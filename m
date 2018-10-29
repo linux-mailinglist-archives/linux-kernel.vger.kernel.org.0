@@ -2,70 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E790FECA13
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A4EECA34
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:24:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfKAU7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:59:49 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:46024 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfKAU7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:59:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=6LFUYdtd/z6Wr9IKwpWqo+i0nhUSa4STX4GMDfZLnVM=; b=TwU2swBh1LPX6w8Fg51nF5S1eA
-        1MinZbzKnGyCGHxdSUL5v3Fq/GrMEKqWUrFsSzrTyG9nAlTfxzW9VwMix2U9wLtmASS7uEzwNUnWe
-        fVUnOb2pzQ1M4dunPcQNjwhBw6MtqSKZVsmdfv8zoFTWlv3IvYY3iMyGlsr45RfkuYmc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iQe1E-0000NN-KN; Fri, 01 Nov 2019 21:59:40 +0100
-Date:   Fri, 1 Nov 2019 21:59:40 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     netdev@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 net-next 06/12] net: ethernet: ti: introduce cpsw
- switchdev based driver part 1 - dual-emac
-Message-ID: <20191101205940.GF31534@lunn.ch>
-References: <20191024100914.16840-1-grygorii.strashko@ti.com>
- <20191024100914.16840-7-grygorii.strashko@ti.com>
- <20191029122422.GL15259@lunn.ch>
- <d87c72e1-cb91-04a2-c881-0d8eec4671e2@ti.com>
- <20191101203913.GD31534@lunn.ch>
- <8f3eb934-7dcd-b43a-de96-6a864ef67c92@ti.com>
+        id S1726951AbfKAVYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:24:00 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:43864 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfKAVX7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 17:23:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1572643439; x=1604179439;
+  h=from:date:subject:message-id:to:mime-version;
+  bh=vhUx5QxMEAQeh+HzNpXJMwmNNTlBGt0/JdKKj8rOIZE=;
+  b=SKOnNhbMF5ksc8FWu0Zjir/jHb3cFGfHeH9tG3BYjpmj36pwP3mkDPMy
+   Y4Fhwa3C+wFv8OjmjWdkcJq1Dyo9eMOpg9AmOZsR2s9LIxav/tBFhKce2
+   e7calufuXHX7dj5huMnKqEKydI+B95WJ+A9mFoXu+sFh5URGFa/Ioj/mv
+   Q=;
+IronPort-SDR: UzESgKsnFarRIW3zjfHPoeKzuIaSYFZ2GpH5iihz5Dq+Xvcf3JbCFC47hQxEgKCE+79gBxMa4P
+ O5D7TP5OvI1A==
+X-IronPort-AV: E=Sophos;i="5.68,257,1569283200"; 
+   d="scan'208";a="3180091"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 01 Nov 2019 21:23:24 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com (Postfix) with ESMTPS id 0F70BA1BC3;
+        Fri,  1 Nov 2019 21:23:20 +0000 (UTC)
+Received: from EX13D07UWA003.ant.amazon.com (10.43.160.35) by
+ EX13MTAUWA001.ant.amazon.com (10.43.160.118) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 1 Nov 2019 21:23:20 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D07UWA003.ant.amazon.com (10.43.160.35) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 1 Nov 2019 21:23:19 +0000
+Received: from dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com
+ (172.22.96.68) by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP
+ Server id 15.0.1367.3 via Frontend Transport; Fri, 1 Nov 2019 21:23:19 +0000
+Received: by dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com (Postfix, from userid 4335130)
+        id 1FFC440EB1; Fri,  1 Nov 2019 21:23:19 +0000 (UTC)
+From:   Anchal Agarwal <anchalag@amazon.com>
+Date:   Mon, 29 Oct 2018 17:52:16 +0000
+Subject: [PATCH] ACPICA: Enable sleep button on ACPI legacy wake
+Message-ID: <20191101212319.1FFC440EB1@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+To:     undisclosed-recipients:;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f3eb934-7dcd-b43a-de96-6a864ef67c92@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > And please you the standard file naming and location,
-> > Documentation/networking/devlink-params-foo.txt
-> Ok. I will.
-> But I'd like to clarify:
-> - drivers documentation placed in ./Documentation/networking/device_drivers/ti/
-> so could you confirm pls, that you want me to add devlink-params documentation in separate file
-> and palace it in ./Documentation/networking/ folder directly?
+Currently we do not see sleep_enable bit set after guest resumes
+from hibernation. Hibernation is triggered in guest on receiving
+a sleep trigger from the hypervisor(S4 state). We see that power
+button is enabled on wake up from S4 state however sleep button
+isn't. This causes subsequent invocation of sleep state to fail
+in the guest. Any environment  going through acpi_hw_legacy_wake()
+won't have sleep button enabled.
 
-Hi Grygorii
+Signed-off-by: Anchal Agarwal <anchalag@amazon.com>
+Reviewed-by: Balbir Singh <sblbir@amazon.com>
+Reviewed-by: Frank van der Linden <fllinden@amazon.com>
+---
+ drivers/acpi/acpica/hwsleep.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-That appears to be the expected place for devlink documentation. You
-can link to it from your document in the ti subdirectory.
+diff --git a/drivers/acpi/acpica/hwsleep.c b/drivers/acpi/acpica/hwsleep.c
+index b62db8ec446f..a176c7802760 100644
+--- a/drivers/acpi/acpica/hwsleep.c
++++ b/drivers/acpi/acpica/hwsleep.c
+@@ -300,6 +300,17 @@ acpi_status acpi_hw_legacy_wake(u8 sleep_state)
+ 				    [ACPI_EVENT_POWER_BUTTON].
+ 				    status_register_id, ACPI_CLEAR_STATUS);
+ 
++	/* Enable sleep button */
++	(void)
++	      acpi_write_bit_register(acpi_gbl_fixed_event_info
++				      [ACPI_EVENT_SLEEP_BUTTON].
++				      enable_register_id, ACPI_ENABLE_EVENT);
++
++	(void)
++	      acpi_write_bit_register(acpi_gbl_fixed_event_info
++				      [ACPI_EVENT_SLEEP_BUTTON].
++				      status_register_id, ACPI_CLEAR_STATUS);
++
+ 	acpi_hw_execute_sleep_method(METHOD_PATHNAME__SST, ACPI_SST_WORKING);
+ 	return_ACPI_STATUS(status);
+ }
+-- 
+2.15.3.AMZN
 
-    Andrew
