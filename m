@@ -2,153 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 759C9196769
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757B5196767
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgC1QnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:15 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50265 "EHLO mx.sdf.org"
+        id S1726316AbgC1QnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:12 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50295 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbgC1QnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:14 -0400
+        id S1726170AbgC1QnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:12 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh9V0022720
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhBkr028015
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:09 GMT
+        Sat, 28 Mar 2020 16:43:11 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh9n2025458;
-        Sat, 28 Mar 2020 16:43:09 GMT
-Message-Id: <202003281643.02SGh9n2025458@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhBxX000080;
+        Sat, 28 Mar 2020 16:43:11 GMT
+Message-Id: <202003281643.02SGhBxX000080@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Sat, 16 Mar 2019 02:32:04 -0400
-Subject: [RFC PATCH v1 09/50] <linux/random.h> prandom_u32_max() for
- power-of-2 ranges
+Date:   Mon, 18 Mar 2019 02:46:05 -0400
+Subject: [RFC PATCH v1 12/50] Treewide: Extirpate prandom_u32_state(rnd) %
+ range
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Chris Wilson <chris@chris-wilson.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add special-case optimization for compile-time constant power-of-2
-ranges (as a simple shift) so it's *always* at least as efficient as
-"prandom_u32() % range".
+There's no prandom_u32_state_max, so we're using reciprocal_scale()
+here directly.
 
-This saves all callers from having to worry about the issue.  You
-may use "% range" or "& (range - 1)" if you know the range is a
-power of 2, but you don't have to.
-
-Rename the parameter from the un-mnemonic "ep_ro" to "range".
-
-Also expand comments, and add to prandom_32() documentation
-that "prandom_u32() % range" should ''not'' be used.
+(Also add a missing "const" to drivers/gpu/drm/i915/selftests/scatterist.c)
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
 ---
- include/linux/random.h | 56 ++++++++++++++++++++++++++++++++++--------
- lib/random32.c         |  9 ++++---
- 2 files changed, 52 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/i915/selftests/scatterlist.c | 4 ++--
+ lib/interval_tree_test.c                     | 7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index f189c927fdea5..109772175c833 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -125,20 +125,56 @@ void prandom_seed_full_state(struct rnd_state __percpu *pcpu_state);
- 	DO_ONCE(prandom_seed_full_state, (pcpu_state))
- 
- /**
-- * prandom_u32_max - returns a pseudo-random number in interval [0, ep_ro)
-- * @ep_ro: right open interval endpoint
-+ * prandom_u32_max - returns a pseudo-random number in interval [0, @range)
-+ * @range: Upper bound on the return value; the first value never returned.
-  *
-- * Returns a pseudo-random number that is in interval [0, ep_ro). Note
-- * that the result depends on PRNG being well distributed in [0, ~0U]
-- * u32 space. Here we use maximally equidistributed combined Tausworthe
-- * generator, that is, prandom_u32(). This is useful when requesting a
-- * random index of an array containing ep_ro elements, for example.
-+ * Returns a pseudo-random number 0 <= @x < @range.
-+ * This is useful when requesting a random index into an array containing
-+ * @range elements, for example.  This is similar to, but more efficient
-+ * than, "prandom_u32() % @range".
-  *
-- * Returns: pseudo-random number in interval [0, ep_ro)
-+ * It's also a tiny bit more uniform than the modulo algorithm.  If @range
-+ * does not divide 1<<32, then some results will occur ceil((1<<32)/@range)
-+ * times, while others will occur floor((1<<32)/range) times.  The modulo
-+ * algorithm makes the lowest (1<<32) % @range possible results occur
-+ * more often, and the higher values all occur slightly less often.
-+ *
-+ * A multiplicative algorithm spreads out the over- and underrepresented
-+ * outputs evenly across the range.  For example, if @range == 7, then
-+ * 2, 4 and 6 occur slighty less often than 0, 1, 3 or 5.
-+ *
-+ * (This all assumes the PRNG is well distributed in [0, ~0U] u32 space,
-+ * a property that is provided by prandom_u32().)
-+ *
-+ * It is possible to extend this to avoid all bias and return perfectly
-+ * uniform pseudorandom numbers by discarding and regenerating sometimes,
-+ * but if your needs are that stringent, you might want to use a stronger
-+ * generator (like get_random_u32()).
-+ *
-+ * Ref:
-+ * 	Fast Random Integer Generation in an Interval
-+ * 	Daniel Lemire
-+ * 	https://arxiv.org/abs/1805.10941
-+ *
-+ * Return: pseudo-random number in interval [0, @range)
-  */
--static inline u32 prandom_u32_max(u32 ep_ro)
-+static inline u32 prandom_u32_max(u32 range)
+diff --git a/drivers/gpu/drm/i915/selftests/scatterlist.c b/drivers/gpu/drm/i915/selftests/scatterlist.c
+index d599186d5b714..be9ff9d03eada 100644
+--- a/drivers/gpu/drm/i915/selftests/scatterlist.c
++++ b/drivers/gpu/drm/i915/selftests/scatterlist.c
+@@ -195,13 +195,13 @@ static unsigned int random_page_size_pages(unsigned long n,
+ 					   struct rnd_state *rnd)
  {
--	return (u32)(((u64) prandom_u32() * ep_ro) >> 32);
-+	/*
-+	 * If the range is a compile-time constant power of 2, then use
-+	 * a simple shift.  This is mathematically equivalent to the
-+	 * multiplication, but GCC 8.3 doesn't optimize that perfectly.
-+	 *
-+	 * We could do an AND with a mask, but
-+	 * 1) The shift is the same speed on a decent CPU,
-+	 * 2) It's generally smaller code (smaller immediate), and
-+	 * 3) Many PRNGs have trouble with their low-order bits;
-+	 *    using the msbits is generaly preferred.
-+	 */
-+	if (__builtin_constant_p(range) && (range & (range - 1)) == 0)
-+		return prandom_u32() / (u32)(0x100000000 / range);
-+	else
-+		return reciprocal_scale(prandom_u32(), range);
+ 	/* 4K, 64K, 2M */
+-	static unsigned int page_count[] = {
++	static const unsigned int page_count[] = {
+ 		BIT(12) >> PAGE_SHIFT,
+ 		BIT(16) >> PAGE_SHIFT,
+ 		BIT(21) >> PAGE_SHIFT,
+ 	};
+ 
+-	return page_count[(prandom_u32_state(rnd) % 3)];
++	return page_count[reciprocal_scale(prandom_u32_state(rnd), 3)];
  }
  
- /*
-diff --git a/lib/random32.c b/lib/random32.c
-index 763b920a6206c..fc369f4e550c2 100644
---- a/lib/random32.c
-+++ b/lib/random32.c
-@@ -75,15 +75,18 @@ EXPORT_SYMBOL(prandom_u32_state);
-  *	A 32 bit pseudo-random number is generated using a fast
-  *	algorithm suitable for simulation. This algorithm is NOT
-  *	considered safe for cryptographic use.
-+ *
-+ *	To generate a random number in a specified interval, use
-+ *	prandom_u32_max(), which uses reciprocal_scale().  Please do
-+ *	NOT use a modulo operation (prandom_u32() % range), which is
-+ *	more expensive.
-  */
- u32 prandom_u32(void)
- {
- 	struct rnd_state *state = &get_cpu_var(net_rand_state);
--	u32 res;
-+	u32 res = prandom_u32_state(state);
+ static inline bool page_contiguous(struct page *first,
+diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
+index f37f4d44faa90..8c129c8c638b9 100644
+--- a/lib/interval_tree_test.c
++++ b/lib/interval_tree_test.c
+@@ -43,8 +43,8 @@ static void init(void)
+ 	int i;
  
--	res = prandom_u32_state(state);
- 	put_cpu_var(net_rand_state);
--
- 	return res;
+ 	for (i = 0; i < nnodes; i++) {
+-		u32 b = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
+-		u32 a = (prandom_u32_state(&rnd) >> 4) % b;
++		u32 b = reciprocal_scale(prandom_u32_state(&rnd), max_endpoint);
++		u32 a = reciprocal_scale(prandom_u32_state(&rnd), b);
+ 
+ 		nodes[i].start = a;
+ 		nodes[i].last = b;
+@@ -56,7 +56,8 @@ static void init(void)
+ 	 * which is pointless.
+ 	 */
+ 	for (i = 0; i < nsearches; i++)
+-		queries[i] = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
++		queries[i] = reciprocal_scale(prandom_u32_state(&rnd),
++					      max_endpoint);
  }
- EXPORT_SYMBOL(prandom_u32);
+ 
+ static int interval_tree_test_init(void)
 -- 
 2.26.0
 
