@@ -2,101 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 757B5196767
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1133E196779
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgC1QnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:12 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50295 "EHLO mx.sdf.org"
+        id S1727920AbgC1Qn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:56 -0400
+Received: from mx.sdf.org ([205.166.94.20]:49890 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbgC1QnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:12 -0400
+        id S1727892AbgC1Qnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:53 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhBkr028015
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh8dN003041
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:11 GMT
+        Sat, 28 Mar 2020 16:43:08 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhBxX000080;
-        Sat, 28 Mar 2020 16:43:11 GMT
-Message-Id: <202003281643.02SGhBxX000080@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh8XV025558;
+        Sat, 28 Mar 2020 16:43:08 GMT
+Message-Id: <202003281643.02SGh8XV025558@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Mon, 18 Mar 2019 02:46:05 -0400
-Subject: [RFC PATCH v1 12/50] Treewide: Extirpate prandom_u32_state(rnd) %
- range
+Date:   Mon, 18 Mar 2019 04:22:17 -0400
+Subject: [RFC PATCH v1 06/50] ubi/debug: Optimize computation of odds
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mtd@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no prandom_u32_state_max, so we're using reciprocal_scale()
-here directly.
+Not only is "prandom_u32() % d" an inefficient way to obtain
+a random number, but "prandom_u32_max(d) < n" is an inefficient
+way to return true with probability n/d.
 
-(Also add a missing "const" to drivers/gpu/drm/i915/selftests/scatterist.c)
+Where n and d are compile-time constants, the efficient way to
+do this test is "prandom_u32() < ((u64)n << 32)/d.
+
+If n == 1 and d is not a power of 2, then 0xffffffff/d == 0x100000000/d
+works just as well and avoids some 64-bit arithmetic.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mtd@lists.infradead.org
 ---
- drivers/gpu/drm/i915/selftests/scatterlist.c | 4 ++--
- lib/interval_tree_test.c                     | 7 ++++---
+ drivers/mtd/ubi/debug.h | 6 +++---
+ fs/ubifs/debug.c        | 5 +++--
  2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/scatterlist.c b/drivers/gpu/drm/i915/selftests/scatterlist.c
-index d599186d5b714..be9ff9d03eada 100644
---- a/drivers/gpu/drm/i915/selftests/scatterlist.c
-+++ b/drivers/gpu/drm/i915/selftests/scatterlist.c
-@@ -195,13 +195,13 @@ static unsigned int random_page_size_pages(unsigned long n,
- 					   struct rnd_state *rnd)
+diff --git a/drivers/mtd/ubi/debug.h b/drivers/mtd/ubi/debug.h
+index 118248a5d7d48..d19671c1a098c 100644
+--- a/drivers/mtd/ubi/debug.h
++++ b/drivers/mtd/ubi/debug.h
+@@ -73,7 +73,7 @@ static inline int ubi_dbg_is_bgt_disabled(const struct ubi_device *ubi)
+ static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
  {
- 	/* 4K, 64K, 2M */
--	static unsigned int page_count[] = {
-+	static const unsigned int page_count[] = {
- 		BIT(12) >> PAGE_SHIFT,
- 		BIT(16) >> PAGE_SHIFT,
- 		BIT(21) >> PAGE_SHIFT,
- 	};
- 
--	return page_count[(prandom_u32_state(rnd) % 3)];
-+	return page_count[reciprocal_scale(prandom_u32_state(rnd), 3)];
+ 	if (ubi->dbg.emulate_bitflips)
+-		return !(prandom_u32() % 200);
++		return prandom_u32() < 0xffffffff/200;
+ 	return 0;
  }
  
- static inline bool page_contiguous(struct page *first,
-diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index f37f4d44faa90..8c129c8c638b9 100644
---- a/lib/interval_tree_test.c
-+++ b/lib/interval_tree_test.c
-@@ -43,8 +43,8 @@ static void init(void)
- 	int i;
- 
- 	for (i = 0; i < nnodes; i++) {
--		u32 b = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
--		u32 a = (prandom_u32_state(&rnd) >> 4) % b;
-+		u32 b = reciprocal_scale(prandom_u32_state(&rnd), max_endpoint);
-+		u32 a = reciprocal_scale(prandom_u32_state(&rnd), b);
- 
- 		nodes[i].start = a;
- 		nodes[i].last = b;
-@@ -56,7 +56,8 @@ static void init(void)
- 	 * which is pointless.
- 	 */
- 	for (i = 0; i < nsearches; i++)
--		queries[i] = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
-+		queries[i] = reciprocal_scale(prandom_u32_state(&rnd),
-+					      max_endpoint);
+@@ -87,7 +87,7 @@ static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
+ static inline int ubi_dbg_is_write_failure(const struct ubi_device *ubi)
+ {
+ 	if (ubi->dbg.emulate_io_failures)
+-		return !(prandom_u32() % 500);
++		return prandom_u32() < 0xffffffff/500;
+ 	return 0;
  }
  
- static int interval_tree_test_init(void)
+@@ -101,7 +101,7 @@ static inline int ubi_dbg_is_write_failure(const struct ubi_device *ubi)
+ static inline int ubi_dbg_is_erase_failure(const struct ubi_device *ubi)
+ {
+ 	if (ubi->dbg.emulate_io_failures)
+-		return !(prandom_u32() % 400);
++		return prandom_u32() < 0xffffffff/400;
+ 	return 0;
+ }
+ 
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 0f5a480fe264f..3d8d8eaea6c66 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -2444,9 +2444,10 @@ int dbg_check_nondata_nodes_order(struct ubifs_info *c, struct list_head *head)
+ 	return 0;
+ }
+ 
+-static inline int chance(unsigned int n, unsigned int out_of)
++static bool chance(unsigned int n, unsigned int out_of)
+ {
+-	return !!((prandom_u32() % out_of) + 1 <= n);
++	/* RHS is a constant expression */
++	return prandom_u32() < ((u64)n << 32) / out_of;
+ 
+ }
+ 
 -- 
 2.26.0
 
