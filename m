@@ -2,104 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1133E196779
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF10196770
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbgC1Qn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:56 -0400
-Received: from mx.sdf.org ([205.166.94.20]:49890 "EHLO mx.sdf.org"
+        id S1727708AbgC1Qn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:29 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50188 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbgC1Qnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:53 -0400
+        id S1726382AbgC1QnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:20 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh8dN003041
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhDVT002162
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:08 GMT
+        Sat, 28 Mar 2020 16:43:13 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh8XV025558;
-        Sat, 28 Mar 2020 16:43:08 GMT
-Message-Id: <202003281643.02SGh8XV025558@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhDHv003972;
+        Sat, 28 Mar 2020 16:43:13 GMT
+Message-Id: <202003281643.02SGhDHv003972@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Mon, 18 Mar 2019 04:22:17 -0400
-Subject: [RFC PATCH v1 06/50] ubi/debug: Optimize computation of odds
+Date:   Mon, 18 Mar 2019 06:56:55 -0400
+Subject: [RFC PATCH v1 16/50] include/net/red.h: Simplify red_random() TO BE
+ VERIFIED
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org
+Cc:     Nogah Frankel <nogahf@mellanox.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Aruna-Hewapathirane <aruna.hewapathirane@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not only is "prandom_u32() % d" an inefficient way to obtain
-a random number, but "prandom_u32_max(d) < n" is an inefficient
-way to return true with probability n/d.
+The existing code goes to some trouble to optimize the
+computation of prandom_u32()/(p->max_P/p->qth_delta).
 
-Where n and d are compile-time constants, the efficient way to
-do this test is "prandom_u32() < ((u64)n << 32)/d.
+But given that the first division is already an approximation,
+there's no need for the fiddly shifting included in
+reciprocal_divide().  Just compute p->qth_delta / p->max_P
+and do a 32-bit multiply and 32-bit shift.
 
-If n == 1 and d is not a power of 2, then 0xffffffff/d == 0x100000000/d
-works just as well and avoids some 64-bit arithmetic.
+This code is subtle, so I'm not certain I didn't break
+something; review definitely appreciated!
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mtd@lists.infradead.org
+Cc: Nogah Frankel <nogahf@mellanox.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Aruna-Hewapathirane <aruna.hewapathirane@gmail.com>
 ---
- drivers/mtd/ubi/debug.h | 6 +++---
- fs/ubifs/debug.c        | 5 +++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ include/net/red.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/mtd/ubi/debug.h b/drivers/mtd/ubi/debug.h
-index 118248a5d7d48..d19671c1a098c 100644
---- a/drivers/mtd/ubi/debug.h
-+++ b/drivers/mtd/ubi/debug.h
-@@ -73,7 +73,7 @@ static inline int ubi_dbg_is_bgt_disabled(const struct ubi_device *ubi)
- static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
+diff --git a/include/net/red.h b/include/net/red.h
+index 9665582c4687e..a357ddb227433 100644
+--- a/include/net/red.h
++++ b/include/net/red.h
+@@ -131,8 +131,7 @@ struct red_parms {
+ 	u32		qth_max;	/* Max avg length threshold: Wlog scaled */
+ 	u32		Scell_max;
+ 	u32		max_P;		/* probability, [0 .. 1.0] 32 scaled */
+-	/* reciprocal_value(max_P / qth_delta) */
+-	struct reciprocal_value	max_P_reciprocal;
++	u32		delta_max_p;	/* (qth_delta << 32) / max_P */
+ 	u32		qth_delta;	/* max_th - min_th */
+ 	u32		target_min;	/* min_th + 0.4*(max_th - min_th) */
+ 	u32		target_max;	/* min_th + 0.6*(max_th - min_th) */
+@@ -184,7 +183,6 @@ static inline void red_set_parms(struct red_parms *p,
+ 				 u8 Scell_log, u8 *stab, u32 max_P)
  {
- 	if (ubi->dbg.emulate_bitflips)
--		return !(prandom_u32() % 200);
-+		return prandom_u32() < 0xffffffff/200;
- 	return 0;
- }
+ 	int delta = qth_max - qth_min;
+-	u32 max_p_delta;
  
-@@ -87,7 +87,7 @@ static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
- static inline int ubi_dbg_is_write_failure(const struct ubi_device *ubi)
+ 	p->qth_min	= qth_min << Wlog;
+ 	p->qth_max	= qth_max << Wlog;
+@@ -198,9 +196,10 @@ static inline void red_set_parms(struct red_parms *p,
+ 		max_P *= delta; /* max_P = (qth_max - qth_min)/2^Plog */
+ 	}
+ 	p->max_P = max_P;
+-	max_p_delta = max_P / delta;
+-	max_p_delta = max(max_p_delta, 1U);
+-	p->max_P_reciprocal  = reciprocal_value(max_p_delta);
++	if (delta >= max_P)
++		p->delta_max_p = 0xffffffff;
++	else
++		p->delta_max_p = DIV_ROUND_CLOSEST_ULL((u64)delta << 32, max_P);
+ 
+ 	/* RED Adaptative target :
+ 	 * [min_th + 0.4*(min_th - max_th),
+@@ -316,7 +315,7 @@ static inline unsigned long red_calc_qavg(const struct red_parms *p,
+ 
+ static inline u32 red_random(const struct red_parms *p)
  {
- 	if (ubi->dbg.emulate_io_failures)
--		return !(prandom_u32() % 500);
-+		return prandom_u32() < 0xffffffff/500;
- 	return 0;
+-	return reciprocal_divide(prandom_u32(), p->max_P_reciprocal);
++	return reciprocal_scale(prandom_u32(), p->delta_max_p);
  }
  
-@@ -101,7 +101,7 @@ static inline int ubi_dbg_is_write_failure(const struct ubi_device *ubi)
- static inline int ubi_dbg_is_erase_failure(const struct ubi_device *ubi)
+ static inline int red_mark_probability(const struct red_parms *p,
+@@ -397,7 +396,6 @@ static inline int red_action(const struct red_parms *p,
+ static inline void red_adaptative_algo(struct red_parms *p, struct red_vars *v)
  {
- 	if (ubi->dbg.emulate_io_failures)
--		return !(prandom_u32() % 400);
-+		return prandom_u32() < 0xffffffff/400;
- 	return 0;
+ 	unsigned long qavg;
+-	u32 max_p_delta;
+ 
+ 	qavg = v->qavg;
+ 	if (red_is_idling(v))
+@@ -411,8 +409,10 @@ static inline void red_adaptative_algo(struct red_parms *p, struct red_vars *v)
+ 	else if (qavg < p->target_min && p->max_P >= MAX_P_MIN)
+ 		p->max_P = (p->max_P/10)*9; /* maxp = maxp * Beta */
+ 
+-	max_p_delta = DIV_ROUND_CLOSEST(p->max_P, p->qth_delta);
+-	max_p_delta = max(max_p_delta, 1U);
+-	p->max_P_reciprocal = reciprocal_value(max_p_delta);
++	if (p->qth_delta >= p->max_P)
++		p->delta_max_p = 0xffffffff;
++	else
++		p->delta_max_p = DIV_ROUND_CLOSEST_ULL((u64)p->qth_delta << 32,
++						       p->max_P);
  }
- 
-diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
-index 0f5a480fe264f..3d8d8eaea6c66 100644
---- a/fs/ubifs/debug.c
-+++ b/fs/ubifs/debug.c
-@@ -2444,9 +2444,10 @@ int dbg_check_nondata_nodes_order(struct ubifs_info *c, struct list_head *head)
- 	return 0;
- }
- 
--static inline int chance(unsigned int n, unsigned int out_of)
-+static bool chance(unsigned int n, unsigned int out_of)
- {
--	return !!((prandom_u32() % out_of) + 1 <= n);
-+	/* RHS is a constant expression */
-+	return prandom_u32() < ((u64)n << 32) / out_of;
- 
- }
- 
+ #endif
 -- 
 2.26.0
 
