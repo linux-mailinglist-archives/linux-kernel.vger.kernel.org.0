@@ -2,145 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F2C196791
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A5219676B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgC1Qnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:40 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50178 "EHLO mx.sdf.org"
+        id S1727384AbgC1QnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:17 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50230 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727485AbgC1QnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:21 -0400
+        id S1726382AbgC1QnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:17 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh88D023629
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhEsd012112
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:09 GMT
+        Sat, 28 Mar 2020 16:43:14 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh8wx015662;
-        Sat, 28 Mar 2020 16:43:08 GMT
-Message-Id: <202003281643.02SGh8wx015662@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhE5I022872;
+        Sat, 28 Mar 2020 16:43:14 GMT
+Message-Id: <202003281643.02SGhE5I022872@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Mon, 18 Mar 2019 07:07:44 -0400
-Subject: [RFC PATCH v1 07/50] mm/slab: Use simpler Fisher-Yates shuffle
+Date:   Mon, 18 Mar 2019 14:50:35 -0400
+Subject: [RFC PATCH v1 19/50] net/sched/sch_netem: Simplify get_crandom
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Thomas Garnier <thgarnie@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In addition to using reciprocal_scale rather than %, use
-the initialize-while-shuffling form of Fisher-Yates.
+This can be done with a single 32x32-bit multiply, rather
+than a 64x64 as previously written.
 
-Rather than swapping list[i] and list[rand] immediately after
-initializing list[i] = i, copy list[i] = list[rand] and then
-initialize list[rand] = i.
+One conditional subtract is required to handle the 33rd bit
+of value - state->last, but that's cheaper than the wider multiply
+even on 64-bit platforms, and much cheaper on 32-bit.
 
-Note that 0 <= rand <= i, so if rand == i, the first step copies
-uninitialized memory to itself before the second step initializes it.
+The need for a 33rd bit to hold rho+1 is avoided by using ~rho
+instead.
 
-This whole pre-computed shuffle list algorithm really needs a more
-extensive overhaul.  It's basically a very-special-purpose PRNG
-created to amortize the overhead of get_random_int().  But there
-are more efficient ways to use the 32 random bits that returns
-than just choosing a random starting point modulo cachep->num.
+(Found while auditing prandom_u32() callers.)
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: netdev@vger.kernel.org
 ---
- mm/slab.c        | 25 +++++++++----------------
- mm/slab_common.c | 15 +++++++--------
- 2 files changed, 16 insertions(+), 24 deletions(-)
+ net/sched/sch_netem.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index a89633603b2d7..d9499d54afa59 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2404,7 +2404,7 @@ static bool freelist_state_initialize(union freelist_init_state *state,
- 	} else {
- 		state->list = cachep->random_seq;
- 		state->count = count;
--		state->pos = rand % count;
-+		state->pos = reciprocal_scale(rand, count);
- 		ret = true;
- 	}
- 	return ret;
-@@ -2418,20 +2418,13 @@ static freelist_idx_t next_random_slot(union freelist_init_state *state)
- 	return state->list[state->pos++];
- }
- 
--/* Swap two freelist entries */
--static void swap_free_obj(struct page *page, unsigned int a, unsigned int b)
--{
--	swap(((freelist_idx_t *)page->freelist)[a],
--		((freelist_idx_t *)page->freelist)[b]);
--}
--
- /*
-  * Shuffle the freelist initialization state based on pre-computed lists.
-  * return true if the list was successfully shuffled, false otherwise.
+diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
+index 7b7503326faf5..fa41601538b21 100644
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -180,17 +180,15 @@ static void init_crandom(struct crndstate *state, unsigned long rho)
   */
- static bool shuffle_freelist(struct kmem_cache *cachep, struct page *page)
+ static u32 get_crandom(struct crndstate *state)
  {
--	unsigned int objfreelist = 0, i, rand, count = cachep->num;
-+	unsigned int objfreelist = 0, i, count = cachep->num;
- 	union freelist_init_state state;
- 	bool precomputed;
+-	u64 value, rho;
+-	unsigned long answer;
++	u32 value = prandom_u32(), last, rho, answer;
  
-@@ -2456,14 +2449,14 @@ static bool shuffle_freelist(struct kmem_cache *cachep, struct page *page)
- 	 * Later use a pre-computed list for speed.
- 	 */
- 	if (!precomputed) {
--		for (i = 0; i < count; i++)
--			set_free_obj(page, i, i);
--
- 		/* Fisher-Yates shuffle */
--		for (i = count - 1; i > 0; i--) {
--			rand = prandom_u32_state(&state.rnd_state);
--			rand %= (i + 1);
--			swap_free_obj(page, i, rand);
-+		set_free_obj(page, 0, 0);
-+		for (i = 1; i < count; i++) {
-+			unsigned int rand = prandom_u32_state(&state.rnd_state);
-+
-+			rand = reciprocal_scale(rand, i + 1);
-+			set_free_obj(page, i, get_free_obj(page, rand));
-+			set_free_obj(page, rand, i);
- 		}
- 	} else {
- 		for (i = 0; i < count; i++)
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 0d95ddea13b0d..67908fc842d98 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1349,17 +1349,16 @@ EXPORT_SYMBOL(kmalloc_order_trace);
- static void freelist_randomize(struct rnd_state *state, unsigned int *list,
- 			       unsigned int count)
- {
--	unsigned int rand;
- 	unsigned int i;
+-	if (!state || state->rho == 0)	/* no correlation */
+-		return prandom_u32();
++	if (!state || (rho = state->rho) == 0)	/* no correlation */
++		return value;
++	last = state->last;
++	answer = last + reciprocal_scale(value - last, ~rho);
  
--	for (i = 0; i < count; i++)
--		list[i] = i;
--
- 	/* Fisher-Yates shuffle */
--	for (i = count - 1; i > 0; i--) {
--		rand = prandom_u32_state(state);
--		rand %= (i + 1);
--		swap(list[i], list[rand]);
-+	list[0] = 0;
-+	for (i = 1; i < count; i++) {
-+		unsigned int rand = prandom_u32_state(state);
-+
-+		rand = reciprocal_scale(rand, i + 1);
-+		list[i] = list[rand];
-+		list[rand] = i;
- 	}
+-	value = prandom_u32();
+-	rho = (u64)state->rho + 1;
+-	answer = (value * ((1ull<<32) - rho) + state->last * rho) >> 32;
+-	state->last = answer;
+-	return answer;
++	/* Handle 33rd bit of difference */
++	return state->last = value >= last ? answer : answer - ~rho;
  }
  
+ /* loss_4state - 4-state model loss generator
 -- 
 2.26.0
 
