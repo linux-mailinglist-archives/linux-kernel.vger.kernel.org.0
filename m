@@ -2,122 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF10196770
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F2C196791
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgC1Qn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:29 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50188 "EHLO mx.sdf.org"
+        id S1727716AbgC1Qnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:40 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50178 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbgC1QnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:20 -0400
+        id S1727485AbgC1QnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:21 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhDVT002162
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGh88D023629
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:13 GMT
+        Sat, 28 Mar 2020 16:43:09 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhDHv003972;
-        Sat, 28 Mar 2020 16:43:13 GMT
-Message-Id: <202003281643.02SGhDHv003972@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGh8wx015662;
+        Sat, 28 Mar 2020 16:43:08 GMT
+Message-Id: <202003281643.02SGh8wx015662@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Mon, 18 Mar 2019 06:56:55 -0400
-Subject: [RFC PATCH v1 16/50] include/net/red.h: Simplify red_random() TO BE
- VERIFIED
+Date:   Mon, 18 Mar 2019 07:07:44 -0400
+Subject: [RFC PATCH v1 07/50] mm/slab: Use simpler Fisher-Yates shuffle
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Nogah Frankel <nogahf@mellanox.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Aruna-Hewapathirane <aruna.hewapathirane@gmail.com>
+Cc:     Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing code goes to some trouble to optimize the
-computation of prandom_u32()/(p->max_P/p->qth_delta).
+In addition to using reciprocal_scale rather than %, use
+the initialize-while-shuffling form of Fisher-Yates.
 
-But given that the first division is already an approximation,
-there's no need for the fiddly shifting included in
-reciprocal_divide().  Just compute p->qth_delta / p->max_P
-and do a 32-bit multiply and 32-bit shift.
+Rather than swapping list[i] and list[rand] immediately after
+initializing list[i] = i, copy list[i] = list[rand] and then
+initialize list[rand] = i.
 
-This code is subtle, so I'm not certain I didn't break
-something; review definitely appreciated!
+Note that 0 <= rand <= i, so if rand == i, the first step copies
+uninitialized memory to itself before the second step initializes it.
+
+This whole pre-computed shuffle list algorithm really needs a more
+extensive overhaul.  It's basically a very-special-purpose PRNG
+created to amortize the overhead of get_random_int().  But there
+are more efficient ways to use the 32 random bits that returns
+than just choosing a random starting point modulo cachep->num.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Nogah Frankel <nogahf@mellanox.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Aruna-Hewapathirane <aruna.hewapathirane@gmail.com>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 ---
- include/net/red.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ mm/slab.c        | 25 +++++++++----------------
+ mm/slab_common.c | 15 +++++++--------
+ 2 files changed, 16 insertions(+), 24 deletions(-)
 
-diff --git a/include/net/red.h b/include/net/red.h
-index 9665582c4687e..a357ddb227433 100644
---- a/include/net/red.h
-+++ b/include/net/red.h
-@@ -131,8 +131,7 @@ struct red_parms {
- 	u32		qth_max;	/* Max avg length threshold: Wlog scaled */
- 	u32		Scell_max;
- 	u32		max_P;		/* probability, [0 .. 1.0] 32 scaled */
--	/* reciprocal_value(max_P / qth_delta) */
--	struct reciprocal_value	max_P_reciprocal;
-+	u32		delta_max_p;	/* (qth_delta << 32) / max_P */
- 	u32		qth_delta;	/* max_th - min_th */
- 	u32		target_min;	/* min_th + 0.4*(max_th - min_th) */
- 	u32		target_max;	/* min_th + 0.6*(max_th - min_th) */
-@@ -184,7 +183,6 @@ static inline void red_set_parms(struct red_parms *p,
- 				 u8 Scell_log, u8 *stab, u32 max_P)
- {
- 	int delta = qth_max - qth_min;
--	u32 max_p_delta;
- 
- 	p->qth_min	= qth_min << Wlog;
- 	p->qth_max	= qth_max << Wlog;
-@@ -198,9 +196,10 @@ static inline void red_set_parms(struct red_parms *p,
- 		max_P *= delta; /* max_P = (qth_max - qth_min)/2^Plog */
+diff --git a/mm/slab.c b/mm/slab.c
+index a89633603b2d7..d9499d54afa59 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -2404,7 +2404,7 @@ static bool freelist_state_initialize(union freelist_init_state *state,
+ 	} else {
+ 		state->list = cachep->random_seq;
+ 		state->count = count;
+-		state->pos = rand % count;
++		state->pos = reciprocal_scale(rand, count);
+ 		ret = true;
  	}
- 	p->max_P = max_P;
--	max_p_delta = max_P / delta;
--	max_p_delta = max(max_p_delta, 1U);
--	p->max_P_reciprocal  = reciprocal_value(max_p_delta);
-+	if (delta >= max_P)
-+		p->delta_max_p = 0xffffffff;
-+	else
-+		p->delta_max_p = DIV_ROUND_CLOSEST_ULL((u64)delta << 32, max_P);
- 
- 	/* RED Adaptative target :
- 	 * [min_th + 0.4*(min_th - max_th),
-@@ -316,7 +315,7 @@ static inline unsigned long red_calc_qavg(const struct red_parms *p,
- 
- static inline u32 red_random(const struct red_parms *p)
- {
--	return reciprocal_divide(prandom_u32(), p->max_P_reciprocal);
-+	return reciprocal_scale(prandom_u32(), p->delta_max_p);
+ 	return ret;
+@@ -2418,20 +2418,13 @@ static freelist_idx_t next_random_slot(union freelist_init_state *state)
+ 	return state->list[state->pos++];
  }
  
- static inline int red_mark_probability(const struct red_parms *p,
-@@ -397,7 +396,6 @@ static inline int red_action(const struct red_parms *p,
- static inline void red_adaptative_algo(struct red_parms *p, struct red_vars *v)
+-/* Swap two freelist entries */
+-static void swap_free_obj(struct page *page, unsigned int a, unsigned int b)
+-{
+-	swap(((freelist_idx_t *)page->freelist)[a],
+-		((freelist_idx_t *)page->freelist)[b]);
+-}
+-
+ /*
+  * Shuffle the freelist initialization state based on pre-computed lists.
+  * return true if the list was successfully shuffled, false otherwise.
+  */
+ static bool shuffle_freelist(struct kmem_cache *cachep, struct page *page)
  {
- 	unsigned long qavg;
--	u32 max_p_delta;
+-	unsigned int objfreelist = 0, i, rand, count = cachep->num;
++	unsigned int objfreelist = 0, i, count = cachep->num;
+ 	union freelist_init_state state;
+ 	bool precomputed;
  
- 	qavg = v->qavg;
- 	if (red_is_idling(v))
-@@ -411,8 +409,10 @@ static inline void red_adaptative_algo(struct red_parms *p, struct red_vars *v)
- 	else if (qavg < p->target_min && p->max_P >= MAX_P_MIN)
- 		p->max_P = (p->max_P/10)*9; /* maxp = maxp * Beta */
+@@ -2456,14 +2449,14 @@ static bool shuffle_freelist(struct kmem_cache *cachep, struct page *page)
+ 	 * Later use a pre-computed list for speed.
+ 	 */
+ 	if (!precomputed) {
+-		for (i = 0; i < count; i++)
+-			set_free_obj(page, i, i);
+-
+ 		/* Fisher-Yates shuffle */
+-		for (i = count - 1; i > 0; i--) {
+-			rand = prandom_u32_state(&state.rnd_state);
+-			rand %= (i + 1);
+-			swap_free_obj(page, i, rand);
++		set_free_obj(page, 0, 0);
++		for (i = 1; i < count; i++) {
++			unsigned int rand = prandom_u32_state(&state.rnd_state);
++
++			rand = reciprocal_scale(rand, i + 1);
++			set_free_obj(page, i, get_free_obj(page, rand));
++			set_free_obj(page, rand, i);
+ 		}
+ 	} else {
+ 		for (i = 0; i < count; i++)
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 0d95ddea13b0d..67908fc842d98 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1349,17 +1349,16 @@ EXPORT_SYMBOL(kmalloc_order_trace);
+ static void freelist_randomize(struct rnd_state *state, unsigned int *list,
+ 			       unsigned int count)
+ {
+-	unsigned int rand;
+ 	unsigned int i;
  
--	max_p_delta = DIV_ROUND_CLOSEST(p->max_P, p->qth_delta);
--	max_p_delta = max(max_p_delta, 1U);
--	p->max_P_reciprocal = reciprocal_value(max_p_delta);
-+	if (p->qth_delta >= p->max_P)
-+		p->delta_max_p = 0xffffffff;
-+	else
-+		p->delta_max_p = DIV_ROUND_CLOSEST_ULL((u64)p->qth_delta << 32,
-+						       p->max_P);
+-	for (i = 0; i < count; i++)
+-		list[i] = i;
+-
+ 	/* Fisher-Yates shuffle */
+-	for (i = count - 1; i > 0; i--) {
+-		rand = prandom_u32_state(state);
+-		rand %= (i + 1);
+-		swap(list[i], list[rand]);
++	list[0] = 0;
++	for (i = 1; i < count; i++) {
++		unsigned int rand = prandom_u32_state(state);
++
++		rand = reciprocal_scale(rand, i + 1);
++		list[i] = list[rand];
++		list[rand] = i;
+ 	}
  }
- #endif
+ 
 -- 
 2.26.0
 
