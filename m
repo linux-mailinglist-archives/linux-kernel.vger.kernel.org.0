@@ -2,151 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BAFC1967AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB51C196772
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbgC1QnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:16 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50248 "EHLO mx.sdf.org"
+        id S1726325AbgC1Qng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:36 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50174 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgC1QnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:15 -0400
+        id S1727486AbgC1QnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:21 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhCw4016539
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhGwk005450
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:12 GMT
+        Sat, 28 Mar 2020 16:43:16 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhC3b019313;
-        Sat, 28 Mar 2020 16:43:12 GMT
-Message-Id: <202003281643.02SGhC3b019313@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhGKO009144;
+        Sat, 28 Mar 2020 16:43:16 GMT
+Message-Id: <202003281643.02SGhGKO009144@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Mon, 25 Mar 2019 14:24:48 -0400
-Subject: [RFC PATCH v1 15/50] drivers/block/drbd/drbd_main: fix
- _drbd_fault_random()
+Date:   Wed, 27 Mar 2019 07:56:49 -0400
+Subject: [RFC PATCH v1 24/50] crypto4xx_core: Use more appropriate seed for
+ PRNG
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        drbd-dev@tron.linbit.com
+Cc:     James Hsiao <jhsiao@amcc.com>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The internal PRNG had numerous problems:
-
-* Since the last operation in this function truncates the
-  return value to 32 bits, there's no point maintaining
-  a 64-bit state and doing 64-bit math.  (The msbits have
-  no effect on the return value.)
-* Use prandom_u32() rather than get_random_bytes().  If
-  we're using an even crappier PRNG, we don't need
-  crypto-quality seeds.
-* Since the function is reseeded from a non-deterministic
-  source periodically, the output isn't repeatable, so it's
-  okay to change the algorithm.
-* The multiplier used (39916801) is bad.  Multipliers must
-  be == 1 (mod 4) for maximum period, which this is, but
-  should also be == 5 (mod 8) which this is not.  Replace it
-  with a multiplier chosen from a published list as having
-  good lattice structure on the spectral test.
-* The additive constant is unnecessarily complex.  Any odd
-  number is as as good as another, so just use 1.
-* The "% 100" output transformation is unnecessarily
-  expensive.  Use multiplicative range reduction instead,
-  which is significantly faster.
-* Multiplicative range reduction also avoids the problems
-  with the low-order bits which modulo-2^n LCGs are subject
-  to.  Thus, the final "swahw32" may be omitted from
-  _drbd_fault_random().
-
-* Also, use get_random_u64() in drbd_uuid_new_current().
-  That's still crypto-quality, but we don't need
-  get_random_bytes().
+A PRNG doesn't need the full security guarantees of
+get_random_bytes() (and a 64-bit seed can be brute-forced
+anyway); get_random_u32() is quite sufficient.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>
-Cc: drbd-dev@lists.linbit.com
+Cc: James Hsiao <jhsiao@amcc.com>
+Cc: Christian Lamparter <chunkeey@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org
 ---
- drivers/block/drbd/drbd_main.c | 37 +++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/crypto/amcc/crypto4xx_core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index a18155cdce416..2bd5e84a18dd6 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -3483,11 +3483,9 @@ void drbd_uuid_set(struct drbd_device *device, int idx, u64 val) __must_hold(loc
-  */
- void drbd_uuid_new_current(struct drbd_device *device) __must_hold(local)
- {
--	u64 val;
-+	u64 val = get_random_u64();
- 	unsigned long long bm_uuid;
+diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
+index 7d6b695c4ab3f..0fc41ffe3ff9a 100644
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -53,7 +53,6 @@ static void crypto4xx_hw_init(struct crypto4xx_device *dev)
+ 	union ce_ring_control ring_ctrl;
+ 	union ce_part_ring_size part_ring_size;
+ 	union ce_io_threshold io_threshold;
+-	u32 rand_num;
+ 	union ce_pe_dma_cfg pe_dma_cfg;
+ 	u32 device_ctrl;
  
--	get_random_bytes(&val, sizeof(u64));
--
- 	spin_lock_irq(&device->ldev->md.uuid_lock);
- 	bm_uuid = device->ldev->md.uuid[UI_BITMAP];
- 
-@@ -3834,30 +3832,37 @@ void unlock_all_resources(void)
- /* Fault insertion support including random number generator shamelessly
-  * stolen from kernel/rcutorture.c */
- struct fault_random_state {
--	unsigned long state;
--	unsigned long count;
-+	u32 state;
-+	unsigned int count;
- };
- 
--#define FAULT_RANDOM_MULT 39916801  /* prime */
--#define FAULT_RANDOM_ADD	479001701 /* prime */
-+/*
-+ * From table 5 of L'Ecuyer (1999)
-+ * "Tables Of Linear Congruential Generators Of Different Sizes And Good
-+ * Lattice Structure"
-+ * https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.34.1024
-+ * https://www.iro.umontreal.ca/~lecuyer/myftp/papers/latrules99Errata.pdf
-+ */
-+#define FAULT_RANDOM_MULT 2891336453
-+#define FAULT_RANDOM_ADD 1
- #define FAULT_RANDOM_REFRESH 10000
- 
- /*
-  * Crude but fast random-number generator.  Uses a linear congruential
-- * generator, with occasional help from get_random_bytes().
-+ * generator, with occasional help from prandom_u32().
-+ *
-+ * NOTE LCGs with a power-of-2 modulus, like this have a well-known
-+ * problem that their low-order bits have short period.  It is used in
-+ * a way that cares mostly about the high bits, avoiding the probem.
-  */
--static unsigned long
-+static u32
- _drbd_fault_random(struct fault_random_state *rsp)
- {
--	long refresh;
--
- 	if (!rsp->count--) {
--		get_random_bytes(&refresh, sizeof(refresh));
--		rsp->state += refresh;
-+		rsp->state += prandom_u32();
- 		rsp->count = FAULT_RANDOM_REFRESH;
- 	}
--	rsp->state = rsp->state * FAULT_RANDOM_MULT + FAULT_RANDOM_ADD;
--	return swahw32(rsp->state);
-+	return rsp->state = rsp->state * FAULT_RANDOM_MULT + FAULT_RANDOM_ADD;
- }
- 
- static char *
-@@ -3886,7 +3891,7 @@ _drbd_insert_fault(struct drbd_device *device, unsigned int type)
- 	unsigned int ret = (
- 		(drbd_fault_devs == 0 ||
- 			((1 << device_to_minor(device)) & drbd_fault_devs) != 0) &&
--		(((_drbd_fault_random(&rrs) % 100) + 1) <= drbd_fault_rate));
-+		reciprocal_scale(_drbd_fault_random(&rrs), 100) < drbd_fault_rate);
- 
- 	if (ret) {
- 		drbd_fault_count++;
+@@ -79,10 +78,8 @@ static void crypto4xx_hw_init(struct crypto4xx_device *dev)
+ 	writel(dev->pdr_pa, dev->ce_base + CRYPTO4XX_PDR_BASE);
+ 	writel(dev->pdr_pa, dev->ce_base + CRYPTO4XX_RDR_BASE);
+ 	writel(PPC4XX_PRNG_CTRL_AUTO_EN, dev->ce_base + CRYPTO4XX_PRNG_CTRL);
+-	get_random_bytes(&rand_num, sizeof(rand_num));
+-	writel(rand_num, dev->ce_base + CRYPTO4XX_PRNG_SEED_L);
+-	get_random_bytes(&rand_num, sizeof(rand_num));
+-	writel(rand_num, dev->ce_base + CRYPTO4XX_PRNG_SEED_H);
++	writel(get_random_u32(), dev->ce_base + CRYPTO4XX_PRNG_SEED_L);
++	writel(get_random_u32(), dev->ce_base + CRYPTO4XX_PRNG_SEED_H);
+ 	ring_size.w = 0;
+ 	ring_size.bf.ring_offset = PPC4XX_PD_SIZE;
+ 	ring_size.bf.ring_size   = PPC4XX_NUM_PD;
 -- 
 2.26.0
 
