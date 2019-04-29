@@ -2,281 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714B4EA14
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD6EEA23
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfD2S1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:27:48 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44642 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728972AbfD2S1s (ORCPT
+        id S1729100AbfD2S3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:29:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36805 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728962AbfD2S3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:27:48 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d14so2395425qkl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:27:46 -0700 (PDT)
+        Mon, 29 Apr 2019 14:29:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id o4so5539748wra.3;
+        Mon, 29 Apr 2019 11:29:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=IP3FHnMV/mFDceaG7NR28w+jM+ZEbdN5PFi1FsBUSc8=;
-        b=DVjUI2QRhQK15j5OYtkyws9OgmMjkNAK+jRGC1G7UbaGz4iHPEMpIcPfUDxNs9yW3T
-         nKeIWFD1+fgsphMkkA9D7JrgXuAZvpwDTuqqw5oIYQs2ytXsNtQLVAJnKwAxb1nZAdon
-         sVgYIWTTuSuIWzAKUdyIRa4ZXLmuRUaBxYtDEm5QwWieTdpJUhV4kbUNacoMfSEMGIdd
-         seGOHP89VCy8fry9dE9GDzOwuKe9YuVspzAMMP4D+RBwQ534gyc6JfOamg7RVT3EWkHx
-         XlkBMjwrNRDI/yuOSdv0EDVgUvGGd0w/+o/JLL1mwvKnTG2PAq2vGd0Xh503GNb+hO6H
-         btng==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BFZmWgLdy4ykcNe/TIuE4Y6yUre/3XY2vSeqK8r6OmY=;
+        b=C72veEyoMpx+St4h0M0XyY/oHvtg3/QKE7xADm0qC7WtPJ1GOYmG6f5+jtDIQZFHTh
+         B0MMyqO/CLpT13RWG9qjH4pstogDv5rfFHpX/fc6SNI4KMDzbu3pjD0ytWp0Kv34tfiV
+         yErfC9z4Mtmpv8vfeZDgPK3a74It8J3zGFBLoJ+aVe+MMn0VwzKvogm3Wwc5VZ7jNwz5
+         mLC2EzGhQ78dbteiRSu7BtdHL5Abpsp962YvAsv9vFczxz23jXOjnKzLE6XmaccVtrAf
+         MJzZU2mzqpRrjr/fvKNCuvj6+n30lvXvCVJXatigwe8T+I/KJFEj4G9HyCD5bPp15iwj
+         zuAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version;
-        bh=IP3FHnMV/mFDceaG7NR28w+jM+ZEbdN5PFi1FsBUSc8=;
-        b=ExbwhKmTOUUQLbhjI3+ESLT2Ic0lbIl/BdvFs6yxcB+QSvUQhViUbhe3fe/I2CzvLU
-         7H9sQIpNhior3OLvWhjKeXnBc3YUYh1WzECA8qefP32v+0Evx0OVYqrxGZNBh/0+rMag
-         Xdg1xP6MnzzKnOk6nBu7vpVMOgd1WNIWARIDF+AgoASwaiJUzG4gSSDd3rJoLylvYZtB
-         YDh+/Pn39VTg2N3jzD5k8BF0//aQsjaTSB95yT/VR0+Xw6bnAcnyCZbe/ucjdBf8pEWE
-         +Vozs3OuWQvDqJKHmQX9wTrMzSPMf5eB+A/ZBrppvc6b71HeNENxK0f69A1bNzpDb6Zv
-         v/Ig==
-X-Gm-Message-State: APjAAAUYHGKtmKdmGgJr2pYH0KTByhDYJ7MmJQe3lA/Rz14GlUJp/jdj
-        WI3HnhYthhP6sBMawpAet+jIIA==
-X-Google-Smtp-Source: APXvYqxU7ss5ur9sEjiVz8vw8cQGWn3lwNw2Intycj3sl212aOKhoJ3aivrTiP2osxcvvwmFd25pMA==
-X-Received: by 2002:a37:4f88:: with SMTP id d130mr13215741qkb.154.1556562466202;
-        Mon, 29 Apr 2019 11:27:46 -0700 (PDT)
-Received: from tpx230-nicolas.collaboramtl (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
-        by smtp.gmail.com with ESMTPSA id q11sm5784408qkn.19.2019.04.29.11.27.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 11:27:43 -0700 (PDT)
-Message-ID: <d656119e73d491fe307045639ccc2102cb8a8722.camel@ndufresne.ca>
-Subject: Re: [PATCH v4] media: docs-rst: Document m2m stateless video
- decoder interface
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alexandre Courbot <acourbot@chromium.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Dafna Hirschfeld <dafna3@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        kernel mailing list <kernel@lists.collabora.co.uk>
-Date:   Mon, 29 Apr 2019 14:27:41 -0400
-In-Reply-To: <16a3a61fe354dc545e99aef36aa58c7d4943de26.camel@bootlin.com>
-References: <20190306080019.159676-1-acourbot@chromium.org>
-         <371df0e4ec9e38d83d11171cbd98f19954cbf787.camel@ndufresne.ca>
-         <da5aa9ab957923a72e30b169a3c242c4fe6260f1.camel@bootlin.com>
-         <c07703459c7e48904bd7fd83be1e675c70eee83c.camel@ndufresne.ca>
-         <d81d0112b99feba0a1899f3722077a4aeec9860c.camel@bootlin.com>
-         <439b7f57aa3ba2b2ed5b043f961ef87cb83912af.camel@ndufresne.ca>
-         <59e23c5ca5bfbadf9441ea06da2e9b9b5898c6d7.camel@bootlin.com>
-         <0b495143bb260cf9f8927ee541e7f001842ac5c3.camel@ndufresne.ca>
-         <CAPBb6MVG+3jQcw3AuhYDYCZ0YJ0aX=TmEuM5izh12GLw9V6B8Q@mail.gmail.com>
-         <793af82c-6b37-6f69-648e-2cd2a2e87645@xs4all.nl>
-         <f30f69af184cc80d5c56853b517943f45c90d9d9.camel@ndufresne.ca>
-         <0a39c613-440d-c7a9-a078-b4688874f9e6@xs4all.nl>
-         <16a3a61fe354dc545e99aef36aa58c7d4943de26.camel@bootlin.com>
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-BvhEZUwF+CTFnteYIJW9"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BFZmWgLdy4ykcNe/TIuE4Y6yUre/3XY2vSeqK8r6OmY=;
+        b=YPwj4Cqna5wrFF8sDISg3kxeG2Ov8z68pZ951rzyS6nGM5H8KwwHEjx9Hgj5kaJY0t
+         qwAHTeBpdbXGzMp3HiT6yKbAAnfEXV1oMGLbIgR2Lb1/jp070ZT5+/Y/V+r1YowBxv8y
+         9LeYVqhUY0ZIUQ9oukJJGe9wnbku1rX7+3EHUveI5iO/FasEvxL0EVvz/gZATuYeBY8/
+         Iv73aIo3rhHvh+zkQTz5iKKN8lV+AtVlcbGzebz6fjrPuV2VqZoUrLp3MRA1NRRr0mBY
+         WvRzopHchxCFBD4roI8j8PCKWtXaTJmQppx2oEciWzR/rGdfZfQTbO+mscUgEaJgr8q2
+         uRZw==
+X-Gm-Message-State: APjAAAVCeMyvuYdcu7tLRAjs0JitjCsWuCblHTon9BRkDkZ/Km0ckF+T
+        nNkGChfyDUcbsLrLP3QrifpQ/GSWbgUba9c1WjAmPxseaGc=
+X-Google-Smtp-Source: APXvYqxvFR2auxcmCUH1Vm273Y/vIr6fBoELXmpxpTYxXcxpaFZEpqxSViNim2HjoPBUi+Lwvx3Z+0sWkGhb6aGz5tk=
+X-Received: by 2002:adf:cc8a:: with SMTP id p10mr257791wrj.34.1556562589013;
+ Mon, 29 Apr 2019 11:29:49 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190426212112.5624-1-fancer.lancer@gmail.com>
+ <20190426212112.5624-2-fancer.lancer@gmail.com> <20190426214631.GV4041@lunn.ch>
+ <20190426233511.qnkgz75ag7axt5lp@mobilestation> <f27df721-47aa-a708-aaee-69be53def814@gmail.com>
+In-Reply-To: <f27df721-47aa-a708-aaee-69be53def814@gmail.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Mon, 29 Apr 2019 21:29:37 +0300
+Message-ID: <CA+h21hpTRCrD=FxDr=ihDPr+Pdhu6hXT3xcKs47-NZZZ3D9zyg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] net: phy: realtek: Change TX-delay setting for
+ RGMII modes only
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Serge Semin <Sergey.Semin@t-platforms.ru>,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 29 Apr 2019 at 20:39, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> On 4/26/19 4:35 PM, Serge Semin wrote:
+> > On Fri, Apr 26, 2019 at 11:46:31PM +0200, Andrew Lunn wrote:
+> >> On Sat, Apr 27, 2019 at 12:21:12AM +0300, Serge Semin wrote:
+> >>> It's prone to problems if delay is cleared out for other than RGMII
+> >>> modes. So lets set/clear the TX-delay in the config register only
+> >>> if actually RGMII-like interface mode is requested.
+> >>>
+> >>> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> >>>
+> >>> ---
+> >>>  drivers/net/phy/realtek.c | 16 ++++++++++++----
+> >>>  1 file changed, 12 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> >>> index ab567a1923ad..a18cb01158f9 100644
+> >>> --- a/drivers/net/phy/realtek.c
+> >>> +++ b/drivers/net/phy/realtek.c
+> >>> @@ -163,16 +163,24 @@ static int rtl8211c_config_init(struct phy_device *phydev)
+> >>>  static int rtl8211f_config_init(struct phy_device *phydev)
+> >>>  {
+> >>>     int ret;
+> >>> -   u16 val = 0;
+> >>> +   u16 val;
+> >>>
+> >>>     ret = genphy_config_init(phydev);
+> >>>     if (ret < 0)
+> >>>             return ret;
+> >>>
+> >>> -   /* enable TX-delay for rgmii-id and rgmii-txid, otherwise disable it */
+> >>> -   if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
+> >>> -       phydev->interface == PHY_INTERFACE_MODE_RGMII_TXID)
+> >>> +   /* enable TX-delay for rgmii-id/rgmii-txid, and disable it for rgmii */
+> >>> +   switch (phydev->interface) {
+> >>> +   case PHY_INTERFACE_MODE_RGMII:
+> >>> +           val = 0;
+> >>> +           break;
+> >>> +   case PHY_INTERFACE_MODE_RGMII_ID:
+> >>> +   case PHY_INTERFACE_MODE_RGMII_TXID:
+> >>>             val = RTL8211F_TX_DELAY;
+> >>> +           break;
+> >>> +   default: /* the rest of the modes imply leaving delay as is. */
+> >>> +           return 0;
+> >>> +   }
+> >>
+> >> So there is no control of the RX delay?
+> >>
+> >
+> > As you can see it hasn't been there even before this change. So I suppose
+> > either the hardware just doesn't support it (although the openly available
+> > datasheet states that there is an RXD pin) or the original driver developer
+> > decided to set TX-delay only.
+> >
+> > Just to make sure you understand. I am not working for realtek and don't
+> > posses any inside info regarding these PHYs. I was working on a project,
+> > which happened to utilize a rtl8211e PHY. We needed to find a way to
+> > programmatically change the delays setting. So I searched the Internet
+> > and found the U-boot rtl8211f driver and freebsd-folks discussion. This
+> > info has been used to write the config_init method for Linux version of the
+> > PHY' driver. That's it.
+> >
+> >> That means PHY_INTERFACE_MODE_RGMII_ID and
+> >> PHY_INTERFACE_MODE_RGMII_RXID are not supported, and you should return
+> >> -EINVAL.
+> >>
+> >
+> > Apparently the current config_init method doesn't support RXID setting.
+> > The patch introduced current function code was submitted by
+> > Martin Blumenstingl in 2016:
+> > https://patchwork.kernel.org/patch/9447581/
+> > and was reviewed by Florian. So we'd better ask him why it was ok to mark
+> > the RGMII_ID as supported while only TX-delay could be set.
+> > I also failed to find anything regarding programmatic rtl8211f delays setting
+> > in the Internet. So at this point we can set TX-delay only for f-model of the PHY.
+> >
+> > Anyway lets clarify the situation before to proceed further. You are suggesting
+> > to return an error in case if either RGMII_ID or RGMII_RXID interface mode is
+> > requested to be enabled for the PHY. It's fair seeing the driver can't fully
+> > support either of them.
+>
+> That is how I read Andrew's suggestion and it is reasonable. WRT to the
+> original changes from Martin, he is probably the one you would want to
+> add to this conversation in case there are any RX delay control knobs
+> available, I certainly don't have the datasheet, and Martin's change
+> looks and looked reasonable, seemingly independent of the direction of
+> this very conversation we are having.
+>
+> But what about the rest of the modes like GMII, MII
+> > and others?
+>
+> The delays should be largely irrelevant for GMII and MII, since a) the
+> PCB is required to have matching length traces, and b) these are not
+> double data rate interfaces
+>
+> > Shouldn't we also return an error instead of leaving a default
+> > delay value?
+>
+> That seems a bit harsh, those could have been configured by firmware,
+> whatever before Linux comes up and be correct and valid. We don't know
+> of a way to configure it, but that does not mean it does not exist and
+> some software is doing it already.
+>
+> >
+> > The same question can be actually asked regarding the config_init method of
+> > rtl8211e PHY, which BTW you already tagged as Reviewed-by.
+> >
+> >> This is where we get into interesting backwards compatibility
+> >> issues. Are there any broken DT blobs with rgmii-id or rgmii-rxid,
+> >> which will break with such a change?
+> >>
+> >
+> > Not that I am aware of and which simple grep rtl8211 could find. Do you
+> > know about one?
+> >
+> > -Sergey
+> >
+> >>      Andrew
+>
+>
+> --
+> Florian
 
---=-BvhEZUwF+CTFnteYIJW9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+There seems to be some confusion here.
+The "normal" RTL8211F has RXDLY and TXDLY configurable only via pin
+strapping (pull-up/pull-down), not via MDIO.
+The "1588-capable" RTL8211FS has RXDLY configurable via pin strapping
+(different pin than the regular 8211F) and TXDLY via page 0xd08,
+register 17, bit 8.
+I think setting the Tx delay via MDIO for the normal RTL8211F is snake oil.
+Disclaimer: I don't work for Realtek either, so I have no insight on
+why it is like that.
+From Linux' point of view, there are two aspects:
+* Erroring out now will likely just break something that was working
+(since it was relying on hardware strapping and the DT phy-mode
+property was more or less informative).
+* Arguably what is wrong here is the semantics of the phy-mode
+bindings for RGMII. It gets said a lot that DT means "hardware
+description", not "hardware configuration". So having said that, the
+correct interpretation of phy-mode = "rgmii-id" is that the operating
+system is informed that RGMII delays were handled in both directions
+(either the PHY was strapped, or PCB traces were lengthened). But the
+current meaning of "rgmii-id" in practice is an imperative "PHY
+driver, please apply delays in both directions" (or MAC driver, if
+it's fixed-link).
 
-Le lundi 29 avril 2019 =C3=A0 10:48 +0200, Paul Kocialkowski a =C3=A9crit :
-> Hi,
->=20
-> On Mon, 2019-04-29 at 10:41 +0200, Hans Verkuil wrote:
-> > On 4/27/19 2:06 PM, Nicolas Dufresne wrote:
-> > > Le vendredi 26 avril 2019 =C3=A0 16:18 +0200, Hans Verkuil a =C3=A9cr=
-it :
-> > > > On 4/16/19 9:22 AM, Alexandre Courbot wrote:
-> > > >=20
-> > > > <snip>
-> > > >=20
-> > > > > Thanks for this great discussion. Let me try to summarize the sta=
-tus
-> > > > > of this thread + the IRC discussion and add my own thoughts:
-> > > > >=20
-> > > > > Proper support for multiple decoding units (e.g. H.264 slices) pe=
-r
-> > > > > frame should not be an afterthought ; compliance to encoded forma=
-ts
-> > > > > depend on it, and the benefit of lower latency is a significant
-> > > > > consideration for vendors.
-> > > > >=20
-> > > > > m2m, which we use for all stateless codecs, has a strong assumpti=
-on
-> > > > > that one OUTPUT buffer consumed results in one CAPTURE buffer bei=
-ng
-> > > > > produced. This assumption can however be overruled: at least the =
-venus
-> > > > > driver does it to implement the stateful specification.
-> > > > >=20
-> > > > > So we need a way to specify frame boundaries when submitting enco=
-ded
-> > > > > content to the driver. One request should contain a single OUTPUT
-> > > > > buffer, containing a single decoding unit, but we need a way to
-> > > > > specify whether the driver should directly produce a CAPTURE buff=
-er
-> > > > > from this request, or keep using the same CAPTURE buffer with
-> > > > > subsequent requests.
-> > > > >=20
-> > > > > I can think of 2 ways this can be expressed:
-> > > > > 1) We keep the current m2m behavior as the default (a CAPTURE buf=
-fer
-> > > > > is produced), and add a flag to ask the driver to change that beh=
-avior
-> > > > > and hold on the CAPTURE buffer and reuse it with the next request=
-(s) ;
-> > > > > 2) We specify that no CAPTURE buffer is produced by default, unle=
-ss a
-> > > > > flag asking so is specified.
-> > > > >=20
-> > > > > The flag could be specified in one of two ways:
-> > > > > a) As a new v4l2_buffer.flag for the OUTPUT buffer ;
-> > > > > b) As a dedicated control, either format-specific or more common =
-to all codecs.
-> > > > >=20
-> > > > > I tend to favor 2) and b) for this, for the reason that with H.26=
-4 at
-> > > > > least, user-space does not know whether a slice is the last slice=
- of a
-> > > > > frame until it starts parsing the next one, and we don't know whe=
-n we
-> > > > > will receive it. If we use a control to ask that a CAPTURE buffer=
- be
-> > > > > produced, we can always submit another request with only that con=
-trol
-> > > > > set once it is clear that the frame is complete (and not delay
-> > > > > decoding meanwhile). In practice I am not that familiar with
-> > > > > latency-sensitive streaming ; maybe a smart streamer would just a=
-ppend
-> > > > > an AUD NAL unit at the end of every frame and we can thus submit =
-the
-> > > > > flag it with the last slice without further delay?
-> > > > >=20
-> > > > > An extra constraint to enforce would be that each decoding unit
-> > > > > belonging to the same frame must be submitted with the same times=
-tamp,
-> > > > > otherwise the request submission would fail. We really need a
-> > > > > framework to enforce all this at a higher level than individual
-> > > > > drivers, once we reach an agreement I will start working on this.
-> > > > >=20
-> > > > > Formats that do not support multiple decoding units per frame wou=
-ld
-> > > > > reject any request that does not carry the end-of-frame informati=
-on.
-> > > > >=20
-> > > > > Anything missing / any further comment?
-> > > > >=20
-> > > >=20
-> > > > After reading through this thread and a further irc discussion I no=
-w
-> > > > understand the problem. I think there are several ways this can be
-> > > > solved, but I think this is the easiest:
-> > > >=20
-> > > > Introduce a new V4L2_BUF_FLAG_HOLD_CAPTURE_BUFFER flag.
-> > > >=20
-> > > > If set in the OUTPUT buffer, then don't mark the CAPTURE buffer as
-> > > > done after processing the OUTPUT buffer.
-> > > >=20
-> > > > If an OUTPUT buffer was queued with a different timestamp than was
-> > > > used for the currently held CAPTURE buffer, then mark that CAPTURE
-> > > > buffer as done before starting processing this OUTPUT buffer.
-> > >=20
-> > > Just a curiosity, can you extend on how this would be handled. If the=
-re
-> > > is a number of capture buffer, these should have "no-timestamp". So I
-> > > suspect we need the condition to differentiate no-timestamp from
-> > > previous timestamp. What I'm unclear is to what does it mean "no-
-> > > timestamp". We already stated the timestamp 0 cannot be reserved as
-> > > being an unset timestamp.
-> >=20
-> > For OUTPUT buffers there is no such thing as 'no timestamp'. They alway=
-s
-> > have a timestamp (which may be 0). The currently active CAPTURE buffer
-> > also always has a timestamp as that was copied from the first OUTPUT bu=
-ffer
-> > for that CAPTURE buffer.
-> >=20
-> > > > In other words, for slicing you can just always set this flag and
-> > > > group the slices by the OUTPUT timestamp. If you know that you
-> > > > reached the last slice of a frame, then you can optionally clear th=
-e
-> > > > flag to ensure the CAPTURE buffer is marked done without having to =
-wait
-> > > > for the first slice of the next frame to arrive.
-> > > >=20
-> > > > Potential disadvantage of this approach is that this relies on the
-> > > > OUTPUT timestamp to be the same for all slices of the same frame.
-> > > >=20
-> > > > Which sounds reasonable to me.
-> > > >=20
-> > > > In addition add a V4L2_BUF_CAP_SUPPORTS_HOLD_CAPTURE_BUFFER
-> > > > capability to signal support for this flag.
-> > > >=20
-> > > > I think this can be fairly easily implemented in v4l2-mem2mem.c.
-> > > >=20
-> > > > In addition, this approach is not specific to codecs, it can be
-> > > > used elsewhere as well (composing multiple output buffers into one
-> > > > capture buffer is one use-case that comes to mind).
-> > > >=20
-> > > > Comments? Other ideas?
-> > >=20
-> > > Sounds reasonable to me. I'll read through Paul's comment now and
-> > > comment if needed.
-> >=20
-> > Paul's OK with it as well. The only thing I am not 100% happy with is
-> > the name of the flag. It's a very low-level name: i.e. it does what it
-> > says, but it doesn't say for what purpose.
-> >=20
-> > Does anyone have any better suggestions?
->=20
-> Good naming is always so hard to find... I don't have anything better
-> to suggest off the top of my head, but will definitely keep thinking
-> about it.
->=20
-> > Also, who will implement this in v4l2-mem2mem? Paul, where you planning=
- to do that?
->=20
-> Well, I no longer have time chunks allocated to the VPU topic at work,
-> so that means I'll have to do it on spare time and it may take me a
-> while to get there.
->=20
-> So if either one of you would like to pick it up to get it over with
-> faster, feel free to do that!
-
-Adding Boris in CC. Boris, do you think that could possibly fit into
-your todo while working on the H264 accelerator on RK ? If needed I can
-generate test streams, there is couple of lines of code to remove / add
-in FFMPEG backend if you want to test this properly, though I'm not
-able to run this code atm (it requires a working DRM, and I'm having
-issues with my board in this regard).
-
->=20
-> Cheers,
->=20
-> Paul
->=20
-
---=-BvhEZUwF+CTFnteYIJW9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXMdCHQAKCRBxUwItrAao
-HFskAJ9hwh12OuDwcxDOiF5VwiOlrM/zJwCgim/rJ+U/ixWMWEym8jVyK92DzIg=
-=92cZ
------END PGP SIGNATURE-----
-
---=-BvhEZUwF+CTFnteYIJW9--
-
+Thanks,
+-Vladimir
