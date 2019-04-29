@@ -2,474 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8BEEC5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C260DEC56
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfD2V5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:57:22 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:42678 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729542AbfD2V5U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:57:20 -0400
-Received: from Internal Mail-Server by MTLPINE2 (envelope-from asmaa@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 30 Apr 2019 00:57:18 +0300
-Received: from farm-1.mtbu.labs.mlnx (farm-1.mtbu.labs.mlnx [10.15.2.31])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x3TLvGCd027610;
-        Mon, 29 Apr 2019 17:57:16 -0400
-Received: (from asmaa@localhost)
-        by farm-1.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x3TLvBl5010990;
-        Mon, 29 Apr 2019 17:57:11 -0400
-From:   Asmaa Mnebhi <Asmaa@mellanox.com>
-To:     minyard@acm.org, wsa@the-dreams.de, vadimp@mellanox.com,
-        michaelsh@mellanox.com
-Cc:     Asmaa Mnebhi <Asmaa@mellanox.com>, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH v3 1/1] Add support for IPMB driver
-Date:   Mon, 29 Apr 2019 17:57:00 -0400
-Message-Id: <a3c732c3b3a75e8d6e8f3c7de18615c71d222cb8.1556573807.git.Asmaa@mellanox.com>
-X-Mailer: git-send-email 2.1.2
-In-Reply-To: <cover.1556573807.git.Asmaa@mellanox.com>
-References: <cover.1556573807.git.Asmaa@mellanox.com>
-In-Reply-To: <cover.1556573807.git.Asmaa@mellanox.com>
-References: <cover.1556573807.git.Asmaa@mellanox.com>
+        id S1729504AbfD2V5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:57:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37138 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729354AbfD2V5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 17:57:09 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE21EA7DD;
+        Mon, 29 Apr 2019 21:57:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-98.rdu2.redhat.com [10.10.121.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FA595D704;
+        Mon, 29 Apr 2019 21:57:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net] rxrpc: Fix net namespace cleanup
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 29 Apr 2019 22:57:05 +0100
+Message-ID: <155657502537.15384.8971743326043723056.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 29 Apr 2019 21:57:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support receiving IPMB requests on a Satellite MC from the BMC.
-Once a response is ready, this driver will send back a response
-to the BMC via the IPMB channel.
+In rxrpc_destroy_all_calls(), there are two phases: (1) make sure the
+->calls list is empty, emitting error messages if not, and (2) wait for the
+RCU cleanup to happen on outstanding calls (ie. ->nr_calls becomes 0).
 
-Signed-off-by: Asmaa Mnebhi <Asmaa@mellanox.com>
+To avoid taking the call_lock, the function prechecks ->calls and if empty,
+it returns to avoid taking the lock - this is wrong, however: it still
+needs to go and do the second phase and wait for ->nr_calls to become 0.
+
+Without this, the rxrpc_net struct may get deallocated before we get to the
+RCU cleanup for the last calls.  This can lead to:
+
+  Slab corruption (Not tainted): kmalloc-16k start=ffff88802b178000, len=16384
+  050: 6b 6b 6b 6b 6b 6b 6b 6b 61 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkakkkkkkk
+
+Note the "61" at offset 0x58.  This corresponds to the ->nr_calls member of
+struct rxrpc_net (which is >9k in size, and thus allocated out of the 16k
+slab).
+
+
+Fix this by flipping the condition on the if-statement, putting the locked
+section inside the if-body and dropping the return from there.  The
+function will then always go on to wait for the RCU cleanup on outstanding
+calls.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- drivers/char/ipmi/Kconfig        |   8 +
- drivers/char/ipmi/Makefile       |   1 +
- drivers/char/ipmi/ipmb_dev_int.c | 386 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 395 insertions(+)
- create mode 100644 drivers/char/ipmi/ipmb_dev_int.c
 
-diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-index 94719fc..12fe8f2 100644
---- a/drivers/char/ipmi/Kconfig
-+++ b/drivers/char/ipmi/Kconfig
-@@ -74,6 +74,14 @@ config IPMI_SSIF
- 	 have a driver that must be accessed over an I2C bus instead of a
- 	 standard interface.  This module requires I2C support.
+ net/rxrpc/call_object.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
+index 8aa2937b069f..fe96881a334d 100644
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -604,30 +604,30 @@ void rxrpc_destroy_all_calls(struct rxrpc_net *rxnet)
  
-+config IPMB_DEVICE_INTERFACE
-+       tristate 'IPMB Interface handler'
-+       depends on I2C && I2C_SLAVE
-+       help
-+         Provides a driver for a device (Satellite MC) to
-+         receive requests and send responses back to the BMC via
-+         the IPMB interface. This module requires I2C support.
-+
- config IPMI_POWERNV
-        depends on PPC_POWERNV
-        tristate 'POWERNV (OPAL firmware) IPMI interface'
-diff --git a/drivers/char/ipmi/Makefile b/drivers/char/ipmi/Makefile
-index 3f06b20..0822adc 100644
---- a/drivers/char/ipmi/Makefile
-+++ b/drivers/char/ipmi/Makefile
-@@ -26,3 +26,4 @@ obj-$(CONFIG_IPMI_KCS_BMC) += kcs_bmc.o
- obj-$(CONFIG_ASPEED_BT_IPMI_BMC) += bt-bmc.o
- obj-$(CONFIG_ASPEED_KCS_IPMI_BMC) += kcs_bmc_aspeed.o
- obj-$(CONFIG_NPCM7XX_KCS_IPMI_BMC) += kcs_bmc_npcm7xx.o
-+obj-$(CONFIG_IPMB_DEVICE_INTERFACE) += ipmb_dev_int.o
-diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
-new file mode 100644
-index 0000000..63122c3
---- /dev/null
-+++ b/drivers/char/ipmi/ipmb_dev_int.c
-@@ -0,0 +1,386 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Mellanox IPMB driver to receive a request and send a response
-+ *
-+ * Copyright (C) 2018 Mellanox Techologies, Ltd.
-+ *
-+ * This was inspired by Brendan Higgins' ipmi-bmc-bt-i2c driver.
-+ */
-+
-+#define	pr_fmt(fmt) "ipmb_dev_int: " fmt
-+
-+#include <linux/errno.h>
-+#include <linux/i2c.h>
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/poll.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/wait.h>
-+
-+#define	MAX_MSG_LEN		128
-+#define	IPMB_REQUEST_LEN_MIN	7
-+#define	NETFN_RSP_BIT_MASK	0x4
-+#define	REQUEST_QUEUE_MAX_LEN	256
-+
-+#define	IPMB_MSG_LEN_IDX	0
-+#define	RQ_SA_8BIT_IDX		1
-+#define	NETFN_LUN_IDX		2
-+
-+#define	IPMB_MSG_PAYLOAD_LEN_MAX (MAX_MSG_LEN - IPMB_REQUEST_LEN_MIN - 1)
-+
-+struct ipmb_msg {
-+	u8 len;
-+	u8 rs_sa;
-+	u8 netfn_rs_lun;
-+	u8 checksum1;
-+	u8 rq_sa;
-+	u8 rq_seq_rq_lun;
-+	u8 cmd;
-+	u8 payload[IPMB_MSG_PAYLOAD_LEN_MAX];
-+	/* checksum2 is included in payload */
-+} __packed;
-+
-+static u32 ipmb_msg_len(struct ipmb_msg *ipmb_msg)
-+{
-+	return ipmb_msg->len + 1;
-+}
-+
-+struct ipmb_request_elem {
-+	struct list_head list;
-+	struct ipmb_msg request;
-+};
-+
-+struct ipmb_dev {
-+	struct i2c_client *client;
-+	struct miscdevice miscdev;
-+	struct ipmb_msg request;
-+	struct list_head request_queue;
-+	atomic_t request_queue_len;
-+	struct ipmb_msg response;
-+	size_t msg_idx;
-+	spinlock_t lock;
-+	wait_queue_head_t wait_queue;
-+	struct mutex file_mutex;
-+};
-+
-+static int receive_ipmb_request(struct ipmb_dev *ipmb_dev_p,
-+				bool non_blocking,
-+				struct ipmb_msg *ipmb_request)
-+{
-+	struct ipmb_request_elem *queue_elem;
-+	unsigned long flags;
-+	int res;
-+
-+	spin_lock_irqsave(&ipmb_dev_p->lock, flags);
-+
-+	while (!atomic_read(&ipmb_dev_p->request_queue_len)) {
-+		spin_unlock_irqrestore(&ipmb_dev_p->lock, flags);
-+		if (non_blocking)
-+			return -EAGAIN;
-+
-+		res = wait_event_interruptible(ipmb_dev_p->wait_queue,
-+				atomic_read(&ipmb_dev_p->request_queue_len));
-+		if (res)
-+			return res;
-+
-+		spin_lock_irqsave(&ipmb_dev_p->lock, flags);
-+	}
-+
-+	if (list_empty(&ipmb_dev_p->request_queue)) {
-+		pr_err("request_queue is empty\n");
-+		return -EIO;
-+	}
-+
-+	queue_elem = list_first_entry(&ipmb_dev_p->request_queue,
-+					struct ipmb_request_elem, list);
-+	memcpy(ipmb_request, &queue_elem->request, sizeof(*ipmb_request));
-+	list_del(&queue_elem->list);
-+	kfree(queue_elem);
-+	atomic_dec(&ipmb_dev_p->request_queue_len);
-+
-+	spin_unlock_irqrestore(&ipmb_dev_p->lock, flags);
-+
-+	return 0;
-+}
-+
-+static inline struct ipmb_dev *to_ipmb_dev(struct file *file)
-+{
-+	return container_of(file->private_data, struct ipmb_dev, miscdev);
-+}
-+
-+static ssize_t ipmb_read(struct file *file, char __user *buf, size_t count,
-+			loff_t *ppos)
-+{
-+	struct ipmb_dev *ipmb_dev_p = to_ipmb_dev(file);
-+	struct ipmb_msg msg;
-+	ssize_t ret;
-+
-+	memset(&msg, 0, sizeof(msg));
-+
-+	mutex_lock(&ipmb_dev_p->file_mutex);
-+	ret = receive_ipmb_request(ipmb_dev_p, file->f_flags & O_NONBLOCK,
-+				&msg);
-+	if (ret < 0)
-+		goto out;
-+	count = min_t(size_t, count, ipmb_msg_len(&msg));
-+	if (copy_to_user(buf, &msg, count)) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+out:
-+	mutex_unlock(&ipmb_dev_p->file_mutex);
-+	return ret < 0 ? ret : count;
-+}
-+
-+static s32 i2c_smbus_write_block_data_local(struct i2c_client *client,
-+					u8 command, u8 length,
-+					u16 requester_i2c_addr,
-+					const char *msg)
-+{
-+	union i2c_smbus_data data;
-+	int ret;
-+
-+	if (length > I2C_SMBUS_BLOCK_MAX)
-+		length = I2C_SMBUS_BLOCK_MAX;
-+
-+	data.block[0] = length;
-+	memcpy(&data.block[1], msg, length);
-+
-+	ret = i2c_smbus_xfer(client->adapter, requester_i2c_addr,
-+				client->flags,
-+				I2C_SMBUS_WRITE, command,
-+				I2C_SMBUS_BLOCK_DATA, &data);
-+
-+	return ret;
-+}
-+
-+static ssize_t ipmb_write(struct file *file, const char __user *buf,
-+			size_t count, loff_t *ppos)
-+{
-+	struct ipmb_dev *ipmb_dev_p = to_ipmb_dev(file);
-+	u8 msg[MAX_MSG_LEN];
-+	ssize_t ret;
-+	u8 rq_sa, netf_rq_lun, msg_len;
-+
-+	if (count > sizeof(msg))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&msg, buf, count) || count < msg[0])
-+		return -EFAULT;
-+
-+	rq_sa = (u16)(msg[RQ_SA_8BIT_IDX] >> 1);
-+	netf_rq_lun = msg[NETFN_LUN_IDX];
-+	/*
-+	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
-+	 * i2c_smbus_write_block_data_local
-+	 */
-+	msg_len = msg[IPMB_MSG_LEN_IDX] - 2;
-+
-+	mutex_lock(&ipmb_dev_p->file_mutex);
-+	ret = i2c_smbus_write_block_data_local(ipmb_dev_p->client,
-+					netf_rq_lun, msg_len, rq_sa, msg + 3);
-+	mutex_unlock(&ipmb_dev_p->file_mutex);
-+
-+	return ret ?: count;
-+}
-+
-+static unsigned int ipmb_poll(struct file *file, poll_table *wait)
-+{
-+	struct ipmb_dev *ipmb_dev_p = to_ipmb_dev(file);
-+	unsigned int mask = 0;
-+
-+	mutex_lock(&ipmb_dev_p->file_mutex);
-+	poll_wait(file, &ipmb_dev_p->wait_queue, wait);
-+
-+	if (atomic_read(&ipmb_dev_p->request_queue_len))
-+		mask |= POLLIN;
-+	mask |= POLLOUT;
-+	mutex_unlock(&ipmb_dev_p->file_mutex);
-+	return mask;
-+}
-+
-+static const struct file_operations ipmb_fops = {
-+	.owner	= THIS_MODULE,
-+	.read	= ipmb_read,
-+	.write	= ipmb_write,
-+	.poll	= ipmb_poll,
-+};
-+
-+/* Called with ipmb_dev->lock held. */
-+static void ipmb_handle_request(struct ipmb_dev *ipmb_dev_p)
-+{
-+	struct ipmb_request_elem *queue_elem;
-+
-+	if (atomic_read(&ipmb_dev_p->request_queue_len) >=
-+			REQUEST_QUEUE_MAX_LEN)
-+		return;
-+
-+	queue_elem = kmalloc(sizeof(*queue_elem), GFP_KERNEL);
-+	if (!queue_elem)
-+		return;
-+
-+	memcpy(&queue_elem->request, &ipmb_dev_p->request,
-+		sizeof(struct ipmb_msg));
-+	list_add(&queue_elem->list, &ipmb_dev_p->request_queue);
-+	atomic_inc(&ipmb_dev_p->request_queue_len);
-+	wake_up_all(&ipmb_dev_p->wait_queue);
-+}
-+
-+static u8 ipmb_verify_checksum1(struct ipmb_dev *ipmb_dev_p, u8 rs_sa)
-+{
-+	return (rs_sa + ipmb_dev_p->request.netfn_rs_lun +
-+		ipmb_dev_p->request.checksum1);
-+}
-+
-+static bool is_ipmb_request(struct ipmb_dev *ipmb_dev_p, u8 rs_sa)
-+{
-+	if (ipmb_dev_p->msg_idx >= IPMB_REQUEST_LEN_MIN) {
-+		if (ipmb_verify_checksum1(ipmb_dev_p, rs_sa))
-+			return false;
-+
-+		/*
-+		 * Check whether this is an IPMB request or
-+		 * response.
-+		 * The 6 MSB of netfn_rs_lun are dedicated to the netfn
-+		 * while the remaining bits are dedicated to the lun.
-+		 * If the LSB of the netfn is cleared, it is associated
-+		 * with an IPMB request.
-+		 * If the LSB of the netfn is set, it is associated with
-+		 * an IPMB response.
-+		 */
-+		if (!(ipmb_dev_p->request.netfn_rs_lun & NETFN_RSP_BIT_MASK))
-+			return true;
-+	}
-+	return false;
-+}
-+
-+/*
-+ * The IPMB protocol only supports I2C Writes so there is no need
-+ * to support I2C_SLAVE_READ* events.
-+ * This i2c callback function only monitors IPMB request messages
-+ * and adds them in a queue, so that they can be handled by
-+ * receive_ipmb_request.
-+ */
-+static int ipmb_slave_cb(struct i2c_client *client,
-+			enum i2c_slave_event event, u8 *val)
-+{
-+	struct ipmb_dev *ipmb_dev_p = i2c_get_clientdata(client);
-+	u8 *buf = (u8 *)&ipmb_dev_p->request;
-+
-+	spin_lock(&ipmb_dev_p->lock);
-+	switch (event) {
-+	case I2C_SLAVE_WRITE_REQUESTED:
-+		memset(&ipmb_dev_p->request, 0, sizeof(ipmb_dev_p->request));
-+		ipmb_dev_p->msg_idx = 0;
-+
-+		/*
-+		 * At index 0, ipmb_msg stores the length of msg,
-+		 * skip it for now.
-+		 * The len will be populated once the whole
-+		 * buf is populated.
-+		 *
-+		 * The I2C bus driver's responsibility is to pass the
-+		 * data bytes to the backend driver; it does not
-+		 * forward the i2c slave address.
-+		 * Since the first byte in the IPMB message is the
-+		 * address of the responder, it is the responsibility
-+		 * of the IPMB driver to format the message properly.
-+		 * So this driver prepends the address of the responder
-+		 * to the received i2c data before the request message
-+		 * is handled in userland.
-+		 */
-+		buf[++ipmb_dev_p->msg_idx] = (u8)(client->addr << 1);
-+		break;
-+
-+	case I2C_SLAVE_WRITE_RECEIVED:
-+		if (ipmb_dev_p->msg_idx >= sizeof(struct ipmb_msg))
-+			break;
-+
-+		buf[++ipmb_dev_p->msg_idx] = *val;
-+		break;
-+
-+	case I2C_SLAVE_STOP:
-+		ipmb_dev_p->request.len = ipmb_dev_p->msg_idx;
-+
-+		if (is_ipmb_request(ipmb_dev_p, (u8)(client->addr << 1)))
-+			ipmb_handle_request(ipmb_dev_p);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+	spin_unlock(&ipmb_dev_p->lock);
-+
-+	return 0;
-+}
-+
-+static int ipmb_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct ipmb_dev *ipmb_dev_p;
-+	int ret;
-+
-+	ipmb_dev_p = devm_kzalloc(&client->dev, sizeof(*ipmb_dev_p),
-+					GFP_KERNEL);
-+	if (!ipmb_dev_p)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&ipmb_dev_p->lock);
-+	init_waitqueue_head(&ipmb_dev_p->wait_queue);
-+	atomic_set(&ipmb_dev_p->request_queue_len, 0);
-+	INIT_LIST_HEAD(&ipmb_dev_p->request_queue);
-+
-+	mutex_init(&ipmb_dev_p->file_mutex);
-+
-+	ipmb_dev_p->miscdev.minor = MISC_DYNAMIC_MINOR;
-+	ipmb_dev_p->miscdev.name = "ipmb-dev";
-+	ipmb_dev_p->miscdev.fops = &ipmb_fops;
-+	ipmb_dev_p->miscdev.parent = &client->dev;
-+	ret = misc_register(&ipmb_dev_p->miscdev);
-+	if (ret)
-+		return ret;
-+
-+	ipmb_dev_p->client = client;
-+	i2c_set_clientdata(client, ipmb_dev_p);
-+	ret = i2c_slave_register(client, ipmb_slave_cb);
-+	if (ret) {
-+		misc_deregister(&ipmb_dev_p->miscdev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ipmb_remove(struct i2c_client *client)
-+{
-+	struct ipmb_dev *ipmb_dev_p = i2c_get_clientdata(client);
-+
-+	i2c_slave_unregister(client);
-+	misc_deregister(&ipmb_dev_p->miscdev);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id ipmb_id[] = {
-+	{"ipmb-dev", 0},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(i2c, ipmb_id);
-+
-+static struct i2c_driver ipmb_driver = {
-+	.driver = {
-+		.name = "ipmb-dev",
-+	},
-+	.probe = ipmb_probe,
-+	.remove = ipmb_remove,
-+	.id_table = ipmb_id,
-+};
-+module_i2c_driver(ipmb_driver);
-+
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_DESCRIPTION("Mellanox BlueField IPMB driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.2
+ 	_enter("");
+ 
+-	if (list_empty(&rxnet->calls))
+-		return;
++	if (!list_empty(&rxnet->calls)) {
++		write_lock(&rxnet->call_lock);
+ 
+-	write_lock(&rxnet->call_lock);
++		while (!list_empty(&rxnet->calls)) {
++			call = list_entry(rxnet->calls.next,
++					  struct rxrpc_call, link);
++			_debug("Zapping call %p", call);
+ 
+-	while (!list_empty(&rxnet->calls)) {
+-		call = list_entry(rxnet->calls.next, struct rxrpc_call, link);
+-		_debug("Zapping call %p", call);
++			rxrpc_see_call(call);
++			list_del_init(&call->link);
+ 
+-		rxrpc_see_call(call);
+-		list_del_init(&call->link);
++			pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
++			       call, atomic_read(&call->usage),
++			       rxrpc_call_states[call->state],
++			       call->flags, call->events);
+ 
+-		pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
+-		       call, atomic_read(&call->usage),
+-		       rxrpc_call_states[call->state],
+-		       call->flags, call->events);
++			write_unlock(&rxnet->call_lock);
++			cond_resched();
++			write_lock(&rxnet->call_lock);
++		}
+ 
+ 		write_unlock(&rxnet->call_lock);
+-		cond_resched();
+-		write_lock(&rxnet->call_lock);
+ 	}
+ 
+-	write_unlock(&rxnet->call_lock);
+-
+ 	atomic_dec(&rxnet->nr_calls);
+ 	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
+ }
 
