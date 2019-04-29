@@ -2,324 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B175FE2E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B782E2D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:38:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfD2MkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:40:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47280 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbfD2MkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:40:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D4824368FF;
-        Mon, 29 Apr 2019 12:40:23 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.35.206.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7067E5D6A9;
-        Mon, 29 Apr 2019 12:40:22 +0000 (UTC)
-From:   Yoni Bettan <ybettan@redhat.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     ailan@redhat.com, ehabkost@redhat.com,
-        Yoni Bettan <ybettan@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RFC-PATCH] Introducing virtio-example.
-Date:   Mon, 29 Apr 2019 15:40:03 +0300
-Message-Id: <20190429124004.49365-1-ybettan@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 29 Apr 2019 12:40:23 +0000 (UTC)
+        id S1728210AbfD2MiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:38:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7142 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728054AbfD2MiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:38:02 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4FF3A2625511BE6A939F;
+        Mon, 29 Apr 2019 20:37:59 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.188.190) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 29 Apr 2019 20:37:49 +0800
+From:   ChenGang <cg.chen@huawei.com>
+To:     <mark@fasheh.com>, <jlbec@evilplan.org>, <jiangqi903@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <ocfs2-devel@oss.oracle.com>, <joseph.qi@linux.alibaba.com>,
+        ChenGang <cg.chen@huawei.com>
+Subject: Re: [PATCH] fs: ocfs: fix spelling mistake "hearbeating" -> "heartbeat"
+Date:   Mon, 29 Apr 2019 20:41:40 +0800
+Message-ID: <1556541700-35237-1-git-send-email-cg.chen@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.188.190]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The main goal is to create an example to be used as template or
-guideline for contributors when they wish to create a new virtio
-device and to document "the right way" to do so.
+Hi Joseph,
+Thanks for your advice, and I folded the four patches into one.
 
-It consists of several parts:
+On 19/4/28 20:22, Joseph Qi wrote:
+>Hi ChenGang,
+>Could you please fold these four patches into one?
 
-    1. The device specification
-        * it can be found in the device header of the implementation
-        * it will hopefully be added to the official virtio specification
+>Thanks,
+>Joseph
 
-    2. The device implementation for Qemu-KVM hypervisor
-        * it can be found at https://github.com/ybettan/qemu/blob/virtio\
-                /hw/virtio/virtio-example.c
+>On 19/4/27 20:22, ChenGang wrote:
+>> There is a spelling mistake in o2hb_do_disk_heartbeat debug message.Fix it.
+>> 
+>> Signed-off-by: ChenGang <cg.chen@huawei.com>
+>> ---
+>>  fs/ocfs2/cluster/heartbeat.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/ocfs2/cluster/heartbeat.c 
+>> b/fs/ocfs2/cluster/heartbeat.c index f3c20b2..e4e7df1 100644
+>> --- a/fs/ocfs2/cluster/heartbeat.c
+>> +++ b/fs/ocfs2/cluster/heartbeat.c
+>> @@ -1198,7 +1198,7 @@ static int o2hb_do_disk_heartbeat(struct o2hb_region *reg)
+>>  	if (atomic_read(&reg->hr_steady_iterations) != 0) {
+>>  		if (atomic_dec_and_test(&reg->hr_unsteady_iterations)) {
+>>  			printk(KERN_NOTICE "o2hb: Unable to stabilize "
+>> -			       "heartbeart on region %s (%s)\n",
+>> +			       "heartbeat on region %s (%s)\n",
+>>  			       config_item_name(&reg->hr_item),
+>>  			       reg->hr_dev_name);
+>> 			atomic_set(&reg->hr_steady_iterations, 0);
+>>
 
-    3. The device driver for linux
-        * this patch content
 
-    4. A blog on virtio
-        * introducing the virtio concept
-        * gives some motivation for virtio-devices to be used
-        * bring extra documentation on "how to write":
-            - device specification
-            - device implementation
-            - device driver for linux
-        * it can be found at https://howtovms.wordpress.com
-
-Signed-off-by: Yoni Bettan <ybettan@redhat.com>
+Signed-off-by: ChenGang <cg.chen@huawei.com>
 ---
- samples/virtio/Makefile                |   1 +
- samples/virtio/virtio_example_driver.c | 239 +++++++++++++++++++++++++
- 2 files changed, 240 insertions(+)
- create mode 100644 samples/virtio/Makefile
- create mode 100644 samples/virtio/virtio_example_driver.c
+ fs/ocfs2/cluster/heartbeat.c | 2 +-
+ fs/ocfs2/cluster/quorum.c    | 2 +-
+ fs/ocfs2/cluster/tcp.c       | 2 +-
+ fs/ocfs2/dlm/dlmmaster.c     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/samples/virtio/Makefile b/samples/virtio/Makefile
-new file mode 100644
-index 000000000000..6f3cc811ca89
---- /dev/null
-+++ b/samples/virtio/Makefile
-@@ -0,0 +1 @@
-+obj-m := virtio_example_driver.o
-diff --git a/samples/virtio/virtio_example_driver.c b/samples/virtio/virtio_example_driver.c
-new file mode 100644
-index 000000000000..2f5a354009a1
---- /dev/null
-+++ b/samples/virtio/virtio_example_driver.c
-@@ -0,0 +1,239 @@
-+/*
-+ * Virtio example implementation.
-+ *
-+ *  Copyright 2019 Yoni Bettan Red Hat Corporation
-+ *
-+ *  This program is free software; you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation; either version 2 of the License, or
-+ *  (at your option) any later version.
-+ *
-+ *  This program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *  GNU General Public License for more details.
-+ */
-+
-+#include <linux/virtio.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/pci.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>               /* io map */
-+#include <linux/dma-mapping.h>      /* DMA */
-+#include <linux/kernel.h>           /* kstrtoint() func */
-+#include <linux/virtio_config.h>    /* find_single_vq() func */
-+
-+
-+#define VIRTIO_ID_EXAMPLE 21
-+/* big enough to contain a string representing an integer */
-+#define MAX_DATA_SIZE 20
-+
-+struct virtexample_info {
-+	struct virtqueue *vq;
-+    /*
-+     * in - the data we get from the device
-+     * out - the data we send to the device
-+     */
-+    int in, out;
-+};
-+
-+
-+
-+//-----------------------------------------------------------------------------
-+//                  sysfs - give user access to driver
-+//-----------------------------------------------------------------------------
-+
-+static ssize_t
-+virtio_buf_store(struct device *dev, struct device_attribute *attr,
-+                    const char *buf, size_t count)
-+{
-+    char tmp_buf[MAX_DATA_SIZE];
-+    int retval;
-+	struct scatterlist sg_in, sg_out;
-+	struct scatterlist *request[2];
-+    /* cast dev into a virtio_device */
-+    struct virtio_device *vdev = dev_to_virtio(dev);
-+	struct virtexample_info *vi = vdev->priv;
-+
-+    /* copy the user buffer since it is a const buffer */
-+    sprintf(tmp_buf, "%s", buf);
-+
-+    /* convert the data into an integer */
-+    retval = kstrtoint(tmp_buf, 10, &vi->out);
-+    if (retval) {
-+        pr_alert("string converstion failed with error: %d\n", retval);
-+    }
-+
-+    /* initialize a single entry sg lists, one for input and one for output */
-+    sg_init_one(&sg_out, &vi->out, sizeof(int));
-+    sg_init_one(&sg_in, &vi->in, sizeof(int));
-+
-+    /* build the request */
-+    request[0] = &sg_out;
-+    request[1] = &sg_in;
-+
-+	/* add the request to the queue, in_buf is sent as the buffer idetifier */
-+    virtqueue_add_sgs(vi->vq, request, 1, 1, &vi->in, GFP_KERNEL);
-+
-+    /* notify the device */
-+	virtqueue_kick(vi->vq);
-+
-+    return count;
-+}
-+
-+static ssize_t
-+virtio_buf_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+    /* cast dev into a virtio_device */
-+    struct virtio_device *vdev = dev_to_virtio(dev);
-+	struct virtexample_info *vi = vdev->priv;
-+
-+    return sprintf(buf, "%d\n", vi->in);
-+}
-+
-+/*
-+ * struct device_attribute dev_attr_virtio_buf = {
-+ *     .attr = {
-+ *         .name = "virtio_buf",
-+ *         .mode = 0644
-+ *     },
-+ *     .show = virtio_buf_show,
-+ *     .store = virtio_buf_store
-+ * }
-+ */
-+static DEVICE_ATTR_RW(virtio_buf);
-+
-+
-+/*
-+ * The example_attr defined above is then grouped in the struct attribute group
-+ * as follows:
-+ */
-+struct attribute *example_attrs[] = {
-+    &dev_attr_virtio_buf.attr,
-+    NULL,
-+};
-+
-+static const struct attribute_group example_attr_group = {
-+    .name = "example", /* directory's name */
-+    .attrs = example_attrs,
-+};
-+
-+
-+
-+//-----------------------------------------------------------------------------
-+//                              IRQ functions
-+//-----------------------------------------------------------------------------
-+
-+static void example_irq_handler(struct virtqueue *vq)
-+{
-+
-+	struct virtexample_info *vi = vq->vdev->priv;
-+    unsigned int len;
-+    int *res = NULL;
-+
-+    /* get the buffer from virtqueue */
-+    res = virtqueue_get_buf(vi->vq, &len);
-+
-+    vi->in = *res;
-+}
-+
-+
-+//-----------------------------------------------------------------------------
-+//                             driver functions
-+//-----------------------------------------------------------------------------
-+
-+
-+static int example_probe(struct virtio_device *vdev)
-+{
-+    int retval;
-+    struct virtexample_info *vi = NULL;
-+
-+    /* create sysfiles for UI */
-+    retval = sysfs_create_group(&vdev->dev.kobj, &example_attr_group);
-+    if (retval) {
-+        pr_alert("failed to create group in /sys/bus/virtio/devices/.../\n");
-+    }
-+
-+    /* initialize driver data */
-+	vi = kzalloc(sizeof(struct virtexample_info), GFP_KERNEL);
-+	if (!vi)
-+		return -ENOMEM;
-+
-+	/* We expect a single virtqueue. */
-+	vi->vq = virtio_find_single_vq(vdev, example_irq_handler, "input");
-+	if (IS_ERR(vi->vq)) {
-+        pr_alert("failed to connect to the device virtqueue\n");
-+	}
-+
-+    /* initialize the data to 0 */
-+    vi->in = 0;
-+    vi->out = 0;
-+
-+    /* store driver data inside the device to be accessed for all functions */
-+    vdev->priv = vi;
-+
-+    return 0;
-+}
-+
-+static void example_remove(struct virtio_device *vdev)
-+{
-+	struct virtexample_info *vi = vdev->priv;
-+
-+    /* remove the directory from sysfs */
-+    sysfs_remove_group(&vdev->dev.kobj, &example_attr_group);
-+
-+    /* disable interrupts for vqs */
-+    vdev->config->reset(vdev);
-+
-+    /* remove virtqueues */
-+	vdev->config->del_vqs(vdev);
-+
-+    /* free memory */
-+	kfree(vi);
-+}
-+
-+
-+/*
-+ * vendor and device (+ subdevice and subvendor)
-+ * identifies a device we support
-+ */
-+static struct virtio_device_id example_ids[] = {
-+    {
-+        .device = VIRTIO_ID_EXAMPLE,
-+        .vendor = VIRTIO_DEV_ANY_ID,
-+    },
-+    { 0, },
-+};
-+
-+/*
-+ * id_table describe the device this driver support
-+ * probe is called when a device we support exist and
-+ * when we are chosen to drive it.
-+ * remove is called when the driver is unloaded or
-+ * when the device disappears
-+ */
-+static struct virtio_driver example = {
-+	.driver.name =	"example",
-+	.driver.owner =	THIS_MODULE,
-+	.id_table =	example_ids,
-+	.probe =	example_probe,
-+	.remove =	example_remove,
-+};
-+
-+
-+
-+//-----------------------------------------------------------------------------
-+//                          overhead - must have
-+//-----------------------------------------------------------------------------
-+
-+
-+
-+/* register driver in kernel pci framework */
-+module_virtio_driver(example);
-+MODULE_DEVICE_TABLE(virtio, example_ids);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Example virtio");
-+MODULE_AUTHOR("Yoni Bettan");
-+
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index f3c20b2..e4e7df1 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -1198,7 +1198,7 @@ static int o2hb_do_disk_heartbeat(struct o2hb_region *reg)
+ 	if (atomic_read(&reg->hr_steady_iterations) != 0) {
+ 		if (atomic_dec_and_test(&reg->hr_unsteady_iterations)) {
+ 			printk(KERN_NOTICE "o2hb: Unable to stabilize "
+-			       "heartbeart on region %s (%s)\n",
++			       "heartbeat on region %s (%s)\n",
+ 			       config_item_name(&reg->hr_item),
+ 			       reg->hr_dev_name);
+ 			atomic_set(&reg->hr_steady_iterations, 0);
+diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
+index af2e747..792132f 100644
+--- a/fs/ocfs2/cluster/quorum.c
++++ b/fs/ocfs2/cluster/quorum.c
+@@ -89,7 +89,7 @@ static void o2quo_fence_self(void)
+ 	};
+ }
+ 
+-/* Indicate that a timeout occurred on a hearbeat region write. The
++/* Indicate that a timeout occurred on a heartbeat region write. The
+  * other nodes in the cluster may consider us dead at that time so we
+  * want to "fence" ourselves so that we don't scribble on the disk
+  * after they think they've recovered us. This can't solve all
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index e9f236a..7a43c04 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1776,7 +1776,7 @@ static void o2net_hb_node_up_cb(struct o2nm_node *node, int node_num,
+ 		(msecs_to_jiffies(o2net_reconnect_delay()) + 1);
+ 
+ 	if (node_num != o2nm_this_node()) {
+-		/* believe it or not, accept and node hearbeating testing
++		/* believe it or not, accept and node heartbeating testing
+ 		 * can succeed for this node before we got here.. so
+ 		 * only use set_nn_state to clear the persistent error
+ 		 * if that hasn't already happened */
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 826f056..41b80d5 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -2176,7 +2176,7 @@ static void dlm_assert_master_worker(struct dlm_work_item *item, void *data)
+  * think that $RECOVERY is currently mastered by a dead node.  If so,
+  * we wait a short time to allow that node to get notified by its own
+  * heartbeat stack, then check again.  All $RECOVERY lock resources
+- * mastered by dead nodes are purged when the hearbeat callback is
++ * mastered by dead nodes are purged when the heartbeat callback is
+  * fired, so we can know for sure that it is safe to continue once
+  * the node returns a live node or no node.  */
+ static int dlm_pre_master_reco_lockres(struct dlm_ctxt *dlm,
 -- 
-2.17.2
+1.8.5.6
 
