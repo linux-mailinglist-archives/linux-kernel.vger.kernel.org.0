@@ -2,68 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 025D1DCEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 09:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBBD9DCF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 09:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfD2HeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 03:34:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40728 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfD2HeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 03:34:06 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hL0nY-00059b-7m; Mon, 29 Apr 2019 09:34:00 +0200
-Date:   Mon, 29 Apr 2019 09:33:59 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Joseph Myers <joseph@codesourcery.com>, libc-alpha@sourceware.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Lukasz Majewski <lukma@denx.de>,
-        Stepan Golosunov <stepan@golosunov.pp.ru>
-Subject: Re: [PATCH 1/2] y2038: make CONFIG_64BIT_TIME unconditional
-In-Reply-To: <20190426142531.1378357-1-arnd@arndb.de>
-Message-ID: <alpine.DEB.2.21.1904290933130.1626@nanos.tec.linutronix.de>
-References: <20190426142531.1378357-1-arnd@arndb.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727414AbfD2Hgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 03:36:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34214 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbfD2Hgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 03:36:33 -0400
+Received: from zn.tnic (p200300EC2F073600CC908F6B12A96C5F.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:3600:cc90:8f6b:12a9:6c5f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FF101EC0A99;
+        Mon, 29 Apr 2019 09:36:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1556523391;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ecj0aE6gq10rKox5w0C12D0qKcWWyug+xBLPklihyDQ=;
+        b=baorS2QbQlfP18vTtOK0cVWrLq5HKuwlJ3nSCscAr8t9TBRZYApffFMdbzA7Htog2Qfk//
+        xz9T4xLDXMcavQcOCdS9skoBKgNx7Huc/ylacMxvQU5GyJAxdakpWPmnASMO82vOk4Wcyt
+        Et4112kvddtMy0zadeuSMWAOZH3usrk=
+Date:   Mon, 29 Apr 2019 09:36:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Zhao, Yakui" <yakui.zhao@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Chen, Jason CJ" <jason.cj.chen@intel.com>
+Subject: Re: [RFC PATCH v5 4/4] x86/acrn: Add hypercall for ACRN guest
+Message-ID: <20190429073625.GA2324@zn.tnic>
+References: <1556067260-9128-1-git-send-email-yakui.zhao@intel.com>
+ <1556067260-9128-5-git-send-email-yakui.zhao@intel.com>
+ <20190425070712.GA57256@gmail.com>
+ <6dd021a9-e2c0-ee84-55fd-3e6dfb4bd944@intel.com>
+ <20190425110025.GA16164@zn.tnic>
+ <473d145c-4bfd-4ec8-34c3-8a26a78fe40d@intel.com>
+ <20190427085816.GB12360@zn.tnic>
+ <e04c43cf-029b-d459-e9d9-1a1f5c403dab@intel.com>
+ <20190428100309.GA2334@zn.tnic>
+ <4c5ca6d7-ffb1-a5a5-9e46-9057802318e0@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4c5ca6d7-ffb1-a5a5-9e46-9057802318e0@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Apr 2019, Arnd Bergmann wrote:
+On Mon, Apr 29, 2019 at 09:24:12AM +0800, Zhao, Yakui wrote:
+> Yes. "movq" only indicates explicitly that it is 64-bit mov as ACRN guest
+> only works under 64-bit mode.
+> I also check the usage of "mov" and "movq" in this scenario. There is no
+> difference except that the movq is an explicit 64-op.
 
-> As Stepan Golosunov points out, we made a small mistake in the
-> get_timespec64() function in the kernel. It was originally added under
-> the assumption that CONFIG_64BIT_TIME would get enabled on all 32-bit
-> and 64-bit architectures, but when I did the conversion, I only turned
-> it on for 32-bit ones.
-> 
-> The effect is that the get_timespec64() function never clears the upper
-> half of the tv_nsec field for 32-bit tasks in compat mode. Clearing this
-> is required for POSIX compliant behavior of functions that pass a
-> 'timespec' structure with a 64-bit tv_sec and a 32-bit tv_nsec, plus
-> uninitialized padding.
-> 
-> The easiest fix for linux-5.1 is to just make the Kconfig symbol
-> unconditional, as it was originally intended. As a follow-up,
-> we should remove any #ifdef CONFIG_64BIT_TIME completely.
-> 
-> Link: https://lore.kernel.org/lkml/20190422090710.bmxdhhankurhafxq@sghpc.golosunov.pp.ru/
-> Cc: Lukasz Majewski <lukma@denx.de>
-> Cc: Stepan Golosunov <stepan@golosunov.pp.ru>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Please apply this one as a bugfix for 5.1
+Damn, I'm tired of explaining this: it is explicit only to the code
+reader. gcc generates the *same* instruction no matter whether it has a
+"q" suffix or not as long as the destination register is a 64-bit one.
 
-Can you provide a 'Fixes: ....' tag please?
+If you prefer to have it explicit, sure, use "movq".
 
-Thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
-	tglx
+Good mailing practices for 400: avoid top-posting and trim the reply.
