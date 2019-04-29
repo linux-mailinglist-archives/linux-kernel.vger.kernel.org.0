@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67417E71D
+	by mail.lfdr.de (Postfix) with ESMTP id E446BE71E
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfD2QAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 12:00:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:32938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728587AbfD2QAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:00:17 -0400
+        id S1728782AbfD2QAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 12:00:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32952 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728587AbfD2QAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 12:00:20 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43002EBD;
-        Mon, 29 Apr 2019 09:00:17 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D34D9165C;
+        Mon, 29 Apr 2019 09:00:19 -0700 (PDT)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1A5363F5C1;
-        Mon, 29 Apr 2019 09:00:14 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 855803F5C1;
+        Mon, 29 Apr 2019 09:00:17 -0700 (PDT)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
         marc.zyngier@arm.com, yuzenghui@huawei.com,
         wanghaibin.wang@huawei.com, james.morse@arm.com,
         will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
-        liwei391@huawei.com, Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v2 1/5] arm64: Do not enable IRQs for ct_user_exit
-Date:   Mon, 29 Apr 2019 17:00:03 +0100
-Message-Id: <1556553607-46531-2-git-send-email-julien.thierry@arm.com>
+        liwei391@huawei.com, Julien Thierry <julien.thierry@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v2 2/5] arm64: Fix interrupt tracing in the presence of NMIs
+Date:   Mon, 29 Apr 2019 17:00:04 +0100
+Message-Id: <1556553607-46531-3-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1556553607-46531-1-git-send-email-julien.thierry@arm.com>
 References: <1556553607-46531-1-git-send-email-julien.thierry@arm.com>
@@ -35,49 +37,202 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For el0_dbg and el0_error, DAIF bits get explicitly cleared before
-calling ct_user_exit.
+In the presence of any form of instrumentation, nmi_enter() should be
+done before calling any traceable code and any instrumentation code.
 
-When context tracking is disabled, DAIF gets set (almost) immediately
-after. When context tracking is enabled, among the first things done
-is disabling IRQs.
+Currently, nmi_enter() is done in handle_domain_nmi(), which is much
+too late as instrumentation code might get called before. Move the
+nmi_enter/exit() calls to the arch IRQ vector handler.
 
-What is actually needed is:
-- PSR.D = 0 so the system can be debugged (should be already the case)
-- PSR.A = 0 so async error can be handled during context tracking
+On arm64, it is not possible to know if the IRQ vector handler was
+called because of an NMI before acknowledging the interrupt. However, It
+is possible to know whether normal interrupts could be taken in the
+interrupted context (i.e. if taking an NMI in that context could
+introduce a potential race condition).
 
-Do not clear PSR.I in those two locations.
+When interrupting a context with IRQs disabled, call nmi_enter() as soon
+as possible. In contexts with IRQs enabled, defer this to the interrupt
+controller, which is in a better position to know if an interrupt taken
+is an NMI.
 
+Fixes: bc3c03ccb ("arm64: Enable the support of pseudo-NMIs")
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc:Catalin Marinas <catalin.marinas@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
 ---
- arch/arm64/kernel/entry.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/entry.S    | 44 +++++++++++++++++++++++++++++++++-----------
+ arch/arm64/kernel/irq.c      | 17 +++++++++++++++++
+ drivers/irqchip/irq-gic-v3.c |  6 ++++++
+ kernel/irq/irqdesc.c         |  8 ++++++--
+ 4 files changed, 62 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index c50a7a7..6a38903 100644
+index 6a38903..00c1f21 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -855,7 +855,7 @@ el0_dbg:
- 	mov	x1, x25
- 	mov	x2, sp
- 	bl	do_debug_exception
--	enable_daif
-+	enable_da_f
- 	ct_user_exit
- 	b	ret_to_user
- el0_inv:
-@@ -907,7 +907,7 @@ el0_error_naked:
- 	enable_dbg
- 	mov	x0, sp
- 	bl	do_serror
--	enable_daif
-+	enable_da_f
- 	ct_user_exit
- 	b	ret_to_user
- ENDPROC(el0_error)
+@@ -420,6 +420,20 @@ tsk	.req	x28		// current thread_info
+ 	irq_stack_exit
+ 	.endm
+
++#ifdef CONFIG_ARM64_PSEUDO_NMI
++	/*
++	 * Set res to 0 if irqs were masked in interrupted context.
++	 * Otherwise set res to non-0 value.
++	 */
++	.macro test_irqs_unmasked res:req, pmr:req
++alternative_if ARM64_HAS_IRQ_PRIO_MASKING
++	sub	\res, \pmr, #GIC_PRIO_IRQON
++alternative_else
++	mov	\res, xzr
++alternative_endif
++	.endm
++#endif
++
+ 	.text
+
+ /*
+@@ -616,19 +630,19 @@ ENDPROC(el1_sync)
+ el1_irq:
+ 	kernel_entry 1
+ 	enable_da_f
+-#ifdef CONFIG_TRACE_IRQFLAGS
++
+ #ifdef CONFIG_ARM64_PSEUDO_NMI
+ alternative_if ARM64_HAS_IRQ_PRIO_MASKING
+ 	ldr	x20, [sp, #S_PMR_SAVE]
+-alternative_else
+-	mov	x20, #GIC_PRIO_IRQON
+-alternative_endif
+-	cmp	x20, #GIC_PRIO_IRQOFF
+-	/* Irqs were disabled, don't trace */
+-	b.ls	1f
++alternative_else_nop_endif
++	test_irqs_unmasked	res=x0, pmr=x20
++	cbz	x0, 1f
++	bl	asm_nmi_enter
++1:
+ #endif
++
++#ifdef CONFIG_TRACE_IRQFLAGS
+ 	bl	trace_hardirqs_off
+-1:
+ #endif
+
+ 	irq_handler
+@@ -647,14 +661,22 @@ alternative_else_nop_endif
+ 	bl	preempt_schedule_irq		// irq en/disable is done inside
+ 1:
+ #endif
+-#ifdef CONFIG_TRACE_IRQFLAGS
++
+ #ifdef CONFIG_ARM64_PSEUDO_NMI
+ 	/*
+ 	 * if IRQs were disabled when we received the interrupt, we have an NMI
+ 	 * and we are not re-enabling interrupt upon eret. Skip tracing.
+ 	 */
+-	cmp	x20, #GIC_PRIO_IRQOFF
+-	b.ls	1f
++	test_irqs_unmasked	res=x0, pmr=x20
++	cbz	x0, 1f
++	bl	asm_nmi_exit
++1:
++#endif
++
++#ifdef CONFIG_TRACE_IRQFLAGS
++#ifdef CONFIG_ARM64_PSEUDO_NMI
++	test_irqs_unmasked	res=x0, pmr=x20
++	cbnz	x0, 1f
+ #endif
+ 	bl	trace_hardirqs_on
+ 1:
+diff --git a/arch/arm64/kernel/irq.c b/arch/arm64/kernel/irq.c
+index 92fa817..fdd9cb2 100644
+--- a/arch/arm64/kernel/irq.c
++++ b/arch/arm64/kernel/irq.c
+@@ -27,8 +27,10 @@
+ #include <linux/smp.h>
+ #include <linux/init.h>
+ #include <linux/irqchip.h>
++#include <linux/kprobes.h>
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
++#include <asm/daifflags.h>
+ #include <asm/vmap_stack.h>
+
+ unsigned long irq_err_count;
+@@ -76,3 +78,18 @@ void __init init_IRQ(void)
+ 	if (!handle_arch_irq)
+ 		panic("No interrupt controller found.");
+ }
++
++/*
++ * Stubs to make nmi_enter/exit() code callable from ASM
++ */
++asmlinkage void notrace asm_nmi_enter(void)
++{
++	nmi_enter();
++}
++NOKPROBE_SYMBOL(asm_nmi_enter);
++
++asmlinkage void notrace asm_nmi_exit(void)
++{
++	nmi_exit();
++}
++NOKPROBE_SYMBOL(asm_nmi_exit);
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 15e55d3..4847673 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -495,7 +495,13 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+
+ 	if (gic_supports_nmi() &&
+ 	    unlikely(gic_read_rpr() == GICD_INT_NMI_PRI)) {
++		if (interrupts_enabled(regs))
++			nmi_enter();
++
+ 		gic_handle_nmi(irqnr, regs);
++
++		if (interrupts_enabled(regs))
++			nmi_exit();
+ 		return;
+ 	}
+
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 9f8a709..b3fdf48 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -679,6 +679,8 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
+  * @hwirq:	The HW irq number to convert to a logical one
+  * @regs:	Register file coming from the low-level handling code
+  *
++ *		This function must be called from an NMI context.
++ *
+  * Returns:	0 on success, or -EINVAL if conversion has failed
+  */
+ int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
+@@ -688,7 +690,10 @@ int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
+ 	unsigned int irq;
+ 	int ret = 0;
+
+-	nmi_enter();
++	/*
++	 * NMI context needs to be setup earlier in order to deal with tracing.
++	 */
++	WARN_ON(!in_nmi());
+
+ 	irq = irq_find_mapping(domain, hwirq);
+
+@@ -701,7 +706,6 @@ int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
+ 	else
+ 		ret = -EINVAL;
+
+-	nmi_exit();
+ 	set_irq_regs(old_regs);
+ 	return ret;
+ }
 --
 1.9.1
