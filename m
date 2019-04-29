@@ -2,81 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D84DD97
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E71DDB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfD2ITo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 04:19:44 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:42586 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbfD2ITo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 04:19:44 -0400
-Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id 68Ki2000F3XaVaC068KiL0; Mon, 29 Apr 2019 10:19:42 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hL1Vm-0000l4-2n; Mon, 29 Apr 2019 10:19:42 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hL1Vm-0001yb-0Q; Mon, 29 Apr 2019 10:19:42 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Greg Ungerer <gerg@linux-m68k.org>,
-        Angelo Dureghello <angelo@sysam.it>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k: io: Fix io{read,write}{16,32}be() for Coldfire peripherals
-Date:   Mon, 29 Apr 2019 10:19:37 +0200
-Message-Id: <20190429081937.7544-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727668AbfD2I1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 04:27:50 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45658 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727444AbfD2I1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 04:27:50 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AE76200241;
+        Mon, 29 Apr 2019 10:27:48 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 99459200166;
+        Mon, 29 Apr 2019 10:27:39 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9991D402F0;
+        Mon, 29 Apr 2019 16:27:28 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com, shawn.lin@rock-chips.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCH 1/2] PCI: layerscape: Add the bar_fixed_64bit property in EP driver.
+Date:   Mon, 29 Apr 2019 16:19:56 +0800
+Message-Id: <20190429081957.47945-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic definitions of mmio_{read,write}{16,32}be() in lib/iomap.c
-assume that the {read,write}[wl]() I/O accessors always use little
-endian accesses, and swap the result.
+The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
+is 32bit, BAR3 and BAR4 is 64bit, this is determined by hardware,
+so set the bar_fixed_64bit with 0x14.
 
-However, the Coldfire versions of the {read,write}[wl]() I/O accessors are
-special, in that they use native big endian instead of little endian for
-accesses to the on-SoC peripheral block, thus violating the assumption.
-
-Fix this by providing our own variants, using the raw accessors,
-reinstating the old behavior.  This is fine on m68k, as no special
-barriers are needed, and also avoids swapping data twice.
-
-Reported-by: Angelo Dureghello <angelo@sysam.it>
-Fixes: aecc787c06f4300f ("iomap: Use non-raw io functions for io{read|write}XXbe")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 ---
-This can be reverted later, after this oddity of the Coldfire I/O
-support has been fixed, and drivers have been updated.
----
- arch/m68k/include/asm/io.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pci/controller/dwc/pci-layerscape-ep.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/m68k/include/asm/io.h b/arch/m68k/include/asm/io.h
-index aabe6420ead2a599..d47e7384681ab1cd 100644
---- a/arch/m68k/include/asm/io.h
-+++ b/arch/m68k/include/asm/io.h
-@@ -8,6 +8,12 @@
- #include <asm/io_mm.h>
- #endif
+diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+index be61d96..e2fbdff 100644
+--- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
++++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+@@ -44,6 +44,7 @@ static int ls_pcie_establish_link(struct dw_pcie *pci)
+ 	.linkup_notifier = false,
+ 	.msi_capable = true,
+ 	.msix_capable = false,
++	.bar_fixed_64bit = 0x14,
+ };
  
-+#define mmio_read16be(addr)		__raw_readw(addr)
-+#define mmio_read32be(addr)		__raw_readl(addr)
-+
-+#define mmio_write16be(val, port)	__raw_writew((val), (port))
-+#define mmio_write32be(val, port)	__raw_writel((val), (port))
-+
- #include <asm-generic/io.h>
- 
- #endif /* _M68K_IO_H */
+ static const struct pci_epc_features*
 -- 
-2.17.1
+1.7.1
 
