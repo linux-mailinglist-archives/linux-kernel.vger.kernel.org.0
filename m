@@ -2,69 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D030DEB91
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF21EB9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbfD2UXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:23:04 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39790 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfD2UXD (ORCPT
+        id S1729387AbfD2UZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:25:48 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37203 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729252AbfD2UZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:23:03 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q10so10610880ljc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:23:02 -0700 (PDT)
+        Mon, 29 Apr 2019 16:25:48 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b12so9449320lji.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hZPco9B0AwJRcXRx0/3kAi2/oUVRUui1oHWnui3+POE=;
-        b=hK1kZGJXqBUwaiXALmHLkdcjKeYn61v//Mj8GdmL337feFsDle0PLwryNmXEBwrs8S
-         nMiE6KN2OCuC2luJ1gtpTtS9+ibFu0S06CjKBRLSvwg6ZCsFCBznCGPdZiCpgm7+NDA8
-         J3lnB9+NdA0txfHJzPOyF+qYo7ppMKAtL2K5s=
+        bh=w50mZSoHkn4YcdVSRzxMDCW63EO0vPkQ2Zrko7ZDpHk=;
+        b=AoO6Qi9m5Ef2LQWrXsqnatYGBHOrBL3A+gnuAsmezQFUMAvvmPyPcegTT9th39HlUb
+         s0behpUfbgVFRk/qomTxJbvucaUEQ+T1StzlVKWLMf0QmKqLJwshHyUYFwvc5w4cct+e
+         ULknvqmm/IVR0Nk7kkerKDJNE3EHy3hhGQff4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hZPco9B0AwJRcXRx0/3kAi2/oUVRUui1oHWnui3+POE=;
-        b=rHhkRn+uAX9sfZAnfi5R7Ubmdw/thQYvunCZgW0rXP/qY2tmQjbf+QgNTyqdbOewD0
-         I1HRc+mFjz4BYe8FJ0ROfPzENiTqfhFDs1uCeeg6C/d2TUuNyOa4rNgxPyew8I1Ud5WO
-         Zf4SyjwXhEYLrWfiyRpz/ZxkN4eXC+R++S6vCEDhn6u22LiedPTq0YuMEaUXJXtRR5aH
-         tQ/++WmUh2FQvpj3RXbUpeTWUJzQJUmTv+mB8I/SFaZfybFbxMOQxfWQT3Yy3TPIZCy6
-         p8xogAZlvzB9uWzX/xUHcLm3N3D8MwLRH7PPyz9zxB6aKOphJF5fHsx3Z8/ZZw5T1qUa
-         s5/Q==
-X-Gm-Message-State: APjAAAUiAKGPXmbVhNXCNNcnew6rHR35gvxgPwqI2CNX6tpjEXHD2qp8
-        gSIdHxjVBaTJfyI4ufRU9EX/mA3pOXM=
-X-Google-Smtp-Source: APXvYqwFQHwaqmncjmVjbwmBqvM9cAcowydAW4O8TWkDgRG4b++jUKfdB/sBG/djFT5TmFe14BBiDg==
-X-Received: by 2002:a2e:8018:: with SMTP id j24mr9556562ljg.149.1556569381226;
-        Mon, 29 Apr 2019 13:23:01 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id a1sm3498962lfc.17.2019.04.29.13.23.00
+        bh=w50mZSoHkn4YcdVSRzxMDCW63EO0vPkQ2Zrko7ZDpHk=;
+        b=ZxQnChEi7PfwMupSmUBqlIK+j7k3D384mTZNqtfLTtke0TFExDJzA24TLv8aV4eVo5
+         YBXPK291tZGq7VcDW1VyR7rktx2j10xS+TnFQKXuuxKgcFk1AhMSFgph2TuW0M/dsJEU
+         rdDpLyN9XX5u4/AUBbWafSLgW3mILZp+XlsCCbuLQMAwdF77RkSJoJI4rxWJqX7yVP9S
+         7j5LPd8ICtIF2VVQoD/+pGHKN/w3Vs1ZTSXgqa7hgBfNORSnOr9UMfqxxvYFlsUAz03L
+         dIVM38NImKoC+zI0GUtHbCASIdUvn8XS1cGZ37l4nUWlvRD/1xmIDGPrclDl1esn9Vew
+         ou5Q==
+X-Gm-Message-State: APjAAAUwzrElqptzghlAkf2ESxKHka6k1K5zGPkxKNcCWBhs5RTwJevg
+        m+v/85Auo+/K+4Zq0kHK/g3hUwWQvc8=
+X-Google-Smtp-Source: APXvYqw98zVbiHIsood6UOEC7lEDfY/9I555y4lSANphWEygxexHw+vbnGPa6o5Q6Qb0G1LFyc/ruw==
+X-Received: by 2002:a2e:3815:: with SMTP id f21mr10741307lja.25.1556569545816;
+        Mon, 29 Apr 2019 13:25:45 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id q15sm2201559lfh.59.2019.04.29.13.25.45
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 13:23:00 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id h126so9042424lfh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:23:00 -0700 (PDT)
-X-Received: by 2002:ac2:43cf:: with SMTP id u15mr3771995lfl.67.1556568986468;
- Mon, 29 Apr 2019 13:16:26 -0700 (PDT)
+        Mon, 29 Apr 2019 13:25:45 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id f23so10675723ljc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:25:45 -0700 (PDT)
+X-Received: by 2002:a2e:8090:: with SMTP id i16mr8383998ljg.135.1556569221934;
+ Mon, 29 Apr 2019 13:20:21 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
  <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
  <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
- <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
- <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
- <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
- <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com> <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+ <20190429145250.1a5da6ed@gandalf.local.home> <CAHk-=wjm93jLtVxTX4HZs6K4k1Wqh3ujjmapqaYtcibVk_YnzQ@mail.gmail.com>
+ <20190429150724.6e501d27@gandalf.local.home> <CAHk-=wgbC-wiSrdDYAh1ORF4EKmecY+MkNsJBF=BWf4W1bXXgA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgbC-wiSrdDYAh1ORF4EKmecY+MkNsJBF=BWf4W1bXXgA@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Apr 2019 13:16:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjyyKDv-WZLXZbVD=V05p2X7eg74z2SpR4TQTxN9JLq4Q@mail.gmail.com>
-Message-ID: <CAHk-=wjyyKDv-WZLXZbVD=V05p2X7eg74z2SpR4TQTxN9JLq4Q@mail.gmail.com>
+Date:   Mon, 29 Apr 2019 13:20:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiMG95TmkMm5AK7w73=mn+is8qnNztS7iJVfz23-A44Yg@mail.gmail.com>
+Message-ID: <CAHk-=wiMG95TmkMm5AK7w73=mn+is8qnNztS7iJVfz23-A44Yg@mail.gmail.com>
 Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
  fops invocation
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -84,6 +81,7 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Nayna Jain <nayna@linux.ibm.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Joerg Roedel <jroedel@suse.de>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         live-patching@vger.kernel.org,
@@ -95,28 +93,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 12:02 PM Linus Torvalds
+On Mon, Apr 29, 2019 at 1:06 PM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> If nmi were to break it, it would be a cpu bug. I'm pretty sure I've
-> seen the "shadow stops even nmi" documented for some uarch, but as
-> mentioned it's not necessarily the only way to guarantee the shadow.
+> Only do the 'call' instructions one at a time. Why would you change
+> _existing_ code?
 
-In fact, the documentation is simply the official Intel instruction
-docs for "STI":
+Side note: if you want to, you can easily batch up rewriting 'call'
+instructions to the same target using the exact same code. You just
+need to change the int3 handler case to calculate the
+bp_int3_call_return from the fixed one-time address to use sopmething
+like
 
-    The IF flag and the STI and CLI instructions do not prohibit the
-    generation of exceptions and NMI interrupts. NMI interrupts (and
-    SMIs) may be blocked for one macroinstruction following an STI.
+     this_cpu_write(bp_call_return, int3_address-1+bp_int3_call_size);
 
-note the "may be blocked". As mentioned, that's just one option for
-not having NMI break the STI shadow guarantee, but it's clearly one
-that Intel has done at times, and clearly even documents as having
-done so.
+instead (and you'd need to also teach the function that there's not
+just a single int3 live at a time)
 
-There is absolutely no question that the sti shadow is real, and that
-people have depended on it for _decades_. It would be a horrible
-errata if the shadow can just be made to go away by randomly getting
-an NMI or SMI.
-
-              Linus
+                Linus
