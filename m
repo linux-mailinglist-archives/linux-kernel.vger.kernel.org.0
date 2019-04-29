@@ -2,722 +2,318 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A130ECE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDA50ECDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbfD2Wlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 18:41:53 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39289 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729593AbfD2Wlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:41:52 -0400
-Received: by mail-it1-f193.google.com with SMTP id t200so1704216itf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 15:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v2qu2ReeUaxnBMNdxYT9yjLwxK2o/ADHGcE/mrf0a/U=;
-        b=C8HqsX5GminfJWHc43b4AwmFYDoPXjhY6rAE7NGIijYeokxQqzU43MqD+KiDjgaq1G
-         vWQ8wIiUDpP9Z6YuAd5+030gE7NXX6XnkbBxI6tEQvFx/oZu+lZZf4UHSxa5WWmaBe4b
-         m3rbk/Q7GtS6Rl44OlHLLBTSKArefloXpIg6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v2qu2ReeUaxnBMNdxYT9yjLwxK2o/ADHGcE/mrf0a/U=;
-        b=MxWOuckDbgsUL0kygzdS/2J7ctfdQ31q/7rW0cgAP7UD4ldaoNNYPnfAkhc+qKBOlf
-         NA0YkcnqO+14lbOONhrRn1AQMlE1uIMzkkjnhujrcUu2gMeoOo5mnTwCSi7AKQvgLGo7
-         pE2b4pkKlJGeIttZYQ3aWpyukWhhnt9fHgkbl4Y/V9wlZ3eZKa0pX19o5lBysTGJfE2q
-         IL6ro8COosYLr/dmugOJU/RjjzFXe0wvZlXQe+802A4mhQH4KrBLCru/Rnay0kuMkwVf
-         kXm9cxVmlQfBYbkUwwJNB3JnURNzDGGKqXY3TZeZFacy2GpWqLQrioYxlH92OcJNuWxa
-         +wkw==
-X-Gm-Message-State: APjAAAVIAm3ztm6jXKBUHsQQvm/MMVEYxzhaPIKpKpe1S2G5R7skYEPq
-        NobqECPTUUQoZc7MuYv0weAuw5RPLU8=
-X-Google-Smtp-Source: APXvYqwNUr7tTWQ+e/+uToQ9YjmrqEZENDydO7kyzbKLP0Ej7+XIIrx0ImWARYYFa7ISgftneGNHfg==
-X-Received: by 2002:a05:6638:29b:: with SMTP id c27mr26465303jaq.112.1556577711111;
-        Mon, 29 Apr 2019 15:41:51 -0700 (PDT)
-Received: from kiwi.bld.corp.google.com ([2620:15c:183:0:8223:87c:a681:66aa])
-        by smtp.gmail.com with ESMTPSA id p132sm574191ita.2.2019.04.29.15.41.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 15:41:50 -0700 (PDT)
-From:   Simon Glass <sjg@chromium.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        Frank Rowand <frank.rowand@sony.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Simon Glass <sjg@chromium.org>
-Subject: [PATCH] RFC: Example schema files written in Python
-Date:   Mon, 29 Apr 2019 16:41:43 -0600
-Message-Id: <20190429224143.192506-1-sjg@chromium.org>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
+        id S1729615AbfD2WjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 18:39:02 -0400
+Received: from mga17.intel.com ([192.55.52.151]:7514 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfD2WjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 18:39:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 15:39:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,411,1549958400"; 
+   d="scan'208";a="227875888"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 29 Apr 2019 15:39:01 -0700
+Date:   Mon, 29 Apr 2019 15:41:46 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 19/19] iommu/vt-d: Add svm/sva invalidate function
+Message-ID: <20190429154146.20e0c13c@jacob-builder>
+In-Reply-To: <26398960-f484-d5dd-eff5-c44810528194@redhat.com>
+References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1556062279-64135-20-git-send-email-jacob.jun.pan@linux.intel.com>
+        <26398960-f484-d5dd-eff5-c44810528194@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of these are hand-written, but xilinx-xadc.py is auto-generated by
-binding_to_py.py as an example of the use of that tool.
+On Fri, 26 Apr 2019 19:23:03 +0200
+Auger Eric <eric.auger@redhat.com> wrote:
 
-This is part of a proof-of-concept device-tree validator. See the patch
-on the dtc mailing list for details:
+> Hi Jacob,
+> On 4/24/19 1:31 AM, Jacob Pan wrote:
+> > When Shared Virtual Address (SVA) is enabled for a guest OS via
+> > vIOMMU, we need to provide invalidation support at IOMMU API and
+> > driver level. This patch adds Intel VT-d specific function to
+> > implement iommu passdown invalidate API for shared virtual address.
+> > 
+> > The use case is for supporting caching structure invalidation
+> > of assigned SVM capable devices. Emulated IOMMU exposes queue
+> > invalidation capability and passes down all descriptors from the
+> > guest to the physical IOMMU.
+> > 
+> > The assumption is that guest to host device ID mapping should be
+> > resolved prior to calling IOMMU driver. Based on the device handle,
+> > host IOMMU driver can replace certain fields before submit to the
+> > invalidation queue.
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> > Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> > ---
+> >  drivers/iommu/intel-iommu.c | 159
+> > ++++++++++++++++++++++++++++++++++++++++++++ 1 file changed, 159
+> > insertions(+)
+> > 
+> > diff --git a/drivers/iommu/intel-iommu.c
+> > b/drivers/iommu/intel-iommu.c index 89989b5..54a3d22 100644
+> > --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -5338,6 +5338,164 @@ static void
+> > intel_iommu_aux_detach_device(struct iommu_domain *domain,
+> > aux_domain_remove_dev(to_dmar_domain(domain), dev); }
+> >  
+> > +/*
+> > + * 2D array for converting and sanitizing IOMMU generic TLB
+> > granularity to
+> > + * VT-d granularity. Invalidation is typically included in the
+> > unmap operation
+> > + * as a result of DMA or VFIO unmap. However, for assigned device
+> > where guest
+> > + * could own the first level page tables without being shadowed by
+> > QEMU. In
+> > + * this case there is no pass down unmap to the host IOMMU as a
+> > result of unmap
+> > + * in the guest. Only invalidations are trapped and passed down.
+> > + * In all cases, only first level TLB invalidation (request with
+> > PASID) can be
+> > + * passed down, therefore we do not include IOTLB granularity for
+> > request
+> > + * without PASID (second level).
+> > + *
+> > + * For an example, to find the VT-d granularity encoding for IOTLB
+> > + * type and page selective granularity within PASID:
+> > + * X: indexed by iommu cache type
+> > + * Y: indexed by enum iommu_inv_granularity
+> > + * [IOMMU_INV_TYPE_TLB][IOMMU_INV_GRANU_PAGE_PASID]
+> > + *
+> > + * Granu_map array indicates validity of the table. 1: valid, 0:
+> > invalid
+> > + *
+> > + */
+> > +const static int
+> > inv_type_granu_map[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
+> > = {  
+> The size is frozen for a given uapi version so I guess you can
+> hardcode the limits for a given version.
+I guess I could, I just felt more readable this way.
+> > +	/* PASID based IOTLB, support PASID selective and page
+> > selective */
+> > +	{0, 1, 1},
+> > +	/* PASID based dev TLBs, only support all PASIDs or single
+> > PASID */
+> > +	{1, 1, 0},
+> > +	/* PASID cache */
+> > +	{1, 1, 0}
+> > +};
+> > +
+> > +const static u64
+> > inv_type_granu_table[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
+> > = {
+> > +	/* PASID based IOTLB */
+> > +	{0, QI_GRAN_NONG_PASID, QI_GRAN_PSI_PASID},
+> > +	/* PASID based dev TLBs */
+> > +	{QI_DEV_IOTLB_GRAN_ALL, QI_DEV_IOTLB_GRAN_PASID_SEL, 0},
+> > +	/* PASID cache */
+> > +	{QI_PC_ALL_PASIDS, QI_PC_PASID_SEL, 0},
+> > +};  
+> Can't you use a single matrix instead, ie. inv_type_granu_table
+> 
+The reason i have an additional inv_type_granu_map[] matrix is that
+some of fields can be 0 but still valid. A single matrix would not be
+able to tell the difference between a valid 0 or invalid field.
+> > +
+> > +static inline int to_vtd_granularity(int type, int granu, u64
+> > *vtd_granu) +{
+> > +	if (type >= NR_IOMMU_CACHE_TYPE || granu >=
+> > NR_IOMMU_CACHE_INVAL_GRANU ||
+> > +		!inv_type_granu_map[type][granu])
+> > +		return -EINVAL;
+> > +
+> > +	*vtd_granu = inv_type_granu_table[type][granu];
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static inline u64 to_vtd_size(u64 granu_size, u64 nr_granules)
+> > +{
+> > +	u64 nr_pages;  
+> direct initialization?
+will do, thanks
+> > +	/* VT-d size is encoded as 2^size of 4K pages, 0 for 4k, 9
+> > for 2MB, etc.
+> > +	 * IOMMU cache invalidate API passes granu_size in bytes,
+> > and number of
+> > +	 * granu size in contiguous memory.
+> > +	 */
+> > +
+> > +	nr_pages = (granu_size * nr_granules) >> VTD_PAGE_SHIFT;
+> > +	return order_base_2(nr_pages);
+> > +}
+> > +
+> > +static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
+> > +		struct device *dev, struct
+> > iommu_cache_invalidate_info *inv_info) +{
+> > +	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
+> > +	struct device_domain_info *info;
+> > +	struct intel_iommu *iommu;
+> > +	unsigned long flags;
+> > +	int cache_type;
+> > +	u8 bus, devfn;
+> > +	u16 did, sid;
+> > +	int ret = 0;
+> > +	u64 granu;
+> > +	u64 size;
+> > +
+> > +	if (!inv_info || !dmar_domain ||
+> > +		inv_info->version !=
+> > IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
+> > +		return -EINVAL;
+> > +
+> > +	if (!dev || !dev_is_pci(dev))
+> > +		return -ENODEV;
+> > +
+> > +	iommu = device_to_iommu(dev, &bus, &devfn);
+> > +	if (!iommu)
+> > +		return -ENODEV;
+> > +
+> > +	spin_lock(&iommu->lock);
+> > +	spin_lock_irqsave(&device_domain_lock, flags);  
+> mix of _irqsave and non _irqsave looks suspicious to me.
+It should be in reverse order. Any other concerns?
+> > +	info = iommu_support_dev_iotlb(dmar_domain, iommu, bus,
+> > devfn);
+> > +	if (!info) {
+> > +		ret = -EINVAL;
+> > +		goto out_unlock;
+> > +	}
+> > +	did = dmar_domain->iommu_did[iommu->seq_id];
+> > +	sid = PCI_DEVID(bus, devfn);
+> > +	size = to_vtd_size(inv_info->addr_info.granule_size,
+> > inv_info->addr_info.nb_granules); +
+> > +	for_each_set_bit(cache_type, (unsigned long
+> > *)&inv_info->cache, NR_IOMMU_CACHE_TYPE) { +
+> > +		ret = to_vtd_granularity(cache_type,
+> > inv_info->granularity, &granu);
+> > +		if (ret) {
+> > +			pr_err("Invalid range type %d, granu
+> > %d\n", cache_type,  
+> s/Invalid range type %d, granu %d/Invalid cache type/granu combination
+> (%d/%d)
+sounds good, indeed it is the combination that is invalid.
+> > +				inv_info->granularity);
+> > +			break;
+> > +		}
+> > +
+> > +		switch (BIT(cache_type)) {
+> > +		case IOMMU_CACHE_INV_TYPE_IOTLB:
+> > +			if (size && (inv_info->addr_info.addr &
+> > ((BIT(VTD_PAGE_SHIFT + size)) - 1))) {
+> > +				pr_err("Address out of range,
+> > 0x%llx, size order %llu\n",
+> > +					inv_info->addr_info.addr,
+> > size);
+> > +				ret = -ERANGE;
+> > +				goto out_unlock;
+> > +			}
+> > +
+> > +			qi_flush_piotlb(iommu, did,
+> > mm_to_dma_pfn(inv_info->addr_info.addr),
+> > +					inv_info->addr_info.pasid,
+> > +					size, granu);
+> > +
+> > +			/*
+> > +			 * Always flush device IOTLB if ATS is
+> > enabled since guest
+> > +			 * vIOMMU exposes CM = 1, no device IOTLB
+> > flush will be passed
+> > +			 * down. REVISIT: cannot assume Linux guest
+> > +			 */
+> > +			if (info->ats_enabled) {
+> > +				qi_flush_dev_piotlb(iommu, sid,
+> > info->pfsid,
+> > +
+> > inv_info->addr_info.pasid, info->ats_qdep,
+> > +
+> > inv_info->addr_info.addr, size,
+> > +						granu);
+> > +			}
+> > +			break;
+> > +		case IOMMU_CACHE_INV_TYPE_DEV_IOTLB:
+> > +			if (info->ats_enabled) {
+> > +				qi_flush_dev_piotlb(iommu, sid,
+> > info->pfsid,
+> > +
+> > inv_info->addr_info.pasid, info->ats_qdep,
+> > +
+> > inv_info->addr_info.addr, size,
+> > +						granu);
+> > +			} else
+> > +				pr_warn("Passdown device IOTLB
+> > flush w/o ATS!\n"); +
+> > +			break;
+> > +		case IOMMU_CACHE_INV_TYPE_PASID:
+> > +			qi_flush_pasid_cache(iommu, did, granu,
+> > inv_info->pasid); +
+> > +			break;
+> > +		default:
+> > +			dev_err(dev, "Unsupported IOMMU
+> > invalidation type %d\n",
+> > +				cache_type);
+> > +			ret = -EINVAL;
+> > +		}
+> > +	}
+> > +out_unlock:
+> > +	spin_unlock(&iommu->lock);
+> > +	spin_unlock_irqrestore(&device_domain_lock, flags);  
+> I would expect the opposite order
+yes, i reversed in the lock order such that irq is disabled.
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static int intel_iommu_map(struct iommu_domain *domain,
+> >  			   unsigned long iova, phys_addr_t hpa,
+> >  			   size_t size, int iommu_prot)
+> > @@ -5769,6 +5927,7 @@ const struct iommu_ops intel_iommu_ops = {
+> >  	.dev_disable_feat	= intel_iommu_dev_disable_feat,
+> >  	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
+> >  #ifdef CONFIG_INTEL_IOMMU_SVM
+> > +	.cache_invalidate	= intel_iommu_sva_invalidate,
+> >  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
+> >  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
+> >  #endif
+> >   
+> Thanks
+> 
+> Eric
 
-   RFC: Python-based device-tree validation
+Thank you so much for your review. I will roll up the next version
+soon, hopefully this week.
 
-Signed-off-by: Simon Glass <sjg@chromium.org>
----
-
- Documentation/__init__.py                     |   0
- Documentation/devicetree/__init__.py          |   0
- Documentation/devicetree/bindings/__init__.py |   0
- .../devicetree/bindings/arm/__init__.py       |   0
- Documentation/devicetree/bindings/arm/cpus.py | 125 ++++++++++++++++++
- Documentation/devicetree/bindings/arm/pmu.py  |  38 ++++++
- .../devicetree/bindings/arm/rockchip.py       |  16 +++
- .../devicetree/bindings/arm/xilinx.py         |  24 ++++
- Documentation/devicetree/bindings/base.py     |  14 ++
- Documentation/devicetree/bindings/chosen.py   |  15 +++
- .../devicetree/bindings/cpufreq/cpufreq-dt.py |  15 +++
- .../devicetree/bindings/fpga/fpga-region.py   |  15 +++
- .../bindings/iio/adc/xilinx-xadc.py           |  61 +++++++++
- .../bindings/iio/adc/xilinx-xadc.txt          |  34 ++---
- Documentation/devicetree/bindings/memory.py   |  15 +++
- Documentation/devicetree/bindings/opp/opp.py  |  15 +++
- .../bindings/regulator/fixed-regulator.py     |  14 ++
- .../bindings/regulator/regulator.py           |  19 +++
- .../reserved-memory/reserved-memory.py        |  14 ++
- .../devicetree/bindings/thermal/thermal.py    |  15 +++
- .../devicetree/bindings/usb/usb-nop-xceiv.py  |  16 +++
- 21 files changed, 449 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/__init__.py
- create mode 100644 Documentation/devicetree/__init__.py
- create mode 100644 Documentation/devicetree/bindings/__init__.py
- create mode 100644 Documentation/devicetree/bindings/arm/__init__.py
- create mode 100644 Documentation/devicetree/bindings/arm/cpus.py
- create mode 100644 Documentation/devicetree/bindings/arm/pmu.py
- create mode 100644 Documentation/devicetree/bindings/arm/rockchip.py
- create mode 100644 Documentation/devicetree/bindings/arm/xilinx.py
- create mode 100644 Documentation/devicetree/bindings/base.py
- create mode 100644 Documentation/devicetree/bindings/chosen.py
- create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-dt.py
- create mode 100644 Documentation/devicetree/bindings/fpga/fpga-region.py
- create mode 100644 Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py
- create mode 100644 Documentation/devicetree/bindings/memory.py
- create mode 100644 Documentation/devicetree/bindings/opp/opp.py
- create mode 100644 Documentation/devicetree/bindings/regulator/fixed-regulator.py
- create mode 100644 Documentation/devicetree/bindings/regulator/regulator.py
- create mode 100644 Documentation/devicetree/bindings/reserved-memory/reserved-memory.py
- create mode 100644 Documentation/devicetree/bindings/thermal/thermal.py
- create mode 100644 Documentation/devicetree/bindings/usb/usb-nop-xceiv.py
-
-diff --git a/Documentation/__init__.py b/Documentation/__init__.py
-new file mode 100644
-index 0000000000000..e69de29bb2d1d
-diff --git a/Documentation/devicetree/__init__.py b/Documentation/devicetree/__init__.py
-new file mode 100644
-index 0000000000000..e69de29bb2d1d
-diff --git a/Documentation/devicetree/bindings/__init__.py b/Documentation/devicetree/bindings/__init__.py
-new file mode 100644
-index 0000000000000..e69de29bb2d1d
-diff --git a/Documentation/devicetree/bindings/arm/__init__.py b/Documentation/devicetree/bindings/arm/__init__.py
-new file mode 100644
-index 0000000000000..e69de29bb2d1d
-diff --git a/Documentation/devicetree/bindings/arm/cpus.py b/Documentation/devicetree/bindings/arm/cpus.py
-new file mode 100644
-index 0000000000000..6a2e94903d438
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/cpus.py
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /cpu bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeCpu, NodeCpus
-+from kschema import PropClocks, PropPhandle, PropReg, PropString, PropSupply
-+
-+enable_methods = [
-+    'actions,s500-smp',
-+    'allwinner,sun6i-a31',
-+    'allwinner,sun8i-a23',
-+    'allwinner,sun9i-a80-smp',
-+    'amlogic,meson8-smp',
-+    'amlogic,meson8b-smp',
-+    'arm,realview-smp',
-+    'brcm,bcm11351-cpu-method',
-+    'brcm,bcm23550',
-+    'brcm,bcm2836-smp',
-+    'brcm,bcm-nsp-smp',
-+    'brcm,brahma-b15',
-+    'marvell,armada-375-smp',
-+    'marvell,armada-380-smp',
-+    'marvell,armada-390-smp',
-+    'marvell,armada-xp-smp',
-+    'marvell,98dx3236-smp',
-+    'mediatek,mt6589-smp',
-+    'mediatek,mt81xx-tz-smp',
-+    'qcom,gcc-msm8660',
-+    'qcom,kpss-acc-v1',
-+    'qcom,kpss-acc-v2',
-+    'renesas,apmu',
-+    'renesas,r9a06g032-smp',
-+    'rockchip,rk3036-smp',
-+    'rockchip,rk3066-smp',
-+    'ste,dbx500-smp',
-+]
-+
-+schema = [
-+    NodeCpus(),
-+    NodeCpu(['arm,arm710t',
-+              'arm,arm720t',
-+              'arm,arm740t',
-+              'arm,arm7ej-s',
-+              'arm,arm7tdmi',
-+              'arm,arm7tdmi-s',
-+              'arm,arm9es',
-+              'arm,arm9ej-s',
-+              'arm,arm920t',
-+              'arm,arm922t',
-+              'arm,arm925',
-+              'arm,arm926e-s',
-+              'arm,arm926ej-s',
-+              'arm,arm940t',
-+              'arm,arm946e-s',
-+              'arm,arm966e-s',
-+              'arm,arm968e-s',
-+              'arm,arm9tdmi',
-+              'arm,arm1020e',
-+              'arm,arm1020t',
-+              'arm,arm1022e',
-+              'arm,arm1026ej-s',
-+              'arm,arm1136j-s',
-+              'arm,arm1136jf-s',
-+              'arm,arm1156t2-s',
-+              'arm,arm1156t2f-s',
-+              'arm,arm1176jzf',
-+              'arm,arm1176jz-s',
-+              'arm,arm1176jzf-s',
-+              'arm,arm11mpcore',
-+              'arm,armv8', # Only for s/w models
-+              'arm,cortex-a5',
-+              'arm,cortex-a7',
-+              'arm,cortex-a8',
-+              'arm,cortex-a9',
-+              'arm,cortex-a12',
-+              'arm,cortex-a15',
-+              'arm,cortex-a17',
-+              'arm,cortex-a53',
-+              'arm,cortex-a57',
-+              'arm,cortex-a72',
-+              'arm,cortex-a73',
-+              'arm,cortex-m0',
-+              'arm,cortex-m0+',
-+              'arm,cortex-m1',
-+              'arm,cortex-m3',
-+              'arm,cortex-m4',
-+              'arm,cortex-r4',
-+              'arm,cortex-r5',
-+              'arm,cortex-r7',
-+              'brcm,brahma-b15',
-+              'brcm,brahma-b53',
-+              'brcm,vulcan',
-+              'cavium,thunder',
-+              'cavium,thunder2',
-+              'faraday,fa526',
-+              'intel,sa110',
-+              'intel,sa1100',
-+              'marvell,feroceon',
-+              'marvell,mohawk',
-+              'marvell,pj4a',
-+              'marvell,pj4b',
-+              'marvell,sheeva-v5',
-+              'marvell,sheeva-v7',
-+              'nvidia,tegra132-denver',
-+              'nvidia,tegra186-denver',
-+              'nvidia,tegra194-carmel',
-+              'qcom,krait',
-+              'qcom,kryo',
-+              'qcom,kryo385',
-+              'qcom,scorpion'], [
-+        PropString('device_type', True, ''),
-+        PropReg(),
-+        PropClocks(),
-+        PropString('enable-method', True, 'psci|spin-table',
-+                   {'#arch': 'armv8'}),
-+        PropString('enable-method', False, '|'.join(enable_methods),
-+                   {'#arch': '!armv8'}),
-+        PropPhandle('rockchip,pmu', 'rockchip,rk3288-pmu',
-+                    cond_props={'enable-method': 'rockchip,rk3066-smp'}),
-+        PropSupply('cpu'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/arm/pmu.py b/Documentation/devicetree/bindings/arm/pmu.py
-new file mode 100644
-index 0000000000000..aa475b7293eff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/pmu.py
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Performance-Monitoring Unit (PMU) bindings
-+#
-+# not Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropIntList, PropReg
-+
-+schema = [
-+    NodeDesc('pmu', [
-+        'apm,potenza-pmu',
-+        'arm,armv8-pmuv3',
-+        'arm,cortex-a73-pmu',
-+        'arm,cortex-a72-pmu',
-+        'arm,cortex-a57-pmu',
-+        'arm,cortex-a53-pmu',
-+        'arm,cortex-a35-pmu',
-+        'arm,cortex-a17-pmu',
-+        'arm,cortex-a15-pmu',
-+        'arm,cortex-a12-pmu',
-+        'arm,cortex-a9-pmu',
-+        'arm,cortex-a8-pmu',
-+        'arm,cortex-a7-pmu',
-+        'arm,cortex-a5-pmu',
-+        'arm,arm11mpcore-pmu',
-+        'arm,arm1176-pmu',
-+        'arm,arm1136-pmu',
-+        'brcm,vulcan-pmu',
-+        'cavium,thunder-pmu',
-+        'qcom,scorpion-pmu',
-+        'qcom,scorpion-mp-pmu',
-+        'qcom,krait-pmu',
-+        ], False, [
-+        PropReg(),
-+        PropIntList('interrupts'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.py b/Documentation/devicetree/bindings/arm/rockchip.py
-new file mode 100644
-index 0000000000000..991775a63ac52
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/rockchip.py
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Rockchip platforms device tree bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeModel
-+
-+schema = [
-+    NodeModel('Google Jerry',
-+              ['google,veyron-jerry-rev7', 'google,veyron-jerry-rev6',
-+               'google,veyron-jerry-rev5', 'google,veyron-jerry-rev4',
-+               'google,veyron-jerry-rev3', 'google,veyron-jerry',
-+               'google,veyron', 'rockchip,rk3288']),
-+]
-diff --git a/Documentation/devicetree/bindings/arm/xilinx.py b/Documentation/devicetree/bindings/arm/xilinx.py
-new file mode 100644
-index 0000000000000..8901878cfdf31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/xilinx.py
-@@ -0,0 +1,24 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Rockchip platforms device tree bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeModel
-+
-+schema = [
-+    NodeModel('Digilent Zybo board',
-+              ['adapteva,parallella',
-+              'digilent,zynq-zybo',
-+              'digilent,zynq-zybo-z7',
-+              'xlnx,zynq-cc108',
-+              'xlnx,zynq-zc702',
-+              'xlnx,zynq-zc706',
-+              'xlnx,zynq-zc770-xm010',
-+              'xlnx,zynq-zc770-xm011',
-+              'xlnx,zynq-zc770-xm012',
-+              'xlnx,zynq-zc770-xm013',
-+              'xlnx,zynq-7000',
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/base.py b/Documentation/devicetree/bindings/base.py
-new file mode 100644
-index 0000000000000..9b86b30e12ee3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/base.py
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# base (built-in) bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropBool
-+
-+schema = [
-+    NodeDesc('simple-bus', ['simple-bus'], False, [
-+        PropBool('ranges'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/chosen.py b/Documentation/devicetree/bindings/chosen.py
-new file mode 100644
-index 0000000000000..9df2e6418222a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/chosen.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /chosen bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeChosen, PropString
-+
-+schema = [
-+    NodeChosen([
-+        PropString('bootargs'),
-+        PropString('stdout-path'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-dt.py b/Documentation/devicetree/bindings/cpufreq/cpufreq-dt.py
-new file mode 100644
-index 0000000000000..cb199af8dce5f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-dt.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /cpu bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeCpu
-+from kschema import PropInt
-+
-+schema1 = [
-+    NodeCpu(None, [
-+        PropInt('clock-latency'),
-+        ])
-+    ]
-diff --git a/Documentation/devicetree/bindings/fpga/fpga-region.py b/Documentation/devicetree/bindings/fpga/fpga-region.py
-new file mode 100644
-index 0000000000000..908cb8d3260f3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/fpga-region.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# fpga-region bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropBool, PropPhandle
-+
-+schema = [
-+    NodeDesc('fpga-region', ['fpga-region'], True, [
-+        PropPhandle('fpga-mgr', 'xlnx,zynq-devcfg-1.0'),
-+        PropBool('ranges'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py
-new file mode 100644
-index 0000000000000..9f55f48f7cde7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+
-+# Xilinx XADC device driver
-+
-+from kschema import NodeDesc, PropBool, PropClocks, PropInt, PropIntList, PropInterrupts, PropReg, PropStringList
-+
-+schema = [
-+    NodeDesc('xilinx-xadc', ['xlnx,zynq-xadc-1.00.a', 'xlnx,axi-xadc-1.00.a'], False, desc=
-+            'This binding document describes the bindings for both of them since the'
-+            'bindings are very similar. The Xilinx XADC is a ADC that can be found in the'
-+            'series 7 FPGAs from Xilinx. The XADC has a DRP interface for communication.'
-+            'Currently two different frontends for the DRP interface exist. One that is only'
-+            'available on the ZYNQ family as a hardmacro in the SoC portion of the ZYNQ. The'
-+            'other one is available on all series 7 platforms and is a softmacro with a AXI'
-+            'interface. This binding document describes the bindings for both of them since'
-+            'the bindings are very similar.', elements=[
-+        PropReg(required=True, 
-+            desc='Address and length of the register set for the device'),
-+        PropInterrupts(required=True, 
-+            desc='Interrupt for the XADC control interface.'),
-+        PropClocks(required=True, 
-+            desc='When using the ZYNQ this must be the ZYNQ PCAP clock,'
-+            'when using the AXI-XADC pcore this must be the clock that provides the'
-+            'clock to the AXI bus interface of the core.'),
-+        PropStringList('xlnx,external-mux', str_pattern='none|single|dual',
-+            desc=''),
-+        PropIntList('xlnx,external-mux-channel', valid_list='0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|16|1|2|3|4|5|6|8',
-+            desc='Configures which pair of pins is used to'
-+            'sample data in external mux mode.'
-+            'Valid values for single external multiplexer mode are:'
-+            'Valid values for dual external multiplexer mode are:'
-+            ''
-+            'This property needs to be present if the device is configured for'
-+            'external multiplexer mode (either single or dual). If the device is'
-+            'not using external multiplexer mode the property is ignored.'),
-+        NodeDesc('xlnx,channels', None, False, desc=
-+                'List of external channels that are connected to the ADC', elements=[
-+            PropInt('#address-cells', required=True, 
-+                desc='Should be 1.'),
-+            PropInt('#size-cells', required=True, 
-+                desc='Should be 0.'),
-+            NodeDesc('None', None, False, desc=
-+                    'The child nodes of this node represent the external channels which are'
-+                    'connected to the ADC. If the property is no present no external'
-+                    'channels will be assumed to be connected.', elements=[
-+                NodeDesc('None', None, False, desc=
-+                        'Each child node represents one channel and has the following'
-+                        'properties:', elements=[
-+                    PropIntList('reg', required=True, valid_list='0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|16',
-+                        desc='Pair of pins the channel is connected to.'
-+                        'Note each channel number should only be used at most'
-+                        'once.'),
-+                    PropBool('xlnx,bipolar', 
-+                        desc='If set the channel is used in bipolar'
-+                        'mode.'),
-+                    ]),
-+                ]),
-+            ]),
-+        ]),
-+    ]
-diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
-index e0e0755cabd8a..24def33e6d6b8 100644
---- a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
-@@ -32,24 +32,26 @@ Optional properties:
- 	- xlnx,external-mux-channel: Configures which pair of pins is used to
- 	  sample data in external mux mode.
- 	  Valid values for single external multiplexer mode are:
--		0: VP/VN
--		1: VAUXP[0]/VAUXN[0]
--		2: VAUXP[1]/VAUXN[1]
-+		* 0: VP/VN
-+		* 1: VAUXP[0]/VAUXN[0]
-+		* 2: VAUXP[1]/VAUXN[1]
- 		...
--		16: VAUXP[15]/VAUXN[15]
-+		* 16: VAUXP[15]/VAUXN[15]
- 	  Valid values for dual external multiplexer mode are:
--		1: VAUXP[0]/VAUXN[0] - VAUXP[8]/VAUXN[8]
--		2: VAUXP[1]/VAUXN[1] - VAUXP[9]/VAUXN[9]
-+		* 1: VAUXP[0]/VAUXN[0] - VAUXP[8]/VAUXN[8]
-+		* 2: VAUXP[1]/VAUXN[1] - VAUXP[9]/VAUXN[9]
- 		...
--		8: VAUXP[7]/VAUXN[7] - VAUXP[15]/VAUXN[15]
-+		* 8: VAUXP[7]/VAUXN[7] - VAUXP[15]/VAUXN[15]
- 
- 	  This property needs to be present if the device is configured for
- 	  external multiplexer mode (either single or dual). If the device is
- 	  not using external multiplexer mode the property is ignored.
--	- xnlx,channels: List of external channels that are connected to the ADC
-+
-+Required subnodes:
-+	- xlnx,channels: List of external channels that are connected to the ADC
- 	  Required properties:
--		* #address-cells: Should be 1.
--		* #size-cells: Should be 0.
-+		- #address-cells: Should be 1.
-+		- #size-cells: Should be 0.
- 
- 	  The child nodes of this node represent the external channels which are
- 	  connected to the ADC. If the property is no present no external
-@@ -58,16 +60,16 @@ Optional properties:
- 	  Each child node represents one channel and has the following
- 	  properties:
- 		Required properties:
--			* reg: Pair of pins the channel is connected to.
--				0: VP/VN
--				1: VAUXP[0]/VAUXN[0]
--				2: VAUXP[1]/VAUXN[1]
-+			- reg: Pair of pins the channel is connected to.
-+				* 0: VP/VN
-+				* 1: VAUXP[0]/VAUXN[0]
-+				* 2: VAUXP[1]/VAUXN[1]
- 				...
--				16: VAUXP[15]/VAUXN[15]
-+				* 16: VAUXP[15]/VAUXN[15]
- 			  Note each channel number should only be used at most
- 			  once.
- 		Optional properties:
--			* xlnx,bipolar: If set the channel is used in bipolar
-+			- xlnx,bipolar: If set the channel is used in bipolar
- 			  mode.
- 
- 
-diff --git a/Documentation/devicetree/bindings/memory.py b/Documentation/devicetree/bindings/memory.py
-new file mode 100644
-index 0000000000000..5f11c0bb6aa83
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /memory bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeMemory, PropReg, PropString
-+
-+schema = [
-+    NodeMemory([
-+        PropString('device_type', True),
-+        PropReg(),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/opp/opp.py b/Documentation/devicetree/bindings/opp/opp.py
-new file mode 100644
-index 0000000000000..2cede72a3288f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/opp/opp.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# operating-point bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeCpu
-+from kschema import PropIntList
-+
-+schema1 = [
-+    NodeCpu(None, [
-+        PropIntList('operating-points'),
-+        ])
-+    ]
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.py b/Documentation/devicetree/bindings/regulator/fixed-regulator.py
-new file mode 100644
-index 0000000000000..cc51c1dd8a0fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.py
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Performance-Monitoring Unit (PMU) bindings
-+#
-+# not Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropString
-+from regulator import SCHEMA_REGULATOR
-+
-+schema = [
-+    NodeDesc('regulator-fixed', ['regulator-fixed'], False, [
-+    ] + SCHEMA_REGULATOR),
-+]
-diff --git a/Documentation/devicetree/bindings/regulator/regulator.py b/Documentation/devicetree/bindings/regulator/regulator.py
-new file mode 100644
-index 0000000000000..455af73ac8ea5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/regulator.py
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Performance-Monitoring Unit (PMU) bindings
-+#
-+# not Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropBool, PropInt, PropPhandleTarget, PropString
-+
-+SCHEMA_REGULATOR = [
-+    PropString('regulator-name', True),
-+    PropBool('regulator-always-on'),
-+    PropBool('regulator-boot-on'),
-+    PropInt('regulator-min-microvolt'),
-+    PropInt('regulator-max-microvolt'),
-+    PropPhandleTarget(),
-+    ];
-+
-+no_schema = True
-diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.py b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.py
-new file mode 100644
-index 0000000000000..0f19fc2b61633
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.py
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /reserved-memory bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeReservedMemory, PropBool
-+
-+schema = [
-+    NodeReservedMemory([
-+        PropBool('ranges'),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/thermal/thermal.py b/Documentation/devicetree/bindings/thermal/thermal.py
-new file mode 100644
-index 0000000000000..a24801937594d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/thermal.py
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# /thermal-zone bindings
-+#
-+# Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, NodeThermalZones
-+
-+schema = [
-+    NodeThermalZones([
-+        NodeDesc('cpu-thermal', []),
-+        NodeDesc('gpu-thermal', []),
-+    ]),
-+]
-diff --git a/Documentation/devicetree/bindings/usb/usb-nop-xceiv.py b/Documentation/devicetree/bindings/usb/usb-nop-xceiv.py
-new file mode 100644
-index 0000000000000..d71c9f9ba84ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/usb-nop-xceiv.py
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Performance-Monitoring Unit (PMU) bindings
-+#
-+# not Copyright 2018 Google LLC
-+#
-+
-+from kschema import NodeDesc, PropGpios, PropInt, PropPhandleTarget
-+
-+schema = [
-+    NodeDesc('usb-nop-xceiv', ['usb-nop-xceiv'], False, [
-+        PropPhandleTarget(),
-+        PropInt('#phy-cells'),
-+        PropGpios('reset', 1),
-+    ]),
-+]
--- 
-2.21.0.593.g511ec345e18-goog
-
+Jacob
