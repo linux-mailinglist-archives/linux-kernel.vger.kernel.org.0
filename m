@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 625C2E51F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 543A2E51D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbfD2OpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:45:22 -0400
+        id S1728600AbfD2OpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:45:24 -0400
 Received: from mga05.intel.com ([192.55.52.43]:1324 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728560AbfD2OpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:45:21 -0400
+        id S1728564AbfD2OpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:45:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 07:45:20 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 07:45:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,409,1549958400"; 
-   d="scan'208";a="154739495"
+   d="scan'208";a="154739498"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
-  by orsmga002.jf.intel.com with ESMTP; 29 Apr 2019 07:45:20 -0700
+  by orsmga002.jf.intel.com with ESMTP; 29 Apr 2019 07:45:21 -0700
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
         linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, tj@kernel.org, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 1/4] perf: Fix system-wide events miscounting during cgroup monitoring
-Date:   Mon, 29 Apr 2019 07:44:02 -0700
-Message-Id: <1556549045-71814-2-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH 2/4] perf: Add filter_match() as a parameter for pinned/flexible_sched_in()
+Date:   Mon, 29 Apr 2019 07:44:03 -0700
+Message-Id: <1556549045-71814-3-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556549045-71814-1-git-send-email-kan.liang@linux.intel.com>
 References: <1556549045-71814-1-git-send-email-kan.liang@linux.intel.com>
@@ -38,129 +38,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-When counting system-wide events and cgroup events simultaneously, the
-value of system-wide events are miscounting. For example,
+A fast path will be introduced in the following patches to speed up the
+cgroup events sched in, which only needs a simpler filter_match().
 
-    perf stat -e cycles,instructions -e cycles,instructions -G
-cgroup1,cgroup1,cgroup2,cgroup2 -a -e cycles,instructions -I 1000
+Add filter_match() as a parameter for pinned/flexible_sched_in().
 
-     1.096265502     12,375,398,872      cycles              cgroup1
-     1.096265502      8,396,184,503      instructions        cgroup1
- #    0.10  insn per cycle
-     1.096265502    109,609,027,112      cycles              cgroup2
-     1.096265502     11,533,690,148      instructions        cgroup2
- #    0.14  insn per cycle
-     1.096265502    121,672,937,058      cycles
-     1.096265502     19,331,496,727      instructions               #
-0.24  insn per cycle
+No functional change.
 
-The events are identical events for system-wide and cgroup. The
-value of system-wide events is less than the sum of cgroup events,
-which is wrong.
-
-Both system-wide and cgroup are per-cpu. They share the same cpuctx
-groups, cpuctx->flexible_groups/pinned_groups.
-In context switch, cgroup switch tries to schedule all the events in
-the cpuctx groups. The unmatched cgroup events can be filtered by its
-event->cgrp. However, system-wide events, which event->cgrp is NULL, are
-unconditionally switched, which causes miscounting.
-
-Introduce cgrp_switch in cpuctx to indicate the cgroup context switch.
-If it's system-wide event in context switch, don't try to switch it.
-
-Fixes: e5d1367f17ba ("perf: Add cgroup support")
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 30 ++++++++++++++++++++++++++++--
- 2 files changed, 29 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index e47ef76..039e2f2 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -795,6 +795,7 @@ struct perf_cpu_context {
- #ifdef CONFIG_CGROUP_PERF
- 	struct perf_cgroup		*cgrp;
- 	struct list_head		cgrp_cpuctx_entry;
-+	unsigned int			cgrp_switch		:1;
- #endif
- 
- 	struct list_head		sched_cb_entry;
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index dc7dead..388dd42 100644
+index 388dd42..782fd86 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -809,6 +809,7 @@ static void perf_cgroup_switch(struct task_struct *task, int mode)
- 
- 		perf_ctx_lock(cpuctx, cpuctx->task_ctx);
- 		perf_pmu_disable(cpuctx->ctx.pmu);
-+		cpuctx->cgrp_switch = true;
- 
- 		if (mode & PERF_CGROUP_SWOUT) {
- 			cpu_ctx_sched_out(cpuctx, EVENT_ALL);
-@@ -832,6 +833,7 @@ static void perf_cgroup_switch(struct task_struct *task, int mode)
- 							     &cpuctx->ctx);
- 			cpu_ctx_sched_in(cpuctx, EVENT_ALL, task);
- 		}
-+		cpuctx->cgrp_switch = false;
- 		perf_pmu_enable(cpuctx->ctx.pmu);
- 		perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
- 	}
-@@ -2944,13 +2946,25 @@ static void ctx_sched_out(struct perf_event_context *ctx,
- 
- 	perf_pmu_disable(ctx->pmu);
- 	if (is_active & EVENT_PINNED) {
--		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
-+		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list) {
-+#ifdef CONFIG_CGROUP_PERF
-+			/* Don't sched system-wide event when cgroup context switch */
-+			if (cpuctx->cgrp_switch && !event->cgrp)
-+				continue;
-+#endif
- 			group_sched_out(event, cpuctx, ctx);
-+		}
- 	}
- 
- 	if (is_active & EVENT_FLEXIBLE) {
--		list_for_each_entry_safe(event, tmp, &ctx->flexible_active, active_list)
-+		list_for_each_entry_safe(event, tmp, &ctx->flexible_active, active_list) {
-+#ifdef CONFIG_CGROUP_PERF
-+			/* Don't sched system-wide event when cgroup context switch */
-+			if (cpuctx->cgrp_switch && !event->cgrp)
-+				continue;
-+#endif
- 			group_sched_out(event, cpuctx, ctx);
-+		}
- 	}
- 	perf_pmu_enable(ctx->pmu);
+@@ -3251,7 +3251,8 @@ static void cpu_ctx_sched_out(struct perf_cpu_context *cpuctx,
  }
-@@ -3280,6 +3294,12 @@ static int pinned_sched_in(struct perf_event *event, void *data)
- 	if (event->state <= PERF_EVENT_STATE_OFF)
+ 
+ static int visit_groups_merge(struct perf_event_groups *groups, int cpu,
+-			      int (*func)(struct perf_event *, void *), void *data)
++			      int (*func)(struct perf_event *, void *, int (*)(struct perf_event *)),
++			      void *data)
+ {
+ 	struct perf_event **evt, *evt1, *evt2;
+ 	int ret;
+@@ -3271,7 +3272,7 @@ static int visit_groups_merge(struct perf_event_groups *groups, int cpu,
+ 			evt = &evt2;
+ 		}
+ 
+-		ret = func(*evt, data);
++		ret = func(*evt, data, event_filter_match);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -3287,7 +3288,8 @@ struct sched_in_data {
+ 	int can_add_hw;
+ };
+ 
+-static int pinned_sched_in(struct perf_event *event, void *data)
++static int pinned_sched_in(struct perf_event *event, void *data,
++			   int (*filter_match)(struct perf_event *))
+ {
+ 	struct sched_in_data *sid = data;
+ 
+@@ -3300,7 +3302,7 @@ static int pinned_sched_in(struct perf_event *event, void *data)
+ 		return 0;
+ #endif
+ 
+-	if (!event_filter_match(event))
++	if (!filter_match(event))
  		return 0;
  
-+#ifdef CONFIG_CGROUP_PERF
-+	/* Don't sched system-wide event when cgroup context switch */
-+	if (sid->cpuctx->cgrp_switch && !event->cgrp)
-+		return 0;
-+#endif
-+
- 	if (!event_filter_match(event))
+ 	if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
+@@ -3318,7 +3320,8 @@ static int pinned_sched_in(struct perf_event *event, void *data)
+ 	return 0;
+ }
+ 
+-static int flexible_sched_in(struct perf_event *event, void *data)
++static int flexible_sched_in(struct perf_event *event, void *data,
++			     int (*filter_match)(struct perf_event *))
+ {
+ 	struct sched_in_data *sid = data;
+ 
+@@ -3331,7 +3334,7 @@ static int flexible_sched_in(struct perf_event *event, void *data)
+ 		return 0;
+ #endif
+ 
+-	if (!event_filter_match(event))
++	if (!filter_match(event))
  		return 0;
  
-@@ -3305,6 +3325,12 @@ static int flexible_sched_in(struct perf_event *event, void *data)
- 	if (event->state <= PERF_EVENT_STATE_OFF)
- 		return 0;
- 
-+#ifdef CONFIG_CGROUP_PERF
-+	/* Don't sched system-wide event when cgroup context switch */
-+	if (sid->cpuctx->cgrp_switch && !event->cgrp)
-+		return 0;
-+#endif
-+
- 	if (!event_filter_match(event))
- 		return 0;
- 
+ 	if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
 -- 
 2.7.4
 
