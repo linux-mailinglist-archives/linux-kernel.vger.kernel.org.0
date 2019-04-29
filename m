@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48290EC11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27770EC0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbfD2V2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:28:05 -0400
+        id S1729485AbfD2V2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:28:01 -0400
 Received: from esa5.hgst.iphmx.com ([216.71.153.144]:37434 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729348AbfD2V15 (ORCPT
+        with ESMTP id S1729472AbfD2V16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:27:57 -0400
+        Mon, 29 Apr 2019 17:27:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
   t=1556573278; x=1588109278;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=674EX0iIftC/tP47ciQ2WAq8p0Blf4MJzfJ6YEpD/54=;
-  b=Gixex1Az6UlvmaCFT1ZaGcJumU2WGl8kXzdSafJvYxPUzcwk3UGSsZln
-   qCVgjcpE4Cwp27Mc8vPb6AC/VIFscZVlwI6QJuBuSl5Ln4MmtxRx4XPOr
-   jvlugyVEr7pqymQBawjoVtmS/osaiSftBcGcWZlAPDZNZDOqxTJMy6Pki
-   SsG3jJXMmxEzHlDqxRoWufDtfYhPaTn+Po/GrMgG5gW+QfqGqnLOqwc5d
-   JkJCABxj2UrKrphop7bUQMGyX9B5Jww4u2wXlScs41y1ZlcPykIl63NpR
-   LdUvAX8bZp80BlRb2rqY5h6ueriu+f/6TGBBzjR8Gt0RDJk3ojvxzg+37
+  bh=6yEgNpC7nkfK5Gt64tHVR1TWf8LgYKpoRswHlGybH9k=;
+  b=qFV6oej8ZiMi/3N42HtMykVcr51YOR7jpcrd5FGkvRujsCRu/7D6ihQR
+   jPQ4vVDCR6FG0hfxCw8aSRUzN9Q+PMlOnzPzvkk30PTYF7pZOEr23FkZH
+   b5nDbo9t0a3SIeHGy3AO7t7vqdS6NzBNbPlnYBwy7KlY9PxnufFHxrlJP
+   c8kjS8NObeo1R15C1fcVL84koCFVWL1DIjy7pofNNS0Pr7fCk//vqTg0A
+   gwsirVIVOZox2WbicHttWyiI222bWTIyPjnjeGKfMZxe2R6+fxiF2JdS5
+   /i5n6KK56qLJC4epXrEXAHmt0MsJ5H5y1Sl+/80ZuJ1s5dDTCr96D8gwi
    Q==;
 X-IronPort-AV: E=Sophos;i="5.60,411,1549900800"; 
-   d="scan'208";a="108317116"
+   d="scan'208";a="108317119"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 30 Apr 2019 05:27:57 +0800
-IronPort-SDR: LKgUSq1ZMIHzoVgQj31y2xZX5nVF3XsaR9ltnhC+igCzTG/nguU8ZWfvCe07INLmZkzoMhnJuh
- vBBy85dd60v4cHfgYFRDkbYHVeHxppq4UktjEKY3VG8ccsI8aaw3J9sqPXsDoo539oSPFq+QbB
- wU/TsNeod+Bg6v016i7+YPd6HY5ROmnM50a8+MKn1C06V7acuE5j+nTKISJrw7VzDvML9BmLky
- +/phmsXLyV6gW6nBffVNgZQO0YQ5tXf2L2bByPjRGhjX4ibQpbGcz2BCc47LuXCaMo3Wc/7oZP
- f+DpzzAQN3Y0fV+vanBLuBcX
+IronPort-SDR: XySzfO7/Hs3o7bUTXppuoEJP5isH9hWHvrlvFkQuoHnlX4XJiU+1rfwSXdpzqLifRAHQzD8ij4
+ VapGnqX1PKKp0Xds8Q+7oftDpjc++4xkm5b8W3X5SIrrjkYxwET+xwBqEfrs/qOecYcDZA2jrI
+ HX/gahDE+Azyo8W4q12jxioytQsH+5TFshxwFr5r3CExjtANOF6/R7k95SJ2sQgpF2L3erPiWg
+ OJBYN1CKtGM3zohTLaO4sX2xrVrXO6CABKyKXa4EQpzo7mDGggpHqIuTOxcWYox62pQDdac6PU
+ Rm7DBZTxba2Qmm16GvTi5xFt
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep02.wdc.com with ESMTP; 29 Apr 2019 14:06:27 -0700
-IronPort-SDR: YKuQOaUGXWtvH6yMxnbX+5T8aKt+xMu1UOys2MqMN9CNGPcNGH4YnoS70RHEai/+/Dum58K/mC
- XFPRVsEpiOt3g5p92g5To6ydWIgV9ypo/MTkjzd06pojtdh+/P/oQUeywSO6jT8onKm5pitIXw
- aaM1FvzE3F8rjP1lzuGf9XKPsK0Q6nceqmHgrOGZaUT7EtHOCWqLPwyq+uZipCVjFTbwv1zRtJ
- cQeDkzSR2TxSz7tEs88qTe1xk1rgl6YPggLJ9AGDzG5yhhpSIJRqxGR/ImMmzo3mU1rODfO2sq
- RXU=
+IronPort-SDR: AeMSfyunL2LsJhLHPw2d6fgcuYcVNj32UjjthqEnf0K3EjrF0GfZMDuDh2OiloNPAlz1aVw0i+
+ rx3dfrB4ctlfgfcrvEiWMY+xU/qL+lKYERo0bkL1QP8bZFPZXWNmK7AHG7clayjGa0Lj8ENMyx
+ 1wOmvOtnbDL3ngbhjQJ8wQKU3EyfHbxJyNq4JwOyOf6ZFZT8aE5nKv3MOFwnA7Y9OWIXRSIzTU
+ D9skxvS/yaP+Q4I3XwxKDgiOXhch58PXoMJmzb/ezPJ2i0WDiO2HBIWmE1psz19MgvK5WqcNgm
+ V3M=
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 29 Apr 2019 14:27:56 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 29 Apr 2019 14:27:57 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Atish Patra <atish.patra@wdc.com>,
@@ -61,9 +61,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
         Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v3 2/3] RISC-V: Enable TLBFLUSH counters for debug kernel.
-Date:   Mon, 29 Apr 2019 14:27:49 -0700
-Message-Id: <20190429212750.26165-3-atish.patra@wdc.com>
+Subject: [PATCH v3 3/3] RISC-V: Update tlb flush counters
+Date:   Mon, 29 Apr 2019 14:27:50 -0700
+Message-Id: <20190429212750.26165-4-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190429212750.26165-1-atish.patra@wdc.com>
 References: <20190429212750.26165-1-atish.patra@wdc.com>
@@ -77,25 +77,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The TLB flush counters under vmstat seems to be very helpful while
 debugging TLB flush performance in RISC-V.
 
-Add the Kconfig option only for debug kernels.
+Update the counters in every TLB flush methods respectively.
 
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/include/asm/tlbflush.h |  5 +++++
+ arch/riscv/mm/tlbflush.c          | 12 ++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index eb56c82d8aa1..c1ee876d1e7f 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -49,6 +49,7 @@ config RISCV
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select ARCH_HAS_PTE_SPECIAL
- 	select HAVE_EBPF_JIT if 64BIT
-+	select HAVE_ARCH_DEBUG_TLBFLUSH if DEBUG_KERNEL
+diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
+index 29a780ca232a..19779a083f52 100644
+--- a/arch/riscv/include/asm/tlbflush.h
++++ b/arch/riscv/include/asm/tlbflush.h
+@@ -9,6 +9,7 @@
+ #define _ASM_RISCV_TLBFLUSH_H
  
- config MMU
- 	def_bool y
+ #include <linux/mm_types.h>
++#include <linux/vmstat.h>
+ 
+ /*
+  * Flush entire local TLB.  'sfence.vma' implicitly fences with the instruction
+@@ -16,11 +17,13 @@
+  */
+ static inline void local_flush_tlb_all(void)
+ {
++	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ALL);
+ 	__asm__ __volatile__ ("sfence.vma" : : : "memory");
+ }
+ 
+ static inline void local_flush_tlb_mm(struct mm_struct *mm)
+ {
++	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ALL);
+ 	/* Flush ASID 0 so that global mappings are not affected */
+ 	__asm__ __volatile__ ("sfence.vma x0, %0" : : "r" (0) : "memory");
+ }
+@@ -28,6 +31,7 @@ static inline void local_flush_tlb_mm(struct mm_struct *mm)
+ static inline void local_flush_tlb_page(struct vm_area_struct *vma,
+ 	unsigned long addr)
+ {
++	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ONE);
+ 	__asm__ __volatile__ ("sfence.vma %0, %1"
+ 			      : : "r" (addr), "r" (0)
+ 			      : "memory");
+@@ -35,6 +39,7 @@ static inline void local_flush_tlb_page(struct vm_area_struct *vma,
+ 
+ static inline void local_flush_tlb_kernel_page(unsigned long addr)
+ {
++	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ONE);
+ 	__asm__ __volatile__ ("sfence.vma %0" : : "r" (addr) : "memory");
+ }
+ 
+diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
+index ceee76f14a0a..8072d7da32bb 100644
+--- a/arch/riscv/mm/tlbflush.c
++++ b/arch/riscv/mm/tlbflush.c
+@@ -4,6 +4,8 @@
+  */
+ 
+ #include <linux/mm.h>
++#include <linux/vmstat.h>
++#include <linux/cpumask.h>
+ #include <asm/sbi.h>
+ 
+ #define SFENCE_VMA_FLUSH_ALL ((unsigned long) -1)
+@@ -110,6 +112,7 @@ static void ipi_remote_sfence_vma(void *info)
+ 	unsigned long size = data->size;
+ 	unsigned long i;
+ 
++	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+ 	if (size == SFENCE_VMA_FLUSH_ALL) {
+ 		local_flush_tlb_all();
+ 	}
+@@ -129,6 +132,8 @@ static void ipi_remote_sfence_vma_asid(void *info)
+ 	unsigned long size = data->size;
+ 	unsigned long i;
+ 
++	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
++	/* Flush entire MM context */
+ 	if (size == SFENCE_VMA_FLUSH_ALL) {
+ 		__asm__ __volatile__ ("sfence.vma x0, %0"
+ 				      : : "r" (asid)
+@@ -158,6 +163,13 @@ static void remote_sfence_vma(unsigned long start, unsigned long size)
+ static void remote_sfence_vma_asid(cpumask_t *mask, unsigned long start,
+ 				   unsigned long size, unsigned long asid)
+ {
++	int cpuid = smp_processor_id();
++
++	if (cpumask_equal(mask, cpumask_of(cpuid)))
++		count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ALL);
++	else
++		count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
++
+ 	if (tlbi_ipi) {
+ 		struct tlbi info = {
+ 			.start = start,
 -- 
 2.21.0
 
