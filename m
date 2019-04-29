@@ -2,76 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058F6E46A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC3CE476
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfD2OO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:14:57 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:44036 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfD2OO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:14:57 -0400
-Received: from zn.tnic (p200300EC2F073600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:3600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9B55C1EC014A;
-        Mon, 29 Apr 2019 16:14:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1556547295;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ux3dNjcP4oIYXywKrNpKFEkeqZLwEjS3goh7xxBcUmw=;
-        b=cr0oJ2wEMeuLGB4SpNVM+Chr5qUDoCb4DT4Sl0H/qmj3C4eVe5DI3cXR0WrsmXwbruEK7Q
-        6IHvlkiZdoeeqb2SGwoV4nA2YwFXDVxNfJkSun9CRFnPQy37cJkI3Af1iMNq7figxKYMxI
-        nkpO1iTAiv1z3T8qTgjrxUDREJK9Oh0=
-Date:   Mon, 29 Apr 2019 16:14:50 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH v3 2/2] x86/fault: Decode and print #PF oops in human
- readable form
-Message-ID: <20190429141450.GD2324@zn.tnic>
-References: <20181221213657.27628-1-sean.j.christopherson@intel.com>
- <20181221213657.27628-3-sean.j.christopherson@intel.com>
- <CACT4Y+Z96anrG1da1-8VXA8BLMd-RA16ysicA=X-CUoSuGAw0Q@mail.gmail.com>
+        id S1728384AbfD2OQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:16:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57989 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfD2OQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:16:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TEG23J941667
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 29 Apr 2019 07:16:03 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TEG23J941667
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556547363;
+        bh=0Ui+o1kSVZ4jE9Css0P+yjJEJFZjFSDhDGouXzoUYAc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=sSlMatAt06ixwRkpmS9e//TKvLfsHcJwGungkA/Z+Tf12PCuCVbDHc04LtSCr1YuG
+         zHWLXuLD00FmOtkVMZeZ5R/A3ZPHNkNMMte9O1/bcAik//7skbJa99VVilQy9JeIas
+         oCy/5tzUHUfhA21O8NkbgHgkbUJ9JoDLUyI3iuHDoE3bftAvLU1WFjWcWAwkadAI/G
+         k9ZWr+Nz/viaN3p15E0F/X8JY+CsxtwtC7YJ0hZrkr9qzwM7CofWrbNSFtOk0lzf0q
+         ipcujtEDFDQCV7ynrnq6So0/xuaSIx3cPpE2ObU2JDVVoN1nyDXj2vne6UFBg7k6y9
+         lL0G9KsSE1qlg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TEG2Io941664;
+        Mon, 29 Apr 2019 07:16:02 -0700
+Date:   Mon, 29 Apr 2019 07:16:02 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for zhengbin <tipbot@zytor.com>
+Message-ID: <tip-d671002be6bdd7f77a771e23bf3e95d1f16775e6@git.kernel.org>
+Cc:     peterz@infradead.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        mingo@kernel.org, will.deacon@arm.com, hpa@zytor.com,
+        zhengbin13@huawei.com
+Reply-To: akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          zhengbin13@huawei.com, hpa@zytor.com, will.deacon@arm.com,
+          mingo@kernel.org
+In-Reply-To: <1556540791-23110-1-git-send-email-zhengbin13@huawei.com>
+References: <1556540791-23110-1-git-send-email-zhengbin13@huawei.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Remove unnecessary unlikely()
+Git-Commit-ID: d671002be6bdd7f77a771e23bf3e95d1f16775e6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z96anrG1da1-8VXA8BLMd-RA16ysicA=X-CUoSuGAw0Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 03:58:20PM +0200, Dmitry Vyukov wrote:
-> Ideally, such changes are coordinated with kernel testing for gradual
-> rollout. Since kernel does not provide an official facility for crash
-> parsing, the actual output effectively becomes part of public API.
+Commit-ID:  d671002be6bdd7f77a771e23bf3e95d1f16775e6
+Gitweb:     https://git.kernel.org/tip/d671002be6bdd7f77a771e23bf3e95d1f16775e6
+Author:     zhengbin <zhengbin13@huawei.com>
+AuthorDate: Mon, 29 Apr 2019 20:26:31 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 29 Apr 2019 16:11:01 +0200
 
-Well, printk message formats are not an API. I agree, though, that if
-this is how kernel testing is going to get told about crashes, then we'd
-need some sort of parsing specification which gets changed together with
-when the actual messages are changed, so that tools don't break.
+locking/lockdep: Remove unnecessary unlikely()
 
-Or something slicker and more robust than tools parsing dmesg output...
+DEBUG_LOCKS_WARN_ON() already contains an unlikely(), there is no need
+for another one.
 
--- 
-Regards/Gruss,
-    Boris.
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: houtao1@huawei.com
+Link: http://lkml.kernel.org/r/1556540791-23110-1-git-send-email-zhengbin13@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/lockdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 25ecc6d3058b..6426d071a324 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3256,7 +3256,7 @@ void lockdep_hardirqs_on(unsigned long ip)
+ 	/*
+ 	 * See the fine text that goes along with this variable definition.
+ 	 */
+-	if (DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled)))
++	if (DEBUG_LOCKS_WARN_ON(early_boot_irqs_disabled))
+ 		return;
+ 
+ 	/*
