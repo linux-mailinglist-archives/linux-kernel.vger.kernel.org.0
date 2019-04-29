@@ -2,121 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFE1E535
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E6FE546
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbfD2OrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:47:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37506 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbfD2OrN (ORCPT
+        id S1728468AbfD2OtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:49:14 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:43392 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbfD2OtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:47:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id b12so8434453lji.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 07:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4sxDBiGIfXC/ZiB8rBSK37wy0gqfF4x7jFrHPYHvbvA=;
-        b=jxCRQIk8xd5/68/ic6ZDupRiHo0z7xsxLRb0PfkjP1kbZ9SxgCDXwTf9uUqJJ990Dj
-         VHGckJD0/Q0f2eFix1OtHyOiSJQZo+Eeoxa07sSHKsOu3rWotlnHSTItFWOiltlhm9Zu
-         H5mq3z0HojQmiK1VfzTQs/o6b8qYXk19zC6I9Xy6+AAO8xFoV8U1d8N8cG5b0Yz651nQ
-         KdTxSuvFnIkgcloxLqLE6FK4pQbAQRlPsqU4+lsTiB+Aaipr18hnzvPvz27bSZuFqyFr
-         /XkaLzZnTTrDYWXSROP9UPEBCdfJmr70CiQQ0QyPvx/DPzhfK7OK+HxkDXKlcpbd+wZd
-         IlUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4sxDBiGIfXC/ZiB8rBSK37wy0gqfF4x7jFrHPYHvbvA=;
-        b=pnBlZcnNnEQXzUS7ZYIFQipice5OA3APzeyJhTRQdpSN1HTDtnvV+2P8xLaOgMxRXX
-         mRQRKus11YPsRDPEcjoqaTltUwzqkPIIQgEF2cEvON0U4UfFlhVkWAO5dXceU1yYcMr9
-         GDUJwgvfs0i5BKriTIGUaDHmZwa47Xy7B3ECdZDIlaagD9BngY4q96+y/Dm5qEKrtghm
-         4sTwVZY2RDmKA65ECWnFzwb/QMdL8s2Q8HI9WUvjWAHSboWP9Sdg3Xc4X6W/VrK+NckA
-         YN6nRDagFiMSZ5Jlo/0rgHLplD0Disapy8nZSw44CrDzI8IHKKCHcYHlhsBO5EfuUZ6G
-         7Cdw==
-X-Gm-Message-State: APjAAAU0RMzFCGXNQcpJiINmL3mudH175QLg1x6w5xG9PN8HXOqZieZK
-        TTlIpPT++IgS3Psopfs6K3lU45ZRbXMikIEVG/KZ
-X-Google-Smtp-Source: APXvYqwnGM3bgmafa0PUo1+A4uuPdo7L9ALPkS2QAvxAQutzf1VOfe4H+Tvfe5KUnuBe3FLFr4zwVXZvgtYpTXAqMM0=
-X-Received: by 2002:a2e:810f:: with SMTP id d15mr7819224ljg.38.1556549231239;
- Mon, 29 Apr 2019 07:47:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190422210041.GA21711@archlinux-i9> <CAHC9VhTtz3OA3EchaZaAeg=DxoGoz_WFdj+Mi9nd9i+cmjmuJA@mail.gmail.com>
- <20190423132926.GK17719@sasha-vm> <CAHC9VhRcdY7G_ES2VqNVpkoU=CRJkJySb3m1sFdgKJwh3JQ2oA@mail.gmail.com>
- <20190429124002.GB31371@kroah.com> <CAHC9VhQxrtYJTOj=aOL4FY=myA4ZO-rcY7TdCeFbjVnCmgOxew@mail.gmail.com>
- <20190429140906.GA7412@kroah.com>
-In-Reply-To: <20190429140906.GA7412@kroah.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 29 Apr 2019 10:47:00 -0400
-Message-ID: <CAHC9VhRDoYd=vfz3Sm8NKpMW_QoX7t_VohumUxU5i6AjTwCRyQ@mail.gmail.com>
-Subject: Re: scripts/selinux build error in 4.14 after glibc update
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nicolas Iooss <nicolas.iooss@m4x.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 29 Apr 2019 10:49:14 -0400
+Received: from grover.flets-west.jp (softbank126125154137.bbtec.net [126.125.154.137]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x3TElneS020381;
+        Mon, 29 Apr 2019 23:47:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x3TElneS020381
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1556549270;
+        bh=0mmb8KbbWCtfjhHsrd+vj0pp6+i0mYzDtsbj3K9ug1I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E/9dWespF/U4QZkTXajWW8HEjCLAKKtzzLhBEGSrAj4VfD82pdB+QgLaWlgB+DsaT
+         6UI0FG8X+mhTF7iJ86IY7bk/U3OQrxcU79h6tlvXMIkW+rNrOfRKryd3DVsWy1zDwK
+         GEoeQScbG6zQ4LquGHs3UKD3O3f/13bm8Od5l+ilrhK1fR+9bjc8BSU6acIm2x3XLC
+         HdLCTYw7cNLim5D7ScD3XYmceYHSbcgDvkXZ5QWKCbEs8RsV66wgIIkk/SAIjtrJzP
+         pGVLbPgdaEyka1onhlmaEIaNBLWsgWmMU3aBWNiOlyoyhj6j6f3nXE4QE494aHzA1n
+         QXm9/2qJy4Asg==
+X-Nifty-SrcIP: [126.125.154.137]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sirio Balmelli <sirio@b-ad.ch>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Martin KaFai Lau <kafai@fb.com>, bpf@vger.kernel.org
+Subject: [PATCH] bpftool: exclude bash-completion/bpftool from .gitignore pattern
+Date:   Mon, 29 Apr 2019 23:47:39 +0900
+Message-Id: <1556549259-16298-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:09 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Mon, Apr 29, 2019 at 10:02:29AM -0400, Paul Moore wrote:
-> > On Mon, Apr 29, 2019 at 8:40 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > On Tue, Apr 23, 2019 at 09:43:09AM -0400, Paul Moore wrote:
-> > > > On Tue, Apr 23, 2019 at 9:29 AM Sasha Levin <sashal@kernel.org> wrote:
-> > > > > On Mon, Apr 22, 2019 at 09:59:47PM -0400, Paul Moore wrote:
-> > > > > >On Mon, Apr 22, 2019 at 5:00 PM Nathan Chancellor
-> > > > > ><natechancellor@gmail.com> wrote:
-> > > > > >> Hi all,
-> > > > > >>
-> > > > > >> After a glibc update to 2.29, my 4.14 builds started failing like so:
-> > > > > >
-> > > > > >...
-> > > > > >
-> > > > > >>   HOSTCC  scripts/selinux/genheaders/genheaders
-> > > > > >> In file included from scripts/selinux/genheaders/genheaders.c:19:
-> > > > > >> ./security/selinux/include/classmap.h:245:2: error: #error New address family defined, please update secclass_map.
-> > > > > >>  #error New address family defined, please update secclass_map.
-> > > > > >>   ^~~~~
-> > > > > >
-> > > > > >This is a known problem that has a fix in the selinux/next branch and
-> > > > > >will be going up to Linus during the next merge window.  The fix is
-> > > > > >quite small and should be relatively easy for you to backport to your
-> > > > > >kernel build if you are interested; the patch can be found at the
-> > > > > >archive link below:
-> > > > > >
-> > > > > >https://lore.kernel.org/selinux/20190225005528.28371-1-paulo@paulo.ac
-> > > > >
-> > > > > Why is it waiting for the next merge window? It fixes a build bug that
-> > > > > people hit.
-> > > >
-> > > > I place a reasonably high bar on patches that I send up to Linus
-> > > > outside of the merge window and I didn't feel this patch met that
-> > > > criteria.  Nathan is only the second person I've seen who has
-> > > > encountered this problem, the first being the original patch author.
-> > > > As far as I've seen, the problem is only seen by users building older
-> > > > kernels on very new userspaces (e.g. glibc v2.29 was released in
-> > > > February 2019, Linux v4.14 was released in 2017); this doesn't appear
-> > > > to be a large group of people and I didn't want to risk breaking the
-> > > > main kernel tree during the -rcX phase for such a small group.
-> > >
-> > > Ugh, this breaks my local builds, I would recommend getting it to Linus
-> > > sooner please.
-> >
-> > Well, we are at -rc7 right now and it looks like an -rc8 is unlikely
-> > so the question really comes down to can/do you want to wait a week?
->
-> It's a regression in the 5.1-rc tree, that is hitting people now.  Why
-> do you want to have a 5.1-final that is known to be broken?
+tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
+intended to ignore the following build artifact:
 
-I believe I answered that in my reply to Sasha.  Can you answer the
-question I asked of you above?
+  tools/bpf/bpftool/bpftool
 
+However, the .gitignore entry is effective not only for the current
+directory, but also for any sub-directories.
+
+So, the following file is also considered to be ignored:
+
+  tools/bpf/bpftool/bash-completion/bpftool
+
+It is obviously version-controlled, so should be excluded from the
+.gitignore pattern.
+
+You can fix it by prefixing the pattern with '/', which means it is
+only effective in the current directory.
+
+I prefixed the other patterns consistently. IMHO, '/' prefixing is
+safer when you intend to ignore specific files.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ tools/bpf/bpftool/.gitignore | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+index 67167e4..19efcc8 100644
+--- a/tools/bpf/bpftool/.gitignore
++++ b/tools/bpf/bpftool/.gitignore
+@@ -1,5 +1,5 @@
+ *.d
+-bpftool
+-bpftool*.8
+-bpf-helpers.*
+-FEATURE-DUMP.bpftool
++/bpftool
++/bpftool*.8
++/bpf-helpers.*
++/FEATURE-DUMP.bpftool
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
