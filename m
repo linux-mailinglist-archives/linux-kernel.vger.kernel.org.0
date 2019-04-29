@@ -2,82 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05B5DBD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5424CDBE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfD2GP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:15:29 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41417 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726566AbfD2GP3 (ORCPT
+        id S1727517AbfD2GQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:16:21 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:61139 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727460AbfD2GQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:15:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TQTvZNw_1556518518;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TQTvZNw_1556518518)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 29 Apr 2019 14:15:24 +0800
-Date:   Mon, 29 Apr 2019 14:15:18 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v2 11/17] sched: Basic tracking of matching tasks
-Message-ID: <20190429061516.GA9796@aaronlu>
-References: <cover.1556025155.git.vpillai@digitalocean.com>
- <2364f2b65bf50826d881c84d7634b6565dfee527.1556025155.git.vpillai@digitalocean.com>
+        Mon, 29 Apr 2019 02:16:17 -0400
+X-UUID: 0137bd44709e48a0b763906698862109-20190429
+X-UUID: 0137bd44709e48a0b763906698862109-20190429
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 625703698; Mon, 29 Apr 2019 14:16:07 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 29 Apr 2019 14:16:05 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 29 Apr 2019 14:16:04 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>
+CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>
+Subject: [PATCH 0/4] fix some bugs in stmmac
+Date:   Mon, 29 Apr 2019 14:15:52 +0800
+Message-ID: <1556518556-32464-1-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2364f2b65bf50826d881c84d7634b6565dfee527.1556025155.git.vpillai@digitalocean.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 29BA39CCF686AAB9215B307A05FAB453ECA786A1640899DC7C3C5E6100E51E9E2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 04:18:16PM +0000, Vineeth Remanan Pillai wrote:
-> +/*
-> + * Find left-most (aka, highest priority) task matching @cookie.
-> + */
-> +struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
-> +{
-> +	struct rb_node *node = rq->core_tree.rb_node;
-> +	struct task_struct *node_task, *match;
-> +
-> +	/*
-> +	 * The idle task always matches any cookie!
-> +	 */
-> +	match = idle_sched_class.pick_task(rq);
-> +
-> +	while (node) {
-> +		node_task = container_of(node, struct task_struct, core_node);
-> +
-> +		if (node_task->core_cookie < cookie) {
-> +			node = node->rb_left;
+This series fix some bugs in stmmac driver.               
+3 patches are for common stmmac or dwmac4:                                      
+        1. update rx tail pointer to fix rx dma hang issue.                     
+        2. change condition for mdc clock to fix csr_clk can't be zero issue.   
+        3. write the modified value back to MTL_OPERATION_MODE.                 
+1 patche is for dwmac-mediatek:                                                 
+        1. modify csr_clk value to fix mdio read/write fail issue for dwmac-mediatek.
+                                                                                
+                                                                                
+Biao Huang (4):                                                                 
+  net: stmmac: update rx tail pointer register to fix rx dma hang               
+    issue.                                                                      
+  net: stmmac: fix csr_clk can't be zero issue                                  
+  net: stmmac: write the modified value back to MTL_OPERATION_MODE              
+  net: stmmac: dwmac-mediatek: modify csr_clk value to fix mdio                 
+    read/write fail                                                             
+                                                                                
+ .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |    4 ++--                 
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |    2 ++                   
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |    5 ++++-                
+ 3 files changed, 8 insertions(+), 3 deletions(-)                               
+                                                                                
+--                                                                              
+1.7.9.5
 
-Should go right here?
-
-> +		} else if (node_task->core_cookie > cookie) {
-> +			node = node->rb_right;
-
-And left here?
-
-> +		} else {
-> +			match = node_task;
-> +			node = node->rb_left;
-> +		}
-> +	}
-> +
-> +	return match;
-> +}
