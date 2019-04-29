@@ -2,244 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89D5E406
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CAFE412
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbfD2Nzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 09:55:45 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40790 "EHLO mail.skyhub.de"
+        id S1728235AbfD2N6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 09:58:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfD2Nzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 09:55:45 -0400
-Received: from zn.tnic (p200300EC2F073600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:3600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727710AbfD2N6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 09:58:06 -0400
+Received: from [192.168.0.101] (unknown [58.212.133.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 38CAF1EC014A;
-        Mon, 29 Apr 2019 15:55:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1556546143;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pkKmQx1hXyy8yc+54Irk8GBhU0FUwLSYEGMtUyIifSQ=;
-        b=WXH8zV6ssFWvah6GS6OaGyVtonfgmw3FoGJwMsdAf4qccou6hk/IPHMk/bjUAn0ARuYxHl
-        EOKAAnJYV0oISYMsL6g7ybg6XGU6XPdz6ZFFT8yPUHD/7lVnl5tonjLhRKbyO89iLsUtFE
-        VIm6zXvR7AKAshtaT2unlq8odKNypn8=
-Date:   Mon, 29 Apr 2019 15:55:36 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     j-nomura@ce.jp.nec.com, kasong@redhat.com, dyoung@redhat.com,
-        fanc.fnst@cn.fujitsu.com, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, tglx@linutronix.de
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-Message-ID: <20190429135536.GC2324@zn.tnic>
-References: <20190424092944.30481-1-bhe@redhat.com>
- <20190424092944.30481-2-bhe@redhat.com>
- <20190429002318.GA25400@MiWiFi-R3L-srv>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E38320652;
+        Mon, 29 Apr 2019 13:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556546285;
+        bh=zzwvCRjip66ErSWdogjE1z3JyHQPKCTMH76hG95wY1w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DdkFCSpiMwzmY3iDUsGsYTswDof5oOHqj60kasboHy0kE0VndEZimiGBYSfWU204S
+         9e5fv4bm6bzhFRrmIte5RaP39uJp9Ftbt7Xoa2yr6HHy+SSDfss8MRa74r9KBYVlck
+         I2rqUVIFc6M0eZt8uIooocVHfOP9EajhbVgSOikQ=
+Subject: Re: [PATCH] f2fs: fix to do sanity with enabled features in image
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20190424094850.118323-1-yuchao0@huawei.com>
+ <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <373f4633-d331-5cf3-74b7-e982072bc4b4@kernel.org>
+Date:   Mon, 29 Apr 2019 21:57:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190429002318.GA25400@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 08:23:18AM +0800, Baoquan He wrote:
-> +static int
-> +map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
-> +{
-> +	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-> +	struct init_pgtable_data data;
-> +
-> +	data.info = info;
-> +	data.level4p = level4p;
-> +	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-> +	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
-> +				   &data, mem_region_callback);
-> +}
-> +#else
-> +static int init_acpi_pgtable(struct x86_mapping_info *info,
+On 2019-4-28 21:38, Jaegeuk Kim wrote:
+> On 04/24, Chao Yu wrote:
+>> This patch fixes to do sanity with enabled features in image, if
+>> there are features kernel can not recognize, just fail the mount.
+> 
+> We need to figure out per-feature-based rejection, since some of them can
+> be set without layout change.
 
-Did you at least build-test the !CONFIG_ACPI case?
+So any suggestion on how to implement this?
 
-arch/x86/kernel/machine_kexec_64.c: In function ‘init_pgtable’:
-arch/x86/kernel/machine_kexec_64.c:237:11: error: implicit declaration of function ‘map_acpi_tables’; did you mean ‘init_acpi_pgtable’? [-Werror=implicit-function-declaration]
-  result = map_acpi_tables(&info, level4p);
-           ^~~~~~~~~~~~~~~
-           init_acpi_pgtable
+Maybe:
 
+if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
+	check 4.14+ features
+else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+	check 4.9+ features
+else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
+	check 4.4+ features
 
-I don't think so. ;-(
+Thanks,
 
-Sigh, next time at least build-test your patch before hurrying it out. I
-fixed it up along with decyphering the commit message:
-
----
-From: Kairui Song <kasong@redhat.com>
-Date: Mon, 29 Apr 2019 08:23:18 +0800
-Subject: [PATCH] x86/kexec: Add the EFI system tables and ACPI tables to the ident map
-
-Currently, only the whole physical memory is identity-mapped for the
-kexec kernel and the regions reserved by firmware are ignored.
-
-However, the recent addition of RSDP parsing in the decompression stage
-and especially:
-
-  33f0df8d843d ("x86/boot: Search for RSDP in the EFI tables")
-
-which tries to access EFI system tables and to dig out the RDSP address
-from there, becomes a problem because in certain configurations, they
-might not be mapped in the kexec'ed kernel's address space.
-
-What is more, this problem doesn't appear on all systems because the
-kexec kernel uses gigabyte pages to build the identity mapping. And
-the EFI system tables and ACPI tables can, depending on the system
-configuration, end up being mapped as part of all physical memory, if
-they share the same 1 GB area with the physical memory.
-
-Therefore, make sure they're always mapped.
-
- [ bp: productize half-baked patch:
-   - rewrite commit message.
-   - s/init_acpi_pgtable/map_acpi_tables/ in the !ACPI case. ]
-
-Signed-off-by: Kairui Song <kasong@redhat.com>
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: dyoung@redhat.com
-Cc: fanc.fnst@cn.fujitsu.com
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: j-nomura@ce.jp.nec.com
-Cc: kexec@lists.infradead.org
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Lianbo Jiang <lijiang@redhat.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190429002318.GA25400@MiWiFi-R3L-srv
----
- arch/x86/kernel/machine_kexec_64.c | 75 ++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index ceba408ea982..3c77bdf7b32a 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/suspend.h>
- #include <linux/vmalloc.h>
-+#include <linux/efi.h>
- 
- #include <asm/init.h>
- #include <asm/pgtable.h>
-@@ -29,6 +30,43 @@
- #include <asm/setup.h>
- #include <asm/set_memory.h>
- 
-+#ifdef CONFIG_ACPI
-+/*
-+ * Used while adding mapping for ACPI tables.
-+ * Can be reused when other iomem regions need be mapped
-+ */
-+struct init_pgtable_data {
-+	struct x86_mapping_info *info;
-+	pgd_t *level4p;
-+};
-+
-+static int mem_region_callback(struct resource *res, void *arg)
-+{
-+	struct init_pgtable_data *data = arg;
-+	unsigned long mstart, mend;
-+
-+	mstart = res->start;
-+	mend = mstart + resource_size(res) - 1;
-+
-+	return kernel_ident_mapping_init(data->info, data->level4p, mstart, mend);
-+}
-+
-+static int
-+map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
-+{
-+	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-+	struct init_pgtable_data data;
-+
-+	data.info = info;
-+	data.level4p = level4p;
-+	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-+	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
-+				   &data, mem_region_callback);
-+}
-+#else
-+static int map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p) { return 0; }
-+#endif
-+
- #ifdef CONFIG_KEXEC_FILE
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 		&kexec_bzImage64_ops,
-@@ -36,6 +74,31 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- };
- #endif
- 
-+static int
-+map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
-+{
-+#ifdef CONFIG_EFI
-+	unsigned long mstart, mend;
-+
-+	if (!efi_enabled(EFI_BOOT))
-+		return 0;
-+
-+	mstart = (boot_params.efi_info.efi_systab |
-+			((u64)boot_params.efi_info.efi_systab_hi<<32));
-+
-+	if (efi_enabled(EFI_64BIT))
-+		mend = mstart + sizeof(efi_system_table_64_t);
-+	else
-+		mend = mstart + sizeof(efi_system_table_32_t);
-+
-+	if (!mstart)
-+		return 0;
-+
-+	return kernel_ident_mapping_init(info, level4p, mstart, mend);
-+#endif
-+	return 0;
-+}
-+
- static void free_transition_pgtable(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.p4d);
-@@ -159,6 +222,18 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
- 			return result;
- 	}
- 
-+	/*
-+	 * Prepare EFI systab and ACPI tables for kexec kernel since they are
-+	 * not covered by pfn_mapped.
-+	 */
-+	result = map_efi_systab(&info, level4p);
-+	if (result)
-+		return result;
-+
-+	result = map_acpi_tables(&info, level4p);
-+	if (result)
-+		return result;
-+
- 	return init_transition_pgtable(image, level4p);
- }
- 
--- 
-2.21.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> 
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h  | 13 +++++++++++++
+>>  fs/f2fs/super.c |  9 +++++++++
+>>  2 files changed, 22 insertions(+)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index f5ffc09705eb..15b640967e12 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -151,6 +151,19 @@ struct f2fs_mount_info {
+>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>  #define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>  
+>> +#define F2FS_ALL_FEATURES	(F2FS_FEATURE_ENCRYPT |			\
+>> +				F2FS_FEATURE_BLKZONED |			\
+>> +				F2FS_FEATURE_ATOMIC_WRITE |		\
+>> +				F2FS_FEATURE_EXTRA_ATTR |		\
+>> +				F2FS_FEATURE_PRJQUOTA |			\
+>> +				F2FS_FEATURE_INODE_CHKSUM |		\
+>> +				F2FS_FEATURE_FLEXIBLE_INLINE_XATTR |	\
+>> +				F2FS_FEATURE_QUOTA_INO |		\
+>> +				F2FS_FEATURE_INODE_CRTIME |		\
+>> +				F2FS_FEATURE_LOST_FOUND |		\
+>> +				F2FS_FEATURE_VERITY |			\
+>> +				F2FS_FEATURE_SB_CHKSUM)
+>> +
+>>  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+>>  	((raw_super->feature & cpu_to_le32(mask)) != 0)
+>>  #define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 4f8e9ab48b26..57f2fc6d14ba 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2573,6 +2573,15 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>  		return 1;
+>>  	}
+>>  
+>> +	/* check whether kernel supports all features */
+>> +	if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
+>> +		f2fs_msg(sb, KERN_INFO,
+>> +			"Unsupported feature:%u: supported:%u",
+>> +			le32_to_cpu(raw_super->feature),
+>> +			F2FS_ALL_FEATURES);
+>> +		return 1;
+>> +	}
+>> +
+>>  	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+>>  	if (sanity_check_area_boundary(sbi, bh))
+>>  		return 1;
+>> -- 
+>> 2.18.0.rc1
