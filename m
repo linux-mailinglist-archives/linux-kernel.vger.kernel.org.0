@@ -2,318 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA50ECDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41FEECFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfD2WjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 18:39:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7514 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfD2WjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:39:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 15:39:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,411,1549958400"; 
-   d="scan'208";a="227875888"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 29 Apr 2019 15:39:01 -0700
-Date:   Mon, 29 Apr 2019 15:41:46 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 19/19] iommu/vt-d: Add svm/sva invalidate function
-Message-ID: <20190429154146.20e0c13c@jacob-builder>
-In-Reply-To: <26398960-f484-d5dd-eff5-c44810528194@redhat.com>
-References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1556062279-64135-20-git-send-email-jacob.jun.pan@linux.intel.com>
-        <26398960-f484-d5dd-eff5-c44810528194@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729683AbfD2WxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 18:53:19 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44092 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729601AbfD2WxS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 18:53:18 -0400
+Received: by mail-ot1-f68.google.com with SMTP id d24so10186077otl.11;
+        Mon, 29 Apr 2019 15:53:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TJyEVrvktv6Tufpho/NZ7KCvbKlhL+8KY18oT1f7uHk=;
+        b=FJULULKAAcnBe11wbD9qO34jMJKWBnu/n50Zy9IOS/yVArJ6HHkD0EV5TEU9MIev63
+         g02p8u1dTmV5DSEWXfZ/x6KblmQoZurUwIkEGMD2XG1WlvgWREGv+lpPo/hGN1UfXBuq
+         Mht5zcmAC2V8OJ4yB7Sctpq+53tzFDfmcZH0mai9BOba1nEPf8FfhaNckk9vEQr4YFL+
+         xFyy5cZRAsECc8ASz1gy+EcWK+ddt6FzqMIix5px5cTckU/eM14CMJwpd+IO6PQytZ5d
+         zkYeEviN+pSrHjaZZFwU6CMFVvFnhFxD65nfE7tsLaYxuwTFoIlyHUkehEB6IH58dxYp
+         NqPw==
+X-Gm-Message-State: APjAAAX6p0moDAVXzpv/hWh+i92aibcqaisN3267Ybe1WeD5Q3e0AcWI
+        Yq4+6G3OBc2iMa1Rwi1Rxg==
+X-Google-Smtp-Source: APXvYqxyLs6MFB7n9d1LRFWLjpK15UJ0Vz05okp6i1ecyTDNMHsqOeG5GSjwhhfcQTOtr1suT8/yeg==
+X-Received: by 2002:a05:6830:4d:: with SMTP id d13mr8171393otp.106.1556578397797;
+        Mon, 29 Apr 2019 15:53:17 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s202sm2479151oih.42.2019.04.29.15.53.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 15:53:16 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 17:53:15 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
+Subject: Re: [PATCH v2 01/15] dt-bindings: media: Add binding for MT2712
+ MIPI-CSI2
+Message-ID: <20190429225315.GA23589@bogus>
+References: <1555407015-18130-1-git-send-email-stu.hsieh@mediatek.com>
+ <1555407015-18130-2-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1555407015-18130-2-git-send-email-stu.hsieh@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Apr 2019 19:23:03 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
-
-> Hi Jacob,
-> On 4/24/19 1:31 AM, Jacob Pan wrote:
-> > When Shared Virtual Address (SVA) is enabled for a guest OS via
-> > vIOMMU, we need to provide invalidation support at IOMMU API and
-> > driver level. This patch adds Intel VT-d specific function to
-> > implement iommu passdown invalidate API for shared virtual address.
-> > 
-> > The use case is for supporting caching structure invalidation
-> > of assigned SVM capable devices. Emulated IOMMU exposes queue
-> > invalidation capability and passes down all descriptors from the
-> > guest to the physical IOMMU.
-> > 
-> > The assumption is that guest to host device ID mapping should be
-> > resolved prior to calling IOMMU driver. Based on the device handle,
-> > host IOMMU driver can replace certain fields before submit to the
-> > invalidation queue.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> > Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> > ---
-> >  drivers/iommu/intel-iommu.c | 159
-> > ++++++++++++++++++++++++++++++++++++++++++++ 1 file changed, 159
-> > insertions(+)
-> > 
-> > diff --git a/drivers/iommu/intel-iommu.c
-> > b/drivers/iommu/intel-iommu.c index 89989b5..54a3d22 100644
-> > --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -5338,6 +5338,164 @@ static void
-> > intel_iommu_aux_detach_device(struct iommu_domain *domain,
-> > aux_domain_remove_dev(to_dmar_domain(domain), dev); }
-> >  
-> > +/*
-> > + * 2D array for converting and sanitizing IOMMU generic TLB
-> > granularity to
-> > + * VT-d granularity. Invalidation is typically included in the
-> > unmap operation
-> > + * as a result of DMA or VFIO unmap. However, for assigned device
-> > where guest
-> > + * could own the first level page tables without being shadowed by
-> > QEMU. In
-> > + * this case there is no pass down unmap to the host IOMMU as a
-> > result of unmap
-> > + * in the guest. Only invalidations are trapped and passed down.
-> > + * In all cases, only first level TLB invalidation (request with
-> > PASID) can be
-> > + * passed down, therefore we do not include IOTLB granularity for
-> > request
-> > + * without PASID (second level).
-> > + *
-> > + * For an example, to find the VT-d granularity encoding for IOTLB
-> > + * type and page selective granularity within PASID:
-> > + * X: indexed by iommu cache type
-> > + * Y: indexed by enum iommu_inv_granularity
-> > + * [IOMMU_INV_TYPE_TLB][IOMMU_INV_GRANU_PAGE_PASID]
-> > + *
-> > + * Granu_map array indicates validity of the table. 1: valid, 0:
-> > invalid
-> > + *
-> > + */
-> > +const static int
-> > inv_type_granu_map[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
-> > = {  
-> The size is frozen for a given uapi version so I guess you can
-> hardcode the limits for a given version.
-I guess I could, I just felt more readable this way.
-> > +	/* PASID based IOTLB, support PASID selective and page
-> > selective */
-> > +	{0, 1, 1},
-> > +	/* PASID based dev TLBs, only support all PASIDs or single
-> > PASID */
-> > +	{1, 1, 0},
-> > +	/* PASID cache */
-> > +	{1, 1, 0}
-> > +};
-> > +
-> > +const static u64
-> > inv_type_granu_table[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
-> > = {
-> > +	/* PASID based IOTLB */
-> > +	{0, QI_GRAN_NONG_PASID, QI_GRAN_PSI_PASID},
-> > +	/* PASID based dev TLBs */
-> > +	{QI_DEV_IOTLB_GRAN_ALL, QI_DEV_IOTLB_GRAN_PASID_SEL, 0},
-> > +	/* PASID cache */
-> > +	{QI_PC_ALL_PASIDS, QI_PC_PASID_SEL, 0},
-> > +};  
-> Can't you use a single matrix instead, ie. inv_type_granu_table
+On Tue, Apr 16, 2019 at 05:30:01PM +0800, Stu Hsieh wrote:
+> Add MIPI-CSI2 dt-binding for Mediatek MT2712 SoC
 > 
-The reason i have an additional inv_type_granu_map[] matrix is that
-some of fields can be 0 but still valid. A single matrix would not be
-able to tell the difference between a valid 0 or invalid field.
-> > +
-> > +static inline int to_vtd_granularity(int type, int granu, u64
-> > *vtd_granu) +{
-> > +	if (type >= NR_IOMMU_CACHE_TYPE || granu >=
-> > NR_IOMMU_CACHE_INVAL_GRANU ||
-> > +		!inv_type_granu_map[type][granu])
-> > +		return -EINVAL;
-> > +
-> > +	*vtd_granu = inv_type_granu_table[type][granu];
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static inline u64 to_vtd_size(u64 granu_size, u64 nr_granules)
-> > +{
-> > +	u64 nr_pages;  
-> direct initialization?
-will do, thanks
-> > +	/* VT-d size is encoded as 2^size of 4K pages, 0 for 4k, 9
-> > for 2MB, etc.
-> > +	 * IOMMU cache invalidate API passes granu_size in bytes,
-> > and number of
-> > +	 * granu size in contiguous memory.
-> > +	 */
-> > +
-> > +	nr_pages = (granu_size * nr_granules) >> VTD_PAGE_SHIFT;
-> > +	return order_base_2(nr_pages);
-> > +}
-> > +
-> > +static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
-> > +		struct device *dev, struct
-> > iommu_cache_invalidate_info *inv_info) +{
-> > +	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-> > +	struct device_domain_info *info;
-> > +	struct intel_iommu *iommu;
-> > +	unsigned long flags;
-> > +	int cache_type;
-> > +	u8 bus, devfn;
-> > +	u16 did, sid;
-> > +	int ret = 0;
-> > +	u64 granu;
-> > +	u64 size;
-> > +
-> > +	if (!inv_info || !dmar_domain ||
-> > +		inv_info->version !=
-> > IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
-> > +		return -EINVAL;
-> > +
-> > +	if (!dev || !dev_is_pci(dev))
-> > +		return -ENODEV;
-> > +
-> > +	iommu = device_to_iommu(dev, &bus, &devfn);
-> > +	if (!iommu)
-> > +		return -ENODEV;
-> > +
-> > +	spin_lock(&iommu->lock);
-> > +	spin_lock_irqsave(&device_domain_lock, flags);  
-> mix of _irqsave and non _irqsave looks suspicious to me.
-It should be in reverse order. Any other concerns?
-> > +	info = iommu_support_dev_iotlb(dmar_domain, iommu, bus,
-> > devfn);
-> > +	if (!info) {
-> > +		ret = -EINVAL;
-> > +		goto out_unlock;
-> > +	}
-> > +	did = dmar_domain->iommu_did[iommu->seq_id];
-> > +	sid = PCI_DEVID(bus, devfn);
-> > +	size = to_vtd_size(inv_info->addr_info.granule_size,
-> > inv_info->addr_info.nb_granules); +
-> > +	for_each_set_bit(cache_type, (unsigned long
-> > *)&inv_info->cache, NR_IOMMU_CACHE_TYPE) { +
-> > +		ret = to_vtd_granularity(cache_type,
-> > inv_info->granularity, &granu);
-> > +		if (ret) {
-> > +			pr_err("Invalid range type %d, granu
-> > %d\n", cache_type,  
-> s/Invalid range type %d, granu %d/Invalid cache type/granu combination
-> (%d/%d)
-sounds good, indeed it is the combination that is invalid.
-> > +				inv_info->granularity);
-> > +			break;
-> > +		}
-> > +
-> > +		switch (BIT(cache_type)) {
-> > +		case IOMMU_CACHE_INV_TYPE_IOTLB:
-> > +			if (size && (inv_info->addr_info.addr &
-> > ((BIT(VTD_PAGE_SHIFT + size)) - 1))) {
-> > +				pr_err("Address out of range,
-> > 0x%llx, size order %llu\n",
-> > +					inv_info->addr_info.addr,
-> > size);
-> > +				ret = -ERANGE;
-> > +				goto out_unlock;
-> > +			}
-> > +
-> > +			qi_flush_piotlb(iommu, did,
-> > mm_to_dma_pfn(inv_info->addr_info.addr),
-> > +					inv_info->addr_info.pasid,
-> > +					size, granu);
-> > +
-> > +			/*
-> > +			 * Always flush device IOTLB if ATS is
-> > enabled since guest
-> > +			 * vIOMMU exposes CM = 1, no device IOTLB
-> > flush will be passed
-> > +			 * down. REVISIT: cannot assume Linux guest
-> > +			 */
-> > +			if (info->ats_enabled) {
-> > +				qi_flush_dev_piotlb(iommu, sid,
-> > info->pfsid,
-> > +
-> > inv_info->addr_info.pasid, info->ats_qdep,
-> > +
-> > inv_info->addr_info.addr, size,
-> > +						granu);
-> > +			}
-> > +			break;
-> > +		case IOMMU_CACHE_INV_TYPE_DEV_IOTLB:
-> > +			if (info->ats_enabled) {
-> > +				qi_flush_dev_piotlb(iommu, sid,
-> > info->pfsid,
-> > +
-> > inv_info->addr_info.pasid, info->ats_qdep,
-> > +
-> > inv_info->addr_info.addr, size,
-> > +						granu);
-> > +			} else
-> > +				pr_warn("Passdown device IOTLB
-> > flush w/o ATS!\n"); +
-> > +			break;
-> > +		case IOMMU_CACHE_INV_TYPE_PASID:
-> > +			qi_flush_pasid_cache(iommu, did, granu,
-> > inv_info->pasid); +
-> > +			break;
-> > +		default:
-> > +			dev_err(dev, "Unsupported IOMMU
-> > invalidation type %d\n",
-> > +				cache_type);
-> > +			ret = -EINVAL;
-> > +		}
-> > +	}
-> > +out_unlock:
-> > +	spin_unlock(&iommu->lock);
-> > +	spin_unlock_irqrestore(&device_domain_lock, flags);  
-> I would expect the opposite order
-yes, i reversed in the lock order such that irq is disabled.
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static int intel_iommu_map(struct iommu_domain *domain,
-> >  			   unsigned long iova, phys_addr_t hpa,
-> >  			   size_t size, int iommu_prot)
-> > @@ -5769,6 +5927,7 @@ const struct iommu_ops intel_iommu_ops = {
-> >  	.dev_disable_feat	= intel_iommu_dev_disable_feat,
-> >  	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
-> >  #ifdef CONFIG_INTEL_IOMMU_SVM
-> > +	.cache_invalidate	= intel_iommu_sva_invalidate,
-> >  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
-> >  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
-> >  #endif
-> >   
-> Thanks
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  .../bindings/media/mediatek-mipicsi-camsv.txt | 53 ++++++++++++++++++
+>  .../media/mediatek-mipicsi-common.txt         | 19 +++++++
+>  .../bindings/media/mediatek-mipicsi.txt       | 54 +++++++++++++++++++
+>  3 files changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek-mipicsi-camsv.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek-mipicsi-common.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
 > 
-> Eric
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-mipicsi-camsv.txt b/Documentation/devicetree/bindings/media/mediatek-mipicsi-camsv.txt
+> new file mode 100644
+> index 000000000000..5f34974f12ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek-mipicsi-camsv.txt
+> @@ -0,0 +1,53 @@
+> +* Mediatek MIPI-CSI2 receiver camsv
+> +
+> +Mediatek MIPI-CSI2 receiver camsv transfer data to DRAM in Mediatek SoCs
+> +
+> +Required properties:
+> +- reg : physical base address of the mipicsi receiver registers and length of
+> +  memory mapped region.
 
-Thank you so much for your review. I will roll up the next version
-soon, hopefully this week.
+Looks like 2 regions in the example. What are they?
 
-Jacob
+> +- clocks: device clocks, see
+> +  Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+
+1 clock?
+
+> +- interrupts : interrupt number to the interrupt controller.
+> +
+> +Example:
+> +	seninf1_mux_camsv0: seninf_mux_camsv@15002100 {
+> +		reg = <0 0x15002120 0 0x40>,
+> +		      <0 0x15004000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV_EN>;
+> +		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	seninf2_mux_camsv1: seninf_mux_camsv@15002500 {
+> +		reg = <0 0x15002520 0 0x40>,
+> +		      <0 0x15005000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV_EN>;
+> +		interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	seninf3_mux_camsv2: seninf_mux_camsv@15002900 {
+> +		reg = <0 0x15002920 0 0x40>,
+> +		      <0 0x15006000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV1_EN>;
+> +		interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	seninf4_mux_camsv3: seninf_mux_camsv@15002D00 {
+> +		reg = <0 0x15002D20 0 0x40>,
+> +		      <0 0x15007000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV1_EN>;
+> +		interrupts = <GIC_SPI 269 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	seninf5_mux_camsv4: seninf_mux_camsv@15003100 {
+> +		reg = <0 0x15003120 0 0x40>,
+> +		      <0 0x15008000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV2_EN>;
+> +		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	seninf6_mux_camsv5: seninf_mux_camsv@15003500 {
+> +		reg = <0 0x15003520 0 0x40>,
+> +		      <0 0x15009000 0 0x1000>;
+> +		clocks = <&imgsys CLK_IMG_CAM_SV2_EN>;
+> +		interrupts = <GIC_SPI 271 IRQ_TYPE_LEVEL_LOW>;
+> +	
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-mipicsi-common.txt b/Documentation/devicetree/bindings/media/mediatek-mipicsi-common.txt
+> new file mode 100644
+> index 000000000000..a67c744b75f0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek-mipicsi-common.txt
+> @@ -0,0 +1,19 @@
+> +* Mediatek MIPI-CSI2 receiver common
+> +
+> +Mediatek MIPI-CSI2 receiver is the MIPI Signal capture hardware present in Mediatek SoCs
+> +
+> +Required properties:
+> +- compatible: should be "mediatek,mt2712-mipicsi-common"
+> +- reg : physical base address of the mipicsi receiver registers and length of
+> +  memory mapped region.
+> +- clocks: device clocks, see
+> +  Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+
+How many clocks and what are they?
+
+> +
+> +
+> +Example:
+> +	mipicsi: mipicsi@15002000 {
+> +		compatible = "mediatek,mt2712-mipicsi-common", "syscon";
+> +		reg = <0 0x15002000 0 0x10>;
+> +		clocks = <&imgsys CLK_IMG_SENINF_CAM_EN>,
+> +			 <&imgsys CLK_IMG_SENINF_SCAM_EN>;
+> +	};
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt b/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
+> new file mode 100644
+> index 000000000000..24741ed62b25
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
+> @@ -0,0 +1,54 @@
+> +* Mediatek MIPI-CSI2 receiver
+> +
+> +Mediatek MIPI-CSI2 receiver is the MIPI Signal capture hardware present in Mediatek SoCs
+> +
+> +Required properties:
+> +- compatible: should be "mediatek,mt2712-mipicsi"
+> +- reg : physical base address of the mipicsi receiver registers and length of
+> +  memory mapped region.
+
+How many regions?
+
+> +- power-domains: a phandle to the power domain, see
+> +  Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +- mediatek,larb: must contain the local arbiters in the current Socs, see
+> +  Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+> +  for details.
+> +- iommus: should point to the respective IOMMU block with master port as
+> +  argument, see Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
+> +  for details.
+
+How many?
+
+> +- mediatek,seninf_mux_camsv: seninf_mux_camsv the data go through of the mipicsi port
+
+s/_/-/
+
+How many entries?
+
+> +- mediatek,mipicsiid: the id of the mipicsi port
+
+What is this for? We generally don't do device indexes in DT.
+
+> +- mediatek,mipicsi: the common component of the two mipicsi port
+> +
+> +Example:
+> +	mipicsi0: mipicsi@10217000 {
+> +		compatible = "mediatek,mt2712-mipicsi";
+> +		mediatek,mipicsi = <&mipicsi>;
+> +		iommus = <&iommu0 M4U_PORT_CAM_DMA0>,
+> +			 <&iommu0 M4U_PORT_CAM_DMA1>;
+> +		mediatek,larb = <&larb2>;
+> +		power-domains = <&scpsys MT2712_POWER_DOMAIN_ISP>;
+> +
+> +		mediatek,seninf_mux_camsv = <&seninf1_mux_camsv0
+> +					     &seninf2_mux_camsv1
+> +					     &seninf3_mux_camsv2
+> +					     &seninf4_mux_camsv3>;
+> +		reg = <0 0x10217000 0 0x60>,
+> +		      <0 0x15002100 0 0x4>,
+> +		      <0 0x15002300 0 0x100>;
+> +		mediatek,mipicsiid = <0>;
+> +		status="disabled";
+
+Don't show status in examples.
+
+> +	};
+> +
+> +	mipicsi1: mipicsi@10218000 {
+> +		compatible = "mediatek,mt2712-mipicsi";
+> +		mediatek,mipicsi = <&mipicsi>;
+> +		iommus = <&iommu0 M4U_PORT_CAM_DMA2>;
+> +		mediatek,larb = <&larb2>;
+> +		power-domains = <&scpsys MT2712_POWER_DOMAIN_ISP>;
+> +		mediatek,seninf_mux_camsv = <&seninf5_mux_camsv4
+> +					     &seninf6_mux_camsv5>;
+> +		reg = <0 0x10218000 0 0x60>,
+> +		      <0 0x15002500 0 0x4>,
+> +		      <0 0x15002700 0 0x100>;
+> +		mediatek,mipicsiid = <1>;
+> +		status="disabled";
+> +	};
+> \ No newline at end of file
+
+Fix this.
+
+> -- 
+> 2.18.0
+> 
