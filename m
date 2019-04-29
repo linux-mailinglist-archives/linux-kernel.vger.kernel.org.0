@@ -2,106 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2513BE2BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90064E2C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfD2Mft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:35:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:55618 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbfD2Mft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:35:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9212A78;
-        Mon, 29 Apr 2019 05:35:48 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 826383F740;
-        Mon, 29 Apr 2019 05:35:47 -0700 (PDT)
-Subject: Re: [PATCH 02/26] arm64/iommu: improve mmap bounds checking
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190422175942.18788-1-hch@lst.de>
- <20190422175942.18788-3-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <306b7a19-4eb5-d1d8-5250-40f3ba9bca16@arm.com>
-Date:   Mon, 29 Apr 2019 13:35:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728163AbfD2Mgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:36:50 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34706 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727956AbfD2Mgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:36:50 -0400
+Received: by mail-qt1-f194.google.com with SMTP id j6so11675726qtq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 05:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tsdtygGHwHLDiP7U7Nb22tfplZQ4QZkZbhbFoqCY5j8=;
+        b=Rp1IdbRAg44yBruvqm0KtYJGRO62vJxcikXVloHeZ4JXGHD+WrE0ueSYlgEkbbgMhk
+         pYs5bP8BEV5lMPCWfOJ+hUQdY8hPHghG9f0qwlLPSYpnzCLsU3q3jiYaUcV9waCOCbKS
+         I5RmTzEKKqEoDUZHojdqSJyyLg9gMcrJ+G568=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tsdtygGHwHLDiP7U7Nb22tfplZQ4QZkZbhbFoqCY5j8=;
+        b=ewTf+6zY+wI9D4dL7piAPcr4NCbXHw+F9W8RlmXj2woqDkJ85peReFj32KaL1n85Bp
+         xftHo05AsPYGdr65v4wyzt4AWsxD3h0aaUSYg/Wxu25Hynz0c9ua/LwsnH3Isn78gMsM
+         Y+F6stUwjmMiENDTbrRBeKeC7fdGfBZC4gpKDcwd/+B6DeO4Nu5uyA/RuTEbi4Da3fXn
+         c99XiVANbCN0z1hinItsPcv+AqRK2Ww6LVR0ms022nysxs2O5BvJTTliryRsvl9q5E1r
+         jUY9Y9FYRT91N/bxy+kkxH9FSvKLhn1ixYqSWtsFSTbJtZDL4V26ZZmJ6OJBV38yLRYp
+         MOEg==
+X-Gm-Message-State: APjAAAUkdpV6tQsVFam2OzNBHuI79pqgN0ZO0bVBxX162dMNArsPm4Zm
+        NmLxFKo3QZX+sGgWJ90cLonPSA==
+X-Google-Smtp-Source: APXvYqxqExPcFEbYH/RX70P/kra/zXk+oYoeBb59MXfrLZnCdjCRTBkpWfMBR7lwIl8npLKgQqDGjw==
+X-Received: by 2002:ac8:2728:: with SMTP id g37mr25376314qtg.264.1556541409092;
+        Mon, 29 Apr 2019 05:36:49 -0700 (PDT)
+Received: from sinkpad (192-222-189-155.qc.cable.ebox.net. [192.222.189.155])
+        by smtp.gmail.com with ESMTPSA id d55sm3249211qtb.59.2019.04.29.05.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 05:36:48 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 08:36:42 -0400
+From:   Julien Desfossez <jdesfossez@digitalocean.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
+        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
+        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
+        Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v2 16/17] sched: Wake up sibling if it has something
+ to run
+Message-ID: <20190429123642.GA16059@sinkpad>
+References: <cover.1556025155.git.vpillai@digitalocean.com>
+ <a0132b8ffb5b37a5f8e242a5ac9e3a0a5ecc5f8e.1556025155.git.vpillai@digitalocean.com>
+ <20190426150337.GC2623@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20190422175942.18788-3-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190426150337.GC2623@hirez.programming.kicks-ass.net>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/04/2019 18:59, Christoph Hellwig wrote:
-> The nr_pages checks should be done for all mmap requests, not just those
-> using remap_pfn_range.
-
-I think it probably makes sense now to just squash this with #22 one way 
-or the other, but if you really really still want to keep it as a 
-separate patch with a misleading commit message then I'm willing to keep 
-my complaints to myself :)
-
-Robin.
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/arm64/mm/dma-mapping.c | 21 ++++++++-------------
->   1 file changed, 8 insertions(+), 13 deletions(-)
+On 26-Apr-2019 05:03:37 PM, Peter Zijlstra wrote:
+> On Tue, Apr 23, 2019 at 04:18:21PM +0000, Vineeth Remanan Pillai wrote:
 > 
-> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-> index 674860e3e478..604c638b2787 100644
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -73,19 +73,9 @@ static int __swiotlb_get_sgtable_page(struct sg_table *sgt,
->   static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
->   			      unsigned long pfn, size_t size)
->   {
-> -	int ret = -ENXIO;
-> -	unsigned long nr_vma_pages = vma_pages(vma);
-> -	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	unsigned long off = vma->vm_pgoff;
-> -
-> -	if (off < nr_pages && nr_vma_pages <= (nr_pages - off)) {
-> -		ret = remap_pfn_range(vma, vma->vm_start,
-> -				      pfn + off,
-> -				      vma->vm_end - vma->vm_start,
-> -				      vma->vm_page_prot);
-> -	}
-> -
-> -	return ret;
-> +	return remap_pfn_range(vma, vma->vm_start, pfn + vma->vm_pgoff,
-> +			      vma->vm_end - vma->vm_start,
-> +			      vma->vm_page_prot);
->   }
->   #endif /* CONFIG_IOMMU_DMA */
->   
-> @@ -241,6 +231,8 @@ static int __iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
->   			      void *cpu_addr, dma_addr_t dma_addr, size_t size,
->   			      unsigned long attrs)
->   {
-> +	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> +	unsigned long off = vma->vm_pgoff;
->   	struct vm_struct *area;
->   	int ret;
->   
-> @@ -249,6 +241,9 @@ static int __iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
->   	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
->   		return ret;
->   
-> +	if (off >= nr_pages || vma_pages(vma) > nr_pages - off)
-> +		return -ENXIO;
-> +
->   	if (!is_vmalloc_addr(cpu_addr)) {
->   		unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
->   		return __swiotlb_mmap_pfn(vma, pfn, size);
+> (you lost From: Julien)
 > 
+> > During core scheduling, it can happen that the current rq selects a
+> > non-tagged process while the sibling might be idling even though it
+> > had something to run (because the sibling selected idle to match the
+> > tagged process in previous tag matching iteration). We need to wake up
+> > the sibling if such a situation arise.
+> > 
+> > Signed-off-by: Vineeth Remanan Pillai <vpillai@digitalocean.com>
+> > Signed-off-by: Julien Desfossez <jdesfossez@digitalocean.com>
+> > ---
+> >  kernel/sched/core.c | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index e8f5ec641d0a..0e3c51a1b54a 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -3775,6 +3775,21 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+> >  			 */
+> >  			if (i == cpu && !rq->core->core_cookie && !p->core_cookie) {
+> >  				next = p;
+> > +				rq->core_pick = NULL;
+> > + 
+> > +				/*
+> > +				 * If the sibling is idling, we might want to wake it
+> > +				 * so that it can check for any runnable tasks that did
+> > +				 * not get a chance to run due to previous task matching.
+> > +				 */
+> > +				for_each_cpu(j, smt_mask) {
+> > +					struct rq *rq_j = cpu_rq(j);
+> > +					rq_j->core_pick = NULL;
+> > +					if (j != cpu &&
+> > +					    is_idle_task(rq_j->curr) && rq_j->nr_running) {
+> > +						resched_curr(rq_j);
+> > +					}
+> > +				}
+> >  				goto done;
+> >  			}
+> 
+> Anyway, as written here:
+> 
+>   https://lkml.kernel.org/r/20190410150116.GI2490@worktop.programming.kicks-ass.net
+> 
+> I think this isn't quite right. Does the below patch (which actually
+> removes lines) also work?
+> 
+> As written before; the intent was to not allow that optimization if the
+> last pick had a cookie; thereby doing a (last) core wide selection when
+> we go to a 0-cookie, and this then includes kicking forced-idle cores.
+
+It works and the performance is similar to our previous solution :-)
+
+Thanks,
+
+Julien
