@@ -2,88 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9129BE1CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3908E1D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfD2MCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:02:44 -0400
-Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:48030 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728024AbfD2MCj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:02:39 -0400
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from webmail.solarflare.com (webmail.solarflare.com [12.187.104.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1-us1.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id 68B641400A8;
-        Mon, 29 Apr 2019 12:02:37 +0000 (UTC)
-Received: from [10.17.20.203] (10.17.20.203) by ocex03.SolarFlarecom.com
- (10.20.40.36) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 29 Apr
- 2019 05:02:33 -0700
-Subject: Re: [PATCH] rds: ib: force endiannes annotation
-To:     Nicholas Mc Guire <der.herr@hofr.at>
-CC:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <rds-devel@oss.oracle.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1556518178-13786-1-git-send-email-hofrat@osadl.org>
- <20443fd3-bd1e-9472-8ca3-e3014e59f249@solarflare.com>
- <20190429111836.GA17830@osadl.at>
-From:   Edward Cree <ecree@solarflare.com>
-Message-ID: <2ffed5fc-a372-3f90-e655-bcbc740eed33@solarflare.com>
-Date:   Mon, 29 Apr 2019 13:02:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190429111836.GA17830@osadl.at>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [10.17.20.203]
-X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24580.005
-X-TM-AS-Result: No-14.176100-4.000000-10
-X-TMASE-MatchedRID: HXSqh3WYKfsOwH4pD14DsPHkpkyUphL9+WzVGPiSY8jkVi/vHE4dwPM+
-        9Fw01I7GRQLzGM7KIBh9cJyW2BrvG9lnkI1u79lBnprizKKMwma1d0Fs4VikB0S/boWSGMtd9P1
-        gJOQHwkv5O2/3eJ45TlT7pLySGeP0n19mXmEdfVlfLa2Qr61pJCGi0ftsSkQygrAXgr/AjP3ZSx
-        a9R97yPI6kPNsstSO0xcKxQpPhJ/bdM4TtXgVTNLlwTkBCo+04i/ymJ2FVg5SbKItl61J/yZkw8
-        KdMzN86KrauXd3MZDWXf5sC39gVVMrUvx27s9YcSJo1rqxdGLyzw2JSXY5EclrsV/jyG+zxXwji
-        hSrlWBo=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--14.176100-4.000000
-X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24580.005
-X-MDID: 1556539358-e9OzWke6H3iF
+        id S1728201AbfD2MDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:03:51 -0400
+Received: from gate.crashing.org ([63.228.1.57]:41194 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727986AbfD2MDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:03:50 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x3TC3N75019409;
+        Mon, 29 Apr 2019 07:03:23 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x3TC3MCq019406;
+        Mon, 29 Apr 2019 07:03:22 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Mon, 29 Apr 2019 07:03:22 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Serge Belyshev <belyshev@depni.sinp.msu.ru>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] powerpc/32s: fix BATs setting with CONFIG_STRICT_KERNEL_RWX
+Message-ID: <20190429120322.GP8599@gate.crashing.org>
+References: <3a21c6f19637847e6ed080186a834ede619f3849.1556528569.git.christophe.leroy@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a21c6f19637847e6ed080186a834ede619f3849.1556528569.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/04/2019 12:18, Nicholas Mc Guire wrote:
-> On Mon, Apr 29, 2019 at 12:00:06PM +0100, Edward Cree wrote:
->> Again, a __force cast doesn't seem necessary here.  It looks like the
->>  code is just using the wrong types; if all of src, dst and uncongested
->>  were __le64 instead of uint64_t, and the last two lines replaced with
->>  rds_cong_map_updated(map, le64_to_cpu(uncongested)); then the semantics
->>  would be kept with neither sparse errors nor __force.
->>
->> __force is almost never necessary and mostly just masks other bugs or
->>  endianness confusion in the surrounding code.  Instead of adding a
->>  __force, either fix the code to be sparse-clean or leave the sparse
->>  warning in place so that future developers know there's something not
->>  right.
->>
-> changing uncongested to __le64 is not an option here - it would only move
-> the sparse warnings to those other locatoins where the ports that 
-> became uncongested are being or'ed into uncongested.
-That's why I say to change *src and *dst too.  Sparse won't mind the
- conversion from void * to __le64 * when they're assigned, and the only
- operations we do on them...
->                         uncongested |= ~(*src) & *dst;
->                         *dst++ = *src++;
-... are some bitwise ops on the values (bitwise ops are legal in any
- endianness) and incrementation of the pointers (which cares only about
- the pointee size, not type).
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
 
--Ed
+(But see comments below.)
+
+On Mon, Apr 29, 2019 at 09:08:09AM +0000, Christophe Leroy wrote:
+> diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
+> index bf1de3ca39bc..37cf2af98f6a 100644
+> --- a/arch/powerpc/mm/ppc_mmu_32.c
+> +++ b/arch/powerpc/mm/ppc_mmu_32.c
+> @@ -101,7 +101,7 @@ static int find_free_bat(void)
+>  static unsigned int block_size(unsigned long base, unsigned long top)
+>  {
+>  	unsigned int max_size = (cpu_has_feature(CPU_FTR_601) ? 8 : 256) << 20;
+> -	unsigned int base_shift = (fls(base) - 1) & 31;
+> +	unsigned int base_shift = (ffs(base) - 1) & 31;
+>  	unsigned int block_shift = (fls(top - base) - 1) & 31;
+
+The code is quite confusing now...  Add a comment, or improve it?
+
+
+Segher
