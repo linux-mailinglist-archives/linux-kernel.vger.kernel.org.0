@@ -2,106 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EDC8EB55
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23667EB72
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbfD2UHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:07:06 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55042 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729212AbfD2UHF (ORCPT
+        id S1729416AbfD2UOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:14:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33644 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729387AbfD2UOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:07:05 -0400
-Received: (qmail 8690 invoked by uid 2102); 29 Apr 2019 16:07:04 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 29 Apr 2019 16:07:04 -0400
-Date:   Mon, 29 Apr 2019 16:07:04 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+a9fefd18c7b240f19c54@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <rafael@kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in hex_string
-In-Reply-To: <000000000000f69c3b0587aa1bc5@google.com>
-Message-ID: <Pine.LNX.4.44L0.1904291604510.1632-100000@iolanthe.rowland.org>
+        Mon, 29 Apr 2019 16:14:42 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j11so9045857lfm.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=klpGGVlaux40qrg5TuBwipJksiZuTXXgkF+MhiSRIlA=;
+        b=TcY9IXe9CfLqn42qUjL9P1ySMDeddDODCyvYowl1cSTLiBSIL5Qts+yxj2tJATyscS
+         VuMBIQMZJ9FcZ/bxb46xlQLqbBowZnvy4pBLmtOnwzxLeSB2LeNEj9ycOUiKVGex0PQ0
+         7w5rqat134L6eKheTJLzUXWSjYZJq/e/a7oNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=klpGGVlaux40qrg5TuBwipJksiZuTXXgkF+MhiSRIlA=;
+        b=Qj4ThQrYlI+bO+P2qQYfSlTAHe86PNACxUZQlVTZ8XbJak+Evj4Xn4g1PDtKfUZyIs
+         OS62TohcqeLbuvZ1RHpbfQcCEOugaAXwsIVN/KpjnBpn6BV7+e71UGhX1gD1udW0puul
+         VIJ9Ahkmt6KPyHhvmA3JRFIhEdgCWJy02auZOb7lAUcN0rcUjynv5cpAs60mWhvMEeT4
+         uWitU/BLNSqkId3xubMEOWX5dKZ0ui3pXn+y/LzKF0fvyqUeijvcqQHuWL0IgvD2Umd7
+         o/41veFnUEuu8KKWrYBSg0GSQWmUxF+cQj5JCEKgC/K0x2+gdthK/qXGtsHE5ZLaxmVM
+         mzUQ==
+X-Gm-Message-State: APjAAAVpWYi4YN1vqMn1f8eeE1Ke2dRchenSzEMgm6PvEBQCsb2Wkttb
+        k2jVKO8qwWk/DWSugs4xhwnZOYDIYFE=
+X-Google-Smtp-Source: APXvYqxZJabRhiXk1ogFTbSKBYxgV0HnrEU4V/dJv5eBbc8AJPLghjBgAmAuB5ctxg3ibqk5729iTw==
+X-Received: by 2002:ac2:4566:: with SMTP id k6mr33823569lfm.22.1556568880556;
+        Mon, 29 Apr 2019 13:14:40 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id y20sm7597549lfe.8.2019.04.29.13.14.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 13:14:39 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id b12so9420414lji.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:14:39 -0700 (PDT)
+X-Received: by 2002:a2e:22c4:: with SMTP id i187mr33222307lji.94.1556568469873;
+ Mon, 29 Apr 2019 13:07:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
+ <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
+ <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+ <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+ <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
+ <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
+ <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
+ <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+ <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com> <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
+In-Reply-To: <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Apr 2019 13:07:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
+Message-ID: <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
+ fops invocation
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019, syzbot wrote:
+On Mon, Apr 29, 2019 at 12:24 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > Side note: we *already* depend on sti shadow working in other parts of the kernel, namely sti->iret.
+>
+> Where?  STI; IRET would be nuts.
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan/tree/usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=139ac37f200000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a9fefd18c7b240f19c54
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f3b338a00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a9fefd18c7b240f19c54@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in hex_string+0x418/0x4b0 lib/vsprintf.c:975
-> Read of size 1 at addr ffff88821a41bd38 by task kworker/0:1/12
-> 
-> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc3-319004-g43151d6 #6
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xe8/0x16e lib/dump_stack.c:113
->   print_address_description+0x6c/0x236 mm/kasan/report.c:187
->   kasan_report.cold+0x1a/0x3c mm/kasan/report.c:317
->   hex_string+0x418/0x4b0 lib/vsprintf.c:975
->   pointer+0x460/0x910 lib/vsprintf.c:1985
->   vsnprintf+0x5a0/0x16b0 lib/vsprintf.c:2400
->   pointer+0x60b/0x910 lib/vsprintf.c:2038
->   vsnprintf+0x5a0/0x16b0 lib/vsprintf.c:2400
->   vscnprintf+0x29/0x80 lib/vsprintf.c:2499
->   vprintk_store+0x45/0x4b0 kernel/printk/printk.c:1900
->   vprintk_emit+0x210/0x5a0 kernel/printk/printk.c:1957
->   dev_vprintk_emit+0x50e/0x553 drivers/base/core.c:3185
->   dev_printk_emit+0xbf/0xf6 drivers/base/core.c:3196
->   __dev_printk+0x1ed/0x215 drivers/base/core.c:3208
->   _dev_info+0xdc/0x10e drivers/base/core.c:3254
->   dlfb_parse_vendor_descriptor drivers/video/fbdev/udlfb.c:1532 [inline]
+Sorry, not 'sti;iret' but 'sti;sysexit'
 
-Accessing beyond the end of the descriptor.
+> before commit 4214a16b02971c60960afd675d03544e109e0d75
+>     x86/asm/entry/64/compat: Use SYSRETL to return from compat mode SYSENTER
+>
+> we did sti; sysxit, but, when we discussed this, I don't recall anyone
+> speaking up in favor of the safely of the old code.
 
-#syz test: https://github.com/google/kasan.git usb-fuzzer
+We still have that sti sysexit in the 32-bit code.
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1511,6 +1511,7 @@ static int dlfb_parse_vendor_descriptor(
- 	char *buf;
- 	char *desc_end;
- 	int total_len;
-+	int width;
- 
- 	buf = kzalloc(MAX_VENDOR_DESCRIPTOR_SIZE, GFP_KERNEL);
- 	if (!buf)
-@@ -1529,9 +1530,10 @@ static int dlfb_parse_vendor_descriptor(
- 	}
- 
- 	if (total_len > 5) {
-+		width = min(total_len, 11);
- 		dev_info(&intf->dev,
--			 "vendor descriptor length: %d data: %11ph\n",
--			 total_len, desc);
-+			 "vendor descriptor length: %d data: %*ph\n",
-+			 total_len, width, desc);
- 
- 		if ((desc[0] != total_len) || /* descriptor length */
- 		    (desc[1] != 0x5f) ||   /* vendor descriptor type */
-
-
+                     Linus
