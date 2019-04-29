@@ -2,300 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505E3DC02
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B881DC0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfD2Gfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:35:47 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41973 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726137AbfD2Gfk (ORCPT
+        id S1727425AbfD2GiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:38:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38511 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfD2GiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:35:40 -0400
-X-UUID: 88c07c6299c34c1884c22a856f736142-20190429
-X-UUID: 88c07c6299c34c1884c22a856f736142-20190429
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1974388627; Mon, 29 Apr 2019 14:35:32 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 29 Apr 2019 14:35:30 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 29 Apr 2019 14:35:30 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
-        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>
-Subject: [PATCH 2/2] net-next: stmmac: add mdio clause 45 access from mac device for dwmac4
-Date:   Mon, 29 Apr 2019 14:35:24 +0800
-Message-ID: <1556519724-1576-3-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1556519724-1576-1-git-send-email-biao.huang@mediatek.com>
-References: <1556519724-1576-1-git-send-email-biao.huang@mediatek.com>
+        Mon, 29 Apr 2019 02:38:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3T6bhbL783875
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 28 Apr 2019 23:37:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3T6bhbL783875
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556519864;
+        bh=c1pJt+pj9gad8oxIz3aOg/Rogv+OXtT4TtGgLss8fyg=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=OrvYAuBa4oBZyD0ZWYq89fIE+6tE5QIzcVkU4o+3o/nrZUeVwXeCkYTNepvgaPV6s
+         oo88GIZp+rbt0UmLcJ4fe3mB7E1kbXI+TKbkjmtz2hY7xqwXeYuIA4vR2sxUgUcAD3
+         8V7aB7IBI1Nad+zXjHa779WuhpP3DMYCA+ZGllH00TIJ2af+JJN/YyYyJCVpgDGN7H
+         D+yk7FavBDkHI3q+0U/c6qZYH1qaHrJupEJGnc7L/3krPj3QIXgbzDdktbmKoh4Ydh
+         YpnnLWR0p0z4zo4f7VYLgZgx6UkzrcVBg+eO1wa5FsUVfIWrY3b9sK3h7vovjcRSOz
+         RMI3kjRiKpSQQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3T6be7k783870;
+        Sun, 28 Apr 2019 23:37:40 -0700
+Date:   Sun, 28 Apr 2019 23:37:40 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kairui Song <tipbot@zytor.com>
+Message-ID: <tip-d15d356887e770c5f2dcf963b52c7cb510c9e42d@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, peterz@infradead.org,
+        tglx@linutronix.de, acme@kernel.org, alexei.starovoitov@gmail.com,
+        jolsa@redhat.com, hpa@zytor.com, kasong@redhat.com,
+        dyoung@redhat.com, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, bp@alien8.de, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org
+Reply-To: dyoung@redhat.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, jpoimboe@redhat.com, bp@alien8.de,
+          namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+          tglx@linutronix.de, torvalds@linux-foundation.org,
+          peterz@infradead.org, acme@kernel.org, jolsa@redhat.com,
+          hpa@zytor.com, alexei.starovoitov@gmail.com, kasong@redhat.com
+In-Reply-To: <20190422162652.15483-1-kasong@redhat.com>
+References: <20190422162652.15483-1-kasong@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/x86: Make perf callchains work without
+ CONFIG_FRAME_POINTER
+Git-Commit-ID: d15d356887e770c5f2dcf963b52c7cb510c9e42d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add clause 45 mdio read and write from mac device for dwmac4.
+Commit-ID:  d15d356887e770c5f2dcf963b52c7cb510c9e42d
+Gitweb:     https://git.kernel.org/tip/d15d356887e770c5f2dcf963b52c7cb510c9e42d
+Author:     Kairui Song <kasong@redhat.com>
+AuthorDate: Tue, 23 Apr 2019 00:26:52 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 29 Apr 2019 08:25:05 +0200
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER
+
+Currently perf callchain doesn't work well with ORC unwinder
+when sampling from trace point. We'll get useless in kernel callchain
+like this:
+
+perf  6429 [000]    22.498450:             kmem:mm_page_alloc: page=0x176a17 pfn=1534487 order=0 migratetype=0 gfp_flags=GFP_KERNEL
+    ffffffffbe23e32e __alloc_pages_nodemask+0x22e (/lib/modules/5.1.0-rc3+/build/vmlinux)
+	7efdf7f7d3e8 __poll+0x18 (/usr/lib64/libc-2.28.so)
+	5651468729c1 [unknown] (/usr/bin/perf)
+	5651467ee82a main+0x69a (/usr/bin/perf)
+	7efdf7eaf413 __libc_start_main+0xf3 (/usr/lib64/libc-2.28.so)
+    5541f689495641d7 [unknown] ([unknown])
+
+The root cause is that, for trace point events, it doesn't provide a
+real snapshot of the hardware registers. Instead perf tries to get
+required caller's registers and compose a fake register snapshot
+which suppose to contain enough information for start a unwinding.
+However without CONFIG_FRAME_POINTER, if failed to get caller's BP as the
+frame pointer, so current frame pointer is returned instead. We get
+a invalid register combination which confuse the unwinder, and end the
+stacktrace early.
+
+So in such case just don't try dump BP, and let the unwinder start
+directly when the register is not a real snapshot. Use SP
+as the skip mark, unwinder will skip all the frames until it meet
+the frame of the trace point caller.
+
+Tested with frame pointer unwinder and ORC unwinder, this makes perf
+callchain get the full kernel space stacktrace again like this:
+
+perf  6503 [000]  1567.570191:             kmem:mm_page_alloc: page=0x16c904 pfn=1493252 order=0 migratetype=0 gfp_flags=GFP_KERNEL
+    ffffffffb523e2ae __alloc_pages_nodemask+0x22e (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb52383bd __get_free_pages+0xd (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb52fd28a __pollwait+0x8a (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb521426f perf_poll+0x2f (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb52fe3e2 do_sys_poll+0x252 (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb52ff027 __x64_sys_poll+0x37 (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb500418b do_syscall_64+0x5b (/lib/modules/5.1.0-rc3+/build/vmlinux)
+    ffffffffb5a0008c entry_SYSCALL_64_after_hwframe+0x44 (/lib/modules/5.1.0-rc3+/build/vmlinux)
+	7f71e92d03e8 __poll+0x18 (/usr/lib64/libc-2.28.so)
+	55a22960d9c1 [unknown] (/usr/bin/perf)
+	55a22958982a main+0x69a (/usr/bin/perf)
+	7f71e9202413 __libc_start_main+0xf3 (/usr/lib64/libc-2.28.so)
+    5541f689495641d7 [unknown] ([unknown])
+
+Co-developed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Kairui Song <kasong@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190422162652.15483-1-kasong@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h      |   11 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |    3 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |  167 +++++++++++++++++++--
- 3 files changed, 165 insertions(+), 16 deletions(-)
+ arch/x86/events/core.c            | 21 +++++++++++++++++----
+ arch/x86/include/asm/perf_event.h |  7 +------
+ arch/x86/include/asm/stacktrace.h | 13 -------------
+ include/linux/perf_event.h        | 14 ++++++++++----
+ 4 files changed, 28 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 709dcec..06573b3 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -410,12 +410,15 @@ struct mac_link {
- struct mii_regs {
- 	unsigned int addr;	/* MII Address */
- 	unsigned int data;	/* MII Data */
--	unsigned int addr_shift;	/* MII address shift */
--	unsigned int reg_shift;		/* MII reg shift */
--	unsigned int addr_mask;		/* MII address mask */
--	unsigned int reg_mask;		/* MII reg mask */
-+	unsigned int addr_shift;	/* PHY address shift */
-+	unsigned int cl45_reg_shift;	/* CL45 reg address shift */
-+	unsigned int reg_shift;		/* CL22 reg/CL45 dev shift */
-+	unsigned int addr_mask;		/* PHY address mask */
-+	unsigned int cl45_reg_mask;	/* CL45 reg mask */
-+	unsigned int reg_mask;		/* CL22 reg/CL45 dev mask */
- 	unsigned int clk_csr_shift;
- 	unsigned int clk_csr_mask;
-+	unsigned int cl45_en;	/* CL45 Enable*/
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index de1a924a4914..f315425d8468 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2382,6 +2382,15 @@ void arch_perf_update_userpage(struct perf_event *event,
+ 	cyc2ns_read_end();
+ }
+ 
++/*
++ * Determine whether the regs were taken from an irq/exception handler rather
++ * than from perf_arch_fetch_caller_regs().
++ */
++static bool perf_hw_regs(struct pt_regs *regs)
++{
++	return regs->flags & X86_EFLAGS_FIXED;
++}
++
+ void
+ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
+ {
+@@ -2393,11 +2402,15 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+ 		return;
+ 	}
+ 
+-	if (perf_callchain_store(entry, regs->ip))
+-		return;
++	if (perf_hw_regs(regs)) {
++		if (perf_callchain_store(entry, regs->ip))
++			return;
++		unwind_start(&state, current, regs, NULL);
++	} else {
++		unwind_start(&state, current, NULL, (void *)regs->sp);
++	}
+ 
+-	for (unwind_start(&state, current, regs, NULL); !unwind_done(&state);
+-	     unwind_next_frame(&state)) {
++	for (; !unwind_done(&state); unwind_next_frame(&state)) {
+ 		addr = unwind_get_return_address(&state);
+ 		if (!addr || perf_callchain_store(entry, addr))
+ 			return;
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 04768a3a5454..1392d5e6e8d6 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -308,14 +308,9 @@ extern unsigned long perf_misc_flags(struct pt_regs *regs);
+  */
+ #define perf_arch_fetch_caller_regs(regs, __ip)		{	\
+ 	(regs)->ip = (__ip);					\
+-	(regs)->bp = caller_frame_pointer();			\
++	(regs)->sp = (unsigned long)__builtin_frame_address(0);	\
+ 	(regs)->cs = __KERNEL_CS;				\
+ 	regs->flags = 0;					\
+-	asm volatile(						\
+-		_ASM_MOV "%%"_ASM_SP ", %0\n"			\
+-		: "=m" ((regs)->sp)				\
+-		:: "memory"					\
+-	);							\
+ }
+ 
+ struct perf_guest_switch_msr {
+diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/stacktrace.h
+index f335aad404a4..beef7ad9e43a 100644
+--- a/arch/x86/include/asm/stacktrace.h
++++ b/arch/x86/include/asm/stacktrace.h
+@@ -98,19 +98,6 @@ struct stack_frame_ia32 {
+     u32 return_address;
  };
  
- struct mac_device_info {
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 2a41c64..1ca03f9 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -835,6 +835,9 @@ int dwmac4_setup(struct stmmac_priv *priv)
- 	mac->mii.reg_mask = GENMASK(20, 16);
- 	mac->mii.clk_csr_shift = 8;
- 	mac->mii.clk_csr_mask = GENMASK(11, 8);
-+	mac->mii.cl45_reg_shift = 16;
-+	mac->mii.cl45_reg_mask = GENMASK(31, 16);
-+	mac->mii.cl45_en = BIT(1);
+-static inline unsigned long caller_frame_pointer(void)
+-{
+-	struct stack_frame *frame;
+-
+-	frame = __builtin_frame_address(0);
+-
+-#ifdef CONFIG_FRAME_POINTER
+-	frame = frame->next_frame;
+-#endif
+-
+-	return (unsigned long)frame;
+-}
+-
+ void show_opcodes(struct pt_regs *regs, const char *loglvl);
+ void show_ip(struct pt_regs *regs, const char *loglvl);
+ #endif /* _ASM_X86_STACKTRACE_H */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index f3864e1c5569..cf023db0e8a2 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1058,12 +1058,18 @@ static inline void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned lo
+ #endif
  
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index bdd3515..a70c967 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -150,16 +150,16 @@ static int stmmac_xgmac2_mdio_write(struct mii_bus *bus, int phyaddr,
- }
- 
- /**
-- * stmmac_mdio_read
-+ * stmmac_c22_read
-  * @bus: points to the mii_bus structure
-- * @phyaddr: MII addr
-- * @phyreg: MII reg
-- * Description: it reads data from the MII register from within the phy device.
-+ * @phyaddr: clause 22 phy address
-+ * @phyreg: clause 22 phy register
-+ * Description: it reads data from the MII register follow clause 22.
-  * For the 7111 GMAC, we must set the bit 0 in the MII address register while
-  * accessing the PHY registers.
-  * Fortunately, it seems this has no drawback for the 7109 MAC.
+ /*
+- * Take a snapshot of the regs. Skip ip and frame pointer to
+- * the nth caller. We only need a few of the regs:
++ * When generating a perf sample in-line, instead of from an interrupt /
++ * exception, we lack a pt_regs. This is typically used from software events
++ * like: SW_CONTEXT_SWITCHES, SW_MIGRATIONS and the tie-in with tracepoints.
++ *
++ * We typically don't need a full set, but (for x86) do require:
+  * - ip for PERF_SAMPLE_IP
+  * - cs for user_mode() tests
+- * - bp for callchains
+- * - eflags, for future purposes, just in case
++ * - sp for PERF_SAMPLE_CALLCHAIN
++ * - eflags for MISC bits and CALLCHAIN (see: perf_hw_regs())
++ *
++ * NOTE: assumes @regs is otherwise already 0 filled; this is important for
++ * things like PERF_SAMPLE_REGS_INTR.
   */
--static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
-+static int stmmac_c22_read(struct mii_bus *bus, int phyaddr, int phyreg)
+ static inline void perf_fetch_caller_regs(struct pt_regs *regs)
  {
- 	struct net_device *ndev = bus->priv;
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-@@ -194,15 +194,15 @@ static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
- }
- 
- /**
-- * stmmac_mdio_write
-+ * stmmac_c22_write
-  * @bus: points to the mii_bus structure
-- * @phyaddr: MII addr
-- * @phyreg: MII reg
-- * @phydata: phy data
-- * Description: it writes the data into the MII register from within the device.
-+ * @phyaddr: clause-22 phy address
-+ * @phyreg: clause-22 phy register
-+ * @phydata: clause-22 phy data
-+ * Description: it writes the data into the MII register follow clause 22.
-  */
--static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
--			     u16 phydata)
-+static int stmmac_c22_write(struct mii_bus *bus, int phyaddr, int phyreg,
-+			    u16 phydata)
- {
- 	struct net_device *ndev = bus->priv;
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-@@ -237,6 +237,149 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
- }
- 
- /**
-+ * stmmac_c45_read
-+ * @bus: points to the mii_bus structure
-+ * @phyaddr: clause-45 phy address
-+ * @devad: clause-45 device address
-+ * @prtad: clause-45 register address
-+ * @phydata: phy data
-+ * Description: it reads the data from the  MII register follow clause 45.
-+ */
-+static int stmmac_c45_read(struct mii_bus *bus, int phyaddr,
-+			   int devad, int prtad)
-+{
-+	struct net_device *ndev = bus->priv;
-+	struct stmmac_priv *priv = netdev_priv(ndev);
-+	unsigned int mii_address = priv->hw->mii.addr;
-+	unsigned int mii_data = priv->hw->mii.data;
-+	u32 v, value;
-+	int data;
-+
-+	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-+			       100, 10000))
-+		return -EIO;
-+
-+	value = 0;
-+	value |= (prtad << priv->hw->mii.cl45_reg_shift)
-+			& priv->hw->mii.cl45_reg_mask;
-+	writel(value, priv->ioaddr + mii_data);
-+
-+	/* delay 2ms to avoid error value of get_phy_c45_devs_in_pkg */
-+	mdelay(2);
-+
-+	value = MII_BUSY;
-+	value |= (phyaddr << priv->hw->mii.addr_shift)
-+		& priv->hw->mii.addr_mask;
-+	value |= (devad << priv->hw->mii.reg_shift) & priv->hw->mii.reg_mask;
-+	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
-+		& priv->hw->mii.clk_csr_mask;
-+	if (priv->plat->has_gmac4) {
-+		value |= MII_GMAC4_READ;
-+		value |= priv->hw->mii.cl45_en;
-+	}
-+	writel(value, priv->ioaddr + mii_address);
-+
-+	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-+			       100, 10000))
-+		return -EIO;
-+
-+	/* Read the data from the MII data register */
-+	data = (int)(readl(priv->ioaddr + mii_data) & 0xffff);
-+
-+	return data;
-+}
-+
-+/**
-+ * stmmac_c45_write
-+ * @bus: points to the mii_bus structure
-+ * @phyaddr: clause-45 phy address
-+ * @devad: clause-45 device address
-+ * @prtad: clause-45 register address
-+ * @phydata: phy data
-+ * Description: it writes the data into the MII register follow clause 45.
-+ */
-+static int stmmac_c45_write(struct mii_bus *bus, int phyaddr, int devad,
-+			    int prtad, u16 phydata)
-+{
-+	struct net_device *ndev = bus->priv;
-+	struct stmmac_priv *priv = netdev_priv(ndev);
-+	unsigned int mii_address = priv->hw->mii.addr;
-+	unsigned int mii_data = priv->hw->mii.data;
-+	u32 v, value;
-+
-+	/* Wait until any existing MII operation is complete */
-+	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-+			       100, 10000))
-+		return -EIO;
-+
-+	value = phydata;
-+	value |= (prtad << priv->hw->mii.cl45_reg_shift) &
-+		 priv->hw->mii.cl45_reg_mask;
-+	writel(value, priv->ioaddr + mii_data);
-+
-+	mdelay(2);
-+
-+	value = MII_BUSY;
-+	value |= (phyaddr << priv->hw->mii.addr_shift) &
-+		 priv->hw->mii.addr_mask;
-+	value |= (devad << priv->hw->mii.reg_shift) & priv->hw->mii.reg_mask;
-+	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift) &
-+		 priv->hw->mii.clk_csr_mask;
-+
-+	if (priv->plat->has_gmac4) {
-+		value |= MII_GMAC4_WRITE;
-+		value |= priv->hw->mii.cl45_en;
-+	}
-+	writel(value, priv->ioaddr + mii_address);
-+
-+	/* Wait until any existing MII operation is complete */
-+	return readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
-+				  100, 10000);
-+}
-+
-+/**
-+ * stmmac_mdio_read
-+ * @bus: points to the mii_bus structure
-+ * @phyaddr: MII addr
-+ * @phyreg: MII reg
-+ * Description: it reads data from the MII register from within the phy device.
-+ */
-+static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
-+{
-+	if (phyreg & MII_ADDR_C45) {
-+		int devad, prtad;
-+
-+		devad = (phyreg >> 16) & 0x1f;
-+		prtad = phyreg & 0xffff;
-+		return stmmac_c45_read(bus, phyaddr, devad, prtad);
-+	} else {
-+		return stmmac_c22_read(bus, phyaddr, phyreg);
-+	}
-+}
-+
-+/**
-+ * stmmac_mdio_write
-+ * @bus: points to the mii_bus structure
-+ * @phyaddr: MII addr
-+ * @phyreg: MII reg
-+ * @phydata: phy data
-+ * Description: it writes the data into the MII register from within the device.
-+ */
-+static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
-+			     u16 phydata)
-+{
-+	if (phyreg & MII_ADDR_C45) {
-+		int devad, prtad;
-+
-+		devad = (phyreg >> 16) & 0x1f;
-+		prtad = phyreg & 0xffff;
-+		return stmmac_c45_write(bus, phyaddr, devad, prtad, phydata);
-+	} else {
-+		return stmmac_c22_write(bus, phyaddr, phyreg, phydata);
-+	}
-+}
-+
-+/**
-  * stmmac_mdio_reset
-  * @bus: points to the mii_bus structure
-  * Description: reset the MII bus
--- 
-1.7.9.5
-
