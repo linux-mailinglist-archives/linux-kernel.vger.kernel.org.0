@@ -2,244 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49DEDA1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:19:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE02DA11
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfD2ASW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Apr 2019 20:18:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55575 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfD2ASQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Apr 2019 20:18:16 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o25so11490467wmf.5;
-        Sun, 28 Apr 2019 17:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WRytol4TsLCjzvjFivOBEq5e1CUmdiuLX9qE0edSQhk=;
-        b=BGPSCS6ojz9nm/TKHuLkr9IzMY0qibhEQQLnk6L+YhFlNMV6+hj2NGw4G9PKWwiwrL
-         uU6vzyuExMcsrYJi7orN2mApfwyGc0f6fnHgCj18k54kvzUQaGdxzr94KCD9qc/GDO0e
-         5UFErZlvfDtutCkLwfrMfy2UGNcC3tX0Mx15uWKbNoO4y2J+RbLhgq2ebn6+y1ymIPDb
-         px/p7SdSH6UdQZ7utuvAih9RcM4FYdzXGPdQ3uClKbnoSpSLu4vOdSTRerJkTnF3A1j/
-         fclwJqEFmlc5LmJ+7upfxIYpDVeKOYANJojtcP4WZty9owSNKL7I6nZnqyOUBBB1JlOX
-         lj2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WRytol4TsLCjzvjFivOBEq5e1CUmdiuLX9qE0edSQhk=;
-        b=TNGaDeVr8uiLD/lR+XfPMaRDnkbI1i0uD54rxdTMy79rZz3w2hMPP6Kj7ylkpRDXHv
-         s7iwZdOj08Zj88Pu9ACEvUpXuN/sICYxPwM92I4iOllIwRufaBkkhShY0wq2TA1qjGim
-         uazLLwqos6K/dr/61NdLNuNhCOXYJ740Lh6HDQhK3B7tIO6f7oZK5ENVuheTiaXMH40O
-         puZdNef4UuEozXN2NxAmTq3d7pVvseiKUe5c337b4lg3zTyx7sn5CBGHlbJkJNnDJ3L0
-         6If1yJG1fHeDBr7PEJVCBmoSiEwpYX3oAWXV1yaNQgmZMihX5DXBrdhOK0buXGSzbvji
-         fl4w==
-X-Gm-Message-State: APjAAAWVs7MZjfYsdmDy8htRQzDjKYAcYgV5j80QbKpyj4faGqInBHVx
-        HgPAqTlH0fu4Lx+ZdVztVZpCcA3XFMs=
-X-Google-Smtp-Source: APXvYqyL7EyYUeIAGHJUIWxCUUyfNiQqNzucPjwGb/7w8iUIAfX+Z9XF32ENViuAEGAQX5DEbPMcoA==
-X-Received: by 2002:a7b:c923:: with SMTP id h3mr15114054wml.34.1556497093652;
-        Sun, 28 Apr 2019 17:18:13 -0700 (PDT)
-Received: from localhost.localdomain (5-12-225-227.residential.rdsnet.ro. [5.12.225.227])
-        by smtp.gmail.com with ESMTPSA id h16sm5098030wrb.31.2019.04.28.17.18.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Apr 2019 17:18:13 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH v4 net-next 12/12] dt-bindings: net: dsa: Add documentation for NXP SJA1105 driver
-Date:   Mon, 29 Apr 2019 03:17:06 +0300
-Message-Id: <20190429001706.7449-13-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190429001706.7449-1-olteanv@gmail.com>
-References: <20190429001706.7449-1-olteanv@gmail.com>
+        id S1726819AbfD2ARL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Apr 2019 20:17:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbfD2ARL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Apr 2019 20:17:11 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E7F620656;
+        Mon, 29 Apr 2019 00:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556497029;
+        bh=oG6Yu4j/Dt+FoonJfviNsLx4jjegkGBiqnZn0AdmUTE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1zvrhoZQieoigcwC87QQNYfTCrNcvfzgWSdrwQfu2RuYfbLjxt/oyZEf6++27LBz6
+         Me+gqjRshaO/NydGhU3lmYWw2N7PuE97zeOudmiKZReE23OQ607uvPJDtW1XW0scgB
+         zUKqhXT5fTekSE5F71QHTMYV7/Gp/YIx3L+RLn20=
+Date:   Sun, 28 Apr 2019 19:17:08 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     fred@fredlawl.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mika.westerberg@linux.intel.com, lukas@wunner.de,
+        andriy.shevchenko@linux.intel.com, keith.busch@intel.com,
+        mr.nuke.me@gmail.com, liudongdong3@huawei.com, thesven73@gmail.com
+Subject: Re: [PATCH 4/4] PCI/portdrv: Add dev_fmt() to port drivers
+Message-ID: <20190429001708.GM14616@google.com>
+References: <20190427191304.32502-1-fred@fredlawl.com>
+ <20190427191304.32502-5-fred@fredlawl.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190427191304.32502-5-fred@fredlawl.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v4:
-None.
+On Sat, Apr 27, 2019 at 02:13:04PM -0500, fred@fredlawl.com wrote:
+> From: Frederick Lawler <fred@fredlawl.com>
+> 
+> Add dev_fmt() to port drivers.
+> 
+> Signed-off-by: Frederick Lawler <fred@fredlawl.com>
+> ---
+>  drivers/pci/hotplug/pciehp_core.c  | 3 +++
+>  drivers/pci/hotplug/pciehp_ctrl.c  | 2 ++
+>  drivers/pci/hotplug/pciehp_hpc.c   | 3 +++
+>  drivers/pci/hotplug/pciehp_pci.c   | 2 ++
+>  drivers/pci/pcie/aer.c             | 3 +++
+>  drivers/pci/pcie/aer_inject.c      | 2 ++
+>  drivers/pci/pcie/bw_notification.c | 2 ++
+>  drivers/pci/pcie/dpc.c             | 2 ++
+>  drivers/pci/pcie/pme.c             | 2 ++
+>  9 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+> index 430a47556813..b07d713fd4bd 100644
+> --- a/drivers/pci/hotplug/pciehp_core.c
+> +++ b/drivers/pci/hotplug/pciehp_core.c
+> @@ -17,6 +17,9 @@
+>   *   Dely Sy <dely.l.sy@intel.com>"
+>   */
+>  
+> +#define pr_fmt(fmt) "pciehp: " fmt
+> +#define dev_fmt(fmt) pr_fmt(fmt)
 
-Changes in v3:
-None.
+This should be in the same patch that converts from using the pcie_device
+to the pci_dev.  That way the "pciehp" that came from the pcie_device is
+atomically replaced with the "pciehp" from pr_fmt()/dev_fmt().
 
-Changes in v2:
-Renamed sja1105,phy-mode to sja1105,role-phy and similarly for mac.
-Clarified the switch situation with RGMII delays.
+If you do it in separate patches, there's an intermediate stage where
+there's no prefix at all, and we want to avoid that.
 
- .../devicetree/bindings/net/dsa/sja1105.txt   | 157 ++++++++++++++++++
- 1 file changed, 157 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/dsa/sja1105.txt
+BTW, in most cases you can simply do this, which is slightly simpler:
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/sja1105.txt b/Documentation/devicetree/bindings/net/dsa/sja1105.txt
-new file mode 100644
-index 000000000000..cf4961af36c4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/dsa/sja1105.txt
-@@ -0,0 +1,157 @@
-+NXP SJA1105 switch driver
-+=========================
-+
-+Required properties:
-+
-+- compatible:
-+	Must be one of:
-+	- "nxp,sja1105e"
-+	- "nxp,sja1105t"
-+	- "nxp,sja1105p"
-+	- "nxp,sja1105q"
-+	- "nxp,sja1105r"
-+	- "nxp,sja1105s"
-+
-+	Although the device ID could be detected at runtime, explicit bindings
-+	are required in order to be able to statically check their validity.
-+	For example, SGMII can only be specified on port 4 of R and S devices,
-+	and the non-SGMII devices, while pin-compatible, are not equal in terms
-+	of support for RGMII internal delays (supported on P/Q/R/S, but not on
-+	E/T).
-+
-+Optional properties:
-+
-+- sja1105,role-mac:
-+- sja1105,role-phy:
-+	Boolean properties that can be assigned under each port node. By
-+	default (unless otherwise specified) a port is configured as MAC if it
-+	is driving a PHY (phy-handle is present) or as PHY if it is PHY-less
-+	(fixed-link specified, presumably because it is connected to a MAC).
-+	The effect of this property (in either its implicit or explicit form)
-+	is:
-+	- In the case of MII or RMII it specifies whether the SJA1105 port is a
-+	  clock source or sink for this interface (not applicable for RGMII
-+	  where there is a Tx and an Rx clock).
-+	- In the case of RGMII it affects the behavior regarding internal
-+	  delays:
-+	  1. If sja1105,role-mac is specified, and the phy-mode property is one
-+	     of "rgmii-id", "rgmii-txid" or "rgmii-rxid", then the entity
-+	     designated to apply the delay/clock skew necessary for RGMII
-+	     is the PHY. The SJA1105 MAC does not apply any internal delays.
-+	  2. If sja1105,role-phy is specified, and the phy-mode property is one
-+	     of the above, the designated entity to apply the internal delays
-+	     is the SJA1105 MAC (if hardware-supported). This is only supported
-+	     by the second-generation (P/Q/R/S) hardware. On a first-generation
-+	     E or T device, it is an error to specify an RGMII phy-mode other
-+	     than "rgmii" for a port that is in fixed-link mode. In that case,
-+	     the clock skew must either be added by the MAC at the other end of
-+	     the fixed-link, or by PCB serpentine traces on the board.
-+	These properties are required, for example, in the case where SJA1105
-+	ports are at both ends of a MII/RMII PHY-less setup. One end would need
-+	to have sja1105,role-mac, while the other sja1105,role-phy.
-+
-+See Documentation/devicetree/bindings/net/dsa/dsa.txt for the list of standard
-+DSA required and optional properties.
-+
-+Other observations
-+------------------
-+
-+The SJA1105 SPI interface requires a CS-to-CLK time (t2 in UM10944) of at least
-+one half of t_CLK. At an SPI frequency of 1MHz, this means a minimum
-+cs_sck_delay of 500ns. Ensuring that this SPI timing requirement is observed
-+depends on the SPI bus master driver.
-+
-+Example
-+-------
-+
-+Ethernet switch connected via SPI to the host, CPU port wired to enet2:
-+
-+arch/arm/boot/dts/ls1021a-tsn.dts:
-+
-+/* SPI controller of the LS1021 */
-+&dspi0 {
-+	sja1105@1 {
-+		reg = <0x1>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nxp,sja1105t";
-+		spi-max-frequency = <4000000>;
-+		fsl,spi-cs-sck-delay = <1000>;
-+		fsl,spi-sck-cs-delay = <1000>;
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				/* ETH5 written on chassis */
-+				label = "swp5";
-+				phy-handle = <&rgmii_phy6>;
-+				phy-mode = "rgmii-id";
-+				reg = <0>;
-+				/* Implicit "sja1105,role-mac;" */
-+			};
-+			port@1 {
-+				/* ETH2 written on chassis */
-+				label = "swp2";
-+				phy-handle = <&rgmii_phy3>;
-+				phy-mode = "rgmii-id";
-+				reg = <1>;
-+				/* Implicit "sja1105,role-mac;" */
-+			};
-+			port@2 {
-+				/* ETH3 written on chassis */
-+				label = "swp3";
-+				phy-handle = <&rgmii_phy4>;
-+				phy-mode = "rgmii-id";
-+				reg = <2>;
-+				/* Implicit "sja1105,role-mac;" */
-+			};
-+			port@3 {
-+				/* ETH4 written on chassis */
-+				phy-handle = <&rgmii_phy5>;
-+				label = "swp4";
-+				phy-mode = "rgmii-id";
-+				reg = <3>;
-+				/* Implicit "sja1105,role-mac;" */
-+			};
-+			port@4 {
-+				/* Internal port connected to eth2 */
-+				ethernet = <&enet2>;
-+				phy-mode = "rgmii";
-+				reg = <4>;
-+				/* Implicit "sja1105,role-phy;" */
-+				fixed-link {
-+					speed = <1000>;
-+					full-duplex;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+/* MDIO controller of the LS1021 */
-+&mdio0 {
-+	/* BCM5464 */
-+	rgmii_phy3: ethernet-phy@3 {
-+		reg = <0x3>;
-+	};
-+	rgmii_phy4: ethernet-phy@4 {
-+		reg = <0x4>;
-+	};
-+	rgmii_phy5: ethernet-phy@5 {
-+		reg = <0x5>;
-+	};
-+	rgmii_phy6: ethernet-phy@6 {
-+		reg = <0x6>;
-+	};
-+};
-+
-+/* Ethernet master port of the LS1021 */
-+&enet2 {
-+	phy-connection-type = "rgmii";
-+	status = "ok";
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+	};
-+};
-+
--- 
-2.17.1
+  #define dev_fmt pr_fmt
 
+>  #include <linux/moduleparam.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+> index 345c02b1e8d7..969a9c72f65d 100644
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -13,6 +13,8 @@
+>   *
+>   */
+>  
+> +#define dev_fmt(fmt) "pciehp: " fmt
+> +
+>  #include <linux/kernel.h>
+>  #include <linux/types.h>
+>  #include <linux/pm_runtime.h>
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index 28a132a0d9db..f2a3da105f5b 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -12,6 +12,9 @@
+>   * Send feedback to <greg@kroah.com>,<kristen.c.accardi@intel.com>
+>   */
+>  
+> +#define pr_fmt(fmt) "pciehp: " fmt
+> +#define dev_fmt(fmt) pr_fmt(fmt)
+> +
+>  #include <linux/kernel.h>
+>  #include <linux/types.h>
+>  #include <linux/jiffies.h>
+> diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
+> index 55967ce567f6..04ccd535aca7 100644
+> --- a/drivers/pci/hotplug/pciehp_pci.c
+> +++ b/drivers/pci/hotplug/pciehp_pci.c
+> @@ -13,6 +13,8 @@
+>   *
+>   */
+>  
+> +#define dev_fmt(fmt) "pciehp: " fmt
+> +
+>  #include <linux/kernel.h>
+>  #include <linux/types.h>
+>  #include <linux/pci.h>
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 224d878a28b4..6fd67285423d 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -12,6 +12,9 @@
+>   *    Andrew Patterson <andrew.patterson@hp.com>
+>   */
+>  
+> +#define pr_fmt(fmt) "AER: " fmt
+> +#define dev_fmt(fmt) pr_fmt(fmt)
+> +
+>  #include <linux/cper.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-acpi.h>
+> diff --git a/drivers/pci/pcie/aer_inject.c b/drivers/pci/pcie/aer_inject.c
+> index 610b617ae600..d4f6d49acd0c 100644
+> --- a/drivers/pci/pcie/aer_inject.c
+> +++ b/drivers/pci/pcie/aer_inject.c
+> @@ -12,6 +12,8 @@
+>   *     Huang Ying <ying.huang@intel.com>
+>   */
+>  
+> +#define dev_fmt(fmt) "AER: " fmt
+> +
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/irq.h>
+> diff --git a/drivers/pci/pcie/bw_notification.c b/drivers/pci/pcie/bw_notification.c
+> index d2eae3b7cc0f..a4bb90562cd5 100644
+> --- a/drivers/pci/pcie/bw_notification.c
+> +++ b/drivers/pci/pcie/bw_notification.c
+> @@ -14,6 +14,8 @@
+>   * and warns when links become degraded in operation.
+>   */
+>  
+> +#define dev_fmt(fmt) "BWN: " fmt
+> +
+>  #include "../pci.h"
+>  #include "portdrv.h"
+>  
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index 72659286191b..b3c10cdc508a 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -6,6 +6,8 @@
+>   * Copyright (C) 2016 Intel Corp.
+>   */
+>  
+> +#define dev_fmt(fmt) "DPC: " fmt
+> +
+>  #include <linux/aer.h>
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+> index 54d593d10396..d6698423a6d6 100644
+> --- a/drivers/pci/pcie/pme.c
+> +++ b/drivers/pci/pcie/pme.c
+> @@ -7,6 +7,8 @@
+>   * Copyright (C) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
+>   */
+>  
+> +#define dev_fmt(fmt) "PME: " fmt
+> +
+>  #include <linux/pci.h>
+>  #include <linux/kernel.h>
+>  #include <linux/errno.h>
+> -- 
+> 2.17.1
+> 
