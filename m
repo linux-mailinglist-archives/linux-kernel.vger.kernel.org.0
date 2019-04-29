@@ -2,97 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC4BDC44
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375C3DBC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbfD2GzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:55:24 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45833 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbfD2GzY (ORCPT
+        id S1727418AbfD2GFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:05:32 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:52013 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727016AbfD2GFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:55:24 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m18so3679147lje.12
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Apr 2019 23:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z8D8MI3gegViugIwpZ2280JffkSqWg4ZFxzK/9RxXBo=;
-        b=LUbBeObv/gR4XZfXo7oDu/YHe62TWZjhYvw4+JtLknzqp2Lp8hRkwlrRsrhl7Sl1C/
-         q2RDtVC14PQvbgr5MBU56llQED/puyU0vk8UPj58UHtIuwGdkA7TUhIptVv4qZz8S0Pl
-         Nl2D5I+nmEdXNhleozyao19ZDG4Lj9x7T1UTKK38d3kxAk+3xgQjP+MSiQUHyx1STE7X
-         hZuGjAEd5UQenzMBve5zZbPdf8KldseCYP1ojLUexW+6JGKazgTLbD2hNWaBpxOo2bK6
-         CM6qPU3HIAWihf7fQxKGPC5kmgfYMGJG8EG2y2rozPNAWijgrVZ5e8RHRlD2SZDnUe2S
-         352g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z8D8MI3gegViugIwpZ2280JffkSqWg4ZFxzK/9RxXBo=;
-        b=tBkY7vvsLJbptq/mqsWdJ5i8fwtCQa9spzb37bG24T87yyfo2nihTbkU95GqpMjmKF
-         GzdhaYrWeyaiOMdJbrk46U3bR6AigEYKY7uy08KgKL2MdP1zNn96fv3+/YIiiWS/snI5
-         20UiyhXuaRCDuldveJa+VCod9moufpKZsa5+JKNwjDe8enp8yOfx7BR8jfYJqf7sL95h
-         UJ3XsOyW0rhfX+UYwS7msCH1U7BkP1LP+LEgOnzLjpviYehUIcJcaItz9qQiDW3HVQ8x
-         Lc/LRDfhFRlWR3G8nRcmAtocPL2Jz6wQX4Y31nanwOwGbycwx0dIzmkZ+mzxKEzPD/Qm
-         1gDg==
-X-Gm-Message-State: APjAAAUtjXPRQWgyErrJFt3hu1kqSmsBr1/piIPIsE9X4HGxtyejVfiv
-        Wqz7VJb5auryKfcg9/9oG1lmbA==
-X-Google-Smtp-Source: APXvYqzYDLI6ZocQr+ZHvYXqPxeBPieMJMXCwRHAFBSqi0F7nqaoFBfUepWKJs6MF7wntspUgF7n9A==
-X-Received: by 2002:a2e:99d2:: with SMTP id l18mr17299658ljj.27.1556520922194;
-        Sun, 28 Apr 2019 23:55:22 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id k4sm3609685lja.18.2019.04.28.23.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Apr 2019 23:55:20 -0700 (PDT)
-Date:   Sun, 28 Apr 2019 23:05:22 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 3/3] ARM: samsung: Changes for v5.2
-Message-ID: <20190429060522.ijfpvz3c2bxa5xwi@localhost>
-References: <20190414154805.10188-1-krzk@kernel.org>
- <20190414154805.10188-3-krzk@kernel.org>
+        Mon, 29 Apr 2019 02:05:32 -0400
+X-UUID: b952677fe0ec41e19dd2a36adff33e10-20190429
+X-UUID: b952677fe0ec41e19dd2a36adff33e10-20190429
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 948546939; Mon, 29 Apr 2019 14:05:27 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 29 Apr
+ 2019 14:05:26 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 29 Apr 2019 14:05:25 +0800
+Message-ID: <1556517925.24897.17.camel@mhfsdcap03>
+Subject: Re: [PATCH 5/6] net: stmmac: add mdio clause 45 access from mac
+ device for dwmac4
+From:   biao huang <biao.huang@mediatek.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>,
+        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <jianguo.zhang@mediatek.com>
+Date:   Mon, 29 Apr 2019 14:05:25 +0800
+In-Reply-To: <20190428163705.GH23059@lunn.ch>
+References: <1556433009-25759-1-git-send-email-biao.huang@mediatek.com>
+         <1556433009-25759-6-git-send-email-biao.huang@mediatek.com>
+         <20190428163705.GH23059@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190414154805.10188-3-krzk@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 14, 2019 at 05:48:05PM +0200, Krzysztof Kozlowski wrote:
-> 
-> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-> 
->   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.2
-> 
-> for you to fetch changes up to 7676e667c841375b41d9438b559756141aa93d0e:
-> 
->   ARM: s3c64xx: Tidy up handling of regulator GPIO lookups (2019-04-14 12:53:03 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v5.2
-> 
-> 1. Cleanup in mach code.
-> 2. Add necessary fixes for Suspend to RAM on Exynos5422 boards (tested
->    with Odroid XU3/XU4/HC1 family).  Finally this brings a working S2R
->    on these Odroid boards (still other drivers might have some issues
->    but mach code seems to be finished).
-> 3. Require MCPM for Exynos542x boards because otherwise not all of cores
->    will come online.
-> 4. GPIO regulator cleanup on S3C6410 Craig.
+Hi Andrew,
 
-Merged, thanks.
+On Sun, 2019-04-28 at 18:37 +0200, Andrew Lunn wrote:
+> On Sun, Apr 28, 2019 at 02:30:08PM +0800, Biao Huang wrote:
+> > +static int stmmac_c45_read(struct mii_bus *bus, int phyaddr,
+> > +			   int devad, int prtad)
+> > +{
+> > +	struct net_device *ndev = bus->priv;
+> > +	struct stmmac_priv *priv = netdev_priv(ndev);
+> > +	unsigned int mii_address = priv->hw->mii.addr;
+> > +	unsigned int mii_data = priv->hw->mii.data;
+> > +	u32 v, value;
+> > +	int data;
+> > +
+> > +	if (readl_poll_timeout(priv->ioaddr + mii_address, v, !(v & MII_BUSY),
+> > +			       100, 10000))
+> > +		return -EBUSY;
+> 
+> Hi Biao
+> 
+> readl_poll_timeout() returns an error code. It is better to return
+> that, than make up some other error code. Yes, i know the C22 read
+> returns EBUSY, but we don't need to copy that behaviour into C45.
+> 
+OK, will return error code here.
+> > +
+> > +	value = 0;
+> > +	value |= (prtad << priv->hw->mii.cl45_reg_shift)
+> > +			& priv->hw->mii.cl45_reg_mask;
+> > +	writel(value, priv->ioaddr + mii_data);
+> > +
+> > +	/* delay 2ms to avoid error value of get_phy_c45_devs_in_pkg */
+> > +	mdelay(2);
+> 
+> Please could you explain this a bit more?
+when of_mdiobus_register is invoked,
+the C22 PHY addr information will be obtained in device tree(reg = xx,
+no need through mdiobus),
+but C45 PHY addr should be got through mdiobus->read according to
+current flow.
+    of_mdiobus_register -->
+    of_mdiobus_register_phy -->
+    get_phy_device -->
+    get_phy_id -->
+    get_phy_c45_ids -->
+    get_phy_c45_devs_in_pkg
+
+In my platform, mdio bus read will return 0xffff or 0x0000 for C45 in
+of_mdiobus_register callstack, and that's not the expected value. 
+So that the mdiobus register fails.
+
+We took some time to find that only after adding 2ms delay here,
+the read action will be stable and return the expected value.
+
+did you try C45 support in your platform? I can't tell whether it's a
+common or specified issue.
+
+our version is 4.21a.
+> 
+>        Andrew
 
 
--Olof
