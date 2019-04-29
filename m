@@ -2,171 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C091E09C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3860E0AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfD2Kgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 06:36:53 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19999 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbfD2Kgw (ORCPT
+        id S1727817AbfD2Km6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 06:42:58 -0400
+Received: from 9.mo173.mail-out.ovh.net ([46.105.72.44]:34442 "EHLO
+        9.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727621AbfD2Km6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 06:36:52 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cc6d3a50000>; Mon, 29 Apr 2019 03:36:21 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 29 Apr 2019 03:36:50 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 29 Apr 2019 03:36:50 -0700
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Apr
- 2019 10:36:50 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Apr
- 2019 10:36:49 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 29 Apr 2019 10:36:49 +0000
-Received: from jilin-desktop.nvidia.com (Not Verified[10.19.120.158]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cc6d3c00002>; Mon, 29 Apr 2019 03:36:49 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jim Lin <jilin@nvidia.com>
-Subject: [PATCH 1/1] usb: xhci: Add Clear_TT_Buffer
-Date:   Mon, 29 Apr 2019 18:36:44 +0800
-Message-ID: <1556534204-17826-1-git-send-email-jilin@nvidia.com>
-X-Mailer: git-send-email 2.1.4
+        Mon, 29 Apr 2019 06:42:58 -0400
+X-Greylist: delayed 346 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Apr 2019 06:42:57 EDT
+Received: from player158.ha.ovh.net (unknown [10.109.159.132])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id B8BBAFF697
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 12:37:09 +0200 (CEST)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player158.ha.ovh.net (Postfix) with ESMTPSA id C9E2051F45C6;
+        Mon, 29 Apr 2019 10:37:01 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 12:36:59 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alistair Popple <alistair@popple.id.au>, stable@vger.kernel.org
+Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
+Message-ID: <20190429123659.00c0622b@bahia.lan>
+In-Reply-To: <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
+References: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
+        <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1556534181; bh=oG+UgkoI1H0HnoK6iSsX7MbtgMNDVfxYFAgBXvtrQ8Y=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=rMN1ETWkrhZUe1qSggTobFAUHM/22ojPtroEiOoUIPyZ5z+F00ig6MYW26PYzdG0b
-         gGjGB/1qPN92OsxM8ipfD3xbeLRdxnltKDUct0znqITiwaF82KJo1jZF66mL9HNUoM
-         DP9Gglu6NglqBxTm9iAarPXTAQO8xsDR2DGSY+B8JKZ4ONpRt6OGx3DLJKMiUq88HL
-         I7NMzUUsNOKJMeS6fedL10s5bUvz86IESlWXrx/LTPPC4crMOEgZTUW1RYtvS4yw1Q
-         E2eaxh/41RNDZLZY49upO38G9bsvOM77gsHEugAOT1j09OOUt/9wIr6Hr2gKS2AIF2
-         QCPHG5jBA4mIA==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 15264106512109181429
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddriedvgdefudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-processing for full-/low-speed endpoints connected via a TT, the host
-software must use the Clear_TT_Buffer request to the TT to ensure
-that the buffer is not in the busy state".
+On Mon, 29 Apr 2019 16:01:29 +1000
+Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 
-In our case, a full-speed speaker (ConferenceCam) is behind a high-
-speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-request we may continue to get STALL with the folllowing requests,
-like Set_Interface.
+> On 20/04/2019 01:34, Greg Kurz wrote:
+> > Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
+> > has the effect of incrementing the reference count of the PCI device, as
+> > explained in drivers/pci/search.c:
+> > 
+> >  * Given a PCI domain, bus, and slot/function number, the desired PCI
+> >  * device is located in the list of PCI devices. If the device is
+> >  * found, its reference count is increased and this function returns a
+> >  * pointer to its data structure.  The caller must decrement the
+> >  * reference count by calling pci_dev_put().  If no device is found,
+> >  * %NULL is returned.
+> > 
+> > Nothing was done to call pci_dev_put() and the reference count of GPU and
+> > NPU PCI devices rockets up.
+> > 
+> > A natural way to fix this would be to teach the callers about the change,
+> > so that they call pci_dev_put() when done with the pointer. This turns
+> > out to be quite intrusive, as it affects many paths in npu-dma.c,
+> > pci-ioda.c and vfio_pci_nvlink2.c.  
+> 
+> 
+> afaict this referencing is only done to protect the current traverser
+> and what you've done is actually a natural way (and the generic
+> pci_get_dev_by_id() does exactly the same), although this looks a bit weird.
+> 
 
-Here we add Clear_TT_Buffer for the following Set_Interface requests
-to get ACK successfully.
+Not exactly the same: pci_get_dev_by_id() always increment the refcount
+of the returned PCI device. The refcount is only decremented when this
+device is passed to pci_get_dev_by_id() to continue searching.
 
-Signed-off-by: Jim Lin <jilin@nvidia.com>
----
- drivers/usb/host/xhci-ring.c | 28 ++++++++++++++++++++++++++++
- drivers/usb/host/xhci.c      |  7 +++++++
- drivers/usb/host/xhci.h      |  3 +++
- 3 files changed, 38 insertions(+)
+That means that the users of the PCI device pointer returned by
+pci_get_dev_by_id() or its exported variants pci_get_subsys(),
+pci_get_device() and pci_get_class() do handle the refcount. They
+all pass the pointer to pci_dev_put() or continue the search,
+which calls pci_dev_put() internally.
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 9215a28dad40..02b1ebad81e7 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1786,6 +1786,33 @@ struct xhci_segment *trb_in_td(struct xhci_hcd *xhci,
- 	return NULL;
- }
- 
-+static void xhci_clear_hub_tt_buffer(struct xhci_hcd *xhci,
-+	unsigned int slot_id, struct xhci_td *td)
-+{
-+	struct xhci_virt_device *dev;
-+	struct xhci_slot_ctx *slot_ctx;
-+	int saved_devnum;
-+
-+	/*
-+	 * As part of low/full-speed endpoint-halt processing
-+	 * we must clear the TT buffer (USB 2.0 specification 11.17.5).
-+	 */
-+	if (td->urb->dev->tt && !usb_pipeint(td->urb->pipe) &&
-+	    (td->urb->dev->tt->hub != xhci_to_hcd(xhci)->self.root_hub) &&
-+	    !xhci->clearing_tt) {
-+		xhci->clearing_tt = 1;
-+		dev = xhci->devs[slot_id];
-+		slot_ctx = xhci_get_slot_ctx(xhci, dev->out_ctx);
-+		/* Update devnum temporarily for usb_hub_clear_tt_buffer */
-+		saved_devnum = td->urb->dev->devnum;
-+		td->urb->dev->devnum = (int) le32_to_cpu(slot_ctx->dev_state) &
-+			DEV_ADDR_MASK;
-+		if (usb_hub_clear_tt_buffer(td->urb))
-+			xhci->clearing_tt = 0;
-+		td->urb->dev->devnum = saved_devnum;
-+	}
-+}
-+
- static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 		unsigned int slot_id, unsigned int ep_index,
- 		unsigned int stream_id, struct xhci_td *td,
-@@ -1804,6 +1831,7 @@ static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 	if (reset_type == EP_HARD_RESET) {
- 		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
- 		xhci_cleanup_stalled_ring(xhci, ep_index, stream_id, td);
-+		xhci_clear_hub_tt_buffer(xhci, slot_id, td);
- 	}
- 	xhci_ring_cmd_db(xhci);
- }
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 7fa58c99f126..cb8c1048d4d3 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -5132,6 +5132,12 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
- }
- EXPORT_SYMBOL_GPL(xhci_gen_setup);
- 
-+void xhci_clear_tt_buffer_complete(struct usb_hcd *hcd,
-+						struct usb_host_endpoint *ep)
-+{
-+	hcd_to_xhci(hcd)->clearing_tt = 0;
-+}
-+
- static const struct hc_driver xhci_hc_driver = {
- 	.description =		"xhci-hcd",
- 	.product_desc =		"xHCI Host Controller",
-@@ -5192,6 +5198,7 @@ static const struct hc_driver xhci_hc_driver = {
- 	.enable_usb3_lpm_timeout =	xhci_enable_usb3_lpm_timeout,
- 	.disable_usb3_lpm_timeout =	xhci_disable_usb3_lpm_timeout,
- 	.find_raw_port_number =	xhci_find_raw_port_number,
-+	.clear_tt_buffer_complete = xhci_clear_tt_buffer_complete,
- };
- 
- void xhci_init_driver(struct hc_driver *drv,
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 9334cdee382a..f786bb0992c4 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1864,6 +1864,7 @@ struct xhci_hcd {
- 	unsigned		hw_lpm_support:1;
- 	/* Broken Suspend flag for SNPS Suspend resume issue */
- 	unsigned		broken_suspend:1;
-+	unsigned		clearing_tt:1;
- 	/* cached usb2 extened protocol capabilites */
- 	u32                     *ext_caps;
- 	unsigned int            num_ext_caps;
-@@ -2052,6 +2053,8 @@ int xhci_alloc_tt_info(struct xhci_hcd *xhci,
- 		struct xhci_virt_device *virt_dev,
- 		struct usb_device *hdev,
- 		struct usb_tt *tt, gfp_t mem_flags);
-+void xhci_clear_tt_buffer_complete(struct usb_hcd *hcd,
-+		struct usb_host_endpoint *ep);
- 
- /* xHCI ring, segment, TRB, and TD functions */
- dma_addr_t xhci_trb_virt_to_dma(struct xhci_segment *seg, union xhci_trb *trb);
--- 
-2.1.4
+Direct and indirect callers of get_pci_dev() don't care for the
+refcount at all unless I'm missing something.
+
+> 
+> > Also, the issue appeared in 4.16 and
+> > some affected code got moved around since then: it would be problematic
+> > to backport the fix to stable releases.
+> > 
+> > All that code never cared for reference counting anyway. Call pci_dev_put()
+> > from get_pci_dev() to revert to the previous behavior.  
+> >> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev  
+> from pci_dn")
+> > Cc: stable@vger.kernel.org # v4.16
+> > Signed-off-by: Greg Kurz <groug@kaod.org>
+> > ---
+> >  arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
+> >  1 file changed, 14 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+> > index e713ade30087..d8f3647e8fb2 100644
+> > --- a/arch/powerpc/platforms/powernv/npu-dma.c
+> > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
+> > @@ -31,9 +31,22 @@ static DEFINE_SPINLOCK(npu_context_lock);
+> >  static struct pci_dev *get_pci_dev(struct device_node *dn)
+> >  {
+> >  	struct pci_dn *pdn = PCI_DN(dn);
+> > +	struct pci_dev *pdev;
+> >  
+> > -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
+> > +	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
+> >  					   pdn->busno, pdn->devfn);
+> > +
+> > +	/*
+> > +	 * pci_get_domain_bus_and_slot() increased the reference count of
+> > +	 * the PCI device, but callers don't need that actually as the PE
+> > +	 * already holds a reference to the device.  
+> 
+> Imho this would be just enough.
+> 
+> Anyway,
+> 
+> Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> 
+
+Thanks !
+
+I now realize that I forgot to add the --cc option for stable on my stgit
+command line :-\.
+
+Cc'ing now.
+
+> 
+> How did you find it? :)
+> 
+
+While reading code to find some inspiration for OpenCAPI passthrough. :)
+
+I saw the following in vfio_pci_ibm_npu2_init():
+
+	if (!pnv_pci_get_gpu_dev(vdev->pdev))
+		return -ENODEV;
+
+and simply followed the function calls.
+
+> 
+> > Since callers aren't
+> > +	 * aware of the reference count change, call pci_dev_put() now to
+> > +	 * avoid leaks.
+> > +	 */
+> > +	if (pdev)
+> > +		pci_dev_put(pdev);
+> > +
+> > +	return pdev;
+> >  }
+> >  
+> >  /* Given a NPU device get the associated PCI device. */
+> >   
+> 
 
