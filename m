@@ -2,114 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23667EB72
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16EC5EB5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfD2UOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:14:43 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33644 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729387AbfD2UOm (ORCPT
+        id S1729281AbfD2UJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:09:57 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34244 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbfD2UJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:14:42 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j11so9045857lfm.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:14:41 -0700 (PDT)
+        Mon, 29 Apr 2019 16:09:57 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b67so707969wmg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=klpGGVlaux40qrg5TuBwipJksiZuTXXgkF+MhiSRIlA=;
-        b=TcY9IXe9CfLqn42qUjL9P1ySMDeddDODCyvYowl1cSTLiBSIL5Qts+yxj2tJATyscS
-         VuMBIQMZJ9FcZ/bxb46xlQLqbBowZnvy4pBLmtOnwzxLeSB2LeNEj9ycOUiKVGex0PQ0
-         7w5rqat134L6eKheTJLzUXWSjYZJq/e/a7oNk=
+        bh=MvdFa5U3+5xI+n7BnR9vncycYNJ5YsEVOp/2MMs/RVM=;
+        b=BuTnIbE/5X9q4mxEOiBag5fyPi2rnHanlZN0p7kPbZG9UotvYf93pZvWrfRxStaYVJ
+         /GdMDmTZmyhQG4Hy8S73PFiykd/3xLz5uxkOlR1T2d+ZYUv3bH1nIvRqSj9TghaMH8e9
+         h3E7U3EsYofgiT5ZkKI+1mBkQdhp4qVEItwbaVaZiJIbK8xau1AjSVBRICUOm6h7Aakn
+         Lw2n4C1QWRRUPfTk3aM/E0ArH7yQj5h/EqjaiZq3PblxIFSFj0c2riOZT4XPLwvzKElR
+         QNh/o96SuIgP8b1IUBnMZVOJ/BcIXhX8iULCLXLMOueeICaz+P66G7gaXAr4/wbq9wUL
+         XJEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=klpGGVlaux40qrg5TuBwipJksiZuTXXgkF+MhiSRIlA=;
-        b=Qj4ThQrYlI+bO+P2qQYfSlTAHe86PNACxUZQlVTZ8XbJak+Evj4Xn4g1PDtKfUZyIs
-         OS62TohcqeLbuvZ1RHpbfQcCEOugaAXwsIVN/KpjnBpn6BV7+e71UGhX1gD1udW0puul
-         VIJ9Ahkmt6KPyHhvmA3JRFIhEdgCWJy02auZOb7lAUcN0rcUjynv5cpAs60mWhvMEeT4
-         uWitU/BLNSqkId3xubMEOWX5dKZ0ui3pXn+y/LzKF0fvyqUeijvcqQHuWL0IgvD2Umd7
-         o/41veFnUEuu8KKWrYBSg0GSQWmUxF+cQj5JCEKgC/K0x2+gdthK/qXGtsHE5ZLaxmVM
-         mzUQ==
-X-Gm-Message-State: APjAAAVpWYi4YN1vqMn1f8eeE1Ke2dRchenSzEMgm6PvEBQCsb2Wkttb
-        k2jVKO8qwWk/DWSugs4xhwnZOYDIYFE=
-X-Google-Smtp-Source: APXvYqxZJabRhiXk1ogFTbSKBYxgV0HnrEU4V/dJv5eBbc8AJPLghjBgAmAuB5ctxg3ibqk5729iTw==
-X-Received: by 2002:ac2:4566:: with SMTP id k6mr33823569lfm.22.1556568880556;
-        Mon, 29 Apr 2019 13:14:40 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id y20sm7597549lfe.8.2019.04.29.13.14.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 13:14:39 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id b12so9420414lji.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:14:39 -0700 (PDT)
-X-Received: by 2002:a2e:22c4:: with SMTP id i187mr33222307lji.94.1556568469873;
- Mon, 29 Apr 2019 13:07:49 -0700 (PDT)
+        bh=MvdFa5U3+5xI+n7BnR9vncycYNJ5YsEVOp/2MMs/RVM=;
+        b=J34IBx2eU1QirYtrNAf6L3jMa8xmVkcl+qXmNrpelpzuCpevJ88S9spQj8HxtyFok8
+         dvBZw+mlbK2UGhBYrMD2IEqfygu57nvzVibSbfFcyYA7ocC3cOnDtqLcis0Qe8psmnfu
+         Ba0CETfxEeqxxnlWTsO4yGcq+52s+ih3fHpp39IIxLkVBJ7Uey8uie9IRb6exX3ylvan
+         HHzbuJZbpTJ6mhe/MnFyLerC40F4Vvj6+WZYlzUGqtmucZi3OoTX2/zPFyVNO6KlcMNf
+         e49nhOCecAfD9S3W1y/2DhamDO01rY2bHKBXW91pnsejsUVGndb9BFzkO5lYiKDvE8U9
+         xmcw==
+X-Gm-Message-State: APjAAAX3dmJv1HPwlPZGQLgWIw5XGIpIO315nkg7orxBDbrHS5j6MiE1
+        3XSWewFZ018QQdrkE0aWoWQVeBMqCup9D9YoxecH
+X-Google-Smtp-Source: APXvYqzinbFB8LtmNFQ+ucaSuOAAMRFBDlIxFr9bPj35ybI9+jbSy361WcbSMCVMAUkixylis7DlTkYjGroaxKsnD+Y=
+X-Received: by 2002:a7b:c25a:: with SMTP id b26mr496762wmj.123.1556568595400;
+ Mon, 29 Apr 2019 13:09:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
- <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
- <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
- <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
- <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
- <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
- <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
- <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
- <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com> <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
-In-Reply-To: <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Apr 2019 13:07:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
-Message-ID: <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
-Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
- fops invocation
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+References: <s5hy33siofw.wl-tiwai@suse.de> <20190429195459.GU2583@lahna.fi.intel.com>
+In-Reply-To: <20190429195459.GU2583@lahna.fi.intel.com>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Mon, 29 Apr 2019 15:09:43 -0500
+Message-ID: <CAErSpo4awEXF3evh7=ZGi39y1dpMx9bdhXw8zt7s+1sDaH6nng@mail.gmail.com>
+Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and thunderbolt)
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lukas Wunner <lukas@wunner.de>, Jiri Slaby <jslaby@suse.cz>,
+        Michael Hirmke <opensuse@mike.franken.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 12:24 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > Side note: we *already* depend on sti shadow working in other parts of the kernel, namely sti->iret.
+[+cc linux-pci]
+
+On Mon, Apr 29, 2019 at 2:55 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> Where?  STI; IRET would be nuts.
-
-Sorry, not 'sti;iret' but 'sti;sysexit'
-
-> before commit 4214a16b02971c60960afd675d03544e109e0d75
->     x86/asm/entry/64/compat: Use SYSRETL to return from compat mode SYSENTER
+> On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
+> > Hi,
 >
-> we did sti; sysxit, but, when we discussed this, I don't recall anyone
-> speaking up in favor of the safely of the old code.
-
-We still have that sti sysexit in the 32-bit code.
-
-                     Linus
+> Hi,
+>
+> > we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
+> > machine.  5.0.7 is confirmed to work, so it must be a regression
+> > introduced by 5.0.8.
+> >
+> > The details are found in openSUSE Bugzilla entry:
+> >   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
+> >
+> > The probe of xhci_hcd on the dock fails like:
+> > [    6.269062] pcieport 0000:3a:00.0: enabling device (0006 -> 0007)
+> > [    6.270027] pcieport 0000:3b:03.0: enabling device (0006 -> 0007)
+> > [    6.270758] xhci_hcd 0000:3c:00.0: init 0000:3c:00.0 fail, -16
+> > [    6.270764] xhci_hcd: probe of 0000:3c:00.0 failed with error -16
+> > [    6.271002] xhci_hcd 0000:3d:00.0: init 0000:3d:00.0 fail, -16
+> >
+> > and later on, thunderbolt gives warnings:
+> > [   30.232676] thunderbolt 0000:05:00.0: unexpected hop count: 1023
+> > [   30.232957] ------------[ cut here ]------------
+> > [   30.232958] thunderbolt 0000:05:00.0: interrupt for TX ring 0 is already enabled
+> > [   30.232974] WARNING: CPU: 3 PID: 1009 at drivers/thunderbolt/nhi.c:107 ring_interrupt_active+0x1ea/0x230 [thunderbolt]
+> >
+> >
+> > I blindly suspected the commit 3943af9d01e9 and asked for a reverted
+> > kernel, but in vain.  And now it was confirmed that the problem is
+> > present with the latest 5.1-rc, too.
+> >
+> > I put some people who might have interest and the reporter (Michael)
+> > to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
+> > let me know if any help needed from the distro side.
+>
+> Since it exists in 5.1-rcX also it would be good if someone
+> who see the problem (Michael?) could bisect it.
