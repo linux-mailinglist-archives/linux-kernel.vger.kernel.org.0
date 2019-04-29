@@ -2,61 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E00E22C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51357E232
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfD2MWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:22:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbfD2MWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:22:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xl4MrYPDmF4P7eoHhj1V5OKIKtqTlTb2zUS6E3j/D/k=; b=urzXn1TjNfhZgYIXvoNGdwcEL4
-        t32R7kXmkyDSDQ8U38vmgrR+PE3OEpsGs2J1p8qyU84uSDRMwJp4FZOCpIdDSVXWvMsDoT0+2JP2z
-        XNYcto0rN83HQx8dovrIibRYuZiernalkybiVBLziDtJ4OVr90Gvho1ip9OXiRTryUyGidMlj7Kbv
-        BkEwJrkIRessWqBBV40J+H7O5zd8oGPLTfKDWUwzoDo8wjTuHo4Sd8Q12kPlasjjsUM1hELMZ8n0/
-        U7mTMPPQKj2Pu/Bopf53s0bWYZQJQKNBMgwLYhVlOLWfwrfJsQzL5lx0ACoA2NoJTUE78c4EzZlle
-        bpg2Kz8Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hL5IQ-0001hq-Mt; Mon, 29 Apr 2019 12:22:10 +0000
-Date:   Mon, 29 Apr 2019 05:22:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Edward Cree <ecree@solarflare.com>
-Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rds: ib: force endiannes annotation
-Message-ID: <20190429122210.GB32474@infradead.org>
-References: <1556518178-13786-1-git-send-email-hofrat@osadl.org>
- <20443fd3-bd1e-9472-8ca3-e3014e59f249@solarflare.com>
- <20190429111836.GA17830@osadl.at>
- <2ffed5fc-a372-3f90-e655-bcbc740eed33@solarflare.com>
+        id S1728175AbfD2MWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:22:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55076 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727710AbfD2MWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:22:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7349CAE1B;
+        Mon, 29 Apr 2019 12:22:18 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 08:22:14 -0400
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg, oom: no oom-kill for __GFP_RETRY_MAYFAIL
+Message-ID: <20190429122214.GK21837@dhcp22.suse.cz>
+References: <20190428235613.166330-1-shakeelb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2ffed5fc-a372-3f90-e655-bcbc740eed33@solarflare.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190428235613.166330-1-shakeelb@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 01:02:31PM +0100, Edward Cree wrote:
-> ... are some bitwise ops on the values (bitwise ops are legal in any
->  endianness) and incrementation of the pointers (which cares only about
->  the pointee size, not type).
+On Sun 28-04-19 16:56:13, Shakeel Butt wrote:
+> The documentation of __GFP_RETRY_MAYFAIL clearly mentioned that the
+> OOM killer will not be triggered and indeed the page alloc does not
+> invoke OOM killer for such allocations. However we do trigger memcg
+> OOM killer for __GFP_RETRY_MAYFAIL. Fix that.
 
-Oh, true.  That is why the underlying annotation is called __bitwise :)
-I'll take my previous comment back.
+An example of __GFP_RETRY_MAYFAIL memcg OOM report would be nice. I
+thought we haven't been using that flag for memcg allocations yet.
+But this is definitely good to have addressed.
+
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/memcontrol.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 2713b45ec3f0..99eca724ed3b 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2294,7 +2294,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	unsigned long nr_reclaimed;
+>  	bool may_swap = true;
+>  	bool drained = false;
+> -	bool oomed = false;
+>  	enum oom_status oom_status;
+>  
+>  	if (mem_cgroup_is_root(memcg))
+> @@ -2381,7 +2380,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (nr_retries--)
+>  		goto retry;
+>  
+> -	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
+> +	if (gfp_mask & __GFP_RETRY_MAYFAIL)
+>  		goto nomem;
+>  
+>  	if (gfp_mask & __GFP_NOFAIL)
+> @@ -2400,7 +2399,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	switch (oom_status) {
+>  	case OOM_SUCCESS:
+>  		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
+> -		oomed = true;
+>  		goto retry;
+>  	case OOM_FAILED:
+>  		goto force;
+> -- 
+> 2.21.0.593.g511ec345e18-goog
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
