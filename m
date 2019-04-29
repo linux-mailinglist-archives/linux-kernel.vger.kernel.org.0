@@ -2,82 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456EDE0A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A04AE0B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfD2Kk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 06:40:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36982 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727560AbfD2Kk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 06:40:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25CCFAB9D;
-        Mon, 29 Apr 2019 10:40:56 +0000 (UTC)
-Date:   Mon, 29 Apr 2019 12:40:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        cgroups@vger.kernel.org, mm <linux-mm@kvack.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Subject: Re: memcg causes crashes in list_lru_add
-Message-ID: <20190429104051.GF21837@dhcp22.suse.cz>
-References: <f0cfcfa7-74d0-8738-1061-05d778155462@suse.cz>
- <2cbfb8dc-31f0-7b95-8a93-954edb859cd8@suse.cz>
- <359d98e6-044a-7686-8522-bdd2489e9456@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <359d98e6-044a-7686-8522-bdd2489e9456@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727865AbfD2Kn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 06:43:28 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61147 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727621AbfD2Kn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 06:43:28 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44t1Tj49xNz9v0KF;
+        Mon, 29 Apr 2019 12:43:21 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=jIEsWsNr; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id h6P2FVo-9-Er; Mon, 29 Apr 2019 12:43:21 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44t1Tj31N8z9v0KD;
+        Mon, 29 Apr 2019 12:43:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556534601; bh=LdoI2qT2aaRj/eKoZVF9HzfAiu1O/6qZbR/YCdBfHpw=;
+        h=From:Subject:To:Cc:Date:From;
+        b=jIEsWsNrnFHt8xpb23J3uqys7xSTOshMZ5puFweZYkxfqU03ZR3cMcXicleTjn07s
+         jRYeKbA0uCKYoSkgxQqyX678USkfDryn6T/JxhkGMj8oioaaAkc4F8BgvLCwqhx3fT
+         YByhpH00SdJHOf9wEnjWMlr1KxNd9JbZin2yTbiA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 37DBF8B8AE;
+        Mon, 29 Apr 2019 12:43:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id mGYo9Qa2Q9VL; Mon, 29 Apr 2019 12:43:26 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.6])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1424C8B7FB;
+        Mon, 29 Apr 2019 12:43:26 +0200 (CEST)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0767466702; Mon, 29 Apr 2019 10:43:26 +0000 (UTC)
+Message-Id: <23167861f6095456b4ba3b52c55a514201ca738f.1556534520.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 1/3] powerpc: Move PPC_HA() PPC_HI() and PPC_LO() to
+ ppc-opcode.h
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 29 Apr 2019 10:43:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-04-19 12:09:53, Jiri Slaby wrote:
-> On 29. 04. 19, 11:25, Jiri Slaby wrote:> memcg_update_all_list_lrus
-> should take care about resizing the array.
-> 
-> It should, but:
-> [    0.058362] Number of physical nodes 2
-> [    0.058366] Skipping disabled node 0
-> 
-> So this should be the real fix:
-> --- linux-5.0-stable1.orig/mm/list_lru.c
-> +++ linux-5.0-stable1/mm/list_lru.c
-> @@ -37,11 +37,12 @@ static int lru_shrinker_id(struct list_l
-> 
->  static inline bool list_lru_memcg_aware(struct list_lru *lru)
->  {
-> -       /*
-> -        * This needs node 0 to be always present, even
-> -        * in the systems supporting sparse numa ids.
-> -        */
-> -       return !!lru->node[0].memcg_lrus;
-> +       int i;
-> +
-> +       for_each_online_node(i)
-> +               return !!lru->node[i].memcg_lrus;
-> +
-> +       return false;
->  }
-> 
->  static inline struct list_lru_one *
-> 
-> 
-> 
-> 
-> 
-> Opinions?
+PPC_HA() PPC_HI() and PPC_LO() macros are nice macros. Move them
+from module64.c to ppc-opcode.h in order to use them in other places.
 
-Please report upstream. This code here is there for quite some time.
-I do not really remember why we do have an assumption about node 0
-and why it hasn't been problem until now.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/ppc-opcode.h | 7 +++++++
+ arch/powerpc/kernel/module_64.c       | 7 -------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Thanks!
+diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
+index 23f7ed796f38..c5ff44400d4d 100644
+--- a/arch/powerpc/include/asm/ppc-opcode.h
++++ b/arch/powerpc/include/asm/ppc-opcode.h
+@@ -412,6 +412,13 @@
+ #define __PPC_SPR(r)	((((r) & 0x1f) << 16) | ((((r) >> 5) & 0x1f) << 11))
+ #define __PPC_RC21	(0x1 << 10)
+ 
++/* Both low and high 16 bits are added as SIGNED additions, so if low
++   16 bits has high bit set, high 16 bits must be adjusted.  These
++   macros do that (stolen from binutils). */
++#define PPC_LO(v) ((v) & 0xffff)
++#define PPC_HI(v) (((v) >> 16) & 0xffff)
++#define PPC_HA(v) PPC_HI ((v) + 0x8000)
++
+ /*
+  * Only use the larx hint bit on 64bit CPUs. e500v1/v2 based CPUs will treat a
+  * larx with EH set as an illegal instruction.
+diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
+index 8661eea78503..c2e1b06253b8 100644
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -400,13 +400,6 @@ static inline unsigned long my_r2(const Elf64_Shdr *sechdrs, struct module *me)
+ 	return (sechdrs[me->arch.toc_section].sh_addr & ~0xfful) + 0x8000;
+ }
+ 
+-/* Both low and high 16 bits are added as SIGNED additions, so if low
+-   16 bits has high bit set, high 16 bits must be adjusted.  These
+-   macros do that (stolen from binutils). */
+-#define PPC_LO(v) ((v) & 0xffff)
+-#define PPC_HI(v) (((v) >> 16) & 0xffff)
+-#define PPC_HA(v) PPC_HI ((v) + 0x8000)
+-
+ /* Patch stub to reference function and correct r2 value. */
+ static inline int create_stub(const Elf64_Shdr *sechdrs,
+ 			      struct ppc64_stub_entry *entry,
 -- 
-Michal Hocko
-SUSE Labs
+2.13.3
+
