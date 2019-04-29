@@ -2,96 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A7AFE523
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D398EE520
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbfD2OqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:46:16 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:52947 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728319AbfD2OqP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:46:15 -0400
-Received: from grover.flets-west.jp (softbank126125154137.bbtec.net [126.125.154.137]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x3TEjcf1013725;
-        Mon, 29 Apr 2019 23:45:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x3TEjcf1013725
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1556549139;
-        bh=KazEk9hxi8U+torRKasXD0v/5Dw35CGY2jNpa95zJ0k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=x3p/1yoTt1qfBJ8BtWa/94gnwhth+mOGtXYdZrowO8QhSTpN7y82EP7/u3zdrRv79
-         b4eqIxKtVy9ER/h7dUGxDCT+7U8Rc8dVwzL9l0yvpAsyqRHhs9irkjuoUiWHK2peHz
-         ElHU7+A7RnA+O+EJaHNTwi3ajpDNSFOGWFtu8QX6i5UQdh1j0YDCupXuiB6S/2IcY7
-         s5IhzdeztEupu1nWn4LcYWSh2B6d8p3yDWgVzjXfW2sICRxxtfxi3lSFMzICQyMxrj
-         8yshP3fcBlqwU23KKddnq6cQxFvkt7kdn6VObZDd65LvV6VwTEFoCgjcxIDb0+FShJ
-         U7JRKPlkDHkAw==
-X-Nifty-SrcIP: [126.125.154.137]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robert Moore <robert.moore@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Erik Schmauss <erik.schmauss@intel.com>, devel@acpica.org
-Subject: [PATCH] tools/power/acpi: exclude tools/* from .gitignore pattern
-Date:   Mon, 29 Apr 2019 23:45:06 +0900
-Message-Id: <1556549106-16119-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728587AbfD2OpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:45:23 -0400
+Received: from foss.arm.com ([217.140.101.70]:59094 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728331AbfD2OpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:45:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7829780D;
+        Mon, 29 Apr 2019 07:45:20 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EADA83F5C1;
+        Mon, 29 Apr 2019 07:45:17 -0700 (PDT)
+Subject: Re: [PATCH 20/26] iommu/dma: Refactor iommu_dma_alloc, part 2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190422175942.18788-1-hch@lst.de>
+ <20190422175942.18788-21-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9412baed-0d13-dab7-0bdc-90cfdf8e92f0@arm.com>
+Date:   Mon, 29 Apr 2019 15:45:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190422175942.18788-21-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tools/power/acpi/.gitignore has the following entries:
+On 22/04/2019 18:59, Christoph Hellwig wrote:
+> From: Robin Murphy <robin.murphy@arm.com>
 
-  acpidbg
-  acpidump
-  ec
+Honestly I don't think anything left of my patch here...
 
-They are intended to ignore the following build artifacts:
+> Apart from the iommu_dma_alloc_remap() case which remains sufficiently
+> different that it's better off being self-contained, the rest of the
+> logic can now be consolidated into a single flow which separates the
+> logcially-distinct steps of allocating pages, getting the CPU address,
+> and finally getting the IOMMU address.
 
-  tools/power/acpi/acpidbg
-  tools/power/acpi/acpidump
-  tools/power/acpi/ec
+...and it certainly doesn't do that any more.
 
-However, those .gitignore entries are effective not only for the
-current directory, but also for any sub-directories.
+It's clear that we have fundamentally different ways of reading code, so 
+I don't think it's productive to keep arguing personal preference - I 
+still find the end result here a fair bit more tolerable than before, so 
+if you update the commit message to reflect the actual change (at which 
+point there's really nothing left of my authorship) I can live with it.
 
-So, the following directories are also considered to be ignored:
+Robin.
 
-  tools/power/acpi/tools/acpidbg
-  tools/power/acpi/tools/acpidump
-  tools/power/acpi/tools/ec
-
-They are obviously version-controlled, so should be excluded from the
-.gitignore patterns.
-
-You can fix it by prefixing the patterns with '/', which means they
-are only effective in the current directory.
-
-I also prefixed the "include" consistently. IMHO, '/' prefixing is
-safer when you intend to ignore specific files or directories.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- tools/power/acpi/.gitignore | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/tools/power/acpi/.gitignore b/tools/power/acpi/.gitignore
-index cba3d99..f698a0e 100644
---- a/tools/power/acpi/.gitignore
-+++ b/tools/power/acpi/.gitignore
-@@ -1,4 +1,4 @@
--acpidbg
--acpidump
--ec
--include
-+/acpidbg
-+/acpidump
-+/ec
-+/include/
--- 
-2.7.4
-
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> [hch: split the page allocation into a new helper to simplify the flow]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/iommu/dma-iommu.c | 65 +++++++++++++++++++++------------------
+>   1 file changed, 35 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 9b269f0792f3..acdfe866cb29 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -955,35 +955,14 @@ static void iommu_dma_free(struct device *dev, size_t size, void *cpu_addr,
+>   	__iommu_dma_free(dev, size, cpu_addr);
+>   }
+>   
+> -static void *iommu_dma_alloc(struct device *dev, size_t size,
+> -		dma_addr_t *handle, gfp_t gfp, unsigned long attrs)
+> +static void *iommu_dma_alloc_pages(struct device *dev, size_t size,
+> +		struct page **pagep, gfp_t gfp, unsigned long attrs)
+>   {
+>   	bool coherent = dev_is_dma_coherent(dev);
+> -	int ioprot = dma_info_to_prot(DMA_BIDIRECTIONAL, coherent, attrs);
+>   	size_t alloc_size = PAGE_ALIGN(size);
+>   	struct page *page = NULL;
+>   	void *cpu_addr;
+>   
+> -	gfp |= __GFP_ZERO;
+> -
+> -	if (gfpflags_allow_blocking(gfp) &&
+> -	    !(attrs & DMA_ATTR_FORCE_CONTIGUOUS))
+> -		return iommu_dma_alloc_remap(dev, size, handle, gfp, attrs);
+> -
+> -	if (!gfpflags_allow_blocking(gfp) && !coherent) {
+> -		cpu_addr = dma_alloc_from_pool(alloc_size, &page, gfp);
+> -		if (!cpu_addr)
+> -			return NULL;
+> -
+> -		*handle = __iommu_dma_map(dev, page_to_phys(page), size,
+> -					  ioprot);
+> -		if (*handle == DMA_MAPPING_ERROR) {
+> -			dma_free_from_pool(cpu_addr, alloc_size);
+> -			return NULL;
+> -		}
+> -		return cpu_addr;
+> -	}
+> -
+>   	if (gfpflags_allow_blocking(gfp))
+>   		page = dma_alloc_from_contiguous(dev, alloc_size >> PAGE_SHIFT,
+>   						 get_order(alloc_size),
+> @@ -993,33 +972,59 @@ static void *iommu_dma_alloc(struct device *dev, size_t size,
+>   	if (!page)
+>   		return NULL;
+>   
+> -	*handle = __iommu_dma_map(dev, page_to_phys(page), size, ioprot);
+> -	if (*handle == DMA_MAPPING_ERROR)
+> -		goto out_free_pages;
+> -
+>   	if (!coherent || PageHighMem(page)) {
+>   		pgprot_t prot = arch_dma_mmap_pgprot(dev, PAGE_KERNEL, attrs);
+>   
+>   		cpu_addr = dma_common_contiguous_remap(page, alloc_size,
+>   				VM_USERMAP, prot, __builtin_return_address(0));
+>   		if (!cpu_addr)
+> -			goto out_unmap;
+> +			goto out_free_pages;
+>   
+>   		if (!coherent)
+>   			arch_dma_prep_coherent(page, size);
+>   	} else {
+>   		cpu_addr = page_address(page);
+>   	}
+> +
+> +	*pagep = page;
+>   	memset(cpu_addr, 0, alloc_size);
+>   	return cpu_addr;
+> -out_unmap:
+> -	__iommu_dma_unmap(dev, *handle, size);
+>   out_free_pages:
+>   	if (!dma_release_from_contiguous(dev, page, alloc_size >> PAGE_SHIFT))
+>   		__free_pages(page, get_order(alloc_size));
+>   	return NULL;
+>   }
+>   
+> +static void *iommu_dma_alloc(struct device *dev, size_t size,
+> +		dma_addr_t *handle, gfp_t gfp, unsigned long attrs)
+> +{
+> +	bool coherent = dev_is_dma_coherent(dev);
+> +	int ioprot = dma_info_to_prot(DMA_BIDIRECTIONAL, coherent, attrs);
+> +	struct page *page = NULL;
+> +	void *cpu_addr;
+> +
+> +	gfp |= __GFP_ZERO;
+> +
+> +	if (gfpflags_allow_blocking(gfp) &&
+> +	    !(attrs & DMA_ATTR_FORCE_CONTIGUOUS))
+> +		return iommu_dma_alloc_remap(dev, size, handle, gfp, attrs);
+> +
+> +	if (!gfpflags_allow_blocking(gfp) && !coherent)
+> +		cpu_addr = dma_alloc_from_pool(PAGE_ALIGN(size), &page, gfp);
+> +	else
+> +		cpu_addr = iommu_dma_alloc_pages(dev, size, &page, gfp, attrs);
+> +	if (!cpu_addr)
+> +		return NULL;
+> +
+> +	*handle = __iommu_dma_map(dev, page_to_phys(page), size, ioprot);
+> +	if (*handle == DMA_MAPPING_ERROR) {
+> +		__iommu_dma_free(dev, size, cpu_addr);
+> +		return NULL;
+> +	}
+> +
+> +	return cpu_addr;
+> +}
+> +
+>   static int __iommu_dma_mmap_pfn(struct vm_area_struct *vma,
+>   			      unsigned long pfn, size_t size)
+>   {
+> 
