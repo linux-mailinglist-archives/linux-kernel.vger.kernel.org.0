@@ -2,94 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9092EB6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16909EB4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbfD2UOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:14:01 -0400
-Received: from mail-n.franken.de ([193.175.24.27]:37114 "EHLO drew.franken.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728928AbfD2UOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:14:01 -0400
-X-Greylist: delayed 582 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Apr 2019 16:14:00 EDT
-Received: from perth.hirmke.de (aquarius.franken.de [193.175.24.89])
-        (Authenticated sender: antares)
-        by mail-n.franken.de (Postfix) with ESMTPSA id 4674E721E2825
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:04:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by perth.hirmke.de (Postfix) with ESMTP id EA52F9649F2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:04:14 +0200 (CEST)
-X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
-        occurs 6 times
-Received: from perth.hirmke.de ([127.0.0.1])
-        by localhost (perth.hirmke.de [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id zclsxvBn1Dzt for <linux-kernel@vger.kernel.org>;
-        Mon, 29 Apr 2019 22:04:13 +0200 (CEST)
-Received: by perth.hirmke.de (Postfix, from userid 10)
-        id 054139649D0; Mon, 29 Apr 2019 22:04:13 +0200 (CEST)
-Received: by mike.franken.de (OpenXP/5.0.34 (Linux) (x86_64));
-          29 Apr 2019 22:04:06 +0200
-Date:   29 Apr 2019 22:03:00 +0200
-From:   opensuse@mike.franken.de (Michael Hirmke)
-To:     jslaby@suse.cz
-Cc:     mika.westerberg@linux.intel.com
-Cc:     bhelgaas@google.com
-Cc:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Cc:     lukas@wunner.de
-Cc:     tiwai@suse.de
-Message-ID: <EkoOCx3N6GB@mike.franken.de>
-In-Reply-To: <20190429195459.GU2583@lahna.fi.intel.com>
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and thunderbolt)
-User-Agent: OpenXP/5.0.34 (Linux) (x86_64)
+        id S1729280AbfD2UDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:03:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35010 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729163AbfD2UDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 16:03:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gXBZVUg4jQbTWNl/rOtvrBvT8zt4gzjmR4Rn7XZccXU=; b=TN1+azQlisq62Mso/YE6137jh
+        dstuCHzj9XfNBJXgcAAm+Heqp8Vrft4jW4co4zD6xNMZt1YpgbG84RFfEunMIJxDVi86SaXtJJMCN
+        IdUGN3+vF9/1ap56HXZq206cDipNDutppFbktg705F5ZdiuIGqR27GlLTOTTVM1cPqyP3De7MThCi
+        En/BcrH3CglsKGIkLWiKGsVMyBqNik4jODOTi2TjxPJcVUy0mpKMFniparDi3tb919wEfIdpfGIaC
+        4nrqM+FZGig2pP0yXHPcISAgCR8JBUGSYR/ZdpcdjgRvf3Xllvu3x4FVn2PGQ62+7bKTtZfaZhC3T
+        zS+K+Q3XQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLCV0-0005Qy-Ty; Mon, 29 Apr 2019 20:03:38 +0000
+Date:   Mon, 29 Apr 2019 13:03:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>, kevin.tian@intel.com,
+        ashok.raj@intel.com, dima@arista.com, tmurphy@arista.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        jacob.jun.pan@intel.com
+Subject: Re: [PATCH v3 5/8] iommu/vt-d: Implement def_domain_type iommu ops
+ entry
+Message-ID: <20190429200338.GA8412@infradead.org>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-6-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline;
- modification-date="29 Apr 2019 20:03:39 +0000";
- read-date="Mon, 29 Apr 2019 22:03:39 +0200";
- creation-date="Mon, 29 Apr 2019 22:03:39 +0200"
-Organization: Kommunikationsnetz Franken e.V. (Nuernberg)
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=disabled version=3.4.1
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail-n.franken.de
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429020925.18136-6-baolu.lu@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+> @@ -3631,35 +3607,30 @@ static int iommu_no_mapping(struct device *dev)
+>  	if (iommu_dummy(dev))
+>  		return 1;
+>  
+> -	if (!iommu_identity_mapping)
+> -		return 0;
+> -
 
->On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
->> Hi,
+FYI, iommu_no_mapping has been refactored in for-next:
 
->Hi,
+https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=x86/vt-d&id=48b2c937ea37a3bece0094b46450ed5267525289
 
->> we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
->> machine.  5.0.7 is confirmed to work, so it must be a regression
->> introduced by 5.0.8.
->>
->> The details are found in openSUSE Bugzilla entry:
->>   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
->>
-[...]
->>
->> I blindly suspected the commit 3943af9d01e9 and asked for a reverted
->> kernel, but in vain.  And now it was confirmed that the problem is
->> present with the latest 5.1-rc, too.
->>
->> I put some people who might have interest and the reporter (Michael)
->> to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
->> let me know if any help needed from the distro side.
+>  	found = identity_mapping(dev);
+>  	if (found) {
+> +		/*
+> +		 * If the device's dma_mask is less than the system's memory
+> +		 * size then this is not a candidate for identity mapping.
+> +		 */
+> +		u64 dma_mask = *dev->dma_mask;
+> +
+> +		if (dev->coherent_dma_mask &&
+> +		    dev->coherent_dma_mask < dma_mask)
+> +			dma_mask = dev->coherent_dma_mask;
+> +
+> +		if (dma_mask < dma_get_required_mask(dev)) {
 
->Since it exists in 5.1-rcX also it would be good if someone
->who see the problem (Michael?) could bisect it.
+I know this is mostly existing code moved around, but it really needs
+some fixing.  For one dma_get_required_mask is supposed to return the
+required to not bounce mask for the given device.  E.g. for a device
+behind an iommu it should always just return 32-bit.  If you really
+want to check vs system memory please call dma_direct_get_required_mask
+without the dma_ops indirection.
 
-I know the meaning of bisecting, but I'm not really a developer, so I am
-probably not able to interpret the results.
+Second I don't even think we need to check the coherent_dma_mask,
+dma_direct is pretty good at always finding memory even without
+an iommu.
 
-Sry.
+Third this doesn't take take the bus_dma_mask into account.
 
-Bye.
-Michael.
--- 
-Michael Hirmke
+This probably should just be:
+
+		if (min(*dev->dma_mask, dev->bus_dma_mask) <
+		    dma_direct_get_required_mask(dev)) {
