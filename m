@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D095FE8A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7CAE8A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfD2RRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:17:54 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:45676 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728829AbfD2RRy (ORCPT
+        id S1728897AbfD2RS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:18:59 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39010 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728778AbfD2RS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:17:54 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 4B5F9C009B;
-        Mon, 29 Apr 2019 17:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1556558271; bh=rx21fwalFzJuwLlEFvldeNsp0iEkfMYCHIUJGt12hfY=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=j9vr3RNo7bxDoJ3ou1UiEVj4zkM4uS3kpvE6nJh3tGICOpGKubVQDEWb5sKe9r14m
-         rROXe9L4PqDyh+9gDEbeeszLO950QSAUY+4OylAVQehPboAy8WNmMlSgZ/SHl6VVtL
-         0fBhz4xVENQhJEDcAaUMS/deHBfNPRRXVSIi0wNQqGXFGB9pThb1kojWzYJmNz0FiL
-         F8rOPdaaxFpOwpwYiIQo5CrPOvzokiwQ8XqlTXWZZQZwedVBig0ZcX+JPLhQMEH9sf
-         /Ag+ZHDFnZj3unGASH6n2jRuOO0VbDudMIEWtz2zrCqQUwfZp3YNTSlx+It3ZFupt0
-         vPdLqg1cJjikg==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id EDD0FA007A;
-        Mon, 29 Apr 2019 17:17:50 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.223]) by
- us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon, 29
- Apr 2019 10:17:51 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-CC:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Subject: Re: perf tools build broken after v5.1-rc1
-Thread-Topic: perf tools build broken after v5.1-rc1
-Thread-Index: AQHU9whSYuAYlq2eD0OAivz0M0d5Nw==
-Date:   Mon, 29 Apr 2019 17:17:50 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA2307501A250584C@us01wembx1.internal.synopsys.com>
-References: <eeb83498-f37f-e234-4941-2731b81dc78c@synopsys.com>
- <20190422152027.GB11750@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.19]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 29 Apr 2019 13:18:58 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h16so7157432qtk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jSTnY20qh+9b+fgMWdr7QdTtLxQEdNrvMsQhAEqFRPQ=;
+        b=J4ZnqAXRg9j1GFxYtxKe6YVghngN71fz2kjh093Y+OOWzlrzrkDXWNLlfywFD3OlOB
+         zuYHLS0Y/EWauPsTFyrxOeOSHPyquWEV3uuuEb8qmAS5S4M4e1Qaz8eI9InMlbS/Nl12
+         hfrAZ4vd36BctyDjW8ajK5Hqeu4N/giB/+OYpeLW3d5qld8voDl8xZpIx0ydsFSGfN5H
+         hN02DMonp4+3iz2woY0xyYExueonPxo4jxCRtKsy3VpocSAPVIhY5nw1Z5o6LYn2exYh
+         fYO1nuRdtSNUlDSYXOIXr/b8cGIVm+riWuZLU9giLGVhso85uLRYedbJRNoXNdOWzyz7
+         301w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jSTnY20qh+9b+fgMWdr7QdTtLxQEdNrvMsQhAEqFRPQ=;
+        b=YQj60ymLIFMy2a1JR8OHKKtpRkKq3NEq9s9uLKDUlaLMfdLUNsSKU6z9HEAhgDKfjz
+         wnOS4DmkSX3IgT3G2w/fPKZSS5naLBtQKOAddrvuekXw6pXRBEGw1u8rr6NkPUAAjIAG
+         OEKphfqJRN/J7qXBWV3H79oLVIH3XUPqr56Jt36J6/YI7FyK2s/m2v9ZRiG3h60ndhNT
+         Sv29/pgt8tye2DGnNVSulyZ/Aw7fkitxVoWz96dxLgVFDkdewmPEspF4Finx3F6jGtpo
+         MamNnf7rrfNVMYpeqdOR49AjY4rMC4d53PWJvOVOtRhUu2iluIayb4g71PtzBL4EyEZI
+         9Lxg==
+X-Gm-Message-State: APjAAAWvSnibidxH4H6H4t90a/FYG//9gsurzkK7qObkXJ7FNtQJHxaj
+        nS58l/nFkKJTP2Mm4gb3rxeqCQ==
+X-Google-Smtp-Source: APXvYqzDpiBsyJcAKjWLppvlEr8mrOVkh4RSHLNQbBP/5FkuX6AtXnf/sYzYfCOFZ5hGGWjHuCWC8w==
+X-Received: by 2002:a0c:fba9:: with SMTP id m9mr749817qvp.32.1556558337608;
+        Mon, 29 Apr 2019 10:18:57 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id e4sm18216200qtb.61.2019.04.29.10.18.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 10:18:57 -0700 (PDT)
+Message-ID: <1556558335.6132.9.camel@lca.pw>
+Subject: Re: [PATCH] arm64: fix pte_unmap() -Wunused-but-set-variable
+From:   Qian Cai <cai@lca.pw>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 29 Apr 2019 13:18:55 -0400
+In-Reply-To: <20190429164923.GA26912@fuggles.cambridge.arm.com>
+References: <20190427012842.93737-1-cai@lca.pw>
+         <20190429164923.GA26912@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/22/19 8:31 AM, Arnaldo Carvalho de Melo wrote:=0A=
->> A quick fix for ARC will be to create our own version but I presume all =
-existing=0A=
->> arches using generic syscall abi are affected. Thoughts ? In lack of ide=
-as I'll=0A=
->> send out a patch for ARC.=0A=
->>=0A=
->> P.S. Why do we need the unistd.h duplication in tools directory, given i=
-t could=0A=
->> have used the in-tree unistd headers directly ?=0A=
-> I have to write down the explanation and have it in a file, but we can't=
-=0A=
-> use anything in the kernel from outside tools/ to avoid adding a burden=
-=0A=
-> to kernel developers that would then have to make sure that the changes=
-=0A=
-> that they make outside tools/ don't break things living there.=0A=
-=0A=
-That is a sound guiding principle in general but I don't agree here. unistd=
- is=0A=
-backbone of kernel user interface it has to work and can't possibly be brok=
-en even=0A=
-when kernel devs add a new syscall is added or condition-alize existing one=
-. So=0A=
-adding a copy - and deferring the propagation of in-kernel unistd to usersa=
-pce=0A=
-won't necessarily help with anything and it just adds the burden of keeping=
- them=0A=
-in sync. Granted we won't necessarily need all the bleeding edge (new sysca=
-ll=0A=
-updates) into that header, its still more work.=0A=
+On Mon, 2019-04-29 at 17:49 +0100, Will Deacon wrote:
+> >  arch/arm64/include/asm/pgtable.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/pgtable.h
+> > b/arch/arm64/include/asm/pgtable.h
+> > index de70c1eabf33..7543e345e078 100644
+> > --- a/arch/arm64/include/asm/pgtable.h
+> > +++ b/arch/arm64/include/asm/pgtable.h
+> > @@ -478,6 +478,8 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+> >  	return __pmd_to_phys(pmd);
+> >  }
+> >  
+> > +static inline void pte_unmap(pte_t *pte) { }
+> 
+> Hmm, is this guaranteed to stop the compiler from warning? Assuming the
+> pte_unmap() call is inlined, I'd expect it to keep complaining. What
+> compiler are you using?
+
+Yes, it is guaranteed. Tested on both gcc and clang.
+
+> 
+> Also, there are a bunch of other architectures that I would expect to have
+> this same issue because they defined pte_unmap() exactly the same way.
+
+This has already fixed in powerpc that went in.
+
+https://lore.kernel.org/lkml/20190307144031.52494-1-cai@lca.pw/
+
+I am not sure if I care about any other arches nor I have real hardware to test
+further.
