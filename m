@@ -2,234 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC16EEA78
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7AD4EA6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfD2Ssl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:48:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41663 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbfD2Ssl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:48:41 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIkQL51031184
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Apr 2019 11:46:26 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIkQL51031184
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556563588;
-        bh=iIPzJzN88Ldq4KztePevor+oaTGNeeuMHs1Eu33goKA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=p44VRK6Dvi+NbOiarhTeTkk4G8SKYfU8huTVemtMn8CKNz1felSNRF0T/E/s7akdE
-         pxroLcJTFUN3OkyxgzbE/9TNx/YVG3brmpyJH60ABjsTew3JkfY9uv93OSjsy5pBdf
-         OuqQyvQE/p1KE71IJxjQ1HlKjHEXCW+XeD9/aXqoYbzfyNk0fzbv5FD7oyO6AhZG3I
-         0DGYd2a/bxsaQd3S9l6cXHTjJBkiInKoY4F7f7d2ZsLkMHbh3ewdDI0U1sZ23Z2Mlk
-         7aUmNyDix5mM6XTH+3g7JDRErMHzQPad4jrxlsDv3KNEnSN/KCr/47tKngDZ7aXyfC
-         AUncWtY65GwOw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIkOsV1031179;
-        Mon, 29 Apr 2019 11:46:24 -0700
-Date:   Mon, 29 Apr 2019 11:46:24 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0@git.kernel.org>
-Cc:     mingo@kernel.org, adobriyan@gmail.com, hpa@zytor.com,
-        akpm@linux-foundation.org, dvyukov@google.com,
-        jani.nikula@linux.intel.com, tglx@linutronix.de,
-        snitzer@redhat.com, m.szyprowski@samsung.com, airlied@linux.ie,
-        penberg@kernel.org, luto@kernel.org, aryabinin@virtuozzo.com,
-        rientjes@google.com, joonas.lahtinen@linux.intel.com,
-        robin.murphy@arm.com, jpoimboe@redhat.com,
-        maarten.lankhorst@linux.intel.com, rppt@linux.vnet.ibm.com,
-        hch@lst.de, dsterba@suse.com, cl@linux.com, josef@toxicpanda.com,
-        jthumshirn@suse.de, catalin.marinas@arm.com, daniel@ffwll.ch,
-        tom.zanussi@linux.intel.com, akinobu.mita@gmail.com,
-        linux-kernel@vger.kernel.org, mbenes@suse.cz, clm@fb.com,
-        agk@redhat.com, rodrigo.vivi@intel.com, glider@google.com,
-        rostedt@goodmis.org
-Reply-To: airlied@linux.ie, penberg@kernel.org, tglx@linutronix.de,
-          snitzer@redhat.com, m.szyprowski@samsung.com,
-          aryabinin@virtuozzo.com, luto@kernel.org, robin.murphy@arm.com,
-          rientjes@google.com, joonas.lahtinen@linux.intel.com,
-          jpoimboe@redhat.com, maarten.lankhorst@linux.intel.com,
-          mingo@kernel.org, adobriyan@gmail.com, dvyukov@google.com,
-          akpm@linux-foundation.org, hpa@zytor.com,
-          jani.nikula@linux.intel.com, daniel@ffwll.ch,
-          catalin.marinas@arm.com, akinobu.mita@gmail.com,
-          linux-kernel@vger.kernel.org, mbenes@suse.cz,
-          tom.zanussi@linux.intel.com, agk@redhat.com, clm@fb.com,
-          rostedt@goodmis.org, glider@google.com, rodrigo.vivi@intel.com,
-          hch@lst.de, dsterba@suse.com, rppt@linux.vnet.ibm.com,
-          cl@linux.com, jthumshirn@suse.de, josef@toxicpanda.com
-In-Reply-To: <20190425094803.248604594@linutronix.de>
-References: <20190425094803.248604594@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/stacktrace] tracing: Simplify stack trace retrieval
-Git-Commit-ID: ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1729224AbfD2Sqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:46:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48348 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728964AbfD2Sqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 14:46:42 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA6C72067D
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 18:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556563602;
+        bh=5j9NYksW1sFn4p0aXlHqBk4ZUKpOJxf0zYGvnIwtNvc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qZhWW23MUGLTV1xDSbhGdYBi6Ok9eRCtMr6n1nCokzoNuWw+9JeXnf0EsGO5F7NPs
+         X/PCZ9IWwRrVbLTkCL6BKXV1vMIK6WcURuaT7A0Eytq62xoVYAimqpRqwRhoVV6Fhb
+         IpNjeuR9wz20QmsqdP9Eh/9sJy8bSiXE5p2BlFOU=
+Received: by mail-wr1-f45.google.com with SMTP id h4so17536587wre.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:46:41 -0700 (PDT)
+X-Gm-Message-State: APjAAAUUHFLOaH5ieVKB4veWfM+/okvPhFLKvq7SHQP6BShqJxcF8406
+        PuivpmyQzBZyGFcECmSgqW/AsSPaearVFZAgALXOuQ==
+X-Google-Smtp-Source: APXvYqy1oi8e+LSfXCrvP/jJQ24jpEljvz/aD49GKXWvZBgRJ5jZDTrdXFKCXTFaX+9EslcKt2nxyLv1fNBSB9apvzk=
+X-Received: by 2002:a5d:424e:: with SMTP id s14mr18705438wrr.77.1556563600428;
+ Mon, 29 Apr 2019 11:46:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com>
+ <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
+ <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com>
+In-Reply-To: <20190427104615.GA55518@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 29 Apr 2019 11:46:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrUn_86VAd8FGacJ169xcWE6XQngAMMhvgd1Aa6ZxhGhtA@mail.gmail.com>
+Message-ID: <CALCETrUn_86VAd8FGacJ169xcWE6XQngAMMhvgd1Aa6ZxhGhtA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
-Gitweb:     https://git.kernel.org/tip/ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 25 Apr 2019 11:45:16 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 29 Apr 2019 12:37:55 +0200
+On Sat, Apr 27, 2019 at 3:46 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Ingo Molnar <mingo@kernel.org> wrote:
+>
+> > * Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > > > And no, I'm not arguing for Java or C#, but I am arguing for a sane=
+r
+> > > > version of C.
+> > >
+> > > IMO three are three credible choices:
+> > >
+> > > 1. C with fairly strong CFI protection. Grsecurity has this (supposed=
+ly
+> > > =E2=80=94 there=E2=80=99s a distinct lack of source code available), =
+and clang is
+> > > gradually working on it.
+> > >
+> > > 2. A safe language for parts of the kernel, e.g. drivers and maybe
+> > > eventually filesystems.  Rust is probably the only credible candidate=
+.
+> > > Actually creating a decent Rust wrapper around the core kernel
+> > > facilities would be quite a bit of work.  Things like sysfs would be
+> > > interesting in Rust, since AFAIK few or even no drivers actually get
+> > > the locking fully correct.  This means that naive users of the API
+> > > cannot port directly to safe Rust, because all the races won't compil=
+e
+> > > :)
+> > >
+> > > 3. A sandbox for parts of the kernel, e.g. drivers.  The obvious
+> > > candidates are eBPF and WASM.
+> > >
+> > > #2 will give very good performance.  #3 gives potentially stronger
+> > > protection against a sandboxed component corrupting the kernel overal=
+l,
+> > > but it gives much weaker protection against a sandboxed component
+> > > corrupting itself.
+> > >
+> > > In an ideal world, we could do #2 *and* #3.  Drivers could, for
+> > > example, be written in a language like Rust, compiled to WASM, and ru=
+n
+> > > in the kernel.
+> >
+> > So why not go for #1, which would still outperform #2/#3, right? Do we
+> > know what it would take, roughly, and how the runtime overhead looks
+> > like?
+>
+> BTW., CFI protection is in essence a compiler (or hardware) technique to
+> detect stack frame or function pointer corruption after the fact.
+>
+> So I'm wondering whether there's a 4th choice as well, which avoids
+> control flow corruption *before* it happens:
+>
+>  - A C language runtime that is a subset of current C syntax and
+>    semantics used in the kernel, and which doesn't allow access outside
+>    of existing objects and thus creates a strictly enforced separation
+>    between memory used for data, and memory used for code and control
+>    flow.
+>
+>  - This would involve, at minimum:
+>
+>     - tracking every type and object and its inherent length and valid
+>       access patterns, and never losing track of its type.
+>
+>     - being a lot more organized about initialization, i.e. no
+>       uninitialized variables/fields.
+>
+>     - being a lot more strict about type conversions and pointers in
+>       general.
 
-tracing: Simplify stack trace retrieval
+You're not the only one to suggest this.  There are at least a few
+things that make this extremely difficult if not impossible.  For
+example, consider this code:
 
-Replace the indirection through struct stack_trace by using the storage
-array based interfaces.
+void maybe_buggy(void)
+{
+  int a, b;
+  int *p =3D &a;
+  int *q =3D (int *)some_function((unsigned long)p);
+  *q =3D 1;
+}
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: linux-mm@kvack.org
-Cc: David Rientjes <rientjes@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: kasan-dev@googlegroups.com
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: David Sterba <dsterba@suse.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org
-Cc: dm-devel@redhat.com
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Miroslav Benes <mbenes@suse.cz>
-Cc: linux-arch@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190425094803.248604594@linutronix.de
+If some_function(&a) returns &a, then all is well.  But if
+some_function(&a) returns &b or even a valid address of some unrelated
+kernel object, then the code might be entirely valid and correct C,
+but I don't see how the runtime checks are supposed to tell whether
+the resulting address is valid or is a bug.  This type of code is, I
+think, quite common in the kernel -- it happens in every data
+structure where we have unions of pointers and integers or where we
+steal some known-zero bits of a pointer to store something else.
 
----
- kernel/trace/trace.c | 40 +++++++++++++---------------------------
- 1 file changed, 13 insertions(+), 27 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index d8369d27c1af..0ce8515dd470 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2774,22 +2774,18 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- {
- 	struct trace_event_call *call = &event_kernel_stack;
- 	struct ring_buffer_event *event;
-+	unsigned int size, nr_entries;
- 	struct ftrace_stack *fstack;
- 	struct stack_entry *entry;
--	struct stack_trace trace;
--	int size = FTRACE_KSTACK_ENTRIES;
- 	int stackidx;
- 
--	trace.nr_entries	= 0;
--	trace.skip		= skip;
--
- 	/*
- 	 * Add one, for this function and the call to save_stack_trace()
- 	 * If regs is set, then these functions will not be in the way.
- 	 */
- #ifndef CONFIG_UNWINDER_ORC
- 	if (!regs)
--		trace.skip++;
-+		skip++;
- #endif
- 
- 	/*
-@@ -2816,28 +2812,24 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- 	barrier();
- 
- 	fstack = this_cpu_ptr(ftrace_stacks.stacks) + stackidx;
--	trace.entries		= fstack->calls;
--	trace.max_entries	= FTRACE_KSTACK_ENTRIES;
--
--	if (regs)
--		save_stack_trace_regs(regs, &trace);
--	else
--		save_stack_trace(&trace);
--
--	if (trace.nr_entries > size)
--		size = trace.nr_entries;
-+	size = ARRAY_SIZE(fstack->calls);
- 
--	size *= sizeof(unsigned long);
-+	if (regs) {
-+		nr_entries = stack_trace_save_regs(regs, fstack->calls,
-+						   size, skip);
-+	} else {
-+		nr_entries = stack_trace_save(fstack->calls, size, skip);
-+	}
- 
-+	size = nr_entries * sizeof(unsigned long);
- 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
- 					    sizeof(*entry) + size, flags, pc);
- 	if (!event)
- 		goto out;
- 	entry = ring_buffer_event_data(event);
- 
--	memcpy(&entry->caller, trace.entries, size);
--
--	entry->size = trace.nr_entries;
-+	memcpy(&entry->caller, fstack->calls, size);
-+	entry->size = nr_entries;
- 
- 	if (!call_filter_check_discard(call, entry, buffer, event))
- 		__buffer_unlock_commit(buffer, event);
-@@ -2916,7 +2908,6 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
- 	struct trace_event_call *call = &event_user_stack;
- 	struct ring_buffer_event *event;
- 	struct userstack_entry *entry;
--	struct stack_trace trace;
- 
- 	if (!(global_trace.trace_flags & TRACE_ITER_USERSTACKTRACE))
- 		return;
-@@ -2947,12 +2938,7 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
- 	entry->tgid		= current->tgid;
- 	memset(&entry->caller, 0, sizeof(entry->caller));
- 
--	trace.nr_entries	= 0;
--	trace.max_entries	= FTRACE_STACK_ENTRIES;
--	trace.skip		= 0;
--	trace.entries		= entry->caller;
--
--	save_stack_trace_user(&trace);
-+	stack_trace_save_user(entry->caller, FTRACE_STACK_ENTRIES);
- 	if (!call_filter_check_discard(call, entry, buffer, event))
- 		__buffer_unlock_commit(buffer, event);
- 
+--Andy
