@@ -2,54 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE113E474
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1109E47A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:17:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbfD2OQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:16:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58216 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfD2OQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:16:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CE9FA78;
-        Mon, 29 Apr 2019 07:16:10 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBED53F5C1;
-        Mon, 29 Apr 2019 07:16:08 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 15:16:03 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 1/2] regulator: vexpress: Get rid of struct
- vexpress_regulator
-Message-ID: <20190429141547.GA13159@e107155-lin>
-References: <20190429113542.476-1-axel.lin@ingics.com>
+        id S1728399AbfD2OQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:16:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728258AbfD2OQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:16:43 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 85E1B81E09;
+        Mon, 29 Apr 2019 14:16:41 +0000 (UTC)
+Received: from localhost (ovpn-12-38.pek2.redhat.com [10.72.12.38])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FA8E5799;
+        Mon, 29 Apr 2019 14:16:39 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 22:16:36 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     bp@alien8.de
+Cc:     j-nomura@ce.jp.nec.com, kasong@redhat.com, dyoung@redhat.com,
+        fanc.fnst@cn.fujitsu.com, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
+ and ACPI tables
+Message-ID: <20190429141636.GB14140@MiWiFi-R3L-srv>
+References: <20190424092944.30481-1-bhe@redhat.com>
+ <20190424092944.30481-2-bhe@redhat.com>
+ <20190429002318.GA25400@MiWiFi-R3L-srv>
+ <20190429135536.GC2324@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190429113542.476-1-axel.lin@ingics.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190429135536.GC2324@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 29 Apr 2019 14:16:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Axel,
+On 04/29/19 at 03:55pm, Borislav Petkov wrote:
+> On Mon, Apr 29, 2019 at 08:23:18AM +0800, Baoquan He wrote:
+> > +static int
+> > +map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
+> > +{
+> > +	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+> > +	struct init_pgtable_data data;
+> > +
+> > +	data.info = info;
+> > +	data.level4p = level4p;
+> > +	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+> > +	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
+> > +				   &data, mem_region_callback);
+> > +}
+> > +#else
+> > +static int init_acpi_pgtable(struct x86_mapping_info *info,
+> 
+> Did you at least build-test the !CONFIG_ACPI case?
+> 
+> arch/x86/kernel/machine_kexec_64.c: In function ‘init_pgtable’:
+> arch/x86/kernel/machine_kexec_64.c:237:11: error: implicit declaration of function ‘map_acpi_tables’; did you mean ‘init_acpi_pgtable’? [-Werror=implicit-function-declaration]
+>   result = map_acpi_tables(&info, level4p);
+>            ^~~~~~~~~~~~~~~
+>            init_acpi_pgtable
+> 
+> 
+> I don't think so. ;-(
+> 
+> Sigh, next time at least build-test your patch before hurrying it out. I
+> fixed it up along with decyphering the commit message:
 
-On Mon, Apr 29, 2019 at 07:35:41PM +0800, Axel Lin wrote:
-> The *regdev and *regmap can be replaced by local variables in probe().
-> Only desc of struct vexpress_regulator is really need, so just use
-> struct regulator_desc directly and remove struct vexpress_regulator.
->
+Sorry, thought them simple, didn't build !CONFIG_ACPI case. Should be
+more careful.
 
-Looks good, thanks for the clean up.
+Thanks for fixing it and the log rewriting.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-
---
-Regards,
-Sudeep
+> 
+> ---
+> From: Kairui Song <kasong@redhat.com>
+> Date: Mon, 29 Apr 2019 08:23:18 +0800
+> Subject: [PATCH] x86/kexec: Add the EFI system tables and ACPI tables to the ident map
+> 
+> Currently, only the whole physical memory is identity-mapped for the
+> kexec kernel and the regions reserved by firmware are ignored.
+> 
+> However, the recent addition of RSDP parsing in the decompression stage
+> and especially:
+> 
+>   33f0df8d843d ("x86/boot: Search for RSDP in the EFI tables")
+> 
+> which tries to access EFI system tables and to dig out the RDSP address
+> from there, becomes a problem because in certain configurations, they
+> might not be mapped in the kexec'ed kernel's address space.
+> 
+> What is more, this problem doesn't appear on all systems because the
+> kexec kernel uses gigabyte pages to build the identity mapping. And
+> the EFI system tables and ACPI tables can, depending on the system
+> configuration, end up being mapped as part of all physical memory, if
+> they share the same 1 GB area with the physical memory.
+> 
+> Therefore, make sure they're always mapped.
+> 
+>  [ bp: productize half-baked patch:
+>    - rewrite commit message.
+>    - s/init_acpi_pgtable/map_acpi_tables/ in the !ACPI case. ]
+> 
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: dyoung@redhat.com
+> Cc: fanc.fnst@cn.fujitsu.com
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: j-nomura@ce.jp.nec.com
+> Cc: kexec@lists.infradead.org
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Lianbo Jiang <lijiang@redhat.com>
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86-ml <x86@kernel.org>
+> Link: https://lkml.kernel.org/r/20190429002318.GA25400@MiWiFi-R3L-srv
+> ---
+>  arch/x86/kernel/machine_kexec_64.c | 75 ++++++++++++++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index ceba408ea982..3c77bdf7b32a 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/io.h>
+>  #include <linux/suspend.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/efi.h>
+>  
+>  #include <asm/init.h>
+>  #include <asm/pgtable.h>
+> @@ -29,6 +30,43 @@
+>  #include <asm/setup.h>
+>  #include <asm/set_memory.h>
+>  
+> +#ifdef CONFIG_ACPI
+> +/*
+> + * Used while adding mapping for ACPI tables.
+> + * Can be reused when other iomem regions need be mapped
+> + */
+> +struct init_pgtable_data {
+> +	struct x86_mapping_info *info;
+> +	pgd_t *level4p;
+> +};
+> +
+> +static int mem_region_callback(struct resource *res, void *arg)
+> +{
+> +	struct init_pgtable_data *data = arg;
+> +	unsigned long mstart, mend;
+> +
+> +	mstart = res->start;
+> +	mend = mstart + resource_size(res) - 1;
+> +
+> +	return kernel_ident_mapping_init(data->info, data->level4p, mstart, mend);
+> +}
+> +
+> +static int
+> +map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
+> +{
+> +	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+> +	struct init_pgtable_data data;
+> +
+> +	data.info = info;
+> +	data.level4p = level4p;
+> +	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+> +	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
+> +				   &data, mem_region_callback);
+> +}
+> +#else
+> +static int map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p) { return 0; }
+> +#endif
+> +
+>  #ifdef CONFIG_KEXEC_FILE
+>  const struct kexec_file_ops * const kexec_file_loaders[] = {
+>  		&kexec_bzImage64_ops,
+> @@ -36,6 +74,31 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
+>  };
+>  #endif
+>  
+> +static int
+> +map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
+> +{
+> +#ifdef CONFIG_EFI
+> +	unsigned long mstart, mend;
+> +
+> +	if (!efi_enabled(EFI_BOOT))
+> +		return 0;
+> +
+> +	mstart = (boot_params.efi_info.efi_systab |
+> +			((u64)boot_params.efi_info.efi_systab_hi<<32));
+> +
+> +	if (efi_enabled(EFI_64BIT))
+> +		mend = mstart + sizeof(efi_system_table_64_t);
+> +	else
+> +		mend = mstart + sizeof(efi_system_table_32_t);
+> +
+> +	if (!mstart)
+> +		return 0;
+> +
+> +	return kernel_ident_mapping_init(info, level4p, mstart, mend);
+> +#endif
+> +	return 0;
+> +}
+> +
+>  static void free_transition_pgtable(struct kimage *image)
+>  {
+>  	free_page((unsigned long)image->arch.p4d);
+> @@ -159,6 +222,18 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+>  			return result;
+>  	}
+>  
+> +	/*
+> +	 * Prepare EFI systab and ACPI tables for kexec kernel since they are
+> +	 * not covered by pfn_mapped.
+> +	 */
+> +	result = map_efi_systab(&info, level4p);
+> +	if (result)
+> +		return result;
+> +
+> +	result = map_acpi_tables(&info, level4p);
+> +	if (result)
+> +		return result;
+> +
+>  	return init_transition_pgtable(image, level4p);
+>  }
+>  
+> -- 
+> 2.21.0
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
