@@ -2,66 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82A3DBA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 07:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F56DBAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 07:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfD2FsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 01:48:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46083 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbfD2FsJ (ORCPT
+        id S1727373AbfD2FuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 01:50:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36125 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfD2FuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 01:48:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n2so4593458pgg.13;
-        Sun, 28 Apr 2019 22:48:09 -0700 (PDT)
+        Mon, 29 Apr 2019 01:50:14 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w20so3925873plq.3;
+        Sun, 28 Apr 2019 22:50:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=MHr5iFRw+tp+gqiL3I3y4eiNAWoHTeP+vDeAwqND73yHii7k0YdDk4QJXrkSgDsXXh
-         WI9oP9MFw6VNcWwFRwYeu19g0O/ihRMgUXX8RDekZAAYwEd6GqF0KZvw8fmdgzIDXF4d
-         uZpbr6VVFPTTdhcazRIDYl3EmgY4r67PaMKYE04XF3NMzrA441VRqG4JfhzQZxWhMCPl
-         C5vJ+Bj/mv+gVUljMAEV+lzaK4/Q6qwUmsPINDN2DNeYClJve9RZjW1redqzcctclzwP
-         Ez/UH8DpqFmD4lmSkfe8/Ek9gNxN/WOJj1+Bdq7F1PHSKdCRFy5jXF459ckeNbvUtv2y
-         bZaw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ex/wtvFh2LFQHAMf1Hh9PK5P1Lhyqf0a9tTK9sge9xk=;
+        b=CBU82FhgablygK35UzOKv2SgpPcjcujsSP/UUsEGT/SMOMRi9MaKMzA6+oDZeV2W+w
+         xmgVaqaWs4mN13kqw0q7JFsg8Kr6w9oqxIKvUljNzyy6aM/bqu+N7twvIvp0Pf817soR
+         Syoi2M+sGB/T7FwoiETpJRvTX17KHB1OQFGf5sjSP9oAfZQY8LoX5NRBch7FL/mK0tC8
+         jqPbraWZysNQocjzRMS2PSnhr7uh2te1ZWrvh1m/DUt7DBaplNjVc7QdjmD+m3hwHykp
+         BQIQJhgjVru3CsHQJuVbOZMMeCWj/GSEVz1PM04Bbiv3g9hq1C2lw0jUkRIvjQrgg1vn
+         AEmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=K8v8E8G+rtjKlEJiAQV0Di1EHdWYrMKUrejk9r4uRSf894JJ3NpL1RUoH/miwksgQd
-         JFUzY/mBAJgnYu1uCKUFxF+PX1kl6pQMOJwMCoLoaQi7gGMOZanmCw6VuDORfVZ0G7bV
-         mfHz1L+oeC9CQZ7wUMsUwc0mVeJqQdkb39eE8ezPsIA2Gxk8R9JsUU/dLq+izMANy6+B
-         YTnBdb1eYdeqbkzw/Px3baiMwI3vWyIFw/OrCbeee3v49+jhZztFsLsv+eEnZZRdBphW
-         C6w+HMIRi0mg3TtPHnltIAbxCcUGSvMGMJKFEjykUPO6ud5Bh9GqtzN7wYefCajLlbzr
-         fTXw==
-X-Gm-Message-State: APjAAAWsMuju657FT2iLIRaLLZlmPhrKqzhMXnr7f4f4y+tSSIOfyySd
-        ds+hYecR4TX1PEiC5aRAnLG1OAS3uwg=
-X-Google-Smtp-Source: APXvYqxF/KdEF10+njoKQkhrf1cNzcNM8W+SyXl+dItO+8/5IZT0o2KfXzp6CnOAqYV0yslD/zFzEA==
-X-Received: by 2002:a65:4183:: with SMTP id a3mr57054240pgq.121.1556516888732;
-        Sun, 28 Apr 2019 22:48:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ex/wtvFh2LFQHAMf1Hh9PK5P1Lhyqf0a9tTK9sge9xk=;
+        b=DoT0G5IwkipfQXlTY0gWSFxtPmt6dA6FSwNfCHAMQEcnVy7Qe/c3tpNWxpWFlNZqrc
+         mmhdv0ion4MQjoqyYZrq9MMI7cvh5cQ6wTTthOhNN/WMF8AzqoQszLvwNxpLknW4MjT6
+         ye6/GcTwKCMISW/+frqdqsNxe+hVL6rAKJ0adt0RzXxXJ07DX375wRql8HWgnBI/4kLF
+         7930w2VMYZksCumQwbWkdH2DS4EQNWuNRVBaDyDTdE9V266D0DOI7C7D8oMajfgipggX
+         sQ5PpxQJtLSmBEt6e/l4z2ARV2fGJCIpzGmILmxJwnXJUG8+EbhtzBhKCysJMiECbvH2
+         /aSQ==
+X-Gm-Message-State: APjAAAWL07RA0zh8IcCCO8kP3mrrBUzLHQR/n5A6irzHlKq+Ms0o2/+R
+        zG3n8BrRPehqwyqLJQSY9wAsqd19mbM=
+X-Google-Smtp-Source: APXvYqz/9SFVYQabsBysw74iG7onoc3zdKpkL2tocCsMGiOf94ZphQFsikUupJnMT771LF1Kw6O54Q==
+X-Received: by 2002:a17:902:a988:: with SMTP id bh8mr41019202plb.243.1556517013668;
+        Sun, 28 Apr 2019 22:50:13 -0700 (PDT)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id g10sm37856567pgq.54.2019.04.28.22.48.07
+        by smtp.gmail.com with ESMTPSA id n188sm19613605pfn.64.2019.04.28.22.50.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Apr 2019 22:48:07 -0700 (PDT)
+        Sun, 28 Apr 2019 22:50:12 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
+To:     linux-gpio@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Enric Balletbo Serra <enric.balletbo@collabora.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: power: supply: Add bindings for Microchip UCS1002
-Date:   Sun, 28 Apr 2019 22:47:41 -0700
-Message-Id: <20190429054741.7286-4-andrew.smirnov@gmail.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] gpio: vf610: Use devm_platform_ioremap_resource()
+Date:   Sun, 28 Apr 2019 22:49:47 -0700
+Message-Id: <20190429054948.9185-1-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190429054741.7286-1-andrew.smirnov@gmail.com>
-References: <20190429054741.7286-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,58 +62,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microchip UCS1002 Programmable USB Port Power
-Controller with Charger Emulation.
+Replace calls to platform_get_resource() and devm_ioremap_resource()
+with newly added devm_platform_ioremap_resource() for brevity. No
+functional change intended.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: Sebastian Reichel <sre@kernel.org>
+Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
 ---
- .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+ drivers/gpio/gpio-vf610.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-new file mode 100644
-index 000000000000..021fd7aba75e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-@@ -0,0 +1,27 @@
-+Microchip UCS1002 USB Port Power Controller
-+
-+Required properties:
-+- compatible		: Should be "microchip,ucs1002";
-+- reg			: I2C slave address
-+
-+Optional properties:
-+- interrupts-extended	: A list of interrupts lines present (could be either
-+			  corresponding to A_DET# pin, ALERT# pin, or both)
-+- interrupt-names	: A list of interrupt names. Should contain (if
-+			  present):
-+			  - "a_det" for line connected to A_DET# pin
-+			  - "alert" for line connected to ALERT# pin
-+			  Both are expected to be IRQ_TYPE_EDGE_BOTH
-+Example:
-+
-+&i2c3 {
-+	charger@32 {
-+		compatible = "microchip,ucs1002";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ucs1002_pins>;
-+		reg = <0x32>;
-+		interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
-+				      <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
-+		interrupt-names = "a_det", "alert";
-+	};
-+};
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 6f6558715b88..30aef41e3b7e 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -242,7 +242,6 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct vf610_gpio_port *port;
+-	struct resource *iores;
+ 	struct gpio_chip *gc;
+ 	struct irq_chip *ic;
+ 	int i;
+@@ -253,13 +252,11 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	port->sdata = of_device_get_match_data(dev);
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	port->base = devm_ioremap_resource(dev, iores);
++	port->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(port->base))
+ 		return PTR_ERR(port->base);
+ 
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	port->gpio_base = devm_ioremap_resource(dev, iores);
++	port->gpio_base = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(port->gpio_base))
+ 		return PTR_ERR(port->gpio_base);
+ 
 -- 
 2.20.1
 
