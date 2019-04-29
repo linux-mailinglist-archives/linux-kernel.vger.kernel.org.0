@@ -2,126 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82EAEC1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BFFEC22
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbfD2Vi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:38:59 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36058 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729336AbfD2Vi6 (ORCPT
+        id S1729428AbfD2VkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:40:16 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:41775 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729252AbfD2VkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:38:58 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y8so4395804ljd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 14:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wSiV79NBIztMusWk2QP2VKKhKOlea+n31l0AFUl2Bg8=;
-        b=ZMLzPqHi9lETwhRL66Ic7OfH6fw2vR3J8CHiKq3pfDQQ78NgprQyY154J6Rqvkqc7s
-         C42c14gHHilvBkmQFjpiBuapTUcRjDejOz3oZMhlsRfav1CrKiKeXa5cwy+w5bWoRtOe
-         i2ztzqxJfLNJSPQmCXpPj6ttEC4mfbjCWUHRc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wSiV79NBIztMusWk2QP2VKKhKOlea+n31l0AFUl2Bg8=;
-        b=X0nYMUj3QQc1Pdw8IAMjOFjLsPpbskkcvXQAgwrQBenQco4I8L/wCowTluxsDZr2/G
-         bhH8YZQrcCYVMConvkmDPLnYATX58z9KwEUdmfxFIrAnphfhQ+psA/2O3nkLoVh++8CI
-         Tc1MUfZBcvt/5s7eAznP6qzijta+erPVfKXbk5u9ZdPt9xSTIId/hxsLKyHlZv33BJgw
-         FxooVtbVa8qaW23XAAg3s57hqc4dlMziA517wFm3/0zQa1zuouKTZqVkDuGzpj2Na5v/
-         o9WVs9yKlOlw1a3jG6K9+qwNY9V/SGNjVodkIzmFBjRT+Dc4d9X/WUUx7ddotxJueZoc
-         eiGg==
-X-Gm-Message-State: APjAAAWsX/N6YksAh3qgMR+XsA78kGRKeK8lGnsqDIg8oh0hDxJkd1+L
-        xMki93Ovr4xdg4YMyH8lktKXgLQV0wU=
-X-Google-Smtp-Source: APXvYqw6b2XnbFrw7BSLw+7VXZOlHqu+jA7VzPOEZoyPR24nhbg5JQgvTuJSCUiY/OgMo07i8S7Fyw==
-X-Received: by 2002:a2e:4b19:: with SMTP id y25mr2448696lja.106.1556573936325;
-        Mon, 29 Apr 2019 14:38:56 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id v141sm7473859lfa.52.2019.04.29.14.38.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 14:38:54 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id m18so6179475lje.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 14:38:53 -0700 (PDT)
-X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr30631636ljj.79.1556573932539;
- Mon, 29 Apr 2019 14:38:52 -0700 (PDT)
+        Mon, 29 Apr 2019 17:40:16 -0400
+Received: from [192.168.1.110] ([77.9.18.117]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MZl1l-1hEo5h0cBr-00Wj4u; Mon, 29 Apr 2019 23:40:14 +0200
+Subject: Re: [PATCH 4/4] input: keyboard: gpio-keys-polled: skip oftree code
+ when CONFIG_OF disabled
+To:     Frank Rowand <frowand.list@gmail.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org
+References: <1555444645-15156-1-git-send-email-info@metux.net>
+ <1555444645-15156-5-git-send-email-info@metux.net>
+ <2a760b29-9f0b-ffa7-03dd-47ddb074563a@gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <d1a9f570-4f92-b46f-140e-45c823c82474@metux.net>
+Date:   Mon, 29 Apr 2019 23:40:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
- <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
- <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
- <20190429145250.1a5da6ed@gandalf.local.home> <CAHk-=wjm93jLtVxTX4HZs6K4k1Wqh3ujjmapqaYtcibVk_YnzQ@mail.gmail.com>
- <20190429150724.6e501d27@gandalf.local.home> <CAHk-=wgbC-wiSrdDYAh1ORF4EKmecY+MkNsJBF=BWf4W1bXXgA@mail.gmail.com>
- <20190429163043.535f4272@gandalf.local.home>
-In-Reply-To: <20190429163043.535f4272@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Apr 2019 14:38:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjGquN7-kQCoa+LHCuiVTjefkk38qwaysd4wLLtoSZhpg@mail.gmail.com>
-Message-ID: <CAHk-=wjGquN7-kQCoa+LHCuiVTjefkk38qwaysd4wLLtoSZhpg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
- fops invocation
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2a760b29-9f0b-ffa7-03dd-47ddb074563a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:I4a/wpfSYCV1FP4iWq6zHYT9Xsld2boyDi0X3mxwyz4FVfh43l1
+ a3y7SajNXWAhMaiASYJtFUSzE96kmzZosSbSzZwueqX6AQpMJnxwNQLw/lTKymymgv/rPsh
+ NM5K+IZlt2StBqcAxmaTvHiy5QxGRTXfA8VsmtS68v7H7aasK7Uocs9rKyFjOawoLJoCxwT
+ qpr/60Kp6ApHBf2+XTEGQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8EZCKlsu8ng=:rPthvjdHhKarYQ/3UCc3WV
+ 0RJ8yQyjwaKKhClCXbJYLZbXgtJqbLJfT13vDaP2mtobZfMFd6mI1SwLq2VSi1DnlH7oQiE1a
+ 8Tda6HBx665ByrICysG1qcI7JQjbHW4gyxBWRkzy/sdOxKm935HhVpnpCT07buc6RwP+Bc+2j
+ LtP+Az4MZf8P5GkKtd6FCS6MhAar5+cGndlXc8Qeuyz1WSUigOPX1XmCnin/2fSnyDQgiYyPq
+ Ofsf8YRrsP3zK1DFtyV7O5ZxlMI+tAhbzT09Dg7uNvQf+Ve1PzO9fQYmLtKOGx8RlimbFjZwB
+ jZzZ5TOKXn/OY8fsKZknZYMsNWGD7lz6uXQUe0Ym72xzYlLVQLm8smrkMSuPjtBQNwbMc2l6R
+ hEGtcwKMMTe6mbDvCXwe7p+kcfujiSpHFfUE+VUGSpbq8Wng7Mkb964NYTC+aILgaZApro9Rm
+ gBpGzznFPY8Fbtcv/kUVzTMdmWJL+FAcDhj8n2zJfOwBdHRgzglXmDCtg2kSB0gdwXI+vBvGz
+ UwyMtrGF+XgjXV3zZVrvJM/MCsr05Mbh35xiuS5he/AAkuH1UVTP1YujOwVmQGtYksuDW5/8y
+ /yfuNpxprCzTHYBbIi5As3hYe7PcaOMCoU1BdSNnZiKzgBGwN68UBIebf38rdgzbP/xcTe6Oj
+ rvrW/Fhc5Qrbh7XZXonXI5ulgwlsmCSP7S8eG5lZ/MUrHAul00c3+L4LX0yPBXfmpeOZhZggh
+ y/cTQAti9kbkZLf70KxZz8i2jjfl3zdpLPCWRCDHPjRrDOvuXB4AdE2PAZNA9bQfRY+BD6ZKe
+ DVbqjzAONChgTnTMA6YfE1muvPgX0iK6PsXIs9+f11A5M/++jEdreHpixfIcOEAK8kLKXez
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 1:30 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> The update from "call custom_trampoline" to "call iterator_trampoline"
-> is where we have an issue.
+On 29.04.19 21:44, Frank Rowand wrote:
+> On 4/16/19 12:57 PM, Enrico Weigelt, metux IT consult wrote:
+>> we don't need to build in oftree probing stuff when oftree isn't
+>> enabled at all.
+>>
+>> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+>> ---
+>>  drivers/input/keyboard/gpio_keys_polled.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+>> index 3f773b2..fbccb89 100644
+>> --- a/drivers/input/keyboard/gpio_keys_polled.c
+>> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+>> @@ -147,6 +147,7 @@ static void gpio_keys_polled_close(struct input_polled_dev *dev)
+>>  static struct gpio_keys_platform_data *
+>>  gpio_keys_polled_get_devtree_pdata(struct device *dev)
+>>  {
+>> +#ifdef CONFIG_OF
+>>  	struct gpio_keys_platform_data *pdata;
+>>  	struct gpio_keys_button *button;
+>>  	struct fwnode_handle *child;
+>> @@ -200,6 +201,9 @@ static void gpio_keys_polled_close(struct input_polled_dev *dev)
+>>  	}
+>>  
+>>  	return pdata;
+>> +#else /* CONFIG_OF */
+>> +	return ERR_PTR(-ENOENT);
+>> +#endif /* CONFIG_OF */
+>>  }
+>>  
+>>  static void gpio_keys_polled_set_abs_params(struct input_dev *input,
+>> @@ -226,7 +230,7 @@ static void gpio_keys_polled_set_abs_params(struct input_dev *input,
+>>  	{ .compatible = "gpio-keys-polled", },
+>>  	{ },
+>>  };
+> 
+> 
+>> -MODULE_DEVICE_TABLE(of, gpio_keys_polled_of_match);
+>> +MODULE_DEVICE_TABLE_OF(gpio_keys_polled_of_match);
+> 
+> Not needed, when you use of_match_ptr() -- see below.
 
-So it has never worked. Just tell people that they have two chocies:
+Shall I remove the MODULE_DEVICE_TABLE... line completely ?
 
- - you do the careful rewriting, which takes more time
+I'd like to have nothing of-related compiled in, when oftree isn't
+enabled.
 
- - you do it by rewriting as nop and then back, which is what
-historically has been done, and that is fast and simple, because
-there's no need to be careful.
+>>  static struct gpio_desc *gpio_keys_polled_get_gpiod_fwnode(
+>>  	struct device *dev,
+>> @@ -452,7 +456,9 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>>  	.probe	= gpio_keys_polled_probe,
+>>  	.driver	= {
+>>  		.name	= DRV_NAME,
+> 
+>> +#ifdef CONFIG_OF
+>>  		.of_match_table = gpio_keys_polled_of_match,
+>> +#endif /* CONFIG_OF */
+> 
+> No need for the #ifdef, use of_match_ptr():
+> 
+>   		.of_match_table = of_match_ptr(gpio_keys_polled_of_match),
 
-Really. I find your complaints completely incomprehensible. You've
-never rewritten call instructions atomically before, and now you
-complain about it being slightly more expensive to do it when I give
-you the code? Yes it damn well will be slightly more expensive. Deal
-with it.
+Ok, thanks.
 
-Btw, once again - I several months ago also gave a suggestion on how
-it could be done batch-mode by having lots of those small stubs and
-just generating them dynamically.
 
-You never wrote that code *EITHER*. It's been *months*.
+--mtx
 
-So now I've written the non-batch-mode code for you, and you just
-*complain* about it?
-
-I'm done with this discussion. I'm totally fed up.
-
-                 Linus
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
