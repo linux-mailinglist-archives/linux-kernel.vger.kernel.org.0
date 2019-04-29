@@ -2,150 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7CEEA37
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEFCEA3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfD2SfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:35:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35982 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728962AbfD2Se7 (ORCPT
+        id S1729065AbfD2Shr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:37:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56557 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729002AbfD2Shq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:34:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id v80so1158755pfa.3;
-        Mon, 29 Apr 2019 11:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language;
-        bh=R95+cNuWkIFZnhdtaDboYNwHP5ScfwcWH/l0fWKKkd8=;
-        b=K2Bgw87tnwhI/93ci3Ltv0UORl164W9D6VfuYRN8aASftib4j62ARHOR8NJkgmsGwd
-         kn4f09U0KwCIQ+TPINseJLDOfBWW88aGGA5MFNRZPki2wyjg3pDl53rchUfuy0qzq3e0
-         u8t5+Qq5zKLaEYGIVhQxn0EqefFcP1TxDOrdHI2JXgG6Pgfg1/1XAVp7abz7SW71gNHC
-         nWhXlCAAQ70vhezdPhMbQM0Qew9BoBEWxFcTy1Eu/7Dj+tvlZdvFY5+kFhARYn2/5T9B
-         W8svw1yJbsSQW62U55pTcqnofCUM3zUg+4osOYdoeHSU7lIj6rjOe6hxFA21zXBtzHCW
-         Lr+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=R95+cNuWkIFZnhdtaDboYNwHP5ScfwcWH/l0fWKKkd8=;
-        b=szBa6vgTkrD1Ht+d5/Wi6o2s1kvhrO+u618oL13KY/HXrOuY0fbEuoy4ZPuyMiideL
-         yf9cl8SsjZ+pscquOZYCTjrJLyQ8+hfHMBOSF6xUbDZ8p1J9hOas0COj8IxUsRl7wMDd
-         ZCxM2HmPbUM7GTeZOoWuSyK6XAGHLgnsJBnDLzSCJxZMviaxVTZvUI5xjLv+w9CpLBkh
-         CUZ9nVXrWIN/xKayytzIMBsj2cnh834GbBC8Zgaprbo4imhTJj9aONr8/HZzt2SDcPYD
-         5gKM5jRs4geL+t72uA1ZTuOlHvQrxYvJCByF4+trHouyWLEpuwmKG1v5B2wvG6RCI3Rv
-         YQyg==
-X-Gm-Message-State: APjAAAUXp2gBK366AENXA9+CxL+S5Y7mMvFepltz2evb23oZWOY5yHjF
-        VL54Ntc3WoIDfXQ/IeOP/5s=
-X-Google-Smtp-Source: APXvYqxHVzbrr3n6aKge7sXVjBxYitHE198LQU9yGpgqT2irmKf4QLdPRr27quFeiMMwGS/HJjas+Q==
-X-Received: by 2002:a63:8949:: with SMTP id v70mr12135945pgd.196.1556562898523;
-        Mon, 29 Apr 2019 11:34:58 -0700 (PDT)
-Received: from [172.27.227.196] ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id f71sm68850310pfc.109.2019.04.29.11.34.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 11:34:56 -0700 (PDT)
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Julian Anastasov <ja@ssi.bg>, Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
-        ddstreet@ieee.org, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000007d22100573d66078@google.com>
- <alpine.LFD.2.20.1808201527230.2758@ja.home.ssi.bg>
- <4684eef5-ea50-2965-86a0-492b8b1e4f52@I-love.SAKURA.ne.jp>
- <9d430543-33c3-0d9b-dc77-3a179a8e3919@I-love.SAKURA.ne.jp>
- <920ebaf1-ee87-0dbb-6805-660c1cbce3d0@I-love.SAKURA.ne.jp>
- <cc054b5c-4e95-8d30-d4bf-9c85f7e20092@gmail.com>
- <15b353e9-49a2-f08b-dc45-2e9bad3abfe2@i-love.sakura.ne.jp>
- <057735f0-4475-7a7b-815f-034b1095fa6c@gmail.com>
- <6e57bc11-1603-0898-dfd4-0f091901b422@i-love.sakura.ne.jp>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <f71dd5cd-c040-c8d6-ab4b-df97dea23341@gmail.com>
-Date:   Mon, 29 Apr 2019 12:34:54 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 29 Apr 2019 14:37:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIZTUZ1027603
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 29 Apr 2019 11:35:29 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIZTUZ1027603
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556562931;
+        bh=RoN7JIoaa+3JKRSawqx+X86giRFIjf7jtr8UpntSZSE=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=QPKDiWm3Lfh8XreiEVMXDGeWoztIIZIzafjb+Dfq53OB8mk9zNgG9Xszgir6kUr85
+         0OFDU64vxd3dawBIbzoo9MOSm+V7EfWva4RFc5POnU2ikONU5ZGsPT4mMfBmJQG3/i
+         LLc1Uj7UbEDRLzSiE84QsrHXl1GGmJy3pR8Y7NqG+AM3EO6NPUf5WD5grLda0X0Tt2
+         tGlq7fwBA8YjuL5mNNDVWrOBBwmB5vkTDvnqIciagojanx0ZOhfd0mZzi+DcTfbAME
+         mzX3KUgE/XUmaxav9e7Rll81xoZDlOQ/NBhQUMe0OdfUiiGi7KmVPswQVrrr6vbQaI
+         tUoZo7tp1pQNQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIZT8C1027599;
+        Mon, 29 Apr 2019 11:35:29 -0700
+Date:   Mon, 29 Apr 2019 11:35:29 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-7971679994d3a239538ddcfea9f89468f0bd65e2@git.kernel.org>
+Cc:     m.szyprowski@samsung.com, tom.zanussi@linux.intel.com, hch@lst.de,
+        snitzer@redhat.com, penberg@kernel.org, dvyukov@google.com,
+        joonas.lahtinen@linux.intel.com, akpm@linux-foundation.org,
+        akinobu.mita@gmail.com, luto@kernel.org,
+        linux-kernel@vger.kernel.org, rientjes@google.com,
+        catalin.marinas@arm.com, rodrigo.vivi@intel.com, airlied@linux.ie,
+        jpoimboe@redhat.com, glider@google.com, mbenes@suse.cz,
+        robin.murphy@arm.com, jthumshirn@suse.de, aryabinin@virtuozzo.com,
+        mingo@kernel.org, clm@fb.com, daniel@ffwll.ch,
+        josef@toxicpanda.com, adobriyan@gmail.com, tglx@linutronix.de,
+        rppt@linux.vnet.ibm.com, rostedt@goodmis.org,
+        jani.nikula@linux.intel.com, hpa@zytor.com, cl@linux.com,
+        agk@redhat.com, dsterba@suse.com, maarten.lankhorst@linux.intel.com
+Reply-To: catalin.marinas@arm.com, rodrigo.vivi@intel.com,
+          airlied@linux.ie, jpoimboe@redhat.com,
+          tom.zanussi@linux.intel.com, m.szyprowski@samsung.com,
+          akinobu.mita@gmail.com, akpm@linux-foundation.org,
+          dvyukov@google.com, joonas.lahtinen@linux.intel.com,
+          penberg@kernel.org, snitzer@redhat.com, hch@lst.de,
+          linux-kernel@vger.kernel.org, luto@kernel.org,
+          rientjes@google.com, rostedt@goodmis.org,
+          rppt@linux.vnet.ibm.com, cl@linux.com, hpa@zytor.com,
+          jani.nikula@linux.intel.com, dsterba@suse.com,
+          maarten.lankhorst@linux.intel.com, agk@redhat.com,
+          robin.murphy@arm.com, mbenes@suse.cz, glider@google.com,
+          daniel@ffwll.ch, clm@fb.com, mingo@kernel.org,
+          aryabinin@virtuozzo.com, jthumshirn@suse.de, tglx@linutronix.de,
+          adobriyan@gmail.com, josef@toxicpanda.com
+In-Reply-To: <20190425094801.771410441@linutronix.de>
+References: <20190425094801.771410441@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/stacktrace] mm/slub: Simplify stack trace retrieval
+Git-Commit-ID: 7971679994d3a239538ddcfea9f89468f0bd65e2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <6e57bc11-1603-0898-dfd4-0f091901b422@i-love.sakura.ne.jp>
-Content-Type: multipart/mixed;
- boundary="------------A2951BECD619E8BAAC5FD632"
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------A2951BECD619E8BAAC5FD632
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Commit-ID:  7971679994d3a239538ddcfea9f89468f0bd65e2
+Gitweb:     https://git.kernel.org/tip/7971679994d3a239538ddcfea9f89468f0bd65e2
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Thu, 25 Apr 2019 11:45:00 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 29 Apr 2019 12:37:48 +0200
 
-On 4/27/19 10:22 PM, Tetsuo Handa wrote:
-> On 2019/04/28 8:52, Eric Dumazet wrote:
->> On 4/27/19 3:33 PM, Tetsuo Handa wrote:
->>>
->>> I'm waiting for davem why it is safe to move the dst entry from
->>> "a device to unregister" to "a loopback device in that namespace".
->>> I'm waiting for an explanation how the dst entry which was moved to
->>> "a loopback device in that namespace" is released (i.e. what the
->>> expected shutdown sequence is).
->>
->> The most probable explanation is that we make sure the loopback device
->> is the last one to be dismantled at netns deletion,
->> and this would obviously happen after all dst have been released.
->>
-> 
-> rt_flush_dev() becomes a no-op if "dev" == "a loopback device in that
-> namespace". And according to debug printk(), rt_flush_dev() is called
-> on "a loopback device in that namespace" itself.
-> 
-> If "a loopback device in that namespace" is the last "one" (== "a network
-> device in that namespace" ?), which shutdown sequence should have called
-> dev_put("a loopback device in that namespace") before unregistration of
-> "a loopback device in that namespace" starts?
-> 
-> Since I'm not a netdev person, I appreciate if you can explain
-> that shutdown sequence using a flow chart.
-> 
+mm/slub: Simplify stack trace retrieval
 
-The attached patch adds a tracepoint to notifier_call_chain. If you have
-KALLSYMS enabled it will show the order of the function handlers:
+Replace the indirection through struct stack_trace with an invocation of
+the storage array based interface.
 
-perf record -e notifier:* -a -g &
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Christoph Lameter <cl@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: linux-mm@kvack.org
+Cc: David Rientjes <rientjes@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: kasan-dev@googlegroups.com
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: David Sterba <dsterba@suse.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-btrfs@vger.kernel.org
+Cc: dm-devel@redhat.com
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: linux-arch@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190425094801.771410441@linutronix.de
 
-ip netns del <NAME>
-<wait a few seconds>
+---
+ mm/slub.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-fg
-<ctrl-c on perf-record>
-
-perf script
-
---------------A2951BECD619E8BAAC5FD632
-Content-Type: text/plain; charset=UTF-8; x-mac-type="0"; x-mac-creator="0";
- name="0001-notifier-add-tracepoint-to-notifier_call_chain.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0="0001-notifier-add-tracepoint-to-notifier_call_chain.patch"
-
-RnJvbSA1NTEwYzE0ZTU2ZjNlOTllN2RmZDkyMDg3NDIxNDM3OTFlMTRhMmUyIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBEYXZpZCBBaGVybiA8ZHNhaGVybkBnbWFpbC5jb20+
-CkRhdGU6IE1vbiwgMjkgQXByIDIwMTkgMTE6MjI6MDcgLTA3MDAKU3ViamVjdDogW1BBVENI
-XSBub3RpZmllcjogYWRkIHRyYWNlcG9pbnQgdG8gbm90aWZpZXJfY2FsbF9jaGFpbgoKU2ln
-bmVkLW9mZi1ieTogRGF2aWQgQWhlcm4gPGRzYWhlcm5AZ21haWwuY29tPgotLS0KIGtlcm5l
-bC9ub3RpZmllci5jIHwgMyArKysKIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykK
-CmRpZmYgLS1naXQgYS9rZXJuZWwvbm90aWZpZXIuYyBiL2tlcm5lbC9ub3RpZmllci5jCmlu
-ZGV4IDYxOTZhZjhhODIyMy4uOWI2NWE5YzU2ZmQ3IDEwMDY0NAotLS0gYS9rZXJuZWwvbm90
-aWZpZXIuYworKysgYi9rZXJuZWwvbm90aWZpZXIuYwpAQCAtNSw2ICs1LDggQEAKICNpbmNs
-dWRlIDxsaW51eC9yY3VwZGF0ZS5oPgogI2luY2x1ZGUgPGxpbnV4L3ZtYWxsb2MuaD4KICNp
-bmNsdWRlIDxsaW51eC9yZWJvb3QuaD4KKyNkZWZpbmUgQ1JFQVRFX1RSQUNFX1BPSU5UUwor
-I2luY2x1ZGUgPHRyYWNlL2V2ZW50cy9ub3RpZmllci5oPgogCiAvKgogICoJTm90aWZpZXIg
-bGlzdCBmb3Iga2VybmVsIGNvZGUgd2hpY2ggd2FudHMgdG8gYmUgY2FsbGVkCkBAIC05MCw2
-ICs5Miw3IEBAIHN0YXRpYyBpbnQgbm90aWZpZXJfY2FsbF9jaGFpbihzdHJ1Y3Qgbm90aWZp
-ZXJfYmxvY2sgKipubCwKIAkJCWNvbnRpbnVlOwogCQl9CiAjZW5kaWYKKwkJdHJhY2Vfbm90
-aWZpZXJfY2FsbF9jaGFpbihuYiwgdmFsKTsKIAkJcmV0ID0gbmItPm5vdGlmaWVyX2NhbGwo
-bmIsIHZhbCwgdik7CiAKIAkJaWYgKG5yX2NhbGxzKQotLSAKMi4xMS4wCgo=
---------------A2951BECD619E8BAAC5FD632--
+diff --git a/mm/slub.c b/mm/slub.c
+index e2ccd12b6faa..6b28cd2b5a58 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -552,18 +552,14 @@ static void set_track(struct kmem_cache *s, void *object,
+ 
+ 	if (addr) {
+ #ifdef CONFIG_STACKTRACE
+-		struct stack_trace trace;
++		unsigned int nr_entries;
+ 
+-		trace.nr_entries = 0;
+-		trace.max_entries = TRACK_ADDRS_COUNT;
+-		trace.entries = p->addrs;
+-		trace.skip = 3;
+ 		metadata_access_enable();
+-		save_stack_trace(&trace);
++		nr_entries = stack_trace_save(p->addrs, TRACK_ADDRS_COUNT, 3);
+ 		metadata_access_disable();
+ 
+-		if (trace.nr_entries < TRACK_ADDRS_COUNT)
+-			p->addrs[trace.nr_entries] = 0;
++		if (nr_entries < TRACK_ADDRS_COUNT)
++			p->addrs[nr_entries] = 0;
+ #endif
+ 		p->addr = addr;
+ 		p->cpu = smp_processor_id();
