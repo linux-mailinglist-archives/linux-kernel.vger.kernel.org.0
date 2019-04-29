@@ -2,87 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B206BE630
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01006E63F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbfD2PXb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 11:23:31 -0400
-Received: from mga03.intel.com ([134.134.136.65]:59941 "EHLO mga03.intel.com"
+        id S1728695AbfD2PY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:24:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:60394 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728253AbfD2PXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:23:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 08:23:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,409,1549958400"; 
-   d="scan'208";a="153294606"
-Received: from pgsmsx101.gar.corp.intel.com ([10.221.44.78])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Apr 2019 08:23:26 -0700
-Received: from pgsmsx114.gar.corp.intel.com ([169.254.4.194]) by
- PGSMSX101.gar.corp.intel.com ([169.254.1.108]) with mapi id 14.03.0415.000;
- Mon, 29 Apr 2019 23:23:25 +0800
-From:   "Ong, Boon Leong" <boon.leong.ong@intel.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Biao Huang <biao.huang@mediatek.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "yt.shen@mediatek.com" <yt.shen@mediatek.com>,
-        "jianguo.zhang@mediatek.com" <jianguo.zhang@mediatek.com>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
-        "Voon, Weifeng" <weifeng.voon@intel.com>
-Subject: RE: [PATCH 2/2] net-next: stmmac: add mdio clause 45 access from
- mac device for dwmac4
-Thread-Topic: [PATCH 2/2] net-next: stmmac: add mdio clause 45 access from
- mac device for dwmac4
-Thread-Index: AQHU/lXS6cVDj4S/ZU28LSGbOEZpuqZTPxvA//977gCAAIaNAA==
-Date:   Mon, 29 Apr 2019 15:23:24 +0000
-Message-ID: <AF233D1473C1364ABD51D28909A1B1B75C0C2849@pgsmsx114.gar.corp.intel.com>
-References: <1556519724-1576-1-git-send-email-biao.huang@mediatek.com>
- <1556519724-1576-3-git-send-email-biao.huang@mediatek.com>
- <AF233D1473C1364ABD51D28909A1B1B75C0C27ED@pgsmsx114.gar.corp.intel.com>
- <78EB27739596EE489E55E81C33FEC33A0B46E5B4@DE02WEMBXB.internal.synopsys.com>
-In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B46E5B4@DE02WEMBXB.internal.synopsys.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjdlMGE1ZTktYmNlZi00ZWQzLWJlZTItMzJmM2UyNzZmMThhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRGdwcHcwUGZCeDlYdXpYdzMwTytyQnZKNGp5ZmlLYmdWdjlzQ1JKZU9KWmU4cU95SnZwOUVqYUxSS1BnXC9xRDYifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728430AbfD2PY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:24:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E4AD80D;
+        Mon, 29 Apr 2019 08:24:27 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 596AC3F5C1;
+        Mon, 29 Apr 2019 08:24:25 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 16:24:22 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Pramod Kumar <pramod.kumar@broadcom.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 3/3] thermal: broadcom: Add Stingray thermal driver
+Message-ID: <20190429152422.GC17516@e107155-lin>
+References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
+ <1527486084-4636-4-git-send-email-srinath.mannam@broadcom.com>
+ <da76e12f246c3f10bfed28d8b91a3575dc73f243.camel@infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da76e12f246c3f10bfed28d8b91a3575dc73f243.camel@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> What is the preference of the driver maintainer here?
+On Mon, Apr 29, 2019 at 06:07:12PM +0300, David Woodhouse wrote:
+> On Mon, 2018-05-28 at 11:11 +0530, Srinath Mannam wrote:
+> > From: Pramod Kumar <pramod.kumar@broadcom.com>
+> >
+> > This commit adds stingray thermal driver to monitor six
+> > thermal zones temperature and trips at critical temperature.
 >
->Your implementation doesn't need the mdelay() so I think we should follow
->your way once you also address the review comments from Andrew and me.
+> This matches an ACPI "BRCM0500" device but then calls
+> devm_thermal_zone_of_sensor_register(), which AFAICT is going to fail
+> on an ACPI system because the first thing that does is call
+> of_find_node_by_name(NULL, "thermal-zones") which isn't going to find a
+> match.
 >
->Maybe you can coordinate with Biao and submit a C45 implementation that
->can be tested by both ?
 
-Ok. We will address the review comments for that patch-series and resend the
-v3 patch-series soonest and for Biao to test. 
- 
-Thanks
+Thanks David for bringing this up. I hadn't noticed that this driver is
+cheekily trying to do thermal management in ACPI using crafty
+acpi_device_id match. ACPI thermal objects/methods must be used in the
+firmware to do thermal management.
+
+Pramod, can you remove the ACPI support or I can go ahead and post the
+patch to do the same ?
+
+> How does this work in the ACPI case?
+
+It can't and shouldn't work if one can make it happen :)
+
+--
+Regards,
+Sudeep
