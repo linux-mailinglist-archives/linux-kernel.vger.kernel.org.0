@@ -2,108 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF603E15B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 13:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C1AE162
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 13:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfD2LeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 07:34:12 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:44285 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727710AbfD2LeL (ORCPT
+        id S1727710AbfD2Lf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 07:35:57 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36666 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727839AbfD2Lfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 07:34:11 -0400
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.85)
-          with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1hL4Xw-003oly-5j>; Mon, 29 Apr 2019 13:34:08 +0200
-Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
-          by inpost2.zedat.fu-berlin.de (Exim 4.85)
-          with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1hL4Xw-0017y1-0R>; Mon, 29 Apr 2019 13:34:08 +0200
-Subject: Re: [PATCH] ia64: fix ptrace(PTRACE_GETREGS) (unbreaks strace, gdb)
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To:     Tony Luck <tony.luck@intel.com>
-Cc:     Sergei Trofimovich <slyfox@gentoo.org>,
-        Frank Scheiner <frank.scheiner@web.de>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <def7f1cf-96b1-b0a9-88b8-3d24eb3b6075@physik.fu-berlin.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=glaubitz@physik.fu-berlin.de; keydata=
- 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
- scOkTAZQGVpD/8AaLH4v1w==
-Message-ID: <906b63c0-9032-995b-f1a4-4eb384e26314@physik.fu-berlin.de>
-Date:   Mon, 29 Apr 2019 13:34:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 29 Apr 2019 07:35:55 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w20so4332364plq.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 04:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T7YB68AOn5NlO086Zr2n2AuIrgzE7qSEebzLEMwr/Mk=;
+        b=LM/r+sFGgsKryAGtFsIxtUtPJB5QXLuFNsh1YRwOYk5uDk+lxMN1NCHOv8ob44vOGz
+         9ZCONldnAs5RCTNY/q5k9VwJ6MVEd+cHqUGy4ko5K/PFUoYoZxto1xh2nxEsQAhrWn4c
+         xwZHwBAWE04iWHx7/zEnCk/kpB8EXURgX0s+gQDVI+6LRd/zZSH4ocEo4MfvI8djpUyU
+         xLClI36M6rGJS1uOp9UoiVgE55tc7/aV2H/3E7fScvQ1ATisHKkxHg6bvFYYmtjHUPGJ
+         3N4GkBHUyiB7i8V71BzEsWZ/SMLmonZn8i6Mp/yr/INoRlvOdL4mwYmv/I/nW/nlK1cM
+         oJaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T7YB68AOn5NlO086Zr2n2AuIrgzE7qSEebzLEMwr/Mk=;
+        b=jGtQgt62LAHKIwkRQ3DADwHBgWBs6HXOcjBT7YRC4W+BcswjBeHKqMuRzSqvuOeECt
+         qmO0V3Nkrbh2XciOulVAuHygxZtX+jgglyFnusAYzGDihDRCWiU7QMEyFkAXuiApVSbF
+         7mowe8OrSs3b4sAqsrMHThnL9Cm7veGWVdmAGbOM8zZoss9G4sk2ef+grxj0vxo+Sdr/
+         u33HdHHrxIfDD6WIc/X+VvHlvVsJ4JnUSVUqMQFmEMzi8sztC7zbDshRpYTkmIG1/kLC
+         7zD5qdVgwS6Z0Xoc00rYfWMm7hf35IchUm7SdkokFGHDSofHNQ9Zwpk3U90Q33Sgxou0
+         G5Hg==
+X-Gm-Message-State: APjAAAW6aLuecXhCXnZN9/jv41Q36ca2FxVgWUJHDOGs4RPejizZ0Kyh
+        EPw7/SOOneN0Rq//eCCgXZElpg==
+X-Google-Smtp-Source: APXvYqx/RNbkMzGYc6AGzgITmL7dguzLosorDprNLnCVtqozhQpm97Lq9l6aGYNBYNtma4+xfrZQBQ==
+X-Received: by 2002:a17:902:b197:: with SMTP id s23mr2596099plr.153.1556537753901;
+        Mon, 29 Apr 2019 04:35:53 -0700 (PDT)
+Received: from localhost.localdomain (118-171-142-181.dynamic-ip.hinet.net. [118.171.142.181])
+        by smtp.gmail.com with ESMTPSA id b13sm45058844pfd.12.2019.04.29.04.35.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 04:35:52 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Pawel Moll <pawel.moll@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: vexpress: Get rid of struct vexpress_regulator
+Date:   Mon, 29 Apr 2019 19:35:41 +0800
+Message-Id: <20190429113542.476-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <def7f1cf-96b1-b0a9-88b8-3d24eb3b6075@physik.fu-berlin.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 160.45.32.140
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+The *regdev and *regmap can be replaced by local variables in probe().
+Only desc of struct vexpress_regulator is really need, so just use
+struct regulator_desc directly and remove struct vexpress_regulator.
 
-On 4/29/19 12:38 PM, John Paul Adrian Glaubitz wrote:
-> Is there a chance that Sergey's patch from [1] could get applied upstream?
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/vexpress-regulator.c | 53 +++++++++++---------------
+ 1 file changed, 22 insertions(+), 31 deletions(-)
 
-Apparently it's sufficient to rebuild the kernel with a gcc which has
-this [1] fix applied. Will give this a try and report back.
-
-Adrian
-
-> [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86984
-
+diff --git a/drivers/regulator/vexpress-regulator.c b/drivers/regulator/vexpress-regulator.c
+index ca4230fe9e77..a15a1319436a 100644
+--- a/drivers/regulator/vexpress-regulator.c
++++ b/drivers/regulator/vexpress-regulator.c
+@@ -23,17 +23,10 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/vexpress.h>
+ 
+-struct vexpress_regulator {
+-	struct regulator_desc desc;
+-	struct regulator_dev *regdev;
+-	struct regmap *regmap;
+-};
+-
+ static int vexpress_regulator_get_voltage(struct regulator_dev *regdev)
+ {
+-	struct vexpress_regulator *reg = rdev_get_drvdata(regdev);
+-	u32 uV;
+-	int err = regmap_read(reg->regmap, 0, &uV);
++	unsigned int uV;
++	int err = regmap_read(regdev->regmap, 0, &uV);
+ 
+ 	return err ? err : uV;
+ }
+@@ -41,9 +34,7 @@ static int vexpress_regulator_get_voltage(struct regulator_dev *regdev)
+ static int vexpress_regulator_set_voltage(struct regulator_dev *regdev,
+ 		int min_uV, int max_uV, unsigned *selector)
+ {
+-	struct vexpress_regulator *reg = rdev_get_drvdata(regdev);
+-
+-	return regmap_write(reg->regmap, 0, min_uV);
++	return regmap_write(regdev->regmap, 0, min_uV);
+ }
+ 
+ static const struct regulator_ops vexpress_regulator_ops_ro = {
+@@ -57,44 +48,44 @@ static const struct regulator_ops vexpress_regulator_ops = {
+ 
+ static int vexpress_regulator_probe(struct platform_device *pdev)
+ {
+-	struct vexpress_regulator *reg;
++	struct regulator_desc *desc;
+ 	struct regulator_init_data *init_data;
+ 	struct regulator_config config = { };
++	struct regulator_dev *rdev;
++	struct regmap *regmap;
+ 
+-	reg = devm_kzalloc(&pdev->dev, sizeof(*reg), GFP_KERNEL);
+-	if (!reg)
++	desc = devm_kzalloc(&pdev->dev, sizeof(*desc), GFP_KERNEL);
++	if (!desc)
+ 		return -ENOMEM;
+ 
+-	reg->regmap = devm_regmap_init_vexpress_config(&pdev->dev);
+-	if (IS_ERR(reg->regmap))
+-		return PTR_ERR(reg->regmap);
++	regmap = devm_regmap_init_vexpress_config(&pdev->dev);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
+ 
+-	reg->desc.name = dev_name(&pdev->dev);
+-	reg->desc.type = REGULATOR_VOLTAGE;
+-	reg->desc.owner = THIS_MODULE;
+-	reg->desc.continuous_voltage_range = true;
++	desc->name = dev_name(&pdev->dev);
++	desc->type = REGULATOR_VOLTAGE;
++	desc->owner = THIS_MODULE;
++	desc->continuous_voltage_range = true;
+ 
+ 	init_data = of_get_regulator_init_data(&pdev->dev, pdev->dev.of_node,
+-					       &reg->desc);
++					       desc);
+ 	if (!init_data)
+ 		return -EINVAL;
+ 
+ 	init_data->constraints.apply_uV = 0;
+ 	if (init_data->constraints.min_uV && init_data->constraints.max_uV)
+-		reg->desc.ops = &vexpress_regulator_ops;
++		desc->ops = &vexpress_regulator_ops;
+ 	else
+-		reg->desc.ops = &vexpress_regulator_ops_ro;
++		desc->ops = &vexpress_regulator_ops_ro;
+ 
++	config.regmap = regmap;
+ 	config.dev = &pdev->dev;
+ 	config.init_data = init_data;
+-	config.driver_data = reg;
+ 	config.of_node = pdev->dev.of_node;
+ 
+-	reg->regdev = devm_regulator_register(&pdev->dev, &reg->desc, &config);
+-	if (IS_ERR(reg->regdev))
+-		return PTR_ERR(reg->regdev);
+-
+-	platform_set_drvdata(pdev, reg);
++	rdev = devm_regulator_register(&pdev->dev, desc, &config);
++	if (IS_ERR(rdev))
++		return PTR_ERR(rdev);
+ 
+ 	return 0;
+ }
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+2.20.1
+
