@@ -2,71 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9396AE50D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E339E51A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbfD2Ooe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:44:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:20801 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728342AbfD2Ood (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:44:33 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-45-jwDIhfeQPpe1TZfWbs-_nQ-1; Mon, 29 Apr 2019 15:44:29 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 29 Apr 2019 15:44:27 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 29 Apr 2019 15:44:27 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Gustavo A. R. Silva'" <gustavo@embeddedor.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: RE: [PATCH] usbip: vhci_hcd: Mark expected switch fall-through
-Thread-Topic: [PATCH] usbip: vhci_hcd: Mark expected switch fall-through
-Thread-Index: AQHU/plu2318l/GBi0OLId5OVcMGj6ZTNpSw
-Date:   Mon, 29 Apr 2019 14:44:27 +0000
-Message-ID: <1daec8c8929e4d18b2059ab1dfbfdf4a@AcuMS.aculab.com>
-References: <20190429143957.GA6725@embeddedor>
-In-Reply-To: <20190429143957.GA6725@embeddedor>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: jwDIhfeQPpe1TZfWbs-_nQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        id S1728549AbfD2OpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:45:02 -0400
+Received: from foss.arm.com ([217.140.101.70]:59058 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728331AbfD2Oo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:44:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C73A01682;
+        Mon, 29 Apr 2019 07:44:55 -0700 (PDT)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 782303F5C1;
+        Mon, 29 Apr 2019 07:44:53 -0700 (PDT)
+From:   Julien Grall <julien.grall@arm.com>
+To:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc:     logang@deltatee.com, douliyangs@gmail.com,
+        miquel.raynal@bootlin.com, marc.zyngier@arm.com,
+        jason@lakedaemon.net, tglx@linutronix.de, joro@8bytes.org,
+        robin.murphy@arm.com, bigeasy@linutronix.de,
+        linux-rt-users@vger.kernel.org, Julien Grall <julien.grall@arm.com>
+Subject: [PATCH v2 7/7] iommu/dma-iommu: Remove iommu_dma_map_msi_msg()
+Date:   Mon, 29 Apr 2019 15:44:28 +0100
+Message-Id: <20190429144428.29254-8-julien.grall@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190429144428.29254-1-julien.grall@arm.com>
+References: <20190429144428.29254-1-julien.grall@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBBLiBSLiBTaWx2YQ0KPiBTZW50OiAyOSBBcHJpbCAyMDE5IDE1OjQwDQo+
-IEluIHByZXBhcmF0aW9uIHRvIGVuYWJsaW5nIC1XaW1wbGljaXQtZmFsbHRocm91Z2gsIG1hcmsg
-c3dpdGNoDQo+IGNhc2VzIHdoZXJlIHdlIGFyZSBleHBlY3RpbmcgdG8gZmFsbCB0aHJvdWdoLg0K
-Li4uDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi91c2JpcC92aGNpX2hjZC5jIGIvZHJpdmVy
-cy91c2IvdXNiaXAvdmhjaV9oY2QuYw0KPiBpbmRleCA2NjdkOWMwZWM5MDUuLjAwMGFiNzIyNTcx
-NyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy91c2IvdXNiaXAvdmhjaV9oY2QuYw0KPiArKysgYi9k
-cml2ZXJzL3VzYi91c2JpcC92aGNpX2hjZC5jDQo+IEBAIC01MDgsNiArNTA4LDcgQEAgc3RhdGlj
-IGludCB2aGNpX2h1Yl9jb250cm9sKHN0cnVjdCB1c2JfaGNkICpoY2QsIHUxNiB0eXBlUmVxLCB1
-MTYgd1ZhbHVlLA0KPiAgCQljYXNlIFVTQl9QT1JUX0ZFQVRfVTFfVElNRU9VVDoNCj4gIAkJCXVz
-YmlwX2RiZ192aGNpX3JoKA0KPiAgCQkJCSIgU2V0UG9ydEZlYXR1cmU6IFVTQl9QT1JUX0ZFQVRf
-VTFfVElNRU9VVFxuIik7DQo+ICsJCQkvKiBGYWxsIHRocm91Z2ggKi8NCj4gIAkJY2FzZSBVU0Jf
-UE9SVF9GRUFUX1UyX1RJTUVPVVQ6DQo+ICAJCQl1c2JpcF9kYmdfdmhjaV9yaCgNCj4gIAkJCQki
-IFNldFBvcnRGZWF0dXJlOiBVU0JfUE9SVF9GRUFUX1UyX1RJTUVPVVRcbiIpOw0KDQpUaGF0IGRv
-ZXNuJ3QgbG9vayByaWdodCwgYm90aCBkZWJ1ZyBtZXNzYWdlcyBzZWVtIHRvIGdldCBwcmludGVk
-Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
-YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
-Tm86IDEzOTczODYgKFdhbGVzKQ0K
+A recent change split iommu_dma_map_msi_msg() in two new functions. The
+function was still implemented to avoid modifying all the callers at
+once.
+
+Now that all the callers have been reworked, iommu_dma_map_msi_msg() can
+be removed.
+
+Signed-off-by: Julien Grall <julien.grall@arm.com>
+
+---
+    Changes in v2:
+        - Rework the commit message
+---
+ drivers/iommu/dma-iommu.c | 20 --------------------
+ include/linux/dma-iommu.h |  5 -----
+ 2 files changed, 25 deletions(-)
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 2309f59cefa4..12f4464828a4 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -936,23 +936,3 @@ void iommu_dma_compose_msi_msg(struct msi_desc *desc,
+ 	msg->address_lo &= cookie_msi_granule(domain->iova_cookie) - 1;
+ 	msg->address_lo += lower_32_bits(msi_page->iova);
+ }
+-
+-void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg)
+-{
+-	struct msi_desc *desc = irq_get_msi_desc(irq);
+-	phys_addr_t msi_addr = (u64)msg->address_hi << 32 | msg->address_lo;
+-
+-	if (WARN_ON(iommu_dma_prepare_msi(desc, msi_addr))) {
+-		/*
+-		 * We're called from a void callback, so the best we can do is
+-		 * 'fail' by filling the message with obviously bogus values.
+-		 * Since we got this far due to an IOMMU being present, it's
+-		 * not like the existing address would have worked anyway...
+-		 */
+-		msg->address_hi = ~0U;
+-		msg->address_lo = ~0U;
+-		msg->data = ~0U;
+-	} else {
+-		iommu_dma_compose_msi_msg(desc, msg);
+-	}
+-}
+diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
+index 3fc48fbd6f63..ddd217c197df 100644
+--- a/include/linux/dma-iommu.h
++++ b/include/linux/dma-iommu.h
+@@ -82,7 +82,6 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr);
+ void iommu_dma_compose_msi_msg(struct msi_desc *desc,
+ 			       struct msi_msg *msg);
+ 
+-void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg);
+ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
+ 
+ #else
+@@ -122,10 +121,6 @@ static inline void iommu_dma_compose_msi_msg(struct msi_desc *desc,
+ {
+ }
+ 
+-static inline void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg)
+-{
+-}
+-
+ static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+ {
+ }
+-- 
+2.11.0
 
