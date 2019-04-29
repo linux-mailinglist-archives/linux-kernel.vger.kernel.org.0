@@ -2,82 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E5DAEB4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B78EB40
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfD2UEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:04:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19850 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729163AbfD2UEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:04:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 12:55:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,410,1549958400"; 
-   d="scan'208";a="169057392"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 29 Apr 2019 12:55:00 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 29 Apr 2019 22:54:59 +0300
-Date:   Mon, 29 Apr 2019 22:54:59 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lukas Wunner <lukas@wunner.de>, Jiri Slaby <jslaby@suse.cz>,
-        Michael Hirmke <opensuse@mike.franken.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and
- thunderbolt)
-Message-ID: <20190429195459.GU2583@lahna.fi.intel.com>
-References: <s5hy33siofw.wl-tiwai@suse.de>
+        id S1729323AbfD2UBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:01:11 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33624 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbfD2UBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 16:01:10 -0400
+Received: by mail-ot1-f68.google.com with SMTP id s11so5499077otp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:01:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HMgcRk8g93CjrXbXJuvBDYtODDacIPx5LhgZDNjChP0=;
+        b=m/c9HKKlv2x9utzy9xHZDzLz/Bt2j/r6MVfcvuF490BAV4J7oX5QWdgghDE182jbSf
+         MdxK3IqRbNVu0vagDg5qIKniVsNq6r/ir5Aem+nKCMydbC2gx8mHJ/yaTzDLXIi6+q4C
+         Aek2HZI7aEDzhKVT2Iiz2s0qEO2yI9NiE6QMajFlWlIMxe2MMuYla+qmMipOhqMAAeJ7
+         UFSPVjQfCRIoGTr7pTh2pNZ26nCrXwgyz6Krbd4HJG/n89z+SdZXljIfRzU+SWgWsd6G
+         CnWHtDcRdMwxNWbjQfqM8uIf3FCcIq9GlY/cLFNHrL3f55oAqsq7ddWFrgXt9xhod0Im
+         NGSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HMgcRk8g93CjrXbXJuvBDYtODDacIPx5LhgZDNjChP0=;
+        b=dcT8Z/d63keelaSU6gB9g9Yw67SFPkntAS5q4yEihRVqqgCcwfQ3EcpBglYg/BGLs/
+         0RftWvhKtJdqDcYpXwCvmFnCj88d1qnySgD6/uHuIrJfELOEiLK8px3UXSmPQp1vw0dm
+         QJwJ3alHgjf04j6nuOmwwW8QGyEBIrMyDtirbI4MsTe0ALxCSF8smci9dGuoWdR3N51F
+         D1xjs2/7Q2FxyAnD3s0zTqhF9nepbbr/yDRUaBkYjCsO1F8uwyCEEsfZu1tqaThTW0i5
+         IFRS7D9x6hqCbH+Pbmndn1jKQhtX6el6NB9NEzxPjtlbJy1cTGQ0Y2VxTrhNf5QKAEMz
+         mY/Q==
+X-Gm-Message-State: APjAAAVS1NgBVkokbF5vFQzr2tOk+eAc77uIqu1v8H4B9Vp6wiSt11+G
+        6BoUFP1ZI8Ods3dnHMNHQKE6Qs4BQS7B2oFCr3pifw==
+X-Google-Smtp-Source: APXvYqwPSg1T0Xhy/ABHJtmyxddhfD0qhfJzLxE3mixUWHhO9Wssz1Ka1zPO5bi/zaNqPzGEIx4RoBtqOKwxUuFaaRY=
+X-Received: by 2002:a9d:6152:: with SMTP id c18mr2261461otk.230.1556567738730;
+ Mon, 29 Apr 2019 12:55:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hy33siofw.wl-tiwai@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190414201436.19502-1-christian@brauner.io> <dc05ffe3-c2ff-8b3e-d181-e0cc620bf91d@metux.net>
+ <20190415195911.z7b7miwsj67ha54y@yavin> <CALCETrWxMnaPvwicqkMLswMynWvJVteazD-bFv3ZnBKWp-1joQ@mail.gmail.com>
+ <20190420071406.GA22257@ip-172-31-15-78> <CAG48ez0gG4bd-t1wdR2p6-N2FjWbCqm_+ZThKfF7yKnD=KLqAQ@mail.gmail.com>
+In-Reply-To: <CAG48ez0gG4bd-t1wdR2p6-N2FjWbCqm_+ZThKfF7yKnD=KLqAQ@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 29 Apr 2019 15:55:11 -0400
+Message-ID: <CAG48ez15bf1EJB0XTJsGFpvf8r5pj9+rv1axKVr13H1NW7ARZw@mail.gmail.com>
+Subject: Re: RFC: on adding new CLONE_* flags [WAS Re: [PATCH 0/4] clone: add CLONE_PIDFD]
+To:     Kevin Easton <kevin@guarana.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
-> Hi,
+On Mon, Apr 29, 2019 at 3:30 PM Jann Horn <jannh@google.com> wrote:
+> On Sat, Apr 20, 2019 at 3:14 AM Kevin Easton <kevin@guarana.org> wrote:
+> > On Mon, Apr 15, 2019 at 01:29:23PM -0700, Andy Lutomirski wrote:
+> > > On Mon, Apr 15, 2019 at 12:59 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > > >
+> > > > On 2019-04-15, Enrico Weigelt, metux IT consult <lkml@metux.net> wrote:
+> > > > > > This patchset makes it possible to retrieve pid file descriptors at
+> > > > > > process creation time by introducing the new flag CLONE_PIDFD to the
+> > > > > > clone() system call as previously discussed.
+> > > > >
+> > > > > Sorry, for highjacking this thread, but I'm curious on what things to
+> > > > > consider when introducing new CLONE_* flags.
+> > > > >
+> > > > > The reason I'm asking is:
+> > > > >
+> > > > > I'm working on implementing plan9-like fs namespaces, where unprivileged
+> > > > > processes can change their own namespace at will. For that, certain
+> > > > > traditional unix'ish things have to be disabled, most notably suid.
+> > > > > As forbidding suid can be helpful in other scenarios, too, I thought
+> > > > > about making this its own feature. Doing that switch on clone() seems
+> > > > > a nice place for that, IMHO.
+> > > >
+> > > > Just spit-balling -- is no_new_privs not sufficient for this usecase?
+> > > > Not granting privileges such as setuid during execve(2) is the main
+> > > > point of that flag.
+> > > >
+> > >
+> > > I would personally *love* it if distros started setting no_new_privs
+> > > for basically all processes.  And pidfd actually gets us part of the
+> > > way toward a straightforward way to make sudo and su still work in a
+> > > no_new_privs world: su could call into a daemon that would spawn the
+> > > privileged task, and su would get a (read-only!) pidfd back and then
+> > > wait for the fd and exit.  I suppose that, done naively, this might
+> > > cause some odd effects with respect to tty handling, but I bet it's
+> > > solveable.  I suppose it would be nifty if there were a way for a
+> > > process, by mutual agreement, to reparent itself to an unrelated
+> > > process.
+> > >
+> > > Anyway, clone(2) is an enormous mess.  Surely the right solution here
+> > > is to have a whole new process creation API that takes a big,
+> > > extensible struct as an argument, and supports *at least* the full
+> > > abilities of posix_spawn() and ideally covers all the use cases for
+> > > fork() + do stuff + exec().  It would be nifty if this API also had a
+> > > way to say "add no_new_privs and therefore enable extra functionality
+> > > that doesn't work without no_new_privs".  This functionality would
+> > > include things like returning a future extra-privileged pidfd that
+> > > gives ptrace-like access.
+> > >
+> > > As basic examples, the improved process creation API should take a
+> > > list of dup2() operations to perform, fds to remove the O_CLOEXEC flag
+> > > from, fds to close (or, maybe even better, a list of fds to *not*
+> > > close), a list of rlimit changes to make, a list of signal changes to
+> > > make, the ability to set sid, pgrp, uid, gid (as in
+> > > setresuid/setresgid), the ability to do capset() operations, etc.  The
+> > > posix_spawn() API, for all that it's rather complicated, covers a
+> > > bunch of the basics pretty well.
+> >
+> > The idea of a system call that takes an infinitely-extendable laundry
+> > list of operations to perform in kernel space seems quite inelegant, if
+> > only for the error-reporting reason.
+> >
+> > Instead, I suggest that what you'd want is a way to create a new
+> > embryonic process that has no address space and isn't yet schedulable.
+> > You then just need other-process-directed variants of all the normal
+> > setup functions - so pr_openat(pidfd, dirfd, pathname, flags, mode),
+> > pr_sigaction(pidfd, signum, act, oldact), pr_dup2(pidfd, oldfd, newfd)
+> > etc.
+> >
+> > Then when it's all set up you pr_execve() to kick it off.
+>
+> Is this really necessary? I agree that fork()+exec() is suboptimal,
+> but if you just want to avoid the cost of duplicating the address
+> space, you can AFAICS already do that in userspace with
+> clone(CLONE_VM|CLONE_CHILD_SETTID|CLONE_CHILD_CLEARTID|SIGCHLD). Then
+> the parent can block on a futex until the child leaves the mm_struct
+> through execve() (or by exiting, in the case of an error), and the
+> child can temporarily have its stack at the bottom of the caller's
+> stack. You could build an API like this around it in userspace:
+>
+> int clone_temporary(int (*fn)(void *arg), void *arg, pid_t *child_pid,
+> <clone flags and arguments, maybe in a struct>)
+>
+> and then you'd use it like this to fork off a child process:
+>
+> int spawn_shell_subprocess_(void *arg) {
+>   char *cmdline = arg;
+>   execl("/bin/sh", "sh", "-c", cmdline);
+>   return -1;
+> }
+> pid_t spawn_shell_subprocess(char *cmdline) {
+>   pid_t child_pid;
+>   int res = clone_temporary(spawn_shell_subprocess_, cmdline,
+> &child_pid, [...]);
+>   if (res == 0) return child_pid;
+>   return res;
+> }
+>
+> clone_temporary() could be implemented roughly as follows by the libc
+> (or other userspace code):
+>
+> sigset_t sigset, sigset_old;
+> sigfillset(&sigset);
+> sigprocmask(SIG_SETMASK, &sigset, &sigset_old);
+> int child_pid;
+> int result = 0;
+> /* starting here, use inline assembly to ensure that no stack
+> allocations occur */
+> long child = syscall(__NR_clone,
+> CLONE_VM|CLONE_CHILD_SETTID|CLONE_CHILD_CLEARTID|SIGCHLD, $RSP -
+> ABI_STACK_REDZONE_SIZE, NULL, &child_pid, 0);
+> if (child == -1) { result = -1; goto reset_sigmask; }
+> if (child == 0) {
+>   result = fn(arg);
+>   syscall(__NR_exit, 0);
+> }
+> futex(&child_pid, FUTEX_WAIT, child, NULL);
+> /* end of no-stack-allocations zone */
+> reset_sigmask:
+> sigprocmask(SIG_SETMASK, &sigset_old, NULL);
+> return result;
 
-Hi,
+... I guess that already has a name, and it's called vfork(). (Well,
+except that the Linux vfork() isn't a real vfork().)
 
-> we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
-> machine.  5.0.7 is confirmed to work, so it must be a regression
-> introduced by 5.0.8.
-> 
-> The details are found in openSUSE Bugzilla entry:
->   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
-> 
-> The probe of xhci_hcd on the dock fails like:
-> [    6.269062] pcieport 0000:3a:00.0: enabling device (0006 -> 0007)
-> [    6.270027] pcieport 0000:3b:03.0: enabling device (0006 -> 0007)
-> [    6.270758] xhci_hcd 0000:3c:00.0: init 0000:3c:00.0 fail, -16
-> [    6.270764] xhci_hcd: probe of 0000:3c:00.0 failed with error -16
-> [    6.271002] xhci_hcd 0000:3d:00.0: init 0000:3d:00.0 fail, -16
-> 
-> and later on, thunderbolt gives warnings:
-> [   30.232676] thunderbolt 0000:05:00.0: unexpected hop count: 1023
-> [   30.232957] ------------[ cut here ]------------
-> [   30.232958] thunderbolt 0000:05:00.0: interrupt for TX ring 0 is already enabled
-> [   30.232974] WARNING: CPU: 3 PID: 1009 at drivers/thunderbolt/nhi.c:107 ring_interrupt_active+0x1ea/0x230 [thunderbolt]
-> 
-> 
-> I blindly suspected the commit 3943af9d01e9 and asked for a reverted
-> kernel, but in vain.  And now it was confirmed that the problem is
-> present with the latest 5.1-rc, too.
-> 
-> I put some people who might have interest and the reporter (Michael)
-> to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
-> let me know if any help needed from the distro side.
+So I guess my question is: Why not vfork()?
 
-Since it exists in 5.1-rcX also it would be good if someone
-who see the problem (Michael?) could bisect it.
+And if vfork() alone isn't flexible enough, alternatively: How about
+an API that forks a new child in the same address space, and then
+allows the parent to invoke arbitrary syscalls in the context of the
+child? You could also build that in userspace if you wanted, I think -
+just let the child run an assembly loop that reads registers from a
+unix seqpacket socket, invokes the syscall instruction, and writes the
+value of the result register back into the seqpacket socket. As long
+as you use CLONE_VM, you don't have to worry about moving the pointer
+targets of syscalls. The user-visible API could look like this:
+
+// flags added by the implementation: CLONE_VM|CLONE_CHILD_SETTID
+puppet_handle = fork_puppet(CLONE_NEWUSER|SIGCHLD);
+int uid_map_fd = puppet_syscall(SYS_open, "/proc/self/uid_map");
+char uid_map_buf[1000];
+puppet_syscall(SYS_write, uid_map_fd, uid_map_buf, strlen(uid_map_buf));
+puppet_syscall(SYS_close, uid_map_fd);
+// waits for the child to either exit or switch to new mm via
+CLONE_CHILD_CLEARTID
+puppet_finish_execve(path, argv, envv);
