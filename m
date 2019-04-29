@@ -2,141 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB92BE922
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B874E91E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbfD2Rcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:32:53 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41061 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728844AbfD2Rcx (ORCPT
+        id S1728972AbfD2Rco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:32:44 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41467 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728798AbfD2Rco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:32:53 -0400
-Received: by mail-io1-f68.google.com with SMTP id r10so9694498ioc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:32:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=63aD6WO7A1p5vw0l0eCm3B6MhF/Ss3f21asqmxXDYpI=;
-        b=odaReNKromheyA8ntOKaPo0HdjrpEPvLJSnhQ4bBCPuUplOwb5tvW7hj9rVnG+8I1+
-         511DP7QERvd/ergmKSXbuSLxQ9serPcbPXRzUPYorCfgHZ/nYH8zIPpDr+gFhGwoNnk8
-         wT4z5cxmA4pgtaomRcrEXrHoa1OcUrFFqHN3o=
+        Mon, 29 Apr 2019 13:32:44 -0400
+Received: by mail-oi1-f193.google.com with SMTP id v23so8813167oif.8;
+        Mon, 29 Apr 2019 10:32:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=63aD6WO7A1p5vw0l0eCm3B6MhF/Ss3f21asqmxXDYpI=;
-        b=YdMwc9prepifcqYGS1vFQsTa06uRVtJMSqAHFcS+xSfE8kiQkDKEbhgdGdB6vmAMb/
-         YClVe76HqFbKCEe1kb7KEGRwxNtGLmQGbCRMOSe8WgnXsc7r6VKerdE0twP4AZ0yaBo0
-         c1TuEKfx+cSR7VJc7VsqVe1jFOIZ1uO4VR5rkmCvB4GLBqw1+gMLc61Xnxpo6FiWBy6K
-         pqaRUzhPHAg+fLvWaTAOdTHrxlGZDLCuCy/ciG0HjYjKOXUQFFYoitIsWdpipJexHMnZ
-         1eHQCTbY9n63Q8lr8ahht9vsfb1+on6tdIgHoSxm7kEnMuofS3wwM22H4xfhx9sxu29K
-         KdFA==
-X-Gm-Message-State: APjAAAWyV48X5gjLUXVjcBDngnbyolLfUS3d/CTEd3ddysguLIBWErIm
-        eAdo7lIL3XcQ7AZ6SWwku/EKaA==
-X-Google-Smtp-Source: APXvYqxUg7iRGY3aXoZbjAXcrFjnbr6ZgUrIoeZ/sQjaSyaPcs5dFxcRM+bTnzwciQ/pwBtFE3OGPA==
-X-Received: by 2002:a6b:cf0f:: with SMTP id o15mr35513809ioa.5.1556559172442;
-        Mon, 29 Apr 2019 10:32:52 -0700 (PDT)
-Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id 62sm64920itx.41.2019.04.29.10.32.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 10:32:49 -0700 (PDT)
-From:   Raul E Rangel <rrangel@chromium.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     djkurtz@chromium.org, zwisler@chromium.org,
-        Raul E Rangel <rrangel@chromium.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        hongjiefang <hongjiefang@asrmicro.com>,
-        Jennifer Dahm <jennifer.dahm@ni.com>,
-        linux-kernel@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3] mmc: core: Verify SD bus width
-Date:   Mon, 29 Apr 2019 11:32:39 -0600
-Message-Id: <20190429173239.51305-1-rrangel@chromium.org>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QDtrWOXaOIs/bib/3O7J4111EMvXZxoXj3SzesY8SpA=;
+        b=sv6n00BYulkDfeVZKRCZ0nBYhjjMaBoheR6MY59HrK2gfohhTacrJkg8ipuny3YQtB
+         d/MxEpp/V6GYhe/ruXXsk4iZ0HQ3YJfMhqdaJc2AgvpgQ3Qcr4WalUT6uVUmeml+IkMs
+         9fSA3UvPmYRplAFbiIDSlxe4KZPenHNqddi746tOl0K1xq+sInyAAd4skBFhkR7xD0np
+         pV0qh22vVTllJWsMlT7Ns+O0v4p7qNWlKLuwegL5M5NCvIqewdGZccH7XGI2k8/n4Fqu
+         eMu8EtxcQIvURQJeieWHk2AWtaFO6U25+bq4FzOlmQVYxkrlOeWENCs4UYX9h2eJ9Bhz
+         JwRw==
+X-Gm-Message-State: APjAAAVqWM/NYXOFvCf2Iq7ACUC1FIaTQSmiPu5xVWl/pyH/kRRYhh+c
+        C1uzDr/DD6itwVl4zePVVg==
+X-Google-Smtp-Source: APXvYqzyPSEssfXutyMhWb2fynO/AklVIW4F7DP8jHNu56/LpY77hOUe/wwznZk4urFuw5CJscMBNw==
+X-Received: by 2002:aca:3306:: with SMTP id z6mr145029oiz.25.1556559163639;
+        Mon, 29 Apr 2019 10:32:43 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p132sm14802026oig.37.2019.04.29.10.32.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 10:32:43 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 12:32:42 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        lee.jones@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: LMU: Add the ramp up/down
+ property
+Message-ID: <20190429173242.GA30624@bogus>
+References: <20190405142855.3969-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190405142855.3969-1-dmurphy@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SD Physical Layer Spec says the following: Since the SD Memory Card
-shall support at least the two bus modes 1-bit or 4-bit width, then any SD
-Card shall set at least bits 0 and 2 (SD_BUS_WIDTH="0101").
+On Fri, 5 Apr 2019 09:28:50 -0500, Dan Murphy wrote:
+> Document the ramp-up and ramp-down property in the binding.
+> Removing the "sec" from the property definition as seconds is
+> implied.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v2 - Fixed commit message as this was not just a modification but adding documentation
+> https://lore.kernel.org/patchwork/patch/1054504/
+> 
+>  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
 
-This change verifies the card has specified a bus width.
-
-AMD SDHC Device 7806 can get into a bad state after a card disconnect
-where anything transferred via the DATA lines will always result in a
-zero filled buffer. Currently the driver will continue without error if
-the HC is in this condition. A block device will be created, but reading
-from it will result in a zero buffer. This makes it seem like the SD
-device has been erased, when in actuality the data is never getting
-copied from the DATA lines to the data buffer.
-
-SCR is the first command in the SD initialization sequence that uses the
-DATA lines. By checking that the response was invalid, we can abort
-mounting the card.
-
-Acked-by: Avri Altman <avri.altman@wdc.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
----
-Here is the testing I did:
-
-Good Trace: https://paste.fedoraproject.org/paste/oVEI5b0IzHD23Yo7CDZgEg
-[   30.103686] mmc0: new high speed SDHC card at address 0001
-[   30.105262] mmcblk0: mmc0:0001 00000 7.41 GiB
-[   30.108258]  mmcblk0: p1
-[   31.947250] mmc0: card 0001 removed
-
-Bad Trace (before patch): https://paste.fedoraproject.org/paste/jBWfpFBM8gdEmGOzxij~hw
-
-Bad Trace (after patch): https://paste.fedoraproject.org/paste/8gB8MLYOKEUZEgHXmQ0W1Q
-[   33.810760] mmc0: invalid bus width
-[   33.810782] mmc0: error -22 whilst initialising SD card
-[   34.068818] mmc0: invalid bus width
-[   34.068839] mmc0: error -22 whilst initialising SD card
-[   34.329521] mmc0: invalid bus width
-[   34.329543] mmc0: error -22 whilst initialising SD card
-[   34.592061] mmc0: invalid bus width
-[   34.592084] mmc0: error -22 whilst initialising SD card
-
-In the traces you can see sd_scr is different
-
-Changes in v3:
-- Rebased on mmc/next
-
-Changes in v2:
-- Made the bus width check stricter. It now requires the value to match
-  the spec.
-
- drivers/mmc/core/sd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 265e1aeeb9d8..d3d32f9a2cb1 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -221,6 +221,14 @@ static int mmc_decode_scr(struct mmc_card *card)
- 
- 	if (scr->sda_spec3)
- 		scr->cmds = UNSTUFF_BITS(resp, 32, 2);
-+
-+	/* SD Spec says: any SD Card shall set at least bits 0 and 2 */
-+	if (!(scr->bus_widths & SD_SCR_BUS_WIDTH_1) ||
-+	    !(scr->bus_widths & SD_SCR_BUS_WIDTH_4)) {
-+		pr_err("%s: invalid bus width\n", mmc_hostname(card->host));
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.21.0.593.g511ec345e18-goog
-
+Reviewed-by: Rob Herring <robh@kernel.org>
