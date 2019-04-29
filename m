@@ -2,124 +2,561 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C260DEC56
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD77EC62
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfD2V5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:57:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37138 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbfD2V5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:57:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EE21EA7DD;
-        Mon, 29 Apr 2019 21:57:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-98.rdu2.redhat.com [10.10.121.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FA595D704;
-        Mon, 29 Apr 2019 21:57:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix net namespace cleanup
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 29 Apr 2019 22:57:05 +0100
-Message-ID: <155657502537.15384.8971743326043723056.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1729538AbfD2V7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:59:22 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43280 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729401AbfD2V7W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 17:59:22 -0400
+Received: by mail-io1-f68.google.com with SMTP id v9so10375787iol.10
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 14:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=indmq07XFWS4gXjaJZT+iAAcr9a+9V4LSWqr6LCFENs=;
+        b=Mgqmlk1qtdpemtyR8SiKe74oQes1kP9UrcFgu+l5KDcESXqvN3uaPaBvlrMsQRub5s
+         hvYjr0p9EdV6dg3qSo4djhR+x0EH3cYlgAjgnqtytlUbrxQ7XXnx2HCosUyBPJkJz+Qq
+         vcuEnK1GPMiB0f9kkZs/PRwPvpPoIBDYHBiXjyYKYMX/B2X3CI2i4jJxamQtrZTywBQ+
+         i67e1hEGNtLmv4nE8NywOsPt0p1D6xNISzGBny5dV7/5/GtOPvMYN88UVwcG7rBwLucv
+         WGFusyQc1ipj8gZa5CnYO5/nJmQ+JbcbDDQHtOw7p2A7jAPpgivazeaNmnO7BoHnZmKR
+         tZKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=indmq07XFWS4gXjaJZT+iAAcr9a+9V4LSWqr6LCFENs=;
+        b=T/BLJEkwD/5Dx1iyWD488lhU8JAGBNU7qehORg5YMp8fACIm3Q5jw14vEDprg870LL
+         ppvKkG/d09HUDayJKLqUiyF209pumnFu0zgXt609CCII+ZZMrnWWuLjXpp7cV4eug7ZS
+         07Lp3FIwfYwg2Pp7me1GQ1s8cOQvM7DqzIfkRZY/S0SBpLmBAtCZr6e/SHTwwSLO9h+K
+         J8cFrvxCfeyRN832jMe+08KQWl2/IgpAPCc9SdAzdLSJ0Rf+vf/JsX3CBQHouqIjEniZ
+         LJEPcCfecIH4kpAQmeXpdK1sSGUYLNt8eqWO77yQ0H0x3gWn/Zhcroghyw56RGyo3HEi
+         KELA==
+X-Gm-Message-State: APjAAAVJF1hEWoOvqBN7y/HLpDLnpqpO9Z3vgpNjeB/RHqUcukNct7Hw
+        mQ1A6pmUwpz4m+R32SU5st1a9CFbS96R7loc3VHbtQ==
+X-Google-Smtp-Source: APXvYqxG1GzcRB+vFWGBoNZIqNnICyueduhcBwZKb6PRheekulHycP3vvBlFYcIgl9rbtXqUXGmWqoU2Wg7d9cNvmhs=
+X-Received: by 2002:a5d:97cd:: with SMTP id k13mr808132ios.11.1556575160884;
+ Mon, 29 Apr 2019 14:59:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 29 Apr 2019 21:57:09 +0000 (UTC)
+References: <1555768835-68555-1-git-send-email-shiwanglai@hisilicon.com> <20190421124606.GA12134@leoy-ThinkPad-X240s>
+In-Reply-To: <20190421124606.GA12134@leoy-ThinkPad-X240s>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 29 Apr 2019 15:59:09 -0600
+Message-ID: <CANLsYkwGyX0RJ0QVgpqXquT0exRDv3FfUHGBgo6LUUSj4K-Xhw@mail.gmail.com>
+Subject: Re: [PATCH v4] arm64: dts: hi3660: Add CoreSight support
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Wanglai Shi <shiwanglai@hisilicon.com>,
+        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        xuwei <xuwei5@hisilicon.com>, Mike Leach <mike.leach@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In rxrpc_destroy_all_calls(), there are two phases: (1) make sure the
-->calls list is empty, emitting error messages if not, and (2) wait for the
-RCU cleanup to happen on outstanding calls (ie. ->nr_calls becomes 0).
+On Sun, 21 Apr 2019 at 06:46, Leo Yan <leo.yan@linaro.org> wrote:
+>
+> On Sat, Apr 20, 2019 at 10:00:35PM +0800, Wanglai Shi wrote:
+> > This patch adds DT bindings for the CoreSight trace components
+> > on hi3660, which is used by 96boards Hikey960.
+> >
+> > Signed-off-by: Wanglai Shi <shiwanglai@hisilicon.com>
+>
+> Reviewed this patch and tested on my Hikey960 board, FWIW:
+>
+> Reviewed-and-tested-by: Leo Yan <leo.yan@linaro.org>
 
-To avoid taking the call_lock, the function prechecks ->calls and if empty,
-it returns to avoid taking the lock - this is wrong, however: it still
-needs to go and do the second phase and wait for ->nr_calls to become 0.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Without this, the rxrpc_net struct may get deallocated before we get to the
-RCU cleanup for the last calls.  This can lead to:
-
-  Slab corruption (Not tainted): kmalloc-16k start=ffff88802b178000, len=16384
-  050: 6b 6b 6b 6b 6b 6b 6b 6b 61 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkakkkkkkk
-
-Note the "61" at offset 0x58.  This corresponds to the ->nr_calls member of
-struct rxrpc_net (which is >9k in size, and thus allocated out of the 16k
-slab).
-
-
-Fix this by flipping the condition on the if-statement, putting the locked
-section inside the if-body and dropping the return from there.  The
-function will then always go on to wait for the RCU cleanup on outstanding
-calls.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- net/rxrpc/call_object.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index 8aa2937b069f..fe96881a334d 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -604,30 +604,30 @@ void rxrpc_destroy_all_calls(struct rxrpc_net *rxnet)
- 
- 	_enter("");
- 
--	if (list_empty(&rxnet->calls))
--		return;
-+	if (!list_empty(&rxnet->calls)) {
-+		write_lock(&rxnet->call_lock);
- 
--	write_lock(&rxnet->call_lock);
-+		while (!list_empty(&rxnet->calls)) {
-+			call = list_entry(rxnet->calls.next,
-+					  struct rxrpc_call, link);
-+			_debug("Zapping call %p", call);
- 
--	while (!list_empty(&rxnet->calls)) {
--		call = list_entry(rxnet->calls.next, struct rxrpc_call, link);
--		_debug("Zapping call %p", call);
-+			rxrpc_see_call(call);
-+			list_del_init(&call->link);
- 
--		rxrpc_see_call(call);
--		list_del_init(&call->link);
-+			pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
-+			       call, atomic_read(&call->usage),
-+			       rxrpc_call_states[call->state],
-+			       call->flags, call->events);
- 
--		pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
--		       call, atomic_read(&call->usage),
--		       rxrpc_call_states[call->state],
--		       call->flags, call->events);
-+			write_unlock(&rxnet->call_lock);
-+			cond_resched();
-+			write_lock(&rxnet->call_lock);
-+		}
- 
- 		write_unlock(&rxnet->call_lock);
--		cond_resched();
--		write_lock(&rxnet->call_lock);
- 	}
- 
--	write_unlock(&rxnet->call_lock);
--
- 	atomic_dec(&rxnet->nr_calls);
- 	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
- }
-
+>
+> > ---
+> >  .../arm64/boot/dts/hisilicon/hi3660-coresight.dtsi | 456 +++++++++++++++++++++
+> >  arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   2 +
+> >  2 files changed, 458 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
+> > new file mode 100644
+> > index 0000000..d607f2f
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
+> > @@ -0,0 +1,456 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * dtsi for Hisilicon Hi3660 Coresight
+> > + *
+> > + * Copyright (C) 2016-2018 Hisilicon Ltd.
+> > + *
+> > + * Author: Wanglai Shi <shiwanglai@hisilicon.com>
+> > + *
+> > + */
+> > +/ {
+> > +     soc {
+> > +             /* A53 cluster internals */
+> > +             etm@ecc40000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xecc40000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu0>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm0_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_funnel_in0>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ecd40000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xecd40000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu1>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm1_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_funnel_in1>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ece40000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xece40000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu2>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm2_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_funnel_in2>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ecf40000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xecf40000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu3>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm3_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_funnel_in3>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             funnel@ec801000 {
+> > +                     compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> > +                     reg = <0 0xec801000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     cluster0_funnel_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_etf_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     in-ports {
+> > +                             #address-cells = <1>;
+> > +                             #size-cells = <0>;
+> > +
+> > +                             port@0 {
+> > +                                     reg = <0>;
+> > +                                     cluster0_funnel_in0: endpoint {
+> > +                                             remote-endpoint = <&etm0_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@1 {
+> > +                                     reg = <1>;
+> > +                                     cluster0_funnel_in1: endpoint {
+> > +                                             remote-endpoint = <&etm1_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@2 {
+> > +                                     reg = <2>;
+> > +                                     cluster0_funnel_in2: endpoint {
+> > +                                             remote-endpoint = <&etm2_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@3 {
+> > +                                     reg = <3>;
+> > +                                     cluster0_funnel_in3: endpoint {
+> > +                                             remote-endpoint = <&etm3_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etf@ec802000 {
+> > +                     compatible = "arm,coresight-tmc", "arm,primecell";
+> > +                     reg = <0 0xec802000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     cluster0_etf_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_funnel_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     cluster0_etf_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&combo_funnel_in0>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             /* A73 cluster internals */
+> > +             etm@ed440000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xed440000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu4>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm4_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_funnel_in0>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ed540000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xed540000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu5>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm5_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_funnel_in1>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ed640000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xed640000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu6>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm6_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_funnel_in2>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etm@ed740000 {
+> > +                     compatible = "arm,coresight-etm4x", "arm,primecell";
+> > +                     reg = <0 0xed740000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     cpu = <&cpu7>;
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     etm7_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_funnel_in3>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             funnel@ed001000 {
+> > +                     compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> > +                     reg = <0 0xed001000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +                     out-ports {
+> > +                             port {
+> > +                                     cluster1_funnel_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_etf_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     in-ports {
+> > +                             #address-cells = <1>;
+> > +                             #size-cells = <0>;
+> > +
+> > +                             port@0 {
+> > +                                     reg = <0>;
+> > +                                     cluster1_funnel_in0: endpoint {
+> > +                                             remote-endpoint = <&etm4_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@1 {
+> > +                                     reg = <1>;
+> > +                                     cluster1_funnel_in1: endpoint {
+> > +                                             remote-endpoint = <&etm5_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@2 {
+> > +                                     reg = <2>;
+> > +                                     cluster1_funnel_in2: endpoint {
+> > +                                             remote-endpoint = <&etm6_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@3 {
+> > +                                     reg = <3>;
+> > +                                     cluster1_funnel_in3: endpoint {
+> > +                                             remote-endpoint = <&etm7_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etf@ed002000 {
+> > +                     compatible = "arm,coresight-tmc", "arm,primecell";
+> > +                     reg = <0 0xed002000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     cluster1_etf_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_funnel_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     cluster1_etf_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&combo_funnel_in1>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             /* An invisible combo funnel between clusters and top funnel */
+> > +             funnel {
+> > +                     compatible = "arm,coresight-static-funnel";
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     combo_funnel_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&top_funnel_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     in-ports {
+> > +                             #address-cells = <1>;
+> > +                             #size-cells = <0>;
+> > +
+> > +                             port@0 {
+> > +                                     reg = <0>;
+> > +                                     combo_funnel_in0: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster0_etf_out>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@1 {
+> > +                                     reg = <1>;
+> > +                                     combo_funnel_in1: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&cluster1_etf_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             /* Top internals */
+> > +             funnel@ec031000 {
+> > +                     compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> > +                     reg = <0 0xec031000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     top_funnel_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&top_etf_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     in-ports {
+> > +                             #address-cells = <1>;
+> > +                             #size-cells = <0>;
+> > +
+> > +                             port@0 {
+> > +                                     reg = <0>;
+> > +                                     top_funnel_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&combo_funnel_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etf@ec036000 {
+> > +                     compatible = "arm,coresight-tmc", "arm,primecell";
+> > +                     reg = <0 0xec036000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     top_etf_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&top_funnel_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     out-ports {
+> > +                             port {
+> > +                                     top_etf_out: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&replicator_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             replicator {
+> > +                     compatible = "arm,coresight-static-replicator";
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     replicator_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&top_etf_out>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +
+> > +                     out-ports {
+> > +                             #address-cells = <1>;
+> > +                             #size-cells = <0>;
+> > +
+> > +                             port@0 {
+> > +                                     reg = <0>;
+> > +                                     replicator0_out0: endpoint {
+> > +                                             remote-endpoint = <&etr_in>;
+> > +                                     };
+> > +                             };
+> > +
+> > +                             port@1 {
+> > +                                     reg = <1>;
+> > +                                     replicator0_out1: endpoint {
+> > +                                             remote-endpoint = <&tpiu_in>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             etr@ec033000 {
+> > +                     compatible = "arm,coresight-tmc", "arm,primecell";
+> > +                     reg = <0 0xec033000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     etr_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&replicator0_out0>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             tpiu@ec032000 {
+> > +                     compatible = "arm,coresight-tpiu", "arm,primecell";
+> > +                     reg = <0 0xec032000 0 0x1000>;
+> > +                     clocks = <&crg_ctrl HI3660_PCLK>;
+> > +                     clock-names = "apb_pclk";
+> > +
+> > +                     in-ports {
+> > +                             port {
+> > +                                     tpiu_in: endpoint {
+> > +                                             remote-endpoint =
+> > +                                                     <&replicator0_out1>;
+> > +                                     };
+> > +                             };
+> > +                     };
+> > +             };
+> > +     };
+> > +};
+> > diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > index a4a3d08..8f2fede 100644
+> > --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > @@ -1246,3 +1246,5 @@
+> >               };
+> >       };
+> >  };
+> > +
+> > +#include "hi3660-coresight.dtsi"
+> > --
+> > 2.7.4
+> >
