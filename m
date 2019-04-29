@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC18E3C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4A6E3C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfD2NaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 09:30:17 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55250 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfD2N3w (ORCPT
+        id S1728279AbfD2N34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 09:29:56 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46930 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbfD2N3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 09:29:52 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b10so759215wmj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 06:29:51 -0700 (PDT)
+        Mon, 29 Apr 2019 09:29:53 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t17so16009283wrw.13
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 06:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jguxe++uQg1Tg16qsCOT2xdBZ2LoE15AQChE753+pog=;
-        b=ns9DV7vl1GqOrO/l7Pw/dLmy4NgN3/x795IBIKZ+BKXrvNhko8jL+GoCk33SLpy7nF
-         GphkEdLsA1stWrdCKWx20VUWt0I8WUBc+s7fvJgfBs1SeB61JEkA1oxNmTRIluXP87g5
-         xJtw8WLKxGjC2bFqvsAiFkZtMyKHE4MJdov2el5ZY2sbLNkl/K52f9Xitk383AEiq/Ht
-         ZIIYkFr4XvTxV8WamLucfoPYlelow6AmwOej3EUaHz4AebYx52vKuwUdQyv+BoZTmUjB
-         ndUGecFTHr8UYRamWk0vJP6sQLfC4pLm9TnIcemJ8aIKRqoZU3wZhZaghTXBIXLZc0sk
-         BaSw==
+        bh=whsOXQ8xRakI5AVYAzepVuB15C/D0yrTQsABLkaS6Vw=;
+        b=J2dTv1NPn4J99TrrljZ2hOdA1bv1ifuVO+cH2SVjLUxRsCwvDn6BHWRe13ydolX9HU
+         f0TgeitA6xsof7AZ1BTeJMhJx9kNVCtreRIIz9tilr7F8ppdQBBxnamrpVfxs+7s0EuC
+         /JVT4wZ1PMsPZY5/LjXMc70KWL4sthpL7sEtgbb7ZuUzPpYMMhz4nifFsD75k0rW8ryA
+         spcy4SlO6AluDcIowl1fcf1VPnzD2N57NI7qTRcgkQAlS9idnCiCIUExwUaYbgeV7gih
+         tm7D8w2q0cvdL0hYkGcQiVK21c5VDYXHMhWi8jpwQFBdbCzSs5At+eD45xDtXv+WytzX
+         tf+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jguxe++uQg1Tg16qsCOT2xdBZ2LoE15AQChE753+pog=;
-        b=SWUAvLmJ1fwkwKz323uKIPJDnw906flAiERE+rRVeXoiThJ3ykeRkS9eCO67lad+M4
-         rwRjHQ9hUu24im5Qj7XWmKlTpA1mt4Gp0e55d36c0bLOPCTyLNHsMAgq8ULMnVUygT0b
-         +cfE/AS6PU/qhXQiJ1zZ+VDTPiBgz57Lun/DksDDuSEV7shz+aA5iwyDGIiNIhu/t90f
-         un0VT1RTHaq2bENTyTimq5X1WcVmTg15dHM2QXJz0SMICBy+5Umv+SuLnbwe8ZoLushw
-         0cIjOmp5aYqI82PMbS+Z6TZ6LkMlRdVWPK/GVUFWdzKHMbmB14xS8DPrSXTNdsPyRTOR
-         0KQg==
-X-Gm-Message-State: APjAAAVbduYZ8J6h4kbNQSFmYI6KdytoILkjYO2Vl6kXl/dYlPziGR21
-        YwTCalJp1VQnsqxCiRxsLELyGQ==
-X-Google-Smtp-Source: APXvYqznEB34S8Y0R3lfnUYKt0vBonlD/vhA5qe5px4C4oql/IzQD3R62u57tqApFNuPCVB1fZfEEQ==
-X-Received: by 2002:a7b:ce84:: with SMTP id q4mr18135443wmj.41.1556544590406;
-        Mon, 29 Apr 2019 06:29:50 -0700 (PDT)
+        bh=whsOXQ8xRakI5AVYAzepVuB15C/D0yrTQsABLkaS6Vw=;
+        b=jSjqbXfxdamEX83PCunFV/AEM0aNjTJiZFw9tNFlxZoYANPdVM5AUXplXseiWX2PfG
+         Khb/CI2E3N0tvCOpKiY5/aF19ML4KGl7MzdCBg4HQIMpL1H3gV8wMyVNcG3ExiKNeq37
+         iEw2gLl9LOj0rPC+/ZFj2bZVhz/rkrTBGOgP0rMpqOJsb3pMWbdBVIMTqyepqg+2UlYd
+         naEaekFcjy2BA3UUUOne3cl9ELRUebqya5Cx1owzBWKk82HLhZ4m6MlEdaJVTDHpyqEE
+         sVvuYJgwsaJVsUmJOp4N0kkksiMEHtSdwYk8Rf+cXDV8R+qQJFe/ZXQJbHOs6O6lxmvj
+         tDLw==
+X-Gm-Message-State: APjAAAUhPMvHZLSN6ktGJHGmgJm4cSU4WeR6Pu7+rX+mmqF0NQcpS8PG
+        5JGif+nzW+COs/cTgXdxUD91ZiYMue4=
+X-Google-Smtp-Source: APXvYqxOsG9oiU7eEepi7586wap76Pj0lBUVZ/mY6bdH1Ba/VKYnS+x1TJFaXAE4iJXvcVWCek6nRA==
+X-Received: by 2002:adf:f845:: with SMTP id d5mr2185657wrq.107.1556544591717;
+        Mon, 29 Apr 2019 06:29:51 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id s17sm2857593wra.94.2019.04.29.06.29.49
+        by smtp.googlemail.com with ESMTPSA id s17sm2857593wra.94.2019.04.29.06.29.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 06:29:49 -0700 (PDT)
+        Mon, 29 Apr 2019 06:29:51 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: [PATCH 2/6] ASoC: hdmi-codec: unlock the device on startup errors
-Date:   Mon, 29 Apr 2019 15:29:39 +0200
-Message-Id: <20190429132943.16269-3-jbrunet@baylibre.com>
+Subject: [PATCH 3/6] ASoC: hdmi-codec: stream is already locked in hw_params
+Date:   Mon, 29 Apr 2019 15:29:40 +0200
+Message-Id: <20190429132943.16269-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190429132943.16269-1-jbrunet@baylibre.com>
 References: <20190429132943.16269-1-jbrunet@baylibre.com>
@@ -63,35 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the hdmi codec startup fails, it should clear the current_substream
-pointer to free the device. This is properly done for the audio_startup()
-callback but for snd_pcm_hw_constraint_eld().
-
-Make sure the pointer cleared if an error is reported.
+startup() should have run before hw_params() is called, so the
+current_substream pointer should already be properly set. There
+is no reason to call hdmi_codec_new_stream() again in the
+hw_params() callback
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- sound/soc/codecs/hdmi-codec.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ sound/soc/codecs/hdmi-codec.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 9dca24732069..4bd598253c62 100644
+index 4bd598253c62..780f2008b271 100644
 --- a/sound/soc/codecs/hdmi-codec.c
 +++ b/sound/soc/codecs/hdmi-codec.c
-@@ -437,8 +437,12 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
- 		if (!ret) {
- 			ret = snd_pcm_hw_constraint_eld(substream->runtime,
- 							hcp->eld);
--			if (ret)
-+			if (ret) {
-+				mutex_lock(&hcp->current_stream_lock);
-+				hcp->current_stream = NULL;
-+				mutex_unlock(&hcp->current_stream_lock);
- 				return ret;
-+			}
- 		}
- 		/* Select chmap supported */
- 		hdmi_codec_eld_chmap(hcp);
+@@ -495,10 +495,6 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
+ 
+-	ret = hdmi_codec_new_stream(substream, dai);
+-	if (ret)
+-		return ret;
+-
+ 	hdmi_audio_infoframe_init(&hp.cea);
+ 	hp.cea.channels = params_channels(params);
+ 	hp.cea.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
 -- 
 2.20.1
 
