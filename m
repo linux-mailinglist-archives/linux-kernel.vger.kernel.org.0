@@ -2,83 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE920E522
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A03E527
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfD2Opr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:45:47 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42604 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728591AbfD2Opp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:45:45 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f23so8801043otl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 07:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aQsRWF6zIWFP6u6h0fPNHWWaz224ukr01sNXIEFyCVQ=;
-        b=mg3zcpHysM6rxTpxenL9XK1Zvah5E8w7vALbhvoiC1TTSma8Uh03KVN2sZ/4CiEuYD
-         rh1/u68dnX0A/77n7RkiSethSJB1plU2anOxMkHaaARyjqBdZoRbLqjDcITWeOwaqDcI
-         e1Pzj4PkAkhkdZKp06TdV5TzX5pJ6R0U3I9zrrUXIX97GPLKLnuj9Vmyo8alefksc6IQ
-         OBknpz6qeF5s+/12FcMhebcfTBS0ZMW00lYtSAKIYiPzTtU9VazgAyPd8nYIvfJMxBUB
-         IXC3tdnl/MKwn/p3XtylFqWgkCCXS37gjkUFW4K+t/orEQHMJMB/uMahCEV8Kwl6H+m6
-         79zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aQsRWF6zIWFP6u6h0fPNHWWaz224ukr01sNXIEFyCVQ=;
-        b=AtvlLkkRfLwsBUQSxFcdJ1perbvHJHSzYHLhbRHp7iUXugPSaf+MpK9UMQc0vr/2ch
-         Hh0UbDMQCwzshvj17RkEu2WGQPnpaULrnQGi+K/w4IvQDulzyp6mstff70nm8K3BkIGs
-         YOOxhqfYOdG4FNuaMW/D/hGVceOSFJVgpy5ZhkBUuaQJ06R/bhUxf1xMxhYIJwZGPULg
-         +zOSNCjYM+WfDKbPopyC08NZzY0QxYJmKPlF64MtM8xYL6RWsARooQNRSiAw7mnguYi6
-         amSYR0FRzq1mSFujVBZvbIbmQ6RKbjt49ZN4dYfSYS1mPDaFqhHRn4cp3shR38Br3XxQ
-         VVvA==
-X-Gm-Message-State: APjAAAWgqwRbNUOKqH4Si3XFDr7YKXg78ZVF7omRo//murc6gHB4Lco0
-        qPXh+lcXtrEGyDES/sbkX/wm7dl8qh4BLO0whEJvKQ==
-X-Google-Smtp-Source: APXvYqxqg+I+R6IIaH5kNEYHVK7570HerFOrgSzrqloi1r1ZqXhWIBt8AfWeSDPOfld3FTAKn8gp1GCbdSfV+VpC4HA=
-X-Received: by 2002:a9d:7ad1:: with SMTP id m17mr3105184otn.367.1556549144567;
- Mon, 29 Apr 2019 07:45:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190429115535.12793-1-hch@lst.de>
-In-Reply-To: <20190429115535.12793-1-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 29 Apr 2019 07:45:34 -0700
-Message-ID: <CAPcyv4iJo6QdDdaXWJCnF3LqO-wSkRcKx1wwWF1h-=q=z2UZdA@mail.gmail.com>
-Subject: Re: [PATCH] kernel: remove the unused device_private_entry_fault export
+        id S1728493AbfD2Oqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:46:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59160 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728320AbfD2Oqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:46:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C24A80D;
+        Mon, 29 Apr 2019 07:46:31 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA8DB3F5C1;
+        Mon, 29 Apr 2019 07:46:29 -0700 (PDT)
+Subject: Re: [PATCH 23/26] iommu/dma: Don't depend on CONFIG_DMA_DIRECT_REMAP
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190422175942.18788-1-hch@lst.de>
+ <20190422175942.18788-24-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <57ecaf25-ac9a-ec34-d552-bcbc1891875e@arm.com>
+Date:   Mon, 29 Apr 2019 15:46:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190422175942.18788-24-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 4:56 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> This export has been entirely unused since it was added more than 1 1/2
-> years ago.
->
+On 22/04/2019 18:59, Christoph Hellwig wrote:
+> For entirely dma coherent architectures there is no requirement to ever
+> remap dma coherent allocation.  Move all the remap and pool code under
+> IS_ENABLED() checks and drop the Kconfig dependency.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  kernel/memremap.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/kernel/memremap.c b/kernel/memremap.c
-> index 4e59d29245f4..1490e63f69a9 100644
-> --- a/kernel/memremap.c
-> +++ b/kernel/memremap.c
-> @@ -45,7 +45,6 @@ vm_fault_t device_private_entry_fault(struct vm_area_struct *vma,
->          */
->         return devmem->page_fault(vma, addr, page, flags, pmdp);
->  }
-> -EXPORT_SYMBOL(device_private_entry_fault);
->  #endif /* CONFIG_DEVICE_PRIVATE */
-
-Looks good to me.
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+>   drivers/iommu/Kconfig     |  1 -
+>   drivers/iommu/dma-iommu.c | 16 +++++++++-------
+>   2 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index bdc14baf2ee5..6f07f3b21816 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -95,7 +95,6 @@ config IOMMU_DMA
+>   	select IOMMU_API
+>   	select IOMMU_IOVA
+>   	select NEED_SG_DMA_LENGTH
+> -	depends on DMA_DIRECT_REMAP
+>   
+>   config FSL_PAMU
+>   	bool "Freescale IOMMU support"
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 8fc6098c1eeb..278a9a960107 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -923,10 +923,11 @@ static void __iommu_dma_free(struct device *dev, size_t size, void *cpu_addr)
+>   	struct page *page = NULL;
+>   
+>   	/* Non-coherent atomic allocation? Easy */
+> -	if (dma_free_from_pool(cpu_addr, alloc_size))
+> +	if (IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
+> +	    dma_free_from_pool(cpu_addr, alloc_size))
+>   		return;
+>   
+> -	if (is_vmalloc_addr(cpu_addr)) {
+> +	if (IS_ENABLED(CONFIG_DMA_REMAP) && is_vmalloc_addr(cpu_addr)) {
+>   		/*
+>   		 * If it the address is remapped, then it's either non-coherent
+>   		 * or highmem CMA, or an iommu_dma_alloc_remap() construction.
+> @@ -972,7 +973,7 @@ static void *iommu_dma_alloc_pages(struct device *dev, size_t size,
+>   	if (!page)
+>   		return NULL;
+>   
+> -	if (!coherent || PageHighMem(page)) {
+> +	if (IS_ENABLED(CONFIG_DMA_REMAP) && (!coherent || PageHighMem(page))) {
+>   		pgprot_t prot = arch_dma_mmap_pgprot(dev, PAGE_KERNEL, attrs);
+>   
+>   		cpu_addr = dma_common_contiguous_remap(page, alloc_size,
+> @@ -1005,11 +1006,12 @@ static void *iommu_dma_alloc(struct device *dev, size_t size,
+>   
+>   	gfp |= __GFP_ZERO;
+>   
+> -	if (gfpflags_allow_blocking(gfp) &&
+> +	if (IS_ENABLED(CONFIG_DMA_REMAP) && gfpflags_allow_blocking(gfp) &&
+>   	    !(attrs & DMA_ATTR_FORCE_CONTIGUOUS))
+>   		return iommu_dma_alloc_remap(dev, size, handle, gfp, attrs);
+>   
+> -	if (!gfpflags_allow_blocking(gfp) && !coherent)
+> +	if (IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
+> +	    !gfpflags_allow_blocking(gfp) && !coherent)
+>   		cpu_addr = dma_alloc_from_pool(PAGE_ALIGN(size), &page, gfp);
+>   	else
+>   		cpu_addr = iommu_dma_alloc_pages(dev, size, &page, gfp, attrs);
+> @@ -1041,7 +1043,7 @@ static int iommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+>   	if (off >= nr_pages || vma_pages(vma) > nr_pages - off)
+>   		return -ENXIO;
+>   
+> -	if (is_vmalloc_addr(cpu_addr)) {
+> +	if (IS_ENABLED(CONFIG_DMA_REMAP) && is_vmalloc_addr(cpu_addr)) {
+>   		struct page **pages = __iommu_dma_get_pages(cpu_addr);
+>   
+>   		if (pages)
+> @@ -1063,7 +1065,7 @@ static int iommu_dma_get_sgtable(struct device *dev, struct sg_table *sgt,
+>   	struct page *page;
+>   	int ret;
+>   
+> -	if (is_vmalloc_addr(cpu_addr)) {
+> +	if (IS_ENABLED(CONFIG_DMA_REMAP) && is_vmalloc_addr(cpu_addr)) {
+>   		struct page **pages = __iommu_dma_get_pages(cpu_addr);
+>   
+>   		if (pages) {
+> 
