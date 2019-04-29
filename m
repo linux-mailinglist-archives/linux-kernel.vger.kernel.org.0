@@ -2,71 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1EDFEA67
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 389F1EA70
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfD2Sqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:46:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57241 "EHLO
+        id S1729255AbfD2Sq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:46:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43875 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728964AbfD2Sqe (ORCPT
+        with ESMTP id S1729228AbfD2Sqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:46:34 -0400
+        Mon, 29 Apr 2019 14:46:53 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIj6rg1031054
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIjjYU1031121
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Apr 2019 11:45:06 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIj6rg1031054
+        Mon, 29 Apr 2019 11:45:45 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIjjYU1031121
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556563508;
-        bh=v58FdPGlwTZThwGXK/xjS2qQtMcOvzihC/eurJ9F7b0=;
+        s=2019041745; t=1556563547;
+        bh=n959JXnlnzgMMELO7dGUaAVzvyrdlr/lYYqJFzXlbaw=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=tlXTQ4guqy6WNPM2bD44ME/PHcyCIU3KZaI3XI2//YPCAu7hGUJCAtyche+7rdnA5
-         s2fYClgiOL0UjX8dc4q+Jm+Mk953XN+BoWB2j9VV8K9z82jRooJTNrJPdrNeCnHW4p
-         inNw+KzViXyxmz/ds2aiLsMetO8mgpeqCNST+OyzsWmR4FBg4uj0ljJmAcl5/JLSh1
-         tkTCyvqXHwyl+525f/EAvEh8cOYzo5PKBTPzGr885FjmGZ9fe+B9xQJHDaugA/xxep
-         u4mLrraln9BlyKWbOfPdjnzK0dmtUuYpsA3cNQ1igTbWHwFgFuOxEzbgqm9peyBVzj
-         K3lRoJPkmCQ6g==
+        b=qM+Mr9vknVB7gpr/HGzZgQKo4xwDHpFnJ/1gyibsoqgma+L49LhInQGOjaXXHAL8q
+         MPmmQEvO8rAnxXGjkTNRexdxzBpZFAPFtzs9cXgGVLZtFos/PcW2NUuBx1A701D0Md
+         e1xS0ydyYWNbx3bt78j2YaAUAuT13akD47bxbajCeC0yKCCS/rsflUjX7zIYLoKEW6
+         D96JyUFCCA6TNLJ4425+AfGDcuS/vAuj/XuikQwyQjHmgguqD0nt6oE5jv+bU5iKoH
+         QNhsf8Rlc6mwoo1peElCGCVVGzyIOj0YGrUsR/clhr0rEgYOuWd5p0HVh7AdZ+8Lgo
+         LA9pHv19J3Maw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIj6VC1031047;
-        Mon, 29 Apr 2019 11:45:06 -0700
-Date:   Mon, 29 Apr 2019 11:45:06 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIjjUV1031117;
+        Mon, 29 Apr 2019 11:45:45 -0700
+Date:   Mon, 29 Apr 2019 11:45:45 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-2a820bf74918d61ea54f7c1001f4a6a2e457577c@git.kernel.org>
-Cc:     airlied@linux.ie, jpoimboe@redhat.com, jani.nikula@linux.intel.com,
-        mbenes@suse.cz, catalin.marinas@arm.com, mingo@kernel.org,
-        tom.zanussi@linux.intel.com, akpm@linux-foundation.org,
-        robin.murphy@arm.com, aryabinin@virtuozzo.com,
-        rppt@linux.vnet.ibm.com, hch@lst.de, rientjes@google.com,
-        m.szyprowski@samsung.com, glider@google.com, josef@toxicpanda.com,
-        dsterba@suse.com, cl@linux.com, snitzer@redhat.com, hpa@zytor.com,
-        akinobu.mita@gmail.com, rostedt@goodmis.org,
-        joonas.lahtinen@linux.intel.com, dvyukov@google.com,
-        rodrigo.vivi@intel.com, jthumshirn@suse.de,
-        maarten.lankhorst@linux.intel.com, linux-kernel@vger.kernel.org,
-        clm@fb.com, penberg@kernel.org, daniel@ffwll.ch, agk@redhat.com,
-        tglx@linutronix.de, luto@kernel.org, adobriyan@gmail.com
-Reply-To: hch@lst.de, rppt@linux.vnet.ibm.com, akpm@linux-foundation.org,
-          robin.murphy@arm.com, aryabinin@virtuozzo.com, dsterba@suse.com,
-          cl@linux.com, glider@google.com, josef@toxicpanda.com,
-          m.szyprowski@samsung.com, rientjes@google.com, airlied@linux.ie,
-          tom.zanussi@linux.intel.com, mingo@kernel.org,
-          catalin.marinas@arm.com, jani.nikula@linux.intel.com,
-          mbenes@suse.cz, jpoimboe@redhat.com, clm@fb.com,
-          linux-kernel@vger.kernel.org, rodrigo.vivi@intel.com,
-          jthumshirn@suse.de, maarten.lankhorst@linux.intel.com,
-          adobriyan@gmail.com, tglx@linutronix.de, luto@kernel.org,
-          agk@redhat.com, penberg@kernel.org, daniel@ffwll.ch,
-          akinobu.mita@gmail.com, rostedt@goodmis.org, hpa@zytor.com,
-          snitzer@redhat.com, dvyukov@google.com,
-          joonas.lahtinen@linux.intel.com
-In-Reply-To: <20190425094803.066064076@linutronix.de>
-References: <20190425094803.066064076@linutronix.de>
+Message-ID: <tip-c438f140cc16d47fac808d893f5017f6d641cb46@git.kernel.org>
+Cc:     penberg@kernel.org, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com, clm@fb.com,
+        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
+        josef@toxicpanda.com, rientjes@google.com, akinobu.mita@gmail.com,
+        mbenes@suse.cz, daniel@ffwll.ch, tglx@linutronix.de,
+        dsterba@suse.com, airlied@linux.ie, dvyukov@google.com,
+        hpa@zytor.com, akpm@linux-foundation.org,
+        jani.nikula@linux.intel.com, glider@google.com, hch@lst.de,
+        rppt@linux.vnet.ibm.com, catalin.marinas@arm.com,
+        snitzer@redhat.com, agk@redhat.com, rodrigo.vivi@intel.com,
+        adobriyan@gmail.com, joonas.lahtinen@linux.intel.com,
+        robin.murphy@arm.com, m.szyprowski@samsung.com,
+        tom.zanussi@linux.intel.com, jthumshirn@suse.de, cl@linux.com,
+        maarten.lankhorst@linux.intel.com
+Reply-To: maarten.lankhorst@linux.intel.com, cl@linux.com,
+          jthumshirn@suse.de, tom.zanussi@linux.intel.com,
+          m.szyprowski@samsung.com, robin.murphy@arm.com,
+          joonas.lahtinen@linux.intel.com, adobriyan@gmail.com,
+          rodrigo.vivi@intel.com, agk@redhat.com, catalin.marinas@arm.com,
+          snitzer@redhat.com, rppt@linux.vnet.ibm.com, hch@lst.de,
+          jani.nikula@linux.intel.com, glider@google.com,
+          akpm@linux-foundation.org, hpa@zytor.com, dvyukov@google.com,
+          airlied@linux.ie, dsterba@suse.com, tglx@linutronix.de,
+          daniel@ffwll.ch, mbenes@suse.cz, akinobu.mita@gmail.com,
+          rientjes@google.com, josef@toxicpanda.com, luto@kernel.org,
+          jpoimboe@redhat.com, mingo@kernel.org, aryabinin@virtuozzo.com,
+          clm@fb.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+          penberg@kernel.org
+In-Reply-To: <20190425094803.162400595@linutronix.de>
+References: <20190425094803.162400595@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/stacktrace] tracing: Use percpu stack trace buffer more
- intelligently
-Git-Commit-ID: 2a820bf74918d61ea54f7c1001f4a6a2e457577c
+Subject: [tip:core/stacktrace] tracing: Make ftrace_trace_userstack() static
+ and conditional
+Git-Commit-ID: c438f140cc16d47fac808d893f5017f6d641cb46
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -85,30 +86,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2a820bf74918d61ea54f7c1001f4a6a2e457577c
-Gitweb:     https://git.kernel.org/tip/2a820bf74918d61ea54f7c1001f4a6a2e457577c
+Commit-ID:  c438f140cc16d47fac808d893f5017f6d641cb46
+Gitweb:     https://git.kernel.org/tip/c438f140cc16d47fac808d893f5017f6d641cb46
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 25 Apr 2019 11:45:14 +0200
+AuthorDate: Thu, 25 Apr 2019 11:45:15 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Mon, 29 Apr 2019 12:37:55 +0200
 
-tracing: Use percpu stack trace buffer more intelligently
+tracing: Make ftrace_trace_userstack() static and conditional
 
-The per cpu stack trace buffer usage pattern is odd at best. The buffer has
-place for 512 stack trace entries on 64-bit and 1024 on 32-bit. When
-interrupts or exceptions nest after the per cpu buffer was acquired the
-stacktrace length is hardcoded to 8 entries. 512/1024 stack trace entries
-in kernel stacks are unrealistic so the buffer is a complete waste.
-
-Split the buffer into 4 nest levels, which are 128/256 entries per
-level. This allows nesting contexts (interrupts, exceptions) to utilize the
-cpu buffer for stack retrieval and avoids the fixed length allocation along
-with the conditional execution pathes.
+It's only used in trace.c and there is absolutely no point in compiling it
+in when user space stack traces are not supported.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt <rostedt@goodmis.org>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Alexander Potapenko <glider@google.com>
 Cc: Alexey Dobriyan <adobriyan@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -145,124 +138,75 @@ Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
 Cc: Miroslav Benes <mbenes@suse.cz>
 Cc: linux-arch@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190425094803.066064076@linutronix.de
+Link: https://lkml.kernel.org/r/20190425094803.162400595@linutronix.de
 
 ---
- kernel/trace/trace.c | 73 ++++++++++++++++++++++++++--------------------------
- 1 file changed, 37 insertions(+), 36 deletions(-)
+ kernel/trace/trace.c | 14 ++++++++------
+ kernel/trace/trace.h |  8 --------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 21153e64bf1c..4fc93004feab 100644
+index 4fc93004feab..d8369d27c1af 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -2749,12 +2749,21 @@ trace_function(struct trace_array *tr,
+@@ -159,6 +159,8 @@ static union trace_eval_map_item *trace_eval_maps;
+ #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
+ 
+ static int tracing_set_tracer(struct trace_array *tr, const char *buf);
++static void ftrace_trace_userstack(struct ring_buffer *buffer,
++				   unsigned long flags, int pc);
+ 
+ #define MAX_TRACER_SIZE		100
+ static char bootup_tracer_buf[MAX_TRACER_SIZE] __initdata;
+@@ -2905,9 +2907,10 @@ void trace_dump_stack(int skip)
+ }
+ EXPORT_SYMBOL_GPL(trace_dump_stack);
+ 
++#ifdef CONFIG_USER_STACKTRACE_SUPPORT
+ static DEFINE_PER_CPU(int, user_stack_count);
+ 
+-void
++static void
+ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
+ {
+ 	struct trace_event_call *call = &event_user_stack;
+@@ -2958,13 +2961,12 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
+  out:
+ 	preempt_enable();
+ }
+-
+-#ifdef UNUSED
+-static void __trace_userstack(struct trace_array *tr, unsigned long flags)
++#else /* CONFIG_USER_STACKTRACE_SUPPORT */
++static void ftrace_trace_userstack(struct ring_buffer *buffer,
++				   unsigned long flags, int pc)
+ {
+-	ftrace_trace_userstack(tr, flags, preempt_count());
+ }
+-#endif /* UNUSED */
++#endif /* !CONFIG_USER_STACKTRACE_SUPPORT */
+ 
+ #endif /* CONFIG_STACKTRACE */
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index d80cee49e0eb..639047b259d7 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -782,17 +782,9 @@ void update_max_tr_single(struct trace_array *tr,
+ #endif /* CONFIG_TRACER_MAX_TRACE */
  
  #ifdef CONFIG_STACKTRACE
- 
--#define FTRACE_STACK_MAX_ENTRIES (PAGE_SIZE / sizeof(unsigned long))
-+/* Allow 4 levels of nesting: normal, softirq, irq, NMI */
-+#define FTRACE_KSTACK_NESTING	4
-+
-+#define FTRACE_KSTACK_ENTRIES	(PAGE_SIZE / FTRACE_KSTACK_NESTING)
-+
- struct ftrace_stack {
--	unsigned long		calls[FTRACE_STACK_MAX_ENTRIES];
-+	unsigned long		calls[FTRACE_KSTACK_ENTRIES];
-+};
-+
-+
-+struct ftrace_stacks {
-+	struct ftrace_stack	stacks[FTRACE_KSTACK_NESTING];
- };
- 
--static DEFINE_PER_CPU(struct ftrace_stack, ftrace_stack);
-+static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
- static DEFINE_PER_CPU(int, ftrace_stack_reserve);
- 
- static void __ftrace_trace_stack(struct ring_buffer *buffer,
-@@ -2763,10 +2772,11 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- {
- 	struct trace_event_call *call = &event_kernel_stack;
- 	struct ring_buffer_event *event;
-+	struct ftrace_stack *fstack;
- 	struct stack_entry *entry;
- 	struct stack_trace trace;
--	int use_stack;
--	int size = FTRACE_STACK_ENTRIES;
-+	int size = FTRACE_KSTACK_ENTRIES;
-+	int stackidx;
- 
- 	trace.nr_entries	= 0;
- 	trace.skip		= skip;
-@@ -2788,29 +2798,32 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- 	 */
- 	preempt_disable_notrace();
- 
--	use_stack = __this_cpu_inc_return(ftrace_stack_reserve);
-+	stackidx = __this_cpu_inc_return(ftrace_stack_reserve) - 1;
-+
-+	/* This should never happen. If it does, yell once and skip */
-+	if (WARN_ON_ONCE(stackidx > FTRACE_KSTACK_NESTING))
-+		goto out;
-+
- 	/*
--	 * We don't need any atomic variables, just a barrier.
--	 * If an interrupt comes in, we don't care, because it would
--	 * have exited and put the counter back to what we want.
--	 * We just need a barrier to keep gcc from moving things
--	 * around.
-+	 * The above __this_cpu_inc_return() is 'atomic' cpu local. An
-+	 * interrupt will either see the value pre increment or post
-+	 * increment. If the interrupt happens pre increment it will have
-+	 * restored the counter when it returns.  We just need a barrier to
-+	 * keep gcc from moving things around.
- 	 */
- 	barrier();
--	if (use_stack == 1) {
--		trace.entries		= this_cpu_ptr(ftrace_stack.calls);
--		trace.max_entries	= FTRACE_STACK_MAX_ENTRIES;
- 
--		if (regs)
--			save_stack_trace_regs(regs, &trace);
--		else
--			save_stack_trace(&trace);
-+	fstack = this_cpu_ptr(ftrace_stacks.stacks) + stackidx;
-+	trace.entries		= fstack->calls;
-+	trace.max_entries	= FTRACE_KSTACK_ENTRIES;
- 
--		if (trace.nr_entries > size)
--			size = trace.nr_entries;
--	} else
--		/* From now on, use_stack is a boolean */
--		use_stack = 0;
-+	if (regs)
-+		save_stack_trace_regs(regs, &trace);
-+	else
-+		save_stack_trace(&trace);
-+
-+	if (trace.nr_entries > size)
-+		size = trace.nr_entries;
- 
- 	size *= sizeof(unsigned long);
- 
-@@ -2820,19 +2833,7 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- 		goto out;
- 	entry = ring_buffer_event_data(event);
- 
--	memset(&entry->caller, 0, size);
+-void ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags,
+-			    int pc);
 -
--	if (use_stack)
--		memcpy(&entry->caller, trace.entries,
--		       trace.nr_entries * sizeof(unsigned long));
--	else {
--		trace.max_entries	= FTRACE_STACK_ENTRIES;
--		trace.entries		= entry->caller;
--		if (regs)
--			save_stack_trace_regs(regs, &trace);
--		else
--			save_stack_trace(&trace);
--	}
-+	memcpy(&entry->caller, trace.entries, size);
- 
- 	entry->size = trace.nr_entries;
- 
+ void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
+ 		   int pc);
+ #else
+-static inline void ftrace_trace_userstack(struct ring_buffer *buffer,
+-					  unsigned long flags, int pc)
+-{
+-}
+-
+ static inline void __trace_stack(struct trace_array *tr, unsigned long flags,
+ 				 int skip, int pc)
+ {
