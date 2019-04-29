@@ -2,83 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E72CEC4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C98EC59
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbfD2Vt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:49:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53844 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729368AbfD2Vt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:49:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6C907ABD7;
-        Mon, 29 Apr 2019 21:49:57 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 124071E3BEC; Mon, 29 Apr 2019 23:49:56 +0200 (CEST)
-Date:   Mon, 29 Apr 2019 23:49:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@gmx.com>
-Cc:     jack@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] quota: set init_needed flag only when successfully
- getting dquot
-Message-ID: <20190429214956.GA6740@quack2.suse.cz>
-References: <20190428053921.5984-1-cgxu519@gmx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190428053921.5984-1-cgxu519@gmx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729540AbfD2V5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:57:14 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:42660 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729512AbfD2V5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 17:57:12 -0400
+Received: from Internal Mail-Server by MTLPINE2 (envelope-from asmaa@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 30 Apr 2019 00:57:10 +0300
+Received: from farm-1.mtbu.labs.mlnx (farm-1.mtbu.labs.mlnx [10.15.2.31])
+        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x3TLv9Ra027607;
+        Mon, 29 Apr 2019 17:57:09 -0400
+Received: (from asmaa@localhost)
+        by farm-1.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x3TLv8Qc010989;
+        Mon, 29 Apr 2019 17:57:08 -0400
+From:   Asmaa Mnebhi <Asmaa@mellanox.com>
+To:     minyard@acm.org, wsa@the-dreams.de, vadimp@mellanox.com,
+        michaelsh@mellanox.com
+Cc:     Asmaa Mnebhi <Asmaa@mellanox.com>, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH v3 0/1] Add support for IPMB driver
+Date:   Mon, 29 Apr 2019 17:56:59 -0400
+Message-Id: <cover.1556573807.git.Asmaa@mellanox.com>
+X-Mailer: git-send-email 2.1.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 28-04-19 13:39:21, Chengguang Xu wrote:
-> Set init_needed flag only when successfully getting dquot,
-> so that we can skip unnecessary subsequent operation.
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Thank you for your feedback Wolfram. I have addressed your comments.
 
-Thanks for the patch but I don't think it's really useful. It will be very
-rare that we race with quotaoff of dqget() fails due to error. So the
-additional overhead of iterating over dquots doesn't really matter in that
-case.
+Concerning your questions:
 
-								Honza
+"Why can't we use i2c_smbus_write_block_data()?"
 
-> ---
->  fs/quota/dquot.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index fc20e06c56ba..8d4ce2a2b5c8 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -1449,8 +1449,6 @@ static int __dquot_initialize(struct inode *inode, int type)
->  		if (!sb_has_quota_active(sb, cnt))
->  			continue;
-> 
-> -		init_needed = 1;
-> -
->  		switch (cnt) {
->  		case USRQUOTA:
->  			qid = make_kqid_uid(inode->i_uid);
-> @@ -1475,6 +1473,9 @@ static int __dquot_initialize(struct inode *inode, int type)
->  			dquot = NULL;
->  		}
->  		got[cnt] = dquot;
-> +
-> +		if (got[cnt])
-> +			init_needed = 1;
->  	}
-> 
->  	/* All required i_dquot has been initialized */
-> --
-> 2.20.1
-> 
-> 
+i2c_smbus_write_block_data() does not allow me to pass the
+requester_i2c_addr argument. Instead, it uses the
+client->addr.
+The client->addr in this driver is set to the
+i2c address of the device where this driver is loaded
+(since we used i2c_slave_register to register this device as
+a slave).
+But the address we want to pass to i2c_smbus_write_block_data_local
+is actually the i2c address of the device on the other end of the
+I2C bus. This is the case where our device acts as a master and
+sends the IPMB (equivalent to I2C) response to the requester device
+(which becomes the I2C slave).
+
+"Can't we leave the default or will the compiler complain?"
+
+I chose to leave the default because IPMB by definition only
+allows master write. It doesn't do any reads. So if there is
+any exetrnal device that tries to do a read, this i2c cb function
+will just go to the default case.
+
+"I really don't know enough about IPMB to judge if the design of
+having one i2c-dev interface and another ipmb-dev interface is
+a good solution"
+
+I am open for discussion. My reasoning was that we need to interact
+with user space so I used misc strictly to enable read/write.
+Maybe we could do something similar to the i2c-slave-eeprom.c
+where the eeprom_data struct uses bin_attributes?
+
+Asmaa Mnebhi (1):
+  Add support for IPMB driver
+
+ drivers/char/ipmi/Kconfig        |   8 +
+ drivers/char/ipmi/Makefile       |   1 +
+ drivers/char/ipmi/ipmb_dev_int.c | 386 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 395 insertions(+)
+ create mode 100644 drivers/char/ipmi/ipmb_dev_int.c
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.1.2
+
