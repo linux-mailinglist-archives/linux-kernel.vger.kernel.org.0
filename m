@@ -2,138 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B1F3E409
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A0FE404
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 15:55:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbfD2Nz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 09:55:59 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:37433 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfD2Nz6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 09:55:58 -0400
-Received: from [192.168.1.110] ([77.9.18.117]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MwPjf-1gT9H42mKz-00sLKc; Mon, 29 Apr 2019 15:54:35 +0200
-Subject: Re: [PATCH v10 0/7] Add Fieldbus subsystem + support HMS Profinet
- card
-To:     Sven Van Asbroeck <thesven73@gmail.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>
-Cc:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>,
-        "J. Kiszka" <jan.kiszka@siemens.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-References: <20190409144250.7237-1-TheSven73@gmail.com>
- <982e69c6-4e68-6f62-8bed-cd5a1802272b@metux.net>
- <CAGngYiUTHZFFY=H7xXHzZnN4pS0jAqWBTrcw04hjf5S-ykxC9w@mail.gmail.com>
- <c1831703-a476-8870-0a5f-9060bda0f669@metux.net>
- <CAGngYiXx2eKR7DnHm9sNWVC+B1F2N6uUNXqZAq4rey2yjU1RyA@mail.gmail.com>
- <23a25601-ed98-5348-9bac-bf8fc2baea5e@metux.net>
- <CAGngYiVJwRh_ESLfSYWak4RU60T2D1HW0-3Hg1CZbRjWhaSN5Q@mail.gmail.com>
- <7ceaeb70-f937-bd84-95e5-d7a6baeb5d87@metux.net>
- <CAGngYiUPZ+g4eXJKvgA9GSJXgOFAAf6Q3qqAheiqNSnJ+Dbx+w@mail.gmail.com>
- <e07f7575-2617-a11a-fd78-d068b10a8171@metux.net>
- <06024a8a-ad00-8062-215b-01b2f95a6e24@hartkopp.net>
- <c1b783b0-9773-17f5-d043-35e28f7797f0@suse.de>
- <d54b294e-d641-bb14-84ed-39d9a9079dc7@hartkopp.net>
- <CAGngYiX_xxDWEAbxQ=XeZPYAA+zgQ32U0Ov=CG86yE=6=qTfpg@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <2bed794d-4960-df09-df16-e063cc41eaae@metux.net>
-Date:   Mon, 29 Apr 2019 15:54:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1728219AbfD2NzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 09:55:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725838AbfD2Ny7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 09:54:59 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A25020652;
+        Mon, 29 Apr 2019 13:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556546098;
+        bh=zGv6exV/uefsaKmbwpA9k94AKfaosua23Psjff+cc3c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qoBXlq0mb53bIYOSBp+u/66HKCO3IQ+NuMvyttOzdnmknKk5R055WRmV2VY21a9e0
+         HwiHlXlZ23mp02Ns1nNZtVb/g3HXNbyNohaijz6hmBltOEfQ+e9jwP3tcw8buW/7aY
+         6+CNp/fiPkSKTRFUcYJolndLw6AoMXae5Z7Gj0Dg=
+Date:   Mon, 29 Apr 2019 15:54:55 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atishp04@gmail.com, dancol@google.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        dietmar.eggemann@arm.com, Guenter Roeck <groeck@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, karim.yaghmour@opersys.com,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>, mhiramat@kernel.org,
+        qais.yousef@arm.com, rdunlap@infradead.org, rostedt@goodmis.org,
+        Shuah Khan <shuah@kernel.org>, yhs@fb.com,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v7 resend 1/2] Provide in-kernel headers to make
+ extending kernel easier
+Message-ID: <20190429135455.GA2412@kroah.com>
+References: <20190426190430.172543-1-joel@joelfernandes.org>
+ <20190427133844.GA29366@kroah.com>
+ <20190429132602.GA165075@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGngYiX_xxDWEAbxQ=XeZPYAA+zgQ32U0Ov=CG86yE=6=qTfpg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XKZ+U9p2e+DR5HEHnRD3a5YgCyikZoBUmNnTjxGi9hDiE/mOW05
- MWW8x9pjhr0I3vtT2M9L+ZdxFYT2ydXVisV1SSZ4hu9gz4ovnbPz1NTvo5JQXim7xMcH7tP
- 6Od4jzmaMi36swtR+Wdrmha4aSlss0Dfv9o+1HZuyWDeK9Fz9UhWkTft5ncMplULHCuAgla
- lrqMyJPjIzrg+38RmVIfA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YGZf1uj3/6I=:uILxPV5x+bGgNNEKC7e4j3
- ZRnzQN+YTtXwsHoDQMyaNWvu6Jm7U6Qcha21dg/ejOZ71z2RNiORCtPH1g+emerxdEwWlWC4v
- NJUVRdpmXdaLcpHejA/Z9q0bjPLg0EGzJXtPjCkgGdQd7ZUp3i7s6OcI+QCZ2IjXVzsFSi4cE
- TmEIqfQagpIzOJ7bf2j7RimRZXupWLauRVEoTaEx7TgoUI8iskH3gf93pfdDVbJBTRs5bZhci
- ch31pjCpbIcoHExjCYiqFoQJ78lPhME0GbbKsfurukisZqmem9FdEC15H8Et68fC1yYuwLjms
- L7tRPSfDyMBZcOnig8r1HdMyoMVz66tBunZi/cWtCNc7WO5l/NyCLVugUVXxUyVAG6n0jc2Cz
- Y2k1p3aHTRiABAPzLC/yL4uZHDTRDE2FD75HqlklkPSk279L2bISEYkMRGHSug7NJd/yQ2fDs
- 2dKUHCjIZrGbtQnAujSvjQ3pRvstKFZ3Y6t5To45/MvG3RwhK0zfdSzISNVZnFJ63PnV+8im5
- sEfUC21/QW4Pg/y1lyKCQ3micL1i4PTJJz8OkBFcmMdzzuf6AiR3Jc8QkFIxuBT64PrzEC0ZP
- /KbTFQOI7ZuUa1GmQZvQN4UUitAS7JxFwcudbo2NV2LSBoQu9hy3Z3WWuNJwD3Ki3OFoe6zeI
- Xm/xlbRLcs8VhaKrrGsDeD+kVcjSyKZAmFR04lBir4zLsbSATgJmeL6LPOiMWPJL9Vmo+LiYW
- WnIOZoTymEHcEagvuhA2+r973IIV3lfRv9SZZ8h1cqtsiZ/0XtHRbM3onu8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429132602.GA165075@google.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.04.19 17:10, Sven Van Asbroeck wrote:
+On Mon, Apr 29, 2019 at 09:26:02AM -0400, Joel Fernandes wrote:
+> On Sat, Apr 27, 2019 at 03:38:44PM +0200, Greg KH wrote:
+> > On Fri, Apr 26, 2019 at 03:04:29PM -0400, Joel Fernandes (Google) wrote:
+> > > Introduce in-kernel headers which are made available as an archive
+> > > through proc (/proc/kheaders.tar.xz file). This archive makes it
+> > > possible to run eBPF and other tracing programs that need to extend the
+> > > kernel for tracing purposes without any dependency on the file system
+> > > having headers.
+> > > 
+> > > A github PR is sent for the corresponding BCC patch at:
+> > > https://github.com/iovisor/bcc/pull/2312
+> > > 
+> > > On Android and embedded systems, it is common to switch kernels but not
+> > > have kernel headers available on the file system. Further once a
+> > > different kernel is booted, any headers stored on the file system will
+> > > no longer be useful. This is an issue even well known to distros.
+> > > By storing the headers as a compressed archive within the kernel, we can
+> > > avoid these issues that have been a hindrance for a long time.
+> > > 
+> > > The best way to use this feature is by building it in. Several users
+> > > have a need for this, when they switch debug kernels, they do not want to
+> > > update the filesystem or worry about it where to store the headers on
+> > > it. However, the feature is also buildable as a module in case the user
+> > > desires it not being part of the kernel image. This makes it possible to
+> > > load and unload the headers from memory on demand. A tracing program can
+> > > load the module, do its operations, and then unload the module to save
+> > > kernel memory. The total memory needed is 3.3MB.
+> > > 
+> > > By having the archive available at a fixed location independent of
+> > > filesystem dependencies and conventions, all debugging tools can
+> > > directly refer to the fixed location for the archive, without concerning
+> > > with where the headers on a typical filesystem which significantly
+> > > simplifies tooling that needs kernel headers.
+> > > 
+> > > The code to read the headers is based on /proc/config.gz code and uses
+> > > the same technique to embed the headers.
+> > > 
+> > > Other approaches were discussed such as having an in-memory mountable
+> > > filesystem, but that has drawbacks such as requiring an in-kernel xz
+> > > decompressor which we don't have today, and requiring usage of 42 MB of
+> > > kernel memory to host the decompressed headers at anytime. Also this
+> > > approach is simpler than such approaches.
+> > > 
+> > > Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > 
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Thanks for the Reviewed-by tag. I believe there are still 2 logistical things
+> to merge this.
+> 1. Location of the header archive:
+> Olof and Steve did not like it to be in /proc and instead /sys seemed a better
+> choice they are Ok with. Me and Greg were Ok with it being in /sys/kernel/.
+> Alexei, Greg and me are Ok with either proc or Sys.
 
-> The subsystem is called fieldbus_dev "fieldbus device" because it> abstracts Linux fieldbus clients that want to expose themselves as>
-e.g. an actuator, motor, console light, switch, ...
-Sounds a bit confusing. With that description, I'd expect highlevel
-interfaces similar to LED, input, IIO, etc ... but you're actually
-implementing an distributed process memory system. This in turn is
-just a subset of the fieldbus world.
+As you say, either is fine with me.
 
-> During one of the eleven review cycles, drivers/fieldbus_dev got> truncated to drivers/fieldbus because the reviewers felt that> _dev
-was redundant, given the lack of other fieldbus> subsystems.
-There is at least one: CAN. Sometimes CAN is used in the IEC61158-way,
-but also completely different, even both in combination.
+> 2. Who is going to pull this patch: This seems a matter of where the header
+> archive resides. If it is in /sys/kernel/ then I am assuming Greg will pull
+> it.  Masahiro has given his Reviewed-by tag, is he the one to pull it?
 
-> These cards are not controllers, but slaves on the bus.
+I can take it, but it probably should just go through the kbuild tree,
+as that makes more sense to me.
 
-Do they really implement the process memory part or just the lower
-layer communications ?
+thanks,
 
-> I'm by no means a fieldbus expert. It seems that the term> 'fieldbus' is much broader than these process-memory based> standards?
-
-Yes, indeed.
-
-> I am open to any _concrete_ naming suggestion
-> that can get consensus.
-Maybe IEC61158 ?
-
-> I'm a bit confused by Wikipedia's entry for fieldbus.
-> It suggests that IEC 61158 and Fieldbus are
-> interchangeable?
-> https://en.wikipedia.org/wiki/Fieldbus
-
-That's wrong.
-
-> <quote>
-> Fieldbus is the name of a family of industrial computer
-> network protocols used for real-time distributed control,
-> standardized as IEC 61158.
-> </quote>
-
-IEC 61158 only standardizes one particular approach: the distributed
-process memory.
-
-> Given that CAN/EtherCAT are not process memory based
-> (that I know of), the fieldbus_dev subsystem is probably
-> not a good fit.
-
-ACK. Neither are MVB+friends.
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+greg k-h
