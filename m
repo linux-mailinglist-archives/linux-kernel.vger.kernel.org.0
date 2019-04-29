@@ -2,102 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B511EB4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9092EB6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfD2UCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:02:24 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50507 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729185AbfD2UCX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:02:23 -0400
-Received: by mail-it1-f194.google.com with SMTP id q14so1057145itk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=d5+AR4ZQ6S8Je85I3GXhGfH5pQCSFdPGrCwlud052ps=;
-        b=XRN9VSnXHB9YOZLhHV+j78/FmX9TQONi+10x6wv8ySgEM5Q3gC4vGptmW/bxkiWCCY
-         rbcj40eh19ktqbvfBBaI7hdAi4X7nV/L6e/YdSS+D+EnzRxv2YhH95gH9aH/gutPNhO4
-         RJsx+Ng3drdHuugTlgCMR2KJLCwrOUInFIlaTNKgT+fEPSEflUTe81/58oCezp2WB53J
-         Tdx9M6r9uvjF5dJT3y8Nur7B6mBnp1vd2obduvs8Sw5WW76/Khxa+GnxKWThbOxThEYI
-         WW9SEpLLQwn3CoVL/FBE6o4G0S4hGvPjxIUy76C2Ys9mrLSEiwClLRCuBLFDnHirvptg
-         mgMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=d5+AR4ZQ6S8Je85I3GXhGfH5pQCSFdPGrCwlud052ps=;
-        b=GL9eLAEMGqIC6c8vXFUXNLvsQzsGDt4DUOHkJD5ln45d9w4CCBRCAQpiK5wONv4kb+
-         Km0azecp4+8Pql5S9qYNcDpqou0jg5GO4TGgbQejN2JN3xaDwBzCHvF6yvbmU8DLqAaT
-         UPe4X3S2joJ1eWuVot54ueqBYCmnVhWc9Sm+yURxtHlzu/100aCr2RJhq2ZTRaj+fJdw
-         ouILfLkXqoRmZSHW9IOtPYxM4lzR5pyjx/aN7msLrTY/frjBs1maKG6u7tNhME9bvQV0
-         HvgepgAmqw6pOO6p7Cc5boqH99RtX5/ywKx5zXebr1eYx62NUZN6amzb6oXShi5jlLK9
-         HHXw==
-X-Gm-Message-State: APjAAAW9NS1A6dCzFl+eMB5gxQgRi7d8GwOltpQmLfyPyDfXGCsW4FvG
-        3W/8fseVyr/yqkQveaASN9mfCg==
-X-Google-Smtp-Source: APXvYqw118+txrOO593MhkfuosJ78cNcNeAwZ0b8WAls8UIMDjjD/RyZt63kf1zMwrwLeq+0e7uoZQ==
-X-Received: by 2002:a24:1f06:: with SMTP id d6mr645397itd.11.1556568142581;
-        Mon, 29 Apr 2019 13:02:22 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id v25sm7723994ioh.41.2019.04.29.13.02.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 13:02:21 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 13:02:21 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Anup Patel <anup@brainfault.org>
-cc:     Christoph Hellwig <hch@infradead.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH] tty: Don't force RISCV SBI console as preferred
- console
-In-Reply-To: <CAAhSdy1nVFCwiP6vyy9i2f+S2WxLodmdwpwUKZUHYz15YfR64g@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.9999.1904291254300.7063@viisi.sifive.com>
-References: <20190425133435.56065-1-anup.patel@wdc.com> <9a8be7ef-e62e-2a93-9170-e3dc70dfb25f@wdc.com> <20190426062133.GA28529@infradead.org> <CAAhSdy1nVFCwiP6vyy9i2f+S2WxLodmdwpwUKZUHYz15YfR64g@mail.gmail.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1729353AbfD2UOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:14:01 -0400
+Received: from mail-n.franken.de ([193.175.24.27]:37114 "EHLO drew.franken.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728928AbfD2UOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 16:14:01 -0400
+X-Greylist: delayed 582 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Apr 2019 16:14:00 EDT
+Received: from perth.hirmke.de (aquarius.franken.de [193.175.24.89])
+        (Authenticated sender: antares)
+        by mail-n.franken.de (Postfix) with ESMTPSA id 4674E721E2825
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:04:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by perth.hirmke.de (Postfix) with ESMTP id EA52F9649F2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:04:14 +0200 (CEST)
+X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
+        occurs 6 times
+Received: from perth.hirmke.de ([127.0.0.1])
+        by localhost (perth.hirmke.de [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id zclsxvBn1Dzt for <linux-kernel@vger.kernel.org>;
+        Mon, 29 Apr 2019 22:04:13 +0200 (CEST)
+Received: by perth.hirmke.de (Postfix, from userid 10)
+        id 054139649D0; Mon, 29 Apr 2019 22:04:13 +0200 (CEST)
+Received: by mike.franken.de (OpenXP/5.0.34 (Linux) (x86_64));
+          29 Apr 2019 22:04:06 +0200
+Date:   29 Apr 2019 22:03:00 +0200
+From:   opensuse@mike.franken.de (Michael Hirmke)
+To:     jslaby@suse.cz
+Cc:     mika.westerberg@linux.intel.com
+Cc:     bhelgaas@google.com
+Cc:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Cc:     lukas@wunner.de
+Cc:     tiwai@suse.de
+Message-ID: <EkoOCx3N6GB@mike.franken.de>
+In-Reply-To: <20190429195459.GU2583@lahna.fi.intel.com>
+Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and thunderbolt)
+User-Agent: OpenXP/5.0.34 (Linux) (x86_64)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline;
+ modification-date="29 Apr 2019 20:03:39 +0000";
+ read-date="Mon, 29 Apr 2019 22:03:39 +0200";
+ creation-date="Mon, 29 Apr 2019 22:03:39 +0200"
+Organization: Kommunikationsnetz Franken e.V. (Nuernberg)
+X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=disabled version=3.4.1
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail-n.franken.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Apr 2019, Anup Patel wrote:
+Hi all,
 
-> On Fri, Apr 26, 2019 at 11:51 AM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Thu, Apr 25, 2019 at 09:41:21PM -0700, Atish Patra wrote:
-> > > Do we even need HVC_SBI console to be enabled by default? Disabling
-> > > CONFIG_HVC_RISCV_SBI seems to be fine while running in QEMU.
-> > >
-> > > If we don't need it, I suggest we should remove the config option from
-> > > defconfig in addition to this patch.
-> >
-> > I think the whole concept of the SBI console is a little dangerous.
-> > It means that for one piece of physical hardware (usually the uart)
-> > we have two entiries (the M-mode firmware and the OS) in control,
-> > which tends to rarely end well.
-> 
-> I think the SBI console is only useful for early SOC bringup and early
-> SOC debugging when most drivers are not available in upstream
-> kernel. It cannot (and should not) be used in production deployments.
+>On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
+>> Hi,
 
-Usually the primary use-case for an abstract console interface is for 
-desktop and server users.  Usually Linux distributions want a hardware 
-platform-specific bootloader or BIOS to specify and control the console.  
+>Hi,
 
-Originally I suspect this was implemented in the SBI for semi-hosting 
-purposes, but that's no longer really applicable.
+>> we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
+>> machine.  5.0.7 is confirmed to work, so it must be a regression
+>> introduced by 5.0.8.
+>>
+>> The details are found in openSUSE Bugzilla entry:
+>>   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
+>>
+[...]
+>>
+>> I blindly suspected the commit 3943af9d01e9 and asked for a reverted
+>> kernel, but in vain.  And now it was confirmed that the problem is
+>> present with the latest 5.1-rc, too.
+>>
+>> I put some people who might have interest and the reporter (Michael)
+>> to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
+>> let me know if any help needed from the distro side.
 
+>Since it exists in 5.1-rcX also it would be good if someone
+>who see the problem (Michael?) could bisect it.
 
-- Paul
+I know the meaning of bisecting, but I'm not really a developer, so I am
+probably not able to interpret the results.
+
+Sry.
+
+Bye.
+Michael.
+-- 
+Michael Hirmke
