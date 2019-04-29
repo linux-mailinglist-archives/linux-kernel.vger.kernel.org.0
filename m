@@ -2,100 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C69A5E467
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B3B0E470
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfD2OOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:14:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728196AbfD2OOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:14:02 -0400
-Received: from [192.168.0.101] (unknown [58.212.133.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75D6320652;
-        Mon, 29 Apr 2019 14:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556547241;
-        bh=xf6NipygRwz8sNGT+uqf5PgnOsEKfKT1vm3IZ3bunjM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dso4WA3f9LnwH+OyLKzx9gjPszb+OcJsevJ1VxlQW5cC4aDph7RORwuDlkB86eNA8
-         q/XDB8hJuEdwfD5rG8Fs5+ks4fTIp4o4MBiK1yNfIwPHETyf9GmAKyiUVj84nByrBk
-         2x5gEM1+/soBwQiUPiA+Nykh6NB86t3bieQfx24c=
-Subject: Re: [PATCH 1/2] f2fs: fix to avoid potential negative .f_bfree
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, drosen@google.com
-References: <20190426095754.85784-1-yuchao0@huawei.com>
- <20190428134722.GC37346@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <f8b890b8-22a3-bead-7df5-6ab87deb56e9@kernel.org>
-Date:   Mon, 29 Apr 2019 22:13:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728365AbfD2OP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:15:26 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:62325 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfD2OP0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:15:26 -0400
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x3TEF7Xo009931;
+        Mon, 29 Apr 2019 23:15:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x3TEF7Xo009931
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1556547308;
+        bh=l3dZW2UIUJmt2aKGNrZq7mHyn/lDaxk1teTwUSyxmG8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=baXvggH1PMJGSExGISfzbwfrxQ8BlpNgPgGOOIn0S6jW9HNAfVsTmUhlQwO43QKJg
+         HtyOoGD02YrB6XQ5Env+2sSyVERHIHWZDsMCevgGgkEoJcbuPRtPz08X2JpiMnBAB8
+         vTsejq5EFPG41XbhzXUBIu6/8CgrRclBIb/LVteCzLD3knrxULNAT1p++suBhy1KmX
+         vr+UaGqco+jNKt+VSpVc7tkEtAtuqvS7zMQEqE1JUp7kM9gZgtX4e5hstZfcuZHgPz
+         lix7VLIX+thkzBHQNbVeKMG/gHXuvkBmhSeqvykBIbuhyrJgCnFxDivO+A9dcFCgPO
+         3kpcaUjdjp5vg==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id t15so3534441uao.5;
+        Mon, 29 Apr 2019 07:15:07 -0700 (PDT)
+X-Gm-Message-State: APjAAAXBEWQSu8KIR9hfhEGCwI/G819hSRBcGP25/8qPxVzVC1hF1fSx
+        BCSFgNR9XjqZ4r3r/5KzL81SWtW1ZkAcfGaGa20=
+X-Google-Smtp-Source: APXvYqyuORXxFnYlSapovC2R789OHwW19P1u/RHj8aGf3kcskdAsSGrH87fld1K6FivP2MOZ/OnJg++4vlgc4y6kAA4=
+X-Received: by 2002:a9f:2d99:: with SMTP id v25mr12349688uaj.25.1556547306611;
+ Mon, 29 Apr 2019 07:15:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190428134722.GC37346@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190426190430.172543-1-joel@joelfernandes.org>
+ <20190427133844.GA29366@kroah.com> <20190429132602.GA165075@google.com> <20190429135455.GA2412@kroah.com>
+In-Reply-To: <20190429135455.GA2412@kroah.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 29 Apr 2019 23:14:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARkGLQ_P4LSuC69QN8XPN47W5ujkDE3EauLrwnBgygsSA@mail.gmail.com>
+Message-ID: <CAK7LNARkGLQ_P4LSuC69QN8XPN47W5ujkDE3EauLrwnBgygsSA@mail.gmail.com>
+Subject: Re: [PATCH v7 resend 1/2] Provide in-kernel headers to make extending
+ kernel easier
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        atish patra <atishp04@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Shuah Khan <shuah@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-4-28 21:47, Jaegeuk Kim wrote:
-> On 04/26, Chao Yu wrote:
->> When calculating .f_bfree value in f2fs_statfs(), sbi->unusable_block_count
->> can be increased after the judgment condition, result in overflow of
->> .f_bfree in later calculation. This patch fixes to use a temporary signed
->> variable to save the calculation result of .f_bfree.
->>
->> 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
->>  		buf->f_bfree = 0;
->>  	else
->> 		buf->f_bfree -= sbi->unusable_block_count;
-> 
-> Do we just need stat_lock for this?
+On Mon, Apr 29, 2019 at 10:57 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Apr 29, 2019 at 09:26:02AM -0400, Joel Fernandes wrote:
+> > On Sat, Apr 27, 2019 at 03:38:44PM +0200, Greg KH wrote:
+> > > On Fri, Apr 26, 2019 at 03:04:29PM -0400, Joel Fernandes (Google) wrote:
+> > > > Introduce in-kernel headers which are made available as an archive
+> > > > through proc (/proc/kheaders.tar.xz file). This archive makes it
+> > > > possible to run eBPF and other tracing programs that need to extend the
+> > > > kernel for tracing purposes without any dependency on the file system
+> > > > having headers.
+> > > >
+> > > > A github PR is sent for the corresponding BCC patch at:
+> > > > https://github.com/iovisor/bcc/pull/2312
+> > > >
+> > > > On Android and embedded systems, it is common to switch kernels but not
+> > > > have kernel headers available on the file system. Further once a
+> > > > different kernel is booted, any headers stored on the file system will
+> > > > no longer be useful. This is an issue even well known to distros.
+> > > > By storing the headers as a compressed archive within the kernel, we can
+> > > > avoid these issues that have been a hindrance for a long time.
+> > > >
+> > > > The best way to use this feature is by building it in. Several users
+> > > > have a need for this, when they switch debug kernels, they do not want to
+> > > > update the filesystem or worry about it where to store the headers on
+> > > > it. However, the feature is also buildable as a module in case the user
+> > > > desires it not being part of the kernel image. This makes it possible to
+> > > > load and unload the headers from memory on demand. A tracing program can
+> > > > load the module, do its operations, and then unload the module to save
+> > > > kernel memory. The total memory needed is 3.3MB.
+> > > >
+> > > > By having the archive available at a fixed location independent of
+> > > > filesystem dependencies and conventions, all debugging tools can
+> > > > directly refer to the fixed location for the archive, without concerning
+> > > > with where the headers on a typical filesystem which significantly
+> > > > simplifies tooling that needs kernel headers.
+> > > >
+> > > > The code to read the headers is based on /proc/config.gz code and uses
+> > > > the same technique to embed the headers.
+> > > >
+> > > > Other approaches were discussed such as having an in-memory mountable
+> > > > filesystem, but that has drawbacks such as requiring an in-kernel xz
+> > > > decompressor which we don't have today, and requiring usage of 42 MB of
+> > > > kernel memory to host the decompressed headers at anytime. Also this
+> > > > approach is simpler than such approaches.
+> > > >
+> > > > Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > >
+> > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >
+> > Thanks for the Reviewed-by tag. I believe there are still 2 logistical things
+> > to merge this.
+> > 1. Location of the header archive:
+> > Olof and Steve did not like it to be in /proc and instead /sys seemed a better
+> > choice they are Ok with. Me and Greg were Ok with it being in /sys/kernel/.
+> > Alexei, Greg and me are Ok with either proc or Sys.
+>
+> As you say, either is fine with me.
+>
+> > 2. Who is going to pull this patch: This seems a matter of where the header
+> > archive resides. If it is in /sys/kernel/ then I am assuming Greg will pull
+> > it.  Masahiro has given his Reviewed-by tag, is he the one to pull it?
+>
+> I can take it, but it probably should just go through the kbuild tree,
+> as that makes more sense to me.
 
-Like we access other stat value in statfs(), we just need the instantaneous
-value of .unusable_block_count, so we don't need additional stat_lock, right?
 
-Thanks,
+I do not want to take responsibility for this.
 
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 2376bb01b5c4..fcc9793dbc2c 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1216,6 +1216,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>  	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
->>  	block_t total_count, user_block_count, start_count;
->>  	u64 avail_node_count;
->> +	long long bfree;
->>  
->>  	total_count = le64_to_cpu(sbi->raw_super->block_count);
->>  	user_block_count = sbi->user_block_count;
->> @@ -1226,10 +1227,12 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>  	buf->f_blocks = total_count - start_count;
->>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
->>  						sbi->current_reserved_blocks;
->> -	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
->> +
->> +	bfree = buf->f_bfree - sbi->unusable_block_count;
->> +	if (unlikely(bfree < 0))
->>  		buf->f_bfree = 0;
->>  	else
->> -		buf->f_bfree -= sbi->unusable_block_count;
->> +		buf->f_bfree = bfree;
->>  
->>  	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
->>  		buf->f_bavail = buf->f_bfree -
->> -- 
->> 2.18.0.rc1
+
+
+-- 
+Best Regards
+Masahiro Yamada
