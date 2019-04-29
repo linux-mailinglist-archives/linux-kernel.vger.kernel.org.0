@@ -2,78 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28AEFDA33
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BE7DA35
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfD2A15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Apr 2019 20:27:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbfD2A14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Apr 2019 20:27:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 524F081F0F;
-        Mon, 29 Apr 2019 00:27:56 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-22.rdu2.redhat.com [10.10.120.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D91764A3;
-        Mon, 29 Apr 2019 00:27:54 +0000 (UTC)
-Subject: Re: [PATCH-tip v7 00/20] locking/rwsem: Rwsem rearchitecture part 2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>
-References: <20190428212557.13482-1-longman@redhat.com>
- <CAHk-=whU83HbayBmOS-jbK7bQJUp87mvAYxhL=vz5wC_ARQCWA@mail.gmail.com>
- <3f8fd44d-1962-e309-49b5-bb16fd662312@redhat.com>
- <CAHk-=wg_facR6y3gnmtGwBSJYZdHm5rWSPpPhJG6XswW4+mO1Q@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <604c8751-5269-de29-0b7f-b3e93b6df4ca@redhat.com>
-Date:   Sun, 28 Apr 2019 20:27:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726958AbfD2Abg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Apr 2019 20:31:36 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45756 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfD2Abg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Apr 2019 20:31:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e5so7152740otk.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Apr 2019 17:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=fTALuAGwyf3jxf08jgW5eKJkkWu10Vvv8pl3YSIVhmD42VVMmjMmZFOyBar6jYSBZR
+         Dsspcn9PCs7tSHBdkE+ZFVor39mw0i6PKb6/GzMOQh+pqQjT2PkvvMjQA+WWBn2iv5Aq
+         eB2d9oPBKImaad2aq5sxrwTxXSNXjBxvg42ojU3C3FGLEyL2xDehE2LfLDoTJTWACMyS
+         nGOd/SOcFyQkOGyADcBJV/NQczfXQpz0TybeLQfeRBoh3kYPh5tIHxVmOtkqQG8hyKF8
+         qz2A/SlNK3iVgOuGp/QjDW9dHTvRekwosuMkYBD/jqPOQannVPN6gi0vrPI32sJiAo5d
+         wUqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=FoEd9eqgbmJiZ+u0HFkb9zLJrplWCHjulQG3hL+owebkmDRDI6QDL8LSL9bVjb8EOo
+         bOJOUzv1LgU7DpBxUJM/JZNGyqRZ9cBJR29XR3HwfLF3ZeNW7xsdar9PgvljyCZndWy0
+         6tPkN0nhuxi0DYsgVWWtOE57kdGL5ihq7NSCOhMTGMlAEFMM8zr/dmZzsYFQyTYBKe8m
+         iNzrsL3wbkYniLkoE4mcbTVZz1PUyROTmsqlZPojKPOcca8AtsAfi/nqAEOz5Zs+wGIA
+         ExD0YSoHuJRIpab0kL9Zgv9Yk5xt9IlPJ87Pq8BpB1PUCckE7RBFK+ujEaF2Tk2UAAUd
+         1IsA==
+X-Gm-Message-State: APjAAAVQHtkWjhZfTPM3KwZZX15VhRpzKrsgcTuO9dF+KxDegtXtkCd6
+        CxT+MS7fQMQJp7SaTfsE9qgbOjZvZF8cRJdMIdQ=
+X-Google-Smtp-Source: APXvYqxZAN3PtqInmJqcyIq1/yEX6ik6928J5BIFgf7JtdmFK1Hi6MNzE2HvcFva02zvA97L09qZ/HQySdWbiywhFzU=
+X-Received: by 2002:a9d:1:: with SMTP id 1mr37098010ota.276.1556497895698;
+ Sun, 28 Apr 2019 17:31:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wg_facR6y3gnmtGwBSJYZdHm5rWSPpPhJG6XswW4+mO1Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 29 Apr 2019 00:27:56 +0000 (UTC)
+Received: by 2002:a9d:6009:0:0:0:0:0 with HTTP; Sun, 28 Apr 2019 17:31:35
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   AISHA GADDAFI <yakissattajustin@gmail.com>
+Date:   Sun, 28 Apr 2019 17:31:35 -0700
+Message-ID: <CALn3PEwp=XFbr52FGPWJvqT9B+2QwpSbf=h3dq_oJALTKEJ_mQ@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/28/19 8:10 PM, Linus Torvalds wrote:
-> On Sun, Apr 28, 2019 at 4:12 PM Waiman Long <longman@redhat.com> wrote:
->> I implemented your suggestion in patch 1 as it will produce simpler and
->> faster code. However, one of the changes in my patchset is to wake up
->> all the readers in the wait list. This means I have to jump over the
->> writers and wake up the readers behind them as well. See patch 11 for
->> details. As a result, I have to revert back to use list_add_tail() and
->> list_for_each_entry_safe() for the first pass. That is why the diff for
->> the whole patchset is just the below change. It is done on purpose, not
->> an omission.
-> Ahh, ok. In that case I suspect the clever code isn't even worth it,
-> since it very much depends on just splitting the list in a fixed
-> place.
->
->                    Linus
+-- 
+Dear Friend (Assalamu Alaikum),
 
-Not really, this is a serious problem that have to be backported to
-earlier stable releases and downstream. The clever code is helpful in
-those cases.
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
 
-Cheers,
-Longman
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
 
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+ayishagddafio@mail.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: ayishagddafio@mail.com
