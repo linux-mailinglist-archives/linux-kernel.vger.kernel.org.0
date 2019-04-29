@@ -2,145 +2,349 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BB0DF70
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3A2DF81
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfD2J3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 05:29:49 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:20677 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbfD2J3t (ORCPT
+        id S1727764AbfD2JeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 05:34:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37997 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbfD2JeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 05:29:49 -0400
-X-IronPort-AV: E=Sophos;i="5.60,409,1549954800"; 
-   d="scan'208";a="29294462"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Apr 2019 02:29:49 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 29 Apr 2019 02:29:47 -0700
+        Mon, 29 Apr 2019 05:34:17 -0400
+Received: by mail-pg1-f195.google.com with SMTP id j26so4883175pgl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 02:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tEVuP9KcYhF+1FO92ClDjY3GsnC3gpFxTmRya7tRNSo=;
- b=lBwvbIsKjLEqmLVS/leu8Bh54pvP0Z+o3JjYXJu4NS8gjBcSBYHT+uHN24AfRXZWzs5QXP92BkYUiC01nrv23JsT28OFVQdW2yGJ66QIlkdWdTXheDMwxibYSCwBawqp0y7BDqO2Bk05Z898pUaBlyRVc55Ka9RRK4BJuYgeG5c=
-Received: from MN2PR11MB3710.namprd11.prod.outlook.com (20.178.252.215) by
- MN2PR11MB3951.namprd11.prod.outlook.com (10.255.181.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.13; Mon, 29 Apr 2019 09:29:45 +0000
-Received: from MN2PR11MB3710.namprd11.prod.outlook.com
- ([fe80::8dab:655a:59a2:ba40]) by MN2PR11MB3710.namprd11.prod.outlook.com
- ([fe80::8dab:655a:59a2:ba40%4]) with mapi id 15.20.1835.010; Mon, 29 Apr 2019
- 09:29:45 +0000
-From:   <Christian.Gromm@microchip.com>
-To:     <erosca@de.adit-jv.com>
-CC:     <andrey.shvetsov@k2l.de>, <driverdev-devel@linuxdriverproject.org>,
-        <sudipi@jp.adit-jv.com>, <gregkh@linuxfoundation.org>,
-        <roscaeugeniu@gmail.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 16/28] staging: most: sound: call snd_card_new with struct
- device
-Thread-Topic: [PATCH 16/28] staging: most: sound: call snd_card_new with
- struct device
-Thread-Index: AQHU+s7vfSdU24YryUy005lU0b/yhaZS51+A
-Date:   Mon, 29 Apr 2019 09:29:45 +0000
-Message-ID: <1556530363.2904.8.camel@microchip.com>
-References: <20190424185032.GA9019@vmlxhi-102.adit-jv.com>
-In-Reply-To: <20190424185032.GA9019@vmlxhi-102.adit-jv.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Gromm@microchip.com; 
-x-originating-ip: [62.154.213.229]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: aa2838a0-86e6-4d5c-f2ea-08d6cc8537db
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MN2PR11MB3951;
-x-ms-traffictypediagnostic: MN2PR11MB3951:
-x-ms-exchange-purlcount: 3
-x-microsoft-antispam-prvs: <MN2PR11MB39519B533A0EFA43929E0314F8390@MN2PR11MB3951.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1332;
-x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(136003)(346002)(366004)(199004)(189003)(6916009)(73956011)(476003)(11346002)(446003)(316002)(66476007)(186003)(66446008)(66556008)(486006)(64756008)(26005)(6306002)(6512007)(54906003)(91956017)(76116006)(76176011)(6436002)(5640700003)(2351001)(229853002)(2616005)(256004)(14444005)(66946007)(6486002)(68736007)(2501003)(71190400001)(71200400001)(99286004)(8676002)(8936002)(66066001)(5660300002)(3846002)(6116002)(102836004)(97736004)(86362001)(14454004)(81166006)(36756003)(4326008)(103116003)(6246003)(25786009)(966005)(72206003)(53936002)(305945005)(478600001)(2906002)(7736002)(6506007)(81156014)(1730700003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3951;H:MN2PR11MB3710.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +jCrBtLiDFicxc8ekIi2kUYSwgOCkU8Jt3y0ZLmiwa8syOg6Mcg6kxCfvE7tazWSDbjFzmJ/CEE2sDt78uCANRGjeLfjVHa6JkhKRi1L39Azt5JKy04AU0ffHNaAtxbXJwufUxkGcuTYZGx9Jd8hohtVtQdwVEQQp/jv+1nvDW/ejPXlwbZLe4vx8v51+BNN1xiAUe8lrL/TQh8++USckIqHBvUaDT4EjmuZPFOC2eVSvV55kIqPsgPbKEpO0UeoZj2a23Fs0tvMmIs240iK0Xsm5MrDghcC3ZWurKSaUmzQS/QYmHg8DLALzFqhs+RXZtm+xyCXSYWURwcWkq26FBGqO14lOClirrrob799jJPBlaKhvUekBnjn3cJ5gqK7buZA+1cTkS/wTiXEa+iZDJ45PlLmVzz0o9EBJzS2knE=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <46C13D919DB108459E4BAAA6C5C6640C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eYcOsUbRZWz5sU6xzQObts//2dBEC/Tc8+Qe10ZiGxg=;
+        b=jJlcZrSsdE8jooaRlLjJ/JfZqlnxdyxy4mciBwm1jeTY7xmyDvUgAPagdABY4jNoTx
+         FWjnqID97xQdFyFbaR0zk3QLnhOH5FYadf3E9/Ju5ZOl7LRqIrfSC9se5nSy+g4Z+geG
+         Q1y9acZRUlTe6H24FPYcuNy3lOCaWi46drEh5/kEG1xK6wYT3j3ihYsrFJji/P92agT/
+         ZiVMH+al6JM1nxKVJPgamVWeuglZ9zwlwPlcrH/Qb08O70oCaxjecKnryuQpRabarfEN
+         YItKOBbQMG42hS2MR5MXE1JaZWWtdSYTHpC4ynN8Y6pGHTpw6yEZeB6rLlvw5pYtQ4RX
+         +Ziw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eYcOsUbRZWz5sU6xzQObts//2dBEC/Tc8+Qe10ZiGxg=;
+        b=Xs+0o/jiifHfmVnq0ws9fLcbJt8xYdn2uUawlmbVZu03NuLFcQu78XPDsbCuHgEU3x
+         AA4hhzpiDft+ei7kd6V39Yq9HEsdDQZtFxuHI7S69dwv61U+8nKkVwnAVyqqAWxJAyr0
+         9JHYYvrpK/aUMuWYs+zLb/6obzPrFlCRmTmD++WNE+EAIJ7m1D5RItxrIboIATmDbo4n
+         DnA2+qhFtUqrfGaOQatgDnRlUjNbG5GsJOWykSADFgQjtxtWQin1b+KMaehv2Qg5A8sQ
+         dsdmvgYOObp940ssbnG9d202luFpWnZ1MNHrkw9PD6zaFTHEiEvoYLfjE/R3wuWeBFj0
+         ntog==
+X-Gm-Message-State: APjAAAW9yI225XdQkBcQqf22mPEXxl8ZKHcCIBhl7mWrHcIFpCuHNa1M
+        UBHGhpx3T/5VomD5skNIhz1Q9Q==
+X-Google-Smtp-Source: APXvYqyD3WCuJozq9AqakZ0AUbiQXkuiz/l0D3xvwzCX2klWQf9+r0U5X+5dhjoYjlIdFbPE5qgQxw==
+X-Received: by 2002:a62:d286:: with SMTP id c128mr4877178pfg.159.1556530455708;
+        Mon, 29 Apr 2019 02:34:15 -0700 (PDT)
+Received: from localhost ([122.166.139.136])
+        by smtp.gmail.com with ESMTPSA id f71sm65787930pfc.109.2019.04.29.02.34.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 02:34:14 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH V4] cpufreq: Call transition notifier only once for each policy
+Date:   Mon, 29 Apr 2019 15:03:58 +0530
+Message-Id: <dffefa5bee3d0a751dcf2d12c1d4cd6f166c23af.1556529864.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa2838a0-86e6-4d5c-f2ea-08d6cc8537db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 09:29:45.7780
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3951
-X-OriginatorOrg: microchip.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTWksIDIwMTktMDQtMjQgYXQgMjA6NTAgKzAyMDAsIEV1Z2VuaXUgUm9zY2Egd3JvdGU6DQo+
-IEV4dGVybmFsIEUtTWFpbA0KPiANCj4gDQo+IEhpIENocmlzdGlhbiwNCj4gDQo+IE9uIFR1ZSwg
-MDggTWF5IDIwMTggMDI6NDY6NDQgLTA3MDAsIENocmlzdGlhbiBHcm9tbSB3cm90ZToNCj4gPiAN
-Cj4gPiDCoMKgwqDCoFRoaXMgcGF0Y2ggaXMgbmVlZGVkIGFzIGZ1bmN0aW9uIHNuZF9jYXJkX25l
-dyBuZWVkcyBhIHZhbGlkDQo+ID4gwqDCoMKgwqBwYXJlbnQgZGV2aWNlLiBQYXNzaW5nIGEgTlVM
-TCBwb2ludGVyIGxlYWRzIHRvIGtlcm5lbCBPb29wcy4NCj4gPiDCoMKgwqDCoA0KPiA+IMKgwqDC
-oMKgU2lnbmVkLW9mZi1ieTogQ2hyaXN0aWFuIEdyb21tIDxjaHJpc3RpYW4uZ3JvbW1AbWljcm9j
-aGlwLmNvbT4NCj4gPiAtLS0NCj4gPiDCoGRyaXZlcnMvc3RhZ2luZy9tb3N0L2NvcmUuaMKgwqDC
-oMKgwqDCoMKgwqB8IDEgKw0KPiA+IMKgZHJpdmVycy9zdGFnaW5nL21vc3Qvc291bmQvc291bmQu
-YyB8IDIgKy0NCj4gPiDCoGRyaXZlcnMvc3RhZ2luZy9tb3N0L3VzYi91c2IuY8KgwqDCoMKgwqB8
-IDEgKw0KPiA+IMKgMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24o
-LSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL21vc3QvY29yZS5oDQo+
-ID4gYi9kcml2ZXJzL3N0YWdpbmcvbW9zdC9jb3JlLmgNCj4gPiBpbmRleCA3YTNjNzBiZWFkMTku
-LjY0Y2MwMmYxNjFlNyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbW9zdC9jb3Jl
-LmgNCj4gPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbW9zdC9jb3JlLmgNCj4gPiBAQCAtMjMwLDYg
-KzIzMCw3IEBAIHN0cnVjdCBtYm8gew0KPiA+IMKgICovDQo+ID4gwqBzdHJ1Y3QgbW9zdF9pbnRl
-cmZhY2Ugew0KPiA+IMKgCXN0cnVjdCBkZXZpY2UgZGV2Ow0KPiA+ICsJc3RydWN0IGRldmljZSAq
-ZHJpdmVyX2RldjsNCj4gPiDCoAlzdHJ1Y3QgbW9kdWxlICptb2Q7DQo+ID4gwqAJZW51bSBtb3N0
-X2ludGVyZmFjZV90eXBlIGludGVyZmFjZTsNCj4gPiDCoAljb25zdCBjaGFyICpkZXNjcmlwdGlv
-bjsNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL21vc3Qvc291bmQvc291bmQuYw0K
-PiA+IGIvZHJpdmVycy9zdGFnaW5nL21vc3Qvc291bmQvc291bmQuYw0KPiA+IGluZGV4IDE4Zjcy
-MjQxMGE2My4uMDRjMTgzMjNjMmVhIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9t
-b3N0L3NvdW5kL3NvdW5kLmMNCj4gPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbW9zdC9zb3VuZC9z
-b3VuZC5jDQo+ID4gQEAgLTU5MCw3ICs1OTAsNyBAQCBzdGF0aWMgaW50IGF1ZGlvX3Byb2JlX2No
-YW5uZWwoc3RydWN0DQo+ID4gbW9zdF9pbnRlcmZhY2UgKmlmYWNlLCBpbnQgY2hhbm5lbF9pZCwN
-Cj4gPiDCoAlpZiAocmV0IDwgMCkNCj4gPiDCoAkJcmV0dXJuIHJldDsNCj4gPiDCoA0KPiA+IC0J
-cmV0ID0gc25kX2NhcmRfbmV3KE5VTEwsIC0xLCBjYXJkX25hbWUsIFRISVNfTU9EVUxFLA0KPiA+
-ICsJcmV0ID0gc25kX2NhcmRfbmV3KCZpZmFjZS0+ZGV2LCAtMSwgY2FyZF9uYW1lLA0KPiA+IFRI
-SVNfTU9EVUxFLA0KPiA+IMKgCQkJwqDCoMKgc2l6ZW9mKCpjaGFubmVsKSwgJmNhcmQpOw0KPiA+
-IMKgCWlmIChyZXQgPCAwKQ0KPiA+IMKgCQlyZXR1cm4gcmV0Ow0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3N0YWdpbmcvbW9zdC91c2IvdXNiLmMNCj4gPiBiL2RyaXZlcnMvc3RhZ2luZy9tb3N0
-L3VzYi91c2IuYw0KPiA+IGluZGV4IDVlZDFkY2NjMDgzOS4uZjE4NzI2MDQ5NTI4IDEwMDY0NA0K
-PiA+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9tb3N0L3VzYi91c2IuYw0KPiA+ICsrKyBiL2RyaXZl
-cnMvc3RhZ2luZy9tb3N0L3VzYi91c2IuYw0KPiA+IEBAIC0xMDQzLDYgKzEwNDMsNyBAQCBoZG1f
-cHJvYmUoc3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGVyZmFjZSwNCj4gPiBjb25zdCBzdHJ1Y3Qg
-dXNiX2RldmljZV9pZCAqaWQpDQo+ID4gwqAJbWRldi0+bGlua19zdGF0X3RpbWVyLmV4cGlyZXMg
-PSBqaWZmaWVzICsgKDIgKiBIWik7DQo+ID4gwqANCj4gPiDCoAltZGV2LT5pZmFjZS5tb2QgPSBo
-ZG1fdXNiX2ZvcHMub3duZXI7DQo+ID4gKwltZGV2LT5pZmFjZS5kcml2ZXJfZGV2ID0gJmludGVy
-ZmFjZS0+ZGV2Ow0KPiA+IMKgCW1kZXYtPmlmYWNlLmludGVyZmFjZSA9IElUWVBFX1VTQjsNCj4g
-PiDCoAltZGV2LT5pZmFjZS5jb25maWd1cmUgPSBoZG1fY29uZmlndXJlX2NoYW5uZWw7DQo+ID4g
-wqAJbWRldi0+aWZhY2UucmVxdWVzdF9uZXRpbmZvID0gaGRtX3JlcXVlc3RfbmV0aW5mbzsNCj4g
-SnVzdCBmb3IgeW91ciBpbmZvcm1hdGlvbiwgd2hlbiBtYXBwaW5nIGNvbW1pdHMgZnJvbSB2YW5p
-bGxhIHRvIHRob3NlDQo+IGZyb20gaHR0cHM6Ly9naXRodWIuY29tL21pY3JvY2hpcC1haXMvbGlu
-dXgvY29tbWl0cy9tbGQtMS44LjAsIHdlJ3ZlDQo+IHN0dW1ibGVkIHVwb24gc29tZSBzdWJ0bGUg
-YnV0IHN0cmlraW5nIGRpZmZlcmVuY2UgYmV0d2VlbiBtbGQtMS44LjANCj4gY29tbWl0IFswXSBh
-bmQgdjQuMTgtcmMxIGNvbW1pdCBbMV0uIFRoZSBsYXR0ZXIgbG9va3MgbGlrZSBhbg0KPiB1cHN0
-cmVhbWVkDQo+IHZlcnNpb24gb2YgdGhlIGZvcm1lci4gSG93ZXZlciwgd2hpbGUgY29tbWl0IFsw
-XSBjcmVhdGVzIGEgbmV3ICdkZXYnDQo+IG1lbWJlciBpbiAnc3RydWN0IG1vc3RfaW50ZXJmYWNl
-JyBhbmQgdXNlcyBpdCBjb25zaXN0ZW50bHksIGNvbW1pdA0KPiBbMV0NCj4gY3JlYXRlcyAnZHJp
-dmVyX2RldicgYW5kIHVzZXMgaXQgaW50ZXJtaXhlZCB3aXRoICdkZXYnLg0KDQpUaGlzIGxvb2tz
-IHNvcnQgb2Ygc3VzcGljaW91cy4gSSdsbCBjaGVjayBpdC4NCg0KVGhhbmtzIGZvciBsZXR0aW5n
-IG1lIGtub3cuDQoNClJlZ2FyZHMsDQpDaHJpcw0KDQo+IA0KPiBTaW5jZSB3ZSBkb24ndCB1c2Ug
-YWltLXNvdW5kLCB3ZSBqdXN0IHNpZ25hbCB0aGlzIGZlZWRiYWNrIHRvIHlvdQ0KPiBhcyBGV0lX
-IHdpdGhvdXQgc2VuZGluZyBhIHBhdGNoICh3aGljaCB3ZSBjYW4ndCB0ZXN0KS4NCj4gDQo+IFsw
-XSBodHRwczovL2dpdGh1Yi5jb20vbWljcm9jaGlwLWFpcy9saW51eC9jb21taXQvMmZlZjBmODlm
-MDQ3MDMNCj4gwqDCoMKgwqAoInN0YWdpbmc6IG1vc3Q6IGFkZCBzdHJ1Y3QgZGV2aWNlIHRvIG1v
-c3QgaW50ZXJmYWNlIikNCj4gWzFdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
-eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpDQo+IHQvY29tbWl0Lz9pZD02OWM5MGNmMWIy
-ZmFmNQ0KPiDCoMKgwqDCoCgic3RhZ2luZzogbW9zdDogc291bmQ6IGNhbGwgc25kX2NhcmRfbmV3
-IHdpdGggc3RydWN0IGRldmljZSIpDQo+IA==
+Currently the notifiers are called once for each CPU of the policy->cpus
+cpumask. It would be more optimal if the notifier can be called only
+once and all the relevant information be provided to it. Out of the 23
+drivers that register for the transition notifiers today, only 4 of them
+do per-cpu updates and the callback for the rest can be called only once
+for the policy without any impact.
+
+This would also avoid multiple function calls to the notifier callbacks
+and reduce multiple iterations of notifier core's code (which does
+locking as well).
+
+This patch adds pointer to the cpufreq policy to the struct
+cpufreq_freqs, so the notifier callback has all the information
+available to it with a single call. The five drivers which perform
+per-cpu updates are updated to use the cpufreq policy. The freqs->cpu
+field is redundant now and is removed.
+
+Acked-by: David S. Miller <davem@davemloft.net> (sparc)
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+V3->V4:
+- rebased over pm/linux-next
+- tsc.c's diff has changed due to rafael's patch present in
+  pm/linux-next.
+- Minor update in commit-log.
+
+ arch/arm/kernel/smp.c       | 24 +++++++++++++++---------
+ arch/sparc/kernel/time_64.c | 28 ++++++++++++++++------------
+ arch/x86/kernel/tsc.c       |  2 +-
+ arch/x86/kvm/x86.c          | 31 ++++++++++++++++++++-----------
+ drivers/cpufreq/cpufreq.c   | 19 ++++++++++---------
+ include/linux/cpufreq.h     | 14 +++++++-------
+ 6 files changed, 69 insertions(+), 49 deletions(-)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index facd4240ca02..c6d37563610a 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -754,15 +754,20 @@ static int cpufreq_callback(struct notifier_block *nb,
+ 					unsigned long val, void *data)
+ {
+ 	struct cpufreq_freqs *freq = data;
+-	int cpu = freq->cpu;
++	struct cpumask *cpus = freq->policy->cpus;
++	int cpu, first = cpumask_first(cpus);
++	unsigned int lpj;
+ 
+ 	if (freq->flags & CPUFREQ_CONST_LOOPS)
+ 		return NOTIFY_OK;
+ 
+-	if (!per_cpu(l_p_j_ref, cpu)) {
+-		per_cpu(l_p_j_ref, cpu) =
+-			per_cpu(cpu_data, cpu).loops_per_jiffy;
+-		per_cpu(l_p_j_ref_freq, cpu) = freq->old;
++	if (!per_cpu(l_p_j_ref, first)) {
++		for_each_cpu(cpu, cpus) {
++			per_cpu(l_p_j_ref, cpu) =
++				per_cpu(cpu_data, cpu).loops_per_jiffy;
++			per_cpu(l_p_j_ref_freq, cpu) = freq->old;
++		}
++
+ 		if (!global_l_p_j_ref) {
+ 			global_l_p_j_ref = loops_per_jiffy;
+ 			global_l_p_j_ref_freq = freq->old;
+@@ -774,10 +779,11 @@ static int cpufreq_callback(struct notifier_block *nb,
+ 		loops_per_jiffy = cpufreq_scale(global_l_p_j_ref,
+ 						global_l_p_j_ref_freq,
+ 						freq->new);
+-		per_cpu(cpu_data, cpu).loops_per_jiffy =
+-			cpufreq_scale(per_cpu(l_p_j_ref, cpu),
+-					per_cpu(l_p_j_ref_freq, cpu),
+-					freq->new);
++
++		lpj = cpufreq_scale(per_cpu(l_p_j_ref, first),
++				    per_cpu(l_p_j_ref_freq, first), freq->new);
++		for_each_cpu(cpu, cpus)
++			per_cpu(cpu_data, cpu).loops_per_jiffy = lpj;
+ 	}
+ 	return NOTIFY_OK;
+ }
+diff --git a/arch/sparc/kernel/time_64.c b/arch/sparc/kernel/time_64.c
+index 3eb77943ce12..89fb05f90609 100644
+--- a/arch/sparc/kernel/time_64.c
++++ b/arch/sparc/kernel/time_64.c
+@@ -653,19 +653,23 @@ static int sparc64_cpufreq_notifier(struct notifier_block *nb, unsigned long val
+ 				    void *data)
+ {
+ 	struct cpufreq_freqs *freq = data;
+-	unsigned int cpu = freq->cpu;
+-	struct freq_table *ft = &per_cpu(sparc64_freq_table, cpu);
++	unsigned int cpu;
++	struct freq_table *ft;
+ 
+-	if (!ft->ref_freq) {
+-		ft->ref_freq = freq->old;
+-		ft->clock_tick_ref = cpu_data(cpu).clock_tick;
+-	}
+-	if ((val == CPUFREQ_PRECHANGE  && freq->old < freq->new) ||
+-	    (val == CPUFREQ_POSTCHANGE && freq->old > freq->new)) {
+-		cpu_data(cpu).clock_tick =
+-			cpufreq_scale(ft->clock_tick_ref,
+-				      ft->ref_freq,
+-				      freq->new);
++	for_each_cpu(cpu, freq->policy->cpus) {
++		ft = &per_cpu(sparc64_freq_table, cpu);
++
++		if (!ft->ref_freq) {
++			ft->ref_freq = freq->old;
++			ft->clock_tick_ref = cpu_data(cpu).clock_tick;
++		}
++
++		if ((val == CPUFREQ_PRECHANGE  && freq->old < freq->new) ||
++		    (val == CPUFREQ_POSTCHANGE && freq->old > freq->new)) {
++			cpu_data(cpu).clock_tick =
++				cpufreq_scale(ft->clock_tick_ref, ft->ref_freq,
++					      freq->new);
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index cc6df5c6d7b3..650fafa6a4d0 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -976,7 +976,7 @@ static int time_cpufreq_notifier(struct notifier_block *nb, unsigned long val,
+ 		if (!(freq->flags & CPUFREQ_CONST_LOOPS))
+ 			mark_tsc_unstable("cpufreq changes");
+ 
+-		set_cyc2ns_scale(tsc_khz, freq->cpu, rdtsc());
++		set_cyc2ns_scale(tsc_khz, freq->policy->cpu, rdtsc());
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a0d1fc80ac5a..55efbc1b0a56 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6677,10 +6677,8 @@ static void kvm_hyperv_tsc_notifier(void)
+ }
+ #endif
+ 
+-static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long val,
+-				     void *data)
++static void __kvmclock_cpufreq_notifier(struct cpufreq_freqs *freq, int cpu)
+ {
+-	struct cpufreq_freqs *freq = data;
+ 	struct kvm *kvm;
+ 	struct kvm_vcpu *vcpu;
+ 	int i, send_ipi = 0;
+@@ -6724,17 +6722,12 @@ static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long va
+ 	 *
+ 	 */
+ 
+-	if (val == CPUFREQ_PRECHANGE && freq->old > freq->new)
+-		return 0;
+-	if (val == CPUFREQ_POSTCHANGE && freq->old < freq->new)
+-		return 0;
+-
+-	smp_call_function_single(freq->cpu, tsc_khz_changed, freq, 1);
++	smp_call_function_single(cpu, tsc_khz_changed, freq, 1);
+ 
+ 	spin_lock(&kvm_lock);
+ 	list_for_each_entry(kvm, &vm_list, vm_list) {
+ 		kvm_for_each_vcpu(i, vcpu, kvm) {
+-			if (vcpu->cpu != freq->cpu)
++			if (vcpu->cpu != cpu)
+ 				continue;
+ 			kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
+ 			if (vcpu->cpu != smp_processor_id())
+@@ -6756,8 +6749,24 @@ static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long va
+ 		 * guest context is entered kvmclock will be updated,
+ 		 * so the guest will not see stale values.
+ 		 */
+-		smp_call_function_single(freq->cpu, tsc_khz_changed, freq, 1);
++		smp_call_function_single(cpu, tsc_khz_changed, freq, 1);
+ 	}
++}
++
++static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long val,
++				     void *data)
++{
++	struct cpufreq_freqs *freq = data;
++	int cpu;
++
++	if (val == CPUFREQ_PRECHANGE && freq->old > freq->new)
++		return 0;
++	if (val == CPUFREQ_POSTCHANGE && freq->old < freq->new)
++		return 0;
++
++	for_each_cpu(cpu, freq->policy->cpus)
++		__kvmclock_cpufreq_notifier(freq, cpu);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 92604afdeec4..3681ec8d19f2 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -340,11 +340,14 @@ static void cpufreq_notify_transition(struct cpufreq_policy *policy,
+ 				      struct cpufreq_freqs *freqs,
+ 				      unsigned int state)
+ {
++	int cpu;
++
+ 	BUG_ON(irqs_disabled());
+ 
+ 	if (cpufreq_disabled())
+ 		return;
+ 
++	freqs->policy = policy;
+ 	freqs->flags = cpufreq_driver->flags;
+ 	pr_debug("notification %u of frequency transition to %u kHz\n",
+ 		 state, freqs->new);
+@@ -364,10 +367,8 @@ static void cpufreq_notify_transition(struct cpufreq_policy *policy,
+ 			}
+ 		}
+ 
+-		for_each_cpu(freqs->cpu, policy->cpus) {
+-			srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
+-						 CPUFREQ_PRECHANGE, freqs);
+-		}
++		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
++					 CPUFREQ_PRECHANGE, freqs);
+ 
+ 		adjust_jiffies(CPUFREQ_PRECHANGE, freqs);
+ 		break;
+@@ -377,11 +378,11 @@ static void cpufreq_notify_transition(struct cpufreq_policy *policy,
+ 		pr_debug("FREQ: %u - CPUs: %*pbl\n", freqs->new,
+ 			 cpumask_pr_args(policy->cpus));
+ 
+-		for_each_cpu(freqs->cpu, policy->cpus) {
+-			trace_cpu_frequency(freqs->new, freqs->cpu);
+-			srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
+-						 CPUFREQ_POSTCHANGE, freqs);
+-		}
++		for_each_cpu(cpu, policy->cpus)
++			trace_cpu_frequency(freqs->new, cpu);
++
++		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
++					 CPUFREQ_POSTCHANGE, freqs);
+ 
+ 		cpufreq_stats_record_transition(policy, freqs->new);
+ 		policy->cur = freqs->new;
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 684caf067003..d01a74fbc4db 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -42,13 +42,6 @@ enum cpufreq_table_sorting {
+ 	CPUFREQ_TABLE_SORTED_DESCENDING
+ };
+ 
+-struct cpufreq_freqs {
+-	unsigned int cpu;	/* cpu nr */
+-	unsigned int old;
+-	unsigned int new;
+-	u8 flags;		/* flags of cpufreq_driver, see below. */
+-};
+-
+ struct cpufreq_cpuinfo {
+ 	unsigned int		max_freq;
+ 	unsigned int		min_freq;
+@@ -156,6 +149,13 @@ struct cpufreq_policy {
+ 	struct thermal_cooling_device *cdev;
+ };
+ 
++struct cpufreq_freqs {
++	struct cpufreq_policy *policy;
++	unsigned int old;
++	unsigned int new;
++	u8 flags;		/* flags of cpufreq_driver, see below. */
++};
++
+ /* Only for ACPI */
+ #define CPUFREQ_SHARED_TYPE_NONE (0) /* None */
+ #define CPUFREQ_SHARED_TYPE_HW	 (1) /* HW does needed coordination */
+-- 
+2.21.0.rc0.269.g1a574e7a288b
+
