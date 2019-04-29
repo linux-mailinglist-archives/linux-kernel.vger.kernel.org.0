@@ -2,103 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA9AE699
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84590E6A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfD2Pe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:34:59 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22625 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728311AbfD2Pe7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:34:59 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-62-DYiISddmOvuraxlBQcgNxw-1; Mon, 29 Apr 2019 16:34:56 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
- 29 Apr 2019 16:34:55 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 29 Apr 2019 16:34:55 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Gustavo A. R. Silva'" <gustavo@embeddedor.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: RE: [PATCH] usbip: vhci_hcd: Mark expected switch fall-through
-Thread-Topic: [PATCH] usbip: vhci_hcd: Mark expected switch fall-through
-Thread-Index: AQHU/plu2318l/GBi0OLId5OVcMGj6ZTNpSw///1h4CAABKa0A==
-Date:   Mon, 29 Apr 2019 15:34:55 +0000
-Message-ID: <c3b730fde3ab44d1b339187518077bcf@AcuMS.aculab.com>
-References: <20190429143957.GA6725@embeddedor>
- <1daec8c8929e4d18b2059ab1dfbfdf4a@AcuMS.aculab.com>
- <287c8504-eafa-ebbb-aa39-babb86fdeb94@embeddedor.com>
-In-Reply-To: <287c8504-eafa-ebbb-aa39-babb86fdeb94@embeddedor.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1728696AbfD2Pf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:35:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:39727 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728501AbfD2Pf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:35:57 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44t7z96kGcz9vD31;
+        Mon, 29 Apr 2019 17:35:49 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Q5o3w0VV; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kbO7e4z3Oado; Mon, 29 Apr 2019 17:35:49 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44t7z95Zr4z9vD30;
+        Mon, 29 Apr 2019 17:35:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556552149; bh=XXe83/pZb9AFMZAVXoUoxnryoMR8eaO+qKHpnqnFOB8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Q5o3w0VVtDkuaQJ720CrXVg1D1EEff1tyfslomh/gdc4+yk1/Dkug0ZmjOpliak9E
+         SNq24Cb/75QU4Vbo8GkPeMa5ZqrlcCuuxHVxWzptG/UbSIeVfGgHzF9GoK962b/vuv
+         2GQOk16RVxWf7DSmpu538h1my8dNOApiD0oga2ow=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EDA2C8B8B4;
+        Mon, 29 Apr 2019 17:35:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id P3bLUxeO-Wfq; Mon, 29 Apr 2019 17:35:54 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.6])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AEE718B8B3;
+        Mon, 29 Apr 2019 17:35:54 +0200 (CEST)
+Subject: Re: [RESEND PATCH v3 09/11] powerpc/mm/radix: mark
+ __radix__flush_tlb_range_psize() as __always_inline
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Cc:     linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mathieu Malaterre <malat@debian.org>
+References: <20190423034959.13525-1-yamada.masahiro@socionext.com>
+ <20190423034959.13525-10-yamada.masahiro@socionext.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <40b48947-b80e-7971-376d-52b594e26d17@c-s.fr>
+Date:   Mon, 29 Apr 2019 17:35:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-MC-Unique: DYiISddmOvuraxlBQcgNxw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20190423034959.13525-10-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBBLiBSLiBTaWx2YQ0KPiBTZW50OiAyOSBBcHJpbCAyMDE5IDE2OjA2DQo+
-IE9uIDQvMjkvMTkgOTo0NCBBTSwgRGF2aWQgTGFpZ2h0IHdyb3RlOg0KPiA+IEZyb206IEd1c3Rh
-dm8gQS4gUi4gU2lsdmENCj4gPj4gU2VudDogMjkgQXByaWwgMjAxOSAxNTo0MA0KPiA+PiBJbiBw
-cmVwYXJhdGlvbiB0byBlbmFibGluZyAtV2ltcGxpY2l0LWZhbGx0aHJvdWdoLCBtYXJrIHN3aXRj
-aA0KPiA+PiBjYXNlcyB3aGVyZSB3ZSBhcmUgZXhwZWN0aW5nIHRvIGZhbGwgdGhyb3VnaC4NCj4g
-PiAuLi4NCj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL3VzYmlwL3ZoY2lfaGNkLmMgYi9k
-cml2ZXJzL3VzYi91c2JpcC92aGNpX2hjZC5jDQo+ID4+IGluZGV4IDY2N2Q5YzBlYzkwNS4uMDAw
-YWI3MjI1NzE3IDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2ZXJzL3VzYi91c2JpcC92aGNpX2hjZC5j
-DQo+ID4+ICsrKyBiL2RyaXZlcnMvdXNiL3VzYmlwL3ZoY2lfaGNkLmMNCj4gPj4gQEAgLTUwOCw2
-ICs1MDgsNyBAQCBzdGF0aWMgaW50IHZoY2lfaHViX2NvbnRyb2woc3RydWN0IHVzYl9oY2QgKmhj
-ZCwgdTE2IHR5cGVSZXEsIHUxNiB3VmFsdWUsDQo+ID4+ICAJCWNhc2UgVVNCX1BPUlRfRkVBVF9V
-MV9USU1FT1VUOg0KPiA+PiAgCQkJdXNiaXBfZGJnX3ZoY2lfcmgoDQo+ID4+ICAJCQkJIiBTZXRQ
-b3J0RmVhdHVyZTogVVNCX1BPUlRfRkVBVF9VMV9USU1FT1VUXG4iKTsNCj4gPj4gKwkJCS8qIEZh
-bGwgdGhyb3VnaCAqLw0KPiA+PiAgCQljYXNlIFVTQl9QT1JUX0ZFQVRfVTJfVElNRU9VVDoNCj4g
-Pj4gIAkJCXVzYmlwX2RiZ192aGNpX3JoKA0KPiA+PiAgCQkJCSIgU2V0UG9ydEZlYXR1cmU6IFVT
-Ql9QT1JUX0ZFQVRfVTJfVElNRU9VVFxuIik7DQo+ID4NCj4gPiBUaGF0IGRvZXNuJ3QgbG9vayBy
-aWdodCwgYm90aCBkZWJ1ZyBtZXNzYWdlcyBzZWVtIHRvIGdldCBwcmludGVkLg0KPiA+DQo+IA0K
-PiBBdCBmaXJzdCBzaWdodCwgSSB0aG91Z2h0IHRoZSBzYW1lIHdheSwgdGhlbiBJIHRvb2sgYSBs
-b29rIGludG8NCj4gY29tbWl0Og0KPiANCj4gMWM5ZGU1YmY0Mjg2MTI0NTg0Mjc5NDNiNzI0YmVh
-NTFhYmRlNTIwYQ0KPiANCj4gYW5kIG5vdGljZWQgdGhhdCB0aGUgb3JpZ2luYWwgZGV2ZWxvcGVy
-IHByb3Blcmx5IGFkZGVkIGZhbGwtdGhyb3VnaA0KPiBjb21tZW50cyBpbiBvdGhlciBwbGFjZXMg
-aW4gdGhlIHNhbWUgc3dpdGNoKCkgY29kZSwgdGhhdCBnYXZlIG1lIHRoZQ0KPiBpbXByZXNzaW9u
-IGhlIGtuZXcgd2hhdCBoZSB3YXMgZG9pbmc7IHRoZW4gSSBub3RpY2VkIHRoZSBmb2xsb3dpbmcN
-Cj4gZXJyb3IgbWVzc2FnZSBpbiBjYXNlIFVTQl9QT1JUX0ZFQVRfVTJfVElNRU9VVDoNCj4gDQo+
-IAlpZiAoaGNkLT5zcGVlZCAhPSBIQ0RfVVNCMykgew0KPiAJCXByX2VycigiVVNCX1BPUlRfRkVB
-VF9VMS8yX1RJTUVPVVQgcmVxIG5vdCAiDQo+IAkJICAgICAgICJzdXBwb3J0ZWQgZm9yIFVTQiAy
-LjAgcm9vdGh1YlxuIik7DQo+IAkJZ290byBlcnJvcjsNCj4gCX0NCj4gDQo+IHRoaXMgZXJyb3Ig
-bWVzc2FnZSBpcyB3aGF0IG1ha2VzIG1lIHRoaW5rIHRoZSBmYWxsLXRocm91Z2ggaXMNCj4gaW50
-ZW50aW9uYWw7IG90aGVyd2lzZSBJIHRoaW5rIGl0IHdvdWxkIGxvb2sgbGlrZSB0aGlzIGluc3Rl
-YWQ6DQo+IA0KPiAJaWYgKGhjZC0+c3BlZWQgIT0gSENEX1VTQjMpIHsNCj4gCQlwcl9lcnIoIlVT
-Ql9QT1JUX0ZFQVRfVTJfVElNRU9VVCByZXEgbm90ICINCj4gCQkgICAgICAgInN1cHBvcnRlZCBm
-b3IgVVNCIDIuMCByb290aHViXG4iKTsNCj4gCQlnb3RvIGVycm9yOw0KPiAJfQ0KDQpHb2QsIHRo
-YXQgY29kZSBpcyB0cnVseSB1Z2x5IDotKA0KDQpJdCBzdGFydHMgb2ZmIGJhZCB3aXRoIGFsbCB0
-aG9zZSAndTE2JyBwYXJhbWV0ZXJzIC0gdGhleSdsbCByZXF1aXJlIGENCm1hc2sgb3BlcmF0aW9u
-IHNvbWV3aGVyZS4NCg0KVGhlbiB3ZSBoYXZlIHRoZSBjbGFzc2ljOg0KCXdJbmRleCA9ICgoX191
-OCkod0luZGV4ICYgMHhmZikpOw0KU29tZSBjb21waWxlcnMgaGF2ZSBiZWVuIGtub3duIHRvIGFu
-ZCB3aXRoIDB4ZmYgdHdpY2UgZm9yIGNvZGUgbGlrZSB0aGF0Lg0KU2luY2UgdGhlIHRhcmdldCBp
-cyB1MTYgdGhlcmUgY291bGQgYmUgYSAzcmQgbWFzayB3aXRoIDB4ZmZmZiBvbiBub24teDg2Lg0K
-DQpJIGxpa2UgdG8gcHV0IGEgYmxhbmsgbGluZSBiZWZvcmUgJ2Nhc2UnIGxpbmVzIC0gdGhlIG9u
-bHkgb25lcyBpbiB0aGF0DQpmdW5jdGlvbiBhcmUgaW4gdGhlIG1pZGRsZSBvZiBuZXN0ZWQgY2Fz
-ZSBibG9ja3MhDQoNCklmIHlvdSBoYXZlIHRvIHJlbHkgb24gdGhlIHVzYmlwX2RiZ192aGNpX3Jo
-KCkgZGVidWcgbGluZXMgeW91J2xsDQp3aXNoIHRoZXkgY29udGFpbmVkIG1vcmUgY29udGV4dCEN
-CnZoY2lfaHViX2NvbnRyb2woKSBoYXMgb25lIGVhcmx5IG9uOyB0aGUgcmVzdCBjb3VsZCBiZSBr
-aWxsZWQgLQ0KdGhleSBjb250YWluIG5vIG1vcmUgaW5mb3JtYXRpb24uDQoNCglEYXZpZA0KDQot
-DQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwg
-TWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2Fs
-ZXMpDQo=
 
+
+Le 23/04/2019 à 05:49, Masahiro Yamada a écrit :
+> This prepares to move CONFIG_OPTIMIZE_INLINING from x86 to a common
+> place. We need to eliminate potential issues beforehand.
+
+How did you identify the functions requiring __always_inline as this one 
+? Just by 'test and see if it fails', or did you have some script or so ?
+
+Here the problem is that one of the parameters of the function are used 
+as "immediate" constraint for the inline assembly, therefore requiring 
+the function to always be inline.
+
+I guess this should be explained in the commit log and I'm wondering how 
+you ensure that you did identify all functions like this.
+
+Christophe
+
+> 
+> If it is enabled for powerpc, the following error is reported:
+> 
+> arch/powerpc/mm/tlb-radix.c: In function '__radix__flush_tlb_range_psize':
+> arch/powerpc/mm/tlb-radix.c:104:2: error: asm operand 3 probably doesn't match constraints [-Werror]
+>    asm volatile(PPC_TLBIEL(%0, %4, %3, %2, %1)
+>    ^~~
+> arch/powerpc/mm/tlb-radix.c:104:2: error: impossible constraint in 'asm'
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v3: None
+> Changes in v2:
+>    - split into a separate patch
+> 
+>   arch/powerpc/mm/tlb-radix.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/mm/tlb-radix.c b/arch/powerpc/mm/tlb-radix.c
+> index 6a23b9ebd2a1..a2b2848f0ae3 100644
+> --- a/arch/powerpc/mm/tlb-radix.c
+> +++ b/arch/powerpc/mm/tlb-radix.c
+> @@ -928,7 +928,7 @@ void radix__tlb_flush(struct mmu_gather *tlb)
+>   	tlb->need_flush_all = 0;
+>   }
+>   
+> -static inline void __radix__flush_tlb_range_psize(struct mm_struct *mm,
+> +static __always_inline void __radix__flush_tlb_range_psize(struct mm_struct *mm,
+>   				unsigned long start, unsigned long end,
+>   				int psize, bool also_pwc)
+>   {
+> 
