@@ -2,274 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3652AE633
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C974E69B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbfD2PXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:23:50 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:43203 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728253AbfD2PXt (ORCPT
+        id S1728635AbfD2PfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:35:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43267 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728555AbfD2PfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:23:49 -0400
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id E33971BF208;
-        Mon, 29 Apr 2019 15:23:45 +0000 (UTC)
-Date:   Mon, 29 Apr 2019 17:32:35 +0200
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: aardvark: Use LTSSM state to build link training
- flag
-Message-ID: <20190429153234.GS2754@voidbox.localdomain>
-References: <20190316161243.29517-1-repk@triplefau.lt>
- <20190425110830.GC10833@e121166-lin.cambridge.arm.com>
- <20190425142353.GO2754@voidbox.localdomain>
- <20190425150640.GA20770@e121166-lin.cambridge.arm.com>
+        Mon, 29 Apr 2019 11:35:01 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t81so8623744oig.10
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 08:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NCmEesKQZll6z8qms+OpZ8kCs6Eb9bECUhGbIFGCjHY=;
+        b=FQ9o14EdK9BE4hJyTRxHvBjI8WUQ9YLVspWY6yiOcsEhTAmKZSm8uIv1GgtotklAmu
+         lrFPviWMOAXoBKUTmNzyIwoL8cVHH5TQxVxXWMrrmWPQDbYRNGMQlGfpWH7ngFq2HOln
+         Mo7fCW6RVSce0XqXcqFdEkBIeVrDQj8IhTBW0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NCmEesKQZll6z8qms+OpZ8kCs6Eb9bECUhGbIFGCjHY=;
+        b=IKD5I2XCjs9Mtv4+jBURJyHJktIDysfotlP8V2UjbSBT7mS88SbZJrHKYnUYpxCiVF
+         9v/2p+//1YrB9zNiD3yFdBUy+XCYv9gL91oYezNuSPPnrcpYUS3kXn5A7f6G3LaatlqT
+         pCfIpOeDWEPNp21b4/GYXWuQtBVV/gkFuuuT+p+gVvbLfJLGyQX/YnUElOuHR69a+ay5
+         JSpROYFQRFXDN7FRxqUPhadIuhwcRRtOHK0OTnFj/Ol44vc0Yp1Cy9n6r1t64YLtI9oh
+         ++nMC+3AQ6ALrA+52D3fwJZb21g/hQcAs1m1Q14F+XjF88U8Nk8wPTq4G1GMLIl7StqK
+         AAPw==
+X-Gm-Message-State: APjAAAXaUH29tACCAuu1sRJpQuZX+JhdUu0QURJMm7yjy/bR5SbiRCpm
+        fhUkqV5UKI1YHnOSxjgNJtvAWS4uDnY98OUZTK4DHA==
+X-Google-Smtp-Source: APXvYqxjAGhcRBlWXEqyEs3QV3IHzccHauIUWfnwvaaIE/CDiE6g1L2U/eHYbqjkZXPfJd9TzBI4S1GWgXTfwMtpXIc=
+X-Received: by 2002:aca:540a:: with SMTP id i10mr3317988oib.54.1556552099454;
+ Mon, 29 Apr 2019 08:34:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190425150640.GA20770@e121166-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190426154848.23490-1-alban@kinvolk.io> <CAH3MdRViqmPWm9UaOEO3ZKa5AodL7AGZ4Bb0FzyDcoqRoDmqNw@mail.gmail.com>
+In-Reply-To: <CAH3MdRViqmPWm9UaOEO3ZKa5AodL7AGZ4Bb0FzyDcoqRoDmqNw@mail.gmail.com>
+From:   Alban Crequy <alban@kinvolk.io>
+Date:   Mon, 29 Apr 2019 17:34:47 +0200
+Message-ID: <CADZs7q4rmRinZPMGVAnS95hA-prjdx7igFmaO=K_du13LsPm7g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/4] bpf: sock ops: add netns ino and dev in
+ bpf context
+To:     Y Song <ys114321@gmail.com>
+Cc:     Alban Crequy <alban.crequy@gmail.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        bpf <bpf@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+On Sat, Apr 27, 2019 at 6:35 PM Y Song <ys114321@gmail.com> wrote:
+>
+> On Fri, Apr 26, 2019 at 8:50 AM Alban Crequy <alban.crequy@gmail.com> wrote:
+> >
+> > From: Alban Crequy <alban@kinvolk.io>
+> >
+> > sockops programs can now access the network namespace inode and device
+> > via (struct bpf_sock_ops)->netns_ino and ->netns_dev. This can be useful
+> > to apply different policies on different network namespaces.
+> >
+> > In the unlikely case where network namespaces are not compiled in
+> > (CONFIG_NET_NS=n), the verifier will not allow access to ->netns_*.
+> >
+> > The generated BPF bytecode for netns_ino is loading the correct inode
+> > number at the time of execution.
+> >
+> > However, the generated BPF bytecode for netns_dev is loading an
+> > immediate value determined at BPF-load-time by looking at the initial
+> > network namespace. In practice, this works because all netns currently
+> > use the same virtual device. If this was to change, this code would need
+> > to be updated too.
+> >
+> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> >
+> > ---
+> >
+> > Changes since v1:
+> > - add netns_dev (review from Alexei)
+> >
+> > Changes since v2:
+> > - replace __u64 by u64 in kernel code (review from Y Song)
+> > - remove unneeded #else branch: program would be rejected in
+> >   is_valid_access (review from Y Song)
+> > - allow partial reads (<u64) (review from Y Song)
+> >
+> >   Note: I have not been able to fully test partial reads on netns_dev.
+> > The following patches check partial reads in the verifier but it does
+> > not actually execute the program to check if partial reads generate the
+> > correct value. I tried to write a BPF program in C and declare the
+> > struct bpf_sock_ops as a volatile variable and I could get llvm to
+> > generate the BPF instructions to do partial loads. But then, I get the
+> > verifier error "dereference of modified ctx ptr R2 off=184 disallowed",
+> > explained in https://www.spinics.net/lists/netdev/msg531582.html
+> > What do you think should be done here?
+>
+> You added partial read tests in test_verifier with raw asm codes.
+> It should be good enough.
+>
+> For the compiler generated code causing verifier error, will take
+> a detailed look later.
 
-Sorry for duplicates I forgot to include everyone.
+Thanks! To clarify my note: the patches I sent on the mailing list
+don't generate a verifier error.
 
-On Thu, Apr 25, 2019 at 04:06:40PM +0100, Lorenzo Pieralisi wrote:
-> On Thu, Apr 25, 2019 at 04:23:53PM +0200, Remi Pommarel wrote:
-> > Hi Lorenzo,
-> > 
-> > On Thu, Apr 25, 2019 at 12:08:30PM +0100, Lorenzo Pieralisi wrote:
-> > > On Sat, Mar 16, 2019 at 05:12:43PM +0100, Remi Pommarel wrote:
-> > > > The PCI_EXP_LNKSTA_LT flag in the emulated root device's PCI_EXP_LNKSTA
-> > > > config register does not reflect the actual link training state and is
-> > > > always cleared. The Link Training and Status State Machine (LTSSM) flag
-> > > > in LMI config register could be used as a link training indicator.
-> > > > Indeed if the LTSSM is in L0 or upper state then link training has
-> > > > completed (see [1]).
-> > > > 
-> > > > Unfortunately because setting the PCI_EXP_LINCTL_RL flag does not
-> > > > instantly imply a LTSSM state change (e.g. L0s to recovery state
-> > > > transition takes some time), LTSSM can be in L0 but link training has
-> > > > not finished yet. Thus a lower L0 LTSSM state followed by a L0 or upper
-> > > > state sequence has to be seen to be sure that link training has been
-> > > > done.
-> > > 
-> > > Hi Remi,
-> > > 
-> > > I am a bit confused, so you are saying that the LTSSM flag in the
-> > > LMI config register can't be used to detect when training is completed ?
-> > 
-> > Not exactly, I am saying that PCI_EXP_LNKSTA_LT from PCI_EXP_LNKSTA
-> > register can't be used with this hardware, but can be emulated with
-> > LTSSM flag.
-> > 
-> > > 
-> > > Certainly it can't be used by ASPM core that relies on:
-> > > 
-> > > PCI_EXP_LNKSTA_LT flag
-> > > 
-> > > in the PCI_EXP_LNKSTA register, and that's what you are setting through
-> > > this timeout mechanism IIUC.
-> > > 
-> > > Please elaborate on that.
-> > 
-> > The problem here is that the hardware does not change PCI_EXP_LNKSTA_LT
-> > at all. So in order to support link re-training feature we need to
-> > emulate this flag. To do so LTSSM flag can be used.
-> 
-> Understood.
-> 
-> > Indeed we can set the emulated PCI_EXP_LNKSTA_LT as soon as re-training
-> > is asked and wait for LTSSM flag to be back to a configured state
-> > (e.g. L0, L0s) before clearing it.
-> 
-> The check for the LTSSM is carried out through advk_pcie_link_up()
-> (ie register CFG_REG), correct ?
-> 
+It only errors out when I try partial reads in C. You can see the code
+of the failed attempt that generate the error here:
+https://github.com/kinvolk/linux/blob/c5fe70990c897a866c7006a0068876b0fde9ee4d/tools/testing/selftests/bpf/test_sockmap_kern.h#L146-L176
 
-Yes that is correct.
+So if the partial read tests in test_verifier with raw asm codes are
+good enough, there is no need to investigate more on that.
 
-> > The problem with that is that LTSSM flag does not change instantly after
-> > link re-training has been asked, and will stay in configured state for a
-> > small amount of time. So the idea is to poll the LTSSM flag and wait for
-> > it to enter a recovery state then waiting for it to be back in
-> > configured state.
-> 
-> When you say "poll" you mean checking advk_pcie_link_up() ?
-> 
+> Also I did not see a cover letter. For a series with 4 patches, it would be
+> the best if you can provide a separate cover letter.
 
-I mean checking advk_pcie_link_up() in a loop. This loop is done by the
-user (e.g. ASPM core). ASPM core waits for PCI_EXP_LNKSTA_LT to be
-cleared in pcie_aspm_configure_common_clock() just after it has set
-PCI_EXP_LNKCTL_RL.
+Ok, I will do that for the next iteration.
 
-So the idea was to check advk_pcie_link_up() each time ASPM core checks
-the PCI_EXP_LNKSTA_LT flag. Please see below patch for an alternative
-to that.
+> > ---
+> >  include/uapi/linux/bpf.h |  2 +
+> >  net/core/filter.c        | 94 ++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 96 insertions(+)
+> >
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index eaf2d3284248..f4f841dde42c 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -3213,6 +3213,8 @@ struct bpf_sock_ops {
+> >         __u32 sk_txhash;
+> >         __u64 bytes_received;
+> >         __u64 bytes_acked;
+> > +       __u64 netns_dev;
+> > +       __u64 netns_ino;
+> >  };
+> >
+> >  /* Definitions for bpf_sock_ops_cb_flags */
+> > diff --git a/net/core/filter.c b/net/core/filter.c
+> > index 2f88baf39cc2..9c77464b1501 100644
+> > --- a/net/core/filter.c
+> > +++ b/net/core/filter.c
+> > @@ -75,6 +75,8 @@
+> >  #include <net/seg6_local.h>
+> >  #include <net/lwtunnel.h>
+> >  #include <net/ipv6_stubs.h>
+> > +#include <linux/kdev_t.h>
+> > +#include <linux/proc_ns.h>
+> >
+> >  /**
+> >   *     sk_filter_trim_cap - run a packet through a socket filter
+> > @@ -6810,6 +6812,24 @@ static bool sock_ops_is_valid_access(int off, int size,
+> >                 }
+> >         } else {
+> >                 switch (off) {
+> > +               case offsetof(struct bpf_sock_ops, netns_dev) ...
+> > +                    offsetof(struct bpf_sock_ops, netns_dev) + sizeof(u64) - 1:
+> > +#ifdef CONFIG_NET_NS
+> > +                       if (off - offsetof(struct bpf_sock_ops, netns_dev)
+> > +                           + size > sizeof(u64))
+>
+> This will allow something off = 1, size = 4. This is not what we want as
+> the access is not properly aligned.
 
-> More below on the code.
-> 
-> > The timeout is only here as a fallback in the unlikely event that we
-> > missed the LTSSM flag entering recovery state.
-> > 
-> > > 
-> > > I am picking Bjorn's brain on this patch since what you are doing
-> > > seems quite arbitrary and honestly it is a bit of a hack.
-> > 
-> > Yes, sorry, it is a bit of a hack because I try to workaround a
-> > hardware issue.
-> 
-> No problems, it is not your fault.
-> > 
-> > Please note that vendor has been contacted about this in the meantime
-> > and answered the following:
-> > 
-> > "FW can poll LTSSM state equals any of the following values: 0xB or 0xD
-> > or 0xC or 0xE. After that, polls for LTSSM equals 0x10. For your
-> > information, LTSSM will transit from 0x10 -> 0xB -> 0xD -> 0xC or 0xE
-> > ........... -> 0x10".
-> > 
-> > It is basically what this patch does, I've just added a timeout fallback
-> > to not poll LTSSM state forever if its transition to 0xB, 0xD, 0xC or
-> > 0xE has been missed.
-> 
-> When you say "missed" you mean advk_pcie_link_up() returning true, right ?
-> 
+sock_ops_is_valid_access() does not allow off = 1, size = 4. There is
+this check at the beginning of the function:
+        if (off % size != 0)
+                return false;
 
-Not exactly, I mean that LTSSM had the time to go down and back up
-between advk_pcie_link_up() because, for example, ASPM core loop took
-too much time between two PCI_EXP_LNKSTA_LT flag checks.
+> You can look at function bpf_skb_is_valid_access(), esp. the two lines below:
+>           bpf_ctx_record_field_size(info, size_default);
+>            if (!bpf_ctx_narrow_access_ok(off, size, size_default))
+>                    return false;
 
-> [...]
-> 
-> > > > +static int advk_pcie_link_retraining(struct advk_pcie *pcie)
-> > > > +{
-> > > > +	if (!advk_pcie_link_up(pcie)) {
-> 
-> That's the bit I find confusing. Is this check here to detect if the
-> link went through the sequence below ? Should not it be carried
-> out only if (pcie->rl_asked == 1) ?
-> 
-> "... LTSSM will transit from 0x10 -> 0xB -> 0xD -> 0xC or 0xE
->  ........... -> 0x10".
+Thanks for the pointer! I now see that if I use them, my code in
+sock_ops_convert_ctx_access() can be simplified.
 
-Yes it is the check to detect the sequence. advk_pcie_link_up() returns
-false if LTSSM <= 0x10.
-
-This cannot be done only if (pcie->rl_asked == 1) because I still
-want this function to return 1 if link is still down.
-
-> 
-> > > > +		pcie->rl_asked = 0;
-> 
-> Why ?
-> 
-
-rl_asked is not a good name, I could have called it
-pcie->wait_for_link_down instead. So if advk_pcie_link_up() returns
-false that means that we don't need to wait for link being down any more
-and just wait for (LTSSM >= 0x10). In this case the delay is not needed.
-
-> > > > +		return 1;
-> > > > +	}
-> > > > +
-> > > > +	if (pcie->rl_asked && time_before(jiffies, pcie->rl_deadline))
-> > > > +		return 1;
-> 
-> This ensures that if the LTSSM >= 0x10 we still wait for a delay before
-> considering the link up (because I suppose, after asking a retraining
-> it takes a while for the LTSSM state to become < 0x10), correct ?
-
-Yes it takes a while to become < 0x10 after retraining hence the delay.
-But here we don't need to always wait for a delay. Indeed if we've
-already seen the link being < 0x10 (i.e if "pcie->rl_asked == 0") and
-if after that link is >= 0x10 then we know that retraining process has
-finished.
-
-Anyway I did it this way because I wanted to keep
-advk_pci_bridge_emul_pcie_conf_write() from polling. But this is
-obviously a bad reason as it makes the code way too complex and relies
-on user (ASPM core) to do the poll instead.
-
-So if you find the following better I'll send a v3 with that:
-
----
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index eb58dfdaba1b..67e8ae4e313e 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -180,6 +180,9 @@
- #define LINK_WAIT_MAX_RETRIES		10
- #define LINK_WAIT_USLEEP_MIN		90000
- #define LINK_WAIT_USLEEP_MAX		100000
-+#define RETRAIN_WAIT_MAX_RETRIES	20
-+#define RETRAIN_WAIT_USLEEP_MIN		2000
-+#define RETRAIN_WAIT_USLEEP_MAX		5000
- 
- #define MSI_IRQ_NUM			32
- 
-@@ -239,6 +242,17 @@ static int advk_pcie_wait_for_link(struct advk_pcie *pcie)
- 	return -ETIMEDOUT;
- }
- 
-+static void advk_pcie_wait_for_retrain(struct advk_pcie *pcie)
-+{
-+	size_t retries;
-+
-+	for (retries = 0; retries < RETRAIN_WAIT_MAX_RETRIES; ++retries) {
-+		if (!advk_pcie_link_up(pcie))
-+			break;
-+		usleep_range(RETRAIN_WAIT_USLEEP_MIN, RETRAIN_WAIT_USLEEP_MAX);
-+	}
-+}
-+
- static void advk_pcie_setup_hw(struct advk_pcie *pcie)
- {
- 	u32 reg;
-@@ -426,11 +440,19 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
- 		return PCI_BRIDGE_EMUL_HANDLED;
- 	}
- 
-+	case PCI_EXP_LNKCTL: {
-+		u32 val = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg) &
-+			~(PCI_EXP_LNKSTA_LT << 16);
-+		if (!advk_pcie_link_up(pcie))
-+			val |= (PCI_EXP_LNKSTA_LT << 16);
-+		*value = val;
-+		return PCI_BRIDGE_EMUL_HANDLED;
-+	}
-+
- 	case PCI_CAP_LIST_ID:
- 	case PCI_EXP_DEVCAP:
- 	case PCI_EXP_DEVCTL:
- 	case PCI_EXP_LNKCAP:
--	case PCI_EXP_LNKCTL:
- 		*value = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg);
- 		return PCI_BRIDGE_EMUL_HANDLED;
- 	default:
-@@ -447,8 +469,13 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
- 
- 	switch (reg) {
- 	case PCI_EXP_DEVCTL:
-+		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
-+		break;
-+
- 	case PCI_EXP_LNKCTL:
- 		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
-+		if (new & PCI_EXP_LNKCTL_RL)
-+			advk_pcie_wait_for_retrain(pcie);
- 		break;
- 
- 	case PCI_EXP_RTCTL:
+> > +                               return false;
+> > +#else
+> > +                       return false;
+> > +#endif
+> > +                       break;
+> > +               case offsetof(struct bpf_sock_ops, netns_ino):
+> > +#ifdef CONFIG_NET_NS
+> > +                       if (size != sizeof(u64))
+> > +                               return false;
+> > +#else
+> > +                       return false;
+> > +#endif
+> > +                       break;
+> >                 case bpf_ctx_range_till(struct bpf_sock_ops, bytes_received,
+> >                                         bytes_acked):
+> >                         if (size != sizeof(__u64))
+> > @@ -7727,6 +7747,11 @@ static u32 sock_addr_convert_ctx_access(enum bpf_access_type type,
+> >         return insn - insn_buf;
+> >  }
+> >
+> > +static struct ns_common *sockops_netns_cb(void *private_data)
+> > +{
+> > +       return &init_net.ns;
+> > +}
+> > +
+> >  static u32 sock_ops_convert_ctx_access(enum bpf_access_type type,
+> >                                        const struct bpf_insn *si,
+> >                                        struct bpf_insn *insn_buf,
+> > @@ -7735,6 +7760,10 @@ static u32 sock_ops_convert_ctx_access(enum bpf_access_type type,
+> >  {
+> >         struct bpf_insn *insn = insn_buf;
+> >         int off;
+> > +       struct inode *ns_inode;
+> > +       struct path ns_path;
+> > +       u64 netns_dev;
+> > +       void *res;
+> >
+> >  /* Helper macro for adding read access to tcp_sock or sock fields. */
+> >  #define SOCK_OPS_GET_FIELD(BPF_FIELD, OBJ_FIELD, OBJ)                        \
+> > @@ -7981,6 +8010,71 @@ static u32 sock_ops_convert_ctx_access(enum bpf_access_type type,
+> >                 SOCK_OPS_GET_OR_SET_FIELD(sk_txhash, sk_txhash,
+> >                                           struct sock, type);
+> >                 break;
+> > +
+> > +       case offsetof(struct bpf_sock_ops, netns_dev) ...
+> > +            offsetof(struct bpf_sock_ops, netns_dev) + sizeof(u64) - 1:
+> > +#ifdef CONFIG_NET_NS
+> > +               /* We get the netns_dev at BPF-load-time and not at
+> > +                * BPF-exec-time. We assume that netns_dev is a constant.
+> > +                */
+> > +               res = ns_get_path_cb(&ns_path, sockops_netns_cb, NULL);
+> > +               if (IS_ERR(res)) {
+> > +                       netns_dev = 0;
+> > +               } else {
+> > +                       ns_inode = ns_path.dentry->d_inode;
+> > +                       netns_dev = new_encode_dev(ns_inode->i_sb->s_dev);
+> > +               }
+> > +               off = si->off;
+> > +               off -= offsetof(struct bpf_sock_ops, netns_dev);
+> > +               switch (BPF_LDST_BYTES(si)) {
+> > +               case sizeof(u64):
+> > +                       *insn++ = BPF_MOV64_IMM(si->dst_reg, netns_dev);
+> > +                       break;
+> > +               case sizeof(u32):
+> > +                       netns_dev = *(u32 *)(((char *)&netns_dev) + off);
+> > +                       *insn++ = BPF_MOV32_IMM(si->dst_reg, netns_dev);
+> > +                       break;
+> > +               case sizeof(u16):
+> > +                       netns_dev = *(u16 *)(((char *)&netns_dev) + off);
+> > +                       *insn++ = BPF_MOV32_IMM(si->dst_reg, netns_dev);
+> > +                       break;
+> > +               case sizeof(u8):
+> > +                       netns_dev = *(u8 *)(((char *)&netns_dev) + off);
+> > +                       *insn++ = BPF_MOV32_IMM(si->dst_reg, netns_dev);
+> > +                       break;
+> > +               }
+> > +#endif
+> > +               break;
+> > +
+> > +       case offsetof(struct bpf_sock_ops, netns_ino):
+> > +#ifdef CONFIG_NET_NS
+> > +               /* Loading: sk_ops->sk->__sk_common.skc_net.net->ns.inum
+> > +                * Type: (struct bpf_sock_ops_kern *)
+> > +                *       ->(struct sock *)
+> > +                *       ->(struct sock_common)
+> > +                *       .possible_net_t
+> > +                *       .(struct net *)
+> > +                *       ->(struct ns_common)
+> > +                *       .(unsigned int)
+> > +                */
+> > +               BUILD_BUG_ON(offsetof(struct sock, __sk_common) != 0);
+> > +               BUILD_BUG_ON(offsetof(possible_net_t, net) != 0);
+> > +               *insn++ = BPF_LDX_MEM(BPF_FIELD_SIZEOF(
+> > +                                               struct bpf_sock_ops_kern, sk),
+> > +                                     si->dst_reg, si->src_reg,
+> > +                                     offsetof(struct bpf_sock_ops_kern, sk));
+> > +               *insn++ = BPF_LDX_MEM(BPF_FIELD_SIZEOF(
+> > +                                               possible_net_t, net),
+> > +                                     si->dst_reg, si->dst_reg,
+> > +                                     offsetof(struct sock_common, skc_net));
+> > +               *insn++ = BPF_LDX_MEM(BPF_FIELD_SIZEOF(
+> > +                                               struct ns_common, inum),
+> > +                                     si->dst_reg, si->dst_reg,
+> > +                                     offsetof(struct net, ns) +
+> > +                                     offsetof(struct ns_common, inum));
+> > +#endif
+> > +               break;
+> > +
+> >         }
+> >         return insn - insn_buf;
+> >  }
+> > --
+> > 2.20.1
+> >
