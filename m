@@ -2,138 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43378EC13
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8886EC20
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbfD2V3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:29:45 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:27510 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729370AbfD2V3o (ORCPT
+        id S1729387AbfD2Vjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:39:36 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38750 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729252AbfD2Vjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:29:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1556573384; x=1588109384;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=tylJaZ3hdwgcoleztgKHgV+VyNuRMO/FYfLLBnr0sQI=;
-  b=U1a1c0hH41/qYW6ip3h4pWSorJEnWGgvY0Pznu1QP2om8RnYcm3hTdWQ
-   sSmBuOEpeRJF9MPOoaF4xPx3eB3TIFxkTveLXOiCql+ViR2Pl8PBPNzmm
-   WvO60NuwUJJkyKi9ZwDzI42GDGaEK6l/L8nTNK1+So5btwkkVezhkMFNt
-   ZUGd5Y4FPUQ0Bk63C2oo+RZt1sRKuXpU8fATLlQl2Wv3P0b8FMF1v/t4E
-   dGvURiLRjGsoCiScBIPGJAd+7U/Dl4XG4SmEHknZONyZYyI2mUJonvQH8
-   1DsvhX/fQd5b/frafepbXnWYbd1Ejy7twn99AXbfcyqmdh3pVemlP0rDQ
-   A==;
-X-IronPort-AV: E=Sophos;i="5.60,411,1549900800"; 
-   d="scan'208";a="112062337"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Apr 2019 05:29:44 +0800
-IronPort-SDR: moNGso2BXe3GzkkuzU5F5AfvPyzy1Ul7eRZWgOPQWety8v3m/4zGlStQSS2hY0og1c6W5TKGVc
- 9icRKPxxqqYSSnQ7mh5VJj8SjEQQ2SUx7s6yDL+OZwv9OBlRfyNNn27ojTWzjzhst5TJQXCigk
- KkOIWL2AmDYuHvbjo1e2IF+Dx9a+XNgg1gfsd0/dmdbzc3pOsOPcvFnADjZ4gbzXiRzVM9028O
- 8+tLuMSRHI1aO8pdDJe9m6yljn2wju2PRL7aPCU7xTbg3B800nkLSzp6g0wNINYmRfkmOVDZuN
- zX3bdcteJ0vaMmq+F6n7rKCV
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 29 Apr 2019 14:08:15 -0700
-IronPort-SDR: 3DPb2PcWrl1lZn4c6cs7QX/GL1L2Mxk3qhbjtbqE5SnoEhVGLGsgYQp0Eb/dU+1MLJeRk4bK3V
- ++ljP17iEXBQXhrYVqDmr4IQi85GLF5yUyR9vBG9J79W2VBZ47HDcTonMJv8Q8Vp3og0a2fWCm
- gHe62TeuS05QO2Sgsw0CubbfQQpT6tj+1qYdgd6WTbZTEdI8miJdVoToYEPkSs41VfHPxeuTuj
- X4dDWhnvFJ9TTmKowheCJ/nsz7dfXizAcBxDYwXIRBfwu6nC4/zlIE8JC/pWnMdBoW4sCTmryI
- Mmk=
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.66.167]) ([10.111.66.167])
-  by uls-op-cesaip02.wdc.com with ESMTP; 29 Apr 2019 14:29:44 -0700
-Subject: Re: [PATCH v2 1/3] x86: Move DEBUG_TLBFLUSH option.
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anup Patel <anup@brainfault.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Changbin Du <changbin.du@intel.com>,
-        Gary Guo <gary@garyguo.net>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20190429195759.18330-1-atish.patra@wdc.com>
- <20190429195759.18330-2-atish.patra@wdc.com>
- <20190429200554.GA102486@gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <e80533d1-6d7c-c503-73d7-1a344a49aa37@wdc.com>
-Date:   Mon, 29 Apr 2019 14:29:43 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        Mon, 29 Apr 2019 17:39:36 -0400
+Received: by mail-lj1-f193.google.com with SMTP id e18so4898146lja.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 14:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xn/5jS+m49YEHy9VewaGSeXNPslEqie8PTvJU6EXUNw=;
+        b=hxFbqa4ewa41rSYJkjywqzmK/JSCoGBv9pbM0qVpY7Jcn8QmH+hVBPBdi7+D/zJmdk
+         nmh191WRMCDQnlnOa+BZyyPstDYFCZkzpGRd0yKcaYhaQ9NmaL1Wd+MyXvvygdZSo+wh
+         4K4v5k4yhv7oc8csttKN+MRZCq2FU2n6mdTIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xn/5jS+m49YEHy9VewaGSeXNPslEqie8PTvJU6EXUNw=;
+        b=QpxnMYP4XDxxWgV0++z8R0nn9BpBQCGsR7g3FD6fhEqn42ckiuhRgW7EHE99dv6/et
+         9QjENIIJsv08Yv9a5PKe67pFFGafbDsZvWAT28dBGnvC+lnYaNOKje4VhkQQR8EmLTzr
+         +OtCvmkmJhqdf2ah/XuAviiLdfPrBlQwi9EKgnb51ciqy3DHY4C4U82lCvnOU9gLJVhH
+         qCcMltpXAH/LRSvKPq/qz+clGWvCtJhFuA9N7/uYxZmv49U/C51BWrlwD8azNP9eh1nO
+         QlQFNLqJ7GiTdJi6P6/BK3tEmptufppDN4XdB7CtC+Qr2SwvGTq8c/P/Sxp6MmHjvAlk
+         +xDA==
+X-Gm-Message-State: APjAAAUDKtGA77/VvWBz1mirguH6T5GJjd2gYc8fPapg5un9bmEu0ljT
+        xykN6JF/1jgpkQB7VcHzRjkB3EggK1c=
+X-Google-Smtp-Source: APXvYqz2+nE8gyiN2dh2WsShdX1xdJUq4UA5whZeCTwkCobtza0qV2ZA88FNovQw+jDjO8dtFf36JA==
+X-Received: by 2002:a2e:7605:: with SMTP id r5mr12689234ljc.161.1556573974394;
+        Mon, 29 Apr 2019 14:39:34 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id i64sm8165140lfe.18.2019.04.29.14.39.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 14:39:34 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id w23so9043877lfc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 14:39:34 -0700 (PDT)
+X-Received: by 2002:ac2:43cf:: with SMTP id u15mr3927622lfl.67.1556573506825;
+ Mon, 29 Apr 2019 14:31:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190429200554.GA102486@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190414201436.19502-1-christian@brauner.io> <dc05ffe3-c2ff-8b3e-d181-e0cc620bf91d@metux.net>
+ <20190415195911.z7b7miwsj67ha54y@yavin> <CALCETrWxMnaPvwicqkMLswMynWvJVteazD-bFv3ZnBKWp-1joQ@mail.gmail.com>
+ <20190420071406.GA22257@ip-172-31-15-78> <CAG48ez0gG4bd-t1wdR2p6-N2FjWbCqm_+ZThKfF7yKnD=KLqAQ@mail.gmail.com>
+ <CAG48ez15bf1EJB0XTJsGFpvf8r5pj9+rv1axKVr13H1NW7ARZw@mail.gmail.com>
+ <CAHk-=wi_N81mKYFz33ycoWiL7_tGbZBMJOsAs16inYzSza+OEw@mail.gmail.com> <87zho8bl8x.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <87zho8bl8x.fsf@oldenburg2.str.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Apr 2019 14:31:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiPv4QJBC0qX8xxnT5P2C7S5uDG0HKdvdSpcoXaHG91tQ@mail.gmail.com>
+Message-ID: <CAHk-=wiPv4QJBC0qX8xxnT5P2C7S5uDG0HKdvdSpcoXaHG91tQ@mail.gmail.com>
+Subject: Re: RFC: on adding new CLONE_* flags [WAS Re: [PATCH 0/4] clone: add CLONE_PIDFD]
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Jann Horn <jannh@google.com>, Kevin Easton <kevin@guarana.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/29/19 1:06 PM, Ingo Molnar wrote:
-> 
-> * Atish Patra <atish.patra@wdc.com> wrote:
-> 
->> CONFIG_DEBUG_TLBFLUSH was added in 'commit 3df3212f9722 ("x86/tlb: add
->> tlb_flushall_shift knob into debugfs")' to support tlb_flushall_shift
->> knob. The knob was removed in 'commit e9f4e0a9fe27 ("x86/mm: Rip out
->> complicated, out-of-date, buggy TLB flushing")'.  However, the debug
->> option was never removed from Kconfig. It was reused in commit
->> '9824cf9753ec ("mm: vmstats: tlb flush counters")' but the commit text
->> was never updated accordingly.
-> 
-> Please, when you mention several commits, put them into new lines to make
-> it readable, i.e.:
-> 
->    3df3212f9722 ("x86/tlb: add tlb_flushall_shift knob into debugfs")
-> 
-> etc.
-> 
-Done.
+On Mon, Apr 29, 2019 at 1:38 PM Florian Weimer <fweimer@redhat.com> wrote:
+>
+> In Linux-as-the-ABI (as opposed to Linux-as-the-implementation), vfork
+> is sometimes implemented as fork, so applications cannot rely on the
+> vfork behavior regarding the stopped parent and the shared address
+> space.
 
->> Update the Kconfig option description as per its current usage.
->>
->> Take this opprtunity to make this kconfig option a common option as it
->> touches the common vmstat code. Introduce another arch specific config
->> HAVE_ARCH_DEBUG_TLBFLUSH that can be selected to enable this config.
-> 
-> "opprtunity"?
-> 
->> +config HAVE_ARCH_DEBUG_TLBFLUSH
->> +	bool
->> +	depends on DEBUG_KERNEL
->> +
->> +config DEBUG_TLBFLUSH
->> +	bool "Save tlb flush statstics to vmstat"
->> +	depends on HAVE_ARCH_DEBUG_TLBFLUSH
->> +	help
->> +
->> +	Add tlbflush statstics to vmstat. It is really helpful understand tlbflush
->> +	performance and behavior. It should be enabled only for debugging purpose
->> +	by individual architectures explicitly by selecting HAVE_ARCH_DEBUG_TLBFLUSH.
-> 
-> "statstics"??
-> 
-> Please put a spell checker into your workflow or read what you are
-> writing ...
-> 
+What broken library does that?
 
-Apologies for the typos. Fixed them.
+Sure, we didn't have a proper vfork() long long long ago. But that
+predates both git and BK, so it's some time in the 90's. We've had a
+proper vfork() *forever*.
 
-Regards,
-Atish
-> Thanks,
-> 
-> 	Ingo
-> 
+> In fact, it would be nice to have a flag we can check in the posix_spawn
+> implementation, so that we can support vfork-as-fork without any run
+> time cost to native Linux.
 
+No. Just make a bug-report to whatever broken library you use. What's
+the point of having a library that can't even get vfork() right? Why
+would you want to have a flag to say "vfork is broken"?
+
+                 Linus
