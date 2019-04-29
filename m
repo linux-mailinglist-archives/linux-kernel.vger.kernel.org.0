@@ -2,211 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389F1EA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01905EA64
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfD2Sq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:46:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43875 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729228AbfD2Sqx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:46:53 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIjjYU1031121
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Apr 2019 11:45:45 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIjjYU1031121
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556563547;
-        bh=n959JXnlnzgMMELO7dGUaAVzvyrdlr/lYYqJFzXlbaw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=qM+Mr9vknVB7gpr/HGzZgQKo4xwDHpFnJ/1gyibsoqgma+L49LhInQGOjaXXHAL8q
-         MPmmQEvO8rAnxXGjkTNRexdxzBpZFAPFtzs9cXgGVLZtFos/PcW2NUuBx1A701D0Md
-         e1xS0ydyYWNbx3bt78j2YaAUAuT13akD47bxbajCeC0yKCCS/rsflUjX7zIYLoKEW6
-         D96JyUFCCA6TNLJ4425+AfGDcuS/vAuj/XuikQwyQjHmgguqD0nt6oE5jv+bU5iKoH
-         QNhsf8Rlc6mwoo1peElCGCVVGzyIOj0YGrUsR/clhr0rEgYOuWd5p0HVh7AdZ+8Lgo
-         LA9pHv19J3Maw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIjjUV1031117;
-        Mon, 29 Apr 2019 11:45:45 -0700
-Date:   Mon, 29 Apr 2019 11:45:45 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-c438f140cc16d47fac808d893f5017f6d641cb46@git.kernel.org>
-Cc:     penberg@kernel.org, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com, clm@fb.com,
-        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
-        josef@toxicpanda.com, rientjes@google.com, akinobu.mita@gmail.com,
-        mbenes@suse.cz, daniel@ffwll.ch, tglx@linutronix.de,
-        dsterba@suse.com, airlied@linux.ie, dvyukov@google.com,
-        hpa@zytor.com, akpm@linux-foundation.org,
-        jani.nikula@linux.intel.com, glider@google.com, hch@lst.de,
-        rppt@linux.vnet.ibm.com, catalin.marinas@arm.com,
-        snitzer@redhat.com, agk@redhat.com, rodrigo.vivi@intel.com,
-        adobriyan@gmail.com, joonas.lahtinen@linux.intel.com,
-        robin.murphy@arm.com, m.szyprowski@samsung.com,
-        tom.zanussi@linux.intel.com, jthumshirn@suse.de, cl@linux.com,
-        maarten.lankhorst@linux.intel.com
-Reply-To: maarten.lankhorst@linux.intel.com, cl@linux.com,
-          jthumshirn@suse.de, tom.zanussi@linux.intel.com,
-          m.szyprowski@samsung.com, robin.murphy@arm.com,
-          joonas.lahtinen@linux.intel.com, adobriyan@gmail.com,
-          rodrigo.vivi@intel.com, agk@redhat.com, catalin.marinas@arm.com,
-          snitzer@redhat.com, rppt@linux.vnet.ibm.com, hch@lst.de,
-          jani.nikula@linux.intel.com, glider@google.com,
-          akpm@linux-foundation.org, hpa@zytor.com, dvyukov@google.com,
-          airlied@linux.ie, dsterba@suse.com, tglx@linutronix.de,
-          daniel@ffwll.ch, mbenes@suse.cz, akinobu.mita@gmail.com,
-          rientjes@google.com, josef@toxicpanda.com, luto@kernel.org,
-          jpoimboe@redhat.com, mingo@kernel.org, aryabinin@virtuozzo.com,
-          clm@fb.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-          penberg@kernel.org
-In-Reply-To: <20190425094803.162400595@linutronix.de>
-References: <20190425094803.162400595@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/stacktrace] tracing: Make ftrace_trace_userstack() static
- and conditional
-Git-Commit-ID: c438f140cc16d47fac808d893f5017f6d641cb46
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1729185AbfD2Spu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:45:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:27294 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728962AbfD2Spu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 14:45:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 11:45:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,410,1549958400"; 
+   d="scan'208";a="153344993"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 29 Apr 2019 11:45:49 -0700
+Received: from brettjgr-mobl1.ger.corp.intel.com (unknown [10.254.180.216])
+        by linux.intel.com (Postfix) with ESMTP id A1D445803C2;
+        Mon, 29 Apr 2019 11:45:47 -0700 (PDT)
+Subject: Re: [PATCH v2] ASoC: Intel: avoid Oops if DMA setup fails
+To:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Ross Zwisler <zwisler@google.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, stable@vger.kernel.org
+References: <20190429182517.210909-1-zwisler@google.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <951de893-e6ff-5bd0-3483-4c1d93b30cfc@linux.intel.com>
+Date:   Mon, 29 Apr 2019 13:45:46 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190429182517.210909-1-zwisler@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c438f140cc16d47fac808d893f5017f6d641cb46
-Gitweb:     https://git.kernel.org/tip/c438f140cc16d47fac808d893f5017f6d641cb46
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 25 Apr 2019 11:45:15 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 29 Apr 2019 12:37:55 +0200
+On 4/29/19 1:25 PM, Ross Zwisler wrote:
+> Currently in sst_dsp_new() if we get an error return from sst_dma_new()
+> we just print an error message and then still complete the function
+> successfully.  This means that we are trying to run without sst->dma
+> properly set up, which will result in NULL pointer dereference when
+> sst->dma is later used.  This was happening for me in
+> sst_dsp_dma_get_channel():
+> 
+>          struct sst_dma *dma = dsp->dma;
+> 	...
+>          dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
+> 
+> This resulted in:
+> 
+>     BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+>     IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
+> 
+> Fix this by adding proper error handling for the case where we fail to
+> set up DMA.
+> 
+> This change only affects Haswell and Broadwell systems.  Baytrail
+> systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
+> being set to -1.
+> 
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
+> Cc: stable@vger.kernel.org
 
-tracing: Make ftrace_trace_userstack() static and conditional
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-It's only used in trace.c and there is absolutely no point in compiling it
-in when user space stack traces are not supported.
+Thanks Ross!
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Steven Rostedt <rostedt@goodmis.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: linux-mm@kvack.org
-Cc: David Rientjes <rientjes@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: kasan-dev@googlegroups.com
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: David Sterba <dsterba@suse.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org
-Cc: dm-devel@redhat.com
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Miroslav Benes <mbenes@suse.cz>
-Cc: linux-arch@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190425094803.162400595@linutronix.de
+FWIW we should start deprecating this driver now and transition to SOF. 
+I'll double-check how the upcoming 1.3 release works on my Pixel 
+2015/Samus device later this week.
 
----
- kernel/trace/trace.c | 14 ++++++++------
- kernel/trace/trace.h |  8 --------
- 2 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4fc93004feab..d8369d27c1af 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -159,6 +159,8 @@ static union trace_eval_map_item *trace_eval_maps;
- #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
- 
- static int tracing_set_tracer(struct trace_array *tr, const char *buf);
-+static void ftrace_trace_userstack(struct ring_buffer *buffer,
-+				   unsigned long flags, int pc);
- 
- #define MAX_TRACER_SIZE		100
- static char bootup_tracer_buf[MAX_TRACER_SIZE] __initdata;
-@@ -2905,9 +2907,10 @@ void trace_dump_stack(int skip)
- }
- EXPORT_SYMBOL_GPL(trace_dump_stack);
- 
-+#ifdef CONFIG_USER_STACKTRACE_SUPPORT
- static DEFINE_PER_CPU(int, user_stack_count);
- 
--void
-+static void
- ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
- {
- 	struct trace_event_call *call = &event_user_stack;
-@@ -2958,13 +2961,12 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
-  out:
- 	preempt_enable();
- }
--
--#ifdef UNUSED
--static void __trace_userstack(struct trace_array *tr, unsigned long flags)
-+#else /* CONFIG_USER_STACKTRACE_SUPPORT */
-+static void ftrace_trace_userstack(struct ring_buffer *buffer,
-+				   unsigned long flags, int pc)
- {
--	ftrace_trace_userstack(tr, flags, preempt_count());
- }
--#endif /* UNUSED */
-+#endif /* !CONFIG_USER_STACKTRACE_SUPPORT */
- 
- #endif /* CONFIG_STACKTRACE */
- 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index d80cee49e0eb..639047b259d7 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -782,17 +782,9 @@ void update_max_tr_single(struct trace_array *tr,
- #endif /* CONFIG_TRACER_MAX_TRACE */
- 
- #ifdef CONFIG_STACKTRACE
--void ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags,
--			    int pc);
--
- void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
- 		   int pc);
- #else
--static inline void ftrace_trace_userstack(struct ring_buffer *buffer,
--					  unsigned long flags, int pc)
--{
--}
--
- static inline void __trace_stack(struct trace_array *tr, unsigned long flags,
- 				 int skip, int pc)
- {
+> ---
+> 
+> Changes in v2:
+>   - Upgraded the sst_dma_new() failure message from dev_warn() to dev_err()
+>     (Pierre-Louis).
+>   - Noted in the changelog that this change only affects Haswell and
+>     Broadwell (Pierre-Louis).
+> 
+> ---
+>   sound/soc/intel/common/sst-firmware.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
+> index 1e067504b6043..f830e59f93eaa 100644
+> --- a/sound/soc/intel/common/sst-firmware.c
+> +++ b/sound/soc/intel/common/sst-firmware.c
+> @@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
+>   		goto irq_err;
+>   
+>   	err = sst_dma_new(sst);
+> -	if (err)
+> -		dev_warn(dev, "sst_dma_new failed %d\n", err);
+> +	if (err)  {
+> +		dev_err(dev, "sst_dma_new failed %d\n", err);
+> +		goto dma_err;
+> +	}
+>   
+>   	return sst;
+>   
+> +dma_err:
+> +	free_irq(sst->irq, sst);
+>   irq_err:
+>   	if (sst->ops->free)
+>   		sst->ops->free(sst);
+> 
+
