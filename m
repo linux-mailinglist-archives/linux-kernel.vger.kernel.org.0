@@ -2,125 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A1EEB45
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5DAEB4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfD2UBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:01:24 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35093 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729237AbfD2UBX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:01:23 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w24so5601507plp.2;
-        Mon, 29 Apr 2019 13:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=hSld9bPgi0+ZmNCHh9hnHGpNMcDXCftcytcMT1RzD2U1rt0bU172xGf7bgK5faVFn8
-         rqF98o+Eo4O0NXgCIcjuKW4NnBDG8jSuQXzRs8Gq+vHThFW4AAkK/VS92htnAOg2adFe
-         HXFHF2jGt08vwpZK+QBIcMUkPW8/SNtJbuB3PalIawRRyaQHyqR4c0E0UxaATRynTdgE
-         rLfXMgCcuyPqJC3Du2Nu7nwWWEhaiowJOqDTpMGxfftE6WjXqUuhGlfo8nC8WXTEOiuR
-         u/XsS8iMM6+l/1czLCulk/9VLEKnarf3qPwrJHxC6rVdDkoPRKKjgBbSKUUDx1RPJZk1
-         fEhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=UNfFb+4sGRNY0CvYAxpSq4euQhB6AZCe0fmQn7mVhGIn3aoL8j4nOBbdpovHkbrKpd
-         ANwx6GsILVLXxQoTzhKlw3sk/mPPcjmC5AP7jhyTK1Wj0VvEYn+nCbXVUObWCvsw2hFg
-         TUF9nVbCzljLe38Cb2ym/1QZ81GrribsrflUO1MsYfP58B4l6NjiJegC68eXItUIQvil
-         a9CRiYFIHiGkhPkrcyOJ+7eApk9bqrEnupIXQ8SoQIoN/kkf0ism/JCqp5BQwp8lZr2W
-         7QP5QJthpat0j7zYwqB7cwXgo3IROYq61MEwM1Py4L7jGNJbBtrak7bsy72B6xkbRjW7
-         B1iQ==
-X-Gm-Message-State: APjAAAXg1dOkB3zQQ4LYNOc0b1F9Rn3rRQYKJTg05iQ5D/ft3k8SWeuV
-        dNf/f1Or9D1q+APTWwc3LCupF5qFpk8=
-X-Google-Smtp-Source: APXvYqxZjfcO2EalYj0Q7+j0oedHQQMbWISZdRRv5eS3XyyL99Z1PQQIx0oTARKAYgrEEpWaB5jlyw==
-X-Received: by 2002:a17:902:968c:: with SMTP id n12mr18925998plp.105.1556567641492;
-        Mon, 29 Apr 2019 12:54:01 -0700 (PDT)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id l2sm39841783pgl.2.2019.04.29.12.53.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 12:54:00 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Enric Balletbo Serra <enric.balletbo@collabora.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
+        id S1729307AbfD2UEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:04:13 -0400
+Received: from mga01.intel.com ([192.55.52.88]:19850 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729163AbfD2UEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 16:04:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 12:55:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,410,1549958400"; 
+   d="scan'208";a="169057392"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 29 Apr 2019 12:55:00 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 29 Apr 2019 22:54:59 +0300
+Date:   Mon, 29 Apr 2019 22:54:59 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lukas Wunner <lukas@wunner.de>, Jiri Slaby <jslaby@suse.cz>,
+        Michael Hirmke <opensuse@mike.franken.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] dt-bindings: power: supply: Add bindings for Microchip UCS1002
-Date:   Mon, 29 Apr 2019 12:53:49 -0700
-Message-Id: <20190429195349.20335-4-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190429195349.20335-1-andrew.smirnov@gmail.com>
-References: <20190429195349.20335-1-andrew.smirnov@gmail.com>
+Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and
+ thunderbolt)
+Message-ID: <20190429195459.GU2583@lahna.fi.intel.com>
+References: <s5hy33siofw.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hy33siofw.wl-tiwai@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microchip UCS1002 Programmable USB Port Power
-Controller with Charger Emulation.
+On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
+> Hi,
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-new file mode 100644
-index 000000000000..021fd7aba75e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-@@ -0,0 +1,27 @@
-+Microchip UCS1002 USB Port Power Controller
-+
-+Required properties:
-+- compatible		: Should be "microchip,ucs1002";
-+- reg			: I2C slave address
-+
-+Optional properties:
-+- interrupts-extended	: A list of interrupts lines present (could be either
-+			  corresponding to A_DET# pin, ALERT# pin, or both)
-+- interrupt-names	: A list of interrupt names. Should contain (if
-+			  present):
-+			  - "a_det" for line connected to A_DET# pin
-+			  - "alert" for line connected to ALERT# pin
-+			  Both are expected to be IRQ_TYPE_EDGE_BOTH
-+Example:
-+
-+&i2c3 {
-+	charger@32 {
-+		compatible = "microchip,ucs1002";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ucs1002_pins>;
-+		reg = <0x32>;
-+		interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
-+				      <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
-+		interrupt-names = "a_det", "alert";
-+	};
-+};
--- 
-2.20.1
+> we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
+> machine.  5.0.7 is confirmed to work, so it must be a regression
+> introduced by 5.0.8.
+> 
+> The details are found in openSUSE Bugzilla entry:
+>   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
+> 
+> The probe of xhci_hcd on the dock fails like:
+> [    6.269062] pcieport 0000:3a:00.0: enabling device (0006 -> 0007)
+> [    6.270027] pcieport 0000:3b:03.0: enabling device (0006 -> 0007)
+> [    6.270758] xhci_hcd 0000:3c:00.0: init 0000:3c:00.0 fail, -16
+> [    6.270764] xhci_hcd: probe of 0000:3c:00.0 failed with error -16
+> [    6.271002] xhci_hcd 0000:3d:00.0: init 0000:3d:00.0 fail, -16
+> 
+> and later on, thunderbolt gives warnings:
+> [   30.232676] thunderbolt 0000:05:00.0: unexpected hop count: 1023
+> [   30.232957] ------------[ cut here ]------------
+> [   30.232958] thunderbolt 0000:05:00.0: interrupt for TX ring 0 is already enabled
+> [   30.232974] WARNING: CPU: 3 PID: 1009 at drivers/thunderbolt/nhi.c:107 ring_interrupt_active+0x1ea/0x230 [thunderbolt]
+> 
+> 
+> I blindly suspected the commit 3943af9d01e9 and asked for a reverted
+> kernel, but in vain.  And now it was confirmed that the problem is
+> present with the latest 5.1-rc, too.
+> 
+> I put some people who might have interest and the reporter (Michael)
+> to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
+> let me know if any help needed from the distro side.
 
+Since it exists in 5.1-rcX also it would be good if someone
+who see the problem (Michael?) could bisect it.
