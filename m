@@ -2,137 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C722ECD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7158DECDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfD2WhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 18:37:21 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35504 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729650AbfD2WhT (ORCPT
+        id S1729645AbfD2Wki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 18:40:38 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:17837 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfD2Wkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:37:19 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j20so9309652lfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 15:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l2dc72lRn+QYapuQ0yA9PTxioiCc/T7YC5XTZWj4UPk=;
-        b=MHkjAOjJ1zlE288eNCi6RUf76K4Ap+c0kFui0qtM+27x6jAsGsBRKcWFtVY3ouRBia
-         c0c4Ue2F9PtcCyie8kp3hAkzCNk86fly/TyN4EZWqMOulVg3ByZsGG8GXtKWTSoXilIP
-         iGWIzyEcqm86bWKghFP2A0OFPzW06Bdb3lfiwBhOY2tqFql2K6VcpgdG3ZnMimp8+OUO
-         /i3Y23FpPkTkX+pDZUXck5cPKuQysX9TQRJdl/QToK1phYA9+UETKkKe42ptZQOjlGMM
-         WiP1G+I2n6VnccugZpUI5De/dHzAv1+iaXiJI8dWVKoFuw0rDuDL6SH4KwOBOd3bcDYq
-         P9TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l2dc72lRn+QYapuQ0yA9PTxioiCc/T7YC5XTZWj4UPk=;
-        b=RW3EOFEXPwvdvgkrg9c9mlbrGyqtTtNbnkQhSKLvbk4bvEVNVXAg8Z6Nz+bF3/Xf2P
-         O7D5Fk7sIYMYs9mE+2L+NSAVVBxuASENtzI5FmJs91QvBumQqXLpusxibD9r0HfJHXNr
-         TrqtYC0xtwVwYOzHbtB5bejlxdK5Kkuyyj1xmwJKpsVyliAdlTVv54rNmArLSGy+pmtq
-         3Svo/FpffPme8p5kirZPjIqkrzLm5de7JBo1sYFgSHkJAxOZUi8Orbw7TFu0POYXE+mL
-         pkBZlKh38ygx1Sb6PQkbaIPCKxUh/U1wuruHrsOK2dH262vw71qnrTVQHniyAhnDuQYd
-         HStg==
-X-Gm-Message-State: APjAAAX2jYYQ0rL3LYyybi/ExIl4Zu6+EI/8ay2QvKQsvPB+80HKJYRV
-        Jn9LSQzyfWSihoOs3ci+0okraVk+5FCD/9E3JHTM
-X-Google-Smtp-Source: APXvYqyWufR/IKGaa7TNZVDs6IZzBW+yXtG00anJgANfJMC8ALjMgxbcJ9J8w83x7kZRKocksidJKfy0K6pdvI9LorM=
-X-Received: by 2002:a19:7702:: with SMTP id s2mr35331595lfc.102.1556577436849;
- Mon, 29 Apr 2019 15:37:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190422210041.GA21711@archlinux-i9> <CAHC9VhTtz3OA3EchaZaAeg=DxoGoz_WFdj+Mi9nd9i+cmjmuJA@mail.gmail.com>
- <20190423132926.GK17719@sasha-vm> <CAHC9VhRcdY7G_ES2VqNVpkoU=CRJkJySb3m1sFdgKJwh3JQ2oA@mail.gmail.com>
- <20190429124002.GB31371@kroah.com> <CAHC9VhQxrtYJTOj=aOL4FY=myA4ZO-rcY7TdCeFbjVnCmgOxew@mail.gmail.com>
- <20190429140906.GA7412@kroah.com> <CAHC9VhRDoYd=vfz3Sm8NKpMW_QoX7t_VohumUxU5i6AjTwCRyQ@mail.gmail.com>
- <20190429145248.GA7111@kroah.com>
-In-Reply-To: <20190429145248.GA7111@kroah.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 29 Apr 2019 18:37:03 -0400
-Message-ID: <CAHC9VhQNdSLfZK6QD1WnCzhdpa9NyjzrDwMks7SKgtuc6+5JgA@mail.gmail.com>
-Subject: Re: scripts/selinux build error in 4.14 after glibc update
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nicolas Iooss <nicolas.iooss@m4x.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 29 Apr 2019 18:40:37 -0400
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190429224035epoutp019ed72e4202f1a16fdab7c994b2faa80d~aExyrh6cd1116611166epoutp01K
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:40:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190429224035epoutp019ed72e4202f1a16fdab7c994b2faa80d~aExyrh6cd1116611166epoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1556577635;
+        bh=efZDE7R8MR8F+5XY1yFe+Tw7lt5nUY6FngkwLfh921o=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=RdBjZZoRhfSMRVt4yK5AuamaNf2cHxpkSaLPIXFzF/rozP924iN/M/UKiQ360SjPZ
+         DC+eb5TGE+QXQXnYA+5ro2D640rm0MzWJ/tVdOeY1Lm7AJpJ+aOo9TlQmk6ufm+LzB
+         0ugyLYE2r7jqbVV7jKgcmihFH7vOkudFJiHbyBVo=
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.181]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20190429224032epcas2p2cb3d89cbb8a3cdcd5ee1e109a18cbabe~aExwZYewN2600226002epcas2p2P;
+        Mon, 29 Apr 2019 22:40:32 +0000 (GMT)
+X-AuditID: b6c32a47-133ff7000000106e-98-5cc77d602ba2
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A5.BD.04206.06D77CC5; Tue, 30 Apr 2019 07:40:32 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH] nvmet: fix ptr_ret.cocci warnings
+Reply-To: minwoo.im@samsung.com
+From:   Minwoo Im <minwoo.im@samsung.com>
+To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Minwoo Im <minwoo.im@samsung.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <SN6PR04MB45271D793C898E527914578086390@SN6PR04MB4527.namprd04.prod.outlook.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190429224031epcms2p45b9198075ea9406da495a1b813400a0d@epcms2p4>
+Date:   Tue, 30 Apr 2019 07:40:31 +0900
+X-CMS-MailID: 20190429224031epcms2p45b9198075ea9406da495a1b813400a0d
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH++3O7WqursvqZFTrir3I3LU2b6EmJXkhLakwqJVd9IeT9mJ3
+        hgWioyK1KIWeS12EZWkPMktrULJekJa9oHxS0dPloheUYrXrndR/Hw7fc77ne34/klAfV0SR
+        +RYHtlt4E60Ik1+9NVcfu6XonkFb7QtlXd0+OXu24Y6MfXq9SsG6T79VsoNlY9l3ba0Ee8H3
+        WZ6i5K65epVcR98lOXe5tpjzdJYouP1N9Yj71jid29O6V5ap3GBKNGI+F9s12JJjzc235CXR
+        K9dmL8/W6bVMLLOYTaA1Ft6Mk+jU9MzYFfmmwDq0ZhtvKgiUMnlBoOOSE+3WAgfWGK2CI4nG
+        tlyTjWFsCwTeLBRY8hbkWM1LGK02XhdQbjEZ2w51ELYn4wvfDHlQCfKHl6NQEqhF8P78NaIc
+        hZFqqgXBx08eWTkiSRUVAcMtE0TNBGoJHDy2E4llNTUDfvZrpfJc8HvaQ0RWULOh5FC/XORI
+        qgj8DbeROJKg7iOobX0cInmp4Oiet3KJp0Jz3RUkcii1Cbp+f1dI9YnQ2TCgHOXPd91I4kjY
+        3feAkDgCXv7yjOwDFECfP1nCYmg6w4q2QO1C8OLT+WBrHDjffxmxVVEZ0OnZJxNZTsVA63Bn
+        UJMK5272jGiIQMTmgSpCnEkEMl68HieNj4bbXUHFOCi9NawcDdVS80YmcTR88XqDS06Buie+
+        YCgOnu16rZCO/BWBr7kbVSCN69+dXf8Zu/4Zn0BEPZqEbYI5DwvxtoX/P20jGvmY89Ja0NWH
+        6V5EkYgOV3H+uwZ1CL9N2G72IiAJOlLF3btjUKty+e07sN2abS8wYcGLdIH8lUTUxBxr4Jtb
+        HNmMLl6v1y7WsTp9PEtPVr2aWr1RTeXxDrwVYxu2j/bJyNCoEqT7fXxK1nNPr9PWv86w4hsu
+        xcNneth248xZDDqVkrqxa/7ZjDlLPZM3PHtXFXNpf/KNxnRne23FySF34s+e1Yb0mur13sJl
+        P8rqICGrw9nbkZK2JmYfM62wbcxg2MIPR0y62e3uB4+sA94/7uqsjLpVys1RM5zdr51Fj4mE
+        A4ezKmm5YOSZeYRd4P8CtzEFLK4DAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190429221427epcas3p2ff4fc6e3b8da00a34cf5766b6f2754f5
+References: <SN6PR04MB45271D793C898E527914578086390@SN6PR04MB4527.namprd04.prod.outlook.com>
+        <201904300131.gB7Qr2Ik%lkp@intel.com> <20190429175734.GA20932@lkp-kbuild08>
+        <CGME20190429221427epcas3p2ff4fc6e3b8da00a34cf5766b6f2754f5@epcms2p4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:52 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Mon, Apr 29, 2019 at 10:47:00AM -0400, Paul Moore wrote:
-> > On Mon, Apr 29, 2019 at 10:09 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > On Mon, Apr 29, 2019 at 10:02:29AM -0400, Paul Moore wrote:
-> > > > On Mon, Apr 29, 2019 at 8:40 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > On Tue, Apr 23, 2019 at 09:43:09AM -0400, Paul Moore wrote:
-> > > > > > On Tue, Apr 23, 2019 at 9:29 AM Sasha Levin <sashal@kernel.org> wrote:
-> > > > > > > On Mon, Apr 22, 2019 at 09:59:47PM -0400, Paul Moore wrote:
-> > > > > > > >On Mon, Apr 22, 2019 at 5:00 PM Nathan Chancellor
-> > > > > > > ><natechancellor@gmail.com> wrote:
-> > > > > > > >> Hi all,
-> > > > > > > >>
-> > > > > > > >> After a glibc update to 2.29, my 4.14 builds started failing like so:
-> > > > > > > >
-> > > > > > > >...
-> > > > > > > >
-> > > > > > > >>   HOSTCC  scripts/selinux/genheaders/genheaders
-> > > > > > > >> In file included from scripts/selinux/genheaders/genheaders.c:19:
-> > > > > > > >> ./security/selinux/include/classmap.h:245:2: error: #error New address family defined, please update secclass_map.
-> > > > > > > >>  #error New address family defined, please update secclass_map.
-> > > > > > > >>   ^~~~~
-> > > > > > > >
-> > > > > > > >This is a known problem that has a fix in the selinux/next branch and
-> > > > > > > >will be going up to Linus during the next merge window.  The fix is
-> > > > > > > >quite small and should be relatively easy for you to backport to your
-> > > > > > > >kernel build if you are interested; the patch can be found at the
-> > > > > > > >archive link below:
-> > > > > > > >
-> > > > > > > >https://lore.kernel.org/selinux/20190225005528.28371-1-paulo@paulo.ac
-> > > > > > >
-> > > > > > > Why is it waiting for the next merge window? It fixes a build bug that
-> > > > > > > people hit.
-> > > > > >
-> > > > > > I place a reasonably high bar on patches that I send up to Linus
-> > > > > > outside of the merge window and I didn't feel this patch met that
-> > > > > > criteria.  Nathan is only the second person I've seen who has
-> > > > > > encountered this problem, the first being the original patch author.
-> > > > > > As far as I've seen, the problem is only seen by users building older
-> > > > > > kernels on very new userspaces (e.g. glibc v2.29 was released in
-> > > > > > February 2019, Linux v4.14 was released in 2017); this doesn't appear
-> > > > > > to be a large group of people and I didn't want to risk breaking the
-> > > > > > main kernel tree during the -rcX phase for such a small group.
-> > > > >
-> > > > > Ugh, this breaks my local builds, I would recommend getting it to Linus
-> > > > > sooner please.
-> > > >
-> > > > Well, we are at -rc7 right now and it looks like an -rc8 is unlikely
-> > > > so the question really comes down to can/do you want to wait a week?
-> > >
-> > > It's a regression in the 5.1-rc tree, that is hitting people now.  Why
-> > > do you want to have a 5.1-final that is known to be broken?
+Sure, I will.
+
+Thanks,
+
+> -----Original Message-----
+> From: Linux-nvme [mailto:linux-nvme-bounces@lists.infradead.org] On
+> Behalf Of Chaitanya Kulkarni
+> Sent: Tuesday, April 30, 2019 7:14 AM
+> To: Minwoo Im
+> Cc: linux-kernel@vger.kernel.org; Christoph Hellwig; linux-
+> nvme@lists.infradead.org; Sagi Grimberg
+> Subject: Re: [PATCH] nvmet: fix ptr_ret.cocci warnings
+> 
+> Hi Minwoo,
+> 
+> Can you please resend this patch with the suggested change ?
+> 
+> On 04/29/2019 10:58 AM, kbuild test robot wrote:
+> > From: kbuild test robot <lkp@intel.com>
 > >
-> > I believe I answered that in my reply to Sasha.  Can you answer the
-> > question I asked of you above?
->
-> If you don't submit it this week, I guess I can wait as I have no other
-> choice.
->
-> But note, this did break my build systems, and my main development
-> system this weekend.  So yes, the number of people being affected might
-> be "small", but that "small" number includes the people responsible for
-> maintaining those stable kernels :(
->
-> Anyway, it's your call, just letting you know I'm really annoyed at the
-> moment by this...
-
-It's against my better judgement, but I'll send a PR up to Linus now.
-
--- 
-paul moore
-www.paul-moore.com
+> > drivers/nvme/target/discovery.c:375:1-3: WARNING: PTR_ERR_OR_ZERO
+> can be used
+> >
+> >
+> >   Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> >
+> > Generated by: scripts/coccinelle/api/ptr_ret.cocci
+> >
+> > Fixes: 6b7e631b927c ("nvmet: return a specified error it subsys_alloc fails")
+> > CC: Minwoo Im <minwoo.im.dev@gmail.com>
+> > Signed-off-by: kbuild test robot <lkp@intel.com>
+> > ---
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> master
+> > head:   3d17a1de96a233cf89bfbb5a77ebb1a05c420681
+> > commit: 6b7e631b927ca1266b2695307ab71ed7764af75e [9188/10649]
+> nvmet: return a specified error it subsys_alloc fails
+> >
+> >   discovery.c |    4 +---
+> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > --- a/drivers/nvme/target/discovery.c
+> > +++ b/drivers/nvme/target/discovery.c
+> > @@ -372,9 +372,7 @@ int __init nvmet_init_discovery(void)
+> >   {
+> >   	nvmet_disc_subsys =
+> >   		nvmet_subsys_alloc(NVME_DISC_SUBSYS_NAME,
+> NVME_NQN_DISC);
+> > -	if (IS_ERR(nvmet_disc_subsys))
+> > -		return PTR_ERR(nvmet_disc_subsys);
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(nvmet_disc_subsys);
+> >   }
+> >
+> >   void nvmet_exit_discovery(void)
+> >
+> 
+> 
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-nvme
