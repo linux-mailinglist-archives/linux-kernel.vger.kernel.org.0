@@ -2,76 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC0E0DB6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 07:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62057DB68
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 07:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfD2FQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 01:16:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29193 "EHLO mga03.intel.com"
+        id S1726646AbfD2FN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 01:13:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbfD2FQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 01:16:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Apr 2019 22:16:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,408,1549958400"; 
-   d="scan'208";a="295363562"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 28 Apr 2019 22:16:34 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] swiotlb: Factor out slot allocation and free
-To:     Christoph Hellwig <hch@lst.de>
-References: <20190421011719.14909-1-baolu.lu@linux.intel.com>
- <20190421011719.14909-3-baolu.lu@linux.intel.com>
- <20190422164555.GA31181@lst.de>
- <0c6e5983-312b-0d6b-92f5-64861cd6804d@linux.intel.com>
- <20190423061232.GB12762@lst.de>
- <dff50b2c-5e31-8b4a-7fdf-99d17852746b@linux.intel.com>
- <20190424144532.GA21480@lst.de>
- <a189444b-15c9-8069-901d-8cdf9af7fc3c@linux.intel.com>
- <20190426150433.GA19930@lst.de>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <93b3d627-782d-cae0-2175-77a5a8b3fe6e@linux.intel.com>
-Date:   Mon, 29 Apr 2019 13:10:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725783AbfD2FN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 01:13:28 -0400
+Received: from localhost (unknown [171.76.113.243])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F15A62075E;
+        Mon, 29 Apr 2019 05:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556514806;
+        bh=7VmgqraXn/9VuG/nJLtKzsply2v6Qrak0T0ayd5evyU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q/ofAF2mDvIZ/HGpM13OgWf7Vxb81OYKP9Y0Hb9hZqR19GnHWy6fIY8jSfFOgkFkR
+         WmqvjSDfKvxv2B4bUBwXNb9JcIm4nx7CYx3/qIc5e8ycMiCr5ORdFZDMKrT62+9baw
+         0+/170xhhnZSRbNfzmoXM2J5Etd+5Zl3iy4VePUk=
+Date:   Mon, 29 Apr 2019 10:43:23 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: stm32-dma: fix residue calculation in
+ stm32-dma
+Message-ID: <20190429051310.GC3845@vkoul-mobl.Dlink>
+References: <1553689316-6231-1-git-send-email-arnaud.pouliquen@st.com>
+ <20190426121751.GC28103@vkoul-mobl>
+ <6894b54e-651f-1caf-d363-79d1ef0eee14@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20190426150433.GA19930@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6894b54e-651f-1caf-d363-79d1ef0eee14@st.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On 26-04-19, 15:41, Arnaud Pouliquen wrote:
+> >> During residue calculation. the DMA can switch to the next sg. When
+> >> this race condition occurs, the residue returned value is not valid.
+> >> Indeed the position in the sg returned by the hardware is the position
+> >> of the next sg, not the current sg.
+> >> Solution is to check the sg after the calculation to verify it.
+> >> If a transition is detected we consider that the DMA has switched to
+> >> the beginning of next sg.
+> > 
+> > Now, that sounds like duct tape. Why should we bother doing that.
+> > 
+> > Also looking back at the stm32_dma_desc_residue() and calls to it from
+> > stm32_dma_tx_status() am not sure we are doing the right thing
+> Please, could you explain what you have in mind here?
 
-On 4/26/19 11:04 PM, Christoph Hellwig wrote:
-> On Thu, Apr 25, 2019 at 10:07:19AM +0800, Lu Baolu wrote:
->> This is not VT-d specific. It's just how generic IOMMU works.
->>
->> Normally, IOMMU works in paging mode. So if a driver issues DMA with
->> IOVA  0xAAAA0123, IOMMU can remap it with a physical address 0xBBBB0123.
->> But we should never expect IOMMU to remap 0xAAAA0123 with physical
->> address of 0xBBBB0000. That's the reason why I said that IOMMU will not
->> work there.
+So when we call vchan_find_desc() that tells us if the descriptor is in
+the issued queue or not..  Ideally it should not matter if we have one
+or N descriptors issued to hardware.
+
+So why should you bother checking for next_sg.
+
+> > why are we looking at next_sg here, can you explain me that please
 > 
-> Well, with the iommu it doesn't happen.  With swiotlb it obviosuly
-> can happen, so drivers are fine with it.  Why would that suddenly
-> become an issue when swiotlb is called from the iommu code?
+> This solution is similar to one implemented in the at_hdmac.c driver
+> (atc_get_bytes_left function).
 > 
+> Yes could be consider as a workaround for a hardware issue...
+> 
+> In stm32 DMA Peripheral, we can register up to 2 sg descriptors (sg1 &
+> sg2)in DMA registers, and use it in a cyclic mode (auto reload). This
+> mode is mainly use for audio transfer initiated by an ALSA driver.
+> 
+> >From hardware point of view the DMA transfers first block based on sg1,
+> then it updates registers to prepare sg2 transfer, and then generates an
+> IRQ to inform that it issues the next transfer (sg2).
+> 
+> Then driver can update sg1 to prepare the third transfer...
+> 
+> In parallel the client driver can requests status to get the residue to
+> update internal pointer.
+> The issue is in the race condition between the call of the
+> device_tx_status ops and the update of the DMA register on sg switch.
 
-I would say IOMMU is DMA remapping, not DMA engine. :-)
+Sorry I do not agree! You are in stm32_dma_tx_status() hold the lock and
+irqs are disabled, so even if sg2 was loaded, you will not get an
+interrupt and wont know. By looking at sg1 register you will see that
+sg1 is telling you that it has finished and residue can be zero. That is
+fine and correct to report.
 
-Best regards,
-Lu Baolu
+Most important thing here is that reside is for _requested_ descriptor
+and not _current_ descriptor, so looking into sg2 doesnt not fit.
+
+> During a short time the hardware updated the registers containing the
+> sg ID but not the transfer counter(SxNDTR). In this case there is a
+> mismatch between the Sg ID and the associated transfer counter.
+> So residue calculation is wrong.
+> Idea of this patch is to perform the calculation and then to crosscheck
+> that the hardware has not switched to the next sg during the
+> calculation. The way to crosscheck is to compare the the sg ID before
+> and after the calculation.
+> 
+> I tested the solution to force a new recalculation but no real solution
+> to trust the registers during this phase. In this case an approximation
+> is to consider that the DMA is transferring the first bytes of the next sg.
+> So we return the residue corresponding to the beginning of the next buffer.
+
+And that is wrong!. The argument is 'cookie' and you return residue for
+that cookie.
+
+For example, if you have dma txn with cookie 1, 2, 3, 4 submitted, then currently HW
+is processing cookie 2, then for tx_status on:
+cookie 1: return DMA_COMPLETE, residue 0
+cookie 2: return DMA_IN_PROGRESS, residue (read from HW)
+cookie 3: return DMA_IN_PROGRESS, residue txn length
+cookie 4: return DMA_IN_PROGRESS, residue txn length
+
+Thanks
+-- 
+~Vinod
