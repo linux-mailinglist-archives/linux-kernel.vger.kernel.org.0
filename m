@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B13A1EB67
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDC8EB55
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbfD2UL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:11:56 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46428 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfD2UL4 (ORCPT
+        id S1729334AbfD2UHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:07:06 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:55042 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729212AbfD2UHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:11:56 -0400
-Received: by mail-lf1-f68.google.com with SMTP id k18so8859619lfj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6BzF2OGCOW6HJd/OnyiluqOmAxSSof4acOvoZOgQm9o=;
-        b=USATFDoZDh4xC+n5UqEtvteBhBowGyyECGRsSRhXKOP5PzafOvxupieg8HOTz7c/tT
-         PXOh2kw9Riqlvj6y0JnovEQkM5Sxqs6/eA/GdnQ1+qDmrJni0xr2WjZhGxpsNJCXOf6b
-         lOAASJsanyZBZOXaJ0IkarPkyAoriW6kXsvF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6BzF2OGCOW6HJd/OnyiluqOmAxSSof4acOvoZOgQm9o=;
-        b=Dq/kDHuF/O6URex9WPc2R6M8zg2kU+LlrZz9j8wxCcBTMY/+01bnyEB1LSx5Xv8IH2
-         yggPcVvCRv4F4UDBPi7DYYS3lrGw7t67ssq0jhUTQKlpMQsQcb+U5NV4L0ZKNauoi/AA
-         WdVKW3zds73kciRWyWnOAfz3rPC4/5e5t63IMUMDygAhb+9N+/PGHVkamNwnxARvBunk
-         kNX+Guua56y0l0nrhIOuuSL2Tbu8HylTGV8pys1dwLLyFSZS9GeLZk5ncTtuak5hXhqj
-         vkFscity5DP+IjPWEF+zCEbXiAyHBa5Y9SmcOJupR+ZlumPjCyRT+hhkzyGqO75amPFJ
-         BPrw==
-X-Gm-Message-State: APjAAAVcuQOKD4tjfrQ3GUArqB+5HJ6Y6JQM4FHqVTTFAbqNm9TwcRUN
-        N27hLUAXIWiuQ2pirdiCOoyQ5HIftH0=
-X-Google-Smtp-Source: APXvYqylBVmx87Z1ny03VsamMro+Ta/VzuqeiRPzCihHKd0X19lzdNDpr35cHUguwvqUBjSSN/IMVQ==
-X-Received: by 2002:ac2:5207:: with SMTP id a7mr35414412lfl.70.1556568713912;
-        Mon, 29 Apr 2019 13:11:53 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id z7sm7555127lfg.40.2019.04.29.13.11.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 13:11:53 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id t1so477801lje.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:11:53 -0700 (PDT)
-X-Received: by 2002:a2e:3e0e:: with SMTP id l14mr33501765lja.125.1556568393207;
- Mon, 29 Apr 2019 13:06:33 -0700 (PDT)
+        Mon, 29 Apr 2019 16:07:05 -0400
+Received: (qmail 8690 invoked by uid 2102); 29 Apr 2019 16:07:04 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 29 Apr 2019 16:07:04 -0400
+Date:   Mon, 29 Apr 2019 16:07:04 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+a9fefd18c7b240f19c54@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <rafael@kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in hex_string
+In-Reply-To: <000000000000f69c3b0587aa1bc5@google.com>
+Message-ID: <Pine.LNX.4.44L0.1904291604510.1632-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
- <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
- <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
- <20190429145250.1a5da6ed@gandalf.local.home> <CAHk-=wjm93jLtVxTX4HZs6K4k1Wqh3ujjmapqaYtcibVk_YnzQ@mail.gmail.com>
- <20190429150724.6e501d27@gandalf.local.home>
-In-Reply-To: <20190429150724.6e501d27@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Apr 2019 13:06:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgbC-wiSrdDYAh1ORF4EKmecY+MkNsJBF=BWf4W1bXXgA@mail.gmail.com>
-Message-ID: <CAHk-=wgbC-wiSrdDYAh1ORF4EKmecY+MkNsJBF=BWf4W1bXXgA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
- fops invocation
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 12:07 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> Are you suggesting that I rewrite the code to do it one function at a
-> time? This has always been batch mode. This is not something new. The
-> function tracer has been around longer than the text poke code.
+On Mon, 29 Apr 2019, syzbot wrote:
 
-Only do the 'call' instructions one at a time. Why would you change
-_existing_ code?
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan/tree/usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=139ac37f200000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a9fefd18c7b240f19c54
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f3b338a00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a9fefd18c7b240f19c54@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in hex_string+0x418/0x4b0 lib/vsprintf.c:975
+> Read of size 1 at addr ffff88821a41bd38 by task kworker/0:1/12
+> 
+> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc3-319004-g43151d6 #6
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xe8/0x16e lib/dump_stack.c:113
+>   print_address_description+0x6c/0x236 mm/kasan/report.c:187
+>   kasan_report.cold+0x1a/0x3c mm/kasan/report.c:317
+>   hex_string+0x418/0x4b0 lib/vsprintf.c:975
+>   pointer+0x460/0x910 lib/vsprintf.c:1985
+>   vsnprintf+0x5a0/0x16b0 lib/vsprintf.c:2400
+>   pointer+0x60b/0x910 lib/vsprintf.c:2038
+>   vsnprintf+0x5a0/0x16b0 lib/vsprintf.c:2400
+>   vscnprintf+0x29/0x80 lib/vsprintf.c:2499
+>   vprintk_store+0x45/0x4b0 kernel/printk/printk.c:1900
+>   vprintk_emit+0x210/0x5a0 kernel/printk/printk.c:1957
+>   dev_vprintk_emit+0x50e/0x553 drivers/base/core.c:3185
+>   dev_printk_emit+0xbf/0xf6 drivers/base/core.c:3196
+>   __dev_printk+0x1ed/0x215 drivers/base/core.c:3208
+>   _dev_info+0xdc/0x10e drivers/base/core.c:3254
+>   dlfb_parse_vendor_descriptor drivers/video/fbdev/udlfb.c:1532 [inline]
 
-                 Linus
+Accessing beyond the end of the descriptor.
+
+#syz test: https://github.com/google/kasan.git usb-fuzzer
+
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1511,6 +1511,7 @@ static int dlfb_parse_vendor_descriptor(
+ 	char *buf;
+ 	char *desc_end;
+ 	int total_len;
++	int width;
+ 
+ 	buf = kzalloc(MAX_VENDOR_DESCRIPTOR_SIZE, GFP_KERNEL);
+ 	if (!buf)
+@@ -1529,9 +1530,10 @@ static int dlfb_parse_vendor_descriptor(
+ 	}
+ 
+ 	if (total_len > 5) {
++		width = min(total_len, 11);
+ 		dev_info(&intf->dev,
+-			 "vendor descriptor length: %d data: %11ph\n",
+-			 total_len, desc);
++			 "vendor descriptor length: %d data: %*ph\n",
++			 total_len, width, desc);
+ 
+ 		if ((desc[0] != total_len) || /* descriptor length */
+ 		    (desc[1] != 0x5f) ||   /* vendor descriptor type */
+
+
