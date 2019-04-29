@@ -2,63 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF62E803
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CF5E8AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbfD2Qon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 12:44:43 -0400
-Received: from mail.nic.cz ([217.31.204.67]:45632 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728629AbfD2Qom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:44:42 -0400
-Received: from localhost (unknown [172.20.6.125])
-        by mail.nic.cz (Postfix) with ESMTPS id 2F920632B0;
-        Mon, 29 Apr 2019 18:44:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1556556280; bh=KPqT55OC6AnnkshO0m7QOgkOsRziVHu4tEdrC34WjNg=;
-        h=Date:From:To;
-        b=cYoRvzBECmO98HTvZ6UYHzESlEw6QB4ej9NSnQ5rlJBo6vxNBey4RbX51r8jvbggk
-         PUqXBiNYjtLsrtZSPRq9rXkSHz68OZYiuNe8itraRjiqFbwNspud73iabIgIYnvRZT
-         hhgeNwWipXRS8Gz85BampV/y9IW5+6evbNuYxqiA=
-Date:   Mon, 29 Apr 2019 18:44:39 +0200
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-leds@vger.kernel.org
-Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
-Message-ID: <20190429184439.68049050@nic.cz>
-In-Reply-To: <20190429163753.GA16782@amd>
-References: <20190429190354.0d5e2e93@canb.auug.org.au>
-        <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
-        <20190429153200.GA11761@amd>
-        <20190429173842.06f02852@nic.cz>
-        <20190429163753.GA16782@amd>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728921AbfD2RUa convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 13:20:30 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:60097
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1728769AbfD2RUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 13:20:30 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id ED509B4FC22;
+        Mon, 29 Apr 2019 16:45:17 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id USk98i_uO0bX; Mon, 29 Apr 2019 16:45:17 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 58F45B4FC26;
+        Mon, 29 Apr 2019 16:45:17 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id icHsvMlDIGRL; Mon, 29 Apr 2019 16:45:17 +0000 (UTC)
+Received: from [100.73.197.163] (unknown [223.237.241.75])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 36538B4FC03;
+        Mon, 29 Apr 2019 16:45:08 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.99.2 at mail
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador web <exportaciones@minpal.gob.ve>
+Date:   Mon, 29 Apr 2019 22:15:00 +0530
+Message-Id: <20190429164509.36538B4FC03@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019 18:37:53 +0200
-Pavel Machek <pavel@ucw.cz> wrote:
+Aviso de seguridad:
 
-> On Mon 2019-04-29 17:38:42, Marek Behun wrote:
-> > I am sending patch only adding the I2C dep. Theoretically it is
-> > possible that someone uses the same I2C API in their microcontroller on
-> > another architecture.  
-> 
-> Theoretically. But we both now that probability of that is very low,
-> and that likely driver would need other updates, too... right?
-> 
-> 								Pavel
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
-What would be the benefit to add ARM dependency? So that distro
-compilations don't ship the turris_omnia driver unnecesarily?
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index  , copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
