@@ -2,197 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE02DA11
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9870EDA30
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 02:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfD2ARL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Apr 2019 20:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
+        id S1726879AbfD2AXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Apr 2019 20:23:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51180 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbfD2ARL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Apr 2019 20:17:11 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726223AbfD2AXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Apr 2019 20:23:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E7F620656;
-        Mon, 29 Apr 2019 00:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556497029;
-        bh=oG6Yu4j/Dt+FoonJfviNsLx4jjegkGBiqnZn0AdmUTE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1zvrhoZQieoigcwC87QQNYfTCrNcvfzgWSdrwQfu2RuYfbLjxt/oyZEf6++27LBz6
-         Me+gqjRshaO/NydGhU3lmYWw2N7PuE97zeOudmiKZReE23OQ607uvPJDtW1XW0scgB
-         zUKqhXT5fTekSE5F71QHTMYV7/Gp/YIx3L+RLn20=
-Date:   Sun, 28 Apr 2019 19:17:08 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     fred@fredlawl.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mika.westerberg@linux.intel.com, lukas@wunner.de,
-        andriy.shevchenko@linux.intel.com, keith.busch@intel.com,
-        mr.nuke.me@gmail.com, liudongdong3@huawei.com, thesven73@gmail.com
-Subject: Re: [PATCH 4/4] PCI/portdrv: Add dev_fmt() to port drivers
-Message-ID: <20190429001708.GM14616@google.com>
-References: <20190427191304.32502-1-fred@fredlawl.com>
- <20190427191304.32502-5-fred@fredlawl.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 912CC3098544;
+        Mon, 29 Apr 2019 00:23:23 +0000 (UTC)
+Received: from localhost (ovpn-12-38.pek2.redhat.com [10.72.12.38])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9EC6917D08;
+        Mon, 29 Apr 2019 00:23:20 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 08:23:18 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     bp@alien8.de, j-nomura@ce.jp.nec.com, kasong@redhat.com,
+        dyoung@redhat.com
+Cc:     fanc.fnst@cn.fujitsu.com, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Subject: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab and
+ ACPI tables
+Message-ID: <20190429002318.GA25400@MiWiFi-R3L-srv>
+References: <20190424092944.30481-1-bhe@redhat.com>
+ <20190424092944.30481-2-bhe@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190427191304.32502-5-fred@fredlawl.com>
+In-Reply-To: <20190424092944.30481-2-bhe@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 29 Apr 2019 00:23:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 27, 2019 at 02:13:04PM -0500, fred@fredlawl.com wrote:
-> From: Frederick Lawler <fred@fredlawl.com>
-> 
-> Add dev_fmt() to port drivers.
-> 
-> Signed-off-by: Frederick Lawler <fred@fredlawl.com>
-> ---
->  drivers/pci/hotplug/pciehp_core.c  | 3 +++
->  drivers/pci/hotplug/pciehp_ctrl.c  | 2 ++
->  drivers/pci/hotplug/pciehp_hpc.c   | 3 +++
->  drivers/pci/hotplug/pciehp_pci.c   | 2 ++
->  drivers/pci/pcie/aer.c             | 3 +++
->  drivers/pci/pcie/aer_inject.c      | 2 ++
->  drivers/pci/pcie/bw_notification.c | 2 ++
->  drivers/pci/pcie/dpc.c             | 2 ++
->  drivers/pci/pcie/pme.c             | 2 ++
->  9 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-> index 430a47556813..b07d713fd4bd 100644
-> --- a/drivers/pci/hotplug/pciehp_core.c
-> +++ b/drivers/pci/hotplug/pciehp_core.c
-> @@ -17,6 +17,9 @@
->   *   Dely Sy <dely.l.sy@intel.com>"
->   */
->  
-> +#define pr_fmt(fmt) "pciehp: " fmt
-> +#define dev_fmt(fmt) pr_fmt(fmt)
+From: Kairui Song <kasong@redhat.com>
 
-This should be in the same patch that converts from using the pcie_device
-to the pci_dev.  That way the "pciehp" that came from the pcie_device is
-atomically replaced with the "pciehp" from pr_fmt()/dev_fmt().
+The current code only builds identity mapping for physical memory during
+kexec-type loading. The regions reserved by firmware are not covered.
+In the later patch, the boot decompressing code of kexec-ed kernel tries
+to access EFI systab and ACPI tables, lacking identity mapping for them
+will cause error and reset system to firmware.
 
-If you do it in separate patches, there's an intermediate stage where
-there's no prefix at all, and we want to avoid that.
+This error doesn't happen on all systems. Because kexec enables gbpages
+to build identity mapping, the EFI systab and ACPI tables could have been
+covered if they share the same 1 GB area with physical memory. To make
+sure, we should map them always.
 
-BTW, in most cases you can simply do this, which is slightly simpler:
+So here add mapping for them.
 
-  #define dev_fmt pr_fmt
+Signed-off-by: Kairui Song <kasong@redhat.com>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+Changelog:
+v5->v6:
+  Tune code, comments and patch log Per Boris's comments.
+v5:
+  This patch was newly added into v5.
 
->  #include <linux/moduleparam.h>
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-> index 345c02b1e8d7..969a9c72f65d 100644
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -13,6 +13,8 @@
->   *
->   */
->  
-> +#define dev_fmt(fmt) "pciehp: " fmt
-> +
->  #include <linux/kernel.h>
->  #include <linux/types.h>
->  #include <linux/pm_runtime.h>
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index 28a132a0d9db..f2a3da105f5b 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -12,6 +12,9 @@
->   * Send feedback to <greg@kroah.com>,<kristen.c.accardi@intel.com>
->   */
->  
-> +#define pr_fmt(fmt) "pciehp: " fmt
-> +#define dev_fmt(fmt) pr_fmt(fmt)
-> +
->  #include <linux/kernel.h>
->  #include <linux/types.h>
->  #include <linux/jiffies.h>
-> diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
-> index 55967ce567f6..04ccd535aca7 100644
-> --- a/drivers/pci/hotplug/pciehp_pci.c
-> +++ b/drivers/pci/hotplug/pciehp_pci.c
-> @@ -13,6 +13,8 @@
->   *
->   */
->  
-> +#define dev_fmt(fmt) "pciehp: " fmt
-> +
->  #include <linux/kernel.h>
->  #include <linux/types.h>
->  #include <linux/pci.h>
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 224d878a28b4..6fd67285423d 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -12,6 +12,9 @@
->   *    Andrew Patterson <andrew.patterson@hp.com>
->   */
->  
-> +#define pr_fmt(fmt) "AER: " fmt
-> +#define dev_fmt(fmt) pr_fmt(fmt)
-> +
->  #include <linux/cper.h>
->  #include <linux/pci.h>
->  #include <linux/pci-acpi.h>
-> diff --git a/drivers/pci/pcie/aer_inject.c b/drivers/pci/pcie/aer_inject.c
-> index 610b617ae600..d4f6d49acd0c 100644
-> --- a/drivers/pci/pcie/aer_inject.c
-> +++ b/drivers/pci/pcie/aer_inject.c
-> @@ -12,6 +12,8 @@
->   *     Huang Ying <ying.huang@intel.com>
->   */
->  
-> +#define dev_fmt(fmt) "AER: " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/irq.h>
-> diff --git a/drivers/pci/pcie/bw_notification.c b/drivers/pci/pcie/bw_notification.c
-> index d2eae3b7cc0f..a4bb90562cd5 100644
-> --- a/drivers/pci/pcie/bw_notification.c
-> +++ b/drivers/pci/pcie/bw_notification.c
-> @@ -14,6 +14,8 @@
->   * and warns when links become degraded in operation.
->   */
->  
-> +#define dev_fmt(fmt) "BWN: " fmt
-> +
->  #include "../pci.h"
->  #include "portdrv.h"
->  
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 72659286191b..b3c10cdc508a 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -6,6 +6,8 @@
->   * Copyright (C) 2016 Intel Corp.
->   */
->  
-> +#define dev_fmt(fmt) "DPC: " fmt
-> +
->  #include <linux/aer.h>
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
-> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-> index 54d593d10396..d6698423a6d6 100644
-> --- a/drivers/pci/pcie/pme.c
-> +++ b/drivers/pci/pcie/pme.c
-> @@ -7,6 +7,8 @@
->   * Copyright (C) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
->   */
->  
-> +#define dev_fmt(fmt) "PME: " fmt
-> +
->  #include <linux/pci.h>
->  #include <linux/kernel.h>
->  #include <linux/errno.h>
-> -- 
-> 2.17.1
-> 
+ arch/x86/kernel/machine_kexec_64.c | 79 ++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
+
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index ceba408ea982..0af01490ee2d 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -18,6 +18,7 @@
+ #include <linux/io.h>
+ #include <linux/suspend.h>
+ #include <linux/vmalloc.h>
++#include <linux/efi.h>
+ 
+ #include <asm/init.h>
+ #include <asm/pgtable.h>
+@@ -29,6 +30,47 @@
+ #include <asm/setup.h>
+ #include <asm/set_memory.h>
+ 
++#ifdef CONFIG_ACPI
++/*
++ * Used while adding mapping for ACPI tables.
++ * Can be reused when other iomem regions need be mapped
++ */
++struct init_pgtable_data {
++	struct x86_mapping_info *info;
++	pgd_t *level4p;
++};
++
++static int mem_region_callback(struct resource *res, void *arg)
++{
++	struct init_pgtable_data *data = arg;
++	unsigned long mstart, mend;
++
++	mstart = res->start;
++	mend = mstart + resource_size(res) - 1;
++
++	return kernel_ident_mapping_init(data->info, data->level4p, mstart, mend);
++}
++
++static int
++map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
++{
++	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
++	struct init_pgtable_data data;
++
++	data.info = info;
++	data.level4p = level4p;
++	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
++	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
++				   &data, mem_region_callback);
++}
++#else
++static int init_acpi_pgtable(struct x86_mapping_info *info,
++				   pgd_t *level4p)
++{
++	return 0;
++}
++#endif
++
+ #ifdef CONFIG_KEXEC_FILE
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ 		&kexec_bzImage64_ops,
+@@ -36,6 +78,31 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ };
+ #endif
+ 
++static int
++map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
++{
++#ifdef CONFIG_EFI
++	unsigned long mstart, mend;
++
++	if (!efi_enabled(EFI_BOOT))
++		return 0;
++
++	mstart = (boot_params.efi_info.efi_systab |
++			((u64)boot_params.efi_info.efi_systab_hi<<32));
++
++	if (efi_enabled(EFI_64BIT))
++		mend = mstart + sizeof(efi_system_table_64_t);
++	else
++		mend = mstart + sizeof(efi_system_table_32_t);
++
++	if (!mstart)
++		return 0;
++
++	return kernel_ident_mapping_init(info, level4p, mstart, mend);
++#endif
++	return 0;
++}
++
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.p4d);
+@@ -159,6 +226,18 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+ 			return result;
+ 	}
+ 
++	/*
++	 * Prepare EFI systab and ACPI table mapping for kexec kernel,
++	 * since they are not covered by pfn_mapped.
++	 */
++	result = map_efi_systab(&info, level4p);
++	if (result)
++		return result;
++
++	result = map_acpi_tables(&info, level4p);
++	if (result)
++		return result;
++
+ 	return init_transition_pgtable(image, level4p);
+ }
+ 
+-- 
+2.17.2
+
