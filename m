@@ -2,138 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE814E78F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BE11E775
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbfD2QSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 12:18:36 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:37192 "EHLO pegase1.c-s.fr"
+        id S1728683AbfD2QRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 12:17:11 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:56154 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728542AbfD2QSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:18:36 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 44t8wN2pCvz9vDbs;
-        Mon, 29 Apr 2019 18:18:28 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=BjQx+kaE; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id aXsRFK1QTZr9; Mon, 29 Apr 2019 18:18:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 44t8wN1Rbrz9vDbr;
-        Mon, 29 Apr 2019 18:18:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1556554708; bh=FmG0gTYs5oq5h81q7jEyc4Wov/smm6KptMn1bWZZ6UY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BjQx+kaEHgEJb9T/61rt3diCsJNYkiNHUhfzgr+mvjN4Pnywq5MbgYBcqpdIQz91l
-         MOoWYXEzdn4IgWuIaWT6IQgLGYQmiTbu4vZxYLhMqB1ljWxO3BTYx68HtfYfrLa2pJ
-         DnY47LpRSIwR+sTZMzdaApWHw4o+sdP3BfWcan1g=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 671608B8B4;
-        Mon, 29 Apr 2019 18:18:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id J9zNcQs8Cgt1; Mon, 29 Apr 2019 18:18:33 +0200 (CEST)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.6])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 094208B8B3;
-        Mon, 29 Apr 2019 18:18:33 +0200 (CEST)
-Subject: Re: serial drivers polishing
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org
-Cc:     lorenzo.pieralisi@arm.com, linux-ia64@vger.kernel.org,
-        linux-serial@vger.kernel.org, andrew@aj.id.au,
-        gregkh@linuxfoundation.org, sudeep.holla@arm.com,
-        liviu.dudau@arm.com, linux-mips@vger.kernel.org, vz@mleia.com,
-        linux@prisktech.co.nz, sparclinux@vger.kernel.org,
-        khilman@baylibre.com, macro@linux-mips.org,
-        slemieux.tyco@gmail.com, matthias.bgg@gmail.com, jacmet@sunsite.dk,
-        linux-amlogic@lists.infradead.org,
-        andriy.shevchenko@linux.intel.com, linuxppc-dev@lists.ozlabs.org,
-        davem@davemloft.net
-References: <1556369542-13247-1-git-send-email-info@metux.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <7471c418-4058-db7b-b2ed-af9a67fff201@c-s.fr>
-Date:   Mon, 29 Apr 2019 16:16:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1728481AbfD2QRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 12:17:11 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1hL8xl-0002p5-Am; Mon, 29 Apr 2019 18:17:05 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To:     Michael Krufky <mkrufky@linuxtv.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Andy Walls <awalls@md.metrocast.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH v12 0/8] [media] Add analog mode support for Medion MD95700
+Date:   Mon, 29 Apr 2019 18:16:51 +0200
+Message-Id: <cover.1556554056.git.mail@maciej.szmigiero.name>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <1556369542-13247-1-git-send-email-info@metux.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series adds support for analog part of Medion 95700 in the cxusb
+driver.
 
-On 04/27/2019 12:51 PM, Enrico Weigelt, metux IT consult wrote:
-> Hello folks,
-> 
-> 
-> here's another attempt of polishing the serial drivers:
-> 
-> * lots of minor cleanups to make checkpatch happier
->    (eg. formatting, includes, inttypes, ...)
-> 
-> * use appropriate logging helpers instead of printk()
-> 
-> * consequent use of mapsize/mapbase fields:
->    the basic idea is, all drivers should fill mapbase/mapbase fields at
->    init time and later only use those fields, instead of hardcoded values
->    (later on, we can add generic helpers for the map/unmap stuff, etc)
-> 
-> * untwisting serial8250_port_size() at all:
->    move the iomem size probing to initialization time, move out some
->    platform specific magic to corresponding platform code, etc.
-> 
-> 
-> Unfortunately, I don't have the actual hardware to really test all
-> the code, so please let me know if there's something broken in here.
-> 
-> 
-> have fun,
-> 
-> --mtx
-> 
+What works:
+* Video capture at various sizes with sequential fields,
+* Input switching (TV Tuner, Composite, S-Video),
+* TV and radio tuning,
+* Video standard switching and auto detection,
+* Radio mode switching (stereo / mono),
+* Unplugging while capturing,
+* DVB / analog coexistence,
+* Raw BT.656 stream support.
 
+What does not work yet:
+* Audio,
+* VBI,
+* Picture controls.
 
-Got the following build  error while compiling for my powerpc board with 
-your full series applied. No time to investigate though.
+This series (as a one patch) was submitted for inclusion few years ago,
+then waited few months in a patch queue.
+Unfortunately, by the time it was supposed to be merged there
+were enough changes in media that it was no longer mergeable.
 
-   CC      arch/powerpc/kernel/setup-common.o
-In file included from ./include/linux/serial_8250.h:14:0,
-                  from arch/powerpc/kernel/setup-common.c:33:
-./include/linux/serial_core.h: In function ‘uart_memres_set_res’:
-./include/linux/serial_core.h:446:18: error: ‘resource’ undeclared 
-(first use in this function)
-    port->iobase = resource->start;
-                   ^
-./include/linux/serial_core.h:446:18: note: each undeclared identifier 
-is reported only once for each function it appears in
-./include/linux/serial_core.h:450:2: error: ‘uart’ undeclared (first use 
-in this function)
-   uart->mapbase = res->start;
-   ^
-./include/linux/serial_core.h: In function ‘uart_memres_set_start_len’:
-./include/linux/serial_core.h:464:6: error: ‘struct uart_driver’ has no 
-member named ‘mapbase’
-   uart->mapbase = start;
-       ^
-./include/linux/serial_core.h:465:6: error: ‘struct uart_driver’ has no 
-member named ‘mapsize’
-   uart->mapsize = len;
-       ^
-./include/linux/serial_core.h:466:6: error: ‘struct uart_driver’ has no 
-member named ‘iotype’
-   uart->iotype  = UPIO_MEM;
-       ^
-make[3]: *** [arch/powerpc/kernel/setup-common.o] Error 1
+I thought at that time that I will be able to rebase and retest it soon
+but unfortunately up till now I was never able to find enough time to do
+so.
+Also, with the passing of time the implementation diverged more and
+more from the current kernel code, necessitating even more reworking.
 
+That last iteration can be found here:
+https://patchwork.linuxtv.org/patch/8048/
 
-Christophe
+Since that version there had been the following changes:
+* Adaptation to changes in V4L2 / DVB core,
+
+* Radio device was added, with a possibility to tune to a FM radio
+station and switch between stereo and mono modes (tested by taping
+audio signal directly at tuner output pin),
+
+* DVB / analog coexistence was improved - resolved a few cases where
+DVB core would switch off power or reset the tuner when the device
+was still being used but in the analog mode,
+
+* Fixed issues reported by v4l2-compliance,
+
+* Switching to raw BT.656 mode is now done by a custom streaming
+parameter set via VIDIOC_S_PARM ioctl instead of using a
+V4L2_BUF_TYPE_PRIVATE buffer (which was removed from V4L2),
+
+* General small code cleanups (like using BIT() or ARRAY_SIZE() macros
+instead of open coding them, code formatting improvements, etc.).
+
+Changes from v1:
+* Only support configuration of cx25840 pins that the cxusb driver is
+actually using so there is no need for an ugly CX25840_PIN() macro,
+
+* Split cxusb changes into two patches: first one implementing
+digital / analog coexistence in this driver, second one adding the
+actual implementation of the analog mode,
+
+* Fix a warning reported by kbuild test robot.
+
+Changes from v2:
+* Split out ivtv cx25840 platform data zero-initialization to a separate
+commit,
+
+* Add kernel-doc description of struct cx25840_state,
+
+* Make sure that all variables used in CX25840_VCONFIG_OPTION() and
+CX25840_VCONFIG_SET_BIT() macros are their explicit parameters,
+
+* Split out some code from cxusb_medion_copy_field() and
+cxusb_medion_v_complete_work() functions to separate ones to increase
+their readability,
+
+* Generate masks using GENMASK() and BIT() macros in cx25840.h and
+cxusb.h.
+
+Changes from v3:
+Add SPDX tag to a newly added "cxusb-analog.c" file.
+
+Changes from v4:
+* Make analog support conditional on a new DVB_USB_CXUSB_ANALOG Kconfig
+option,
+
+* Use '//' comments in the header of a newly added "cxusb-analog.c"
+file,
+
+* Don't print errors on memory allocation failures,
+
+* Get rid of the driver MODULE_VERSION(),
+
+* Small formating fix of a one line.
+
+Changes from v5:
+Rebase onto current media_tree/master.
+
+Changes from v6:
+Adapt to commit 4eb2f55728abbe changing V4L2_SUBDEV_IO_PIN_* from bit
+masks to bit numbers.
+Thanks to Dan Carpenter's kbuild bot for catching this.
+
+Changes from v7:
+* Simplify cx25840_function_to_pad() assuming that the values of
+individual members of I/O pad enum will always match the actual
+chip register values,
+
+* Add a comment that the above is now a requirement to the I/O pad enum,
+
+* Don't #undef macros in the cx25840 patch,
+
+* Change "generic_mode" variable type in struct cx25840_state to bool,
+
+* Prefix todo-style comments added by the cx25840 patch with "TODO:",
+
+* Add a core init op to the cx25840 driver and use it to turn the
+generic_mode on instead of doing it via the platform data,
+
+* Use the above core init op to also provide a vconfig configuration
+to the cx25840 driver so the cxusb driver does not have to pass this
+(constant) configuration there on every video input change,
+
+* Remove cxusb_auxbuf_advance(), cxusb_auxbuf_begin() and
+cxusb_auxbuf_isend(),
+
+* Add a missing frame sequence counter support,
+
+* Test the driver with v4l2-compliance with streaming tests enabled,
+
+* Set device_caps in struct video_device during probe instead of returning
+it manually in vidioc_querycap handler,
+
+* Don't set the format name in vidioc_enum_fmt_vid_cap handler,
+
+* Drop various memset() zeroing in ioctl handlers, as suggested during
+last review,
+
+* Enforce minimum buffer count via in_buffers_needed field of
+struct vb2_queue instead of doing it in queue_setup callback,
+
+* Rewrite stream starting / stopping / configuration mechanism using a
+'stop_streaming' flag, remove cxusb_medion_stream_busy(),
+
+* Set the lock field in struct vb2_queue so vb2_ops_wait_prepare() /
+vb2_ops_wait_finish() helpers can be utilized,
+
+* Split out raw (unprocessed) BT.656 stream capturing support to a
+separate patch, adapt it to a recent change introduced by
+commit 8a7c5594c020 ("v4l2-ioctl: clear fields in s_parm") that forced
+extendedmode set by VIDIOC_S_PARM to zero,
+
+* Add a comment that if we ever need to support analog mode in similar
+hardware then this code should be made generic,
+
+* Remove a requirement that URB length has to be less than full frame
+size,
+
+* Limit URB length to avoid very high order memory allocations,
+
+* Remove out-of-order incoming URB support: this can't really happen,
+
+* Small cleanups here and there.
+
+Changes from v8:
+Rebase onto current media_tree/master.
+
+Changes from v9:
+* Elaborate generic mode comments in cx25840 and cxusb drivers,
+add datasheet references to cx25840 chip video output settings,
+
+* Describe the new DVB_USB_ADAP_STREAMING_CTRL_NO_URB flag,
+
+* Drop likely and unlikely annotations in cxusb driver from the patches,
+
+* Exclusively use strscpy (and not strncpy, strcpy, etc.) in the patches,
+
+* Drop zeroing of various v4l fields which should be zeroed by the
+core v4l code,
+
+* Adapt VIDIOC_S_FMT handler so the video format can't be changed if
+buffers are allocated,
+
+* Add VB2_DMABUF to the list of supported I/O modes.
+
+Changes from v10:
+* Add a commit cleaning up cx25840_load_fw() and its comments
+(no functional change intended),
+
+* Add a commit renaming cx25840 g_std operation to querystd operation
+since this is what this handler does,
+
+* Add a commit that clamps out-of-range picture sizes in cx25840
+set_fmt subdev operation so it conforms better to the V4L2 API,
+
+* cx25840 driver generic mode (enabled by calling its init op) is currently
+only implemented for cx2584x-family chips.
+Add a relevant comment and a warning to catch unintentional uses,
+
+* Program cx25840 driver video timings in the generic mode to the same
+values that the chip autoconfig would set.
+
+While improving the set_fmt subdev operation it became obvious that
+the video timings that cx25840 driver was setting resulted in a strange
+BT.656 PAL stream that had two active video areas per field (one with
+just a single line) and 580 active lines total.
+An output format with 580 active lines total meant that the most common
+PAL capture line count of 576 needed a non-identity scaling factor.
+
+This is the reason why in the generic mode the driver now uses the same
+values that the chip autoconfig would set (read from the chip).
+These give a nice, BT.656-compliant PAL stream with 576 lines and one
+active video area per field.
+
+cxusb raw mode, as provided by the last commit, is very useful for
+diagnosing these issues as it gives access to a raw BT.656 stream
+from the cx25840 chip where one can see line count for each field, see
+where VBI lines lie, which lines actually contain samples (as it is
+possible to have some active video lines without any samples at all and
+some VBI lines with normal line samples - cx25840 can move a VBI marker
+independently of a "start capturing samples" marker and, in fact, can have
+a slightly different VBI / active video divider between the two fields in
+a frame),
+
+* Remove the dvb-usb framework DVB_USB_ADAP_STREAMING_CTRL_NO_URB flag
+and always assume its behaviour (always make sure that data URBs are
+not active before calling a driver streaming_ctrl callback),
+
+* Initialize cxusb driver to PAL mode instead of trying to autodetect
+the standard,
+
+* Change videodev->tvnorms and the currently set standard when switching
+inputs so VIDIOC_ENUMSTD and VIDIOC_G_STD correctly return a limited
+standard set for TV tuner input,
+
+* Implement VIDIOC_QUERYSTD operation,
+
+* Make sure to return bottom-top field order for 525-line signal
+captures.
+
+Changes from v11:
+Add g_std operation to cx25840 driver and use it instead of querystd
+operation when determining field order in cxusb driver.
+
+ drivers/media/i2c/cx25840/cx25840-core.c |  554 +++++-
+ drivers/media/i2c/cx25840/cx25840-core.h |   15 +
+ drivers/media/i2c/cx25840/cx25840-vbi.c  |    4 +
+ drivers/media/usb/dvb-usb/Kconfig        |   16 +-
+ drivers/media/usb/dvb-usb/Makefile       |    3 +
+ drivers/media/usb/dvb-usb/cxusb-analog.c | 1974 ++++++++++++++++++++++
+ drivers/media/usb/dvb-usb/cxusb.c        |  451 ++++-
+ drivers/media/usb/dvb-usb/cxusb.h        |  158 ++
+ drivers/media/usb/dvb-usb/dvb-usb-dvb.c  |    5 +-
+ drivers/media/usb/dvb-usb/dvb-usb-init.c |   13 +
+ drivers/media/usb/dvb-usb/dvb-usb.h      |   10 +
+ drivers/media/v4l2-core/v4l2-ioctl.c     |    3 +-
+ include/media/drv-intf/cx25840.h         |  105 +-
+ 13 files changed, 3176 insertions(+), 135 deletions(-)
+ create mode 100644 drivers/media/usb/dvb-usb/cxusb-analog.c
