@@ -2,87 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2A1DC0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60302DC0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfD2GiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:38:04 -0400
-Received: from mailrelay1-1.pub.mailoutpod1-cph3.one.com ([46.30.210.182]:50348
-        "EHLO mailrelay1-1.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726589AbfD2GiD (ORCPT
+        id S1727453AbfD2Gif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:38:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56131 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfD2Gif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:38:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=haabendal.dk; s=20140924;
-        h=content-type:mime-version:message-id:in-reply-to:date:references:subject:cc:
-         to:from:from;
-        bh=9wnic545AsxZHcx/2hqOCpwUOjyBhfbZc3ntdYwABvA=;
-        b=WyvSl9iIFOcmGZ6eUlAGplycj4yNUwKW6vEWXfYXuDswldGuLYjCDaZoYrbkedvb95qs5WMMaolLm
-         6KIMIUP+3hfwvdAuWVCEk+W1dRystMzgAu7bdCChne8+gGuMzY8SQp2eKZkSfPzR7RfyYtglJxi1nN
-         S7mveu2smMn6jhqU=
-X-HalOne-Cookie: 365ca68957aadfd74324080bb8210c56c9d88814
-X-HalOne-ID: 54aea3d4-6a49-11e9-b614-d0431ea8a283
-Received: from localhost (unknown [193.163.1.7])
-        by mailrelay1.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id 54aea3d4-6a49-11e9-b614-d0431ea8a283;
-        Mon, 29 Apr 2019 06:37:59 +0000 (UTC)
-From:   Esben Haabendal <esben@haabendal.dk>
-To:     "Enrico Weigelt\, metux IT consult" <lkml@metux.net>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
-        He Zhe <zhe.he@windriver.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] serial: 8250: Allow port registration without UPF_BOOT_AUTOCONF
-References: <20190426084038.6377-1-esben@geanix.com>
-        <20190426084038.6377-2-esben@geanix.com>
-        <20190426143946.GX9224@smile.fi.intel.com>
-        <871s1og11u.fsf@haabendal.dk>
-        <20190426215103.GD9224@smile.fi.intel.com>
-        <87tvejakot.fsf@haabendal.dk>
-        <7a1fd6cc-050f-a077-6169-03552a89c563@metux.net>
-Date:   Mon, 29 Apr 2019 08:37:59 +0200
-In-Reply-To: <7a1fd6cc-050f-a077-6169-03552a89c563@metux.net> (Enrico
-        Weigelt's message of "Sat, 27 Apr 2019 13:57:57 +0200")
-Message-ID: <87tvehz588.fsf@haabendal.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        Mon, 29 Apr 2019 02:38:35 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3T6cNrK783955
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 28 Apr 2019 23:38:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3T6cNrK783955
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556519904;
+        bh=ttPw3dg9hQ47u8vro+sKr1xSCBN2zpzosj4tjgr9WqQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=BIH4Dsnu0vc/8ODmHWeNzDbEWwWEXXzgwQUGu6XMQ8CU1lXtkGXolXWfA6LRp0DHj
+         eJJuKmEL41GT4ho1XXzr5sOBG22YXRGOpFV1zpFMYc9sx5z0FFr9CnTcdmngy0Y6+x
+         B9inO6fTCGmHQoLXdNMzCZkFcFKA2lhLR70WbWyFb6gdODuQAtGiVaZa0ukVjds8nX
+         el+PoPeXdHPS9bSK/biRd/RcofN0/K3ZnPOzhsf1Lm+5GlrFEDOdll/ZUE4lvFyi94
+         HsFyAWx6aSffvtqCVCaLi4X1HuYO+zQit993SxHHjde1TKJy87CbrrBGrahBDwQcOX
+         gXEp117L47ScA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3T6cNJX783951;
+        Sun, 28 Apr 2019 23:38:23 -0700
+Date:   Sun, 28 Apr 2019 23:38:23 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Nicholas Piggin <tipbot@zytor.com>
+Message-ID: <tip-9b019acb72e4b5741d88e8936d6f200ed44b66b2@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, npiggin@gmail.com,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, fweisbec@gmail.com,
+        peterz@infradead.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, npiggin@gmail.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          fweisbec@gmail.com, hpa@zytor.com, torvalds@linux-foundation.org
+In-Reply-To: <20190412042613.28930-1-npiggin@gmail.com>
+References: <20190412042613.28930-1-npiggin@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/nohz: Run NOHZ idle load balancer on
+ HK_FLAG_MISC CPUs
+Git-Commit-ID: 9b019acb72e4b5741d88e8936d6f200ed44b66b2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Enrico Weigelt, metux IT consult" <lkml@metux.net> writes:
+Commit-ID:  9b019acb72e4b5741d88e8936d6f200ed44b66b2
+Gitweb:     https://git.kernel.org/tip/9b019acb72e4b5741d88e8936d6f200ed44b66b2
+Author:     Nicholas Piggin <npiggin@gmail.com>
+AuthorDate: Fri, 12 Apr 2019 14:26:13 +1000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 29 Apr 2019 08:27:03 +0200
 
-> On 27.04.19 10:58, Esben Haabendal wrote:
->
-> Hi folks,
->
->> That said, the purpose of UPF_BOOT_AUTOCONF (for 8250 driver) is to
->> request and map the register memory.  So when that is already done by
->> the parent MFD driver, I think it is silly to workaround problems
->> caused by UPF_BOOT_AUTOCONF being force setted, when it really
->> shouldn't.
-> I tend to agree. Maybe we should give serial8250_register_8250_port()
-> some flags for controlling this, or add another function for those
-> cases.
+sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs
 
-Changing serial8250_register_8250_port() would break existing drivers,
-as I have seen that some explicitly rely on the automtic addition of
-UPF_BOOT_AUTOCONF.
+The NOHZ idle balancer runs on the lowest idle CPU. This can
+interfere with isolated CPUs, so confine it to HK_FLAG_MISC
+housekeeping CPUs.
 
-> A minimal-invasive approach could be introducing an
-> serial8250_register_8250_port_ext() with extra parameters, and let
-> serial8250_register_8250_port() just call it.
+HK_FLAG_SCHED is not used for this because it is not set anywhere
+at the moment. This could be folded into HK_FLAG_SCHED once that
+option is fixed.
 
-So basically a rename of __serial8250_register_8250_port() in my patch
-to serial8250_register_8250_port_ext()?  Fine with me.  Should we give
-it an EXPORT_SYMBOL() also, as it is just as valid to use in modules as
-the current serial8250_register_8250_port()?
+The problem was observed with increased jitter on an application
+running on CPU0, caused by NOHZ idle load balancing being run on
+CPU1 (an SMT sibling).
 
-/Esben
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190412042613.28930-1-npiggin@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 13bafe350abf..7b0da7007da3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9519,22 +9519,26 @@ static inline int on_null_domain(struct rq *rq)
+  * - When one of the busy CPUs notice that there may be an idle rebalancing
+  *   needed, they will kick the idle load balancer, which then does idle
+  *   load balancing for all the idle CPUs.
++ * - HK_FLAG_MISC CPUs are used for this task, because HK_FLAG_SCHED not set
++ *   anywhere yet.
+  */
+ 
+ static inline int find_new_ilb(void)
+ {
+-	int ilb = cpumask_first(nohz.idle_cpus_mask);
++	int ilb;
+ 
+-	if (ilb < nr_cpu_ids && idle_cpu(ilb))
+-		return ilb;
++	for_each_cpu_and(ilb, nohz.idle_cpus_mask,
++			      housekeeping_cpumask(HK_FLAG_MISC)) {
++		if (idle_cpu(ilb))
++			return ilb;
++	}
+ 
+ 	return nr_cpu_ids;
+ }
+ 
+ /*
+- * Kick a CPU to do the nohz balancing, if it is time for it. We pick the
+- * nohz_load_balancer CPU (if there is one) otherwise fallback to any idle
+- * CPU (if there is one).
++ * Kick a CPU to do the nohz balancing, if it is time for it. We pick any
++ * idle CPU in the HK_FLAG_MISC housekeeping set (if there is one).
+  */
+ static void kick_ilb(unsigned int flags)
+ {
