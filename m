@@ -2,178 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB9DE692
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3652AE633
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbfD2Pc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:32:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39038 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbfD2Pc2 (ORCPT
+        id S1728669AbfD2PXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:23:50 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:43203 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728253AbfD2PXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:32:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a9so16708801wrp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 08:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:references:from:openpgp:autocrypt:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jm6QDHUao+fmhsEgeeVvgd+wkNrUYKnME477xuih/hc=;
-        b=PR3flQxhNbaAFxKjtv7FejaFDY6VRQ1kij1nO95FfSRPYPeQBy69TFJprPhIjzQzZH
-         dQ/HpqfI3WmNigkA46Wn3RNcxVxRiCND8GViaEzK5JBaceiS/G9lPhX/ZaRd+p1YBzt6
-         50e0CdLWrG5XcEdu+82Q82nHi9WF4/OJl3tFNRmjPP3fvbcc8etq2BhF17xh8d7cbIEa
-         wGXxpatqpW28jQ/UsH3FcsDgMJ8IQCI49FLBf+qjwbDyrcIdiFDIui0TOTpXuF+lzGcz
-         Mu2nBs4E7iEyZInVoIR7ZTGRadFbivpvBsKSTafqF7gZWnX3HSN7MYl9viipyR7oKOd/
-         UiaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:openpgp:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Jm6QDHUao+fmhsEgeeVvgd+wkNrUYKnME477xuih/hc=;
-        b=uTXZe+8AAPsjaNJVrKXReIb3nGo6M0uEE77xWikGmqPMzo+EaDrmfl8qskqCRqFGVW
-         zof41luvS7CS4PVJ9NTiXm21YaW92fCOkQcLXTb0/fIqIWQrxhBJlTjhBLl4aqG8SU0G
-         US9i/nJn3stvU5BmB4t/0VgQf+2bL92XiF9eldLG06QHEeR2tsRunOa2GspUleYDTiJj
-         Dp7nyrLdkKOmJLrBmr3OBtyRRFWRuDKEP+0OTOwDHTuoaVplBj63aLfbaiBJrfdpJbsq
-         qn3WMEMRO6VONTNKey5VL+dR+DKJfevrIFGT9GFRuGs3o8CLiIUzmCJq/A7qQrOGu5Ai
-         4AVw==
-X-Gm-Message-State: APjAAAUy9qhDleZaurbKns5gSQBEOdaSBQhkvEjx17KIu010vY6c0lAM
-        fPX7ngMXxG2a3+/pi5Tib3k6GQ==
-X-Google-Smtp-Source: APXvYqysad4oREcw0QAUigGM16Cg5nBTyW/rr1rQECUTzgHeB4ew+1HRtxprS3wo4qEv4QCDFB03Mw==
-X-Received: by 2002:a5d:69cb:: with SMTP id s11mr10410137wrw.315.1556551946678;
-        Mon, 29 Apr 2019 08:32:26 -0700 (PDT)
-Received: from [172.20.1.250] ([217.38.71.146])
-        by smtp.gmail.com with ESMTPSA id t18sm839634wrg.19.2019.04.29.08.32.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 08:32:25 -0700 (PDT)
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Sirio Balmelli <sirio@b-ad.ch>, Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        Yonghong Song <yhs@fb.com>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Martin KaFai Lau <kafai@fb.com>, bpf@vger.kernel.org
-References: <1556549259-16298-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Quentin Monnet <quentin.monnet@netronome.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=quentin.monnet@netronome.com; prefer-encrypt=mutual; keydata=
- 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
- RHhSHGnKaQ6MfrTge5Q0h5A=
-Subject: Re: [PATCH] bpftool: exclude bash-completion/bpftool from .gitignore
- pattern
-Message-ID: <ec1d2c14-ae27-38c7-9b79-4e323161d6f5@netronome.com>
-Date:   Mon, 29 Apr 2019 16:32:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 29 Apr 2019 11:23:49 -0400
+X-Originating-IP: 88.190.179.123
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id E33971BF208;
+        Mon, 29 Apr 2019 15:23:45 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 17:32:35 +0200
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ellie Reeves <ellierevves@gmail.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: aardvark: Use LTSSM state to build link training
+ flag
+Message-ID: <20190429153234.GS2754@voidbox.localdomain>
+References: <20190316161243.29517-1-repk@triplefau.lt>
+ <20190425110830.GC10833@e121166-lin.cambridge.arm.com>
+ <20190425142353.GO2754@voidbox.localdomain>
+ <20190425150640.GA20770@e121166-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1556549259-16298-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190425150640.GA20770@e121166-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-04-29 23:47 UTC+0900 ~ Masahiro Yamada <yamada.masahiro@socionext.com>
-> tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
-> intended to ignore the following build artifact:
-> 
->   tools/bpf/bpftool/bpftool
-> 
-> However, the .gitignore entry is effective not only for the current
-> directory, but also for any sub-directories.
-> 
-> So, the following file is also considered to be ignored:
-> 
->   tools/bpf/bpftool/bash-completion/bpftool
-> 
-> It is obviously version-controlled, so should be excluded from the
-> .gitignore pattern.
-> 
-> You can fix it by prefixing the pattern with '/', which means it is
-> only effective in the current directory.
-> 
-> I prefixed the other patterns consistently. IMHO, '/' prefixing is
-> safer when you intend to ignore specific files.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Hi Lorenzo,
 
-Hi,
+Sorry for duplicates I forgot to include everyone.
 
-“Files already tracked by Git are not affected” by the .gitignore (says
-the relevant man page), so bash completion file is not ignored. It would
-be if we were to add the sources to the index of a new Git repo. But
-sure, it does not cost much to make the .gitignore cleaner.
-
+On Thu, Apr 25, 2019 at 04:06:40PM +0100, Lorenzo Pieralisi wrote:
+> On Thu, Apr 25, 2019 at 04:23:53PM +0200, Remi Pommarel wrote:
+> > Hi Lorenzo,
+> > 
+> > On Thu, Apr 25, 2019 at 12:08:30PM +0100, Lorenzo Pieralisi wrote:
+> > > On Sat, Mar 16, 2019 at 05:12:43PM +0100, Remi Pommarel wrote:
+> > > > The PCI_EXP_LNKSTA_LT flag in the emulated root device's PCI_EXP_LNKSTA
+> > > > config register does not reflect the actual link training state and is
+> > > > always cleared. The Link Training and Status State Machine (LTSSM) flag
+> > > > in LMI config register could be used as a link training indicator.
+> > > > Indeed if the LTSSM is in L0 or upper state then link training has
+> > > > completed (see [1]).
+> > > > 
+> > > > Unfortunately because setting the PCI_EXP_LINCTL_RL flag does not
+> > > > instantly imply a LTSSM state change (e.g. L0s to recovery state
+> > > > transition takes some time), LTSSM can be in L0 but link training has
+> > > > not finished yet. Thus a lower L0 LTSSM state followed by a L0 or upper
+> > > > state sequence has to be seen to be sure that link training has been
+> > > > done.
+> > > 
+> > > Hi Remi,
+> > > 
+> > > I am a bit confused, so you are saying that the LTSSM flag in the
+> > > LMI config register can't be used to detect when training is completed ?
+> > 
+> > Not exactly, I am saying that PCI_EXP_LNKSTA_LT from PCI_EXP_LNKSTA
+> > register can't be used with this hardware, but can be emulated with
+> > LTSSM flag.
+> > 
+> > > 
+> > > Certainly it can't be used by ASPM core that relies on:
+> > > 
+> > > PCI_EXP_LNKSTA_LT flag
+> > > 
+> > > in the PCI_EXP_LNKSTA register, and that's what you are setting through
+> > > this timeout mechanism IIUC.
+> > > 
+> > > Please elaborate on that.
+> > 
+> > The problem here is that the hardware does not change PCI_EXP_LNKSTA_LT
+> > at all. So in order to support link re-training feature we need to
+> > emulate this flag. To do so LTSSM flag can be used.
 > 
->  tools/bpf/bpftool/.gitignore | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Understood.
 > 
-> diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
-> index 67167e4..19efcc8 100644
-> --- a/tools/bpf/bpftool/.gitignore
-> +++ b/tools/bpf/bpftool/.gitignore
-> @@ -1,5 +1,5 @@
->  *.d
-> -bpftool
-> -bpftool*.8
-> -bpf-helpers.*
-> -FEATURE-DUMP.bpftool
-> +/bpftool
-> +/bpftool*.8
-> +/bpf-helpers.*
-
-Careful when you add all those slashes, however. "bpftool*.8" and
-"bpf-helpers.*" should match files under Documentation/, so you do NOT
-want to prefix them with just a "/".
-
-Quentin
-
-> +/FEATURE-DUMP.bpftool
+> > Indeed we can set the emulated PCI_EXP_LNKSTA_LT as soon as re-training
+> > is asked and wait for LTSSM flag to be back to a configured state
+> > (e.g. L0, L0s) before clearing it.
+> 
+> The check for the LTSSM is carried out through advk_pcie_link_up()
+> (ie register CFG_REG), correct ?
 > 
 
+Yes that is correct.
+
+> > The problem with that is that LTSSM flag does not change instantly after
+> > link re-training has been asked, and will stay in configured state for a
+> > small amount of time. So the idea is to poll the LTSSM flag and wait for
+> > it to enter a recovery state then waiting for it to be back in
+> > configured state.
+> 
+> When you say "poll" you mean checking advk_pcie_link_up() ?
+> 
+
+I mean checking advk_pcie_link_up() in a loop. This loop is done by the
+user (e.g. ASPM core). ASPM core waits for PCI_EXP_LNKSTA_LT to be
+cleared in pcie_aspm_configure_common_clock() just after it has set
+PCI_EXP_LNKCTL_RL.
+
+So the idea was to check advk_pcie_link_up() each time ASPM core checks
+the PCI_EXP_LNKSTA_LT flag. Please see below patch for an alternative
+to that.
+
+> More below on the code.
+> 
+> > The timeout is only here as a fallback in the unlikely event that we
+> > missed the LTSSM flag entering recovery state.
+> > 
+> > > 
+> > > I am picking Bjorn's brain on this patch since what you are doing
+> > > seems quite arbitrary and honestly it is a bit of a hack.
+> > 
+> > Yes, sorry, it is a bit of a hack because I try to workaround a
+> > hardware issue.
+> 
+> No problems, it is not your fault.
+> > 
+> > Please note that vendor has been contacted about this in the meantime
+> > and answered the following:
+> > 
+> > "FW can poll LTSSM state equals any of the following values: 0xB or 0xD
+> > or 0xC or 0xE. After that, polls for LTSSM equals 0x10. For your
+> > information, LTSSM will transit from 0x10 -> 0xB -> 0xD -> 0xC or 0xE
+> > ........... -> 0x10".
+> > 
+> > It is basically what this patch does, I've just added a timeout fallback
+> > to not poll LTSSM state forever if its transition to 0xB, 0xD, 0xC or
+> > 0xE has been missed.
+> 
+> When you say "missed" you mean advk_pcie_link_up() returning true, right ?
+> 
+
+Not exactly, I mean that LTSSM had the time to go down and back up
+between advk_pcie_link_up() because, for example, ASPM core loop took
+too much time between two PCI_EXP_LNKSTA_LT flag checks.
+
+> [...]
+> 
+> > > > +static int advk_pcie_link_retraining(struct advk_pcie *pcie)
+> > > > +{
+> > > > +	if (!advk_pcie_link_up(pcie)) {
+> 
+> That's the bit I find confusing. Is this check here to detect if the
+> link went through the sequence below ? Should not it be carried
+> out only if (pcie->rl_asked == 1) ?
+> 
+> "... LTSSM will transit from 0x10 -> 0xB -> 0xD -> 0xC or 0xE
+>  ........... -> 0x10".
+
+Yes it is the check to detect the sequence. advk_pcie_link_up() returns
+false if LTSSM <= 0x10.
+
+This cannot be done only if (pcie->rl_asked == 1) because I still
+want this function to return 1 if link is still down.
+
+> 
+> > > > +		pcie->rl_asked = 0;
+> 
+> Why ?
+> 
+
+rl_asked is not a good name, I could have called it
+pcie->wait_for_link_down instead. So if advk_pcie_link_up() returns
+false that means that we don't need to wait for link being down any more
+and just wait for (LTSSM >= 0x10). In this case the delay is not needed.
+
+> > > > +		return 1;
+> > > > +	}
+> > > > +
+> > > > +	if (pcie->rl_asked && time_before(jiffies, pcie->rl_deadline))
+> > > > +		return 1;
+> 
+> This ensures that if the LTSSM >= 0x10 we still wait for a delay before
+> considering the link up (because I suppose, after asking a retraining
+> it takes a while for the LTSSM state to become < 0x10), correct ?
+
+Yes it takes a while to become < 0x10 after retraining hence the delay.
+But here we don't need to always wait for a delay. Indeed if we've
+already seen the link being < 0x10 (i.e if "pcie->rl_asked == 0") and
+if after that link is >= 0x10 then we know that retraining process has
+finished.
+
+Anyway I did it this way because I wanted to keep
+advk_pci_bridge_emul_pcie_conf_write() from polling. But this is
+obviously a bad reason as it makes the code way too complex and relies
+on user (ASPM core) to do the poll instead.
+
+So if you find the following better I'll send a v3 with that:
+
+---
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index eb58dfdaba1b..67e8ae4e313e 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -180,6 +180,9 @@
+ #define LINK_WAIT_MAX_RETRIES		10
+ #define LINK_WAIT_USLEEP_MIN		90000
+ #define LINK_WAIT_USLEEP_MAX		100000
++#define RETRAIN_WAIT_MAX_RETRIES	20
++#define RETRAIN_WAIT_USLEEP_MIN		2000
++#define RETRAIN_WAIT_USLEEP_MAX		5000
+ 
+ #define MSI_IRQ_NUM			32
+ 
+@@ -239,6 +242,17 @@ static int advk_pcie_wait_for_link(struct advk_pcie *pcie)
+ 	return -ETIMEDOUT;
+ }
+ 
++static void advk_pcie_wait_for_retrain(struct advk_pcie *pcie)
++{
++	size_t retries;
++
++	for (retries = 0; retries < RETRAIN_WAIT_MAX_RETRIES; ++retries) {
++		if (!advk_pcie_link_up(pcie))
++			break;
++		usleep_range(RETRAIN_WAIT_USLEEP_MIN, RETRAIN_WAIT_USLEEP_MAX);
++	}
++}
++
+ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
+ {
+ 	u32 reg;
+@@ -426,11 +440,19 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
+ 		return PCI_BRIDGE_EMUL_HANDLED;
+ 	}
+ 
++	case PCI_EXP_LNKCTL: {
++		u32 val = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg) &
++			~(PCI_EXP_LNKSTA_LT << 16);
++		if (!advk_pcie_link_up(pcie))
++			val |= (PCI_EXP_LNKSTA_LT << 16);
++		*value = val;
++		return PCI_BRIDGE_EMUL_HANDLED;
++	}
++
+ 	case PCI_CAP_LIST_ID:
+ 	case PCI_EXP_DEVCAP:
+ 	case PCI_EXP_DEVCTL:
+ 	case PCI_EXP_LNKCAP:
+-	case PCI_EXP_LNKCTL:
+ 		*value = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg);
+ 		return PCI_BRIDGE_EMUL_HANDLED;
+ 	default:
+@@ -447,8 +469,13 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
+ 
+ 	switch (reg) {
+ 	case PCI_EXP_DEVCTL:
++		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
++		break;
++
+ 	case PCI_EXP_LNKCTL:
+ 		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
++		if (new & PCI_EXP_LNKCTL_RL)
++			advk_pcie_wait_for_retrain(pcie);
+ 		break;
+ 
+ 	case PCI_EXP_RTCTL:
