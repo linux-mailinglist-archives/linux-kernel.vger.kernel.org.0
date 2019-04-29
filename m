@@ -2,122 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD64FE727
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F108E736
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfD2QBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 12:01:05 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37490 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbfD2QBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:01:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y5so15648868wma.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 09:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=47R6Zpibyfoy78svmdHN6byC39LAOhbREp9Vq7W8ApM=;
-        b=J6WZI/9oZi6DDKY6ako6bYIe0Ho2qjghdiWqUvyAS7l+nRMiKRoF8QwS9JlolG6510
-         Q5N5HRulN4x7f8dcPpZl33KYtvLvbzdGSd/3dbgaGUcRzgXw5L1Qf7mUIcJtFZ1+oUSn
-         mdW4XoBbzNwcx8pEvJffS3J5si1MuSH4OKvngUBtaFM166ubF70+375GsLojZWBCfWOr
-         nhX4md1G6bbEC5WxHgTjR9Gj1ivGp+iSHr17nK9iayfFdLrWFtXsF7za9jkRiyTBvEEL
-         +eEjbLwRWQtIMo9uBWDgYiZJrJc9ucIY6foS1IKhzEC/Nsl9ZeuUqKdeE6zweMUf5/47
-         IT5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=47R6Zpibyfoy78svmdHN6byC39LAOhbREp9Vq7W8ApM=;
-        b=Zzt0/9snqvb3x9E3AxCZMnIYLLkIY6v1cwWasJfwbKRw0VyYHADYJcAOY5ulGcp1JE
-         UAfkJk68sGgccVSsP+A/jaWRrRNf0T31+fY65+QWkcydCHN7gR/sc98mS9NEUsMxyUuB
-         /Ye9DMzqcS9xVgCUcjQi/MTxdnGwPmckJlSysdFsew8VabMWdk09mnK/ILDWYSNQqc4o
-         WzCye0wWCycI+6v10JjdQjhg70zMqnH7CQ49OBCdsh1By4SLU0C+DzsuLwlNu7L18C/b
-         ALzXk3ODijXgjSzUUOFJO47EuxdsUvX2JfpIw+PfbWjOOU/7Pj5a+xo5fbRpS2+mRrfu
-         CXRw==
-X-Gm-Message-State: APjAAAXm6/u4OsiJL5roJMXnBmF+kkoG2x652b6kROYdHhDbU6O5lPUt
-        YFfWNbkSuhr6U6c3kXgcJAg=
-X-Google-Smtp-Source: APXvYqzcpnQflanBpal3y5NxmBtr/1fTly+OrRIG47nJowVPZPtGq8IlWtBEAgYrnNE/BQwVzQb2xQ==
-X-Received: by 2002:a1c:f901:: with SMTP id x1mr541889wmh.136.1556553662023;
-        Mon, 29 Apr 2019 09:01:02 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id t74sm237110wmt.3.2019.04.29.09.01.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 09:01:01 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 18:00:58 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Li, Aubrey" <aubrey.li@linux.intel.com>
-Cc:     Aubrey Li <aubrey.intel@gmail.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v2 00/17] Core scheduling v2
-Message-ID: <20190429160058.GA82935@gmail.com>
-References: <20190427091716.GC99668@gmail.com>
- <CAERHkruEAVBsh6FphMKqgR2+HjsVVegxjnpOFRNfbrfZDNpc9w@mail.gmail.com>
- <20190427142137.GA72051@gmail.com>
- <CAERHkrtaU=Y-Lxypu_7uBbe-mJtG-3friz=ZLhV53X4FXHcEyA@mail.gmail.com>
- <20190428093304.GA7393@gmail.com>
- <CAERHkrvaSSR1wRECF1AcLOhpmCAH0ecvFEL5MOFjK05F0xSuzA@mail.gmail.com>
- <20190428121721.GA121434@gmail.com>
- <db7c3e51-d013-b3d9-7bce-c247aa2e7144@linux.intel.com>
- <20190429061422.GA20939@gmail.com>
- <24bca399-5370-c4b5-725f-979db06bfc29@linux.intel.com>
+        id S1728800AbfD2QCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 12:02:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:37078 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728394AbfD2QCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 12:02:34 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44t8Yt4z6qz9vD3W;
+        Mon, 29 Apr 2019 18:02:26 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=uA79P5zs; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 905VH79wAdJv; Mon, 29 Apr 2019 18:02:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44t8Yt3dNTz9vD3V;
+        Mon, 29 Apr 2019 18:02:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556553746; bh=T0R91daQOtdOH7tKHhta8172OsZU9Bi8+jnmZywXEP8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=uA79P5zsw1WI5+2UmqF/21J7JNMj2aTsFgEYwRWbLSvnD+grpuVIyZHrgXaVpyhcL
+         5OuXLLnWaQiLIrvMYMpZTidvoJKAnUXNE/2CCFZ1E4i5VW6A3dVsnieAZe3TLrthWI
+         rZo1nFN72tAyWEa1qaDx8FOzxVLD2uSTAzKJ8kkY=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AE6868B8B4;
+        Mon, 29 Apr 2019 18:02:31 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id DgkTUp-_afaR; Mon, 29 Apr 2019 18:02:31 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.6])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 021048B8B3;
+        Mon, 29 Apr 2019 18:02:30 +0200 (CEST)
+Subject: Re: [PATCH 20/41] drivers: tty: serial: cpm_uart: use
+ dev_err()/dev_warn() instead of printk()
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     lorenzo.pieralisi@arm.com, linux-ia64@vger.kernel.org,
+        linux-serial@vger.kernel.org, andrew@aj.id.au,
+        gregkh@linuxfoundation.org, sudeep.holla@arm.com,
+        liviu.dudau@arm.com, linux-mips@vger.kernel.org, vz@mleia.com,
+        linux@prisktech.co.nz, sparclinux@vger.kernel.org,
+        khilman@baylibre.com, macro@linux-mips.org,
+        slemieux.tyco@gmail.com, matthias.bgg@gmail.com, jacmet@sunsite.dk,
+        linux-amlogic@lists.infradead.org,
+        andriy.shevchenko@linux.intel.com, linuxppc-dev@lists.ozlabs.org,
+        davem@davemloft.net
+References: <1556369542-13247-1-git-send-email-info@metux.net>
+ <1556369542-13247-21-git-send-email-info@metux.net>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <7509c580-e7c6-7d22-b6a2-8356264f408e@c-s.fr>
+Date:   Mon, 29 Apr 2019 18:02:30 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24bca399-5370-c4b5-725f-979db06bfc29@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1556369542-13247-21-git-send-email-info@metux.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Li, Aubrey <aubrey.li@linux.intel.com> wrote:
 
-> > I.e. showing the approximate CPU thread-load figure column would be 
-> > very useful too, where '50%' shows half-loaded, '100%' fully-loaded, 
-> > '200%' over-saturated, etc. - for each row?
+Le 27/04/2019 à 14:52, Enrico Weigelt, metux IT consult a écrit :
+> Using dev_err()/dev_warn() instead of printk() for more consistent output.
+> (prints device name, etc).
 > 
-> See below, hope this helps.
-> .--------------------------------------------------------------------------------------------------------------------------------------.
-> |NA/AVX vanilla-SMT     [std% / sem%]     cpu% |coresched-SMT   [std% / sem%]     +/-     cpu% |  no-SMT [std% / sem%]   +/-      cpu% |
-> |--------------------------------------------------------------------------------------------------------------------------------------|
-> |  1/1        508.5     [ 0.2%/ 0.0%]     2.1% |        504.7   [ 1.1%/ 0.1%]    -0.8%    2.1% |   509.0 [ 0.2%/ 0.0%]   0.1%     4.3% |
-> |  2/2       1000.2     [ 1.4%/ 0.1%]     4.1% |       1004.1   [ 1.6%/ 0.2%]     0.4%    4.1% |   997.6 [ 1.2%/ 0.1%]  -0.3%     8.1% |
-> |  4/4       1912.1     [ 1.0%/ 0.1%]     7.9% |       1904.2   [ 1.1%/ 0.1%]    -0.4%    7.9% |  1914.9 [ 1.3%/ 0.1%]   0.1%    15.1% |
-> |  8/8       3753.5     [ 0.3%/ 0.0%]    14.9% |       3748.2   [ 0.3%/ 0.0%]    -0.1%   14.9% |  3751.3 [ 0.4%/ 0.0%]  -0.1%    30.5% |
-> | 16/16      7139.3     [ 2.4%/ 0.2%]    30.3% |       7137.9   [ 1.8%/ 0.2%]    -0.0%   30.3% |  7049.2 [ 2.4%/ 0.2%]  -1.3%    60.4% |
-> | 32/32     10899.0     [ 4.2%/ 0.4%]    60.3% |      10780.3   [ 4.4%/ 0.4%]    -1.1%   55.9% | 10339.2 [ 9.6%/ 0.9%]  -5.1%    97.7% |
-> | 64/64     15086.1     [11.5%/ 1.2%]    97.7% |      14262.0   [ 8.2%/ 0.8%]    -5.5%   82.0% | 11168.7 [22.2%/ 1.7%] -26.0%   100.0% |
-> |128/128    15371.9     [22.0%/ 2.2%]   100.0% |      14675.8   [14.4%/ 1.4%]    -4.5%   82.8% | 10963.9 [18.5%/ 1.4%] -28.7%   100.0% |
-> |256/256    15990.8     [22.0%/ 2.2%]   100.0% |      12227.9   [10.3%/ 1.0%]   -23.5%   73.2% | 10469.9 [19.6%/ 1.7%] -34.5%   100.0% |
-> '--------------------------------------------------------------------------------------------------------------------------------------'
+> Signed-off-by: Enrico Weigelt <info@metux.net>
 
-Very nice, thank you!
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-What's interesting is how in the over-saturated case (the last three 
-rows: 128, 256 and 512 total threads) coresched-SMT leaves 20-30% CPU 
-performance on the floor according to the load figures.
-
-Is this true idle time (which shows up as 'id' during 'top'), or some 
-load average artifact?
-
-	Ingo
+> ---
+>   drivers/tty/serial/cpm_uart/cpm_uart_core.c | 6 +++---
+>   drivers/tty/serial/cpm_uart/cpm_uart_cpm2.c | 2 +-
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> index b929c7a..374b8bb 100644
+> --- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> +++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+> @@ -265,7 +265,7 @@ static void cpm_uart_int_rx(struct uart_port *port)
+>   		 * later, which will be the next rx-interrupt or a timeout
+>   		 */
+>   		if (tty_buffer_request_room(tport, i) < i) {
+> -			printk(KERN_WARNING "No room in flip buffer\n");
+> +			dev_warn(port->dev, "No room in flip buffer\n");
+>   			return;
+>   		}
+>   
+> @@ -1155,7 +1155,7 @@ static int cpm_uart_init_port(struct device_node *np,
+>   	if (!pinfo->clk) {
+>   		data = of_get_property(np, "fsl,cpm-brg", &len);
+>   		if (!data || len != 4) {
+> -			printk(KERN_ERR "CPM UART %pOFn has no/invalid "
+> +			dev_err(port->dev, "CPM UART %pOFn has no/invalid "
+>   			                "fsl,cpm-brg property.\n", np);
+>   			return -EINVAL;
+>   		}
+> @@ -1164,7 +1164,7 @@ static int cpm_uart_init_port(struct device_node *np,
+>   
+>   	data = of_get_property(np, "fsl,cpm-command", &len);
+>   	if (!data || len != 4) {
+> -		printk(KERN_ERR "CPM UART %pOFn has no/invalid "
+> +		dev_err(port->dev, "CPM UART %pOFn has no/invalid "
+>   		                "fsl,cpm-command property.\n", np);
+>   		return -EINVAL;
+>   	}
+> diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_cpm2.c b/drivers/tty/serial/cpm_uart/cpm_uart_cpm2.c
+> index 6a1cd03..ef1ae08 100644
+> --- a/drivers/tty/serial/cpm_uart/cpm_uart_cpm2.c
+> +++ b/drivers/tty/serial/cpm_uart/cpm_uart_cpm2.c
+> @@ -67,7 +67,7 @@ void __iomem *cpm_uart_map_pram(struct uart_cpm_port *port,
+>   		return pram;
+>   
+>   	if (len != 2) {
+> -		printk(KERN_WARNING "cpm_uart[%d]: device tree references "
+> +		dev_warn(port->dev, "cpm_uart[%d]: device tree references "
+>   			"SMC pram, using boot loader/wrapper pram mapping. "
+>   			"Please fix your device tree to reference the pram "
+>   			"base register instead.\n",
+> 
