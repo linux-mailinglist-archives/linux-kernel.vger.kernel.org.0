@@ -2,130 +2,410 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2A0E647
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD63BE628
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbfD2PY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:24:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36779 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbfD2PY5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:24:57 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a8so7438048edx.3;
-        Mon, 29 Apr 2019 08:24:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=zdkl15yDtUMDjcT3PhPiGxH6HbIfk+17gDQY6gRt9VY=;
-        b=EU8p/LiAuWZTaBXKNZWaKq1vNaSJvDcy39qwV/Z0FHFTDHncV1Zr4ndrOk4JGQHpjX
-         8+2Fp9pb74ZpblErpBwk2AHVSA0XH1TFcISRE2xKvyJ09GkPlceqdU0EpvbPyjROw/Rp
-         2mjTY5DKkCICp5o8xAzP61nli8P0TVf4bfqEgZD8rzztWgastc4fusx/sOq1jUdvqMSm
-         u/4ZemsXZ+LiOOOHhyR/mI0lVFDHDfej+AK9qa3aWH0ZWw6BwM+Q0zzdWbfYGenHUgTj
-         mKQnWyDk7GiejXknp18q+wabn/scWwGXt9KqD4tzqHeVAqnAHml0d/6MfFfKMOSTgfl6
-         uvdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=zdkl15yDtUMDjcT3PhPiGxH6HbIfk+17gDQY6gRt9VY=;
-        b=gXz78eWbfcGVHNvs2gNe+m6z++a2K1aytbjbkyupU3w+K45GmnjU2XV+zPzKhR94mb
-         nbuv/+wdqX98f7M050IoibWKuvFBaansktBsSOCx+Ex6Yapyi6yjsq3Jp3+6yVCcDjEw
-         VojvRGGmC8l2myI5chYC6pvfTg+CNXogWPtm/oTi2tg3i/Y7P4AHvJ3O2TsjzhVXgWP0
-         M45g6YWU1Q2So29lk7aTQHCdYUKzvwL2gxLxQbVGpoqCOu1Sf75FO1ncQYBY3qtSjGgj
-         MWwrxBKA4mqi0nfsgAhnqrjnhczEW9izi1J3n88wCTIoosJ53bJdIScYz2GEsZrm6Yg1
-         C6ww==
-X-Gm-Message-State: APjAAAWd4pbNU/dpbFNzgJ7Hui5afaEveYRk4KN+wLm39KhdYW2et0QG
-        gGevoamv8+zNV/ABLVyDJI8=
-X-Google-Smtp-Source: APXvYqzd7kklmwd/rJ9mZmXiJZJarahK9hi98VCMk8C4K5NtullM8PfDIBfWq8pF0LtSyR4PuNZQ7Q==
-X-Received: by 2002:a17:906:1f53:: with SMTP id d19mr10119945ejk.12.1556551494836;
-        Mon, 29 Apr 2019 08:24:54 -0700 (PDT)
-Received: from dell.be.48ers.dk (d51A5BC31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id y12sm5901269ejo.85.2019.04.29.08.24.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 08:24:53 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peter@korsgaard.com>)
-        id 1hL89F-0000nB-4t; Mon, 29 Apr 2019 17:24:53 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     "Enrico Weigelt\, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com,
-        linux-ia64@vger.kernel.org, linux-serial@vger.kernel.org,
-        andrew@aj.id.au, gregkh@linuxfoundation.org, sudeep.holla@arm.com,
-        liviu.dudau@arm.com, linux-mips@vger.kernel.org, vz@mleia.com,
-        linux@prisktech.co.nz, sparclinux@vger.kernel.org,
-        khilman@baylibre.com, macro@linux-mips.org,
-        slemieux.tyco@gmail.com, matthias.bgg@gmail.com, jacmet@sunsite.dk,
-        linux-amlogic@lists.infradead.org,
-        andriy.shevchenko@linux.intel.com, linuxppc-dev@lists.ozlabs.org,
-        davem@davemloft.net
-Subject: Re: [PATCH 16/41] drivers: tty: serial: uartlite: fix overlong lines
-References: <1556369542-13247-1-git-send-email-info@metux.net>
-        <1556369542-13247-17-git-send-email-info@metux.net>
-Date:   Mon, 29 Apr 2019 17:24:53 +0200
-In-Reply-To: <1556369542-13247-17-git-send-email-info@metux.net> (Enrico
-        Weigelt's message of "Sat, 27 Apr 2019 14:51:57 +0200")
-Message-ID: <87a7g8rfzu.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1728542AbfD2PXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:23:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33441 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728214AbfD2PXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:23:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 08:23:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,409,1549958400"; 
+   d="scan'208";a="227760348"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 29 Apr 2019 08:23:06 -0700
+Date:   Mon, 29 Apr 2019 08:25:50 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 15/19] iommu/vt-d: Add bind guest PASID support
+Message-ID: <20190429082550.76f3f736@jacob-builder>
+In-Reply-To: <66758de4-2b76-7380-3636-7da1c0a6dc65@redhat.com>
+References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1556062279-64135-16-git-send-email-jacob.jun.pan@linux.intel.com>
+        <66758de4-2b76-7380-3636-7da1c0a6dc65@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Enrico" == Enrico Weigelt, metux IT consult <info@metux.net> writes:
+On Fri, 26 Apr 2019 18:15:27 +0200
+Auger Eric <eric.auger@redhat.com> wrote:
 
- > Fix checkpatch warnings:
- >     WARNING: line over 80 characters
- >     #283: FILE: drivers/tty/serial/uartlite.c:283:
- >     +	ret = request_irq(port->irq, ulite_isr, IRQF_SHARED | IRQF_TRIGGER_RISING,
+> Hi Jacob,
+> 
+> On 4/24/19 1:31 AM, Jacob Pan wrote:
+> > When supporting guest SVA with emulated IOMMU, the guest PASID
+> > table is shadowed in VMM. Updates to guest vIOMMU PASID table
+> > will result in PASID cache flush which will be passed down to
+> > the host as bind guest PASID calls.
+> > 
+> > For the SL page tables, it will be harvested from device's
+> > default domain (request w/o PASID), or aux domain in case of
+> > mediated device.
+> > 
+> >     .-------------.  .---------------------------.
+> >     |   vIOMMU    |  | Guest process CR3, FL only|
+> >     |             |  '---------------------------'
+> >     .----------------/
+> >     | PASID Entry |--- PASID cache flush -
+> >     '-------------'                       |
+> >     |             |                       V
+> >     |             |                CR3 in GPA
+> >     '-------------'
+> > Guest
+> > ------| Shadow |--------------------------|--------
+> >       v        v                          v
+> > Host
+> >     .-------------.  .----------------------.
+> >     |   pIOMMU    |  | Bind FL for GVA-GPA  |
+> >     |             |  '----------------------'
+> >     .----------------/  |
+> >     | PASID Entry |     V (Nested xlate)
+> >     '----------------\.------------------------------.
+> >     |             |   |SL for GPA-HPA, default domain|
+> >     |             |   '------------------------------'
+> >     '-------------'
+> > Where:
+> >  - FL = First level/stage one page tables
+> >  - SL = Second level/stage two page tables
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> > ---
+> >  drivers/iommu/intel-iommu.c |   4 +
+> >  drivers/iommu/intel-svm.c   | 174
+> > ++++++++++++++++++++++++++++++++++++++++++++
+> > include/linux/intel-iommu.h |  10 ++- include/linux/intel-svm.h
+> > |   7 ++ 4 files changed, 193 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel-iommu.c
+> > b/drivers/iommu/intel-iommu.c index 77bbe1b..89989b5 100644
+> > --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -5768,6 +5768,10 @@ const struct iommu_ops intel_iommu_ops = {
+> >  	.dev_enable_feat	= intel_iommu_dev_enable_feat,
+> >  	.dev_disable_feat	= intel_iommu_dev_disable_feat,
+> >  	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
+> > +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > +	.sva_bind_gpasid	= intel_svm_bind_gpasid,
+> > +	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
+> > +#endif
+> >  };
+> >  
+> >  static void quirk_iommu_g4x_gfx(struct pci_dev *dev)
+> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> > index 8fff212..0a973c2 100644
+> > --- a/drivers/iommu/intel-svm.c
+> > +++ b/drivers/iommu/intel-svm.c
+> > @@ -227,6 +227,180 @@ static const struct mmu_notifier_ops
+> > intel_mmuops = { 
+> >  static DEFINE_MUTEX(pasid_mutex);
+> >  static LIST_HEAD(global_svm_list);
+> > +#define for_each_svm_dev() \
+> > +	list_for_each_entry(sdev, &svm->devs, list)	\
+> > +	if (dev == sdev->dev)				\
+> > +
+> > +int intel_svm_bind_gpasid(struct iommu_domain *domain,
+> > +			struct device *dev,
+> > +			struct gpasid_bind_data *data)
+> > +{
+> > +	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
+> > +	struct intel_svm_dev *sdev;
+> > +	struct intel_svm *svm = NULL;
+> > +	struct dmar_domain *ddomain;
+> > +	int pasid_max;
+> > +	int ret = 0;
+> > +
+> > +	if (WARN_ON(!iommu) || !data)
+> > +		return -EINVAL;
+> > +
+> > +	if (dev_is_pci(dev)) {
+> > +		pasid_max = pci_max_pasids(to_pci_dev(dev));
+> > +		if (pasid_max < 0)
+> > +			return -EINVAL;
+> > +	} else
+> > +		pasid_max = 1 << 20;
+> > +
+> > +	if (data->pasid <= 0 || data->pasid >= pasid_max)
+> > +		return -EINVAL;
+> > +
+> > +	ddomain = to_dmar_domain(domain);
+> > +	/* REVISIT:
+> > +	 * Sanity check adddress width and paging mode support
+> > +	 * width matching in two dimensions:
+> > +	 * 1. paging mode CPU <= IOMMU
+> > +	 * 2. address width Guest <= Host.
+> > +	 */
+> > +	mutex_lock(&pasid_mutex);
+> > +	svm = ioasid_find(NULL, data->pasid, NULL);
+> > +	if (IS_ERR(svm)) {
+> > +		ret = PTR_ERR(svm);
+> > +		goto out;
+> > +	}
+> > +	if (svm) {
+> > +		if (list_empty(&svm->devs)) {
+> > +			dev_err(dev, "GPASID %d has no devices
+> > bond but SVA is allocated\n",
+> > +				data->pasid);
+> > +			ret = -ENODEV; /*
+> > +					* If we found svm for the
+> > PASID, there must be at
+> > +					* least one device bond,
+> > otherwise svm should be freed.
+> > +					*/  
+> comment should be put after list_empty I think. In which circumstances
+> can it happen, I mean, isn't it a BUG_ON case?
+Well, I think failing to bind guest PASID is not severe enough to the
+host to use BUG_ON. It has to be something more catastrophic to use
+BUG_ON right? I will relocate the comments.
+> > +			goto out;
+> > +		}
+> > +		for_each_svm_dev() {
+> > +			/* In case of multiple sub-devices of the
+> > same pdev assigned, we should
+> > +			 * allow multiple bind calls with the same
+> > PASID and pdev.
+> > +			 */
+> > +			sdev->users++;
+> > +			goto out;
+> > +		}
+> > +	} else {
+> > +		/* We come here when PASID has never been bond to
+> > a device. */
+> > +		svm = kzalloc(sizeof(*svm), GFP_KERNEL);
+> > +		if (!svm) {
+> > +			ret = -ENOMEM;
+> > +			goto out;
+> > +		}
+> > +		/* REVISIT: upper layer/VFIO can track host
+> > process that bind the PASID.
+> > +		 * ioasid_set = mm might be sufficient for vfio to
+> > check pasid VMM
+> > +		 * ownership.
+> > +		 */
+> > +		svm->mm = get_task_mm(current);
+> > +		svm->pasid = data->pasid;
+> > +		refcount_set(&svm->refs, 0);
+> > +		ioasid_set_data(data->pasid, svm);
+> > +		INIT_LIST_HEAD_RCU(&svm->devs);
+> > +		INIT_LIST_HEAD(&svm->list);
+> > +
+> > +		mmput(svm->mm);
+> > +	}
+> > +	svm->flags |= SVM_FLAG_GUEST_MODE;
+> > +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+> > +	if (!sdev) {
+> > +		ret = -ENOMEM;  
+> in case of failure what is the state of svm (you added the
+> SVM_FLAG_GUEST_MODE bit typically, is it safe to leave it?)
+The SVM_FLAG_GUEST_MODE flag is used for fault reporting where faults
+such as PRQ need to be injected into the guest. If this kzalloc()
+fails, the nested translation would not be setup for this PASID. So
+there shouldn't be any user of the flag. But I think it is better to
+move svm->flags |= SVM_FLAG_GUEST_MODE; to the end when everything is
+setup for nesting.
 
- >     WARNING: Missing a blank line after declarations
- >     #577: FILE: drivers/tty/serial/uartlite.c:577:
- >     +	struct earlycon_device *device = console->data;
- >     +	uart_console_write(&device->port, s, n, early_uartlite_putc);
+> > +		goto out;
+> > +	}
+> > +	sdev->dev = dev;
+> > +	sdev->users = 1;
+> > +
+> > +	/* Set up device context entry for PASID if not enabled
+> > already */
+> > +	ret = intel_iommu_enable_pasid(iommu, sdev->dev);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to enable PASID
+> > capability\n");
+> > +		kfree(sdev);  
+> same here
+> > +		goto out;
+> > +	}
+> > +
+> > +	/*
+> > +	 * For guest bind, we need to set up PASID table entry as
+> > follows:
+> > +	 * - FLPM matches guest paging mode
+> > +	 * - turn on nested mode
+> > +	 * - SL guest address width matching
+> > +	 */
+> > +	ret = intel_pasid_setup_nested(iommu,
+> > +				dev,
+> > +				(pgd_t *)data->gcr3,
+> > +				data->pasid,
+> > +				data->flags,
+> > +				ddomain,
+> > +				data->addr_width);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to set up PASID %d in nested
+> > mode, Err %d\n",
+> > +			data->pasid, ret);
+> > +		kfree(sdev);
+> > +		goto out;
+> > +	}
+> > +
+> > +	init_rcu_head(&sdev->rcu);
+> > +	refcount_inc(&svm->refs);
+> > +	list_add_rcu(&sdev->list, &svm->devs);
+> > + out:
+> > +	mutex_unlock(&pasid_mutex);
+> > +	return ret;
+> > +}
+> > +
+> > +int intel_svm_unbind_gpasid(struct device *dev, int pasid)
+> > +{
+> > +	struct intel_svm_dev *sdev;
+> > +	struct intel_iommu *iommu;
+> > +	struct intel_svm *svm;
+> > +	int ret = -EINVAL;
+> > +
+> > +	mutex_lock(&pasid_mutex);
+> > +	iommu = intel_svm_device_to_iommu(dev);
+> > +	if (!iommu)
+> > +		goto out;
+> > +
+> > +	svm = ioasid_find(NULL, pasid, NULL);
+> > +	if (IS_ERR(svm)) {
+> > +		ret = PTR_ERR(svm);
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (!svm)
+> > +		goto out;
+> > +
+> > +	for_each_svm_dev() {
+> > +		ret = 0;
+> > +		sdev->users--;
+> > +		if (!sdev->users) {
+> > +			list_del_rcu(&sdev->list);
+> > +			intel_pasid_tear_down_entry(iommu, dev,
+> > svm->pasid);
+> > +			/* TODO: Drain in flight PRQ for the PASID
+> > since it
+> > +			 * may get reused soon, we don't want to
+> > +			 * confuse with its previous live.
+> > +			 * intel_svm_drain_prq(dev, pasid);
+> > +			 */
+> > +			kfree_rcu(sdev, rcu);
+> > +
+> > +			if (list_empty(&svm->devs)) {
+> > +				list_del(&svm->list);
+> > +				kfree(svm);
+> > +				/*
+> > +				 * We do not free PASID here until
+> > explicit call
+> > +				 * from the guest to free.  
+> can you be confident in the guest?
+No. But I have confident in the kernel VFIO code to manage guest life
+cycle :)
+I assume when a guest doesn't do unbind when it dies or unload a
+assigned device, I expect VFIO to free all the PASIDs. VFIO needs to
+police the PASID ownership anyway in order to make sure a PASID
+assigned to guest A cannot be used to bind from guest B.
+This is the flow I worked out with Yi, who is doing the VFIO part. Any
+particular concerns?
 
- >     WARNING: line over 80 characters
- >     #590: FILE: drivers/tty/serial/uartlite.c:590:
- >     +OF_EARLYCON_DECLARE(uartlite_b, "xlnx,opb-uartlite-1.00.b", early_uartlite_setup);
+> > +				 */
+> > +				ioasid_set_data(pasid, NULL);
+> > +			}
+> > +		}
+> > +		break;
+> > +	}
+> > + out:
+> > +	mutex_unlock(&pasid_mutex);
+> > +
+> > +	return ret;
+> > +}
+> >  
+> >  int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
+> > struct svm_dev_ops *ops) {
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 48fa164..5d67d0d4 100644
+> > --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -677,7 +677,9 @@ int intel_iommu_enable_pasid(struct intel_iommu
+> > *iommu, struct device *dev); int intel_svm_init(struct intel_iommu
+> > *iommu); extern int intel_svm_enable_prq(struct intel_iommu *iommu);
+> >  extern int intel_svm_finish_prq(struct intel_iommu *iommu);
+> > -
+> > +extern int intel_svm_bind_gpasid(struct iommu_domain *domain,
+> > +		struct device *dev, struct gpasid_bind_data *data);
+> > +extern int intel_svm_unbind_gpasid(struct device *dev, int pasid);
+> >  struct svm_dev_ops;
+> >  
+> >  struct intel_svm_dev {
+> > @@ -693,12 +695,16 @@ struct intel_svm_dev {
+> >  
+> >  struct intel_svm {
+> >  	struct mmu_notifier notifier;
+> > -	struct mm_struct *mm;
+> > +	union {
+> > +		struct mm_struct *mm;
+> > +		u64 gcr3;
+> > +	};
+> >  	struct intel_iommu *iommu;
+> >  	int flags;
+> >  	int pasid;
+> >  	struct list_head devs;
+> >  	struct list_head list;
+> > +	refcount_t refs; /* # of devs bond to the PASID */  
+> number of devices sharing the same PASID?
+more clear wording, thanks.
+> >  };
+> >  
+> >  extern struct intel_iommu *intel_svm_device_to_iommu(struct device
+> > *dev); diff --git a/include/linux/intel-svm.h
+> > b/include/linux/intel-svm.h index e3f7631..34b0a3b 100644
+> > --- a/include/linux/intel-svm.h
+> > +++ b/include/linux/intel-svm.h
+> > @@ -52,6 +52,13 @@ struct svm_dev_ops {
+> >   * do such IOTLB flushes automatically.
+> >   */
+> >  #define SVM_FLAG_SUPERVISOR_MODE	(1<<1)
+> > +/*
+> > + * The SVM_FLAG_GUEST_MODE flag is used when a guest process bind
+> > to a device.  
+> binds
+will fix
 
- >     WARNING: line over 80 characters
- >     #591: FILE: drivers/tty/serial/uartlite.c:591:
- >     +OF_EARLYCON_DECLARE(uartlite_a, "xlnx,xps-uartlite-1.00.a", early_uartlite_setup);
+> > + * In this case the mm_struct is in the guest kernel or userspace,
+> > its life
+> > + * cycle is managed by VMM and VFIO layer. For IOMMU driver, this
+> > API provides
+> > + * means to bind/unbind guest CR3 with PASIDs allocated for a
+> > device.
+> > + */
+> > +#define SVM_FLAG_GUEST_MODE	(1<<2)
+> >  
+> >  #ifdef CONFIG_INTEL_IOMMU_SVM
+> >  
+> >   
+> 
+> Thanks
+> 
+> Eric
 
-Given that these are just a few characters more than 80 I don't really
-think these changes improve readability.
-
-
- > Signed-off-by: Enrico Weigelt <info@metux.net>
- > ---
- >  drivers/tty/serial/uartlite.c | 10 +++++++---
- >  1 file changed, 7 insertions(+), 3 deletions(-)
-
- > diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
- > index 6f79353..0140cec 100644
- > --- a/drivers/tty/serial/uartlite.c
- > +++ b/drivers/tty/serial/uartlite.c
- > @@ -280,7 +280,8 @@ static int ulite_startup(struct uart_port *port)
- >  		return ret;
- >  	}
- 
- > -	ret = request_irq(port->irq, ulite_isr, IRQF_SHARED | IRQF_TRIGGER_RISING,
- > +	ret = request_irq(port->irq, ulite_isr,
- > +			  IRQF_SHARED | IRQF_TRIGGER_RISING,
- >  			  "uartlite", port);
- >  	if (ret)
- >  		return ret;
- > @@ -574,6 +575,7 @@ static void early_uartlite_write(struct console *console,
- >  				 const char *s, unsigned int n)
- >  {
- >  	struct earlycon_device *device = console->data;
- > +
- >  	uart_console_write(&device->port, s, n, early_uartlite_putc);
-
-Unrelated change?
-
--- 
-Bye, Peter Korsgaard
+[Jacob Pan]
