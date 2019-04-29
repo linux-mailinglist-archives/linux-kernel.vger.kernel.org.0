@@ -2,111 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CE5E968
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D3CE96B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfD2Rn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:43:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728748AbfD2Rn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:43:28 -0400
-Received: from localhost (odyssey.drury.edu [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECA2020652;
-        Mon, 29 Apr 2019 17:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556559807;
-        bh=zrIas43W+20OqO4dn+GRi6SO7eY2eC4BLDyKo1vDc5Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zJu4HE2CIKB1JQ/MQLN5QxAHU6vj3l1bXq/Wmx/wyuWLIHnMV6Ru+MXWzgGhKm9Xu
-         xrh25aGxhPFBBCryIpEuRlF6CYnmhLtDjkYp8YMPJGWK8/kwljyTPrv/IAsLLpk46T
-         +4elhJ+DnzCW69e2wK/3+Jy4f0XrHkS23b5sOYaM=
-Date:   Mon, 29 Apr 2019 12:43:25 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     mr.nuke.me@gmail.com, linux-pci@vger.kernel.org,
-        austin_bolen@dell.com, alex_gagniuc@dellteam.com,
-        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
-        okaya@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add link_change error handler and vfio-pci user
-Message-ID: <20190429174325.GA105836@google.com>
-References: <155605909349.3575.13433421148215616375.stgit@gimli.home>
- <20190424175758.GC244134@google.com>
- <20190429085104.728aee75@x1.home>
+        id S1728964AbfD2Rog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:44:36 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45317 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728838AbfD2Rog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 13:44:36 -0400
+Received: by mail-pl1-f195.google.com with SMTP id o5so5399040pls.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k1NomnPWMIfso5x9ImCRSbz25mvLyl8gFIQ8b/bFOKU=;
+        b=cKzT/jECdjkEqqAqdqgiVNtmJx5QGXkHirh7YnqVt5rNVYMskoK+zKZQyuFzkPJxno
+         5AYGHxgllC2CbVNUdL+mNkm4B4eBeokIMKQHdluM17yqfP+8cg/DoL/6CfkLuBazikHf
+         4YpzBUCzq6MTjps7nW/JKehIzwO2k+csB39pgksxnQkbqkPPOLgIPu0h5TigJ8U657Y2
+         3ID46ruVukzp+FvgQZ9TeRXWJSKrVSB7dCob3me3OnLA7uFa2WI8OlQGPcxWrVOH8FZ2
+         xObdVCMqL9iuJ5+AQW0GvOVU91VwSOKLJ+Fa/ZAVjsma9rHjF1K24K3cb+9UHzAsj5kD
+         MsxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k1NomnPWMIfso5x9ImCRSbz25mvLyl8gFIQ8b/bFOKU=;
+        b=WPTjY3UedJTWV3zZiRmTIGVT6wQ0tZoS9ikYYYEFc6cLo+lta/GLOEVqjX0FIqji3g
+         OmIgyWqkKICAKVjSl8V2YtrY0orT0mcJZK54QD3FIxcIPPg/A/uB9qp84fk2/8xyKMVh
+         Ini3yddkQ0YEm4yXjGMQY+Ki1o1eqbeYLHmu1zXI+yaU46auydkLmueg+KooOHKB+TAQ
+         cFAEplOvX+KwRXPcnq/nyZ8nCxGRC3lsNalpt6PeVryYMH3tS3XehAwqB13RhelI8BKE
+         Eu4YjtNTKe43aMrePKvzv4ovoe2QPVJXHmJ46T28lZoNQKmt2QmZLVzfHjleMJ47HGkS
+         qwcw==
+X-Gm-Message-State: APjAAAWp/SHW2eInquQdZ6/iqdE5WZYfuTVVvMnmiEVcSqvRhpPVFG1l
+        G/hqHyx/Vxawm9ilbVFvH5mUtw==
+X-Google-Smtp-Source: APXvYqxfDdgpKbi7c5IJfSUSR96PBo3aTr9H2pdfHg77PXLqLz0S0cq3UFVcfj/69GieeS/am76LyA==
+X-Received: by 2002:a17:902:bd0c:: with SMTP id p12mr12365704pls.50.1556559875914;
+        Mon, 29 Apr 2019 10:44:35 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id c22sm46860290pfn.136.2019.04.29.10.44.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 10:44:35 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 11:44:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org, mike.leach@linaro.org,
+        rjw@rjwysocki.net, robert.walker@arm.com
+Subject: Re: [PATCH v2 35/36] [RFC] coresight: add return value for fixup
+ connections
+Message-ID: <20190429174432.GB18807@xps15>
+References: <1555344260-12375-1-git-send-email-suzuki.poulose@arm.com>
+ <1555344260-12375-36-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190429085104.728aee75@x1.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1555344260-12375-36-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 08:51:04AM -0600, Alex Williamson wrote:
-> On Wed, 24 Apr 2019 12:57:58 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Mon, Apr 15, 2019 at 05:04:18PM +0100, Suzuki K Poulose wrote:
+> Handle failures in fixing up connections for a newly registered
+> device. This will be useful to handle cases where we fail to expose
+> the links via sysfs for the connections.
 > 
-> > On Tue, Apr 23, 2019 at 04:42:28PM -0600, Alex Williamson wrote:
-> > > The PCIe bandwidth notification service generates logging any time a
-> > > link changes speed or width to a state that is considered downgraded.
-> > > Unfortunately, it cannot differentiate signal integrity related link
-> > > changes from those intentionally initiated by an endpoint driver,
-> > > including drivers that may live in userspace or VMs when making use
-> > > of vfio-pci.  Therefore, allow the driver to have a say in whether
-> > > the link is indeed downgraded and worth noting in the log, or if the
-> > > change is perhaps intentional.
-> > > 
-> > > For vfio-pci, we don't know the intentions of the user/guest driver
-> > > either, but we do know that GPU drivers in guests actively manage
-> > > the link state and therefore trigger the bandwidth notification for
-> > > what appear to be entirely intentional link changes.
-> > > 
-> > > Fixes: e8303bb7a75c PCI/LINK: Report degraded links via link bandwidth notification
-> > > Link: https://lore.kernel.org/linux-pci/155597243666.19387.1205950870601742062.stgit@gimli.home/T/#u
-> > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> > > ---
-> > > 
-> > > Changing to pci_dbg() logging is not super usable, so let's try the
-> > > previous idea of letting the driver handle link change events as they
-> > > see fit.  Ideally this might be two patches, but for easier handling,
-> > > folding the pci and vfio-pci bits together.  Comments?  Thanks,  
-> > 
-> > I'm a little uneasy about the bandwidth notification logging as a
-> > whole.  Messages in dmesg don't seem like a solid base for building
-> > management tools.
-> > 
-> > I assume the eventual goal would be some sort of digested notification
-> > along the lines of "hey mr/ms administrator, the link to device X
-> > unexpectedly became slower, you might want to check that out."
-> > 
-> > If I were building that, I don't think I would use dmesg.  I might
-> > write a daemon that polls /sys/.../current_link_{speed,width}, or
-> > maybe use some sort of netlink event.  Maybe it would be useful to
-> > have the admin designate devices of interest.
-> > 
-> > I'm hesitant about adding a .link_change() handler.  If there's
-> > something useful a driver could do with it, that's one thing.  But
-> > using it merely to suppress a message doesn't really seem worth the
-> > trouble, and it seems unfriendly to ask drivers to add it when they
-> > didn't ask for it and get no benefit from it.
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 > 
-> So where do we go from here?  I agree that dmesg is not necessarily a
-> great choice for these sorts of events and if they went somewhere else,
-> maybe I wouldn't have the same concerns about them generating user
-> confusion or contributing to DoS vectors from userspace drivers.  As it
-> is though, we have known cases where benign events generate confusing
-> logging messages, which seems like a regression.  Drivers didn't ask
-> for a link_change handler, but nor did they ask that the link state to
-> their device be monitored so closely.  Maybe this not only needs some
-> sort of change to the logging mechanism, but also an opt-in by the
-> driver if they don't expect runtime link changes.  Thanks,
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index 010bc86..4d63063 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -1025,18 +1025,18 @@ static int coresight_orphan_match(struct device *dev, void *data)
+>  	return 0;
+>  }
+>  
+> -static void coresight_fixup_orphan_conns(struct coresight_device *csdev)
+> +static int coresight_fixup_orphan_conns(struct coresight_device *csdev)
+>  {
+>  	/*
+>  	 * No need to check for a return value as orphan connection(s)
+>  	 * are hooked-up with each newly added component.
+>  	 */
+> -	bus_for_each_dev(&coresight_bustype, NULL,
+> +	return bus_for_each_dev(&coresight_bustype, NULL,
+>  			 csdev, coresight_orphan_match);
 
-I think it's really too late in the cycle to rework this and get
-changes merged before the v5.1 release (probably on May 5), so I'll
-queue up a revert and we can iron out the wrinkles for v5.2.
+After this patch the comment is no longer true - please consider amending.
 
-Bjorn
+With the above:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  }
+>  
+>  
+> -static void coresight_fixup_device_conns(struct coresight_device *csdev)
+> +static int coresight_fixup_device_conns(struct coresight_device *csdev)
+>  {
+>  	int i;
+>  
+> @@ -1056,6 +1056,8 @@ static void coresight_fixup_device_conns(struct coresight_device *csdev)
+>  			conn->child_dev = NULL;
+>  		}
+>  	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int coresight_remove_match(struct device *dev, void *data)
+> @@ -1265,10 +1267,15 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+>  
+>  	mutex_lock(&coresight_mutex);
+>  
+> -	coresight_fixup_device_conns(csdev);
+> -	coresight_fixup_orphan_conns(csdev);
+> +	ret = coresight_fixup_device_conns(csdev);
+> +	if (!ret)
+> +		ret = coresight_fixup_orphan_conns(csdev);
+>  
+>  	mutex_unlock(&coresight_mutex);
+> +	if (ret) {
+> +		coresight_unregister(csdev);
+> +		return ERR_PTR(ret);
+> +	}
+>  
+>  	return csdev;
+>  
+> -- 
+> 2.7.4
+> 
