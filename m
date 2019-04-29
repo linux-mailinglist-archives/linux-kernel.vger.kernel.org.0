@@ -2,134 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58841E91F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60434E91B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfD2Rcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:32:48 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:38569 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728889AbfD2Rcp (ORCPT
+        id S1728946AbfD2Rcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:32:31 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:58668 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728798AbfD2Rca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:32:45 -0400
-Received: from [192.168.1.110] ([77.9.18.117]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M8QNy-1hPXqm04bA-004P7i; Mon, 29 Apr 2019 19:31:48 +0200
-Subject: Re: RFC: on adding new CLONE_* flags [WAS Re: [PATCH 0/4] clone: add
- CLONE_PIDFD]
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        jannh@google.com, dhowells@redhat.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org, arnd@arndb.de,
-        ebiederm@xmission.com, keescook@chromium.org, tglx@linutronix.de,
-        mtk.manpages@gmail.com, akpm@linux-foundation.org, oleg@redhat.com,
-        cyphar@cyphar.com, joel@joelfernandes.org, dancol@google.com
-References: <20190414201436.19502-1-christian@brauner.io>
- <dc05ffe3-c2ff-8b3e-d181-e0cc620bf91d@metux.net>
- <20190415155034.GA25351@mail.hallyn.com>
- <000a64d6-1e22-21bf-f232-15f141092e44@metux.net>
- <20190429154949.GA23456@mail.hallyn.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <c95fbdbb-a62b-4ad1-f4be-7d1a8f96f508@metux.net>
-Date:   Mon, 29 Apr 2019 19:31:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Apr 2019 13:32:30 -0400
+Received: from pps.filterd (m0122333.ppops.net [127.0.0.1])
+        by mx0a-00190b01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3THW7lU029960;
+        Mon, 29 Apr 2019 18:32:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=jan2016.eng; bh=sS7DrQAgbihdhID9iWJw9oN4UHyGdasArGXMZWDAwSA=;
+ b=DMT5kV5/nEua4sy5xPmHLK+2L55ki5959TcXOes5jGvXG6YBXHR6llG6wbUq1BGB/ELm
+ SSgDEWKOPNsmG05b8+oWFkYHWdA+99RbWudDzExCAPwKyNXAyP58uWf6cMuNjMjcBOSE
+ Cz77p70tP+sv0qTvy9xqkWQf2FhC5Pt6xHE4Lvf5KmzlIu1GGE39q7/L5c3HvF4O/cuC
+ UBKAtSOiWWWQmI3q5aTuM9gkXSyATMS9/YfqjRAmoIazBvixNv0/iLiOWcmIFITlDdg9
+ hby+mAhXqCt9OtUBycivVy0OarUVt3pIi85lsaDFCXfflk0nIAMoion4H3rSdvNu7rPq OA== 
+Received: from prod-mail-ppoint3 (prod-mail-ppoint3.akamai.com [96.6.114.86] (may be forged))
+        by mx0a-00190b01.pphosted.com with ESMTP id 2s4eb6jcux-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Apr 2019 18:32:19 +0100
+Received: from pps.filterd (prod-mail-ppoint3.akamai.com [127.0.0.1])
+        by prod-mail-ppoint3.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x3THWFRc004727;
+        Mon, 29 Apr 2019 13:32:18 -0400
+Received: from prod-mail-relay15.akamai.com ([172.27.17.40])
+        by prod-mail-ppoint3.akamai.com with ESMTP id 2s4jdvcg8r-1;
+        Mon, 29 Apr 2019 13:32:18 -0400
+Received: from bos-lpxjs (bos-lpxjs.kendall.corp.akamai.com [172.29.171.194])
+        by prod-mail-relay15.akamai.com (Postfix) with ESMTP id 377C420064;
+        Mon, 29 Apr 2019 17:32:18 +0000 (GMT)
+Received: from dbanerje by bos-lpxjs with local (Exim 4.86_2)
+        (envelope-from <dbanerje@akamai.com>)
+        id 1hLA8I-0000OJ-DQ; Mon, 29 Apr 2019 13:32:02 -0400
+From:   Debabrata Banerjee <dbanerje@akamai.com>
+To:     Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>,
+        linux-kernel@vger.kernel.org
+Cc:     dbanerje@akamai.com
+Subject: [PATCH v2] ext4: bad mount opts in no journal mode
+Date:   Mon, 29 Apr 2019 13:31:58 -0400
+Message-Id: <20190429173158.1463-1-dbanerje@akamai.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190429154949.GA23456@mail.hallyn.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:cOoGF4O0ntI/WPSdDzGnTzK38X8AqqrXHbTZWivbx0UCfrWZL/G
- Jj+ShRCDmnv/XYUPHuT5DwIVW48/XSFn11Zxwptd18b7ASF/5PLdTJaONOmRjshmKTB2+85
- WLqEsMstYdqJsobTMcsOCWj2Js1eO7hpRFG5JxtvafQ/pYdVtQuHE/yRL0ahDrbf7hP/5xn
- T7P3oXfD0An2k4SRFg5DA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DHNVwzPmvdQ=:otp/O9JL7oHEqhoLMW3eMN
- 1plzeYIy2FDwKunOBfzgAlmFXVKNAiLC5PQpDhJteyCxARePZzZufNp+NVY44WoVNG/hTKUAU
- ivxfi0ooWhuSXGgKQQZOIZjPKR7u1hPENDQm5Lxvn8NI2Ztf6ybJowZGXUhlYKDs37HW/CGs6
- tFvXtF/eEvSnotj2o3BCRol183ro5yrGOt2VDzjoD58BFfOVVfUp7uXupHalSoc2PWPHtkXjW
- UgCiUXv9J1B6UW9110waqz9LXa3VTFtFDpWCoO8pkCacBhwSj3Zqk2UdcnNZiOEh3H8b4Uydq
- M4h7v7gnAfBHbRO+Lns5U7Y70r+6WUWpr2XpMIFrie7isvePp3WYP5SHDy7osBpr16065z5Km
- M2a8DmBg309bysQcZ3WMsSPqnrXXXARypGf/mov0kYs49zmrvewMZnBRUAswjWj1h9k9igWfd
- rDMRfZSqTkSJQnuY74LUCcZyni/1xHce7EUGJFwLf7INrFb80haqLY1BsP5fbO2+RBLdL4DkV
- +jf1ObkV4rKApu8i2fK+tweHlDMbk1tKjfWCfdALOXebi+jiSBU24v/lSdNFhv8IpzaNce0H/
- AKZUO2Gu10qt/BxijhK5mOTCt3nxKG/T0zJvAZEJHwmfZqB/weEOyyKUFddMjNd78nndCqMR4
- FkKkjaBD/uYIR5n69poDbREqg7lwCTYCmotISrI0V0X5VrYv2J+hwLrClGqf61Lb1KYUgT0nN
- S1z37sR5jFBKwpj/M2MAIgNEpmNBmFbXdPqky8VvM+LoaX79Dzjk3Y7+BoA=
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904290120
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904290120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.04.19 17:49, Serge E. Hallyn wrote:
+Fixes:
+commit 1e381f60dad9 ("ext4: do not allow journal_opts for fs w/o journal")
 
->> * all users are equal - no root at all. the only exception is the>>   initial process, which gets the kernel devices mounted into his>>
- namespace.> > This does not match my understanding, but I'm most likely
-wrong.  (I thought> there was an actual 'host owner' uid, which mostly
-is only used for initial> process, but is basically root with a
-different name, and used far less.  No> uid transitions without factotem
-so that it *looked* like no root user).
-Not quite (IIRC). The hostowner is just the user who booted the machine,
-the initial process runs under this uname and gets the kernel devices
-bound into his namespace, so he can start fileservers on them.
+Instead of removing EXT4_MOUNT_JOURNAL_CHECKSUM from s_def_mount_opt as
+I assume was intended, all other options were blown away leading to
+_ext4_show_options() output being incorrect.
 
-Also the caphash device (the one you can create capabilities, eg. for
-user change, which then can be used via capuse device) can only be
-opened once - usually by the host factotum.
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+---
+ fs/ext4/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There really is no such thing like root user.
-
->> What I'd like to achieve on Linux:>>>> * unprivileged users can have their own mount namespace, where
-they>>   can mount at will (maybe just 9P).> > No problem, you can do
-that now.
-But only within separate userns, IMHO. (and, when I last tried, plain
-users couldn't directly create their userns).
-
->> * but they still appear as the same normal users to the rest of the
->>   system
-> 
-> No problem, you can do that now.
-
-How exactly ? Did I miss something vital ?
-
->> * 9p programs (compiled for Linux ABI) can run parallel to traditional
->>   linux programs within the same user and sessions (eg. from a terminal,
->>   i can call both the same way)
->> * namespace modifications affect both equally (eg. I could run ff in
->>   an own ns)
-> 
-> affect both of what equally?
-
-mount / bind.
-
-> That's exactly what user namespaces are for.  You can create a new
-> user namespace, using no privilege at all, with your current uid (i.e.
-> 1000) mapped to whatever uid you like; if you pick 0, then you can unshare all
-> the namespaces you like.  
-
-But I don't like to appear as 'root' in here. I just wanna have my own
-filesystem namespace, nothing more.
-
-> Once you unshare mnt_ns, you can mount to your
-> heart's content.  To other processes on the host, your process is
-> uid 1000.
-
-Is that the uid, I'm appearing to filesystems ?
-
-> Regarding factotem, I agree that with the pidfd work going on etc, it's getting
-> more and more tempting to attempt a switch to that.  Looking back at my folder,
-> I see you posted a kernel patch for it.  I had done the same long ago.  Happy to
-> work with you again on that, and put a simple daemon into shadow package, if
-> util-linux isn't deemed the far better place.
-
-Yeah :)
-
-
---mtx
-
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 6ed4eb81e674..5cdf1d88b5c3 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4238,7 +4238,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 				 "data=, fs mounted w/o journal");
+ 			goto failed_mount_wq;
+ 		}
+-		sbi->s_def_mount_opt &= EXT4_MOUNT_JOURNAL_CHECKSUM;
++		sbi->s_def_mount_opt &= ~EXT4_MOUNT_JOURNAL_CHECKSUM;
+ 		clear_opt(sb, JOURNAL_CHECKSUM);
+ 		clear_opt(sb, DATA_FLAGS);
+ 		sbi->s_journal = NULL;
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.21.0
+
