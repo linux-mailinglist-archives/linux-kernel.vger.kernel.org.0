@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 364FBE59F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD3AE5A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbfD2PB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:01:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbfD2PBZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:01:25 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1BB9460CEC; Mon, 29 Apr 2019 15:01:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1556550085;
-        bh=hPzUai/4q86KkLTLbU6B01pvrdI1M63fG/ZZE74WXcs=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=jIG5dcAvnCNNVv5zfUJXzHNe+xigOB2MVnGakh2ANQlqb3fYnjJZ9MI8eIxVcgXdg
-         grg/A66/v1jsZO+X58xdvfgjPS30g1xDYIRHJZLEzTivJUBaCRz5Ee+YXgotLn/wza
-         UQkw9h+MoTxmUJ3gD74I+aei66midGbxXA8SSHRg=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728605AbfD2PBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:01:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56514 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727554AbfD2PBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:01:40 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6A252602F3;
-        Mon, 29 Apr 2019 15:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1556550084;
-        bh=hPzUai/4q86KkLTLbU6B01pvrdI1M63fG/ZZE74WXcs=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=eho73adpVes0NTGU9X+Zasbur9XOdRw0OiEU27+FFmc4L972qgcpdZoRc92RhGRUE
-         i+flnE15M0rewzG7a5xQD7gUmXaRn1jGRXxrSBnkckJGXniaeU9727IdvBY16raR7E
-         NDfdmR7AbheEi2liTu+D6hfmmgsbJx6bUAN+SRZ4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A252602F3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id C987A3092661;
+        Mon, 29 Apr 2019 15:01:39 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-148.ams2.redhat.com [10.36.116.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53B225C239;
+        Mon, 29 Apr 2019 15:01:37 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Semyon Verchenko <semverchenko@factor-ts.ru>
+Subject: [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to critclk_systems DMI table
+Date:   Mon, 29 Apr 2019 17:01:35 +0200
+Message-Id: <20190429150135.15070-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wireless: carl9170: fix clang build warning
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190325124354.1413529-1-arnd@arndb.de>
-References: <20190325124354.1413529-1-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christian Lamparter <chunkeey@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190429150125.1BB9460CEC@smtp.codeaurora.org>
-Date:   Mon, 29 Apr 2019 15:01:24 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 29 Apr 2019 15:01:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
+The Lex 3I380D industrial PC has 4 ethernet controllers on board
+which need pmc_plt_clk0 - 3 to function, add it to the critclk_systems
+DMI table, so that drivers/clk/x86/clk-pmc-atom.c will mark the clocks
+as CLK_CRITICAL and they will not get turned off.
 
-> clang fails to eliminate some dead code with always-taken branches
-> when CONFIG_PROFILE_ANNOTATED_BRANCHES is set, leading to a false-positive
-> warning:
-> 
-> drivers/net/wireless/ath/carl9170/mac.c:522:3: error: variable 'power' is used uninitialized whenever 'if' condition is
->       false [-Werror,-Wsometimes-uninitialized]
->                 BUG_ON(1);
->                 ^~~~~~~~~
-> 
-> Change both instances of BUG_ON(1) in carl9170 to the simpler BUG()
-> to avoid the warning.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Christian Lamparter <chunkeey@gmail.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Reported-and-tested-by: Semyon Verchenko <semverchenko@factor-ts.ru>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/pmc_atom.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-62acdcfa8b7a wireless: carl9170: fix clang build warning
-
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index 3a635ea09b8a..2910845b7cdd 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -407,12 +407,21 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+  */
+ static const struct dmi_system_id critclk_systems[] = {
+ 	{
++		/* pmc_plt_clk0 is used for an external HSIC USB HUB */
+ 		.ident = "MPL CEC1x",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
+ 		},
+ 	},
++	{
++		/* pmc_plt_clk0 - 3 are used for the 4 ethernet controllers */
++		.ident = "Lex 3I380D",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "3I380D"),
++		},
++	},
+ 	{ /*sentinel*/ }
+ };
+ 
 -- 
-https://patchwork.kernel.org/patch/10869053/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.21.0
 
