@@ -2,88 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2C6DA67
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 04:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FE7DA75
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 04:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfD2COl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Apr 2019 22:14:41 -0400
-Received: from mail-eopbgr140049.outbound.protection.outlook.com ([40.107.14.49]:41528
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726439AbfD2COl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Apr 2019 22:14:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CQDiwrLbGIW8ItErakXpB7jtI5UpewNrvEOfcniSTQ4=;
- b=L6OdGuIp16uSa6V6e5dyAcZGF+TtzLp0w5EEg6afHVurKqigCU9sRZGL0cjdsBaXRIbUisGjMYbfscA60MqlzAhROiOvJ96dLWljUOQD9B2LOPGQ6CSKj5D87S7lGNJWXuG4pKGKnSSZoGHIkiEu0JM0AdAZDvbjVkfopITNmXA=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB6068.eurprd04.prod.outlook.com (20.179.34.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.13; Mon, 29 Apr 2019 02:14:37 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cda:4e52:8e87:8f0e]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cda:4e52:8e87:8f0e%2]) with mapi id 15.20.1835.018; Mon, 29 Apr 2019
- 02:14:37 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mfd: imx6sx: add MQS register definition for iomuxc gpr
-Thread-Topic: [PATCH] mfd: imx6sx: add MQS register definition for iomuxc gpr
-Thread-Index: AQHU/agjfPz5ks/OzEakw7KYMflrHaZSZf3g
-Date:   Mon, 29 Apr 2019 02:14:37 +0000
-Message-ID: <AM0PR04MB42117B7880B6FB6A4E9B104080390@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1556445161-29477-1-git-send-email-shengjiu.wang@nxp.com>
-In-Reply-To: <1556445161-29477-1-git-send-email-shengjiu.wang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 562033d2-8a84-42c3-f8b6-08d6cc486dfd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6068;
-x-ms-traffictypediagnostic: AM0PR04MB6068:
-x-microsoft-antispam-prvs: <AM0PR04MB6068173BE195225896C87E5B80390@AM0PR04MB6068.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2331;
-x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(346002)(366004)(376002)(199004)(189003)(25786009)(478600001)(3846002)(33656002)(558084003)(71200400001)(71190400001)(8936002)(81156014)(81166006)(8676002)(5660300002)(26005)(186003)(7736002)(4326008)(76176011)(6506007)(7696005)(102836004)(11346002)(446003)(14454004)(6246003)(44832011)(476003)(486006)(74316002)(52536014)(66066001)(305945005)(99286004)(97736004)(53936002)(2201001)(86362001)(55016002)(2906002)(6436002)(9686003)(229853002)(66446008)(2501003)(76116006)(66476007)(256004)(6116002)(64756008)(66556008)(73956011)(316002)(66946007)(110136005)(68736007)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6068;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 14Sg77AxQntUk0DZnyjKN+UgmwIRxrjZv3l0f8dDWg5kYJzDs67ICY+z+OuM4f64Lfs2hSwfNMZ4ay9ZsA3ezX6mU0UDKiEIhNqjAXdPXNLo2hbUCxYg9xVRejc3waidyVXAkdAOOoaFF6Jjv6T8WWWDX2PAYxX9SzAnaktNQ/5Htxcm2UjemgQ1dP0gVuzZASQnQBZjYhqr6KM2sI+oakGwmyHsvGLCJsM5vKOKVWpBVvaVV0NNbncU3kyXMq+9Ed9krtZxeEsHVopal5VQsSP1eTvFWHsBPlWCL8JzV6+TFrTq/jPvSkyN7jP3Dp+A93FoH6rl3zKgN/ifs4hRweXbxaqsHjCg1N3MCHO/H4p0W6SQGBi8E57QYgcTXcmqpselciKTI3bpXT4zONd9rxLVNXT2fl4zX2AcBUs5Qe4=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727349AbfD2CRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Apr 2019 22:17:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46408 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726969AbfD2CRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Apr 2019 22:17:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Apr 2019 19:17:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,408,1549958400"; 
+   d="scan'208";a="139632022"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga006.jf.intel.com with ESMTP; 28 Apr 2019 19:17:02 -0700
+Subject: Re: [RFC PATCH v2 00/17] Core scheduling v2
+To:     Ingo Molnar <mingo@kernel.org>, Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Julien Desfossez <jdesfossez@digitalocean.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <20190424140013.GA14594@sinkpad>
+ <CAERHkrtVjU4SaHjPGNb140qBiU+wVELGaH6j9Z=cctToZ0qn9g@mail.gmail.com>
+ <20190425095508.GA8387@gmail.com>
+ <CAERHkrs0=xcx9UUZbZPYq4QbznUqHAuVbTnafSVpZFKwAEFyMA@mail.gmail.com>
+ <20190427091716.GC99668@gmail.com>
+ <CAERHkruEAVBsh6FphMKqgR2+HjsVVegxjnpOFRNfbrfZDNpc9w@mail.gmail.com>
+ <20190427142137.GA72051@gmail.com>
+ <CAERHkrtaU=Y-Lxypu_7uBbe-mJtG-3friz=ZLhV53X4FXHcEyA@mail.gmail.com>
+ <20190428093304.GA7393@gmail.com>
+ <CAERHkrvaSSR1wRECF1AcLOhpmCAH0ecvFEL5MOFjK05F0xSuzA@mail.gmail.com>
+ <20190428121721.GA121434@gmail.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <db7c3e51-d013-b3d9-7bce-c247aa2e7144@linux.intel.com>
+Date:   Mon, 29 Apr 2019 10:17:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 562033d2-8a84-42c3-f8b6-08d6cc486dfd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 02:14:37.2735
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6068
+In-Reply-To: <20190428121721.GA121434@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBTLmouIFdhbmcNCj4gU2VudDogU3VuZGF5LCBBcHJpbCAyOCwgMjAxOSA1OjUzIFBN
-DQo+IA0KPiBBZGQgbWFjcm9zIHRvIGRlZmluZSBtYXNrcyBhbmQgYml0cyBmb3IgaW14NnN4IE1R
-UyByZWdpc3RlcnMNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFNoZW5naml1IFdhbmcgPHNoZW5naml1
-LndhbmdAbnhwLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IERvbmcgQWlzaGVuZyA8YWlzaGVuZy5kb25n
-QG54cC5jbT4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
+On 2019/4/28 20:17, Ingo Molnar wrote:
+> 
+> * Aubrey Li <aubrey.intel@gmail.com> wrote:
+> 
+>> On Sun, Apr 28, 2019 at 5:33 PM Ingo Molnar <mingo@kernel.org> wrote:
+>>> So because I'm a big fan of presenting data in a readable fashion, here
+>>> are your results, tabulated:
+>>
+>> I thought I tried my best to make it readable, but this one looks much better,
+>> thanks, ;-)
+>>>
+>>>  #
+>>>  # Sysbench throughput comparison of 3 different kernels at different
+>>>  # load levels, higher numbers are better:
+>>>  #
+>>>
+>>>  .--------------------------------------|----------------------------------------------------------------.
+>>>  |  NA/AVX     vanilla-SMT    [stddev%] |coresched-SMT   [stddev%]   +/-  |   no-SMT    [stddev%]   +/-  |
+>>>  |--------------------------------------|----------------------------------------------------------------|
+>>>  |   1/1             508.5    [  0.2% ] |        504.7   [  1.1% ]   0.8% |    509.0    [  0.2% ]   0.1% |
+>>>  |   2/2            1000.2    [  1.4% ] |       1004.1   [  1.6% ]   0.4% |    997.6    [  1.2% ]   0.3% |
+>>>  |   4/4            1912.1    [  1.0% ] |       1904.2   [  1.1% ]   0.4% |   1914.9    [  1.3% ]   0.1% |
+>>>  |   8/8            3753.5    [  0.3% ] |       3748.2   [  0.3% ]   0.1% |   3751.3    [  0.4% ]   0.1% |
+>>>  |  16/16           7139.3    [  2.4% ] |       7137.9   [  1.8% ]   0.0% |   7049.2    [  2.4% ]   1.3% |
+>>>  |  32/32          10899.0    [  4.2% ] |      10780.3   [  4.4% ]  -1.1% |  10339.2    [  9.6% ]  -5.1% |
+>>>  |  64/64          15086.1    [ 11.5% ] |      14262.0   [  8.2% ]  -5.5% |  11168.7    [ 22.2% ] -26.0% |
+>>>  | 128/128         15371.9    [ 22.0% ] |      14675.8   [ 14.4% ]  -4.5% |  10963.9    [ 18.5% ] -28.7% |
+>>>  | 256/256         15990.8    [ 22.0% ] |      12227.9   [ 10.3% ] -23.5% |  10469.9    [ 19.6% ] -34.5% |
+>>>  '--------------------------------------|----------------------------------------------------------------'
+>>>
+>>> One major thing that sticks out is that if we compare the stddev numbers
+>>> to the +/- comparisons then it's pretty clear that the benchmarks are
+>>> very noisy: in all but the last row stddev is actually higher than the
+>>> measured effect.
+>>>
+>>> So what does 'stddev' mean here, exactly? The stddev of multipe runs,
+>>> i.e. measured run-to-run variance? Or is it some internal metric of the
+>>> benchmark?
+>>>
+>>
+>> The benchmark periodically reports intermediate statistics in one second,
+>> the raw log looks like below:
+>> [ 11s ] thds: 256 eps: 14346.72 lat (ms,95%): 44.17
+>> [ 12s ] thds: 256 eps: 14328.45 lat (ms,95%): 44.17
+>> [ 13s ] thds: 256 eps: 13773.06 lat (ms,95%): 43.39
+>> [ 14s ] thds: 256 eps: 13752.31 lat (ms,95%): 43.39
+>> [ 15s ] thds: 256 eps: 15362.79 lat (ms,95%): 43.39
+>> [ 16s ] thds: 256 eps: 26580.65 lat (ms,95%): 35.59
+>> [ 17s ] thds: 256 eps: 15011.78 lat (ms,95%): 36.89
+>> [ 18s ] thds: 256 eps: 15025.78 lat (ms,95%): 39.65
+>> [ 19s ] thds: 256 eps: 15350.87 lat (ms,95%): 39.65
+>> [ 20s ] thds: 256 eps: 15491.70 lat (ms,95%): 36.89
+>>
+>> I have a python script to parse eps(events per second) and lat(latency)
+>> out, and compute the average and stddev. (And I can draw a curve locally).
+>>
+>> It's noisy indeed when tasks number is greater than the CPU number.
+>> It's probably caused by high frequent load balance and context switch.
+> 
+> Ok, so it's basically an internal workload noise metric, it doesn't 
+> represent the run-to-run noise.
+> 
+> So it's the real stddev of the workload - but we don't know whether the 
+> measured performance figure is exactly in the middle of the runtime 
+> probability distribution.
+> 
+>> Do you have any suggestions? Or any other information I can provide?
+> 
+> Yeah, so we don't just want to know the "standard deviation" of the 
+> measured throughput values, but also the "standard error of the mean".
+> 
+> I suspect it's pretty low, below 1% for all rows?
+
+Hope my this mail box works for this...
+
+.-------------------------------------------------------------------------------------------------------------.
+|NA/AVX vanilla-SMT     [std% / sem%] | coresched-SMT   [std% / sem%]     +/- |  no-SMT [std% / sem%]    +/-  |
+|-------------------------------------------------------------------------------------------------------------|
+|  1/1        508.5     [ 0.2%/ 0.0%] |         504.7   [ 1.1%/ 0.1%]    -0.8%|   509.0 [ 0.2%/ 0.0%]    0.1% |
+|  2/2       1000.2     [ 1.4%/ 0.1%] |        1004.1   [ 1.6%/ 0.2%]     0.4%|   997.6 [ 1.2%/ 0.1%]   -0.3% |
+|  4/4       1912.1     [ 1.0%/ 0.1%] |        1904.2   [ 1.1%/ 0.1%]    -0.4%|  1914.9 [ 1.3%/ 0.1%]    0.1% |
+|  8/8       3753.5     [ 0.3%/ 0.0%] |        3748.2   [ 0.3%/ 0.0%]    -0.1%|  3751.3 [ 0.4%/ 0.0%]   -0.1% |
+| 16/16      7139.3     [ 2.4%/ 0.2%] |        7137.9   [ 1.8%/ 0.2%]    -0.0%|  7049.2 [ 2.4%/ 0.2%]   -1.3% |
+| 32/32     10899.0     [ 4.2%/ 0.4%] |       10780.3   [ 4.4%/ 0.4%]    -1.1%| 10339.2 [ 9.6%/ 0.9%]   -5.1% |
+| 64/64     15086.1     [11.5%/ 1.2%] |       14262.0   [ 8.2%/ 0.8%]    -5.5%| 11168.7 [22.2%/ 1.7%]  -26.0% |
+|128/128    15371.9     [22.0%/ 2.2%] |       14675.8   [14.4%/ 1.4%]    -4.5%| 10963.9 [18.5%/ 1.4%]  -28.7% |
+|256/256    15990.8     [22.0%/ 2.2%] |       12227.9   [10.3%/ 1.0%]   -23.5%| 10469.9 [19.6%/ 1.7%]  -34.5% |
+'-------------------------------------------------------------------------------------------------------------'
+
+Thanks,
+-Aubrey
