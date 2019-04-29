@@ -2,129 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D275DE71
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4100DF12
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfD2IyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 04:54:22 -0400
-Received: from foss.arm.com ([217.140.101.70]:50684 "EHLO foss.arm.com"
+        id S1728070AbfD2JOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 05:14:07 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32623 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfD2IyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 04:54:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5561B80D;
-        Mon, 29 Apr 2019 01:54:21 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 734CF3F71A;
-        Mon, 29 Apr 2019 01:54:19 -0700 (PDT)
-Subject: Re: [PATCH v2 33/36] coresight: acpi: Support for components
-To:     rjw@rjwysocki.net
-Cc:     mathieu.poirier@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        mike.leach@linaro.org, robert.walker@arm.com
-References: <1555344260-12375-1-git-send-email-suzuki.poulose@arm.com>
- <1555344260-12375-34-git-send-email-suzuki.poulose@arm.com>
- <20190425174553.GB4080@xps15>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <876c6e2c-0a6a-1814-c9ad-1e81d16b0cb0@arm.com>
-Date:   Mon, 29 Apr 2019 09:54:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190425174553.GB4080@xps15>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727259AbfD2JMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 05:12:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 02:12:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,409,1549958400"; 
+   d="scan'208";a="165988173"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by fmsmga004.fm.intel.com with ESMTP; 29 Apr 2019 02:12:34 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v2 00/18] add new features for FPGA DFL drivers
+Date:   Mon, 29 Apr 2019 16:55:33 +0800
+Message-Id: <1556528151-17221-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rafael,
+This patchset adds more features support for FPGA Device Feature List
+(DFL) drivers, including PR enhancement, virtualization support based
+on PCIe SRIOV, private features to Port, private features to FME, and
+enhancement to DFL framework. Please refer to details in below list.
 
-On 25/04/2019 18:45, Mathieu Poirier wrote:
-> On Mon, Apr 15, 2019 at 05:04:16PM +0100, Suzuki K Poulose wrote:
->> All AMBA devices are handled via ACPI AMBA scan notifier
->> infrastructure. The platform devices get the ACPI id
->> added to their driver.
->>
->> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   drivers/acpi/acpi_amba.c                           | 9 +++++++++
->>   drivers/hwtracing/coresight/coresight-replicator.c | 9 ++++++++-
->>   2 files changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/acpi/acpi_amba.c b/drivers/acpi/acpi_amba.c
->> index 7f77c07..eef5a69 100644
->> --- a/drivers/acpi/acpi_amba.c
->> +++ b/drivers/acpi/acpi_amba.c
->> @@ -24,6 +24,15 @@
->>   
->>   static const struct acpi_device_id amba_id_list[] = {
->>   	{"ARMH0061", 0}, /* PL061 GPIO Device */
->> +	{"ARMHC500", 0}, /* ARM CoreSight ETM4x */
->> +	{"ARMHC501", 0}, /* ARM CoreSight ETR */
->> +	{"ARMHC502", 0}, /* ARM CoreSight STM */
->> +	{"ARMHC503", 0}, /* ARM CoreSight Debug */
->> +	{"ARMHC979", 0}, /* ARM CoreSight TPIU */
->> +	{"ARMHC97C", 0}, /* ARM CoreSight SoC-400 TMC, SoC-600 ETF/ETB */
->> +	{"ARMHC98D", 0}, /* ARM CoreSight Dynamic Replicator */
->> +	{"ARMHC9CA", 0}, /* ARM CoreSight CATU */
->> +	{"ARMHC9FF", 0}, /* ARM CoreSight Funnel */
->>   	{"", 0},
->>   };
->>   
->> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
->> index 2eb489c..a8f42df 100644
->> --- a/drivers/hwtracing/coresight/coresight-replicator.c
->> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
->> @@ -5,6 +5,7 @@
->>    * Description: CoreSight Replicator driver
->>    */
->>   
->> +#include <linux/acpi.h>
->>   #include <linux/amba/bus.h>
->>   #include <linux/kernel.h>
->>   #include <linux/device.h>
->> @@ -290,11 +291,17 @@ static const struct of_device_id static_replicator_match[] = {
->>   	{}
->>   };
->>   
->> +#ifdef CONFIG_ACPI
->> +static const struct acpi_device_id static_replicator_acpi_ids[] = {
->> +	{"ARMHC985", 0}, /* ARM CoreSight Static Replicator */
->> +};
->> +#endif
->>   static struct platform_driver static_replicator_driver = {
->>   	.probe          = static_replicator_probe,
->>   	.driver         = {
->>   		.name   = "coresight-replicator",
->> -		.of_match_table = static_replicator_match,
->> +		.of_match_table = of_match_ptr(static_replicator_match),
->> +		.acpi_match_table = ACPI_PTR(static_replicator_acpi_ids),
->>   		.pm	= &replicator_dev_pm_ops,
->>   		.suppress_bind_attrs = true,
->>   	},
-> 
-> For the coresight part: Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> You probably want to split this patch in half so that Rafael can pick up the
-> the first part of it in his tree.
-> 
+Main changes from v1:
+ - split the clean up code in a separated patch (patch #2)
+ - add cpu_feature_enabled check for AVX512 code (patch #4)
+ - improve sysfs return values and also sysfs doc (patch #12 #17)
+ - create a hwmon for thermal management sysfs interfaces (patch #15)
+ - create a hwmon for power management sysfs interfaces (patch #16)
+ - update docmentation according to above changes (patch #5)
+ - improve sysfs doc for performance reporting support (patch #18)
 
+Wu Hao (18):
+  fpga: dfl-fme-mgr: fix FME_PR_INTFC_ID register address.
+  fpga: dfl: fme: remove copy_to_user() in ioctl for PR
+  fpga: dfl: fme: align PR buffer size per PR datawidth
+  fpga: dfl: fme: support 512bit data width PR
+  Documentation: fpga: dfl: add descriptions for virtualization and new
+    interfaces.
+  fpga: dfl: fme: add DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
+  fpga: dfl: pci: enable SRIOV support.
+  fpga: dfl: afu: add AFU state related sysfs interfaces
+  fpga: dfl: afu: add userclock sysfs interfaces.
+  fpga: dfl: add id_table for dfl private feature driver
+  fpga: dfl: afu: export __port_enable/disable function.
+  fpga: dfl: afu: add error reporting support.
+  fpga: dfl: afu: add STP (SignalTap) support
+  fpga: dfl: fme: add capability sysfs interfaces
+  fpga: dfl: fme: add thermal management support
+  fpga: dfl: fme: add power management support
+  fpga: dfl: fme: add global error reporting support
+  fpga: dfl: fme: add performance reporting support
 
-We have the CoreSight components span over AMBA and platform devices. This
-series is almost getting ready, so for the next revision I would like to
-get your view on how to split this particular patch.
+ Documentation/ABI/testing/sysfs-platform-dfl-fme  | 322 ++++++++
+ Documentation/ABI/testing/sysfs-platform-dfl-port | 104 +++
+ Documentation/fpga/dfl.txt                        | 114 +++
+ drivers/fpga/Kconfig                              |   2 +-
+ drivers/fpga/Makefile                             |   4 +-
+ drivers/fpga/dfl-afu-error.c                      | 225 +++++
+ drivers/fpga/dfl-afu-main.c                       | 335 +++++++-
+ drivers/fpga/dfl-afu.h                            |   7 +
+ drivers/fpga/dfl-fme-error.c                      | 385 +++++++++
+ drivers/fpga/dfl-fme-main.c                       | 583 ++++++++++++-
+ drivers/fpga/dfl-fme-mgr.c                        | 117 ++-
+ drivers/fpga/dfl-fme-perf.c                       | 950 ++++++++++++++++++++++
+ drivers/fpga/dfl-fme-pr.c                         |  65 +-
+ drivers/fpga/dfl-fme.h                            |   9 +-
+ drivers/fpga/dfl-pci.c                            |  40 +
+ drivers/fpga/dfl.c                                | 170 +++-
+ drivers/fpga/dfl.h                                |  56 +-
+ include/uapi/linux/fpga-dfl.h                     |  32 +
+ 18 files changed, 3439 insertions(+), 81 deletions(-)
+ create mode 100644 drivers/fpga/dfl-afu-error.c
+ create mode 100644 drivers/fpga/dfl-fme-error.c
+ create mode 100644 drivers/fpga/dfl-fme-perf.c
 
-We have components in AMBA and Platform devices. Would you prefer to split
-the patch and pull the ACPI_AMBA changes above in to your tree ? Or are
-you happy with Mathieu pushing this change together with the other ACPI
-bindings support in the CoreSight drivers ?
+-- 
+1.8.3.1
 
-FWIW, we should still be fine if we split and the patches reach at different
-times. Please let me know your thoughts.
-
-Suzuki
