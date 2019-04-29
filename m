@@ -2,99 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF23CEB35
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 21:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB1BEB47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbfD2TwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 15:52:20 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:28230 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfD2TwU (ORCPT
+        id S1729376AbfD2UBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:01:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40122 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729237AbfD2UBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 15:52:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1556567540; x=1588103540;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=iGR4Zs5nDuCr/SyO0IMhqYsZGxQL5/GTdmx0tD7WxoM=;
-  b=pw+544LYKC28PsL/Z2N+0ID6D3bMTQ1G0ikp8/rI05eIYXW/gA3Gs0GH
-   nEcSpgEskWzwGHOjImvTsdPGfs6vugv1RwFtF46ejff6obROGl5hJayCp
-   F0WvRGxpZem1Ov0uWVqN2ROjv46pW9QsODbgwU2e3w2RGsNts5PMveKWc
-   wW5VopU/kIzfkentNIijZ82tRSAQVTd43pVl4Z/f8/FKZ/GAWiFF+tdtH
-   iQHVo4HsyWB9OkXuy2KMXNtv2bxV5kRpH5la4RI8E+yY6bX7QV/FpyLs9
-   DysfIyGZahMn6VGNRPDf5FNImrkI++v2fxWdRzyTgT00vWzeHAZh0w9Yj
-   g==;
-X-IronPort-AV: E=Sophos;i="5.60,410,1549900800"; 
-   d="scan'208";a="108822905"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Apr 2019 03:52:20 +0800
-IronPort-SDR: skcBvZEAFKBWIz+0eofpg9whoUpuVYdGMYTU255UvfGAUlR3y4sfsH6XovlLbDS4jMlM6tBQKc
- m1uQNqu2r2TXG4xL1+f5D2bBJYZepYaD/0nw2MwLN+TXXkAYMwLlxLhfTk60NYnzw1BT9vWtM/
- 7FdSEgHE9B70ksycQdLsCzDZd3Z9g6vIcuFhWOtfWw26D2dL2rFJ2QAQrmZQc85XlPs7DZyhtH
- pIf+36hORR2JoVKxC4X0p55gw4ZB/0Z9z2t6vvM78utWIK81zUyfIyzkRHz5t8KkaE3JAPeJ4A
- yhPVDnPBEQ56kqPAtgmt38Li
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 29 Apr 2019 12:28:42 -0700
-IronPort-SDR: WCTsEeq+jdWM9wWQFiffEKgZ2ajy+EgpnirMSVaJ0tEi4A8l36v+D7tfZ6G59yMlywONSSNZ1X
- n22P6upFjfVXOl7H4ZV47RVT7HgJAmFl2r5v64s4HTUvhSoe+XA4fqmcU6Y83wdC4eiadY8KCS
- 1d1eUj5vmaac3eO0xjOVEiBdeFfClh/74oFrnoWCsCYXMaVdHGe+okInPBRTabZUbl23ghneos
- t+80OXpBGVIK59DaOffRqEzqU6jFoJlH/VbDehXFTeycX4DbkaXGACaVIIDJpLyKEZcrdMCTyM
- iS8=
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.66.167]) ([10.111.66.167])
-  by uls-op-cesaip01.wdc.com with ESMTP; 29 Apr 2019 12:52:20 -0700
-Subject: Re: [1/3] x86: Update DEBUG_TLBFLUSH options description.
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Gary Guo <gary@garyguo.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-References: <20190410224449.10877-1-atish.patra@wdc.com>
- <20190410224449.10877-2-atish.patra@wdc.com>
- <20190411065617.GA29422@infradead.org>
- <580d95d1-224f-a372-c656-1d2cbb19d868@wdc.com> <20190414142709.GA569@zn.tnic>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <956163a3-9a9f-ac12-b429-eb592bce815b@wdc.com>
-Date:   Mon, 29 Apr 2019 12:52:18 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        Mon, 29 Apr 2019 16:01:38 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u17so1895711pfn.7;
+        Mon, 29 Apr 2019 13:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bTUR4BU7SNrbGwYw6ulkWST95/i8bxeFGfTLU+5eb+w=;
+        b=i1Ir2B4zXgvSHk/6PwCU9zPEunYN5ng1HEP5haDCn4gP7N4ELFmyA9Ewal0kte5wvR
+         BGKorEtWwnmHRmi3u8aPeQC0tpgWyES+BRWjW2xUy2i/2XS2fn2tjTqfatIdnqVAWJUq
+         kKXEQ5CwR0ukK09Kkgem2drxva8dQi6nLOqQpbroI4GE+vRtG/GBtw5W2e+SBV/lGld2
+         Ztfr2v5Jjv0mZO2FIru9oT5vJaChnTt6NWjAubIDV2KME1Zcf/T11O9ktP8polRJvqff
+         LtyEKepv5zIR4ZqfKbhC7HpyBj5I+eJZ11v8HXT1hBnP76CKFfbmIJ14sXg1e4iKVy5t
+         1pUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bTUR4BU7SNrbGwYw6ulkWST95/i8bxeFGfTLU+5eb+w=;
+        b=NehLj4bfujFwysHbS8fHREC6wjzkoVE5W2A7APhBP+qCWhSpl9KQhw3n8vjYR6tEpK
+         by9STkpuyrmqtqe8vgaRuKjciY1rdlPkXDGsunuPojkILDk6P5dnk8xorXAJwjfc5Ffy
+         MolB5FBODreC4L7LVhD5zUC27AqlZWnQpVGivGe46EAs0Zh/LDvEkfES7Jbp/U8nXcq/
+         5qbpjsSkF5fiFZzGK/dz/uPdaOfqm/6CYw2vmWXwwoajqPwWDZglqT4Nb6eWz7caHZX/
+         PIDDOdJx99T5jcX275Fnf8EOscdizhypoLr+NDCQ3eVo1FQuRbjenhCvdZJV1QRH/em0
+         VmiA==
+X-Gm-Message-State: APjAAAWitsksm/iGP6ghGIbr0nfCkDVpYnDnuhF5rJ07/qq8cIfvFARA
+        EtLE+QdI2MXwFSQqZhziQrCotNKXBHc=
+X-Google-Smtp-Source: APXvYqxKW8vbi4XT4G2atsGGPz4mRPCYyXzjOGBv5NqldSujI4elCwv1bTo5VHLoQR5TLomi0DnCJw==
+X-Received: by 2002:a62:be14:: with SMTP id l20mr29754296pff.241.1556567636750;
+        Mon, 29 Apr 2019 12:53:56 -0700 (PDT)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id l2sm39841783pgl.2.2019.04.29.12.53.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 12:53:55 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Enric Balletbo Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Driver for UCS1002
+Date:   Mon, 29 Apr 2019 12:53:46 -0700
+Message-Id: <20190429195349.20335-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190414142709.GA569@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/14/19 7:29 AM, Borislav Petkov wrote:
-> On Fri, Apr 12, 2019 at 01:14:54PM -0700, Atish Patra wrote:
->> On 4/10/19 11:56 PM, Christoph Hellwig wrote:
->>> Given that this option enables generic code (which you reuse for RISC-V
->>> later in this series) please also move the config option to
->>> mm/Kconfig, proabbly keyed off another ARCH_HAVE_DEBUG_TLBFLUSH
->>> symbol that the architecture can select.
->>>
->>
->> Sure.
-> 
-> And when you do that, instead of deleting the help text, make it
-> generic. Otherwise, there's no explanation anymore, how that option is
-> supposed to be used through tlb_flushall_shift.
-> 
-Not sure I am following you.
-tlb_flushall_shift knob was removed by
-commit e9f4e0a9fe27 ("x86/mm: Rip out complicated, out-of-date, buggy 
-TLB flushing")
+Everyone:
 
+This small series adds a driver for UCS1002 Programmable USB Port
+Power Controller with Charger Emulation. See [page] for product page
+and [datasheet] for device dataseet. Hopefully each individual patch
+is self explanatory.
 
-Regards,
-Atish
+Note that this series is a revival of the upstreaming effort by Enric
+Balletbo Serra last version of which can be found at [original-effort]
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+Changes since [v2]:
+
+    - Fixed a bug pointed out by Lucas
+
+Changes since [v1]:
+
+    - Moved IRQ trigger specification to DT
+
+    - Fixed silent error paths in probe()
+    
+    - Dropped error message in ucs1002_set_max_current()
+
+    - Fixed license mismatch
+
+    - Changed the driver to configure the chip to BC1.2 CDP by default
+
+    - Made other small fixes as per feedback for v1
+
+[v2] https://lore.kernel.org/lkml/20190429054741.7286-1-andrew.smirnov@gmail.com
+[v1] https://lore.kernel.org/lkml/20190417084457.28747-1-andrew.smirnov@gmail.com/
+[page] https://www.microchip.com/wwwproducts/en/UCS1002-2
+[datasheet] https://ww1.microchip.com/downloads/en/DeviceDoc/UCS1002-2%20Data%20Sheet.pdf
+[original-effort] https://lore.kernel.org/lkml/1460705181-10493-1-git-send-email-enric.balletbo@collabora.com/
+
+Andrey Smirnov (3):
+  power: supply: core: Add POWER_SUPPLY_HEALTH_OVERCURRENT constant
+  power: supply: Add driver for Microchip UCS1002
+  dt-bindings: power: supply: Add bindings for Microchip UCS1002
+
+ .../power/supply/microchip,ucs1002.txt        |  27 +
+ drivers/power/supply/Kconfig                  |   9 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/power_supply_sysfs.c     |   2 +-
+ drivers/power/supply/ucs1002_power.c          | 646 ++++++++++++++++++
+ include/linux/power_supply.h                  |   1 +
+ 6 files changed, 685 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+ create mode 100644 drivers/power/supply/ucs1002_power.c
+
+-- 
+2.20.1
+
