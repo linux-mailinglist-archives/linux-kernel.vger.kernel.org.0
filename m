@@ -2,178 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC24BDF1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72D5DF45
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfD2JQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 05:16:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42404 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbfD2JQY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 05:16:24 -0400
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hL2Ob-0004En-W7
-        for linux-kernel@vger.kernel.org; Mon, 29 Apr 2019 09:16:22 +0000
-Received: by mail-pg1-f199.google.com with SMTP id l13so6895433pgp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 02:16:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1vBVQBSQaK0ivjDWZNWqu8SXOnL5ZygG/J+bF2HLTJs=;
-        b=sS6mpWZMYko6XFby7ikP8MCri+DDs4X9AeHGTFiaQ8A9oSO8P+7LcdxqteaAg0KNcb
-         9reHAhENXXx8ZMsnzzSWQwyZ4BpeolYdcask54jQW1vhl2PGi2im43rQkQzjod6Sj1E9
-         T83vMgq9/7CdNDh2ribOxUFSTbh1+KMtGUSY0fQb5xONlw7+JefKhtZd2BG/6496eloV
-         eJCM37cnY02etHsQ9OOR8OWn93Kvahw67BhcTjV/CBibq5GOkxbuif4br7v+j6Ru50cz
-         w/iCIHEeU2EW01i0r7jWWo+/SrxJC6vdKlijBOqFSPy2rO0SKvgdZVaD8i2pCexc7hsK
-         gbrQ==
-X-Gm-Message-State: APjAAAUV1qlqYmMv/Ftwsh4Id6nCCwDUeDBpmg7O0MVlAHg1mG4gbfKa
-        amtsFMDGdk3a8szAqrZPNmMdNwDNjzH8JbzRdkBAmdN3i3J/NbUcsjKyxpfrkez7R5UqAROZ1wG
-        7VCkmQkNx+gAjcbfFqObY3GVVfFgr1QU7YZOto5mfpA==
-X-Received: by 2002:a17:902:864b:: with SMTP id y11mr57315649plt.1.1556529380731;
-        Mon, 29 Apr 2019 02:16:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx9XpO1CeaEcjEEhjhsFZff8FIsuKve2mo/JyFPlSC/H3qRTN5B3xh7+JxXzybE2gVR/l0Djw==
-X-Received: by 2002:a17:902:864b:: with SMTP id y11mr57315617plt.1.1556529380409;
-        Mon, 29 Apr 2019 02:16:20 -0700 (PDT)
-Received: from 2001-b011-380f-14b9-d9ab-9ff9-92fc-2609.dynamic-ip6.hinet.net (2001-b011-380f-14b9-d9ab-9ff9-92fc-2609.dynamic-ip6.hinet.net. [2001:b011:380f:14b9:d9ab:9ff9:92fc:2609])
-        by smtp.gmail.com with ESMTPSA id f63sm55095222pfc.180.2019.04.29.02.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 02:16:19 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20190426214758.GC9224@smile.fi.intel.com>
-Date:   Mon, 29 Apr 2019 17:16:16 +0800
-Cc:     mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
-        hotwater438@tutanota.com, hdegoede@redhat.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <6BCF9C55-E365-4638-8030-99EBA348F8D4@canonical.com>
-References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
- <20190426214758.GC9224@smile.fi.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-X-Mailer: Apple Mail (2.3445.104.8)
+        id S1728132AbfD2JSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 05:18:03 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59263 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727884AbfD2JRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 05:17:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 8DFA01036A0;
+        Mon, 29 Apr 2019 11:17:04 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id nfkfA1vzJ1e3; Mon, 29 Apr 2019 11:16:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A1853103695;
+        Mon, 29 Apr 2019 11:16:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id QUJh-FssglVF; Mon, 29 Apr 2019 11:16:39 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 6487810367B;
+        Mon, 29 Apr 2019 11:16:38 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>,
+        jacopo mondi <jacopo@jmondi.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Subject: [PATCH v4 00/14] media: make Marvell camera work on DT-based OLPC XO-1.75
+Date:   Mon, 29 Apr 2019 11:16:22 +0200
+Message-Id: <20190429091632.2462285-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 05:47, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> On Mon, Apr 22, 2019 at 12:45:39PM +0800, Kai-Heng Feng wrote:
->> Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
->> added because clearing interrupt status bit is required to avoid
->> unexpected behavior.
->>
->> Turns out the unmask callback also needs the fix, which can solve weird
->> IRQ triggering issues on I2C touchpad ELAN1200.
->
->> -static void intel_gpio_irq_enable(struct irq_data *d)
->> -{
->> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> -	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
->> -	const struct intel_community *community;
->> -	const struct intel_padgroup *padgrp;
->> -	int pin;
->> -
->> -	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
->> -	if (pin >= 0) {
->> -		unsigned int gpp, gpp_offset, is_offset;
->> -		unsigned long flags;
->> -		u32 value;
->> -
->> -		gpp = padgrp->reg_num;
->> -		gpp_offset = padgroup_offset(padgrp, pin);
->> -		is_offset = community->is_offset + gpp * 4;
->> -
->> -		raw_spin_lock_irqsave(&pctrl->lock, flags);
->> -		/* Clear interrupt status first to avoid unexpected interrupt */
->> -		writel(BIT(gpp_offset), community->regs + is_offset);
->> -
->> -		value = readl(community->regs + community->ie_offset + gpp * 4);
->> -		value |= BIT(gpp_offset);
->> -		writel(value, community->regs + community->ie_offset + gpp * 4);
->> -		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
->> -	}
->> -}
->> -
->>  static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
->>  {
->>  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> @@ -963,6 +934,11 @@ static void intel_gpio_irq_mask_unmask(struct  
->> irq_data *d, bool mask)
->>  		reg = community->regs + community->ie_offset + gpp * 4;
->>
->>  		raw_spin_lock_irqsave(&pctrl->lock, flags);
->> +
->> +		/* Clear interrupt status first to avoid unexpected interrupt */
->
->> +		if (!mask)
->
-> Can we do this unconditionally?
+Hi,
 
-Yes I think so.
+this is the fourth spin of a patchset that modernizes the Marvell MMP2 CC=
+IC
+driver.
 
->
->> +			writel(BIT(gpp_offset), community->regs +  
->> community->is_offset + gpp * 4);
->
-> I would rather prefer to follow the below pattern, like
->
-> reg = ...;
-> writel(..., reg);
->
-> or, to decrease calculus under spin lock, something like
->
-> reg = ->regs + gpp * 4;
->
-> writel(..., reg + is_offset);
->
-> readl(reg + ie_offset);
->
-> etc.
+At the core of the rework is the move to asynchronous sensor discovery
+and clock management with the standard clock framework. There are also
+some straightforward fixes for the bitrotten parts.
 
-Ok, will do.
+Compared the the previous version it addresses things pointed out in last
+review, in patches [01/10] and [10/10]. Details in the changelogs of
+the individual patches.
 
->
->> +
->>  		value = readl(reg);
->>  		if (mask)
->>  			value &= ~BIT(gpp_offset);
->> @@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void  
->> *data)
->>
->>  static struct irq_chip intel_gpio_irqchip = {
->>  	.name = "intel-gpio",
->
->> -	.irq_enable = intel_gpio_irq_enable,
->
-> Is it possible scenario when IRQ enable is called, but not masking  
-> callbacks?
-> For _AEI or GPE?
+Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
 
-I am unfamiliar with both of them, what are the callbacks to be used for  
-_AEI and GPE case?
-Seems like both gpiolib and irqchip call irq_unmask() when irq_enable() is  
-absent.
+Thanks,
+Lubo
 
-Kai-Heng
 
->
->> .irq_ack = intel_gpio_irq_ack,
->>  	.irq_mask = intel_gpio_irq_mask,
->>  	.irq_unmask = intel_gpio_irq_unmask,
->
-> -- 
-> With Best Regards,
-> Andy Shevchenko
 
 
