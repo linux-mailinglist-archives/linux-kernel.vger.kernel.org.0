@@ -2,93 +2,324 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD05E2E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B175FE2E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfD2MkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:40:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53800 "EHLO mail.kernel.org"
+        id S1728219AbfD2MkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:40:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47280 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728064AbfD2MkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:40:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728044AbfD2MkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:40:24 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D50F20675;
-        Mon, 29 Apr 2019 12:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556541604;
-        bh=VtuGZoYAnKngnQl6eSlPBIWIFDPiV3IsR61xIGjAPoQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HcOdIHbrrIuYNujm4j1RkPmc0CIC4upR6h2eV5sF2giw8Pwliv/T9s/R6oKimnoPV
-         npaSLjP2hL6+x4owcKCkRO2Pailg9bo+KBORGogRi1VISQ6u7ERMToe4LkQOdGpLFG
-         QtlBsqu2lY86JJswc7FH3B2WUoul6mH6EHW7RZPI=
-Date:   Mon, 29 Apr 2019 14:40:02 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nicolas Iooss <nicolas.iooss@m4x.org>
-Subject: Re: scripts/selinux build error in 4.14 after glibc update
-Message-ID: <20190429124002.GB31371@kroah.com>
-References: <20190422210041.GA21711@archlinux-i9>
- <CAHC9VhTtz3OA3EchaZaAeg=DxoGoz_WFdj+Mi9nd9i+cmjmuJA@mail.gmail.com>
- <20190423132926.GK17719@sasha-vm>
- <CAHC9VhRcdY7G_ES2VqNVpkoU=CRJkJySb3m1sFdgKJwh3JQ2oA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRcdY7G_ES2VqNVpkoU=CRJkJySb3m1sFdgKJwh3JQ2oA@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id D4824368FF;
+        Mon, 29 Apr 2019 12:40:23 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.35.206.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7067E5D6A9;
+        Mon, 29 Apr 2019 12:40:22 +0000 (UTC)
+From:   Yoni Bettan <ybettan@redhat.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     ailan@redhat.com, ehabkost@redhat.com,
+        Yoni Bettan <ybettan@redhat.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RFC-PATCH] Introducing virtio-example.
+Date:   Mon, 29 Apr 2019 15:40:03 +0300
+Message-Id: <20190429124004.49365-1-ybettan@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 29 Apr 2019 12:40:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 09:43:09AM -0400, Paul Moore wrote:
-> On Tue, Apr 23, 2019 at 9:29 AM Sasha Levin <sashal@kernel.org> wrote:
-> > On Mon, Apr 22, 2019 at 09:59:47PM -0400, Paul Moore wrote:
-> > >On Mon, Apr 22, 2019 at 5:00 PM Nathan Chancellor
-> > ><natechancellor@gmail.com> wrote:
-> > >> Hi all,
-> > >>
-> > >> After a glibc update to 2.29, my 4.14 builds started failing like so:
-> > >
-> > >...
-> > >
-> > >>   HOSTCC  scripts/selinux/genheaders/genheaders
-> > >> In file included from scripts/selinux/genheaders/genheaders.c:19:
-> > >> ./security/selinux/include/classmap.h:245:2: error: #error New address family defined, please update secclass_map.
-> > >>  #error New address family defined, please update secclass_map.
-> > >>   ^~~~~
-> > >
-> > >This is a known problem that has a fix in the selinux/next branch and
-> > >will be going up to Linus during the next merge window.  The fix is
-> > >quite small and should be relatively easy for you to backport to your
-> > >kernel build if you are interested; the patch can be found at the
-> > >archive link below:
-> > >
-> > >https://lore.kernel.org/selinux/20190225005528.28371-1-paulo@paulo.ac
-> >
-> > Why is it waiting for the next merge window? It fixes a build bug that
-> > people hit.
-> 
-> I place a reasonably high bar on patches that I send up to Linus
-> outside of the merge window and I didn't feel this patch met that
-> criteria.  Nathan is only the second person I've seen who has
-> encountered this problem, the first being the original patch author.
-> As far as I've seen, the problem is only seen by users building older
-> kernels on very new userspaces (e.g. glibc v2.29 was released in
-> February 2019, Linux v4.14 was released in 2017); this doesn't appear
-> to be a large group of people and I didn't want to risk breaking the
-> main kernel tree during the -rcX phase for such a small group.
+The main goal is to create an example to be used as template or
+guideline for contributors when they wish to create a new virtio
+device and to document "the right way" to do so.
 
-Ugh, this breaks my local builds, I would recommend getting it to Linus
-sooner please.
+It consists of several parts:
 
-thanks,
+    1. The device specification
+        * it can be found in the device header of the implementation
+        * it will hopefully be added to the official virtio specification
 
-greg k-h
+    2. The device implementation for Qemu-KVM hypervisor
+        * it can be found at https://github.com/ybettan/qemu/blob/virtio\
+                /hw/virtio/virtio-example.c
+
+    3. The device driver for linux
+        * this patch content
+
+    4. A blog on virtio
+        * introducing the virtio concept
+        * gives some motivation for virtio-devices to be used
+        * bring extra documentation on "how to write":
+            - device specification
+            - device implementation
+            - device driver for linux
+        * it can be found at https://howtovms.wordpress.com
+
+Signed-off-by: Yoni Bettan <ybettan@redhat.com>
+---
+ samples/virtio/Makefile                |   1 +
+ samples/virtio/virtio_example_driver.c | 239 +++++++++++++++++++++++++
+ 2 files changed, 240 insertions(+)
+ create mode 100644 samples/virtio/Makefile
+ create mode 100644 samples/virtio/virtio_example_driver.c
+
+diff --git a/samples/virtio/Makefile b/samples/virtio/Makefile
+new file mode 100644
+index 000000000000..6f3cc811ca89
+--- /dev/null
++++ b/samples/virtio/Makefile
+@@ -0,0 +1 @@
++obj-m := virtio_example_driver.o
+diff --git a/samples/virtio/virtio_example_driver.c b/samples/virtio/virtio_example_driver.c
+new file mode 100644
+index 000000000000..2f5a354009a1
+--- /dev/null
++++ b/samples/virtio/virtio_example_driver.c
+@@ -0,0 +1,239 @@
++/*
++ * Virtio example implementation.
++ *
++ *  Copyright 2019 Yoni Bettan Red Hat Corporation
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ */
++
++#include <linux/virtio.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/pci.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>               /* io map */
++#include <linux/dma-mapping.h>      /* DMA */
++#include <linux/kernel.h>           /* kstrtoint() func */
++#include <linux/virtio_config.h>    /* find_single_vq() func */
++
++
++#define VIRTIO_ID_EXAMPLE 21
++/* big enough to contain a string representing an integer */
++#define MAX_DATA_SIZE 20
++
++struct virtexample_info {
++	struct virtqueue *vq;
++    /*
++     * in - the data we get from the device
++     * out - the data we send to the device
++     */
++    int in, out;
++};
++
++
++
++//-----------------------------------------------------------------------------
++//                  sysfs - give user access to driver
++//-----------------------------------------------------------------------------
++
++static ssize_t
++virtio_buf_store(struct device *dev, struct device_attribute *attr,
++                    const char *buf, size_t count)
++{
++    char tmp_buf[MAX_DATA_SIZE];
++    int retval;
++	struct scatterlist sg_in, sg_out;
++	struct scatterlist *request[2];
++    /* cast dev into a virtio_device */
++    struct virtio_device *vdev = dev_to_virtio(dev);
++	struct virtexample_info *vi = vdev->priv;
++
++    /* copy the user buffer since it is a const buffer */
++    sprintf(tmp_buf, "%s", buf);
++
++    /* convert the data into an integer */
++    retval = kstrtoint(tmp_buf, 10, &vi->out);
++    if (retval) {
++        pr_alert("string converstion failed with error: %d\n", retval);
++    }
++
++    /* initialize a single entry sg lists, one for input and one for output */
++    sg_init_one(&sg_out, &vi->out, sizeof(int));
++    sg_init_one(&sg_in, &vi->in, sizeof(int));
++
++    /* build the request */
++    request[0] = &sg_out;
++    request[1] = &sg_in;
++
++	/* add the request to the queue, in_buf is sent as the buffer idetifier */
++    virtqueue_add_sgs(vi->vq, request, 1, 1, &vi->in, GFP_KERNEL);
++
++    /* notify the device */
++	virtqueue_kick(vi->vq);
++
++    return count;
++}
++
++static ssize_t
++virtio_buf_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++    /* cast dev into a virtio_device */
++    struct virtio_device *vdev = dev_to_virtio(dev);
++	struct virtexample_info *vi = vdev->priv;
++
++    return sprintf(buf, "%d\n", vi->in);
++}
++
++/*
++ * struct device_attribute dev_attr_virtio_buf = {
++ *     .attr = {
++ *         .name = "virtio_buf",
++ *         .mode = 0644
++ *     },
++ *     .show = virtio_buf_show,
++ *     .store = virtio_buf_store
++ * }
++ */
++static DEVICE_ATTR_RW(virtio_buf);
++
++
++/*
++ * The example_attr defined above is then grouped in the struct attribute group
++ * as follows:
++ */
++struct attribute *example_attrs[] = {
++    &dev_attr_virtio_buf.attr,
++    NULL,
++};
++
++static const struct attribute_group example_attr_group = {
++    .name = "example", /* directory's name */
++    .attrs = example_attrs,
++};
++
++
++
++//-----------------------------------------------------------------------------
++//                              IRQ functions
++//-----------------------------------------------------------------------------
++
++static void example_irq_handler(struct virtqueue *vq)
++{
++
++	struct virtexample_info *vi = vq->vdev->priv;
++    unsigned int len;
++    int *res = NULL;
++
++    /* get the buffer from virtqueue */
++    res = virtqueue_get_buf(vi->vq, &len);
++
++    vi->in = *res;
++}
++
++
++//-----------------------------------------------------------------------------
++//                             driver functions
++//-----------------------------------------------------------------------------
++
++
++static int example_probe(struct virtio_device *vdev)
++{
++    int retval;
++    struct virtexample_info *vi = NULL;
++
++    /* create sysfiles for UI */
++    retval = sysfs_create_group(&vdev->dev.kobj, &example_attr_group);
++    if (retval) {
++        pr_alert("failed to create group in /sys/bus/virtio/devices/.../\n");
++    }
++
++    /* initialize driver data */
++	vi = kzalloc(sizeof(struct virtexample_info), GFP_KERNEL);
++	if (!vi)
++		return -ENOMEM;
++
++	/* We expect a single virtqueue. */
++	vi->vq = virtio_find_single_vq(vdev, example_irq_handler, "input");
++	if (IS_ERR(vi->vq)) {
++        pr_alert("failed to connect to the device virtqueue\n");
++	}
++
++    /* initialize the data to 0 */
++    vi->in = 0;
++    vi->out = 0;
++
++    /* store driver data inside the device to be accessed for all functions */
++    vdev->priv = vi;
++
++    return 0;
++}
++
++static void example_remove(struct virtio_device *vdev)
++{
++	struct virtexample_info *vi = vdev->priv;
++
++    /* remove the directory from sysfs */
++    sysfs_remove_group(&vdev->dev.kobj, &example_attr_group);
++
++    /* disable interrupts for vqs */
++    vdev->config->reset(vdev);
++
++    /* remove virtqueues */
++	vdev->config->del_vqs(vdev);
++
++    /* free memory */
++	kfree(vi);
++}
++
++
++/*
++ * vendor and device (+ subdevice and subvendor)
++ * identifies a device we support
++ */
++static struct virtio_device_id example_ids[] = {
++    {
++        .device = VIRTIO_ID_EXAMPLE,
++        .vendor = VIRTIO_DEV_ANY_ID,
++    },
++    { 0, },
++};
++
++/*
++ * id_table describe the device this driver support
++ * probe is called when a device we support exist and
++ * when we are chosen to drive it.
++ * remove is called when the driver is unloaded or
++ * when the device disappears
++ */
++static struct virtio_driver example = {
++	.driver.name =	"example",
++	.driver.owner =	THIS_MODULE,
++	.id_table =	example_ids,
++	.probe =	example_probe,
++	.remove =	example_remove,
++};
++
++
++
++//-----------------------------------------------------------------------------
++//                          overhead - must have
++//-----------------------------------------------------------------------------
++
++
++
++/* register driver in kernel pci framework */
++module_virtio_driver(example);
++MODULE_DEVICE_TABLE(virtio, example_ids);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Example virtio");
++MODULE_AUTHOR("Yoni Bettan");
++
+-- 
+2.17.2
+
