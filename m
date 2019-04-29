@@ -2,199 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9939EE2BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 292F8E2C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 14:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbfD2Meq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 08:34:46 -0400
-Received: from mail-eopbgr150042.outbound.protection.outlook.com ([40.107.15.42]:2326
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S1728150AbfD2MgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 08:36:22 -0400
+Received: from mail-eopbgr680051.outbound.protection.outlook.com ([40.107.68.51]:32363
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727956AbfD2Meq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 08:34:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1727956AbfD2MgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 08:36:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1tCQODn8B9suG6zD9VA54Wls7OaoMge7cK25IlRJ/+o=;
- b=kXMVbLydF9bZmjl4n5PNHJ/Xz0q9SB7DI4b/1JWZ7IIF7Kinb4CONzT0h4aO6SBFgjMHPBDMvhhkArxIDreDi18fsv8CLb9cjFzQWtMg8hbY9Zq1Iy1WHmjKXCrtJnUMtxa7YHKPQWiWOH+rwjOLXyMtYJpRs/vb+UDMz69JmaU=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3898.eurprd04.prod.outlook.com (52.134.65.139) with Microsoft SMTP
+ bh=/Z7LIszsahXGJqBQq30YFKnqD/z+GBo07ofBC4KAj4s=;
+ b=MANvbtlxt7Arhir02vvZA8Q2M0MCoKyhkFIMam2S3qDf12HGp6O/I0roSM5yO3ENlJVBmnR5RlOavyORITGJTIf3s95aeocfOBJh/D3Tn3OKv+N7c8PZCv4WLoDpW1b9ATlLC5RNlqWAoy78GbQYsgPMn5FkA1IfXuR20M02Ko0=
+Received: from DM6PR02MB4779.namprd02.prod.outlook.com (20.176.109.16) by
+ DM6PR02MB4236.namprd02.prod.outlook.com (20.176.76.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.12; Mon, 29 Apr 2019 12:34:36 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e8ca:4f6b:e43:c170]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e8ca:4f6b:e43:c170%3]) with mapi id 15.20.1835.018; Mon, 29 Apr 2019
- 12:34:36 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] clk: imx: add fractional-N pll support to pllv4
-Thread-Topic: [PATCH] clk: imx: add fractional-N pll support to pllv4
-Thread-Index: AQHU/jo/D2ZwDi5WREOeVbOKgmEXYaZS+19AgAAXj0A=
-Date:   Mon, 29 Apr 2019 12:34:36 +0000
-Message-ID: <DB3PR0402MB3916BF3B94E3F2206D0C7954F5390@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1556507637-22847-1-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4211D3F29BCA3727E799005F80390@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211D3F29BCA3727E799005F80390@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ 15.20.1835.12; Mon, 29 Apr 2019 12:35:38 +0000
+Received: from DM6PR02MB4779.namprd02.prod.outlook.com
+ ([fe80::1970:28ec:3bfa:2305]) by DM6PR02MB4779.namprd02.prod.outlook.com
+ ([fe80::1970:28ec:3bfa:2305%7]) with mapi id 15.20.1835.018; Mon, 29 Apr 2019
+ 12:35:38 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Helmut Grohne <helmut.grohne@intenta.de>
+CC:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: RE: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Thread-Topic: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Thread-Index: AQHU83vggkxmg2rBCEyEcIHuXS/Vp6ZMy7GAgAFFM5CABRNXAIAAA45Q
+Date:   Mon, 29 Apr 2019 12:35:38 +0000
+Message-ID: <DM6PR02MB477988A7F04027F41834AC72AF390@DM6PR02MB4779.namprd02.prod.outlook.com>
+References: <1555326613-26739-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <20190425112338.dipgmqqfuj45gx6s@laureti-dev>
+ <DM6PR02MB4779EE37978EC0E6475C55D7AF390@DM6PR02MB4779.namprd02.prod.outlook.com>
+ <20190429121804.4jzspv4goehwdpez@laureti-dev>
+In-Reply-To: <20190429121804.4jzspv4goehwdpez@laureti-dev>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.68]
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 24701db4-af4c-471a-a2b2-08d6cc9f0a42
+x-ms-office365-filtering-correlation-id: 2cdabeda-79c1-419a-59f5-08d6cc9f2f35
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3898;
-x-ms-traffictypediagnostic: DB3PR0402MB3898:
-x-microsoft-antispam-prvs: <DB3PR0402MB389890097C797635E402387FF5390@DB3PR0402MB3898.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:785;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM6PR02MB4236;
+x-ms-traffictypediagnostic: DM6PR02MB4236:
+x-microsoft-antispam-prvs: <DM6PR02MB4236097251E98B2612B12571AF390@DM6PR02MB4236.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
 x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(396003)(136003)(376002)(13464003)(189003)(199004)(71190400001)(102836004)(6246003)(256004)(2201001)(110136005)(97736004)(2906002)(64756008)(66556008)(66476007)(476003)(5660300002)(71200400001)(478600001)(86362001)(11346002)(446003)(73956011)(66066001)(76116006)(66446008)(66946007)(186003)(7696005)(76176011)(26005)(33656002)(55016002)(486006)(6436002)(7736002)(14454004)(52536014)(8936002)(68736007)(99286004)(74316002)(44832011)(305945005)(6116002)(81156014)(229853002)(8676002)(3846002)(53546011)(53936002)(81166006)(4326008)(2501003)(9686003)(316002)(25786009)(6506007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3898;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(346002)(366004)(136003)(13464003)(199004)(189003)(129404003)(76176011)(7696005)(3846002)(478600001)(14454004)(6436002)(6116002)(86362001)(66066001)(76116006)(71190400001)(71200400001)(55016002)(33656002)(446003)(9686003)(229853002)(68736007)(2906002)(4326008)(66946007)(66476007)(81156014)(81166006)(97736004)(8676002)(7416002)(6916009)(316002)(74316002)(99286004)(73956011)(11346002)(52536014)(93886005)(5660300002)(54906003)(6246003)(26005)(7736002)(561944003)(25786009)(102836004)(486006)(53546011)(6506007)(53936002)(186003)(8936002)(305945005)(14444005)(256004)(66446008)(476003)(66556008)(64756008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4236;H:DM6PR02MB4779.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 74wgxQUEIzZmuQbpArzFyBYCzxC6nsgqwsKnnVvzi7pRifgmdxvRVirRkUeZnzj4I6Zr0g+dd60KG1/KabTj2LwjUnpuD/38jfXZQTVWAOEyP1o7aLYXlAaHAt27o5Mk5ylAdckE7bNbItN/1i1GU6P/BNMS0xGaAh7nuLTw9A2xjW28+y27NTSUN4VQP9YVgR3uaPXSY/UEWcBaxhnD94XpBnNm/j/vVtzudH48H2Yg+tTuHBQ6By3QRik2+/fvnBElNFHsVwwgwVoovZEqyDj5hxuJGZ2DWc08zEAH3kzz43mzOGyOkwyHsfQKGwNeUhpC2nRZylwEhWUizij+9NtGXflKSiImkyk65domLdxfBegIBBUGiHROA0SyZjqFLHubdho/OL7+1o/N7MuJqSTW5G6M1l6Q86wYuWmo2p0=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: 5nWZIZeKQfhHrCQQCGfpFU7x8dyojgvrKhwFH1Nmluak05shS59lf6VFE6285Zp4CI+2E8+5kJEKMpbo0QCRKrd8ta75ta4akk3Xdz+NYNIWSGsaPVd/8VCi1prxWW7PqlN/lFiGIJkymEI+7EzwSXRjXXKrCIbLWfExEWKJey2OJSqtOhfLaKPX68bHvfh8vaND+DQTHB05A/+G9lVB/0ZDMJo5+sGMmV2md0tGKNcPemuX/aNuYYABp9XEO0n2jc7fjfb+Tu6SrylPXa70oZqp+ORSXUXyAqEgia4HhS2nykDy++LNDWffJ8lXkiQozQvtEcO5UonF1tyOQGmaYrBUiRynQhIodW+e7Rtqdh6uymLALt2ogz+7PgPg523m+LQ9iOA7fq7CwgDI3Jiwm2jOFw7KHfp/9sVoXX6/lKo=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24701db4-af4c-471a-a2b2-08d6cc9f0a42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 12:34:36.2588
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cdabeda-79c1-419a-59f5-08d6cc9f2f35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 12:35:38.2114
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3898
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4236
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEFpc2hlbmcNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBaXNo
-ZW5nIERvbmcNCj4gU2VudDogTW9uZGF5LCBBcHJpbCAyOSwgMjAxOSA3OjI4IFBNDQo+IFRvOiBB
-bnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29t
-Ow0KPiBzYm95ZEBrZXJuZWwub3JnOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBzLmhhdWVyQHBlbmd1
-dHJvbml4LmRlOw0KPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IGZlc3RldmFtQGdtYWlsLmNvbTsg
-bGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IENjOiBkbC1saW51eC1p
-bXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBTdWJqZWN0OiBSRTogW1BBVENIXSBjbGs6IGlteDog
-YWRkIGZyYWN0aW9uYWwtTiBwbGwgc3VwcG9ydCB0byBwbGx2NA0KPiANCj4gPiBGcm9tOiBBbnNv
-biBIdWFuZw0KPiA+IFNlbnQ6IE1vbmRheSwgQXByaWwgMjksIDIwMTkgMTE6MTkgQU0NCj4gPg0K
-PiANCj4gY2xrOiBpbXg6IHBsbHY0OiBhZGQgZnJhY3Rpb25hbC1OIHBsbCBzdXBwb3J0DQoNCldp
-bGwgaW1wcm92ZSBpdCBpbiBWMi4NCg0KPiA+IFRoZSBwbGx2NCBzdXBwb3J0cyBmcmFjdGlvbmFs
-LU4gZnVuY3Rpb24sIHRoZSBmb3JtdWxhIGlzOg0KPiA+DQo+ID4gUExMIG91dHB1dCBmcmVxID0g
-aW5wdXQgKiAobXVsdCArIG51bS9kZW5vbSksDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFkZHMgZnJh
-Y3Rpb25hbC1OIGZ1bmN0aW9uIHN1cHBvcnQsIGluY2x1ZGluZyBjbG9jayByb3VuZA0KPiA+IHJh
-dGUsIGNhbGN1bGF0ZSByYXRlIGFuZCBzZXQgcmF0ZSwgd2l0aCB0aGlzIHBhdGNoLCB0aGUgY2xv
-Y2sgcmF0ZSBvZg0KPiA+IEFQTEwgaW4gY2xvY2sgdHJlZSBpcyBtb3JlIGFjY3VyYXRlIHRoYW4g
-YmVmb3JlOg0KPiA+DQo+ID4gV2l0aG91dCBmcmFjdGlvbjoNCj4gPiBhcGxsX3ByZV9zZWwgICAg
-ICAgICAgICAgICAgICAgICAgMSAgICAgICAgMSAgICAgICAgMSAgICAyNDAwMDAwMA0KPiA+IDAg
-ICAgIDAgIDUwMDAwDQo+ID4gICAgYXBsbF9wcmVfZGl2ICAgICAgICAgICAgICAgICAgIDEgICAg
-ICAgIDEgICAgICAgIDIgICAgMjQwMDAwMDANCj4gPiAwICAgICAwICA1MDAwMA0KPiA+ICAgICAg
-IGFwbGwgICAgICAgICAgICAgICAgICAgICAgICAxICAgICAgICAxICAgICAgICAyICAgNTI4MDAw
-MDAwDQo+ID4gMCAgICAgMCAgNTAwMDANCj4gPiAgICAgICAgICBhcGxsX3BmZDMgICAgICAgICAg
-ICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgIDc5MjAwMDAwMA0KPiA+IDAgICAgIDAgIDUwMDAw
-DQo+ID4gICAgICAgICAgYXBsbF9wZmQyICAgICAgICAgICAgICAgIDAgICAgICAgIDAgICAgICAg
-IDAgICAzMzk0Mjg1NzENCj4gPiAwICAgICAwICA1MDAwMA0KPiA+ICAgICAgICAgIGFwbGxfcGZk
-MSAgICAgICAgICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgMzUyMDAwMDAwDQo+ID4gMCAg
-ICAgMCAgNTAwMDANCj4gPiAgICAgICAgICAgICB1c2RoYzAgICAgICAgICAgICAgICAgMCAgICAg
-ICAgMCAgICAgICAgMCAgIDM1MjAwMDAwMA0KPiA+IDAgICAgIDAgIDUwMDAwDQo+ID4gICAgICAg
-ICAgYXBsbF9wZmQwICAgICAgICAgICAgICAgIDEgICAgICAgIDEgICAgICAgIDEgICAzNTIwMDAw
-MDANCj4gPiAwICAgICAwICA1MDAwMA0KPiA+DQo+ID4gV2l0aCBmcmFjdGlvbjoNCj4gPiBhcGxs
-X3ByZV9zZWwgICAgICAgICAgICAgICAgICAgICAgMSAgICAgICAgMSAgICAgICAgMSAgICAyNDAw
-MDAwMA0KPiA+IDAgICAgIDAgIDUwMDAwDQo+ID4gICAgYXBsbF9wcmVfZGl2ICAgICAgICAgICAg
-ICAgICAgIDEgICAgICAgIDEgICAgICAgIDIgICAgMjQwMDAwMDANCj4gPiAwICAgICAwICA1MDAw
-MA0KPiA+ICAgICAgIGFwbGwgICAgICAgICAgICAgICAgICAgICAgICAxICAgICAgICAxICAgICAg
-ICAyICAgNTI5MjAwMDAwDQo+ID4gMCAgICAgMCAgNTAwMDANCj4gPiAgICAgICAgICBhcGxsX3Bm
-ZDMgICAgICAgICAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgIDc5MzgwMDAwMA0KPiA+IDAg
-ICAgIDAgIDUwMDAwDQo+ID4gICAgICAgICAgYXBsbF9wZmQyICAgICAgICAgICAgICAgIDAgICAg
-ICAgIDAgICAgICAgIDAgICAzNDAyMDAwMDANCj4gPiAwICAgICAwICA1MDAwMA0KPiA+ICAgICAg
-ICAgIGFwbGxfcGZkMSAgICAgICAgICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgMzUyODAw
-MDAwDQo+ID4gMCAgICAgMCAgNTAwMDANCj4gPiAgICAgICAgICAgICB1c2RoYzAgICAgICAgICAg
-ICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgIDM1MjgwMDAwMA0KPiA+IDAgICAgIDAgIDUwMDAw
-DQo+ID4gICAgICAgICAgYXBsbF9wZmQwICAgICAgICAgICAgICAgIDEgICAgICAgIDEgICAgICAg
-IDEgICAzNTI4MDAwMDANCj4gPiAwICAgICAwICA1MDAwMA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZl
-cnMvY2xrL2lteC9jbGstcGxsdjQuYyB8IDY4DQo+ID4gKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA2MCBpbnNlcnRpb25z
-KCspLCA4IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2lt
-eC9jbGstcGxsdjQuYyBiL2RyaXZlcnMvY2xrL2lteC9jbGstcGxsdjQuYw0KPiA+IGluZGV4IGQz
-OGJjOWYuLjRjZWQ1Y2EgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2
-NC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2NC5jDQo+ID4gQEAgLTY0LDEz
-ICs2NCwxOCBAQCBzdGF0aWMgdW5zaWduZWQgbG9uZyBjbGtfcGxsdjRfcmVjYWxjX3JhdGUoc3Ry
-dWN0DQo+ID4gY2xrX2h3ICpodywNCj4gPiAgCQkJCQkgICB1bnNpZ25lZCBsb25nIHBhcmVudF9y
-YXRlKQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgY2xrX3BsbHY0ICpwbGwgPSB0b19jbGtfcGxsdjQo
-aHcpOw0KPiA+IC0JdTMyIGRpdjsNCj4gPiArCXUzMiBtdWx0ID0gcmVhZGxfcmVsYXhlZChwbGwt
-PmJhc2UgKyBQTExfQ0ZHX09GRlNFVCk7DQo+ID4gKwl1MzIgbWZuID0gcmVhZGxfcmVsYXhlZChw
-bGwtPmJhc2UgKyBQTExfTlVNX09GRlNFVCk7DQo+ID4gKwl1MzIgbWZkID0gcmVhZGxfcmVsYXhl
-ZChwbGwtPmJhc2UgKyBQTExfREVOT01fT0ZGU0VUKTsNCj4gDQo+IE5pdHBpY2s6DQo+IFdlIHVz
-dWFsbHkgZG9uJ3Qgd3JpdGUgY29kZSBsaWtlIHRoaXMuDQo+IEhvdyBhYm91dCBzZXBhcmF0ZSB0
-aGUgYXNzaWdubWVudCBmcm9tIGRlY2xhcmF0aW9uPw0KDQpJIHdpbGwgaW1wcm92ZSB0aGVtIGlu
-IFYyLg0KDQo+IA0KPiA+ICsJdTY0IHRlbXA2NCA9IHBhcmVudF9yYXRlOw0KPiA+DQo+ID4gLQlk
-aXYgPSByZWFkbF9yZWxheGVkKHBsbC0+YmFzZSArIFBMTF9DRkdfT0ZGU0VUKTsNCj4gPiAtCWRp
-diAmPSBCTV9QTExfTVVMVDsNCj4gPiAtCWRpdiA+Pj0gQlBfUExMX01VTFQ7DQo+ID4gKwltdWx0
-ICY9IEJNX1BMTF9NVUxUOw0KPiA+ICsJbXVsdCA+Pj0gQlBfUExMX01VTFQ7DQo+ID4NCj4gPiAt
-CXJldHVybiBwYXJlbnRfcmF0ZSAqIGRpdjsNCj4gPiArCXRlbXA2NCAqPSBtZm47DQo+ID4gKwlk
-b19kaXYodGVtcDY0LCBtZmQpOw0KPiA+ICsNCj4gPiArCXJldHVybiAocGFyZW50X3JhdGUgKiBt
-dWx0KSArICh1MzIpdGVtcDY0Ow0KPiA+ICB9DQo+ID4NCj4gPiAgc3RhdGljIGxvbmcgY2xrX3Bs
-bHY0X3JvdW5kX3JhdGUoc3RydWN0IGNsa19odyAqaHcsIHVuc2lnbmVkIGxvbmcNCj4gPiByYXRl
-LCBAQA0KPiA+IC03OCwxNCArODMsNDcgQEAgc3RhdGljIGxvbmcgY2xrX3BsbHY0X3JvdW5kX3Jh
-dGUoc3RydWN0IGNsa19odyAqaHcsDQo+ID4gdW5zaWduZWQgbG9uZyByYXRlLCAgew0KPiA+ICAJ
-dW5zaWduZWQgbG9uZyBwYXJlbnRfcmF0ZSA9ICpwcmF0ZTsNCj4gPiAgCXVuc2lnbmVkIGxvbmcg
-cm91bmRfcmF0ZSwgaTsNCj4gPiArCWJvb2wgZm91bmQgPSBmYWxzZTsNCj4gPiArCXUzMiBtZm4s
-IG1mZCA9IDEwMDAwMDA7DQo+ID4gKwl1MzIgbWF4X21mZCA9IDB4M0ZGRkZGRkY7DQo+IA0KPiBQ
-bGVhc2Uga2VlcCBzb3J0IGZyb20gbG9uZyB0byBzaG9ydC4NCj4gQW5kIHRoZSBtdWx0aSBNYXhf
-bWZkIGRlZmluaXRpb25zIGNvdWxkIGJlIG1vdmUgb3V0IHRoZSBmdW5jdGlvbiBhbmQNCj4gRGVm
-aW5lZCB1c2UgbWFjcm8uDQoNCk9LLCB3aWxsIGltcHJvdmUgdGhlbSBpbiBWMi4NCg0KPiANCj4g
-PiArCXU2NCB0ZW1wNjQ7DQo+ID4NCj4gPiAgCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHBs
-bHY0X211bHRfdGFibGUpOyBpKyspIHsNCj4gPiAgCQlyb3VuZF9yYXRlID0gcGFyZW50X3JhdGUg
-KiBwbGx2NF9tdWx0X3RhYmxlW2ldOw0KPiA+IC0JCWlmIChyYXRlID49IHJvdW5kX3JhdGUpDQo+
-ID4gLQkJCXJldHVybiByb3VuZF9yYXRlOw0KPiA+ICsJCWlmIChyYXRlID49IHJvdW5kX3JhdGUp
-IHsNCj4gPiArCQkJZm91bmQgPSB0cnVlOw0KPiA+ICsJCQlicmVhazsNCj4gPiArCQl9DQo+ID4g
-Kwl9DQo+ID4gKw0KPiA+ICsJaWYgKCFmb3VuZCkgew0KPiA+ICsJCXByX3dhcm4oIiVzOiB1bmFi
-bGUgdG8gcm91bmQgcmF0ZSAlbHUsIHBhcmVudCByYXRlICVsdVxuIiwNCj4gPiArCQkJY2xrX2h3
-X2dldF9uYW1lKGh3KSwgcmF0ZSwgcGFyZW50X3JhdGUpOw0KPiA+ICsJCXJldHVybiAwOw0KPiA+
-ICAJfQ0KPiA+DQo+ID4gLQlyZXR1cm4gcm91bmRfcmF0ZTsNCj4gPiArCWlmIChwYXJlbnRfcmF0
-ZSA8PSBtYXhfbWZkKQ0KPiA+ICsJCW1mZCA9IHBhcmVudF9yYXRlOw0KPiA+ICsNCj4gPiArCXRl
-bXA2NCA9ICh1NjQpKHJhdGUgLSByb3VuZF9yYXRlKTsNCj4gPiArCXRlbXA2NCAqPSBtZmQ7DQo+
-ID4gKwlkb19kaXYodGVtcDY0LCBwYXJlbnRfcmF0ZSk7DQo+ID4gKwltZm4gPSB0ZW1wNjQ7DQo+
-ID4gKw0KPiA+ICsJLyoNCj4gPiArCSAqIE5PVEU6IFRoZSB2YWx1ZSBvZiBudW1lcmF0b3IgbXVz
-dCBhbHdheXMgYmUgY29uZmlndXJlZCB0byBiZQ0KPiA+ICsJICogbGVzcyB0aGFuIHRoZSB2YWx1
-ZSBvZiB0aGUgZGVub21pbmF0b3IuIElmIHdlIGNhbid0IGdldCBhIHByb3Blcg0KPiA+ICsJICog
-cGFpciBvZiBtZm4vbWZkLCB3ZSBzaW1wbHkgcmV0dXJuIHRoZSByb3VuZF9yYXRlIHdpdGhvdXQg
-dXNpbmcNCj4gPiArCSAqIHRoZSBmcmFjIHBhcnQuDQo+ID4gKwkgKi8NCj4gPiArCWlmIChtZm4g
-Pj0gbWZkKQ0KPiA+ICsJCXJldHVybiByb3VuZF9yYXRlOw0KPiA+ICsNCj4gPiArCXRlbXA2NCA9
-ICh1NjQpcGFyZW50X3JhdGU7DQo+ID4gKwl0ZW1wNjQgKj0gbWZuOw0KPiA+ICsJZG9fZGl2KHRl
-bXA2NCwgbWZkKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gcm91bmRfcmF0ZSArICh1MzIpdGVtcDY0
-Ow0KPiA+ICB9DQo+ID4NCj4gPiAgc3RhdGljIGJvb2wgY2xrX3BsbHY0X2lzX3ZhbGlkX211bHQo
-dW5zaWduZWQgaW50IG11bHQpIEBAIC0xMDYsMTcNCj4gPiArMTQ0LDMxIEBAIHN0YXRpYyBpbnQg
-Y2xrX3BsbHY0X3NldF9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nDQo+IHJh
-dGUsICB7DQo+ID4gIAlzdHJ1Y3QgY2xrX3BsbHY0ICpwbGwgPSB0b19jbGtfcGxsdjQoaHcpOw0K
-PiA+ICAJdTMyIHZhbCwgbXVsdDsNCj4gPiArCXUzMiBtZm4sIG1mZCA9IDEwMDAwMDA7DQo+ID4g
-Kwl1MzIgbWF4X21mZCA9IDB4M0ZGRkZGRkY7DQo+IA0KPiBEaXR0bw0KDQpPSy4NCg0KVGhhbmtz
-LCANCkFuc29uLg0KDQo+IA0KPiBPdGhlcndpc2U6DQo+IFJldmlld2VkLWJ5OiBEb25nIEFpc2hl
-bmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiANCj4gUmVnYXJkcw0KPiBEb25nIEFpc2hlbmcN
-Cj4gDQo+ID4gKwl1NjQgdGVtcDY0Ow0KPiA+DQo+ID4gIAltdWx0ID0gcmF0ZSAvIHBhcmVudF9y
-YXRlOw0KPiA+DQo+ID4gIAlpZiAoIWNsa19wbGx2NF9pc192YWxpZF9tdWx0KG11bHQpKQ0KPiA+
-ICAJCXJldHVybiAtRUlOVkFMOw0KPiA+DQo+ID4gKwlpZiAocGFyZW50X3JhdGUgPD0gbWF4X21m
-ZCkNCj4gPiArCQltZmQgPSBwYXJlbnRfcmF0ZTsNCj4gPiArDQo+ID4gKwl0ZW1wNjQgPSAodTY0
-KShyYXRlIC0gbXVsdCAqIHBhcmVudF9yYXRlKTsNCj4gPiArCXRlbXA2NCAqPSBtZmQ7DQo+ID4g
-Kwlkb19kaXYodGVtcDY0LCBwYXJlbnRfcmF0ZSk7DQo+ID4gKwltZm4gPSB0ZW1wNjQ7DQo+ID4g
-Kw0KPiA+ICAJdmFsID0gcmVhZGxfcmVsYXhlZChwbGwtPmJhc2UgKyBQTExfQ0ZHX09GRlNFVCk7
-DQo+ID4gIAl2YWwgJj0gfkJNX1BMTF9NVUxUOw0KPiA+ICAJdmFsIHw9IG11bHQgPDwgQlBfUExM
-X01VTFQ7DQo+ID4gIAl3cml0ZWxfcmVsYXhlZCh2YWwsIHBsbC0+YmFzZSArIFBMTF9DRkdfT0ZG
-U0VUKTsNCj4gPg0KPiA+ICsJd3JpdGVsX3JlbGF4ZWQobWZuLCBwbGwtPmJhc2UgKyBQTExfTlVN
-X09GRlNFVCk7DQo+ID4gKwl3cml0ZWxfcmVsYXhlZChtZmQsIHBsbC0+YmFzZSArIFBMTF9ERU5P
-TV9PRkZTRVQpOw0KPiA+ICsNCj4gPiAgCXJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiAtLQ0K
-PiA+IDIuNy40DQoNCg==
+Hi Helmut,
+
+> -----Original Message-----
+> From: Helmut Grohne <helmut.grohne@intenta.de>
+> Sent: Monday, April 29, 2019 5:48 PM
+> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Cc: bbrezillon@kernel.org; miquel.raynal@bootlin.com; richard@nod.at;
+> dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com; =
+linux-
+> mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <mich=
+als@xilinx.com>;
+> nagasureshkumarrelli@gmail.com
+> Subject: Re: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for =
+arm pl353 smc
+> nand interface
+>=20
+> On Mon, Apr 29, 2019 at 11:31:14AM +0000, Naga Sureshkumar Relli wrote:
+> > But just wanted to know, do you see issues with these __force and __iom=
+em castings?
+>=20
+> I only see a minor issue: They're (deliberately) lengthy. Using many of t=
+hem diverts attention
+> of the reader. Therefore, my proposal attempted to reduce their frequency=
+. The only issue I see
+> here is readability.
+Ok then, I will update it.
+>=20
+> > >
+> > > > +	u8 addr_cycles;
+> > > > +	struct clk *mclk;
+> > >
+> > > All you need here is the memory clock frequency. Wouldn't it be
+> > > easier to extract that frequency once during probe and store it
+> > > here? That assumes a constant frequency, but if the frequency isn't c=
+onstant, you have a
+> race condition.
+> > That is what we are doing in the probe.
+> > In the probe, we are getting mclk using of_clk_get() and then we are
+> > getting the actual frequency Using clk_get_rate().
+> > And this is constant frequency only(getting from dts)
+>=20
+> Not quite. You're getting a clock reference in probe and then repeatedly =
+access the frequency
+> elswhere. I am suggesting that you get the clock frequency during probe a=
+nd never save the
+> clock reference to a struct.
+Ok. got it. Will update.
+>=20
+> > > > +		case NAND_OP_ADDR_INSTR:
+> > > > +			offset =3D nand_subop_get_addr_start_off(subop, op_id);
+> > > > +			naddrs =3D nand_subop_get_num_addr_cyc(subop, op_id);
+> > > > +			addrs =3D &instr->ctx.addr.addrs[offset];
+> > > > +			nfc_op->addrs =3D instr->ctx.addr.addrs[offset];
+> > > > +			for (i =3D 0; i < min_t(unsigned int, 4, naddrs); i++) {
+> > > > +				nfc_op->addrs |=3D instr->ctx.addr.addrs[i] <<
+> > >
+> > > I don't quite understand what this code does, but it looks strange
+> > > to me. I compared it to other drivers. The code here is quite
+> > > similar to marvell_nand.c. It seems like we are copying a varying
+> > > number (0 to 6) of addresses from the buffer instr->ctx.addr.addrs.
+> > > However their indices are special: 0, 1, 2, 3, offset + 4, offset + 5=
+. This is non-consecutive
+> and different from marvell_nand.c in this regard. Could it be that you re=
+ally meant index
+> offset+i here?
+> > I didn't get, what you are saying here.
+> > It is about updating page and column addresses.
+> > Are you asking me to remove nfc_op->addrs =3D instr->ctx.addr.addrs[off=
+set]; before for
+> loop?
+>=20
+> I compared this code to marvell_nand.c and noticed a subtle difference.
+> Both snippets read 6 address bytes and consume them in a driver-specific =
+way. Now which
+> address bytes are consumed differs.
+>=20
+> marvell_nand.c consumes instr->ctx.addr.addrs at indices offset,
+> offset+1, offset+2, offset+3, offset+4, offset+5. pl353_nand.c consumes
+> instr->ctx.addr.addrs at indices 0, 1, 2, 3, offset, offset+4, offset+5.
+> (In my previous mail, I didn't notice that it was also consuming the offs=
+et index.)
+>=20
+> I would have expected this behaviour to be consistent between different d=
+rivers. If I assume
+> marvell_nand.c to do the right thing and pl353_nand.c to be wrong (which =
+is not necessarily a
+> correct assumption), then the code woule likely becom:
+>=20
+> 	addrs =3D &instr->ctx.addr.addrs[offset];
+> 	for (i =3D 0; i < min_t(unsigned int, 4, naddrs); i++) {
+> 		nfc_op->addrs |=3D addrs[i] << (8 * i);
+> 		              // ^^^^^
+> 	}
+>=20
+> Hope this helps.
+Ok. let me re check this and I will update this accordingly.
+
+Thanks,
+Naga Sureshkumar Relli
+>=20
+> Helmut
