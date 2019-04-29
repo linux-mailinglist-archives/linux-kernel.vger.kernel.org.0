@@ -2,71 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0131ED1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 00:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B605ED1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 01:01:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbfD2W7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 18:59:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48960 "EHLO mail.kernel.org"
+        id S1729713AbfD2W7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 18:59:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbfD2W7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:59:20 -0400
+        id S1729603AbfD2W7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 18:59:51 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE9852075E;
-        Mon, 29 Apr 2019 22:59:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B14FD2075E;
+        Mon, 29 Apr 2019 22:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556578760;
-        bh=/wNr8VsiG03XlgiYJ3PW0ej3WrLq3I5p2va/dtfT1eQ=;
+        s=default; t=1556578790;
+        bh=meRJth1M+kiJPxxgh3MIc+0JTa73UcNp4kMSvaernzI=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=zvnvOknTP6/WjClt+yysNR0aev+4bazA60BfGQcM0sRt0xjk74yCtqqLWPOGHBtpR
-         Ja/+pbEHNUeKO9gNPv97yG6aoIBPvMh1z7w/WJarvG/ijOh8yWOIjSVW/OA/SyKbNJ
-         UWTWI6aw72jedO4rwzggGY5nqWhq/G1ZV/sXOa9o=
+        b=mQrWCbilGLcMz3ad21W/e5Nvwt9M4j93gDLvZx7ESiUWTOtj+WHaGoOcXY17uAbLB
+         Fh94YvstIJydqRddm7wr2f/8N1uhi1A2dMr7BlahyqxjmoVpWG+AJKR3UPN48cRSLx
+         5+ny+loJyCvtwx4YI1cbV1EpS0NJHAtDh5jqHqyc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1556571191.1721.0@crapouillou.net>
-References: <20190417112420.3034-1-paul@crapouillou.net> <155562472561.15276.17918796624287416345@swboyd.mtv.corp.google.com> <1556571191.1721.0@crapouillou.net>
+In-Reply-To: <alpine.DEB.2.21.9999.1904291141340.7063@viisi.sifive.com>
+References: <20190411082733.3736-2-paul.walmsley@sifive.com> <155632691100.168659.14460051101205812433@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904262031510.10713@viisi.sifive.com> <alpine.DEB.2.21.9999.1904291141340.7063@viisi.sifive.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: ingenic/jz4725b: Fix parent of pixel clock
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Message-ID: <155657875909.168659.9064792203031956186@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/3] clk: analogbits: add Wide-Range PLL library
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Paul Walmsley <paul@pwsan.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Megan Wachs <megan@sifive.com>
+Message-ID: <155657878993.168659.6676692672888882237@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-Date:   Mon, 29 Apr 2019 15:59:19 -0700
+Date:   Mon, 29 Apr 2019 15:59:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Paul Cercueil (2019-04-29 13:53:11)
+Quoting Paul Walmsley (2019-04-29 12:42:07)
 > Hi Stephen,
 >=20
-> Le jeu. 18 avril 2019 =C3=A0 23:58, Stephen Boyd <sboyd@kernel.org> a=20
-> =C3=A9crit :
-> > Quoting Paul Cercueil (2019-04-17 04:24:20)
-> >>  The pixel clock is directly connected to the output of the PLL, and=20
-> >> not
-> >>  to the /2 divider.
-> >>=20
-> >>  Cc: stable@vger.kernel.org
-> >>  Fixes: 226dfa4726eb ("clk: Add Ingenic jz4725b CGU driver")
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
+> On Fri, 26 Apr 2019, Paul Walmsley wrote:
+>=20
+> > On Fri, 26 Apr 2019, Stephen Boyd wrote:
 > >=20
-> > Applied to clk-next
+> > > Quoting Paul Walmsley (2019-04-11 01:27:32)
+> > > > Add common library code for the Analog Bits Wide-Range PLL (WRPLL) =
+IP
+> > > > block, as implemented in TSMC CLN28HPC.
+> > >=20
+> > > I haven't deeply reviewed at all, but I already get two problems when
+> > > compile testing these patches. I can fix them up if nothing else needs
+> > > fixing.
+> > >=20
+> > > drivers/clk/analogbits/wrpll-cln28hpc.c:165 __wrpll_calc_divq() warn:=
+ should 'target_rate << divq' be a 64 bit type?
+> > > drivers/clk/sifive/fu540-prci.c:214:16: error: return expression in v=
+oid function
+> >=20
+> > Hmm, that's odd.  I will definitely take a look and repost.
 >=20
-> Could you drop this patch?
+> I'm not able to reproduce these problems.  The configs tried here were:
 >=20
-> It turns out it is wrong and the pixel clock is really connected to the=20
-> "pll half"
-> clock. The real bug was elsewhere: the "pll half" clock does not report=20
-> the correct
-> rate. I will send a patch for this one later.
+> - 64-bit RISC-V defconfig w/ PRCI driver enabled (gcc 8.2.0 built with=20
+>   crosstool-NG 1.24.0)
+>=20
+> - 32-bit ARM defconfig w/ PRCI driver enabled (gcc 8.3.0 built with=20
+>   crosstool-NG 1.24.0)
+>=20
+> - 32-bit i386 defconfig w/ PRCI driver enabled (gcc=20
+>   5.4.0-6ubuntu1~16.04.11)
+>=20
+> Could you post the toolchain and kernel config you're using?
 >=20
 
-Ok. No problem.
+I'm running sparse and smatch too.
 
