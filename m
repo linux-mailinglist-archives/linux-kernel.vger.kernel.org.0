@@ -2,134 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFF6EA1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D53AEEA0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:26:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbfD2S30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:29:26 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35221 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728962AbfD2S30 (ORCPT
+        id S1729002AbfD2SZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:25:54 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:32962 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728940AbfD2SZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:29:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id z26so10335649ljj.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:29:24 -0700 (PDT)
+        Mon, 29 Apr 2019 14:25:53 -0400
+Received: by mail-it1-f193.google.com with SMTP id v8so634146itf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=liktUAQ84meAwYxARrOaB57hFmqHknre6y7TLap/pyw=;
-        b=TlX1vlaNRutHcVL0zAHMii8+n9hCbC2fIKsPMUSq4g7TknK8mmi/6eY9keIz02Ws6a
-         0sxXLjiXKqUe5nVD8Hq9h6XVk1mWLMo7lAqkO0QgXrp0M7JguoB/2YMziFqvFKujU3CI
-         Oo2bSTLegqzhOQTgHMmIMbR2g7S9IuZHsXaQU=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YaQCnzzh+3p/v5Fojy+snkCdhoa+2CZox1xOwkyLqvU=;
+        b=J4S+dRaERgYYJqnVpVLtPqQznX5dFlnBdW1GSin1hyFvVPaVFzBMJJghFLtjWDxjRT
+         v4iQjjYiEm5qqJHFhcTf+I2XtMweu48chGehJmqyEzO/Qd5UGSJCqE5O7ITg1jCUrp1O
+         sLkB+tB1sLss3OVRYXkzt7MWCq2RCJl+FymYM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=liktUAQ84meAwYxARrOaB57hFmqHknre6y7TLap/pyw=;
-        b=BKQkHtlkRw/m6jtICj4m9ajZl3TSKIhkm1sEFoMCuE1g0P+3t7+qJMPW9+Qpy/hpzm
-         DLl5z20xYrH+gNX56GwCwC4KPPmZzktzARRPltdTha1Mp0A8Fe/hX6tq4ebXjTCzoVZc
-         nCLPTcw1x1xmPNdsXHb6OUKqH+Nd7W308cRezm0dY9lHWsc28jIXO8415qkvXkqnCDb/
-         s+12GgxuAF3u/2O9LkHsgr9oKd9b1pr64T2/Pir4Vx+KLfrWyXF7z0XqtJV1Rpd2COsi
-         N/rid6QKkHNNvcdcrG1v6ReWNkLa5vGRfHdeNspGjP0tVDud1/s7trFK0LAUZ+0VDRhW
-         hPGw==
-X-Gm-Message-State: APjAAAV1AGpJYoYrrtAasfJz+R1HEVpnp/Q3DY7figdxZ2q1GDq8pPMx
-        x/V6qaZfcboud7w0iEstA/jYHbKVfdE=
-X-Google-Smtp-Source: APXvYqwBLABNWG6bCbfi6iWIT6ywCZdwik8iQN4+FgMnTod0yTZOpIOZzaTVc+DP9N9JtL+iDoizwQ==
-X-Received: by 2002:a2e:8693:: with SMTP id l19mr32985699lji.47.1556562563537;
-        Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id h6sm7368659lfp.1.2019.04.29.11.29.23
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YaQCnzzh+3p/v5Fojy+snkCdhoa+2CZox1xOwkyLqvU=;
+        b=UBaTb6Uq4Jgq7MOIpa4yZcesviGgFhexEFy4Ff20IyBHngsi+BOFe0LyhrRsvYNDe7
+         H3hRvbrWxNtoY/4OSiO/q4S+RNnMXajoG3i1m5+Wv7HnMJLHQa0htLZC6uOYjuB8mElX
+         aIwBJkW4Is9Ox/p7hEwGgfV3kGf+PRAwgo6oTPLm9gg+nEBJl56kiaskfj8nOS6s+qY3
+         UpOMLMqQuBA7RU7LZanXxrqU1aJFW5M84O46GUVFweU8NhSTeVWFxmYc1UpqLdcEUL1Z
+         w3wLaTVbQv+3QnDoLBNAYDbuqbEDGMbtp1X9su935iDRSd4yT5pGQDyUC1WeyRKL3UVj
+         phzw==
+X-Gm-Message-State: APjAAAVxCDS40Vv69Jq8VwEAcOsh7ViTvRX5MyxFc+Y/J+77AvwER54z
+        VbbGevUvonb5k2akibOv3RZuAQ==
+X-Google-Smtp-Source: APXvYqwBCurYe1oxJjzdJiVGjz+EDb8ToH9Z6RTcJkNpjitcglw/xKq/Iljl45Uzy6HrBv+Pj9q+6w==
+X-Received: by 2002:a05:660c:24e:: with SMTP id t14mr371088itk.50.1556562352791;
+        Mon, 29 Apr 2019 11:25:52 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id y199sm12894585iof.88.2019.04.29.11.25.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id m18so5688225lje.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
-X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr30224042ljj.79.1556562187132;
- Mon, 29 Apr 2019 11:23:07 -0700 (PDT)
+        Mon, 29 Apr 2019 11:25:51 -0700 (PDT)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Ross Zwisler <zwisler@google.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, stable@vger.kernel.org
+Subject: [PATCH v2] ASoC: Intel: avoid Oops if DMA setup fails
+Date:   Mon, 29 Apr 2019 12:25:17 -0600
+Message-Id: <20190429182517.210909-1-zwisler@google.com>
+X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
+In-Reply-To: <0b030b85-00c8-2e35-3064-bb764aaff0f6@linux.intel.com>
+References: 
 MIME-Version: 1.0
-References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
- <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
- <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
-In-Reply-To: <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Apr 2019 11:22:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
-Message-ID: <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
- fops invocation
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 11:06 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
->
-> It does *not* emulate the "call" in the BP handler itself, instead if
-> replace the %ip (the same way all the other BP handlers replace the
-> %ip) with a code sequence that just does
->
->         push %gs:bp_call_return
->         jmp *%gs:bp_call_target
->
-> after having filled in those per-cpu things.
+Currently in sst_dsp_new() if we get an error return from sst_dma_new()
+we just print an error message and then still complete the function
+successfully.  This means that we are trying to run without sst->dma
+properly set up, which will result in NULL pointer dereference when
+sst->dma is later used.  This was happening for me in
+sst_dsp_dma_get_channel():
 
-Note that if you read the patch, you'll see that my explanation
-glossed over the "what if an interrupt happens" part. Which is handled
-by having two handlers, one for "interrupts were already disabled" and
-one for "interrupts were enabled, so I disabled them before entering
-the handler".
+        struct sst_dma *dma = dsp->dma;
+	...
+        dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
 
-The second handler does the same push/jmp sequence, but has a "sti"
-before the jmp. Because of the one-instruction sti shadow, interrupts
-won't actually be enabled until after the jmp instruction has
-completed, and thus the "push/jmp" is atomic wrt regular interrupts.
+This resulted in:
 
-It's not safe wrt NMI, of course, but since NMI won't be rescheduling,
-and since any SMP IPI won't be punching through that sequence anyway,
-it's still atomic wrt _another_ text_poke() attempt coming in and
-re-using the bp_call_return/tyarget slots.
+   BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+   IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
 
-So yeah, it's not "one-liner" trivial, but it's not like it's
-complicated either, and it actually matches the existing "call this
-code to emulate the replaced instruction". So I'd much rather have a
-couple of tens of lines of code here that still acts pretty much
-exactly like all the other rewriting does, rather than play subtle
-games with the entry stack frame.
+Fix this by adding proper error handling for the case where we fail to
+set up DMA.
 
-Finally: there might be other situations where you want to have this
-kind of "pseudo-atomic" replacement sequence, so I think while it's a
-hack specific to emulating a "call" instruction, I don't think it is
-conceptually limited to just that case.
+This change only affects Haswell and Broadwell systems.  Baytrail
+systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
+being set to -1.
 
-                 Linus
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+Cc: stable@vger.kernel.org
+---
+
+Changes in v2:
+ - Upgraded the sst_dma_new() failure message from dev_warn() to dev_err()
+   (Pierre-Louis).
+ - Noted in the changelog that this change only affects Haswell and
+   Broadwell (Pierre-Louis).
+
+---
+ sound/soc/intel/common/sst-firmware.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
+index 1e067504b6043..f830e59f93eaa 100644
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
+ 		goto irq_err;
+ 
+ 	err = sst_dma_new(sst);
+-	if (err)
+-		dev_warn(dev, "sst_dma_new failed %d\n", err);
++	if (err)  {
++		dev_err(dev, "sst_dma_new failed %d\n", err);
++		goto dma_err;
++	}
+ 
+ 	return sst;
+ 
++dma_err:
++	free_irq(sst->irq, sst);
+ irq_err:
+ 	if (sst->ops->free)
+ 		sst->ops->free(sst);
+-- 
+2.21.0.593.g511ec345e18-goog
+
