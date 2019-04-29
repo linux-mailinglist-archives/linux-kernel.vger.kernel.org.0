@@ -2,69 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27312EA49
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C905EA4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbfD2Skb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:40:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48101 "EHLO
+        id S1729054AbfD2SmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:42:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58525 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbfD2Sk3 (ORCPT
+        with ESMTP id S1728186AbfD2SmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:40:29 -0400
+        Mon, 29 Apr 2019 14:42:12 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TId3EM1028205
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIdi6n1028396
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Apr 2019 11:39:03 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TId3EM1028205
+        Mon, 29 Apr 2019 11:39:44 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIdi6n1028396
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556563145;
-        bh=oUyLDDqI7PhEFg5s22vsO8km2m2rsNIUoZ0+YIEfPO4=;
+        s=2019041745; t=1556563186;
+        bh=m/WV8wbQqe7VqlxyY3dbNq8yGaQRZ1piOP0Q881a2/k=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=dUPjlFEFXTPsYENSKeeO77+C7ltEs1PCxRtQj6lfJqbO8qcSTAKWzmEIXUqVb1TEL
-         U/Rk2H3Xsr8SysIgkfpyYoG2od0WIT96A7YkW4xv2L2A0VQy+5yFoHzZGYzQdgOBTM
-         XBwYOV5x4FKp80mMDfsCoc43bb+aZQw30RLWVFc/aK2RxUxt9txqyR1MZDn0H+Gtn/
-         H/qUEG0LrG5Za+psYTEwYPacauxs7e2wUFOhoPGZGHdcpp2PgdI4d0O7Rye2m7hpAY
-         3nJZ1xaKtcmxXsRGAA4xuWZLueOVSvL2/KZyisYO9vwAvNCqzMzccnAml3/qdZ+0ei
-         RIPdJpFAXqlaQ==
+        b=T+Sy885fSIP1E46u1t/BJTRP4lg0Jnb0sTG/1Kbdyv9iglvgqhOKOxmA5EIwA0OAK
+         Vf4ZlliORoXOe0keewJygezen2H3hUmsbIga7KXe56LqQcJtn+/2jgbiGCGFp0qQug
+         ZdgAY4mrGozdgnN3HP0EVpNw90z9fwTGVUUhdBZAdAPrPhcFKVUOsedzQAvUngMbEC
+         WL2hqtN7rtS7wYH0x3qkTTaVgAlXJzp78BEvAZGaxWba6PGVwPlUA1hD2kZtCqcrAZ
+         09kwQDQ4+1jfzr8r4K290eR2mhRYf7OBJRiUSasEEIbyBWPcSY00eS32XIxZqxqm7H
+         Xmmb733ayO6PA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TId2Vi1028200;
-        Mon, 29 Apr 2019 11:39:02 -0700
-Date:   Mon, 29 Apr 2019 11:39:02 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIdhku1028390;
+        Mon, 29 Apr 2019 11:39:43 -0700
+Date:   Mon, 29 Apr 2019 11:39:43 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-746017ed8d4d3c2070bb03aee9536f24da43c778@git.kernel.org>
-Cc:     maarten.lankhorst@linux.intel.com, robin.murphy@arm.com,
-        mingo@kernel.org, snitzer@redhat.com, catalin.marinas@arm.com,
-        luto@kernel.org, linux-kernel@vger.kernel.org,
-        tom.zanussi@linux.intel.com, jani.nikula@linux.intel.com,
-        akinobu.mita@gmail.com, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, josef@toxicpanda.com, dsterba@suse.com,
-        aryabinin@virtuozzo.com, clm@fb.com, jthumshirn@suse.de,
-        daniel@ffwll.ch, rppt@linux.vnet.ibm.com, airlied@linux.ie,
-        jpoimboe@redhat.com, adobriyan@gmail.com, rodrigo.vivi@intel.com,
-        rostedt@goodmis.org, m.szyprowski@samsung.com, hch@lst.de,
-        glider@google.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        hpa@zytor.com, joonas.lahtinen@linux.intel.com, agk@redhat.com,
-        mbenes@suse.cz, dvyukov@google.com
-Reply-To: maarten.lankhorst@linux.intel.com, robin.murphy@arm.com,
-          catalin.marinas@arm.com, snitzer@redhat.com, mingo@kernel.org,
-          luto@kernel.org, linux-kernel@vger.kernel.org,
-          jani.nikula@linux.intel.com, tom.zanussi@linux.intel.com,
-          penberg@kernel.org, cl@linux.com, akinobu.mita@gmail.com,
-          dsterba@suse.com, josef@toxicpanda.com, rientjes@google.com,
-          aryabinin@virtuozzo.com, clm@fb.com, daniel@ffwll.ch,
-          jthumshirn@suse.de, airlied@linux.ie, rppt@linux.vnet.ibm.com,
-          adobriyan@gmail.com, jpoimboe@redhat.com, rodrigo.vivi@intel.com,
-          rostedt@goodmis.org, m.szyprowski@samsung.com, hch@lst.de,
-          glider@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
-          hpa@zytor.com, joonas.lahtinen@linux.intel.com, agk@redhat.com,
-          mbenes@suse.cz, dvyukov@google.com
-In-Reply-To: <20190425094802.248658135@linutronix.de>
-References: <20190425094802.248658135@linutronix.de>
+Message-ID: <tip-6924f5feba21ea2bba64b4dc316ee046c48355ca@git.kernel.org>
+Cc:     dsterba@suse.com, tglx@linutronix.de, akpm@linux-foundation.org,
+        penberg@kernel.org, akinobu.mita@gmail.com, daniel@ffwll.ch,
+        aryabinin@virtuozzo.com, agk@redhat.com, jpoimboe@redhat.com,
+        glider@google.com, mbenes@suse.cz, rostedt@goodmis.org,
+        catalin.marinas@arm.com, adobriyan@gmail.com,
+        jani.nikula@linux.intel.com, tom.zanussi@linux.intel.com,
+        rppt@linux.vnet.ibm.com, hch@lst.de, dvyukov@google.com,
+        hpa@zytor.com, mingo@kernel.org, m.szyprowski@samsung.com,
+        cl@linux.com, robin.murphy@arm.com, josef@toxicpanda.com,
+        clm@fb.com, maarten.lankhorst@linux.intel.com, rientjes@google.com,
+        rodrigo.vivi@intel.com, luto@kernel.org, snitzer@redhat.com,
+        jthumshirn@suse.de, linux-kernel@vger.kernel.org, airlied@linux.ie,
+        joonas.lahtinen@linux.intel.com
+Reply-To: mingo@kernel.org, dvyukov@google.com, hpa@zytor.com, hch@lst.de,
+          rppt@linux.vnet.ibm.com, tom.zanussi@linux.intel.com,
+          jani.nikula@linux.intel.com, adobriyan@gmail.com,
+          catalin.marinas@arm.com, rostedt@goodmis.org, mbenes@suse.cz,
+          glider@google.com, jpoimboe@redhat.com, aryabinin@virtuozzo.com,
+          agk@redhat.com, daniel@ffwll.ch, akinobu.mita@gmail.com,
+          penberg@kernel.org, akpm@linux-foundation.org,
+          tglx@linutronix.de, dsterba@suse.com, airlied@linux.ie,
+          joonas.lahtinen@linux.intel.com, linux-kernel@vger.kernel.org,
+          jthumshirn@suse.de, snitzer@redhat.com, luto@kernel.org,
+          rodrigo.vivi@intel.com, rientjes@google.com,
+          maarten.lankhorst@linux.intel.com, clm@fb.com,
+          josef@toxicpanda.com, cl@linux.com, robin.murphy@arm.com,
+          m.szyprowski@samsung.com
+In-Reply-To: <20190425094802.338890064@linutronix.de>
+References: <20190425094802.338890064@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/stacktrace] dma/debug: Simplify stracktrace retrieval
-Git-Commit-ID: 746017ed8d4d3c2070bb03aee9536f24da43c778
+Subject: [tip:core/stacktrace] btrfs: ref-verify: Simplify stack trace
+ retrieval
+Git-Commit-ID: 6924f5feba21ea2bba64b4dc316ee046c48355ca
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -83,25 +85,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  746017ed8d4d3c2070bb03aee9536f24da43c778
-Gitweb:     https://git.kernel.org/tip/746017ed8d4d3c2070bb03aee9536f24da43c778
+Commit-ID:  6924f5feba21ea2bba64b4dc316ee046c48355ca
+Gitweb:     https://git.kernel.org/tip/6924f5feba21ea2bba64b4dc316ee046c48355ca
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 25 Apr 2019 11:45:05 +0200
+AuthorDate: Thu, 25 Apr 2019 11:45:06 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 29 Apr 2019 12:37:50 +0200
+CommitDate: Mon, 29 Apr 2019 12:37:51 +0200
 
-dma/debug: Simplify stracktrace retrieval
+btrfs: ref-verify: Simplify stack trace retrieval
 
 Replace the indirection through struct stack_trace with an invocation of
 the storage array based interface.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: David Sterba <dsterba@suse.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: iommu@lists.linux-foundation.org
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-btrfs@vger.kernel.org
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Alexander Potapenko <glider@google.com>
 Cc: Alexey Dobriyan <adobriyan@gmail.com>
@@ -116,11 +119,10 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Cc: kasan-dev@googlegroups.com
 Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: David Sterba <dsterba@suse.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: dm-devel@redhat.com
 Cc: Mike Snitzer <snitzer@redhat.com>
 Cc: Alasdair Kergon <agk@redhat.com>
@@ -135,49 +137,44 @@ Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
 Cc: Miroslav Benes <mbenes@suse.cz>
 Cc: linux-arch@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190425094802.248658135@linutronix.de
+Link: https://lkml.kernel.org/r/20190425094802.338890064@linutronix.de
 
 ---
- kernel/dma/debug.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ fs/btrfs/ref-verify.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index a218e43cc382..badd77670d00 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -89,8 +89,8 @@ struct dma_debug_entry {
- 	int		 sg_mapped_ents;
- 	enum map_err_types  map_err_type;
+diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+index d09b6cdb785a..b283d3a6e837 100644
+--- a/fs/btrfs/ref-verify.c
++++ b/fs/btrfs/ref-verify.c
+@@ -205,28 +205,17 @@ static struct root_entry *lookup_root_entry(struct rb_root *root, u64 objectid)
  #ifdef CONFIG_STACKTRACE
--	struct		 stack_trace stacktrace;
--	unsigned long	 st_entries[DMA_DEBUG_STACKTRACE_ENTRIES];
-+	unsigned int	stack_len;
-+	unsigned long	stack_entries[DMA_DEBUG_STACKTRACE_ENTRIES];
- #endif
- };
- 
-@@ -174,7 +174,7 @@ static inline void dump_entry_trace(struct dma_debug_entry *entry)
- #ifdef CONFIG_STACKTRACE
- 	if (entry) {
- 		pr_warning("Mapped at:\n");
--		print_stack_trace(&entry->stacktrace, 0);
-+		stack_trace_print(entry->stack_entries, entry->stack_len, 0);
- 	}
- #endif
- }
-@@ -704,12 +704,10 @@ static struct dma_debug_entry *dma_entry_alloc(void)
- 	spin_unlock_irqrestore(&free_entries_lock, flags);
- 
- #ifdef CONFIG_STACKTRACE
--	entry->stacktrace.max_entries = DMA_DEBUG_STACKTRACE_ENTRIES;
--	entry->stacktrace.entries = entry->st_entries;
--	entry->stacktrace.skip = 1;
--	save_stack_trace(&entry->stacktrace);
-+	entry->stack_len = stack_trace_save(entry->stack_entries,
-+					    ARRAY_SIZE(entry->stack_entries),
-+					    1);
- #endif
+ static void __save_stack_trace(struct ref_action *ra)
+ {
+-	struct stack_trace stack_trace;
 -
- 	return entry;
+-	stack_trace.max_entries = MAX_TRACE;
+-	stack_trace.nr_entries = 0;
+-	stack_trace.entries = ra->trace;
+-	stack_trace.skip = 2;
+-	save_stack_trace(&stack_trace);
+-	ra->trace_len = stack_trace.nr_entries;
++	ra->trace_len = stack_trace_save(ra->trace, MAX_TRACE, 2);
  }
  
+ static void __print_stack_trace(struct btrfs_fs_info *fs_info,
+ 				struct ref_action *ra)
+ {
+-	struct stack_trace trace;
+-
+ 	if (ra->trace_len == 0) {
+ 		btrfs_err(fs_info, "  ref-verify: no stacktrace");
+ 		return;
+ 	}
+-	trace.nr_entries = ra->trace_len;
+-	trace.entries = ra->trace;
+-	print_stack_trace(&trace, 2);
++	stack_trace_print(ra->trace, ra->trace_len, 2);
+ }
+ #else
+ static void inline __save_stack_trace(struct ref_action *ra)
