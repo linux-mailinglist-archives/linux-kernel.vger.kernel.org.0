@@ -2,246 +2,379 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF05DE2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEFE9DE32
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfD2Imd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 04:42:33 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:42032 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727578AbfD2Imc (ORCPT
+        id S1727701AbfD2Inp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 04:43:45 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:49460 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727480AbfD2Ino (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 04:42:32 -0400
-X-IronPort-AV: E=Sophos;i="5.60,409,1549954800"; 
-   d="scan'208";a="31041155"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 29 Apr 2019 01:42:31 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 29 Apr 2019 01:42:31 -0700
+        Mon, 29 Apr 2019 04:43:44 -0400
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 08A55C00AE;
+        Mon, 29 Apr 2019 08:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1556527422; bh=xI5h5MdXnhVD9y3tDSYGBQQ7Nsli3e4FTVtv6zWlr/U=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=TccqouOdCMcNrMf7ERvNWy2BcFsOTPjlQ+MQ9FhllvuNFwdzVkS1cWVf0s2jUFWsV
+         Zm0JdaRq6wJlOkAnwuHLz2RW7yP8CdkAGak4iIHpwkQk0OyC6CY221kSqAelNMEeAf
+         /OB7p5n0lTVQSzB6A5TaRPNYdrYROPFAIFofdSyaW6nHHS28s3ZhIKaksNZ/Xp1OuJ
+         QaK6a1GT6XD9J2BeYtBeeDtC+P9E+BoMXCpjj/a+PrOTHk1EiwJrhEiKoNbFMDJS+u
+         D0H6ViypmhsGqncHDiak22z1bxH9dfu/WTqQWz/Cm0WvQkmcJrXMxGmFSGB4SyD8V4
+         QAIJkU2qLvUAg==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 11651A008E;
+        Mon, 29 Apr 2019 08:43:37 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 29 Apr 2019 01:43:37 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 29 Apr 2019 01:43:37 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1Hf/m6JqXCxukY7GBQeb16rVXUoQQQYVr4qbViftKs=;
- b=PoCV2oGjS807VUdUxfr3m0z+4jvXz9QMDG0+DAsT0cSUd0FawRcjsLZCh6qS4Oehh/Ewzen8a0T7F6197zpci4sfxdGKK29swktpMqk6Q4H2R7X3GLQcU06ZTTVtRVPIMuLVmqlF6uv9+6x3ElnIf1LzeGVFgPXxnRBjli9KAOk=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1982.namprd11.prod.outlook.com (10.175.54.145) with Microsoft SMTP
+ bh=cLtaK4dBkDbZZHaE01dlvd+2qLnST+ZXlz8Bal5/SMk=;
+ b=IRpO70xdzfiCbg7qqRoA4bzq39hXrQxQi34IFxwU2E2MtmcDfIFYzNJaShjaBNxceh4iynShD/aFjvVeOullm7NmsaPwGoWuehNhimban/xx6/aXUf5Cg+bAA1/GPIJdA58VxieT0y9RFp28IO9Yy3arzPhsvolnoviD17c1CGk=
+Received: from SN1PR12MB2431.namprd12.prod.outlook.com (52.132.195.146) by
+ SN1PR12MB2493.namprd12.prod.outlook.com (52.132.196.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.13; Mon, 29 Apr 2019 08:42:28 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::65cd:b698:41:54d6]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::65cd:b698:41:54d6%2]) with mapi id 15.20.1835.016; Mon, 29 Apr 2019
- 08:42:28 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <jonas@norrbonn.se>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <Cristian.Birsan@microchip.com>
-CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/3] usb: gadget: atmel: support USB suspend
-Thread-Topic: [PATCH 2/3] usb: gadget: atmel: support USB suspend
-Thread-Index: AQHU/LZK0J0Tf8l6YU+Jzeqluv+RfqZS1X8A
-Date:   Mon, 29 Apr 2019 08:42:28 +0000
-Message-ID: <42737ffb-17f1-9e55-b08b-af81cd27c2d4@microchip.com>
-References: <20190220122001.5713-1-jonas@norrbonn.se>
- <20190220122001.5713-3-jonas@norrbonn.se>
- <eb302fcf-83b1-bed9-f2d3-201dc767a30b@norrbonn.se>
-In-Reply-To: <eb302fcf-83b1-bed9-f2d3-201dc767a30b@norrbonn.se>
+ 15.20.1835.13; Mon, 29 Apr 2019 08:43:35 +0000
+Received: from SN1PR12MB2431.namprd12.prod.outlook.com
+ ([fe80::1982:4b45:2adf:9a1f]) by SN1PR12MB2431.namprd12.prod.outlook.com
+ ([fe80::1982:4b45:2adf:9a1f%4]) with mapi id 15.20.1835.010; Mon, 29 Apr 2019
+ 08:43:34 +0000
+From:   Artur Petrosyan <Arthur.Petrosyan@synopsys.com>
+To:     Douglas Anderson <dianders@chromium.org>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "heiko@sntech.de" <heiko@sntech.de>
+CC:     Alan Stern <stern@rowland.harvard.edu>,
+        "amstan@chromium.org" <amstan@chromium.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        William Wu <william.wu@rock-chips.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Randy Li <ayaka@soulik.info>,
+        "zyw@rock-chips.com" <zyw@rock-chips.com>,
+        "mka@chromium.org" <mka@chromium.org>,
+        "ryandcase@chromium.org" <ryandcase@chromium.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        "jwerner@chromium.org" <jwerner@chromium.org>,
+        "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>,
+        "Elaine Zhang" <zhangqing@rock-chips.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/5] usb: dwc2: bus suspend/resume for hosts with
+ DWC2_POWER_DOWN_PARAM_NONE
+Thread-Topic: [PATCH v2 1/5] usb: dwc2: bus suspend/resume for hosts with
+ DWC2_POWER_DOWN_PARAM_NONE
+Thread-Index: AQHU9XvT/eL2bASAskajIQu3Y3ICkw==
+Date:   Mon, 29 Apr 2019 08:43:34 +0000
+Message-ID: <SN1PR12MB243108D1EF3239EC4F730ACDA7390@SN1PR12MB2431.namprd12.prod.outlook.com>
+References: <20190418001356.124334-1-dianders@chromium.org>
+ <20190418001356.124334-2-dianders@chromium.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR06CA0072.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::49) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
+ smtp.mailfrom=arturp@synopsys.com; 
+x-originating-ip: [84.53.141.185]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 24ae2d2a-9123-4078-fa54-08d6cc7e9c45
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR11MB1982;
-x-ms-traffictypediagnostic: MWHPR11MB1982:
-x-microsoft-antispam-prvs: <MWHPR11MB19828BB35F6551257F56B475E0390@MWHPR11MB1982.namprd11.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: dece680f-3687-4750-9416-08d6cc7ec439
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:SN1PR12MB2493;
+x-ms-traffictypediagnostic: SN1PR12MB2493:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <SN1PR12MB24939235DAC2E3F6AE9AE470A7390@SN1PR12MB2493.namprd12.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(376002)(346002)(396003)(189003)(199004)(53546011)(66556008)(110136005)(66446008)(66476007)(64756008)(486006)(386003)(316002)(66946007)(2616005)(52116002)(99286004)(3846002)(6506007)(6436002)(5660300002)(6116002)(6486002)(54906003)(73956011)(76176011)(26005)(11346002)(25786009)(186003)(478600001)(6636002)(31686004)(229853002)(446003)(305945005)(6246003)(256004)(97736004)(86362001)(2501003)(81166006)(476003)(8676002)(53936002)(68736007)(15650500001)(14444005)(4326008)(81156014)(36756003)(2201001)(31696002)(6512007)(2906002)(102836004)(7736002)(71190400001)(71200400001)(66066001)(14454004)(72206003)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1982;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39850400004)(396003)(366004)(376002)(136003)(189003)(199004)(55674003)(14444005)(15650500001)(476003)(55016002)(256004)(9686003)(6306002)(99286004)(6246003)(966005)(486006)(316002)(52536014)(76116006)(8936002)(66946007)(66446008)(64756008)(66556008)(91956017)(5660300002)(66476007)(73956011)(33656002)(81156014)(81166006)(97736004)(8676002)(446003)(68736007)(102836004)(4326008)(478600001)(26005)(74316002)(53546011)(86362001)(25786009)(2906002)(7736002)(2501003)(305945005)(71190400001)(71200400001)(186003)(6506007)(6436002)(7416002)(7696005)(54906003)(229853002)(6116002)(66066001)(3846002)(76176011)(53936002)(14454004)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR12MB2493;H:SN1PR12MB2431.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Z4HrwdITRR8Ccafs6Nnt3PFFSLmdeh8xE0/Sxfv5wWFOxMP0xjGF7IaAEDB2NH3BjMU0DL6tVFpVogzRV9ZpoBrocjRDsdw0Qe5ImFhl0aPjrSEY2h9BxxwDc2bjU4PNqZKSm/0OgQa+nIAfLNpCUGpbDdnraFYxbScud9zwU+FHF78r99VM8oJLVYl4JxbWiF//YezI1DCY8zov8aOfX4e+a5tfrWS47Mv0cWCIOKxhcYxm5YoBvSKO+eGQON7FrhF9mOGzhGFSoVfSWcg4MZr0ubVjZRl+CjPbLzqt/PYYiPgVlyOlvEeR44EGZLbCosSu8SNMlFF77kgl0Nd+gn8vd/2Uc27mSYeoX/GIM1xd1IfmLYiDtFIUyFgZ90HbsVUrQmrkJvF3Rk+ipSFPMUF6RZMiIOI0eZJyaaT4UwM=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FABAFC110C4A944491B6CC843AD0F5FE@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: PVAMvAtIY6ExilWoGs9GVvpiTp0Lk50DV2PtMF4MlUqVQ4yxJPbyC1ka08CT3JzrnJESy/Pw7TDclDrjS4DTheOogy5RbnZpjnI6AAbkXnfAu7NujCRojC9BAEp+wNERk3HiM5Ong2Dy0uGl/ew9dkdiqcfHl+ktSvEB+cNrJHlf7mpxyQcq0Rl3JwwanFgYGVvkYMwNMxuIdDykT7vbnJrKxSKpaC5nnujCzjJOi+rcyLeANlSAwi/jm9RLwiwXIReKy8gUGAEHvJLB/wWqCEDOON50jCH1dXkEKkNTmZZy24FEj2QnAMtThiu1Ac6FVwnmGrbcpuG1YYgTUPch/vNXiuEspsxSGmQlP/Mj3Is61P/Sbulo8f9QoC3tN2TrfoFmblLkueGcTitFWyPiEg8EldwxijfKltreVaIU40Y=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24ae2d2a-9123-4078-fa54-08d6cc7e9c45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 08:42:28.3614
+X-MS-Exchange-CrossTenant-Network-Message-Id: dece680f-3687-4750-9416-08d6cc7ec439
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 08:43:34.8366
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1982
-X-OriginatorOrg: microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2493
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjcvMDQvMjAxOSBhdCAwNzowMSwgSm9uYXMgQm9ubiB3cm90ZToNCj4gRXh0ZXJuYWwgRS1N
-YWlsDQo+IA0KPiANCj4gUGluZy4gIEFueSBmZWVkYmFjayBvbiB0aGlzIGF0IGFsbD8gIEl0J3Mg
-YmVlbiBvdmVyIHR3byBtb250aHMgd2l0aG91dCBhDQo+IHNpbmdsZSBjb21tZW50Lg0KDQpKb25h
-cywNCg0KV2UgYXJlIHdvcmtpbmcgb24gdGhlIGNhc2UgdGhhdCB5b3UgZGVzY3JpYmUgaW50ZXJu
-YWxseSBhbmQgYXNzb2NpYXRlZCANCmJlaGF2aW9yIG9uIG91ciBTb0MuIFdlIGRpZG4ndCBjb21l
-IHRvIGEgY29uY2x1c2lvbiB5ZXQgYW5kIHRoYXQgaXMgd2h5IA0Kd2UgZGlkbid0IGNvbWUgYmFj
-ayB0byB5b3UuIFdlIHdhbnRlZCB0byB1bmRlcnN0YW5kIHRoZSBzaXR1YXRpb24gDQpjb21wbGV0
-ZWx5IGJlZm9yZSBnaXZpbmcgeW91IGEgY29tbWVudCBvbiB5b3VyIHBhdGNoIHNlcmllcy4NCg0K
-U29ycnkgZm9yIGFueSBtaXN1bmRlcnN0YW5kaW5nIGl0IGNvdWxkIGhhdmUgY3JlYXRlZC4NCkNy
-aXN0aWFuIHdpbGwgY29tZSBiYWNrIHRvIHlvdSBhIGxpdHRsZSBsYXRlcjogYnV0IGJlIHJlYXNz
-dXJlZCwgeW91ciANCnBhdGNoZXMgYXJlIGFic29sdXRlbHkgbm90IGZvcmdvdHRlbi4NCg0KQmVz
-dCByZWdhcmRzLA0KICAgTmljb2xhcw0KDQo+IE9uIDIwLzAyLzIwMTkgMTM6MjAsIEpvbmFzIEJv
-bm4gd3JvdGU6DQo+PiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgVVNCIHN1c3BlbmQgdG8g
-dGhlIEF0bWVsIFVEQy4NCj4+DQo+PiBXaGVuIHN1c3BlbmRlZCwgdGhlIFVEQyBjbG9jayBjYW4g
-YmUgc3RvcHBlZCwgcmVzdWx0aW5nIGluIHNvbWUgcG93ZXINCj4+IHNhdmluZ3MuICBUaGUgIndh
-a2UgdXAiIGludGVycnVwdCB3aWxsIGZpcmUgaXJyZWdhcmRsZXNzIG9mIHdoZXRoZXIgdGhlDQo+
-PiBjbG9jayBpcyBydW5uaW5nIG9yIG5vdCwgYWxsb3dpbmcgdGhlIFVEQyBjbG9jayB0byBiZSBy
-ZXN0YXJ0ZWQgd2hlbiB0aGUNCj4+IFVTQiBtYXN0ZXIgd2FudHMgdG8gd2FrZSB0aGUgZGV2aWNl
-IGFnYWluLg0KPj4NCj4+IFRoZSBJUlEgc3RhdGUgb2YgdGhpcyBkZXZpY2UgaXMgc29tZXdoYXQg
-ZmlkZGx5LiAgVGhlICJ3YWtlIHVwIiBJUlENCj4+IHNlZW1zIHRvIGFjdHVhbGx5IGJlIGEgImJ1
-cyBhY3Rpdml0eSIgaW5kaWNhdG9yOyB0aGUgSVJRIGlzIGFsbW9zdA0KPj4gY29udGludW91c2x5
-IGFzc2VydGVkIHNvIGVuYWJsaW5nIHRoaXMgSVJRIHNob3VsZCBvbmx5IGJlIGRvbmUgYWZ0ZXIg
-YQ0KPj4gc3VzcGVuZCB3aGVuIHRoZSB3YWtlIElSUSBiZWNvbWVzIHJlbGV2YW50LiAgU2ltaWxh
-cmx5LCB0aGUgInN1c3BlbmQiDQo+PiBJUlEgZGV0ZWN0cyAiYnVzIGluYWN0aXZpdHkiIGFuZCBt
-YXkgdGhlcmVmb3JlIGZpcmUgdG9nZXRoZXIgd2l0aCBhDQo+PiAid2FrZSIgaWYgdGhlIHR3byB0
-eXBlcyBvZiBhY3Rpdml0eSBjb2luY2lkZSBkdXJpbmcgdGhlIHBlcmlvZCBiZXR3ZWVuDQo+PiB0
-d28gSVJRIGhhbmRsZXIgaW52b2NhdGlvbnM7IHRoZXJlZm9yZSwgaXQncyBpbXBvcnRhbnQgdG8g
-aWdub3JlIHRoZQ0KPj4gInN1c3BlbmQiIElSUSB3aGlsZSB3YWl0aW5nIGZvciBhIHdha2UtdXAu
-DQo+Pg0KPj4gVGhpcyBoYXMgYmVlbiB0ZXN0ZWQgb24gYSBTQU1BNUQyIGJvYXJkLg0KPj4NCj4+
-IFNpZ25lZC1vZmYtYnk6IEpvbmFzIEJvbm4gPGpvbmFzQG5vcnJib25uLnNlPg0KPj4gQ0M6IENy
-aXN0aWFuIEJpcnNhbiA8Y3Jpc3RpYW4uYmlyc2FuQG1pY3JvY2hpcC5jb20+DQo+PiBDQzogRmVs
-aXBlIEJhbGJpIDxiYWxiaUBrZXJuZWwub3JnPg0KPj4gQ0M6IEdyZWcgS3JvYWgtSGFydG1hbiA8
-Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+PiBDQzogTmljb2xhcyBGZXJyZSA8bmljb2xh
-cy5mZXJyZUBtaWNyb2NoaXAuY29tPg0KPj4gQ0M6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4YW5k
-cmUuYmVsbG9uaUBib290bGluLmNvbT4NCj4+IENDOiBMdWRvdmljIERlc3JvY2hlcyA8bHVkb3Zp
-Yy5kZXNyb2NoZXNAbWljcm9jaGlwLmNvbT4NCj4+IENDOiBsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcNCj4+IENDOiBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnDQo+PiAtLS0N
-Cj4+ICAgIGRyaXZlcnMvdXNiL2dhZGdldC91ZGMvYXRtZWxfdXNiYV91ZGMuYyB8IDU1ICsrKysr
-KysrKysrKysrKysrKysrKystLS0NCj4+ICAgIGRyaXZlcnMvdXNiL2dhZGdldC91ZGMvYXRtZWxf
-dXNiYV91ZGMuaCB8ICAxICsNCj4+ICAgIDIgZmlsZXMgY2hhbmdlZCwgNTAgaW5zZXJ0aW9ucygr
-KSwgNiBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvZ2FkZ2V0
-L3VkYy9hdG1lbF91c2JhX3VkYy5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0L3VkYy9hdG1lbF91c2Jh
-X3VkYy5jDQo+PiBpbmRleCA5ZDE4ZmRkZGQ5YjIuLjc0MGNiOTMwOGE4NiAxMDA2NDQNCj4+IC0t
-LSBhL2RyaXZlcnMvdXNiL2dhZGdldC91ZGMvYXRtZWxfdXNiYV91ZGMuYw0KPj4gKysrIGIvZHJp
-dmVycy91c2IvZ2FkZ2V0L3VkYy9hdG1lbF91c2JhX3VkYy5jDQo+PiBAQCAtMTcwMyw2ICsxNzAz
-LDkgQEAgc3RhdGljIHZvaWQgdXNiYV9kbWFfaXJxKHN0cnVjdCB1c2JhX3VkYyAqdWRjLCBzdHJ1
-Y3QgdXNiYV9lcCAqZXApDQo+PiAgICAJfQ0KPj4gICAgfQ0KPj4gICAgDQo+PiArc3RhdGljIGlu
-dCBzdGFydF9jbG9jayhzdHJ1Y3QgdXNiYV91ZGMgKnVkYyk7DQo+PiArc3RhdGljIHZvaWQgc3Rv
-cF9jbG9jayhzdHJ1Y3QgdXNiYV91ZGMgKnVkYyk7DQo+PiArDQo+PiAgICBzdGF0aWMgaXJxcmV0
-dXJuX3QgdXNiYV91ZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldmlkKQ0KPj4gICAgew0KPj4gICAg
-CXN0cnVjdCB1c2JhX3VkYyAqdWRjID0gZGV2aWQ7DQo+PiBAQCAtMTcyMCwxMCArMTcyMywxMyBA
-QCBzdGF0aWMgaXJxcmV0dXJuX3QgdXNiYV91ZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldmlkKQ0K
-Pj4gICAgCURCRyhEQkdfSU5ULCAiaXJxLCBzdGF0dXM9JSMwOHhcbiIsIHN0YXR1cyk7DQo+PiAg
-ICANCj4+ICAgIAlpZiAoc3RhdHVzICYgVVNCQV9ERVRfU1VTUEVORCkgew0KPj4gLQkJdG9nZ2xl
-X2JpYXModWRjLCAwKTsNCj4+IC0JCXVzYmFfd3JpdGVsKHVkYywgSU5UX0NMUiwgVVNCQV9ERVRf
-U1VTUEVORCk7DQo+PiArCQl1c2JhX3dyaXRlbCh1ZGMsIElOVF9DTFIsIFVTQkFfREVUX1NVU1BF
-TkR8VVNCQV9XQUtFX1VQKTsNCj4+ICAgIAkJdXNiYV9pbnRfZW5iX3NldCh1ZGMsIFVTQkFfV0FL
-RV9VUCk7DQo+PiArCQl1c2JhX2ludF9lbmJfY2xlYXIodWRjLCBVU0JBX0RFVF9TVVNQRU5EKTsN
-Cj4+ICsJCXVkYy0+c3VzcGVuZGVkID0gdHJ1ZTsNCj4+ICsJCXRvZ2dsZV9iaWFzKHVkYywgMCk7
-DQo+PiAgICAJCXVkYy0+Ymlhc19wdWxzZV9uZWVkZWQgPSB0cnVlOw0KPj4gKwkJc3RvcF9jbG9j
-ayh1ZGMpOw0KPj4gICAgCQlEQkcoREJHX0JVUywgIlN1c3BlbmQgZGV0ZWN0ZWRcbiIpOw0KPj4g
-ICAgCQlpZiAodWRjLT5nYWRnZXQuc3BlZWQgIT0gVVNCX1NQRUVEX1VOS05PV04NCj4+ICAgIAkJ
-CQkmJiB1ZGMtPmRyaXZlciAmJiB1ZGMtPmRyaXZlci0+c3VzcGVuZCkgew0KPj4gQEAgLTE3MzQs
-MTQgKzE3NDAsMTcgQEAgc3RhdGljIGlycXJldHVybl90IHVzYmFfdWRjX2lycShpbnQgaXJxLCB2
-b2lkICpkZXZpZCkNCj4+ICAgIAl9DQo+PiAgICANCj4+ICAgIAlpZiAoc3RhdHVzICYgVVNCQV9X
-QUtFX1VQKSB7DQo+PiArCQlzdGFydF9jbG9jayh1ZGMpOw0KPj4gICAgCQl0b2dnbGVfYmlhcyh1
-ZGMsIDEpOw0KPj4gICAgCQl1c2JhX3dyaXRlbCh1ZGMsIElOVF9DTFIsIFVTQkFfV0FLRV9VUCk7
-DQo+PiAtCQl1c2JhX2ludF9lbmJfY2xlYXIodWRjLCBVU0JBX1dBS0VfVVApOw0KPj4gICAgCQlE
-QkcoREJHX0JVUywgIldha2UgVXAgQ1BVIGRldGVjdGVkXG4iKTsNCj4+ICAgIAl9DQo+PiAgICAN
-Cj4+ICAgIAlpZiAoc3RhdHVzICYgVVNCQV9FTkRfT0ZfUkVTVU1FKSB7DQo+PiArCQl1ZGMtPnN1
-c3BlbmRlZCA9IGZhbHNlOw0KPj4gICAgCQl1c2JhX3dyaXRlbCh1ZGMsIElOVF9DTFIsIFVTQkFf
-RU5EX09GX1JFU1VNRSk7DQo+PiArCQl1c2JhX2ludF9lbmJfY2xlYXIodWRjLCBVU0JBX1dBS0Vf
-VVApOw0KPj4gKwkJdXNiYV9pbnRfZW5iX3NldCh1ZGMsIFVTQkFfREVUX1NVU1BFTkQpOw0KPj4g
-ICAgCQlnZW5lcmF0ZV9iaWFzX3B1bHNlKHVkYyk7DQo+PiAgICAJCURCRyhEQkdfQlVTLCAiUmVz
-dW1lIGRldGVjdGVkXG4iKTsNCj4+ICAgIAkJaWYgKHVkYy0+Z2FkZ2V0LnNwZWVkICE9IFVTQl9T
-UEVFRF9VTktOT1dODQo+PiBAQCAtMTc1Niw2ICsxNzY1LDggQEAgc3RhdGljIGlycXJldHVybl90
-IHVzYmFfdWRjX2lycShpbnQgaXJxLCB2b2lkICpkZXZpZCkNCj4+ICAgIAlpZiAoZG1hX3N0YXR1
-cykgew0KPj4gICAgCQlpbnQgaTsNCj4+ICAgIA0KPj4gKwkJdXNiYV9pbnRfZW5iX3NldCh1ZGMs
-IFVTQkFfREVUX1NVU1BFTkQpOw0KPj4gKw0KPj4gICAgCQlmb3IgKGkgPSAxOyBpIDw9IFVTQkFf
-TlJfRE1BUzsgaSsrKQ0KPj4gICAgCQkJaWYgKGRtYV9zdGF0dXMgJiAoMSA8PCBpKSkNCj4+ICAg
-IAkJCQl1c2JhX2RtYV9pcnEodWRjLCAmdWRjLT51c2JhX2VwW2ldKTsNCj4+IEBAIC0xNzY1LDYg
-KzE3NzYsOCBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdXNiYV91ZGNfaXJxKGludCBpcnEsIHZvaWQg
-KmRldmlkKQ0KPj4gICAgCWlmIChlcF9zdGF0dXMpIHsNCj4+ICAgIAkJaW50IGk7DQo+PiAgICAN
-Cj4+ICsJCXVzYmFfaW50X2VuYl9zZXQodWRjLCBVU0JBX0RFVF9TVVNQRU5EKTsNCj4+ICsNCj4+
-ICAgIAkJZm9yIChpID0gMDsgaSA8IHVkYy0+bnVtX2VwOyBpKyspDQo+PiAgICAJCQlpZiAoZXBf
-c3RhdHVzICYgKDEgPDwgaSkpIHsNCj4+ICAgIAkJCQlpZiAoZXBfaXNfY29udHJvbCgmdWRjLT51
-c2JhX2VwW2ldKSkNCj4+IEBAIC0xNzc4LDcgKzE3OTEsOSBAQCBzdGF0aWMgaXJxcmV0dXJuX3Qg
-dXNiYV91ZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldmlkKQ0KPj4gICAgCQlzdHJ1Y3QgdXNiYV9l
-cCAqZXAwLCAqZXA7DQo+PiAgICAJCWludCBpLCBuOw0KPj4gICAgDQo+PiAtCQl1c2JhX3dyaXRl
-bCh1ZGMsIElOVF9DTFIsIFVTQkFfRU5EX09GX1JFU0VUKTsNCj4+ICsJCXVzYmFfd3JpdGVsKHVk
-YywgSU5UX0NMUiwNCj4+ICsJCQlVU0JBX0VORF9PRl9SRVNFVHxVU0JBX0VORF9PRl9SRVNVTUUN
-Cj4+ICsJCQl8VVNCQV9ERVRfU1VTUEVORHxVU0JBX1dBS0VfVVApOw0KPj4gICAgCQlnZW5lcmF0
-ZV9iaWFzX3B1bHNlKHVkYyk7DQo+PiAgICAJCXJlc2V0X2FsbF9lbmRwb2ludHModWRjKTsNCj4+
-ICAgIA0KPj4gQEAgLTE4MDUsNiArMTgyMCwxMSBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdXNiYV91
-ZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldmlkKQ0KPj4gICAgCQkJCXwgVVNCQV9CRihCS19OVU1C
-RVIsIFVTQkFfQktfTlVNQkVSX09ORSkpKTsNCj4+ICAgIAkJdXNiYV9lcF93cml0ZWwoZXAwLCBD
-VExfRU5CLA0KPj4gICAgCQkJCVVTQkFfRVBUX0VOQUJMRSB8IFVTQkFfUlhfU0VUVVApOw0KPj4g
-Kw0KPj4gKwkJLyogSWYgd2UgZ2V0IHJlc2V0IHdoaWxlIHN1c3BlbmRlZC4uLiAqLw0KPj4gKwkJ
-dWRjLT5zdXNwZW5kZWQgPSBmYWxzZTsNCj4+ICsJCXVzYmFfaW50X2VuYl9jbGVhcih1ZGMsIFVT
-QkFfV0FLRV9VUCk7DQo+PiArDQo+PiAgICAJCXVzYmFfaW50X2VuYl9zZXQodWRjLCBVU0JBX0JG
-KEVQVF9JTlQsIDEpIHwNCj4+ICAgIAkJCQkgICAgICBVU0JBX0RFVF9TVVNQRU5EIHwgVVNCQV9F
-TkRfT0ZfUkVTVU1FKTsNCj4+ICAgIA0KPj4gQEAgLTE4NzIsOSArMTg5MiwxOSBAQCBzdGF0aWMg
-aW50IHVzYmFfc3RhcnQoc3RydWN0IHVzYmFfdWRjICp1ZGMpDQo+PiAgICAJaWYgKHJldCkNCj4+
-ICAgIAkJcmV0dXJuIHJldDsNCj4+ICAgIA0KPj4gKwlpZiAodWRjLT5zdXNwZW5kZWQpDQo+PiAr
-CQlyZXR1cm4gMDsNCj4+ICsNCj4+ICAgIAlzcGluX2xvY2tfaXJxc2F2ZSgmdWRjLT5sb2NrLCBm
-bGFncyk7DQo+PiAgICAJdG9nZ2xlX2JpYXModWRjLCAxKTsNCj4+ICAgIAl1c2JhX3dyaXRlbCh1
-ZGMsIENUUkwsIFVTQkFfRU5BQkxFX01BU0spOw0KPj4gKwkvKiBDbGVhciBhbGwgcmVxdWVzdGVk
-IGFuZCBwZW5kaW5nIGludGVycnVwdHMuLi4gKi8NCj4+ICsJdXNiYV93cml0ZWwodWRjLCBJTlRf
-RU5CLCAwKTsNCj4+ICsJdWRjLT5pbnRfZW5iX2NhY2hlID0gMDsNCj4+ICsJdXNiYV93cml0ZWwo
-dWRjLCBJTlRfQ0xSLA0KPj4gKwkJVVNCQV9FTkRfT0ZfUkVTRVR8VVNCQV9FTkRfT0ZfUkVTVU1F
-DQo+PiArCQl8VVNCQV9ERVRfU1VTUEVORHxVU0JBX1dBS0VfVVApOw0KPj4gKwkvKiAuLi5hbmQg
-ZW5hYmxlIGp1c3QgJ3Jlc2V0JyBJUlEgdG8gZ2V0IHVzIHN0YXJ0ZWQgKi8NCj4+ICAgIAl1c2Jh
-X2ludF9lbmJfc2V0KHVkYywgVVNCQV9FTkRfT0ZfUkVTRVQpOw0KPj4gICAgCXNwaW5fdW5sb2Nr
-X2lycXJlc3RvcmUoJnVkYy0+bG9jaywgZmxhZ3MpOw0KPj4gICAgDQo+PiBAQCAtMTg4NSw2ICsx
-OTE1LDkgQEAgc3RhdGljIHZvaWQgdXNiYV9zdG9wKHN0cnVjdCB1c2JhX3VkYyAqdWRjKQ0KPj4g
-ICAgew0KPj4gICAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+PiAgICANCj4+ICsJaWYgKHVkYy0+
-c3VzcGVuZGVkKQ0KPj4gKwkJcmV0dXJuOw0KPj4gKw0KPj4gICAgCXNwaW5fbG9ja19pcnFzYXZl
-KCZ1ZGMtPmxvY2ssIGZsYWdzKTsNCj4+ICAgIAl1ZGMtPmdhZGdldC5zcGVlZCA9IFVTQl9TUEVF
-RF9VTktOT1dOOw0KPj4gICAgCXJlc2V0X2FsbF9lbmRwb2ludHModWRjKTsNCj4+IEBAIC0xOTEy
-LDYgKzE5NDUsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdXNiYV92YnVzX2lycV90aHJlYWQoaW50
-IGlycSwgdm9pZCAqZGV2aWQpDQo+PiAgICAJCWlmICh2YnVzKSB7DQo+PiAgICAJCQl1c2JhX3N0
-YXJ0KHVkYyk7DQo+PiAgICAJCX0gZWxzZSB7DQo+PiArCQkJdWRjLT5zdXNwZW5kZWQgPSBmYWxz
-ZTsNCj4+ICAgIAkJCXVzYmFfc3RvcCh1ZGMpOw0KPj4gICAgDQo+PiAgICAJCQlpZiAodWRjLT5k
-cml2ZXItPmRpc2Nvbm5lY3QpDQo+PiBAQCAtMTk3NSw2ICsyMDA5LDcgQEAgc3RhdGljIGludCBh
-dG1lbF91c2JhX3N0b3Aoc3RydWN0IHVzYl9nYWRnZXQgKmdhZGdldCkNCj4+ICAgIAlpZiAoZmlm
-b19tb2RlID09IDApDQo+PiAgICAJCXVkYy0+Y29uZmlndXJlZF9lcCA9IDE7DQo+PiAgICANCj4+
-ICsJdWRjLT5zdXNwZW5kZWQgPSBmYWxzZTsNCj4+ICAgIAl1c2JhX3N0b3AodWRjKTsNCj4+ICAg
-IA0KPj4gICAgCXVkYy0+ZHJpdmVyID0gTlVMTDsNCj4+IEBAIC0yMjg4LDYgKzIzMjMsNyBAQCBz
-dGF0aWMgaW50IHVzYmFfdWRjX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQ0KPj4gICAgCW11
-dGV4X2xvY2soJnVkYy0+dmJ1c19tdXRleCk7DQo+PiAgICANCj4+ICAgIAlpZiAoIWRldmljZV9t
-YXlfd2FrZXVwKGRldikpIHsNCj4+ICsJCXVkYy0+c3VzcGVuZGVkID0gZmFsc2U7DQo+PiAgICAJ
-CXVzYmFfc3RvcCh1ZGMpOw0KPj4gICAgCQlnb3RvIG91dDsNCj4+ICAgIAl9DQo+PiBAQCAtMjI5
-NywxMCArMjMzMywxMyBAQCBzdGF0aWMgaW50IHVzYmFfdWRjX3N1c3BlbmQoc3RydWN0IGRldmlj
-ZSAqZGV2KQ0KPj4gICAgCSAqIHRvIHJlcXVlc3QgdmJ1cyBpcnEsIGFzc3VtaW5nIGFsd2F5cyBv
-bi4NCj4+ICAgIAkgKi8NCj4+ICAgIAlpZiAodWRjLT52YnVzX3Bpbikgew0KPj4gKwkJLyogRklY
-TUU6IHJpZ2h0IHRvIHN0b3AgaGVyZS4uLj8/PyAqLw0KPj4gICAgCQl1c2JhX3N0b3AodWRjKTsN
-Cj4+ICAgIAkJZW5hYmxlX2lycV93YWtlKGdwaW9kX3RvX2lycSh1ZGMtPnZidXNfcGluKSk7DQo+
-PiAgICAJfQ0KPj4gICAgDQo+PiArCWVuYWJsZV9pcnFfd2FrZSh1ZGMtPmlycSk7DQo+PiArDQo+
-PiAgICBvdXQ6DQo+PiAgICAJbXV0ZXhfdW5sb2NrKCZ1ZGMtPnZidXNfbXV0ZXgpOw0KPj4gICAg
-CXJldHVybiAwOw0KPj4gQEAgLTIzMTQsOCArMjM1MywxMiBAQCBzdGF0aWMgaW50IHVzYmFfdWRj
-X3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+PiAgICAJaWYgKCF1ZGMtPmRyaXZlcikNCj4+
-ICAgIAkJcmV0dXJuIDA7DQo+PiAgICANCj4+IC0JaWYgKGRldmljZV9tYXlfd2FrZXVwKGRldikg
-JiYgdWRjLT52YnVzX3BpbikNCj4+IC0JCWRpc2FibGVfaXJxX3dha2UoZ3Bpb2RfdG9faXJxKHVk
-Yy0+dmJ1c19waW4pKTsNCj4+ICsJaWYgKGRldmljZV9tYXlfd2FrZXVwKGRldikpIHsNCj4+ICsJ
-CWlmICh1ZGMtPnZidXNfcGluKQ0KPj4gKwkJCWRpc2FibGVfaXJxX3dha2UoZ3Bpb2RfdG9faXJx
-KHVkYy0+dmJ1c19waW4pKTsNCj4+ICsNCj4+ICsJCWRpc2FibGVfaXJxX3dha2UodWRjLT5pcnEp
-Ow0KPj4gKwl9DQo+PiAgICANCj4+ICAgIAkvKiBJZiBWYnVzIGlzIHByZXNlbnQsIGVuYWJsZSB0
-aGUgY29udHJvbGxlciBhbmQgd2FpdCBmb3IgcmVzZXQgKi8NCj4+ICAgIAltdXRleF9sb2NrKCZ1
-ZGMtPnZidXNfbXV0ZXgpOw0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2dhZGdldC91ZGMv
-YXRtZWxfdXNiYV91ZGMuaCBiL2RyaXZlcnMvdXNiL2dhZGdldC91ZGMvYXRtZWxfdXNiYV91ZGMu
-aA0KPj4gaW5kZXggNThjOTY3MzBlMzJlLi4yNGU2ZmJkM2JiOTkgMTAwNjQ0DQo+PiAtLS0gYS9k
-cml2ZXJzL3VzYi9nYWRnZXQvdWRjL2F0bWVsX3VzYmFfdWRjLmgNCj4+ICsrKyBiL2RyaXZlcnMv
-dXNiL2dhZGdldC91ZGMvYXRtZWxfdXNiYV91ZGMuaA0KPj4gQEAgLTMzMSw2ICszMzEsNyBAQCBz
-dHJ1Y3QgdXNiYV91ZGMgew0KPj4gICAgCXN0cnVjdCB1c2JhX2VwICp1c2JhX2VwOw0KPj4gICAg
-CWJvb2wgYmlhc19wdWxzZV9uZWVkZWQ7DQo+PiAgICAJYm9vbCBjbG9ja2VkOw0KPj4gKwlib29s
-IHN1c3BlbmRlZDsNCj4+ICAgIA0KPj4gICAgCXUxNiBkZXZzdGF0dXM7DQo+PiAgICANCj4+DQoN
-Cg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
+Hi,=0A=
+=0A=
+On 4/18/2019 04:15, Douglas Anderson wrote:=0A=
+> This is an attempt to rehash commit 0cf884e819e0 ("usb: dwc2: add bus=0A=
+> suspend/resume for dwc2") on ToT.  That commit was reverted in commit=0A=
+> b0bb9bb6ce01 ("Revert "usb: dwc2: add bus suspend/resume for dwc2"")=0A=
+> because apparently it broke the Altera SOCFPGA.=0A=
+> =0A=
+> With all the changes that have happened to dwc2 in the meantime, it's=0A=
+> possible that the Altera SOCFPGA will just magically work with this=0A=
+> change now.  ...and it would be good to get bus suspend/resume=0A=
+> implemented.=0A=
+> =0A=
+> This change is a forward port of one that's been living in the Chrome=0A=
+> OS 3.14 kernel tree.=0A=
+> =0A=
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>=0A=
+> ---=0A=
+> This patch was last posted at:=0A=
+> =0A=
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.kernel.org_r_=
+1446237173-2D15263-2D1-2Dgit-2Dsend-2Demail-2Ddianders-40chromium.org&d=3DD=
+wIDAg&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7=
+niMJI&m=3DMMfe-4lZePyty6F5zfQ54kiYGuJWNulyRat944LkOsc&s=3DnExFpAPP_0plZfO5L=
+MG1B-mqt1vyCvE35elVcyVgs8Y&e=3D=0A=
+> =0A=
+> ...and appears to have died the death of silence.  Maybe it could get=0A=
+> some bake time in linuxnext if we can't find any proactive testing?=0A=
+> =0A=
+> I will also freely admit that I don't know tons about the theory=0A=
+> behind this patch.  I'm mostly just re-hashing the original commit=0A=
+> from Kever that was reverted since:=0A=
+> * Turning on partial power down on rk3288 doesn't "just work".  I=0A=
+>    don't get hotplug events.  This is despite dwc2 auto-detecting that=0A=
+>    we are power optimized.=0A=
+What do you mean by doesn't "just work" ? It seem to me that even after =0A=
+adding this patch you don't get issues fixed.=0A=
+You mention that you don't get the hotplug events. Please provide dwc2 =0A=
+debug logs and register dumps on this issue.=0A=
+=0A=
+> * If we don't do something like this commit we don't get into as low=0A=
+>    of a power mode.=0A=
+> =0A=
+> Changes in v2: None=0A=
+> =0A=
+>   drivers/usb/dwc2/hcd.c | 84 ++++++++++++++++++++++++++----------------=
+=0A=
+>   1 file changed, 53 insertions(+), 31 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c=0A=
+> index e272d020012e..978232a9e4a8 100644=0A=
+> --- a/drivers/usb/dwc2/hcd.c=0A=
+> +++ b/drivers/usb/dwc2/hcd.c=0A=
+> @@ -4482,6 +4482,7 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)=
+=0A=
+>   	unsigned long flags;=0A=
+>   	int ret =3D 0;=0A=
+>   	u32 hprt0;=0A=
+> +	u32 pcgctl;=0A=
+>   =0A=
+>   	spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>   =0A=
+> @@ -4497,7 +4498,7 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)=
+=0A=
+>   	if (hsotg->op_state =3D=3D OTG_STATE_B_PERIPHERAL)=0A=
+>   		goto unlock;=0A=
+>   =0A=
+> -	if (hsotg->params.power_down !=3D DWC2_POWER_DOWN_PARAM_PARTIAL)=0A=
+> +	if (hsotg->params.power_down > DWC2_POWER_DOWN_PARAM_PARTIAL)=0A=
+ >   		goto skip_power_saving;=0A=
+ >=0A=
+=0A=
+"hsotg->params.power_down" is assigned to "DWC2_POWER_DOWN_PARAM_NONE =3D =
+=0A=
+0" if there is no hibernation or partial power down supported by the =0A=
+core or power saving features are disabled by =0A=
+"hsotg->params.power_saving =3D false" , "DWC2_POWER_DOWN_PARAM_PARTIAL" =
+=0A=
+if core supports partial power down, "DWC2_POWER_DOWN_PARAM_HIBERNATION =0A=
+" if the core supports hibernation=0A=
+=0A=
+When you check "if (hsotg->params.power_down > =0A=
+DWC2_POWER_DOWN_PARAM_PARTIAL)" you are saying that "skip_power_saving" =0A=
+only in that case when core supports Hibernation. But what if core =0A=
+doesn't support both hibernation and partial power down and the =0A=
+"hsotg->params.power_down" value us equal to =0A=
+"DWC2_POWER_DOWN_PARAM_NONE" which is 0.=0A=
+=0A=
+With this implementation driver will program entering to suspend when =0A=
+core doesn't support both hibernation and partial power down.=0A=
+=0A=
+>   	/*=0A=
+> @@ -4506,21 +4507,35 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)=
+=0A=
+>   	 */=0A=
+>   	if (!hsotg->bus_suspended) {=0A=
+>   		hprt0 =3D dwc2_read_hprt0(hsotg);=0A=
+> -		hprt0 |=3D HPRT0_SUSP;=0A=
+> -		hprt0 &=3D ~HPRT0_PWR;=0A=
+> -		dwc2_writel(hsotg, hprt0, HPRT0);=0A=
+> -		spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+> -		dwc2_vbus_supply_exit(hsotg);=0A=
+> -		spin_lock_irqsave(&hsotg->lock, flags);=0A=
+> +		if (hprt0 & HPRT0_CONNSTS) { > +			hprt0 |=3D HPRT0_SUSP;=0A=
+Here you set "HPRT0_SUSP" bit but what if core doesn't support both =0A=
+hibernation and Partial Power down assuming that =0A=
+hsotg->params.power_down" value us equal to "DWC2_POWER_DOWN_PARAM_NONE" =
+=0A=
+which is 0.=0A=
+> +			if (hsotg->params.power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL)=0A=
+You make one checking of hsotg->params.power_down mode here.=0A=
+> +				hprt0 &=3D ~HPRT0_PWR;=0A=
+> +			dwc2_writel(hsotg, hprt0, HPRT0);=0A=
+> +		}=0A=
+> +		if (hsotg->params.power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL) {=
+=0A=
+another checking of power_down mode here.=0A=
+> +			spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+> +			dwc2_vbus_supply_exit(hsotg);=0A=
+> +			spin_lock_irqsave(&hsotg->lock, flags);=0A=
+> +		} else {=0A=
+> +			pcgctl =3D readl(hsotg->regs + PCGCTL);=0A=
+> +			pcgctl |=3D PCGCTL_STOPPCLK;=0A=
+> +			writel(pcgctl, hsotg->regs + PCGCTL);=0A=
+"PCGCTL_STOPPCLK" bit is set only when core enters to partial power =0A=
+down. So here if hsotg->params.power_down is not equal to =0A=
+DWC2_POWER_DOWN_PARAM_PARTIAL and is DWC2_POWER_DOWN_PARAM_NONE the the =0A=
+bit will be set.=0A=
+> +		}=0A=
+>   	}=0A=
+>   =0A=
+> -	/* Enter partial_power_down */=0A=
+> -	ret =3D dwc2_enter_partial_power_down(hsotg);=0A=
+> -	if (ret) {=0A=
+> -		if (ret !=3D -ENOTSUPP)=0A=
+> -			dev_err(hsotg->dev,=0A=
+> -				"enter partial_power_down failed\n");=0A=
+> -		goto skip_power_saving;=0A=
+> +	if (hsotg->params.power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL) {=0A=
+one more power_down mode checking here.=0A=
+I understand that those checking are to make sure that we got partial =0A=
+power down mode enabled but before this patch it was done with one checking=
+.=0A=
+> +		/* Enter partial_power_down */=0A=
+> +		ret =3D dwc2_enter_partial_power_down(hsotg);=0A=
+> +		if (ret) {=0A=
+> +			if (ret !=3D -ENOTSUPP)=0A=
+> +				dev_err(hsotg->dev,=0A=
+> +					"enter partial_power_down failed\n");=0A=
+> +			goto skip_power_saving;=0A=
+> +		}=0A=
+> +=0A=
+> +		/* After entering partial_power_down, hardware is no more accessible *=
+/=0A=
+> +		clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);=0A=
+>   	}=0A=
+>   =0A=
+>   	/* Ask phy to be suspended */=0A=
+> @@ -4530,9 +4545,6 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)=
+=0A=
+>   		spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>   	}=0A=
+>   =0A=
+> -	/* After entering partial_power_down, hardware is no more accessible */=
+=0A=
+> -	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);=0A=
+> -=0A=
+>   skip_power_saving:=0A=
+>   	hsotg->lx_state =3D DWC2_L2;=0A=
+>   unlock:=0A=
+> @@ -4545,6 +4557,7 @@ static int _dwc2_hcd_resume(struct usb_hcd *hcd)=0A=
+>   {=0A=
+>   	struct dwc2_hsotg *hsotg =3D dwc2_hcd_to_hsotg(hcd);=0A=
+>   	unsigned long flags;=0A=
+> +	u32 pcgctl;=0A=
+>   	int ret =3D 0;=0A=
+>   =0A=
+>   	spin_lock_irqsave(&hsotg->lock, flags);=0A=
+> @@ -4555,17 +4568,11 @@ static int _dwc2_hcd_resume(struct usb_hcd *hcd)=
+=0A=
+>   	if (hsotg->lx_state !=3D DWC2_L2)=0A=
+>   		goto unlock;=0A=
+>   =0A=
+> -	if (hsotg->params.power_down !=3D DWC2_POWER_DOWN_PARAM_PARTIAL) {=0A=
+> +	if (hsotg->params.power_down > DWC2_POWER_DOWN_PARAM_PARTIAL) {=0A=
+>   		hsotg->lx_state =3D DWC2_L0;=0A=
+>   		goto unlock;=0A=
+>   	}=0A=
+>   =0A=
+> -	/*=0A=
+> -	 * Set HW accessible bit before powering on the controller=0A=
+> -	 * since an interrupt may rise.=0A=
+> -	 */=0A=
+> -	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);=0A=
+> -=0A=
+>   	/*=0A=
+>   	 * Enable power if not already done.=0A=
+>   	 * This must not be spinlocked since duration=0A=
+> @@ -4577,10 +4584,23 @@ static int _dwc2_hcd_resume(struct usb_hcd *hcd)=
+=0A=
+>   		spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>   	}=0A=
+>   =0A=
+> -	/* Exit partial_power_down */=0A=
+> -	ret =3D dwc2_exit_partial_power_down(hsotg, true);=0A=
+> -	if (ret && (ret !=3D -ENOTSUPP))=0A=
+> -		dev_err(hsotg->dev, "exit partial_power_down failed\n");=0A=
+> +	if (hsotg->params.power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL) {=0A=
+> +		/*=0A=
+> +		 * Set HW accessible bit before powering on the controller=0A=
+> +		 * since an interrupt may rise.=0A=
+> +		 */=0A=
+> +		set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);=0A=
+> +=0A=
+> +=0A=
+you leave an odd blank line here.  Please delete it.=0A=
+> +		/* Exit partial_power_down */=0A=
+> +		ret =3D dwc2_exit_partial_power_down(hsotg, true);=0A=
+> +		if (ret && (ret !=3D -ENOTSUPP))=0A=
+> +			dev_err(hsotg->dev, "exit partial_power_down failed\n");=0A=
+> +	} else {=0A=
+> +		pcgctl =3D readl(hsotg->regs + PCGCTL);=0A=
+> +		pcgctl &=3D ~PCGCTL_STOPPCLK;=0A=
+> +		writel(pcgctl, hsotg->regs + PCGCTL);=0A=
+=0A=
+Here if core doesn't support both hibernation and partial power down =0A=
+and "hsotg->params.power_down" is equal to "DWC2_POWER_DOWN_PARAM_NONE" =0A=
+which is 0 then "PCGCTL_STOPPCLK" bit is unset.=0A=
+=0A=
+> +	}=0A=
+>   =0A=
+>   	hsotg->lx_state =3D DWC2_L0;=0A=
+>   =0A=
+> @@ -4592,10 +4612,12 @@ static int _dwc2_hcd_resume(struct usb_hcd *hcd)=
+=0A=
+>   		spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+>   		dwc2_port_resume(hsotg);=0A=
+>   	} else {=0A=
+> -		dwc2_vbus_supply_init(hsotg);=0A=
+> +		if (hsotg->params.power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL) {=
+=0A=
+> +			dwc2_vbus_supply_init(hsotg);=0A=
+>   =0A=
+> -		/* Wait for controller to correctly update D+/D- level */=0A=
+> -		usleep_range(3000, 5000);=0A=
+> +			/* Wait for controller to correctly update D+/D- level */=0A=
+> +			usleep_range(3000, 5000);=0A=
+> +		}=0A=
+>   =0A=
+>   		/*=0A=
+>   		 * Clear Port Enable and Port Status changes.=0A=
+> =0A=
+=0A=
+I have tested the patch on HAPS-DX. With this patch or without it when I =
+=0A=
+have a device connected core  enters to partial power down and doesn't =0A=
+exit from it. So I cannot use the device.=0A=
+=0A=
+-- =0A=
+Regards,=0A=
+Artur=0A=
