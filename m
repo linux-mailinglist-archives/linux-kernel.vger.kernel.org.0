@@ -2,93 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B517E855
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A082FE822
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbfD2RHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:07:51 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43086 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728695AbfD2RHu (ORCPT
+        id S1728893AbfD2Qv3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 12:51:29 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:41852
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1728877AbfD2Qv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:07:50 -0400
-Received: by mail-lj1-f194.google.com with SMTP id k2so10046562lje.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:07:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s/4xwtUG/cKwNNv3hBRVLGCWHejEs70XonImzRvFPlM=;
-        b=PosPp5gys1RLkjRFXyznCdadARcWawPbjUCapw+0DkAT04c2KewGwgcUnjlQPjN4EL
-         Pay6WfEsAorzRzfqjbxpQwvhj+S6BsCkJF1Aj/M7GgT6fkrRBhxeSA8oQjZ8MnXNL55g
-         RcXAyp/5LNr1zxaGspstUvCDRo6tzUVhBjojVUxEfZvVacIgWEPLpZNp/d7jQFI1fVyB
-         jBmHyMU4J//xSQYjFgUUPZEDvadZ7Oymss3hEzQe0vrYoc0kpB0U+sL01MPGVQkfIHFK
-         srUoGYSDVaayKysYH3dUnnNa9FdgeyiUulCNS3sfKykmFN0ym3aA3t+xY8MOVllZWGAX
-         MHDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s/4xwtUG/cKwNNv3hBRVLGCWHejEs70XonImzRvFPlM=;
-        b=jWE1F6QtCQ9nry89eFgQsy+FU+3LuLb2tlS/V+dLw6w/Bpx0Y9PNrMVlfD4ATd1Vcp
-         t1ZUWf4cpT8Sn96ImkvyV5Lt81qaOCAaLXjosPn9dWZBBJjkJ1ong2xEtbXVMQUzlx9S
-         W7ZEgoulI0pdljSP2tRudm1j2coXuUxrp0mqfdPn5bpGjx7AQs1wMcInIRT1RlKHjm1C
-         TOIKt1JZwLhaPif37Hzzq9fjHoZO2Sm8ts4Hpzv4H+ky6fgNcfwGquDvDOmMbVoI/3QC
-         VIOaiY79z0f9o0CFFOnpkds1FP01z4ABpq1fUyl1Dmsit6TsnxpKF16zJjGnKEy7ScBo
-         04kw==
-X-Gm-Message-State: APjAAAWksalN18ji+jvJ3tvxSXsvUzJoqJy5AXgxis5lyYvUOapzpXk5
-        SwWhteNReE0d09RlXU2rYsj0mJApdbfyEuMq
-X-Google-Smtp-Source: APXvYqzoR8001nycqA47aAwHYB8TFNG6jxgEY1mY9b15Zx7v+/BxfcA4dwe4+0Gp70CAao/rEQLNXQ==
-X-Received: by 2002:a2e:9b14:: with SMTP id u20mr14356452lji.67.1556557667904;
-        Mon, 29 Apr 2019 10:07:47 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id z17sm6926179lja.26.2019.04.29.10.07.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 10:07:46 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 09:32:29 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Patrick Venture <venture@google.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org, arm-soc <arm@kernel.org>
-Subject: Re: [PATCH] soc: add aspeed folder and misc drivers
-Message-ID: <20190429163229.ibeny5r4islxiyrp@localhost>
-References: <20190422173838.182736-1-venture@google.com>
- <CAK8P3a0k_8+R9FeyZsL6Egvi1Z-G0VrvR0TWXzGHryqxTr6thg@mail.gmail.com>
+        Mon, 29 Apr 2019 12:51:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id D8FDCB4F85A;
+        Mon, 29 Apr 2019 16:33:02 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id CCBxhswxAJ-E; Mon, 29 Apr 2019 16:33:02 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 48995B4F863;
+        Mon, 29 Apr 2019 16:33:02 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9KMb9BrbyKDt; Mon, 29 Apr 2019 16:33:02 +0000 (UTC)
+Received: from [100.73.197.163] (unknown [223.237.241.75])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 4F07AB4F88E;
+        Mon, 29 Apr 2019 16:32:53 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0k_8+R9FeyZsL6Egvi1Z-G0VrvR0TWXzGHryqxTr6thg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador web <exportaciones@minpal.gob.ve>
+Date:   Mon, 29 Apr 2019 22:02:44 +0530
+Message-Id: <20190429163254.4F07AB4F88E@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 10:08:11AM +0200, Arnd Bergmann wrote:
-> On Mon, Apr 22, 2019 at 7:38 PM Patrick Venture <venture@google.com> wrote:
-> >
-> > Create a SoC folder for the ASPEED parts and place the misc drivers
-> > currently present into this folder.  These drivers are not generic part
-> > drivers, but rather only apply to the ASPEED SoCs.
-> >
-> > Signed-off-by: Patrick Venture <venture@google.com>
-> 
-> Looks ok, but please resend to arm@kernel.org or soc@kernel.org
-> so we can track the submission and make sure it gets applied if
-> you want this to go through the arm-soc tree.
-> 
-> If Greg wants to pick it up, that's fine too.
-> 
-> Either way,
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Aviso de seguridad:
 
-Applied to the SoC tree now.
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
--Olof
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index  , copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
