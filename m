@@ -2,68 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC6FAE813
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C400EE854
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfD2QtG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 12:49:06 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:40040
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1728621AbfD2QtF (ORCPT
+        id S1728804AbfD2RHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:07:47 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37670 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728695AbfD2RHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:49:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 63EC3B4E967;
-        Mon, 29 Apr 2019 16:31:09 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kZY2ta-wVQHW; Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id B78F7B4E996;
-        Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ldhaA4TH7e8O; Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
-Received: from [100.73.197.163] (unknown [223.237.241.75])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id A0175B4E437;
-        Mon, 29 Apr 2019 16:31:00 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Mon, 29 Apr 2019 13:07:47 -0400
+Received: by mail-lj1-f193.google.com with SMTP id b12so8885193lji.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YeKK3tAfy5x+3pFMDByyIL1i7Necl4Ot8V4uzh6dPdI=;
+        b=SpTxWnNXCT+s7eNFLiBVrhtEPFWtmdu0QV5L9p4KNsv8soOLUaV7vq7TgE8vGgM+sc
+         //ZqQu3TjxSrZycLZJXRoccECIY2xm9wxF92OvuZrTbZ7qqLlFjsp6LR5ixPsPAukXXw
+         cWBjtTSRskVqm6pjgQsYuPUQ18Zw2ywbwr5mTOX2X/OXIqdRhKT/rR0QfvGYhF6/MA3P
+         mfZ1+2b4XfT0zwXc/FzIlna+GiQ0pnsstcwAFj79OddVAskq1Y/vBPe3ghVRQjuRlAxD
+         7KwSilnAsQjLlGU+5fxwimueGL8UCDf4rpFTDZRQhg9UvCwus5/SU6uK6iWjxQhq4Hxc
+         9uQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YeKK3tAfy5x+3pFMDByyIL1i7Necl4Ot8V4uzh6dPdI=;
+        b=DKPDcDv9Mf20MiJnnnFJbthQMiGw1mMKw3/8q5FPHfl7ttrRWAy16Pj8KLX9EOHL0J
+         +oQ8ORM63feJy8AuqtKGAsDowdnIYsdpc3BjlP3pHaWoMz6akBUhws6Lv21Mg9xD4jaZ
+         KQ31eCLxu5a1H7UuMBzxMMD7LEdBdqknf3bQWvsfiT8mrhPM05ezjtmToNFVlzqXopQd
+         NlhMzDRdqV5wvESTI4vZH6jDO6XbSfc/kfMOu6AeOMbVdWnGvzNuXLg6fo73MCKt2OBq
+         r/Wy+UHZUpNWpGRiS6+jVD4w9OG8C9I2E9Cz1hmEB0Ex5eTy36TpYlpPyat56LlaLjO2
+         oUmg==
+X-Gm-Message-State: APjAAAVNNbj42cweMjyfpF2BQ1wuUi5VjRJqQQXheGdjku/q3IUdaFAC
+        4Bw3oGpYDTIIByJYMJpF6pa/3g==
+X-Google-Smtp-Source: APXvYqxr2kAiL2bmKb1U2ragx5zvjsV94YGmZpTib0GYs7NAZyHDj9Or280CmF4buq1qXwRq5LKh4Q==
+X-Received: by 2002:a2e:7503:: with SMTP id q3mr32471107ljc.190.1556557665256;
+        Mon, 29 Apr 2019 10:07:45 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id h14sm6902864ljg.10.2019.04.29.10.07.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 10:07:43 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 09:31:27 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Patrick Venture <venture@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, gregkh <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org, arm-soc <arm@kernel.org>
+Subject: Re: [PATCH] soc: add aspeed folder and misc drivers
+Message-ID: <20190429163127.r6k7yfriz5ha5xul@localhost>
+References: <20190422173838.182736-1-venture@google.com>
+ <CAK8P3a0k_8+R9FeyZsL6Egvi1Z-G0VrvR0TWXzGHryqxTr6thg@mail.gmail.com>
+ <CAO=notxuYsBzWBnNran5jH0RujSBeti6-HsjasCRP6Sq0MwGNA@mail.gmail.com>
+ <CAK8P3a24h=0JLZnZWOmzRqM70uhw3QZ_HcYDXST7F6TgSuW6YA@mail.gmail.com>
+ <CAO=noty2QN6H_x3RMjqOrY9b0xLLz=MBk6Fb6yCdW9+J0a-bSA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador web <exportaciones@minpal.gob.ve>
-Date:   Mon, 29 Apr 2019 22:00:51 +0530
-Message-Id: <20190429163100.A0175B4E437@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO=noty2QN6H_x3RMjqOrY9b0xLLz=MBk6Fb6yCdW9+J0a-bSA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
+On Tue, Apr 23, 2019 at 08:40:25AM -0700, Patrick Venture wrote:
+> On Tue, Apr 23, 2019 at 8:33 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Tue, Apr 23, 2019 at 4:24 PM Patrick Venture <venture@google.com> wrote:
+> > >
+> > > On Tue, Apr 23, 2019 at 1:08 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > >
+> > > > On Mon, Apr 22, 2019 at 7:38 PM Patrick Venture <venture@google.com> wrote:
+> > > > >
+> > > > > Create a SoC folder for the ASPEED parts and place the misc drivers
+> > > > > currently present into this folder.  These drivers are not generic part
+> > > > > drivers, but rather only apply to the ASPEED SoCs.
+> > > > >
+> > > > > Signed-off-by: Patrick Venture <venture@google.com>
+> > > >
+> > > > Looks ok, but please resend to arm@kernel.org or soc@kernel.org
+> > > > so we can track the submission and make sure it gets applied if
+> > > > you want this to go through the arm-soc tree.
+> > >
+> > > Thanks, I didn't see those come up in the get_maintainers output.
+> > >
+> > > I had a longer question related to this patch progression -- if I am
+> > > moving the aspeed gpio driver to the soc folder, the soc tree may have
+> > > the soc/aspeed folder in their next, but the gpio tree wouldn't
+> > > necessarily.  I know the branches sync up when things are merged at
+> > > the top, but I wasn't sure if there was another mechanism for this?
+> >
+> > We can generally deal with merge conflicts like this, or you can ask
+> > the respective maintainers about it and let us figure something out.
+> 
+> Thanks for explaining that.
+> 
+> >
+> > In this particular case, why would you move the gpio driver into
+> > the soc folder? If there is a proper subsystem for a driver, it should
+> > not be in drivers/misc or drivers/soc.
+> 
+> Ok, that makes sense. I was trying to get a sense of what belonged in
+> soc versus the subsystem folders.  My thinking from the limited
+> reading was the purpose of a SoC folder was to contain the drivers
+> that were only associated with a system-on-a-chip and not a part you
+> could buy and place on any board.  A tmp421 sensor is just a generic
+> part, versus the pwm controller, which is only for the specific SoCs.
+> 
+> That said, there are quite a few misc drivers associated with the
+> Aspeed parts -- and there are two under review now, so there's a
+> strong motivation to move those at least into the soc/aspeed folder.
+> Thanks for these clarifying remarks.
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+drivers/soc is more about platform-level glue and SoC configuration, etc.
+Specific IP blocks and drivers normally don't go into there, unless it's
+a shared resource that a lot of drivers need access to.
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+So, for most of the small drivers around the SoC, other directories than
+drivers/soc are still the best answer.
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index  , copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
-
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
+-Olof
