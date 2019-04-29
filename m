@@ -2,103 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A590EB36
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 21:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B511EB4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbfD2T6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 15:58:39 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32774 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfD2T6j (ORCPT
+        id S1729383AbfD2UCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:02:24 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50507 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbfD2UCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 15:58:39 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k19so5685816pgh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 12:58:39 -0700 (PDT)
+        Mon, 29 Apr 2019 16:02:23 -0400
+Received: by mail-it1-f194.google.com with SMTP id q14so1057145itk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=+0pEvJHfgnRVL31bGXerHYLPtlqb793XRK9UCWud7Go=;
-        b=jDz96PvqkXsvt2iFVhZf6RMWGPNt1zIabeQePrmGpbuy4I8jzBJxCFWlsmQ/z40mcl
-         tATLM6g6AAQYBGwz6xp9LnxyVOb/35LHbsUaEPBtQeZ5spmamP4Ag68lKwvrcQMzlIYH
-         CUWWa7gTifnDKg6+kwvaKU2ZsIM2LAU02xotc=
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=d5+AR4ZQ6S8Je85I3GXhGfH5pQCSFdPGrCwlud052ps=;
+        b=XRN9VSnXHB9YOZLhHV+j78/FmX9TQONi+10x6wv8ySgEM5Q3gC4vGptmW/bxkiWCCY
+         rbcj40eh19ktqbvfBBaI7hdAi4X7nV/L6e/YdSS+D+EnzRxv2YhH95gH9aH/gutPNhO4
+         RJsx+Ng3drdHuugTlgCMR2KJLCwrOUInFIlaTNKgT+fEPSEflUTe81/58oCezp2WB53J
+         Tdx9M6r9uvjF5dJT3y8Nur7B6mBnp1vd2obduvs8Sw5WW76/Khxa+GnxKWThbOxThEYI
+         WW9SEpLLQwn3CoVL/FBE6o4G0S4hGvPjxIUy76C2Ys9mrLSEiwClLRCuBLFDnHirvptg
+         mgMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=+0pEvJHfgnRVL31bGXerHYLPtlqb793XRK9UCWud7Go=;
-        b=LApVEOL5dF4VIWK7JVsJS9a9kInhHFxR/6LF3AqEo+qHVETrVsIkKgRD2lwdgghT7B
-         JgqSIl+WuLehUB0y/xQvCkBGSwPVbslYQOR+Mv4+uiW90L3/zxehMsf59tHL8rIMgoFT
-         Pr4XFRyNuxUv0I2aWaOJJh8lYkcNS26S58W31KxnyFbmYMV1GOOMfFo1AaRoR6naRLr1
-         KbzxqZ4pqKEB+g+Yc+iwgOR7xTTWpvAkBisxpE7p/WMx2KuGS7LeMdsKHegni1iRceUC
-         NUlZZ0v4OtHuey8o/q5DRBLkmB+xAY7drPjJRkXDxDF/XRhwntrX5d5KWh49NR1mfg+R
-         6XnA==
-X-Gm-Message-State: APjAAAUi95HshDlhf8BiJoWTayCsoMGpWypfn55k9XhtnmqEYY8uC9tW
-        QVJ54n6VpD1gLTcX3D4W2kqgig==
-X-Google-Smtp-Source: APXvYqxiIgh5n28OFLjkoA8cDfNSicOV7qyHbwvpCBktMKbOU7Gb05aDaHYrjmrYob5e3IFeNwM73g==
-X-Received: by 2002:a63:f444:: with SMTP id p4mr61384597pgk.32.1556567918686;
-        Mon, 29 Apr 2019 12:58:38 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id t13sm68644501pgo.14.2019.04.29.12.58.36
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=d5+AR4ZQ6S8Je85I3GXhGfH5pQCSFdPGrCwlud052ps=;
+        b=GL9eLAEMGqIC6c8vXFUXNLvsQzsGDt4DUOHkJD5ln45d9w4CCBRCAQpiK5wONv4kb+
+         Km0azecp4+8Pql5S9qYNcDpqou0jg5GO4TGgbQejN2JN3xaDwBzCHvF6yvbmU8DLqAaT
+         UPe4X3S2joJ1eWuVot54ueqBYCmnVhWc9Sm+yURxtHlzu/100aCr2RJhq2ZTRaj+fJdw
+         ouILfLkXqoRmZSHW9IOtPYxM4lzR5pyjx/aN7msLrTY/frjBs1maKG6u7tNhME9bvQV0
+         HvgepgAmqw6pOO6p7Cc5boqH99RtX5/ywKx5zXebr1eYx62NUZN6amzb6oXShi5jlLK9
+         HHXw==
+X-Gm-Message-State: APjAAAW9NS1A6dCzFl+eMB5gxQgRi7d8GwOltpQmLfyPyDfXGCsW4FvG
+        3W/8fseVyr/yqkQveaASN9mfCg==
+X-Google-Smtp-Source: APXvYqw118+txrOO593MhkfuosJ78cNcNeAwZ0b8WAls8UIMDjjD/RyZt63kf1zMwrwLeq+0e7uoZQ==
+X-Received: by 2002:a24:1f06:: with SMTP id d6mr645397itd.11.1556568142581;
+        Mon, 29 Apr 2019 13:02:22 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id v25sm7723994ioh.41.2019.04.29.13.02.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 12:58:37 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 12:58:36 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        James Morris <jamorris@linux.microsoft.com>,
-        syzbot+b562969adb2e04af3442@syzkaller.appspotmail.com,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [GIT PULL] seccomp fixes for v5.1-rc8
-Message-ID: <20190429195836.GA30688@beast>
+        Mon, 29 Apr 2019 13:02:21 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 13:02:21 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Anup Patel <anup@brainfault.org>
+cc:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH] tty: Don't force RISCV SBI console as preferred
+ console
+In-Reply-To: <CAAhSdy1nVFCwiP6vyy9i2f+S2WxLodmdwpwUKZUHYz15YfR64g@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.9999.1904291254300.7063@viisi.sifive.com>
+References: <20190425133435.56065-1-anup.patel@wdc.com> <9a8be7ef-e62e-2a93-9170-e3dc70dfb25f@wdc.com> <20190426062133.GA28529@infradead.org> <CAAhSdy1nVFCwiP6vyy9i2f+S2WxLodmdwpwUKZUHYz15YfR64g@mail.gmail.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 26 Apr 2019, Anup Patel wrote:
 
-Please pull these seccomp fixes for v5.1-rc8. Syzbot found a use-after-free
-bug in seccomp due to flags that should not be allowed to be used together.
-Tycho fixed this, I updated the self-tests, and the syzkaller PoC has been
-running for several days without triggering KASan (before this fix, it
-would reproduce). These patches have also been in -next for almost a week,
-just to be sure.
+> On Fri, Apr 26, 2019 at 11:51 AM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Thu, Apr 25, 2019 at 09:41:21PM -0700, Atish Patra wrote:
+> > > Do we even need HVC_SBI console to be enabled by default? Disabling
+> > > CONFIG_HVC_RISCV_SBI seems to be fine while running in QEMU.
+> > >
+> > > If we don't need it, I suggest we should remove the config option from
+> > > defconfig in addition to this patch.
+> >
+> > I think the whole concept of the SBI console is a little dangerous.
+> > It means that for one piece of physical hardware (usually the uart)
+> > we have two entiries (the M-mode firmware and the OS) in control,
+> > which tends to rarely end well.
+> 
+> I think the SBI console is only useful for early SOC bringup and early
+> SOC debugging when most drivers are not available in upstream
+> kernel. It cannot (and should not) be used in production deployments.
 
-Thanks!
+Usually the primary use-case for an abstract console interface is for 
+desktop and server users.  Usually Linux distributions want a hardware 
+platform-specific bootloader or BIOS to specify and control the console.  
 
--Kees
+Originally I suspect this was implemented in the SBI for semi-hosting 
+purposes, but that's no longer really applicable.
 
-The following changes since commit 8c2ffd9174779014c3fe1f96d9dc3641d9175f00:
 
-  Linux 5.1-rc2 (2019-03-24 14:02:26 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-v5.1-rc8
-
-for you to fetch changes up to 7a0df7fbc14505e2e2be19ed08654a09e1ed5bf6:
-
-  seccomp: Make NEW_LISTENER and TSYNC flags exclusive (2019-04-25 15:55:58 -0700)
-
-----------------------------------------------------------------
-seccomp use-after-free fix
-
-- Add logic for making some seccomp flags exclusive (Tycho)
-- Update selftests for exclusivity testing (Kees)
-
-----------------------------------------------------------------
-Kees Cook (1):
-      selftests/seccomp: Prepare for exclusive seccomp flags
-
-Tycho Andersen (1):
-      seccomp: Make NEW_LISTENER and TSYNC flags exclusive
-
- kernel/seccomp.c                              | 17 ++++++++++++--
- tools/testing/selftests/seccomp/seccomp_bpf.c | 34 ++++++++++++++++++++-------
- 2 files changed, 40 insertions(+), 11 deletions(-)
-
--- 
-Kees Cook
+- Paul
