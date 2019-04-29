@@ -2,77 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F13E96F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71376E94D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbfD2Rp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:45:58 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41334 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbfD2Rp6 (ORCPT
+        id S1729075AbfD2Rhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:37:34 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42005 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbfD2Rhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:45:58 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g8so8415762otl.8;
-        Mon, 29 Apr 2019 10:45:57 -0700 (PDT)
+        Mon, 29 Apr 2019 13:37:31 -0400
+Received: by mail-qt1-f193.google.com with SMTP id p20so12885519qtc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:37:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Scl3PSeQx2hTIiqKFeLsOvlDZYPJZC93Bw/i/+ssipk=;
+        b=ptaO2FS6ypIWyQztD2x2lutibcWLniDRjyeuKUfWIf1O+X5lxP5eMp4/yYYtuz+pGY
+         Ce1XXKV/mauofPq43ANGGo6PE3Kk/SDXnWiQRI+og1/IPlwqZfM6Vq8Ohx+Qd+xe3Cea
+         1XliFECnAIIRzb4T3QpixakaHFmr/RZ921PUK1wHvYo6CbSuHBTc3bjjbOBaLe1x3AKr
+         LqNHs/SltBfNkLhL6b7nnJnLPK211670F1VVeE8oneNUafHLpj9ZvtGw3ypqtz1pEIJx
+         JcDr2aqjt21YG85BglmPhR89KSy7HkMswTGFzEMe1/jlO7ILrDSYmMKxnVU2We8soAVR
+         P51A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jAzJmF2TDQHSyudozQ8MRP+x53QYDHzdtWrUcOyie5o=;
-        b=g+R92KDFW0x6NHaON6tGIwOzwahJ1uY0f2uFCkM4ehSXaRpBAy18WwSJwtH24yiNe8
-         Dg6R8os/+N3ERC8WIGnbGzbVmntXuD3l6v60G+bWPUzFAUYTgXamkoM8+k0Hygiag358
-         GhJSY0zjzqtA+iVigi21JwYab0ZHSptzDZa3GUb+5ElgDPZSLLDfbjpAHCd+XoXNw3W1
-         fUo9gVCXk3klCJArpYi8zt+LC0xiTwZp08rGBvCJaPEVcuBd7S06+vaQ0G9Ii2T0Ol6N
-         +wb+8004MAeSHDVZQJI9zLO9mqyT9QTIsihnsVlEJRJYudAGAISx7wr+ryHl4Xk4q3WW
-         3lAA==
-X-Gm-Message-State: APjAAAXP/1pUa26HJGkf/eXsNAxq4jxGUKPhrIqtba3Po3E4Tvs+/7yL
-        Wu+pL+cVudy8UBa+4r+JhGhHMoc=
-X-Google-Smtp-Source: APXvYqyDmhrZrBxVsjETXa+G0jMSBEdawMchYDvBe7bdT/A54hBJgsvfF2vIblFu+/8+xxw3vWkkFw==
-X-Received: by 2002:a9d:7f89:: with SMTP id t9mr23252837otp.169.1556559413449;
-        Mon, 29 Apr 2019 10:36:53 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s26sm13741338otk.24.2019.04.29.10.36.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 10:36:52 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 12:36:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH 2/6] dt-bindings: media: sun6i-csi: Add compatible string
- for A83T variant
-Message-ID: <20190429173651.GA6551@bogus>
-References: <20190408165744.11672-1-wens@kernel.org>
- <20190408165744.11672-3-wens@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Scl3PSeQx2hTIiqKFeLsOvlDZYPJZC93Bw/i/+ssipk=;
+        b=XtvGTmQP+sPCW+x8W7uM7FC85sZkbPuaVyRMi41Pz+R8sshjAB7AvHXXUPidkL17Iq
+         0Hg8TF3op2QEbCtaleQNq69xl+kXjWUah/9+SEZ6SQ1FM66qGTyXd/R+SMZ2uaSwBo59
+         ao/zbJMtiL5AQ25n5hFw5WZ2btSF+Oep1aK26nf8egWo10L3i4/FGn2u4pDZzkY+47G/
+         ztwCwGnWix4zIgt2jFmM04D/eLyDBJGfNO+GGeJm9XU/9vBcfWoMK2mlByPD0K0sHahb
+         TqAT0MtnSvp+HPR22Yn80W7z/1+XmiPui5jtzK6Y6l653f5sh5e6KLjSf9Dr0fRwIo8Z
+         NVdg==
+X-Gm-Message-State: APjAAAW4yAumiGQn5FPd3brBAtp1rcNOWk8qSYqlaQFBAtmafkeWoVkO
+        ycqy6o4zqPp1nAHBR2xph9weag==
+X-Google-Smtp-Source: APXvYqxVU8sw20J6Qw/4taFaNGKYpelgEYrGSEY3WYaBH1E6yhmpWrRJFCcKzXbh58XbHGTuCJNX8g==
+X-Received: by 2002:ac8:3613:: with SMTP id m19mr27358131qtb.261.1556559435878;
+        Mon, 29 Apr 2019 10:37:15 -0700 (PDT)
+Received: from ovpn-121-162.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id 74sm4710182qta.15.2019.04.29.10.37.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 10:37:15 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH 1/2] arm64: fix pte_unmap() -Wunused-but-set-variable
+Date:   Mon, 29 Apr 2019 13:37:01 -0400
+Message-Id: <20190429173702.31389-1-cai@lca.pw>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190408165744.11672-3-wens@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  9 Apr 2019 00:57:40 +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> lingo), which is similar to the one found on the A64 and H3. The only
-> difference seems to be that support of MIPI CSI through a connected
-> MIPI CSI-2 bridge.
-> 
-> Add a compatible string for this variant.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Many compilation warnings due to pte_unmap() compiles away. Fixed it by
+making it an static inline function.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+mm/gup.c: In function 'gup_pte_range':
+mm/gup.c:1727:16: warning: variable 'ptem' set but not used
+[-Wunused-but-set-variable]
+mm/gup.c: At top level:
+mm/memory.c: In function 'copy_pte_range':
+mm/memory.c:821:24: warning: variable 'orig_dst_pte' set but not used
+[-Wunused-but-set-variable]
+mm/memory.c:821:9: warning: variable 'orig_src_pte' set but not used
+[-Wunused-but-set-variable]
+mm/swap_state.c: In function 'swap_ra_info':
+mm/swap_state.c:641:15: warning: variable 'orig_pte' set but not used
+[-Wunused-but-set-variable]
+mm/madvise.c: In function 'madvise_free_pte_range':
+mm/madvise.c:318:9: warning: variable 'orig_pte' set but not used
+[-Wunused-but-set-variable]
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/arm64/include/asm/pgtable.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index de70c1eabf33..74ebe9693714 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -478,6 +478,8 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ 	return __pmd_to_phys(pmd);
+ }
+ 
++static inline void pte_unmap(pte_t *pte) { }
++
+ /* Find an entry in the third-level page table. */
+ #define pte_index(addr)		(((addr) >> PAGE_SHIFT) & (PTRS_PER_PTE - 1))
+ 
+@@ -486,7 +488,6 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ 
+ #define pte_offset_map(dir,addr)	pte_offset_kernel((dir), (addr))
+ #define pte_offset_map_nested(dir,addr)	pte_offset_kernel((dir), (addr))
+-#define pte_unmap(pte)			do { } while (0)
+ #define pte_unmap_nested(pte)		do { } while (0)
+ 
+ #define pte_set_fixmap(addr)		((pte_t *)set_fixmap_offset(FIX_PTE, addr))
+-- 
+2.20.1 (Apple Git-117)
+
