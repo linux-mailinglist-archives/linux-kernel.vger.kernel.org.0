@@ -2,229 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A545BDD57
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3831ADD58
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 10:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfD2IDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 04:03:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:59379 "EHLO mga06.intel.com"
+        id S1727586AbfD2IE5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 04:04:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:59463 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfD2IDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 04:03:36 -0400
+        id S1727448AbfD2IE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 04:04:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 01:03:35 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 01:04:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,408,1549958400"; 
-   d="scan'208";a="139699438"
-Received: from shbuild999.sh.intel.com ([10.239.146.112])
-  by orsmga006.jf.intel.com with ESMTP; 29 Apr 2019 01:03:33 -0700
-From:   Feng Tang <feng.tang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+   d="scan'208";a="139699800"
+Received: from irsmsx109.ger.corp.intel.com ([163.33.3.23])
+  by orsmga006.jf.intel.com with ESMTP; 29 Apr 2019 01:04:52 -0700
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.21]) by
+ IRSMSX109.ger.corp.intel.com ([169.254.13.189]) with mapi id 14.03.0415.000;
+ Mon, 29 Apr 2019 09:04:50 +0100
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        David Laight <David.Laight@aculab.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Eric W Biederman <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ying Huang <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Cc:     Feng Tang <feng.tang@intel.com>
-Subject: [RFC PATCH 3/3] latencytop: add a lazy mode for updating global latency data
-Date:   Mon, 29 Apr 2019 16:03:31 +0800
-Message-Id: <1556525011-28022-4-git-send-email-feng.tang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1556525011-28022-1-git-send-email-feng.tang@intel.com>
-References: <1556525011-28022-1-git-send-email-feng.tang@intel.com>
+        'Peter Zijlstra' <peterz@infradead.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "luto@amacapital.net" <luto@amacapital.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Subject: RE: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+Thread-Topic: [PATCH] x86/entry/64: randomize kernel stack offset upon
+ syscall
+Thread-Index: AQHU81HQwzT9MH4dM0y/JZXnSwiYT6Y8wW2AgAAdM1CAAXexAIAANZ3ggAAW1gCAAApRgIAAMeKAgAAd+PCAAQuGgIAAYQuAgAAKhwCACsPi4IADJTwAgAAcagCAAD5kAIAEIeIQ
+Date:   Mon, 29 Apr 2019 08:04:50 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4C66B18@IRSMSX102.ger.corp.intel.com>
+References: <20190416120822.GV11158@hirez.programming.kicks-ass.net>
+ <01914abbfc1a4053897d8d87a63e3411@AcuMS.aculab.com>
+ <20190416154348.GB3004@mit.edu>
+ <2236FBA76BA1254E88B949DDB74E612BA4C52338@IRSMSX102.ger.corp.intel.com>
+ <9cf586757eb44f2c8f167abf078da921@AcuMS.aculab.com>
+ <20190417151555.GG4686@mit.edu>
+ <99e045427125403ba2b90c2707d74e02@AcuMS.aculab.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C5E473@IRSMSX102.ger.corp.intel.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
+ <20190426140102.GA4922@mit.edu> <20190426174419.GB691@sol.localdomain>
+In-Reply-To: <20190426174419.GB691@sol.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNGU0NTgyNWYtZGI2MC00MWYxLTliNmMtZTYzNWMxNWFjMTljIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWFdNWkZ4Tm1cL3l3STQ5RVZ5dytNU1wvcCtidU15K2ZodnEzTE16TkFLVlhLMHRId3g4ZGttbUZxRTUwK3RCclVPIn0=
+x-originating-ip: [163.33.239.180]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-latencytop is a nice tool for tracing system latency hotspots, and
-we heavily use it in 0day/LKP test suites.
+> On Fri, Apr 26, 2019 at 10:01:02AM -0400, Theodore Ts'o wrote:
+> > On Fri, Apr 26, 2019 at 11:33:09AM +0000, Reshetova, Elena wrote:
+> > > Adding Eric and Herbert to continue discussion for the chacha part.
+> > > So, as a short summary I am trying to find out a fast (fast enough to be used per
+> syscall
+> > > invocation) source of random bits with good enough security properties.
+> > > I started to look into chacha kernel implementation and while it seems that it is
+> designed to
+> > > work with any number of rounds, it does not expose less than 12 rounds
+> primitive.
+> > > I guess this is done for security sake, since 12 is probably the lowest bound we
+> want people
+> > > to use for the purpose of encryption/decryption, but if we are to build an
+> efficient RNG,
+> > > chacha8 probably is a good tradeoff between security and speed.
+> > >
+> > > What are people's opinions/perceptions on this? Has it been considered before
+> to create a
+> > > kernel RNG based on chacha?
+> >
+> > Well, sure.  The get_random_bytes() kernel interface and the
+> > getrandom(2) system call uses a CRNG based on chacha20.  See
+> > extract_crng() and crng_reseed() in drivers/char/random.c.
+> >
+> > It *is* possible to use an arbitrary number of rounds if you use the
+> > low level interface exposed as chacha_block(), which is an
+> > EXPORT_SYMBOL interface so even modules can use it.  "Does not expose
+> > less than 12 rounds" applies only if you are using the high-level
+> > crypto interface.
+> 
+> chacha_block() actually WARNs if the round count isn't 12 or 20, because I
+> didn't want people to sneak in uses of other variants without discussion :-)
+> 
+> (Possibly I should have made chacha_block() 'static' and only exported
+> chacha12_block() and chacha20_block().  But the 'nrounds' parameter is
+> convenient for crypto/chacha_generic.c.)
+> 
+> >
+> > We have used cut down crypto algorithms for performance critical
+> > applications before; at one point, we were using a cut down MD4(!) for
+> > initial TCP sequence number generation.  But that was getting rekeyed
+> > every five minutes, and the goal was to make it just hard enough that
+> > there were other easier ways of DOS attacking a server.
+> >
+> > I'm not a cryptographer, so I'd really us to hear from multiple
+> > experts about the security level of, say, ChaCha8 so we understand
+> > exactly kind of security we'd offering.  And I'd want that interface
+> > to be named so that it's clear it's only intended for a very specific
+> > use case, since it will be tempting for other kernel developers to use
+> > it in other contexts, with undue consideration.
+> >
+> >       	    	      	   	 - Ted
+> 
+> The best attack on ChaCha is against 7 rounds and has time complexity 2^235.  So
+> while there's no publicly known attack on ChaCha8, its security margin is too
+> small for it to be recommended for typical cryptographic use.  I wouldn't be
+> suprised to see an attack published on ChaCha8 in the not-too-distant future.
+> (*Probably* not a practical one, but the crypto will be technically "broken"
+> regardless.)
 
-However, When running some scheduler benchmarks like hackbench,
-we noticed in some cases the global latencytop_lock will occupy around
-70% of CPU cycles from perf profile, mainly come from contention
-for "latency_lock" inside __account_scheduler_latency(), as when
-system is running with workload that causes massive process scheduling,
-most of the processes contends for this global lock. Given that,
-we have to disable the latencytop when running such benchmarks.
+Yes, this is also what is my understanding with regards to chacha official 
+security strength. But our use case and requirements are slightly different
+and can be in future upgraded, if needed, but let's indeed then try per-cpu
+buffer solution that Andy is proposing first to see if it is satisfactory performance-
+wise with chacha20, which probably stays secure for much longer unless whole
+construction is fully broken. 
 
-Add an extra lazy mode option, which will only update the global
-latency data when a task exits, and this greatly reduces the possible
-lock contion for "latency_lock". And with this new lazy mode, the lock
-contention for latency_lock could be cut from 70% to less than 3%
-(perf profile data),  and there is a hackbench throughput boost :
+> 
+> I don't think it's completely out of the question for this specific use case,
+> since apparently you only need random numbers that are used temporarily for
+> runtime memory layout.  Thus the algorithm can be upgraded at any time without
+> spending decades deprecating it from network protocols and on-disk formats.
+> 
+> But if you actually need cryptographically secure random numbers, it would be
+> much better to start with something with a higher security margin like ChaCha20,
+> optimizing it, and only going lower if you actually need to.
 
-            v5.0    v5.0 + patches
----------------- ---------------------------
-    540207          +267.6%    1986052        hackbench.throughput
+Yes, agree, so this is what I am going to try then.
 
-The test we run is on a 2 sockets Xeon E5-2699 machine (44 Cores/88 CPUs)
-with 64GB RAM, with cmd:
-  "hackbench -g 1408 --process --pipe -l 1875 -s 1024"
+> Would it be possibly to call ChaCha20 through the actual crypto API so that SIMD
+> instructions (e.g. AVX-2) could be used?  That would make it *much* faster.
 
-As a new mode is added, the sysctl "kernel.latencytop" and
-/proc/sys/kernel/latencytop are changed as follows:
+I can try measuring both ways given that we ask for enough random bits as Andy suggested. 
+Couple of pages or so, if it helps with overhead. Also, hope none of these specific 
+Instructions (including AES-NI) can block, as I was pointed out with RDRAND, otherwise
+I guess we have a problem.. 
 
-	0 - Disabled
-	1 - Enabled (normal mode): update the global data each time task
-	    gets scheduled (same as before the patch)
-	2 - Enabled (lazy mode): update the global data only when a task
-	    exists
+> Also consider AES-CTR with AES-NI instructions.
 
-Suggested-by: Ying Huang <ying.huang@intel.com>
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/sysctl/kernel.txt | 17 +++++++++++------
- include/linux/latencytop.h      |  5 +++++
- kernel/exit.c                   |  2 ++
- kernel/latencytop.c             | 41 +++++++++++++++++++++++++++++++++++++----
- 4 files changed, 55 insertions(+), 10 deletions(-)
+Yes, I guess based on these numbers they go hand in hand with chacha8 (depending on CPU):
+https://bench.cr.yp.to/results-stream.html
+Also need to compare cases when no special instructions are available I guess when choosing a primitive
+here... 
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index 080ef66..05cd9e2 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -440,12 +440,17 @@ When kptr_restrict is set to (2), kernel pointers printed using
- 
- latencytop:
- 
--This value controls whether to start collecting kernel latency
--data, it is off (0) by default, and could be switched on (1).
--The latency talked here is not the 'traditional' interrupt
--latency (which is primarily caused by something else consuming CPU),
--but instead, it is the latency an application encounters because
--the kernel sleeps on its behalf for various reasons.
-+This value controls whether and how to collect kernel latency
-+data, it is off (0) by default. The latency talked here is not
-+the 'traditional' interrupt latency (which is primarily caused by
-+something else consuming CPU), but instead, it is the latency an
-+application encounters because the kernel sleeps on its behalf
-+for various reasons.
-+
-+0 - Disabled
-+1 - Enabled (normal mode): update the global data each time task
-+    gets scheduled
-+2 - Enabled (lazy mode): update the global data only when a task exists
- 
- The info is exported via /proc/latency_stats and /proc/<pid>/latency.
- 
-diff --git a/include/linux/latencytop.h b/include/linux/latencytop.h
-index 7c560e0..08eeabb 100644
---- a/include/linux/latencytop.h
-+++ b/include/linux/latencytop.h
-@@ -41,6 +41,7 @@ void clear_all_latency_tracing(struct task_struct *p);
- extern int sysctl_latencytop(struct ctl_table *table, int write,
- 			void __user *buffer, size_t *lenp, loff_t *ppos);
- 
-+extern void update_task_latency_data(struct task_struct *tsk);
- #else
- 
- static inline void
-@@ -52,6 +53,10 @@ static inline void clear_all_latency_tracing(struct task_struct *p)
- {
- }
- 
-+static inline void update_task_latency_data(struct task_struct *tsk)
-+{
-+}
-+
- #endif
- 
- #endif
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 2639a30..701b8bd 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -859,6 +859,8 @@ void __noreturn do_exit(long code)
- 	tsk->exit_code = code;
- 	taskstats_exit(tsk, group_dead);
- 
-+	update_task_latency_data(tsk);
-+
- 	exit_mm();
- 
- 	if (group_dead)
-diff --git a/kernel/latencytop.c b/kernel/latencytop.c
-index 6d7a174..9943cce 100644
---- a/kernel/latencytop.c
-+++ b/kernel/latencytop.c
-@@ -65,6 +65,17 @@ static DEFINE_RAW_SPINLOCK(latency_lock);
- #define MAXLR 128
- static struct latency_record latency_record[MAXLR];
- 
-+/*
-+ * latencytop working models:
-+ *	0 - disabled
-+ *	1 - enabled, update the global data each time task
-+ *	    gets scheduled
-+ *	2 - enabled, only update the global data when a task
-+ *	    exists
-+ */
-+#define LATENCYTOP_DISABLED	0
-+#define LATENCYTOP_NORMAL_MODE	1
-+#define LATENCYTOP_LAZY_MODE	2
- int latencytop_enabled;
- 
- void clear_all_latency_tracing(struct task_struct *p)
-@@ -125,7 +136,7 @@ account_global_scheduler_latency(struct task_struct *tsk,
- 				break;
- 		}
- 		if (same) {
--			latency_record[i].count++;
-+			latency_record[i].count += lat->count;
- 			latency_record[i].time += lat->time;
- 			if (lat->time > latency_record[i].max)
- 				latency_record[i].max = lat->time;
-@@ -141,6 +152,25 @@ account_global_scheduler_latency(struct task_struct *tsk,
- 	memcpy(&latency_record[i], lat, sizeof(struct latency_record));
- }
- 
-+/* Used only in lazy mode */
-+void update_task_latency_data(struct task_struct *tsk)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	if (latencytop_enabled != LATENCYTOP_LAZY_MODE)
-+		return;
-+
-+	/* skip kernel threads for now */
-+	if (!tsk->mm)
-+		return;
-+
-+	raw_spin_lock_irqsave(&latency_lock, flags);
-+	for (i = 0; i < tsk->latency_record_count; i++)
-+		account_global_scheduler_latency(tsk, &tsk->latency_record[i]);
-+	raw_spin_unlock_irqrestore(&latency_lock, flags);
-+}
-+
- /*
-  * Iterator to store a backtrace into a latency record entry
-  */
-@@ -193,9 +223,12 @@ __account_scheduler_latency(struct task_struct *tsk, int usecs, int inter)
- 	lat.max = usecs;
- 	store_stacktrace(tsk, &lat);
- 
--	raw_spin_lock_irqsave(&latency_lock, flags);
--	account_global_scheduler_latency(tsk, &lat);
--	raw_spin_unlock_irqrestore(&latency_lock, flags);
-+	/* Don't do the global update in lazy mode */
-+	if (latencytop_enabled == LATENCYTOP_NORMAL_MODE) {
-+		raw_spin_lock_irqsave(&latency_lock, flags);
-+		account_global_scheduler_latency(tsk, &lat);
-+		raw_spin_unlock_irqrestore(&latency_lock, flags);
-+	}
- 
- 	raw_spin_lock_irqsave(&tsk->latency_lock, flags);
- 	for (i = 0; i < tsk->latency_record_count; i++) {
--- 
-2.7.4
+Best Regards,
+Elena.
 
