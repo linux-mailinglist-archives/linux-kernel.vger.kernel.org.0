@@ -2,94 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16909EB4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75606EB51
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbfD2UDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:03:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35010 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729163AbfD2UDr (ORCPT
+        id S1729279AbfD2UFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:05:48 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36402 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbfD2UFs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:03:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gXBZVUg4jQbTWNl/rOtvrBvT8zt4gzjmR4Rn7XZccXU=; b=TN1+azQlisq62Mso/YE6137jh
-        dstuCHzj9XfNBJXgcAAm+Heqp8Vrft4jW4co4zD6xNMZt1YpgbG84RFfEunMIJxDVi86SaXtJJMCN
-        IdUGN3+vF9/1ap56HXZq206cDipNDutppFbktg705F5ZdiuIGqR27GlLTOTTVM1cPqyP3De7MThCi
-        En/BcrH3CglsKGIkLWiKGsVMyBqNik4jODOTi2TjxPJcVUy0mpKMFniparDi3tb919wEfIdpfGIaC
-        4nrqM+FZGig2pP0yXHPcISAgCR8JBUGSYR/ZdpcdjgRvf3Xllvu3x4FVn2PGQ62+7bKTtZfaZhC3T
-        zS+K+Q3XQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLCV0-0005Qy-Ty; Mon, 29 Apr 2019 20:03:38 +0000
-Date:   Mon, 29 Apr 2019 13:03:38 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>, kevin.tian@intel.com,
-        ashok.raj@intel.com, dima@arista.com, tmurphy@arista.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        jacob.jun.pan@intel.com
-Subject: Re: [PATCH v3 5/8] iommu/vt-d: Implement def_domain_type iommu ops
- entry
-Message-ID: <20190429200338.GA8412@infradead.org>
-References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
- <20190429020925.18136-6-baolu.lu@linux.intel.com>
+        Mon, 29 Apr 2019 16:05:48 -0400
+Received: by mail-io1-f67.google.com with SMTP id d19so10141005ioc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:05:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tC2ii7OkMypP9Br4uPDYWWFU7NBDDS8QRme9Wy6zm/8=;
+        b=BEF6FeqCkvGhBgLDl5yPPWV3i4tMpavwlD6geMWM/d1ryf9v+iHwgg4uJIB7rgioBh
+         Kyp2l/4gBJz9MKEMcel32vMP8gnDkR0SdFHxUVBynbwY4G0sG1fo4VIBb4Gx5FKXexoo
+         At9/+gjbjguglioui8T/cbrPPI8msEG+RpKaFYn59E92IQzOpxirZ/npNDNbpfR2CWQM
+         FIVqwBbxlbkj6Ldm74V3h6UA5GqMx/GUCWiAPcDtVnIcY4pq/2k4f8FF7c5nQTs76tWr
+         Xa48jUJEfYTYWK20klO5c2Zo+krNXbuuO0rDWLHuooMNHgMdOtwU52+B+AwA1sqY1Lpi
+         GS3w==
+X-Gm-Message-State: APjAAAW7QmtKrCyKUc7nExhhJPUOdivGF1FlCAfXzbsZNj0HrHeRBkwL
+        LqzA8X4A8JiqMB9Xa8FtPq1ibg==
+X-Google-Smtp-Source: APXvYqxivxOcXaQhwX8xCEpSH/9z5tK+xILufw0tv9Y5/ccJdVJ6UOC1csH3kacmPD5O/YpVwnzcUg==
+X-Received: by 2002:a5d:8245:: with SMTP id n5mr12201452ioo.41.1556568346959;
+        Mon, 29 Apr 2019 13:05:46 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id b72sm255077itc.30.2019.04.29.13.05.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 13:05:46 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 14:05:41 -0600
+From:   Raul Rangel <rrangel@chromium.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-usb@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xhci: Convert xhci_handshake() to use
+ readl_poll_timeout_atomic()
+Message-ID: <20190429200541.GA116440@google.com>
+References: <20190208014816.21869-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190429020925.18136-6-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190208014816.21869-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -3631,35 +3607,30 @@ static int iommu_no_mapping(struct device *dev)
->  	if (iommu_dummy(dev))
->  		return 1;
->  
-> -	if (!iommu_identity_mapping)
-> -		return 0;
-> -
+On Thu, Feb 07, 2019 at 05:48:16PM -0800, Andrey Smirnov wrote:
+> Xhci_handshake() implements the algorithm already captured by
+> readl_poll_timeout_atomic(). Convert the former to use the latter to
+> avoid repetition.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Tested-by: Raul E Rangel <rrangel@chromium.org>
+Reviewed-by: Raul E Rangel <rrangel@chromium.org>
 
-FYI, iommu_no_mapping has been refactored in for-next:
+This fixes a bug on the AMD Stoneyridge platform. usleep(1) sometimes
+takes over 10ms. This means a 5 second timeout can easily take over 15
+seconds which will trigger the watchdog and reboot the system.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=x86/vt-d&id=48b2c937ea37a3bece0094b46450ed5267525289
-
->  	found = identity_mapping(dev);
->  	if (found) {
-> +		/*
-> +		 * If the device's dma_mask is less than the system's memory
-> +		 * size then this is not a candidate for identity mapping.
-> +		 */
-> +		u64 dma_mask = *dev->dma_mask;
-> +
-> +		if (dev->coherent_dma_mask &&
-> +		    dev->coherent_dma_mask < dma_mask)
-> +			dma_mask = dev->coherent_dma_mask;
-> +
-> +		if (dma_mask < dma_get_required_mask(dev)) {
-
-I know this is mostly existing code moved around, but it really needs
-some fixing.  For one dma_get_required_mask is supposed to return the
-required to not bounce mask for the given device.  E.g. for a device
-behind an iommu it should always just return 32-bit.  If you really
-want to check vs system memory please call dma_direct_get_required_mask
-without the dma_ops indirection.
-
-Second I don't even think we need to check the coherent_dma_mask,
-dma_direct is pretty good at always finding memory even without
-an iommu.
-
-Third this doesn't take take the bus_dma_mask into account.
-
-This probably should just be:
-
-		if (min(*dev->dma_mask, dev->bus_dma_mask) <
-		    dma_direct_get_required_mask(dev)) {
+Thanks for the patch.
