@@ -2,97 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434A7EEB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 04:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70F5BE9C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbfD3CMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 22:12:37 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46517 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729803AbfD3CMh (ORCPT
+        id S1728962AbfD2SMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:12:49 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57111 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbfD2SMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 22:12:37 -0400
-Received: by mail-qk1-f194.google.com with SMTP id w73so7230427qkb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 19:12:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AvEs9iF7UgH1KoPh1IzqcTHpTm8A152gkwFXPuBPxi4=;
-        b=qZFM76xqwX0nHQwBnaEyXEkQW/Nn9Cxxfguc3CWDmtGBZ32MljDrhYn2YTKLFb7Czx
-         aw4hhzV5DzabQQFxoo8Nsg3ioD25APmb9se+2ym5QcnWM3B9BYPyAqPUcz/6uZig0zyT
-         QAnHoCyQzZJjTocOK9ePD4uO3nvTnIcDpEPEqjgS+9y6hgxX3Y0WpEX0qbcrYbmQpb9Y
-         dXwB7l0x1Q60XoUvmNmN0l+k1O0Nt5tbcrB80rYUK5LvOGE0n5Irshwld5BaFlIWmK4g
-         rUX3SKGhr0BSwseFpeLZXj2M8hWfaw5/kziMKB1BAgcTE/54PH5LvR17oSCt6ECW6TpY
-         RVfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AvEs9iF7UgH1KoPh1IzqcTHpTm8A152gkwFXPuBPxi4=;
-        b=KS/xG46Ji/cY0F8U6td99omJo9+5k7gKPA0I4OcZxOwxgoxVbZUW+on/6KeMmQSd+P
-         dN1ET/rHXkP+K2T3oa9wKQsAQixTWxawW+z+firLGA5EBB98ParcI0AsgNHfHmxttbwT
-         /c36aHlYLYNfqVVdE9DBpzh7Eh8KeZLtOUS5iF7LRDpkzP326owm7ZLnUAsoerzrVXYB
-         yL1vl3ogb9cvgQRzfuaIrt+yO0QgVATVABONH/DGb+4/1rv5w054Ls9Q6+gvotLkS9af
-         rTNgns8nTV52OcX+RbNpaYFaRYI3WvbXFCxMrSQi6bnNckhX39nlHLT1e+s2qUT5rMvT
-         VwfQ==
-X-Gm-Message-State: APjAAAUapRnowEed1sbqYfu/GYmjps4iHZknuYEE/9OzOW4E9kP1YqvA
-        aLBOZDeLmPjhIjLlwu+YEtH2nHip38H4a7rm9ju5eg==
-X-Google-Smtp-Source: APXvYqzqb3PJHn1yZcKtN0ujVfgfOiIbacUnfqiU/Iwlvs3nFz94JrQtCCBqvBgb2BgMuPsnhY7XSR/J6J3QytvtpQQ=
-X-Received: by 2002:ae9:e60b:: with SMTP id z11mr18198439qkf.80.1556590356354;
- Mon, 29 Apr 2019 19:12:36 -0700 (PDT)
+        Mon, 29 Apr 2019 14:12:49 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 5A24880683; Mon, 29 Apr 2019 20:12:37 +0200 (CEST)
+Date:   Mon, 29 Apr 2019 20:12:45 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Marek Behun <marek.behun@nic.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-leds@vger.kernel.org
+Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
+Message-ID: <20190429181245.GA24658@amd>
+References: <20190429190354.0d5e2e93@canb.auug.org.au>
+ <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
+ <20190429153200.GA11761@amd>
+ <20190429173842.06f02852@nic.cz>
+ <20190429163753.GA16782@amd>
+ <20190429184439.68049050@nic.cz>
+ <20190429165319.GB16782@amd>
+ <c045db7f-2147-1a58-8d65-8b52fddd932c@metux.net>
 MIME-Version: 1.0
-References: <20190415055358.9269-1-chiu@endlessm.com> <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
- <20190426125031.GQ9224@smile.fi.intel.com>
-In-Reply-To: <20190426125031.GQ9224@smile.fi.intel.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Tue, 30 Apr 2019 02:12:29 +0800
-Message-ID: <CAB4CAwfF7FoQK9OndOm_yHQe19j=E_cNLn3eTBfoggEacONiyg@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
-To:     Andriy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Daniel Drake <drake@endlessm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <c045db7f-2147-1a58-8d65-8b52fddd932c@metux.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 8:50 PM Andriy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Tue, Apr 23, 2019 at 12:38:17PM +0200, Linus Walleij wrote:
-> > On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
-> >
-> > > The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
-> > > responsive after suspend/resume. The following error message
-> > > shows after resume.
-> > >  i2c_hid i2c-ELAN1200:00: failed to reset device.
-> > >
-> > > On these laptops, the touchpad interrupt is connected via a GPIO
-> > > pin which is controlled by Intel pinctrl. After system resumes,
-> > > the GPIO is in ACPI mode and no longer works as an IRQ.
-> > >
-> > > This commit saves the HOSTSW_OWN value during suspend, make sure
-> > > the HOSTSW_OWN mode remains the same after resume.
-> > >
-> > > Signed-off-by: Chris Chiu <chiu@endlessm.com>
-> >
-> > This v3 patch applied with Mika's ACK.
->
-> Hmm... It's supposed to go along with our PR.
 
-Anything I can help with?
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Chris
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+On Mon 2019-04-29 19:51:40, Enrico Weigelt, metux IT consult wrote:
+> On 29.04.19 18:53, Pavel Machek wrote:
+> >>> Theoretically. But we both now that probability of that is very low,
+> >>> and that likely driver would need other updates, too... right?
+> >>
+> >> What would be the benefit to add ARM dependency? So that distro
+> >> compilations don't ship the turris_omnia driver unnecesarily?
+> >=20
+> > That, and so that people are not asked "do you want to enable omnia
+> > LEDs?" when they update their kernel on i386.
+>=20
+> Is that controller only built-in into some SoCs, or also available
+> as a separate chip ?
+
+AFAIU.. separate chip, but runs firmware not likely to be available
+outside Turris routers.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzHPpwACgkQMOfwapXb+vIcBQCgtBmnpmXzcHNXsdDgB5Gwe2ws
+iSQAnj9N+Ez+Ex9vtroCNqCGYUal3/AG
+=mzAP
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
