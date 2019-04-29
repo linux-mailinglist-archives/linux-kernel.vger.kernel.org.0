@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB71E990
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D71D5DFBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfD2R5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:57:11 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:18027 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728844AbfD2R5L (ORCPT
+        id S1727720AbfD2JsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 05:48:00 -0400
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:39930 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfD2JsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:57:11 -0400
+        Mon, 29 Apr 2019 05:48:00 -0400
+Received: by mail-wr1-f54.google.com with SMTP id a9so15047157wrp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 02:47:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1556560630; x=1588096630;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=VP2cUI8KjAFIewDrbCGl5adztK+upR77ms3b6lJ7QZA=;
-  b=vGMkC/TIMg40oY1Hbrd0Wc2gQyQNMKIhHUOTF4sFguENHVbeKt/yY64L
-   oWsU0K9l67tOzd6sNx6HnLmXG1yJg6QD8PiZ3NybmaXYINX0MdCTOoy2s
-   kxaD36wYKvnEZwQgOiF4APMYqFaic4nV0W/fHtEhL8e++4GaVMWCd7skj
-   4=;
-X-IronPort-AV: E=Sophos;i="5.60,410,1549929600"; 
-   d="scan'208";a="730991733"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Apr 2019 09:47:57 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x3T9ltnl088636
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 29 Apr 2019 09:47:55 GMT
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 29 Apr 2019 09:47:55 +0000
-Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.160.175) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 29 Apr 2019 09:47:48 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <talel@amazon.com>, <robh@kernel.org>, <edubezval@gmail.com>,
-        <daniel.lezcano@linaro.org>, <dwmw@amazon.co.uk>,
-        <jonnyc@amazon.com>, <rui.zhang@intel.com>, <hhhawa@amazon.com>,
-        <ronenk@amazon.com>, <hanochu@amazon.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: [PATCH 1/1] thermal: Fix build error of missing devm_ioremap_resource on UM
-Date:   Mon, 29 Apr 2019 12:47:36 +0300
-Message-ID: <1556531256-26321-1-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <201904261215.nJZXSFjx%lkp@intel.com>
-References: <201904261215.nJZXSFjx%lkp@intel.com>
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LrkVzYO8i3GpLatsXL6FS/oqta3++wMs7+5LeRy4XK4=;
+        b=ukqWmx3wk3bwzUUQ1iO/jvjVvsc23IEqfUxqjqDjOfpR0kUF144ve+vgR3s5aGxeh3
+         k6uyPmHOLatnda/+LtcyvQ8Pr6jtdFGok9hsz9Y+OvxzTt4UejcZWTdPFr6e7/h085Ey
+         Ob5UOdSyjGF2QlfDxl4ZOBTzxz6cwKw8GkH7j8JI7VIy7ZJhycPoMMMkgpM//FPZfnHv
+         vx96uYQOwuO2dLziGjZJGTp3W3dxTeJIb1hiEmF0lPrJmLV9T3ofbq2Wc25CWmyvXoG/
+         SXBHID4/4JQSFL7qMQU9xOh9b9SmLNWtP/AInD0CHc8QWjJ9G+CtkMq43SPy1PHfNrSd
+         ROfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LrkVzYO8i3GpLatsXL6FS/oqta3++wMs7+5LeRy4XK4=;
+        b=JK35BvTO/YeKpkih5POXQgVS16goMMLB9VgvrXP2Z/+HykZwJ3GA/bvy8/re9ZQbPr
+         4SXxhC/mTFCzevm+R70RCD1/ybbgDlN/p8qPrloVLXsAYwEetToUkZX6RozJvKkIjiAR
+         8k+jwDi1lid3bGrNmuq38i2EM1UgYLarYmxBT7scEH9GsDxPlXvekaeoGvKgULivL1bd
+         izwMf2SXJ8y1lT5O0T0ZRY2HffXNqi3aBk67BeLby0efDFvrBwO9KFRqBMhJk4lVRwkf
+         Bkfjj4aHax+637BH0Cc7D1uvRtGNXlzpeCc5CWq71dCYpsEAi07kzTIYqz5x2I5a04xF
+         c78A==
+X-Gm-Message-State: APjAAAUN5221m/Qi/v05D4zitEuMsQQm9tHQFnxnsfOFEsn1tyL+h9Bi
+        4qNOwkhsZlS5CMUe3Hz3PjA/Iw==
+X-Google-Smtp-Source: APXvYqw1Y82RfJ3jpeXI3QjGSBtoRy2moIA/+T+GLROcNG/x6qQpL1g5WWqaNo2iN13u4PoSisRA8Q==
+X-Received: by 2002:adf:afd1:: with SMTP id y17mr7767686wrd.125.1556531278695;
+        Mon, 29 Apr 2019 02:47:58 -0700 (PDT)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id 192sm47987465wme.13.2019.04.29.02.47.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 02:47:57 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: [PATCH 0/2] ASoC: fix hw_params/hw_free validity checks
+Date:   Mon, 29 Apr 2019 11:47:48 +0200
+Message-Id: <20190429094750.1857-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.175]
-X-ClientProxiedBy: EX13D18UWC004.ant.amazon.com (10.43.162.77) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The devres.o gets linked if HAS_IOMEM is present so on ARCH=um
-allyesconfig (COMPILE_TEST) failed on many files with:
+While working on a codec, I have found an odd situation. The hw_params
+callback which was provided by the codec dai was not called as expected.
+However, the hw_free callback was called, even if hw_params was skipped.
 
-drivers/thermal/thermal_mmio.o:
-In function 'thermal_mmio_probe':thermal_mmio.c:(.text+0xe1):
-undefined reference to `devm_ioremap_resource'
+After debugging, I found out that the dai was considered invalid because
+it did not specify any rates, only rate_min and rate_max. That's a first
+problem.
 
-The users of devm_ioremap_resource() which are compile-testable
-should depend on HAS_IOMEM.
+If a codec dai is considered invalid, hw_free should probably not be
+called either, that's a 2nd issue.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Talel Shenhar <talel@amazon.com>
----
- drivers/thermal/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patchset is meant to solve both issues.
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 41f3943..66a709d 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -203,6 +203,7 @@ config THERMAL_EMULATION
- config THERMAL_MMIO
- 	tristate "Generic Thermal MMIO driver"
- 	depends on OF || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	help
- 	  This option enables the generic thermal MMIO driver that will use
- 	  memory-mapped reads to get the temperature.  Any HW/System that
+Jerome Brunet (2):
+  ASoC: fix valid stream condition
+  ASoC: skip hw_free on codec dai for which the stream is invalid
+
+ sound/soc/soc-pcm.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
 -- 
-2.7.4
+2.20.1
 
