@@ -2,72 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B874E91E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE418E925
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfD2Rco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:32:44 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41467 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728798AbfD2Rco (ORCPT
+        id S1729030AbfD2RdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:33:12 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42587 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728816AbfD2RdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:32:44 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v23so8813167oif.8;
-        Mon, 29 Apr 2019 10:32:44 -0700 (PDT)
+        Mon, 29 Apr 2019 13:33:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id w25so5647796pfi.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zpbyIVAlhMbRdeAB1M3cn6Wkwo9TF52AlNw1cUUTqHY=;
+        b=vch2kdmhm3l/dYckKUYwTvyy6uXkMyZ9o3lJstXxJLuYnD3TbLEy3yWlSDh0vKuwif
+         Kf3mGYGdG2QKV02tpYo0oG0vO8JNt2F9ZFLumLfRWLRu21hlnPQe9ewIidI/KUGZfDH8
+         chQPhoRQgf7tS+IC+9XCrZ81Me0OjI762s90xxvqBvoi1g/GTsKSdHa2JyVk0JvbAUKx
+         kr2ArBxjThj4+xSh8X/91M+uhfjGs1fAPcvHBex1n8hYIz9Ck9xbIyFCTWKa57hw0ZYW
+         nU0iHKd57k3x2C8Z0I5rRs4gFqm1k0c8tfNQX+FbjDAFH0hA/y+0iJzwzY5RKb2CXuKs
+         FpVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QDtrWOXaOIs/bib/3O7J4111EMvXZxoXj3SzesY8SpA=;
-        b=sv6n00BYulkDfeVZKRCZ0nBYhjjMaBoheR6MY59HrK2gfohhTacrJkg8ipuny3YQtB
-         d/MxEpp/V6GYhe/ruXXsk4iZ0HQ3YJfMhqdaJc2AgvpgQ3Qcr4WalUT6uVUmeml+IkMs
-         9fSA3UvPmYRplAFbiIDSlxe4KZPenHNqddi746tOl0K1xq+sInyAAd4skBFhkR7xD0np
-         pV0qh22vVTllJWsMlT7Ns+O0v4p7qNWlKLuwegL5M5NCvIqewdGZccH7XGI2k8/n4Fqu
-         eMu8EtxcQIvURQJeieWHk2AWtaFO6U25+bq4FzOlmQVYxkrlOeWENCs4UYX9h2eJ9Bhz
-         JwRw==
-X-Gm-Message-State: APjAAAVqWM/NYXOFvCf2Iq7ACUC1FIaTQSmiPu5xVWl/pyH/kRRYhh+c
-        C1uzDr/DD6itwVl4zePVVg==
-X-Google-Smtp-Source: APXvYqzyPSEssfXutyMhWb2fynO/AklVIW4F7DP8jHNu56/LpY77hOUe/wwznZk4urFuw5CJscMBNw==
-X-Received: by 2002:aca:3306:: with SMTP id z6mr145029oiz.25.1556559163639;
-        Mon, 29 Apr 2019 10:32:43 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p132sm14802026oig.37.2019.04.29.10.32.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 10:32:43 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 12:32:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        lee.jones@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: LMU: Add the ramp up/down
- property
-Message-ID: <20190429173242.GA30624@bogus>
-References: <20190405142855.3969-1-dmurphy@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zpbyIVAlhMbRdeAB1M3cn6Wkwo9TF52AlNw1cUUTqHY=;
+        b=bec4txDHxMEXKD6xWDxFOWy4wV0Qpiz3p64Yro7cuLaThiVtQvclKLbsajGAuo9ff+
+         6FAy7HXY11O9n98zNqOes5ohG7FXUcSpdQmqzEFFq4ZIPXw+4gD82GcIDoRvbQQD5FDa
+         nb+k6/TLKSQW5zrna5zq0JxQ6dsG4w9qDVbMDpPb+JtaX3Txf1AhxfjSlnGdrPxurN66
+         7fJm3PnqBhYFQn30mxkdoRfT59SiLipYZ4797t0C+WwQbaYys6iF42kVPfYVUk7p1k85
+         bOQ5jE2inOU0dfQmG5eXKXRibNoMyOniT0nCTx2Og36kMog0HJi/9MXeaA8OQl44PZiV
+         r3zQ==
+X-Gm-Message-State: APjAAAXFUxvKzUcrSiUpE3Iw71y9LQZM7cJb8HFyGB/27PRbNdX2I7SO
+        /JcIUCA9CZejjp+6+dpOkPm28RdD+PqspKtYCtFogg==
+X-Google-Smtp-Source: APXvYqyhzVkgB0sNyP0pJLGAsn93Af3fptKn4jl6xD7tGPX4gYaGIpx/DliKHjfrKnMpDxgiLG5/DVCAaTylqLuA5Wo=
+X-Received: by 2002:a63:c702:: with SMTP id n2mr21510100pgg.255.1556559190626;
+ Mon, 29 Apr 2019 10:33:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190405142855.3969-1-dmurphy@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190426130015.GA12483@archlinux-i9> <20190426190603.5982-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20190426190603.5982-1-linux@rasmusvillemoes.dk>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 29 Apr 2019 10:32:59 -0700
+Message-ID: <CAKwvOd=Qzs8gAenS6-GkiSmrwxwJA7wChJ6FUE5+=LPAj4XSfQ@mail.gmail.com>
+Subject: Re: [PATCH 11/10] arm64: unbreak DYNAMIC_DEBUG=y build with clang
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Apr 2019 09:28:50 -0500, Dan Murphy wrote:
-> Document the ramp-up and ramp-down property in the binding.
-> Removing the "sec" from the property definition as seconds is
-> implied.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+On Fri, Apr 26, 2019 at 12:06 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> Current versions of clang does not like the %c modifier in inline
+> assembly for targets other than x86, so any DYNAMIC_DEBUG=y build
+> fails on arm64. A fix is likely to land in 9.0 (see
+> https://github.com/ClangBuiltLinux/linux/issues/456), but unbreak the
+> build for older versions.
+>
+> Fixes: arm64: select DYNAMIC_DEBUG_RELATIVE_POINTERS
+> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > ---
-> 
-> v2 - Fixed commit message as this was not just a modification but adding documentation
-> https://lore.kernel.org/patchwork/patch/1054504/
-> 
->  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
+> Andrew, please apply and/or fold into 9/10.
+>
+>  arch/arm64/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index d0871d523d5d..315992e33b17 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -83,7 +83,7 @@ config ARM64
+>         select CRC32
+>         select DCACHE_WORD_ACCESS
+>         select DMA_DIRECT_REMAP
+> -       select DYNAMIC_DEBUG_RELATIVE_POINTERS
+> +       select DYNAMIC_DEBUG_RELATIVE_POINTERS if CC_IS_GCC || CLANG_VERSION >= 90000
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I just landed the fix for this in Clang, I think around the time you
+sent the patch.  Should ship in Clang 9.  Thanks for unbreaking our
+build.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+>         select EDAC_SUPPORT
+>         select FRAME_POINTER
+>         select GENERIC_ALLOCATOR
+> --
+> 2.20.1
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
