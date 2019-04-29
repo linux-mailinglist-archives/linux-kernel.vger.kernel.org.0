@@ -2,163 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3860E0AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30BEE0A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 12:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfD2Km6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 06:42:58 -0400
-Received: from 9.mo173.mail-out.ovh.net ([46.105.72.44]:34442 "EHLO
-        9.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbfD2Km6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 06:42:58 -0400
-X-Greylist: delayed 346 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Apr 2019 06:42:57 EDT
-Received: from player158.ha.ovh.net (unknown [10.109.159.132])
-        by mo173.mail-out.ovh.net (Postfix) with ESMTP id B8BBAFF697
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 12:37:09 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player158.ha.ovh.net (Postfix) with ESMTPSA id C9E2051F45C6;
-        Mon, 29 Apr 2019 10:37:01 +0000 (UTC)
-Date:   Mon, 29 Apr 2019 12:36:59 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alistair Popple <alistair@popple.id.au>, stable@vger.kernel.org
-Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
-Message-ID: <20190429123659.00c0622b@bahia.lan>
-In-Reply-To: <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
-References: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
-        <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727829AbfD2Kht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 06:37:49 -0400
+Received: from mail-eopbgr130089.outbound.protection.outlook.com ([40.107.13.89]:28341
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727621AbfD2Khs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 06:37:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n29GjD+lJxjPv4oNzL6Txq+WQX6U9smqgB4ZUfVUbbA=;
+ b=vrxxYzPi7D3gthPQFLi4ivTRWHAxNv3sksaj9uZk3BVydaxuI2YILo3kY4QIdE6Q8gnob/Q6lMUwo/Cu5mGzOFvRz8aetnqiU8M59bLb11nEpEYNt16s/PYp9iQPKlkdXfI2U2QdbdK+fH8MOH2yhU44Q1MueWVdSo2cWL/x2XQ=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB4066.eurprd04.prod.outlook.com (52.134.92.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.15; Mon, 29 Apr 2019 10:37:44 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::8cda:4e52:8e87:8f0e]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::8cda:4e52:8e87:8f0e%2]) with mapi id 15.20.1835.018; Mon, 29 Apr 2019
+ 10:37:44 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] rtc: snvs: Use __maybe_unused instead of #if
+ CONFIG_PM_SLEEP
+Thread-Topic: [PATCH] rtc: snvs: Use __maybe_unused instead of #if
+ CONFIG_PM_SLEEP
+Thread-Index: AQHU/lmEml9HNTGs9Ea7jhPERyCyyKZS8kxA
+Date:   Mon, 29 Apr 2019 10:37:44 +0000
+Message-ID: <AM0PR04MB42116B2223E1AA8AAE2CF00080390@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1556521071-8981-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1556521071-8981-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 688540d2-f1a6-44c4-4843-08d6cc8eb71b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4066;
+x-ms-traffictypediagnostic: AM0PR04MB4066:
+x-microsoft-antispam-prvs: <AM0PR04MB4066FED039618470CE28E7D280390@AM0PR04MB4066.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4303;
+x-forefront-prvs: 0022134A87
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39860400002)(136003)(189003)(199004)(97736004)(9686003)(305945005)(52536014)(76116006)(66476007)(66556008)(64756008)(66446008)(73956011)(55016002)(66946007)(6436002)(25786009)(7696005)(86362001)(110136005)(2201001)(99286004)(6506007)(102836004)(76176011)(4326008)(6246003)(316002)(33656002)(6116002)(3846002)(7736002)(68736007)(81156014)(8676002)(8936002)(53936002)(74316002)(81166006)(558084003)(2501003)(478600001)(2906002)(229853002)(256004)(5660300002)(44832011)(486006)(446003)(11346002)(476003)(14454004)(71200400001)(71190400001)(66066001)(26005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4066;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: GwaDsfAVcLUVvZ3p6DvQ1fYXTeSF4YUkigCMsXTuKN9p1UQrsL1fpAEPaWRnXQirF2FoaWRBqVaLOVEbzmYh2pOO/QrzSiipqfaLgnotfqIkN/U0irOadkbhitT+NkfNnHZMDgj+GDEnBqzzFEHHUU1vJRpzgmGNTDhvrYxuRpdT6h0LMJ1BqOxtUIUYdGkL5O1Kdf4UpKsojVRTQ9m31fXTW/r9AYe/S8s4uEuTh4+dnskpI908e1LiOdTXCGjLJhp/7w3nsTTgw1MwnsuiOLfx1stO+Ehz10zbiPGORxNkuftyeeWUmIWtj8A1w5ekGbG37Ymlsjxhch2lmDI9w6/p4+jhYHbJJK0U9CkmCU1uWCRFV2GEtJWn8f8IBLezIdMU914KaGR8Pf7zyp3WsyqGfoc/mmSrAxz+N7cFjHM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 15264106512109181429
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddriedvgdefudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 688540d2-f1a6-44c4-4843-08d6cc8eb71b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 10:37:44.7583
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019 16:01:29 +1000
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-
-> On 20/04/2019 01:34, Greg Kurz wrote:
-> > Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
-> > has the effect of incrementing the reference count of the PCI device, as
-> > explained in drivers/pci/search.c:
-> > 
-> >  * Given a PCI domain, bus, and slot/function number, the desired PCI
-> >  * device is located in the list of PCI devices. If the device is
-> >  * found, its reference count is increased and this function returns a
-> >  * pointer to its data structure.  The caller must decrement the
-> >  * reference count by calling pci_dev_put().  If no device is found,
-> >  * %NULL is returned.
-> > 
-> > Nothing was done to call pci_dev_put() and the reference count of GPU and
-> > NPU PCI devices rockets up.
-> > 
-> > A natural way to fix this would be to teach the callers about the change,
-> > so that they call pci_dev_put() when done with the pointer. This turns
-> > out to be quite intrusive, as it affects many paths in npu-dma.c,
-> > pci-ioda.c and vfio_pci_nvlink2.c.  
-> 
-> 
-> afaict this referencing is only done to protect the current traverser
-> and what you've done is actually a natural way (and the generic
-> pci_get_dev_by_id() does exactly the same), although this looks a bit weird.
-> 
-
-Not exactly the same: pci_get_dev_by_id() always increment the refcount
-of the returned PCI device. The refcount is only decremented when this
-device is passed to pci_get_dev_by_id() to continue searching.
-
-That means that the users of the PCI device pointer returned by
-pci_get_dev_by_id() or its exported variants pci_get_subsys(),
-pci_get_device() and pci_get_class() do handle the refcount. They
-all pass the pointer to pci_dev_put() or continue the search,
-which calls pci_dev_put() internally.
-
-Direct and indirect callers of get_pci_dev() don't care for the
-refcount at all unless I'm missing something.
-
-> 
-> > Also, the issue appeared in 4.16 and
-> > some affected code got moved around since then: it would be problematic
-> > to backport the fix to stable releases.
-> > 
-> > All that code never cared for reference counting anyway. Call pci_dev_put()
-> > from get_pci_dev() to revert to the previous behavior.  
-> >> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev  
-> from pci_dn")
-> > Cc: stable@vger.kernel.org # v4.16
-> > Signed-off-by: Greg Kurz <groug@kaod.org>
-> > ---
-> >  arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-> > index e713ade30087..d8f3647e8fb2 100644
-> > --- a/arch/powerpc/platforms/powernv/npu-dma.c
-> > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
-> > @@ -31,9 +31,22 @@ static DEFINE_SPINLOCK(npu_context_lock);
-> >  static struct pci_dev *get_pci_dev(struct device_node *dn)
-> >  {
-> >  	struct pci_dn *pdn = PCI_DN(dn);
-> > +	struct pci_dev *pdev;
-> >  
-> > -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> > +	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> >  					   pdn->busno, pdn->devfn);
-> > +
-> > +	/*
-> > +	 * pci_get_domain_bus_and_slot() increased the reference count of
-> > +	 * the PCI device, but callers don't need that actually as the PE
-> > +	 * already holds a reference to the device.  
-> 
-> Imho this would be just enough.
-> 
-> Anyway,
-> 
-> Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> 
-
-Thanks !
-
-I now realize that I forgot to add the --cc option for stable on my stgit
-command line :-\.
-
-Cc'ing now.
-
-> 
-> How did you find it? :)
-> 
-
-While reading code to find some inspiration for OpenCAPI passthrough. :)
-
-I saw the following in vfio_pci_ibm_npu2_init():
-
-	if (!pnv_pci_get_gpu_dev(vdev->pdev))
-		return -ENODEV;
-
-and simply followed the function calls.
-
-> 
-> > Since callers aren't
-> > +	 * aware of the reference count change, call pci_dev_put() now to
-> > +	 * avoid leaks.
-> > +	 */
-> > +	if (pdev)
-> > +		pci_dev_put(pdev);
-> > +
-> > +	return pdev;
-> >  }
-> >  
-> >  /* Given a NPU device get the associated PCI device. */
-> >   
-> 
-
+PiBGcm9tOiBBbnNvbiBIdWFuZw0KPiBTZW50OiBNb25kYXksIEFwcmlsIDI5LCAyMDE5IDM6MDMg
+UE0NCj4gDQo+IFVzZSBfX21heWJlX3VudXNlZCBmb3IgcG93ZXIgbWFuYWdlbWVudCByZWxhdGVk
+IGZ1bmN0aW9ucyBpbnN0ZWFkIG9mICNpZg0KPiBDT05GSUdfUE1fU0xFRVAgdG8gc2ltcGx5IHRo
+ZSBjb2RlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54
+cC5jb20+DQoNClJldmlld2VkLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29t
+Pg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
