@@ -2,120 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01905EA64
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC16EEA78
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfD2Spu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:45:50 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27294 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728962AbfD2Spu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:45:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 11:45:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,410,1549958400"; 
-   d="scan'208";a="153344993"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Apr 2019 11:45:49 -0700
-Received: from brettjgr-mobl1.ger.corp.intel.com (unknown [10.254.180.216])
-        by linux.intel.com (Postfix) with ESMTP id A1D445803C2;
-        Mon, 29 Apr 2019 11:45:47 -0700 (PDT)
-Subject: Re: [PATCH v2] ASoC: Intel: avoid Oops if DMA setup fails
-To:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     Ross Zwisler <zwisler@google.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, stable@vger.kernel.org
-References: <20190429182517.210909-1-zwisler@google.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <951de893-e6ff-5bd0-3483-4c1d93b30cfc@linux.intel.com>
-Date:   Mon, 29 Apr 2019 13:45:46 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1729147AbfD2Ssl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:48:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41663 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbfD2Ssl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 14:48:41 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TIkQL51031184
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 29 Apr 2019 11:46:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TIkQL51031184
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556563588;
+        bh=iIPzJzN88Ldq4KztePevor+oaTGNeeuMHs1Eu33goKA=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=p44VRK6Dvi+NbOiarhTeTkk4G8SKYfU8huTVemtMn8CKNz1felSNRF0T/E/s7akdE
+         pxroLcJTFUN3OkyxgzbE/9TNx/YVG3brmpyJH60ABjsTew3JkfY9uv93OSjsy5pBdf
+         OuqQyvQE/p1KE71IJxjQ1HlKjHEXCW+XeD9/aXqoYbzfyNk0fzbv5FD7oyO6AhZG3I
+         0DGYd2a/bxsaQd3S9l6cXHTjJBkiInKoY4F7f7d2ZsLkMHbh3ewdDI0U1sZ23Z2Mlk
+         7aUmNyDix5mM6XTH+3g7JDRErMHzQPad4jrxlsDv3KNEnSN/KCr/47tKngDZ7aXyfC
+         AUncWtY65GwOw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TIkOsV1031179;
+        Mon, 29 Apr 2019 11:46:24 -0700
+Date:   Mon, 29 Apr 2019 11:46:24 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0@git.kernel.org>
+Cc:     mingo@kernel.org, adobriyan@gmail.com, hpa@zytor.com,
+        akpm@linux-foundation.org, dvyukov@google.com,
+        jani.nikula@linux.intel.com, tglx@linutronix.de,
+        snitzer@redhat.com, m.szyprowski@samsung.com, airlied@linux.ie,
+        penberg@kernel.org, luto@kernel.org, aryabinin@virtuozzo.com,
+        rientjes@google.com, joonas.lahtinen@linux.intel.com,
+        robin.murphy@arm.com, jpoimboe@redhat.com,
+        maarten.lankhorst@linux.intel.com, rppt@linux.vnet.ibm.com,
+        hch@lst.de, dsterba@suse.com, cl@linux.com, josef@toxicpanda.com,
+        jthumshirn@suse.de, catalin.marinas@arm.com, daniel@ffwll.ch,
+        tom.zanussi@linux.intel.com, akinobu.mita@gmail.com,
+        linux-kernel@vger.kernel.org, mbenes@suse.cz, clm@fb.com,
+        agk@redhat.com, rodrigo.vivi@intel.com, glider@google.com,
+        rostedt@goodmis.org
+Reply-To: airlied@linux.ie, penberg@kernel.org, tglx@linutronix.de,
+          snitzer@redhat.com, m.szyprowski@samsung.com,
+          aryabinin@virtuozzo.com, luto@kernel.org, robin.murphy@arm.com,
+          rientjes@google.com, joonas.lahtinen@linux.intel.com,
+          jpoimboe@redhat.com, maarten.lankhorst@linux.intel.com,
+          mingo@kernel.org, adobriyan@gmail.com, dvyukov@google.com,
+          akpm@linux-foundation.org, hpa@zytor.com,
+          jani.nikula@linux.intel.com, daniel@ffwll.ch,
+          catalin.marinas@arm.com, akinobu.mita@gmail.com,
+          linux-kernel@vger.kernel.org, mbenes@suse.cz,
+          tom.zanussi@linux.intel.com, agk@redhat.com, clm@fb.com,
+          rostedt@goodmis.org, glider@google.com, rodrigo.vivi@intel.com,
+          hch@lst.de, dsterba@suse.com, rppt@linux.vnet.ibm.com,
+          cl@linux.com, jthumshirn@suse.de, josef@toxicpanda.com
+In-Reply-To: <20190425094803.248604594@linutronix.de>
+References: <20190425094803.248604594@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/stacktrace] tracing: Simplify stack trace retrieval
+Git-Commit-ID: ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190429182517.210909-1-zwisler@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/29/19 1:25 PM, Ross Zwisler wrote:
-> Currently in sst_dsp_new() if we get an error return from sst_dma_new()
-> we just print an error message and then still complete the function
-> successfully.  This means that we are trying to run without sst->dma
-> properly set up, which will result in NULL pointer dereference when
-> sst->dma is later used.  This was happening for me in
-> sst_dsp_dma_get_channel():
-> 
->          struct sst_dma *dma = dsp->dma;
-> 	...
->          dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
-> 
-> This resulted in:
-> 
->     BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
->     IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
-> 
-> Fix this by adding proper error handling for the case where we fail to
-> set up DMA.
-> 
-> This change only affects Haswell and Broadwell systems.  Baytrail
-> systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
-> being set to -1.
-> 
-> Signed-off-by: Ross Zwisler <zwisler@google.com>
-> Cc: stable@vger.kernel.org
+Commit-ID:  ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
+Gitweb:     https://git.kernel.org/tip/ee6dd0db4d8de41a0a0bc37d8d87a0b1623f83b0
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Thu, 25 Apr 2019 11:45:16 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 29 Apr 2019 12:37:55 +0200
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+tracing: Simplify stack trace retrieval
 
-Thanks Ross!
+Replace the indirection through struct stack_trace by using the storage
+array based interfaces.
 
-FWIW we should start deprecating this driver now and transition to SOF. 
-I'll double-check how the upcoming 1.3 release works on my Pixel 
-2015/Samus device later this week.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: linux-mm@kvack.org
+Cc: David Rientjes <rientjes@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: kasan-dev@googlegroups.com
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: David Sterba <dsterba@suse.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-btrfs@vger.kernel.org
+Cc: dm-devel@redhat.com
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: linux-arch@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190425094803.248604594@linutronix.de
 
+---
+ kernel/trace/trace.c | 40 +++++++++++++---------------------------
+ 1 file changed, 13 insertions(+), 27 deletions(-)
 
-> ---
-> 
-> Changes in v2:
->   - Upgraded the sst_dma_new() failure message from dev_warn() to dev_err()
->     (Pierre-Louis).
->   - Noted in the changelog that this change only affects Haswell and
->     Broadwell (Pierre-Louis).
-> 
-> ---
->   sound/soc/intel/common/sst-firmware.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-> index 1e067504b6043..f830e59f93eaa 100644
-> --- a/sound/soc/intel/common/sst-firmware.c
-> +++ b/sound/soc/intel/common/sst-firmware.c
-> @@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
->   		goto irq_err;
->   
->   	err = sst_dma_new(sst);
-> -	if (err)
-> -		dev_warn(dev, "sst_dma_new failed %d\n", err);
-> +	if (err)  {
-> +		dev_err(dev, "sst_dma_new failed %d\n", err);
-> +		goto dma_err;
-> +	}
->   
->   	return sst;
->   
-> +dma_err:
-> +	free_irq(sst->irq, sst);
->   irq_err:
->   	if (sst->ops->free)
->   		sst->ops->free(sst);
-> 
-
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index d8369d27c1af..0ce8515dd470 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2774,22 +2774,18 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
+ {
+ 	struct trace_event_call *call = &event_kernel_stack;
+ 	struct ring_buffer_event *event;
++	unsigned int size, nr_entries;
+ 	struct ftrace_stack *fstack;
+ 	struct stack_entry *entry;
+-	struct stack_trace trace;
+-	int size = FTRACE_KSTACK_ENTRIES;
+ 	int stackidx;
+ 
+-	trace.nr_entries	= 0;
+-	trace.skip		= skip;
+-
+ 	/*
+ 	 * Add one, for this function and the call to save_stack_trace()
+ 	 * If regs is set, then these functions will not be in the way.
+ 	 */
+ #ifndef CONFIG_UNWINDER_ORC
+ 	if (!regs)
+-		trace.skip++;
++		skip++;
+ #endif
+ 
+ 	/*
+@@ -2816,28 +2812,24 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
+ 	barrier();
+ 
+ 	fstack = this_cpu_ptr(ftrace_stacks.stacks) + stackidx;
+-	trace.entries		= fstack->calls;
+-	trace.max_entries	= FTRACE_KSTACK_ENTRIES;
+-
+-	if (regs)
+-		save_stack_trace_regs(regs, &trace);
+-	else
+-		save_stack_trace(&trace);
+-
+-	if (trace.nr_entries > size)
+-		size = trace.nr_entries;
++	size = ARRAY_SIZE(fstack->calls);
+ 
+-	size *= sizeof(unsigned long);
++	if (regs) {
++		nr_entries = stack_trace_save_regs(regs, fstack->calls,
++						   size, skip);
++	} else {
++		nr_entries = stack_trace_save(fstack->calls, size, skip);
++	}
+ 
++	size = nr_entries * sizeof(unsigned long);
+ 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+ 					    sizeof(*entry) + size, flags, pc);
+ 	if (!event)
+ 		goto out;
+ 	entry = ring_buffer_event_data(event);
+ 
+-	memcpy(&entry->caller, trace.entries, size);
+-
+-	entry->size = trace.nr_entries;
++	memcpy(&entry->caller, fstack->calls, size);
++	entry->size = nr_entries;
+ 
+ 	if (!call_filter_check_discard(call, entry, buffer, event))
+ 		__buffer_unlock_commit(buffer, event);
+@@ -2916,7 +2908,6 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
+ 	struct trace_event_call *call = &event_user_stack;
+ 	struct ring_buffer_event *event;
+ 	struct userstack_entry *entry;
+-	struct stack_trace trace;
+ 
+ 	if (!(global_trace.trace_flags & TRACE_ITER_USERSTACKTRACE))
+ 		return;
+@@ -2947,12 +2938,7 @@ ftrace_trace_userstack(struct ring_buffer *buffer, unsigned long flags, int pc)
+ 	entry->tgid		= current->tgid;
+ 	memset(&entry->caller, 0, sizeof(entry->caller));
+ 
+-	trace.nr_entries	= 0;
+-	trace.max_entries	= FTRACE_STACK_ENTRIES;
+-	trace.skip		= 0;
+-	trace.entries		= entry->caller;
+-
+-	save_stack_trace_user(&trace);
++	stack_trace_save_user(entry->caller, FTRACE_STACK_ENTRIES);
+ 	if (!call_filter_check_discard(call, entry, buffer, event))
+ 		__buffer_unlock_commit(buffer, event);
+ 
