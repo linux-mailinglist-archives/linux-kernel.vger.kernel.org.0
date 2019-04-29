@@ -2,84 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A368EB6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C2D2EB74
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 22:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfD2UNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 16:13:51 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20389 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbfD2UNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 16:13:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 13:13:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,410,1549958400"; 
-   d="scan'208";a="169062376"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 29 Apr 2019 13:13:47 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 29 Apr 2019 23:13:47 +0300
-Date:   Mon, 29 Apr 2019 23:13:47 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Michael Hirmke <opensuse@mike.franken.de>
-Cc:     bhelgaas@google.com, gregkh@linuxfoundation.org, jslaby@suse.cz,
-        linux-kernel@vger.kernel.org, lukas@wunner.de, tiwai@suse.de,
-        Christian Kellner <ckellner@redhat.com>
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and
- thunderbolt)
-Message-ID: <20190429201347.GV2583@lahna.fi.intel.com>
-References: <20190429195459.GU2583@lahna.fi.intel.com>
- <EkoOCx3N6GB@mike.franken.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <EkoOCx3N6GB@mike.franken.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1729418AbfD2UPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 16:15:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36445 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729212AbfD2UPX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 16:15:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o4so5942378wra.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 13:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qoPhwxCnRaVr9cai5wKe4b1V5A2KQPjXKSnDtAcDvUo=;
+        b=P8OUdo8UPIv3zxfHb7pkxEwuxNptvaW5X7QI83j5Sg5C8rfUdp5KhQNmk23fo833N+
+         2FpjkvpuEXtHdDsgQB9JrY1oP1ohtObD7wOkzhRt22jydxsbJX0/OJ/OqH5gC7GaIggy
+         jGHirOkf88vdIIgrgkajIVIKNOG9UKmAlx7x8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qoPhwxCnRaVr9cai5wKe4b1V5A2KQPjXKSnDtAcDvUo=;
+        b=i/+5Npdy+eCDMWk8PJPOBk8eFyJZwooJLXkBs6piZAJ41HXAW/vM1mbmOdj8tqM2Je
+         OrxrBW6slAP5VgyaDdSt1fDi7P1r6TCBLoPycp7OzFgtKMn6y14vnF3i/1VqC5Ffg3c6
+         +S5aDsufggu8GFM4NxiT7En+s/8RUKNQrnMwNXZrTKJiGPgYFYpg9qp8Ri4kVJn/qPM1
+         ixvrpNPlLodvAJp/18ONOfJFavkNQCgAD5nL+yaJRy3gIlv/kYfQ2qPbrLR0yTS9sHB6
+         xobj38BhGavVQVvYi409m2UcgN3fdhO9dGeuyGvwyB67wAhmtkSz4yAfwS0qO23yh6Q3
+         Y4jA==
+X-Gm-Message-State: APjAAAUtlw2LHLq9SrYkqUafbxbLSLDp9A3slCV5yPTRj407+oC73zSp
+        S4zDMhCnnwn8H67chyZQE/namTgj51o=
+X-Google-Smtp-Source: APXvYqzUEpX7yipW5xTA0Sbj75BY2rWXrtjwy3muihRFT100EBiDOoIbU//AXYPKNxWtx8v4mai3JA==
+X-Received: by 2002:adf:f102:: with SMTP id r2mr13780264wro.136.1556568921489;
+        Mon, 29 Apr 2019 13:15:21 -0700 (PDT)
+Received: from localhost.localdomain (ip-93-97.sn2.clouditalia.com. [83.211.93.97])
+        by smtp.gmail.com with ESMTPSA id k6sm22864019wrd.20.2019.04.29.13.15.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 29 Apr 2019 13:15:20 -0700 (PDT)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: [PATCH 0/5] Fix improper uses of smp_mb__{before,after}_atomic()
+Date:   Mon, 29 Apr 2019 22:14:56 +0200
+Message-Id: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:03:00PM +0200, Michael Hirmke wrote:
-> Hi all,
-> 
-> >On Mon, Apr 29, 2019 at 09:47:15PM +0200, Takashi Iwai wrote:
-> >> Hi,
-> 
-> >Hi,
-> 
-> >> we've got a regression report wrt xhci_hcd and thunderbolt on a Dell
-> >> machine.  5.0.7 is confirmed to work, so it must be a regression
-> >> introduced by 5.0.8.
-> >>
-> >> The details are found in openSUSE Bugzilla entry:
-> >>   https://bugzilla.opensuse.org/show_bug.cgi?id=1132943
-> >>
-> [...]
-> >>
-> >> I blindly suspected the commit 3943af9d01e9 and asked for a reverted
-> >> kernel, but in vain.  And now it was confirmed that the problem is
-> >> present with the latest 5.1-rc, too.
-> >>
-> >> I put some people who might have interest and the reporter (Michael)
-> >> to Cc.  If anyone has an idea, feel free to join to the Bugzilla, or
-> >> let me know if any help needed from the distro side.
-> 
-> >Since it exists in 5.1-rcX also it would be good if someone
-> >who see the problem (Michael?) could bisect it.
-> 
-> I know the meaning of bisecting, but I'm not really a developer, so I am
-> probably not able to interpret the results.
+Hello!
 
-No worries. 
+A relatively common misuse of these barriers is to apply these to
+operations which are not read-modify-write operations, such as
+atomic_set() and atomic_read(); examples were discussed in [1].
 
-I'm adding Christian who reported similar (same?) problem last week.
-Christian, this seems to exist in v5.1-rc6 at least. Can you try to
-bisect it on your side?
+This series attempts to fix those uses by (conservatively) replacing
+the smp_mb__{before,after}_atomic() barriers with full memory barriers.
 
-I also have XPS 9370 but not that particular dock. I will check tomorrow
-if I can reproduce it as well.
+Applies on 5.1-rc7.
+
+Thanks,
+  Andrea
+
+Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Omar Sandoval <osandov@fb.com>
+Cc: "Yan, Zheng" <zyan@redhat.com>
+Cc: Sage Weil <sage@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+
+[1] http://lkml.kernel.org/r/20190420085440.GK14111@linux.ibm.com
+
+Andrea Parri (5):
+  drm/msm: Fix improper uses of smp_mb__{before,after}_atomic()
+  bio: fix improper use of smp_mb__before_atomic()
+  sbitmap: fix improper use of smp_mb__before_atomic()
+  ceph: fix improper use of smp_mb__before_atomic()
+  IB/hfi1: Fix improper uses of smp_mb__before_atomic()
+
+ drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 4 ++--
+ drivers/infiniband/sw/rdmavt/qp.c         | 6 +++---
+ fs/ceph/super.h                           | 2 +-
+ include/linux/bio.h                       | 2 +-
+ lib/sbitmap.c                             | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+-- 
+2.7.4
+
