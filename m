@@ -2,76 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE80EBFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6AEEC07
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 23:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbfD2VPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 17:15:46 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40725 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfD2VPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:15:45 -0400
-Received: by mail-oi1-f196.google.com with SMTP id y64so4010898oia.7;
-        Mon, 29 Apr 2019 14:15:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=koMqFVq+sZtTFE9lQzOVI0CiiGelX/b7gktI+eHUpmg=;
-        b=PEOQQ8GZBjzkgi252/hzzp7aa9ZVl8honj6FKMl0FBHbv4bM+sMVSLSskMdfXp9ZC+
-         wUI00YNVevAakayykq/qJ6md6IglnYkeEcA3jKj9g31PzXxlTNk53GrEkDtFKUNYWWqJ
-         tEuh2XTm/mMawEJMjlPvK3e/IXHVGX/Bs5TJCcZaXs0Zjx4KiuuHcYvtXKBym0edTsoo
-         1gw5gmrOdzgzX43rkC01ncrGYU7jCZxwfPkodmod66PxTQu+rAUsKjv/PPXryFedrOES
-         UveO1/9VRBm+OQhvvwmvrscD2J8dizofx9LFYonp/IcD0W9dgFL/ERTRjLPaTSelpcWx
-         7RBw==
-X-Gm-Message-State: APjAAAWqK/0A/N6N2s46r6L4cgZ8/ygBwiLDRoIjQ7XM5Ppe1QfYrk/Y
-        l8eAsGwB6l7lh3y9d3hWyA==
-X-Google-Smtp-Source: APXvYqz2TEK23uu2UtgA9T+1nPA3Aim10UWLnbz8RQmwt+Rwp7nNsetW4zP+Fj0IQs/Sa89YglGUrQ==
-X-Received: by 2002:aca:c7c5:: with SMTP id x188mr806556oif.48.1556572543997;
-        Mon, 29 Apr 2019 14:15:43 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g25sm13852036otl.7.2019.04.29.14.15.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 14:15:43 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 16:15:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        marek.behun@nic.cz, rdunlap@infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 6/7] dt: bindings: lp50xx: Introduce the lp50xx family
- of RGB drivers
-Message-ID: <20190429211542.GA28956@bogus>
-References: <20190411193848.23140-1-dmurphy@ti.com>
- <20190411193848.23140-7-dmurphy@ti.com>
+        id S1729450AbfD2V0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 17:26:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729283AbfD2V0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 17:26:30 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE8752075E;
+        Mon, 29 Apr 2019 21:26:28 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 17:17:00 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: Re: [function_graph] 02519fa3c4:
+ BUG:kernel_reboot-without-warning_in_early-boot_stage,last_printk:early_console_in_setup_code
+Message-ID: <20190429171700.4d48791c@gandalf.local.home>
+In-Reply-To: <20190429075629.GD29809@shao2-debian>
+References: <20190429075629.GD29809@shao2-debian>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190411193848.23140-7-dmurphy@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Apr 2019 14:38:47 -0500, Dan Murphy wrote:
-> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024 and the LP5018
-> RGB LED device driver.  The LP5036/3024/18 can control RGB LEDs individually
-> or as part of a control bank group.  These devices have the ability
-> to adjust the mixing control for the RGB LEDs to obtain different colors
-> independent of the overall brightness of the LED grouping.
+On Mon, 29 Apr 2019 15:56:29 +0800
+kernel test robot <lkp@intel.com> wrote:
+
+> FYI, we noticed the following commit (built with gcc-7):
 > 
-> Datasheet:
-> http://www.ti.com/lit/ds/symlink/lp5024.pdf
-> http://www.ti.com/lit/ds/symlink/lp5036.pdf
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lp50xx.txt  | 142 ++++++++++++++++++
->  1 file changed, 142 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+> commit: 02519fa3c43164aa8ee0ebbe1b464a568130a36f ("function_graph: Use a ftrace_graph_ret_stub() for return")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks. Seems that ftrace_graph_return is expected to point at
+ftrace_stub when not in use, and this is critical when DYNAMIC_FTRACE
+is not enabled (and for various other architectures).
+
+I'll have to just remove this change for upstream (and rebase my
+for-next, which I usually try to avoid doing. But this shouldn't hurt).
+
+-- Steve
+
+> in testcase: trinity
+> with following parameters:
+> 
+> 	runtime: 300s
+> 
+> test-description: Trinity is a linux system call fuzz tester.
+> test-url: http://codemonkey.org.uk/projects/trinity/
+> 
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 2G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +-----------------------------------------------------------------------------------------------+------------+------------+
+> |                                                                                               | 52fde6e70c | 02519fa3c4 |
+> +-----------------------------------------------------------------------------------------------+------------+------------+
+> | boot_successes                                                                                | 4          | 0          |
+> | boot_failures                                                                                 | 0          | 4          |
+> | BUG:kernel_reboot-without-warning_in_early-boot_stage,last_printk:early_console_in_setup_code | 0          | 4          |
+> +-----------------------------------------------------------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> 
+> early console in setup code
+> BUG: kernel reboot-without-warning in early-boot stage, last printk: early console in setup code
+> Linux version 5.1.0-rc3-00023-g02519fa #1
+> Command line: ip=::::vm-snb-quantal-ia32-804::dhcp root=/dev/ram0 user=lkp job=/lkp/jobs/scheduled/vm-snb-quantal-ia32-804/trinity-300s-quantal-core-i386-2019-04-26.cgz-02519fa3c43-20190429-62375-116iczn-1.yaml ARCH=x86_64 kconfig=x86_64-randconfig-s3-04261012 branch=linux-devel/devel-hourly-2019042607 commit=02519fa3c43164aa8ee0ebbe1b464a568130a36f BOOT_IMAGE=/pkg/linux/x86_64-randconfig-s3-04261012/gcc-7/02519fa3c43164aa8ee0ebbe1b464a568130a36f/vmlinuz-5.1.0-rc3-00023-g02519fa max_uptime=1500 RESULT_ROOT=/result/trinity/300s/vm-snb-quantal-ia32/quantal-core-i386-2019-04-26.cgz/x86_64-randconfig-s3-04261012/gcc-7/02519fa3c43164aa8ee0ebbe1b464a568130a36f/3 LKP_SERVER=inn debug apic=debug sysrq_always_enabled rcupdate.rcu_cpu_stall_timeout=100 net.ifnames=0 printk.devkmsg=on panic=-1 softlockup_panic=1 nmi_watchdog=panic oops=panic load_ramdisk=2 prompt_ramdisk=0 drbd.minor_count=8 systemd.log_level=err ignore_loglevel console=tty0 earlyprintk=ttyS0,115200 console=ttyS0,115200 vga=n
+ ormal rw rcuperf.shutdown=0
+> 
+> Elapsed time: 30
+> 
+> 
+> 
+> To reproduce:
+> 
+>         # build kernel
+> 	cd linux
+> 	cp config-5.1.0-rc3-00023-g02519fa .config
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 prepare
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 modules_prepare
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 SHELL=/bin/bash
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 bzImage
+> 
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+> 
+> 
+> 
+> Thanks,
+> lkp
+> 
+
