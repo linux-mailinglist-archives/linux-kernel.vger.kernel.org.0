@@ -2,72 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B886DCE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 09:32:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DE1DCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 09:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfD2HcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 03:32:05 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40722 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfD2HcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 03:32:04 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hL0lK-00053O-Qd; Mon, 29 Apr 2019 09:31:43 +0200
-Date:   Mon, 29 Apr 2019 09:31:37 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@linux.intel.com>
-cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v8 12/15] kvm/vmx: Emulate MSR TEST_CTL
-In-Reply-To: <87ef9a01-fc99-20be-ec20-2c65e6a012a1@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1904290929570.1626@nanos.tec.linutronix.de>
-References: <1556134382-58814-1-git-send-email-fenghua.yu@intel.com> <1556134382-58814-13-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1904250931020.1762@nanos.tec.linutronix.de> <7395908840acfbf806146f5f20d3509342771a19.camel@linux.intel.com>
- <alpine.DEB.2.21.1904280903520.1757@nanos.tec.linutronix.de> <87ef9a01-fc99-20be-ec20-2c65e6a012a1@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727487AbfD2Hfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 03:35:52 -0400
+Received: from mail.eat-dinner.eu ([80.211.38.224]:43015 "EHLO eat-dinner.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbfD2Hfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 03:35:51 -0400
+Received: by eat-dinner.eu (Postfix, from userid 1001)
+        id 5BBD4A35C7; Mon, 29 Apr 2019 09:32:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=eat-dinner.eu;
+        s=mail; t=1556523324;
+        bh=1wXsRnVQKyR5953v1mK5+VSjATpkqCFjMxx9a9NW6X4=;
+        h=Date:From:To:Subject:From;
+        b=vLvAlA23YMd/Mo2WzoHrDx9oNTDRjKptKz6pVcbkApvRUiqWgBBMXxcb45lKG2O94
+         kLwIdPccpoHc/akbcU50mxU+IjVkEDe7nFkNtxJ3Uk/OBzhmZTpn4sATKZ9D1gQr09
+         X6uAsArDLAXDTjaOT1V2p6eTrgn6/c6TJrb3Xbzk=
+Received: by mail.eat-dinner.eu for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 07:32:33 GMT
+Message-ID: <20190429084500-0.1.19.q7o.0.h9byqlccqn@eat-dinner.eu>
+Date:   Mon, 29 Apr 2019 07:32:33 GMT
+From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
+        <kapolcs.matyas@eat-dinner.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
+X-Mailer: mail.eat-dinner.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 28 Apr 2019, Xiaoyao Li wrote:
-> On 4/28/2019 3:09 PM, Thomas Gleixner wrote:
-> > On Sat, 27 Apr 2019, Xiaoyao Li wrote:
-> > > Indeed, if we use split lock detection for protection purpose, when host
-> > > has it enabled we should directly pass it to guest and forbid guest from
-> > > disabling it.  And only when host disables split lock detection, we can
-> > > expose it and allow the guest to turn it on.
-> > ?
-> > > If it is used for protection purpose, then it should follow what you said
-> > > and
-> > > this feature needs to be disabled by default. Because there are split lock
-> > > issues in old/current kernels and BIOS. That will cause the existing guest
-> > > booting failure and killed due to those split lock.
-> > 
-> > Rightfully so.
-> 
-> So, the patch 13 "Enable split lock detection by default" needs to be removed?
+=C3=9Cdv=C3=B6zl=C3=B6m!
+=20
+2019 janu=C3=A1rt=C3=B3l v=C3=A1ltozik a nem b=C3=A9r jelleg=C5=B1 juttat=
+=C3=A1sok rendje.
+=20
+Egy kiv=C3=A1l=C3=B3 lehet=C5=91s=C3=A9ggel =C3=A9lehet, amennyiben a mi =
+k=C3=A1rty=C3=A1nkat v=C3=A1lasztja!
+=20
+Ez a k=C3=A1rtya:
+=20
+Korl=C3=A1tlanul felhaszn=C3=A1lhat=C3=B3:
+=20
+k=C3=A9szp=C3=A9nzfelv=C3=A9tel
+=C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1s
+eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s
+elektronikai term=C3=A9kek v=C3=A1s=C3=A1rl=C3=A1sa
+oktat=C3=A1s
+sz=C3=A1ll=C3=A1s
+=20
+K=C3=A1rty=C3=A1nk az egyetlen olyan val=C3=B3ban szabadfelhaszn=C3=A1l=C3=
+=A1s=C3=BA k=C3=A1rtya, melyet minden POS termin=C3=A1l elfogad!
+=20
+Amennyiben k=C3=A1rty=C3=A1nk felkeltette =C3=A9rdekl=C5=91d=C3=A9s=C3=A9=
+t, mint dolgoz=C3=B3i juttat=C3=A1s, k=C3=A9rem keressen fel a tov=C3=A1b=
+bi t=C3=A1j=C3=A9koztat=C3=A1s =C3=A9rdek=C3=A9ben!
+=20
+=C3=96r=C3=B6mmel =C3=A1llunk rendelkez=C3=A9s=C3=A9re mindenben!
 
-Why? No. We enable it by default and everything which violates the rules
-gets what it deserves. If there is an issue, boot with ac_splitlock_off and
-be done with it.
 
-Thanks,
-
-	tglx
+Kapolcs M=C3=A1ty=C3=A1s
+Hungary Team Leader
