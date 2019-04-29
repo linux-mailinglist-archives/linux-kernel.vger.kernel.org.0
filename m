@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0580BDC1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93457DC1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfD2GkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:40:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55137 "EHLO
+        id S1727470AbfD2Gku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:40:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56869 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfD2GkI (ORCPT
+        with ESMTP id S1726758AbfD2Gku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:40:08 -0400
+        Mon, 29 Apr 2019 02:40:50 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3T6dpDE784289
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3T6eXim784439
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 28 Apr 2019 23:39:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3T6dpDE784289
+        Sun, 28 Apr 2019 23:40:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3T6eXim784439
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556519991;
-        bh=uxe7cr2/aBo2yaIEbqAb/nybbxwaLgg5jhI0o0AUy64=;
+        s=2019041745; t=1556520034;
+        bh=svZTN1DxhjXtRIAPclSOK0fyXxnGVGBjFM6gHiJZX3s=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=d4idvhC3tZbEqSGsw0n+UUFwO4iwism6pFvKO7UUrF2W0VWSAeDQ+TEECAmmeIn+l
-         6cfd9GS3oUbVZUszv/Rv22SDT3+D13d1yVwzV9QE7z/wj/Ge1cZLuQ5cJUG2vYYUTX
-         tibXny7TYUde9pROX0+gijM/iTX+EDEyRN5YpYs6+lq041tl48ParPcO7WbODwq7Ri
-         f9MeuI5Tye+w30gi///rsJqi/qluyRBRuSdQfUEMAXDQo4bgEQnHMhNpIvp7S/Q0kL
-         aoA7cBM66hmFx08qTRkRONXnf1Tc5ItZn+s+J/vccLx0Yn/Izbu8h6WKKI1OIV6UF7
-         P3Bht0w5J1bpA==
+        b=szG/bRcV67+AIEklX0dBunz5rNP/1QKaECGSVnefpRLJNaExrzuUc+js+y3BfgzH9
+         vFFyGzvav57IMLsbSRNZ/j9rjexY/dVf8vryqljk6HKh4NuwB94M/GzZHo6mrZyDFg
+         LLnqwDfjKcOPObKGFi9ORvpZ29l7JOIWXlxo/UhFPJHwdS3hfCcBvlO+Cv7jG6CHNS
+         cUT0s9HJCYMjWF5poNuaieXr52FmDbVxekB4/WCfmjAgzHssbTpdWIJEPtkZ2YA2F5
+         +1FPwBpbhyACf0jqEhYaVmL02o5yKm1P6qXtIds+GtEZI06RWr51gOLQB8rbl33sZm
+         CijZEa2LnfY/w==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3T6dnXO784286;
-        Sun, 28 Apr 2019 23:39:49 -0700
-Date:   Sun, 28 Apr 2019 23:39:49 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3T6eWX5784436;
+        Sun, 28 Apr 2019 23:40:32 -0700
+Date:   Sun, 28 Apr 2019 23:40:32 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Frederic Weisbecker <tipbot@zytor.com>
-Message-ID: <tip-948f83768a180ec8e85c4a8ff269d5e433d10815@git.kernel.org>
-Cc:     tglx@linutronix.de, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
-        akpm@linux-foundation.org, frederic@kernel.org,
-        will.deacon@arm.com, mingo@kernel.org,
-        torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, will.deacon@arm.com,
-          mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, akpm@linux-foundation.org,
-          frederic@kernel.org, tglx@linutronix.de
-In-Reply-To: <20190402160244.32434-5-frederic@kernel.org>
-References: <20190402160244.32434-5-frederic@kernel.org>
+From:   tip-bot for Jakub Kicinski <tipbot@zytor.com>
+Message-ID: <tip-ad282a8117d5048398f506f20b092c14b3b3c43f@git.kernel.org>
+Cc:     akpm@linux-foundation.org, will.deacon@arm.com,
+        jakub.kicinski@netronome.com, torvalds@linux-foundation.org,
+        paulmck@linux.vnet.ibm.com, hpa@zytor.com, mingo@kernel.org,
+        peterz@infradead.org, simon.horman@netronome.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: will.deacon@arm.com, torvalds@linux-foundation.org,
+          jakub.kicinski@netronome.com, akpm@linux-foundation.org,
+          hpa@zytor.com, paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, simon.horman@netronome.com
+In-Reply-To: <20190330000854.30142-2-jakub.kicinski@netronome.com>
+References: <20190330000854.30142-2-jakub.kicinski@netronome.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lockdep: Test all incompatible scenarios
- at once in check_irq_usage()
-Git-Commit-ID: 948f83768a180ec8e85c4a8ff269d5e433d10815
+Subject: [tip:locking/core] locking/static_key: Add support for deferred
+ static branches
+Git-Commit-ID: ad282a8117d5048398f506f20b092c14b3b3c43f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,380 +67,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  948f83768a180ec8e85c4a8ff269d5e433d10815
-Gitweb:     https://git.kernel.org/tip/948f83768a180ec8e85c4a8ff269d5e433d10815
-Author:     Frederic Weisbecker <frederic@kernel.org>
-AuthorDate: Tue, 2 Apr 2019 18:02:44 +0200
+Commit-ID:  ad282a8117d5048398f506f20b092c14b3b3c43f
+Gitweb:     https://git.kernel.org/tip/ad282a8117d5048398f506f20b092c14b3b3c43f
+Author:     Jakub Kicinski <jakub.kicinski@netronome.com>
+AuthorDate: Fri, 29 Mar 2019 17:08:52 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 29 Apr 2019 08:29:20 +0200
 
-locking/lockdep: Test all incompatible scenarios at once in check_irq_usage()
+locking/static_key: Add support for deferred static branches
 
-check_prev_add_irq() tests all incompatible scenarios one after the
-other while adding a lock (@next) to a tree dependency (@prev):
+Add deferred static branches.  We can't unfortunately use the
+nice trick of encapsulating the entire structure in true/false
+variants, because the inside has to be either struct static_key_true
+or struct static_key_false.  Use defines to pass the appropriate
+members to the helpers separately.
 
-	LOCK_USED_IN_HARDIRQ          vs         LOCK_ENABLED_HARDIRQ
-	LOCK_USED_IN_HARDIRQ_READ     vs         LOCK_ENABLED_HARDIRQ
-	LOCK_USED_IN_SOFTIRQ          vs         LOCK_ENABLED_SOFTIRQ
-	LOCK_USED_IN_SOFTIRQ_READ     vs         LOCK_ENABLED_SOFTIRQ
-
-Also for these four scenarios, we must at least iterate the @prev
-backward dependency. Then if it matches the relevant LOCK_USED_* bit,
-we must also iterate the @next forward dependency.
-
-Therefore in the best case we iterate 4 times, in the worst case 8 times.
-
-A different approach can let us divide the number of branch iterations
-by 4:
-
-1) Iterate through @prev backward dependencies and accumulate all the IRQ
-   uses in a single mask. In the best case where the current lock hasn't
-   been used in IRQ, we stop here.
-
-2) Iterate through @next forward dependencies and try to find a lock
-   whose usage is exclusive to the accumulated usages gathered in the
-   previous step. If we find one (call it @lockA), we have found an
-   incompatible use, otherwise we stop here. Only bad locking scenario
-   go further. So a sane verification stop here.
-
-3) Iterate again through @prev backward dependency and find the lock
-   whose usage matches @lockA in term of incompatibility. Call that
-   lock @lockB.
-
-4) Report the incompatible usages of @lockA and @lockB
-
-If no incompatible use is found, the verification never goes beyond
-step 2 which means at most two iterations.
-
-The following compares the execution measurements of the function
-check_prev_add_irq():
-
-            Number of  calls   | Avg (ns)  | Stdev (ns) | Total time (ns)
-  ------------------------------------------------------------------------
-  Mainline         8452        |  2652     |    11962   |    22415143
-  This patch       8452        |  1518     |     7090   |    12835602
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/r/20190402160244.32434-5-frederic@kernel.org
+Cc: alexei.starovoitov@gmail.com
+Cc: ard.biesheuvel@linaro.org
+Cc: oss-drivers@netronome.com
+Cc: yamada.masahiro@socionext.com
+Link: https://lkml.kernel.org/r/20190330000854.30142-2-jakub.kicinski@netronome.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/lockdep.c           | 228 ++++++++++++++++++++++++++-----------
- kernel/locking/lockdep_internals.h |   6 +
- 2 files changed, 167 insertions(+), 67 deletions(-)
+ include/linux/jump_label_ratelimit.h | 64 ++++++++++++++++++++++++++++++++++--
+ kernel/jump_label.c                  | 17 ++++++----
+ 2 files changed, 71 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5e149dd78298..25ecc6d3058b 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1676,6 +1676,14 @@ check_redundant(struct lock_list *root, struct lock_class *target,
- }
+diff --git a/include/linux/jump_label_ratelimit.h b/include/linux/jump_label_ratelimit.h
+index a49f2b45b3f0..42710d5949ba 100644
+--- a/include/linux/jump_label_ratelimit.h
++++ b/include/linux/jump_label_ratelimit.h
+@@ -12,21 +12,79 @@ struct static_key_deferred {
+ 	struct delayed_work work;
+ };
  
- #if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
+-extern void static_key_slow_dec_deferred(struct static_key_deferred *key);
+-extern void static_key_deferred_flush(struct static_key_deferred *key);
++struct static_key_true_deferred {
++	struct static_key_true key;
++	unsigned long timeout;
++	struct delayed_work work;
++};
 +
-+static inline int usage_accumulate(struct lock_list *entry, void *mask)
-+{
-+	*(unsigned long *)mask |= entry->class->usage_mask;
++struct static_key_false_deferred {
++	struct static_key_false key;
++	unsigned long timeout;
++	struct delayed_work work;
++};
 +
-+	return 0;
-+}
++#define static_key_slow_dec_deferred(x)					\
++	__static_key_slow_dec_deferred(&(x)->key, &(x)->work, (x)->timeout)
++#define static_branch_slow_dec_deferred(x)				\
++	__static_key_slow_dec_deferred(&(x)->key.key, &(x)->work, (x)->timeout)
 +
- /*
-  * Forwards and backwards subgraph searching, for the purposes of
-  * proving that two subgraphs can be connected by a new dependency
-@@ -1687,8 +1695,6 @@ static inline int usage_match(struct lock_list *entry, void *mask)
- 	return entry->class->usage_mask & *(unsigned long *)mask;
- }
++#define static_key_deferred_flush(x)					\
++	__static_key_deferred_flush((x), &(x)->work)
++
++extern void
++__static_key_slow_dec_deferred(struct static_key *key,
++			       struct delayed_work *work,
++			       unsigned long timeout);
++extern void __static_key_deferred_flush(void *key, struct delayed_work *work);
+ extern void
+ jump_label_rate_limit(struct static_key_deferred *key, unsigned long rl);
  
--
--
- /*
-  * Find a node in the forwards-direction dependency sub-graph starting
-  * at @root->class that matches @bit.
-@@ -1922,39 +1928,6 @@ print_bad_irq_dependency(struct task_struct *curr,
- 	return 0;
- }
- 
--static int
--check_usage(struct task_struct *curr, struct held_lock *prev,
--	    struct held_lock *next, enum lock_usage_bit bit_backwards,
--	    enum lock_usage_bit bit_forwards, const char *irqclass)
--{
--	int ret;
--	struct lock_list this, that;
--	struct lock_list *uninitialized_var(target_entry);
--	struct lock_list *uninitialized_var(target_entry1);
--
--	this.parent = NULL;
--
--	this.class = hlock_class(prev);
--	ret = find_usage_backwards(&this, lock_flag(bit_backwards), &target_entry);
--	if (ret < 0)
--		return print_bfs_bug(ret);
--	if (ret == 1)
--		return ret;
--
--	that.parent = NULL;
--	that.class = hlock_class(next);
--	ret = find_usage_forwards(&that, lock_flag(bit_forwards), &target_entry1);
--	if (ret < 0)
--		return print_bfs_bug(ret);
--	if (ret == 1)
--		return ret;
--
--	return print_bad_irq_dependency(curr, &this, &that,
--			target_entry, target_entry1,
--			prev, next,
--			bit_backwards, bit_forwards, irqclass);
--}
--
- static const char *state_names[] = {
- #define LOCKDEP_STATE(__STATE) \
- 	__stringify(__STATE),
-@@ -1977,6 +1950,13 @@ static inline const char *state_name(enum lock_usage_bit bit)
- 		return state_names[bit >> LOCK_USAGE_DIR_MASK];
- }
- 
-+/*
-+ * The bit number is encoded like:
-+ *
-+ *  bit0: 0 exclusive, 1 read lock
-+ *  bit1: 0 used in irq, 1 irq enabled
-+ *  bit2-n: state
-+ */
- static int exclusive_bit(int new_bit)
- {
- 	int state = new_bit & LOCK_USAGE_STATE_MASK;
-@@ -1988,45 +1968,160 @@ static int exclusive_bit(int new_bit)
- 	return state | (dir ^ LOCK_USAGE_DIR_MASK);
- }
- 
-+/*
-+ * Observe that when given a bitmask where each bitnr is encoded as above, a
-+ * right shift of the mask transforms the individual bitnrs as -1 and
-+ * conversely, a left shift transforms into +1 for the individual bitnrs.
-+ *
-+ * So for all bits whose number have LOCK_ENABLED_* set (bitnr1 == 1), we can
-+ * create the mask with those bit numbers using LOCK_USED_IN_* (bitnr1 == 0)
-+ * instead by subtracting the bit number by 2, or shifting the mask right by 2.
-+ *
-+ * Similarly, bitnr1 == 0 becomes bitnr1 == 1 by adding 2, or shifting left 2.
-+ *
-+ * So split the mask (note that LOCKF_ENABLED_IRQ_ALL|LOCKF_USED_IN_IRQ_ALL is
-+ * all bits set) and recompose with bitnr1 flipped.
-+ */
-+static unsigned long invert_dir_mask(unsigned long mask)
-+{
-+	unsigned long excl = 0;
++extern void jump_label_update_timeout(struct work_struct *work);
 +
-+	/* Invert dir */
-+	excl |= (mask & LOCKF_ENABLED_IRQ_ALL) >> LOCK_USAGE_DIR_MASK;
-+	excl |= (mask & LOCKF_USED_IN_IRQ_ALL) << LOCK_USAGE_DIR_MASK;
-+
-+	return excl;
-+}
-+
-+/*
-+ * As above, we clear bitnr0 (LOCK_*_READ off) with bitmask ops. First, for all
-+ * bits with bitnr0 set (LOCK_*_READ), add those with bitnr0 cleared (LOCK_*).
-+ * And then mask out all bitnr0.
-+ */
-+static unsigned long exclusive_mask(unsigned long mask)
-+{
-+	unsigned long excl = invert_dir_mask(mask);
-+
-+	/* Strip read */
-+	excl |= (excl & LOCKF_IRQ_READ) >> LOCK_USAGE_READ_MASK;
-+	excl &= ~LOCKF_IRQ_READ;
-+
-+	return excl;
-+}
-+
-+/*
-+ * Retrieve the _possible_ original mask to which @mask is
-+ * exclusive. Ie: this is the opposite of exclusive_mask().
-+ * Note that 2 possible original bits can match an exclusive
-+ * bit: one has LOCK_USAGE_READ_MASK set, the other has it
-+ * cleared. So both are returned for each exclusive bit.
-+ */
-+static unsigned long original_mask(unsigned long mask)
-+{
-+	unsigned long excl = invert_dir_mask(mask);
-+
-+	/* Include read in existing usages */
-+	excl |= (excl & LOCKF_IRQ) << LOCK_USAGE_READ_MASK;
-+
-+	return excl;
-+}
-+
-+/*
-+ * Find the first pair of bit match between an original
-+ * usage mask and an exclusive usage mask.
-+ */
-+static int find_exclusive_match(unsigned long mask,
-+				unsigned long excl_mask,
-+				enum lock_usage_bit *bitp,
-+				enum lock_usage_bit *excl_bitp)
-+{
-+	int bit, excl;
-+
-+	for_each_set_bit(bit, &mask, LOCK_USED) {
-+		excl = exclusive_bit(bit);
-+		if (excl_mask & lock_flag(excl)) {
-+			*bitp = bit;
-+			*excl_bitp = excl;
-+			return 0;
-+		}
++#define DEFINE_STATIC_KEY_DEFERRED_TRUE(name, rl)			\
++	struct static_key_true_deferred name = {			\
++		.key =		{ STATIC_KEY_INIT_TRUE },		\
++		.timeout =	(rl),					\
++		.work =	__DELAYED_WORK_INITIALIZER((name).work,		\
++						   jump_label_update_timeout, \
++						   0),			\
 +	}
-+	return -1;
-+}
 +
-+/*
-+ * Prove that the new dependency does not connect a hardirq-safe(-read)
-+ * lock with a hardirq-unsafe lock - to achieve this we search
-+ * the backwards-subgraph starting at <prev>, and the
-+ * forwards-subgraph starting at <next>:
-+ */
- static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
--			   struct held_lock *next, enum lock_usage_bit bit)
-+			   struct held_lock *next)
++#define DEFINE_STATIC_KEY_DEFERRED_FALSE(name, rl)			\
++	struct static_key_false_deferred name = {			\
++		.key =		{ STATIC_KEY_INIT_FALSE },		\
++		.timeout =	(rl),					\
++		.work =	__DELAYED_WORK_INITIALIZER((name).work,		\
++						   jump_label_update_timeout, \
++						   0),			\
++	}
++
++#define static_branch_deferred_inc(x)	static_branch_inc(&(x)->key)
++
+ #else	/* !CONFIG_JUMP_LABEL */
+ struct static_key_deferred {
+ 	struct static_key  key;
+ };
++struct static_key_true_deferred {
++	struct static_key_true key;
++};
++struct static_key_false_deferred {
++	struct static_key_false key;
++};
++#define DEFINE_STATIC_KEY_DEFERRED_TRUE(name, rl)	\
++	struct static_key_true_deferred name = { STATIC_KEY_TRUE_INIT }
++#define DEFINE_STATIC_KEY_DEFERRED_FALSE(name, rl)	\
++	struct static_key_false_deferred name = { STATIC_KEY_FALSE_INIT }
++
++#define static_branch_slow_dec_deferred(x)	static_branch_dec(&(x)->key)
++
+ static inline void static_key_slow_dec_deferred(struct static_key_deferred *key)
  {
-+	unsigned long usage_mask = 0, forward_mask, backward_mask;
-+	enum lock_usage_bit forward_bit = 0, backward_bit = 0;
-+	struct lock_list *uninitialized_var(target_entry1);
-+	struct lock_list *uninitialized_var(target_entry);
-+	struct lock_list this, that;
-+	int ret;
-+
- 	/*
--	 * Prove that the new dependency does not connect a hardirq-safe
--	 * lock with a hardirq-unsafe lock - to achieve this we search
--	 * the backwards-subgraph starting at <prev>, and the
--	 * forwards-subgraph starting at <next>:
-+	 * Step 1: gather all hard/soft IRQs usages backward in an
-+	 * accumulated usage mask.
- 	 */
--	if (!check_usage(curr, prev, next, bit,
--			   exclusive_bit(bit), state_name(bit)))
--		return 0;
-+	this.parent = NULL;
-+	this.class = hlock_class(prev);
- 
--	bit++; /* _READ */
-+	ret = __bfs_backwards(&this, &usage_mask, usage_accumulate, NULL);
-+	if (ret < 0)
-+		return print_bfs_bug(ret);
-+
-+	usage_mask &= LOCKF_USED_IN_IRQ_ALL;
-+	if (!usage_mask)
-+		return 1;
- 
- 	/*
--	 * Prove that the new dependency does not connect a hardirq-safe-read
--	 * lock with a hardirq-unsafe lock - to achieve this we search
--	 * the backwards-subgraph starting at <prev>, and the
--	 * forwards-subgraph starting at <next>:
-+	 * Step 2: find exclusive uses forward that match the previous
-+	 * backward accumulated mask.
- 	 */
--	if (!check_usage(curr, prev, next, bit,
--			   exclusive_bit(bit), state_name(bit)))
--		return 0;
-+	forward_mask = exclusive_mask(usage_mask);
- 
--	return 1;
--}
-+	that.parent = NULL;
-+	that.class = hlock_class(next);
- 
--static int
--check_prev_add_irq(struct task_struct *curr, struct held_lock *prev,
--		struct held_lock *next)
--{
--#define LOCKDEP_STATE(__STATE)						\
--	if (!check_irq_usage(curr, prev, next, LOCK_USED_IN_##__STATE))	\
--		return 0;
--#include "lockdep_states.h"
--#undef LOCKDEP_STATE
-+	ret = find_usage_forwards(&that, forward_mask, &target_entry1);
-+	if (ret < 0)
-+		return print_bfs_bug(ret);
-+	if (ret == 1)
-+		return ret;
- 
--	return 1;
-+	/*
-+	 * Step 3: we found a bad match! Now retrieve a lock from the backward
-+	 * list whose usage mask matches the exclusive usage mask from the
-+	 * lock found on the forward list.
-+	 */
-+	backward_mask = original_mask(target_entry1->class->usage_mask);
-+
-+	ret = find_usage_backwards(&this, backward_mask, &target_entry);
-+	if (ret < 0)
-+		return print_bfs_bug(ret);
-+	if (DEBUG_LOCKS_WARN_ON(ret == 1))
-+		return 1;
-+
-+	/*
-+	 * Step 4: narrow down to a pair of incompatible usage bits
-+	 * and report it.
-+	 */
-+	ret = find_exclusive_match(target_entry->class->usage_mask,
-+				   target_entry1->class->usage_mask,
-+				   &backward_bit, &forward_bit);
-+	if (DEBUG_LOCKS_WARN_ON(ret == -1))
-+		return 1;
-+
-+	return print_bad_irq_dependency(curr, &this, &that,
-+			target_entry, target_entry1,
-+			prev, next,
-+			backward_bit, forward_bit,
-+			state_name(backward_bit));
+ 	STATIC_KEY_CHECK_USE(key);
+ 	static_key_slow_dec(&key->key);
+ }
+-static inline void static_key_deferred_flush(struct static_key_deferred *key)
++static inline void static_key_deferred_flush(void *key)
+ {
+ 	STATIC_KEY_CHECK_USE(key);
+ }
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index a799b1ac6b2f..73bbbaddbd9c 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -244,12 +244,13 @@ static void __static_key_slow_dec(struct static_key *key,
+ 	cpus_read_unlock();
  }
  
- static void inc_chains(void)
-@@ -2043,9 +2138,8 @@ static void inc_chains(void)
- 
- #else
- 
--static inline int
--check_prev_add_irq(struct task_struct *curr, struct held_lock *prev,
--		struct held_lock *next)
-+static inline int check_irq_usage(struct task_struct *curr,
-+				  struct held_lock *prev, struct held_lock *next)
+-static void jump_label_update_timeout(struct work_struct *work)
++void jump_label_update_timeout(struct work_struct *work)
  {
- 	return 1;
+ 	struct static_key_deferred *key =
+ 		container_of(work, struct static_key_deferred, work.work);
+ 	__static_key_slow_dec(&key->key, 0, NULL);
  }
-@@ -2225,7 +2319,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	else if (unlikely(ret < 0))
- 		return print_bfs_bug(ret);
++EXPORT_SYMBOL_GPL(jump_label_update_timeout);
  
--	if (!check_prev_add_irq(curr, prev, next))
-+	if (!check_irq_usage(curr, prev, next))
- 		return 0;
+ void static_key_slow_dec(struct static_key *key)
+ {
+@@ -264,19 +265,21 @@ void static_key_slow_dec_cpuslocked(struct static_key *key)
+ 	__static_key_slow_dec_cpuslocked(key, 0, NULL);
+ }
  
- 	/*
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 2b3ffd4117ad..150ec3f0c5b5 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -66,6 +66,12 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
- 	0;
- #undef LOCKDEP_STATE
+-void static_key_slow_dec_deferred(struct static_key_deferred *key)
++void __static_key_slow_dec_deferred(struct static_key *key,
++				    struct delayed_work *work,
++				    unsigned long timeout)
+ {
+ 	STATIC_KEY_CHECK_USE(key);
+-	__static_key_slow_dec(&key->key, key->timeout, &key->work);
++	__static_key_slow_dec(key, timeout, work);
+ }
+-EXPORT_SYMBOL_GPL(static_key_slow_dec_deferred);
++EXPORT_SYMBOL_GPL(__static_key_slow_dec_deferred);
  
-+#define LOCKF_ENABLED_IRQ_ALL (LOCKF_ENABLED_IRQ | LOCKF_ENABLED_IRQ_READ)
-+#define LOCKF_USED_IN_IRQ_ALL (LOCKF_USED_IN_IRQ | LOCKF_USED_IN_IRQ_READ)
-+
-+#define LOCKF_IRQ (LOCKF_ENABLED_IRQ | LOCKF_USED_IN_IRQ)
-+#define LOCKF_IRQ_READ (LOCKF_ENABLED_IRQ_READ | LOCKF_USED_IN_IRQ_READ)
-+
- /*
-  * CONFIG_LOCKDEP_SMALL is defined for sparc. Sparc requires .text,
-  * .data and .bss to fit in required 32MB limit for the kernel. With
+-void static_key_deferred_flush(struct static_key_deferred *key)
++void __static_key_deferred_flush(void *key, struct delayed_work *work)
+ {
+ 	STATIC_KEY_CHECK_USE(key);
+-	flush_delayed_work(&key->work);
++	flush_delayed_work(work);
+ }
+-EXPORT_SYMBOL_GPL(static_key_deferred_flush);
++EXPORT_SYMBOL_GPL(__static_key_deferred_flush);
+ 
+ void jump_label_rate_limit(struct static_key_deferred *key,
+ 		unsigned long rl)
