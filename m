@@ -2,132 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F92EE7C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6FAE813
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 18:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbfD2Q3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 12:29:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46908 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728518AbfD2Q3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 12:29:14 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FEF53086225;
-        Mon, 29 Apr 2019 16:29:14 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-9.rdu2.redhat.com [10.10.112.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 19B045D75D;
-        Mon, 29 Apr 2019 16:29:12 +0000 (UTC)
-Message-ID: <b2c40e59e56b00f41bc2c10e55ef75d52cef0361.camel@redhat.com>
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
-From:   Doug Ledford <dledford@redhat.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 29 Apr 2019 12:29:10 -0400
-In-Reply-To: <00c2666a46b22f004429abc9c4530bbf21fe6e43.camel@redhat.com>
-References: <20190428115207.GA11924@ziepe.ca> <20190429060947.GB3665@osiris>
-         <20190429084030.GA4275@mellanox.com>
-         <00c2666a46b22f004429abc9c4530bbf21fe6e43.camel@redhat.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-GOYXXzF9KHU36Ho3xOiV"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1728788AbfD2QtG convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 12:49:06 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:40040
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1728621AbfD2QtF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 12:49:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 63EC3B4E967;
+        Mon, 29 Apr 2019 16:31:09 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kZY2ta-wVQHW; Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id B78F7B4E996;
+        Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ldhaA4TH7e8O; Mon, 29 Apr 2019 16:31:08 +0000 (UTC)
+Received: from [100.73.197.163] (unknown [223.237.241.75])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id A0175B4E437;
+        Mon, 29 Apr 2019 16:31:00 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 29 Apr 2019 16:29:14 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador web <exportaciones@minpal.gob.ve>
+Date:   Mon, 29 Apr 2019 22:00:51 +0530
+Message-Id: <20190429163100.A0175B4E437@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Aviso de seguridad:
 
---=-GOYXXzF9KHU36Ho3xOiV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
-On Mon, 2019-04-29 at 11:42 -0400, Doug Ledford wrote:
-> On Mon, 2019-04-29 at 08:40 +0000, Jason Gunthorpe wrote:
-> > On Mon, Apr 29, 2019 at 08:09:47AM +0200, Heiko Carstens wrote:
-> > > On Sun, Apr 28, 2019 at 11:52:12AM +0000, Jason Gunthorpe wrote:
-> > > > Hi Linus,
-> > > >=20
-> > > > Third rc pull request
-> > > >=20
-> > > > Nothing particularly special here. There is a small merge conflict
-> > > > with Adrea's mm_still_valid patches which is resolved as below:
-> > > ...
-> > > > Jason Gunthorpe (3):
-> > > >       RDMA/mlx5: Do not allow the user to write to the clock page
-> > > >       RDMA/mlx5: Use rdma_user_map_io for mapping BAR pages
-> > > >       RDMA/ucontext: Fix regression with disassociate
-> > >=20
-> > > This doesn't compile. The patch below would fix it, but not sure if
-> > > this is what is intended:
-> > >=20
-> > > drivers/infiniband/core/uverbs_main.c: In function 'rdma_umap_fault':
-> > > drivers/infiniband/core/uverbs_main.c:898:28: error: 'struct vm_fault=
-' has no member named 'vm_start'
-> > >    vmf->page =3D ZERO_PAGE(vmf->vm_start);
-> > >                             ^~
-> > > diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniba=
-nd/core/uverbs_main.c
-> > > index 7843e89235c3..65fe89b3fa2d 100644
-> > > +++ b/drivers/infiniband/core/uverbs_main.c
-> > > @@ -895,7 +895,7 @@ static vm_fault_t rdma_umap_fault(struct vm_fault=
- *vmf)
-> > > =20
-> > >  	/* Read only pages can just use the system zero page. */
-> > >  	if (!(vmf->vma->vm_flags & (VM_WRITE | VM_MAYWRITE))) {
-> > > -		vmf->page =3D ZERO_PAGE(vmf->vm_start);
-> > > +		vmf->page =3D ZERO_PAGE(vmf->vma->vm_start);
-> > >  		get_page(vmf->page);
-> > >  		return 0;
-> > >  	}
-> > >=20
-> >=20
-> > Thanks Heiko, this looks right to me.=20
-> >=20
-> > I'm surprised to be seeing this at this point, these patches should
-> > have been seen by 0 day for several days now, and they were in
-> > linux-next already too..
-> >=20
-> > Doug, can you send this to Linus today?
->=20
-> Yep.
->=20
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
-Done.
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index  , copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
 
---=-GOYXXzF9KHU36Ho3xOiV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
 
------BEGIN PGP SIGNATURE-----
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlzHJlYACgkQuCajMw5X
-L91yvw//Ys2rV6w8YAjYEgeCwgJYzp6rraX9/ElJrYwnobStfgcjEddCY4QiO69g
-yO9vMgHqcqmgp/WAKgDKu35vthZE6zgmuS6f80ZJ0eKYLcGfGDeeVREZfZEmjx+a
-/EG/UA5Vb5N12ek8Y3Yy5Qk2uzoVjgOmKenPMxh+1SG1STNVwcp6st3TX6J35KkJ
-Af3w8etl1t2nEueESciJt6DiOXf7Gxrg2MF1un2hhPgHLiicu24GC4RRTyyuNUCj
-6rcYKqXh5Fr/NyiIjrQo9uGmfVkeZYoE5ZQQ4cf6MteP3/KEXF6SxmGAw4NOsVVv
-0FEMmWt0JiN6R7jmRHNqnX5qFy0bB5AlzPowtkobVax9jOGP+DkGyfwa5nnn2JbW
-c6cQWXJ8ez6+e4/h+C/wad7bkbNFwwgQwazdsuPg88gqT+fasQx3wg9Pt6XgNW3M
-LkvWY3c6AYfReXJuXQCDAgXWZcxkU81IqhfXhKr7GuQl3o3M9XEQH24LJxZkqQfQ
-VWOo0C+hPkDLfa2klxwGMDwhRZU3mfCxWxJ6Kqe1hftrHHHB0KMTx1OCb6zemfmd
-/SBv4Mh1PivvWkbqPg55AEdiH1wroIDXgvbXybxVePWC7Nf7DB5hkdJ2YIm1Ht11
-rAYhHUwbcBOS27A2WQ3WfCWAokPOW1LeslqMyi9XFdsusQaUftU=
-=QDZ6
------END PGP SIGNATURE-----
+Gracias por usar nuestro webmail.
 
---=-GOYXXzF9KHU36Ho3xOiV--
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
 
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
