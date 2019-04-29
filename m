@@ -2,92 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01B9E544
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C01E55E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfD2Oso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:48:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39800 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbfD2Osn (ORCPT
+        id S1728514AbfD2OvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:51:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38738 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728490AbfD2OvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:48:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B70F7608BA; Mon, 29 Apr 2019 14:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1556549322;
-        bh=NcFqWJZM8KHVVeLy31Z4V83m0XnDaKF7vCAx6RUJ4kQ=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Wh/qgAmhyh7cA6V9hWUzr5W7oCSXScy5XwDthvFwo0xAf6rePnkuUxoaODcND7TXw
-         tLMHQZbSslvkTGFQCZmELkS2os0DDmXXpS0jd8MSklqBxQ/GqLVW9cnLP0TO9S4b6t
-         UNsnlSPkIZXHFOx0V861hIanpHY4dfsjQNyLsk+w=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF25760134;
-        Mon, 29 Apr 2019 14:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1556549322;
-        bh=NcFqWJZM8KHVVeLy31Z4V83m0XnDaKF7vCAx6RUJ4kQ=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=k5rSRXEu3lTa/+KjDCIwxoOyt7MXBCnBHltcQsIQJHPowy4bg6iHAmqOHnrLmsnWb
-         ehJSTJTtnV99sNUBNQAubQeAHzYENPFIIgDKVNX8Xv8sTdG5PIN1Grw7EcnhAfdU1u
-         IQXFaioSpe6//5LnSBnl/9R+2jnLdDG6NYchdhr4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF25760134
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 29 Apr 2019 10:51:20 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3TEgbDl046329
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:51:19 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s62qgt2hj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:51:19 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 29 Apr 2019 15:51:18 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 29 Apr 2019 15:51:13 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3TEnu9b36110556
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Apr 2019 14:49:56 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7E5FB2075;
+        Mon, 29 Apr 2019 14:49:56 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96435B206B;
+        Mon, 29 Apr 2019 14:49:56 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.213.184])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Apr 2019 14:49:56 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4CBD616C0F1D; Mon, 29 Apr 2019 07:49:56 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 07:49:56 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] Documentation: atomic_t.txt: Explain ordering provided
+ by smp_mb__{before,after}_atomic()
+Reply-To: paulmck@linux.ibm.com
+References: <Pine.LNX.4.44L0.1904191312200.1406-100000@iolanthe.rowland.org>
+ <20190419180017.GP4038@hirez.programming.kicks-ass.net>
+ <20190419182620.GF14111@linux.ibm.com>
+ <1555719429.t9n8gkf70y.astroid@bobo.none>
+ <20190420085440.GK14111@linux.ibm.com>
+ <20190423123209.GR4038@hirez.programming.kicks-ass.net>
+ <20190423133010.GK3923@linux.ibm.com>
+ <20190429092430.GF26546@localhost>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] ath6kl: wmi: use struct_size() helper
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190403184949.GA7597@embeddedor>
-References: <20190403184949.GA7597@embeddedor>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190429144842.B70F7608BA@smtp.codeaurora.org>
-Date:   Mon, 29 Apr 2019 14:48:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429092430.GF26546@localhost>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19042914-0072-0000-0000-00000422B2C2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011017; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01196110; UDB=6.00627248; IPR=6.00976960;
+ MB=3.00026647; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-29 14:51:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19042914-0073-0000-0000-00004C02CF28
+Message-Id: <20190429144956.GQ3923@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-29_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904290104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+On Mon, Apr 29, 2019 at 11:24:30AM +0200, Johan Hovold wrote:
+> On Tue, Apr 23, 2019 at 06:30:10AM -0700, Paul E. McKenney wrote:
+> > On Tue, Apr 23, 2019 at 02:32:09PM +0200, Peter Zijlstra wrote:
+> > > On Sat, Apr 20, 2019 at 01:54:40AM -0700, Paul E. McKenney wrote:
+> 
+> > > > 	And lock acquisition??? acm_read_bulk_callback().
+> > > 
+> > > I think it goes with the set_bit() earlier, but what do I know.
+> > 
+> > Quite possibly!  In that case it should be smp_mb__after_atomic(),
+> > and it would be nice if it immediately followed the set_bit().
+> 
+> I noticed this one last week as well. The set_bit() had been incorrectly
+> moved and without noticing the smp_mb__before_atomic(). I've submitted a
+> patch to restore it and to fix a related issue to due missing barriers:
+> 
+> 	https://lkml.kernel.org/r/20190425160540.10036-5-johan@kernel.org
 
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes, in particular in the
-> context in which this code is being used.
-> 
-> So, replace code of the following form:
-> 
-> sizeof(*ev) + ev->num_neighbors * sizeof(struct wmi_neighbor_info)
-> 
-> with:
-> 
-> struct_size(ev, neighbor, ev->num_neighbors)
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Good to know, thank you!
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-83d9562b6478 ath6kl: wmi: use struct_size() helper
-
--- 
-https://patchwork.kernel.org/patch/10884343/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+							Thanx, Paul
 
