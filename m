@@ -2,106 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC47E65D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0524BE687
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfD2P2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:28:40 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53801 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfD2P2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:28:40 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 26so14751366wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 08:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=II8KXmgk5i2NI+d+OagAFbqz1kgwsgIr5Q0TCse/uaE=;
-        b=CTLGlgkPaxWr00QsI3EOFLETyybraZIKbHkfyMUTo/ZDocD4Sw2Nqc39Xgs1UNJ1hg
-         hheR5rMt/LQfKRWtrvhjdLaUri/Lf/GpPsDs5SFlS+Np5vWAn5wSLozHtB0M4L5/g7LI
-         WzbHpOfFSGEL1cqLgs3AhBIS+hhXqXVyFX0+g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=II8KXmgk5i2NI+d+OagAFbqz1kgwsgIr5Q0TCse/uaE=;
-        b=QBosZR7tnl2UostzXWj5BTxsTEAK2UBtu65Sew77DkZXYAj9IjpG0izaIbWVzYgy4a
-         YfGxORtdY18JLr+IVBF1w43Y28biFddSYHXqieDmb/wDH0UsQgA0yF+9HN7s95S0ORIA
-         5cjZtT5wRNGE7WhJw5kSnZjgtvUhpjR7/ifVOZT8Mli2iks5DUCDwv6TDZpOw2xBISXq
-         DmsjLVUaH6e025SSudBjCV3YYMMsdaJ+1C/m2ffH8u8l/zTc7RRhzcRpOIuFHo07yw9C
-         Z+Ghxj6R2T96EPiw0+3KDJv70QbzF2Tht3n9m3HGjDKxs9uPBZKuRxi92pN4DnhgUS4T
-         jCvA==
-X-Gm-Message-State: APjAAAVKoT6DRqNyesIRO9aysPZB8JdHuD0fFoeTwXDk2Z4gWrx6SB95
-        StobvC7QBgdcTDVBvRE+8hHfnZmDlDw6jqI0wA/FRA==
-X-Google-Smtp-Source: APXvYqwjIP2ogzCulDTCoRN3zD+FONRuAk0p0ylTja8E7VBHXTiVcX/G42pUFehblUT4AwAaMZ+onJuC040kZpbr+Qo=
-X-Received: by 2002:a1c:1a85:: with SMTP id a127mr4020287wma.139.1556551718099;
- Mon, 29 Apr 2019 08:28:38 -0700 (PDT)
+        id S1728877AbfD2Pad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:30:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:60620 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728214AbfD2Pac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:30:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0369680D;
+        Mon, 29 Apr 2019 08:30:32 -0700 (PDT)
+Received: from [10.1.196.92] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 315A83F5C1;
+        Mon, 29 Apr 2019 08:30:31 -0700 (PDT)
+Subject: Re: [PATCH] irqchip: Remove unneeded select IRQ_DOMAIN
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-kernel@vger.kernel.org
+References: <20190429151203.21650-1-geert+renesas@glider.be>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <5444419a-8f7d-e42a-f321-0a5d12deec46@arm.com>
+Date:   Mon, 29 Apr 2019 16:30:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-4-git-send-email-srinath.mannam@broadcom.com>
- <da76e12f246c3f10bfed28d8b91a3575dc73f243.camel@infradead.org> <20190429152422.GC17516@e107155-lin>
-In-Reply-To: <20190429152422.GC17516@e107155-lin>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Mon, 29 Apr 2019 20:58:26 +0530
-Message-ID: <CABe79T4MYf65QM+OHTPa_F8uG6_pd-9VLMQOHb9EPRyj2mEx1A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] thermal: broadcom: Add Stingray thermal driver
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190429151203.21650-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On 29/04/2019 16:12, Geert Uytterhoeven wrote:
+> IRQ_DOMAIN_HIERARCHY selects IRQ_DOMAIN, hence there is no need for
+> drivers to select both.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thank you for notifying..
+Applied, thanks.
 
-Hi Sudeep,
-
-I will send a patch to remove ACPI support.
-
-Regards,
-Srinath.
-
-On Mon, Apr 29, 2019 at 8:54 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Mon, Apr 29, 2019 at 06:07:12PM +0300, David Woodhouse wrote:
-> > On Mon, 2018-05-28 at 11:11 +0530, Srinath Mannam wrote:
-> > > From: Pramod Kumar <pramod.kumar@broadcom.com>
-> > >
-> > > This commit adds stingray thermal driver to monitor six
-> > > thermal zones temperature and trips at critical temperature.
-> >
-> > This matches an ACPI "BRCM0500" device but then calls
-> > devm_thermal_zone_of_sensor_register(), which AFAICT is going to fail
-> > on an ACPI system because the first thing that does is call
-> > of_find_node_by_name(NULL, "thermal-zones") which isn't going to find a
-> > match.
-> >
->
-> Thanks David for bringing this up. I hadn't noticed that this driver is
-> cheekily trying to do thermal management in ACPI using crafty
-> acpi_device_id match. ACPI thermal objects/methods must be used in the
-> firmware to do thermal management.
->
-> Pramod, can you remove the ACPI support or I can go ahead and post the
-> patch to do the same ?
->
-> > How does this work in the ACPI case?
->
-> It can't and shouldn't work if one can make it happen :)
->
-> --
-> Regards,
-> Sudeep
+	M.
+-- 
+Jazz is not dead. It just smells funny...
