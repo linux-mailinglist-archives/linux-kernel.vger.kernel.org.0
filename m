@@ -2,77 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3622DBE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B406DC47
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 08:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfD2GQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 02:16:38 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:8683 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726566AbfD2GQP (ORCPT
+        id S1727478AbfD2Gzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 02:55:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46484 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726846AbfD2Gzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 02:16:15 -0400
-X-UUID: a9508f3ce592421d869f9ca0b57bef0c-20190429
-X-UUID: a9508f3ce592421d869f9ca0b57bef0c-20190429
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 180244555; Mon, 29 Apr 2019 14:16:09 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 29 Apr 2019 14:16:09 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 29 Apr 2019 14:16:08 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
-        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>
-Subject: [PATCH 4/4] net: stmmac: dwmac-mediatek: modify csr_clk value to fix mdio read/write fail
-Date:   Mon, 29 Apr 2019 14:15:56 +0800
-Message-ID: <1556518556-32464-5-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1556518556-32464-1-git-send-email-biao.huang@mediatek.com>
-References: <1556518556-32464-1-git-send-email-biao.huang@mediatek.com>
+        Mon, 29 Apr 2019 02:55:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id k18so6928407lfj.13
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Apr 2019 23:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X79SrIi9c84VIrWeeLGrqQgrBJdkT4fyXXb11dpl5ZI=;
+        b=FodnkuEmqqVuaM5mDPGWUCZOn1baCfEeqTxi+dIxUzLDrZXO/0mZGmUBicyEW2dam0
+         shxT1VNv2cNfeI7a9gkdE3unft2FW4c7F86WvbDabsMHDoUb3W94Q3XfHuIgshSTU6uD
+         cTCSIL50Kh7ocMBdk//GsoX7dWi2Iv3w8hZoKgl5DF/7HJqMzHcc3duWAV+RU25LhPHG
+         cVH3isgjjR+o0f1ZvO9oo/n/ac5xSx8zIJgynE49YLoc4SR2JLZzylh76xAHDMGCAs74
+         uurHec8CRsvdUTvr1jxGLIJknMQC1qiMVaiQYHA4lHUdmgptwIU69etDvrmsoyRI5LRm
+         TGxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X79SrIi9c84VIrWeeLGrqQgrBJdkT4fyXXb11dpl5ZI=;
+        b=A2WgG+PiDw0UUCXeKzmjF8vCJMILUDqlmBbW86TcAtefdaaUpvpZ7KYib9jqplDojk
+         ntszk5sFRR7yNysgJHOqYrFYxhnFazjGYlxbFpVs8kb2l7l9Vfs0K8/uMnEgpfxAaLrY
+         FcBy8ApPLIuu9o4qVJ6jtTBVXcDQAp6WxV7XZJW6jjgSbvy5wy45/0yBOmOGnSE1ab4i
+         okEfltWdqolGlem2Y20ypCyomFC5OYslE7cjSSui6qqUzBHMiJ+cAQwLgPhxZbiNgfQ5
+         87xjU98fT0hPJso138XTYZyADaK700GCM8C67CJhXYBQcthH2vEXV1JVpKE0BDo/sONq
+         zg/w==
+X-Gm-Message-State: APjAAAULK1AUjNb5mYnRg5vCtAC4ohk0+PLcXTNhPwli2m4JcWPNowP2
+        vMXofn8V6IltbIu/sCs0IRMPfw==
+X-Google-Smtp-Source: APXvYqz2HI1dJLQ6NTVZVazrEaO9tcW9JY+dPMoexZcD6xY339/BeCzOPtYhoZrEh0iSOaLVtwy66g==
+X-Received: by 2002:ac2:51a1:: with SMTP id f1mr22068165lfk.129.1556520946405;
+        Sun, 28 Apr 2019 23:55:46 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id d16sm7204946lfi.75.2019.04.28.23.55.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 28 Apr 2019 23:55:45 -0700 (PDT)
+Date:   Sun, 28 Apr 2019 23:19:42 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        marc.w.gonzalez@free.fr, john.stultz@linaro.org,
+        liwei213@huawei.com
+Subject: Re: [PATCH] arm64: defconfig: Update UFSHCD for Hi3660 soc
+Message-ID: <20190429061942.2e3xy3ki7ua5woai@localhost>
+References: <20190416170221.13764-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190416170221.13764-1-valentin.schneider@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The frequency of  csr clock is 66.5MHz, so the csr_clk value should
-be 0. Modify the csr_clk value to fix mdio read/write fail issue.
+On Tue, Apr 16, 2019 at 06:02:21PM +0100, Valentin Schneider wrote:
+> Commit 7ee7ef24d02d ("scsi: arm64: defconfig: enable configs for Hisilicon ufs")
+> set 'CONFIG_SCSI_UFS_HISI=y', but the configs it depends
+> on
+> 
+>   (CONFIG_SCSI_HFSHCD_PLATFORM && CONFIG_SCSI_UFSHCD)
+> 
+> were left to being built as modules.
+> 
+> Commit 1f4fa50dd48f ("arm64: defconfig: Regenerate for v4.20") "fixed"
+> that by reverting to 'CONFIG_SCSI_UFS_HISI=m'.
+> 
+> Thing is, if the rootfs is stored in the on-board flash (which
+> is the "canonical" way of doing things), we either need these drivers
+> to be built-in, or we need to fiddle with an initramfs to access that
+> flash and eventually load the modules installed over there.
+> 
+> The former is the easiest, do that.
+> 
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-index bf25629..6b12d0f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-@@ -346,8 +346,8 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
- 		return PTR_ERR(plat_dat);
- 
- 	plat_dat->interface = priv_plat->phy_mode;
--	/* clk_csr_i = 250-300MHz & MDC = clk_csr_i/124 */
--	plat_dat->clk_csr = 5;
-+	/* clk_csr_i = 60-100MHz & MDC = clk_csr_i/42 */
-+	plat_dat->clk_csr = 0;
- 	plat_dat->has_gmac4 = 1;
- 	plat_dat->has_gmac = 0;
- 	plat_dat->pmt = 0;
--- 
-1.7.9.5
 
+-Olof
