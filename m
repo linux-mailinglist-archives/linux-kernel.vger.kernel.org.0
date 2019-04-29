@@ -2,226 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63A1DF7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933DADF90
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 11:36:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfD2JeO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Apr 2019 05:34:14 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:44111 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfD2JeN (ORCPT
+        id S1727792AbfD2Jgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 05:36:44 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36628 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbfD2Jgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 05:34:13 -0400
-X-Originating-IP: 90.88.147.33
-Received: from xps13 (aaubervilliers-681-1-27-33.w90-88.abo.wanadoo.fr [90.88.147.33])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id BE49DFF825;
-        Mon, 29 Apr 2019 09:34:07 +0000 (UTC)
-Date:   Mon, 29 Apr 2019 11:34:06 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org,
-        "Boris Brezillon" <boris.brezillon@collabora.com>,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        richard@nod.at, zhengxunli@mxic.com.tw
-Subject: Re: [PATCH] mtd: rawnand: Add Macronix NAND read retry and
- randomizer support
-Message-ID: <20190429113406.09d5b68f@xps13>
-In-Reply-To: <OFD55A67FA.88C5BFBC-ON482583E0.0011385B-482583E0.00133C32@mxic.com.tw>
-References: <1554780172-23111-1-git-send-email-masonccyang@mxic.com.tw>
-        <20190409090427.22de9917@collabora.com>
-        <OF6C97E4DE.45261545-ON482583D7.00340468-482583D7.0034B3FE@mxic.com.tw>
-        <20190409114701.744c2c8c@collabora.com>
-        <OF9601E14B.A48284C4-ON482583D8.0005E3EB-482583D8.0006CC14@mxic.com.tw>
-        <20190410092258.332ef399@collabora.com>
-        <OF071D3608.9D6D2523-ON482583D9.00173F52-482583D9.0018188C@mxic.com.tw>
-        <20190411085353.4c1af008@collabora.com>
-        <OF34672B6F.AACFE22C-ON482583D9.00335814-482583D9.0033A673@mxic.com.tw>
-        <20190411112943.1fecfa69@collabora.com>
-        <OF84BD5411.301E92AC-ON482583DF.000CC3CC-482583DF.000F4920@mxic.com.tw>
-        <20190417090817.7a0c4638@xps13>
-        <OFD55A67FA.88C5BFBC-ON482583E0.0011385B-482583E0.00133C32@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 29 Apr 2019 05:36:42 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id 69cd200053XaVaC019cdzb; Mon, 29 Apr 2019 11:36:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hL2iD-0000we-3P; Mon, 29 Apr 2019 11:36:37 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hL2iD-0002p0-13; Mon, 29 Apr 2019 11:36:37 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] ARM: rskrza1: Add RZ/A1 IRQC and input switches
+Date:   Mon, 29 Apr 2019 11:36:26 +0200
+Message-Id: <20190429093631.10799-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason, Boris,
+	Hi all,
 
-masonccyang@mxic.com.tw wrote on Thu, 18 Apr 2019 11:30:05 +0800:
+Unlike on most other Renesas SoCs, the GPIO controller block on RZ/A1
+SoCs lack interrupt functionality.  While the GPIOs can be routed to the
+GIC as pin interrupts, this is of limited use, as the PL390 GIC supports
+rising edge and high-level interrupts only.
 
-> Hi Miquel,
-> 
-> 
-> > > > > > > > > > 
-> > > > > > > > > > Re: [PATCH] mtd: rawnand: Add Macronix NAND read retry   
-> and 
-> > > > > > > randomizer   
-> > > > > > > > > support   
-> > > > > > > > > > 
-> > > > > > > > > > On Tue, 9 Apr 2019 17:35:39 +0800
-> > > > > > > > > > masonccyang@mxic.com.tw wrote:
-> > > > > > > > > >   
-> > > > > > > > > > > > > +
-> > > > > > > > > > > > > +static const struct kobj_attribute   
-> sysfs_mxic_nand =
-> > > > > > > > > > > > > +   __ATTR(nand_random, S_IRUGO | S_IWUSR,
-> > > > > > > > > > > > > +          mxic_nand_rand_type_show,
-> > > > > > > > > > > > > +          mxic_nand_rand_type_store);   
-> > > > > > > > > > > > 
-> > > > > > > > > > > > No, we don't want to expose that through a sysfs   
-> file, 
-> > > > > > > especially   
-> > > > > > > > > since   
-> > > > > > > > > > > > changing the randomizer config means making the NAND   
->  
-> > > > > unreadable   
-> > > > > > > for   
-> > > > > > > > > > > > those that have used it before the change.
-> > > > > > > > > > > >   
-> > > > > > > > > > > 
-> > > > > > > > > > > Our on-die randomizer is still readable from user   
-> after 
-> > > the   
-> > > > > > > function   
-> > > > > > > > > > > is enabled.   
-> > > > > > > > > > 
-> > > > > > > > > > You mean the memory is still readable no matter the   
-> > > randomizer   
-> > > > > > > state.   
-> > > > > > > > > > Not sure how that's possible, but okay.
-> > > > > > > > > >   
-> > > > > > > > > > > This randomizer is just like a internal memory cell 
-> > > > > > > > > > > reliability enhanced.   
-> > > > > > > > > > 
-> > > > > > > > > > Why don't you enable it by default then?   
-> > > > > > > > > 
-> > > > > > > > > The penalty of randomizer is read/write performance down.
-> > > > > > > > > i.e,. tPROG 300 us to 340 us (randomizer enable)
-> > > > > > > > > therefore, disable it by default.   
-> > > > > > > > 
-> > > > > > > > I'm a bit puzzled. On the NAND I've seen that required data
-> > > > > > > > randomization it's not something you'd want to disable as   
-> this 
-> > > > > implied   
-> > > > > > > > poor data retention. What's the use case here? Are we   
-> talking 
-> > > about   
-> > > > > SLC   
-> > > > > > > > or MLC NANDs? Should we enable this feature once we   
-> > start seeing   
-> > >   
-> > > > > that   
-> > > > > > > > the NAND starts being less reliable (basically when   
-> read-retry 
-> > > > > happens   
-> > > > > > > > more often)? I really think this is something you   
-> shoulddecide 
-> > >   
-> > > > > kernel   
-> > > > > > > > side, because users have no clue when it's appropriate   
-> > to switch   
-> > >   
-> > > > > this   
-> > > > > > > > feature on/off.
-> > > > > > > >   
-> > > > > > > 
-> > > > > > > It's SLC NAND and seems to has nothing to do with read-retry   
-> > > happens.  
-> > > > > > > later, I will get more information for your concerns.   
-> > > > > > 
-> > > > > > Well, this feature is optional, and can be enabled to improve
-> > > > > > reliability. Sounds like a good reason to enable it when your   
-> NAND
-> > > > > > device starts showing reliability issues, and the number of   
-> > > read_retry  
-> > > > > > attempts reflects the wear level pretty well. Alternatively, you   
->  
-> > > could  
-> > > > > > use the number of bitflips, but, in any case, don't expect the   
-> user 
-> > > to  
-> > > > > > take this decision, because almost nobody knows what the   
-> randomizer
-> > > > > > is needed for.
-> > > > > >   
-> > > > > > >   
-> > > > > > > > >   
-> > > > > > > > > >   
-> > > > > > > > > > > It could be enable at any time with OTP bit function   
-> and 
-> > > > > that's   
-> > > > > > > why   
-> > > > > > > > > > > we patch it by sys-fs.   
-> > > > > > > > > > 
-> > > > > > > > > > Sorry, but that's not a good reason to expose that   
-> through 
-> > > > > sysfs.   
-> > > > > > > > > 
-> > > > > > > > > Any good way to expose randomizer function for user ?   
-> > > > > > > > 
-> > > > > > > > Don't expose it :P.   
-> > > > > > > 
-> > > > > > > oh, okay, I will remove sys-fs randomizer.
-> > > > > > > 
-> > > > > > > Is it OK to keep set/get features for randomizer ?   
-> > > > > > 
-> > > > > > I don't think it's a good idea to have dead code, so no. But I'm   
->  
-> > > pretty  
-> > > > > > sure we'll find a way to use/expose this feature.   
-> > > > > 
-> > > > > okay, great!
-> > > > > Looking forward to hearing this feature use/expose.   
-> > > > 
-> > > > But for that to happen we are waiting for inputs about when this is
-> > > > supposed to be used...   
-> > > 
-> > > 
-> > > The main reason to disable Randomizer in default is
-> > > NOP = 4 (default) change to NOP = 1 (Randomizer enable), 
-> > > NOP: number of partial program cycles in same page  
-> > 
-> > I am not sure to understand, is this related to what we call 'subpages'?
-> >   
-> yes,
-> 
-> > > 
-> > > Some OS file systems(or FTL) much concern NOP = 4 and 
-> > > any better way than sys-fs to enable it?  
-> > 
-> > sysfs entry => user action
-> > The user has absolutely no way to know when it is relevant to enable
-> > the randomizer. The kernel must be in charge of it. So the question is:
-> > when is it relevant to enable the randomizer? What criteria? What
-> > threshold?
-> >   
-> 
-> Randomizer is according to users' demand that at least two different use 
-> cases.
-> 1. a need for an operation mode/use case to take advantage of NOP of 4 
-> without turning on randomizer
-> 2. another use case for high data integrity by enabling randomizer and 
-> sacrificing NOP 
-> 
-> If user application don't need subpage program (NOP = 1 is ok),
-> they could enable Randomizer from kernel driver 
-> (i.e., chip->options |= NAND_NO_SUBPAGE_WRITE; & set feature to enable 
-> randomizer)
-> or user space(i.e., sys-fs.).
-> 
-> Therefore, default to disbale randomizer(for NOP=4).
+Fortunately RZ/A1 SoCs contain a small front-end for the GIC, allowing
+to use up to 8 external interrupts, with configurable sense select.
 
-What about a DT property in the NAND chip node that would be checked in
-Macronix driver? Or maybe a defconfig entry? This cannot be changed at
-runtime.
+Hence this patch series adds DT bindings and a driver for this
+front-end, adds a device node for it in the RZ/A1H DTS, and uses it to
+enable support for the 3 input switches on the Renesas RSK+RZA1
+development board.
 
-Thanks,
-Miquèl
+I expect this driver to be reusable for RZ/A2, after adding a match
+entry with .gic_spi_base = 4.
+  - Should this information come from DT instead?
+  - Originally I had interrupts properties in DT to define the mapping
+    from external interrupts to GIC interrupts (cfr. "renesas,irqc",
+    which also calls request_irq()), but other similar drivers seem to
+    hardcode this information in the driver, so I went that route.
+
+Dependencies:
+  - Patch 3 depends on patch 2,
+  - Patch 4 can be applied as soon as the DT bindings in patch 1 have
+    been accepted,
+  - Patch 5 depends on patch 4.
+
+This has been tested on RSK+RZA1 with evtest and s2ram wake-up.
+I have verified proper operation of low-level and rising/falling sense
+select, too.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (5):
+  dt-bindings: interrupt-controller: Add Renesas RZ/A1 Interrupt
+    Controller
+  irqchip: Add Renesas RZ/A1 Interrupt Controller driver
+  soc: renesas: Enable RZ/A1 IRQC on RZ/A1H
+  ARM: dts: r7s72100: Add IRQC device node
+  ARM: dts: rskrza1: Add input switches
+
+ .../renesas,rza1-irqc.txt                     |  27 ++
+ arch/arm/boot/dts/r7s72100-rskrza1.dts        |  38 +++
+ arch/arm/boot/dts/r7s72100.dtsi               |   8 +
+ drivers/irqchip/Kconfig                       |   4 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rza1.c            | 238 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   1 +
+ 7 files changed, 317 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+ create mode 100644 drivers/irqchip/irq-renesas-rza1.c
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
