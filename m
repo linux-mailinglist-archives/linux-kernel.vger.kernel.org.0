@@ -2,106 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC3CE476
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE113E474
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbfD2OQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:16:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57989 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfD2OQd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:16:33 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3TEG23J941667
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Apr 2019 07:16:03 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3TEG23J941667
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556547363;
-        bh=0Ui+o1kSVZ4jE9Css0P+yjJEJFZjFSDhDGouXzoUYAc=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=sSlMatAt06ixwRkpmS9e//TKvLfsHcJwGungkA/Z+Tf12PCuCVbDHc04LtSCr1YuG
-         zHWLXuLD00FmOtkVMZeZ5R/A3ZPHNkNMMte9O1/bcAik//7skbJa99VVilQy9JeIas
-         oCy/5tzUHUfhA21O8NkbgHgkbUJ9JoDLUyI3iuHDoE3bftAvLU1WFjWcWAwkadAI/G
-         k9ZWr+Nz/viaN3p15E0F/X8JY+CsxtwtC7YJ0hZrkr9qzwM7CofWrbNSFtOk0lzf0q
-         ipcujtEDFDQCV7ynrnq6So0/xuaSIx3cPpE2ObU2JDVVoN1nyDXj2vne6UFBg7k6y9
-         lL0G9KsSE1qlg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3TEG2Io941664;
-        Mon, 29 Apr 2019 07:16:02 -0700
-Date:   Mon, 29 Apr 2019 07:16:02 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for zhengbin <tipbot@zytor.com>
-Message-ID: <tip-d671002be6bdd7f77a771e23bf3e95d1f16775e6@git.kernel.org>
-Cc:     peterz@infradead.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        mingo@kernel.org, will.deacon@arm.com, hpa@zytor.com,
-        zhengbin13@huawei.com
-Reply-To: akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          zhengbin13@huawei.com, hpa@zytor.com, will.deacon@arm.com,
-          mingo@kernel.org
-In-Reply-To: <1556540791-23110-1-git-send-email-zhengbin13@huawei.com>
-References: <1556540791-23110-1-git-send-email-zhengbin13@huawei.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lockdep: Remove unnecessary unlikely()
-Git-Commit-ID: d671002be6bdd7f77a771e23bf3e95d1f16775e6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1728369AbfD2OQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:16:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58216 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725838AbfD2OQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:16:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CE9FA78;
+        Mon, 29 Apr 2019 07:16:10 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBED53F5C1;
+        Mon, 29 Apr 2019 07:16:08 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 15:16:03 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 1/2] regulator: vexpress: Get rid of struct
+ vexpress_regulator
+Message-ID: <20190429141547.GA13159@e107155-lin>
+References: <20190429113542.476-1-axel.lin@ingics.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190429113542.476-1-axel.lin@ingics.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d671002be6bdd7f77a771e23bf3e95d1f16775e6
-Gitweb:     https://git.kernel.org/tip/d671002be6bdd7f77a771e23bf3e95d1f16775e6
-Author:     zhengbin <zhengbin13@huawei.com>
-AuthorDate: Mon, 29 Apr 2019 20:26:31 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 29 Apr 2019 16:11:01 +0200
+Hi Axel,
 
-locking/lockdep: Remove unnecessary unlikely()
+On Mon, Apr 29, 2019 at 07:35:41PM +0800, Axel Lin wrote:
+> The *regdev and *regmap can be replaced by local variables in probe().
+> Only desc of struct vexpress_regulator is really need, so just use
+> struct regulator_desc directly and remove struct vexpress_regulator.
+>
 
-DEBUG_LOCKS_WARN_ON() already contains an unlikely(), there is no need
-for another one.
+Looks good, thanks for the clean up.
 
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: houtao1@huawei.com
-Link: http://lkml.kernel.org/r/1556540791-23110-1-git-send-email-zhengbin13@huawei.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/locking/lockdep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 25ecc6d3058b..6426d071a324 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3256,7 +3256,7 @@ void lockdep_hardirqs_on(unsigned long ip)
- 	/*
- 	 * See the fine text that goes along with this variable definition.
- 	 */
--	if (DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled)))
-+	if (DEBUG_LOCKS_WARN_ON(early_boot_irqs_disabled))
- 		return;
- 
- 	/*
+--
+Regards,
+Sudeep
