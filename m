@@ -2,103 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF9CE57A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953B5E582
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 16:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbfD2Oxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 10:53:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59450 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728396AbfD2Oxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 10:53:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7A6E80D;
-        Mon, 29 Apr 2019 07:53:39 -0700 (PDT)
-Received: from [10.32.98.83] (e111474-lin.manchester.arm.com [10.32.98.83])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 187983F5C1;
-        Mon, 29 Apr 2019 07:53:37 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] perf cs-etm: Always allocate memory for
- cs_etm_queue::prev_packet
-To:     Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190428083228.20246-1-leo.yan@linaro.org>
-From:   Robert Walker <robert.walker@arm.com>
-Message-ID: <bba9c934-2ee9-4c0a-b3c8-52c901f740db@arm.com>
-Date:   Mon, 29 Apr 2019 15:53:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190428083228.20246-1-leo.yan@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1728545AbfD2Oy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 10:54:27 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:22343 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728365AbfD2Oy0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 10:54:26 -0400
+Received: from grover.flets-west.jp (softbank126125154137.bbtec.net [126.125.154.137]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x3TEs2DB010195;
+        Mon, 29 Apr 2019 23:54:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x3TEs2DB010195
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1556549643;
+        bh=ZweuqeTPoljDbmkeKikxx4wqv2jN6rBHEqKiytbbuyo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l9rJ2fILRGWkiRdjPQqkQ+A3OyAOOJvSctLMA4lZvRP6HDVOMRzwk/BXQnR2xJgw3
+         XSmAQN8R//scUoKeNA27TkvueVuNL8yNUJHGMEEHtosKb/ue4SUdNF407j2qAX82Q4
+         Y+G9f2sLUukhrZYtHvQgRzkKhxls/pxcluF3n/yYuwSYfBfQPGsYviyIlg2tLP4ZJa
+         /VlhXSbP/v0GoP590kBBJwRcejz9xySlk1EDfMIkQZLuMVdA/f/b2kZGyQge9olqWP
+         /h33yMzqY7UxUeAVpDSWb1yoj4Ty+b19OcEZIKg5q38ueNTWceP26F3PmlbM20c1p0
+         4EMCcKdZue8Ig==
+X-Nifty-SrcIP: [126.125.154.137]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] dontdiff: update with Kconfig build artifacts
+Date:   Mon, 29 Apr 2019 23:53:50 +0900
+Message-Id: <1556549630-17605-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add generated *conf-cfg files.
 
-On 28/04/2019 09:32, Leo Yan wrote:
-> Robert Walker reported a segmentation fault is observed when process
-> CoreSight trace data; this issue can be easily reproduced by the
-> command 'perf report --itrace=i1000i' for decoding tracing data.
->
-> If neither the 'b' flag (synthesize branches events) nor 'l' flag
-> (synthesize last branch entries) are specified to option '--itrace',
-> cs_etm_queue::prev_packet will not been initialised.  After merging
-> the code to support exception packets and sample flags, there
-> introduced a number of uses of cs_etm_queue::prev_packet without
-> checking whether it is valid, for these cases any accessing to
-> uninitialised prev_packet will cause crash.
->
-> As cs_etm_queue::prev_packet is used more widely now and it's already
-> hard to follow which functions have been called in a context where the
-> validity of cs_etm_queue::prev_packet has been checked, this patch
-> always allocates memory for cs_etm_queue::prev_packet.
->
-> Reported-by: Robert Walker <robert.walker@arm.com>
-> Suggested-by: Robert Walker <robert.walker@arm.com>
-> Fixes: 7100b12cf474 ("perf cs-etm: Generate branch sample for exception packet")
-> Fixes: 24fff5eb2b93 ("perf cs-etm: Avoid stale branch samples when flush packet")
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->   tools/perf/util/cs-etm.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
+Commit 694c49a7c01c ("kconfig: drop localization support") removed
+"gconf.glade.h" and "kxgettext".
 
-I've tested these with the trace from the HiKey960 and the segfault no 
-longer occurs
+"kconfig" and "lxdialog" should not be excluded either.
 
-Tested-by: Robert Walker <robert.walker@arm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Regards
+ Documentation/dontdiff | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Rob
+diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+index ef25a06..15c54da 100644
+--- a/Documentation/dontdiff
++++ b/Documentation/dontdiff
+@@ -127,7 +127,7 @@ flask.h
+ fore200e_mkfirm
+ fore200e_pca_fw.c*
+ gconf
+-gconf.glade.h
++gconf-cfg
+ gen-devlist
+ gen_crc32table
+ gen_init_cpio
+@@ -148,24 +148,22 @@ int32.c
+ int4.c
+ int8.c
+ kallsyms
+-kconfig
+ keywords.c
+ ksym.c*
+ ksym.h*
+-kxgettext
+ *lex.c
+ *lex.*.c
+ linux
+ logo_*.c
+ logo_*_clut224.c
+ logo_*_mono.c
+-lxdialog
+ mach-types
+ mach-types.h
+ machtypes.h
+ map
+ map_hugetlb
+ mconf
++mconf-cfg
+ miboot*
+ mk_elfconfig
+ mkboot
+@@ -181,6 +179,7 @@ modules.builtin
+ modules.order
+ modversions.h*
+ nconf
++nconf-cfg
+ ncscope.*
+ offset.h
+ oui.c*
+@@ -200,6 +199,7 @@ pnmtologo
+ ppc_defs.h*
+ pss_boot.h
+ qconf
++qconf-cfg
+ r100_reg_safe.h
+ r200_reg_safe.h
+ r300_reg_safe.h
+-- 
+2.7.4
 
->
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 110804936fc3..054b480aab04 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -422,11 +422,9 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm)
->   	if (!etmq->packet)
->   		goto out_free;
->   
-> -	if (etm->synth_opts.last_branch || etm->sample_branches) {
-> -		etmq->prev_packet = zalloc(szp);
-> -		if (!etmq->prev_packet)
-> -			goto out_free;
-> -	}
-> +	etmq->prev_packet = zalloc(szp);
-> +	if (!etmq->prev_packet)
-> +		goto out_free;
->   
->   	if (etm->synth_opts.last_branch) {
->   		size_t sz = sizeof(struct branch_stack);
