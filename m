@@ -2,157 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B84AAEA06
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFF6EA1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 20:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfD2SVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 14:21:02 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40699 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbfD2SVC (ORCPT
+        id S1729045AbfD2S30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 14:29:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35221 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728962AbfD2S30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 14:21:02 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d31so5542208pgl.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:21:01 -0700 (PDT)
+        Mon, 29 Apr 2019 14:29:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z26so10335649ljj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1LpOQr9D5bQgwPLNE6mNhwOUBh1r8osOqn3zrrKXTa4=;
-        b=YnZvPVa+jGuvpz3XgkIvlqZjxADTyAdRhDERPZOoN7xwPQW9AWBRDAYzgx3C69/Mxb
-         I/CqBmvrbhU5QOLjEnGNRxRpaJp2QKZUunY3BK/lk2qc1nAghRplhBhSXaGYiyG8ud81
-         xOovGYbfYmD+DXFo0sDnsDaTJSzBHr45uqMDLGeW95KTtGH9KYg6qZAsbybf7zA0jSL8
-         g2AH5K9jbX4iOx8/heYicjxOgZAZieBJBz+5pY4k29NCcOmMcC417Ximz1r+q+fvHPd3
-         gXgBdam+tznYLXVxk38GFn6vp8ODvAoxiPHZkygEMXHhJLfc7XVQWWOhaH2ruDsf2f/o
-         fKtA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=liktUAQ84meAwYxARrOaB57hFmqHknre6y7TLap/pyw=;
+        b=TlX1vlaNRutHcVL0zAHMii8+n9hCbC2fIKsPMUSq4g7TknK8mmi/6eY9keIz02Ws6a
+         0sxXLjiXKqUe5nVD8Hq9h6XVk1mWLMo7lAqkO0QgXrp0M7JguoB/2YMziFqvFKujU3CI
+         Oo2bSTLegqzhOQTgHMmIMbR2g7S9IuZHsXaQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1LpOQr9D5bQgwPLNE6mNhwOUBh1r8osOqn3zrrKXTa4=;
-        b=rEFBEmRQ3nPXM8It3xuExzR0j9w50qC6P7lnkhbaz5U0sqWBudrflwkWGI/KVzGuw4
-         z4wuF1CVVW8IHZlAvhMkOlbLbZKJDqRz/y1c2XXzGdMwf3AgJYLPYMa4NR7FYEh7uU4P
-         PRfQ1VQStPjoG2lu1ruY0rMtTmrwlSLbZSP+BFf3t+SeldCpquSJyUAM7vg38cyMwpfD
-         7D6mebZnVbZyErYJFxy8mZnoksw4xyLdhKaa4RkBC1mgE+QtuMeeaofJR6+QLFw8qypV
-         oxxupUhAZRCqaQBIFMIMiR/Kn/N4+xsOv+L/kNzqvpbZO8K9TxEH1pFxt8BU8JRcNj1X
-         0ryA==
-X-Gm-Message-State: APjAAAVki+ADWAufS5y8OVEqIY5fxUIznHYRyZb1/zGqH4Sue2lYQfxj
-        8LbIJu9DGLI41XjTWheW5iwaCVby
-X-Google-Smtp-Source: APXvYqx+2Mz/IDYnoHKuV8qf1KIBQG8azXXVGiooj4GNIFsdV466QyajZhzGM3ad6iAhbKtsQsAKtg==
-X-Received: by 2002:a65:5c82:: with SMTP id a2mr10400160pgt.378.1556562061101;
-        Mon, 29 Apr 2019 11:21:01 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m131sm66420883pga.3.2019.04.29.11.20.59
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=liktUAQ84meAwYxARrOaB57hFmqHknre6y7TLap/pyw=;
+        b=BKQkHtlkRw/m6jtICj4m9ajZl3TSKIhkm1sEFoMCuE1g0P+3t7+qJMPW9+Qpy/hpzm
+         DLl5z20xYrH+gNX56GwCwC4KPPmZzktzARRPltdTha1Mp0A8Fe/hX6tq4ebXjTCzoVZc
+         nCLPTcw1x1xmPNdsXHb6OUKqH+Nd7W308cRezm0dY9lHWsc28jIXO8415qkvXkqnCDb/
+         s+12GgxuAF3u/2O9LkHsgr9oKd9b1pr64T2/Pir4Vx+KLfrWyXF7z0XqtJV1Rpd2COsi
+         N/rid6QKkHNNvcdcrG1v6ReWNkLa5vGRfHdeNspGjP0tVDud1/s7trFK0LAUZ+0VDRhW
+         hPGw==
+X-Gm-Message-State: APjAAAV1AGpJYoYrrtAasfJz+R1HEVpnp/Q3DY7figdxZ2q1GDq8pPMx
+        x/V6qaZfcboud7w0iEstA/jYHbKVfdE=
+X-Google-Smtp-Source: APXvYqwBLABNWG6bCbfi6iWIT6ywCZdwik8iQN4+FgMnTod0yTZOpIOZzaTVc+DP9N9JtL+iDoizwQ==
+X-Received: by 2002:a2e:8693:: with SMTP id l19mr32985699lji.47.1556562563537;
+        Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id h6sm7368659lfp.1.2019.04.29.11.29.23
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 11:20:59 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 11:20:58 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
-        alexander.deucher@amd.com, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, jshriram@codeaurora.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] driver core: platform: Fix the usage of platform device
- name(pdev->name)
-Message-ID: <20190429182058.GA31126@roeck-us.net>
-References: <1555978589-4998-1-git-send-email-vnkgutta@codeaurora.org>
+        Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id m18so5688225lje.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 11:29:23 -0700 (PDT)
+X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr30224042ljj.79.1556562187132;
+ Mon, 29 Apr 2019 11:23:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1555978589-4998-1-git-send-email-vnkgutta@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190427100639.15074-1-nstange@suse.de> <20190427100639.15074-4-nstange@suse.de>
+ <20190427102657.GF2623@hirez.programming.kicks-ass.net> <20190428133826.3e142cfd@oasis.local.home>
+ <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+In-Reply-To: <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Apr 2019 11:22:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+Message-ID: <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
+ fops invocation
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Apr 29, 2019 at 11:06 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>
+> It does *not* emulate the "call" in the BP handler itself, instead if
+> replace the %ip (the same way all the other BP handlers replace the
+> %ip) with a code sequence that just does
+>
+>         push %gs:bp_call_return
+>         jmp *%gs:bp_call_target
+>
+> after having filled in those per-cpu things.
 
-On Mon, Apr 22, 2019 at 05:16:29PM -0700, Venkata Narendra Kumar Gutta wrote:
-> Platform core is using pdev->name as the platform device name to do
-> the binding of the devices with the drivers. But, when the platform
-> driver overrides the platform device name with dev_set_name(),
-> the pdev->name is pointing to a location which is freed and becomes
-> an invalid parameter to do the binding match.
-> 
-> use-after-free instance:
-> 
-> [   33.325013] BUG: KASAN: use-after-free in strcmp+0x8c/0xb0
-> [   33.330646] Read of size 1 at addr ffffffc10beae600 by task modprobe
-> [   33.339068] CPU: 5 PID: 518 Comm: modprobe Tainted:
-> 			G S      W  O      4.19.30+ #3
-> [   33.346835] Hardware name: MTP (DT)
-> [   33.350419] Call trace:
-> [   33.352941]  dump_backtrace+0x0/0x3b8
-> [   33.356713]  show_stack+0x24/0x30
-> [   33.360119]  dump_stack+0x160/0x1d8
-> [   33.363709]  print_address_description+0x84/0x2e0
-> [   33.368549]  kasan_report+0x26c/0x2d0
-> [   33.372322]  __asan_report_load1_noabort+0x2c/0x38
-> [   33.377248]  strcmp+0x8c/0xb0
-> [   33.380306]  platform_match+0x70/0x1f8
-> [   33.384168]  __driver_attach+0x78/0x3a0
-> [   33.388111]  bus_for_each_dev+0x13c/0x1b8
-> [   33.392237]  driver_attach+0x4c/0x58
-> [   33.395910]  bus_add_driver+0x350/0x560
-> [   33.399854]  driver_register+0x23c/0x328
-> [   33.403886]  __platform_driver_register+0xd0/0xe0
-> 
-> So, use dev_name(&pdev->dev), which fetches the platform device name from
-> the kobject(dev->kobj->name) of the device instead of the pdev->name.
-> 
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Note that if you read the patch, you'll see that my explanation
+glossed over the "what if an interrupt happens" part. Which is handled
+by having two handlers, one for "interrupts were already disabled" and
+one for "interrupts were enabled, so I disabled them before entering
+the handler".
 
-This patch results in a large number of crashes (statistics: total: 349
-pass: 244 fail: 105) in my boot tests (https://kerneltests.org/builders).
-Affected architectures are (at least) arm, m68k, mips, ppc, and sh.
-The reason for the crash is different for each architecture. Sometimes
-the boot will stall, sometimes there is a crash, and sometimes the system
-will fail to restart.
+The second handler does the same push/jmp sequence, but has a "sti"
+before the jmp. Because of the one-instruction sti shadow, interrupts
+won't actually be enabled until after the jmp instruction has
+completed, and thus the "push/jmp" is atomic wrt regular interrupts.
 
-Here is an example for a log message, seen on arm (and m68k, but with ttyS
-instead of ttySA).
+It's not safe wrt NMI, of course, but since NMI won't be rescheduling,
+and since any SMP IPI won't be punching through that sequence anyway,
+it's still atomic wrt _another_ text_poke() attempt coming in and
+re-using the bp_call_return/tyarget slots.
 
-WARNING: CPU: 0 PID: 1 at drivers/tty/tty_io.c:1349 tty_init_dev+0x14c/0x1a4
-tty_init_dev: ttySA driver does not set tty->port. This will crash the kernel later. Fix the driver!
+So yeah, it's not "one-liner" trivial, but it's not like it's
+complicated either, and it actually matches the existing "call this
+code to emulate the replaced instruction". So I'd much rather have a
+couple of tens of lines of code here that still acts pretty much
+exactly like all the other rewriting does, rather than play subtle
+games with the entry stack frame.
 
-This is then indeed followed by a crash in tty_init_dev().
+Finally: there might be other situations where you want to have this
+kind of "pseudo-atomic" replacement sequence, so I think while it's a
+hack specific to emulating a "call" instruction, I don't think it is
+conceptually limited to just that case.
 
-Bisect log for m68k attached below. Reverting this patch fixes the
-problem at least for arm, m68k, and mips images.
-
-Guenter
-
----
-# bad: [3d17a1de96a233cf89bfbb5a77ebb1a05c420681] Add linux-next specific files for 20190429
-# good: [085b7755808aa11f78ab9377257e1dad2e6fa4bb] Linux 5.1-rc6
-git bisect start 'HEAD' 'v5.1-rc6'
-# good: [48ea994d711ca2e66038741e549f3ebd3072e215] Merge remote-tracking branch 'crypto/master'
-git bisect good 48ea994d711ca2e66038741e549f3ebd3072e215
-# good: [2d49c5dbbd93045625927b6acf54bf43f86f97fd] Merge remote-tracking branch 'spi/for-next'
-git bisect good 2d49c5dbbd93045625927b6acf54bf43f86f97fd
-# bad: [7d38461c1c19569f7952c66913b38a78b2c51828] Merge remote-tracking branch 'staging/staging-next'
-git bisect bad 7d38461c1c19569f7952c66913b38a78b2c51828
-# bad: [b827800209cf30ed4e2d3a503044014b56f2b06f] Merge remote-tracking branch 'tty/tty-next'
-git bisect bad b827800209cf30ed4e2d3a503044014b56f2b06f
-# good: [e643fe145f03134a9de2b8996e11e03b8a0cd90a] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good e643fe145f03134a9de2b8996e11e03b8a0cd90a
-# good: [cac573af020fbe8b16c1c769ed692126b8eceb69] Merge remote-tracking branch 'ipmi/for-next'
-git bisect good cac573af020fbe8b16c1c769ed692126b8eceb69
-# good: [ad74b8649beaf1a22cf8641324e3321fa0269d16] usb: typec: ucsi: Preliminary support for alternate modes
-git bisect good ad74b8649beaf1a22cf8641324e3321fa0269d16
-# bad: [9dc730c74af21b8403a9befba0f5f2e3bd9d6be4] Merge remote-tracking branch 'usb/usb-next'
-git bisect bad 9dc730c74af21b8403a9befba0f5f2e3bd9d6be4
-# good: [ab3a9f2ccc080d27873f76869c9a780be45e581e] acpi/hmat: fix an uninitialized memory_target
-git bisect good ab3a9f2ccc080d27873f76869c9a780be45e581e
-# good: [70283454c918f1d65de0ec50c45ef592d781bcae] livepatch: Replace klp_ktype_patch's default_attrs with groups
-git bisect good 70283454c918f1d65de0ec50c45ef592d781bcae
-# good: [33e39350ebd20fe6a77a51b8c21c3aa6b4a208cf] usb: xhci: add Immediate Data Transfer support
-git bisect good 33e39350ebd20fe6a77a51b8c21c3aa6b4a208cf
-# good: [5afa0a5ed3da85f64f27613a38daa1c4f69dd8ff] usb: xhci: add endpoint context tracing when an endpoint is added
-git bisect good 5afa0a5ed3da85f64f27613a38daa1c4f69dd8ff
-# bad: [a85b96e9e11d97a1fb4a683030d6aa98e1a872e8] Merge remote-tracking branch 'driver-core/driver-core-next'
-git bisect bad a85b96e9e11d97a1fb4a683030d6aa98e1a872e8
-# bad: [edb16da34b084c66763f29bee42b4e6bb33c3d66] driver core: platform: Fix the usage of platform device name(pdev->name)
-git bisect bad edb16da34b084c66763f29bee42b4e6bb33c3d66
-# first bad commit: [edb16da34b084c66763f29bee42b4e6bb33c3d66] driver core: platform: Fix the usage of platform device name(pdev->name)
+                 Linus
