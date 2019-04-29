@@ -2,72 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0977E95E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1AEE96A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 19:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfD2RlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 13:41:00 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38902 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbfD2RlA (ORCPT
+        id S1728975AbfD2Rne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 13:43:34 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:41717 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728926AbfD2Rn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:41:00 -0400
-Received: by mail-ot1-f68.google.com with SMTP id t20so9417567otl.5;
-        Mon, 29 Apr 2019 10:41:00 -0700 (PDT)
+        Mon, 29 Apr 2019 13:43:29 -0400
+Received: by mail-vs1-f67.google.com with SMTP id g187so6400555vsc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ofJyIqXwomA7GmqHzXwPuN8m6L/H0ryPXhElh4AzLbo=;
+        b=b9QWvLYtbc+VcNpxKV+IAdHf8oOksS7WNX6Jars+H2fG+d6ckHlQ4BFMCrET38xecj
+         gSQ6VW5/T+RIZwE3S2Kc+cQK/ngg2sceJ2wMxtRGy0aUsrkJA41QOvbvb7RCsq6AXXbR
+         3/oNq6sHc+kr5KfFz9Cc5x0ei1ULxzSvuFGZA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7IAkFL1JXbZxNJHIArZ/p7tWmdMrEZfFKxFB5D31v3Y=;
-        b=VmQFGNP/nKKOhIUzJ6tcKCvl4vYB0joCjFX7IZetchwivtU3Y6Cx36a4LOOHERgQCi
-         ZyL746Mm8gmpwWJanVyKlG2DljbQpvnPTpiU+kc2tx2IY2hhaRS6N0JsrDais1q2osC/
-         6qmPa87EMRtsiW6j2cEi8bjvFjsA5NyHKeXd9j7UMHICCdZ+V3mOwx17AKbg8xfaCHDc
-         Yr34h70JcbsffAeGVXtOkWTAFqDyGNX19FpYqgTTnM2VEnEszVrQMHv/CfCHKimppxC8
-         0ID6jFw9BSzDc6wCGlRwkWoYdBicOF+bSQJwIq69m443vE1TszyrNfMwTX7MrXSFsnIX
-         aJ/A==
-X-Gm-Message-State: APjAAAUfchWPbMBiIiDdCvfH5MFTDiyLv3a7hqdOlBg8z1tFE1/4Xv5L
-        ANoYQSnKQwbqApxImdCmLA==
-X-Google-Smtp-Source: APXvYqw/imxgz09DG6zdb1MmzjQVdBUe8PLv9+NKHbFUlUVCLnjIkMVGwh0dmC1m3Zg49hHRfgn0uw==
-X-Received: by 2002:a9d:4909:: with SMTP id e9mr8198002otf.160.1556559659685;
-        Mon, 29 Apr 2019 10:40:59 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i22sm1689418otj.34.2019.04.29.10.40.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 10:40:58 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 12:40:58 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: mfd: axp20x: Add fallback for axp805
-Message-ID: <20190429174058.GA11425@bogus>
-References: <20190409160550.1086-1-peron.clem@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ofJyIqXwomA7GmqHzXwPuN8m6L/H0ryPXhElh4AzLbo=;
+        b=I98iuj/lnQ6+OnD3uj0HQL7cF+bF2iy7oYHUfPb1zGhiumBwsacxmoD6BbuSX06ZjY
+         z42ozXGGj7VCm2uTFWRn3ASQThRNgKpow1nVGwzX6E6j0ZIEgu0/Zfy33/n94sVBbw8h
+         I7i9NWp9XXzcu2I39dB3+VoAPlj3h2yIs9Urf/A/AuJVEvR0sc3FUvy/10fZUw/m2Ym+
+         oCsuHlKvxh52BuU7rqjIqVOf7pFqm83pMMv+Ctz1LGWuuvv5cmrglvrOMFh8wodXXfo+
+         G6s1A7QKZry2cTj36B8LEZJtfvEURmdGxxVpHFfC0NdJ++z19sOQaud5PPW5YgrXAMoB
+         vM4g==
+X-Gm-Message-State: APjAAAXVXtdOdRV3QjldavDjP7Oymb4wcHcAma7rx6WZhvuoA2gDXotY
+        njOlddGvDIbOUKAraxOth5q0Ap+MqzI=
+X-Google-Smtp-Source: APXvYqxRE0J1LhmcrQP6BJXSFd0m2w8OicqDE9jcP97UyTLGR6XZKx6HZep3ACTkZjkKooVM9mXZEA==
+X-Received: by 2002:a67:b44c:: with SMTP id c12mr12631254vsm.169.1556559808355;
+        Mon, 29 Apr 2019 10:43:28 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 2sm38975733vke.27.2019.04.29.10.43.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 10:43:27 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id p13so3785467uaa.11
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 10:43:26 -0700 (PDT)
+X-Received: by 2002:ab0:20c1:: with SMTP id z1mr6396608ual.109.1556559806547;
+ Mon, 29 Apr 2019 10:43:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190409160550.1086-1-peron.clem@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1555672441.git.arturp@synopsys.com> <87k1fis1b5.fsf@linux.intel.com>
+ <SN1PR12MB2431EB450993E07730C3672FA73D0@SN1PR12MB2431.namprd12.prod.outlook.com>
+ <CAD=FV=WKJMks9oCdUVS9vTKp9yD_VPE_uaAmTM9HgNoz8tt4pA@mail.gmail.com>
+ <SN1PR12MB24312AEFA71B7EEF6FE4EB59A73E0@SN1PR12MB2431.namprd12.prod.outlook.com>
+ <CAD=FV=WmtKYt5hn8s1PrjEgFcJqyc-8UWbyEmjPPVq0o4YgD5w@mail.gmail.com>
+ <CAD=FV=WM7k-6moen+sgzZXnX-Zcw_BY9L=RTTrmt6pSHpXPLng@mail.gmail.com> <SN1PR12MB2431C9312AD486935C9B728AA7390@SN1PR12MB2431.namprd12.prod.outlook.com>
+In-Reply-To: <SN1PR12MB2431C9312AD486935C9B728AA7390@SN1PR12MB2431.namprd12.prod.outlook.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 29 Apr 2019 10:43:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VtNUu0GyamvOv8x4rFHjFZdOaLMkFN=Rh0mJED08fW2Q@mail.gmail.com>
+Message-ID: <CAD=FV=VtNUu0GyamvOv8x4rFHjFZdOaLMkFN=Rh0mJED08fW2Q@mail.gmail.com>
+Subject: Re: [PATCH v1 00/14] usb: dwc2: Fix and improve power saving modes.
+To:     Artur Petrosyan <Arthur.Petrosyan@synopsys.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        John Youn <John.Youn@synopsys.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 09, 2019 at 06:05:50PM +0200, Clément Péron wrote:
-> axp805 is actually compatible and used with axp806 as fallback.
-> But it's actually undocumented and trig a warning with checkpatch.
-> 
-> DT compatible string "x-powers,axp805" appears un-documented.
-> 
-> Add this compatible in the dt-bindings documentation.
-> 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> ---
->  Documentation/devicetree/bindings/mfd/axp20x.txt | 1 +
->  1 file changed, 1 insertion(+)
+Hi,
 
-Applied, thanks.
+On Mon, Apr 29, 2019 at 5:05 AM Artur Petrosyan
+<Arthur.Petrosyan@synopsys.com> wrote:
+>
+> > To add a bit of breadcrumbs, I did the rebase atop my patches and also
+> > did some basic review of yours.  Other than a few nits I think I found
+> > at least one bug where you're unlocking a spinlock twice in the
+> > partial power down case.
+> Yeah thank you so much for the review it really helps to make
+> conclusions on the implementations. I have tested those patches on
+> HAPS-DX platform and have not got any problem. Hibernation and partial
+> power down flows are working ok.
 
-Rob
+Do you happen to have any boards that have "OTG_EN_PWROPT =3D 0"?  I'd
+love testing of my patch series with that.
+
+
+> > I continue to be convinced that the right thing to do is to finish
+> > landing my series and then once you've spun yours atop mine we can
+> > look at landing it.
+> >
+> > Here's all my picks atop Felipe's tree that show how I resolved
+> > things:  https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__chromiu=
+m.googlesource.com_chromiumos_third-5Fparty_kernel_-2Blog_refs_sandbox_dian=
+ders_190426-2Ddwc2-2Dstuff&d=3DDwIFaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFK=
+CJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3Dmdz-R9O5TUR_zXEeeCZO2341dvcwZro2c=
+edCZzIIans&s=3DmVfBGtiMQg2XVHXmGCWcd584g0DYRH1JDVnEnJWE6P8&e=3D
+> >
+> >
+> > -Doug
+> >
+>
+> I will make my changes then will go ahead and rebase.
+
+Thanks!
+
+
+-Doug
