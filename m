@@ -2,221 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C2AE675
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BEAE664
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Apr 2019 17:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfD2P3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 11:29:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3087 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728448AbfD2P3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 11:29:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 08:27:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,409,1549958400"; 
-   d="scan'208";a="227761659"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 29 Apr 2019 08:27:50 -0700
-Received: from [10.254.90.51] (kliang2-mobl.ccr.corp.intel.com [10.254.90.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 99514580349;
-        Mon, 29 Apr 2019 08:27:49 -0700 (PDT)
-Subject: Re: [PATCH 1/4] perf: Fix system-wide events miscounting during
- cgroup monitoring
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, eranian@google.com, tj@kernel.org,
-        ak@linux.intel.com
-References: <1556549045-71814-1-git-send-email-kan.liang@linux.intel.com>
- <1556549045-71814-2-git-send-email-kan.liang@linux.intel.com>
- <20190429150443.GB2182@lakrids.cambridge.arm.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <85d377a6-ef36-64f6-6574-7270bf9c4b23@linux.intel.com>
-Date:   Mon, 29 Apr 2019 11:27:47 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190429150443.GB2182@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728666AbfD2P3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 11:29:25 -0400
+Received: from mail.efficios.com ([167.114.142.138]:56700 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbfD2P3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 11:29:24 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 965A81C1C8F;
+        Mon, 29 Apr 2019 11:29:22 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id KhiAxotBqAbr; Mon, 29 Apr 2019 11:29:22 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3B8541C1C8C;
+        Mon, 29 Apr 2019 11:29:22 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3B8541C1C8C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1556551762;
+        bh=oeB5Du+F0HQtKwSK2A3ZXitc9LMeHbag39VqK1/CHyg=;
+        h=From:To:Date:Message-Id;
+        b=Dplpme90ELJB7fIj6uwcV/mxKyf/prVOfa6IfRtHT93b9Dm2YlQcvjNivIe08xBNy
+         ohiE1VS5Luk0R0u7BPQG1mutigvB6MgVlBqMnr7XAvFqgWpSwISWVJY1ZjsDRmUFr1
+         T7tfUpGZeUpJiNw1OkpyBXNk76GxOy/XyiecYsiU/jzsGxK+4N7hPeVGNdppmKN+0g
+         VlwlThxD/5RGdQ0yN9s3Gl++a61/Xs1SvewTwtPVI0w2J17MHgs/qU0LsmmnkxaebE
+         PNTevuYjsxxMAD2uT2fplKslTL2gQ0wzZZEZEMEQQlYoqwMjLBDhYKflZhXdtLKtF2
+         kI7YnXciAwDKw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id KPbFGPCJ8WTo; Mon, 29 Apr 2019 11:29:22 -0400 (EDT)
+Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id A5E771C1C82;
+        Mon, 29 Apr 2019 11:29:21 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH for 5.2 00/12] Restartable Sequences selftests updates
+Date:   Mon, 29 Apr 2019 11:27:51 -0400
+Message-Id: <20190429152803.7719-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Those rseq selftests updates are hereby submitted to Shuah Khan,
+maintainer of kernel selftests, for the next merge window (5.2).
 
+They change the per-architecture pre-abort signatures to ensure those
+are valid trap instructions.
 
-On 4/29/2019 11:04 AM, Mark Rutland wrote:
-> On Mon, Apr 29, 2019 at 07:44:02AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> When counting system-wide events and cgroup events simultaneously, the
->> value of system-wide events are miscounting. For example,
->>
->>      perf stat -e cycles,instructions -e cycles,instructions -G
->> cgroup1,cgroup1,cgroup2,cgroup2 -a -e cycles,instructions -I 1000
->>
->>       1.096265502     12,375,398,872      cycles              cgroup1
->>       1.096265502      8,396,184,503      instructions        cgroup1
->>   #    0.10  insn per cycle
->>       1.096265502    109,609,027,112      cycles              cgroup2
->>       1.096265502     11,533,690,148      instructions        cgroup2
->>   #    0.14  insn per cycle
->>       1.096265502    121,672,937,058      cycles
->>       1.096265502     19,331,496,727      instructions               #
->> 0.24  insn per cycle
->>
->> The events are identical events for system-wide and cgroup. The
->> value of system-wide events is less than the sum of cgroup events,
->> which is wrong.
->>
->> Both system-wide and cgroup are per-cpu. They share the same cpuctx
->> groups, cpuctx->flexible_groups/pinned_groups.
->> In context switch, cgroup switch tries to schedule all the events in
->> the cpuctx groups. The unmatched cgroup events can be filtered by its
->> event->cgrp. However, system-wide events, which event->cgrp is NULL, are
->> unconditionally switched, which causes miscounting.
-> 
-> Why exactly does that cause mis-counting?
-> 
-> Are the system-wide events not switched back in? Or filtered
-> erroneously?
+The way exit points are presented to debuggers is enhanced, ensuring
+all exit points are present, so debuggers don't have to disassemble
+rseq critical section to properly skip over them.
 
+Discussions with the glibc community is reaching a concensus of exposing
+a __rseq_handled symbol from glibc to coexist with rseq early adopters.
+Update the rseq selftest code to expose and use this symbol.
 
-The small period between the prev cgroup sched_out and the new cgroup 
-sched_in is missed for system-wide events.
-Current code mistakenly sched_out of system-wide events during that period.
-
-> 
->> Introduce cgrp_switch in cpuctx to indicate the cgroup context switch.
->> If it's system-wide event in context switch, don't try to switch it.
->>
->> Fixes: e5d1367f17ba ("perf: Add cgroup support")
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>   include/linux/perf_event.h |  1 +
->>   kernel/events/core.c       | 30 ++++++++++++++++++++++++++++--
->>   2 files changed, 29 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->> index e47ef76..039e2f2 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -795,6 +795,7 @@ struct perf_cpu_context {
->>   #ifdef CONFIG_CGROUP_PERF
->>   	struct perf_cgroup		*cgrp;
->>   	struct list_head		cgrp_cpuctx_entry;
->> +	unsigned int			cgrp_switch		:1;
->>   #endif
->>   
->>   	struct list_head		sched_cb_entry;
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index dc7dead..388dd42 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -809,6 +809,7 @@ static void perf_cgroup_switch(struct task_struct *task, int mode)
->>   
->>   		perf_ctx_lock(cpuctx, cpuctx->task_ctx);
->>   		perf_pmu_disable(cpuctx->ctx.pmu);
->> +		cpuctx->cgrp_switch = true;
->>   
->>   		if (mode & PERF_CGROUP_SWOUT) {
->>   			cpu_ctx_sched_out(cpuctx, EVENT_ALL);
->> @@ -832,6 +833,7 @@ static void perf_cgroup_switch(struct task_struct *task, int mode)
->>   							     &cpuctx->ctx);
->>   			cpu_ctx_sched_in(cpuctx, EVENT_ALL, task);
->>   		}
->> +		cpuctx->cgrp_switch = false;
->>   		perf_pmu_enable(cpuctx->ctx.pmu);
->>   		perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
->>   	}
->> @@ -2944,13 +2946,25 @@ static void ctx_sched_out(struct perf_event_context *ctx,
->>   
->>   	perf_pmu_disable(ctx->pmu);
->>   	if (is_active & EVENT_PINNED) {
->> -		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
->> +		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list) {
->> +#ifdef CONFIG_CGROUP_PERF
->> +			/* Don't sched system-wide event when cgroup context switch */
->> +			if (cpuctx->cgrp_switch && !event->cgrp)
->> +				continue;
->> +#endif
-> 
-> This pattern is duplicated several times, and should probably be a
-> helper like:
-> 
-> static bool skip_cgroup_switch(struct perf_cpu_context *cpuctx,
-> 			       struct perf_event *event);
-> {
-> 	return IS_ENABLED(CONFIG_CGROUP_PERF) &&
-> 	       cpuctx->cgrp_switch &&
-> 	       !event->cgrp;
-> }
-> 
-> ... allowing the above to be an unconditional:
-> 
-> 	if (skip_cgroup_switch(cpuctx, event))
-> 		continue;
-> 
-> ... and likewise for the other cases.
-> 
-
-I will change it in V2.
+Support for compiling asm goto with clang is added with the
+"-no-integrated-as" compiler switch, similarly to the toplevel kernel
+Makefile.
 
 Thanks,
-Kan
 
-> Thanks,
-> Mark.
-> 
->>   			group_sched_out(event, cpuctx, ctx);
->> +		}
->>   	}
->>   
->>   	if (is_active & EVENT_FLEXIBLE) {
->> -		list_for_each_entry_safe(event, tmp, &ctx->flexible_active, active_list)
->> +		list_for_each_entry_safe(event, tmp, &ctx->flexible_active, active_list) {
->> +#ifdef CONFIG_CGROUP_PERF
->> +			/* Don't sched system-wide event when cgroup context switch */
->> +			if (cpuctx->cgrp_switch && !event->cgrp)
->> +				continue;
->> +#endif
->>   			group_sched_out(event, cpuctx, ctx);
->> +		}
->>   	}
->>   	perf_pmu_enable(ctx->pmu);
->>   }
->> @@ -3280,6 +3294,12 @@ static int pinned_sched_in(struct perf_event *event, void *data)
->>   	if (event->state <= PERF_EVENT_STATE_OFF)
->>   		return 0;
->>   
->> +#ifdef CONFIG_CGROUP_PERF
->> +	/* Don't sched system-wide event when cgroup context switch */
->> +	if (sid->cpuctx->cgrp_switch && !event->cgrp)
->> +		return 0;
->> +#endif
->> +
->>   	if (!event_filter_match(event))
->>   		return 0;
->>   
->> @@ -3305,6 +3325,12 @@ static int flexible_sched_in(struct perf_event *event, void *data)
->>   	if (event->state <= PERF_EVENT_STATE_OFF)
->>   		return 0;
->>   
->> +#ifdef CONFIG_CGROUP_PERF
->> +	/* Don't sched system-wide event when cgroup context switch */
->> +	if (sid->cpuctx->cgrp_switch && !event->cgrp)
->> +		return 0;
->> +#endif
->> +
->>   	if (!event_filter_match(event))
->>   		return 0;
->>   
->> -- 
->> 2.7.4
->>
+Mathieu
+
+Martin Schwidefsky (1):
+  rseq/selftests: s390: use trap4 for RSEQ_SIG
+
+Mathieu Desnoyers (11):
+  rseq/selftests: x86: Work-around bogus gcc-8 optimisation
+  rseq/selftests: Add __rseq_exit_point_array section for debuggers
+  rseq/selftests: Introduce __rseq_cs_ptr_array, rename __rseq_table to
+    __rseq_cs
+  rseq/selftests: Use __rseq_handled symbol to coexist with glibc
+  rseq/selftests: s390: use jg instruction for jumps outside of the asm
+  rseq/selftests: x86: use ud1 instruction as RSEQ_SIG opcode
+  rseq/selftests: arm: use udf instruction for RSEQ_SIG
+  rseq/selftests: aarch64 code signature: handle big-endian environment
+  rseq/selftests: powerpc code signature: generate valid instructions
+  rseq/selftests: mips: use break instruction for RSEQ_SIG
+  rseq/selftests: add -no-integrated-as for clang
+
+ tools/testing/selftests/rseq/Makefile     |   8 +-
+ tools/testing/selftests/rseq/rseq-arm.h   | 132 +++++++++++++--
+ tools/testing/selftests/rseq/rseq-arm64.h |  74 ++++++++-
+ tools/testing/selftests/rseq/rseq-mips.h  | 115 +++++++++++--
+ tools/testing/selftests/rseq/rseq-ppc.h   |  90 +++++++++-
+ tools/testing/selftests/rseq/rseq-s390.h  |  78 ++++++++-
+ tools/testing/selftests/rseq/rseq-x86.h   | 264 +++++++++++++++++++++---------
+ tools/testing/selftests/rseq/rseq.c       |  55 ++++++-
+ tools/testing/selftests/rseq/rseq.h       |   1 +
+ 9 files changed, 688 insertions(+), 129 deletions(-)
+
+-- 
+2.11.0
+
