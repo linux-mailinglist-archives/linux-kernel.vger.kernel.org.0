@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9F7F8BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15190F8BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbfD3MXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:23:05 -0400
-Received: from ms.lwn.net ([45.79.88.28]:48084 "EHLO ms.lwn.net"
+        id S1727754AbfD3MXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:23:36 -0400
+Received: from ms.lwn.net ([45.79.88.28]:48090 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbfD3MXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:23:04 -0400
+        id S1726073AbfD3MXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:23:35 -0400
 Received: from localhost.localdomain (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 3ADA79AF;
-        Tue, 30 Apr 2019 12:23:03 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 06:23:00 -0600
+        by ms.lwn.net (Postfix) with ESMTPSA id DC23C9AF;
+        Tue, 30 Apr 2019 12:23:34 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 06:23:31 -0600
 From:   Jonathan Corbet <corbet@lwn.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] dontdiff: update with Kconfig build artifacts
-Message-ID: <20190430062300.7c9cf177@lwn.net>
-In-Reply-To: <1556549630-17605-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1556549630-17605-1-git-send-email-yamada.masahiro@socionext.com>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] doc: fix typo in PGP guide
+Message-ID: <20190430062331.1934f8f4@lwn.net>
+In-Reply-To: <20190429214514.25625-1-federico.vaga@vaga.pv.it>
+References: <20190429214514.25625-1-federico.vaga@vaga.pv.it>
 Organization: LWN.net
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -35,17 +34,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019 23:53:50 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+On Mon, 29 Apr 2019 23:45:14 +0200
+Federico Vaga <federico.vaga@vaga.pv.it> wrote:
 
-> Add generated *conf-cfg files.
+> Fix typo in the GPG guide for maintainers
 > 
-> Commit 694c49a7c01c ("kconfig: drop localization support") removed
-> "gconf.glade.h" and "kxgettext".
-> 
-> "kconfig" and "lxdialog" should not be excluded either.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 
 Applied, thanks.
 
