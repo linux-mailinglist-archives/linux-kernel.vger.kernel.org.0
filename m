@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92225F753
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5CAF6AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfD3L6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:58:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32880 "EHLO mail.kernel.org"
+        id S1731312AbfD3LvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:51:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730705AbfD3Lr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:47:27 -0400
+        id S1731285AbfD3Lu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:50:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50CCA2054F;
-        Tue, 30 Apr 2019 11:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3425820449;
+        Tue, 30 Apr 2019 11:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624846;
-        bh=ez49DqDQcLXZ+8IQETI2Udki6MF5zImlUp4i58z9YZc=;
+        s=default; t=1556625058;
+        bh=VIBDoBYWrv4Hz50FNYm0hZqoUAxsH6f4TnodRCgSobo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MiXu+8P0A5tTN4tnCPdG7py8k9UKjKRCExieyvXFq57JVq45USbt0+PabrfLxpE8p
-         rD4gHXE+4EpemNw5M6eyEzGCm3q5WhV9RhDLFTzKzTbgHLCoqWTEfpbgf8rhQFR6Y9
-         FVvg2plcE7SSeXOaNqmQqPbeB+I139wgzA9dRXpY=
+        b=vbMeMFYqBXyHAmGjLdjg4wWZ4rd/6kLrGFSPzkHFbHLJouLO8pStbe4PEKh1shdrq
+         YTRjCmjupQBUDeuJemPmL/gwB33PX68RwuF6DD/kMjckTs73DNBAa9cR/tTY77xpCE
+         SLCyTkXHsoPbA1zHT1inCU+9bW2MC+PXdGrnnA94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 096/100] mlxsw: spectrum: Put MC TCs into DWRR mode
-Date:   Tue, 30 Apr 2019 13:39:05 +0200
-Message-Id: <20190430113613.363211020@linuxfoundation.org>
+        stable@vger.kernel.org, Erez Alfasi <ereza@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.0 75/89] net/mlx5e: ethtool, Remove unsupported SFP EEPROM high pages query
+Date:   Tue, 30 Apr 2019 13:39:06 +0200
+Message-Id: <20190430113613.279103908@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Erez Alfasi <ereza@mellanox.com>
 
-[ Upstream commit f476b3f809fa02f47af6333ed63715058c3fc348 ]
+[ Upstream commit ace329f4ab3ba434be2adf618073c752d083b524 ]
 
-Both Spectrum-1 and Spectrum-2 chips are currently configured such that
-pairs of TC n (which is used for UC traffic) and TC n+8 (which is used
-for MC traffic) are feeding into the same subgroup. Strict
-prioritization is configured between the two TCs, and by enabling
-MC-aware mode on the switch, the lower-numbered (UC) TCs are favored
-over the higher-numbered (MC) TCs.
+Querying EEPROM high pages data for SFP module is currently
+not supported by our driver and yet queried, resulting in
+invalid FW queries.
 
-On Spectrum-2 however, there is an issue in configuration of the
-MC-aware mode. As a result, MC traffic is prioritized over UC traffic.
-To work around the issue, configure the MC TCs with DWRR mode (while
-keeping the UC TCs in strict mode).
+Set the EEPROM ethtool data length to 256 for SFP module will
+limit the reading for page 0 only and prevent invalid FW queries.
 
-With this patch, the multicast-unicast arbitration results in the same
-behavior on both Spectrum-1 and Spectrum-2 chips.
-
-Fixes: 7b8195306694 ("mlxsw: spectrum: Configure MC-aware mode on mlxsw ports")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bb64143eee8c ("net/mlx5e: Add ethtool support for dump module EEPROM")
+Signed-off-by: Erez Alfasi <ereza@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/port.c       |    4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -2783,7 +2783,7 @@ static int mlxsw_sp_port_ets_init(struct
- 		err = mlxsw_sp_port_ets_set(mlxsw_sp_port,
- 					    MLXSW_REG_QEEC_HIERARCY_TC,
- 					    i + 8, i,
--					    false, 0);
-+					    true, 100);
- 		if (err)
- 			return err;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1470,7 +1470,7 @@ static int mlx5e_get_module_info(struct
+ 		break;
+ 	case MLX5_MODULE_ID_SFP:
+ 		modinfo->type       = ETH_MODULE_SFF_8472;
+-		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
++		modinfo->eeprom_len = MLX5_EEPROM_PAGE_LENGTH;
+ 		break;
+ 	default:
+ 		netdev_err(priv->netdev, "%s: cable type not recognized:0x%x\n",
+--- a/drivers/net/ethernet/mellanox/mlx5/core/port.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/port.c
+@@ -404,10 +404,6 @@ int mlx5_query_module_eeprom(struct mlx5
+ 		size -= offset + size - MLX5_EEPROM_PAGE_LENGTH;
+ 
+ 	i2c_addr = MLX5_I2C_ADDR_LOW;
+-	if (offset >= MLX5_EEPROM_PAGE_LENGTH) {
+-		i2c_addr = MLX5_I2C_ADDR_HIGH;
+-		offset -= MLX5_EEPROM_PAGE_LENGTH;
+-	}
+ 
+ 	MLX5_SET(mcia_reg, in, l, 0);
+ 	MLX5_SET(mcia_reg, in, module, module_num);
 
 
