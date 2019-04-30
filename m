@@ -2,99 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2AFFC7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCE3FB63
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfD3PKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:10:02 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25598 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfD3PKC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:10:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1556634273; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=mfk8MAVDYBh5D+t5N8zXPT0V16NvwKIXypPd7J9iRimMxTcSSW2Ikd9TZ+V+L2hQlqrg+Pt6FcgF45MQyuT0Y/qjWmX+efWN89xMaaCbqbkcGK8zQm3xit8oDHdDmF8RdREAtRVmhZngSjinxrGE6Edlb858ivdJrEd2qiTPqes=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1556634273; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=; 
-        b=Ppn4+dJJOcgnoJ2/7Euo8xzz+czKtorAVcqEcHVW1CeND9KZrRqtgYc4NnmFWn42LHeI5GslDN6ijPXp17CdtsPSsGn+Slthn4pCTTPMXg2gYOUQTaWPjftVzeNsyZniTnfXZNkt66ogjZOE3CCiUagHoVg9CwNwMhnzzVxOgsg=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=strongbox8@zoho.com;
-        dmarc=pass header.from=<strongbox8@zoho.com> header.from=<strongbox8@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:message-id:subject:date:mime-version:content-type; 
-  b=g7f/SM0l7YPsKfWf4XXY773vIoWNkXScXKdqUEoq20PKHtZEgX0ZZNaI3qThm4WFY7hOy7MwzEZ6
-    ioMWF0o5TcuzzfIj5P3eIVMKysK20ZrEBjqaN5xiruYhC2vLzSXI  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1556634273;
-        s=default; d=zoho.com; i=strongbox8@zoho.com;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        l=1352; bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=;
-        b=ZeaFanAGGV6ujArpeT3QkTx5zPIBAZyNrJgK2crNDcvIYe+myx6btSG/KfAdeUf2
-        0dML8vYXabECniOM2AreFsu25VySbOuTmfuni6/6H2rDxIf/nVlRXMSr+X6vPFc+V6T
-        lufqWfAwMYNwJcPJUcBBNSLdNC/xu8zjKWFpkIhE=
-Received: from archlinux.localdomain (106.2.239.74 [106.2.239.74]) by mx.zohomail.com
-        with SMTPS id 1556634269644614.490180315079; Tue, 30 Apr 2019 07:24:29 -0700 (PDT)
-From:   Perr Zhang <strongbox8@zoho.com>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, stable@vger.kernel.org,
-        mingo@redhat.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <20190430142423.3393-1-strongbox8@zoho.com>
-Subject: [PATCH] KVM: x86: revert the order of calls in kvm_fast_pio()
-Date:   Tue, 30 Apr 2019 22:24:23 +0800
-X-Mailer: git-send-email 2.21.0
+        id S1727327AbfD3OZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:25:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726303AbfD3OZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 10:25:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF07120835;
+        Tue, 30 Apr 2019 14:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556634339;
+        bh=rulEanPhmjFN3OEL+l1hhcaiBatHmWy80GceKdaBKMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TvExlQJ25UxGdkTL6XeMsx6mHD+XNb504SCreklMl6J8yzS8Jx0cWFGWmnrxacWc/
+         Mf245ec1LxXqFWflNHBx+QsDZUT0xFaGXpLET1yU2kA7ZalTo1sbq3VzuFMmYQpeaM
+         /ivAjVYZYoh0x/hhN7wYQ66YIVY4GeDC7A/zHxw4=
+Date:   Tue, 30 Apr 2019 16:25:36 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        Vinod Koul <vkoul@kernel.org>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [alsa-devel] [PATCH v3 2/5] soundwire: fix style issues
+Message-ID: <20190430142536.GA22503@kroah.com>
+References: <20190411031701.5926-1-pierre-louis.bossart@linux.intel.com>
+ <20190411031701.5926-3-pierre-louis.bossart@linux.intel.com>
+ <20190414095839.GG28103@vkoul-mobl>
+ <08ea1442-361a-ecfc-ca26-d3bd8a0ec37b@linux.intel.com>
+ <20190430085153.GS3845@vkoul-mobl.Dlink>
+ <9866ac8c-103d-22cd-a639-a71c39a685c2@linux.intel.com>
+ <20190430140526.GB18986@kroah.com>
+ <b036a602-704f-4286-001c-6d4b32e0391e@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b036a602-704f-4286-001c-6d4b32e0391e@linux.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 45def77ebf79, the order of function calls in kvm_fast_pio()
-was changed. This causes that the vm(XP,and also XP's iso img) failed
-to boot. This doesn't happen with win10 or ubuntu.
+On Tue, Apr 30, 2019 at 09:13:55AM -0500, Pierre-Louis Bossart wrote:
+> 
+> > My patch-bot would reject a patch that tried to do multiple types of
+> > different cleanups on the same file(s).  Has done so for _years_, this
+> > is not a new thing.
+> 
+> If there are tools let's use them (all the fixes in this series were
+> reported by tools). Can you share pointers and location of this patch-bot?
 
-After revert the order, the vm(XP) succeedes to boot. In addition, the
-change of calls's order of kvm_fast_pio() in commit 45def77ebf79 has no
-obvious reason.
+I talked about my bot a long time ago in one of my presentations, the
+source isn't around anywhere public, sorry.
 
-Fixes: 45def77ebf79 ("KVM: x86: update %rip after emulating IO")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Perr Zhang <strongbox8@zoho.com>
----
- arch/x86/kvm/x86.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+But here's the template for what it can spit out, depending on the patch
+input, feel free to cut/paste from it for your use when reviewing
+patches.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a0d1fc80ac5a..248753cb94a1 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6610,13 +6610,12 @@ static int kvm_fast_pio_in(struct kvm_vcpu *vcpu, i=
-nt size,
-=20
- int kvm_fast_pio(struct kvm_vcpu *vcpu, int size, unsigned short port, int=
- in)
- {
--=09int ret;
-+=09int ret =3D kvm_skip_emulated_instruction(vcpu);
-=20
- =09if (in)
--=09=09ret =3D kvm_fast_pio_in(vcpu, size, port);
-+=09=09return kvm_fast_pio_in(vcpu, size, port) && ret;
- =09else
--=09=09ret =3D kvm_fast_pio_out(vcpu, size, port);
--=09return ret && kvm_skip_emulated_instruction(vcpu);
-+=09=09return kvm_fast_pio_out(vcpu, size, port) && ret;
- }
- EXPORT_SYMBOL_GPL(kvm_fast_pio);
-=20
---=20
-2.21.0
+thanks,
+
+greg k-h
+-----------------
 
 
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch breaks the build.
+
+- Your patch contains warnings and/or errors noticed by the
+  scripts/checkpatch.pl tool.
+
+- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
+  and can not be applied.  Please read the file,
+  Documentation/email-clients.txt in order to fix this.
+
+- Your patch was attached, please place it inline so that it can be
+  applied directly from the email message itself.
+
+- Your patch does not have a Signed-off-by: line.  Please read the
+  kernel file, Documentation/SubmittingPatches and resend it after
+  adding that line.  Note, the line needs to be in the body of the
+  email, before the patch, not at the bottom of the patch or in the
+  email signature.
+
+- Your patch was sent privately to Greg.  Kernel development is done in
+  public, please always cc: a public mailing list with a patch
+  submission.  Using the tool, scripts/get_maintainer.pl on the patch
+  will tell you what mailing list to cc.
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+- Your patch did not apply to any known trees that Greg is in control
+  of.  Possibly this is because you made it against Linus's tree, not
+  the linux-next tree, which is where all of the development for the
+  next version of the kernel is at.  Please refresh your patch against
+  the linux-next tree, or even better yet, the development tree
+  specified in the MAINTAINERS file for the subsystem you are submitting
+  a patch for, and resend it.
+
+- You sent multiple patches, yet no indication of which ones should be
+  applied in which order.  Greg could just guess, but if you are
+  receiving this email, he guessed wrong and the patches didn't apply.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/SubmittingPatches for a description of how
+  to do this so that Greg has a chance to apply these correctly.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
