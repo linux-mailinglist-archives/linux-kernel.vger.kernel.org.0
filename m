@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34E71025F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CB910264
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:31:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfD3WbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 18:31:23 -0400
-Received: from mail-eopbgr720135.outbound.protection.outlook.com ([40.107.72.135]:26752
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726049AbfD3WbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:31:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7JwGOlbx1AbXFguFHLajH7K1ZhljEf5PLbxOYRrE+M=;
- b=VBObJYNyMcV5u2aD2t6r/tpJqK7rAqqa7IsnA4uH7fEQTx2bgHzkLi1Pm0Gb5jDlkWFEwWk1bSzdPlVROpmnIej+mH0SXgfVUXaUiR1mxe6tt7swFS9srptQwpFNCNCeQJeVuf1n/fNWeNCFyjNBb0fdTY+EPpb0mAebyOjReEM=
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
- MWHPR0601MB3738.namprd06.prod.outlook.com (10.167.236.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.10; Tue, 30 Apr 2019 22:31:19 +0000
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::2d6d:7e4b:d2ff:5e29]) by MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::2d6d:7e4b:d2ff:5e29%3]) with mapi id 15.20.1835.018; Tue, 30 Apr 2019
- 22:31:19 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "patrice.chotard@st.com" <patrice.chotard@st.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtc: st-lpc: remove unnecessary check
-Thread-Topic: [PATCH] rtc: st-lpc: remove unnecessary check
-Thread-Index: AQHU/5H32hcx4X+jhEK8dI4HvkdrpqZVSbiA
-Date:   Tue, 30 Apr 2019 22:31:19 +0000
-Message-ID: <1556663479.31309.36.camel@impinj.com>
-References: <20190430201834.12634-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20190430201834.12634-1-alexandre.belloni@bootlin.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tpiepho@impinj.com; 
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 17cc9cd4-7af0-4970-84a8-08d6cdbb9147
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR0601MB3738;
-x-ms-traffictypediagnostic: MWHPR0601MB3738:
-x-microsoft-antispam-prvs: <MWHPR0601MB37386880D9DAED61321E0EB1D33A0@MWHPR0601MB3738.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 00235A1EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39850400004)(396003)(346002)(136003)(376002)(199004)(189003)(66946007)(66446008)(64756008)(73956011)(66556008)(66476007)(8936002)(305945005)(91956017)(68736007)(76116006)(66066001)(53936002)(7736002)(6246003)(3846002)(2501003)(71200400001)(71190400001)(86362001)(2201001)(229853002)(110136005)(54906003)(6512007)(81166006)(81156014)(76176011)(99286004)(8676002)(4326008)(2906002)(36756003)(6506007)(6486002)(103116003)(478600001)(6436002)(102836004)(25786009)(316002)(26005)(186003)(486006)(6116002)(14454004)(5660300002)(476003)(2616005)(446003)(11346002)(256004)(14444005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3738;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: impinj.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Tx8lNRcAz/7F3aldfFtEXp9Fue9YisqVqVeSvZwAkO2pGM4xRotWBhifOmISGOBjbIYoeHEYLlcWHChHZ53ILTj9iEuo7kv3CQ/0iwcWSIFo9OgjG/WF9v4JEuEn+hqZA0X48NT1CBzz9RpKIWJzDa62qbcuXUVpLJcNT/dzkQr6WXmiGkcOnYePvGNzjdGt9IUaHX3dHP4LSS3ih0Y46JLZXfVIt6+3rISSdGgxMvV81x7Uio7qXHeX6/nwn5LZ0/37ybPTjmW+Fo/o9WTTt4plChGSUDistxHz+3BbMXTVCDA/3xaZwPNn2bmRnqYLrfhqa2cTPCW5OiZwbYwFSVcCKgeQi8r2J1m78HS1tLAUpNkBvGJcYnsrf4OMr40lWselt7g2fA8dcadRapL0wlrn3L/lOkxJl4Wq6ouHbTk=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <352C3F422848634E83D54198D4A165FD@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727455AbfD3Wbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 18:31:40 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37177 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfD3Wbk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 18:31:40 -0400
+Received: by mail-pl1-f194.google.com with SMTP id z8so7404072pln.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 15:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yfF5H9sXdYGfRkgjeUEgFTpI/com9Yw+RoJM20k2Mo8=;
+        b=a6SA3kY9w7hdAa1fPmp0gfn6vQWFW4190viuCtta0fylIwg7wnbDQLdVWLIpxWfVt5
+         I5ReElLYpF9ZiYEyEWT7sAQHE/B0rWttkMZdIH7zo87WO5vLbHrtETl1nkG4/SZKgEEc
+         jvPdEv2C1LIXjMkxgKtdMR5wZ+0Hhj7dbDR7yIO3PpH3vHKPkVv86DLAaOx2TG+zn5sa
+         Jw4kCEa1PhqW/Iq4vmQHrvaqEwzTId4PaZQc8V5VQ/iyX+lHvrATh8B08myM636TFPtD
+         btmQIH5g36ec7za7lqxVsRiq8XNiqxHl1OCA2lyJeWv6lNj8OPbxcW7Itm5PznVYY8AW
+         qiwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yfF5H9sXdYGfRkgjeUEgFTpI/com9Yw+RoJM20k2Mo8=;
+        b=hzduh8Wn9ughfOQngYyGtnbdH2yoK/Jm4r6h/zrqGRjEuGryP4eElLI+SH7fedEBoQ
+         HkucvZfvHQJS6ZEZdmo4EDjtGsLh4AxIXZ0Yisyt2mQPeZe27Acd217OTsPd37WW6rzz
+         kKJo76TtNskTPic6p4VxkHBK4JG2v6+YkTV4z627yeIO1SEFx0ehrQr4b04Ke/6W8Lsk
+         ns8i95P/dXmbGRlBaRu/VPuGOZZshpry/sGqam5pa2ga4y7Zsrmp7x9iO53XCRLpG7bU
+         xvoWG15FgOtVumOcCHpSn8a2KI2RI+duVfZPHIKCJA1XB8Z4JWzbHP4u2qzZGzaB36O7
+         zhpQ==
+X-Gm-Message-State: APjAAAUEuDvrKkZW6L3aQV0TfYMy1kCq8xTCxPf+jnnKZvWtI2A1JzTr
+        apboJYBez7NTvAJbkpzrgrPbjwTp+wMLW2o6nosViw==
+X-Google-Smtp-Source: APXvYqwhJoBXedgaM/wlibXyF1IvVjm7pE3LY5oa/mMkvOuh3boz3I/pIIGAmuhePDCUR2hcUoxR9ol2Cw2SRdBepnk=
+X-Received: by 2002:a17:902:4383:: with SMTP id j3mr2195280pld.320.1556663499039;
+ Tue, 30 Apr 2019 15:31:39 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17cc9cd4-7af0-4970-84a8-08d6cdbb9147
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 22:31:19.8484
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3738
+References: <20190430021010.25151-1-natechancellor@gmail.com>
+In-Reply-To: <20190430021010.25151-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 30 Apr 2019 15:31:27 -0700
+Message-ID: <CAKwvOdkNMnwRC9UO_cJq+e9+x5DHE0Nw0guzThxU_RX5obfSPQ@mail.gmail.com>
+Subject: Re: [PATCH] dm dust: Convert an 'else if' into an 'else' in dust_map
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA0LTMwIGF0IDIyOjE4ICswMjAwLCBBbGV4YW5kcmUgQmVsbG9uaSB3cm90
-ZToNCj4gVGhlIFJUQyBjb3JlIGFscmVhZHkgZW5zdXJlcyB0aGUgYWxhcm0gaXMgc2V0IHRvIGEg
-dGltZSBpbiB0aGUgZnV0dXJlLCBpdA0KPiBpcyBub3QgbmVjZXNzYXJ5IHRvIGNoZWNrIGFnYWlu
-IGluIHRoZSBkcml2ZXIuDQoNCk15IHJlYWRpbmcgb2YgdGhlIHJ0YyBjb3JlIGNvZGUgaXMgdGhh
-dCBpdCBjaGVja3MgaWYgdGhlIGFsYXJtIGlzIGluDQp0aGUgZnV0dXJlICp0d2ljZSogYmVmb3Jl
-IGhhbmRpbmcgb2ZmIHRoZSBzZXQgY2FsbCB0byB0aGUgZHJpdmVyLCB3aGljaA0KcG9zc2libHkg
-Y2hlY2tzIGEgM3JkIHRpbWUgKGFzIHNlZW4gaGVyZSkuDQoNCkhvd2V2ZXIsIGFsbCB0aGVzZSBj
-aGVja3MgYXJlIGRvbmUgKmJlZm9yZSogc2V0dGluZyB0aGUgYWxhcm0uICBJdA0Kc3RpbGwgcG9z
-c2libGUgdG8gaGF2ZSBhIHJhY2UgYW5kIHNldCB0aGUgYWxhcm0gYWZ0ZXIgdGhlIHRpbWUgaGFz
-DQphbHJlYWR5IHBhc3NlZCwgaW4gd2hpY2ggY2FzZSB0aGUgYWxhcm0gd2lsbCBuZXZlciBmaXJl
-Lg0KDQpUaGUgd2F5IHRvIGZpeCB0aGUgcmFjZSB3b3VsZCBiZSB0byBoYXZlIHRoZSBkcml2ZXIg
-Y2hlY2sgdGhlIGFsYXJtDQoqYWZ0ZXIqIHNldHRpbmcgaXQuICBJbiBwcmVjaXNlbHkgdGhpcyBv
-cmRlciwgZG8gdGhlc2Ugc3RlcHM6DQoNCjEuIFNldCBhbGFybSBpbiBSVEMsIHRvIFRhbGFybQ0K
-Mi4gR2V0IHRpbWUgZnJvbSBSVEMsIGFzIFRjdXJyZW50DQozLiBHZXQgYWxhcm0gc3RhdHVzIGZy
-b20gUlRDDQoNCklmIFRhbGFybSA8IFRjdXJyZW50LCBhbGFybSB3YXMgc2V0IHRvIGZ1dHVyZSB0
-aW1lLCBubyBlcnJvcg0KRWxzZQ0KICBJZiBzdGF0dXMgPT0gZmlyZWQsIGFsYXJtIHdhcyBzZXQg
-YW5kIGhhcyBzaW5jZSBmaXJlZCwgbm8gZXJyb3INCiAgRWxzZSBzdGF0dXMgPT0gbm90IGZpcmVk
-LCBhbGFybSB3YXMgc2V0IGluIHBhc3QsIEVJTlZBTA0KDQpUaGlzIHNob3VsZCBiZSByYWNlIGZy
-ZWUuDQoNCg0KPiAgDQo+IC0JLyogSW52YWxpZCBhbGFybSB0aW1lICovDQo+IC0JaWYgKG5vd19z
-ZWNzID4gYWxhcm1fc2VjcykNCj4gLQkJcmV0dXJuIC1FSU5WQUw7DQo+IC0NCj4gIAltZW1jcHko
-JnJ0Yy0+YWxhcm0sIHQsIHNpemVvZihzdHJ1Y3QgcnRjX3drYWxybSkpOw0KPiAgDQo+ICAJLyog
-Tm93IG1hbnkgc2VjcyB0byBmaXJlICovDQogICAgICAgIGFsYXJtX3NlY3MgLT0gbm93X3NlY3M7
-DQogICAgICAgIGxwYSA9ICh1bnNpZ25lZCBsb25nIGxvbmcpYWxhcm1fc2VjcyAqIHJ0Yy0+Y2xr
-cmF0ZTsNCg0KV2hpbGUgaXQncyB0cnVlIHRoZSB0aW1lIHdvdWxkbid0IG5vcm1hbGx5IGJlIGlu
-IHBhc3QsIGl0IHN0aWxsIHJhY2VzLA0KYXMgZGVzY3JpYmUgYWJvdmUuIEluIHRoYXQgY2FzZSwg
-dGhlIG1hdGggaGVyZSB1bmRlcmZsb3dzIGFsYXJtX3NlY3MsDQpzbyBpdCBwcm9iYWJseSBzdGls
-bCBtYWtlcyBzZW5zZSB0byBjaGVjay4=
+On Mon, Apr 29, 2019 at 7:10 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> When building with -Wsometimes-uninitialized, Clang warns:
+>
+> drivers/md/dm-dust.c:216:11: warning: variable 'ret' is used
+> uninitialized whenever 'if' condition is false
+> [-Wsometimes-uninitialized]
+>         else if (bio_data_dir(bio) == WRITE)
+>                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> include/linux/bio.h:69:2: note: expanded from macro 'bio_data_dir'
+>         (op_is_write(bio_op(bio)) ? WRITE : READ)
+>         ^
+> drivers/md/dm-dust.c:219:9: note: uninitialized use occurs here
+>         return ret;
+>                ^~~
+> drivers/md/dm-dust.c:216:7: note: remove the 'if' if its condition is
+> always true
+>         else if (bio_data_dir(bio) == WRITE)
+>              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/md/dm-dust.c:209:9: note: initialize the variable 'ret' to
+> silence this warning
+>         int ret;
+>                ^
+>                 = 0
+> 1 warning generated.
+>
+> It isn't wrong; however, bio_data_dir will only ever return READ and
+> WRITE so the second 'else if' can really become an 'else' to silence
+> this warning and not change the final meaning of the code.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/462
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/md/dm-dust.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/md/dm-dust.c b/drivers/md/dm-dust.c
+> index 997830984893..5baeb56679ed 100644
+> --- a/drivers/md/dm-dust.c
+> +++ b/drivers/md/dm-dust.c
+> @@ -213,7 +213,7 @@ static int dust_map(struct dm_target *ti, struct bio *bio)
+>
+>         if (bio_data_dir(bio) == READ)
+>                 ret = dust_map_read(dd, bio->bi_iter.bi_sector, dd->fail_read_on_bb);
+> -       else if (bio_data_dir(bio) == WRITE)
+> +       else
+>                 ret = dust_map_write(dd, bio->bi_iter.bi_sector, dd->fail_read_on_bb);
+>
+>         return ret;
+> --
+> 2.21.0
+>
+
+Thanks for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+-- 
+Thanks,
+~Nick Desaulniers
