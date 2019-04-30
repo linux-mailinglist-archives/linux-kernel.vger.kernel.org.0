@@ -2,75 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F8CFB2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF445FB3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfD3OPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:15:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbfD3OPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:15:11 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0FD6E30833A3;
-        Tue, 30 Apr 2019 14:15:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F1A796E714;
-        Tue, 30 Apr 2019 14:15:03 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Apr 2019 16:15:09 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 16:15:01 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>, jack@suse.com
-Subject: Re: [RT WARNING] DEBUG_LOCKS_WARN_ON(rt_mutex_owner(lock) !=
- current) with fsfreeze (4.19.25-rt16)
-Message-ID: <20190430141500.GE23020@redhat.com>
-References: <20190326093421.GA29508@localhost.localdomain>
- <20190419085627.GI4742@localhost.localdomain>
- <20190430125130.uw7mhdnsoqr2v3gf@linutronix.de>
- <20190430132811.GB2589@hirez.programming.kicks-ass.net>
+        id S1727462AbfD3ORH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:17:07 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:35386 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726164AbfD3ORH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 10:17:07 -0400
+Received: (qmail 2055 invoked by uid 2102); 30 Apr 2019 10:17:06 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Apr 2019 10:17:06 -0400
+Date:   Tue, 30 Apr 2019 10:17:06 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Tangnianyao (ICT)" <tangnianyao@huawei.com>
+cc:     mathias.nyman@intel.com, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Question about reset order for xhci controller and pci
+In-Reply-To: <b4176223-e44f-5454-0a02-b75a65384fa6@huawei.com>
+Message-ID: <Pine.LNX.4.44L0.1904301013580.1465-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430132811.GB2589@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 30 Apr 2019 14:15:11 +0000 (UTC)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, I don't understand...
+On Tue, 30 Apr 2019, Tangnianyao (ICT) wrote:
 
-On 04/30, Peter Zijlstra wrote:
->
-> Thaw then does the reverse, frobs lockdep
+> On 2019/4/29 22:06, Alan Stern wrote:
+> 
+> Hi, Alan
+> 
+> > On Mon, 29 Apr 2019, Tangnianyao (ICT) wrote:
+> > 
+> >> Using command "echo 1 > /sys/bus/pci/devices/0000:7a:02.0/reset"
+> >> on centos7.5 system to reset xhci.
+> >>
+> >> On 2019/4/26 11:07, Tangnianyao (ICT) wrote:
+> >>> Hi,all
+> >>>
+> >>> I've meet a problem about reset xhci and it may be caused by the
+> >>> reset order of pci and xhci.
+> >>> Using xhci-pci, when users send reset command in os(centos or red-hat os),
+> >>> it would first reset PCI device by pci_reset_function. During this
+> >>> process, it would disable BME(Bus Master Enable) and set BME=0, and
+> >>> then enable it and set BME=1.
+> >>> And then it comes to xhci reset process. First, it would send an
+> >>> endpoint stop command in xhci_urb_dequeue. However, this stop ep command
+> >>> fails to finish. The reason is that BME is set to 0 in former process and
+> >>> xhci RUN/STOP changes to 0, and when BME is set to 1 again, RUN/STOP doesn't
+> >>> recover to 1.
+> >>> I've checked BME behavior in xhci spec, it shows that "If the BME bit is set to 0
+> >>> when xHC is running, the xHC may treat this as a Host Controller Error, asserting
+> >>> HCE(1) and immediately halt(R/S=0 and HCH=1). Recovery from this state will
+> >>> require an HCRST." It seems that the stop ep command failure is reasonable.
+> >>> Maybe I've missed something and please let me know.
+> > 
+> > Your email subject says "Question about...".  What is the question?
+> > 
+> Sorry I didn't descibe it clearly.
+> When sending a reset command, now the reset order is first BME and then xhci.
+> BME reset would make xhci controller stop, resulting in xhci reset failure,
+> because it can't finish stop ep command in xhci_urb_dequeue.
+> I'm not sure if this situation is in expectation.
 
-Yes, in particular it does
+Probably it isn't.
 
-	lockdep_sb_freeze_acquire()
-		percpu_rwsem_acquire()
-			sem->rw_sem.owner = current;
+> > Also, given that your question concerns what happens when you write to
+> > /sys/bus/pci/..., perhaps you should consider mailing it to some PCI
+> > maintainers as well as to the USB maintainers.
+> > ok, I will mailing it to PCI maintainer as well.
+> 
+> > Perhaps the reset was not meant to be used the way you are doing it.  
+> > A more conservative approach would be to unbind xhci-hcd from the 
+> > device before doing the reset and then rebind it afterward.
+> > 
+> > Alan Stern
+> >
+> >
+> > .
+> >
+> 
+> I think this approach not work. When reset BME, xhci controller is stopped and
+> can't recover even BME is set enable later. According to xhci spec, it's appropriate.
+> When rebind it afterward, with xhci stop, xhci driver would consider the
+> xhci controller already died and it fails to work again.
+> 
+> To recover xhci, now I rmmod xhci-pci.ko and then insmod it again.
 
-	
-> and then does: percpu_up_write().
->
-> percpu_up_write() on up_write(). And note how __up_write() has:
->
-> 	DEBUG_RWSEMS_WARN_ON(sem->owner != current, sem);
+That's basically what I meant.  "rmmod xhci-pci" does an unbind, and 
+"insmod xhci-pci.ko" does a rebind.
 
-and everything looks correct, sem->owner == current by the time
-thaw_super_locked() does percpu_up_write/up_write.
+So long as you do the unbind before the reset and the rebind after the
+reset, you should be okay.  Perhaps you misunderstood what I wrote; it 
+sounds like you're doing the reset first and then the unbind.
 
-Oleg.
+Alan Stern
 
