@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B17F860
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD33F750
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfD3LkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46126 "EHLO mail.kernel.org"
+        id S1730704AbfD3Lr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:47:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfD3LkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:08 -0400
+        id S1728862AbfD3LrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:47:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA13B21670;
-        Tue, 30 Apr 2019 11:40:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAA562054F;
+        Tue, 30 Apr 2019 11:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624408;
-        bh=UhzJsLWRQqqF97PnXv1nCVLIjpwwH475GlR5l98dpBA=;
+        s=default; t=1556624841;
+        bh=oKlPAoQ9ZBkCJzVeAwx87mKWHmnicgEOjcEmv6Oj014=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cHxQNvhAtN2JWYxmGLaBJiZ+nlScDmQSmMOVh8hqfv52ruQg5z7DhAK7vX0ND2t0k
-         sHg9aL/TmHED50qfS88fJ+g7wnBceec4qSrgJVD+i2V/fqcZbtN45/llT1cKOPldCU
-         KxLzJuWkBpFH9bns5RYryX+EWu/SZr/t6a86gdwA=
+        b=UXA/CBYXWu+Hkp6OmedE0dStkoUQlSTcRO38JPyUi14NwhXeM0jSHpovIfpdBvaSS
+         xq2caHEbTiGibhfm0mnLcsZMeuo3M8BOoGB4pFzHpfxFX2dxctI9vQnfIm2haoCOIK
+         AhkS02qN0bZh8MNqyypZE8siw1kL5QgSV6JkYf9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 03/41] tracing: Fix a memory leak by early error exit in trace_pid_write()
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.19 045/100] ARM: 8857/1: efi: enable CP15 DMB instructions before cleaning the cache
 Date:   Tue, 30 Apr 2019 13:38:14 +0200
-Message-Id: <20190430113525.093145607@linuxfoundation.org>
+Message-Id: <20190430113611.214119965@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 91862cc7867bba4ee5c8fcf0ca2f1d30427b6129 upstream.
+commit e17b1af96b2afc38e684aa2f1033387e2ed10029 upstream.
 
-In trace_pid_write(), the buffer for trace parser is allocated through
-kmalloc() in trace_parser_get_init(). Later on, after the buffer is used,
-it is then freed through kfree() in trace_parser_put(). However, it is
-possible that trace_pid_write() is terminated due to unexpected errors,
-e.g., ENOMEM. In that case, the allocated buffer will not be freed, which
-is a memory leak bug.
+The EFI stub is entered with the caches and MMU enabled by the
+firmware, and once the stub is ready to hand over to the decompressor,
+we clean and disable the caches.
 
-To fix this issue, free the allocated buffer when an error is encountered.
+The cache clean routines use CP15 barrier instructions, which can be
+disabled via SCTLR. Normally, when using the provided cache handling
+routines to enable the caches and MMU, this bit is enabled as well.
+However, but since we entered the stub with the caches already enabled,
+this routine is not executed before we call the cache clean routines,
+resulting in undefined instruction exceptions if the firmware never
+enabled this bit.
 
-Link: http://lkml.kernel.org/r/1555726979-15633-1-git-send-email-wang6495@umn.edu
+So set the bit explicitly in the EFI entry code, but do so in a way that
+guarantees that the resulting code can still run on v6 cores as well
+(which are guaranteed to have CP15 barriers enabled)
 
-Fixes: f4d34a87e9c10 ("tracing: Use pid bitmap instead of a pid array for set_event_pid")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: <stable@vger.kernel.org> # v4.9+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/compressed/head.S |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -500,8 +500,10 @@ int trace_pid_write(struct trace_pid_lis
- 	 * not modified.
- 	 */
- 	pid_list = kmalloc(sizeof(*pid_list), GFP_KERNEL);
--	if (!pid_list)
-+	if (!pid_list) {
-+		trace_parser_put(&parser);
- 		return -ENOMEM;
-+	}
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -1395,7 +1395,21 @@ ENTRY(efi_stub_entry)
  
- 	pid_list->pid_max = READ_ONCE(pid_max);
+ 		@ Preserve return value of efi_entry() in r4
+ 		mov	r4, r0
+-		bl	cache_clean_flush
++
++		@ our cache maintenance code relies on CP15 barrier instructions
++		@ but since we arrived here with the MMU and caches configured
++		@ by UEFI, we must check that the CP15BEN bit is set in SCTLR.
++		@ Note that this bit is RAO/WI on v6 and earlier, so the ISB in
++		@ the enable path will be executed on v7+ only.
++		mrc	p15, 0, r1, c1, c0, 0	@ read SCTLR
++		tst	r1, #(1 << 5)		@ CP15BEN bit set?
++		bne	0f
++		orr	r1, r1, #(1 << 5)	@ CP15 barrier instructions
++		mcr	p15, 0, r1, c1, c0, 0	@ write SCTLR
++ ARM(		.inst	0xf57ff06f		@ v7+ isb	)
++ THUMB(		isb						)
++
++0:		bl	cache_clean_flush
+ 		bl	cache_off
  
-@@ -511,6 +513,7 @@ int trace_pid_write(struct trace_pid_lis
- 
- 	pid_list->pids = vzalloc((pid_list->pid_max + 7) >> 3);
- 	if (!pid_list->pids) {
-+		trace_parser_put(&parser);
- 		kfree(pid_list);
- 		return -ENOMEM;
- 	}
+ 		@ Set parameters for booting zImage according to boot protocol
 
 
