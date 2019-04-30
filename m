@@ -2,142 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC417FD01
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8021FD04
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfD3Phm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:37:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:56135 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbfD3Phl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:37:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 08:37:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
-   d="scan'208";a="153608978"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Apr 2019 08:37:38 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hLUp6-0007FV-Ki; Tue, 30 Apr 2019 18:37:36 +0300
-Date:   Tue, 30 Apr 2019 18:37:36 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Esben Haabendal <esben@geanix.com>
-Cc:     linux-serial@vger.kernel.org, Enrico Weigelt <lkml@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        He Zhe <zhe.he@windriver.com>, Marek Vasut <marex@denx.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        Paul Burton <paul.burton@mips.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250: Add support for using platform_device
- resources
-Message-ID: <20190430153736.GL9224@smile.fi.intel.com>
-References: <20190430140416.4707-1-esben@geanix.com>
+        id S1726401AbfD3PiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:38:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36444 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3PiN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:38:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v80so2649507pfa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 08:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wPaz7sqrWKUrAtzAW5vMHcrXvc4YTXq+0idwbiux/gM=;
+        b=C4rmJC+XSY4dbiYlCJ9sE0hN+VEOgE8eclZCOX5S/it0Lxv0FKZ+0ZwUHzFvGPITPM
+         ALgP1FKitRss2z9qwuanmIaLFveIosysjk1wk/Rfo0ZJ0+M95gHnLyKTsnvwSB7/kpDO
+         U+FU8nkAPAPjjNHAgyiNmlx2uYi9lG/daXEFI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wPaz7sqrWKUrAtzAW5vMHcrXvc4YTXq+0idwbiux/gM=;
+        b=OHuC9YDciPssVzvgWr5JbdoBB8A2vxQbpZ2PivdMVvn5g11gd30Nkt4g9SpiJbKGV0
+         GVk7H62Dy0/yx5cbpkpEOSO7R/vgXjvYnevu4Eup4wtQwQVbeysR2a+WBUDLeIgDud+L
+         OFzyaACHE4qw3sRKsyzF+L/NYpaBL+IXuBWeM+imInzaCJ35kNSic5WMGML7hEb2SzsN
+         hcbK02UwwReoJZ/v4Yww4Q30XRbdMH8zcA9FTbHWneHOFnGoXGreQXr9FxxvGafgtuNz
+         y9PoBsVAh2aHgx/y/+aXKC2V5yyE0lVvZp+YsGR+SwCprCcts4pPvJ9pFjdbvzEBU9+B
+         2gnw==
+X-Gm-Message-State: APjAAAU9Jb6wddF1+TbrejwRQjzWSeQocEhq2O1JBPi7ORRnoQU+W0ev
+        3K56Su7lvWgXl6rze1PNdnxAClKt+Oiwzw==
+X-Google-Smtp-Source: APXvYqzo8CUIafc4ViWksQdqXju1j8i5Z4JiKxGkUqzM/8ztPOvg4GMF59dfYlIKdYxG321+3bvr0w==
+X-Received: by 2002:a62:27c2:: with SMTP id n185mr23839241pfn.51.1556638693191;
+        Tue, 30 Apr 2019 08:38:13 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id z16sm4572022pfa.42.2019.04.30.08.38.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 08:38:12 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 08:38:11 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Harish Bandi <c-hbandi@codeaurora.org>,
+        Rocky Liao <rjliao@codeaurora.org>
+Subject: Re: [PATCH v8] Bluetooth: btqca: inject command complete event
+ during fw download
+Message-ID: <20190430153811.GK112750@google.com>
+References: <20190430001024.209688-1-mka@chromium.org>
+ <201904301409.dhHyM2xm%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190430140416.4707-1-esben@geanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <201904301409.dhHyM2xm%lkp@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 04:04:13PM +0200, Esben Haabendal wrote:
-> Allow getting memory resource (mapbase or iobase) as well as irq from
-> platform_device resources.
+On Tue, Apr 30, 2019 at 02:27:33PM +0800, kbuild test robot wrote:
+> Hi Matthias,
 > 
-> The UPF_DEV_RESOURCES flag must be set for devices where platform_device
-> resources are to be used.  When not set, driver behaves as before.
+> Thank you for the patch! Yet something to improve:
 > 
-> This allows use of the serial8250 driver together with devices with
-> resources added by platform_device_add_resources(), such as mfd child
-> devices added with mfd_add_devices().
+> [auto build test ERROR on bluetooth-next/master]
+> [also build test ERROR on next-20190429]
+> [cannot apply to v5.1-rc7]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
+> url:    https://github.com/0day-ci/linux/commits/Matthias-Kaehlcke/Bluetooth-btqca-inject-command-complete-event-during-fw-download/20190430-125407
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+> config: xtensa-allyesconfig (attached as .config)
+> compiler: xtensa-linux-gcc (GCC) 8.1.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=8.1.0 make.cross ARCH=xtensa 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/bluetooth/btqca.c: In function 'qca_inject_cmd_complete_event':
+> >> drivers/bluetooth/btqca.c:286:18: error: 'QCA_HCI_CC_SUCCESS' undeclared (first use in this function); did you mean 'QCA_HCI_CC_OPCODE'?
+>      skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
+>                      ^~~~~~~~~~~~~~~~~~
+>                      QCA_HCI_CC_OPCODE
+>    drivers/bluetooth/btqca.c:286:18: note: each undeclared identifier is reported only once for each function it appears in
+> 
+> vim +286 drivers/bluetooth/btqca.c
+> 
+>    267	
+>    268	static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
+>    269	{
+>    270		struct hci_event_hdr *hdr;
+>    271		struct hci_ev_cmd_complete *evt;
+>    272		struct sk_buff *skb;
+>    273	
+>    274		skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
+>    275		if (!skb)
+>    276			return -ENOMEM;
+>    277	
+>    278		hdr = skb_put(skb, sizeof(*hdr));
+>    279		hdr->evt = HCI_EV_CMD_COMPLETE;
+>    280		hdr->plen = sizeof(*evt) + 1;
+>    281	
+>    282		evt = skb_put(skb, sizeof(*evt));
+>    283		evt->ncmd = 1;
+>    284		evt->opcode = HCI_OP_NOP;
+>    285	
+>  > 286		skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
 
-> Remaining platform_data fields (other than mapbase, iobase, mapsize and
-> irq) are used just as before.  Note
+Oh, I changed it in my tree, but somehow missed to include this file
+in the commit ...
 
-Note what?
+I'll fix it in the next version. Since I expect the change to remain
+controversial I'll wait a bit for other comments before sending out
+v9.
 
-> +static int serial8250_probe_resources(struct platform_device *pdev,
-> +				      unsigned int num,
-> +				      struct plat_serial8250_port *p,
-> +				      struct uart_8250_port *uart)
-> +{
-> +	struct resource *r;
-> +	int irq;
-> +
-> +	switch (p->iotype) {
-> +	case UPIO_AU:
-> +	case UPIO_TSI:
-> +	case UPIO_MEM32:
-> +	case UPIO_MEM32BE:
-> +	case UPIO_MEM16:
-> +	case UPIO_MEM:
-> +		r = platform_get_resource(pdev, IORESOURCE_MEM, num);
-> +		if (!r)
-> +			return -ENODEV;
-> +		uart->port.mapbase = r->start;
-> +		uart->port.mapsize = resource_size(r);
-> +		uart->port.flags |= UPF_IOREMAP;
-> +		break;
-> +	case UPIO_HUB6:
-> +	case UPIO_PORT:
-> +		r = platform_get_resource(pdev, IORESOURCE_IO, num);
-> +		if (!r)
-> +			return -ENODEV;
-> +		uart->port.iobase = r->start;
-> +		uart->port.mapsize = resource_size(r);
-> +		break;
-> +	}
-> +
-> +	irq = platform_get_irq(pdev, num);
-> +	if (irq == -ENXIO)
-> +		uart->port.irq = 0; /* no interrupt -> use polling */
-> +	else if (irq < 0)
-> +		return irq;
-> +	uart->port.irq = irq;
-> +
-> +	return 0;
-> +}
+Thanks
 
-Hmm... Currently it's done inside individual port drivers, like 8250_dw.c.
-Each of the drivers can do it differently, for example 8250_lpss.c or
-8250_pnp.c.
-
-> +				if (!(port->flags & UPF_DEV_RESOURCES))
-> +					release_mem_region(port->mapbase, size);
-
-This is again same issue. The parent should not request resource it doesn't use.
-
-I think I understand what is a confusion here.
-
-For the IO resources we have two operations:
-- mapping / re-mapping (may be shared)
-- requesting (exclusive)
-
-In the parenthesis I put a level of access to it. While many device drivers can
-*share* same resource (mapped or unmapped), the only one can actually request
-it.
-
-So, the parent can take an slice resources as it would be appropriated, but not
-requesting them.
-
-OTOH, it's possible to have a (weird) MFD case where parent *requested*
-resources, and *all* of its children are aware of that.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Matthias
