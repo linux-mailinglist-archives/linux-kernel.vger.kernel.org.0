@@ -2,111 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72335FCF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E70FCFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfD3PfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:35:21 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:50283 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726014AbfD3PfU (ORCPT
+        id S1726383AbfD3Pfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:35:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38748 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3Pfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:35:20 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 95C746CF;
-        Tue, 30 Apr 2019 11:35:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 30 Apr 2019 11:35:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=lUhLByuCWkwkjJrzNCYlklmu1AZ
-        KvcruJii4RaKrLXk=; b=gccH8deaYaHtej3yNluzRWg7QUJlI659Biii8gdM+Sg
-        f0eGGW2Rd5kzG4+YbDYY8ftNUijxzDlnf5apvL5v/E/87Cne/RJjdxMxkEwfmS4p
-        eKncdIuxVsb7H9z7OU7rwYC+fDXywrM2eY5XsZT3IDj9SRocmzSLnj0k1r1HWux4
-        EqBiwJxrInPuCPh9+nJs1VNUaq7mUJwR5OXsXm6LSDdkt896isJaOSfZmiaBRcxV
-        hxujSTiwmxPO8lr/E7xZDY4C+WM2GiqColwtO8fhlLF3a31za8P3mFrKOyg3ukc+
-        XXRhRR1yNhj/Ycs2e2cfjO5687Get0hwFlve7z/PIZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=lUhLBy
-        uCWkwkjJrzNCYlklmu1AZKvcruJii4RaKrLXk=; b=PneItX3IUUZH8xHqv/p6XL
-        /ZPwYaqTGLgjrurBGpXc6j1xKRuheMqhdxqjNBLexHOTL5iPjU8vs+olxyozC8he
-        MWGK7viX2tOvg3HU07J5CEk4/G9u5gFv/tnYtz2uE+xtaVrXNZ5VfggD7+PxnFVU
-        ICWVvaCOOytD7ZHIgTzFECJTVjoWRT0deiug79dKsNn9COCQ6KUkc+fvtMgnFG6Z
-        fiBi64e4cFQ1ShDk4ZYt5H2mqqz5ddcdWaRNyy0VbO23mMr7ertFkVM7T/2Y1/Mw
-        lKq5zPoDSuEZnDfrSj53/lPUe3qF0SOoB3DwrU+mWrg78W1dJ0NrMQRmID2X++tw
-        ==
-X-ME-Sender: <xms:NmvIXI3eZ_jgXO2SVWsx285A9RC2sae2TKX1Tohku_JjYtcMRvV0dA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieehgdefudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecuogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepghhithhhuhgsrd
-    gtohhmpdgrphhpshhpohhtrdgtohhmnecukfhppeekfedrkeeirdekledruddtjeenucfr
-    rghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsth
-    gvrhfuihiivgeptd
-X-ME-Proxy: <xmx:NmvIXEpsL08XzciNi3FXWkmc77WCF640MdIYZnD7PLLE-8II4HMjUg>
-    <xmx:NmvIXHN-f8q_tsDEGX8YJ0xglms4P-0WPngqzpoqSwZNs7VPHkU-wQ>
-    <xmx:NmvIXNphjoOPVKK94FfDy93jwJmv2NaM3FJsltqK7aAwRCPRAeIG3A>
-    <xmx:N2vIXDvdxndjdJfCHRN-OXvXkmIgfXgbX-92dVYM2xMhCykIH0R9mA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3A6B1103CF;
-        Tue, 30 Apr 2019 11:35:18 -0400 (EDT)
-Date:   Tue, 30 Apr 2019 17:35:16 +0200
-From:   Greg KH <greg@kroah.com>
-To:     syzbot <syzbot+170a86bf206dd2c6217e@syzkaller.appspotmail.com>
-Cc:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: Detected a wedged cx25840 chip; the device will not
- work.
-Message-ID: <20190430153516.GA23459@kroah.com>
-References: <00000000000048aa750587c052ef@google.com>
+        Tue, 30 Apr 2019 11:35:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xkHmQ5VtLPFk5RCj2nSWg30TnIw2SSbj0nkad1c7W7E=; b=bOQnutm+bB+XMxG3zduAv4jW7
+        znSbbl+5BGbPorr8/ibz5INOWoVxj3R8KryAVGOpi+MvZjoflt9dvB3sz2LtLacGEKb7VtLESUYeG
+        xpJ5vyaOz8NWx3yGMQMdOABuahAZPhGd5TJMOVEBKO4soCdERdpqkwty7T7uxHDcLtbBMWTk3QeeJ
+        QvQ4dUboMm24ewnqZjK93nB95uy6P8M8rllYuaqBYVq5CnZcPUNnt2FPsVgfFQnNLE+26Xk+pTTtM
+        Zc4hm+xLMyGpzZ8gG3yzVNNXYwS2ntqc0mWbUdUvaoxJzwWyfa0MOAXUfmr8rxaipa3GCioOpDJR5
+        8Y+W9uNHw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLUn3-0001zI-Lf; Tue, 30 Apr 2019 15:35:30 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 22100236F9E80; Tue, 30 Apr 2019 17:35:28 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 17:35:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yuyang Du <duyuyang@gmail.com>
+Cc:     will.deacon@arm.com, mingo@kernel.org, bvanassche@acm.org,
+        ming.lei@redhat.com, frederic@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH 24/28] locking/lockdep: Remove !dir in lock irq usage
+ check
+Message-ID: <20190430153528.GA2650@hirez.programming.kicks-ass.net>
+References: <20190424101934.51535-1-duyuyang@gmail.com>
+ <20190424101934.51535-25-duyuyang@gmail.com>
+ <20190425200336.GY12232@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000048aa750587c052ef@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190425200336.GY12232@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 07:36:07AM -0700, syzbot wrote:
-> Hello,
+On Thu, Apr 25, 2019 at 10:03:36PM +0200, Peter Zijlstra wrote:
+> On Wed, Apr 24, 2019 at 06:19:30PM +0800, Yuyang Du wrote:
+> > In mark_lock_irq(), the following checks are performed:
+> > 
+> >    ----------------------------------
+> >   |   ->      | unsafe | read unsafe |
+> >   |----------------------------------|
+> >   | safe      |  F  B  |    F* B*    |
+> >   |----------------------------------|
+> >   | read safe |  F? B* |      -      |
+> >    ----------------------------------
+> > 
+> > Where:
+> > F: check_usage_forwards
+> > B: check_usage_backwards
+> > *: check enabled by STRICT_READ_CHECKS
+> > ?: check enabled by the !dir condition
+> > 
+> > From checking point of view, the special F? case does not make sense,
+> > whereas it perhaps is made for peroformance concern. As later patch will
+> > address this issue, remove this exception, which makes the checks
+> > consistent later.
+> > 
+> > With STRICT_READ_CHECKS = 1 which is default, there is no functional
+> > change.
 > 
-> syzbot found the following crash on:
+> Oh man.. thinking required and it is way late.. anyway this whole read
+> stuff made me remember we had a patch set on readlocks last year.
 > 
-> HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12df67c3200000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
-> dashboard link: https://syzkaller.appspot.com/bug?extid=170a86bf206dd2c6217e
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108a28f3200000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145d8a2d200000
+>   https://lkml.kernel.org/r/20180411135110.9217-1-boqun.feng@gmail.com
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+170a86bf206dd2c6217e@syzkaller.appspotmail.com
-> 
-> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> pvrusb2: Hardware description: Gotview USB 2.0 DVD 2
-> pvrusb2: Invalid write control endpoint
-> usb 1-1: USB disconnect, device number 2
-> pvrusb2: Invalid write control endpoint
-> pvrusb2: WARNING: Detected a wedged cx25840 chip; the device will not work.
-> pvrusb2: WARNING: Try power cycling the pvrusb2 device.
-> pvrusb2: WARNING: Disabling further access to the device to prevent other
-> foul-ups.
-> pvrusb2: Device being rendered inoperable
-> cx25840 0-0044: Unable to detect h/w, assuming cx23887
-> cx25840 0-0044: cx23887 A/V decoder found @ 0x88 (pvrusb2_a)
-> pvrusb2: Attached sub-driver cx25840
-> pvrusb2: Attempted to execute control transfer when device not ok
-> pvrusb2: Attempted to execute control transfer when device not ok
+> I remember reviewing that a few times and then it dropped on the floor,
+> probably because Spectre crap or something sucked up all my time again :/
 
-As the driver said, power cycle your device, it crashed :)
+So if we look at Boqun's patches (as posted, I haven't looked at his
+github, but I'm assuming this hasn't changed with the 'Shared' state),
+we'll find he'll only does either 1 backward or 1 foward search (which
+is already an improvement over the current state).
 
-Seriously, I think your script detection failed here, sorry.
+His mark_lock_irq() looks like:
 
-greg k-h
+static int
+mark_lock_irq(struct task_struct *curr, struct *held_lock *this,
+		enum lock_usage_bit new_bit)
+{
+	int excl_bit = exclusive_bit(new_bit);
+
++       if (new_bit & 2) {
++               /*
++                * mark ENABLED has to look backwards -- to ensure no dependee
++                * has USED_IN state, which, again, would allow recursion
++                * deadlocks.
++                */
++               if (!check_usage_backwards(curr, this, new_bit, excl_bit))
+			return 0;
++       } else {
++               /*
++                * mark USED_IN has to look forwards -- to ensure no dependency
++                * has ENABLED state, which would allow recursion deadlocks.
++                */
++               if (!check_usage_forwards(curr, this, new_bit, excl_bit))
+			return 0;
+	}
+
+	return 1;
+}
+
+Where '& 2' would read '& LOCK_USAGE_DIR_MASK' in the current code.
+
+Now, I'm thinking you're proposing to replace the backward search for
+USED_IN/safe with your reachable-safe state, which, if done on his
+'strong' links, should still work.
+
+That is; I _think_ the two patch-sets are not in conceptual conflict.
+
+Of course; I could have missed something; I've just read both patchsets
+again, and it's a bit much :-)
