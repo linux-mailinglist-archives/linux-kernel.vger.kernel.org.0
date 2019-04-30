@@ -2,46 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67345EF18
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE01EF22
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfD3DLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 23:11:50 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37734 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729981AbfD3DLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:11:50 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hLJBI-00064y-57; Tue, 30 Apr 2019 03:11:44 +0000
-Date:   Tue, 30 Apr 2019 04:11:44 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in __get_super
-Message-ID: <20190430031144.GG23075@ZenIV.linux.org.uk>
-References: <001a113ed5540f411c0568cc8418@google.com>
- <0000000000002cd22305879b22c4@google.com>
- <20190428185109.GD23075@ZenIV.linux.org.uk>
- <20190430025501.GB6740@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430025501.GB6740@quack2.suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1730056AbfD3DTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 23:19:01 -0400
+Received: from www.osadl.org ([62.245.132.105]:53929 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729931AbfD3DTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 23:19:01 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x3U3IZKT005484;
+        Tue, 30 Apr 2019 05:18:35 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH V2] rds: ib: force endiannes annotation
+Date:   Tue, 30 Apr 2019 05:12:57 +0200
+Message-Id: <1556593977-15828-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
+X-Spam-Status: No, score=-1.9 required=6.0 tests=BAYES_00 autolearn=ham
+        version=3.3.1
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on www.osadl.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 04:55:01AM +0200, Jan Kara wrote:
+While the endiannes is being handled correctly as indicated by the comment
+above the offending line - sparse was unhappy with the missing annotation
+as be64_to_cpu() expects a __be64 argument. To mitigate this annotation
+all involved variables are changed to a consistent __le64 and the
+ conversion to uint64_t delayed to the call to rds_cong_map_updated().
 
-> Yeah, you're right. And if we push the patch a bit further to not take
-> loop_ctl_mutex for invalid ioctl number, that would fix the problem. I
-> can send a fix.
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+---
 
-Huh?  We don't take it until in lo_simple_ioctl(), and that patch doesn't
-get to its call on invalid ioctl numbers.  What am I missing here?
+Problem located by an experimental coccinelle script to locate
+patters that make sparse unhappy (false positives):
+net/rds/ib_recv.c:827:23: warning: cast to restricted __le64
+
+V2: Edward Cree <ecree@solarflare.com> rejected the need for using __force
+    here - instead solve the sparse issue by updating all of the involved
+    variables - which results in an identical binary as well without using
+    the __force "solution" to the sparse warning. Thanks !
+
+Patch was compile-tested with: x86_64_defconfig + INFINIBAND=m, RDS_RDMA=m
+
+Patch was verified not to change the binary by diffing the
+generated object code before and after applying the patch.
+
+Patch is against 5.1-rc6 (localversion-next is 20190429)
+
+ net/rds/ib_recv.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/net/rds/ib_recv.c b/net/rds/ib_recv.c
+index 7055985..8946c89 100644
+--- a/net/rds/ib_recv.c
++++ b/net/rds/ib_recv.c
+@@ -772,7 +772,7 @@ static void rds_ib_cong_recv(struct rds_connection *conn,
+ 	unsigned long frag_off;
+ 	unsigned long to_copy;
+ 	unsigned long copied;
+-	uint64_t uncongested = 0;
++	__le64 uncongested = 0;
+ 	void *addr;
+ 
+ 	/* catch completely corrupt packets */
+@@ -789,7 +789,7 @@ static void rds_ib_cong_recv(struct rds_connection *conn,
+ 	copied = 0;
+ 
+ 	while (copied < RDS_CONG_MAP_BYTES) {
+-		uint64_t *src, *dst;
++		__le64 *src, *dst;
+ 		unsigned int k;
+ 
+ 		to_copy = min(RDS_FRAG_SIZE - frag_off, PAGE_SIZE - map_off);
+@@ -824,9 +824,7 @@ static void rds_ib_cong_recv(struct rds_connection *conn,
+ 	}
+ 
+ 	/* the congestion map is in little endian order */
+-	uncongested = le64_to_cpu(uncongested);
+-
+-	rds_cong_map_updated(map, uncongested);
++	rds_cong_map_updated(map, le64_to_cpu(uncongested));
+ }
+ 
+ static void rds_ib_process_recv(struct rds_connection *conn,
+-- 
+2.1.4
+
