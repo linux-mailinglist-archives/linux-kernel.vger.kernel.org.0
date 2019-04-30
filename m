@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A24FAF755
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB07F5FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfD3L6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:58:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60754 "EHLO mail.kernel.org"
+        id S1728983AbfD3Lll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:41:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730687AbfD3LrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:47:16 -0400
+        id S1728955AbfD3Llh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:41:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C850821670;
-        Tue, 30 Apr 2019 11:47:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7670621670;
+        Tue, 30 Apr 2019 11:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624836;
-        bh=SrJCoBMwqCwlPKloQA39AOKmQbx9IOxoVdnu2uvxb/U=;
+        s=default; t=1556624496;
+        bh=Q0pLV2EOyNxF7SO6dQrgct4pt7SeONLWomO0a+1iI1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d1puJMnOg3hcAViHJoT++RD4JG7Z1OrBwrhX6CnkYqvmYRsGYhYAfpi5huON7lUnO
-         ciGOOb/DrTGu+47BPRwDh24tZY2gGflvai5N7bn/P13um4cbPgjpJHzQVKmWzw9uY4
-         w32xluStqjj548CKe1YeEP7vAn0JffX60F0yHnCI=
+        b=TpqVpdFid74IuIu+xDLBQInu7kB6n9rgInjnGv1yZDA/AHPJMDQM/E8oNkfGiCfsF
+         8fqlKnR/gh+t0ci38GYS8RYM1XjZjCYQ9qOHlHirge0oBepEoRdFvSri5irGRkaZq5
+         1bPPoKDC235h4X8ryCHOUaQ0vP+Nud+5BRHIQU0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.19 053/100] intel_th: gth: Fix an off-by-one in output unassigning
-Date:   Tue, 30 Apr 2019 13:38:22 +0200
-Message-Id: <20190430113611.474614031@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 16/53] Input: synaptics-rmi4 - write config register values to the right offset
+Date:   Tue, 30 Apr 2019 13:38:23 +0200
+Message-Id: <20190430113553.312761433@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 91d3f8a629849968dc91d6ce54f2d46abf4feb7f upstream.
+commit 3a349763cf11e63534b8f2d302f2d0c790566497 upstream.
 
-Commit 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
-fixes a NULL dereference for all masters except the last one ("256+"),
-which keeps the stale pointer after the output driver had been unassigned.
+Currently any changed config register values don't take effect, as the
+function to write them back is called with the wrong register offset.
 
-Fix the off-by-one.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
+Fixes: ff8f83708b3e (Input: synaptics-rmi4 - add support for 2D
+                     sensors and F11)
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/gth.c |    2 +-
+ drivers/input/rmi4/rmi_f11.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwtracing/intel_th/gth.c
-+++ b/drivers/hwtracing/intel_th/gth.c
-@@ -616,7 +616,7 @@ static void intel_th_gth_unassign(struct
- 	othdev->output.port = -1;
- 	othdev->output.active = false;
- 	gth->output[port].output = NULL;
--	for (master = 0; master < TH_CONFIGURABLE_MASTERS; master++)
-+	for (master = 0; master <= TH_CONFIGURABLE_MASTERS; master++)
- 		if (gth->master[master] == port)
- 			gth->master[master] = -1;
- 	spin_unlock(&gth->gth_lock);
+--- a/drivers/input/rmi4/rmi_f11.c
++++ b/drivers/input/rmi4/rmi_f11.c
+@@ -1239,7 +1239,7 @@ static int rmi_f11_initialize(struct rmi
+ 	}
+ 
+ 	rc = f11_write_control_regs(fn, &f11->sens_query,
+-			   &f11->dev_controls, fn->fd.query_base_addr);
++			   &f11->dev_controls, fn->fd.control_base_addr);
+ 	if (rc)
+ 		dev_warn(&fn->dev, "Failed to write control registers\n");
+ 
 
 
