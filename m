@@ -2,51 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF2AF3CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35479EEAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 04:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfD3KL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:11:56 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:50937 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726930AbfD3KL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:11:56 -0400
-Received: by ozlabs.org (Postfix, from userid 1003)
-        id 44tckx63cWz9sBr; Tue, 30 Apr 2019 20:11:53 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1556619113; bh=/3cVNERTeFNHsUu9N/NoL+9iM4miE3OQ/3mWOShCetQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YADHNTpgxSe0EKuGzE4A8KBo387NkTzsK47lXBVfvDMfrxrylvn1IrLnm+Ic3Hsht
-         66jPJh0khrpXf8dcgZDLjItpY1WuMYUr3eJBZLlf0JZeaRqJTffklbU4yccaqyLoFY
-         WXlPUtcNffp2rnPfd0VSRjzpyocOj3HxoOCsAHwIc3woDjwTdq25lco5x/s+nCZIHa
-         gDkxC0BKknl85ITtZs3JL6Nch17VFz/OwqW9rHhK2RqKMO5FpesErdsk1AVyrfwq37
-         XUOSCSm0N59pkDi2jjKXhKLR9nqHKglGp95cnJH3kTIwA26uZwNlsquKmg77jnsxRE
-         tJQKc4QtRhscg==
-Date:   Tue, 30 Apr 2019 20:03:23 +1000
-From:   Paul Mackerras <paulus@ozlabs.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     benh@kernel.crashing.org, mpe@ellerman.id.au,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: PPC: Book3S HV: smb->smp comment fixup
-Message-ID: <20190430100323.GF32205@blackberry>
-References: <20190425195339.12609-1-palmer@sifive.com>
+        id S1729880AbfD3CGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 22:06:00 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:18028 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbfD3CGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 22:06:00 -0400
+Received-SPF: SoftFail (esa5.microchip.iphmx.com: domain of
+  wesley.sheng@microchip.com is inclined to not designate
+  208.19.99.222 as permitted sender) identity=mailfrom;
+  client-ip=208.19.99.222; receiver=esa5.microchip.iphmx.com;
+  envelope-from="wesley.sheng@microchip.com";
+  x-sender="wesley.sheng@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@smtp.microsemi.com) identity=helo;
+  client-ip=208.19.99.222; receiver=esa5.microchip.iphmx.com;
+  envelope-from="wesley.sheng@microchip.com";
+  x-sender="postmaster@smtp.microsemi.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=wesley.sheng@microchip.com; spf=None smtp.helo=postmaster@smtp.microsemi.com; dmarc=fail (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,412,1549954800"; 
+   d="scan'208";a="29360171"
+Received: from unknown (HELO smtp.microsemi.com) ([208.19.99.222])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Apr 2019 19:05:55 -0700
+Received: from AUSMBX3.microsemi.net (10.201.34.33) by AUSMBX2.microsemi.net
+ (10.201.34.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 29 Apr
+ 2019 21:05:53 -0500
+Received: from server1.microsemi.net (10.188.119.166) by ausmbx3.microsemi.net
+ (10.201.34.33) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Mon, 29 Apr 2019 21:05:51 -0500
+From:   Wesley Sheng <wesley.sheng@microchip.com>
+To:     <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
+        <linux-ntb@googlegroups.com>, <linux-kernel@vger.kernel.org>
+CC:     <wesleyshenggit@sina.com>, <logang@deltatee.com>,
+        Wesley Sheng <wesley.sheng@microchip.com>
+Subject: [PATCH] NTB: correct ntb_dev_ops and ntb_dev comment typos
+Date:   Tue, 30 Apr 2019 18:04:29 +0800
+Message-ID: <1556618669-2434-1-git-send-email-wesley.sheng@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190425195339.12609-1-palmer@sifive.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 12:53:39PM -0700, Palmer Dabbelt wrote:
-> I made the same typo when trying to grep for uses of smp_wmb and figured
-> I might as well fix it.
-> 
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+The comment for ntb_dev_ops and ntb_dev incorrectly referred to
+ntb_ctx_ops and ntb_device.
 
-Thanks, patch applied to my kvm-ppc-next tree.
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ include/linux/ntb.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Paul.
+diff --git a/include/linux/ntb.h b/include/linux/ntb.h
+index 56a92e3..604abc8 100644
+--- a/include/linux/ntb.h
++++ b/include/linux/ntb.h
+@@ -205,7 +205,7 @@ static inline int ntb_ctx_ops_is_valid(const struct ntb_ctx_ops *ops)
+ }
+ 
+ /**
+- * struct ntb_ctx_ops - ntb device operations
++ * struct ntb_dev_ops - ntb device operations
+  * @port_number:	See ntb_port_number().
+  * @peer_port_count:	See ntb_peer_port_count().
+  * @peer_port_number:	See ntb_peer_port_number().
+@@ -404,7 +404,7 @@ struct ntb_client {
+ #define drv_ntb_client(__drv) container_of((__drv), struct ntb_client, drv)
+ 
+ /**
+- * struct ntb_device - ntb device
++ * struct ntb_dev - ntb device
+  * @dev:		Linux device object.
+  * @pdev:		PCI device entry of the ntb.
+  * @topo:		Detected topology of the ntb.
+-- 
+2.7.4
+
