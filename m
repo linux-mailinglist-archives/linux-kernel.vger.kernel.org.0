@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEFF4F610
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140D3F72B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfD3Lmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:42:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51558 "EHLO mail.kernel.org"
+        id S1726766AbfD3L4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:56:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728270AbfD3Lma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:30 -0400
+        id S1730866AbfD3Lsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8CFE21670;
-        Tue, 30 Apr 2019 11:42:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7902B20449;
+        Tue, 30 Apr 2019 11:48:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624549;
-        bh=VcpKBqHheq+0zxr5mfTmUUIAIN1pPJCWkgC44Ioi6eU=;
+        s=default; t=1556624921;
+        bh=TKqAad3HeCTQ5jzhurH98iRs8WRCsusuiIuMh6eGFjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vzNe47WE63+rqobTBvC5c70w6cu7Ftf6y8HF7OBiWHfcK2VYUdsHKlXG8FbTGG3Mh
-         qIV4cR/tTwahszdqbae+wSn9uVSkbfV+jZvubHjoZSr3YCoZY3NKgi0nhV7dCFdsnI
-         3ZAJDyWmAVOB03uBJxoh7GbSk9tS+xAtENcBlB3o=
+        b=lQlyzBzsWxcBHwvdqU7LxmzNFreBQDY77LN9+DwGjNj22iA+SeNuSEiNMTSoAqEwZ
+         u1PpzVQlTzO1l+8DjVzFfY94M77RJB9eMTkxUqI0hKq3wGX484w19SDExLTmDD+aGq
+         hJftTl77n15B9jkex9uIq+MhanK7wX0vOiIdEK9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Jarno <aurelien@aurel32.net>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.14 07/53] MIPS: scall64-o32: Fix indirect syscall number load
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 5.0 23/89] RDMA/mlx5: Do not allow the user to write to the clock page
 Date:   Tue, 30 Apr 2019 13:38:14 +0200
-Message-Id: <20190430113551.793494451@linuxfoundation.org>
+Message-Id: <20190430113611.124712220@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aurelien Jarno <aurelien@aurel32.net>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit 79b4a9cf0e2ea8203ce777c8d5cfa86c71eae86e upstream.
+commit c660133c339f9ab684fdf568c0d51b9ae5e86002 upstream.
 
-Commit 4c21b8fd8f14 (MIPS: seccomp: Handle indirect system calls (o32))
-added indirect syscall detection for O32 processes running on MIPS64,
-but it did not work correctly for big endian kernel/processes. The
-reason is that the syscall number is loaded from ARG1 using the lw
-instruction while this is a 64-bit value, so zero is loaded instead of
-the syscall number.
+The intent of this VMA was to be read-only from user space, but the
+VM_MAYWRITE masking was missed, so mprotect could make it writable.
 
-Fix the code by using the ld instruction instead. When running a 32-bit
-processes on a 64 bit CPU, the values are properly sign-extended, so it
-ensures the value passed to syscall_trace_enter is correct.
-
-Recent systemd versions with seccomp enabled whitelist the getpid
-syscall for their internal  processes (e.g. systemd-journald), but call
-it through syscall(SYS_getpid). This fix therefore allows O32 big endian
-systems with a 64-bit kernel to run recent systemd versions.
-
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-Cc: <stable@vger.kernel.org> # v3.15+
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 5c99eaecb1fc ("IB/mlx5: Mmap the HCA's clock info to user-space")
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reviewed-by: Haggai Eran <haggaie@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/scall64-o32.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/mips/kernel/scall64-o32.S
-+++ b/arch/mips/kernel/scall64-o32.S
-@@ -125,7 +125,7 @@ trace_a_syscall:
- 	subu	t1, v0,  __NR_O32_Linux
- 	move	a1, v0
- 	bnez	t1, 1f /* __NR_syscall at offset 0 */
--	lw	a1, PT_R4(sp) /* Arg1 for __NR_syscall case */
-+	ld	a1, PT_R4(sp) /* Arg1 for __NR_syscall case */
- 	.set	pop
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -1982,6 +1982,7 @@ static int mlx5_ib_mmap_clock_info_page(
  
- 1:	jal	syscall_trace_enter
+ 	if (vma->vm_flags & VM_WRITE)
+ 		return -EPERM;
++	vma->vm_flags &= ~VM_MAYWRITE;
+ 
+ 	if (!dev->mdev->clock_info_page)
+ 		return -EOPNOTSUPP;
+@@ -2147,6 +2148,7 @@ static int mlx5_ib_mmap(struct ib_uconte
+ 
+ 		if (vma->vm_flags & VM_WRITE)
+ 			return -EPERM;
++		vma->vm_flags &= ~VM_MAYWRITE;
+ 
+ 		/* Don't expose to user-space information it shouldn't have */
+ 		if (PAGE_SIZE > 4096)
 
 
