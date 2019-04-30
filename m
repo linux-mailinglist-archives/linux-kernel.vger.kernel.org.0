@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F48F5E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C652BF5E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfD3Lju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:39:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45354 "EHLO mail.kernel.org"
+        id S1728125AbfD3Lj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:39:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbfD3Ljp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:39:45 -0400
+        id S1728026AbfD3Ljs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:39:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 470D021670;
-        Tue, 30 Apr 2019 11:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0940021670;
+        Tue, 30 Apr 2019 11:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624384;
-        bh=KQK1Ilc5RkTobybJT2jptxjBvhi4nuiyISMPJhDGCp8=;
+        s=default; t=1556624387;
+        bh=XOMQrsv1n430giOAfiXaba/kabfX/GmaTkLEaYI6iKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJuDNyV8z+pvhJxADlutFzQ3UGUhTja9rIa4EACQGmBu25UqVtZDkdR0R2nTYd5jV
-         F9VKCdaDbwbE485OcWbWtjbSE6Ctb/5JI22pu0Sr4x3OCZLKZ/zko+FL4q0HVcEMtm
-         wyZXQqr70+6wnObOlJCJL6X+h3UyU0/w2CA/BBg0=
+        b=uRcep203awC2ZsU/JyZSPcfxQyo6sdV3es7k9jW5rTEazb0X8cSmNi+qwTiVuo1nL
+         fJHJ1L5BiLO0KChePk91U1sWDddM6/hplr2koeNHTIi9JbDvGPX+nBnuucodMmMcTD
+         B+w64PkeTbBJSfVRuLOfXSIW9a+5hf2dYLs4UJsA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: [PATCH 4.9 15/41] drm/vc4: Fix memory leak during gpu reset.
-Date:   Tue, 30 Apr 2019 13:38:26 +0200
-Message-Id: <20190430113528.646217552@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.9 16/41] drm/vc4: Fix compilation error reported by kbuild test bot
+Date:   Tue, 30 Apr 2019 13:38:27 +0200
+Message-Id: <20190430113528.917882238@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
 References: <20190430113524.451237916@linuxfoundation.org>
@@ -45,17 +48,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-commit d08106796a78a4273e39e1bbdf538dc4334b2635 upstream.
+commit 462ce5d963f18b71c63f6b7730a35a2ee5273540 upstream.
 
-__drm_atomic_helper_crtc_destroy_state does not free memory, it only
-cleans it up. Fix this by calling the functions own destroy function.
+A pointer to crtc was missing, resulting in the following build error:
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse: sparse: incorrect type in argument 1 (different base types)
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    expected struct drm_crtc *crtc
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    got struct drm_crtc_state *state
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:39: sparse: sparse: not enough arguments for function vc4_crtc_destroy_state
 
-Fixes: 6d6e50039187 ("drm/vc4: Allocate the right amount of space for boot-time CRTC state.")
-Cc: Eric Anholt <eric@anholt.net>
-Cc: <stable@vger.kernel.org> # v4.6+
-Reviewed-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190301125627.7285-2-maarten.lankhorst@linux.intel.com
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/2b6ed5e6-81b0-4276-8860-870b54ca3262@linux.intel.com
+Fixes: d08106796a78 ("drm/vc4: Fix memory leak during gpu reset.")
+Cc: <stable@vger.kernel.org> # v4.6+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
@@ -68,8 +75,8 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  vc4_crtc_reset(struct drm_crtc *crtc)
  {
  	if (crtc->state)
--		__drm_atomic_helper_crtc_destroy_state(crtc->state);
-+		vc4_crtc_destroy_state(crtc->state);
+-		vc4_crtc_destroy_state(crtc->state);
++		vc4_crtc_destroy_state(crtc, crtc->state);
  
  	crtc->state = kzalloc(sizeof(struct vc4_crtc_state), GFP_KERNEL);
  	if (crtc->state)
