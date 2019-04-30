@@ -2,38 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52875F660
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3261FF613
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfD3Lqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:46:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59878 "EHLO mail.kernel.org"
+        id S1729543AbfD3Lmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbfD3Lqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:46:46 -0400
+        id S1729443AbfD3Lmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:42:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 656DE21707;
-        Tue, 30 Apr 2019 11:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EF052173E;
+        Tue, 30 Apr 2019 11:42:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624805;
-        bh=7Y1eJJsMscOudnHihgQjekD0aMOHcc1Kjqxix0XwBZQ=;
+        s=default; t=1556624562;
+        bh=AgE5NMk3KoqOl3px5GL8ybRBHG4Sc6dAno+ZR3osuAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vb784qi1Z+P2OIhtv2nQsmZFSSD2ddiVPU+tcjk7n3K7yS/Ms5WAWIRqjQjqZVEWh
-         yp/lDwy1vxoeWMBg0mho4A/VMwuZaN+klui2nt5fVQHfSlR/NSlEQsKf53iQCyTAZ5
-         Noaqv0vO2Jcznc16N+JZmozy1rTQRYExktqwzVMY=
+        b=jD3hDSFfu4wXqVD7Mujz287sSspHZRh2TcdNd/wCfZDDJMhQ1PbUfUy7UunvLL5we
+         A03/QcgUUkoOzQrxZIEjn53jGCSNv+46EOSb34uTAVJ6BQxZCEexIvASid2nMGHkdA
+         Kc/zEh4vO64xmvQmtQ28wpjJgt5kR0TjrpQg8GQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 078/100] aio: store event at final iocb_put()
-Date:   Tue, 30 Apr 2019 13:38:47 +0200
-Message-Id: <20190430113612.424843050@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Liska <mliska@suse.cz>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 41/53] x86/retpolines: Disable switch jump tables when retpolines are enabled
+Date:   Tue, 30 Apr 2019 13:38:48 +0200
+Message-Id: <20190430113558.190448835@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,102 +52,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 2bb874c0d873d13bd9b9b9c6d7b7c4edab18c8b4 upstream.
+commit a9d57ef15cbe327fe54416dd194ee0ea66ae53a4 upstream.
 
-Instead of having aio_complete() set ->ki_res.{res,res2}, do that
-explicitly in its callers, drop the reference (as aio_complete()
-used to do) and delay the rest until the final iocb_put().
+Commit ce02ef06fcf7 ("x86, retpolines: Raise limit for generating indirect
+calls from switch-case") raised the limit under retpolines to 20 switch
+cases where gcc would only then start to emit jump tables, and therefore
+effectively disabling the emission of slow indirect calls in this area.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
+After this has been brought to attention to gcc folks [0], Martin Liska
+has then fixed gcc to align with clang by avoiding to generate switch jump
+tables entirely under retpolines. This is taking effect in gcc starting
+from stable version 8.4.0. Given kernel supports compilation with older
+versions of gcc where the fix is not being available or backported anymore,
+we need to keep the extra KBUILD_CFLAGS around for some time and generally
+set the -fno-jump-tables to align with what more recent gcc is doing
+automatically today.
+
+More than 20 switch cases are not expected to be fast-path critical, but
+it would still be good to align with gcc behavior for versions < 8.4.0 in
+order to have consistency across supported gcc versions. vmlinux size is
+slightly growing by 0.27% for older gcc. This flag is only set to work
+around affected gcc, no change for clang.
+
+  [0] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86952
+
+Suggested-by: Martin Liska <mliska@suse.cz>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Björn Töpel<bjorn.topel@intel.com>
+Cc: Magnus Karlsson <magnus.karlsson@intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: H.J. Lu <hjl.tools@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: David S. Miller <davem@davemloft.net>
+Link: https://lkml.kernel.org/r/20190325135620.14882-1-daniel@iogearbox.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/aio.c |   33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+ arch/x86/Makefile |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1071,16 +1071,10 @@ static inline void iocb_destroy(struct a
- 	kmem_cache_free(kiocb_cachep, iocb);
- }
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -245,8 +245,12 @@ ifdef CONFIG_RETPOLINE
+   # Additionally, avoid generating expensive indirect jumps which
+   # are subject to retpolines for small number of switch cases.
+   # clang turns off jump table generation by default when under
+-  # retpoline builds, however, gcc does not for x86.
+-  KBUILD_CFLAGS += $(call cc-option,--param=case-values-threshold=20)
++  # retpoline builds, however, gcc does not for x86. This has
++  # only been fixed starting from gcc stable version 8.4.0 and
++  # onwards, but not for older ones. See gcc bug #86952.
++  ifndef CONFIG_CC_IS_CLANG
++    KBUILD_CFLAGS += $(call cc-option,-fno-jump-tables)
++  endif
+ endif
  
--static inline void iocb_put(struct aio_kiocb *iocb)
--{
--	if (refcount_dec_and_test(&iocb->ki_refcnt))
--		iocb_destroy(iocb);
--}
--
- /* aio_complete
-  *	Called when the io request on the given iocb is complete.
-  */
--static void aio_complete(struct aio_kiocb *iocb, long res, long res2)
-+static void aio_complete(struct aio_kiocb *iocb)
- {
- 	struct kioctx	*ctx = iocb->ki_ctx;
- 	struct aio_ring	*ring;
-@@ -1088,8 +1082,6 @@ static void aio_complete(struct aio_kioc
- 	unsigned tail, pos, head;
- 	unsigned long	flags;
- 
--	iocb->ki_res.res = res;
--	iocb->ki_res.res2 = res2;
- 	/*
- 	 * Add a completion event to the ring buffer. Must be done holding
- 	 * ctx->completion_lock to prevent other code from messing with the tail
-@@ -1155,7 +1147,14 @@ static void aio_complete(struct aio_kioc
- 
- 	if (waitqueue_active(&ctx->wait))
- 		wake_up(&ctx->wait);
--	iocb_put(iocb);
-+}
-+
-+static inline void iocb_put(struct aio_kiocb *iocb)
-+{
-+	if (refcount_dec_and_test(&iocb->ki_refcnt)) {
-+		aio_complete(iocb);
-+		iocb_destroy(iocb);
-+	}
- }
- 
- /* aio_read_events_ring
-@@ -1429,7 +1428,9 @@ static void aio_complete_rw(struct kiocb
- 		file_end_write(kiocb->ki_filp);
- 	}
- 
--	aio_complete(iocb, res, res2);
-+	iocb->ki_res.res = res;
-+	iocb->ki_res.res2 = res2;
-+	iocb_put(iocb);
- }
- 
- static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
-@@ -1577,11 +1578,10 @@ static ssize_t aio_write(struct kiocb *r
- 
- static void aio_fsync_work(struct work_struct *work)
- {
--	struct fsync_iocb *req = container_of(work, struct fsync_iocb, work);
--	int ret;
-+	struct aio_kiocb *iocb = container_of(work, struct aio_kiocb, fsync.work);
- 
--	ret = vfs_fsync(req->file, req->datasync);
--	aio_complete(container_of(req, struct aio_kiocb, fsync), ret, 0);
-+	iocb->ki_res.res = vfs_fsync(iocb->fsync.file, iocb->fsync.datasync);
-+	iocb_put(iocb);
- }
- 
- static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
-@@ -1602,7 +1602,8 @@ static int aio_fsync(struct fsync_iocb *
- 
- static inline void aio_poll_complete(struct aio_kiocb *iocb, __poll_t mask)
- {
--	aio_complete(iocb, mangle_poll(mask), 0);
-+	iocb->ki_res.res = mangle_poll(mask);
-+	iocb_put(iocb);
- }
- 
- static void aio_poll_complete_work(struct work_struct *work)
+ archscripts: scripts_basic
 
 
