@@ -2,278 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F540ED8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27670ED9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfD3APA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 20:15:00 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:28042 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbfD3AO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 20:14:59 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190430001455epoutp03c1ca58c177d2372977ff66ac5dda0d75~aGEJ7KT2v0353803538epoutp03Y
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 00:14:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190430001455epoutp03c1ca58c177d2372977ff66ac5dda0d75~aGEJ7KT2v0353803538epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1556583295;
-        bh=jgEiupZLaSbXRwWtJ4Jq3fVFlSGwme7HIaHJF92vfGM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=sYTEx7asANW+hxQ2MomNRkyfx6+u+P4nKqfYPdzpLfKODwVbAa/f83Xx/M9EEi7pj
-         qzRcML2F/Fa0eF96WYQfcOQu2/q6MysF5daZNlAb2c/2PbVYNr65Kdj1bgTJejKY9i
-         0dBRNRRtija9aXSK0A2MHuh9KV/pW/fV01VxMbYY=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190430001451epcas1p427287f496b2816b9646bf4da504f3f8a~aGEGuRDSq2911229112epcas1p4s;
-        Tue, 30 Apr 2019 00:14:51 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        ED.88.04142.87397CC5; Tue, 30 Apr 2019 09:14:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190430001448epcas1p34fdfdf740532dfaf9697ec7fc3acbe16~aGEDZpNzC1158011580epcas1p3E;
-        Tue, 30 Apr 2019 00:14:48 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190430001448epsmtrp21bd6ecdb47ecf38cde5e74711bbcd49e~aGEDYu4x70555605556epsmtrp2R;
-        Tue, 30 Apr 2019 00:14:48 +0000 (GMT)
-X-AuditID: b6c32a36-cf9ff7000000102e-09-5cc793784af0
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        35.42.03692.77397CC5; Tue, 30 Apr 2019 09:14:47 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190430001447epsmtip1acbc8dc5c14fdc78ca20c217bbdf2f62~aGEDMUIka2618226182epsmtip1E;
-        Tue, 30 Apr 2019 00:14:47 +0000 (GMT)
-Subject: Re: [PATCH v3 08/16] PM / devfreq: tegra: Clean up driver's probe /
- remove
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <236a553b-ccb5-f8fd-d404-af78f04d6985@samsung.com>
-Date:   Tue, 30 Apr 2019 09:16:03 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190417222925.5815-9-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURDHfT22BS0uVWBERVhjTDFIFyiuKOJBtFE/YIR4pLGudFOQXukW
-        BP2ClKhVURQ0Ws8gnkhAqAbrgSJKNMGgRDQoUaGJhuASbjBGbbsx8u333vxn/jPvjVQor8LC
-        pdkmG2M10QYCCxTde6aIjckva9Eor4+GUVUDPYgqdlaIqNaiPgnV7j6PUUMlzYhyDDsx6uP+
-        Gxg14b4ooo5Vv8VWBqgbuiqR+r6zS6IusXOY+pjrFlIP1UWkibfnLM9iaB1jjWRMmWZdtkmf
-        TGzYrF2jVSUqyRhyKbWEiDTRRiaZSN2YFrM22+BtiIjMow253qs0mmWJ2BXLreZcGxOZZWZt
-        yQRj0RksSy2LWdrI5pr0izPNxiRSqYxTeYU7c7Ied9RjFo8i/6lnWSHyRB1GAVLAE6C7+Szm
-        YznegMDOzT6MAr08iGDi/R3EB0YRlF7e+y+hvKtbwIseITjt4SS8qB/BSM0cH8/AM2DAfRLz
-        iWbivxEMus+IfQEhvg1Gnl4V+hjDo6Hx+we/9XQ8Ct6N9/jdZPgK6LMP+4uK8AXwsGNQ4OMQ
-        fCt8flEr5jXB8PKsR+TjAFwFz7ifEr5+GHR6Lgl4ngf2u+eEviYA/4OBq/eBNyD1HlKh800w
-        P80M6G1xSXgOhyHuEcbzPrj5shnjcw8hcDW2iflAPDReLfPXEeIKqHHH8l5BwI0cFfPlZXDo
-        gJxXz4f2L10CnmfBlYMOjJeoYexrSimKck4axjlpAOekAZz/vS4j0S0UylhYo55hSUvc5J+u
-        Q/5FjU5sQBWvNzYhXIqIaTI190IjF9N5bIGxCYFUSMyUqVuea+QyHV2wl7GatdZcA8M2IZX3
-        rU8Iw0Myzd61N9m0pCouPj6eSiATVSRJhMlqVq7RyHE9bWNyGMbCWP/lCaQB4YUoqadaeWpV
-        a/HCOM21lPGyLeP9r28XRtgS5ioy3pSOfd6xqOjTfl2lw3hkir2uOtUVq29rYB0O3PUjuDf0
-        wa+8xOH0oO6p3zhn+dbsV5tCGwsrzuh1uy9ot60u1rfXl1mT5le2htS2adPPdyqenLKt/5Wx
-        p+jIrrt/uOMbDqwriNk8SojYLJqMFlpZ+i/D+C8JvgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnG755OMxBtcOm1us/viY0aJl1iIW
-        i7NNb9gtLu+aw2bxufcIo0Xnl1lsFrcbV7BZ/Nw1j8Wib+0lNgdOjx13lzB67Jx1l92jt/kd
-        m0ffllWMHp83yQWwRnHZpKTmZJalFunbJXBl7Lu2ma3giWbFwSfWDYxPFLsYOTkkBEwkptx9
-        xNTFyMUhJLCbUWJl5zlGiISkxLSLR5m7GDmAbGGJw4eLIWreMkqcWfqbDaRGWCBU4uOuSWwg
-        CRGBJiaJzw9bmEASzAKREv2PulkhOjYzSixa+wYswSagJbH/xQ2wbn4BRYmrPx6DbeMVsJN4
-        0/yFHcRmEVCV2HPtE1i9qECExJn3K1ggagQlTs58AmZzCphKHH73ix1imbrEn3mXmCFscYlb
-        T+ZDHSEv0bx1NvMERuFZSNpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS
-        9ZLzczcxgmNMS3MH4+Ul8YcYBTgYlXh4Pd4dixFiTSwrrsw9xCjBwawkwutx/GiMEG9KYmVV
-        alF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KLYLJMHJxSDYwOR3o9tx4z/sv0Zd+m
-        tb+7zx/Z9c14w3W/DdMEpqSxul+YGlvZmO27SP/1tywV1n1xLeHfz2pUea3au1/9FnPIEW2f
-        S+UBPVtcFxryTC/7/WzLns1rdn7nvHJw+kse76gtT/9d3nxdcWJ/1fxrhS9S9EPVJ1lcWr/A
-        cnH9Y+bM0PhNq53qPP2TlFiKMxINtZiLihMB3CI7Ja0CAAA=
-X-CMS-MailID: 20190430001448epcas1p34fdfdf740532dfaf9697ec7fc3acbe16
-X-Msg-Generator: CA
+        id S1729720AbfD3ARK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 20:17:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729083AbfD3ARK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 20:17:10 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5A1821670;
+        Tue, 30 Apr 2019 00:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556583428;
+        bh=QT6S6NiqLDuf6uLxFZ4ko7gd/kGE9Fl2HUC1VAVYb6E=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=q9mfYrxSE6XIRr6nkfMOsuR/ivTvyB5vdyb8iDXMzuQV+QiURH7xfFjHbFbG3DCa6
+         HDcmWeCPzGGaSJaHFVEPT296DkPBKATOIsoOiI7uBF5yDv41hke/D/CqNaaA7HnvXz
+         3e5PUKXOmFFhvmLfkewjJ2rg2OAgSInUeMNmTGXk=
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190417224114epcas4p14b20e269f10a3e3bfea4c8ec4c3300b3
-References: <20190417222925.5815-1-digetx@gmail.com>
-        <CGME20190417224114epcas4p14b20e269f10a3e3bfea4c8ec4c3300b3@epcas4p1.samsung.com>
-        <20190417222925.5815-9-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl>
+References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Add silabs,si5341
+To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <155658342800.168659.4922821141203707564@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Mon, 29 Apr 2019 17:17:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Quoting Mike Looijmans (2019-04-27 02:42:56)
+> On 27-04-19 02:44, Stephen Boyd wrote:
+> > Quoting Mike Looijmans (2019-04-25 23:51:15)
+> >> On 26-04-19 01:04, Stephen Boyd wrote:
+> >>>> +
+> >>>> +Optional properties:
+> >>>> +- silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for=
+ PLL
+> >>>> +  feedback divider. Must be such that the PLL output is in the vali=
+d range. For
+> >>>> +  example, to create 14GHz from a 48MHz xtal, use m-num=3D14000 and=
+ m-den=3D48. Only
+> >>>> +  the fraction matters, using 3500 and 12 will deliver the exact sa=
+me result.
+> >>>> +  If these are not specified, and the PLL is not yet programmed whe=
+n the driver
+> >>>> +  probes, the PLL will be set to 14GHz.
+> >>>
+> >>> Can this be done via assigned-clock-rates? Possibly with a table in t=
+he
+> >>> clk driver to tell us how to generate those rates.
+> >>
+> >> The PLL frequency choice determines who'll get jitter and who won't. I=
+t's
+> >> ridiculously accurate too.
+> >>
+> >> For example, if you need a 26 MHz and a 100 MHz output, there's no sol=
+ution
+> >> for the PLL that makes both clocks an integer divider (SI is vague abo=
+ut it,
+> >> but apparently integer dividers have less jitter on output). Only the =
+enduser
+> >> can say which clock will get the better quality.
 
-On 19. 4. 18. 오전 7:29, Dmitry Osipenko wrote:
-> Reset hardware, disable ACTMON clock, release OPP's and handle all
-> possible error cases correctly, maintaining the correct tear down
-> order. Also use devm_platform_ioremap_resource() which is now available
-> in the kernel.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra-devfreq.c | 83 +++++++++++++++++++--------------
->  1 file changed, 47 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-> index ce1eb97a2090..70946e432d3c 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -610,7 +610,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  {
->  	struct tegra_devfreq *tegra;
->  	struct tegra_devfreq_device *dev;
-> -	struct resource *res;
->  	unsigned int i;
->  	unsigned long rate;
->  	int err;
-> @@ -619,9 +618,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  	if (!tegra)
->  		return -ENOMEM;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -
-> -	tegra->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	tegra->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(tegra->regs))
->  		return PTR_ERR(tegra->regs);
->  
-> @@ -643,11 +640,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		return PTR_ERR(tegra->emc_clock);
->  	}
->  
-> -	tegra->rate_change_nb.notifier_call = tegra_actmon_rate_notify_cb;
-> -	err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
-> -	if (err) {
-> -		dev_err(&pdev->dev,
-> -			"Failed to register rate change notifier\n");
-> +	tegra->irq = platform_get_irq(pdev, 0);
-> +	if (tegra->irq < 0) {
-> +		err = tegra->irq;
-> +		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
->  		return err;
->  	}
->  
-> @@ -678,54 +674,69 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  
->  	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
->  		rate = clk_round_rate(tegra->emc_clock, rate);
-> -		dev_pm_opp_add(&pdev->dev, rate, 0);
-> -	}
->  
-> -	tegra->irq = platform_get_irq(pdev, 0);
-> -	if (tegra->irq < 0) {
-> -		err = tegra->irq;
-> -		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
-> -		return err;
-> +		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-> +		if (err) {
-> +			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
-> +			goto remove_opps;
-> +		}
->  	}
->  
->  	platform_set_drvdata(pdev, tegra);
->  
-> +	tegra->rate_change_nb.notifier_call = tegra_actmon_rate_notify_cb;
-> +	err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to register rate change notifier\n");
-> +		goto remove_opps;
-> +	}
-> +
-> +	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-> +	tegra->devfreq = devfreq_add_device(&pdev->dev,
-> +					    &tegra_devfreq_profile,
-> +					    "tegra_actmon",
-> +					    NULL);
-> +	if (IS_ERR(tegra->devfreq)) {
-> +		err = PTR_ERR(tegra->devfreq);
-> +		goto unreg_notifier;
-> +	}
-> +
->  	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
->  					actmon_thread_isr, IRQF_ONESHOT,
->  					"tegra-devfreq", tegra);
->  	if (err) {
-> -		dev_err(&pdev->dev, "Interrupt request failed\n");
-> -		return err;
-> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
-> +		goto remove_devfreq;
->  	}
->  
-> -	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-> -	tegra->devfreq = devm_devfreq_add_device(&pdev->dev,
-> -						 &tegra_devfreq_profile,
-> -						 "tegra_actmon",
-> -						 NULL);
-> -
->  	return 0;
-> +
-> +remove_devfreq:
-> +	devfreq_remove_device(tegra->devfreq);
-> +
-> +unreg_notifier:
-> +	clk_notifier_unregister(tegra->emc_clock, &tegra->rate_change_nb);
-> +
-> +remove_opps:
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> +
-> +	reset_control_reset(tegra->reset);
-> +	clk_disable_unprepare(tegra->clock);
-> +
-> +	return err;
->  }
->  
->  static int tegra_devfreq_remove(struct platform_device *pdev)
->  {
->  	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
-> -	int irq = platform_get_irq(pdev, 0);
-> -	u32 val;
-> -	unsigned int i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
-> -		val = device_readl(&tegra->devices[i], ACTMON_DEV_CTRL);
-> -		val &= ~ACTMON_DEV_CTRL_ENB;
-> -		device_writel(&tegra->devices[i], val, ACTMON_DEV_CTRL);
-> -	}
-> -
-> -	actmon_write_barrier(tegra);
->  
-> -	devm_free_irq(&pdev->dev, irq, tegra);
-> +	devfreq_remove_device(tegra->devfreq);
-> +	dev_pm_opp_remove_all_dynamic(&pdev->dev);
->  
->  	clk_notifier_unregister(tegra->emc_clock, &tegra->rate_change_nb);
+Right. So maybe we make tables of rates and put it in the driver and
+keep adding code in there? I'm worried about having these properties in
+DT and then having to work around them later on by "fixing" the DT. If
+it's only in the driver then we're able to tweak the values to get
+better jitter numbers, etc.
 
-nitpick: the probe function  has following call sequence if error case,
-First, clk_notifier_unregister()
-Second, dev_pm_opp_remove_all_dynamic()
+> >>
+> >>>
+> >>>> +- silabs,reprogram: When present, the driver will always assume the=
+ device must
+> >>>> +  be initialized, and always performs the soft-reset routine. Since=
+ this will
+> >>>> +  temporarily stop all output clocks, don't do this if the chip is =
+generating
+> >>>> +  the CPU clock for example.
+> >>>
+> >>> Could this be done with the reset framework? It almost sounds like if
+> >>> the clk is a CLK_IS_CRITICAL then we shouldn't do the reset, otherwise
+> >>> we probably should reset the chip when the driver probes. If we don't
+> >>> have a case where it's going to be supplying a critical clk for a long
+> >>> time then perhaps we shouldn't even consider this topic until later.
+> >>
+> >> The driver can sort of see that the chips is already configured. This =
+tells
+> >> the driver whether that's expected or just coincidence.
+> >>
+> >> Maybe it'd be clearer if I reversed the logic and name this
+> >> "silabs,preprogrammed", which will skip the driver's initialization ro=
+utine?
+> >>
+> >=20
+> > Maybe? Is there any way to look at some register to figure out for sure
+> > if it's been pre-programmed or not? Could TOOL_VERSION be used or
+> > ACTIVE_NVM_BANK or DESIGN_ID0-7?
+>=20
+> I've experimentally determined that TOOL_VERSION and DESIGN_IDx=20
+> apparently get filled with zeroes by the clockbuilder anyway.
+>=20
+> ACTIVE_NVM_BANK works reliably for self-programmed chips.
+>=20
+> The flag is about "is this chip under full kernel control, or is it=20
+> generating clocks the kernel doesn't know about (e.g. for realtime cores =
 
-If possible, you better to keep the same sequence
-in the tegra_devfreq_remove(). But, it is just opinion.
-If you think that it doesn't break the routine of device removal,
-jut keep this code.
+> or FPGA logic)".
+>=20
 
->  
-> +	reset_control_reset(tegra->reset);
->  	clk_disable_unprepare(tegra->clock);
->  
->  	return 0;
-> 
+Alright.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>=20
+>=20
+> >>>> +=3D=3DChild nodes=3D=3D
+> >>>> +
+> >>>> +Each of the clock outputs can be overwritten individually by
+> >>>> +using a child node to the I2C device node. If a child node for a cl=
+ock
+> >>>> +output is not set, the configuration remains unchanged.
+> >>>> +
+> >>>> +Required child node properties:
+> >>>> +- reg: number of clock output.
+> >>>> +
+> >>>> +Optional child node properties:
+> >>>> +- silabs,format: Output format, see [1], 1=3Ddifferential, 2=3Dlow-=
+power, 4=3DLVCMOS
+> >>>> +- silabs,common-mode: Output common mode, depends on standard.
+> >>>> +- silabs,amplitude: Output amplitude, depends on standard.
+> >>>> +- silabs,synth-source: Select which multisynth to use for this outp=
+ut
+> >>>> +- silabs,synth-frequency: Sets the frequency for the multisynth con=
+nected to
+> >>>> +  this output. This will affect other outputs connected to this mul=
+tisynth. The
+> >>>> +  setting is applied before silabs,synth-master and clock-frequency.
+> >>>> +- silabs,synth-master: If present, this output is allowed to change=
+ the
+> >>>> +  multisynth frequency dynamically.
+> >>>
+> >>> These above properties look like highly detailed configuration data to
+> >>> let the driver configure the clk output exactly how it's supposed to =
+be
+> >>> configured. Can these properties be rewritten in more high-level terms
+> >>> that a system integrator would understand? Ideally, I shouldn't have =
+to
+> >>> read the datasheet and the driver and then figure out what DT propert=
+ies
+> >>> need the values from the datasheet in them so that the driver writes
+> >>> them to a particular register. I don't know if that's possible here,
+> >>> because I haven't read the driver or the datasheet too closely yet, b=
+ut
+> >>> that should be the goal.
+> >>
+> >> The datasheet is not very helpful in this regard. Silabs just assumes =
+you'll
+> >> use their clockbuilder software for writing these values, which is how=
+ we got
+> >> to the "LVDS 3v3" values.
+> >=20
+> > I hope that can be determined by looking at vdd<N>-supply voltages?
+>=20
+> Not really, and when asked for a bit more detail, Silabs just says to=20
+> use the excellent developer friendly clockbuilder software that almost=20
+> runs on almost any platform.
+>=20
+> >> I could put in a table of "common" values, so that you can say:
+> >>
+> >> silabs,output-standard =3D "lvds";
+> >>
+> >> And then use the "raw" properties to expand or override on that.
+> >>
+> >> Extra defines might help, e.g.:
+> >>
+> >> silabs,format =3D <SI5341_FORMAT_DIFFERENTIAL>;
+> >=20
+> > I suppose you'll need to reverse engineer the clock builder software to
+> > figure out why a SI5341_FORMAT_DIFFERENTIAL would be specified instead
+> > of some other value. Ideally we don't need any of these vendor specific
+> > properties and the drivers using these clks can ask the clk framework to
+> > configure these properties, or we need to look at making more properties
+> > like 'assigned-clock-parents' that lets us configure things generically.
+>=20
+> These properties are about how you soldered things together, but yeah,=20
+> if the clock outputs go to expansion slots, some driver or devicetree=20
+> fragment control would be desirable, so you can switch the clock mode=20
+> from differential to single ended for example.
 
+Hmm.. Perhaps we need a clk_set_mode() API? Possibly be an internal API
+that lets the DT configure the mode to be differential or single ended?
+Nobody has required this so far so it's very rare, but I'd like to see
+the properties become standard instead of vendor specific if possible.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>=20
+>=20
+> >>>> +- always-on: Immediately and permanently enable this output. Partic=
+ulary
+> >>>> +  useful when combined with assigned-clocks, since that does not pr=
+epare clocks.
+> >>>
+> >>> Looks like you want CLK_IS_CRITICAL in DT. We've had that discussion
+> >>> before but maybe we should revisit it here and add a way to indicate
+> >>> that some clk should never be turned off instead of assuming that we
+> >>> can do this from C code all the time.
+> >>
+> >> My issue was that assigned-clocks does not call clk_prepare. If the cl=
+ock is
+> >> not running, assigned-clocks will not turn it on (at least, that is th=
+e case
+> >> on the 4.14 kernel I tested this on), it apparently only prevents it f=
+rom
+> >> being turned off by marking it as "in use". This just provides a way t=
+o use
+> >> assigned-clocks.
+> >>
+> > Do you want the clks to always be prepared and enabled? What use-case is
+> > this? It still looks like CLK_IS_CRITICAL flag needs to be expressed in
+> > DT here.
+>=20
+> The use case is pretty simple, it's just to enable the clock. Or in this =
+
+> case, "prepare" it, because the I2C client needs to be able to sleep and =
+
+> all actions must be done in the prepare part.
+>=20
+> Suppose I use the si5341 to generate a 26MHz clock that would normally=20
+> be provides by a hardware oscillator. The driver itself doesn't have any =
+
+> clock properties to set. Then I'd put into that device's devicetree node =
+
+> the following:
+>=20
+> assigned-clocks =3D <&si5341 2>;
+> assigned-clock-rates =3D <26000000>;
+>=20
+> When the system boots, the clock framework indeed calls=20
+> "set_rate(26000000)" before that driver probes, but it never calls=20
+> "clk_prepare", so the clock's frequency is set okay but the clock won't=20
+> be running and the device won't function.
+
+Why can't that driver call clk_prepare_enable()? Is there some sort of
+assumption that this clk will always be enabled and not have a driver
+that configures the rate and gates/ungates it?
+
