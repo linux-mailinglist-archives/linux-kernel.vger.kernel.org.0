@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4E2F367
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E51F35D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfD3JqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:46:16 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25758 "EHLO
+        id S1727273AbfD3Jps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:45:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38423 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726979AbfD3Jp0 (ORCPT
+        with ESMTP id S1727137AbfD3Jpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:45:26 -0400
-X-UUID: 46bc264e5f0b41d2a503e0747e5afcd3-20190430
-X-UUID: 46bc264e5f0b41d2a503e0747e5afcd3-20190430
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        Tue, 30 Apr 2019 05:45:32 -0400
+X-UUID: fe62b11d42db49ebbc20b3b0dfc61aae-20190430
+X-UUID: fe62b11d42db49ebbc20b3b0dfc61aae-20190430
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <henryc.chen@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 229218210; Tue, 30 Apr 2019 17:45:20 +0800
+        with ESMTP id 409421780; Tue, 30 Apr 2019 17:45:20 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 30 Apr 2019 17:45:18 +0800
 Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 30 Apr 2019 17:45:18 +0800
+ Transport; Tue, 30 Apr 2019 17:45:19 +0800
 From:   Henry Chen <henryc.chen@mediatek.com>
 To:     Georgi Djakov <georgi.djakov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -36,11 +36,14 @@ CC:     Nicolas Boichat <drinkcat@google.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RFC V2] Add driver for dvfsrc, support for active state of scpsys
-Date:   Tue, 30 Apr 2019 16:50:54 +0800
-Message-ID: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
+        <linux-kernel@vger.kernel.org>,
+        Henry Chen <henryc.chen@mediatek.com>
+Subject: [RFC V2 01/11] dt-bindings: soc: Add dvfsrc driver bindings
+Date:   Tue, 30 Apr 2019 16:50:55 +0800
+Message-ID: <1556614265-12745-2-git-send-email-henryc.chen@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
+References: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -49,109 +52,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patchsets add support for MediaTek hardware module named DVFSRC
-(dynamic voltage and frequency scaling resource collector). The DVFSRC is
-a HW module which is used to collect all the requests from both software
-and hardware and turn into the decision of minimum operating voltage and
-minimum DRAM frequency to fulfill those requests.
+Document the binding for enabling dvfsrc on MediaTek SoC.
 
-So, This series is to implement the dvfsrc driver to collect all the
-requests of operating voltage or DRAM bandwidth from other device drivers
-likes GPU/Camera through 2 frameworks basically:
-
-1. interconnect framework: to aggregate the bandwidth
-   requirements from different clients
-
-[1] https://patchwork.kernel.org/cover/10766329/
-
-Below is the emi bandwidth map of mt8183. There has a hw module "DRAM scheduler"
-which used to control the throughput. The DVFSRC will collect forecast data
-of dram bandwidth from SW consumers(camera/gpu...), and according the forecast
-to change the DRAM frequency
-
-           ICC provider         ICC Nodes
-                            ----          ----
-           ---------       |CPU |   |--->|VPU |
-  -----   |         |-----> ----    |     ----
- |DRAM |--|DRAM     |       ----    |     ----
- |     |--|scheduler|----->|GPU |   |--->|DISP|
- |     |--|(EMI)    |       ----    |     ----
- |     |--|         |       -----   |     ----
-  -----   |         |----->|MMSYS|--|--->|VDEC|
-           ---------        -----   |     ----
-             /|\                    |     ----
-              |change DRAM freq     |--->|VENC|
-           ----------               |     ----
-          |  DVFSR   |              |
-          |          |              |     ----
-           ----------               |--->|IMG |
-                                    |     ----
-                                    |     ----
-                                    |--->|CAM |
-                                          ----
-
-2. Active state management of power domains[1]: to handle the operating
-   voltage opp requirement from different power domains
-
-[2] https://lwn.net/Articles/744047/
-
-Changes in RFC V2:
-* Remove the DT property dram_type. (Rob)
-* Used generic dts property 'opp-level' to get the performace state. (Stephen)
-* Remove unecessary dependency config on Kconfig. (Stephen)
-* Remove unused header file, fixed some coding style issue, typo,
-error handling on dvfsrc driver. (Nicolas/Stephen)
-* Remove irq handler on dvfsrc driver. (Stephen)
-* Remove init table on dvfsrc driver, combine hw init on trustzone.
-* Add interconnect support of mt8183 to aggregate the emi bandwidth.
-(Georgi)
-
-RFC V1: https://lore.kernel.org/patchwork/cover/1028535/
-
-Henry Chen (11):
-  dt-bindings: soc: Add dvfsrc driver bindings
-  dt-bindings: soc: Add opp table on scpsys bindings
-  soc: mediatek: add support for the performance state
-  arm64: dts: mt8183: add performance state support of scpsys
-  soc: mediatek: add header for mediatek SIP interface
-  soc: mediatek: add MT8183 dvfsrc support
-  arm64: dts: mt8183: add dvfsrc related nodes
-  dt-bindings: interconnect: add MT8183 interconnect dt-bindings
-  dt-bindings: interconnect: Add header for interconnect node
-  interconnect: mediatek: Add mt8183 interconnect provider driver
-  arm64: dts: mt8183: Add interconnect provider DT nodes
-
- .../bindings/interconnect/mtk,mt8183.txt           |  24 ++
- .../devicetree/bindings/soc/mediatek/dvfsrc.txt    |  23 ++
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |  42 +++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  33 ++
- drivers/interconnect/Kconfig                       |   1 +
- drivers/interconnect/Makefile                      |   1 +
- drivers/interconnect/mediatek/Kconfig              |  13 +
- drivers/interconnect/mediatek/Makefile             |   5 +
- drivers/interconnect/mediatek/mt8183.c             | 223 +++++++++++++
- drivers/soc/mediatek/Kconfig                       |  15 +
- drivers/soc/mediatek/Makefile                      |   1 +
- drivers/soc/mediatek/mtk-dvfsrc.c                  | 347 +++++++++++++++++++++
- drivers/soc/mediatek/mtk-scpsys.c                  |  53 ++++
- drivers/soc/mediatek/mtk-scpsys.h                  |  22 ++
- include/dt-bindings/interconnect/mtk,mt8183.h      |  18 ++
- include/dt-bindings/soc/mtk,dvfsrc.h               |  14 +
- include/soc/mediatek/mtk_dvfsrc.h                  |  22 ++
- include/soc/mediatek/mtk_sip.h                     |  17 +
- 18 files changed, 874 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
+Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
+---
+ .../devicetree/bindings/soc/mediatek/dvfsrc.txt    | 23 ++++++++++++++++++++++
+ include/dt-bindings/soc/mtk,dvfsrc.h               | 14 +++++++++++++
+ 2 files changed, 37 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
- create mode 100644 drivers/interconnect/mediatek/Kconfig
- create mode 100644 drivers/interconnect/mediatek/Makefile
- create mode 100644 drivers/interconnect/mediatek/mt8183.c
- create mode 100644 drivers/soc/mediatek/mtk-dvfsrc.c
- create mode 100644 drivers/soc/mediatek/mtk-scpsys.h
- create mode 100644 include/dt-bindings/interconnect/mtk,mt8183.h
  create mode 100644 include/dt-bindings/soc/mtk,dvfsrc.h
- create mode 100644 include/soc/mediatek/mtk_dvfsrc.h
- create mode 100644 include/soc/mediatek/mtk_sip.h
 
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
+new file mode 100644
+index 0000000..7f43499
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
+@@ -0,0 +1,23 @@
++MediaTek DVFSRC
++
++The Dynamic Voltage and Frequency Scaling Resource Collector (DVFSRC) is a
++HW module which is used to collect all the requests from both software and
++hardware and turn into the decision of minimum operating voltage and minimum
++DRAM frequency to fulfill those requests.
++
++Required Properties:
++- compatible: Should be one of the following
++	- "mediatek,mt8183-dvfsrc": For MT8183 SoC
++- reg: Address range of the DVFSRC unit
++- clock-names: Must include the following entries:
++	"dvfsrc": DVFSRC module clock
++- clocks: Must contain an entry for each entry in clock-names.
++
++Example:
++
++	dvfsrc@10012000 {
++		compatible = "mediatek,mt8183-dvfsrc";
++		reg = <0 0x10012000 0 0x1000>;
++		clocks = <&infracfg CLK_INFRA_DVFSRC>;
++		clock-names = "dvfsrc";
++	};
+diff --git a/include/dt-bindings/soc/mtk,dvfsrc.h b/include/dt-bindings/soc/mtk,dvfsrc.h
+new file mode 100644
+index 0000000..a522488
+--- /dev/null
++++ b/include/dt-bindings/soc/mtk,dvfsrc.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 MediaTek Inc.
++ */
++
++#ifndef _DT_BINDINGS_POWER_MTK_DVFSRC_H
++#define _DT_BINDINGS_POWER_MTK_DVFSRC_H
++
++#define MT8183_DVFSRC_LEVEL_1	1
++#define MT8183_DVFSRC_LEVEL_2	2
++#define MT8183_DVFSRC_LEVEL_3	3
++#define MT8183_DVFSRC_LEVEL_4	4
++
++#endif /* _DT_BINDINGS_POWER_MTK_DVFSRC_H */
 -- 
 1.9.1
 
