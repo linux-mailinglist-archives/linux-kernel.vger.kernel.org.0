@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E51F35D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2372F366
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfD3Jps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:45:48 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38423 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727137AbfD3Jpc (ORCPT
+        id S1727378AbfD3JqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:46:15 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:48767 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726945AbfD3Jp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:45:32 -0400
-X-UUID: fe62b11d42db49ebbc20b3b0dfc61aae-20190430
-X-UUID: fe62b11d42db49ebbc20b3b0dfc61aae-20190430
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        Tue, 30 Apr 2019 05:45:27 -0400
+X-UUID: a1c30d10bc484564b3e97412b8402b51-20190430
+X-UUID: a1c30d10bc484564b3e97412b8402b51-20190430
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <henryc.chen@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 409421780; Tue, 30 Apr 2019 17:45:20 +0800
+        with ESMTP id 583229787; Tue, 30 Apr 2019 17:45:21 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 30 Apr 2019 17:45:18 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 30 Apr 2019 17:45:19 +0800
 Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Tue, 30 Apr 2019 17:45:19 +0800
@@ -38,79 +38,93 @@ CC:     Nicolas Boichat <drinkcat@google.com>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Henry Chen <henryc.chen@mediatek.com>
-Subject: [RFC V2 01/11] dt-bindings: soc: Add dvfsrc driver bindings
-Date:   Tue, 30 Apr 2019 16:50:55 +0800
-Message-ID: <1556614265-12745-2-git-send-email-henryc.chen@mediatek.com>
+Subject: [RFC V2 02/11] dt-bindings: soc: Add opp table on scpsys bindings
+Date:   Tue, 30 Apr 2019 16:50:56 +0800
+Message-ID: <1556614265-12745-3-git-send-email-henryc.chen@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
 References: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: A0192DEC0B2A71B838B3E54F8F346560A9AFF8FE1F4F8B11C656FF1C2F1997332000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the binding for enabling dvfsrc on MediaTek SoC.
+Add opp table on scpsys dt-bindings for Mediatek SoC.
 
 Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
 ---
- .../devicetree/bindings/soc/mediatek/dvfsrc.txt    | 23 ++++++++++++++++++++++
- include/dt-bindings/soc/mtk,dvfsrc.h               | 14 +++++++++++++
- 2 files changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
- create mode 100644 include/dt-bindings/soc/mtk,dvfsrc.h
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
-new file mode 100644
-index 0000000..7f43499
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/mediatek/dvfsrc.txt
-@@ -0,0 +1,23 @@
-+MediaTek DVFSRC
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index b4728ce..33df802 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -63,6 +63,10 @@ Optional properties:
+ - mfg_2d-supply: Power supply for the mfg_2d power domain
+ - mfg-supply: Power supply for the mfg power domain
+ 
++- operating-points-v2: Phandle to the OPP table for the Power domain.
++	Refer to Documentation/devicetree/bindings/power/power_domain.txt
++	and Documentation/devicetree/bindings/opp/opp.txt for more details
 +
-+The Dynamic Voltage and Frequency Scaling Resource Collector (DVFSRC) is a
-+HW module which is used to collect all the requests from both software and
-+hardware and turn into the decision of minimum operating voltage and minimum
-+DRAM frequency to fulfill those requests.
+ Example:
+ 
+ 	scpsys: scpsys@10006000 {
+@@ -75,6 +79,27 @@ Example:
+ 			 <&topckgen CLK_TOP_VENC_SEL>,
+ 			 <&topckgen CLK_TOP_VENC_LT_SEL>;
+ 		clock-names = "mfg", "mm", "venc", "venc_lt";
++		operating-points-v2 = <&dvfsrc_opp_table>;
 +
-+Required Properties:
-+- compatible: Should be one of the following
-+	- "mediatek,mt8183-dvfsrc": For MT8183 SoC
-+- reg: Address range of the DVFSRC unit
-+- clock-names: Must include the following entries:
-+	"dvfsrc": DVFSRC module clock
-+- clocks: Must contain an entry for each entry in clock-names.
++		dvfsrc_opp_table: opp-table {
++			compatible = "operating-points-v2-level";
 +
-+Example:
++			dvfsrc_vol_min: opp1 {
++				opp,level = <MT8183_DVFSRC_LEVEL_1>;
++			};
 +
-+	dvfsrc@10012000 {
-+		compatible = "mediatek,mt8183-dvfsrc";
-+		reg = <0 0x10012000 0 0x1000>;
-+		clocks = <&infracfg CLK_INFRA_DVFSRC>;
-+		clock-names = "dvfsrc";
++			dvfsrc_freq_medium: opp2 {
++				opp,level = <MT8183_DVFSRC_LEVEL_2>;
++			};
++
++			dvfsrc_freq_max: opp3 {
++				opp,level = <MT8183_DVFSRC_LEVEL_3>;
++			};
++
++			dvfsrc_vol_max: opp4 {
++				opp,level = <MT8183_DVFSRC_LEVEL_4>;
++			};
++		};
+ 	};
+ 
+ Example consumer:
+@@ -82,4 +107,21 @@ Example consumer:
+ 	afe: mt8173-afe-pcm@11220000 {
+ 		compatible = "mediatek,mt8173-afe-pcm";
+ 		power-domains = <&scpsys MT8173_POWER_DOMAIN_AUDIO>;
++		operating-points-v2 = <&aud_opp_table>;
 +	};
-diff --git a/include/dt-bindings/soc/mtk,dvfsrc.h b/include/dt-bindings/soc/mtk,dvfsrc.h
-new file mode 100644
-index 0000000..a522488
---- /dev/null
-+++ b/include/dt-bindings/soc/mtk,dvfsrc.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 MediaTek Inc.
-+ */
 +
-+#ifndef _DT_BINDINGS_POWER_MTK_DVFSRC_H
-+#define _DT_BINDINGS_POWER_MTK_DVFSRC_H
-+
-+#define MT8183_DVFSRC_LEVEL_1	1
-+#define MT8183_DVFSRC_LEVEL_2	2
-+#define MT8183_DVFSRC_LEVEL_3	3
-+#define MT8183_DVFSRC_LEVEL_4	4
-+
-+#endif /* _DT_BINDINGS_POWER_MTK_DVFSRC_H */
++	aud_opp_table: aud-opp-table {
++		compatible = "operating-points-v2";
++		opp1 {
++			opp-hz = /bits/ 64 <793000000>;
++			required-opps = <&dvfsrc_vol_min>;
++		};
++		opp2 {
++			opp-hz = /bits/ 64 <910000000>;
++			required-opps = <&dvfsrc_vol_max>;
++		};
++		opp3 {
++			opp-hz = /bits/ 64 <1014000000>;
++			required-opps = <&dvfsrc_vol_max>;
++		};
+ 	};
 -- 
 1.9.1
 
