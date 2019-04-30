@@ -2,115 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AFF8F2A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16329F2AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfD3JQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:16:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52516 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726165AbfD3JQx (ORCPT
+        id S1726810AbfD3JV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:21:57 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33711 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfD3JV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:16:53 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3U98FGP046501
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 05:16:52 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s6hj3dejm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 05:16:52 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Tue, 30 Apr 2019 10:16:47 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 30 Apr 2019 10:16:46 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3U9GjwS52429002
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 09:16:45 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 815BDA4055;
-        Tue, 30 Apr 2019 09:16:45 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56B8EA4051;
-        Tue, 30 Apr 2019 09:16:45 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.21])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 30 Apr 2019 09:16:45 +0000 (GMT)
-Date:   Tue, 30 Apr 2019 11:16:44 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/module: Reschedule while waiting for modules to
- finish loading
-References: <20190429151751.15424-1-prarit@redhat.com>
- <20190430075108.GA21092@linux-8ccs>
+        Tue, 30 Apr 2019 05:21:56 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z6so1875311wmi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 02:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iaFDFnvVtS1iWSBFrIIKUe+7Fko1T4rJ0OHw8pGokPc=;
+        b=SGZs7DUnbcoM2RcuSABcJ5nEoFb5Jh0yeaPcnF7PUPj+8pC9/WQCx9BoIHQSJleqz3
+         N/9J58myQKiVQXvIx8lwvoC+4AC9LE0osAegiYd5wfE42z2H/ePs54RyDNrRSTAa2IXw
+         7ByXxjQSOPkiK2LuY8u2671JH6lLW96Vv1MD5QJe62rqoc7RjuFVEEa0byaLidAP6+ss
+         mJg+n7238TTgYfVBHgjWao3xUI8HqccPyvjGIsXVyTLswrqQWSqnLM/WCl2P2UDefbzq
+         wY1iDaaKC5b4iIaEUCuRGx9TKrASiJp1IY0YURTny0z3gzpj5c7obFWhL8lZPD35gAo3
+         RPrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iaFDFnvVtS1iWSBFrIIKUe+7Fko1T4rJ0OHw8pGokPc=;
+        b=H92WM55/6CNtsSPgOFwOF56vRY8kZ+tWLIXNigvKkYLexZXFYSbqzHxXrMnz16pxQq
+         MpeBo4bL1c7bNR7ssjT3gyYPAARfLc6RtVj7ImpajHckiz3zVQgKmrhDCo1fQzgDR/9r
+         ig4jpDBRb+H37YLUv2TjPni306G7OrfdcKG3vgFjUesuRoC7Nq19tIq/D4EqytdWVVB0
+         2M9s5oQHSFu/OfroJBj4nd0M/J1Qk49DcFIWgcaUJlLi6o7ejLjkuwYdBk49ppXFn9KF
+         2wzLgHlYeszk1+3CwHuDAm7SLgc5Kbs75IGuzpzJ0q8YJ9fJcJ658/vRMMszoWtqyB6q
+         yWmQ==
+X-Gm-Message-State: APjAAAVNtoUAaSbYU4XfQMay2xNfhqoCrDow1QGU/vtLDCi19OVszUoS
+        3Y3zkhs6SrQwpmOMogYz3/4C3Q==
+X-Google-Smtp-Source: APXvYqx+yh3Iadp8l8x5yFZGysITBwlj+gNULdwM6jjBvepbMk7WQhnCC99IjaETLKFpNyD41sTd9w==
+X-Received: by 2002:a7b:c054:: with SMTP id u20mr2564880wmc.100.1556616114786;
+        Tue, 30 Apr 2019 02:21:54 -0700 (PDT)
+Received: from [192.168.1.2] ([194.53.187.71])
+        by smtp.gmail.com with ESMTPSA id r2sm9694774wrr.65.2019.04.30.02.21.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 02:21:54 -0700 (PDT)
+Subject: Re: [PATCH] bpftool: exclude bash-completion/bpftool from .gitignore
+ pattern
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Sirio Balmelli <sirio@b-ad.ch>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Martin KaFai Lau <kafai@fb.com>, bpf@vger.kernel.org
+References: <1556549259-16298-1-git-send-email-yamada.masahiro@socionext.com>
+ <ec1d2c14-ae27-38c7-9b79-4e323161d6f5@netronome.com>
+ <CAK7LNARBOtOMr-=FRh0K1nMFLijRjRCMHYb0L=NY7KZQGydVrQ@mail.gmail.com>
+From:   Quentin Monnet <quentin.monnet@netronome.com>
+Message-ID: <ca18f97d-0a16-0c2f-2849-841633ad09cb@netronome.com>
+Date:   Tue, 30 Apr 2019 10:21:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430075108.GA21092@linux-8ccs>
-X-TM-AS-GCONF: 00
-x-cbid: 19043009-0012-0000-0000-00000316C720
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19043009-0013-0000-0000-0000214F2F36
-Message-Id: <20190430091643.GB5487@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904300061
+In-Reply-To: <CAK7LNARBOtOMr-=FRh0K1nMFLijRjRCMHYb0L=NY7KZQGydVrQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 09:51:08AM +0200, Jessica Yu wrote:
-> +++ Prarit Bhargava [29/04/19 11:17 -0400]:
-> >Heiko, do you want a Signed-off-by or a Reported-by?  Either one works
-> >for me.
-> >
-> >P.
+2019-04-30 09:15 UTC+0900 ~ Masahiro Yamada <yamada.masahiro@socionext.com>
+> Hi Quentin,
 > 
-> I think you forgot to CC Heiko :)
+> 
+> On Tue, Apr 30, 2019 at 12:33 AM Quentin Monnet
+> <quentin.monnet@netronome.com> wrote:
+>>
+>> 2019-04-29 23:47 UTC+0900 ~ Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
+>>> intended to ignore the following build artifact:
+>>>
+>>>    tools/bpf/bpftool/bpftool
+>>>
+>>> However, the .gitignore entry is effective not only for the current
+>>> directory, but also for any sub-directories.
+>>>
+>>> So, the following file is also considered to be ignored:
+>>>
+>>>    tools/bpf/bpftool/bash-completion/bpftool
+>>>
+>>> It is obviously version-controlled, so should be excluded from the
+>>> .gitignore pattern.
+>>>
+>>> You can fix it by prefixing the pattern with '/', which means it is
+>>> only effective in the current directory.
+>>>
+>>> I prefixed the other patterns consistently. IMHO, '/' prefixing is
+>>> safer when you intend to ignore specific files.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>
+>> Hi,
+>>
+>> “Files already tracked by Git are not affected” by the .gitignore (says
+>> the relevant man page), so bash completion file is not ignored. It would
+>> be if we were to add the sources to the index of a new Git repo. But
+>> sure, it does not cost much to make the .gitignore cleaner.
+> 
+> Right, git seems to be flexible enough.
+> 
+> 
+> But, .gitignore is useful to identify
+> build artifacts in general.
+> In fact, other than git, some projects
+> already parse this.
+> 
+> For example, tar(1) supports:
+> 
+>       --exclude-vcs-ignores
+>             read exclude patterns from the VCS ignore files
+> 
+> 
+> As of writing, this option works only to some extent,
+> but I thought this would be useful to create a source
+> package without relying on "git archive".
+> 
+> When I tried "tar --exclude-vcs-ignores", I noticed
+> tools/bpf/bpftool/bash-completion/bpftool was not
+> contained in the tarball.
+> 
+> That's why I sent this patch.
 
-Indeed ;)
+Ok, thanks for explaining! Makes sense to me now.
 
-I'm fine with the Reported-by tag. Thank you!
+> 
+> I can add more info in v2 to clarify
+> my motivation though.
 
-> >----8<----
-> >
-> >On a s390 z14 LAR with 2 cpus about stalls about 3% of the time while
-> >loading the s390_trng.ko module.
-> >
-> >Add a reschedule point to the loop that waits for modules to complete
-> >loading.
-> >
-> >Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> >Fixes: linux-next commit f9a75c1d717f ("modules: Only return -EEXIST for modules that have finished loading")
-> >Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> >Cc: Jessica Yu <jeyu@kernel.org>
-> >---
-> >kernel/module.c | 1 +
-> >1 file changed, 1 insertion(+)
-> >
-> >diff --git a/kernel/module.c b/kernel/module.c
-> >index 410eeb7e4f1d..48748cfec991 100644
-> >--- a/kernel/module.c
-> >+++ b/kernel/module.c
-> >@@ -3585,6 +3585,7 @@ static int add_unformed_module(struct module *mod)
-> >					       finished_loading(mod->name));
-> >			if (err)
-> >				goto out_unlocked;
-> >+			cond_resched();
-> >			goto again;
-> >		}
-> >		err = -EEXIST;
-> >-- 
-> >2.18.1
-> >
+Sounds good, yes please.
 
+> 
+> 
+>>>
+>>>   tools/bpf/bpftool/.gitignore | 8 ++++----
+>>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+>>> index 67167e4..19efcc8 100644
+>>> --- a/tools/bpf/bpftool/.gitignore
+>>> +++ b/tools/bpf/bpftool/.gitignore
+>>> @@ -1,5 +1,5 @@
+>>>   *.d
+>>> -bpftool
+>>> -bpftool*.8
+>>> -bpf-helpers.*
+>>> -FEATURE-DUMP.bpftool
+>>> +/bpftool
+>>> +/bpftool*.8
+>>> +/bpf-helpers.*
+>>
+>> Careful when you add all those slashes, however. "bpftool*.8" and
+>> "bpf-helpers.*" should match files under Documentation/, so you do NOT
+>> want to prefix them with just a "/".
+> 
+> OK, I should not have touched what I was unsure about.
+> Will fix in v2.
+
+Thanks!
+Quentin
