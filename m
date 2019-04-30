@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC19FF652
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB03F690
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfD3Lp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:45:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S1731002AbfD3Lt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730454AbfD3Lpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:45:54 -0400
+        id S1730985AbfD3LtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:49:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C07F621734;
-        Tue, 30 Apr 2019 11:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57A4621734;
+        Tue, 30 Apr 2019 11:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624753;
-        bh=a+WU3jhEPTvZzuAODfMcmN5QRnutqchpHZn8X8hoRP0=;
+        s=default; t=1556624962;
+        bh=R4EoRxp5VUPcegQvGoO6HysLF8EDfQpLxNG6/h6hV9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lAWerxcoVdsB62wnwCO5pmdkGvrGezFIkZ9dLNpcOQ+jh5uWO4Jv0tgZJvW85KwXV
-         N/Z/H7O7k0a9UK+/hdA8ved9UjjPx1tAiesPjfVnd4NgT4l5sl0c5VftpkdIn4Uxtz
-         oeEaZ2hY9uv78Y1M1/FAa8feAIZob8F+n5MX/B/M=
+        b=Q5MAQuR11t5gIrjOWoqcIytsuGQYWg3/T/ESSG3ImakS6OMMDwA5+eIrUqODA2O0P
+         +//uxCCWmOd14C1l7LS4wC5CW+LkG5iTjNqjhVz6L5tzP4976z8mQ4NkiZw6hb/u/2
+         tnZ8Vr2u41b3zCDO9JWC3mSshtu1rMjADmR0aFmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Yue Haibing <yuehaibing@huawei.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 4.19 060/100] fm10k: Fix a potential NULL pointer dereference
+        stable@vger.kernel.org,
+        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 5.0 38/89] dmaengine: sh: rcar-dmac: Fix glitch in dmaengine_tx_status
 Date:   Tue, 30 Apr 2019 13:38:29 +0200
-Message-Id: <20190430113611.714218676@linuxfoundation.org>
+Message-Id: <20190430113611.612017498@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +46,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
 
-commit 01ca667133d019edc9f0a1f70a272447c84ec41f upstream.
+commit 6e7da74775348d96e2d7efaf3f91410e18c481ef upstream.
 
-Syzkaller report this:
+The tx_status poll in the rcar_dmac driver reads the status register
+which indicates which chunk is busy (DMACHCRB). Afterwards the point
+inside the chunk is read from DMATCRB. It is possible that the chunk
+has changed between the two reads. The result is a non-monotonous
+increase of the residue. Fix this by introducing a 'safe read' logic.
 
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN PTI
-CPU: 0 PID: 4378 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-RIP: 0010:__lock_acquire+0x95b/0x3200 kernel/locking/lockdep.c:3573
-Code: 00 0f 85 28 1e 00 00 48 81 c4 08 01 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 cc 24 00 00 49 81 7d 00 e0 de 03 a6 41 bc 00 00
-RSP: 0018:ffff8881e3c07a40 EFLAGS: 00010002
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000080
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: ffff8881e3c07d98 R11: ffff8881c7f21f80 R12: 0000000000000001
-R13: 0000000000000080 R14: 0000000000000000 R15: 0000000000000001
-FS:  00007fce2252e700(0000) GS:ffff8881f2400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffc7eb0228 CR3: 00000001e5bea002 CR4: 00000000007606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- lock_acquire+0xff/0x2c0 kernel/locking/lockdep.c:4211
- __mutex_lock_common kernel/locking/mutex.c:925 [inline]
- __mutex_lock+0xdf/0x1050 kernel/locking/mutex.c:1072
- drain_workqueue+0x24/0x3f0 kernel/workqueue.c:2934
- destroy_workqueue+0x23/0x630 kernel/workqueue.c:4319
- __do_sys_delete_module kernel/module.c:1018 [inline]
- __se_sys_delete_module kernel/module.c:961 [inline]
- __x64_sys_delete_module+0x30c/0x480 kernel/module.c:961
- do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462e99
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fce2252dc58 EFLAGS: 00000246 ORIG_RAX: 00000000000000b0
-RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
-RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fce2252e6bc
-R13: 00000000004bcca9 R14: 00000000006f6b48 R15: 00000000ffffffff
-
-If alloc_workqueue fails, it should return -ENOMEM, otherwise may
-trigger this NULL pointer dereference while unloading drivers.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 0a38c17a21a0 ("fm10k: Remove create_workqueue")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
+Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: <stable@vger.kernel.org> # v4.16+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/intel/fm10k/fm10k_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/sh/rcar-dmac.c |   26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-@@ -41,6 +41,8 @@ static int __init fm10k_init_module(void
- 	/* create driver workqueue */
- 	fm10k_workqueue = alloc_workqueue("%s", WQ_MEM_RECLAIM, 0,
- 					  fm10k_driver_name);
-+	if (!fm10k_workqueue)
-+		return -ENOMEM;
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1282,6 +1282,9 @@ static unsigned int rcar_dmac_chan_get_r
+ 	enum dma_status status;
+ 	unsigned int residue = 0;
+ 	unsigned int dptr = 0;
++	unsigned int chcrb;
++	unsigned int tcrb;
++	unsigned int i;
  
- 	fm10k_dbg_init();
+ 	if (!desc)
+ 		return 0;
+@@ -1330,14 +1333,31 @@ static unsigned int rcar_dmac_chan_get_r
+ 	}
  
+ 	/*
++	 * We need to read two registers.
++	 * Make sure the control register does not skip to next chunk
++	 * while reading the counter.
++	 * Trying it 3 times should be enough: Initial read, retry, retry
++	 * for the paranoid.
++	 */
++	for (i = 0; i < 3; i++) {
++		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
++					    RCAR_DMACHCRB_DPTR_MASK;
++		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
++		/* Still the same? */
++		if (chcrb == (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
++			      RCAR_DMACHCRB_DPTR_MASK))
++			break;
++	}
++	WARN_ONCE(i >= 3, "residue might be not continuous!");
++
++	/*
+ 	 * In descriptor mode the descriptor running pointer is not maintained
+ 	 * by the interrupt handler, find the running descriptor from the
+ 	 * descriptor pointer field in the CHCRB register. In non-descriptor
+ 	 * mode just use the running descriptor pointer.
+ 	 */
+ 	if (desc->hwdescs.use) {
+-		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+-			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
++		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
+ 		if (dptr == 0)
+ 			dptr = desc->nchunks;
+ 		dptr--;
+@@ -1355,7 +1375,7 @@ static unsigned int rcar_dmac_chan_get_r
+ 	}
+ 
+ 	/* Add the residue for the current chunk. */
+-	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
++	residue += tcrb << desc->xfer_shift;
+ 
+ 	return residue;
+ }
 
 
