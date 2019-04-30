@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E504F86B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BCEF643
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfD3LkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45732 "EHLO mail.kernel.org"
+        id S1730373AbfD3LpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:45:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727380AbfD3Lj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:39:58 -0400
+        id S1730366AbfD3LpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:45:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A03721734;
-        Tue, 30 Apr 2019 11:39:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86A9421670;
+        Tue, 30 Apr 2019 11:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624397;
-        bh=/qjWqKHu3ZXP6yVjNlOP85MfxlesW2a+Jy4lSu2u2kA=;
+        s=default; t=1556624716;
+        bh=LnAasITKAP8GikVDz7pSmI6wzBOPW/7N4PyDs08spG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I7QtcR5RQwD085q6W2ZNHVdj7jzP9csMtNFuVAYVnF2mBzWlc0/82rkC9BBifzfzX
-         zUO0OJVc3tW2OeN7B/r9YzHnTnYws66x8CoINLjkGc8CbJSVm50XfxLnbifWBx8FPn
-         GMP9sGHY9dLBSxRcXpPJuRhHaT0VQG6hdLyDmnnM=
+        b=mp5LdIG+nlKvPqaoptQbV0iH23cMYoLHe4Cy8RyA+Fpq6GFaJnszmhqAD20s5K+BK
+         AM3ro9run50iga6dSKRWKWfBkOxAYdgi7d9dr1ctLl6jvPAhm1dQqpY5az1T/TUEOF
+         LYDph5IUymMrbpdxJj205G2Mc0oBkMKRnPv8FbOY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.9 02/41] cifs: do not attempt cifs operation on smb2+ rename error
+        stable@vger.kernel.org,
+        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.19 044/100] dmaengine: sh: rcar-dmac: Fix glitch in dmaengine_tx_status
 Date:   Tue, 30 Apr 2019 13:38:13 +0200
-Message-Id: <20190430113524.880372121@linuxfoundation.org>
+Message-Id: <20190430113611.180037970@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Sorenson <sorenson@redhat.com>
+From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
 
-commit 652727bbe1b17993636346716ae5867627793647 upstream.
+commit 6e7da74775348d96e2d7efaf3f91410e18c481ef upstream.
 
-A path-based rename returning EBUSY will incorrectly try opening
-the file with a cifs (NT Create AndX) operation on an smb2+ mount,
-which causes the server to force a session close.
+The tx_status poll in the rcar_dmac driver reads the status register
+which indicates which chunk is busy (DMACHCRB). Afterwards the point
+inside the chunk is read from DMATCRB. It is possible that the chunk
+has changed between the two reads. The result is a non-monotonous
+increase of the residue. Fix this by introducing a 'safe read' logic.
 
-If the mount is smb2+, skip the fallback.
-
-Signed-off-by: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
+Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: <stable@vger.kernel.org> # v4.16+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/dma/sh/rcar-dmac.c |   26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -1722,6 +1722,10 @@ cifs_do_rename(const unsigned int xid, s
- 	if (rc == 0 || rc != -EBUSY)
- 		goto do_rename_exit;
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1281,6 +1281,9 @@ static unsigned int rcar_dmac_chan_get_r
+ 	enum dma_status status;
+ 	unsigned int residue = 0;
+ 	unsigned int dptr = 0;
++	unsigned int chcrb;
++	unsigned int tcrb;
++	unsigned int i;
  
-+	/* Don't fall back to using SMB on SMB 2+ mount */
-+	if (server->vals->protocol_id != 0)
-+		goto do_rename_exit;
+ 	if (!desc)
+ 		return 0;
+@@ -1329,14 +1332,31 @@ static unsigned int rcar_dmac_chan_get_r
+ 	}
+ 
+ 	/*
++	 * We need to read two registers.
++	 * Make sure the control register does not skip to next chunk
++	 * while reading the counter.
++	 * Trying it 3 times should be enough: Initial read, retry, retry
++	 * for the paranoid.
++	 */
++	for (i = 0; i < 3; i++) {
++		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
++					    RCAR_DMACHCRB_DPTR_MASK;
++		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
++		/* Still the same? */
++		if (chcrb == (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
++			      RCAR_DMACHCRB_DPTR_MASK))
++			break;
++	}
++	WARN_ONCE(i >= 3, "residue might be not continuous!");
 +
- 	/* open-file renames don't work across directories */
- 	if (to_dentry->d_parent != from_dentry->d_parent)
- 		goto do_rename_exit;
++	/*
+ 	 * In descriptor mode the descriptor running pointer is not maintained
+ 	 * by the interrupt handler, find the running descriptor from the
+ 	 * descriptor pointer field in the CHCRB register. In non-descriptor
+ 	 * mode just use the running descriptor pointer.
+ 	 */
+ 	if (desc->hwdescs.use) {
+-		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+-			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
++		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
+ 		if (dptr == 0)
+ 			dptr = desc->nchunks;
+ 		dptr--;
+@@ -1354,7 +1374,7 @@ static unsigned int rcar_dmac_chan_get_r
+ 	}
+ 
+ 	/* Add the residue for the current chunk. */
+-	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
++	residue += tcrb << desc->xfer_shift;
+ 
+ 	return residue;
+ }
 
 
