@@ -2,188 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2F5F48E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D17CF480
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfD3Kwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:52:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32768 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbfD3KwO (ORCPT
+        id S1726977AbfD3Kvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:51:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726294AbfD3Kvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:52:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nTtk8rbDTbbpjpuAwoQzV/q5JhA1Xaj3G5/agqhHoJ4=; b=Wvwzv92qJ3P0XSvT/WZ1Kd/R2l
-        ziTcxsQ+oDgI28wUAUgx/cdzEx+584WnUaZnWI1cCooch4VecXwVxzBkWZKq5BYPDMKxT+nfoT/by
-        xeR3Xkj62zQ2XYaG86R6zXAyM9dgE8WSaN98SunV5rcb5ulUiTcR7Toi44SRZYeZ6dKLlT+70NVNG
-        5XobsZ2yUxCh0uQOlcnmbQOH2Ry02B2UGE/OtGVCnt3LBdTfrLx6rwGvUsLDVvyVdzfOgVq25W7ds
-        5hnQwxotNXFS5eVVh1VqC0K9W41PGuC9l+v7ZWR3sh9p8owKQybs1dVyWhTYSTJJ7K7I5JeKa1ZK7
-        04T0IcEQ==;
-Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLQMu-0007EL-AV; Tue, 30 Apr 2019 10:52:12 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] LICENSES: Clearly mark dual license only licenses
-Date:   Tue, 30 Apr 2019 06:51:29 -0400
-Message-Id: <20190430105130.24500-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430105130.24500-1-hch@lst.de>
-References: <20190430105130.24500-1-hch@lst.de>
+        Tue, 30 Apr 2019 06:51:41 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3UAhJgk144190;
+        Tue, 30 Apr 2019 06:51:31 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s6hj3gyye-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Apr 2019 06:51:31 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x3U4s422004003;
+        Tue, 30 Apr 2019 04:55:23 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 2s4eq3sdkq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Apr 2019 04:55:23 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3UApTok25624786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 10:51:29 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A09F7B2066;
+        Tue, 30 Apr 2019 10:51:29 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80792B2065;
+        Tue, 30 Apr 2019 10:51:29 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.213.184])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Apr 2019 10:51:29 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0707016C0A0D; Tue, 30 Apr 2019 03:51:30 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 03:51:30 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com
+Subject: Re: Question about sched_setaffinity()
+Message-ID: <20190430105129.GA3923@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190427180246.GA15502@linux.ibm.com>
+ <20190430100318.GP2623@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430100318.GP2623@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904300070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like the CDDL the Apache license and the MPL must only be used as
-a choice in additional to an GPL2 compatible license.  Copy over the
-boilerplate from the CDDL file to the other two after fixing it up to
-make it clear the licenses need to be GPL2 compatible, not just the
-more generic GPL compatible.  For example the Apache 2 license is GPL3
-compatible, but that doesn't matter for the kernel.
+On Tue, Apr 30, 2019 at 12:03:18PM +0200, Peter Zijlstra wrote:
+> On Sat, Apr 27, 2019 at 11:02:46AM -0700, Paul E. McKenney wrote:
+> 
+> > This actually passes rcutorture.  But, as Andrea noted, not klitmus.
+> > After some investigation, it turned out that klitmus was creating kthreads
+> > with PF_NO_SETAFFINITY, hence the failures.  But that prompted me to
+> > put checks into my code: After all, rcutorture can be fooled.
+> > 
+> > 	void synchronize_rcu(void)
+> > 	{
+> > 		int cpu;
+> > 
+> > 		for_each_online_cpu(cpu) {
+> > 			sched_setaffinity(current->pid, cpumask_of(cpu));
+> > 			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
+> > 		}
+> > 	}
+> > 
+> > This triggers fairly quickly, usually in less than a minute of rcutorture
+> > testing.
+> >
+> > And further investigation shows that sched_setaffinity()
+> > always returned 0. 
+> 
+> > Is this expected behavior?  Is there some configuration or setup that I
+> > might be missing?
+> 
+> ISTR there is hotplug involved in RCU torture? In that case, it can be
+> sched_setaffinity() succeeds to place us on a CPU, which CPU hotplug
+> then takes away. So when we run the WARN thingy, we'll be running on a
+> different CPU than expected.
 
-Also move these licenses to a separate directory and document the rules
-in license-rules.rst.
+There can be CPU hotplug involved in rcutorture, but it was disabled
+during this run.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/process/license-rules.rst | 51 ++++++++++++++++++++++++-
- LICENSES/{other => dual}/Apache-2.0     |  4 ++
- LICENSES/{other => dual}/CDDL-1.0       |  4 +-
- LICENSES/{other => dual}/MPL-1.1        |  4 ++
- 4 files changed, 60 insertions(+), 3 deletions(-)
- rename LICENSES/{other => dual}/Apache-2.0 (97%)
- rename LICENSES/{other => dual}/CDDL-1.0 (99%)
- rename LICENSES/{other => dual}/MPL-1.1 (99%)
+> If OTOH, your loop is written like (as it really should be):
+> 
+> 	void synchronize_rcu(void)
+> 	{
+> 		int cpu;
+> 
+> 		cpus_read_lock();
+> 		for_each_online_cpu(cpu) {
+> 			sched_setaffinity(current->pid, cpumask_of(cpu));
+> 			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
+> 		}
+> 		cpus_read_unlock();
+> 	}
+> 
+> Then I'm not entirely sure how we can return 0 and not run on the
+> expected CPU. If we look at __set_cpus_allowed_ptr(), the only paths out
+> to 0 are:
+> 
+>  - if the mask didn't change
+>  - if we already run inside the new mask
+>  - if we migrated ourself with the stop-task
+>  - if we're not in fact running
+> 
+> That last case should never trigger in your circumstances, since @p ==
+> current and current is obviously running. But for completeness, the
+> wakeup of @p would do the task placement in that case.
 
-diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
-index ade495fe6811..507b695fa9da 100644
---- a/Documentation/process/license-rules.rst
-+++ b/Documentation/process/license-rules.rst
-@@ -281,7 +281,56 @@ kernel, can be broken down into:
- 
- |
- 
--3. _`Exceptions`:
-+3. Dual Licensing Only
-+
-+   These licenses should only be used to dual license code with another
-+   license in addition to a preferred license.  These licenses are available
-+   from the directory::
-+
-+      LICENSES/dual/
-+
-+   in the kernel source tree.
-+
-+   The files in this directory contain the full license text and
-+   `Metatags`_.  The file names are identical to the SPDX license
-+   identifier which shall be used for the license in source files.
-+
-+   Examples::
-+
-+      LICENSES/dual/MPL-1.1
-+
-+   Contains the Mozilla Public License version 1.1 license text and the
-+   required metatags::
-+
-+      LICENSES/dual/Apache-2.0
-+
-+   Contains the Apache License version 2.0 license text and the required
-+   metatags.
-+
-+   Metatags:
-+
-+   The metatag requirements for 'other' licenses are identical to the
-+   requirements of the `Preferred licenses`_.
-+
-+   File format example::
-+
-+      Valid-License-Identifier: MPL-1.1
-+      SPDX-URL: https://spdx.org/licenses/MPL-1.1.html
-+      Usage-Guide:
-+        Do NOT use. The MPL-1.1 is not GPL2 compatible. It may only be used for
-+        dual-licensed files where the other license is GPL2 compatible.
-+        If you end up using this it MUST be used together with a GPL2 compatible
-+        license using "OR".
-+        To use the Mozilla Public License version 1.1 put the following SPDX
-+        tag/value pair into a comment according to the placement guidelines in
-+        the licensing rules documentation:
-+      SPDX-License-Identifier: MPL-1.1
-+      License-Text:
-+        Full license text
-+
-+|
-+
-+4. _`Exceptions`:
- 
-    Some licenses can be amended with exceptions which grant certain rights
-    which the original license does not.  These exceptions are available
-diff --git a/LICENSES/other/Apache-2.0 b/LICENSES/dual/Apache-2.0
-similarity index 97%
-rename from LICENSES/other/Apache-2.0
-rename to LICENSES/dual/Apache-2.0
-index 7cd903f573e5..6e89ddeab187 100644
---- a/LICENSES/other/Apache-2.0
-+++ b/LICENSES/dual/Apache-2.0
-@@ -1,6 +1,10 @@
- Valid-License-Identifier: Apache-2.0
- SPDX-URL: https://spdx.org/licenses/Apache-2.0.html
- Usage-Guide:
-+  Do NOT use. The Apache-2.0 is not GPL2 compatible. It may only be used
-+  for dual-licensed files where the other license is GPL2 compatible.
-+  If you end up using this it MUST be used together with a GPL2 compatible
-+  license using "OR".
-   To use the Apache License version 2.0 put the following SPDX tag/value
-   pair into a comment according to the placement guidelines in the
-   licensing rules documentation:
-diff --git a/LICENSES/other/CDDL-1.0 b/LICENSES/dual/CDDL-1.0
-similarity index 99%
-rename from LICENSES/other/CDDL-1.0
-rename to LICENSES/dual/CDDL-1.0
-index 25f614276ddd..b0ca1016db79 100644
---- a/LICENSES/other/CDDL-1.0
-+++ b/LICENSES/dual/CDDL-1.0
-@@ -1,8 +1,8 @@
- Valid-License-Identifier: CDDL-1.0
- SPDX-URL: https://spdx.org/licenses/CDDL-1.0.html
- Usage-Guide:
--  Do NOT use. The CDDL-1.0 is not GPL compatible. It may only be used for
--  dual-licensed files where the other license is GPL compatible.
-+  Do NOT use. The CDDL-1.0 is not GPL2 compatible. It may only be used for
-+  dual-licensed files where the other license is GPL2 compatible.
-   If you end up using this it MUST be used together with a GPL2 compatible
-   license using "OR".
-   To use the Common Development and Distribution License 1.0 put the
-diff --git a/LICENSES/other/MPL-1.1 b/LICENSES/dual/MPL-1.1
-similarity index 99%
-rename from LICENSES/other/MPL-1.1
-rename to LICENSES/dual/MPL-1.1
-index 568b6049efe6..61706859e1b2 100644
---- a/LICENSES/other/MPL-1.1
-+++ b/LICENSES/dual/MPL-1.1
-@@ -1,6 +1,10 @@
- Valid-License-Identifier: MPL-1.1
- SPDX-URL: https://spdx.org/licenses/MPL-1.1.html
- Usage-Guide:
-+  Do NOT use. The MPL-1.1 is not GPL2 compatible. It may only be used for
-+  dual-licensed files where the other license is GPL2 compatible.
-+  If you end up using this it MUST be used together with a GPL2 compatible
-+  license using "OR".
-   To use the Mozilla Public License version 1.1 put the following SPDX
-   tag/value pair into a comment according to the placement guidelines in
-   the licensing rules documentation:
--- 
-2.20.1
+Are there some diagnostics I could add that would help track this down,
+be it my bug or yours?
 
+							Thanx, Paul
