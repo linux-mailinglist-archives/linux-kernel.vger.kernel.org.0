@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDED7F81D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4688DF642
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfD3Lm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:42:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51220 "EHLO mail.kernel.org"
+        id S1730364AbfD3LpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:45:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbfD3LmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:22 -0400
+        id S1729494AbfD3LpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:45:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE0E420449;
-        Tue, 30 Apr 2019 11:42:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC90D21707;
+        Tue, 30 Apr 2019 11:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624541;
-        bh=mYsck2O6L0TSOMoZIJFa6DPyUbyUdCI1J/Nh2xvFWXg=;
+        s=default; t=1556624713;
+        bh=Y9VG9bpFil1JKNKM+77M5AY4DhSDUjtMmD2poi2CVWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R8mK4nkSzPlzdLsDoW+2N7g08NxZz+QL20QYpj8yOz5WApBxc3HlRUOa7Pa4x52hH
-         pzbEtbMl3Vze++QF+vZj9RZugB/ojZMMulAGRnzhA88YBb+GzozEB/6xXhTz8O9OzW
-         yHb9d05atGGTMxx19mRNHz/COap1ttQuSgHNLwIM=
+        b=Kz4s5RUWQK0fqL5/rFmmRQx+TI/RHwIxICObmB3euUGsOSt4EyZgStYD159yOezho
+         CxGByDFJl0in4EgFdto1OcMFzNyEq1uUjyTaPL+qTiSsRhezjG7TCi3jCpFg14cCOL
+         /VwLZ+5eUlX2/A4QxFPPWQQ6Ykx/FIcwpjoCIbz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 04/53] tracing: Fix buffer_ref pipe ops
-Date:   Tue, 30 Apr 2019 13:38:11 +0200
-Message-Id: <20190430113550.386761433@linuxfoundation.org>
+        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Yao Lihua <ylhuajnu@outlook.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.19 043/100] dmaengine: sh: rcar-dmac: With cyclic DMA residue 0 is valid
+Date:   Tue, 30 Apr 2019 13:38:12 +0200
+Message-Id: <20190430113611.148869632@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,140 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-commit b987222654f84f7b4ca95b3a55eca784cb30235b upstream.
+commit 907bd68a2edc491849e2fdcfe52c4596627bca94 upstream.
 
-This fixes multiple issues in buffer_pipe_buf_ops:
+Having a cyclic DMA, a residue 0 is not an indication of a completed
+DMA. In case of cyclic DMA make sure that dma_set_residue() is called
+and with this a residue of 0 is forwarded correctly to the caller.
 
- - The ->steal() handler must not return zero unless the pipe buffer has
-   the only reference to the page. But generic_pipe_buf_steal() assumes
-   that every reference to the pipe is tracked by the page's refcount,
-   which isn't true for these buffers - buffer_pipe_buf_get(), which
-   duplicates a buffer, doesn't touch the page's refcount.
-   Fix it by using generic_pipe_buf_nosteal(), which refuses every
-   attempted theft. It should be easy to actually support ->steal, but the
-   only current users of pipe_buf_steal() are the virtio console and FUSE,
-   and they also only use it as an optimization. So it's probably not worth
-   the effort.
- - The ->get() and ->release() handlers can be invoked concurrently on pipe
-   buffers backed by the same struct buffer_ref. Make them safe against
-   concurrency by using refcount_t.
- - The pointers stored in ->private were only zeroed out when the last
-   reference to the buffer_ref was dropped. As far as I know, this
-   shouldn't be necessary anyway, but if we do it, let's always do it.
-
-Link: http://lkml.kernel.org/r/20190404215925.253531-1-jannh@google.com
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@vger.kernel.org
-Fixes: 73a757e63114d ("ring-buffer: Return reader page back into existing ring buffer")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 3544d2878817 ("dmaengine: rcar-dmac: use result of updated get_residue in tx_status")
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Yao Lihua <ylhuajnu@outlook.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/splice.c               |    4 ++--
- include/linux/pipe_fs_i.h |    1 +
- kernel/trace/trace.c      |   28 ++++++++++++++--------------
- 3 files changed, 17 insertions(+), 16 deletions(-)
+ drivers/dma/sh/rcar-dmac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -332,8 +332,8 @@ const struct pipe_buf_operations default
- 	.get = generic_pipe_buf_get,
- };
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1367,6 +1367,7 @@ static enum dma_status rcar_dmac_tx_stat
+ 	enum dma_status status;
+ 	unsigned long flags;
+ 	unsigned int residue;
++	bool cyclic;
  
--static int generic_pipe_buf_nosteal(struct pipe_inode_info *pipe,
--				    struct pipe_buffer *buf)
-+int generic_pipe_buf_nosteal(struct pipe_inode_info *pipe,
-+			     struct pipe_buffer *buf)
- {
- 	return 1;
- }
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -182,6 +182,7 @@ void free_pipe_info(struct pipe_inode_in
- void generic_pipe_buf_get(struct pipe_inode_info *, struct pipe_buffer *);
- int generic_pipe_buf_confirm(struct pipe_inode_info *, struct pipe_buffer *);
- int generic_pipe_buf_steal(struct pipe_inode_info *, struct pipe_buffer *);
-+int generic_pipe_buf_nosteal(struct pipe_inode_info *, struct pipe_buffer *);
- void generic_pipe_buf_release(struct pipe_inode_info *, struct pipe_buffer *);
- void pipe_buf_mark_unmergeable(struct pipe_buffer *buf);
+ 	status = dma_cookie_status(chan, cookie, txstate);
+ 	if (status == DMA_COMPLETE || !txstate)
+@@ -1374,10 +1375,11 @@ static enum dma_status rcar_dmac_tx_stat
  
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6719,19 +6719,23 @@ struct buffer_ref {
- 	struct ring_buffer	*buffer;
- 	void			*page;
- 	int			cpu;
--	int			ref;
-+	refcount_t		refcount;
- };
+ 	spin_lock_irqsave(&rchan->lock, flags);
+ 	residue = rcar_dmac_chan_get_residue(rchan, cookie);
++	cyclic = rchan->desc.running ? rchan->desc.running->cyclic : false;
+ 	spin_unlock_irqrestore(&rchan->lock, flags);
  
-+static void buffer_ref_release(struct buffer_ref *ref)
-+{
-+	if (!refcount_dec_and_test(&ref->refcount))
-+		return;
-+	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
-+	kfree(ref);
-+}
-+
- static void buffer_pipe_buf_release(struct pipe_inode_info *pipe,
- 				    struct pipe_buffer *buf)
- {
- 	struct buffer_ref *ref = (struct buffer_ref *)buf->private;
+ 	/* if there's no residue, the cookie is complete */
+-	if (!residue)
++	if (!residue && !cyclic)
+ 		return DMA_COMPLETE;
  
--	if (--ref->ref)
--		return;
--
--	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
--	kfree(ref);
-+	buffer_ref_release(ref);
- 	buf->private = 0;
- }
- 
-@@ -6740,7 +6744,7 @@ static void buffer_pipe_buf_get(struct p
- {
- 	struct buffer_ref *ref = (struct buffer_ref *)buf->private;
- 
--	ref->ref++;
-+	refcount_inc(&ref->refcount);
- }
- 
- /* Pipe buffer operations for a buffer. */
-@@ -6748,7 +6752,7 @@ static const struct pipe_buf_operations
- 	.can_merge		= 0,
- 	.confirm		= generic_pipe_buf_confirm,
- 	.release		= buffer_pipe_buf_release,
--	.steal			= generic_pipe_buf_steal,
-+	.steal			= generic_pipe_buf_nosteal,
- 	.get			= buffer_pipe_buf_get,
- };
- 
-@@ -6761,11 +6765,7 @@ static void buffer_spd_release(struct sp
- 	struct buffer_ref *ref =
- 		(struct buffer_ref *)spd->partial[i].private;
- 
--	if (--ref->ref)
--		return;
--
--	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
--	kfree(ref);
-+	buffer_ref_release(ref);
- 	spd->partial[i].private = 0;
- }
- 
-@@ -6820,7 +6820,7 @@ tracing_buffers_splice_read(struct file
- 			break;
- 		}
- 
--		ref->ref = 1;
-+		refcount_set(&ref->refcount, 1);
- 		ref->buffer = iter->trace_buffer->buffer;
- 		ref->page = ring_buffer_alloc_read_page(ref->buffer, iter->cpu_file);
- 		if (IS_ERR(ref->page)) {
+ 	dma_set_residue(txstate, residue);
 
 
