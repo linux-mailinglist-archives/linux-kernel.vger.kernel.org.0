@@ -2,78 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9517B10251
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF15F10257
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfD3WZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 18:25:20 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45213 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbfD3WZU (ORCPT
+        id S1727444AbfD3W0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 18:26:22 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35521 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfD3W0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:25:20 -0400
-Received: by mail-ot1-f68.google.com with SMTP id a10so4627902otl.12;
-        Tue, 30 Apr 2019 15:25:19 -0700 (PDT)
+        Tue, 30 Apr 2019 18:26:21 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y197so5432436wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 15:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=VXYwZpX1d+wknY0tSOqvdnHG027bEu0WR2/eqUIGUnc=;
+        b=mLmEiLrOszkjvWQmhv5Y63FqOFF5a7VybPmAa8ZnM6eUIVod5BYlQyeE4QfvwlR5NJ
+         wzvoF48WoPU7qIGUp01G+0HFz7snAUq8DOLqBcsar19IkvH+GojvzrkGAA03Zo56VW0v
+         PeXpaWaR2OSno0xfwaUj5pMMB3XCU71uDvHHSMpmBa9qe/7x9v61mz2f6QYnNyXTHfa8
+         c0F2jYdO9/w4Ccn1Xo+2esy1tp/85RInpkJVxvbd7whmyAaW0bpWRi3NLtypypYE7XV+
+         T5bifWMRFfSAcA5JiAAkZXpKubwl0FT/6bD/aCwkv3rl2xoG2VDjoEz9em+uC0JZZiJ5
+         /n0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=brf7Bb8id6Hk+i6bJxTGFqDIbEXOeaazWSGC46nmM0E=;
-        b=q1dqTYSsmG2wGpGZ413+9r0yGpHyUVwFtezx4Qyx+inMM9IZ+PWElnmSeW0EX7RrNf
-         dfdsTYl7MG2J30dHJ55TPAhATThahRlYXoKU/TmNrovjm9SesiGPbbK9lZdsSeNpE09V
-         uDpfscTJKBofEPxusXMYzReVY0iQPPYdGM34P+KlOjYW7fOg3BYPWl5OrhBZVhvUICfk
-         wWTOgcTGPlfpYVbpeU2bmeM5QI6zbYJwDYN+JaYaqLphn5pYvRpFTTbiLIjDw2yvwMJh
-         n/N8JSXSQobnPLb+cQLhgPfaWjz+4LzLc+wrN0usNniUNDa2z2if3FVUdTRJqJnU35iY
-         kqoQ==
-X-Gm-Message-State: APjAAAXaXRU1U4tiq8ciY4MymgY033fNVdRwHFF02NgAw5yXYp38hdJw
-        jveFxwHPNX/sAwUcGFqX3qGboo8=
-X-Google-Smtp-Source: APXvYqyyRL+scZJ1xlL9sgDE1ulI6fxpWupwNB6e11rvDCaYex/jkYDco3+Yr1qYKX+MCz5J3CuiUA==
-X-Received: by 2002:a9d:5c09:: with SMTP id o9mr13588147otk.311.1556663119307;
-        Tue, 30 Apr 2019 15:25:19 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n3sm15918317oia.46.2019.04.30.15.25.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 15:25:18 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 17:25:18 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>, tglx@linutronix.de,
-        jason@lakedaemon.net,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>,
-        linus.walleij@linaro.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v8 10/14] dt-bindings: irqchip: Introduce TISCI Interrupt
- Aggregator bindings
-Message-ID: <20190430222518.GA8786@bogus>
-References: <20190430101230.21794-1-lokeshvutla@ti.com>
- <20190430101230.21794-11-lokeshvutla@ti.com>
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=VXYwZpX1d+wknY0tSOqvdnHG027bEu0WR2/eqUIGUnc=;
+        b=A1JauNnwq+nwuOIeg0K4JFBfwK1WqkKu/Xiqkx+vujRQbKhLRDfd4oc6a+XxEUdmC5
+         dIX0lpmsxZgdfdKDVynqMJBzbnPdF/4F3P83byJZdAck1XXB3MqHU2iF8V86C3Cfriog
+         MVoM4SDA9OKqbHLT+j3weBfOJVHZvuTb8L7+CqopUK2p5hHig3MlWisOHyUy/r6kZM9V
+         8J2mZGJQzjGj3CYrAj54YnhgiKLeziMNRHMHjeKgpZG85W1DxRvV6rwua/oINHja3aGu
+         4uNkTcRtXrG/2SUt3sgUFGzFKnxFxWykCEcD9yfKimgbCn+3/nX7KurI2od6TJWoEJ+3
+         Pq9A==
+X-Gm-Message-State: APjAAAW6f5aYOx5dEyR/U1IpOuFY5Gsossw+5WdiLr612SucYs3LKf8a
+        dvRBhT00/1LEJx6cDTEoqHyxRw==
+X-Google-Smtp-Source: APXvYqymoEF3vOsE3u+wAezZJxUo2QTFYbZ5Uz20HoxFagG5+NUSGvI2+6lB9uATQsmHDxyQRKuODw==
+X-Received: by 2002:a7b:c04b:: with SMTP id u11mr3686065wmc.95.1556663180349;
+        Tue, 30 Apr 2019 15:26:20 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id t24sm15073738wra.58.2019.04.30.15.26.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 15:26:19 -0700 (PDT)
+Message-ID: <5cc8cb8b.1c69fb81.1f94.04ed@mx.google.com>
+Date:   Tue, 30 Apr 2019 15:26:19 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430101230.21794-11-lokeshvutla@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v4.9.171-42-ga707069e56d0
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/41] 4.9.172-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Apr 2019 15:42:26 +0530, Lokesh Vutla wrote:
-> Add the DT binding documentation for Interrupt Aggregator driver.
-> 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> ---
-> Changes since v7:
-> - None
->  .../interrupt-controller/ti,sci-inta.txt      | 66 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
-> 
+stable-rc/linux-4.9.y boot: 99 boots: 0 failed, 96 passed with 3 offline (v=
+4.9.171-42-ga707069e56d0)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.171-42-ga707069e56d0/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.171-42-ga707069e56d0/
+
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.171-42-ga707069e56d0
+Git Commit: a707069e56d0b0365daa528a05c6388b41cfe4fa
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 52 unique boards, 22 SoC families, 15 builds out of 197
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-7
+            stih410-b2120: 1 offline lab
+            tegra20-iris-512: 1 offline lab
+
+    tegra_defconfig:
+        gcc-7
+            tegra20-iris-512: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
