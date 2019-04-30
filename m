@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73927F5DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16536F601
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbfD3Ljr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:39:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45252 "EHLO mail.kernel.org"
+        id S1729049AbfD3Lls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:41:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbfD3Ljm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:39:42 -0400
+        id S1729009AbfD3Lln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:41:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6C12173E;
-        Tue, 30 Apr 2019 11:39:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC50421670;
+        Tue, 30 Apr 2019 11:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624382;
-        bh=OSovCw99t+fe1qPIzosQ6np7feDDRH7Hul/2hG9iB5s=;
+        s=default; t=1556624502;
+        bh=9KxzJjSVk0Z6C3PpvG3RgzdZOL8WGvP+kOSixw12S8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wz8gGnG4JvrWT4/9mc7gJJlb5n0EqYHgnrb07KF/DauJHdHQX8byCWJESb06sjszz
-         1gU7hwhWb78newtyG61+yJY/dFHIura7SFh4zY/yXorqs4IiZb11b6N+jh8NJsKL2d
-         fTMc9Z1ydoeIADzB6EaBKRleb4S4Oftcjehff69U=
+        b=Se9LjWKvTyPsbJVkjYNbL1a85dZiHBBFOPG4/npYXenOGl7eTMqSE4b1u7Uxj50/t
+         i2WRPio2oYwOUN+itSlRLQHoHmUlaKvs0S00oJghV7quBoYKhVlaRTYqmb/AJBQLUB
+         /Unb/qUdn2oeZn3F0upI6hLdF/fpgmxUUOq/gdOk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.9 14/41] ARM: 8857/1: efi: enable CP15 DMB instructions before cleaning the cache
+        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Yao Lihua <ylhuajnu@outlook.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.14 18/53] dmaengine: sh: rcar-dmac: With cyclic DMA residue 0 is valid
 Date:   Tue, 30 Apr 2019 13:38:25 +0200
-Message-Id: <20190430113528.465419917@linuxfoundation.org>
+Message-Id: <20190430113553.653431455@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-commit e17b1af96b2afc38e684aa2f1033387e2ed10029 upstream.
+commit 907bd68a2edc491849e2fdcfe52c4596627bca94 upstream.
 
-The EFI stub is entered with the caches and MMU enabled by the
-firmware, and once the stub is ready to hand over to the decompressor,
-we clean and disable the caches.
+Having a cyclic DMA, a residue 0 is not an indication of a completed
+DMA. In case of cyclic DMA make sure that dma_set_residue() is called
+and with this a residue of 0 is forwarded correctly to the caller.
 
-The cache clean routines use CP15 barrier instructions, which can be
-disabled via SCTLR. Normally, when using the provided cache handling
-routines to enable the caches and MMU, this bit is enabled as well.
-However, but since we entered the stub with the caches already enabled,
-this routine is not executed before we call the cache clean routines,
-resulting in undefined instruction exceptions if the firmware never
-enabled this bit.
-
-So set the bit explicitly in the EFI entry code, but do so in a way that
-guarantees that the resulting code can still run on v6 cores as well
-(which are guaranteed to have CP15 barriers enabled)
-
-Cc: <stable@vger.kernel.org> # v4.9+
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 3544d2878817 ("dmaengine: rcar-dmac: use result of updated get_residue in tx_status")
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Yao Lihua <ylhuajnu@outlook.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/compressed/head.S |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/dma/sh/rcar-dmac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -1383,7 +1383,21 @@ ENTRY(efi_stub_entry)
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1332,6 +1332,7 @@ static enum dma_status rcar_dmac_tx_stat
+ 	enum dma_status status;
+ 	unsigned long flags;
+ 	unsigned int residue;
++	bool cyclic;
  
- 		@ Preserve return value of efi_entry() in r4
- 		mov	r4, r0
--		bl	cache_clean_flush
-+
-+		@ our cache maintenance code relies on CP15 barrier instructions
-+		@ but since we arrived here with the MMU and caches configured
-+		@ by UEFI, we must check that the CP15BEN bit is set in SCTLR.
-+		@ Note that this bit is RAO/WI on v6 and earlier, so the ISB in
-+		@ the enable path will be executed on v7+ only.
-+		mrc	p15, 0, r1, c1, c0, 0	@ read SCTLR
-+		tst	r1, #(1 << 5)		@ CP15BEN bit set?
-+		bne	0f
-+		orr	r1, r1, #(1 << 5)	@ CP15 barrier instructions
-+		mcr	p15, 0, r1, c1, c0, 0	@ write SCTLR
-+ ARM(		.inst	0xf57ff06f		@ v7+ isb	)
-+ THUMB(		isb						)
-+
-+0:		bl	cache_clean_flush
- 		bl	cache_off
+ 	status = dma_cookie_status(chan, cookie, txstate);
+ 	if (status == DMA_COMPLETE || !txstate)
+@@ -1339,10 +1340,11 @@ static enum dma_status rcar_dmac_tx_stat
  
- 		@ Set parameters for booting zImage according to boot protocol
+ 	spin_lock_irqsave(&rchan->lock, flags);
+ 	residue = rcar_dmac_chan_get_residue(rchan, cookie);
++	cyclic = rchan->desc.running ? rchan->desc.running->cyclic : false;
+ 	spin_unlock_irqrestore(&rchan->lock, flags);
+ 
+ 	/* if there's no residue, the cookie is complete */
+-	if (!residue)
++	if (!residue && !cyclic)
+ 		return DMA_COMPLETE;
+ 
+ 	dma_set_residue(txstate, residue);
 
 
