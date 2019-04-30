@@ -2,110 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4EDFFD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55363FFD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfD3Sma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 14:42:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51516 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfD3Sma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:42:30 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 11:42:29 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by orsmga002.jf.intel.com with ESMTP; 30 Apr 2019 11:42:29 -0700
-Date:   Tue, 30 Apr 2019 11:42:29 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH] x86/kvm/mmu: reset MMU context when 32-bit guest
- switches PAE
-Message-ID: <20190430184229.GE32170@linux.intel.com>
-References: <20190430173326.1956-1-vkuznets@redhat.com>
+        id S1727079AbfD3Sn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 14:43:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56860 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfD3Sn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 14:43:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=STJhfFIcl8NmsqBz0oUJKAuRfU7ewVikywFTxDg+V7c=; b=acLw4abIWyEHtIntf0uWm2LS1
+        fSsFms0K0ESI7Hfynftciog+orQBUebHYcRfizGpVk77mNrrjGaRDJ8OW13B/4ieYT1GRieg42j1T
+        XqeUx7URYJypdU2EpwiFrod6yrH/Z+s5ELdgs/HPOeEElB/1cdxcE1MkUE2YkvOIhyipeRZVa/mbm
+        92JKfYE20wECUQIbbhiUgqvzAnnsZq6F36thLksEMh+VCFPEfvkNWYxuDmMDZP03Rcgby8V73+zcU
+        d9v/LpPVpRHYLhVm6ofeFdELtMIuE0Z7VVe1YjKjZoCTj4lst64zZeodIEWC2qfKu2YO+IvDG2kBD
+        LJ6RDjUWQ==;
+Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLXiq-0000rm-Pr; Tue, 30 Apr 2019 18:43:21 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Josef Bacik <jbacik@fb.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Fabio Checconi <fabio@gandalf.sssup.it>,
+        Nauman Rafique <nauman@google.com>,
+        Arianna Avanzini <avanzini.arianna@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: add SPDX tags to all block layer files
+Date:   Tue, 30 Apr 2019 14:42:38 -0400
+Message-Id: <20190430184243.23436-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430173326.1956-1-vkuznets@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 07:33:26PM +0200, Vitaly Kuznetsov wrote:
-> Commit 47c42e6b4192 ("KVM: x86: fix handling of role.cr4_pae and rename it
-> to 'gpte_size'") introduced a regression: 32-bit PAE guests stopped
+Hi Jens,
 
-"gpte_is_8_bytes" is really confusing in this case. :-(  Unfortunately I
-can't think I can't think of a better name that isn't ridiculously verbose.
-
-> working. The issue appears to be: when guest switches (enables) PAE we need
-> to re-initialize MMU context (set context->root_level, do
-> reset_rsvds_bits_mask(), ...) but init_kvm_tdp_mmu() doesn't do that
-> because we threw away is_pae(vcpu) flag from mmu role. Restore it to
-> kvm_mmu_extended_role (as we now don't need it in base role) to fix
-> the issue.
-
-The change makes sense, but I'm amazed that there's a kernel that can
-actually trigger the bug.  The extended role tracks CR0.PG, so I'm pretty
-sure hitting this bug requires toggling CR4.PAE *while paging is enabled*.
-Which is legal, but crazy.  E.g. my 32-bit Linux VM runs fine with and
-without PAE enabled.
-
-> Fixes: 47c42e6b4192 ("KVM: x86: fix handling of role.cr4_pae and rename it to 'gpte_size'")
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-
-> ---
-> - RFC: it was proven multiple times that mmu code is more complex than it
->   appears (at least to me) :-)
-
-LOL, maybe you're just more optimistic than most people.  Every time I
-look at the code I say something along the lines of "holy $&*#".
-
-> ---
->  arch/x86/include/asm/kvm_host.h | 1 +
->  arch/x86/kvm/mmu.c              | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index a9d03af34030..c79abe7ca093 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -295,6 +295,7 @@ union kvm_mmu_extended_role {
->  		unsigned int valid:1;
->  		unsigned int execonly:1;
->  		unsigned int cr0_pg:1;
-> +		unsigned int cr4_pae:1;
->  		unsigned int cr4_pse:1;
->  		unsigned int cr4_pke:1;
->  		unsigned int cr4_smap:1;
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index e10962dfc203..d9c7b45d231f 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -4781,6 +4781,7 @@ static union kvm_mmu_extended_role kvm_calc_mmu_role_ext(struct kvm_vcpu *vcpu)
->  	union kvm_mmu_extended_role ext = {0};
->  
->  	ext.cr0_pg = !!is_paging(vcpu);
-> +	ext.cr4_pae = !!is_pae(vcpu);
-
-This got me thinking, I wonder if we can/should leave the CR4 bits clear
-if !is_paging().  Technically I think we're unnecessarily purging the MMU
-when the guest is toggling CR4 bits with CR0.PG==0.  And I think we can
-also git rid of the oddball nx flag in struct kvm_mmu.  I'll play around
-with the code and hopefully send a patch or two.
-
->  	ext.cr4_smep = !!kvm_read_cr4_bits(vcpu, X86_CR4_SMEP);
->  	ext.cr4_smap = !!kvm_read_cr4_bits(vcpu, X86_CR4_SMAP);
->  	ext.cr4_pse = !!is_pse(vcpu);
-> -- 
-> 2.20.1
-> 
+this series adds SPDX tags to all block layer files that are still
+missing them.  The last patch adds them to files that didn't have
+any licensing, and I've cced everyone who is mentioned in the
+Copyright notices for these files to make sure no one has any
+disagreement with the fact that that they are per default under
+the kernels GPLv2 license.
