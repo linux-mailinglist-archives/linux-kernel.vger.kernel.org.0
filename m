@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE20F5FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A24FAF755
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfD3Llh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:41:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49378 "EHLO mail.kernel.org"
+        id S1728011AbfD3L6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:58:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728925AbfD3Llf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:35 -0400
+        id S1730687AbfD3LrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:47:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E563D21670;
-        Tue, 30 Apr 2019 11:41:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C850821670;
+        Tue, 30 Apr 2019 11:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624494;
-        bh=xTz0TplUvCuk3TISQVkGrsJzMSmpwDhzVRj928ZBAqQ=;
+        s=default; t=1556624836;
+        bh=SrJCoBMwqCwlPKloQA39AOKmQbx9IOxoVdnu2uvxb/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gzfATd7Sm6bI/sKyGQwoQ3UjOyG2KU8sbV5PnO9XJ5B6J1BqJ4JbilYsy1ev65xRk
-         xPGNVE5/dBvkHGgQY92lrLCUzpHE6bTwgenF0Rsq72Ob4iseLkYYz9ejx6zyY27klO
-         5TQQhwSCewDyJlx//nkOtTLzf0HHF6T8Sx8YmP64=
+        b=d1puJMnOg3hcAViHJoT++RD4JG7Z1OrBwrhX6CnkYqvmYRsGYhYAfpi5huON7lUnO
+         ciGOOb/DrTGu+47BPRwDh24tZY2gGflvai5N7bn/P13um4cbPgjpJHzQVKmWzw9uY4
+         w32xluStqjj548CKe1YeEP7vAn0JffX60F0yHnCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        "J. Bruce Fields" <bfields@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.14 15/53] sunrpc: dont mark uninitialised items as VALID.
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.19 053/100] intel_th: gth: Fix an off-by-one in output unassigning
 Date:   Tue, 30 Apr 2019 13:38:22 +0200
-Message-Id: <20190430113553.091347032@linuxfoundation.org>
+Message-Id: <20190430113611.474614031@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit d58431eacb226222430940134d97bfd72f292fcd upstream.
+commit 91d3f8a629849968dc91d6ce54f2d46abf4feb7f upstream.
 
-A recent commit added a call to cache_fresh_locked()
-when an expired item was found.
-The call sets the CACHE_VALID flag, so it is important
-that the item actually is valid.
-There are two ways it could be valid:
-1/ If ->update has been called to fill in relevant content
-2/ if CACHE_NEGATIVE is set, to say that content doesn't exist.
+Commit 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
+fixes a NULL dereference for all masters except the last one ("256+"),
+which keeps the stale pointer after the output driver had been unassigned.
 
-An expired item that is waiting for an update will be neither.
-Setting CACHE_VALID will mean that a subsequent call to cache_put()
-will be likely to dereference uninitialised pointers.
+Fix the off-by-one.
 
-So we must make sure the item is valid, and we already have code to do
-that in try_to_negate_entry().  This takes the hash lock and so cannot
-be used directly, so take out the two lines that we need and use them.
-
-Now cache_fresh_locked() is certain to be called only on
-a valid item.
-
-Cc: stable@kernel.org # 2.6.35
-Fixes: 4ecd55ea0742 ("sunrpc: fix cache_head leak due to queued request")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/cache.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwtracing/intel_th/gth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/cache.c
-+++ b/net/sunrpc/cache.c
-@@ -54,6 +54,7 @@ static void cache_init(struct cache_head
- 	h->last_refresh = now;
- }
- 
-+static inline int cache_is_valid(struct cache_head *h);
- static void cache_fresh_locked(struct cache_head *head, time_t expiry,
- 				struct cache_detail *detail);
- static void cache_fresh_unlocked(struct cache_head *head,
-@@ -100,6 +101,8 @@ struct cache_head *sunrpc_cache_lookup(s
- 			if (cache_is_expired(detail, tmp)) {
- 				hlist_del_init(&tmp->cache_list);
- 				detail->entries --;
-+				if (cache_is_valid(tmp) == -EAGAIN)
-+					set_bit(CACHE_NEGATIVE, &tmp->flags);
- 				cache_fresh_locked(tmp, 0, detail);
- 				freeme = tmp;
- 				break;
+--- a/drivers/hwtracing/intel_th/gth.c
++++ b/drivers/hwtracing/intel_th/gth.c
+@@ -616,7 +616,7 @@ static void intel_th_gth_unassign(struct
+ 	othdev->output.port = -1;
+ 	othdev->output.active = false;
+ 	gth->output[port].output = NULL;
+-	for (master = 0; master < TH_CONFIGURABLE_MASTERS; master++)
++	for (master = 0; master <= TH_CONFIGURABLE_MASTERS; master++)
+ 		if (gth->master[master] == port)
+ 			gth->master[master] = -1;
+ 	spin_unlock(&gth->gth_lock);
 
 
