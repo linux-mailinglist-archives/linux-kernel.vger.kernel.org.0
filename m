@@ -2,30 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7438EF41
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6442EF45
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730091AbfD3DsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 23:48:22 -0400
+        id S1730161AbfD3Dsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 23:48:41 -0400
 Received: from mga18.intel.com ([134.134.136.126]:54863 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729933AbfD3DsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:48:20 -0400
+        id S1730081AbfD3DsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 23:48:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 20:48:19 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 20:48:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,412,1549958400"; 
-   d="scan'208";a="138598241"
+   d="scan'208";a="138598245"
 Received: from genxtest-ykzhao.sh.intel.com ([10.239.143.71])
-  by orsmga008.jf.intel.com with ESMTP; 29 Apr 2019 20:48:18 -0700
+  by orsmga008.jf.intel.com with ESMTP; 29 Apr 2019 20:48:20 -0700
 From:   Zhao Yakui <yakui.zhao@intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     tglx@linutronix.de, bp@alien8.de, Zhao Yakui <yakui.zhao@intel.com>
-Subject: [PATCH v6 1/4] x86/Kconfig: Add new config symbol to unify conditional definition of hv_irq_callback_count
-Date:   Tue, 30 Apr 2019 11:45:23 +0800
-Message-Id: <1556595926-17910-2-git-send-email-yakui.zhao@intel.com>
+Cc:     tglx@linutronix.de, bp@alien8.de,
+        Zhao Yakui <yakui.zhao@intel.com>,
+        Jason Chen CJ <jason.cj.chen@intel.com>
+Subject: [PATCH v6 2/4] x86: Add the support of Linux guest on ACRN hypervisor
+Date:   Tue, 30 Apr 2019 11:45:24 +0800
+Message-Id: <1556595926-17910-3-git-send-email-yakui.zhao@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556595926-17910-1-git-send-email-yakui.zhao@intel.com>
 References: <1556595926-17910-1-git-send-email-yakui.zhao@intel.com>
@@ -34,88 +36,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a special Kconfig symbol X86_HV_CALLBACK_VECTOR so that the guests
-using the hypervisor interrupt callback counter can select and thus
-enable that counter. Select it when xen or hyperv support is enabled.
-No functional changes.
+ACRN is an open-source hypervisor maintained by Linux Foundation.
+It is built for embedded IOT with small footprint and real-time features.
+Add the ACRN guest support so that it allows linux to be booted under the
+ACRN hypervisor. Following this patch it will setup the upcall
+notification vector, enable hypercall and provide the interface that is
+used to manage the virtualized CPU/memory/device/interrupt for other
+guest OS.
 
+Co-developed-by: Jason Chen CJ <jason.cj.chen@intel.com>
+Signed-off-by: Jason Chen CJ <jason.cj.chen@intel.com>
 Signed-off-by: Zhao Yakui <yakui.zhao@intel.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-v3->v4: Follow the comments to refine the commit log.
+v1->v2: Change the CONFIG_ACRN to CONFIG_ACRN_GUEST, which makes it easy to
+understand.
+        Remove the export of x86_hyper_acrn.
+
+v2->v3: Remove the unnecessary dependency of PARAVIRT
+v3->v4: Refine the commit log and add more meaningful description in Kconfig
+v4->v5: No change
+v5->v6: No change
 ---
- arch/x86/Kconfig               | 3 +++
- arch/x86/include/asm/hardirq.h | 2 +-
- arch/x86/kernel/irq.c          | 2 +-
- arch/x86/xen/Kconfig           | 1 +
- drivers/hv/Kconfig             | 1 +
- 5 files changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/Kconfig                  | 12 ++++++++++++
+ arch/x86/include/asm/hypervisor.h |  1 +
+ arch/x86/kernel/cpu/Makefile      |  1 +
+ arch/x86/kernel/cpu/acrn.c        | 39 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/hypervisor.c  |  4 ++++
+ 5 files changed, 57 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/acrn.c
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 62fc3fd..2fc9297 100644
+index 2fc9297..8dc4200 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -791,6 +791,9 @@ config QUEUED_LOCK_STAT
- 	  behavior of paravirtualized queued spinlocks and report
- 	  them on debugfs.
+@@ -845,6 +845,18 @@ config JAILHOUSE_GUEST
+ 	  cell. You can leave this option disabled if you only want to start
+ 	  Jailhouse and run Linux afterwards in the root cell.
  
-+config X86_HV_CALLBACK_VECTOR
-+	def_bool n
++config ACRN_GUEST
++	bool "ACRN Guest support"
++	depends on X86_64
++	help
++	  This option allows to run Linux as guest in ACRN hypervisor. Enabling
++	  this will allow the kernel to boot in virtualized environment under
++	  the ACRN hypervisor.
++	  ACRN is a flexible, lightweight reference open-source hypervisor, built
++	  with real-time and safety-criticality in mind. It is built for embedded
++	  IOT with small footprint and real-time features. More details can be
++	  found in https://projectacrn.org/
 +
- source "arch/x86/xen/Kconfig"
+ endif #HYPERVISOR_GUEST
  
- config KVM_GUEST
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index d9069bb..0753379 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -37,7 +37,7 @@ typedef struct {
- #ifdef CONFIG_X86_MCE_AMD
- 	unsigned int irq_deferred_error_count;
+ source "arch/x86/Kconfig.cpu"
+diff --git a/arch/x86/include/asm/hypervisor.h b/arch/x86/include/asm/hypervisor.h
+index 8c5aaba..50a30f6 100644
+--- a/arch/x86/include/asm/hypervisor.h
++++ b/arch/x86/include/asm/hypervisor.h
+@@ -29,6 +29,7 @@ enum x86_hypervisor_type {
+ 	X86_HYPER_XEN_HVM,
+ 	X86_HYPER_KVM,
+ 	X86_HYPER_JAILHOUSE,
++	X86_HYPER_ACRN,
+ };
+ 
+ #ifdef CONFIG_HYPERVISOR_GUEST
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index cfd24f9..17a7cdf 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
+ obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ 
+ obj-$(CONFIG_HYPERVISOR_GUEST)		+= vmware.o hypervisor.o mshyperv.o
++obj-$(CONFIG_ACRN_GUEST)		+= acrn.o
+ 
+ ifdef CONFIG_X86_FEATURE_NAMES
+ quiet_cmd_mkcapflags = MKCAP   $@
+diff --git a/arch/x86/kernel/cpu/acrn.c b/arch/x86/kernel/cpu/acrn.c
+new file mode 100644
+index 0000000..f556640
+--- /dev/null
++++ b/arch/x86/kernel/cpu/acrn.c
+@@ -0,0 +1,39 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ACRN detection support
++ *
++ * Copyright (C) 2019 Intel Corporation. All rights reserved.
++ *
++ * Jason Chen CJ <jason.cj.chen@intel.com>
++ * Zhao Yakui <yakui.zhao@intel.com>
++ *
++ */
++
++#include <asm/hypervisor.h>
++
++static uint32_t __init acrn_detect(void)
++{
++	return hypervisor_cpuid_base("ACRNACRNACRN\0\0", 0);
++}
++
++static void __init acrn_init_platform(void)
++{
++}
++
++static bool acrn_x2apic_available(void)
++{
++	/* x2apic is not supported now.
++	 * Later it needs to check the X86_FEATURE_X2APIC bit of cpu info
++	 * returned by CPUID to determine whether the x2apic is
++	 * supported in Linux guest.
++	 */
++	return false;
++}
++
++const __initconst struct hypervisor_x86 x86_hyper_acrn = {
++	.name                   = "ACRN",
++	.detect                 = acrn_detect,
++	.type			= X86_HYPER_ACRN,
++	.init.init_platform     = acrn_init_platform,
++	.init.x2apic_available  = acrn_x2apic_available,
++};
+diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hypervisor.c
+index 479ca47..87e39ad 100644
+--- a/arch/x86/kernel/cpu/hypervisor.c
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -32,6 +32,7 @@ extern const struct hypervisor_x86 x86_hyper_xen_pv;
+ extern const struct hypervisor_x86 x86_hyper_xen_hvm;
+ extern const struct hypervisor_x86 x86_hyper_kvm;
+ extern const struct hypervisor_x86 x86_hyper_jailhouse;
++extern const struct hypervisor_x86 x86_hyper_acrn;
+ 
+ static const __initconst struct hypervisor_x86 * const hypervisors[] =
+ {
+@@ -49,6 +50,9 @@ static const __initconst struct hypervisor_x86 * const hypervisors[] =
+ #ifdef CONFIG_JAILHOUSE_GUEST
+ 	&x86_hyper_jailhouse,
  #endif
--#if IS_ENABLED(CONFIG_HYPERV) || defined(CONFIG_XEN)
-+#ifdef CONFIG_X86_HV_CALLBACK_VECTOR
- 	unsigned int irq_hv_callback_count;
- #endif
- #if IS_ENABLED(CONFIG_HYPERV)
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 59b5f2e..a147826 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -134,7 +134,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- 		seq_printf(p, "%10u ", per_cpu(mce_poll_count, j));
- 	seq_puts(p, "  Machine check polls\n");
- #endif
--#if IS_ENABLED(CONFIG_HYPERV) || defined(CONFIG_XEN)
-+#ifdef CONFIG_X86_HV_CALLBACK_VECTOR
- 	if (test_bit(HYPERVISOR_CALLBACK_VECTOR, system_vectors)) {
- 		seq_printf(p, "%*s: ", prec, "HYP");
- 		for_each_online_cpu(j)
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index e07abef..ba5a418 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -7,6 +7,7 @@ config XEN
- 	bool "Xen guest support"
- 	depends on PARAVIRT
- 	select PARAVIRT_CLOCK
-+	select X86_HV_CALLBACK_VECTOR
- 	depends on X86_64 || (X86_32 && X86_PAE)
- 	depends on X86_LOCAL_APIC && X86_TSC
- 	help
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 1c1a251..cafcb97 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -6,6 +6,7 @@ config HYPERV
- 	tristate "Microsoft Hyper-V client drivers"
- 	depends on X86 && ACPI && X86_LOCAL_APIC && HYPERVISOR_GUEST
- 	select PARAVIRT
-+	select X86_HV_CALLBACK_VECTOR
- 	help
- 	  Select this option to run Linux as a Hyper-V client operating
- 	  system.
++#ifdef CONFIG_ACRN_GUEST
++	&x86_hyper_acrn,
++#endif
+ };
+ 
+ enum x86_hypervisor_type x86_hyper_type;
 -- 
 2.7.4
 
