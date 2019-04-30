@@ -2,43 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C80DF5F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 507C0F640
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfD3LlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:41:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48800 "EHLO mail.kernel.org"
+        id S1730345AbfD3LpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728862AbfD3LlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:20 -0400
+        id S1729535AbfD3LpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:45:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 142DE21783;
-        Tue, 30 Apr 2019 11:41:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1668921670;
+        Tue, 30 Apr 2019 11:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624478;
-        bh=JfbBBb9GSwrn3uSbyVzEH030s2yAJCMAhdmxy2v/Pgk=;
+        s=default; t=1556624705;
+        bh=3Tq88hR5hv0Ak6dU50bZT9K8PkyxvQU6ZbbPLIXGtXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hwOn1S6PGURLnAP5dORWmuAt6PSOAdwUJ5uBXuYVNk/03kDZIRHU7Ra9RZLl6VyeY
-         Q5MYanZnhoLBMkL4/pLnFCuDjlvMuODiTZScQ9wevqxk0/c8JWlm3Zic+8ldBZH+ys
-         eaLdoSSXaULoWvha4Xe6t1AKyUHriwWfIOejcZZg=
+        b=PxGDzFW5kJzikREv3aVuKWr4mluFGhdD6FbxxHOdQCCuPXTVk4EElg/IMHzg7ZswA
+         lxHbYvYNtwBFOwBhgcRVj3PVaZqMJnNAuJinslth8qcxxvKA28ArtSZexM0OpSZsCB
+         mDGeuvDEhlQZBulMGRy+CBMELhinOWF+vN5ym2ew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.14 01/53] kbuild: simplify ld-option implementation
-Date:   Tue, 30 Apr 2019 13:38:08 +0200
-Message-Id: <20190430113549.630232113@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, gs0622@gmail.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 040/100] perf/x86/intel: Update KBL Package C-state events to also include PC8/PC9/PC10 counters
+Date:   Tue, 30 Apr 2019 13:38:09 +0200
+Message-Id: <20190430113611.050594851@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,92 +51,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Harry Pan <harry.pan@intel.com>
 
-commit 0294e6f4a0006856e1f36b8cd8fa088d9e499e98 upstream.
+commit 82c99f7a81f28f8c1be5f701c8377d14c4075b10 upstream.
 
-Currently, linker options are tested by the coordination of $(CC) and
-$(LD) because $(LD) needs some object to link.
+Kaby Lake (and Coffee Lake) has PC8/PC9/PC10 residency counters.
 
-As commit 86a9df597cdd ("kbuild: fix linker feature test macros when
-cross compiling with Clang") addressed, we need to make sure $(CC)
-and $(LD) agree the underlying architecture of the passed object.
+This patch updates the list of Kaby/Coffee Lake PMU event counters
+from the snb_cstates[] list of events to the hswult_cstates[]
+list of events, which keeps all previously supported events and
+also adds the PKG_C8, PKG_C9 and PKG_C10 residency counters.
 
-This could be a bit complex when we combine tools from different groups.
-For example, we can use clang for $(CC), but we still need to rely on
-GCC toolchain for $(LD).
+This allows user space tools to profile them through the perf interface.
 
-So, I was searching for a way of standalone testing of linker options.
-A trick I found is to use '-v'; this not only prints the version string,
-but also tests if the given option is recognized.
-
-If a given option is supported,
-
-  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
-  GNU ld (Linaro_Binutils-2017.11) 2.28.2.20170706
-  $ echo $?
-  0
-
-If unsupported,
-
-  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
-  GNU ld (crosstool-NG linaro-1.13.1-4.7-2013.04-20130415 - Linaro GCC 2013.04) 2.23.1
-  aarch64-linux-gnu-ld: unrecognized option '--fix-cortex-a53-843419'
-  aarch64-linux-gnu-ld: use the --help option for usage information
-  $ echo $?
-  1
-
-Gold works likewise.
-
-  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-843419
-  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
-  masahiro@pug:~/ref/linux$ echo $?
-  0
-  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-999999
-  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
-  aarch64-linux-gnu-ld.gold: --fix-cortex-a53-999999: unknown option
-  aarch64-linux-gnu-ld.gold: use the --help option for usage information
-  $ echo $?
-  1
-
-LLD too.
-
-  $ ld.lld -v --gc-sections
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  0
-  $ ld.lld -v --fix-cortex-a53-843419
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  0
-  $ ld.lld -v --fix-cortex-a53-999999
-  ld.lld: error: unknown argument: --fix-cortex-a53-999999
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  1
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-[nc: try-run-cached was added later, just use try-run, which is the
-     current mainline state]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: gs0622@gmail.com
+Link: http://lkml.kernel.org/r/20190424145033.1924-1-harry.pan@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- scripts/Kbuild.include |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -165,9 +165,7 @@ cc-ldoption = $(call try-run,\
+---
+ arch/x86/events/intel/cstate.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -76,15 +76,15 @@
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
+  *			       perf code: 0x04
+- *			       Available model: HSW ULT,CNL
++ *			       Available model: HSW ULT,KBL,CNL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
+  *			       perf code: 0x05
+- *			       Available model: HSW ULT,CNL
++ *			       Available model: HSW ULT,KBL,CNL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+  *			       perf code: 0x06
+- *			       Available model: HSW ULT,GLM,CNL
++ *			       Available model: HSW ULT,KBL,GLM,CNL
+  *			       Scope: Package (physical package)
+  *
+  */
+@@ -572,8 +572,8 @@ static const struct x86_cpu_id intel_cst
+ 	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_DESKTOP, snb_cstates),
+ 	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_X, snb_cstates),
  
- # ld-option
- # Usage: LDFLAGS += $(call ld-option, -X)
--ld-option = $(call try-run,\
--	$(CC) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
--	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
-+ld-option = $(call try-run, $(LD) $(LDFLAGS) $(1) -v,$(1),$(2))
+-	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_MOBILE,  snb_cstates),
+-	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_DESKTOP, snb_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_MOBILE,  hswult_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_DESKTOP, hswult_cstates),
  
- # ar-option
- # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+ 	X86_CSTATES_MODEL(INTEL_FAM6_CANNONLAKE_MOBILE, cnl_cstates),
+ 
 
 
