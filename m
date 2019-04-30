@@ -2,135 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F987FCDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12257FCE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfD3P1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:27:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:49180 "EHLO foss.arm.com"
+        id S1726302AbfD3P3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:29:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41612 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfD3P1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:27:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0BE6374;
-        Tue, 30 Apr 2019 08:27:48 -0700 (PDT)
-Received: from [10.1.196.92] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECEC73F719;
-        Tue, 30 Apr 2019 08:27:46 -0700 (PDT)
-Subject: Re: [PATCH 7/7] clocksource/arm_arch_timer: Use
- arch_timer_read_counter to access stable counters
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Russell King <linux@arm.linux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Valentin Schneider <valentin.schneider@arm.com>
-References: <20190408154907.223536-1-marc.zyngier@arm.com>
- <20190408154907.223536-8-marc.zyngier@arm.com>
- <2a60a031-1eab-2d5e-89ff-b5d516545eeb@linaro.org>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <bbe9b8c1-132f-bbfa-e3d0-ad10c4165ad7@arm.com>
-Date:   Tue, 30 Apr 2019 16:27:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725906AbfD3P3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:29:22 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5F2C309264B;
+        Tue, 30 Apr 2019 15:29:20 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 04D0A10013D9;
+        Tue, 30 Apr 2019 15:29:10 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 17:29:08 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>,
+        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
+        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "eauger@redhat.com" <eauger@redhat.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "eskultet@redhat.com" <eskultet@redhat.com>,
+        "Yang, Ziye" <ziye.yang@intel.com>,
+        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "felipe@nutanix.com" <felipe@nutanix.com>,
+        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "dgilbert@redhat.com" <dgilbert@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [PATCH 1/2] vfio/mdev: add version field as mandatory attribute
+ for mdev device
+Message-ID: <20190430172908.2ae77fa9.cohuck@redhat.com>
+In-Reply-To: <20190424081558.GE26247@joy-OptiPlex-7040>
+References: <20190419083258.19580-1-yan.y.zhao@intel.com>
+        <20190419083505.19654-1-yan.y.zhao@intel.com>
+        <20190423115932.42619422.cohuck@redhat.com>
+        <20190424031036.GB26247@joy-OptiPlex-7040>
+        <20190424095624.0ce97328.cohuck@redhat.com>
+        <20190424081558.GE26247@joy-OptiPlex-7040>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <2a60a031-1eab-2d5e-89ff-b5d516545eeb@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 30 Apr 2019 15:29:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/04/2019 13:16, Daniel Lezcano wrote:
-> On 08/04/2019 17:49, Marc Zyngier wrote:
->> Instead of always going via arch_counter_get_cntvct_stable to
->> access the counter workaround, let's have arch_timer_read_counter
->> to point to the right method.
->>
->> For that, we need to track whether any CPU in the system has a
->> workaround for the counter. This is done by having an atomic
->> variable tracking this.
->>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
+On Wed, 24 Apr 2019 04:15:58 -0400
+Yan Zhao <yan.y.zhao@intel.com> wrote:
+
+> On Wed, Apr 24, 2019 at 03:56:24PM +0800, Cornelia Huck wrote:
+> > On Tue, 23 Apr 2019 23:10:37 -0400
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >   
+> > > On Tue, Apr 23, 2019 at 05:59:32PM +0800, Cornelia Huck wrote:  
+> > > > On Fri, 19 Apr 2019 04:35:04 -0400
+> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+
+> > > > > @@ -225,6 +228,8 @@ Directories and files under the sysfs for Each Physical Device
+> > > > >    [<type-id>], device_api, and available_instances are mandatory attributes
+> > > > >    that should be provided by vendor driver.
+> > > > >
+> > > > > +  version is a mandatory attribute if a mdev device supports live migration.    
+> > > > 
+> > > > What about "An mdev device wishing to support live migration must
+> > > > provide the version attribute."?    
+> > > yes, I just want to keep consistent with the line above it 
+> > > " [<type-id>], device_api, and available_instances are mandatory attributes
+> > >   that should be provided by vendor driver."
+> > > what about below one?
+> > >   "version is a mandatory attribute if a mdev device wishing to support live
+> > >   migration."  
+> > 
+> > My point is that an attribute is not mandatory if it can be left out :)
+> > (I'm not a native speaker, though; maybe this makes perfect sense
+> > after all?)
+> > 
+> > Maybe "version is a required attribute if live migration is supported
+> > for an mdev device"?
+> >   
+> you are right, "mandatory" may bring some confusion.
+> Maybe
+> "vendor driver must provide version attribute for an mdev device wishing to
+> support live migration." ?
+> based on your first version :)
+
+"The vendor driver must provide the version attribute for any mdev
+device it wishes to support live migration for." ?
+
 > 
-> [ ... ]
+> > > 
+> > >   
+> > > > > +
+> > > > >  * [<type-id>]
+> > > > >
+> > > > >    The [<type-id>] name is created by adding the device driver string as a prefix
+> > > > > @@ -246,6 +251,35 @@ Directories and files under the sysfs for Each Physical Device
+> > > > >    This attribute should show the number of devices of type <type-id> that can be
+> > > > >    created.
+> > > > >
+> > > > > +* version
+> > > > > +
+> > > > > +  This attribute is rw. It is used to check whether two devices are compatible
+> > > > > +  for live migration. If this attribute is missing, then the corresponding mdev
+> > > > > +  device is regarded as not supporting live migration.
+> > > > > +
+> > > > > +  It consists of two parts: common part and vendor proprietary part.
+> > > > > +  common part: 32 bit. lower 16 bits is vendor id and higher 16 bits identifies
+> > > > > +               device type. e.g., for pci device, it is
+> > > > > +               "pci vendor id" | (VFIO_DEVICE_FLAGS_PCI << 16).
+> > > > > +  vendor proprietary part: this part is varied in length. vendor driver can
+> > > > > +               specify any string to identify a device.
+> > > > > +
+> > > > > +  When reading this attribute, it should show device version string of the device
+> > > > > +  of type <type-id>. If a device does not support live migration, it should
+> > > > > +  return errno.
+> > > > > +  When writing a string to this attribute, it returns errno for incompatibility
+> > > > > +  or returns written string length in compatibility case. If a device does not
+> > > > > +  support live migration, it always returns errno.    
+> > > > 
+> > > > I'm not sure whether a device that does not support live migration
+> > > > should expose this attribute in the first place. Or is that to cover
+> > > > cases where a driver supports live migration only for some of the
+> > > > devices it supports?    
+> > > yes, driver returning error code is to cover the cases where only part of devices it
+> > > supports can be migrated.
+> > > 
+> > >   
+> > > > Also, I'm not sure if a string that has to be parsed is a good idea...
+> > > > is this 'version' attribute supposed to convey some human-readable
+> > > > information as well? The procedure you describe for compatibility
+> > > > checking does the checking within the vendor driver which I would
+> > > > expect to have a table/rules for that anyway.    
+> > > right. if a vendor driver has the confidence to migrate between devices of
+> > > diffent platform or mdev types, it can maintain a compatibility table for that
+> > > purpose. That's the reason why we would leave the compatibility check to vendor
+> > > driver. vendor driver can freely choose its own complicated way to decide
+> > > which device is migratable to which device.  
+> > 
+> > I think there are two scenarios here:
+> > - Migrating between different device types, which is unlikely to work,
+> >   except in special cases.
+> > - Migrating between different versions of the same device type, which
+> >   may work for some drivers/devices (and at least migrating to a newer
+> >   version looks quite reasonable).
+> > 
+> > But both should be something that is decided by the individual driver;
+> > I hope we don't want to support migration between different drivers :-O
+> > 
+> > Can we make this a driver-defined format?
+> >  
+> yes, this is indeed driver-defined format.
+> Actually we define it into two parts: common part and vendor proprietary part.
+> common part: 32 bit. lower 16 bits is vendor id and higher 16 bits
+>              identifies device type. e.g., for pci device, it is
+>              "pci vendor id" | (VFIO_DEVICE_FLAGS_PCI << 16).
+> vendor proprietary part: this part is varied in length. vendor driver can
+>              specify any string to identify a device.
 > 
->> +
->>  /*
->>   * Default to cp15 based access because arm64 uses this function for
->>   * sched_clock() before DT is probed and the cp15 method is guaranteed
->> @@ -372,6 +392,7 @@ static u32 notrace sun50i_a64_read_cntv_tval_el0(void)
->>  DEFINE_PER_CPU(const struct arch_timer_erratum_workaround *, timer_unstable_counter_workaround);
->>  EXPORT_SYMBOL_GPL(timer_unstable_counter_workaround);
->>  
->> +static atomic_t timer_unstable_counter_workaround_in_use = ATOMIC_INIT(0);
+> vendor proprietary part is defined by vendor driver. vendor driver can
+> define any format it wishes to use. Also it is its own responsibility to
+> ensure backward compatibility if it wants to update format definition in this
+> part.
 > 
-> Wouldn't make sense to READ_ONCE / WRITE_ONCE instead of using an atomic?
+> So user space only needs to get source side's version string, and asks
+> target side whether the two are compatible. The decision maker is the
+> vendor driver:)
 
-I don't think *_ONCE says anything about the atomicity of the access. It
-only instruct the compiler that this should only be accessed once, and
-not reloaded/rewritten. In this case, WRITE_ONCE() would work just as
-well, but I feel that setting the expectations do matter.
+If I followed the discussion correctly, I think you plan to drop this
+format, don't you? I'd be happy if a vendor driver can use a simple
+number without any prefixes if it so chooses.
 
-I also had a vague idea to use this as a refcount to drop the
-workarounds as CPUs get hotplugged off, in which case we'd need the RMW
-operations to be atomic.
-
-Anyway, I'm not hell bent on this. If you fundamentally disagree with me
-I'll change it.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+I also like the idea of renaming this "migration_version" so that it is
+clear we're dealing with versioning of the migration capability (and
+not a version of the device or so).
