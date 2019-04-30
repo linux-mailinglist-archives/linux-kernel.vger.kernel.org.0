@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09DB3F61E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE37EF65B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfD3LnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:43:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53348 "EHLO mail.kernel.org"
+        id S1730575AbfD3Lqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:46:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729830AbfD3LnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:43:19 -0400
+        id S1730568AbfD3Lqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:46:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E456221707;
-        Tue, 30 Apr 2019 11:43:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3077217D6;
+        Tue, 30 Apr 2019 11:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624598;
-        bh=r2UVRYgI6zFKWaIlg6Ntrk3OKtj+wxjvf66JG/ZofmM=;
+        s=default; t=1556624790;
+        bh=eUQUjbJZXwJvAIl8IRN9aj4vSZWvYjg+7dqI2/qrr9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0etMVobYchz5+tnPLtzOxkCMMhsd24P9++6VyKZwMVqXgGdQVhjUG0qfIBBUF4wGO
-         4uLyaK2azAIBS5sIKQrwP5yO3IWRPlP1mrmTnwusGU0r5MH22g7xkHpRKBVfbNNLLc
-         OztDHVgJusOPFsi61UQTFMHTvF/+wKuOcMgphnrU=
+        b=O7CR8Ws5M/D87JGzhxWDbdzTMZlM0Dht//AHYUJANaKDw+6XT6UPHwo8Vyl2UFQV8
+         uv7uXETZJFTs0tnn/yxF2xaMU2RtQWsB/yJyMbBcGp8AW4rpnN/WanZZiOq55Mt8yG
+         4m/F24C4aBnP3PjaPyivVSMqmXe5OYyz8PSfyoGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+047a11c361b872896a4f@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.14 34/53] NFS: Forbid setting AF_INET6 to "struct sockaddr_in"->sin_family.
-Date:   Tue, 30 Apr 2019 13:38:41 +0200
-Message-Id: <20190430113557.320151368@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.19 073/100] aio: initialize kiocb private in case any filesystems expect it.
+Date:   Tue, 30 Apr 2019 13:38:42 +0200
+Message-Id: <20190430113612.187536714@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Mike Marshall <hubcap@omnibond.com>
 
-commit 7c2bd9a39845bfb6d72ddb55ce737650271f6f96 upstream.
+commit ec51f8ee1e63498e9f521ec0e5a6d04622bb2c67 upstream.
 
-syzbot is reporting uninitialized value at rpc_sockaddr2uaddr() [1]. This
-is because syzbot is setting AF_INET6 to "struct sockaddr_in"->sin_family
-(which is embedded into user-visible "struct nfs_mount_data" structure)
-despite nfs23_validate_mount_data() cannot pass sizeof(struct sockaddr_in6)
-bytes of AF_INET6 address to rpc_sockaddr2uaddr().
+A recent optimization had left private uninitialized.
 
-Since "struct nfs_mount_data" structure is user-visible, we can't change
-"struct nfs_mount_data" to use "struct sockaddr_storage". Therefore,
-assuming that everybody is using AF_INET family when passing address via
-"struct nfs_mount_data"->addr, reject if its sin_family is not AF_INET.
-
-[1] https://syzkaller.appspot.com/bug?id=599993614e7cbbf66bc2656a919ab2a95fb5d75c
-
-Reported-by: syzbot <syzbot+047a11c361b872896a4f@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: 2bc4ca9bb600 ("aio: don't zero entire aio_kiocb aio_get_req()")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/super.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/aio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2044,7 +2044,8 @@ static int nfs23_validate_mount_data(voi
- 		memcpy(sap, &data->addr, sizeof(data->addr));
- 		args->nfs_server.addrlen = sizeof(data->addr);
- 		args->nfs_server.port = ntohs(data->addr.sin_port);
--		if (!nfs_verify_server_address(sap))
-+		if (sap->sa_family != AF_INET ||
-+		    !nfs_verify_server_address(sap))
- 			goto out_no_address;
- 
- 		if (!(data->flags & NFS_MOUNT_TCP))
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1430,6 +1430,7 @@ static int aio_prep_rw(struct kiocb *req
+ 	if (unlikely(!req->ki_filp))
+ 		return -EBADF;
+ 	req->ki_complete = aio_complete_rw;
++	req->private = NULL;
+ 	req->ki_pos = iocb->aio_offset;
+ 	req->ki_flags = iocb_flags(req->ki_filp);
+ 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
 
 
