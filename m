@@ -2,127 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE449FF36
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B614FF3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfD3SAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 14:00:01 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:34748 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfD3SAB (ORCPT
+        id S1726952AbfD3SBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 14:01:37 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46071 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfD3SBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:00:01 -0400
-Received: by mail-it1-f197.google.com with SMTP id i2so1961203ita.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:00:00 -0700 (PDT)
+        Tue, 30 Apr 2019 14:01:36 -0400
+Received: by mail-vs1-f66.google.com with SMTP id o10so8514453vsp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=udGYYZ0yreK6CtTU+km/hkbu5NAgxUoskOjd7fbDP/U=;
+        b=loVtF8KBjSkZ8K3xAisNVfIzS4JJpgbqd/1xbj5zJ/zndA/l2aYmvKyzT5P2WNF0Ph
+         8EfksqMoTlhy+kreTuVOGfFpGdcIxKSdNaywlFu4kJSR84ljsb1/KB9nPoxLCTN99eEZ
+         73+nUgycHbo2eoku46d5DG3xXX7nj7nXZ3Kkw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=i1hNmIlzVNTyKhhowyG+Xc4x0UuOGxlZW8Ho3IlyYRI=;
-        b=VChtjkf6bmo3M9woiglxVndzagJ8fOVsU06h4HfgxLmPtFiHwvLPzosH7jIdPujyjF
-         PDxCNCzhFfLddX1IHE7W5+i7PwJZlHyNdhllM2NCxYIAlaW3rp0ZYyR+jslNpeyCwQJF
-         M6mp74tU15xZ+UUMq8DiJhr3SHYDDEW4V7/7dXwjeCkQYxa6iYvCWGr5iC7sRg7iLQE6
-         fh32xTE+kZCQ3D7er7dBCMbbqVke5QYi+j1eIgt6g0Nx/VUeE8k9OH2B+NpHNVXGYiFv
-         aGOvHEPgoIuHyvhUwTmz8bdenBoImObUhI8k3IRvFN8/jJ3XQU1zgw8TUsSMjstaSs2/
-         x7NA==
-X-Gm-Message-State: APjAAAXVYfWAIn/GSQ5zfKMVMSgapw78YoHrkWs7MuWqiOoMnw0beEgD
-        8RrCiBm1l7jS0E+gOGJOyLwoMVa5Ld8H2dRDidrIKX6Pv+9n
-X-Google-Smtp-Source: APXvYqxuUrE2nlzrRMGpu9w5k2U4DSjiS+lLd/PJcC0lFmoQuMdIeGKAtdUEmXYUl6Zk2Sh+HygwuCfv+JtcigTMyfzBUpDzUcSs
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=udGYYZ0yreK6CtTU+km/hkbu5NAgxUoskOjd7fbDP/U=;
+        b=AX1yFOcAh0v3EYY0kAl5cQ65uux+wrzL9PVLf1FxDfoMeoaGs5GHaG4BMNbCt/2mQ1
+         VcwC86c6NWZm+TQ1qekohIURSP10cX1Oec+DfRWx1QKlUuboaG0G47EOonw34xk/2cY9
+         IJtS/rZfkEuJzVSwYX0xn49c8yIPzsJJCyJxenw9U+S2fIQENjPaPnl6oTNv/hinTdzx
+         UOXUGB6Sa/Ah28g7lCJw/5r+tlbFU9G/vl9ll4ULH0DFT5lvd5bl8xn84OwE1fWsPm0e
+         iyqf2PV3jDFPi+PrBHm2Ooih4nfF7c7Iswhmvf68oeeCPBNslrU4FheFvIyyGLSKvhRK
+         gV5A==
+X-Gm-Message-State: APjAAAUEXzRPJhrIIzwEEvggHSesFz+piL9bGqBmvT9GN/13A6cueaZO
+        spM+pVPnEnCtiusXijaQIr0Dwq5wTfw=
+X-Google-Smtp-Source: APXvYqw5IaBKdhM/5krXQmB/rCgQiPSrvFUv5K8F1SGviNULc7r6jHcBI0Z/u97XAuq0KAFYjbaXQg==
+X-Received: by 2002:a67:82c8:: with SMTP id e191mr37537009vsd.24.1556647294383;
+        Tue, 30 Apr 2019 11:01:34 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id u3sm3982942vsi.2.2019.04.30.11.01.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 11:01:31 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id h127so3306469vkd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:01:31 -0700 (PDT)
+X-Received: by 2002:a1f:3c83:: with SMTP id j125mr35725886vka.92.1556647290472;
+ Tue, 30 Apr 2019 11:01:30 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:91c1:: with SMTP id k1mr2395471ior.180.1556647200359;
- Tue, 30 Apr 2019 11:00:00 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 11:00:00 -0700
-In-Reply-To: <CAAeHK+zn-26NHw8seueTyQV1o=O9x0U3m9-jV4V70Ctfutk8Fg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006b0d230587c32bf2@google.com>
-Subject: Re: WARNING: Support for this device (Terratec Grabster AV400) is experimental.
-From:   syzbot <syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <2236FBA76BA1254E88B949DDB74E612BA4C51962@IRSMSX102.ger.corp.intel.com>
+ <20190416120822.GV11158@hirez.programming.kicks-ass.net> <01914abbfc1a4053897d8d87a63e3411@AcuMS.aculab.com>
+ <20190416154348.GB3004@mit.edu> <2236FBA76BA1254E88B949DDB74E612BA4C52338@IRSMSX102.ger.corp.intel.com>
+ <9cf586757eb44f2c8f167abf078da921@AcuMS.aculab.com> <20190417151555.GG4686@mit.edu>
+ <99e045427125403ba2b90c2707d74e02@AcuMS.aculab.com> <2236FBA76BA1254E88B949DDB74E612BA4C5E473@IRSMSX102.ger.corp.intel.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
+ <20190426140102.GA4922@mit.edu> <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
+ <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
+ <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net> <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Apr 2019 11:01:02 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK108afSxMp6qtcdEr-D-ONz80L0C_4p2oLsMsDWvK=zw@mail.gmail.com>
+Message-ID: <CAGXu5jK108afSxMp6qtcdEr-D-ONz80L0C_4p2oLsMsDWvK=zw@mail.gmail.com>
+Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        David Laight <David.Laight@aculab.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Apr 30, 2019 at 10:51 AM Reshetova, Elena
+<elena.reshetova@intel.com> wrote:
+> base: Simple syscall: 0.1761 microseconds
+> get_random_bytes (4096 bytes per-cpu buffer): 0.1793 microsecons
+> get_random_bytes (64 bytes per-cpu buffer): 0.1866 microsecons
 
-syzbot has tested the proposed patch but the reproducer still triggered  
-crash:
-WARNING in sysfs_remove_group
+The 4096 size seems pretty good.
 
-pvrusb2: Important functionality might not be entirely working.
-pvrusb2: Please consider contacting the driver author to help with further  
-stabilization of the driver.
-------------[ cut here ]------------
-pvrusb2: **********
-sysfs group 'power' not found for kobject '0-0044'
-WARNING: CPU: 0 PID: 586 at fs/sysfs/group.c:254 sysfs_remove_group  
-fs/sysfs/group.c:254 [inline]
-WARNING: CPU: 0 PID: 586 at fs/sysfs/group.c:254  
-sysfs_remove_group+0x15a/0x1b0 fs/sysfs/group.c:245
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 586 Comm: pvrusb2-context Not tainted 5.1.0-rc3-g43151d6-dirty  
-#1
-usb 5-1: New USB device found, idVendor=0ccd, idProduct=0039, bcdDevice=  
-d.3c
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xe8/0x16e lib/dump_stack.c:113
-  panic+0x29d/0x5f2 kernel/panic.c:214
-  __warn.cold+0x20/0x48 kernel/panic.c:571
-  report_bug+0x262/0x2a0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x130/0x1f0 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:sysfs_remove_group fs/sysfs/group.c:254 [inline]
-RIP: 0010:sysfs_remove_group+0x15a/0x1b0 fs/sysfs/group.c:245
-Code: 48 89 d9 49 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 e9 03 80 3c  
-01 00 75 41 48 8b 33 48 c7 c7 a0 31 7a 8e e8 e6 c2 6e ff <0f> 0b eb 95 e8  
-0d de d3 ff e9 d2 fe ff ff 48 89 df e8 00 de d3 ff
-RSP: 0018:ffff88809cc9fb70 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffffffff8f037e80 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815b2132 RDI: ffffed1013993f60
-RBP: 0000000000000000 R08: ffff88809cc93100 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888097d06eb0
-R13: ffffffff8f038520 R14: 1ffff11013993f97 R15: ffff888097d06ea8
-  dpm_sysfs_remove+0xa2/0xc0 drivers/base/power/sysfs.c:737
-  device_del+0x175/0xb90 drivers/base/core.c:2246
-  device_unregister+0x27/0xd0 drivers/base/core.c:2301
-  i2c_unregister_device drivers/i2c/i2c-core-base.c:814 [inline]
-  __unregister_client drivers/i2c/i2c-core-base.c:1422 [inline]
-  __unregister_client+0x7d/0x90 drivers/i2c/i2c-core-base.c:1418
-  device_for_each_child+0x100/0x170 drivers/base/core.c:2401
-  i2c_del_adapter drivers/i2c/i2c-core-base.c:1485 [inline]
-  i2c_del_adapter+0x35b/0x640 drivers/i2c/i2c-core-base.c:1447
-  pvr2_i2c_core_done+0x6e/0xbb  
-drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:662
-  pvr2_hdw_destroy+0x17e/0x380 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2669
-  pvr2_context_destroy+0x89/0x240  
-drivers/media/usb/pvrusb2/pvrusb2-context.c:79
-  pvr2_context_check drivers/media/usb/pvrusb2/pvrusb2-context.c:146 [inline]
-  pvr2_context_thread_func+0x65e/0x870  
-drivers/media/usb/pvrusb2/pvrusb2-context.c:167
-usb 5-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-  kthread+0x313/0x420 kernel/kthread.c:253
-usb 3-1: New USB device found, idVendor=0ccd, idProduct=0039, bcdDevice=  
-d.3c
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> Below is a snip of what I quickly did (relevant parts) to get these numbers.
+> I do initial population of per-cpu buffers in late_initcall, but
+> practice shows that rng might not always be in good state by then.
+> So, we might not have really good randomness then, but I am not sure
+> if this is a practical problem since it only applies to system boot and by
+> the time it booted, it already issued enough syscalls that buffer gets refilled
+> with really good numbers.
+> Alternatively we can also do it on the first syscall that each cpu gets, but I
+> am not sure if that is always guaranteed to have a good randomness.
 
+Populating at first syscall seems like a reasonable way to delay. And
+I agree: I think we should not be too concerned about early RNG state:
+we should design for the "after boot" behaviors.
 
-Tested on:
+> diff --git a/lib/percpu-random.c b/lib/percpu-random.c
+> new file mode 100644
+> index 000000000000..3f92c44fbc1a
+> --- /dev/null
+> +++ b/lib/percpu-random.c
+> @@ -0,0 +1,49 @@
+> +#include <linux/types.h>
+> +#include <linux/percpu.h>
+> +#include <linux/random.h>
+> +
+> +static DEFINE_PER_CPU(struct rnd_buffer, stack_rand_offset) __latent_entropy;
+> +
+> +
+> +/*
+> + *    Generate some initially weak seeding values to allow
+> + *    to start the prandom_u32() engine.
+> + */
+> +static int __init stack_rand_offset_init(void)
+> +{
+> +    int i;
+> +
+> +    /* exctract bits to out per-cpu rand buffers */
+> +    for_each_possible_cpu(i) {
+> +        struct rnd_buffer *buffer = &per_cpu(stack_rand_offset, i);
+> +        buffer->byte_counter = 0;
+> +        /* if rng is not initialized, this won't extract us good stuff
+> +         * but we cannot wait for rng to initialize either */
+> +        get_random_bytes(&(buffer->buffer), sizeof(buffer->buffer));
 
-commit:         43151d6c usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e467a8a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=274aad0cf966c3bc
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1479a4b8a00000
+Instead of doing get_random_bytes() here, just set byte_counter =
+RANDOM_BUFFER_SIZE and let random_get_byte() do the work on a per-cpu
+basis?
 
+> +
+> +    }
+> +
+> +    return 0;
+> +}
+> +late_initcall(stack_rand_offset_init);
+> +
+> +unsigned char random_get_byte(void)
+> +{
+> +    struct rnd_buffer *buffer = &get_cpu_var(stack_rand_offset);
+> +    unsigned char res;
+> +
+> +    if (buffer->byte_counter >= RANDOM_BUFFER_SIZE) {
+> +        get_random_bytes(&(buffer->buffer), sizeof(buffer->buffer));
+> +        buffer->byte_counter = 0;
+> +    }
+> +
+> +    res = buffer->buffer[buffer->byte_counter];
+> +    buffer->buffer[buffer->byte_counter] = 0;
+> +    buffer->byte_counter ++;
+> +     put_cpu_var(stack_rand_offset);
+> +    return res;
+> +}
+> +EXPORT_SYMBOL(random_get_byte);
+
+Otherwise, sure, looks good. I remain worried about info leaks of the
+percpu area causing pain down the road, but we find a safer way to do
+this, we can do it later.
+
+-- 
+Kees Cook
