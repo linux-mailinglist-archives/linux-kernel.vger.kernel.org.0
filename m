@@ -2,76 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21484F1F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06215F1FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:27:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfD3IXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:23:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfD3IXe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:23:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NZBXO1ME4yyhNikKDn25Wx/qhHtX/guFa4/8R+Ntg+Y=; b=G3TUd0H0Lh2EYnrNVTvuVyRLB
-        p6pHt9vlLF0QLkapwZMYwuiZGgRG5nqILhQdEldK2Q5ku+eWhOMMsFZuRTthTK8Vaj6yNr9G54AXa
-        VqzBhoWej4S3X7Se06W0n7BRMUS95nn89oFIyVjBt6OBJyEta7tADh+jbNq8OxpzU62PtyLDJZwcg
-        A4qlbpX5xjzGIsu7w2QXJgno6DCXC7RAuuYRUvefMQtf42OsIemUxBmtQ72NTHQnWZ7Dpo5khsmeA
-        vYBLOLAYixvT0RaOkkcLGB3tD4N4zSxUdTDkHqSrgzC1ej0rPOcG4a63mKQBQgyFGZirJJApeJEQf
-        zvEKEnWhw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLO33-00082Z-LQ; Tue, 30 Apr 2019 08:23:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 334EE29D2D6D6; Tue, 30 Apr 2019 10:23:32 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 10:23:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH 4/5] ceph: fix improper use of smp_mb__before_atomic()
-Message-ID: <20190430082332.GB2677@hirez.programming.kicks-ass.net>
-References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1726537AbfD3I1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:27:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbfD3I1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:27:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 946472080C;
+        Tue, 30 Apr 2019 08:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556612852;
+        bh=qpWhxfKdvK06OPgNuI0PmE1gknQDuPHSD6Ow6PnrCtQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UCs9O3r1c1XINbUYUolN9sjlVVFUkTBPi/L2CvIGQfYsivM41zEEB+oBYCs/GKh8j
+         i/zt3TpNVX8BTAzhHB1d8epMursSTZD9R0CNKr/fZpN9qe7NAKNR61/ITtegl3pFJd
+         uQPQLeGsPQH5OiLPYDTTzWstOhtUYKQpSpkqWFVY=
+Date:   Tue, 30 Apr 2019 10:27:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Marek Behun <marek.behun@nic.cz>
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: sysfs attrs for HW ECDSA signature
+Message-ID: <20190430082728.GE8245@kroah.com>
+References: <20190429234752.171b4f2b@nic.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190429234752.171b4f2b@nic.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:15:00PM +0200, Andrea Parri wrote:
-> This barrier only applies to the read-modify-write operations; in
-> particular, it does not apply to the atomic64_set() primitive.
+On Mon, Apr 29, 2019 at 11:47:52PM +0200, Marek Behun wrote:
+> Hi Greg and Tejun,
 > 
-> Replace the barrier with an smp_mb().
+> is it acceptable for a driver to expose sysfs attr files for ECDSA
+> signature generation?
+
+What is "ECDSA signature generation"?  Is it a crypto thing?  If so, why
+not use the crypto api?  If not, what exactly is it?
+
+> The thing is that
+>   1. AFAIK there isn't another API for userspace to do this.
+>      There were attempts in 2015 to expose akcipher via netlink to
+>      userspace, but the patchseries were not accepted.
+
+Pointers to that patchset?  Why was it not accepted?
+
+>   2. even if it was possible, that specific device for which I am
+>      writing this driver does not provide the ability to set the
+>      private key to sign with - the private key is just burned during
+>      manufacturing and cannot be read, only signed with.
+
+Why does this matter?
+
+> The current version of my driver exposes do_sign file in
+> /sys/firmware/turris_mox directory.
 > 
+> Userspace should write message to sign and then can read the signature
+> from this do_sign file.
 
-> @@ -541,7 +541,7 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
->  					   long long release_count,
->  					   long long ordered_count)
->  {
-> -	smp_mb__before_atomic();
+How big are messages and signatures?  Why does this have to be a sysfs
+api?
 
-same
-	/*
-	 * XXX: the comment that explain this barrier goes here.
-	 */
+> According to the one attr = one file principle, it would be better to
+> have two files: ecdsa_msg_to_sign (write-only) and ecdsa_signature
+> (read-only).
+> Would this be acceptable in the kernel for this driver?
 
-> +	smp_mb();
+Why not use the crypto api, and if that doesn't work, why not just a
+char device to read/write?
 
->  	atomic64_set(&ci->i_complete_seq[0], release_count);
->  	atomic64_set(&ci->i_complete_seq[1], ordered_count);
->  }
-> -- 
-> 2.7.4
+> I have also another question, if you would not mind:
 > 
+> This driver is dependant on a mailbox driver I have also written
+> ("mailbox: Add support for Armada 37xx rWTM mailbox"), but I have not
+> received any review for this driver from the mailbox subsystem
+> maintainer, and I have already sent three versions (on 12/17/2018,
+> 03/01/2019 and 03/15/2019).
+> What should I do in this case?
+
+Poke the maintainer again :)
+
+thanks,
+
+greg k-h
