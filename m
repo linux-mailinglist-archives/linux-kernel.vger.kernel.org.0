@@ -2,253 +2,318 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08221FF07
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94792FF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfD3Rll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 13:41:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45582 "EHLO mx1.redhat.com"
+        id S1726560AbfD3RtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 13:49:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfD3Rlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 13:41:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725942AbfD3RtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 13:49:19 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D9A223086238;
-        Tue, 30 Apr 2019 17:41:39 +0000 (UTC)
-Received: from [10.36.116.17] (ovpn-116-17.ams2.redhat.com [10.36.116.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 921696D0B4;
-        Tue, 30 Apr 2019 17:41:34 +0000 (UTC)
-Subject: Re: [PATCH v2 18/19] iommu/vt-d: Support flushing more translation
- cache types
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1556062279-64135-19-git-send-email-jacob.jun.pan@linux.intel.com>
- <5ad35536-4993-13f1-5199-ddd99f7009e5@redhat.com>
- <20190429142921.1d36f560@jacob-builder>
- <4c54cbe9-b639-d560-4546-0ad84a622e89@redhat.com>
- <20190430101523.000e57a0@jacob-builder>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <4f92210c-81ba-58b1-6843-f70460885eba@redhat.com>
-Date:   Tue, 30 Apr 2019 19:41:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C86320835;
+        Tue, 30 Apr 2019 17:49:15 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 13:49:13 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: [RFC][PATCH] ftrace/x86: Emulate call function while updating in
+ breakpoint handler
+Message-ID: <20190430134913.4e29ce72@gandalf.local.home>
+In-Reply-To: <20190430132024.0f03f5b8@gandalf.local.home>
+References: <20190428133826.3e142cfd@oasis.local.home>
+        <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+        <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+        <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
+        <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
+        <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
+        <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+        <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
+        <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
+        <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
+        <20190430135602.GD2589@hirez.programming.kicks-ass.net>
+        <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
+        <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
+        <20190430130359.330e895b@gandalf.local.home>
+        <20190430132024.0f03f5b8@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190430101523.000e57a0@jacob-builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 30 Apr 2019 17:41:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
 
-On 4/30/19 7:15 PM, Jacob Pan wrote:
-> On Tue, 30 Apr 2019 06:41:13 +0200
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Jacob,
->>
->> On 4/29/19 11:29 PM, Jacob Pan wrote:
->>> On Sat, 27 Apr 2019 11:04:04 +0200
->>> Auger Eric <eric.auger@redhat.com> wrote:
->>>   
->>>> Hi Jacob,
->>>>
->>>> On 4/24/19 1:31 AM, Jacob Pan wrote:  
->>>>> When Shared Virtual Memory is exposed to a guest via vIOMMU,
->>>>> extended IOTLB invalidation may be passed down from outside IOMMU
->>>>> subsystems. This patch adds invalidation functions that can be
->>>>> used for additional translation cache types.
->>>>>
->>>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>>>> ---
->>>>>  drivers/iommu/dmar.c        | 48
->>>>> +++++++++++++++++++++++++++++++++++++++++++++
->>>>> include/linux/intel-iommu.h | 21 ++++++++++++++++---- 2 files
->>>>> changed, 65 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
->>>>> index 9c49300..680894e 100644
->>>>> --- a/drivers/iommu/dmar.c
->>>>> +++ b/drivers/iommu/dmar.c
->>>>> @@ -1357,6 +1357,20 @@ void qi_flush_iotlb(struct intel_iommu
->>>>> *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
->>>>>  }
->>>>>      
->>>> /* PASID-based IOTLB Invalidate */  
->>>>> +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u64
->>>>> addr, u32 pasid,
->>>>> +		unsigned int size_order, u64 granu)
->>>>> +{
->>>>> +	struct qi_desc desc;
->>>>> +
->>>>> +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
->>>>> +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
->>>>> +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(0) |
->>>>> +		QI_EIOTLB_AM(size_order);    
->>>> I see IH it hardcoded to 0. Don't you envision to cascade the IH.
->>>> On ARM this was needed for perf sake.  
->>> Right, we should cascade IH based on IOMMU_INV_ADDR_FLAGS_LEAF. Just
->>> curious how do you deduce the IH information on ARM? I guess you
->>> need to get the non-leaf page directory info?
->>> I will add an argument for IH.  
->> On ARM we have the "Leaf" field in the stage1 TLB invalidation
->> command. "When Leaf==1, only cached entries for the last level of
->> translation table walk are required to be invalidated".
->>
-> Thanks for explaining, I guess I didn't ask the right question. I was
-> wondering how SMMU driver determines when to set the Leaf bit. I guess
-> it is this function? It is not apparent to me whether the sharing of
-> non-leaf TLBs are considered.
-> io_pgtable_tlb_add_flush(iop, iova, blk_size, blk_size, true);
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-the leaf value is passed as arg to
-tlb_sync cb = arm_smmu_tlb_inv_range_nosync so the actual decision is
-made in io-pgtable-arm.c, see io_pgtable_tlb_sync call sites.
 
-Thanks
+Nicolai Stange discovered[1] that if live kernel patching is enabled, and the
+function tracer started tracing the same function that was patched, the
+conversion of the fentry call site during the translation of going from
+calling the live kernel patch trampoline to the iterator trampoline, would
+have as slight window where it didn't call anything.
 
-Eric
-> 
->> Thanks
->>
->> Eric
->>  [...]  
->>>> /* Pasid-based Device-TLB Invalidation */  
->>  [...]  
->>>>> +void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16
->>>>> pfsid,
->>>>> +		u32 pasid,  u16 qdep, u64 addr, unsigned size,
->>>>> u64 granu) +{
->>>>> +	struct qi_desc desc;
->>>>> +
->>>>> +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
->>>>> QI_DEV_EIOTLB_SID(sid) |
->>>>> +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
->>>>> +		QI_DEV_IOTLB_PFSID(pfsid);
->>>>> +	desc.qw1 |= QI_DEV_EIOTLB_GLOB(granu);  
->>> should be desc.qw1 =  
->>>>> +
->>>>> +	/* If S bit is 0, we only flush a single page. If S bit
->>>>> is set,
->>>>> +	 * The least significant zero bit indicates the size.
->>>>> VT-d spec
->>>>> +	 * 6.5.2.6
->>>>> +	 */
->>>>> +	if (!size)
->>>>> +		desc.qw0 = QI_DEV_EIOTLB_ADDR(addr) &
->>>>> ~QI_DEV_EIOTLB_SIZE;    
->>>> desc.q1 |= ?  
->>> Right, I also missed previous qw1 assignment.  
->>>>> +	else {
->>>>> +		unsigned long mask = 1UL << (VTD_PAGE_SHIFT +
->>>>> size); +
->>>>> +		desc.qw1 = QI_DEV_EIOTLB_ADDR(addr & ~mask) |
->>>>> QI_DEV_EIOTLB_SIZE;    
->>>> desc.q1 |=  
->>> right, thanks  
->>>>> +	}
->>>>> +	qi_submit_sync(&desc, iommu);
->>>>> +}
->>>>> +    
->>>> /* PASID-cache invalidation */  
->>>>> +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
->>>>> granu, int pasid) +{
->>>>> +	struct qi_desc desc;
->>>>> +
->>>>> +	desc.qw0 = QI_PC_TYPE | QI_PC_DID(did) |
->>>>> QI_PC_GRAN(granu) | QI_PC_PASID(pasid);
->>>>> +	desc.qw1 = 0;
->>>>> +	desc.qw2 = 0;
->>>>> +	desc.qw3 = 0;
->>>>> +	qi_submit_sync(&desc, iommu);
->>>>> +}
->>>>>  /*
->>>>>   * Disable Queued Invalidation interface.
->>>>>   */
->>>>> diff --git a/include/linux/intel-iommu.h
->>>>> b/include/linux/intel-iommu.h index 5d67d0d4..38e5efb 100644
->>>>> --- a/include/linux/intel-iommu.h
->>>>> +++ b/include/linux/intel-iommu.h
->>>>> @@ -339,7 +339,7 @@ enum {
->>>>>  #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
->>>>> (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
->>>>> (((u64)addr) & VTD_PAGE_MASK) #define
->>>>> QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
->>>>> QI_IOTLB_AM(am)		(((u8)am)) +#define
->>>>> QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
->>>>>  #define QI_CC_FM(fm)		(((u64)fm) << 48)
->>>>>  #define QI_CC_SID(sid)		(((u64)sid) << 32)
->>>>> @@ -357,17 +357,22 @@ enum {
->>>>>  #define QI_PC_DID(did)		(((u64)did) << 16)
->>>>>  #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
->>>>>  
->>>>> -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
->>>>> -#define QI_PC_PASID_SEL		(QI_PC_TYPE |
->>>>> QI_PC_GRAN(1)) +/* PASID cache invalidation granu */
->>>>> +#define QI_PC_ALL_PASIDS	0
->>>>> +#define QI_PC_PASID_SEL		1
->>>>>  
->>>>>  #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
->>>>>  #define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
->>>>>  #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
->>>>> -#define QI_EIOTLB_AM(am)	(((u64)am))
->>>>> +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
->>>>>  #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
->>>>>  #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
->>>>>  #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
->>>>>  
->>>>> +/* QI Dev-IOTLB inv granu */
->>>>> +#define QI_DEV_IOTLB_GRAN_ALL		1
->>>>> +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0
->>>>> +
->>>>>  #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
->>>>>  #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
->>>>>  #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
->>>>> @@ -658,8 +663,16 @@ extern void qi_flush_context(struct
->>>>> intel_iommu *iommu, u16 did, u16 sid, u8 fm, u64 type);
->>>>>  extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did,
->>>>> u64 addr, unsigned int size_order, u64 type);
->>>>> +extern void qi_flush_piotlb(struct intel_iommu *iommu, u16 did,
->>>>> u64 addr,
->>>>> +			u32 pasid, unsigned int size_order, u64
->>>>> type); extern void qi_flush_dev_iotlb(struct intel_iommu *iommu,
->>>>> u16 sid, u16 pfsid, u16 qdep, u64 addr, unsigned mask);
->>>>> +
->>>>> +extern void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16
->>>>> sid, u16 pfsid,
->>>>> +			u32 pasid, u16 qdep, u64 addr, unsigned
->>>>> size, u64 granu); +
->>>>> +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
->>>>> did, u64 granu, int pasid); +
->>>>>  extern int qi_submit_sync(struct qi_desc *desc, struct
->>>>> intel_iommu *iommu); 
->>>>>  extern int dmar_ir_support(void);
->>>>>     
->>>>
->>>> Thanks
->>>>
->>>> Eric  
->>>
->>> [Jacob Pan]
->>>   
-> 
-> [Jacob Pan]
-> 
+As live kernel patching depends on ftrace to always call its code (to
+prevent the function being traced from being called, as it will redirect
+it). This small window would allow the old buggy function to be called, and
+this can cause undesirable results.
+
+Nicolai submitted new patches[2] but these were controversial. As this is
+similar to the static call emulation issues that came up a while ago[3],
+Linus suggested using per CPU data along with special trampolines[4] to emulate
+the calls.
+
+Linus's solution was for text poke (which was mostly what the static_call
+code did), but as ftrace has its own mechanism, it required doing its own
+thing.
+
+Having ftrace use its own per CPU data and having its own set of specialized
+trampolines solves the issue of missed calls that live kernel patching
+suffers.
+
+[1] http://lkml.kernel.org/r/20180726104029.7736-1-nstange@suse.de
+[2] http://lkml.kernel.org/r/20190427100639.15074-1-nstange@suse.de
+[3] http://lkml.kernel.org/r/3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com
+[4] http://lkml.kernel.org/r/CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com
+
+Inspired-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Fixes: b700e7f03df5 ("livepatch: kernel: add support for live patching")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ arch/x86/kernel/ftrace.c | 146 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 143 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index ef49517f6bb2..835277043348 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -17,6 +17,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/ftrace.h>
+ #include <linux/percpu.h>
++#include <linux/frame.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
+@@ -232,6 +233,9 @@ int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
+ 
+ static unsigned long ftrace_update_func;
+ 
++/* Used within inline asm below */
++unsigned long ftrace_update_func_call;
++
+ static int update_ftrace_func(unsigned long ip, void *new)
+ {
+ 	unsigned char old[MCOUNT_INSN_SIZE];
+@@ -259,6 +263,8 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
+ 	unsigned char *new;
+ 	int ret;
+ 
++	ftrace_update_func_call = (unsigned long)func;
++
+ 	new = ftrace_call_replace(ip, (unsigned long)func);
+ 	ret = update_ftrace_func(ip, new);
+ 
+@@ -280,6 +286,103 @@ static nokprobe_inline int is_ftrace_caller(unsigned long ip)
+ 	return 0;
+ }
+ 
++/*
++ * We need to handle the "call func1" -> "call func2" case.
++ * Just skipping the call is not sufficient as it will be like
++ * changing to "nop" first and then updating the call. But some
++ * users of ftrace require calls never to be missed.
++ *
++ * To emulate the call while converting the call site with a breakpoint,
++ * some trampolines are used along with per CPU buffers.
++ * There are three trampolines for the call sites and three trampolines
++ * for the updating of the call in ftrace trampoline. The three
++ * trampolines are:
++ *
++ * 1) Interrupts are enabled when the breakpoint is hit
++ * 2) Interrupts are disabled when the breakpoint is hit
++ * 3) The breakpoint was hit in an NMI
++ *
++ * As per CPU data is used, interrupts must be disabled to prevent them
++ * from corrupting the data. A separate NMI trampoline is used for the
++ * NMI case. If interrupts are already disabled, then the return path
++ * of where the breakpoint was hit (saved in the per CPU data) is pushed
++ * on the stack and then a jump to either the ftrace_caller (which will
++ * loop through all registered ftrace_ops handlers depending on the ip
++ * address), or if its a ftrace trampoline call update, it will call
++ * ftrace_update_func_call which will hold the call that should be
++ * called.
++ */
++extern asmlinkage void ftrace_emulate_call_irqon(void);
++extern asmlinkage void ftrace_emulate_call_irqoff(void);
++extern asmlinkage void ftrace_emulate_call_nmi(void);
++extern asmlinkage void ftrace_emulate_call_update_irqoff(void);
++extern asmlinkage void ftrace_emulate_call_update_irqon(void);
++extern asmlinkage void ftrace_emulate_call_update_nmi(void);
++
++static DEFINE_PER_CPU(void *, ftrace_bp_call_return);
++static DEFINE_PER_CPU(void *, ftrace_bp_call_nmi_return);
++
++asm(
++	".text\n"
++
++	/* Trampoline for function update with interrupts enabled */
++	".global ftrace_emulate_call_irqoff\n"
++	".type ftrace_emulate_call_irqoff, @function\n"
++	"ftrace_emulate_call_irqoff:\n\t"
++		"push %gs:ftrace_bp_call_return\n\t"
++		"sti\n\t"
++		"jmp ftrace_caller\n"
++	".size ftrace_emulate_call_irqoff, .-ftrace_emulate_call_irqoff\n"
++
++	/* Trampoline for function update with interrupts disabled*/
++	".global ftrace_emulate_call_irqon\n"
++	".type ftrace_emulate_call_irqon, @function\n"
++	"ftrace_emulate_call_irqon:\n\t"
++		"push %gs:ftrace_bp_call_return\n\t"
++		"jmp ftrace_caller\n"
++	".size ftrace_emulate_call_irqon, .-ftrace_emulate_call_irqon\n"
++
++	/* Trampoline for function update in an NMI */
++	".global ftrace_emulate_call_nmi\n"
++	".type ftrace_emulate_call_nmi, @function\n"
++	"ftrace_emulate_call_nmi:\n\t"
++		"push %gs:ftrace_bp_call_nmi_return\n\t"
++		"jmp ftrace_caller\n"
++	".size ftrace_emulate_call_nmi, .-ftrace_emulate_call_nmi\n"
++
++	/* Trampoline for ftrace trampoline call update with interrupts enabled */
++	".global ftrace_emulate_call_update_irqoff\n"
++	".type ftrace_emulate_call_update_irqoff, @function\n"
++	"ftrace_emulate_call_update_irqoff:\n\t"
++		"push %gs:ftrace_bp_call_return\n\t"
++		"sti\n\t"
++		"jmp *ftrace_update_func_call\n"
++	".size ftrace_emulate_call_update_irqoff, .-ftrace_emulate_call_update_irqoff\n"
++
++	/* Trampoline for ftrace trampoline call update with interrupts disabled */
++	".global ftrace_emulate_call_update_irqon\n"
++	".type ftrace_emulate_call_update_irqon, @function\n"
++	"ftrace_emulate_call_update_irqon:\n\t"
++		"push %gs:ftrace_bp_call_return\n\t"
++		"jmp *ftrace_update_func_call\n"
++	".size ftrace_emulate_call_update_irqon, .-ftrace_emulate_call_update_irqon\n"
++
++	/* Trampoline for ftrace trampoline call update in an NMI */
++	".global ftrace_emulate_call_update_nmi\n"
++	".type ftrace_emulate_call_update_nmi, @function\n"
++	"ftrace_emulate_call_update_nmi:\n\t"
++		"push %gs:ftrace_bp_call_nmi_return\n\t"
++		"jmp *ftrace_update_func_call\n"
++	".size ftrace_emulate_call_update_nmi, .-ftrace_emulate_call_update_nmi\n"
++	".previous\n");
++
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_irqoff);
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_irqon);
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_nmi);
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_update_irqoff);
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_update_irqon);
++STACK_FRAME_NON_STANDARD(ftrace_emulate_call_update_nmi);
++
+ /*
+  * A breakpoint was added to the code address we are about to
+  * modify, and this is the handle that will just skip over it.
+@@ -295,10 +398,44 @@ int ftrace_int3_handler(struct pt_regs *regs)
+ 		return 0;
+ 
+ 	ip = regs->ip - 1;
+-	if (!ftrace_location(ip) && !is_ftrace_caller(ip))
++	if (ftrace_location(ip)) {
++		/* A breakpoint at the beginning of the function was hit */
++		if (in_nmi()) {
++			/* NMIs have their own trampoline */
++			this_cpu_write(ftrace_bp_call_nmi_return, (void *)ip + MCOUNT_INSN_SIZE);
++			regs->ip = (unsigned long) ftrace_emulate_call_nmi;
++			return 1;
++		}
++		this_cpu_write(ftrace_bp_call_return, (void *)ip + MCOUNT_INSN_SIZE);
++		if (regs->flags & X86_EFLAGS_IF) {
++			regs->flags &= ~X86_EFLAGS_IF;
++			regs->ip = (unsigned long) ftrace_emulate_call_irqoff;
++		} else {
++			regs->ip = (unsigned long) ftrace_emulate_call_irqon;
++		}
++	} else if (is_ftrace_caller(ip)) {
++		/* An ftrace trampoline is being updated */
++		if (!ftrace_update_func_call) {
++			/* If it's a jump, just need to skip it */
++			regs->ip += MCOUNT_INSN_SIZE -1;
++			return 1;
++		}
++		if (in_nmi()) {
++			/* NMIs have their own trampoline */
++			this_cpu_write(ftrace_bp_call_nmi_return, (void *)ip + MCOUNT_INSN_SIZE);
++			regs->ip = (unsigned long) ftrace_emulate_call_update_nmi;
++			return 1;
++		}
++		this_cpu_write(ftrace_bp_call_return, (void *)ip + MCOUNT_INSN_SIZE);
++		if (regs->flags & X86_EFLAGS_IF) {
++			regs->flags &= ~X86_EFLAGS_IF;
++			regs->ip = (unsigned long) ftrace_emulate_call_update_irqoff;
++		} else {
++			regs->ip = (unsigned long) ftrace_emulate_call_update_irqon;
++		}
++	} else {
+ 		return 0;
+-
+-	regs->ip += MCOUNT_INSN_SIZE - 1;
++	}
+ 
+ 	return 1;
+ }
+@@ -859,6 +996,8 @@ void arch_ftrace_update_trampoline(struct ftrace_ops *ops)
+ 
+ 	func = ftrace_ops_get_func(ops);
+ 
++	ftrace_update_func_call = (unsigned long)func;
++
+ 	/* Do a safe modify in case the trampoline is executing */
+ 	new = ftrace_call_replace(ip, (unsigned long)func);
+ 	ret = update_ftrace_func(ip, new);
+@@ -960,6 +1099,7 @@ static int ftrace_mod_jmp(unsigned long ip, void *func)
+ {
+ 	unsigned char *new;
+ 
++	ftrace_update_func_call = 0;
+ 	new = ftrace_jmp_replace(ip, (unsigned long)func);
+ 
+ 	return update_ftrace_func(ip, new);
+-- 
+2.20.1
+
