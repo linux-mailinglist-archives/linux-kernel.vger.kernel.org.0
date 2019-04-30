@@ -2,72 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC532100B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C01100BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfD3UVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 16:21:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56933 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfD3UVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 16:21:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 13:21:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
-   d="scan'208";a="228167388"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 30 Apr 2019 13:21:19 -0700
-Date:   Tue, 30 Apr 2019 13:24:05 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Auger Eric <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 06/19] drivers core: Add I/O ASID allocator
-Message-ID: <20190430132405.62902350@jacob-builder>
-In-Reply-To: <fd5b8c6c-05f0-307b-aaa2-0938337014a8@arm.com>
-References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1556062279-64135-7-git-send-email-jacob.jun.pan@linux.intel.com>
-        <4550408f-39ff-7bf9-0072-a0898c6c2f60@redhat.com>
-        <fd5b8c6c-05f0-307b-aaa2-0938337014a8@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726431AbfD3UZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 16:25:02 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38279 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfD3UZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 16:25:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id j26so7369634pgl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 13:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cZbWR8UVfZ8GI/ZAitfCAp4Uvgb8pmAiiJi8Ym1dyi0=;
+        b=mPxLMpoXrjW84+Q+dAXzwjWJ9L1mxjS352qOAnO+1VCFDzPfebz3qqp2pN4tHOfFLB
+         9gPyAEyVAoUBTWi9vlizYePWV/gIED0jBojgBoKtfkl0THUjpDKUvk+cx9EAx2t+YQ8I
+         i+CVzWSecEmDbyCzSu/GmIJE3TROPyjQc+hd/u/Wi1pSM9sf0nMrBb5itinoLOoJNW2S
+         FBNpyGM1d8oMm58eSxSTVOO3Qi1vpAiPg0bXUOOSnzcRXhHymgOVxuYjdED9DhMpa6do
+         PLdlvIUGLSOnOolrYC/RrfrHLkLkaPftYndaxR5NWQyMvdnJzaK0+J1TqWglKBwnXuIb
+         NpLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cZbWR8UVfZ8GI/ZAitfCAp4Uvgb8pmAiiJi8Ym1dyi0=;
+        b=VL5kKkwu60Vv0T530mcZzzAYGfA0cqU0Ro5UARZ5ZQnwvYjLe15i1gwQv+00e67Qy1
+         FE2N3COmuLbDS7T+qeE3n8cGNggk8F3R0JYeHB2oog+0Ss4OejuKloP6iUAtMZYATGpC
+         i426iaQR2SREJ533QyYTrvh9QsaZzqBHH5NIvRei2FU/TmSZOsiYqr0DDTafQyQz/Yf+
+         xiAvYoaKR2vppDTzt8VNNfc9alOJVkP7lAsk+JcsDbxv9mj+4b4iPiFXuHsA5RVdnNdx
+         BvgtMDlfkLVQZmjnFmd/RfND6vPhNV5lbQDyayO7eDwuHj0QAdhurO868A8621A7uCfx
+         r3OA==
+X-Gm-Message-State: APjAAAWICP20NrpVsOuo68K779Y8bTU/dTCvT2E2WjdeKokYV+SEs8/H
+        KVQfSSyaxezUVvyk0zDAJRRWZWAQySW9Z6U9GaAluQ==
+X-Google-Smtp-Source: APXvYqwcrOTSBIpt8uvCRs55U+qx6snTYGoytm6Fw7QoPc1UUSu1WG0QFpUFlFgyfNfj7Pzb+675wZlbrF28unvbtZ0=
+X-Received: by 2002:a63:4558:: with SMTP id u24mr65997972pgk.225.1556655900784;
+ Tue, 30 Apr 2019 13:25:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190423204821.241925-1-ndesaulniers@google.com>
+In-Reply-To: <20190423204821.241925-1-ndesaulniers@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 30 Apr 2019 13:24:49 -0700
+Message-ID: <CAKwvOd=ws1D95ydQjGtK0U0KQ-5poyj8Oek5Yka6-cvtCdpJ-g@mail.gmail.com>
+Subject: Re: [PATCH] ia64: require -Wl,--hash-style=sysv
+To:     tony.luck@intel.com, fenghua.yu@intel.com
+Cc:     clang-built-linux <clang-built-linux@googlegroups.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Apr 2019 11:41:05 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+On Tue, Apr 23, 2019 at 1:48 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> Towards the goal of removing cc-ldoption, it seems that --hash-style=
+> was added to binutils 2.17.50.0.2 in 2006. The minimal required version
+> of binutils for the kernel according to
+> Documentation/process/changes.rst is 2.20.
+>
+> Link: https://gcc.gnu.org/ml/gcc/2007-01/msg01141.html
+> Cc: clang-built-linux@googlegroups.com
+> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  arch/ia64/kernel/Makefile.gate | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/ia64/kernel/Makefile.gate b/arch/ia64/kernel/Makefile.gate
+> index f53faf48b7ce..846867bff6d6 100644
+> --- a/arch/ia64/kernel/Makefile.gate
+> +++ b/arch/ia64/kernel/Makefile.gate
+> @@ -11,7 +11,7 @@ quiet_cmd_gate = GATE    $@
+>        cmd_gate = $(CC) -nostdlib $(GATECFLAGS_$(@F)) -Wl,-T,$(filter-out FORCE,$^) -o $@
+>
+>  GATECFLAGS_gate.so = -shared -s -Wl,-soname=linux-gate.so.1 \
+> -                    $(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
+> +                    -Wl,--hash-style=sysv
+>  $(obj)/gate.so: $(obj)/gate.lds $(obj)/gate.o FORCE
+>         $(call if_changed,gate)
+>
+> --
+> 2.21.0.593.g511ec345e18-goog
+>
 
-> On 25/04/2019 11:17, Auger Eric wrote:
-> >> +/**
-> >> + * ioasid_alloc - Allocate an IOASID
-> >> + * @set: the IOASID set
-> >> + * @min: the minimum ID (inclusive)
-> >> + * @max: the maximum ID (exclusive)
-> >> + * @private: data private to the caller
-> >> + *
-> >> + * Allocate an ID between @min and @max (or %0 and %INT_MAX).
-> >> Return the  
-> > I would remove "(or %0 and %INT_MAX)".  
-> 
-> Agreed, those where the default values of idr, but the xarray doesn't
-> define a default max value. By the way, I do think squashing patches 6
-> and 7 would be better (keeping my SOB but you can change the author).
-> 
-I will squash 6 and 7 in v3. I will just add my SOB but keep the
-author if that is OK.
+bumping for review
+
+-- 
+Thanks,
+~Nick Desaulniers
