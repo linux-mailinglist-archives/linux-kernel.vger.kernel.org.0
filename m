@@ -2,159 +2,322 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B679F16A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 09:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44772F156
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 09:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfD3HfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 03:35:16 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41954 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfD3HfN (ORCPT
+        id S1726444AbfD3HdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 03:33:25 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:52719 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfD3HdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 03:35:13 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t30so9921366lfd.8;
-        Tue, 30 Apr 2019 00:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4Akp5uxp13EweIV3YZW+2vy2S3lWmyRPWKOuymZaNBQ=;
-        b=LFLixQ6b6+xa9/QZVqDDGA21oDHgPCKaF3ael1isibVX7xxiKAthhuYeKMRq8INoMY
-         MrkjZsyED6OgcB5DbWY1NaE9vG0iRgMOpEwrXWZ/w7iKvNlHNzQccL94pJCJ9dw/akWa
-         VydPi/RwXz7qmbQ5AR9CEzvO5iP81KQTvUhxarrrPKKwrl/toGTeguZiSzuiZ0gcIgij
-         7MY9SnM6umJ76UIBnegY4Q7haFT+ZMfwgNS26spdYL09UFp7uehv0FdUMX2itADK20IF
-         3ZlZpUydeBuHTdK/LThLpAOYG8n0bCYlG7e6Wzt5tw7XvcLtfb/D1n7jDqr7mYKHg4Jh
-         ddkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4Akp5uxp13EweIV3YZW+2vy2S3lWmyRPWKOuymZaNBQ=;
-        b=rCvZAEVrMRrN7tF1jKOQfR1zS5ho3t7WoSutVJbVcbhzMSKSikDA9BuPIJj0ciKf+J
-         IpFmM+Nkp+ZYUgrnRf9fK0/tow92Psa08M+YCsZbfX+io/04+6cV4GhvyxcmXKcpq5bE
-         38k1c3JBRXYdUm42Zoq88evtAkA0IkkzYTdIEhcmsZsXfimkF88Mpjgxgh2ETBFxlSwG
-         fT0ZGplBt6uaK+zgfFcfQFm5Qm+YQePogZGz1ySKcVTHDPMJnzu1yPZG4moIZWWjpTGg
-         sjG0AEXmtembIelVlLvURPe1NTlUlSjD7PLQ22YhulRnLnQwtdXb64M/Y3dvCHI8NbeX
-         uK2g==
-X-Gm-Message-State: APjAAAVRMjyS3TdOVNu6C4sJmOel9bBThefkz0bQm+8WErCppcXijS2c
-        4FkVZ0cf69LHZ0q1B4mII3o=
-X-Google-Smtp-Source: APXvYqzAVtaeLvJcIE/R+qJxl8ttLN6W3l69ULlOrb+R12MtLxhFyXnmQXwOHsclaEN/tVWSHOqa1w==
-X-Received: by 2002:ac2:5582:: with SMTP id v2mr9892379lfg.19.1556609710946;
-        Tue, 30 Apr 2019 00:35:10 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.133.52])
-        by smtp.gmail.com with ESMTPSA id v23sm2400572ljk.14.2019.04.30.00.35.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 00:35:10 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 7/7] blk-mq: Adjust hybrid poll sleep time
-Date:   Tue, 30 Apr 2019 10:34:19 +0300
-Message-Id: <90ea71d810084eec70fb1632587b450b3037ce85.1556609582.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1556609582.git.asml.silence@gmail.com>
-References: <cover.1556609582.git.asml.silence@gmail.com>
+        Tue, 30 Apr 2019 03:33:23 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190430073319epoutp042d5b8974da9c2acadfb6373eab25a4f8~aMC7u-D590822708227epoutp04R
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:33:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190430073319epoutp042d5b8974da9c2acadfb6373eab25a4f8~aMC7u-D590822708227epoutp04R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1556609599;
+        bh=e34k/yVofLPdOOX6XLtJ1nlpeN11FL4odbRWUg/xKsE=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=C09iPBFtB/qBwwP9DqEKJ9SudDeEv6GjWNtohAVKHpEJ6GVl5nnPWW6ahJM7Aa4bZ
+         XWpp4yeG0/tVgtlLp1OuEfRhafgUMbR4TGRnT1KC2KPKtRMux5cTV9J4wY1SpuffcU
+         lldQbZrGFkFF2BmkCiyvnZEff4rta+W4z3fSHzdI=
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190430073316epcas1p115013adba89d57243ab2883855e9a86e~aMC4oH7Ue1033710337epcas1p13;
+        Tue, 30 Apr 2019 07:33:16 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        32.37.04108.B3AF7CC5; Tue, 30 Apr 2019 16:33:15 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190430073315epcas1p362e81786c257ddeace6be27afa1332fd~aMC38Hk5a0610506105epcas1p3E;
+        Tue, 30 Apr 2019 07:33:15 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190430073315epsmtrp23a1daa0b667fdf7f0025e5ccb8be04fe~aMC37Mfwh2858628586epsmtrp2K;
+        Tue, 30 Apr 2019 07:33:15 +0000 (GMT)
+X-AuditID: b6c32a39-d0c179c00000100c-71-5cc7fa3b2f53
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.EA.03692.B3AF7CC5; Tue, 30 Apr 2019 16:33:15 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190430073314epsmtip1c91c030ccb46c91972456cba60effb23~aMC3p85_71626316263epsmtip1V;
+        Tue, 30 Apr 2019 07:33:14 +0000 (GMT)
+Subject: Re: [PATCH v3 2/4] drivers: devfreq: events: extend events by type
+ of counted data
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, kgene@kernel.org,
+        willy.mh.wolff.ml@gmail.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <3557d507-0463-89de-4025-fbeaaef78bed@samsung.com>
+Date:   Tue, 30 Apr 2019 16:34:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <1555681688-19643-3-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNJsWRmVeSWpSXmKPExsWy7bCmrq71r+MxBt8+m1lsnLGe1WL+kXOs
+        Fv2PXzNbnD+/gd3ibNMbdotbDTIWmx5fY7W4vGsOm8Xn3iOMFjPO72OyWHvkLrvF0usXmSxu
+        N65gs2jde4Td4vCbdlaLbyceMToIeKyZt4bRY+esu+wem1Z1snlsXlLvcfDdHiaPvi2rGD0+
+        b5ILYI/KtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wB
+        ul1JoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBk
+        ClSYkJ3xZEcbY8Em84qmSdvZGhi3aXQxcnJICJhINH59y9TFyMUhJLCDUWLhvg9sEM4nRol7
+        PYtZIJxvjBJ/1u5kgWn5e7+NGcQWEtjLKLH5oyxE0XtGiQk7PrOCJIQFYiVuTZjGCpIQETjL
+        KPGgaRvYXGaBz4wSJx9cA6tiE9CS2P/iBhuIzS+gKHH1x2NGEJtXwE7iwpHfQDUcHCwCqhJb
+        nruAhEUFIiTuH9vAClEiKHFy5hOwizgFvCWmv+4CG8MsIC5x68l8JghbXqJ562xmkL0SAsfY
+        JZ782swM8YKLRE9zIyuELSzx6vgWdghbSuLzu71sEHa1xMqTR9ggmjsYJbbsvwDVYCyxf+lk
+        JpDjmAU0Jdbv0odYxifx7msP2M0SArwSHW1CENXKEpcf3GWCsCUlFrd3Qo33kJh1egnTBEbF
+        WUjemYXkhVlIXpiFsGwBI8sqRrHUguLc9NRiwwJT5OjexAhO2FqWOxiPnfM5xCjAwajEw+vx
+        7liMEGtiWXFl7iFGCQ5mJRFej+NHY4R4UxIrq1KL8uOLSnNSiw8xmgIDeyKzlGhyPjCb5JXE
+        G5oaGRsbW5gYmpkaGiqJ8653cI4REkhPLEnNTk0tSC2C6WPi4JRqYHRLu7ZHIcS+YV8ff6Dg
+        tsvPCgsfaGVfkDnfqaQ2c77Voq6mzC0v+z/Lqa/zObgjeWP4o92zXJ4WM52+JNbKVJycPMHq
+        Au/8KxMu8xzTv69/rHFT09Luvl+KXgxKGwtn6+kuYjQX2PpOYp5WppHARu+3bPMWpzH3LW3b
+        p1DM8cTirEr8yr5Tm5VYijMSDbWYi4oTASvwA0DuAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCSnK71r+MxBlMWc1hsnLGe1WL+kXOs
+        Fv2PXzNbnD+/gd3ibNMbdotbDTIWmx5fY7W4vGsOm8Xn3iOMFjPO72OyWHvkLrvF0usXmSxu
+        N65gs2jde4Td4vCbdlaLbyceMToIeKyZt4bRY+esu+wem1Z1snlsXlLvcfDdHiaPvi2rGD0+
+        b5ILYI/isklJzcksSy3St0vgyniyo42xYJN5RdOk7WwNjNs0uhg5OSQETCT+3m9j7mLk4hAS
+        2M0osXnBcnaIhKTEtItHgRIcQLawxOHDxRA1bxklrtycwAZSIywQKzF/8T5GkISIwFlGiUWT
+        FrCDOMwCnxklpq+5DDX2PqPEo2ftTCAtbAJaEvtf3ABr5xdQlLj64zEjiM0rYCdx4chvVpB1
+        LAKqElueu4CERQUiJM68X8ECUSIocXLmEzCbU8BbYvrrLrAxzALqEn/mXWKGsMUlbj2ZzwRh
+        y0s0b53NPIFReBaS9llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95Pzc
+        TYzg2NXS3MF4eUn8IUYBDkYlHl6Pd8dihFgTy4orcw8xSnAwK4nwehw/GiPEm5JYWZValB9f
+        VJqTWnyIUZqDRUmc92nesUghgfTEktTs1NSC1CKYLBMHp1QDo7/77AWrLefJL88Q/P5VKPlu
+        QOAN5ycu79L6ly6cxn1vbdBF27oLDdqCRuzzPVy3nZnziNPHWEqDqUFOqJe/SuhHqNRpKYdP
+        l2+vsPrx6GaM3ZfZix1cjhdnZaydeXXTtNUBc16+zJyz4YdVBc93jpB/mYuyLu+9+77uqK4r
+        846dST+ftC1fb67EUpyRaKjFXFScCABR6hro2QIAAA==
+X-CMS-MailID: 20190430073315epcas1p362e81786c257ddeace6be27afa1332fd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190419134821eucas1p2461a27e28387ff2b87c149f09582d2a0
+References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190419134821eucas1p2461a27e28387ff2b87c149f09582d2a0@eucas1p2.samsung.com>
+        <1555681688-19643-3-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Hi Lukasz,
 
-Sleep for (mean / 2) in the adaptive polling is often too pessimistic,
-use a variation of the 3-sigma rule (mean - 4 * lmd) and tune it in
-runtime using percentage of missed (i.e. overslept) requests:
-1. if more than ~3% of requests are missed, then fallback to (mean / 2)
-2. if more than ~0.4% is missed, then scale down
+On 19. 4. 19. 오후 10:48, Lukasz Luba wrote:
+> This patch adds posibility to choose what type of data should be counted
+> by the PPMU counter. Now the type comes from DT where the event has been
+> defined. When there is no 'event-data-type' the default value is used,
+> which is 'read data in bytes'.
+> It is needed when you want to know not only read+write data bytes but
+> i.e. only write data in byte, or number of read requests, etc.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 61 +++++++++++++++++++++++++------------
+>  include/linux/devfreq-event.h       |  6 ++++
+>  2 files changed, 48 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index c61de0b..073bf2c 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -154,9 +154,9 @@ static int exynos_ppmu_set_event(struct devfreq_event_dev *edev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Set the event of Read/Write data count  */
+> +	/* Set the event of proper data type monitoring */
+>  	ret = regmap_write(info->regmap, PPMU_BEVTxSEL(id),
+> -				PPMU_RO_DATA_CNT | PPMU_WO_DATA_CNT);
+> +			   edev->desc->data_type);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -368,23 +368,11 @@ static int exynos_ppmu_v2_set_event(struct devfreq_event_dev *edev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Set the event of Read/Write data count  */
+> -	switch (id) {
+> -	case PPMU_PMNCNT0:
+> -	case PPMU_PMNCNT1:
+> -	case PPMU_PMNCNT2:
+> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
+> -				PPMU_V2_RO_DATA_CNT | PPMU_V2_WO_DATA_CNT);
+> -		if (ret < 0)
+> -			return ret;
+> -		break;
+> -	case PPMU_PMNCNT3:
+> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
+> -				PPMU_V2_EVT3_RW_DATA_CNT);
+> -		if (ret < 0)
+> -			return ret;
+> -		break;
+> -	}
+> +	/* Set the event of proper data type monitoring */
+> +	ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
+> +			   edev->desc->data_type);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	/* Reset cycle counter/performance counter and enable PPMU */
+>  	ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
+> @@ -508,6 +496,7 @@ static int of_get_devfreq_events(struct device_node *np,
+>  	struct device *dev = info->dev;
+>  	struct device_node *events_np, *node;
+>  	int i, j, count;
+> +	int ret;
+>  
+>  	events_np = of_get_child_by_name(np, "events");
+>  	if (!events_np) {
+> @@ -544,6 +533,40 @@ static int of_get_devfreq_events(struct device_node *np,
+>  		desc[j].driver_data = info;
+>  
+>  		of_property_read_string(node, "event-name", &desc[j].name);
+> +		ret = of_property_read_u32(node, "event-data-type",
+> +					   &desc[j].data_type);
+> +		if (ret) {
+> +			/* Set the event of proper data type counting.
+> +			 * Check if the data type has been defined in DT,
+> +			 * use default if not.
+> +			 */
+> +			if (of_device_is_compatible(np,
+> +					"samsung,exynos-ppmu-v2")) {
 
-Pitfalls:
-1. any missed request increases the mean, synergistically increasing
-mean and sleep time, so, scale down fast in the case
-2. even if the sleep time is predicted well, sleep loop could greatly
-oversleep by itself. Then try to detect it and skip the miss accounting.
+It is not proper to compare the compatible string again
+in the device driver. Instead, you can define the ppmu device type
+as following and then use 'struct of_device_id' in order to
+identify the device type.
 
-Tested on an NVMe SSD:
-{4K,8K} read-only workloads give similar latency distribution (up to
-7 nines), and decreases CPU load twice (50% -> 25%). New method even
-outperform the old one a bit (in terms of throughput and latencies),
-presumably, because it alleviates the 2nd pitfall.
-For write-only workload it falls back to (mean / 2).
+	enum exynos_ppmu_type {
+		EXYNOS_TYPE_PPMU,
+		EXYNOS_TYPE_PPMU_V2,
+	};
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- block/blk-mq.c | 44 +++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 37 insertions(+), 7 deletions(-)
+ static const struct of_device_id exynos_ppmu_id_match[] = {
+        {
+                .compatible = "samsung,exynos-ppmu",
+-               .data = (void *)&exynos_ppmu_ops,
++               .data = (void *)EXYNOS_TYPE_PPMU,
+        }, {
+                .compatible = "samsung,exynos-ppmu-v2",
+-               .data = (void *)&exynos_ppmu_v2_ops,
++               .data = (void *)EXYNOS_TYPE_PPMU_V2,
+        },
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ec7cde754c2f..efa44a617bea 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3338,10 +3338,21 @@ static void blk_mq_poll_stats_start(struct request_queue *q)
- 	blk_stat_activate_msecs(q->poll_cb, 100);
- }
+
+The many device drivers in the mainline uses this code
+in order to get the device type. You can refer the example
+in the drivers/mfd/max14577.c.
+
+(snip)
+
+
+Example, I add the example. but it is not tested. 
+
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -16,6 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/suspend.h>
+@@ -23,6 +24,11 @@
  
-+/*
-+ * Thresholds are ilog2(nr_requests / nr_misses)
-+ * To calculate tolerated miss ratio from it, use
-+ * f(x) ~= 2 ^ -(x + 1)
-+ *
-+ * fallback ~ 3.1%
-+ * throttle ~ 0.4%
-+ */
-+#define BLK_POLL_FALLBACK_THRESHOLD	4
-+#define BLK_POLL_THROTTLE_THRESHOLD	7
+ #include "exynos-ppmu.h"
+ 
++enum exynos_ppmu_type {
++       EXYNOS_TYPE_PPMU,
++       EXYNOS_TYPE_PPMU_V2,
++};
 +
- static void blk_mq_update_poll_info(struct poll_info *pi,
- 				    struct blk_rq_stat *stat)
+ struct exynos_ppmu_data {
+        struct clk *clk;
+ };
+@@ -36,6 +42,7 @@ struct exynos_ppmu {
+        struct regmap *regmap;
+ 
+        struct exynos_ppmu_data ppmu;
++       enum exynos_ppmu_type ppmu_type;
+ };
+ 
+ #define PPMU_EVENT(name)                       \
+ 
+        /* Reset cycle counter/performance counter and enable PPMU */
+        ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
+@@ -483,31 +476,23 @@ static const struct devfreq_event_ops exynos_ppmu_v2_ops = {
+ static const struct of_device_id exynos_ppmu_id_match[] = {
+        {
+                .compatible = "samsung,exynos-ppmu",
+-               .data = (void *)&exynos_ppmu_ops,
++               .data = (void *)EXYNOS_TYPE_PPMU,
+        }, {
+                .compatible = "samsung,exynos-ppmu-v2",
+-               .data = (void *)&exynos_ppmu_v2_ops,
++               .data = (void *)EXYNOS_TYPE_PPMU_V2,
+        },
+        { /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, exynos_ppmu_id_match);
+ 
+-static struct devfreq_event_ops *exynos_bus_get_ops(struct device_node *np)
+-{
+-       const struct of_device_id *match;
+-
+-       match = of_match_node(exynos_ppmu_id_match, np);
+-       return (struct devfreq_event_ops *)match->data;
+-}
+-
+ static int of_get_devfreq_events(struct device_node *np,
+                                 struct exynos_ppmu *info)
  {
--	u64 sleep_ns;
-+	u64 half_mean, indent, sleep_ns;
- 	u32 nr_misses, nr_samples;
+        struct devfreq_event_desc *desc;
+-       struct devfreq_event_ops *event_ops;
+        struct device *dev = info->dev;
+        struct device_node *events_np, *node;
+        int i, j, count;
  
- 	nr_samples = stat->nr_samples;
-@@ -3349,14 +3360,33 @@ static void blk_mq_update_poll_info(struct poll_info *pi,
- 	if (nr_misses > nr_samples)
- 		nr_misses = nr_samples;
+        events_np = of_get_child_by_name(np, "events");
+        if (!events_np) {
+@@ -515,7 +500,6 @@ static int of_get_devfreq_events(struct device_node *np,
+                        "failed to get child node of devfreq-event devices\n");
+                return -EINVAL;
+        }
+-       event_ops = exynos_bus_get_ops(np);
  
--	if (!nr_samples)
-+	half_mean = (stat->mean + 1) / 2;
-+	indent = stat->lmd * 4;
+        count = of_get_child_count(events_np);
+        desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
+@@ -540,11 +524,38 @@ static int of_get_devfreq_events(struct device_node *np,
+                        continue;
+                }
+ 
+-               desc[j].ops = event_ops;
++               switch (info->ppmu_type) {
++               case EXYNOS_TYPE_PPMU:
++                       desc[j].ops = &exynos_ppmu_ops;
++                       break;
++               case EXYNOS_TYPE_PPMU_V2:
++                       desc[j].ops = &exynos_ppmu_v2_ops;
++                       break;
++               }
 +
-+	if (!stat->nr_samples) {
- 		sleep_ns = 0;
--	else
--		sleep_ns = (stat->mean + 1) / 2;
-+	} else if (!stat->lmd || stat->mean <= indent) {
-+		sleep_ns = half_mean;
-+	} else {
-+		int ratio = INT_MAX;
- 
--	/*
--	 * Use miss ratio here to adjust sleep time
--	 */
-+		sleep_ns = stat->mean - indent;
-+
-+		/*
-+		 * If a completion is overslept, the observable time will
-+		 * be greater than the actual, so increasing mean. It
-+		 * also increases sleep time estimation, synergistically
-+		 * backfiring on mean. Need to scale down / fallback early.
-+		 */
-+		if (nr_misses)
-+			ratio = ilog2(nr_samples / nr_misses);
-+		if (ratio <= BLK_POLL_FALLBACK_THRESHOLD)
-+			sleep_ns = half_mean;
-+		else if (ratio <= BLK_POLL_THROTTLE_THRESHOLD)
-+			sleep_ns -= sleep_ns / 4;
-+
-+		sleep_ns = max(sleep_ns, half_mean);
-+	}
- 
- 	pi->stat = *stat;
- 	pi->sleep_ns = sleep_ns;
--- 
-2.21.0
 
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
