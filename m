@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2BCCF632
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 881E5F67C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbfD3Lo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:44:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55634 "EHLO mail.kernel.org"
+        id S1730832AbfD3LsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:48:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729236AbfD3LoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:44:25 -0400
+        id S1730816AbfD3LsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B1FC2173E;
-        Tue, 30 Apr 2019 11:44:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C189A20449;
+        Tue, 30 Apr 2019 11:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624664;
-        bh=TsqbLPI9d0YrYZoXI3eaFV8J5vqZeYuaLMLw8AWhRy8=;
+        s=default; t=1556624894;
+        bh=dGp3iSHZeqM687ALn5iXYf8NFjT0EZ4EVAVx1Hi4FEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EqVNgi9Ib3KrE9Z45TNzeXbEkxtQ+L/O0gU+j8VO2MZeECKAANPXTJGqxvzeUtUPc
-         vOzYpLyazgjQs0JT8ReUQ94+Si3x8WxGPdDlJckbB7EJ1a3G+Od+O8pNVczWyVrWgc
-         37JU9ojxQBpWez1Nszh7Vbw0QZFcZjEE1hIy8z8I=
+        b=j00dn6x3dZ+6F1Fd0swOHZ8+kvnv+OnMdMMKw90p8qFiFIG2JaPJGYAp1NSAYGNve
+         0l3FVGAXilSGpR8h5IAtMzv45GlSKEtsWqzA0DQCX++9e0xrKHAEjD/wW5OXRldC64
+         Zf3zWnukFjdt4V7x4lGDlzlflUdcDsFxyAlJKUOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 026/100] tracing: Fix buffer_ref pipe ops
-Date:   Tue, 30 Apr 2019 13:37:55 +0200
-Message-Id: <20190430113610.108174724@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 05/89] ALSA: hda/realtek - Move to ACT_INIT state
+Date:   Tue, 30 Apr 2019 13:37:56 +0200
+Message-Id: <20190430113610.057774520@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,140 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+[ Upstream commit 8983eb602af511fc5822f5ff4a82074c68816fd9 ]
 
-commit b987222654f84f7b4ca95b3a55eca784cb30235b upstream.
+It will be lose Mic JD state when Chrome OS boot and headset was plugged.
+Just Implement of reset combo jack JD verb for ACT_PRE_PROBE state.
+Intel test result was also failed.
+It test passed until changed the initial state to ACT_INIT.
+Mic JD will show every time.
+This patch also changed the model name as 'alc-chrome-book' for
+application of Chrome OS.
 
-This fixes multiple issues in buffer_pipe_buf_ops:
-
- - The ->steal() handler must not return zero unless the pipe buffer has
-   the only reference to the page. But generic_pipe_buf_steal() assumes
-   that every reference to the pipe is tracked by the page's refcount,
-   which isn't true for these buffers - buffer_pipe_buf_get(), which
-   duplicates a buffer, doesn't touch the page's refcount.
-   Fix it by using generic_pipe_buf_nosteal(), which refuses every
-   attempted theft. It should be easy to actually support ->steal, but the
-   only current users of pipe_buf_steal() are the virtio console and FUSE,
-   and they also only use it as an optimization. So it's probably not worth
-   the effort.
- - The ->get() and ->release() handlers can be invoked concurrently on pipe
-   buffers backed by the same struct buffer_ref. Make them safe against
-   concurrency by using refcount_t.
- - The pointers stored in ->private were only zeroed out when the last
-   reference to the buffer_ref was dropped. As far as I know, this
-   shouldn't be necessary anyway, but if we do it, let's always do it.
-
-Link: http://lkml.kernel.org/r/20190404215925.253531-1-jannh@google.com
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@vger.kernel.org
-Fixes: 73a757e63114d ("ring-buffer: Return reader page back into existing ring buffer")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 10f5b1b85ed1 ("ALSA: hda/realtek - Fixed Headset Mic JD not stable")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/splice.c               |    4 ++--
- include/linux/pipe_fs_i.h |    1 +
- kernel/trace/trace.c      |   28 ++++++++++++++--------------
- 3 files changed, 17 insertions(+), 16 deletions(-)
+ sound/pci/hda/patch_realtek.c | 41 +++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 12 deletions(-)
 
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -333,8 +333,8 @@ const struct pipe_buf_operations default
- 	.get = generic_pipe_buf_get,
- };
- 
--static int generic_pipe_buf_nosteal(struct pipe_inode_info *pipe,
--				    struct pipe_buffer *buf)
-+int generic_pipe_buf_nosteal(struct pipe_inode_info *pipe,
-+			     struct pipe_buffer *buf)
- {
- 	return 1;
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index f061167062bc..a9f69c3a3e0b 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5490,7 +5490,7 @@ static void alc_headset_btn_callback(struct hda_codec *codec,
+ 	jack->jack->button_state = report;
  }
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -181,6 +181,7 @@ void free_pipe_info(struct pipe_inode_in
- void generic_pipe_buf_get(struct pipe_inode_info *, struct pipe_buffer *);
- int generic_pipe_buf_confirm(struct pipe_inode_info *, struct pipe_buffer *);
- int generic_pipe_buf_steal(struct pipe_inode_info *, struct pipe_buffer *);
-+int generic_pipe_buf_nosteal(struct pipe_inode_info *, struct pipe_buffer *);
- void generic_pipe_buf_release(struct pipe_inode_info *, struct pipe_buffer *);
- void pipe_buf_mark_unmergeable(struct pipe_buffer *buf);
  
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6803,19 +6803,23 @@ struct buffer_ref {
- 	struct ring_buffer	*buffer;
- 	void			*page;
- 	int			cpu;
--	int			ref;
-+	refcount_t		refcount;
- };
+-static void alc295_fixup_chromebook(struct hda_codec *codec,
++static void alc_fixup_headset_jack(struct hda_codec *codec,
+ 				    const struct hda_fixup *fix, int action)
+ {
  
-+static void buffer_ref_release(struct buffer_ref *ref)
+@@ -5500,16 +5500,6 @@ static void alc295_fixup_chromebook(struct hda_codec *codec,
+ 						    alc_headset_btn_callback);
+ 		snd_hda_jack_add_kctl(codec, 0x55, "Headset Jack", false,
+ 				      SND_JACK_HEADSET, alc_headset_btn_keymap);
+-		switch (codec->core.vendor_id) {
+-		case 0x10ec0295:
+-			alc_update_coef_idx(codec, 0x4a, 0x8000, 1 << 15); /* Reset HP JD */
+-			alc_update_coef_idx(codec, 0x4a, 0x8000, 0 << 15);
+-			break;
+-		case 0x10ec0236:
+-			alc_update_coef_idx(codec, 0x1b, 0x8000, 1 << 15); /* Reset HP JD */
+-			alc_update_coef_idx(codec, 0x1b, 0x8000, 0 << 15);
+-			break;
+-		}
+ 		break;
+ 	case HDA_FIXUP_ACT_INIT:
+ 		switch (codec->core.vendor_id) {
+@@ -5530,6 +5520,25 @@ static void alc295_fixup_chromebook(struct hda_codec *codec,
+ 	}
+ }
+ 
++static void alc295_fixup_chromebook(struct hda_codec *codec,
++				    const struct hda_fixup *fix, int action)
 +{
-+	if (!refcount_dec_and_test(&ref->refcount))
-+		return;
-+	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
-+	kfree(ref);
++	switch (action) {
++	case HDA_FIXUP_ACT_INIT:
++		switch (codec->core.vendor_id) {
++		case 0x10ec0295:
++			alc_update_coef_idx(codec, 0x4a, 0x8000, 1 << 15); /* Reset HP JD */
++			alc_update_coef_idx(codec, 0x4a, 0x8000, 0 << 15);
++			break;
++		case 0x10ec0236:
++			alc_update_coef_idx(codec, 0x1b, 0x8000, 1 << 15); /* Reset HP JD */
++			alc_update_coef_idx(codec, 0x1b, 0x8000, 0 << 15);
++			break;
++		}
++		break;
++	}
 +}
 +
- static void buffer_pipe_buf_release(struct pipe_inode_info *pipe,
- 				    struct pipe_buffer *buf)
+ static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
+ 				  const struct hda_fixup *fix, int action)
  {
- 	struct buffer_ref *ref = (struct buffer_ref *)buf->private;
- 
--	if (--ref->ref)
--		return;
--
--	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
--	kfree(ref);
-+	buffer_ref_release(ref);
- 	buf->private = 0;
- }
- 
-@@ -6824,7 +6828,7 @@ static void buffer_pipe_buf_get(struct p
- {
- 	struct buffer_ref *ref = (struct buffer_ref *)buf->private;
- 
--	ref->ref++;
-+	refcount_inc(&ref->refcount);
- }
- 
- /* Pipe buffer operations for a buffer. */
-@@ -6832,7 +6836,7 @@ static const struct pipe_buf_operations
- 	.can_merge		= 0,
- 	.confirm		= generic_pipe_buf_confirm,
- 	.release		= buffer_pipe_buf_release,
--	.steal			= generic_pipe_buf_steal,
-+	.steal			= generic_pipe_buf_nosteal,
- 	.get			= buffer_pipe_buf_get,
+@@ -5684,6 +5693,7 @@ enum {
+ 	ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ 	ALC255_FIXUP_ACER_HEADSET_MIC,
+ 	ALC295_FIXUP_CHROME_BOOK,
++	ALC225_FIXUP_HEADSET_JACK,
+ 	ALC225_FIXUP_DELL_WYSE_AIO_MIC_NO_PRESENCE,
+ 	ALC225_FIXUP_WYSE_AUTO_MUTE,
+ 	ALC225_FIXUP_WYSE_DISABLE_MIC_VREF,
+@@ -6645,6 +6655,12 @@ static const struct hda_fixup alc269_fixups[] = {
+ 	[ALC295_FIXUP_CHROME_BOOK] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc295_fixup_chromebook,
++		.chained = true,
++		.chain_id = ALC225_FIXUP_HEADSET_JACK
++	},
++	[ALC225_FIXUP_HEADSET_JACK] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_headset_jack,
+ 	},
+ 	[ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_PINS,
+@@ -7143,7 +7159,8 @@ static const struct hda_model_fixup alc269_fixup_models[] = {
+ 	{.id = ALC255_FIXUP_DUMMY_LINEOUT_VERB, .name = "alc255-dummy-lineout"},
+ 	{.id = ALC255_FIXUP_DELL_HEADSET_MIC, .name = "alc255-dell-headset"},
+ 	{.id = ALC295_FIXUP_HP_X360, .name = "alc295-hp-x360"},
+-	{.id = ALC295_FIXUP_CHROME_BOOK, .name = "alc-sense-combo"},
++	{.id = ALC225_FIXUP_HEADSET_JACK, .name = "alc-headset-jack"},
++	{.id = ALC295_FIXUP_CHROME_BOOK, .name = "alc-chrome-book"},
+ 	{.id = ALC299_FIXUP_PREDATOR_SPK, .name = "predator-spk"},
+ 	{}
  };
- 
-@@ -6845,11 +6849,7 @@ static void buffer_spd_release(struct sp
- 	struct buffer_ref *ref =
- 		(struct buffer_ref *)spd->partial[i].private;
- 
--	if (--ref->ref)
--		return;
--
--	ring_buffer_free_read_page(ref->buffer, ref->cpu, ref->page);
--	kfree(ref);
-+	buffer_ref_release(ref);
- 	spd->partial[i].private = 0;
- }
- 
-@@ -6904,7 +6904,7 @@ tracing_buffers_splice_read(struct file
- 			break;
- 		}
- 
--		ref->ref = 1;
-+		refcount_set(&ref->refcount, 1);
- 		ref->buffer = iter->trace_buffer->buffer;
- 		ref->page = ring_buffer_alloc_read_page(ref->buffer, iter->cpu_file);
- 		if (IS_ERR(ref->page)) {
+-- 
+2.19.1
+
 
 
