@@ -2,68 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45855F98D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF89FF93F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:50:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbfD3NIw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 09:08:52 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:50171
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727138AbfD3NIv (ORCPT
+        id S1727548AbfD3Mux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:50:53 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50147 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfD3Mux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 09:08:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 8C1AAB5052B;
-        Tue, 30 Apr 2019 12:40:16 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id FQEN_hPm6Tly; Tue, 30 Apr 2019 12:40:16 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E291FB504FA;
-        Tue, 30 Apr 2019 12:40:15 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 4HI6dH4w6GD3; Tue, 30 Apr 2019 12:40:15 +0000 (UTC)
-Received: from [100.76.194.7] (unknown [223.237.254.93])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 27CC4B5052B;
-        Tue, 30 Apr 2019 12:40:07 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 30 Apr 2019 08:50:53 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hLSDe-00022T-2M; Tue, 30 Apr 2019 14:50:46 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hLSDb-0001O9-43; Tue, 30 Apr 2019 14:50:43 +0200
+Date:   Tue, 30 Apr 2019 14:50:43 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Chuanhua Han <chuanhua.han@nxp.com>
+Cc:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, festevam@gmail.com, linux-imx@nxp.com,
+        wsa+renesas@sang-engineering.com, u.kleine-koenig@pengutronix.de,
+        eha@deif.com, linux@rempel-privat.de, l.stach@pengutronix.de,
+        peda@axentia.se, sumit.batra@nxp.com
+Subject: Re: [PATCH 1/2] i2c: imx: I2C Driver doesn't consider I2C_IPGCLK_SEL
+ RCW bit when using ls1046a SoC
+Message-ID: <20190430125043.weqwzim4gpsvtkfe@pengutronix.de>
+References: <20190430044719.30720-1-chuanhua.han@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: verificacion de email
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administracion web <exportaciones@minpal.gob.ve>
-Date:   Tue, 30 Apr 2019 18:09:59 +0530
-Message-Id: <20190430124008.27CC4B5052B@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430044719.30720-1-chuanhua.han@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:47:42 up 42 days, 23:58, 86 users,  load average: 1.11, 1.13,
+ 1.10
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
+On Tue, Apr 30, 2019 at 12:47:18PM +0800, Chuanhua Han wrote:
+> The current kernel driver does not consider I2C_IPGCLK_SEL (424 bit
+> of RCW) in deciding  i2c_clk_rate in function i2c_imx_set_clk()
+> { 0 Platform clock/4, 1 Platform clock/2}.
+> 
+> When using ls1046a SoC, this populates incorrect value in IBFD register
+> if I2C_IPGCLK_SEL = 0, which generates half of the desired Clock.
+> 
+> Therefore, if ls1046a SoC is used, we need to set the i2c clock
+> according to the corresponding RCW.
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+So the clock driver reports the wrong clock. Please fix the clock driver
+then.
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+Sascha
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
-
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index, copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
-
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
