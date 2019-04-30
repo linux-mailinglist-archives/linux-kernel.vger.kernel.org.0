@@ -2,84 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21662F73A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DAEF782
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfD3L5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:57:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35914 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727359AbfD3L5F (ORCPT
+        id S1728286AbfD3L7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:59:54 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:40068 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbfD3L7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:57:05 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3UBqEMo012991
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:57:05 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s6kf9pvm4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:57:04 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Tue, 30 Apr 2019 12:57:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 30 Apr 2019 12:56:59 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3UBuwXV54132838
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 11:56:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 806A1AE045;
-        Tue, 30 Apr 2019 11:56:58 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9EFCAE04D;
-        Tue, 30 Apr 2019 11:56:56 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.85.97.254])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 30 Apr 2019 11:56:56 +0000 (GMT)
-Date:   Tue, 30 Apr 2019 17:26:51 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
- reliable stacktrace support
-References: <20190430091049.30413-1-pmladek@suse.com>
- <20190430091049.30413-2-pmladek@suse.com>
+        Tue, 30 Apr 2019 07:59:51 -0400
+Received: by mail-vk1-f196.google.com with SMTP id l17so3026917vke.7;
+        Tue, 30 Apr 2019 04:59:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=68G41fzqy/t8KAzyAUuR7DOWW+Zvyi6v+m6lvfvvc+0=;
+        b=Avz5LXAVgTu/W4Tll+6H17nun9by9PM3UnmeIs9qcFKhS4s2ENyc25V1ItsYeOOrJf
+         M2bwTH3BV766g+AjXsWbhx/rskvnirHtZoE+dFF6dXKSDWIcMW3OXLqjZ/XBhSFcjAX6
+         biiuuo++/4LMeJy4/WylFfkULHklOhGNEvMXdWtdU0eh10euO41V55fMAViI0RFnshqT
+         tZ7P3+8BwRW/hWDnkXWep3fjFuAnudlqBR81h0verHToztgS4AizEQg/kt5OPU7as8Tp
+         NGtSrVcfBEMIuHzNuZrTOBSYjKdCsgC8EvXLuHfskI2RaDXfv7DQx741XVhglNidi7ll
+         CdwA==
+X-Gm-Message-State: APjAAAXV/iJX+OyPjEgOf5JhVgofaDq6lvaliXtkSmj1JfcN6cp8vnL9
+        Qn0UC2f06acLpBhJu4QtQD2CsvdUHnpsXXyQ/z0=
+X-Google-Smtp-Source: APXvYqygIlklTnbIk6rM0U9zkVtPflbEuf3kSFG/GNNQnmU5aiEFoRpZdVM+Sii2SE3lHQP9DwnZPtD6ccV2tu1UN/s=
+X-Received: by 2002:a1f:17cd:: with SMTP id 196mr660349vkx.83.1556625590532;
+ Tue, 30 Apr 2019 04:59:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430091049.30413-2-pmladek@suse.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-TM-AS-GCONF: 00
-x-cbid: 19043011-0016-0000-0000-00000276DC19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19043011-0017-0000-0000-000032D366D7
-Message-Id: <20190430115651.GA18595@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=973 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904300078
+References: <20190429152006.22593-1-geert+renesas@glider.be>
+ <20190429152006.22593-3-geert+renesas@glider.be> <3ecf87e2-4e70-9159-a364-d41f1b744f7b@cogentembedded.com>
+In-Reply-To: <3ecf87e2-4e70-9159-a364-d41f1b744f7b@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 30 Apr 2019 13:59:39 +0200
+Message-ID: <CAMuHMdV3DNqDmTVHzmenS_jecnijx8bAjTV_7RRtTPEzg+uJ+Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] irqchip/renesas-irqc: Remove devm_kzalloc()/ioremap_nocache()
+ error printing
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 11:10:48AM +0200, Petr Mladek wrote:
-> WARN_ON_ONCE() could not be called safely under rq lock because
-> of console deadlock issues. Fortunately, there is another check
-> for the reliable stacktrace support in klp_enable_patch().
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+Hi Sergei,
 
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+On Tue, Apr 30, 2019 at 10:12 AM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 29.04.2019 18:20, Geert Uytterhoeven wrote:
+> > There is no need to print a message if devm_kzalloc() or
+>
+>     Just kzalloc() in this case.
 
+Thanks, silly copy-and-paste error.
+
+> > --- a/drivers/irqchip/irq-renesas-irqc.c
+> > +++ b/drivers/irqchip/irq-renesas-irqc.c
+> > @@ -173,7 +172,6 @@ static int irqc_probe(struct platform_device *pdev)
+> >       /* ioremap IOMEM and setup read/write callbacks */
+> >       p->iomem = ioremap_nocache(io->start, resource_size(io));
+> >       if (!p->iomem) {
+> > -             dev_err(&pdev->dev, "failed to remap IOMEM\n");
+> >               ret = -ENXIO;
+>
+>     -ENOMEM?
+
+I'd say yes, except that this error code is removed in patch [5/5], so I don't
+think it's worth changing it in this patch.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
