@@ -2,114 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01501EF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 06:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2901CEF9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 06:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfD3E01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 00:26:27 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38532 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfD3E01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 00:26:27 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hLKLY-0007Ys-3q; Tue, 30 Apr 2019 04:26:24 +0000
-Date:   Tue, 30 Apr 2019 05:26:24 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCHSET] sorting out RCU-delayed stuff in
- ->destroy_inode()
-Message-ID: <20190430042623.GJ23075@ZenIV.linux.org.uk>
-References: <20190416174900.GT2217@ZenIV.linux.org.uk>
- <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
- <20190430030914.GF23075@ZenIV.linux.org.uk>
- <F01D238D-8A6C-4629-ABC5-4A8BAC25951F@dilger.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <F01D238D-8A6C-4629-ABC5-4A8BAC25951F@dilger.ca>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726014AbfD3Eb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 00:31:29 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51448 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbfD3Eb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 00:31:29 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A713E1A0014;
+        Tue, 30 Apr 2019 06:31:26 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ACEDA1A0013;
+        Tue, 30 Apr 2019 06:31:17 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C57A5402D9;
+        Tue, 30 Apr 2019 12:31:06 +0800 (SGT)
+From:   Chuanhua Han <chuanhua.han@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, leoyang.li@nxp.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        kernel@pengutronix.de, linux-imx@nxp.com, festevam@gmail.com,
+        wsa+renesas@sang-engineering.com, u.kleine-koenig@pengutronix.de,
+        eha@deif.com, linux@rempel-privat.de, sumit.batra@nxp.com,
+        l.stach@pengutronix.de, peda@axentia.se,
+        Chuanhua Han <chuanhua.han@nxp.com>
+Subject: [PATCH 1/3] dt-bindings: i2c: add optional mul-value property to binding
+Date:   Tue, 30 Apr 2019 12:32:40 +0800
+Message-Id: <20190430043242.29687-1-chuanhua.han@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:18:04PM -0600, Andreas Dilger wrote:
-> > 
-> > 	void			*i_private; /* fs or device private pointer */
-> > +	void (*free_inode)(struct inode *);
-> 
-> It seems like a waste to increase the size of every struct inode just to access
-> a static pointer.  Is this the only place that ->free_inode() is called?  Why
-> not move the ->free_inode() pointer into inode->i_fop->free_inode() so that it
-> is still directly accessible at this point.
+NXP Layerscape SoC have up to three MUL options available for all
+divider values, we choice of MUL determines the internal monitor rate
+of the I2C bus (SCL and SDA signals):
+A lower MUL value results in a higher sampling rate of the I2C signals.
+A higher MUL value results in a lower sampling rate of the I2C signals.
 
-i_op, surely?  In any case, increasing sizeof(struct inode) is not a problem -
-if anything, I'd turn ->i_fop into an anon union with that.  As in,
+So in Optional properties we added our custom mul-value property in the
+binding to select which mul option for the device tree i2c controller
+node.
 
-diff --git a/Documentation/filesystems/porting b/Documentation/filesystems/porting
-index 9d80f9e0855e..b8d3ddd8b8db 100644
---- a/Documentation/filesystems/porting
-+++ b/Documentation/filesystems/porting
-@@ -655,3 +655,11 @@ in your dentry operations instead.
- 		* if ->free_inode() is non-NULL, it gets scheduled by call_rcu()
- 		* combination of NULL ->destroy_inode and NULL ->free_inode is
- 		  treated as NULL/free_inode_nonrcu, to preserve the compatibility.
-+
-+	Note that the callback (be it via ->free_inode() or explicit call_rcu()
-+	in ->destroy_inode()) is *NOT* ordered wrt superblock destruction;
-+	as the matter of fact, the superblock and all associated structures
-+	might be already gone.  The filesystem driver is guaranteed to be still
-+	there, but that's it.  Freeing memory in the callback is fine; doing
-+	more than that is possible, but requires a lot of care and is best
-+	avoided.
-diff --git a/fs/inode.c b/fs/inode.c
-index fb45590d284e..627e1766503a 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -211,8 +211,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
- static void i_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
--	if (inode->i_sb->s_op->free_inode)
--		inode->i_sb->s_op->free_inode(inode);
-+	if (inode->free_inode)
-+		inode->free_inode(inode);
- 	else
- 		free_inode_nonrcu(inode);
- }
-@@ -236,6 +236,7 @@ static struct inode *alloc_inode(struct super_block *sb)
- 			if (!ops->free_inode)
- 				return NULL;
- 		}
-+		inode->free_inode = ops->free_inode;
- 		i_callback(&inode->i_rcu);
- 		return NULL;
- 	}
-@@ -276,6 +277,7 @@ static void destroy_inode(struct inode *inode)
- 		if (!ops->free_inode)
- 			return;
- 	}
-+	inode->free_inode = ops->free_inode;
- 	call_rcu(&inode->i_rcu, i_callback);
- }
+Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-imx.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx.txt b/Documentation/devicetree/bindings/i2c/i2c-imx.txt
+index b967544590e8..ba8e7b7b3fa8 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-imx.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-imx.txt
+@@ -18,6 +18,9 @@ Optional properties:
+ - sda-gpios: specify the gpio related to SDA pin
+ - pinctrl: add extra pinctrl to configure i2c pins to gpio function for i2c
+   bus recovery, call it "gpio" state
++- mul-value: NXP Layerscape SoC have up to three MUL options available for
++all I2C divider values, it describes which MUL we choose to use for the driver,
++the values should be 1,2,4.
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2e9b9f87caca..92732286b748 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -694,7 +694,10 @@ struct inode {
- #ifdef CONFIG_IMA
- 	atomic_t		i_readcount; /* struct files open RO */
- #endif
--	const struct file_operations	*i_fop;	/* former ->i_op->default_file_ops */
-+	union {
-+		const struct file_operations	*i_fop;	/* former ->i_op->default_file_ops */
-+		void (*free_inode)(struct inode *);
-+	};
- 	struct file_lock_context	*i_flctx;
- 	struct address_space	i_data;
- 	struct list_head	i_devices;
+ Examples:
+ 
+-- 
+2.17.1
+
