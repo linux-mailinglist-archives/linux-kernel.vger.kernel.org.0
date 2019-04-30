@@ -2,117 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CF7F908
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45855F98D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfD3MjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:39:10 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46452 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728212AbfD3MjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:39:08 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 44th0m65ppz9vD38;
-        Tue, 30 Apr 2019 14:39:04 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=R/6PPSdm; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id beeXf01hbNiG; Tue, 30 Apr 2019 14:39:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 44th0m54ftz9vD30;
-        Tue, 30 Apr 2019 14:39:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1556627944; bh=nyn5PbqqhKTzRamqkQ3I4adO6bi1wUC9r3Z2MBImYHM=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=R/6PPSdmoZ5NAyiTzibrVYDs+LWf6peMGsGja1FzLfUaXr0uR03458Ccu+LjW6l6L
-         FiQRZShCWNqCOiW96vULutGUYPJMu/8pwwYPcdDRFLqOxAaYDy2bvE4wSWgfTqDE7p
-         tvmD7dS/yKSGSf4WnLUULND++03zCwyoDYj2H7yQ=
+        id S1728250AbfD3NIw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 09:08:52 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:50171
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727138AbfD3NIv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 09:08:51 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF4D48B8E1;
-        Tue, 30 Apr 2019 14:39:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id LCQMn-uA0xdE; Tue, 30 Apr 2019 14:39:05 +0200 (CEST)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CC76E8B8DF;
-        Tue, 30 Apr 2019 14:39:05 +0200 (CEST)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 91C83666F8; Tue, 30 Apr 2019 12:39:05 +0000 (UTC)
-Message-Id: <5e4c040b7c1f89b960bd5df2d7eb073bcd72c96d.1556627571.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1556627571.git.christophe.leroy@c-s.fr>
-References: <cover.1556627571.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 16/16] powerpc/32: Don't add dummy frames when calling
- trace_hardirqs_on/off
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 30 Apr 2019 12:39:05 +0000 (UTC)
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 8C1AAB5052B;
+        Tue, 30 Apr 2019 12:40:16 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id FQEN_hPm6Tly; Tue, 30 Apr 2019 12:40:16 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E291FB504FA;
+        Tue, 30 Apr 2019 12:40:15 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 4HI6dH4w6GD3; Tue, 30 Apr 2019 12:40:15 +0000 (UTC)
+Received: from [100.76.194.7] (unknown [223.237.254.93])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 27CC4B5052B;
+        Tue, 30 Apr 2019 12:40:07 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: verificacion de email
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administracion web <exportaciones@minpal.gob.ve>
+Date:   Tue, 30 Apr 2019 18:09:59 +0530
+Message-Id: <20190430124008.27CC4B5052B@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need to add dummy frames when calling trace_hardirqs_on or
-trace_hardirqs_off. GCC properly handles empty stacks.
+Aviso de seguridad:
 
-In addition, powerpc doesn't set CONFIG_FRAME_POINTER, therefore
-__builtin_return_address(1..) returns NULL at all time. So the
-dummy frames are definitely unneeded here.
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
-In the meantime, avoid reading memory for loading r1 with a value
-we already know.
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/entry_32.S | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index e65c3e70c648..235a01d34b6d 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -243,12 +243,7 @@ transfer_to_handler_cont:
- 
- reenable_mmu:
- 	/*
--	 * The trace_hardirqs_off will use CALLER_ADDR0 and CALLER_ADDR1.
--	 * If from user mode there is only one stack frame on the stack, and
--	 * accessing CALLER_ADDR1 will cause oops. So we need create a dummy
--	 * stack frame to make trace_hardirqs_off happy.
--	 *
--	 * This is handy because we also need to save a bunch of GPRs,
-+	 * We save a bunch of GPRs,
- 	 * r3 can be different from GPR3(r1) at this point, r9 and r11
- 	 * contains the old MSR and handler address respectively,
- 	 * r4 & r5 can contain page fault arguments that need to be passed
-@@ -950,18 +945,11 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_TYPE_47x)
- 	 */
- 	andi.	r10,r9,MSR_EE
- 	beq	1f
--	/*
--	 * Since the ftrace irqsoff latency trace checks CALLER_ADDR1,
--	 * which is the stack frame here, we need to force a stack frame
--	 * in case we came from user space.
--	 */
- 	stwu	r1,-32(r1)
- 	mflr	r0
- 	stw	r0,4(r1)
--	stwu	r1,-32(r1)
- 	bl	trace_hardirqs_on
--	lwz	r1,0(r1)
--	lwz	r1,0(r1)
-+	addi	r1, r1, 32
- 	lwz	r9,_MSR(r1)
- 1:
- #endif /* CONFIG_TRACE_IRQFLAGS */
--- 
-2.13.3
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index, copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
 
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
