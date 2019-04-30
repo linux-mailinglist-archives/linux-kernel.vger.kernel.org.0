@@ -2,49 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4671F699
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C80DF5F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731106AbfD3Lt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:49:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36630 "EHLO mail.kernel.org"
+        id S1728903AbfD3LlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730402AbfD3Lt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:49:57 -0400
+        id S1728862AbfD3LlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:41:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E27220449;
-        Tue, 30 Apr 2019 11:49:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 142DE21783;
+        Tue, 30 Apr 2019 11:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624996;
-        bh=LCAkp//ftKgk6OdwS8adWpcWxA/yq6rOKlqWZgMYfoY=;
+        s=default; t=1556624478;
+        bh=JfbBBb9GSwrn3uSbyVzEH030s2yAJCMAhdmxy2v/Pgk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dc4zys7BfeoUrG/Tp+xSOMVv+0AfDS8eIB1lO3ruNAWq+rcNUFOBudef9q5TWb5p6
-         sjXRsJSgODcx9HqzUvh21fcZGkuGhOe0YFgupTbrmTG+ewAqq4v3Ye7MsVnIlKz+dH
-         f0PtQY5obyMXVAkSYAUTSSFuc1vORRpUDbDh6GlA=
+        b=hwOn1S6PGURLnAP5dORWmuAt6PSOAdwUJ5uBXuYVNk/03kDZIRHU7Ra9RZLl6VyeY
+         Q5MYanZnhoLBMkL4/pLnFCuDjlvMuODiTZScQ9wevqxk0/c8JWlm3Zic+8ldBZH+ys
+         eaLdoSSXaULoWvha4Xe6t1AKyUHriwWfIOejcZZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.0 17/89] lib/Kconfig.debug: fix build error without CONFIG_BLOCK
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.14 01/53] kbuild: simplify ld-option implementation
 Date:   Tue, 30 Apr 2019 13:38:08 +0200
-Message-Id: <20190430113610.465460015@linuxfoundation.org>
+Message-Id: <20190430113549.630232113@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,43 +47,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit ae3d6a323347940f0548bbb4b17f0bb2e9164169 upstream.
+commit 0294e6f4a0006856e1f36b8cd8fa088d9e499e98 upstream.
 
-If CONFIG_TEST_KMOD is set to M, while CONFIG_BLOCK is not set, XFS and
-BTRFS can not be compiled successly.
+Currently, linker options are tested by the coordination of $(CC) and
+$(LD) because $(LD) needs some object to link.
 
-Link: http://lkml.kernel.org/r/20190410075434.35220-1-yuehaibing@huawei.com
-Fixes: d9c6a72d6fa2 ("kmod: add test driver to stress test the module loader")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+As commit 86a9df597cdd ("kbuild: fix linker feature test macros when
+cross compiling with Clang") addressed, we need to make sure $(CC)
+and $(LD) agree the underlying architecture of the passed object.
+
+This could be a bit complex when we combine tools from different groups.
+For example, we can use clang for $(CC), but we still need to rely on
+GCC toolchain for $(LD).
+
+So, I was searching for a way of standalone testing of linker options.
+A trick I found is to use '-v'; this not only prints the version string,
+but also tests if the given option is recognized.
+
+If a given option is supported,
+
+  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
+  GNU ld (Linaro_Binutils-2017.11) 2.28.2.20170706
+  $ echo $?
+  0
+
+If unsupported,
+
+  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
+  GNU ld (crosstool-NG linaro-1.13.1-4.7-2013.04-20130415 - Linaro GCC 2013.04) 2.23.1
+  aarch64-linux-gnu-ld: unrecognized option '--fix-cortex-a53-843419'
+  aarch64-linux-gnu-ld: use the --help option for usage information
+  $ echo $?
+  1
+
+Gold works likewise.
+
+  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-843419
+  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
+  masahiro@pug:~/ref/linux$ echo $?
+  0
+  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-999999
+  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
+  aarch64-linux-gnu-ld.gold: --fix-cortex-a53-999999: unknown option
+  aarch64-linux-gnu-ld.gold: use the --help option for usage information
+  $ echo $?
+  1
+
+LLD too.
+
+  $ ld.lld -v --gc-sections
+  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
+  $ echo $?
+  0
+  $ ld.lld -v --fix-cortex-a53-843419
+  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
+  $ echo $?
+  0
+  $ ld.lld -v --fix-cortex-a53-999999
+  ld.lld: error: unknown argument: --fix-cortex-a53-999999
+  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
+  $ echo $?
+  1
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+[nc: try-run-cached was added later, just use try-run, which is the
+     current mainline state]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- lib/Kconfig.debug |    1 +
- 1 file changed, 1 insertion(+)
+ scripts/Kbuild.include |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1952,6 +1952,7 @@ config TEST_KMOD
- 	depends on m
- 	depends on BLOCK && (64BIT || LBDAF)	  # for XFS, BTRFS
- 	depends on NETDEVICES && NET_CORE && INET # for TUN
-+	depends on BLOCK
- 	select TEST_LKM
- 	select XFS_FS
- 	select TUN
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -165,9 +165,7 @@ cc-ldoption = $(call try-run,\
+ 
+ # ld-option
+ # Usage: LDFLAGS += $(call ld-option, -X)
+-ld-option = $(call try-run,\
+-	$(CC) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
+-	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
++ld-option = $(call try-run, $(LD) $(LDFLAGS) $(1) -v,$(1),$(2))
+ 
+ # ar-option
+ # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
 
 
