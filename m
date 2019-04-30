@@ -2,155 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0DB2EF43
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65512EF3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfD3Ds1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 23:48:27 -0400
-Received: from mga18.intel.com ([134.134.136.126]:54863 "EHLO mga18.intel.com"
+        id S1730028AbfD3Drq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 23:47:46 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64330 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbfD3DsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:48:24 -0400
+        id S1729933AbfD3Drq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 23:47:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 20:48:23 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 20:47:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,412,1549958400"; 
-   d="scan'208";a="138598254"
-Received: from genxtest-ykzhao.sh.intel.com ([10.239.143.71])
-  by orsmga008.jf.intel.com with ESMTP; 29 Apr 2019 20:48:22 -0700
-From:   Zhao Yakui <yakui.zhao@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     tglx@linutronix.de, bp@alien8.de,
-        Zhao Yakui <yakui.zhao@intel.com>,
-        Jason Chen CJ <jason.cj.chen@intel.com>
-Subject: [PATCH v6 4/4] x86/acrn: Add hypercall for ACRN guest
-Date:   Tue, 30 Apr 2019 11:45:26 +0800
-Message-Id: <1556595926-17910-5-git-send-email-yakui.zhao@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1556595926-17910-1-git-send-email-yakui.zhao@intel.com>
-References: <1556595926-17910-1-git-send-email-yakui.zhao@intel.com>
+   d="scan'208";a="138598084"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga008.jf.intel.com with ESMTP; 29 Apr 2019 20:47:45 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] drivers: thermal: processor_thermal: Read PPCC on resume
+Date:   Mon, 29 Apr 2019 20:47:43 -0700
+Message-Id: <20190430034743.43576-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the ACRN hypervisor is detected, the hypercall is needed so that the
-ACRN guest can query/config some settings. For example: it can be used
-to query the resources in hypervisor and manage the CPU/memory/device/
-interrupt for guest operating system.
+Read PPCC power limits on system resume in case those limits changed
+while system was suspended.
 
-Add the hypercall so that the ACRN guest can communicate with the
-low-level ACRN hypervisor. On x86 it is implemented with the VMCALL
-instruction.
-
-Co-developed-by: Jason Chen CJ <jason.cj.chen@intel.com>
-Signed-off-by: Jason Chen CJ <jason.cj.chen@intel.com>
-Signed-off-by: Zhao Yakui <yakui.zhao@intel.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
-V1->V2: Refine the comments for the function of acrn_hypercall0/1/2
-v2->v3: Use the "vmcall" mnemonic to replace hard-code byte definition
-v4->v5: Use _ASM_X86_ACRN_HYPERCALL_H instead of _ASM_X86_ACRNHYPERCALL_H.
-        Use the "VMCALL" mnemonic in comment/commit log.
-        Uppercase r8/rdi/rsi/rax for hypercall parameter register in comment.
-v5->v6: Remove explicit local register variable for inline assembly
----
- arch/x86/include/asm/acrn_hypercall.h | 84 +++++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
- create mode 100644 arch/x86/include/asm/acrn_hypercall.h
+ .../int340x_thermal/processor_thermal_device.c     | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/include/asm/acrn_hypercall.h b/arch/x86/include/asm/acrn_hypercall.h
-new file mode 100644
-index 0000000..5cb438e
---- /dev/null
-+++ b/arch/x86/include/asm/acrn_hypercall.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _ASM_X86_ACRN_HYPERCALL_H
-+#define _ASM_X86_ACRN_HYPERCALL_H
-+
-+#include <linux/errno.h>
-+
-+#ifdef CONFIG_ACRN_GUEST
-+
-+/*
-+ * Hypercalls for ACRN guest
-+ *
-+ * Hypercall number is passed in R8 register.
-+ * Up to 2 arguments are passed in RDI, RSI.
-+ * Return value will be placed in RAX.
-+ */
-+
-+static inline long acrn_hypercall0(unsigned long hcall_id)
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index 436c256f111d..acb22157b9ac 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -465,6 +465,18 @@ static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
+ 
++static int proc_thermal_resume(struct device *dev)
 +{
-+	long result;
++	struct proc_thermal_device *proc_dev;
 +
-+	/* the hypercall is implemented with the VMCALL instruction.
-+	 * volatile qualifier is added to avoid that it is dropped
-+	 * because of compiler optimization.
-+	 */
-+	asm volatile("movq %[hcall_id], %%r8\n\t"
-+		     "vmcall\n\t"
-+		     : "=a" (result)
-+		     : [hcall_id] "g" (hcall_id)
-+		     : "r8");
++	proc_dev = dev_get_drvdata(dev);
++	proc_thermal_read_ppcc(proc_dev);
 +
-+	return result;
++	return 0;
 +}
 +
-+static inline long acrn_hypercall1(unsigned long hcall_id,
-+				   unsigned long param1)
-+{
-+	long result;
++static SIMPLE_DEV_PM_OPS(proc_thermal_pm, NULL, proc_thermal_resume);
 +
-+	asm volatile("movq %[hcall_id], %%r8\n\t"
-+		     "vmcall\n\t"
-+		     : "=a" (result)
-+		     : [hcall_id] "g" (hcall_id), "D" (param1)
-+		     : "r8");
-+
-+	return result;
-+}
-+
-+static inline long acrn_hypercall2(unsigned long hcall_id,
-+				   unsigned long param1,
-+				   unsigned long param2)
-+{
-+	long result;
-+
-+	asm volatile("movq %[hcall_id], %%r8\n\t"
-+		     "vmcall\n\t"
-+		     : "=a" (result)
-+		     : [hcall_id] "g" (hcall_id), "D" (param1), "S" (param2)
-+		     : "r8");
-+
-+	return result;
-+}
-+
-+#else
-+
-+static inline long acrn_hypercall0(unsigned long hcall_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline long acrn_hypercall1(unsigned long hcall_id,
-+				   unsigned long param1)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline long acrn_hypercall2(unsigned long hcall_id,
-+				   unsigned long param1,
-+				   unsigned long param2)
-+{
-+	return -ENOTSUPP;
-+}
-+#endif /* CONFIG_ACRN_GUEST */
-+#endif /* _ASM_X86_ACRN_HYPERCALL_H */
+ static const struct pci_device_id proc_thermal_pci_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_BDW_THERMAL)},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_HSB_THERMAL)},
+@@ -489,6 +501,7 @@ static struct pci_driver proc_thermal_pci_driver = {
+ 	.probe		= proc_thermal_pci_probe,
+ 	.remove		= proc_thermal_pci_remove,
+ 	.id_table	= proc_thermal_pci_ids,
++	.driver.pm	= &proc_thermal_pm,
+ };
+ 
+ static const struct acpi_device_id int3401_device_ids[] = {
+@@ -503,6 +516,7 @@ static struct platform_driver int3401_driver = {
+ 	.driver = {
+ 		.name = "int3401 thermal",
+ 		.acpi_match_table = int3401_device_ids,
++		.pm = &proc_thermal_pm,
+ 	},
+ };
+ 
 -- 
-2.7.4
+2.17.2
 
