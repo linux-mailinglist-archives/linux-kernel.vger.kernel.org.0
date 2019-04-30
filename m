@@ -2,161 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 771FEEF5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 06:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 402ACEF9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 06:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfD3EVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 00:21:25 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43405 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfD3EVY (ORCPT
+        id S1726030AbfD3E2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 00:28:22 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:60801 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725446AbfD3E2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 00:21:24 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t1so1310860lje.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 21:21:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8t58pyvZxW1Md6PX1g2Ns+VeO6t+qdcIVL3s1azo1PA=;
-        b=BKJ/oB49fE/XRK+Gh8TN/iWBL1nKOjQ+kW/y7SPwIp8O0ur5ZqCpBg2KebAc8tEjp5
-         1DFxABlW/D3hIquSYlN0XsJIdXvdlIlPgHgcctMTv2rltVqQhv/QKVbNOS71B+FNtPaY
-         vgqM84YW0qKTBXqO8/e7JbBQKE79/FRH1QoqUdyfzasCIFBUTMPyOXWiZy3Sqj7+MuHf
-         2aiSxx3hTZ65PvE0SPp82BcS80Zuq2fglWZ3R83rAlu8w+dVaYN1vleF2cRwvksV6qwS
-         kl8PKsVWSFnLTA71uFJQo8Nz66wBTmsC6pg+ZAzjw61P9fyfSlG/mdkVHp9fr8DzjspI
-         XXJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8t58pyvZxW1Md6PX1g2Ns+VeO6t+qdcIVL3s1azo1PA=;
-        b=Ivig0MHIfm3Dtzw89zGCO4HeNTgIkFjdMLm6jesvpi8GH5BBENF5f3ppsiMjPqOyxv
-         p65ucNyPtKJ7XOimF6bF8Zi5gYRwUujnguqGgktccdvC467okQJphO8KOHeDk5Ket3Pd
-         XKGD+9EbCjsdEbZGsmLsC6HUDhY3TizIDxOhZwrQSrLnJtauuMuF8P3/6BWHiMYgLrvH
-         wwzoWwJoN4mnpQFJ3KjiHFbI7zH+G8mZoBixZQ4hRObboyQsiFCoJ3EQ+UM7v8ybq1Uq
-         2NsrNz+Qiezw2uFFYj1i66r7Z044wN42BfvfbC/UurcJaVtX+0H+w5Sv91yke71JgEQH
-         J0Ag==
-X-Gm-Message-State: APjAAAUaGz/BjWUu/k0MHoTW8LiXKr4zd6IJj9otnoVzOg9QMz+SE10J
-        ZyysOT9DV82S0nuA46V1KPSfh9pK3EP8zaE7ZzH4iA==
-X-Google-Smtp-Source: APXvYqzkQQWeXalbI6bQvrte/IcR7hF54ikPQKnx35AOhJAFG3ySKNN1bIXiA6KbwMDF6/hcnNfUD2MhHS2jZCl9Ysk=
-X-Received: by 2002:a2e:9855:: with SMTP id e21mr470763ljj.180.1556598082317;
- Mon, 29 Apr 2019 21:21:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <1556171696-7741-1-git-send-email-yash.shah@sifive.com>
- <1556171696-7741-2-git-send-email-yash.shah@sifive.com> <20190425101318.GA8469@e107155-lin>
- <CAJ2_jOEBqBnorz9PcQp72Jjju9RX_P8mU=Gq+0xCCcWsBiJksw@mail.gmail.com> <20190426093358.GA28309@e107155-lin>
-In-Reply-To: <20190426093358.GA28309@e107155-lin>
-From:   Yash Shah <yash.shah@sifive.com>
-Date:   Tue, 30 Apr 2019 09:50:45 +0530
-Message-ID: <CAJ2_jOEoD=Njp+L+H=jG59mA-j9SnwzyNmz7ECogWmbvei_f5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] RISC-V: Add DT documentation for SiFive L2 Cache Controller
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Apr 2019 00:28:22 -0400
+X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 00:28:21 EDT
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 86C0C14F12;
+        Tue, 30 Apr 2019 00:21:38 -0400 (EDT)
+Received: from imap7 ([10.202.2.57])
+  by compute6.internal (MEProxy); Tue, 30 Apr 2019 00:21:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outv.im; h=
+        mime-version:message-id:date:from:to:cc:subject:content-type
+        :content-transfer-encoding; s=fm1; bh=tCB6PUZcz5EXqtAx5NteG4K6Bh
+        JjVjPTl402n8s4rZw=; b=DIv78+2c1AnYoLTF8rYwBME3nNZSMQDqB29CMHZGUC
+        dmxbrTY2VjWHOSwDXgQBY1GcyoBh2GAxJz9s9WRwd9Cacj4Jk97MrBErKzhZK5u1
+        vQ4aiepGUpOQxaiGhxJad5YaIqPUqb/NIMccGW+LQ7ofJNbk+S8oDDI7A91cltAB
+        lMM/afpuL2DAEjXWQAyuFR4fC5q6i0ktI1LKiZFyDU/gtbrK5cE46vgP++NOXBw6
+        uxsP2jtU1aZshXWdbqWuVADoVYPrPtibACS6GWJNXhHexeyh8jRQqhp/1f6yy3gZ
+        ni4BcSKCd1zh+gt9/XKdovqZUTDmAqKds4jGSovEOvtw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=tCB6PU
+        Zcz5EXqtAx5NteG4K6BhJjVjPTl402n8s4rZw=; b=j0nxRfLr1+TrDQJ1/2c2VL
+        9ZNnWtx4jmWzYqrSrgwm77L9PYF+EptkCWz6WBPbep57F/C3nXrL0AGNPYHqxa6S
+        rflOEiOh0URPzXJXsHMZVdA+ASAmXaRN6yigM+9h/gm9dBja695tPahq2U1+Cy3E
+        /NFHXJqRy95x1x5DOENrbAfzHqsdBZANDF1O0Zvzg83PAtNhvISRH1+uDn23snz/
+        RHs77VOf6Iq9Ee3GXwK8kbWADmLNkvQHAcewV5LTQ0i9FLmPEuvWgcE+2hnUNLlA
+        3enkG0rXCoZTt3QJpD0oHJRBl+7TWn7eaO3vRQHPl6a+aRJYjZ08lCFW/NCHbC4A
+        ==
+X-ME-Sender: <xms:Uc3HXAXPE4QdGN5x7-aqEuCSsj1o919EGvMx5GkAkMhDBKvoM3wlWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdekgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepofgfggfkfffhvffutgfgsehtqhertd
+    erredtnecuhfhrohhmpedfqfhuthhvihcuggdfuceoihesohhuthhvrdhimheqnecuffho
+    mhgrihhnpegrrhgthhhlihhnuhigrdhorhhgnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hisehouhhtvhdrihhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:Uc3HXCFT2Wah4oWbLk5IYeZIxZxFqIh-cwj5gKTB7dhT2db1WYiqow>
+    <xmx:Uc3HXAchGVY1zNyuktJOhzwR2olehwInOWM2wDOfr5yfENHpFsWi-Q>
+    <xmx:Uc3HXMlBRF-j2URcWQqUwfLTk82-1cUhKIQk8ACI7V4NLVzNhVZIVA>
+    <xmx:Us3HXN_1fyUk9Rf4enUb3QzEzqmVw0__FBWmYFZJA47i2bQC_xQ2Vg>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 83EF7211BA; Tue, 30 Apr 2019 00:21:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-448-g5cc1c91-fmstable-20190429v1
+Mime-Version: 1.0
+Message-Id: <0c87e12c-c964-40a3-b97e-af2286c318c4@www.fastmail.com>
+Date:   Tue, 30 Apr 2019 00:20:56 -0400
+From:   "Outvi V" <i@outv.im>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: PROBLEM: Elan touchpad regression on Kernel 5.0.10
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 3:04 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Fri, Apr 26, 2019 at 11:20:17AM +0530, Yash Shah wrote:
-> > On Thu, Apr 25, 2019 at 3:43 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > >
-> > > On Thu, Apr 25, 2019 at 11:24:55AM +0530, Yash Shah wrote:
-> > > > Add device tree bindings for SiFive FU540 L2 cache controller driver
-> > > >
-> > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > > ---
-> > > >  .../devicetree/bindings/riscv/sifive-l2-cache.txt  | 53 ++++++++++++++++++++++
-> > > >  1 file changed, 53 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt
-> > > > new file mode 100644
-> > > > index 0000000..15132e2
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt
-> > > > @@ -0,0 +1,53 @@
-> > > > +SiFive L2 Cache Controller
-> > > > +--------------------------
-> > > > +The SiFive Level 2 Cache Controller is used to provide access to fast copies
-> > > > +of memory for masters in a Core Complex. The Level 2 Cache Controller also
-> > > > +acts as directory-based coherency manager.
-> > > > +
-> > > > +Required Properties:
-> > > > +--------------------
-> > > > +- compatible: Should be "sifive,fu540-c000-ccache"
-> > > > +
-> > > > +- cache-block-size: Specifies the block size in bytes of the cache
-> > > > +
-> > > > +- cache-level: Should be set to 2 for a level 2 cache
-> > > > +
-> > > > +- cache-sets: Specifies the number of associativity sets of the cache
-> > > > +
-> > > > +- cache-size: Specifies the size in bytes of the cache
-> > > > +
-> > > > +- cache-unified: Specifies the cache is a unified cache
-> > > > +
-> > > > +- interrupt-parent: Must be core interrupt controller
-> > > > +
-> > > > +- interrupts: Must contain 3 entries (DirError, DataError and DataFail signals)
-> > > > +
-> > > > +- reg: Physical base address and size of L2 cache controller registers map
-> > > > +
-> > > > +- reg-names: Should be "control"
-> > > > +
-> > >
-> > > It would be good if you mark the properties that are present in DT
-> > > specification and those that are added for sifive,fu540-c000-ccache
-> >
-> > I believe there isn't any property which is added explicitly for
-> > sifive,fu540-c000-ccache.
-> >
->
-> reg and interrupts are generally optional for normal cache and may be
-> required for cache controller like this. DT specification[1] covers
-> only caches and not cache controllers.
+Hello,
 
-Are you suggesting something like this:
+[1.] One line summary of the problem: Elan touchpad regression on Kernel=
+ 5.0.10
 
-Required Properties:
---------------------
-Standard Properties:
-- compatible: Should be "sifive,<chip>-ccache"
-  Supported compatible strings are:
-  "sifive,fu540-c000-ccache" and "sifive,fu740-c000-ccache"
+[2.] Full description of the problem/report:
+  Elan touchpad does not work on 5.0.10 while working on 5.0.9
 
-- cache-block-size: Specifies the block size in bytes of the cache
+[3.] Keywords: elan_i2c_core elan i2c touchpad 5.0.10
 
-- cache-level: Should be set to 2 for a level 2 cache
+[4.] Kernel information
+[4.1.] Kernel version:
+  Linux version 5.0.10-arch1-1-ARCH (builduser@heftig-2592) (gcc version=
+ 8.3.0 (GCC)) #1 SMP PREEMPT Sat Apr 27 20:06:45 UTC 2019
+[4.2.] Kernel .config file:
+  I'm not sure, but I think it may be referring to
+  https://git.archlinux.org/svntogit/packages.git/tree/trunk/config?h=3D=
+packages/linux
+[5.] Most recent kernel version which did not have the bug: 5.0.9
 
-- cache-sets: Specifies the number of associativity sets of the cache
+[6.] Output of Oops.. message (if applicable) with symbolic information
+     resolved (Not appliable)
+[7.] A small shell script or example program which triggers the
+     problem: (Not appliable)
 
-- cache-size: Specifies the size in bytes of the cache
+[8.] Environment
+[8.1.] Software (add the output of the ver_linux script here)
+ =20
+Linux sheltty 5.0.10-arch1-1-ARCH #1 SMP PREEMPT Sat Apr 27 20:06:45 UTC=
+ 2019 x86_64 GNU/Linux
 
-- cache-unified: Specifies the cache is a unified cache
+GNU C                   8.3.0
+GNU Make                4.2.1
+Binutils                2.32
+Util-linux              2.33.2
+Mount                   2.33.2
+Module-init-tools       26
+E2fsprogs               1.45.0
+Jfsutils                1.1.15
+Reiserfsprogs           3.6.27
+Xfsprogs                4.20.0
+PPP                     2.4.7
+Linux C Library         2.29
+Dynamic linker (ldd)    2.29
+Linux C++ Library       6.0.25
+Procps                  3.3.15
+Kbd                     2.0.4
+Console-tools           2.0.4
+Sh-utils                8.31
+Udev                    242
+Modules Loaded          8021q 8250_dw ac ac97_bus acpi_thermal_rel aesni=
+_intel aes_x86_64 agpgart ahci arc4 atkbd battery bbswitch bluetooth btb=
+cm btintel btrtl btusb cfg80211 coretemp crc16 crc32c_generic crc32c_int=
+el crc32_pclmul crct10dif_pclmul cryptd crypto_simd crypto_user drm drm_=
+kms_helper ecdh_generic elan_i2c evdev ext4 fat fb_sys_fops fscrypto gar=
+p ghash_clmulni_intel glue_helper hid hid_generic i2c_algo_bit i2c_hid i=
+2c_i801 i8042 i915 idma64 input_leds int3400_thermal int3403_thermal int=
+340x_thermal_zone intel_cstate intel_gtt intel_lpss intel_lpss_pci intel=
+_pch_thermal intel_powerclamp intel_rapl intel_rapl_perf intel_soc_dts_i=
+osf intel_uncore intel_wmi_thunderbolt ip_tables irqbypass iTCO_vendor_s=
+upport iTCO_wdt jbd2 joydev kvm kvmgt kvm_intel ledtrig_audio libahci li=
+bata libphy libps2 llc mac80211 mac_hid mbcache mdev media mei mei_me mo=
+usedev mrp nls_cp437 nls_iso8859_1 pcc_cpufreq processor_thermal_device =
+r8169 r8822be realtek rfkill rng_core scsi_mod serio serio_raw snd snd_c=
+ompress snd_hda_codec snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_c=
+odec_realtek snd_hda_core snd_hda_ext_core snd_hda_intel snd_hwdep snd_p=
+cm snd_pcm_dmaengine snd_soc_acpi snd_soc_acpi_intel_match snd_soc_core =
+snd_soc_hdac_hda snd_soc_skl snd_soc_skl_ipc snd_soc_sst_dsp snd_soc_sst=
+_ipc snd_timer soundcore stp syscopyarea sysfillrect sysimgblt tpm tpm_c=
+rb tpm_tis tpm_tis_core typec typec_ucsi ucsi_acpi usbhid uvcvideo vfat =
+vfio vfio_iommu_type1 vfio_mdev videobuf2_common videobuf2_memops videob=
+uf2_v4l2 videobuf2_vmalloc videodev wmi wmi_bmof x86_pkg_temp_thermal xh=
+ci_hcd xhci_pci x_tables
 
-Non-Standard Properties:
-- interrupt-parent: Must be core interrupt controller
+[8.2.] Processor information (from /proc/cpuinfo): (Maybe not appliable)=
 
-- interrupts: Must contain 3 entries for FU540 (DirError, DataError and
-  DataFail signals) or 4 entries for other chips (DirError, DirFail, DataError,
-  DataFail signals)
+[8.3.] Module information (from /proc/modules):=20
 
-- reg: Physical base address and size of L2 cache controller registers map
+(Parts related to i2c and elan:)
 
-- reg-names: Should be "control"
+i2c_algo_bit 16384 1 i915, Live 0x0000000000000000
+i2c_hid 32768 0 - Live 0x0000000000000000
+hid 147456 3 hid_generic,usbhid,i2c_hid, Live 0x0000000000000000
+elan_i2c 49152 0 - Live 0x0000000000000000
+i2c_i801 36864 0 - Live 0x0000000000000000
 
-- Yash
->
-> --
-> Regards,
-> Sudeep
->
-> [1] https://github.com/devicetree-org/devicetree-specification/releases/download/v0.2/devicetree-specification-v0.2.pdf
+[8.4.] Loaded driver and hardware information (/proc/ioports, /proc/iome=
+m)
+
+/proc/ioports:
+0000-0000 : PCI Bus 0000:00
+  0000-0000 : dma1
+  0000-0000 : pic1
+  0000-0000 : iTCO_wdt
+  0000-0000 : timer0
+  0000-0000 : timer1
+  0000-0000 : keyboard
+  0000-0000 : PNP0C09:00
+    0000-0000 : EC data
+  0000-0000 : keyboard
+  0000-0000 : PNP0C09:00
+    0000-0000 : EC cmd
+  0000-0000 : rtc0
+  0000-0000 : dma page reg
+  0000-0000 : pic2
+  0000-0000 : dma2
+  0000-0000 : fpu
+    0000-0000 : PNP0C04:00
+  0000-0000 : iTCO_wdt
+  0000-0000 : pnp 00:02
+0000-0000 : PCI conf1
+0000-0000 : PCI Bus 0000:00
+  0000-0000 : pnp 00:02
+  0000-0000 : pnp 00:00
+    0000-0000 : ACPI PM1a_EVT_BLK
+    0000-0000 : ACPI PM1a_CNT_BLK
+    0000-0000 : ACPI PM_TMR
+    0000-0000 : ACPI CPU throttle
+    0000-0000 : ACPI PM2_CNT_BLK
+    0000-0000 : pnp 00:04
+    0000-0000 : ACPI GPE0_BLK
+  0000-0000 : pnp 00:01
+  0000-0000 : PCI Bus 0000:08
+    0000-0000 : 0000:08:00.0
+  0000-0000 : PCI Bus 0000:07
+    0000-0000 : 0000:07:00.0
+      0000-0000 : r8822be
+  0000-0000 : PCI Bus 0000:01
+    0000-0000 : 0000:01:00.0
+  0000-0000 : 0000:00:02.0
+  0000-0000 : 0000:00:1f.4
+    0000-0000 : i801_smbus
+  0000-0000 : 0000:00:17.0
+    0000-0000 : ahci
+  0000-0000 : 0000:00:17.0
+    0000-0000 : ahci
+  0000-0000 : 0000:00:17.0
+    0000-0000 : ahci
+
+
+[8.5.] PCI information
+  It seems to be long (over 700 lines) and unrelated to this regression.=
+ Omitted to avoid flooding. I've kept an archive so feel free to ask me =
+to post it if needed.
+
+[8.6.] SCSI information (from /proc/scsi/scsi): (Empty)
+[8.7.] Other information that might be relevant to the problem:
+
+  dmesg is constantly showing "elan_i2c i2c-ELAN061B:00: invalid report =
+id data (d)".
+  I checked the git log and it is likely to be related to commit "95df59=
+9f95f398b0a34d081dadfdee3126e58163".
+  I'm using Arch Linux, its kernel repository link: [1]
+  I checked the related file "elan_i2c_core.c" in Arch Linux's kernel re=
+pository [2], and it is the same as in 5.0.10 on kernel.org.
+  My laptop is a Lenovo Legion Y7000.
+
+Links:
+[1]. https://git.archlinux.org/linux.git
+[2]. https://git.archlinux.org/linux.git/tree/drivers/input/mouse/elan_i=
+2c_core.c?h=3Dv5.0.10-arch1
+
+Please don't hesitate if more information or operation is needed.
