@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0005EFC87
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2FFFC8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfD3PMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:12:51 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35156 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfD3PMu (ORCPT
+        id S1726310AbfD3PPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:15:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46256 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfD3PPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:12:50 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w197so11545449oia.2;
-        Tue, 30 Apr 2019 08:12:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7aahexJfH3+ZCWyzwJ4HVTibyUsm/U8CQ+avun/lb8w=;
-        b=M5GbafMPEw1FpUNuPjUwms7Cxan/YhI0LBNBnJ1NgEifzyephSGFy7trreF1QLuWZN
-         9phJCGSBD9crQT60BJWkeBZS7Be36B4Qpht0y9svV1UC5W42Cwi2JFbAx5R7+fTaWhc6
-         ZUJAvGzg5l3HA/3dODChYMIBwoNJKnT2U9yDXYmeTivpKtHxLK98B9Q7jwvqn+sltgUx
-         rZYXQUDQUAB0IrO52LJKGp4vmQKYrPwYHgUq7tv2g/5LHZzTBJ5HIjUG0pxyY+ULMkp+
-         +PlJ+eUK5NJGibNv0vYV9DkaLrR/mOHxWuoGJZ/0tsm392BWIEIU1stUlXu4ahSz0eHq
-         xbXg==
-X-Gm-Message-State: APjAAAXGD74hm5RcB9NSOHchEisoAEiBDMOg2gzHg5RjR3IcBeYpu+fv
-        ia4I9xI92hsFSxJlr3r+tHCCh9I=
-X-Google-Smtp-Source: APXvYqw+7CtQGpDl9egPhX/Ibog5Hs4VhoUaMkukQMspgHXvHnYdx7igDWd16RY8bjIjwyxtwGAzZQ==
-X-Received: by 2002:aca:55c1:: with SMTP id j184mr3206627oib.119.1556637164785;
-        Tue, 30 Apr 2019 08:12:44 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o1sm16620919otj.11.2019.04.30.08.12.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 08:12:43 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 10:12:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     linus.walleij@linaro.org, mark.rutland@arm.com,
-        khilman@baylibre.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        Tue, 30 Apr 2019 11:15:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 69801608CC; Tue, 30 Apr 2019 15:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556637300;
+        bh=kDESwusWoNlcpai8Hhzx6F56ctP3yrdln4AYiKvAfV8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=c1sgpEK08p4Viz1h4LYj6Cao84cdjI9PfQEvvyfI2gC39lQMqATS6Vkz71eAMRVk3
+         zyt5lnrSlAjG7+XHdk43lmCcVZDoZb1OcSMoeZQdD6E9XJtgTDSglUbvKlaR2HlK9t
+         cT9RuN6onAqG5g2PjoKlCBgXH5v8KybDokVHBUMg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16EA8608CC;
+        Tue, 30 Apr 2019 15:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556637299;
+        bh=kDESwusWoNlcpai8Hhzx6F56ctP3yrdln4AYiKvAfV8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NGszjabWnBd3WE0yIF9zNcz+MIBW+FGB93qE1XbqQJ+DH2UPbDykJ+hFrUPjmcATt
+         r3bgvbM+XpxTGm3mQL3GjIbKdnp1NetdzGhwtEs1avU4Px9/GQo15OcXqLiwOTDXc/
+         yDsyxNQk2xgEu2pFXBa4Zk8JSiPwXwJhNUlR6zpM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16EA8608CC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH] firmware_loader: Fix a typo ("syfs" -> "sysfs")
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: add a 'drive-strength-uA'
- property
-Message-ID: <20190430151243.GA6879@bogus>
-References: <20190418124758.24022-1-glaroque@baylibre.com>
- <20190418124758.24022-2-glaroque@baylibre.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20190430145610.1291-1-j.neuschaefer@gmx.net>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <a87e799e-73d3-6971-2df5-59ba34fb1446@codeaurora.org>
+Date:   Tue, 30 Apr 2019 20:44:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190418124758.24022-2-glaroque@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190430145610.1291-1-j.neuschaefer@gmx.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 18, 2019 at 02:47:55PM +0200, Guillaume La Roque wrote:
-> This property allow drive-strength parameter in uA instead of mA.
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+
+On 4/30/2019 8:26 PM, Jonathan Neuschäfer wrote:
+> "sysfs" was misspelled in a comment and a log message.
+>
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+Cheers,
+-Mukesh
 > ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> index cef2b5855d60..fc7018459aa2 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> @@ -258,6 +258,7 @@ drive-push-pull		- drive actively high and low
->  drive-open-drain	- drive with open drain
->  drive-open-source	- drive with open source
->  drive-strength		- sink or source at most X mA
-> +drive-strength-uA	- sink or source at most X uA
->  input-enable		- enable input on pin (no effect on output, such as
->  			  enabling an input buffer)
->  input-disable		- disable input on pin (no effect on output, such as
-> @@ -326,6 +327,8 @@ arguments are described below.
->  
->  - drive-strength takes as argument the target strength in mA.
->  
-> +- drive-strength-uA takes as argument the target strength in uA.
-> +
-
-We have standard unit suffixes defined in bindings/property-units.txt. 
-Use them please.
-
-Rob
+>   drivers/base/firmware_loader/fallback.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> index b5c865fe263b..f962488546b6 100644
+> --- a/drivers/base/firmware_loader/fallback.c
+> +++ b/drivers/base/firmware_loader/fallback.c
+> @@ -674,8 +674,8 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+>    *
+>    * This function is called if direct lookup for the firmware failed, it enables
+>    * a fallback mechanism through userspace by exposing a sysfs loading
+> - * interface. Userspace is in charge of loading the firmware through the syfs
+> - * loading interface. This syfs fallback mechanism may be disabled completely
+> + * interface. Userspace is in charge of loading the firmware through the sysfs
+> + * loading interface. This sysfs fallback mechanism may be disabled completely
+>    * on a system by setting the proc sysctl value ignore_sysfs_fallback to true.
+>    * If this false we check if the internal API caller set the @FW_OPT_NOFALLBACK
+>    * flag, if so it would also disable the fallback mechanism. A system may want
+> @@ -693,7 +693,7 @@ int firmware_fallback_sysfs(struct firmware *fw, const char *name,
+>   		return ret;
+>
+>   	if (!(opt_flags & FW_OPT_NO_WARN))
+> -		dev_warn(device, "Falling back to syfs fallback for: %s\n",
+> +		dev_warn(device, "Falling back to sysfs fallback for: %s\n",
+>   				 name);
+>   	else
+>   		dev_dbg(device, "Falling back to sysfs fallback for: %s\n",
+> --
+> 2.20.1
+>
