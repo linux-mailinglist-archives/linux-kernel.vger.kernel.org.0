@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40017F867
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB2FF785
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfD3LkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
+        id S1730510AbfD3LqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:46:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbfD3LkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:06 -0400
+        id S1730486AbfD3LqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:46:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 370D721734;
-        Tue, 30 Apr 2019 11:40:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5705F21734;
+        Tue, 30 Apr 2019 11:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624405;
-        bh=YgvIXG6EbYT9zA84oNKUL2APiik8/DsVpRSHkNPcQak=;
+        s=default; t=1556624763;
+        bh=+ebOXy1Dc42e2ylzFgurqpriBg0nrITmuqCC5h/OTV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rhk+UZRJnKbVvz3flR5NN3qOfqfWFuGiq3BhP6J9b7Vta77exXaqMW64HTNUz3EFj
-         qKxDi/e87YNqqNV2/pQFb2tXVdmZtvqHnJt7pdK5Hgowgab+tm4rOj5XJkSizoYF45
-         jgTwt1gHuCJQ8Ut3LLjLvn0B+wXffzyMR3OnzNGc=
+        b=ZORTwAyO9Yl+SkSqB8hnT3gAty2Rau6y6Dl8e+9ySmtz6drZuaQYMuJvigurRII8C
+         Gu/6nU70nMT7g0L5e5KafLq/cpoqcR/9e4fyGAsCdWV2ZG3IMKb+ECY+WwG1zWGdFy
+         zSUUMYMC7xSgv8OrBi9SN/AqKcwCcg2pMzHTeN8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.9 22/41] intel_th: gth: Fix an off-by-one in output unassigning
+        syzbot <syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com>,
+        syzbot <syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 064/100] net/rds: Check address length before reading address family
 Date:   Tue, 30 Apr 2019 13:38:33 +0200
-Message-Id: <20190430113530.299621071@linuxfoundation.org>
+Message-Id: <20190430113611.844768997@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 91d3f8a629849968dc91d6ce54f2d46abf4feb7f upstream.
+commit dd3ac9a684358b8c1d5c432ca8322aaf5e4f28ee upstream.
 
-Commit 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
-fixes a NULL dereference for all masters except the last one ("256+"),
-which keeps the stale pointer after the output driver had been unassigned.
+syzbot is reporting uninitialized value at rds_connect() [1] and
+rds_bind() [2]. This is because syzbot is passing ulen == 0 whereas
+these functions expect that it is safe to access sockaddr->family field
+in order to determine minimal address length for validation.
 
-Fix the off-by-one.
+[1] https://syzkaller.appspot.com/bug?id=f4e61c010416c1e6f0fa3ffe247561b60a50ad71
+[2] https://syzkaller.appspot.com/bug?id=a4bf9e41b7e055c3823fdcd83e8c58ca7270e38f
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
+Reported-by: syzbot <syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/gth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rds/af_rds.c |    3 +++
+ net/rds/bind.c   |    2 ++
+ 2 files changed, 5 insertions(+)
 
---- a/drivers/hwtracing/intel_th/gth.c
-+++ b/drivers/hwtracing/intel_th/gth.c
-@@ -605,7 +605,7 @@ static void intel_th_gth_unassign(struct
- 	othdev->output.port = -1;
- 	othdev->output.active = false;
- 	gth->output[port].output = NULL;
--	for (master = 0; master < TH_CONFIGURABLE_MASTERS; master++)
-+	for (master = 0; master <= TH_CONFIGURABLE_MASTERS; master++)
- 		if (gth->master[master] == port)
- 			gth->master[master] = -1;
- 	spin_unlock(&gth->gth_lock);
+--- a/net/rds/af_rds.c
++++ b/net/rds/af_rds.c
+@@ -506,6 +506,9 @@ static int rds_connect(struct socket *so
+ 	struct rds_sock *rs = rds_sk_to_rs(sk);
+ 	int ret = 0;
+ 
++	if (addr_len < offsetofend(struct sockaddr, sa_family))
++		return -EINVAL;
++
+ 	lock_sock(sk);
+ 
+ 	switch (uaddr->sa_family) {
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -173,6 +173,8 @@ int rds_bind(struct socket *sock, struct
+ 	/* We allow an RDS socket to be bound to either IPv4 or IPv6
+ 	 * address.
+ 	 */
++	if (addr_len < offsetofend(struct sockaddr, sa_family))
++		return -EINVAL;
+ 	if (uaddr->sa_family == AF_INET) {
+ 		struct sockaddr_in *sin = (struct sockaddr_in *)uaddr;
+ 
 
 
