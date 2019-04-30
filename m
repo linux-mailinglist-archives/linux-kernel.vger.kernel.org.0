@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5185F6C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9926F84D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbfD3Lvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:51:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39556 "EHLO mail.kernel.org"
+        id S1727516AbfD3MHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:07:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfD3Lvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:51:38 -0400
+        id S1728503AbfD3Lke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:40:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC57021670;
-        Tue, 30 Apr 2019 11:51:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD3EB217D8;
+        Tue, 30 Apr 2019 11:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556625098;
-        bh=RlH34TrqR6+L8TPt7VcRdcG/xgNAd0vIlgQsh/n2KoQ=;
+        s=default; t=1556624434;
+        bh=CPJPH/Jy78usenS4z0bRi7H8YQmGs3/daJzXJGYgHrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QICrzOo5sa3XKcWsoWZHp/woMYHBuGg25vPmSxtRmzqz0djnGTPjOizhnSgfW3Mu5
-         +gyDvyKTK2qF2WEYnrjVTnUc9km9nDPtptdldATd38lEKO2xRpx9cvsRKNTdlfBc/z
-         i4iP/oTFfXO7qhjCk18zElqLfNjYLxVmaAIZlG80=
+        b=2Wg6b0LZs7If/3Goe+9dzA+oyUFdEuisupuJALHa0jJFqN/57zNl180a36mIJh4mz
+         0W/wOTHE9pzTz7473Z2l8cXzWGN0vdpmHtgs/f0Kd0/DbUPRKe63pqwucczHZeQ4ri
+         Pj2Jceld4/+FDvvvPqbfBKoE6f4zlgVVPtw5RUFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, luca abeni <luca.abeni@santannapisa.it>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "chengjian (D)" <cj.chengjian@huawei.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.0 54/89] sched/deadline: Correctly handle active 0-lag timers
+        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 34/41] team: fix possible recursive locking when add slaves
 Date:   Tue, 30 Apr 2019 13:38:45 +0200
-Message-Id: <20190430113612.212524332@linuxfoundation.org>
+Message-Id: <20190430113532.534243885@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,61 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: luca abeni <luca.abeni@santannapisa.it>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit 1b02cd6a2d7f3e2a6a5262887d2cb2912083e42f upstream.
+[ Upstream commit 925b0c841e066b488cc3a60272472b2c56300704 ]
 
-syzbot reported the following warning:
+If we add a bond device which is already the master of the team interface,
+we will hold the team->lock in team_add_slave() first and then request the
+lock in team_set_mac_address() again. The functions are called like:
 
-   [ ] WARNING: CPU: 4 PID: 17089 at kernel/sched/deadline.c:255 task_non_contending+0xae0/0x1950
+- team_add_slave()
+ - team_port_add()
+   - team_port_enter()
+     - team_modeop_port_enter()
+       - __set_port_dev_addr()
+         - dev_set_mac_address()
+           - bond_set_mac_address()
+             - dev_set_mac_address()
+  	       - team_set_mac_address
 
-line 255 of deadline.c is:
+Although team_upper_dev_link() would check the upper devices but it is
+called too late. Fix it by adding a checking before processing the slave.
 
-	WARN_ON(hrtimer_active(&dl_se->inactive_timer));
+v2: Do not split the string in netdev_err()
 
-in task_non_contending().
-
-Unfortunately, in some cases (for example, a deadline task
-continuosly blocking and waking immediately) it can happen that
-a task blocks (and task_non_contending() is called) while the
-0-lag timer is still active.
-
-In this case, the safest thing to do is to immediately decrease
-the running bandwidth of the task, without trying to re-arm the 0-lag timer.
-
-Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: chengjian (D) <cj.chengjian@huawei.com>
-Link: https://lkml.kernel.org/r/20190325131530.34706-1-luca.abeni@santannapisa.it
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sched/deadline.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/team/team.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -252,7 +252,6 @@ static void task_non_contending(struct t
- 	if (dl_entity_is_special(dl_se))
- 		return;
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1163,6 +1163,12 @@ static int team_port_add(struct team *te
+ 		return -EINVAL;
+ 	}
  
--	WARN_ON(hrtimer_active(&dl_se->inactive_timer));
- 	WARN_ON(dl_se->dl_non_contending);
- 
- 	zerolag_time = dl_se->deadline -
-@@ -269,7 +268,7 @@ static void task_non_contending(struct t
- 	 * If the "0-lag time" already passed, decrease the active
- 	 * utilization now, instead of starting a timer
- 	 */
--	if (zerolag_time < 0) {
-+	if ((zerolag_time < 0) || hrtimer_active(&dl_se->inactive_timer)) {
- 		if (dl_task(p))
- 			sub_running_bw(dl_se, dl_rq);
- 		if (!dl_task(p) || p->state == TASK_DEAD) {
++	if (netdev_has_upper_dev(dev, port_dev)) {
++		netdev_err(dev, "Device %s is already an upper device of the team interface\n",
++			   portname);
++		return -EBUSY;
++	}
++
+ 	if (port_dev->features & NETIF_F_VLAN_CHALLENGED &&
+ 	    vlan_uses_dev(dev)) {
+ 		netdev_err(dev, "Device %s is VLAN challenged and team device has VLAN set up\n",
 
 
