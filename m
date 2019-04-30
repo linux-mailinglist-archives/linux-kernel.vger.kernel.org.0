@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC20F7C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CD0EF698
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfD3MBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
+        id S1731097AbfD3Lt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbfD3Lo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:44:58 -0400
+        id S1731083AbfD3Ltz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:49:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B4F420449;
-        Tue, 30 Apr 2019 11:44:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C74B420449;
+        Tue, 30 Apr 2019 11:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624697;
-        bh=m72RwRxcoFtulB6zopXl3rOKL6k7xVpEkWygvSNLSi4=;
+        s=default; t=1556624994;
+        bh=t74Bakk3a87504pVuuIccZKC5EyAKwMCin+kox/pFXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=upjV2qYjO5A5HtBRtjZMr0JbGgMmEWzPMTjLvJ53hVDE6Pma2en04KkJcnWKhasDC
-         S6xGC4Lk2Ka1Gla+tpRKJk9HQXfdk4mUYArXZhx0bYv9JTw6vmIW4DBToUqb5RulxN
-         x2nQk5m10UuAS3/dG2KQXMVSGe+iPODtIC1dJdA0=
+        b=Nw8Pw9EzXOyshzr13btzt8+LtMu7qWUcwJYZhL6/F9OzKcoTM8p6fNKsZCi2RzkZK
+         U014Rq4xIrWmrk8lls80ZCeXCMj64/AaztQbw7FBOVdyXHMLZvFKtbWEkcuWODi/7P
+         ZlTzWSHtcISS4irv1Oc4MHRErxy2XIpV2ijbVlls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH 4.19 037/100] ceph: fix ci->i_head_snapc leak
-Date:   Tue, 30 Apr 2019 13:38:06 +0200
-Message-Id: <20190430113610.489469697@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.0 16/89] zram: pass down the bvec we need to read into in the work struct
+Date:   Tue, 30 Apr 2019 13:38:07 +0200
+Message-Id: <20190430113610.433951117@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +48,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Jérôme Glisse <jglisse@redhat.com>
 
-commit 37659182bff1eeaaeadcfc8f853c6d2b6dbc3f47 upstream.
+commit e153abc0739ff77bd89c9ba1688cdb963464af97 upstream.
 
-We missed two places that i_wrbuffer_ref_head, i_wr_ref, i_dirty_caps
-and i_flushing_caps may change. When they are all zeros, we should free
-i_head_snapc.
+When scheduling work item to read page we need to pass down the proper
+bvec struct which points to the page to read into.  Before this patch it
+uses a randomly initialized bvec (only if PAGE_SIZE != 4096) which is
+wrong.
 
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/38224
-Reported-and-tested-by: Luis Henriques <lhenriques@suse.com>
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Note that without this patch on arch/kernel where PAGE_SIZE != 4096
+userspace could read random memory through a zram block device (thought
+userspace probably would have no control on the address being read).
+
+Link: http://lkml.kernel.org/r/20190408183219.26377-1-jglisse@redhat.com
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Cc: Nitin Gupta <ngupta@vflare.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/mds_client.c |    9 +++++++++
- fs/ceph/snap.c       |    7 ++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ drivers/block/zram/zram_drv.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1290,6 +1290,15 @@ static int remove_session_caps_cb(struct
- 			list_add(&ci->i_prealloc_cap_flush->i_list, &to_remove);
- 			ci->i_prealloc_cap_flush = NULL;
- 		}
-+
-+               if (drop &&
-+                  ci->i_wrbuffer_ref_head == 0 &&
-+                  ci->i_wr_ref == 0 &&
-+                  ci->i_dirty_caps == 0 &&
-+                  ci->i_flushing_caps == 0) {
-+                      ceph_put_snap_context(ci->i_head_snapc);
-+                      ci->i_head_snapc = NULL;
-+               }
- 	}
- 	spin_unlock(&ci->i_ceph_lock);
- 	while (!list_empty(&to_remove)) {
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -568,7 +568,12 @@ void ceph_queue_cap_snap(struct ceph_ino
- 	old_snapc = NULL;
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -774,18 +774,18 @@ struct zram_work {
+ 	struct zram *zram;
+ 	unsigned long entry;
+ 	struct bio *bio;
++	struct bio_vec bvec;
+ };
  
- update_snapc:
--	if (ci->i_head_snapc) {
-+       if (ci->i_wrbuffer_ref_head == 0 &&
-+           ci->i_wr_ref == 0 &&
-+           ci->i_dirty_caps == 0 &&
-+           ci->i_flushing_caps == 0) {
-+               ci->i_head_snapc = NULL;
-+       } else {
- 		ci->i_head_snapc = ceph_get_snap_context(new_snapc);
- 		dout(" new snapc is %p\n", new_snapc);
- 	}
+ #if PAGE_SIZE != 4096
+ static void zram_sync_read(struct work_struct *work)
+ {
+-	struct bio_vec bvec;
+ 	struct zram_work *zw = container_of(work, struct zram_work, work);
+ 	struct zram *zram = zw->zram;
+ 	unsigned long entry = zw->entry;
+ 	struct bio *bio = zw->bio;
+ 
+-	read_from_bdev_async(zram, &bvec, entry, bio);
++	read_from_bdev_async(zram, &zw->bvec, entry, bio);
+ }
+ 
+ /*
+@@ -798,6 +798,7 @@ static int read_from_bdev_sync(struct zr
+ {
+ 	struct zram_work work;
+ 
++	work.bvec = *bvec;
+ 	work.zram = zram;
+ 	work.entry = entry;
+ 	work.bio = bio;
 
 
