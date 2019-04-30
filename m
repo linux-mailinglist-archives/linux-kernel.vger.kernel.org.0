@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EE4F5DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:39:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14083F798
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:00:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfD3Ljl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:39:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45132 "EHLO mail.kernel.org"
+        id S1728667AbfD3MAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:00:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbfD3Ljk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:39:40 -0400
+        id S1729237AbfD3Lpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:45:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 051CD21734;
-        Tue, 30 Apr 2019 11:39:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A798221670;
+        Tue, 30 Apr 2019 11:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624379;
-        bh=8W/ehXQACVYoYHOEBk7VSWUI8SF3BqYrJa0YNOBXKRo=;
+        s=default; t=1556624740;
+        bh=hplInzEK2u4jRyTMgl9aER7j6CPUgDmKh8VJJamwZGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1z0nfUeD3hluBS/zJtR34SSYeOM3ax5aXXZ9CEv8et7QSXk2gHQdyJlIIdAsG0cLk
-         pmwgGR6xL3/sMgFqPN51TwgU0OW3leUzHSUwef+GeGRlyiTL5fTv0ZvuuSZ7s1TcQi
-         Jdllq9/OdwMV75m3h7x2AwCag+yTYvkIV+ur39v4=
+        b=Cq1b4P+/XrHUf59OHpi+ZrCmhrclF5GptGO1J0GPhm5XSod++n5aRshb0agdfW5qH
+         lNI18IAydzACN5dcsh03F8fHHansX8fyMBxAjZys5ZDddXqXn3bx2p6t2bRhtSAw5R
+         b9Oqtv8EQGqMZi+JySCzmpaXmA/Wp7unwyEgLw/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
-        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Yao Lihua <ylhuajnu@outlook.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.9 13/41] dmaengine: sh: rcar-dmac: With cyclic DMA residue 0 is valid
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.19 055/100] workqueue: Try to catch flush_work() without INIT_WORK().
 Date:   Tue, 30 Apr 2019 13:38:24 +0200
-Message-Id: <20190430113528.091286225@linuxfoundation.org>
+Message-Id: <20190430113611.541863454@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dirk Behme <dirk.behme@de.bosch.com>
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 
-commit 907bd68a2edc491849e2fdcfe52c4596627bca94 upstream.
+commit 4d43d395fed124631ca02356c711facb90185175 upstream.
 
-Having a cyclic DMA, a residue 0 is not an indication of a completed
-DMA. In case of cyclic DMA make sure that dma_set_residue() is called
-and with this a residue of 0 is forwarded correctly to the caller.
+syzbot found a flush_work() caller who forgot to call INIT_WORK()
+because that work_struct was allocated by kzalloc() [1]. But the message
 
-Fixes: 3544d2878817 ("dmaengine: rcar-dmac: use result of updated get_residue in tx_status")
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Yao Lihua <ylhuajnu@outlook.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: <stable@vger.kernel.org> # v4.8+
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+  INFO: trying to register non-static key.
+  the code is fine but needs lockdep annotation.
+  turning off the locking correctness validator.
+
+by lock_map_acquire() is failing to tell that INIT_WORK() is missing.
+
+Since flush_work() without INIT_WORK() is a bug, and INIT_WORK() should
+set ->func field to non-zero, let's warn if ->func field is zero.
+
+[1] https://syzkaller.appspot.com/bug?id=a5954455fcfa51c29ca2ab55b203076337e1c770
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/sh/rcar-dmac.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/workqueue.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1311,6 +1311,7 @@ static enum dma_status rcar_dmac_tx_stat
- 	enum dma_status status;
- 	unsigned long flags;
- 	unsigned int residue;
-+	bool cyclic;
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2908,6 +2908,9 @@ static bool __flush_work(struct work_str
+ 	if (WARN_ON(!wq_online))
+ 		return false;
  
- 	status = dma_cookie_status(chan, cookie, txstate);
- 	if (status == DMA_COMPLETE || !txstate)
-@@ -1318,10 +1319,11 @@ static enum dma_status rcar_dmac_tx_stat
- 
- 	spin_lock_irqsave(&rchan->lock, flags);
- 	residue = rcar_dmac_chan_get_residue(rchan, cookie);
-+	cyclic = rchan->desc.running ? rchan->desc.running->cyclic : false;
- 	spin_unlock_irqrestore(&rchan->lock, flags);
- 
- 	/* if there's no residue, the cookie is complete */
--	if (!residue)
-+	if (!residue && !cyclic)
- 		return DMA_COMPLETE;
- 
- 	dma_set_residue(txstate, residue);
++	if (WARN_ON(!work->func))
++		return false;
++
+ 	if (!from_cancel) {
+ 		lock_map_acquire(&work->lockdep_map);
+ 		lock_map_release(&work->lockdep_map);
 
 
