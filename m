@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE193F63D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6C4F697
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbfD3Lo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:44:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56692 "EHLO mail.kernel.org"
+        id S1731086AbfD3Lty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730275AbfD3Lox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:44:53 -0400
+        id S1731078AbfD3Ltw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:49:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FD2120449;
-        Tue, 30 Apr 2019 11:44:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D2BF2173E;
+        Tue, 30 Apr 2019 11:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624692;
-        bh=dvAnglenaAPPEDdrNg0L+1ChK2siq9KNAMIzym/7tvo=;
+        s=default; t=1556624991;
+        bh=TsZdpmCy1pcPB5gfC6C686aDfKiW4WLiHwcWOX4x58w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iOnjKpPGVgajtMUk8jUpnIQyJAXKPIMWG/V4xvjnkBfwF7OMrmuD6XLGmNNwy5JTX
-         kqCrBIOdoNAQZ9PSgXX1BWKZ/QHlbyYltvwcOsMpjP52XrLE0LUDU58OqM+8LfU+Uc
-         ZxpvAUqMLh/3duAvM0R1n5w+I+boqGWad5jV57ok=
+        b=yekqfFra68Hqp5thEvG9aDcnnJAEhjuGjn4ZAIY3jp5txFBQtelGuaBdm9Z4mCWuu
+         +66MSHflMMj1n5LFfe22fw/c3Qn1zrcpHA8oB5OkGdaE+Iy4aSSt+wOnE8fdEy5uYB
+         Egl9lrtqt0D1f2kLIRd7G2cPxYG8kMPWGua9hsmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.19 036/100] ceph: ensure d_name stability in ceph_dentry_hash()
-Date:   Tue, 30 Apr 2019 13:38:05 +0200
-Message-Id: <20190430113610.454821626@linuxfoundation.org>
+        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.0 15/89] gpio: eic: sprd: Fix incorrect irq type setting for the sync EIC
+Date:   Tue, 30 Apr 2019 13:38:06 +0200
+Message-Id: <20190430113610.404625881@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+From: Baolin Wang <baolin.wang@linaro.org>
 
-commit 76a495d666e5043ffc315695f8241f5e94a98849 upstream.
+commit 102bbe34b31c9159e714432afd64458f6f3876d7 upstream.
 
-Take the d_lock here to ensure that d_name doesn't change.
+When setting sync EIC as IRQ_TYPE_EDGE_BOTH type, we missed to set the
+SPRD_EIC_SYNC_INTMODE register to 0, which means detecting edge signals.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Thus this patch fixes the issue.
+
+Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/dir.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-eic-sprd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1470,6 +1470,7 @@ void ceph_dentry_lru_del(struct dentry *
- unsigned ceph_dentry_hash(struct inode *dir, struct dentry *dn)
- {
- 	struct ceph_inode_info *dci = ceph_inode(dir);
-+	unsigned hash;
- 
- 	switch (dci->i_dir_layout.dl_dir_hash) {
- 	case 0:	/* for backward compat */
-@@ -1477,8 +1478,11 @@ unsigned ceph_dentry_hash(struct inode *
- 		return dn->d_name.hash;
- 
- 	default:
--		return ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
-+		spin_lock(&dn->d_lock);
-+		hash = ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
- 				     dn->d_name.name, dn->d_name.len);
-+		spin_unlock(&dn->d_lock);
-+		return hash;
- 	}
- }
- 
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -414,6 +414,7 @@ static int sprd_eic_irq_set_type(struct
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_EDGE_BOTH:
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
 
 
