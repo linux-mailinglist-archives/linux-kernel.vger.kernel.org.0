@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F63F82B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A342F875
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfD3MFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:05:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
+        id S1728094AbfD3Ljy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:39:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728308AbfD3Llx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:53 -0400
+        id S1727993AbfD3Ljv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:39:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B7B521670;
-        Tue, 30 Apr 2019 11:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AFAD21670;
+        Tue, 30 Apr 2019 11:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624512;
-        bh=ZIEyLvFKAMt6fNRudKrbSl7s8zY7Ss8EROqjpQe1wi8=;
+        s=default; t=1556624390;
+        bh=VpZN+ISoJGB1r1M+e+fyvo0X+6AVL+yNLMrCttrsPuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AH8j9If+uh7WQglcP+es9mBZHlZwQSZDnbV0PfYh/Aciz9IK6Gz5KuUosjnHgO9Yp
-         yZH82lwCg8y7zqsAwRlaR5T2UToKWw3O2xLD8CUfTIiUIDzfkwSKrioJmeZ+dqa0bX
-         G3G2ocu6KOh8FplYZT8TUT320SJRN/bmH22y41eg=
+        b=uezX9KKKwbHksK7fyRMFfy2pTp9aQo3vkoQT7G+ukeDsFygAEqsQnWficnAx5UsYZ
+         E13k9wiaVgXg4crs1ivye7JLV9c9pJyiphLmCUD2vsWZyQSPhnk75uUGy8WKy7knai
+         ZgdLsJspWvf+vwLkScKiDvxErFH52DaPffYQ1ovc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.14 21/53] Revert "drm/i915/fbdev: Actually configure untiled displays"
+        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 4.9 17/41] USB: Add new USB LPM helpers
 Date:   Tue, 30 Apr 2019 13:38:28 +0200
-Message-Id: <20190430113554.846958746@linuxfoundation.org>
+Message-Id: <20190430113529.206945883@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,72 +42,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Airlie <airlied@redhat.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 9fa246256e09dc30820524401cdbeeaadee94025 upstream.
+commit 7529b2574a7aaf902f1f8159fbc2a7caa74be559 upstream.
 
-This reverts commit d179b88deb3bf6fed4991a31fd6f0f2cad21fab5.
+Use new helpers to make LPM enabling/disabling more clear.
 
-This commit is documented to break userspace X.org modesetting driver in certain configurations.
+This is a preparation to subsequent patch.
 
-The X.org modesetting userspace driver is broken. No fixes are available yet. In order for this patch to be applied it either needs a config option or a workaround developed.
-
-This has been reported a few times, saying it's a userspace problem is clearly against the regression rules.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=109806
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Cc: <stable@vger.kernel.org> # v3.19+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: stable <stable@vger.kernel.org> # after much soaking
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/usb/core/driver.c  |   12 +++++++++++-
+ drivers/usb/core/hub.c     |   12 ++++++------
+ drivers/usb/core/message.c |    2 +-
+ drivers/usb/core/sysfs.c   |    5 ++++-
+ drivers/usb/core/usb.h     |   10 ++++++++--
+ 5 files changed, 30 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -326,8 +326,8 @@ static bool intel_fb_initial_config(stru
- 				    bool *enabled, int width, int height)
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1888,7 +1888,7 @@ int usb_runtime_idle(struct device *dev)
+ 	return -EBUSY;
+ }
+ 
+-int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
++static int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
  {
- 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
-+	unsigned long conn_configured, conn_seq, mask;
- 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
--	unsigned long conn_configured, conn_seq;
- 	int i, j;
- 	bool *save_enabled;
- 	bool fallback = true, ret = true;
-@@ -345,9 +345,10 @@ static bool intel_fb_initial_config(stru
- 		drm_modeset_backoff(&ctx);
+ 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+ 	int ret = -EPERM;
+@@ -1905,6 +1905,16 @@ int usb_set_usb2_hardware_lpm(struct usb
+ 	return ret;
+ }
  
- 	memcpy(save_enabled, enabled, count);
--	conn_seq = GENMASK(count - 1, 0);
-+	mask = GENMASK(count - 1, 0);
- 	conn_configured = 0;
- retry:
-+	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
- 		struct drm_fb_helper_connector *fb_conn;
- 		struct drm_connector *connector;
-@@ -360,8 +361,7 @@ retry:
- 		if (conn_configured & BIT(i))
- 			continue;
++int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return usb_set_usb2_hardware_lpm(udev, 1);
++}
++
++int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return usb_set_usb2_hardware_lpm(udev, 0);
++}
++
+ #endif /* CONFIG_PM */
  
--		/* First pass, only consider tiled connectors */
--		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
-+		if (conn_seq == 0 && !connector->has_tile)
- 			continue;
+ struct bus_type usb_bus_type = {
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3169,7 +3169,7 @@ int usb_port_suspend(struct usb_device *
  
- 		if (connector->status == connector_status_connected)
-@@ -465,10 +465,8 @@ retry:
- 		conn_configured |= BIT(i);
+ 	/* disable USB2 hardware LPM */
+ 	if (udev->usb2_hw_lpm_enabled == 1)
+-		usb_set_usb2_hardware_lpm(udev, 0);
++		usb_disable_usb2_hardware_lpm(udev);
+ 
+ 	if (usb_disable_ltm(udev)) {
+ 		dev_err(&udev->dev, "Failed to disable LTM before suspend\n.");
+@@ -3216,7 +3216,7 @@ int usb_port_suspend(struct usb_device *
+  err_ltm:
+ 		/* Try to enable USB2 hardware LPM again */
+ 		if (udev->usb2_hw_lpm_capable == 1)
+-			usb_set_usb2_hardware_lpm(udev, 1);
++			usb_enable_usb2_hardware_lpm(udev);
+ 
+ 		if (udev->do_remote_wakeup)
+ 			(void) usb_disable_remote_wakeup(udev);
+@@ -3500,7 +3500,7 @@ int usb_port_resume(struct usb_device *u
+ 	} else  {
+ 		/* Try to enable USB2 hardware LPM */
+ 		if (udev->usb2_hw_lpm_capable == 1)
+-			usb_set_usb2_hardware_lpm(udev, 1);
++			usb_enable_usb2_hardware_lpm(udev);
+ 
+ 		/* Try to enable USB3 LTM and LPM */
+ 		usb_enable_ltm(udev);
+@@ -4337,7 +4337,7 @@ static void hub_set_initial_usb2_lpm_pol
+ 	if ((udev->bos->ext_cap->bmAttributes & cpu_to_le32(USB_BESL_SUPPORT)) ||
+ 			connect_type == USB_PORT_CONNECT_TYPE_HARD_WIRED) {
+ 		udev->usb2_hw_lpm_allowed = 1;
+-		usb_set_usb2_hardware_lpm(udev, 1);
++		usb_enable_usb2_hardware_lpm(udev);
+ 	}
+ }
+ 
+@@ -5482,7 +5482,7 @@ static int usb_reset_and_verify_device(s
+ 	 * It will be re-enabled by the enumeration process.
+ 	 */
+ 	if (udev->usb2_hw_lpm_enabled == 1)
+-		usb_set_usb2_hardware_lpm(udev, 0);
++		usb_disable_usb2_hardware_lpm(udev);
+ 
+ 	/* Disable LPM and LTM while we reset the device and reinstall the alt
+ 	 * settings.  Device-initiated LPM settings, and system exit latency
+@@ -5592,7 +5592,7 @@ static int usb_reset_and_verify_device(s
+ 
+ done:
+ 	/* Now that the alt settings are re-installed, enable LTM and LPM. */
+-	usb_set_usb2_hardware_lpm(udev, 1);
++	usb_enable_usb2_hardware_lpm(udev);
+ 	usb_unlocked_enable_lpm(udev);
+ 	usb_enable_ltm(udev);
+ 	usb_release_bos_descriptor(udev);
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1182,7 +1182,7 @@ void usb_disable_device(struct usb_devic
+ 		}
+ 
+ 		if (dev->usb2_hw_lpm_enabled == 1)
+-			usb_set_usb2_hardware_lpm(dev, 0);
++			usb_disable_usb2_hardware_lpm(dev);
+ 		usb_unlocked_disable_lpm(dev);
+ 		usb_disable_ltm(dev);
+ 
+--- a/drivers/usb/core/sysfs.c
++++ b/drivers/usb/core/sysfs.c
+@@ -494,7 +494,10 @@ static ssize_t usb2_hardware_lpm_store(s
+ 
+ 	if (!ret) {
+ 		udev->usb2_hw_lpm_allowed = value;
+-		ret = usb_set_usb2_hardware_lpm(udev, value);
++		if (value)
++			ret = usb_enable_usb2_hardware_lpm(udev);
++		else
++			ret = usb_disable_usb2_hardware_lpm(udev);
  	}
  
--	if (conn_configured != conn_seq) { /* repeat until no more are found */
--		conn_seq = conn_configured;
-+	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
- 		goto retry;
--	}
+ 	usb_unlock_device(udev);
+--- a/drivers/usb/core/usb.h
++++ b/drivers/usb/core/usb.h
+@@ -84,7 +84,8 @@ extern int usb_remote_wakeup(struct usb_
+ extern int usb_runtime_suspend(struct device *dev);
+ extern int usb_runtime_resume(struct device *dev);
+ extern int usb_runtime_idle(struct device *dev);
+-extern int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable);
++extern int usb_enable_usb2_hardware_lpm(struct usb_device *udev);
++extern int usb_disable_usb2_hardware_lpm(struct usb_device *udev);
  
- 	/*
- 	 * If the BIOS didn't enable everything it could, fall back to have the
+ #else
+ 
+@@ -104,7 +105,12 @@ static inline int usb_autoresume_device(
+ 	return 0;
+ }
+ 
+-static inline int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
++static inline int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return 0;
++}
++
++static inline int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+ {
+ 	return 0;
+ }
 
 
