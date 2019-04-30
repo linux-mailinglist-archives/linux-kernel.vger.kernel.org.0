@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBAC5F835
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4FFF61F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729306AbfD3MGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48464 "EHLO mail.kernel.org"
+        id S1729889AbfD3LnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727964AbfD3LlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:11 -0400
+        id S1729874AbfD3LnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:43:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7353D21670;
-        Tue, 30 Apr 2019 11:41:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B63521734;
+        Tue, 30 Apr 2019 11:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624470;
-        bh=2fVrfKPRJDmpuIYu/AVPqgHqNSEtakCjOlU/kwx6aWs=;
+        s=default; t=1556624601;
+        bh=DQAPoA1vmz5pLFoA53smvGOgqPbkDEWjxB/23Uq+0Uo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xI0S1j8CbQfwUQYWj7V4TPCr5nr1xMsN4+rvN2SuS+wtjxypMwjLAvHUZzjrB1B5K
-         LEeKfeX4WJXw2gPQt+dvlbEU7ktF277GkjWj6f6VlQ5Nwz95wkqYBBTGl+S6ktlOzl
-         soTjsOzrDy1/wmlLuiKQaOJ22i6v4MD77RsaOZgI=
+        b=Wh0YyozLsGTZZf6wdGytBUIJRy59LPEFSUkMKWqLuzEpBlcwIRYfyGAaSgY0Taumv
+         NldJHOeWztaq+afhHNh9SzkJBLChZrncG4iS4OIbRpGMnKZPR/b2FNoqokHy9nEoQG
+         3q+Dj9zm0yrhJ90aAqcxAPPkz6fqlD1VIdtF2aN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amit Cohen <amitc@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 31/41] mlxsw: spectrum: Fix autoneg status in ethtool
+        stable@vger.kernel.org,
+        syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 35/53] netfilter: ebtables: CONFIG_COMPAT: drop a bogus WARN_ON
 Date:   Tue, 30 Apr 2019 13:38:42 +0200
-Message-Id: <20190430113531.907091349@linuxfoundation.org>
+Message-Id: <20190430113557.415213926@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amit Cohen <amitc@mellanox.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 151f0dddbbfe4c35c9c5b64873115aafd436af9d ]
+commit 7caa56f006e9d712b44f27b32520c66420d5cbc6 upstream.
 
-If link is down and autoneg is set to on/off, the status in ethtool does
-not change.
+It means userspace gave us a ruleset where there is some other
+data after the ebtables target but before the beginning of the next rule.
 
-The reason is when the link is down the function returns with zero
-before changing autoneg value.
-
-Move the checking of link state (up/down) to be performed after setting
-autoneg value, in order to be sure that autoneg will change in any case.
-
-Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
-Signed-off-by: Amit Cohen <amitc@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
+Reported-by: syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -2059,11 +2059,11 @@ mlxsw_sp_port_set_link_ksettings(struct
- 	if (err)
- 		return err;
+---
+ net/bridge/netfilter/ebtables.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2030,7 +2030,8 @@ static int ebt_size_mwt(struct compat_eb
+ 		if (match_kern)
+ 			match_kern->match_size = ret;
  
-+	mlxsw_sp_port->link.autoneg = autoneg;
-+
- 	if (!netif_running(dev))
- 		return 0;
+-		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
++		/* rule should have no remaining data after target */
++		if (type == EBT_COMPAT_TARGET && size_left)
+ 			return -EINVAL;
  
--	mlxsw_sp_port->link.autoneg = autoneg;
--
- 	mlxsw_sp_port_admin_status_set(mlxsw_sp_port, false);
- 	mlxsw_sp_port_admin_status_set(mlxsw_sp_port, true);
- 
+ 		match32 = (struct compat_ebt_entry_mwt *) buf;
 
 
