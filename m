@@ -2,203 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3160FBA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB98FBB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfD3Ojo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:39:44 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38352 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfD3Ojn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:39:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w11so5804294edl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:39:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zQMzOEOjxZHMvmO5FLHBwq+9oHa3heGRya7YM30RNyY=;
-        b=EhM3PvG4eAi+BxPpYdxsVAmzFEvMjuOyOL+UhC2bwgCuNfNxM62MNSwqdg4hIvRfBu
-         Qg9vnagovFy7fdd/20DjTu3/wIRhpPUcglDFA8ALUxt40/oHBNHO04+p7j17mC5BsM8L
-         T4O0XkJBB10qHPxaQvIPKpIZrD6W6zD/5lohZOOTmJIWXtGPzYqWIJaSc0v3tdYQT/pG
-         rrX6PPGCLrKbWWNmE8aXxmnwMyZJGJfuGhdSp4rPH8IUX/AqOgCFAyl7OPYnoWp7Bb3N
-         UmC2IDDODQu5m3phZUaTG/tSE70jnnreXOLj9Y2ICZYyPtehiROl1gq644NWxRUbfZtJ
-         qHDA==
-X-Gm-Message-State: APjAAAVgyhHzL0970J/k5mAOuk3ap5bY9VJ/lXQdsueboY7dLILGOebl
-        5kbLNwM/685a05X1xJez5ZMC84ZGNXg=
-X-Google-Smtp-Source: APXvYqx1234fcMrjFMGVa57IO9+f/eGJhGqA7xKgDp/OcA5okjHSezGYQusujlljNqw6mmalBOE25A==
-X-Received: by 2002:a17:906:9a9:: with SMTP id q9mr26741022eje.171.1556635181153;
-        Tue, 30 Apr 2019 07:39:41 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
-        by smtp.gmail.com with ESMTPSA id s11sm6323208ejq.59.2019.04.30.07.39.39
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 07:39:40 -0700 (PDT)
-Subject: Re: [PATCH] ACPI / LPSS: Don't skip late system PM ops for hibernate
- on BYT/CHT
-To:     "Robert R. Howell" <RHowell@uwyo.edu>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190403054352.30120-1-kai.heng.feng@canonical.com>
- <eb1462c9-ebef-7bd6-c263-3f4f2e8ba63d@redhat.com>
- <b6cd67d7-a4de-0fab-4512-25d732190d17@uwyo.edu>
- <feb1808d-542c-83c2-5c70-9228473bb8d0@redhat.com>
- <0a770539-dfe9-2eb6-a90a-82f065a23a3f@uwyo.edu>
- <f6db39bc-b8d1-fda8-ad37-a8b050ef0027@redhat.com>
- <37aee883-1253-adad-82b4-4a578cc72825@uwyo.edu>
- <CAJZ5v0j9U20cFbRx6QKeQv6wyDg6nL71L0U_Rec5+W1JoD8-=w@mail.gmail.com>
- <144b56d4-54e6-bccd-4652-22303bcd9168@uwyo.edu>
- <CAJZ5v0jJEovXXiqs-tzPC7FsGjGL+qxfXCxbTrQZqAxSCv1oyQ@mail.gmail.com>
- <beab21cb-9f89-b934-e0a4-2fd85c69f4e6@uwyo.edu>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <4fb5fc2e-e5af-6732-0228-8c73beed1afb@redhat.com>
-Date:   Tue, 30 Apr 2019 16:39:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727932AbfD3OkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:40:23 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:46698 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727107AbfD3OkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 10:40:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id D653FFB03;
+        Tue, 30 Apr 2019 16:40:15 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ZxhPMDPfx7vw; Tue, 30 Apr 2019 16:40:12 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 5A6FE4027E; Tue, 30 Apr 2019 16:40:11 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH v9 0/2] Mixel MIPI DPHY support for NXPs i.MX8 SOCs
+Date:   Tue, 30 Apr 2019 16:40:09 +0200
+Message-Id: <cover.1556633413.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <beab21cb-9f89-b934-e0a4-2fd85c69f4e6@uwyo.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is basically a resend of v8 with one minor debug printk fixed and
+Rob's Reviewed-by for binding docs collteted. Thanks Rob!
 
-On 4/25/19 6:38 PM, Robert R. Howell wrote:
-> On 4/24/19 1:20 AM, Rafael J. Wysocki wrote:
-> 
->> On Tue, Apr 23, 2019 at 10:03 PM Robert R. Howell <RHowell@uwyo.edu> wrote:
->>>
->>> On 4/23/19 2:07 AM, Rafael J. Wysocki wrote:
->>>>
->>>> On Sat, Apr 20, 2019 at 12:44 AM Robert R. Howell <RHowell@uwyo.edu> wrote:
->>>>>
->>>>> On 4/18/19 5:42 AM, Hans de Goede wrote:
->>>>>
->>>>>>> On 4/8/19 2:16 AM, Hans de Goede wrote:>
->>>>>>>>
->>>>>>>> Hmm, interesting so you have hibernation working on a T100TA
->>>>>>>> (with 5.0 + 02e45646d53b reverted), right ?
->>>>>>>>
->>>>>
->>>>>
->>>>> I've managed to find a way around the i2c_designware timeout issues
->>>>> on the T100TA's.  The key is to NOT set DPM_FLAG_SMART_SUSPEND,
->>>>> which was added in the 02e45646d53b commit.
->>>>>
->>>>> To test that I've started with a 5.1-rc5 kernel, applied your recent patch
->>>>> to acpi_lpss.c, then apply the following patch of mine, removing
->>>>> DPM_FLAG_SMART_SUSPEND.  (For the T100 hardware I need to apply some
->>>>> other patches as well but those are not related to the i2c-designware or
->>>>> acpi issues addressed here.)
->>>>>
->>>>> On a resume from hibernation I still see one error:
->>>>>    "i2c_designware 80860F41:00: Error i2c_dw_xfer called while suspended"
->>>>> but I no longer get the i2c_designware timeouts, and audio does now work
->>>>> after the resume.
->>>>>
->>>>> Removing DPM_FLAG_SMART_SUSPEND may not be what you want for other
->>>>> hardware, but perhaps this will give you a clue as to what is going
->>>>> wrong with hibernate/resume on the T100TA's.
->>>>
->>>> What if you drop DPM_FLAG_LEAVE_SUSPENDED alone instead?
->>>>
->>>
->>> I did try dropping just DPM_FLAG_LEAVE_SUSPENDED, dropping just
->>> DPM_FLAG_SMART_SUSPEND, and dropping both flags.  When I just drop
->>> DPM_FLAG_LEAVE_SUSPENDED I still get the i2c_designware timeouts
->>> after the resume.  If I drop just DPM_FLAG_SMART_SUSPEND or drop both,
->>> then the timeouts go away.
->>
->> OK, thanks!
->>
->> Is non-hibernation system suspend affected too?
-> 
-> I just ran some tests on a T100TA, using the 5.1-rc5 code with Hans' patch applied
-> but without any changes to i2c-designware-platdrv.c, so the
-> DPM_FLAG_SMART_PREPARE, DPM_FLAG_SMART_SUSPEND, and DPM_FLAG_LEAVE_SUSPENDED flags
-> are all set.
-> 
-> Suspend does work OK, and after resume I do NOT get any of the crippling
-> i2c_designware timeout errors which cause sound to fail after hibernate.  I DO see one
->    "i2c_designware 80860F41:00: Error i2c_dw_xfer call while suspended"
-> error on resume, just as I do on hibernate.  I've attached a portion of dmesg below.
-> The "asus_wmi:  Unknown key 79 pressed" error is a glitch which occurs
-> intermittently on these machines, but doesn't seem related to the other issues.
-> I had one test run when it was absent but the rest of the messages were the
-> same -- but then kept getting that unknown key error on all my later tries.
+This adds initial support for the Mixel IP based mipi dphy as found on i.MX8
+processors.  It has support for the i.MX8MQ, support for other variants can be
+added - once the platform specific parts are in - via the provided devdata.
+The driver is somewhat based on what's found in NXPs BSP.
 
-I've just tried to reproduce the "Error i2c_dw_xfer call while suspended" error
-on suspend/resume on my own T100TA and I could not reproduce this.
+Public documentation on the DPHY's registers is currently thin in the i.MX8
+reference manuals (even on the i.MX8QXP form 11/18) so most of the values were
+taken from existing drivers. Newer NXP drivers have a bit more details so where
+possible the timings are calculated and validated.
 
-Can you try without the BT keyboard paired and waking up from suspend using the
-tablet part's power-button ?
+This was tested with an initial version of a NWL MIPI DSI host
+controller driver
 
-Also do you still have the scripts to rmmod some modules before suspend ?
+    https://lists.freedesktop.org/archives/dri-devel/2019-March/209685.html
 
-> I did notice the "2sidle" in the following rather than "shallow" or "deep".  A
-> cat of /sys/power/state shows "freeze mem disk" but a
-> cat of /sys/power/mem_sleep" shows only "[s2idle] so it looks like shallow and deep
-> are not enabled for this system.  I did check the input power (or really current)
-> as it went into suspend and the micro-usb power input drops from about
-> 0.5 amps to 0.05 amps.  But clearly a lot of devices are still active, as movement
-> of a bluetooth mouse (the MX Anywhere 2) will wake it from suspend.  That presumably is
-> why suspend doesn't trigger the same i2c_designware problems as hibernate.
+and a forward ported DCSS driver on linux-next 20190408.
 
-s2idle is the normal / expected suspend condition on these tablet devices.
+Robert Chiras (the author of the corresponding driver in NXPs vendor
+tree) got this driver to work in his tree as well using mxsfb:
 
-As for how much energy is consumed during suspend, the device should use
-S0i3 and then you should get ok (so not great, but also not too much) power
-consumption during suspend:
+    https://www.spinics.net/lists/arm-kernel/msg711950.html
 
-[root@dhcp-43-189 ~]# cat /sys/kernel/debug/pmc_atom/sleep_state
-S0IR Residency: 156256us
-S0I1 Residency: 3968us
-S0I2 Residency: 0us
-S0I3 Residency: 70557440us
-S0   Residency: 11826052384us
+Changes from v8
+* Collect Reviewed-by from Rob Herring
+* Fix {hs,clk}_prepare vs {hs,clk}_zero debug print out
 
-After being suspended for a couple of seconds, you should see a significant
-(large) value in S0I3 like above.
+Changes from v7
+* As per review comments from Rob Herring
+  * Use fsl, as vendor prefix
+  * Drop changes to vendor-prefixes.txt due to that
+  * Shorten mixel_dphy to dphy in the example
+* Fix an indentation error noticed by checkpatch that got introduced in v6
+* Use lowercase letters in hex addresses in DT bindings example
 
-Regards,
+Changes from v6
+* Depend on HAS_IOMEM (fixes a build problem on UM spotted by kbuild)
 
-Hans
+Changes from v5
+* Fix build problems on mips (spotted by the kbuild test robot) by using u32
+  consistently and long long for lp_t.
+
+Changes from v4
+* Build by default on ARCH_MXC && ARM64
+
+Changes form v3
+* Check correct variable after devm_ioremap_resource
+* Add Robert Chiras as Co-authored-by since he's the author
+  of the driver in NXPs BSP.
+
+Changes from v2
+* As per review comments from Fabio Estevam
+  * KConfig: select REGMAP_MMIO
+  * Drop phy_read
+  * Don't make phy_write inline
+  * Remove duplicate debugging output
+  * Comment style and typo fixes
+  * Add #defines's for PLL lock timing values
+  * Return correct error value when PLL fails to lock
+  * Check error when enabling clock
+  * Use devm_ioremap_resource
+* As per review comments from Robert Chiras
+  * Deassert PD_DPHY after PLL lock (as per mixel ref manual)
+  * Assert PD_{DPHY,PLL} before power on (as per mixel ref manual)manual
+* Add exit phy_op to reset CN/CM/CO
+
+Changes from v1
+* As per review comments from Fabio Estevam
+  * Kconfig: tristate mixel dphy support.
+  * Drop unused 'ret' in mixel_dphy_ref_power_off.
+  * Match values of DPHY_RXL{PRP,DRP} to those of
+    https://source.codeaurora.org/external/imx/linux-imx/log/?h=imx_4.14.78_1.0.0_ga
+    The previous values were based on 4.9.
+  * Use resource size on devm_ioremap, we have that in dt already.
+  * Use regmap so it's simple to dump the registers.
+  * Use regmap_read_poll_timeout instead of open coded loop.
+  * Add undocumented rxhs_settle register
+* As per review comments from Sam Ravnborg
+  * Move driver to d/phy/freescale/
+  * Move SPDX-License-Identifier to top of file.
+  * Drop '/* #define DEBUG 1 */'.
+  * Use GPL-2.0+ since the vendor driver uses that as well.
+  * Drop the mutex, register access is now protected by regmap.
+  * Fix various style / indentation issues.
+* Check for register read, write and ioremap errors
+* Improve phy timing calculations
+  * Use LP clock rate where sensible, check for errors
+  * Use ad hoc forumulas for timings involving hs clock
+* Switch from dphy_ops to devdata. Other i.MX8 variants
+  differ in register layout too
+* Add Mixel Inc to vendor-prefixes.txt
+
+To: Kishon Vijay Abraham I <kishon@ti.com>,Rob Herring <robh+dt@kernel.org>,Mark Rutland <mark.rutland@arm.com>,Shawn Guo <shawnguo@kernel.org>,Sascha Hauer <s.hauer@pengutronix.de>,Pengutronix Kernel Team <kernel@pengutronix.de>,Fabio Estevam <festevam@gmail.com>,NXP Linux Team <linux-imx@nxp.com>,Thierry Reding <treding@nvidia.com>,"Andreas Färber" <afaerber@suse.de>,Martin Blumenstingl <martin.blumenstingl@googlemail.com>,Heiko Stuebner <heiko@sntech.de>,Johan Hovold <johan@kernel.org>,Lucas Stach <l.stach@pengutronix.de>,Abel Vesa <abel.vesa@nxp.com>,Li Jun <jun.li@nxp.com>,linux-kernel@vger.kernel.org,devicetree@vger.kernel.org,linux-arm-kernel@lists.infradead.org,dri-devel@lists.freedesktop.org,Robert Chiras <robert.chiras@nxp.com>,Sam Ravnborg <sam@ravnborg.org>,Maxime Ripard <maxime.ripard@bootlin.com>
 
 
+Guido Günther (2):
+  dt-bindings: phy: Add documentation for mixel dphy
+  phy: Add driver for mixel mipi dphy found on NXP's i.MX8 SoCs
 
+ .../bindings/phy/mixel,mipi-dsi-phy.txt       |  29 +
+ drivers/phy/freescale/Kconfig                 |  11 +
+ drivers/phy/freescale/Makefile                |   1 +
+ .../phy/freescale/phy-fsl-imx8-mipi-dphy.c    | 506 ++++++++++++++++++
+ 4 files changed, 547 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/mixel,mipi-dsi-phy.txt
+ create mode 100644 drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
 
+-- 
+2.20.1
 
-
-> 
-> Let me know if I can do any other tests.
-> 
-> Bob Howell
-> 
-> ----DMESG OUTPUT ON SUSPEND------------------
-> [   71.791495] NET: Registered protocol family 38
-> [   73.150736] input: MX Anywhere 2 Keyboard as /devices/virtual/misc/uhid/0005:046D:B013.0005/input/input24
-> [   73.156612] input: MX Anywhere 2 Mouse as /devices/virtual/misc/uhid/0005:046D:B013.0005/input/input25
-> [   73.159504] hid-generic 0005:046D:B013.0005: input,hidraw4: BLUETOOTH HID v0.07 Keyboard [MX Anywhere 2] on 74:D0:2B:DF:77:E9
-> [  102.719170] asus_wmi: Unknown key 79 pressed
-> [  102.897214] asus_wmi: Unknown key 79 pressed
-> [  104.298409] PM: suspend entry (s2idle)
-> [  104.298414] PM: Syncing filesystems ... done.
-> [  105.410883] Freezing user space processes ... (elapsed 0.002 seconds) done.
-> [  105.413556] OOM killer disabled.
-> [  105.413558] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> [  123.353720] i2c_designware 80860F41:00: Error i2c_dw_xfer call while suspended
-> [  123.635028] ACPI: button: The lid device is not compliant to SW_LID.
-> [  124.086421] OOM killer enabled.
-> [  124.086491] Restarting tasks ... done.
-> [  124.120647] PM: suspend exit
-> [  124.939566] asus_wmi: Unknown key 79 pressed
-> 
