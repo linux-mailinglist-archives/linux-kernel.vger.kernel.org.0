@@ -2,97 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2601AEFE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 07:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F22FDEFD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 07:15:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbfD3FQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 01:16:31 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:42487 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725446AbfD3FQa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 01:16:30 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7862B27CE8;
-        Tue, 30 Apr 2019 01:16:29 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 30 Apr 2019 01:16:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=DUYD7xRlE61Rnxv7xoYW7Ssfsx5
-        LnGk2D3PkL/WJ8Ik=; b=hDMWL/JzlkFybHuKb0MoXkqVAJkasMpnqEirHt4VObt
-        kwYj3tWdgRv9P+roD9UIUfrr3j0xSICayLEk8e73AuaiVaWFVA2E5kCqnwE3INpE
-        zYxQpz3t58Y/Kkir7XVcQ4+XzhSiaZKiUtL0ZeBmwIQV0Hvkh0AgLm/1rPSf9YEq
-        K3bkgHyJVWT6+FXAlluCe4cVJfVAd0b98xsHk+FxO/enJNHO4ud88akbM0KMliJ2
-        kE7/KpQIjUz5KfqpRk5az+OJJcW1q3bsv2FZi3GIzYZmZNLF2TsSH+a0BmNSC9cd
-        IVQOO/XVnwAXiPanEKkWWPdwmkwot5xejveBH0CYp6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=DUYD7x
-        RlE61Rnxv7xoYW7Ssfsx5LnGk2D3PkL/WJ8Ik=; b=Po303dIKhLf++y10KwKR2b
-        19s96KvZ5tCil9B5fdw/n/y8LO2K1zQyJ4RMkz7wLAOSiEW+ZmNzW+IJZSd7Gaej
-        oy/XBRfzJtTer3IPaREI7Sinu7Fwx3qyX0gEIQI/SFYWc/cdQJvP+gQJyfK8cebx
-        jVA5dne+aZ9v+45RYs4E5LyVkJtAMW4dB4dt/8wqGbS5TT0PPe8RXhK3Ywv3zFsK
-        MgcdGZJjeUUSYqSsQ7sWui3xvYhKWw4HnLP2L+F5/U+Prj2kZd2NRFu3QB5G05yQ
-        zFIXZliIR7jwRpRyf2/Ys0RFA9QWrJXgpybcPYpPxqkhGyHVCZgHbJOjUAZm7fNA
-        ==
-X-ME-Sender: <xms:LdrHXGAaqcq5iB83EdllyF12agGKTFb5imHvkLiGJOJkbijMd51Ysw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
-    hrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
-    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
-    hinhdrtggtqeenucfkphepuddvuddrgeegrddvfedtrddukeeknecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:LdrHXOFWdrPJ4yvRdKW6uHuf5rAAZJ7_-rIVUn9GvttwI0xs7AV2BA>
-    <xmx:LdrHXACSjH8_Z847B-_1zJ6MDT3_yFrx2aqqEtkaxamuI1j33qJ60A>
-    <xmx:LdrHXGX-unkxBBH-f0pmQiK9_qqq75mRId0BY8FmU919GCWbn_wQ4A>
-    <xmx:LdrHXBerXOvl2QnclXWXjhjHTiOOIxLtKQQGYiHUsUIcVnb5BnSFgA>
-Received: from localhost (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 539E7103C9;
-        Tue, 30 Apr 2019 01:16:28 -0400 (EDT)
-Date:   Tue, 30 Apr 2019 15:15:45 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] sched/cpufreq: Fix kobject memleak
-Message-ID: <20190430051545.GB30100@eros.localdomain>
-References: <20190430001717.26533-1-tobin@kernel.org>
- <20190430042443.GB73609@gmail.com>
+        id S1726167AbfD3FPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 01:15:52 -0400
+Received: from mail-eopbgr10042.outbound.protection.outlook.com ([40.107.1.42]:13026
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725446AbfD3FPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 01:15:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ta9fMO0dk7pewKBA7DrSOk86lqYpvZH1CHv061S4JgA=;
+ b=g579Lo9pG1iL7GGAFjvOAkb7Luw5EyRNl5KAXLPnGSZymKMiGvme8g6VQtQjomM+KrirzuESDxeuIKigGdAODVyaqP418MH4n4IrB/qKEeRPEYXJZmzb48kvZPMr7TluLHGw67JYGAaVyud7X9ZRnaz/Nb+IU4Ix5IUxDQV7mhw=
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com (52.133.15.33) by
+ VI1PR04MB6205.eurprd04.prod.outlook.com (20.179.24.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.15; Tue, 30 Apr 2019 05:15:47 +0000
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::8015:ec84:d721:b566]) by VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::8015:ec84:d721:b566%5]) with mapi id 15.20.1835.018; Tue, 30 Apr 2019
+ 05:15:47 +0000
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leo Li <leoyang.li@nxp.com>
+CC:     Yinbo Zhu <yinbo.zhu@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        "Y.b. Lu" <yangbo.lu@nxp.com>, Jiafei Pan <jiafei.pan@nxp.com>
+Subject: [PATCH v1] mmc: dt: add DT bindings for ls1028a eSDHC host controller
+Thread-Topic: [PATCH v1] mmc: dt: add DT bindings for ls1028a eSDHC host
+ controller
+Thread-Index: AQHU/xPEWmF2aWlBZkm+gILQArYb6Q==
+Date:   Tue, 30 Apr 2019 05:15:47 +0000
+Message-ID: <20190430051723.31345-1-yinbo.zhu@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR04CA0011.apcprd04.prod.outlook.com
+ (2603:1096:203:36::23) To VI1PR04MB4158.eurprd04.prod.outlook.com
+ (2603:10a6:803:46::33)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yinbo.zhu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5d7e4c34-82e3-4de3-d40c-08d6cd2ae718
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB6205;
+x-ms-traffictypediagnostic: VI1PR04MB6205:
+x-microsoft-antispam-prvs: <VI1PR04MB62053D5DE39D885430AA3559E93A0@VI1PR04MB6205.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1079;
+x-forefront-prvs: 00235A1EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(346002)(136003)(396003)(199004)(189003)(66446008)(6506007)(99286004)(66476007)(64756008)(66556008)(2906002)(386003)(66946007)(52116002)(6636002)(102836004)(6486002)(97736004)(66066001)(1076003)(25786009)(14454004)(6436002)(73956011)(54906003)(53936002)(50226002)(5660300002)(7736002)(4744005)(44832011)(316002)(305945005)(4326008)(478600001)(256004)(36756003)(71200400001)(86362001)(8936002)(26005)(2201001)(8676002)(186003)(81166006)(6116002)(81156014)(110136005)(486006)(476003)(2616005)(68736007)(71190400001)(2501003)(6512007)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6205;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: EMuLPZOLhFw13wtFI7bebAlURuTnqSSTrg9h7zfzJBYioLK9bcy//FyH2O0AwWBgBRt4Fvprcqzy0y8yGz8z3LqLMYAHieMaQFenFa30tbuZS7bcoTA1KGfB7piqYaG9OgzOGb2FPx0ibMsvU+YldbLmi0sn2DsOv0Edp8yzEt5hXgUmmTxfjPcONl2BMeZdAZ7cFGBGP5+NoCl3BLUiAgEVhYUts4W3gGnnMIkcbbS9sGzNrxm5TRydvf3ou7J0T5LXbseNpDYhuWEhN8b89WDpGjgT9BtapPp+vo25wD8S9W1CoPkG8qxNzek6xHrqtr8pGv/sYX2eM0VQaIQ9FjrPFXznAbwLwRo6R3fbaSSGMmw8a31BHZK5+UQVrywtmiEAuK7JprieBo7Z58efn3Hj2ThiNDrfhm7GV+opBuU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430042443.GB73609@gmail.com>
-X-Mailer: Mutt 1.11.4 (2019-03-13)
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d7e4c34-82e3-4de3-d40c-08d6cd2ae718
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 05:15:47.5382
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 06:24:43AM +0200, Ingo Molnar wrote:
-> 
-> * Tobin C. Harding <tobin@kernel.org> wrote:
-> 
-> > Currently error return from kobject_init_and_add() is not followed by a
-> > call to kobject_put().  This means there is a memory leak.
-> > 
-> > Add call to kobject_put() in error path of kobject_init_and_add().
-> > 
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> > ---
-> > 
-> > Resend with SOB tag.
-> 
-> Please ignore my previous mail :-)
-
-Cheers Ingo, caught myself not checkpatching :(
-
-thanks,
-Tobin.
-
+RnJvbTogWWluYm8gWmh1IDx5aW5iby56aHVAbnhwLmNvbT4NCg0KQWRkICJmc2wsbHMxMDI4YS1l
+c2RoYyIgYmluZGluZ3MgZm9yIGxzMTAyOGEgZVNESEMgaG9zdCBjb250cm9sbGVyDQoNClNpZ25l
+ZC1vZmYtYnk6IFlpbmJvIFpodSA8eWluYm8uemh1QG54cC5jb20+DQotLS0NCiAuLi4vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9tbWMvZnNsLWVzZGhjLnR4dCAgICAgICAgICB8ICAgIDEgKw0KIDEgZmls
+ZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0
+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9mc2wtZXNkaGMudHh0IGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9mc2wtZXNkaGMudHh0DQppbmRl
+eCA5OWM1Y2Y4Li5hNzI1MGI5IDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL21tYy9mc2wtZXNkaGMudHh0DQorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvbW1jL2ZzbC1lc2RoYy50eHQNCkBAIC0yMSw2ICsyMSw3IEBAIFJlcXVpcmVk
+IHByb3BlcnRpZXM6DQogCSJmc2wsbHMxMDQzYS1lc2RoYyINCiAJImZzbCxsczEwNDZhLWVzZGhj
+Ig0KIAkiZnNsLGxzMjA4MGEtZXNkaGMiDQorCSJmc2wsbHMxMDI4YS1lc2RoYyINCiAgIC0gY2xv
+Y2stZnJlcXVlbmN5IDogc3BlY2lmaWVzIGVTREhDIGJhc2UgY2xvY2sgZnJlcXVlbmN5Lg0KIA0K
+IE9wdGlvbmFsIHByb3BlcnRpZXM6DQotLSANCjEuNy4xDQoNCg==
