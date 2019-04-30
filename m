@@ -2,88 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F62F360
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A63F242
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfD3Jp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:45:57 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:48767 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727068AbfD3Jp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:45:29 -0400
-X-UUID: de806874b1c34150b95615d23c81ffc6-20190430
-X-UUID: de806874b1c34150b95615d23c81ffc6-20190430
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <henryc.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 973128999; Tue, 30 Apr 2019 17:45:21 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 30 Apr 2019 17:45:20 +0800
-Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 30 Apr 2019 17:45:20 +0800
-From:   Henry Chen <henryc.chen@mediatek.com>
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
-CC:     Nicolas Boichat <drinkcat@google.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Henry Chen <henryc.chen@mediatek.com>
-Subject: [RFC V2 11/11] arm64: dts: mt8183: Add interconnect provider DT nodes
-Date:   Tue, 30 Apr 2019 16:51:05 +0800
-Message-ID: <1556614265-12745-12-git-send-email-henryc.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
-References: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
+        id S1726505AbfD3IwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:52:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbfD3IwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:52:04 -0400
+Received: from localhost (unknown [171.76.113.243])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 226FE2080C;
+        Tue, 30 Apr 2019 08:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556614323;
+        bh=rx7gaafRLvVxPDqwUax0KvGsKin5v/LWnnrVHNAHdO0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qOonsrnINOv2RpSPsRKwi6zuWmuX0krW/BpoIRz9cg/hunslBxHyOt5lRy2WD3xeE
+         G+Mjm47KScEfQvJBqWA4JmtwApvmbu/STm9R4rgJ4o+W/35plnDKwH92gGB2DRXrCi
+         pK8z5OmGazLXqXDxW4Ds/Iv17ebR9CN1yfzlfOUE=
+Date:   Tue, 30 Apr 2019 14:21:53 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
+        srinivas.kandagatla@linaro.org,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [alsa-devel] [PATCH v3 2/5] soundwire: fix style issues
+Message-ID: <20190430085153.GS3845@vkoul-mobl.Dlink>
+References: <20190411031701.5926-1-pierre-louis.bossart@linux.intel.com>
+ <20190411031701.5926-3-pierre-louis.bossart@linux.intel.com>
+ <20190414095839.GG28103@vkoul-mobl>
+ <08ea1442-361a-ecfc-ca26-d3bd8a0ec37b@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 49CC5D9D103BFB28D9BFC001BF05DC1514CC9149507117BCD0812460867759DD2000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08ea1442-361a-ecfc-ca26-d3bd8a0ec37b@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DDR EMI provider dictating dram interconnect bus performance
-found on MT8183-based platforms
+On 15-04-19, 08:09, Pierre-Louis Bossart wrote:
+> 
+> > > 
+> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> > > ---
+> > >   drivers/soundwire/Kconfig          |   2 +-
+> > >   drivers/soundwire/bus.c            |  87 ++++++++--------
+> > >   drivers/soundwire/bus.h            |  16 +--
+> > >   drivers/soundwire/bus_type.c       |   4 +-
+> > >   drivers/soundwire/cadence_master.c |  87 ++++++++--------
+> > >   drivers/soundwire/cadence_master.h |  22 ++--
+> > >   drivers/soundwire/intel.c          |  87 ++++++++--------
+> > >   drivers/soundwire/intel.h          |   4 +-
+> > >   drivers/soundwire/intel_init.c     |  12 +--
+> > >   drivers/soundwire/mipi_disco.c     | 116 +++++++++++----------
+> > >   drivers/soundwire/slave.c          |  10 +-
+> > >   drivers/soundwire/stream.c         | 161 +++++++++++++++--------------
+> > 
+> > I would prefer this to be a patch per module. It doesnt help to have a
+> > single patch for all the files!
+> > 
+> > It would be great to have cleanup done per logical group, for example
+> > typos in a patch, aligns in another etc...
+> 
+> You've got to be kidding. I've never seen people ask for this sort of
+> detail.
 
-Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Nope this is the way it should be. A patch is patch and which
+should do one thing! Even if it is a cleanup one.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index d298013..ab98adb 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/mt8183-power.h>
- #include <dt-bindings/soc/mtk,dvfsrc.h>
-+#include <dt-bindings/interconnect/mtk,mt8183.h>
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -139,6 +140,10 @@
- 		reg = <0 0x10012000 0 0x1000>;
- 		clocks = <&infracfg CLK_INFRA_DVFSRC>;
- 		clock-names = "dvfsrc";
-+		ddr_emi: interconnect {
-+			compatible = "mediatek,mt8183-emi-icc";
-+			#interconnect-cells = <1>;
-+		};
- 	};
- 
- 	timer {
+I dislike a patch which touches everything, core, modules, so please
+split up. As a said in review it takes guesswork to find why a change
+was done, was it whitespace fix, indentation or not, so please split up
+based on type of fixes.
+
+> 
+> > 
+> > >   12 files changed, 313 insertions(+), 295 deletions(-)
+> > > 
+> > > diff --git a/drivers/soundwire/Kconfig b/drivers/soundwire/Kconfig
+> > > index 19c8efb9a5ee..84876a74874f 100644
+> > > --- a/drivers/soundwire/Kconfig
+> > > +++ b/drivers/soundwire/Kconfig
+> > > @@ -4,7 +4,7 @@
+> > >   menuconfig SOUNDWIRE
+> > >   	bool "SoundWire support"
+> > > -	---help---
+> > > +	help
+> > 
+> > Not sure if this is a style issue, kernel seems to have 2990 instances
+> > of this!
+> 
+> this is reported by checkpatch.pl --strict.
+> 
+> > 
+> > >   	if (msg->page)
+> > >   		sdw_reset_page(bus, msg->dev_num);
+> > > @@ -243,7 +244,7 @@ int sdw_transfer(struct sdw_bus *bus, struct sdw_msg *msg)
+> > >    * Caller needs to hold the msg_lock lock while calling this
+> > >    */
+> > >   int sdw_transfer_defer(struct sdw_bus *bus, struct sdw_msg *msg,
+> > > -				struct sdw_defer *defer)
+> > > +		       struct sdw_defer *defer)
+> > 
+> > this does not seem aligned to me!
+> 
+> It is, I checked. 2 tabs and 7 spaces.
+> 
+> > 
+> > >   int sdw_fill_msg(struct sdw_msg *msg, struct sdw_slave *slave,
+> > > -		u32 addr, size_t count, u16 dev_num, u8 flags, u8 *buf)
+> > > +		 u32 addr, size_t count, u16 dev_num, u8 flags, u8 *buf)
+> > 
+> > this one too
+> 
+> 2 tabs and one space.
+> 
+> > 
+> > > @@ -458,13 +458,13 @@ static int sdw_assign_device_num(struct sdw_slave *slave)
+> > >   		mutex_unlock(&slave->bus->bus_lock);
+> > >   		if (dev_num < 0) {
+> > >   			dev_err(slave->bus->dev, "Get dev_num failed: %d",
+> > > -								dev_num);
+> > > +				dev_num);
+> > 
+> > It might read better if we move the log to second line along with
+> > dev_num...
+
+?
+
+> > 
+> > >   int sdw_configure_dpn_intr(struct sdw_slave *slave,
+> > > -			int port, bool enable, int mask)
+> > > +			   int port, bool enable, int mask)
+> > 
+> > not aligned
+> 
+> it is in the code. It's a diff illusion.
+> 
+> > 
+> > >   void sdw_extract_slave_id(struct sdw_bus *bus,
+> > > -			u64 addr, struct sdw_slave_id *id);
+> > > +			  u64 addr, struct sdw_slave_id *id);
+> > 
+> > Not aligned
+> 
+> it is in the code. It's a diff illusion.
+> 
+> > >   enum sdw_command_response
+> > >   cdns_xfer_msg_defer(struct sdw_bus *bus,
+> > > -		struct sdw_msg *msg, struct sdw_defer *defer)
+> > > +		    struct sdw_msg *msg, struct sdw_defer *defer)
+> > 
+> > this one too..
+> > 
+> > >   static int cdns_port_params(struct sdw_bus *bus,
+> > > -		struct sdw_port_params *p_params, unsigned int bank)
+> > > +			    struct sdw_port_params *p_params, unsigned int bank)
+> > 
+> > here as well.. (and giving up on rest)
+> 
+> Please check for yourself that this is a diff illusion w/ tab space.
+
 -- 
-1.9.1
-
+~Vinod
