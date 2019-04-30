@@ -2,191 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03280FE89
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D319FE8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfD3RMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 13:12:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:52035 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfD3RMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 13:12:17 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 44tp3y58RLz9v1k9;
-        Tue, 30 Apr 2019 19:12:14 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Y+BPCfFl; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 7IpCUdIa0TSw; Tue, 30 Apr 2019 19:12:14 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 44tp3y3rYfz9v1k7;
-        Tue, 30 Apr 2019 19:12:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1556644334; bh=I6U/WMxuM/ZK7tYarUOuYY237DpcVURiegr1EP4PwhY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Y+BPCfFlQth4Q3F4g09mhVDLltZ5p3Mj2+f6vObRBwtp83X+EBMQ7W/cEJ9lu+7PJ
-         U7Lu6rlIhX1oP9BOJN7JC4H6TcF0fBF1sJ++alaqcd2Ea2lR9anAaYMuuATjNakepe
-         ONOZwv+6heJPV/00barKCBVJyByRCJfQFYHYnV1Q=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3EE138B8F1;
-        Tue, 30 Apr 2019 19:12:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id IvLfQpKYtXoV; Tue, 30 Apr 2019 19:12:16 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 94E648B8DF;
-        Tue, 30 Apr 2019 19:12:15 +0200 (CEST)
-Subject: Re: [PATCH 2/5] soc/fsl/qe: qe.c: reduce static memory footprint by
- 1.7K
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     Valentin Longchamp <valentin.longchamp@keymile.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190430133615.25721-1-rasmus.villemoes@prevas.dk>
- <20190430133615.25721-3-rasmus.villemoes@prevas.dk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <51b00425-58a7-089a-67a9-61cd315d5097@c-s.fr>
-Date:   Tue, 30 Apr 2019 19:12:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726766AbfD3RNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 13:13:19 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42263 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfD3RNT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 13:13:19 -0400
+Received: by mail-io1-f66.google.com with SMTP id m188so12856818ioa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 10:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=jK04ckLw0I34yJUnmy5KSQzRcqzMiLH61Olu1nj5FW8=;
+        b=emNtFUXxA6u3/X0LFCk/N10uGRLXoXN7d7GVsStivjArpsRMcME2Zqrfdavw7fxwEb
+         XA/RviIt2rvTIl7KWC+tvORxzVDxNdl1cvTbRoU00fuR8cIIxYIlhPX2hB+khOPRzyM7
+         tM6XxbMozgawjRU+uj6KAtZ7XTtOTzlnjVg5bL6SxL3O7Gh+hvQDViflYBwZC+MaF3RD
+         Bfoj0xtDWxQ0xEFnQ2Wois9cUiiHE/bxIInR8J0YAiNe8/D3hUJeEzmjAIkRbgwzqgPl
+         MMgfqCg4jxKx04FT5kDGVHrh/zUr5yOMWuNKJa3Rhe3LCYEgWJEsTRIJol9jc7I3FhBl
+         9VtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=jK04ckLw0I34yJUnmy5KSQzRcqzMiLH61Olu1nj5FW8=;
+        b=s4BPjo3RFq6Fr/yhocr+T4Zy8ekfUhnodbBRPcxiIRAoEOou3EkJ3hIYwNqKJFMRBb
+         5VMaM/PIpWEXBCvSeuQdfVX/oGrtDkEGmm3gL/cAcRJ2h3+X2jXaUTRRXXQMy1RB5m3F
+         2pl0kmHQC+49sASY+DYjgH4mxiYJLB0KLN/r3V18BvDxQk+9miCKGWEAmwJHdxDkipsh
+         5nV2R53FgUgix3bC+drtYr4eSlRun+qkSea6QMv37eN9oh3xcN2z8GVY4fGRHMej0/Qc
+         Uwju3ITYLXf+rIUoSNuFp47ORx05sJ9n41A+AUMJHCUZZe0IouPL2eaxRkEj7DTo54QM
+         c37A==
+X-Gm-Message-State: APjAAAX1aVfvtkf+0z4Rxbb53b9rv7LQiAw2oF0dCGoVDUfgmPTYcT2B
+        aft8/MrOPJPb/TAl7mubj5Fs+Q==
+X-Google-Smtp-Source: APXvYqwmi65gW/QZM3FdeLpUsXcro8Mpg0Mj+1XnX3LL/CbQGIlPSbxiLXKUD6sVG4MQUwbLHM5tDA==
+X-Received: by 2002:a6b:4f0f:: with SMTP id d15mr5036524iob.48.1556644398210;
+        Tue, 30 Apr 2019 10:13:18 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id f204sm1787534itc.26.2019.04.30.10.13.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 10:13:17 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 10:13:16 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+cc:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        bbrezillon@kernel.org, richard@nod.at, palmer@sifive.com,
+        paul.walmsley@sifive.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] mtd: spi-nor: add locking support for is25xxxxx
+ device
+In-Reply-To: <1556474956-27786-4-git-send-email-sagar.kadam@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1904301004060.7063@viisi.sifive.com>
+References: <1556474956-27786-1-git-send-email-sagar.kadam@sifive.com> <1556474956-27786-4-git-send-email-sagar.kadam@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-In-Reply-To: <20190430133615.25721-3-rasmus.villemoes@prevas.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 28 Apr 2019, Sagar Shrikant Kadam wrote:
 
-
-Le 30/04/2019 à 15:36, Rasmus Villemoes a écrit :
-> The current array of struct qe_snum use 256*4 bytes for just keeping
-> track of the free/used state of each index, and the struct layout
-> means there's another 768 bytes of padding. If we just unzip that
-> structure, the array of snum values just use 256 bytes, while the
-> free/inuse state can be tracked in a 32 byte bitmap.
+> The locking scheme for ISSI devices is based on stm_lock mechanism.
+> The is25xxxxx  devices have 4 bits for selecting the range of blocks to
+> be locked for write.
 > 
-> So this reduces the .data footprint by 1760 bytes. It also serves as
-> preparation for introducing another DT binding for specifying the snum
-> values.
+> The current implementation, blocks entire 512 blocks of flash memory.
 > 
-> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
 > ---
->   drivers/soc/fsl/qe/qe.c | 37 ++++++++++++-------------------------
->   1 file changed, 12 insertions(+), 25 deletions(-)
+>  drivers/mtd/spi-nor/spi-nor.c | 60 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
 > 
-> diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-> index 855373deb746..d0393f83145c 100644
-> --- a/drivers/soc/fsl/qe/qe.c
-> +++ b/drivers/soc/fsl/qe/qe.c
-> @@ -14,6 +14,7 @@
->    * Free Software Foundation;  either version 2 of the  License, or (at your
->    * option) any later version.
->    */
-> +#include <linux/bitmap.h>
->   #include <linux/errno.h>
->   #include <linux/sched.h>
->   #include <linux/kernel.h>
-> @@ -43,25 +44,14 @@ static DEFINE_SPINLOCK(qe_lock);
->   DEFINE_SPINLOCK(cmxgcr_lock);
->   EXPORT_SYMBOL(cmxgcr_lock);
->   
-> -/* QE snum state */
-> -enum qe_snum_state {
-> -	QE_SNUM_STATE_USED,
-> -	QE_SNUM_STATE_FREE
-> -};
-> -
-> -/* QE snum */
-> -struct qe_snum {
-> -	u8 num;
-> -	enum qe_snum_state state;
-> -};
-> -
->   /* We allocate this here because it is used almost exclusively for
->    * the communication processor devices.
->    */
->   struct qe_immap __iomem *qe_immr;
->   EXPORT_SYMBOL(qe_immr);
->   
-> -static struct qe_snum snums[QE_NUM_OF_SNUM];	/* Dynamically allocated SNUMs */
-> +static u8 snums[QE_NUM_OF_SNUM];	/* Dynamically allocated SNUMs */
-> +static DECLARE_BITMAP(snum_state, QE_NUM_OF_SNUM);
->   static unsigned int qe_num_of_snum;
->   
->   static phys_addr_t qebase = -1;
-> @@ -308,6 +298,7 @@ static void qe_snums_init(void)
->   	};
->   	const u8 *snum_init;
->   
-> +	bitmap_zero(snum_state, QE_NUM_OF_SNUM);
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 81c7b3e..2dba7e9 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1459,6 +1459,65 @@ static int macronix_quad_enable(struct spi_nor *nor)
+>  
+>  	return 0;
+>  }
+> +/**
 
-Doesn't make much importance, but wouldn't it be more logical to add 
-this line where the setting of .state = QE_SNUM_STATE_FREE was done 
-previously, ie around the for() loop below ?
+The above sequence indicates a kerneldoc-style comment, but the format of 
+the comment is not in kerneldoc format.  Please fix this comment to 
+conform with
 
->   	qe_num_of_snum = qe_get_num_of_snums();
->   
->   	if (qe_num_of_snum == 76)
-> @@ -315,10 +306,8 @@ static void qe_snums_init(void)
->   	else
->   		snum_init = snum_init_46;
->   
-> -	for (i = 0; i < qe_num_of_snum; i++) {
-> -		snums[i].num = snum_init[i];
-> -		snums[i].state = QE_SNUM_STATE_FREE;
-> -	}
-> +	for (i = 0; i < qe_num_of_snum; i++)
-> +		snums[i] = snum_init[i];
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/kernel-docs.rst
 
-Could use memcpy() instead ?
 
->   }
->   
->   int qe_get_snum(void)
-> @@ -328,12 +317,10 @@ int qe_get_snum(void)
->   	int i;
->   
->   	spin_lock_irqsave(&qe_lock, flags);
-> -	for (i = 0; i < qe_num_of_snum; i++) {
-> -		if (snums[i].state == QE_SNUM_STATE_FREE) {
-> -			snums[i].state = QE_SNUM_STATE_USED;
-> -			snum = snums[i].num;
-> -			break;
-> -		}
-> +	i = find_first_zero_bit(snum_state, qe_num_of_snum);
-> +	if (i < qe_num_of_snum) {
-> +		set_bit(i, snum_state);
-> +		snum = snums[i];
->   	}
->   	spin_unlock_irqrestore(&qe_lock, flags);
->   
-> @@ -346,8 +333,8 @@ void qe_put_snum(u8 snum)
->   	int i;
->   
->   	for (i = 0; i < qe_num_of_snum; i++) {
-> -		if (snums[i].num == snum) {
-> -			snums[i].state = QE_SNUM_STATE_FREE;
-> +		if (snums[i] == snum) {
-> +			clear_bit(i, snum_state);
->   			break;
->   		}
->   	}
+> + * Lock a region of the flash.Implementation is based on stm_lock
+> + * Supports the block protection bits BP{0,1,2,3} in the status register
+> + * Returns negative on errors, 0 on success.
+> + */
+> +static int issi_lock(struct spi_nor *nor, loff_t ofs, uint64_t len)
+> +{
 
-Can we replace this loop by memchr() ?
+Almost all of this function is copied and pasted from stm_lock().  Please 
+don't do this: it adds bloat, makes the code hard to maintain, and 
+increases the risk that fixes will only target one function rather than 
+both.  Instead please pull the common code out into a separate static 
+function.
 
-Christophe
-
+> +	struct mtd_info *mtd = &nor->mtd;
+> +	int status_old, status_new;
+> +	u8 mask = SR_BP3 | SR_BP2 | SR_BP1 | SR_BP0;
+> +	u8 shift = ffs(mask) - 1, pow, val = 0;
+> +	loff_t lock_len;
+> +	bool use_top = true;
+> +
+> +	status_old = read_sr(nor);
+> +
+> +	if (status_old < 0)
+> +		return status_old;
+> +
+> +	/* lock_len: length of region that should end up locked */
+> +	if (use_top)
+> +		lock_len = mtd->size - ofs;
+> +	else
+> +		lock_len = ofs + len;
+> +
+> +	/*
+> +	 * Need smallest pow such that:
+> +	 *
+> +	 *   1 / (2^pow) <= (len / size)
+> +	 *
+> +	 * so (assuming power-of-2 size) we do:
+> +	 *
+> +	 *   pow = ceil(log2(size / len)) = log2(size) - floor(log2(len))
+> +	 */
+> +	pow = ilog2(mtd->size) - ilog2(lock_len);
+> +	val = mask - (pow << shift);
+> +
+> +	if (val & ~mask)
+> +		return -EINVAL;
+> +
+> +	/* Don't "lock" with no region! */
+> +	if (!(val & mask))
+> +		return -EINVAL;
+> +
+> +	status_new = (status_old & ~mask & ~SR_TB) | val;
+> +
+> +	/* Disallow further writes if WP pin is asserted */
+> +	status_new |= SR_SRWD;
+> +
+> +	/* Don't bother if they're the same */
+> +	if (status_new == status_old)
+> +		return 0;
+> +
+> +	/* Only modify protection if it will not unlock other areas */
+> +	if ((status_new & mask) < (status_old & mask))
+> +		return -EINVAL;
+> +
+> +	return write_sr_and_check(nor, status_new, mask);
+> +}
+>  
+>  /**
+>   * issi_unlock() - clear BP[0123] write-protection.
+> @@ -4121,6 +4180,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+>  	/* NOR protection support for ISSI chips */
+>  	if (JEDEC_MFR(info) == SNOR_MFR_ISSI ||
+>  	    info->flags & SPI_NOR_HAS_LOCK) {
+> +		nor->flash_lock = issi_lock;
+>  		nor->flash_unlock = issi_unlock;
+>  
+>  	}
+> -- 
+> 1.9.1
+> 
+> 
