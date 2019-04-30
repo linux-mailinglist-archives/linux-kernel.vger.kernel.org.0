@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2C3F691
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A0D0F865
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbfD3Lta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:49:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35962 "EHLO mail.kernel.org"
+        id S1728255AbfD3LkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:40:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730981AbfD3LtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:49:25 -0400
+        id S1728212AbfD3LkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:40:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 167A22054F;
-        Tue, 30 Apr 2019 11:49:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06A9E21670;
+        Tue, 30 Apr 2019 11:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624965;
-        bh=BdQhIG9wILFo7eLEILQEvL3B4jrM0QzUfDXwLdG2Sgg=;
+        s=default; t=1556624400;
+        bh=yNF5fBcZBeHofcbFX4RGA8qq7oiAsCqYqoSBSysuYh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xQf5uGBi4QkLZXS2VapUUTrwSgQrwKRmDDpNYxxNykRS79STCJqyLvBrAzNmmSx4J
-         utnFAyWhFh2OWIio85PRQ02LoN/mEWbs4dKlcN5pJtkKK4HEGTIXO30dD6ebICLzYI
-         JN5fL0/Vv2C8LxX0zx7Zw3x3IVtGQcmc5zhxJjiA=
+        b=PgJadybxojFFNxuQzjxWGgxiT0D5a+392W6nrvnMdPbEu0LoZTNyAv8Acxx37dgKm
+         rzLQo53wn2BIrJJG38+pJvk/Cn4jCcZ29L3cjnRKZTgQGTmC9Tgbx4LB/N15d7GTFl
+         wIHgIGysCiOoNX4s2uodkYdOx6hkjLr2soqK8zAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shun-Chih Yu <shun-chih.yu@mediatek.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.0 39/89] dmaengine: mediatek-cqdma: fix wrong register usage in mtk_cqdma_start
-Date:   Tue, 30 Apr 2019 13:38:30 +0200
-Message-Id: <20190430113611.648834954@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 20/41] tipc: handle the err returned from cmd header function
+Date:   Tue, 30 Apr 2019 13:38:31 +0200
+Message-Id: <20190430113530.005872610@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shun-Chih Yu <shun-chih.yu@mediatek.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 5bb5c3a3ac102158b799bf5eda871223aa5e9c25 upstream.
+commit 2ac695d1d602ce00b12170242f58c3d3a8e36d04 upstream.
 
-This patch fixes wrong register usage in the mtk_cqdma_start. The
-destination register should be MTK_CQDMA_DST2 instead.
+Syzbot found a crash:
 
-Fixes: b1f01e48df5a ("dmaengine: mediatek: Add MediaTek Command-Queue DMA controller for MT6765 SoC")
-Signed-off-by: Shun-Chih Yu <shun-chih.yu@mediatek.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+  BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
+  Call Trace:
+    tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
+    __tipc_nl_compat_dumpit+0x59e/0xda0 net/tipc/netlink_compat.c:215
+    tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:280
+    tipc_nl_compat_handle net/tipc/netlink_compat.c:1226 [inline]
+    tipc_nl_compat_recv+0x1b5f/0x2750 net/tipc/netlink_compat.c:1265
+    genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+    genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+    netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2477
+    genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+    netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+    netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1336
+    netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+    sock_sendmsg_nosec net/socket.c:622 [inline]
+    sock_sendmsg net/socket.c:632 [inline]
+
+  Uninit was created at:
+    __alloc_skb+0x309/0xa20 net/core/skbuff.c:208
+    alloc_skb include/linux/skbuff.h:1012 [inline]
+    netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+    netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+    sock_sendmsg_nosec net/socket.c:622 [inline]
+    sock_sendmsg net/socket.c:632 [inline]
+
+It was supposed to be fixed on commit 974cb0e3e7c9 ("tipc: fix uninit-value
+in tipc_nl_compat_name_table_dump") by checking TLV_GET_DATA_LEN(msg->req)
+in cmd->header()/tipc_nl_compat_name_table_dump_header(), which is called
+ahead of tipc_nl_compat_name_table_dump().
+
+However, tipc_nl_compat_dumpit() doesn't handle the error returned from cmd
+header function. It means even when the check added in that fix fails, it
+won't stop calling tipc_nl_compat_name_table_dump(), and the issue will be
+triggered again.
+
+So this patch is to add the process for the err returned from cmd header
+function in tipc_nl_compat_dumpit().
+
+Reported-by: syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/mediatek/mtk-cqdma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/netlink_compat.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/mediatek/mtk-cqdma.c
-+++ b/drivers/dma/mediatek/mtk-cqdma.c
-@@ -253,7 +253,7 @@ static void mtk_cqdma_start(struct mtk_c
- #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
- 	mtk_dma_set(pc, MTK_CQDMA_DST2, cvd->dest >> MTK_CQDMA_ADDR2_SHFIT);
- #else
--	mtk_dma_set(pc, MTK_CQDMA_SRC2, 0);
-+	mtk_dma_set(pc, MTK_CQDMA_DST2, 0);
- #endif
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -262,8 +262,14 @@ static int tipc_nl_compat_dumpit(struct
+ 	if (msg->rep_type)
+ 		tipc_tlv_init(msg->rep, msg->rep_type);
  
- 	/* setup the length */
+-	if (cmd->header)
+-		(*cmd->header)(msg);
++	if (cmd->header) {
++		err = (*cmd->header)(msg);
++		if (err) {
++			kfree_skb(msg->rep);
++			msg->rep = NULL;
++			return err;
++		}
++	}
+ 
+ 	arg = nlmsg_new(0, GFP_KERNEL);
+ 	if (!arg) {
 
 
