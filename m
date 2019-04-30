@@ -2,156 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8D4101DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A96101DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfD3VfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 17:35:22 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34853 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfD3VfW (ORCPT
+        id S1727110AbfD3ViM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 17:38:12 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60781 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726048AbfD3ViM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:35:22 -0400
-Received: by mail-it1-f194.google.com with SMTP id l140so5990002itb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 14:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
-        b=Sq8KNLYMoEQTJQ8Stw6ktrYFYw+zkDUBePOHtQKKTkZvwVtovOluTVKwMnP5OxwkEI
-         xRPL4YOMPiqolt7cnNDIoRjpVwHdC9cPNhE5Az/2QlbtpvjxgVHuNqQuQHGGwpUVVukW
-         nC5xJQiZfC1wh2gFeunojseYcQqwKNo5P06mvHmBW2ZJ7630qxkTzOArc13ieUXbbmh7
-         u5k9icmaMxO9TnXKm5AyU5gnXzs5kmyR4Kumoh2cWT3xkILJnt8pw/wQ2BbT/p/BhhX2
-         Y8Wt5n3FwizMxkHPOOXZHoN+O5XlGBIpYOk+347M3eRzLEcaJhRYkVvbP14mTC1og8mp
-         0aeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xwbA6m1IlkHcQAdDn+q8EF7OA9bDmXUDL8pQ3xlxeqo=;
-        b=NweeWmdHH9KBo4NBNA2KlNdpRr1OEpAIazUEw/L3LGXUybjXFNdGm8sVSmU81Jf9v1
-         8E3RxbzSBfOWGZkWib7RS1JtdYPJKTy4Lu3AfVq1l4xH1bPlE1H7HbjNlrpO7VvJXkKN
-         fegtrT+vwQB1pqG7hbxCF8seN9ptha7IhW922TOH7+g2Xo3TtO03129tKun38t+0WNqP
-         KtB408/nRgDD2G5GrxINvALWgYmvFQrXG9qvJooqynzN6YnSVpXTB+SuhV1L7mcK/rSo
-         P/zYvjCmsQSUiMENYo0QiErjfXT+w+zIcbOUtbrvfjEeqIvf5dJfWyUYrBm2k4V0f1hW
-         6kRA==
-X-Gm-Message-State: APjAAAXQLjtQ0OgDiGzNRfZJ4ypKASztRlo2VUxoCrF86A/eok15xjGO
-        A2gEMnojd7TbYSWru7AwOmGUpf5Y+PVbUtwYj6WgYw==
-X-Google-Smtp-Source: APXvYqzIenEc1fHVzRGEEU14wPVQmKcjNo/JeR+UzSCvKt1pTOpxhl8Bq8KqDZSLgHNDy7fTG9L+3o5JTKEc6QSn4hM=
-X-Received: by 2002:a24:a86:: with SMTP id 128mr5346735itw.118.1556660120632;
- Tue, 30 Apr 2019 14:35:20 -0700 (PDT)
+        Tue, 30 Apr 2019 17:38:12 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 489E423075;
+        Tue, 30 Apr 2019 17:38:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 30 Apr 2019 17:38:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=z/wot53dADMViIAkfdEWPVrOhYU
+        SuTUgxPTfH7rwG3I=; b=ihfnKxtkM8dC5o+KzimVK+qfTuDO0q2coXzeoit84DY
+        uFVU0L8GkxgZH8P3Pis38k699KtYwBWLk18s1c6G1HGeeUYqGCeh1fRhz1kOlHXI
+        tSpKiId4Fn5IJ7GBOiV1scXvmHlYfrD+StLjin+KcJcxAX/8MsgmWRifYs3zWqab
+        TOp74PSP/XjQBP1GQod+uh+r54AfYsK2gGGpyWn4eDAuWOrsdir/qI8tRgS0EUj7
+        9SG15Ad0veTG1BrIrfLgICrPfyN6g6BvX/hm/TBVa68B5ZUXu7R+CBQI8wqAIwJE
+        lml0ME09qN/FJKtcS6z96+3Wk5n4tcp5GUyP4lC2QrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=z/wot5
+        3dADMViIAkfdEWPVrOhYUSuTUgxPTfH7rwG3I=; b=N5MhjEuKkADRg2xBbcgrpz
+        730hK4VfLVFlEr1OTVxUJ7gBwCv97y9UvUokzHx9v0FUNGO6i7xyl0q1yBpP48+K
+        1a+yTxLa8vUSY3P2hWqYE7WxWf8T6+bD7HE8K8I3M0Ym12G+r6ew5uFWKRiKLOwn
+        FCMO6wSugoAP7MM2PCi6lf/a6NXozEDW439vkG4/Dctdax/Y/1RO4IHPx5Gj+4PS
+        e6dA6vrD7zF2wVPYuU/eKMfP0sapfneh/t/4tS3Xn/qfPPGlvWcYo9obqGrcpJq0
+        dAfA2/Hx58yaitOPzMWz7cQKuI9YBC2tALvrz/g7L51pWFLzeDgDZuqR3EfoPwGA
+        ==
+X-ME-Sender: <xms:QsDIXJ2dxTMClk89e3Buei1Q-5L00jmt4FotNQXm_PFKjAbNSabTXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieeigddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
+    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
+    hinhdrtggtqeenucfkphepuddvuddrgeegrddvtdegrddvfeehnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:QsDIXIHJ7uplv-AU9I6i8_Ism9pcqyvsYVLgajweymZDu4bBIFh2Ag>
+    <xmx:QsDIXKiHXmMxc69XlsC8t1gCBEJE6AchJ-8Ok1hf_ZGT6ykb6-hbrg>
+    <xmx:QsDIXGbl7Zi_-lRftJfCoi1fYgSSheW-Qt1E2KsQQ0pvR2Pvy99NAg>
+    <xmx:Q8DIXMqXyeRft_XnONG1OJgJ5qXqhCCAZZu9kHsEWBUyxFQqdipl1A>
+Received: from localhost (ppp121-44-204-235.bras1.syd2.internode.on.net [121.44.204.235])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1BB03103CD;
+        Tue, 30 Apr 2019 17:38:09 -0400 (EDT)
+Date:   Wed, 1 May 2019 07:37:30 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] livepatch: Use correct kobject cleanup function
+Message-ID: <20190430213730.GC9454@eros.localdomain>
+References: <20190430001534.26246-1-tobin@kernel.org>
+ <20190430001534.26246-3-tobin@kernel.org>
+ <20190430150811.4hzhtz4w46o6numh@pathway.suse.cz>
 MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
- <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-In-Reply-To: <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 30 Apr 2019 14:35:09 -0700
-Message-ID: <CACdnJuvYAfFboej4e5jQ=iwhb-5Pi7BgSKEWGqJ0q=uarCoOfQ@mail.gmail.com>
-Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
-To:     Bartosz Szczepanek <bsz@semihalf.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: multipart/mixed; boundary="0000000000008759370587c62d7b"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430150811.4hzhtz4w46o6numh@pathway.suse.cz>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000008759370587c62d7b
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Apr 30, 2019 at 05:08:11PM +0200, Petr Mladek wrote:
+> On Tue 2019-04-30 10:15:34, Tobin C. Harding wrote:
+> > The correct cleanup function after a call to kobject_init_and_add() has
+> > succeeded is kobject_del() _not_ kobject_put().  kobject_del() calls
+> > kobject_put().
+> 
+> Really? I see only kobject_put(kobj->parent) in kobject_del.
+> It decreases a reference of the _parent_ object and not
+> the given one.
 
-On Tue, Apr 30, 2019 at 12:51 PM Matthew Garrett <mjg59@google.com> wrote:
-> Yes, it looks like this is just broken. Can you try with the attached patch?
+Thanks Petr, you are right.  I misread kobject_del().  The story
+thickens, so we need to call kobject_del() AND kobject_put().
 
-Actually, please try this one.
+> Also the section "Kobject removal" in Documentation/kobject.txt
+> says that kobject_del() is for two-stage removal. kobject_put()
+> still needs to get called at a later time.
 
---0000000000008759370587c62d7b
-Content-Type: text/x-patch; charset="US-ASCII"; name="fix_log.diff"
-Content-Disposition: attachment; filename="fix_log.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jv4b8h1f0>
-X-Attachment-Id: f_jv4b8h1f0
+Is this call sequence above what is meant by 'two-stage removal', I
+didn't really understand that bit of the docs (and I almost always just
+assume docs are stale and take them as a hint only :)
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jIGIvZHJpdmVycy9maXJtd2Fy
-ZS9lZmkvdHBtLmMKaW5kZXggMmNjYWE2NjYxYWFmLi5kYjBmZGFhOWM2NjYgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZmlybXdhcmUvZWZpL3RwbS5jCisrKyBiL2RyaXZlcnMvZmlybXdhcmUvZWZpL3Rw
-bS5jCkBAIC0yOCw2ICsyOCw3IEBAIHN0YXRpYyBpbnQgdHBtMl9jYWxjX2V2ZW50X2xvZ19zaXpl
-KHZvaWQgKmRhdGEsIGludCBjb3VudCwgdm9pZCAqc2l6ZV9pbmZvKQogCQlpZiAoZXZlbnRfc2l6
-ZSA9PSAwKQogCQkJcmV0dXJuIC0xOwogCQlzaXplICs9IGV2ZW50X3NpemU7CisJCWNvdW50LS07
-CiAJfQogCiAJcmV0dXJuIHNpemU7CkBAIC00MSw2ICs0Miw3IEBAIGludCBfX2luaXQgZWZpX3Rw
-bV9ldmVudGxvZ19pbml0KHZvaWQpCiAJc3RydWN0IGxpbnV4X2VmaV90cG1fZXZlbnRsb2cgKmxv
-Z190Ymw7CiAJc3RydWN0IGVmaV90Y2cyX2ZpbmFsX2V2ZW50c190YWJsZSAqZmluYWxfdGJsOwog
-CXVuc2lnbmVkIGludCB0Ymxfc2l6ZTsKKwlpbnQgcmV0ID0gMDsKIAogCWlmIChlZmkudHBtX2xv
-ZyA9PSBFRklfSU5WQUxJRF9UQUJMRV9BRERSKSB7CiAJCS8qCkBAIC02MCwxMCArNjIsOSBAQCBp
-bnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCiAJdGJsX3NpemUgPSBzaXpl
-b2YoKmxvZ190YmwpICsgbG9nX3RibC0+c2l6ZTsKIAltZW1ibG9ja19yZXNlcnZlKGVmaS50cG1f
-bG9nLCB0Ymxfc2l6ZSk7Ci0JZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJs
-KSk7CiAKIAlpZiAoZWZpLnRwbV9maW5hbF9sb2cgPT0gRUZJX0lOVkFMSURfVEFCTEVfQUREUikK
-LQkJcmV0dXJuIDA7CisJCWdvdG8gb3V0OwogCiAJZmluYWxfdGJsID0gZWFybHlfbWVtcmVtYXAo
-ZWZpLnRwbV9maW5hbF9sb2csIHNpemVvZigqZmluYWxfdGJsKSk7CiAKQEAgLTcxLDE3ICs3Miwy
-MCBAQCBpbnQgX19pbml0IGVmaV90cG1fZXZlbnRsb2dfaW5pdCh2b2lkKQogCQlwcl9lcnIoIkZh
-aWxlZCB0byBtYXAgVFBNIEZpbmFsIEV2ZW50IExvZyB0YWJsZSBAIDB4JWx4XG4iLAogCQkgICAg
-ICAgZWZpLnRwbV9maW5hbF9sb2cpOwogCQllZmkudHBtX2ZpbmFsX2xvZyA9IEVGSV9JTlZBTElE
-X1RBQkxFX0FERFI7Ci0JCXJldHVybiAtRU5PTUVNOworCQlyZXQgPSAtRU5PTUVNOworCQlnb3Rv
-IG91dDsKIAl9CiAKIAl0Ymxfc2l6ZSA9IHRwbTJfY2FsY19ldmVudF9sb2dfc2l6ZShmaW5hbF90
-YmwtPmV2ZW50cywKIAkJCQkJICAgIGZpbmFsX3RibC0+bnJfZXZlbnRzLAotCQkJCQkgICAgKHZv
-aWQgKillZmkudHBtX2xvZyk7CisJCQkJCSAgICBsb2dfdGJsLT5sb2cpOwogCW1lbWJsb2NrX3Jl
-c2VydmUoKHVuc2lnbmVkIGxvbmcpZmluYWxfdGJsLAogCQkJIHRibF9zaXplICsgc2l6ZW9mKCpm
-aW5hbF90YmwpKTsKIAllYXJseV9tZW11bm1hcChmaW5hbF90YmwsIHNpemVvZigqZmluYWxfdGJs
-KSk7CiAJZWZpX3RwbV9maW5hbF9sb2dfc2l6ZSA9IHRibF9zaXplOwogCi0JcmV0dXJuIDA7Citv
-dXQ6CisJZWFybHlfbWVtdW5tYXAobG9nX3RibCwgc2l6ZW9mKCpsb2dfdGJsKSk7CisJcmV0dXJu
-IHJldDsKIH0KIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC90cG1fZXZlbnRsb2cuaCBiL2lu
-Y2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKaW5kZXggZGNjYzk3ZTYxMzVjLi42NjI0MTA3MTBh
-YzAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvdHBtX2V2ZW50bG9nLmgKKysrIGIvaW5jbHVk
-ZS9saW51eC90cG1fZXZlbnRsb2cuaApAQCAtMTU4LDcgKzE1OCw2IEBAIHN0YXRpYyBpbmxpbmUg
-aW50IF9fY2FsY190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2
-ZW50LAogewogCXN0cnVjdCB0Y2dfZWZpX3NwZWNpZF9ldmVudF9oZWFkICplZmlzcGVjaWQ7CiAJ
-c3RydWN0IHRjZ19ldmVudF9maWVsZCAqZXZlbnRfZmllbGQ7Ci0Jdm9pZCAqbWFwcGluZyA9IE5V
-TEw7CiAJaW50IG1hcHBpbmdfc2l6ZTsKIAl2b2lkICptYXJrZXI7CiAJdm9pZCAqbWFya2VyX3N0
-YXJ0OwpAQCAtMTc2LDkgKzE3NSw5IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
-ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCS8qIE1hcCB0aGUg
-ZXZlbnQgaGVhZGVyICovCiAJaWYgKGRvX21hcHBpbmcpIHsKIAkJbWFwcGluZ19zaXplID0gbWFy
-a2VyIC0gbWFya2VyX3N0YXJ0OwotCQltYXBwaW5nID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVk
-IGxvbmcpbWFya2VyX3N0YXJ0LAorCQlldmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBs
-b25nKW1hcmtlcl9zdGFydCwKIAkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykg
-eworCQlpZiAoIWV2ZW50KSB7CiAJCQlzaXplID0gMDsKIAkJCWdvdG8gb3V0OwogCQl9CkBAIC0x
-OTksOSArMTk4LDkgQEAgc3RhdGljIGlubGluZSBpbnQgX19jYWxjX3RwbTJfZXZlbnRfc2l6ZShz
-dHJ1Y3QgdGNnX3Bjcl9ldmVudDJfaGVhZCAqZXZlbnQsCiAJCWlmIChkb19tYXBwaW5nKSB7CiAJ
-CQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBtYXBwaW5nX3NpemUpOwogCQkJbWFwcGluZ19zaXpl
-ID0gbWFya2VyIC0gbWFya2VyX3N0YXJ0ICsgaGFsZ19zaXplOwotCQkJbWFwcGluZyA9IGVhcmx5
-X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCWV2ZW50ID0gZWFybHlf
-bWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0YXJ0LAogCQkJCQkJIG1hcHBpbmdfc2l6
-ZSk7Ci0JCQlpZiAoIW1hcHBpbmcpIHsKKwkJCWlmICghZXZlbnQpIHsKIAkJCQlzaXplID0gMDsK
-IAkJCQlnb3RvIG91dDsKIAkJCX0KQEAgLTIxOSw5ICsyMTgsOSBAQCBzdGF0aWMgaW5saW5lIGlu
-dCBfX2NhbGNfdHBtMl9ldmVudF9zaXplKHN0cnVjdCB0Y2dfcGNyX2V2ZW50Ml9oZWFkICpldmVu
-dCwKIAkJCQlpZiAoZG9fbWFwcGluZykgewogCQkJCQllYXJseV9tZW11bm1hcChtYXBwaW5nLCBt
-YXBwaW5nX3NpemUpOwogCQkJCQltYXBwaW5nX3NpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
-Ci0JCQkJCW1hcHBpbmcgPSBlYXJseV9tZW1yZW1hcCgodW5zaWduZWQgbG9uZyltYXJrZXJfc3Rh
-cnQsCisJCQkJCWV2ZW50ID0gZWFybHlfbWVtcmVtYXAoKHVuc2lnbmVkIGxvbmcpbWFya2VyX3N0
-YXJ0LAogCQkJCQkJICAgICAgbWFwcGluZ19zaXplKTsKLQkJCQkJaWYgKCFtYXBwaW5nKSB7CisJ
-CQkJCWlmICghZXZlbnQpIHsKIAkJCQkJCXNpemUgPSAwOwogCQkJCQkJZ290byBvdXQ7CiAJCQkJ
-CX0KQEAgLTI0MywxMSArMjQyLDExIEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2FsY190cG0yX2V2
-ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCSAqIHdlIGRvbid0
-IG5lZWQgdG8gbWFwIGl0CiAJICovCiAJaWYgKGRvX21hcHBpbmcpIHsKLQkJZWFybHlfbWVtdW5t
-YXAobWFya2VyX3N0YXJ0LCBtYXBwaW5nX3NpemUpOworCQllYXJseV9tZW11bm1hcChtYXBwaW5n
-LCBtYXBwaW5nX3NpemUpOwogCQltYXBwaW5nX3NpemUgKz0gc2l6ZW9mKGV2ZW50X2ZpZWxkLT5l
-dmVudF9zaXplKTsKLQkJbWFwcGluZyA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1h
-cmtlcl9zdGFydCwKLQkJCQkJIG1hcHBpbmdfc2l6ZSk7Ci0JCWlmICghbWFwcGluZykgeworCQll
-dmVudCA9IGVhcmx5X21lbXJlbWFwKCh1bnNpZ25lZCBsb25nKW1hcmtlcl9zdGFydCwKKwkJCQkg
-ICAgICAgbWFwcGluZ19zaXplKTsKKwkJaWYgKCFldmVudCkgewogCQkJc2l6ZSA9IDA7CiAJCQln
-b3RvIG91dDsKIAkJfQpAQCAtMjU3LDggKzI1Niw2IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fY2Fs
-Y190cG0yX2V2ZW50X3NpemUoc3RydWN0IHRjZ19wY3JfZXZlbnQyX2hlYWQgKmV2ZW50LAogCQkr
-IGV2ZW50X2ZpZWxkLT5ldmVudF9zaXplOwogCXNpemUgPSBtYXJrZXIgLSBtYXJrZXJfc3RhcnQ7
-CiAKLQlpZiAoKGV2ZW50LT5ldmVudF90eXBlID09IDApICYmIChldmVudF9maWVsZC0+ZXZlbnRf
-c2l6ZSA9PSAwKSkKLQkJc2l6ZSA9IDA7CiBvdXQ6CiAJaWYgKGRvX21hcHBpbmcpCiAJCWVhcmx5
-X21lbXVubWFwKG1hcHBpbmcsIG1hcHBpbmdfc2l6ZSk7Cg==
---0000000000008759370587c62d7b--
+> IMHO, this patch causes that kobject_put() would never get called.
+
+I'll do a v2 of this one and re-check all the patches on this I've
+already sent (including the docs ones).
+
+> That said, we could probably make the removal a bit cleaner
+> by using kobject_del() in klp_free_patch_start() and
+> kobject_put() in klp_free_patch_finish(). But I have
+> to think more about it.
+
+Noted, thanks for your review.
+
+	Tobin
+	
