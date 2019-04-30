@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB03F690
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A379FF606
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731002AbfD3Lt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:49:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35908 "EHLO mail.kernel.org"
+        id S1729126AbfD3Ll7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:41:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730985AbfD3LtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:49:24 -0400
+        id S1729104AbfD3Ll4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:41:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57A4621734;
-        Tue, 30 Apr 2019 11:49:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D928621670;
+        Tue, 30 Apr 2019 11:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624962;
-        bh=R4EoRxp5VUPcegQvGoO6HysLF8EDfQpLxNG6/h6hV9k=;
+        s=default; t=1556624515;
+        bh=dfcChI+EQWkdxdZ5HqmcxSwY/717RRoy4vDGdSijDEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5MAQuR11t5gIrjOWoqcIytsuGQYWg3/T/ESSG3ImakS6OMMDwA5+eIrUqODA2O0P
-         +//uxCCWmOd14C1l7LS4wC5CW+LkG5iTjNqjhVz6L5tzP4976z8mQ4NkiZw6hb/u/2
-         tnZ8Vr2u41b3zCDO9JWC3mSshtu1rMjADmR0aFmA=
+        b=WgAxw3S7MPZEmtr5R1HN3eHSTPimY/9YDUoNtYtfJBqsAlDC8xmv2tMaoQjgqojwF
+         HiOU/mIDgQPjdEUxmRdyJugJlZhtsL0iHAro6yCKm7oY54GXFZCU2oD/lOfD4xdUEz
+         HRMsShgBDlbl3upL/a6KI75AaxXX7iAGMR2elhqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.0 38/89] dmaengine: sh: rcar-dmac: Fix glitch in dmaengine_tx_status
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.14 22/53] drm/vc4: Fix compilation error reported by kbuild test bot
 Date:   Tue, 30 Apr 2019 13:38:29 +0200
-Message-Id: <20190430113611.612017498@linuxfoundation.org>
+Message-Id: <20190430113555.134060137@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,82 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-commit 6e7da74775348d96e2d7efaf3f91410e18c481ef upstream.
+commit 462ce5d963f18b71c63f6b7730a35a2ee5273540 upstream.
 
-The tx_status poll in the rcar_dmac driver reads the status register
-which indicates which chunk is busy (DMACHCRB). Afterwards the point
-inside the chunk is read from DMATCRB. It is possible that the chunk
-has changed between the two reads. The result is a non-monotonous
-increase of the residue. Fix this by introducing a 'safe read' logic.
+A pointer to crtc was missing, resulting in the following build error:
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse: sparse: incorrect type in argument 1 (different base types)
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    expected struct drm_crtc *crtc
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    got struct drm_crtc_state *state
+drivers/gpu/drm/vc4/vc4_crtc.c:1045:39: sparse: sparse: not enough arguments for function vc4_crtc_destroy_state
 
-Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
-Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: <stable@vger.kernel.org> # v4.16+
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/2b6ed5e6-81b0-4276-8860-870b54ca3262@linux.intel.com
+Fixes: d08106796a78 ("drm/vc4: Fix memory leak during gpu reset.")
+Cc: <stable@vger.kernel.org> # v4.6+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/sh/rcar-dmac.c |   26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/vc4/vc4_crtc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1282,6 +1282,9 @@ static unsigned int rcar_dmac_chan_get_r
- 	enum dma_status status;
- 	unsigned int residue = 0;
- 	unsigned int dptr = 0;
-+	unsigned int chcrb;
-+	unsigned int tcrb;
-+	unsigned int i;
+--- a/drivers/gpu/drm/vc4/vc4_crtc.c
++++ b/drivers/gpu/drm/vc4/vc4_crtc.c
+@@ -867,7 +867,7 @@ static void
+ vc4_crtc_reset(struct drm_crtc *crtc)
+ {
+ 	if (crtc->state)
+-		vc4_crtc_destroy_state(crtc->state);
++		vc4_crtc_destroy_state(crtc, crtc->state);
  
- 	if (!desc)
- 		return 0;
-@@ -1330,14 +1333,31 @@ static unsigned int rcar_dmac_chan_get_r
- 	}
- 
- 	/*
-+	 * We need to read two registers.
-+	 * Make sure the control register does not skip to next chunk
-+	 * while reading the counter.
-+	 * Trying it 3 times should be enough: Initial read, retry, retry
-+	 * for the paranoid.
-+	 */
-+	for (i = 0; i < 3; i++) {
-+		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
-+					    RCAR_DMACHCRB_DPTR_MASK;
-+		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
-+		/* Still the same? */
-+		if (chcrb == (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
-+			      RCAR_DMACHCRB_DPTR_MASK))
-+			break;
-+	}
-+	WARN_ONCE(i >= 3, "residue might be not continuous!");
-+
-+	/*
- 	 * In descriptor mode the descriptor running pointer is not maintained
- 	 * by the interrupt handler, find the running descriptor from the
- 	 * descriptor pointer field in the CHCRB register. In non-descriptor
- 	 * mode just use the running descriptor pointer.
- 	 */
- 	if (desc->hwdescs.use) {
--		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
--			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
-+		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
- 		if (dptr == 0)
- 			dptr = desc->nchunks;
- 		dptr--;
-@@ -1355,7 +1375,7 @@ static unsigned int rcar_dmac_chan_get_r
- 	}
- 
- 	/* Add the residue for the current chunk. */
--	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
-+	residue += tcrb << desc->xfer_shift;
- 
- 	return residue;
- }
+ 	crtc->state = kzalloc(sizeof(struct vc4_crtc_state), GFP_KERNEL);
+ 	if (crtc->state)
 
 
