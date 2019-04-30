@@ -2,305 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A949510145
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C9010153
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfD3U4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 16:56:46 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43337 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727342AbfD3U4d (ORCPT
+        id S1727116AbfD3U61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 16:58:27 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42708 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfD3U61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 16:56:33 -0400
-Received: by mail-io1-f68.google.com with SMTP id v9so13431691iol.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 13:56:32 -0700 (PDT)
+        Tue, 30 Apr 2019 16:58:27 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x19so4553qki.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 13:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :reply-to:organization;
-        bh=mYmIhRnm97J2GMRymnzJcfVYOfv5/Pvcxh//QU152qg=;
-        b=GgxgUoZjApNAjPTpsEFHKCLQVfFkeX9y6w95BiEu5TGtqRirBG3zboxljlxKu9LBB0
-         TagYM4m4ajnvXcpYhMkEIovOX5aaQf93iRWrkabyN6XRZn/k4CZ2narnK3WtGGC1YqbM
-         6Fkio8DZc32MgaHKUH1ZakfZ9dz3j+4dwqhXJfdFCT7BEODMXeCOAeHNXDS6oszJw0yE
-         2cPlRWCmP0wo7R87MLAiB51SKCbRzwfncPZ2q3/niORnRZGKexdG1szsU9wB4c0oYMlF
-         M3mL0BQTb13FYtiTJjB29GXCkU/iveKUh3YYcJsxXjppVUwS7pmH+Q4R9NyR1kDDHUkC
-         QZYw==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=p4C14CTS2pz4PiazgYmxilGzF8o3AwVg6Fb8ajLHNGQ=;
+        b=KNN3M9YzUJLLtq2CmUKgHwCruNuWLAtTohnRNP0w+yopwOElC3KoNz9QLdvrFh7skb
+         ruOxSmIuceB4sWTxuNzwqewoKgfSnDjmedWJNUYFZa6N1H8+m6U0Tbonpn2+1i/cB3DX
+         53yL0IRas+tArh46n0tSdH1Pj1MbPD6cojAg12VqrMuatkU/QK0bPBMkwb+pLp/OMiL4
+         JWtCDKzOmQVBadmytywWzewyQyPhS4+6ht2/1XD6555siHn+0G9p0RypWl8Ls6c0BGt/
+         I8+bYMARJGX5MVIAtL2sgbI86uggdM7/5sUixVQZzzqC8NDcnLUQVwSxe+zMItPLOmou
+         tEzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:reply-to:organization;
-        bh=mYmIhRnm97J2GMRymnzJcfVYOfv5/Pvcxh//QU152qg=;
-        b=AUdbcY+ofGGZzTiABbOlCSqHsgO9JN0ushwGJBHWOqw6CS2ihZPhppv5gAuGawwGWL
-         nfmafFmeJI2hepz1QVxtqhygq1hZF6iS2feVgyHtvaZLTuSmd9ZylX8GtCeXhWG8Yml7
-         aiPAJwcso2QZgzQ3tnwlTejdxqVsQD5jqQdXoy9xoJ1e9uu+DMqf4cFHjMgO6YWdOMPD
-         eW/OUSlDJ20Jl7RFKnlgK+bAo7gii3X6IgEWzooYaoHLzdHMRqX2TAbGGt4hPDC5Lg70
-         pys+iKXIKFMzR/72lRg6Kyf9yPCZ/+FO2n97Wavbkfj5SR7m39XjCVfgRae2yE7yYjLI
-         xtIQ==
-X-Gm-Message-State: APjAAAW75gVco/T8Te67BPccF7oR6vFeCk1ro+eCnt8fIFBLcBPr2rO3
-        WEQPse3MsebP27NhgZ+Sc2SBG2TF
-X-Google-Smtp-Source: APXvYqwOCZEqaTmoPQL8P+mc4PToLUGyNyiwnTUoXpE2Q/HjVm/JV5NJ+IZagiWm8u3QBzWiLtyieQ==
-X-Received: by 2002:a6b:630b:: with SMTP id p11mr6340394iog.168.1556657792180;
-        Tue, 30 Apr 2019 13:56:32 -0700 (PDT)
-Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id s7sm9799349ioo.17.2019.04.30.13.56.30
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=p4C14CTS2pz4PiazgYmxilGzF8o3AwVg6Fb8ajLHNGQ=;
+        b=HQvBImu9tPmxxI/oRHphDEB1PznKgh7tQgkMwqHhN0slvwAwXuesdLE6hOixon4GZ0
+         mw2VLBCxxFm7zhT8zncQ3qlsIoM+2IXGZulefe6raD0vOSsPkj1phfBCZs25dimSjSn6
+         QTBwaokUEC4i8uzNNpF1+J/czrvAGxAEhMoLjeg6TghS5LizKmDjTZSf93jcev4CsP5w
+         sWWTXYQ56ukpNAtblok4A1ngo8VLlEyGahIB5/nYMZJfM7aA+qeWvl7gCPEvN54fgRdF
+         a8564eCDgaTdGt9SymFn7vEMwtXs+Vda8XRBA/zhASXLhzhd6w+/qAj1eDD/5LwUWHug
+         4SqA==
+X-Gm-Message-State: APjAAAWLqMiEBDZQI7RxsarhVLgojcKOMtGqb2oTXAf4JqWBZm+X2dZq
+        Xl0QQ+RUHi/b31VtO5qaB0mitg==
+X-Google-Smtp-Source: APXvYqxtH/bVFTAz4Uc3zfoJ+Z7QdXcn47swK/0pwCPQsJaRjAUwQCgAPNlKUvztnG4HM9aVWSKceQ==
+X-Received: by 2002:ae9:de87:: with SMTP id s129mr51307545qkf.63.1556657905193;
+        Tue, 30 Apr 2019 13:58:25 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id n10sm21150892qte.11.2019.04.30.13.58.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 13:56:31 -0700 (PDT)
-From:   Len Brown <lenb@kernel.org>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
-Subject: [PATCH 14/14] topology: Create core_threads sysfs attribute
-Date:   Tue, 30 Apr 2019 16:55:59 -0400
-Message-Id: <647375066a62024df24b8c6a7fa70796ac82f63d.1553624867.git.len.brown@intel.com>
-X-Mailer: git-send-email 2.18.0-rc0
-In-Reply-To: <75386dff62ee869eb7357dff1e60dfd9b3e68023.1553624867.git.len.brown@intel.com>
-References: <75386dff62ee869eb7357dff1e60dfd9b3e68023.1553624867.git.len.brown@intel.com>
-Reply-To: Len Brown <lenb@kernel.org>
-Organization: Intel Open Source Technology Center
+        Tue, 30 Apr 2019 13:58:24 -0700 (PDT)
+Message-ID: <1556657902.6132.13.camel@lca.pw>
+Subject: copy_fpstate_to_sigframe()  use-after-free
+From:   Qian Cai <cai@lca.pw>
+To:     bigeasy@linutronix.de
+Cc:     dave.hansen@intel.com, bp@suse.de, tglx@linutronix.de,
+        x86@kernel.org, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        luto@amacapital.net, hpa@zytor.com, mingo@kernel.org
+Date:   Tue, 30 Apr 2019 16:58:22 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Len Brown <len.brown@intel.com>
+The commit eeec00d73be2 ("x86/fpu: Fault-in user stack if
+copy_fpstate_to_sigframe() fails") causes use-after-free when running the LTP
+signal06 test case. Reverted this commit fixed the issue.
 
-Create CPU topology sysfs attributes:
-"core_threads" and "core_threads_list"
-
-These attributes represent all of the logical CPU threads that share the
-same core.
-
-These attriutes is synonymous with the existing "thread_siblings" and
-"thread_siblings_list" attribute, which will be deprecated.
-
-Signed-off-by: Len Brown <len.brown@intel.com>
-Suggested-by: Brice Goglin <Brice.Goglin@inria.fr>
----
- Documentation/cputopology.txt   | 19 +++++++++++++++----
- arch/x86/include/asm/smp.h      |  1 +
- arch/x86/include/asm/topology.h |  1 +
- arch/x86/kernel/smpboot.c       | 22 ++++++++++++++++++++++
- arch/x86/xen/smp_pv.c           |  1 +
- drivers/base/topology.c         | 12 ++++++++++++
- include/linux/topology.h        |  3 +++
- 7 files changed, 55 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-index a500e25476f4..77b65583081e 100644
---- a/Documentation/cputopology.txt
-+++ b/Documentation/cputopology.txt
-@@ -36,15 +36,15 @@ drawer_id:
- 	identifier (rather than the kernel's).	The actual value is
- 	architecture and platform dependent.
- 
--thread_siblings:
-+core_threads:
- 
- 	internal kernel map of cpuX's hardware threads within the same
--	core as cpuX.
-+	core as cpuX. (deprecated name: "thread_siblings")
- 
--thread_siblings_list:
-+core_threads_list:
- 
- 	human-readable list of cpuX's hardware threads within the same
--	core as cpuX.
-+	core as cpuX. (deprecated name: "thread_siblings_list");
- 
- package_threads:
- 
-@@ -56,6 +56,16 @@ package_threads_list:
- 	human-readable list of cpuX's hardware threads within the same
- 	physical_package_id. (deprecated name: "core_siblings_list")
- 
-+die_threads:
-+
-+	internal kernel map of cpuX's hardware threads within the same
-+	die_id.
-+
-+die_threads_list:
-+
-+	human-readable list of cpuX's hardware threads within the same
-+	die_id.
-+
- book_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
-@@ -93,6 +103,7 @@ these macros in include/asm-XXX/topology.h::
- 	#define topology_drawer_id(cpu)
- 	#define topology_sibling_cpumask(cpu)
- 	#define topology_core_cpumask(cpu)
-+	#define topology_die_cpumask(cpu)
- 	#define topology_book_cpumask(cpu)
- 	#define topology_drawer_cpumask(cpu)
- 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 2e95b6c1bca3..39266d193597 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -23,6 +23,7 @@ extern unsigned int num_processors;
- 
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
-+DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
- /* cpus sharing the last level cache: */
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
- DECLARE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id);
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 5728c43f5123..9be47300665c 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -111,6 +111,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
- #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
- 
- #ifdef CONFIG_SMP
-+#define topology_die_cpumask(cpu)		(per_cpu(cpu_die_map, cpu))
- #define topology_core_cpumask(cpu)		(per_cpu(cpu_core_map, cpu))
- #define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
- 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 0e7184e526a4..b5c516422231 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -90,6 +90,10 @@ EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
- EXPORT_PER_CPU_SYMBOL(cpu_core_map);
- 
-+/* representing HT, core, and die siblings of each logical CPU */
-+DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
-+EXPORT_PER_CPU_SYMBOL(cpu_die_map);
-+
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
- 
- /* Per CPU bogomips and other parameters */
-@@ -513,6 +517,15 @@ static bool match_pkg(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 	return false;
- }
- 
-+static bool match_die(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
-+{
-+	if ((c->phys_proc_id == o->phys_proc_id) &&
-+		(c->cpu_die_id == o->cpu_die_id))
-+		return true;
-+	return false;
-+}
-+
-+
- #if defined(CONFIG_SCHED_SMT) || defined(CONFIG_SCHED_MC)
- static inline int x86_sched_itmt_flags(void)
- {
-@@ -575,6 +588,7 @@ void set_cpu_sibling_map(int cpu)
- 		cpumask_set_cpu(cpu, topology_sibling_cpumask(cpu));
- 		cpumask_set_cpu(cpu, cpu_llc_shared_mask(cpu));
- 		cpumask_set_cpu(cpu, topology_core_cpumask(cpu));
-+		cpumask_set_cpu(cpu, topology_die_cpumask(cpu));
- 		c->booted_cores = 1;
- 		return;
- 	}
-@@ -623,6 +637,9 @@ void set_cpu_sibling_map(int cpu)
- 		}
- 		if (match_pkg(c, o) && !topology_same_node(c, o))
- 			x86_has_numa_in_package = true;
-+
-+		if ((i == cpu) || (has_mp && match_die(c, o)))
-+			link_mask(topology_die_cpumask, cpu, i);
- 	}
- 
- 	threads = cpumask_weight(topology_sibling_cpumask(cpu));
-@@ -1218,6 +1235,7 @@ static __init void disable_smp(void)
- 		physid_set_mask_of_physid(0, &phys_cpu_present_map);
- 	cpumask_set_cpu(0, topology_sibling_cpumask(0));
- 	cpumask_set_cpu(0, topology_core_cpumask(0));
-+	cpumask_set_cpu(0, topology_die_cpumask(0));
- }
- 
- /*
-@@ -1313,6 +1331,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 	for_each_possible_cpu(i) {
- 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
-+		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
- 	}
- 
-@@ -1533,6 +1552,8 @@ static void remove_siblinginfo(int cpu)
- 			cpu_data(sibling).booted_cores--;
- 	}
- 
-+	for_each_cpu(sibling, topology_die_cpumask(cpu))
-+		cpumask_clear_cpu(cpu, topology_die_cpumask(sibling));
- 	for_each_cpu(sibling, topology_sibling_cpumask(cpu))
- 		cpumask_clear_cpu(cpu, topology_sibling_cpumask(sibling));
- 	for_each_cpu(sibling, cpu_llc_shared_mask(cpu))
-@@ -1540,6 +1561,7 @@ static void remove_siblinginfo(int cpu)
- 	cpumask_clear(cpu_llc_shared_mask(cpu));
- 	cpumask_clear(topology_sibling_cpumask(cpu));
- 	cpumask_clear(topology_core_cpumask(cpu));
-+	cpumask_clear(topology_die_cpumask(cpu));
- 	c->cpu_core_id = 0;
- 	c->booted_cores = 0;
- 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 145506f9fdbe..ac13b0be8448 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -251,6 +251,7 @@ static void __init xen_pv_smp_prepare_cpus(unsigned int max_cpus)
- 	for_each_possible_cpu(i) {
- 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
-+		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
- 	}
- 	set_cpu_sibling_map(0);
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 5f4405a08c6e..b6d1fec9b6a3 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -53,10 +53,18 @@ define_siblings_show_func(thread_siblings, sibling_cpumask);
- static DEVICE_ATTR_RO(thread_siblings);
- static DEVICE_ATTR_RO(thread_siblings_list);
- 
-+define_siblings_show_func(core_threads, sibling_cpumask);
-+static DEVICE_ATTR_RO(core_threads);
-+static DEVICE_ATTR_RO(core_threads_list);
-+
- define_siblings_show_func(core_siblings, core_cpumask);
- static DEVICE_ATTR_RO(core_siblings);
- static DEVICE_ATTR_RO(core_siblings_list);
- 
-+define_siblings_show_func(die_threads, die_cpumask);
-+static DEVICE_ATTR_RO(die_threads);
-+static DEVICE_ATTR_RO(die_threads_list);
-+
- define_siblings_show_func(package_threads, core_cpumask);
- static DEVICE_ATTR_RO(package_threads);
- static DEVICE_ATTR_RO(package_threads_list);
-@@ -83,8 +91,12 @@ static struct attribute *default_attrs[] = {
- 	&dev_attr_core_id.attr,
- 	&dev_attr_thread_siblings.attr,
- 	&dev_attr_thread_siblings_list.attr,
-+	&dev_attr_core_threads.attr,
-+	&dev_attr_core_threads_list.attr,
- 	&dev_attr_core_siblings.attr,
- 	&dev_attr_core_siblings_list.attr,
-+	&dev_attr_die_threads.attr,
-+	&dev_attr_die_threads_list.attr,
- 	&dev_attr_package_threads.attr,
- 	&dev_attr_package_threads_list.attr,
- #ifdef CONFIG_SCHED_BOOK
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index 5cc8595dd0e4..47a3e3c08036 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -196,6 +196,9 @@ static inline int cpu_to_mem(int cpu)
- #ifndef topology_core_cpumask
- #define topology_core_cpumask(cpu)		cpumask_of(cpu)
- #endif
-+#ifndef topology_die_cpumask
-+#define topology_die_cpumask(cpu)		cpumask_of(cpu)
-+#endif
- 
- #ifdef CONFIG_SCHED_SMT
- static inline const struct cpumask *cpu_smt_mask(int cpu)
--- 
-2.18.0-rc0
-
+[ 6150.581746] LTP: starting signal06
+[ 6151.099635]
+==================================================================
+[ 6151.137893] BUG: KASAN: use-after-free in follow_page_mask+0x32/0x3e0
+[ 6151.169683] Read of size 8 at addr ffff8884ac424048 by task signal06/45144
+[ 6151.201832] 
+[ 6151.208652] CPU: 45 PID: 45144 Comm: signal06 Kdump: loaded Not tainted
+5.1.0-rc7-next-20190430+ #8
+[ 6151.251025] Hardware name: HP ProLiant XL420 Gen9/ProLiant XL420 Gen9, BIOS
+U19 12/27/2015
+[ 6151.289642] Call Trace:
+[ 6151.300966]  dump_stack+0x62/0x9a
+[ 6151.316552]  print_address_description.cold.2+0x9/0x28b
+[ 6151.340859]  __kasan_report.cold.3+0x7a/0xb5
+[ 6151.360819]  ? follow_page_mask+0x32/0x3e0
+[ 6151.380970]  kasan_report+0xc/0x10
+[ 6151.396922]  __asan_load8+0x71/0xa0
+[ 6151.413474]  follow_page_mask+0x32/0x3e0
+[ 6151.431870]  __get_user_pages+0x3cc/0x7c0
+[ 6151.450644]  ? follow_page_mask+0x3e0/0x3e0
+[ 6151.470058]  ? lock_downgrade+0x300/0x300
+[ 6151.488677]  ? __bad_area_nosemaphore+0x66/0x230
+[ 6151.510560]  ? do_raw_spin_unlock+0xa8/0x140
+[ 6151.530468]  __gup_longterm_locked+0x32c/0xa90
+[ 6151.551432]  ? do_page_fault+0x4c/0x260
+[ 6151.569327]  ? get_user_pages_unlocked+0x2b0/0x2b0
+[ 6151.591874]  get_user_pages+0x60/0x70
+[ 6151.609098]  copy_fpstate_to_sigframe+0x31a/0x670
+[ 6151.631612]  ? __fpu__restore_sig+0x7a0/0x7a0
+[ 6151.652869]  do_signal+0x40c/0x9d0
+[ 6151.669822]  ? do_send_specific+0x87/0xe0
+[ 6151.690250]  ? setup_sigcontext+0x280/0x280
+[ 6151.710151]  ? check_kill_permission+0x8e/0x1c0
+[ 6151.731618]  ? do_send_specific+0xa6/0xe0
+[ 6151.750539]  ? do_tkill+0x125/0x160
+[ 6151.766493]  ? signal_fault+0x160/0x160
+[ 6151.783820]  exit_to_usermode_loop+0x9d/0xc0
+[ 6151.803040]  do_syscall_64+0x470/0x5d8
+[ 6151.819575]  ? syscall_return_slowpath+0xf0/0xf0
+[ 6151.840392]  ? __do_page_fault+0x44d/0x5b0
+[ 6151.858886]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 6151.882493] RIP: 0033:0x40377e
+[ 6151.896645] Code: b4 00 00 00 0f 85 ae 00 00 00 89 c7 31 db ba c8 00 00 00 be
+01 00 00 00 eb 0c 66 90 75 1d 81 fb 30 75 00 00 74 65 89 d0 0f 05 <f2> 0f 10 05
+7a b8 21 00 83 c3 01 66 0f 2e c1 7b e1 31 c0 41 89 d8
+[ 6151.984032] RSP: 002b:00007fff1fa13190 EFLAGS: 00000287 ORIG_RAX:
+00000000000000c8
+[ 6152.018779] RAX: 0000000000000000 RBX: 0000000000001e12 RCX: 000000000040377e
+[ 6152.052252] RDX: 00000000000000c8 RSI: 0000000000000001 RDI: 000000000000b058
+[ 6152.085621] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f8104e48700
+[ 6152.119275] R10: fffffffffffff7a8 R11: 0000000000000287 R12: 00007f81056466c0
+[ 6152.155037] R13: 00007fff1fa13360 R14: 0000000000000000 R15: 0000000000000000
+[ 6152.190814] 
+[ 6152.197777] Allocated by task 45145:
+[ 6152.214655]  __kasan_kmalloc.part.0+0x44/0xc0
+[ 6152.235078]  __kasan_kmalloc.constprop.1+0xac/0xc0
+[ 6152.257665]  kasan_slab_alloc+0x11/0x20
+[ 6152.275711]  kmem_cache_alloc+0x131/0x360
+[ 6152.294272]  vm_area_dup+0x20/0x80
+[ 6152.310227]  __split_vma+0x68/0x270
+[ 6152.326595]  split_vma+0x51/0x70
+[ 6152.341817]  mprotect_fixup+0x469/0x540
+[ 6152.359402]  do_mprotect_pkey+0x2a8/0x480
+[ 6152.378313]  __x64_sys_mprotect+0x48/0x60
+[ 6152.397014]  do_syscall_64+0xc8/0x5d8
+[ 6152.414015]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 6152.437731] 
+[ 6152.444797] Freed by task 45145:
+[ 6152.459202]  __kasan_slab_free+0x134/0x200
+[ 6152.477692]  kasan_slab_free+0xe/0x10
+[ 6152.494044]  kmem_cache_free+0xa0/0x300
+[ 6152.512009]  vm_area_free+0x18/0x20
+[ 6152.528295]  __vma_adjust+0x2f8/0xca0
+[ 6152.545417]  vma_merge+0x619/0x6d0
+[ 6152.561416]  mprotect_fixup+0x2bf/0x540
+[ 6152.579336]  do_mprotect_pkey+0x2a8/0x480
+[ 6152.597772]  __x64_sys_mprotect+0x48/0x60
+[ 6152.616119]  do_syscall_64+0xc8/0x5d8
+[ 6152.633298]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 6152.657665] 
+[ 6152.665119] The buggy address belongs to the object at ffff8884ac424008
+[ 6152.665119]  which belongs to the cache vm_area_struct(96:user.slice) of size
+200
+[ 6152.734268] The buggy address is located 64 bytes inside of
+[ 6152.734268]  200-byte region [ffff8884ac424008, ffff8884ac4240d0)
+[ 6152.788643] The buggy address belongs to the page:
+[ 6152.810991] page:ffffea0012b10900 count:1 mapcount:0 mapping:ffff88829c7383c0
+index:0x0
+[ 6152.848361] flags: 0x15fffe000000200(slab)
+[ 6152.867558] raw: 015fffe000000200 ffffea00171b6c08 ffff8885928109a0
+ffff88829c7383c0
+[ 6152.903840] raw: 0000000000000000 0000000000070007 00000001ffffffff
+ffff8884da644008
+[ 6152.940077] page dumped because: kasan: bad access detected
+[ 6152.966181] page->mem_cgroup:ffff8884da644008
+[ 6152.986737] page allocated via order 0, migratetype Unmovable, gfp_mask
+0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY)
+[ 6153.036670]  prep_new_page+0x29d/0x2c0
+[ 6153.054207]  get_page_from_freelist+0x95b/0x2050
+[ 6153.076165]  __alloc_pages_nodemask+0x2ff/0x1b50
+[ 6153.097886]  alloc_pages_current+0x9c/0x110
+[ 6153.117199]  allocate_slab+0x3a7/0x850
+[ 6153.134763]  new_slab+0x46/0x70
+[ 6153.149507]  ___slab_alloc+0x5d3/0x9c0
+[ 6153.167080]  __slab_alloc+0x12/0x20
+[ 6153.184301]  kmem_cache_alloc+0x30a/0x360
+[ 6153.203847]  vm_area_dup+0x20/0x80
+[ 6153.221785]  __split_vma+0x68/0x270
+[ 6153.238130]  split_vma+0x51/0x70
+[ 6153.253442]  mprotect_fixup+0x4be/0x540
+[ 6153.271351]  do_mprotect_pkey+0x2a8/0x480
+[ 6153.290282]  __x64_sys_mprotect+0x48/0x60
+[ 6153.308993]  do_syscall_64+0xc8/0x5d8
+[ 6153.326146] 
+[ 6153.333065] Memory state around the buggy address:
+[ 6153.355172]  ffff8884ac423f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00
+[ 6153.388572]  ffff8884ac423f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00
+[ 6153.422389] >ffff8884ac424000: fc fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[ 6153.456232]                                               ^
+[ 6153.482324]  ffff8884ac424080: fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+fc
+[ 6153.516323]  ffff8884ac424100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc
+[ 6153.549993]
+==================================================================
+[ 6153.583892] Disabling lock debugging due to kernel taint
+[ 6190.482570] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+[ 6190.519596] CPU: 0 PID: 45144 Comm: signal06 Kdump: loaded Tainted:
+G    B             5.1.0-rc7-next-20190430+ #8
+[ 6190.568280] Hardware name: HP ProLiant XL420 Gen9/ProLiant XL420 Gen9, BIOS
+U19 12/27/2015
+[ 6190.605290] RIP: 0010:hugetlb_fault+0x46/0x920
+[ 6190.625151] Code: 41 54 53 48 83 ec 48 48 89 7d c8 4c 89 ef 89 4d c4 48 89 55
+a0 e8 aa 36 02 00 49 8b 9e a0 00 00 00 48 8d 7b 20 e8 9a 36 02 00 <48> 8b 5b 20
+48 8d 7b 28 e8 8d 36 02 00 48 8b 5b 28 48 8d bb 40 06
+[ 6190.711533] RSP: 0018:ffff8887c7bcf820 EFLAGS: 00010282
+[ 6190.734963] RAX: 0000000000000000 RBX: 6b6b6b6b6b6b6b6b RCX: ffffffff8c33a376
+[ 6190.767109] RDX: 0000000000000000 RSI: 0000000000000008 RDI: 6b6b6b6b6b6b6b8b
+[ 6190.799329] RBP: ffff8887c7bcf890 R08: fffffbfff1b05102 R09: fffffbfff1b05101
+[ 6190.831304] R10: fffffbfff1b05101 R11: ffffffff8d82880b R12: 0000000000000001
+[ 6190.863311] R13: ffff8884ac4240a8 R14: ffff8884ac424008 R15: 0000000000629c80
+[ 6190.895367] FS:  00007f8105646740(0000) GS:ffff888453400000(0000)
+knlGS:0000000000000000
+[ 6190.931839] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6190.957598] CR2: 00007ff1a60018c0 CR3: 0000000834bd8002 CR4: 00000000001606b0
+[ 6190.989654] Call Trace:
+[ 6191.000738]  ? kasan_check_read+0x11/0x20
+[ 6191.019852]  handle_mm_fault+0x313/0x360
+[ 6191.040562]  __get_user_pages+0x448/0x7c0
+[ 6191.059723]  ? follow_page_mask+0x3e0/0x3e0
+[ 6191.078545]  ? lock_downgrade+0x300/0x300
+[ 6191.096551]  ? __bad_area_nosemaphore+0x66/0x230
+[ 6191.117323]  ? do_raw_spin_unlock+0xa8/0x140
+[ 6191.136813]  __gup_longterm_locked+0x32c/0xa90
+[ 6191.156738]  ? do_page_fault+0x4c/0x260
+[ 6191.174016]  ? get_user_pages_unlocked+0x2b0/0x2b0
+[ 6191.195529]  get_user_pages+0x60/0x70
+[ 6191.212026]  copy_fpstate_to_sigframe+0x31a/0x670
+[ 6191.233252]  ? __fpu__restore_sig+0x7a0/0x7a0
+[ 6191.252704]  do_signal+0x40c/0x9d0
+[ 6191.267912]  ? do_send_specific+0x87/0xe0
+[ 6191.285864]  ? setup_sigcontext+0x280/0x280
+[ 6191.304675]  ? check_kill_permission+0x8e/0x1c0
+[ 6191.325007]  ? do_send_specific+0xa6/0xe0
+[ 6191.343005]  ? do_tkill+0x125/0x160
+[ 6191.358809]  ? signal_fault+0x160/0x160
+[ 6191.376088]  exit_to_usermode_loop+0x9d/0xc0
+[ 6191.395176]  do_syscall_64+0x470/0x5d8
+[ 6191.412299]  ? syscall_return_slowpath+0xf0/0xf0
+[ 6191.433590]  ? __do_page_fault+0x44d/0x5b0
+[ 6191.452211]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 6191.474981] RIP: 0033:0x40377e
+[ 6191.488761] Code: b4 00 00 00 0f 85 ae 00 00 00 89 c7 31 db ba c8 00 00 00 be
+01 00 00 00 eb 0c 66 90 75 1d 81 fb 30 75 00 00 74 65 89 d0 0f 05 <f2> 0f 10 05
+7a b8 21 00 83 c3 01 66 0f 2e c1 7b e1 31 c0 41 89 d8
+[ 6191.578915] RSP: 002b:00007fff1fa13190 EFLAGS: 00000287 ORIG_RAX:
+00000000000000c8
+[ 6191.613071] RAX: 0000000000000000 RBX: 0000000000001e12 RCX: 000000000040377e
+[ 6191.645339] RDX: 00000000000000c8 RSI: 0000000000000001 RDI: 000000000000b058
+[ 6191.677764] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f8104e48700
+[ 6191.709916] R10: fffffffffffff7a8 R11: 0000000000000287 R12: 00007f81056466c0
+[ 6191.741996] R13: 00007fff1fa13360 R14: 0000000000000000 R15: 0000000000000000
+[ 6191.774072] Modules linked in: brd vfat fat ext4 crc16 mbcache jbd2 overlay
+loop kvm_intel kvm dax_pmem irqbypass dax_pmem_core ip_tables x_tables xfs
+sd_mod igb i2c_algo_bit hpsa i2c_core scsi_transport_sas dm_mirror
+dm_region_hash dm_log dm_mod
