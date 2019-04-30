@@ -2,92 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE830F0B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 08:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE980F0B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 08:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfD3GvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 02:51:11 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40089 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfD3GvL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 02:51:11 -0400
-Received: by mail-ed1-f68.google.com with SMTP id e56so4984441ede.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 23:51:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qN3VerpaqOdIGuUXTR5dt2XO1wBt2HwygQaOykPSnWA=;
-        b=L/j0tH7Zm//Y2Tetki2qKe9GcQNMINWkRSyftcITh17V6x3ZewHGo1jNj0TckUlBKs
-         8iFfx53bB9ZqwH9Z4Gd8B5y1mjDR6YXRWYbylY3yKM7mc56O1F6dk7t0QQeKrw5Nhey+
-         9nFvpmqxBXICG3wzCy9aidYtMUxH2YDnkI8NDWAQSjc3VSQDru+2CmTUg4ax41ch0+Xi
-         zeckrKTXEfoOI0RqNR4GHuZlyd7K8vMpDtQR+Y7NV94Iv9T/96VmrHYd6I3TF5oiuUhJ
-         VXQkzJsx0ty7nnmQDASOpIKcNh29uaCnLXipWjOCGmwUOfoC8ECOqkoOLpDkwKPpjLfb
-         BYSQ==
-X-Gm-Message-State: APjAAAWnaDnytUXdbc5uxBAsRcDp1kbAbNyO2lW7vxuzI2tK6y96DKFj
-        9xgJsV7iogy9hGaGwzMbGCJu5SrzoQXrt2wfCA0=
-X-Google-Smtp-Source: APXvYqy7IHrFf5cO9MwCM3ULkpQ+lYR72AOeZL73CTeC67+M93PR+Ok//ypK1bnMCaAGlX2bazs3zTog1FBO63/Fa/0=
-X-Received: by 2002:a50:b513:: with SMTP id y19mr19629692edd.100.1556607069701;
- Mon, 29 Apr 2019 23:51:09 -0700 (PDT)
+        id S1726383AbfD3GyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 02:54:25 -0400
+Received: from first.geanix.com ([116.203.34.67]:43048 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbfD3GyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 02:54:24 -0400
+Received: from localhost (unknown [193.163.1.7])
+        by first.geanix.com (Postfix) with ESMTPSA id F012D308E81;
+        Tue, 30 Apr 2019 06:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1556607257; bh=yq+1xy4tgXBdDFfNyxW4u0ZPJoYM/tD91IUKxtMYn9s=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To;
+        b=g9nHFwAaYsvYJAqAa/Xr5fAJkVcliOZU9wP2Yw+cn/qD4t9AQEe/QXmhqJYZwuxLv
+         /s9WXHSLrG49VpNVAvMiSC70IprzsyNDRg+301+6I+/fcgr64Dr043aMreGY4SgBDE
+         UQQSvCH2EKA4LAkpbmHTZkXy9lJNOAh+6dFge0vlNlL8ql7HfASHRmepNB5Ms/tnda
+         Kbw56l9jxteps5hqg0DkVSvUiPj+JCAS+AH5BmsWIJ1C5SJ6rhjKinMzQ9jmWJhfDC
+         w/YPV2ekrBfny3UBfRVCIu/KjfxdNLFwbaYsdfPTYfGZSmxy3BKxivNZihGUwZlXJJ
+         P4Jt8c5ck0KZg==
+From:   Esben Haabendal <esben@geanix.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Yang Wei <yang.wei9@zte.com.cn>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/12] net: ll_temac: Support indirect_mutex share within TEMAC IP
+References: <20190426073231.4008-1-esben@geanix.com>
+        <20190429083422.4356-1-esben@geanix.com>
+        <20190429083422.4356-8-esben@geanix.com>
+        <20190429221204.GN12333@lunn.ch>
+Date:   Tue, 30 Apr 2019 08:54:21 +0200
+In-Reply-To: <20190429221204.GN12333@lunn.ch> (Andrew Lunn's message of "Tue,
+        30 Apr 2019 00:12:04 +0200")
+Message-ID: <87pnp4ouea.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20190226062012.23746-1-lenb@kernel.org> <20190226190512.GR2861@worktop.programming.kicks-ass.net>
-In-Reply-To: <20190226190512.GR2861@worktop.programming.kicks-ass.net>
-From:   Len Brown <lenb@kernel.org>
-Date:   Tue, 30 Apr 2019 02:50:58 -0400
-Message-ID: <CAJvTdK=SGZy+vbTcCKAmBeQSkeuAW0UxEpKXY2YNvmUofFXNUQ@mail.gmail.com>
-Subject: Re: [PATCH 0/14] v2 multi-die/package topology support
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
+        autolearn=disabled version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on b7bf6291adac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 2:05 PM Peter Zijlstra <peterz@infradead.org> wrote:
+Andrew Lunn <andrew@lunn.ch> writes:
+
+>> For OF devices, the xlnx,compound parent of the temac node should be
+>> used to find siblings, and setup a shared indirect_mutex between them.
+>> I will leave this work to somebody else, as I don't have hardware to
+>> test that.  No regression is introduced by that, as before this commit
+>> using two Ethernet interfaces in same TEMAC block is simply broken.
 >
-> On Tue, Feb 26, 2019 at 01:19:58AM -0500, Len Brown wrote:
-> >  Documentation/cputopology.txt                | 72 ++++++++++++++---------
-> >  Documentation/x86/topology.txt               |  6 +-
-> >  arch/x86/include/asm/processor.h             |  5 +-
-> >  arch/x86/include/asm/smp.h                   |  1 +
-> >  arch/x86/include/asm/topology.h              |  5 ++
-> >  arch/x86/kernel/cpu/topology.c               | 85 +++++++++++++++++++++-------
-> >  arch/x86/kernel/smpboot.c                    | 73 +++++++++++++++++++++++-
-> >  arch/x86/xen/smp_pv.c                        |  1 +
-> >  drivers/base/topology.c                      | 22 +++++++
-> >  drivers/hwmon/coretemp.c                     |  9 +--
-> >  drivers/powercap/intel_rapl.c                | 75 +++++++++++++-----------
-> >  drivers/thermal/intel/x86_pkg_temp_thermal.c |  9 +--
-> >  include/linux/topology.h                     |  6 ++
-> >  13 files changed, 276 insertions(+), 93 deletions(-)
+> Is that true?
+
+Ouch, it was in v1.  But I messed up here in v2.  I will fix for v3.
+
+>> @@ -1092,7 +1092,16 @@ static int temac_probe(struct platform_device *pdev)
+>>  	lp->dev = &pdev->dev;
+>>  	lp->options = XTE_OPTION_DEFAULTS;
+>>  	spin_lock_init(&lp->rx_lock);
+>> -	mutex_init(&lp->indirect_mutex);
+>> +
+>> +	/* Setup mutex for synchronization of indirect register access */
+>> +	if (pdata) {
+>> +		if (!pdata->indirect_mutex) {
+>> +			dev_err(&pdev->dev,
+>> +				"indirect_mutex missing in platform_data\n");
+>> +			return -EINVAL;
+>> +		}
+>> +		lp->indirect_mutex = pdata->indirect_mutex;
+>> +	}
 >
-> Should we not also have changes to
-> arch/x86/kernel/cpu/proc.c:show_cpuinfo_cores() ?
+> In the OF case, isn't lp->indirect_mutex now a NULL pointer, where as
+> before it was a valid mutex?
+>
+> Or did i miss something somewhere?
 
-Good question.
-I was thinking that /proc/cpuinfo was sort of the legacy API, and
-adding a field might break something.
-While adding an attribute to sysfs topology directory was the
-compatible/safe way to make additions.
+No, you did not miss something.  But I did messed up the OF case in v2
+of this series.  Sorry.
 
-/proc/cpuinfo has these fields today:
-
-physical id : 0
-    this is the physical package id
-siblings : 8
-    this is the count of cpus in the same package
-core id : 3
-    this is cpu_core_id
-cpu cores : 4
-    this is booted_cores
-
-If one were to make a change here, I'd consider adding the (physical) die_id,
-though it is already in sysfs topology as an attribute.
-
-Not sure if it would then make sense to print the count of cpus in the die.
-Not sure what I'd name it, and this info is already in sysfs as a map and list.
-
-
-Len Brown, Intel Open Source Technology Center
+/Esben
