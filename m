@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51253F631
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78634F739
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbfD3LoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:44:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55548 "EHLO mail.kernel.org"
+        id S1730819AbfD3LsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:48:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729236AbfD3LoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:44:22 -0400
+        id S1730808AbfD3LsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE31F21670;
-        Tue, 30 Apr 2019 11:44:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19D682054F;
+        Tue, 30 Apr 2019 11:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624661;
-        bh=BMQhf59ngHxcrEisMnwNzHCcj0mMR5dhpJStGP4pMZ8=;
+        s=default; t=1556624891;
+        bh=WClKCRlJDD7W2lTkvYKzQ7G9NElNSD/2db0/8zxai6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o00TzakDtGpny0pQlX7x0t3jjiALEfYnwrAsU/ARytozRwy6eYplF1v4+IDgidAmq
-         LOyofKR57jtRdvsxG70iDZzW1klAhfvpHsxl9BbDQf8l+O/VumjSBwaWzNa/t85KV1
-         bfZ5o7Is2aytpqXaSTxqOYG7VQR08NrW6eGj7dlA=
+        b=cLM8efW7Lqm+mtuMHHz23tOJFYPAm3yva2K9EcIkQcr6aUABV1Ysl8OXhy3FoCPRh
+         cx14kzpPOba+S4/xRbEICaAUf99kHTZwxdZ1Bz3L04IFlNr1B3rgFqfxdnWYYwLZmL
+         Zv/f9NTAPl0d+K16qj6KyfLCQFQ1ZdZ3gSgkq/Ts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 025/100] tracing: Fix a memory leak by early error exit in trace_pid_write()
-Date:   Tue, 30 Apr 2019 13:37:54 +0200
-Message-Id: <20190430113610.065292755@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 04/89] powerpc/vdso32: fix CLOCK_MONOTONIC on PPC64
+Date:   Tue, 30 Apr 2019 13:37:55 +0200
+Message-Id: <20190430113610.012559626@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+[ Upstream commit dd9a994fc68d196a052b73747e3366c57d14a09e ]
 
-commit 91862cc7867bba4ee5c8fcf0ca2f1d30427b6129 upstream.
+Commit b5b4453e7912 ("powerpc/vdso64: Fix CLOCK_MONOTONIC
+inconsistencies across Y2038") changed the type of wtom_clock_sec
+to s64 on PPC64. Therefore, VDSO32 needs to read it with a 4 bytes
+shift in order to retrieve the lower part of it.
 
-In trace_pid_write(), the buffer for trace parser is allocated through
-kmalloc() in trace_parser_get_init(). Later on, after the buffer is used,
-it is then freed through kfree() in trace_parser_put(). However, it is
-possible that trace_pid_write() is terminated due to unexpected errors,
-e.g., ENOMEM. In that case, the allocated buffer will not be freed, which
-is a memory leak bug.
-
-To fix this issue, free the allocated buffer when an error is encountered.
-
-Link: http://lkml.kernel.org/r/1555726979-15633-1-git-send-email-wang6495@umn.edu
-
-Fixes: f4d34a87e9c10 ("tracing: Use pid bitmap instead of a pid array for set_event_pid")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: b5b4453e7912 ("powerpc/vdso64: Fix CLOCK_MONOTONIC inconsistencies across Y2038")
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/vdso32/gettimeofday.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -496,8 +496,10 @@ int trace_pid_write(struct trace_pid_lis
- 	 * not modified.
+diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
+index 1e0bc5955a40..afd516b572f8 100644
+--- a/arch/powerpc/kernel/vdso32/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
+@@ -98,7 +98,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	 * can be used, r7 contains NSEC_PER_SEC.
  	 */
- 	pid_list = kmalloc(sizeof(*pid_list), GFP_KERNEL);
--	if (!pid_list)
-+	if (!pid_list) {
-+		trace_parser_put(&parser);
- 		return -ENOMEM;
-+	}
  
- 	pid_list->pid_max = READ_ONCE(pid_max);
+-	lwz	r5,WTOM_CLOCK_SEC(r9)
++	lwz	r5,(WTOM_CLOCK_SEC+LOPART)(r9)
+ 	lwz	r6,WTOM_CLOCK_NSEC(r9)
  
-@@ -507,6 +509,7 @@ int trace_pid_write(struct trace_pid_lis
- 
- 	pid_list->pids = vzalloc((pid_list->pid_max + 7) >> 3);
- 	if (!pid_list->pids) {
-+		trace_parser_put(&parser);
- 		kfree(pid_list);
- 		return -ENOMEM;
- 	}
+ 	/* We now have our offset in r5,r6. We create a fake dependency
+-- 
+2.19.1
+
 
 
