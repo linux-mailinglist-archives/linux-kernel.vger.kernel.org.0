@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9334D101A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB42101A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfD3VLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 17:11:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:36828 "EHLO mga01.intel.com"
+        id S1727065AbfD3VQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 17:16:12 -0400
+Received: from verein.lst.de ([213.95.11.211]:49203 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfD3VLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:11:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 14:11:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
-   d="scan'208";a="166391957"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Apr 2019 14:11:30 -0700
-Date:   Tue, 30 Apr 2019 14:11:30 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: use direct accessors for RIP and RSP
-Message-ID: <20190430211130.GF4523@linux.intel.com>
-References: <1556654865-45045-1-git-send-email-pbonzini@redhat.com>
+        id S1726015AbfD3VQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 17:16:12 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 2CE8867358; Tue, 30 Apr 2019 23:15:54 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 23:15:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [PATCH 5/7] MIPS: use the generic uncached segment support in
+ dma-direct
+Message-ID: <20190430211553.GA31109@lst.de>
+References: <20190430110032.25301-1-hch@lst.de> <20190430110032.25301-6-hch@lst.de> <20190430201041.536amvinrcvd2wua@pburton-laptop> <20190430202947.GA30262@lst.de> <20190430211105.ielntedm46uqamca@pburton-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1556654865-45045-1-git-send-email-pbonzini@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190430211105.ielntedm46uqamca@pburton-laptop>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 10:07:45PM +0200, Paolo Bonzini wrote:
-> Use specific inline functions for RIP and RSP instead of
-> going through kvm_register_read and kvm_register_write,
-> which are quite a mouthful.  kvm_rsp_read and kvm_rsp_write
-> did not exist, so add them.
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On Tue, Apr 30, 2019 at 09:11:07PM +0000, Paul Burton wrote:
+> Right but dma_direct_alloc_pages() already checks for the PageHighMem
+> case & returns before ever calling arch_dma_prep_coherent(), no?
 
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+True.  And of course it can't be remapped into the uncached segment
+anyway.  So yes, we should drop it.  Eventually I want to add generic
+support for DMA_ATTR_NO_KERNEL_MAPPING, but that'll involved auditing
+all instances anyway.
