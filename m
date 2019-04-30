@@ -2,167 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02C52F590
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E08F58E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfD3L3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:29:06 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57855 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfD3L3G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:29:06 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3UBSFGg1350429
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Apr 2019 04:28:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3UBSFGg1350429
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556623696;
-        bh=oDZ5KraJL4KgMsljNN1FiEACozdkKt3NmYXo5R8ae7E=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=CffJBua1JSJ8mVi7LKwDnpfEYh6QNMhQfKneGTrlzQp0Rb9IlvNqQf5fJFiYNS8q9
-         lW1HIUAy5Rk+hiodiNjbzRdgfcT18dZbbgkZCuXCGZqdTMRoaPVz+U+osBbXtq+kvC
-         grpd1WKaEk1Fc810E/b0zbvF4/b877LJt5BACwlkN7q3979fQ6ykeDzR9wWN9GbTZo
-         THfnHkXbH9dazeu+EJsDNwmijsn46P9tPbSnmfAkMt/CtS00otuNy2pYH3/RJJHTC6
-         kS0Ed70289R+tyjj6vUe7T6vACuNiUfi9rJ8eJByxhy83kZB5ZnXpMccVvg3u5WM4/
-         qihrHt3rt9rdA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3UBSDm31350426;
-        Tue, 30 Apr 2019 04:28:13 -0700
-Date:   Tue, 30 Apr 2019 04:28:13 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rick Edgecombe <tipbot@zytor.com>
-Message-ID: <tip-7fdfe1e40b225b1d163f9afed2fa3f04442dbaad@git.kernel.org>
-Cc:     hpa@zytor.com, bp@alien8.de, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, akpm@linux-foundation.org,
-        nadav.amit@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        rostedt@goodmis.org, linux_dti@icloud.com,
-        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        rick.p.edgecombe@intel.com, ard.biesheuvel@linaro.org,
-        kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        riel@surriel.com, deneen.t.dock@intel.com, luto@kernel.org
-Reply-To: linux_dti@icloud.com, dave.hansen@linux.intel.com,
-          rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-          rick.p.edgecombe@intel.com, ard.biesheuvel@linaro.org,
-          kristen@linux.intel.com, kernel-hardening@lists.openwall.com,
-          deneen.t.dock@intel.com, luto@kernel.org, riel@surriel.com,
-          bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
-          tglx@linutronix.de, torvalds@linux-foundation.org,
-          nadav.amit@gmail.com, will.deacon@arm.com,
-          akpm@linux-foundation.org, peterz@infradead.org
-In-Reply-To: <20190426001143.4983-20-namit@vmware.com>
-References: <20190426001143.4983-20-namit@vmware.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/ftrace: Use vmalloc special flag
-Git-Commit-ID: 7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727935AbfD3L2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:28:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54337 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbfD3L2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:28:24 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7454A2D7F5;
+        Tue, 30 Apr 2019 11:28:24 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 101506F547;
+        Tue, 30 Apr 2019 11:28:23 +0000 (UTC)
+Subject: Re: [PATCH] kernel/module: Reschedule while waiting for modules to
+ finish loading
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel@vger.kernel.org
+References: <20190429151751.15424-1-prarit@redhat.com>
+ <20190430075108.GA21092@linux-8ccs>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <49a246d0-3751-7d13-d7fd-01eac446b922@redhat.com>
+Date:   Tue, 30 Apr 2019 07:28:23 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190430075108.GA21092@linux-8ccs>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 30 Apr 2019 11:28:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
-Gitweb:     https://git.kernel.org/tip/7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
-Author:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-AuthorDate: Thu, 25 Apr 2019 17:11:39 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 30 Apr 2019 12:38:00 +0200
 
-x86/ftrace: Use vmalloc special flag
 
-Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set NX
-and RW before freeing which is no longer needed.
+On 4/30/19 3:51 AM, Jessica Yu wrote:
+> +++ Prarit Bhargava [29/04/19 11:17 -0400]:
+>> Heiko, do you want a Signed-off-by or a Reported-by?  Either one works
+>> for me.
+>>
+>> P.
+> 
+> I think you forgot to CC Heiko :)
 
-Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: <akpm@linux-foundation.org>
-Cc: <ard.biesheuvel@linaro.org>
-Cc: <deneen.t.dock@intel.com>
-Cc: <kernel-hardening@lists.openwall.com>
-Cc: <kristen@linux.intel.com>
-Cc: <linux_dti@icloud.com>
-Cc: <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190426001143.4983-20-namit@vmware.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/ftrace.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+#oops.
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 53ba1aa3a01f..0caf8122d680 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
- {
- 	return module_alloc(size);
- }
--static inline void tramp_free(void *tramp, int size)
-+static inline void tramp_free(void *tramp)
- {
--	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
--
--	set_memory_nx((unsigned long)tramp, npages);
--	set_memory_rw((unsigned long)tramp, npages);
- 	module_memfree(tramp);
- }
- #else
-@@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
- {
- 	return NULL;
- }
--static inline void tramp_free(void *tramp, int size) { }
-+static inline void tramp_free(void *tramp) { }
- #endif
- 
- /* Defined as markers to the end of the ftrace default trampolines */
-@@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	/* ALLOC_TRAMP flags lets us know we created it */
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
- 
-+	set_vm_flush_reset_perms(trampoline);
-+
- 	/*
- 	 * Module allocation needs to be completed by making the page
- 	 * executable. The page is still writable, which is a security hazard,
-@@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
--	tramp_free(trampoline, *tramp_size);
-+	tramp_free(trampoline);
- 	return 0;
- }
- 
-@@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
- 	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
- 		return;
- 
--	tramp_free((void *)ops->trampoline, ops->trampoline_size);
-+	tramp_free((void *)ops->trampoline);
- 	ops->trampoline = 0;
- }
- 
+I forgot that git-send-email doesn't pick up "Reported-by".
+
+P.
+
+> 
+>> ----8<----
+>>
+>> On a s390 z14 LAR with 2 cpus about stalls about 3% of the time while
+>> loading the s390_trng.ko module.
+>>
+>> Add a reschedule point to the loop that waits for modules to complete
+>> loading.
+>>
+>> Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>> Fixes: linux-next commit f9a75c1d717f ("modules: Only return -EEXIST for
+>> modules that have finished loading")
+>> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+>> Cc: Jessica Yu <jeyu@kernel.org>
+>> ---
+>> kernel/module.c | 1 +
+>> 1 file changed, 1 insertion(+)
+>>
+>> diff --git a/kernel/module.c b/kernel/module.c
+>> index 410eeb7e4f1d..48748cfec991 100644
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -3585,6 +3585,7 @@ static int add_unformed_module(struct module *mod)
+>>                            finished_loading(mod->name));
+>>             if (err)
+>>                 goto out_unlocked;
+>> +            cond_resched();
+>>             goto again;
+>>         }
+>>         err = -EEXIST;
+>> -- 
+>> 2.18.1
+>>
