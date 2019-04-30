@@ -2,100 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05041FC2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D973AFB50
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfD3PGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:06:23 -0400
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25411 "EHLO
-        sender-pp-o92.zoho.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726198AbfD3PGV (ORCPT
+        id S1726679AbfD3OWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:22:55 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41762 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfD3OWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:06:21 -0400
-X-Greylist: delayed 2710 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 11:06:21 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1556634062; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=FekgT0yaoJTctRbEqW1SPQP+2EyMyVLnIk+jFPDwuwkRFyZeiaGlVsQcfK6kKGs5srwRz46tPuJTfeBB5ltW72KkBhuFXkzNQDvgSjM0mVBgJQsYo2H8uK5xcvsm+BN4x+HhaLIkMW8hIICe/8VIP2W/sA4cZ34YKBHTmvPHK4I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1556634062; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=; 
-        b=DZxtfUb3RAvB/+5+saUGnk5PJyXA0E6E8QZK1AbGNJ8xT1J9C0vZFeAtBTt75MDLTllPW37bKv1VppsawEuWWLQvs643BHHMwo/DaRaQYYoVrKXwHyzNgcy7RbX1SAxiJT4asdDvCfAENeo+ETzLSoW3GI5DWi4afJwLgVor4d4=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=strongbox8@zoho.com;
-        dmarc=pass header.from=<strongbox8@zoho.com> header.from=<strongbox8@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:message-id:subject:date:mime-version:content-type; 
-  b=LO7DJBJFTxshes/zPiT1qmQZpcE/5taXzgE75P3UwqIHDKWzcLRxKmA+DeDIx3BgVzKwkYAQqKhB
-    DnMimChn5Do1y1RKMT8yWmhPBC6dp25PwbyQD8SpWbKsEO6wR8xR  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1556634062;
-        s=default; d=zoho.com; i=strongbox8@zoho.com;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        l=1352; bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=;
-        b=l7eqyrh568GmCaIvp38TDBukNpIyFXmgwrAMPIfQb4aFP3f2HY3vY6ZVZKIb7lIM
-        PMu12LiE/W31YzMWXRANWwGBrC+1HACSfDBaXVT/8K8kbFwAsCLKsldZ41MKX6vv/lm
-        uFHAmaPVWdRJ6IvVHImfQ76dz1xdmDapdp3pEbs8=
-Received: from archlinux.localdomain (180.97.206.46 [180.97.206.46]) by mx.zohomail.com
-        with SMTPS id 1556634059124564.1015564377054; Tue, 30 Apr 2019 07:20:59 -0700 (PDT)
-From:   Perr Zhang <strongbox8@zoho.com>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, stable@vger.kernel.org,
-        mingo@redhat.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <20190430142056.3133-1-strongbox8@zoho.com>
-Subject: [PATCH] KVM: x86: revert the order of calls in kvm_fast_pio()
-Date:   Tue, 30 Apr 2019 22:20:56 +0800
-X-Mailer: git-send-email 2.21.0
+        Tue, 30 Apr 2019 10:22:54 -0400
+Received: by mail-ot1-f68.google.com with SMTP id g8so11053006otl.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GhLbsCh+7+3dT0yeAZbUcY/AwuBdniC8c1Doy2RANbs=;
+        b=LCrcJ8GqxP81DA7QCA7VLz3LgfcMmrt5jZfwdg6KQT5IJtjVfMjw8a5ENUnbY4V2ij
+         6n0+9c5ovtEZgIcDXqUDnatVZpQqCl2uNf41zOQjbrEDfTemi+w71bQA++j963lMO8G1
+         /6X4cFT7Hi5vA4h9u+M4cyw421qbK6HJwDRx1yx1G+socY34I4ae0YFrQB1vu8IhzM0/
+         ep8BmjeQFWT1KBmWQrnlCYaEaGsc2co7YFHaA1F4HFd/gzt+YKvoadVwDxK92vDT8TLG
+         GN9DsHIsYcAqcNHkxChgwBu7b1xt7ZpmPccxx4i82KUfzpYQO957H9K8oae6sGtEA5L5
+         3P/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GhLbsCh+7+3dT0yeAZbUcY/AwuBdniC8c1Doy2RANbs=;
+        b=Rm4DlBPL5V/5Oj/NqestCRXreZR/06qLLlLz6saPd8lsq3fFqQxdTazXuUJ3MYAYak
+         c8aFJyXVrBgOlgpInGxPvicByRVNlJQVriEyCWjg8pX24/4NkkVGTmmud4XdyClzGRQc
+         TILFyUmJ1MLkQWmUTz63lS+eApmUNYz1iGhTet1ffx4VWnOp2uD/zrUduKx2Y2nN/bkk
+         AkRGwJRsdP6Fkive0FePsnrSt30/E8t+qy8KVeSOtYJehjBMFVM1jjvZs0Z4+4bFFCrh
+         OKe10SHUWgpNJRIiSIolrJiSp5BwWv6vf//s/YKOihw0dMdSLNjqbfxirjeSTj4R4TMN
+         Q3ww==
+X-Gm-Message-State: APjAAAWPJZrOkXPixGD6IkYf4d7P34UCmvJ/sMA16o3Ao/1vyvX0VwKt
+        QbIQIkiQuGuhf2JYi41wcgl6posLh6yGOu5/mZW08A==
+X-Google-Smtp-Source: APXvYqyEHmAehKZR1imvGsb8Kcy0DWzhy/Ln6QcqM8WmdKbxc6yx1si6SIMEV9sm/IfM6bunmGW7SK5AOOSBXMRPo2M=
+X-Received: by 2002:a9d:6318:: with SMTP id q24mr2794428otk.95.1556634173787;
+ Tue, 30 Apr 2019 07:22:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+References: <1556517940-13725-1-git-send-email-hofrat@osadl.org>
+ <CAGngYiVDFL1fm2oKALXORNziX6pdcBBNtp7rSnj_FBdr6u4j5w@mail.gmail.com>
+ <20190430022238.GA22593@osadl.at> <20190430030223.GE23075@ZenIV.linux.org.uk>
+ <20190430033310.GB23144@osadl.at> <20190430041934.GI23075@ZenIV.linux.org.uk>
+ <CAGngYiVSg86X+jD+hgwwrOYX82Fu3OWSLygwGFzyc9wYq6AesQ@mail.gmail.com> <20190430140339.GA18986@kroah.com>
+In-Reply-To: <20190430140339.GA18986@kroah.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 30 Apr 2019 10:22:42 -0400
+Message-ID: <CAGngYiXbSBuce2HmbHH4kUbe2ShgheML=bp+AJ-3O+FE+37ZRw@mail.gmail.com>
+Subject: Re: [PATCH V2] staging: fieldbus: anybus-s: force endiannes annotation
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, devel@driverdev.osuosl.org,
+        Nicholas Mc Guire <der.herr@hofr.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 45def77ebf79, the order of function calls in kvm_fast_pio()
-was changed. This causes that the vm(XP,and also XP's iso img) failed
-to boot. This doesn't happen with win10 or ubuntu.
+On Tue, Apr 30, 2019 at 10:03 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> Keep it bus-endian, as that's the "normal" way bus structures work (like
+> PCI and USB for example), and that should be in a documented, and
+> consistent, form, right?
+>
+> Then do the conversion when you access the field from within the kernel.
 
-After revert the order, the vm(XP) succeedes to boot. In addition, the
-change of calls's order of kvm_fast_pio() in commit 45def77ebf79 has no
-obvious reason.
-
-Fixes: 45def77ebf79 ("KVM: x86: update %rip after emulating IO")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Perr Zhang <strongbox8@zoho.com>
----
- arch/x86/kvm/x86.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a0d1fc80ac5a..248753cb94a1 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6610,13 +6610,12 @@ static int kvm_fast_pio_in(struct kvm_vcpu *vcpu, i=
-nt size,
-=20
- int kvm_fast_pio(struct kvm_vcpu *vcpu, int size, unsigned short port, int=
- in)
- {
--=09int ret;
-+=09int ret =3D kvm_skip_emulated_instruction(vcpu);
-=20
- =09if (in)
--=09=09ret =3D kvm_fast_pio_in(vcpu, size, port);
-+=09=09return kvm_fast_pio_in(vcpu, size, port) && ret;
- =09else
--=09=09ret =3D kvm_fast_pio_out(vcpu, size, port);
--=09return ret && kvm_skip_emulated_instruction(vcpu);
-+=09=09return kvm_fast_pio_out(vcpu, size, port) && ret;
- }
- EXPORT_SYMBOL_GPL(kvm_fast_pio);
-=20
---=20
-2.21.0
-
-
-
+Ah ok, it's like a standard way of implementing a bus. Sounds good, I'll
+spin a patch to conform to it. And while I'm at it, I'll rename fieldbus_type
+because it can be confused with another fieldbus_type within the
+fieldbus_dev core.
