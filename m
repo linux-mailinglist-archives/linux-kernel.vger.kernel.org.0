@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88321F485
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D19F4D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfD3KwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:52:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32784 "EHLO
+        id S1728054AbfD3KzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:55:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33178 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfD3KwP (ORCPT
+        with ESMTP id S1726916AbfD3Kw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:52:15 -0400
+        Tue, 30 Apr 2019 06:52:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OjOD2oMjxpggW41tpwAHqLAmFcrJ2PV74fctRCPb0YM=; b=CAfFvUb3h9Z5Ktfh8rxh+5IiDm
-        lY97oHjJ7HjwOKCA8j31dx2moU99TYCoFTqmI699YPJyl4KkkkwxSH7DCdALtZyL8TB7wrHPN9ZCf
-        ifeMmu1pv5uedYgpFQqiagEdgnChynosW3ZBFzzjah7r7s2Akt9qg/HwqpOVJLVTg3+TahiKvFnVq
-        kMKZvPMEWQMLM5QoiTRFpjY2riHn/D3MqcUTjG81KwHd+FKu6pnv8qKReYmCEf7eAhFkXAY2HJoX9
-        5DCuWwiUau852nNnlQv3dS1uj2fznNQU4fZVikPoHxnAjBO3ImVCwcG//VDzqFADdkQY65G+1SylZ
-        Nxeq0yMA==;
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NSdqCv71ScTLfp+L8DoOcIv8z0/qhRPKt5mb1BYMk/s=; b=t8/xdPkLuMODEclDwrkXgZG6i
+        jd28Y4ll3XEIXyENP0Lp2V5CG7LB9jmVnVkEoKIPanOxnfZM9jwqXX6+f19EeyA4Sz6mGmxSNc9XJ
+        J9UaH9G3JTHE0uM+6NldNrZsEFQLPzhMIUmeN+TTejqv3LWCWB1ck9wu3A6GvvhzGr28uQG4v9PVR
+        qlPQ8Dn3UHCaW6mFhdgtUfQwZ3dafOYshE1x45BCFMjMUQGgrL6b2YmV/sgqYqXOwf6bGe5LT8lu7
+        trbe57rg26xkdVh3HyL5QcVRRZfpUQaZ2stm0RyEnb8M9taCl5uS2z/EDhuMbnTbXDH3j/+uhcnCU
+        qDTA0Otvg==;
 Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLQMw-0007EX-5d; Tue, 30 Apr 2019 10:52:14 +0000
+        id 1hLQNX-0007JR-UQ; Tue, 30 Apr 2019 10:52:52 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] LICENSES: Rename other to deprecated
-Date:   Tue, 30 Apr 2019 06:51:30 -0400
-Message-Id: <20190430105130.24500-4-hch@lst.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: implement generic dma_map_ops for IOMMUs v4
+Date:   Tue, 30 Apr 2019 06:51:49 -0400
+Message-Id: <20190430105214.24628-1-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430105130.24500-1-hch@lst.de>
-References: <20190430105130.24500-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -47,73 +47,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make it clear in the directory name that these are not intended for new
-code.
+Hi Robin,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/process/license-rules.rst     | 8 ++++----
- LICENSES/{other => deprecated}/GPL-1.0      | 0
- LICENSES/{other => deprecated}/ISC          | 0
- LICENSES/{other => deprecated}/Linux-OpenIB | 0
- LICENSES/{other => deprecated}/X11          | 0
- 5 files changed, 4 insertions(+), 4 deletions(-)
- rename LICENSES/{other => deprecated}/GPL-1.0 (100%)
- rename LICENSES/{other => deprecated}/ISC (100%)
- rename LICENSES/{other => deprecated}/Linux-OpenIB (100%)
- rename LICENSES/{other => deprecated}/X11 (100%)
+please take a look at this series, which implements a completely generic
+set of dma_map_ops for IOMMU drivers.  This is done by taking the
+existing arm64 code, moving it to drivers/iommu and then massaging it
+so that it can also work for architectures with DMA remapping.  This
+should help future ports to support IOMMUs more easily, and also allow
+to remove various custom IOMMU dma_map_ops implementations, like Tom
+was planning to for the AMD one.
 
-diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
-index 507b695fa9da..2ef44ada3f11 100644
---- a/Documentation/process/license-rules.rst
-+++ b/Documentation/process/license-rules.rst
-@@ -234,13 +234,13 @@ kernel, can be broken down into:
- 
- |
- 
--2. Not recommended licenses:
-+2. Deprecated licenses:
- 
-    These licenses should only be used for existing code or for importing
-    code from a different project.  These licenses are available from the
-    directory::
- 
--      LICENSES/other/
-+      LICENSES/deprecated/
- 
-    in the kernel source tree.
- 
-@@ -250,12 +250,12 @@ kernel, can be broken down into:
- 
-    Examples::
- 
--      LICENSES/other/ISC
-+      LICENSES/deprecated/ISC
- 
-    Contains the Internet Systems Consortium license text and the required
-    metatags::
- 
--      LICENSES/other/GPL-1.0
-+      LICENSES/deprecated/GPL-1.0
- 
-    Contains the GPL version 1 license text and the required metatags.
- 
-diff --git a/LICENSES/other/GPL-1.0 b/LICENSES/deprecated/GPL-1.0
-similarity index 100%
-rename from LICENSES/other/GPL-1.0
-rename to LICENSES/deprecated/GPL-1.0
-diff --git a/LICENSES/other/ISC b/LICENSES/deprecated/ISC
-similarity index 100%
-rename from LICENSES/other/ISC
-rename to LICENSES/deprecated/ISC
-diff --git a/LICENSES/other/Linux-OpenIB b/LICENSES/deprecated/Linux-OpenIB
-similarity index 100%
-rename from LICENSES/other/Linux-OpenIB
-rename to LICENSES/deprecated/Linux-OpenIB
-diff --git a/LICENSES/other/X11 b/LICENSES/deprecated/X11
-similarity index 100%
-rename from LICENSES/other/X11
-rename to LICENSES/deprecated/X11
--- 
-2.20.1
+A git tree is also available at:
 
+    git://git.infradead.org/users/hch/misc.git dma-iommu-ops.3
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+
+Changes since v3:
+ - fold the separate patch to refactor mmap bounds checking
+ - don't warn on not finding a vm_area
+ - improve a commit log
+ - refactor __dma_iommu_free a little differently
+ - remove a minor MSI map cleanup to avoid a conflict with the
+   "Split iommu_dma_map_msi_msg" series
+
+Changes since v2:
+ - address various review comments and include patches from Robin
+
+Changes since v1:
+ - only include other headers in dma-iommu.h if CONFIG_DMA_IOMMU is enabled
+ - keep using a scatterlist in iommu_dma_alloc
+ - split out mmap/sgtable fixes and move them early in the series
+ - updated a few commit logs
