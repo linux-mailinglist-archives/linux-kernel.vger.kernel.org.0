@@ -2,110 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A79CFDF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD91FDFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfD3Qap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 12:30:45 -0400
-Received: from mga03.intel.com ([134.134.136.65]:11907 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfD3Qao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:30:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 09:30:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
-   d="scan'208";a="342198148"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Apr 2019 09:30:42 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hLVeT-0007p9-4i; Tue, 30 Apr 2019 19:30:41 +0300
-Date:   Tue, 30 Apr 2019 19:30:41 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     linux-acpi@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] ACPI / property: fix handling of data_nodes in
- acpi_get_next_subnode()
-Message-ID: <20190430163041.GN9224@smile.fi.intel.com>
-References: <20190430155229.14213-1-pierre-louis.bossart@linux.intel.com>
+        id S1726401AbfD3QdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 12:33:24 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:33631 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfD3QdY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 12:33:24 -0400
+Received: by mail-io1-f49.google.com with SMTP id u12so12813580iop.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 09:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=av5VSNqJe7ZdTw4nzRuXBSgojWB4gnNiSMsj6Rn7YDc=;
+        b=uqHv+v7HqQD21A02DUEi0TR9EDNnqSAh+65SBAPqzIAwTrsXlla7pqKSpini2DuqBH
+         MZ5wnArL0hWFtEw6QvwH1+wal5Puz2vhMQ6jAdKCw+1QU83TWeTRMJX+jTlvKqBBAGa2
+         VesFY/GgBYduoB2sNrCPdO1kIrVl5O4+BiUeTHlxxvYwZAF/YPltSMdb60i7WZzDejMD
+         tu+NpOFTYvLCce4TnnEJLSs02L4nketpCF51AGmRsmbpx3P2gUIucB8YJY5cxr+UetWE
+         6p6/BYexB/U7z6Ik8iXqktx95i39UNFE9jIfF+5DCoIEqCAknFXgry44Hr0MwGGLL8Ox
+         dpMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=av5VSNqJe7ZdTw4nzRuXBSgojWB4gnNiSMsj6Rn7YDc=;
+        b=OniCPHY53IgGk7sELyoTUWWd0N4bRMzOjgf+Tn2hqVvDB7qMPYVo8doUalk9LdeVbI
+         0vTqRn1o8gYU+m1Iz2BX5nvnktXq+BzL4GgpADF8vmAdw9s4i89FCCDY2EhBtUXj8TZK
+         QtpidWvgGxE768iw8Qg2G77UeryhtAbpUqLKqcxlH5OyMjbcfjZ9ptnq7ls18ZZdy4VL
+         H7/DciAlkZlyXrcVXPcfDS4IITOQru66KC3I0xwuOl5fR0HALBeDaQsVgCypJ/SMDXuS
+         s037sQjm4+HSTeK9OirvR+BMVcfFP95Is2pb4cEsa4l2NcT/rNskfsfCeNnLfmp+1wWJ
+         GtaQ==
+X-Gm-Message-State: APjAAAWdsUVUYEz8YNhJQyxykX0WN2FIn88oqUno91ovS0AITubYzw5M
+        st+NIDQrHsLcLa+EEI7g1hOsMg==
+X-Google-Smtp-Source: APXvYqy114OccaZET0DAxPq1oVIV3uf8pOzkEUP8Ovs6BXAvr+d7OrRPRhaSDVAJ6t12mnKQFzqa9g==
+X-Received: by 2002:a5d:89c1:: with SMTP id a1mr15751044iot.214.1556642003525;
+        Tue, 30 Apr 2019 09:33:23 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id h8sm14286582iof.36.2019.04.30.09.33.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 09:33:22 -0700 (PDT)
+Subject: Re: [PATCHv2] io_uring: free allocated io_memory once
+To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190430163021.54711-1-mark.rutland@arm.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b31d4f2e-8756-02ef-9c0b-55c7e755c097@kernel.dk>
+Date:   Tue, 30 Apr 2019 10:33:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430155229.14213-1-pierre-louis.bossart@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190430163021.54711-1-mark.rutland@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 10:52:29AM -0500, Pierre-Louis Bossart wrote:
-> When the DSDT tables expose devices with subdevices and a set of
-> hierarchical _DSD properties, the data returned by
-> acpi_get_next_subnode() is incorrect, with the results suggesting a bad
-> pointer assignment. The parser works fine with device_nodes or
-> data_nodes, but not with a combination of the two.
+On 4/30/19 10:30 AM, Mark Rutland wrote:
+> If io_allocate_scq_urings() fails to allocate an sq_* region, it will
+> call io_mem_free() for any previously allocated regions, but leave
+> dangling pointers to these regions in the ctx. Any regions which have
+> not yet been allocated are left NULL. Note that when returning
+> -EOVERFLOW, the previously allocated sq_ring is not freed, which appears
+> to be an unintentional leak.
 > 
-> The problem is traced to an invalid pointer used when jumping from
-> handling device_nodes to data nodes. The existing code looks for data
-> nodes below the last subdevice found instead of the common root. Fix
-> by forcing the acpi_device pointer to be derived from the same fwnode
-> for the two types of subnodes.
+> When io_allocate_scq_urings() fails, io_uring_create() will call
+> io_ring_ctx_wait_and_kill(), which calls io_mem_free() on all the sq_*
+> regions, assuming the pointers are valid and not NULL.
 > 
-> This same problem of handling device and data nodes was already fixed
-> in a similar way by 'commit bf4703fdd166 ("ACPI / property: fix data
-> node parsing in acpi_get_next_subnode()")' but broken later by 'commit
-> 34055190b19 ("ACPI / property: Add fwnode_get_next_child_node()")', so
-> this should probably go to linux-stable all the way to 4.12
-
-Period is missed in above sentence.
-
-I think it make sense to add Fixes: tag.
-
-Nevertheless,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thank you for fixing this interesting issue!
-
+> This can result in pages being freed multiple times, which has been
+> observed to corrupt the page state, leading to subsequent fun. This can
+> also result in virt_to_page() on NULL, resulting in the use of bogus
+> page addresses, and yet more subsequent fun. The latter can be detected
+> with CONFIG_DEBUG_VIRTUAL on arm64.
 > 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/acpi/property.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index 5815356ea6ad..efc74f912f39 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -943,6 +943,16 @@ struct fwnode_handle *acpi_get_next_subnode(const struct fwnode_handle *fwnode,
->  		const struct acpi_data_node *data = to_acpi_data_node(fwnode);
->  		struct acpi_data_node *dn;
->  
-> +		/*
-> +		 * We can have a combination of device and data nodes,
-> +		 * e.g. with hierarchical _DSD properties. Make sure
-> +		 * the adev pointer is restored before going through
-> +		 * data nodes, otherwise we will be looking for
-> +		 * data_nodes below the last device found instead of
-> +		 * the common fwnode shared by device_nodes and
-> +		 * data_nodes
-> +		 */
-> +		adev = to_acpi_device_node(fwnode);
->  		if (adev)
->  			head = &adev->data.subnodes;
->  		else if (data)
-> -- 
-> 2.17.1
-> 
+> Adding a cleanup path to io_allocate_scq_urings() complicates the logic,
+> so let's leave it to io_ring_ctx_free() to consistently free these
+> pointers, and simplify the io_allocate_scq_urings() error paths.
+
+Looks good - applied, thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Jens Axboe
 
