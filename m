@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE25F604
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6C09F60E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfD3Llz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:41:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49956 "EHLO mail.kernel.org"
+        id S1729274AbfD3LmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:42:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729036AbfD3Lls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:48 -0400
+        id S1727770AbfD3LmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:42:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B1121670;
-        Tue, 30 Apr 2019 11:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E16A821734;
+        Tue, 30 Apr 2019 11:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624507;
-        bh=5SHsypmo8pe7K626t53+E/hpSpGB6teWcfIps7w6rIs=;
+        s=default; t=1556624536;
+        bh=77D6z18oj1v3jnBnn8XBJEpwVJSyPUUId9lJz6jmG7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tqg8WQDiu4YTFPDe3w71ewj2VlBmfSMNJw5FK+XytJF8xZdxHaSndHJh/hP8Ee1rW
-         qEopSnJw7F41nxCRH23WC1vUQ943KtNVhZ8PsEDWfC9XTrPypzsx4DURoq8euHDFCZ
-         m5BSyDl+RKj1TSIWRrvfAfaXsVVvvV4GvMc5EtZk=
+        b=K560cWkVkcjBI3AJklte0DMLHIhMRnh36Wj6j2rh/IhZ+WunUrpjyCEcJS9fTA/bF
+         3XVSS9HfwQMoQ2mKQt7CcRCofSeDUnX2FT8OuiS79wT7opyLg3c8q3cGVpL015cCfL
+         Xru4Ij18+ydC0NevXcGt4VRO9QOSJ5f9AExvX5r4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.14 02/53] cifs: do not attempt cifs operation on smb2+ rename error
-Date:   Tue, 30 Apr 2019 13:38:09 +0200
-Message-Id: <20190430113549.852405340@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 03/53] tracing: Fix a memory leak by early error exit in trace_pid_write()
+Date:   Tue, 30 Apr 2019 13:38:10 +0200
+Message-Id: <20190430113550.171594651@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
 References: <20190430113549.400132183@linuxfoundation.org>
@@ -44,38 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Sorenson <sorenson@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit 652727bbe1b17993636346716ae5867627793647 upstream.
+commit 91862cc7867bba4ee5c8fcf0ca2f1d30427b6129 upstream.
 
-A path-based rename returning EBUSY will incorrectly try opening
-the file with a cifs (NT Create AndX) operation on an smb2+ mount,
-which causes the server to force a session close.
+In trace_pid_write(), the buffer for trace parser is allocated through
+kmalloc() in trace_parser_get_init(). Later on, after the buffer is used,
+it is then freed through kfree() in trace_parser_put(). However, it is
+possible that trace_pid_write() is terminated due to unexpected errors,
+e.g., ENOMEM. In that case, the allocated buffer will not be freed, which
+is a memory leak bug.
 
-If the mount is smb2+, skip the fallback.
+To fix this issue, free the allocated buffer when an error is encountered.
 
-Signed-off-by: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Link: http://lkml.kernel.org/r/1555726979-15633-1-git-send-email-wang6495@umn.edu
+
+Fixes: f4d34a87e9c10 ("tracing: Use pid bitmap instead of a pid array for set_event_pid")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/trace/trace.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -1730,6 +1730,10 @@ cifs_do_rename(const unsigned int xid, s
- 	if (rc == 0 || rc != -EBUSY)
- 		goto do_rename_exit;
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -494,8 +494,10 @@ int trace_pid_write(struct trace_pid_lis
+ 	 * not modified.
+ 	 */
+ 	pid_list = kmalloc(sizeof(*pid_list), GFP_KERNEL);
+-	if (!pid_list)
++	if (!pid_list) {
++		trace_parser_put(&parser);
+ 		return -ENOMEM;
++	}
  
-+	/* Don't fall back to using SMB on SMB 2+ mount */
-+	if (server->vals->protocol_id != 0)
-+		goto do_rename_exit;
-+
- 	/* open-file renames don't work across directories */
- 	if (to_dentry->d_parent != from_dentry->d_parent)
- 		goto do_rename_exit;
+ 	pid_list->pid_max = READ_ONCE(pid_max);
+ 
+@@ -505,6 +507,7 @@ int trace_pid_write(struct trace_pid_lis
+ 
+ 	pid_list->pids = vzalloc((pid_list->pid_max + 7) >> 3);
+ 	if (!pid_list->pids) {
++		trace_parser_put(&parser);
+ 		kfree(pid_list);
+ 		return -ENOMEM;
+ 	}
 
 
