@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA4DDF5F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BBFF6A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbfD3Lk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47740 "EHLO mail.kernel.org"
+        id S1730830AbfD3LuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:50:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728600AbfD3Lky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:54 -0400
+        id S1731161AbfD3LuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:50:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 247EF21734;
-        Tue, 30 Apr 2019 11:40:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 773992054F;
+        Tue, 30 Apr 2019 11:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624452;
-        bh=ajN8JtMnQlPa1YlO/4u54AdoCGo5ukZNwYAQwujZ7f0=;
+        s=default; t=1556625020;
+        bh=A8JBLSC1ofHW3Q7bGp97qpoxftwAKyrj4FTUS/yfBaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3t6qEOJQGIF+xzuR5RiiZMBFQ4FjbqL9gKSoP7xXyx9kl/1Fhtuyretdu67Irp2D
-         MxDOGOpdifXGXfMXtScvOep6IjrZyxWz6HnNLKQKib7wtVYeST2lp73BMopS+1APCp
-         7z2Wsy1IXjMEP0lt/BDwVGasnJ5QzkFpLcVSkITM=
+        b=evSNSkJDBKFGNdxwBUFEFezdRT8ZVYbl3WsgWqTEhD6R0VYW//NX0soirXPbLl4Y9
+         Zp6JobLG9YwbBZr01giXOKRfP+tQ/UPwTaEtdNsHkzG8jwHJYlYnJwfYwoCb5wUsv9
+         B5yI9Ww3tojnEGMAsbmjifOMm/nzjrmKfyRKgmg8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Oskolkov <posk@google.com>,
-        Tom Herbert <tom@herbertland.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 41/41] net: IP6 defrag: use rbtrees in nf_conntrack_reasm.c
+Subject: [PATCH 5.0 61/89] net: netrom: Fix error cleanup path of nr_proto_init
 Date:   Tue, 30 Apr 2019 13:38:52 +0200
-Message-Id: <20190430113535.261302059@linuxfoundation.org>
+Message-Id: <20190430113612.553999280@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,393 +44,250 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Oskolkov <posk@google.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 997dd96471641e147cb2c33ad54284000d0f5e35 ]
+commit d3706566ae3d92677b932dd156157fd6c72534b1 upstream.
 
-Currently, IPv6 defragmentation code drops non-last fragments that
-are smaller than 1280 bytes: see
-commit 0ed4229b08c1 ("ipv6: defrag: drop non-last frags smaller than min mtu")
+Syzkaller report this:
 
-This behavior is not specified in IPv6 RFCs and appears to break
-compatibility with some IPv6 implemenations, as reported here:
-https://www.spinics.net/lists/netdev/msg543846.html
+BUG: unable to handle kernel paging request at fffffbfff830524b
+PGD 237fe8067 P4D 237fe8067 PUD 237e64067 PMD 1c9716067 PTE 0
+Oops: 0000 [#1] SMP KASAN PTI
+CPU: 1 PID: 4465 Comm: syz-executor.0 Not tainted 5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:__list_add_valid+0x21/0xe0 lib/list_debug.c:23
+Code: 8b 0c 24 e9 17 fd ff ff 90 55 48 89 fd 48 8d 7a 08 53 48 89 d3 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 48 83 ec 08 <80> 3c 02 00 0f 85 8b 00 00 00 48 8b 53 08 48 39 f2 75 35 48 89 f2
+RSP: 0018:ffff8881ea2278d0 EFLAGS: 00010282
+RAX: dffffc0000000000 RBX: ffffffffc1829250 RCX: 1ffff1103d444ef4
+RDX: 1ffffffff830524b RSI: ffffffff85659300 RDI: ffffffffc1829258
+RBP: ffffffffc1879250 R08: fffffbfff0acb269 R09: fffffbfff0acb269
+R10: ffff8881ea2278f0 R11: fffffbfff0acb268 R12: ffffffffc1829250
+R13: dffffc0000000000 R14: 0000000000000008 R15: ffffffffc187c830
+FS:  00007fe0361df700(0000) GS:ffff8881f7300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff830524b CR3: 00000001eb39a001 CR4: 00000000007606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ __list_add include/linux/list.h:60 [inline]
+ list_add include/linux/list.h:79 [inline]
+ proto_register+0x444/0x8f0 net/core/sock.c:3375
+ nr_proto_init+0x73/0x4b3 [netrom]
+ ? 0xffffffffc1628000
+ ? 0xffffffffc1628000
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe0361dec58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007fe0361dec70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe0361df6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
+Modules linked in: netrom(+) ax25 fcrypt pcbc af_alg arizona_ldo1 v4l2_common videodev media v4l2_dv_timings hdlc ide_cd_mod snd_soc_sigmadsp_regmap snd_soc_sigmadsp intel_spi_platform intel_spi mtd spi_nor snd_usbmidi_lib usbcore lcd ti_ads7950 hi6421_regulator snd_soc_kbl_rt5663_max98927 snd_soc_hdac_hdmi snd_hda_ext_core snd_hda_core snd_soc_rt5663 snd_soc_core snd_pcm_dmaengine snd_compress snd_soc_rl6231 mac80211 rtc_rc5t583 spi_slave_time leds_pwm hid_gt683r hid industrialio_triggered_buffer kfifo_buf industrialio ir_kbd_i2c rc_core led_class_flash dwc_xlgmac snd_ymfpci gameport snd_mpu401_uart snd_rawmidi snd_ac97_codec snd_pcm ac97_bus snd_opl3_lib snd_timer snd_seq_device snd_hwdep snd soundcore iptable_security iptable_raw iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter bpfilter ip6_vti ip_vti ip_gre ipip sit tunnel4 ip_tunnel hsr veth netdevsim vxcan batman_adv cfg80211 rfkill chnl_net caif nlmon dummy team bonding vcan
+ bridge stp llc ip6_gre gre ip6_tunnel tunnel6 tun joydev mousedev ppdev tpm kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel ide_pci_generic piix aesni_intel aes_x86_64 crypto_simd cryptd glue_helper ide_core psmouse input_leds i2c_piix4 serio_raw intel_agp intel_gtt ata_generic agpgart pata_acpi parport_pc rtc_cmos parport floppy sch_fq_codel ip_tables x_tables sha1_ssse3 sha1_generic ipv6 [last unloaded: rxrpc]
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+CR2: fffffbfff830524b
+---[ end trace 039ab24b305c4b19 ]---
 
-This patch re-uses common IP defragmentation queueing and reassembly
-code in IP6 defragmentation in nf_conntrack, removing the 1280 byte
-restriction.
+If nr_proto_init failed, it may forget to call proto_unregister,
+tiggering this issue.This patch rearrange code of nr_proto_init
+to avoid such issues.
 
-Signed-off-by: Peter Oskolkov <posk@google.com>
-Reported-by: Tom Herbert <tom@herbertland.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/netfilter/nf_conntrack_reasm.c |  260 +++++++++-----------------------
- 1 file changed, 74 insertions(+), 186 deletions(-)
 
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -51,14 +51,6 @@
+---
+ include/net/netrom.h           |    2 -
+ net/netrom/af_netrom.c         |   76 +++++++++++++++++++++++++++++------------
+ net/netrom/nr_loopback.c       |    2 -
+ net/netrom/nr_route.c          |    2 -
+ net/netrom/sysctl_net_netrom.c |    5 ++
+ 5 files changed, 61 insertions(+), 26 deletions(-)
+
+--- a/include/net/netrom.h
++++ b/include/net/netrom.h
+@@ -266,7 +266,7 @@ void nr_stop_idletimer(struct sock *);
+ int nr_t1timer_running(struct sock *);
  
- static const char nf_frags_cache_name[] = "nf-frags";
+ /* sysctl_net_netrom.c */
+-void nr_register_sysctl(void);
++int nr_register_sysctl(void);
+ void nr_unregister_sysctl(void);
  
--struct nf_ct_frag6_skb_cb
--{
--	struct inet6_skb_parm	h;
--	int			offset;
--};
--
--#define NFCT_FRAG6_CB(skb)	((struct nf_ct_frag6_skb_cb *)((skb)->cb))
--
- static struct inet_frags nf_frags;
+ #endif
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -1392,18 +1392,22 @@ static int __init nr_proto_init(void)
+ 	int i;
+ 	int rc = proto_register(&nr_proto, 0);
+ 
+-	if (rc != 0)
+-		goto out;
++	if (rc)
++		return rc;
+ 
+ 	if (nr_ndevs > 0x7fffffff/sizeof(struct net_device *)) {
+-		printk(KERN_ERR "NET/ROM: nr_proto_init - nr_ndevs parameter to large\n");
+-		return -1;
++		pr_err("NET/ROM: %s - nr_ndevs parameter too large\n",
++		       __func__);
++		rc = -EINVAL;
++		goto unregister_proto;
+ 	}
+ 
+ 	dev_nr = kcalloc(nr_ndevs, sizeof(struct net_device *), GFP_KERNEL);
+-	if (dev_nr == NULL) {
+-		printk(KERN_ERR "NET/ROM: nr_proto_init - unable to allocate device array\n");
+-		return -1;
++	if (!dev_nr) {
++		pr_err("NET/ROM: %s - unable to allocate device array\n",
++		       __func__);
++		rc = -ENOMEM;
++		goto unregister_proto;
+ 	}
+ 
+ 	for (i = 0; i < nr_ndevs; i++) {
+@@ -1413,13 +1417,13 @@ static int __init nr_proto_init(void)
+ 		sprintf(name, "nr%d", i);
+ 		dev = alloc_netdev(0, name, NET_NAME_UNKNOWN, nr_setup);
+ 		if (!dev) {
+-			printk(KERN_ERR "NET/ROM: nr_proto_init - unable to allocate device structure\n");
++			rc = -ENOMEM;
+ 			goto fail;
+ 		}
+ 
+ 		dev->base_addr = i;
+-		if (register_netdev(dev)) {
+-			printk(KERN_ERR "NET/ROM: nr_proto_init - unable to register network device\n");
++		rc = register_netdev(dev);
++		if (rc) {
+ 			free_netdev(dev);
+ 			goto fail;
+ 		}
+@@ -1427,36 +1431,64 @@ static int __init nr_proto_init(void)
+ 		dev_nr[i] = dev;
+ 	}
+ 
+-	if (sock_register(&nr_family_ops)) {
+-		printk(KERN_ERR "NET/ROM: nr_proto_init - unable to register socket family\n");
++	rc = sock_register(&nr_family_ops);
++	if (rc)
+ 		goto fail;
+-	}
+ 
+-	register_netdevice_notifier(&nr_dev_notifier);
++	rc = register_netdevice_notifier(&nr_dev_notifier);
++	if (rc)
++		goto out_sock;
+ 
+ 	ax25_register_pid(&nr_pid);
+ 	ax25_linkfail_register(&nr_linkfail_notifier);
  
  #ifdef CONFIG_SYSCTL
-@@ -144,6 +136,9 @@ static void __net_exit nf_ct_frags6_sysc
- }
+-	nr_register_sysctl();
++	rc = nr_register_sysctl();
++	if (rc)
++		goto out_sysctl;
  #endif
  
-+static int nf_ct_frag6_reasm(struct frag_queue *fq, struct sk_buff *skb,
-+			     struct sk_buff *prev_tail, struct net_device *dev);
-+
- static inline u8 ip6_frag_ecn(const struct ipv6hdr *ipv6h)
- {
- 	return 1 << (ipv6_get_dsfield(ipv6h) & INET_ECN_MASK);
-@@ -184,9 +179,10 @@ static struct frag_queue *fq_find(struct
- static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
- 			     const struct frag_hdr *fhdr, int nhoff)
- {
--	struct sk_buff *prev, *next;
- 	unsigned int payload_len;
--	int offset, end;
-+	struct net_device *dev;
-+	struct sk_buff *prev;
-+	int offset, end, err;
- 	u8 ecn;
+ 	nr_loopback_init();
  
- 	if (fq->q.flags & INET_FRAG_COMPLETE) {
-@@ -261,55 +257,19 @@ static int nf_ct_frag6_queue(struct frag
- 		goto err;
- 	}
- 
--	/* Find out which fragments are in front and at the back of us
--	 * in the chain of fragments so far.  We must know where to put
--	 * this fragment, right?
--	 */
-+	/* Note : skb->rbnode and skb->dev share the same location. */
-+	dev = skb->dev;
-+	/* Makes sure compiler wont do silly aliasing games */
-+	barrier();
-+
- 	prev = fq->q.fragments_tail;
--	if (!prev || NFCT_FRAG6_CB(prev)->offset < offset) {
--		next = NULL;
--		goto found;
--	}
--	prev = NULL;
--	for (next = fq->q.fragments; next != NULL; next = next->next) {
--		if (NFCT_FRAG6_CB(next)->offset >= offset)
--			break;	/* bingo! */
--		prev = next;
--	}
--
--found:
--	/* RFC5722, Section 4:
--	 *                                  When reassembling an IPv6 datagram, if
--	 *   one or more its constituent fragments is determined to be an
--	 *   overlapping fragment, the entire datagram (and any constituent
--	 *   fragments, including those not yet received) MUST be silently
--	 *   discarded.
--	 */
-+	err = inet_frag_queue_insert(&fq->q, skb, offset, end);
-+	if (err)
-+		goto insert_error;
-+
-+	if (dev)
-+		fq->iif = dev->ifindex;
- 
--	/* Check for overlap with preceding fragment. */
--	if (prev &&
--	    (NFCT_FRAG6_CB(prev)->offset + prev->len) > offset)
--		goto discard_fq;
--
--	/* Look for overlap with succeeding segment. */
--	if (next && NFCT_FRAG6_CB(next)->offset < end)
--		goto discard_fq;
--
--	NFCT_FRAG6_CB(skb)->offset = offset;
--
--	/* Insert this fragment in the chain of fragments. */
--	skb->next = next;
--	if (!next)
--		fq->q.fragments_tail = skb;
--	if (prev)
--		prev->next = skb;
--	else
--		fq->q.fragments = skb;
--
--	if (skb->dev) {
--		fq->iif = skb->dev->ifindex;
--		skb->dev = NULL;
--	}
- 	fq->q.stamp = skb->tstamp;
- 	fq->q.meat += skb->len;
- 	fq->ecn |= ecn;
-@@ -325,11 +285,25 @@ found:
- 		fq->q.flags |= INET_FRAG_FIRST_IN;
- 	}
- 
--	return 0;
-+	if (fq->q.flags == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
-+	    fq->q.meat == fq->q.len) {
-+		unsigned long orefdst = skb->_skb_refdst;
-+
-+		skb->_skb_refdst = 0UL;
-+		err = nf_ct_frag6_reasm(fq, skb, prev, dev);
-+		skb->_skb_refdst = orefdst;
-+		return err;
-+	}
-+
-+	skb_dst_drop(skb);
-+	return -EINPROGRESS;
- 
--discard_fq:
-+insert_error:
-+	if (err == IPFRAG_DUP)
-+		goto err;
- 	inet_frag_kill(&fq->q);
- err:
-+	skb_dst_drop(skb);
- 	return -EINVAL;
- }
- 
-@@ -339,141 +313,67 @@ err:
-  *	It is called with locked fq, and caller must check that
-  *	queue is eligible for reassembly i.e. it is not COMPLETE,
-  *	the last and the first frames arrived and all the bits are here.
-- *
-- *	returns true if *prev skb has been transformed into the reassembled
-- *	skb, false otherwise.
-  */
--static bool
--nf_ct_frag6_reasm(struct frag_queue *fq, struct sk_buff *prev,  struct net_device *dev)
-+static int nf_ct_frag6_reasm(struct frag_queue *fq, struct sk_buff *skb,
-+			     struct sk_buff *prev_tail, struct net_device *dev)
- {
--	struct sk_buff *fp, *head = fq->q.fragments;
--	int    payload_len;
-+	void *reasm_data;
-+	int payload_len;
- 	u8 ecn;
- 
- 	inet_frag_kill(&fq->q);
- 
--	WARN_ON(head == NULL);
--	WARN_ON(NFCT_FRAG6_CB(head)->offset != 0);
--
- 	ecn = ip_frag_ecn_table[fq->ecn];
- 	if (unlikely(ecn == 0xff))
--		return false;
-+		goto err;
-+
-+	reasm_data = inet_frag_reasm_prepare(&fq->q, skb, prev_tail);
-+	if (!reasm_data)
-+		goto err;
- 
--	/* Unfragmented part is taken from the first segment. */
--	payload_len = ((head->data - skb_network_header(head)) -
-+	payload_len = ((skb->data - skb_network_header(skb)) -
- 		       sizeof(struct ipv6hdr) + fq->q.len -
- 		       sizeof(struct frag_hdr));
- 	if (payload_len > IPV6_MAXPLEN) {
- 		net_dbg_ratelimited("nf_ct_frag6_reasm: payload len = %d\n",
- 				    payload_len);
--		return false;
--	}
--
--	/* Head of list must not be cloned. */
--	if (skb_unclone(head, GFP_ATOMIC))
--		return false;
--
--	/* If the first fragment is fragmented itself, we split
--	 * it to two chunks: the first with data and paged part
--	 * and the second, holding only fragments. */
--	if (skb_has_frag_list(head)) {
--		struct sk_buff *clone;
--		int i, plen = 0;
--
--		clone = alloc_skb(0, GFP_ATOMIC);
--		if (clone == NULL)
--			return false;
--
--		clone->next = head->next;
--		head->next = clone;
--		skb_shinfo(clone)->frag_list = skb_shinfo(head)->frag_list;
--		skb_frag_list_init(head);
--		for (i = 0; i < skb_shinfo(head)->nr_frags; i++)
--			plen += skb_frag_size(&skb_shinfo(head)->frags[i]);
--		clone->len = clone->data_len = head->data_len - plen;
--		head->data_len -= clone->len;
--		head->len -= clone->len;
--		clone->csum = 0;
--		clone->ip_summed = head->ip_summed;
--
--		add_frag_mem_limit(fq->q.net, clone->truesize);
--	}
--
--	/* morph head into last received skb: prev.
--	 *
--	 * This allows callers of ipv6 conntrack defrag to continue
--	 * to use the last skb(frag) passed into the reasm engine.
--	 * The last skb frag 'silently' turns into the full reassembled skb.
--	 *
--	 * Since prev is also part of q->fragments we have to clone it first.
--	 */
--	if (head != prev) {
--		struct sk_buff *iter;
--
--		fp = skb_clone(prev, GFP_ATOMIC);
--		if (!fp)
--			return false;
--
--		fp->next = prev->next;
--
--		iter = head;
--		while (iter) {
--			if (iter->next == prev) {
--				iter->next = fp;
--				break;
--			}
--			iter = iter->next;
--		}
--
--		skb_morph(prev, head);
--		prev->next = head->next;
--		consume_skb(head);
--		head = prev;
-+		goto err;
- 	}
- 
- 	/* We have to remove fragment header from datagram and to relocate
- 	 * header in order to calculate ICV correctly. */
--	skb_network_header(head)[fq->nhoffset] = skb_transport_header(head)[0];
--	memmove(head->head + sizeof(struct frag_hdr), head->head,
--		(head->data - head->head) - sizeof(struct frag_hdr));
--	head->mac_header += sizeof(struct frag_hdr);
--	head->network_header += sizeof(struct frag_hdr);
--
--	skb_shinfo(head)->frag_list = head->next;
--	skb_reset_transport_header(head);
--	skb_push(head, head->data - skb_network_header(head));
--
--	for (fp = head->next; fp; fp = fp->next) {
--		head->data_len += fp->len;
--		head->len += fp->len;
--		if (head->ip_summed != fp->ip_summed)
--			head->ip_summed = CHECKSUM_NONE;
--		else if (head->ip_summed == CHECKSUM_COMPLETE)
--			head->csum = csum_add(head->csum, fp->csum);
--		head->truesize += fp->truesize;
--		fp->sk = NULL;
--	}
--	sub_frag_mem_limit(fq->q.net, head->truesize);
--
--	head->ignore_df = 1;
--	head->next = NULL;
--	head->dev = dev;
--	head->tstamp = fq->q.stamp;
--	ipv6_hdr(head)->payload_len = htons(payload_len);
--	ipv6_change_dsfield(ipv6_hdr(head), 0xff, ecn);
--	IP6CB(head)->frag_max_size = sizeof(struct ipv6hdr) + fq->q.max_size;
-+	skb_network_header(skb)[fq->nhoffset] = skb_transport_header(skb)[0];
-+	memmove(skb->head + sizeof(struct frag_hdr), skb->head,
-+		(skb->data - skb->head) - sizeof(struct frag_hdr));
-+	skb->mac_header += sizeof(struct frag_hdr);
-+	skb->network_header += sizeof(struct frag_hdr);
-+
-+	skb_reset_transport_header(skb);
-+
-+	inet_frag_reasm_finish(&fq->q, skb, reasm_data);
-+
-+	skb->ignore_df = 1;
-+	skb->dev = dev;
-+	ipv6_hdr(skb)->payload_len = htons(payload_len);
-+	ipv6_change_dsfield(ipv6_hdr(skb), 0xff, ecn);
-+	IP6CB(skb)->frag_max_size = sizeof(struct ipv6hdr) + fq->q.max_size;
- 
- 	/* Yes, and fold redundant checksum back. 8) */
--	if (head->ip_summed == CHECKSUM_COMPLETE)
--		head->csum = csum_partial(skb_network_header(head),
--					  skb_network_header_len(head),
--					  head->csum);
-+	if (skb->ip_summed == CHECKSUM_COMPLETE)
-+		skb->csum = csum_partial(skb_network_header(skb),
-+					 skb_network_header_len(skb),
-+					 skb->csum);
- 
- 	fq->q.fragments = NULL;
- 	fq->q.rb_fragments = RB_ROOT;
- 	fq->q.fragments_tail = NULL;
-+	fq->q.last_run_head = NULL;
+-	proc_create_seq("nr", 0444, init_net.proc_net, &nr_info_seqops);
+-	proc_create_seq("nr_neigh", 0444, init_net.proc_net, &nr_neigh_seqops);
+-	proc_create_seq("nr_nodes", 0444, init_net.proc_net, &nr_node_seqops);
+-out:
+-	return rc;
++	rc = -ENOMEM;
++	if (!proc_create_seq("nr", 0444, init_net.proc_net, &nr_info_seqops))
++		goto proc_remove1;
++	if (!proc_create_seq("nr_neigh", 0444, init_net.proc_net,
++			     &nr_neigh_seqops))
++		goto proc_remove2;
++	if (!proc_create_seq("nr_nodes", 0444, init_net.proc_net,
++			     &nr_node_seqops))
++		goto proc_remove3;
 +
 +	return 0;
- 
--	return true;
-+err:
-+	inet_frag_kill(&fq->q);
-+	return -EINVAL;
++
++proc_remove3:
++	remove_proc_entry("nr_neigh", init_net.proc_net);
++proc_remove2:
++	remove_proc_entry("nr", init_net.proc_net);
++proc_remove1:
++
++	nr_loopback_clear();
++	nr_rt_free();
++
++#ifdef CONFIG_SYSCTL
++	nr_unregister_sysctl();
++out_sysctl:
++#endif
++	ax25_linkfail_release(&nr_linkfail_notifier);
++	ax25_protocol_release(AX25_P_NETROM);
++	unregister_netdevice_notifier(&nr_dev_notifier);
++out_sock:
++	sock_unregister(PF_NETROM);
+ fail:
+ 	while (--i >= 0) {
+ 		unregister_netdev(dev_nr[i]);
+ 		free_netdev(dev_nr[i]);
+ 	}
+ 	kfree(dev_nr);
++unregister_proto:
+ 	proto_unregister(&nr_proto);
+-	rc = -1;
+-	goto out;
++	return rc;
  }
  
- /*
-@@ -542,7 +442,6 @@ find_prev_fhdr(struct sk_buff *skb, u8 *
- int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- {
- 	u16 savethdr = skb->transport_header;
--	struct net_device *dev = skb->dev;
- 	int fhoff, nhoff, ret;
- 	struct frag_hdr *fhdr;
- 	struct frag_queue *fq;
-@@ -565,10 +464,6 @@ int nf_ct_frag6_gather(struct net *net,
- 	hdr = ipv6_hdr(skb);
- 	fhdr = (struct frag_hdr *)skb_transport_header(skb);
- 
--	if (skb->len - skb_network_offset(skb) < IPV6_MIN_MTU &&
--	    fhdr->frag_off & htons(IP6_MF))
--		return -EINVAL;
--
- 	skb_orphan(skb);
- 	fq = fq_find(net, fhdr->identification, user, hdr,
- 		     skb->dev ? skb->dev->ifindex : 0);
-@@ -580,24 +475,17 @@ int nf_ct_frag6_gather(struct net *net,
- 	spin_lock_bh(&fq->q.lock);
- 
- 	ret = nf_ct_frag6_queue(fq, skb, fhdr, nhoff);
--	if (ret < 0) {
--		if (ret == -EPROTO) {
--			skb->transport_header = savethdr;
--			ret = 0;
--		}
--		goto out_unlock;
-+	if (ret == -EPROTO) {
-+		skb->transport_header = savethdr;
-+		ret = 0;
+ module_init(nr_proto_init);
+--- a/net/netrom/nr_loopback.c
++++ b/net/netrom/nr_loopback.c
+@@ -70,7 +70,7 @@ static void nr_loopback_timer(struct tim
  	}
+ }
  
- 	/* after queue has assumed skb ownership, only 0 or -EINPROGRESS
- 	 * must be returned.
- 	 */
--	ret = -EINPROGRESS;
--	if (fq->q.flags == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
--	    fq->q.meat == fq->q.len &&
--	    nf_ct_frag6_reasm(fq, skb, dev))
--		ret = 0;
-+	if (ret)
-+		ret = -EINPROGRESS;
+-void __exit nr_loopback_clear(void)
++void nr_loopback_clear(void)
+ {
+ 	del_timer_sync(&loopback_timer);
+ 	skb_queue_purge(&loopback_queue);
+--- a/net/netrom/nr_route.c
++++ b/net/netrom/nr_route.c
+@@ -953,7 +953,7 @@ const struct seq_operations nr_neigh_seq
+ /*
+  *	Free all memory associated with the nodes and routes lists.
+  */
+-void __exit nr_rt_free(void)
++void nr_rt_free(void)
+ {
+ 	struct nr_neigh *s = NULL;
+ 	struct nr_node  *t = NULL;
+--- a/net/netrom/sysctl_net_netrom.c
++++ b/net/netrom/sysctl_net_netrom.c
+@@ -146,9 +146,12 @@ static struct ctl_table nr_table[] = {
+ 	{ }
+ };
  
--out_unlock:
- 	spin_unlock_bh(&fq->q.lock);
- 	inet_frag_put(&fq->q);
- 	return ret;
+-void __init nr_register_sysctl(void)
++int __init nr_register_sysctl(void)
+ {
+ 	nr_table_header = register_net_sysctl(&init_net, "net/netrom", nr_table);
++	if (!nr_table_header)
++		return -ENOMEM;
++	return 0;
+ }
+ 
+ void nr_unregister_sysctl(void)
 
 
