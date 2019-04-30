@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF285F7AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3C0F682
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfD3MBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57228 "EHLO mail.kernel.org"
+        id S1730878AbfD3Lsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:48:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729535AbfD3LpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:45:11 -0400
+        id S1730330AbfD3Lse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AA1D21734;
-        Tue, 30 Apr 2019 11:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5748217D4;
+        Tue, 30 Apr 2019 11:48:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624710;
-        bh=fKUg6+PahRM8TTj2fQmK27sq0Nz0V/wzQ4NWA34HGVU=;
+        s=default; t=1556624913;
+        bh=65pmRMBbYo3ufkKxy7b3RcIhY3PhDiYvr8C95TKgmdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GggnxONasf7XXf9gvJDOcX3Bchi2xJdUlvcDJlmyK2CD5fznbFvJfvhaffGC0Scgt
-         Pbog8Qt9rAEf4jHMjILaFEbnHI9spQpK2cc9l3BLRQ7awLjKwQkYrLy5nWJuJwJJJo
-         mRyU7JlJ8NO72d4PMR0TYEx7VKEFFdNSvbPpWzEc=
+        b=c01D11wBct3nYWbP7oY1ZjQUtcCf9BbCkVzgBKe38njCC6gW3c4Kkvo2WiqzPK3Kb
+         ELHoCfkKTj7sx5wD50hVjgLAToA01SgTbVSQzvx/UcRk3w64FkWBqtX9mfWhoo/vH/
+         LNmpvse/f+fvOJd4PG4YdUCJ95x06QHMBJBZ3d2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.19 042/100] vfio/type1: Limit DMA mappings per container
+        stable@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.0 20/89] mm: do not boost watermarks to avoid fragmentation for the DISCONTIG memory model
 Date:   Tue, 30 Apr 2019 13:38:11 +0200
-Message-Id: <20190430113611.111136512@linuxfoundation.org>
+Message-Id: <20190430113611.028764341@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,94 +48,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Mel Gorman <mgorman@techsingularity.net>
 
-commit 492855939bdb59c6f947b0b5b44af9ad82b7e38c upstream.
+commit 24512228b7a3f412b5a51f189df302616b021c33 upstream.
 
-Memory backed DMA mappings are accounted against a user's locked
-memory limit, including multiple mappings of the same memory.  This
-accounting bounds the number of such mappings that a user can create.
-However, DMA mappings that are not backed by memory, such as DMA
-mappings of device MMIO via mmaps, do not make use of page pinning
-and therefore do not count against the user's locked memory limit.
-These mappings still consume memory, but the memory is not well
-associated to the process for the purpose of oom killing a task.
+Mikulas Patocka reported that commit 1c30844d2dfe ("mm: reclaim small
+amounts of memory when an external fragmentation event occurs") "broke"
+memory management on parisc.
 
-To add bounding on this use case, we introduce a limit to the total
-number of concurrent DMA mappings that a user is allowed to create.
-This limit is exposed as a tunable module option where the default
-value of 64K is expected to be well in excess of any reasonable use
-case (a large virtual machine configuration would typically only make
-use of tens of concurrent mappings).
+The machine is not NUMA but the DISCONTIG model creates three pgdats
+even though it's a UMA machine for the following ranges
 
-This fixes CVE-2019-3882.
+        0) Start 0x0000000000000000 End 0x000000003fffffff Size   1024 MB
+        1) Start 0x0000000100000000 End 0x00000001bfdfffff Size   3070 MB
+        2) Start 0x0000004040000000 End 0x00000040ffffffff Size   3072 MB
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Tested-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Mikulas reported:
+
+	With the patch 1c30844d2, the kernel will incorrectly reclaim the
+	first zone when it fills up, ignoring the fact that there are two
+	completely free zones. Basiscally, it limits cache size to 1GiB.
+
+	For example, if I run:
+	# dd if=/dev/sda of=/dev/null bs=1M count=2048
+
+	- with the proper kernel, there should be "Buffers - 2GiB"
+	when this command finishes. With the patch 1c30844d2, buffers
+	will consume just 1GiB or slightly more, because the kernel was
+	incorrectly reclaiming them.
+
+The page allocator and reclaim makes assumptions that pgdats really
+represent NUMA nodes and zones represent ranges and makes decisions on
+that basis.  Watermark boosting for small pgdats leads to unexpected
+results even though this would have behaved reasonably on SPARSEMEM.
+
+DISCONTIG is essentially deprecated and even parisc plans to move to
+SPARSEMEM so there is no need to be fancy, this patch simply disables
+watermark boosting by default on DISCONTIGMEM.
+
+Link: http://lkml.kernel.org/r/20190419094335.GJ18914@techsingularity.net
+Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external fragmentation event occurs")
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+Tested-by: Mikulas Patocka <mpatocka@redhat.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/vfio_iommu_type1.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ Documentation/sysctl/vm.txt |   16 ++++++++--------
+ mm/page_alloc.c             |   13 +++++++++++++
+ 2 files changed, 21 insertions(+), 8 deletions(-)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -58,12 +58,18 @@ module_param_named(disable_hugepages,
- MODULE_PARM_DESC(disable_hugepages,
- 		 "Disable VFIO IOMMU support for IOMMU hugepages.");
+--- a/Documentation/sysctl/vm.txt
++++ b/Documentation/sysctl/vm.txt
+@@ -866,14 +866,14 @@ The intent is that compaction has less w
+ increase the success rate of future high-order allocations such as SLUB
+ allocations, THP and hugetlbfs pages.
  
-+static unsigned int dma_entry_limit __read_mostly = U16_MAX;
-+module_param_named(dma_entry_limit, dma_entry_limit, uint, 0644);
-+MODULE_PARM_DESC(dma_entry_limit,
-+		 "Maximum number of user DMA mappings per container (65535).");
-+
- struct vfio_iommu {
- 	struct list_head	domain_list;
- 	struct vfio_domain	*external_domain; /* domain for external user */
- 	struct mutex		lock;
- 	struct rb_root		dma_list;
- 	struct blocking_notifier_head notifier;
-+	unsigned int		dma_avail;
- 	bool			v2;
- 	bool			nesting;
- };
-@@ -836,6 +842,7 @@ static void vfio_remove_dma(struct vfio_
- 	vfio_unlink_dma(iommu, dma);
- 	put_task_struct(dma->task);
- 	kfree(dma);
-+	iommu->dma_avail++;
- }
+-To make it sensible with respect to the watermark_scale_factor parameter,
+-the unit is in fractions of 10,000. The default value of 15,000 means
+-that up to 150% of the high watermark will be reclaimed in the event of
+-a pageblock being mixed due to fragmentation. The level of reclaim is
+-determined by the number of fragmentation events that occurred in the
+-recent past. If this value is smaller than a pageblock then a pageblocks
+-worth of pages will be reclaimed (e.g.  2MB on 64-bit x86). A boost factor
+-of 0 will disable the feature.
++To make it sensible with respect to the watermark_scale_factor
++parameter, the unit is in fractions of 10,000. The default value of
++15,000 on !DISCONTIGMEM configurations means that up to 150% of the high
++watermark will be reclaimed in the event of a pageblock being mixed due
++to fragmentation. The level of reclaim is determined by the number of
++fragmentation events that occurred in the recent past. If this value is
++smaller than a pageblock then a pageblocks worth of pages will be reclaimed
++(e.g.  2MB on 64-bit x86). A boost factor of 0 will disable the feature.
  
- static unsigned long vfio_pgsize_bitmap(struct vfio_iommu *iommu)
-@@ -1110,12 +1117,18 @@ static int vfio_dma_do_map(struct vfio_i
- 		goto out_unlock;
- 	}
+ =============================================================
  
-+	if (!iommu->dma_avail) {
-+		ret = -ENOSPC;
-+		goto out_unlock;
-+	}
-+
- 	dma = kzalloc(sizeof(*dma), GFP_KERNEL);
- 	if (!dma) {
- 		ret = -ENOMEM;
- 		goto out_unlock;
- 	}
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -266,7 +266,20 @@ compound_page_dtor * const compound_page
  
-+	iommu->dma_avail--;
- 	dma->iova = iova;
- 	dma->vaddr = vaddr;
- 	dma->prot = prot;
-@@ -1612,6 +1625,7 @@ static void *vfio_iommu_type1_open(unsig
+ int min_free_kbytes = 1024;
+ int user_min_free_kbytes = -1;
++#ifdef CONFIG_DISCONTIGMEM
++/*
++ * DiscontigMem defines memory ranges as separate pg_data_t even if the ranges
++ * are not on separate NUMA nodes. Functionally this works but with
++ * watermark_boost_factor, it can reclaim prematurely as the ranges can be
++ * quite small. By default, do not boost watermarks on discontigmem as in
++ * many cases very high-order allocations like THP are likely to be
++ * unsupported and the premature reclaim offsets the advantage of long-term
++ * fragmentation avoidance.
++ */
++int watermark_boost_factor __read_mostly;
++#else
+ int watermark_boost_factor __read_mostly = 15000;
++#endif
+ int watermark_scale_factor = 10;
  
- 	INIT_LIST_HEAD(&iommu->domain_list);
- 	iommu->dma_list = RB_ROOT;
-+	iommu->dma_avail = dma_entry_limit;
- 	mutex_init(&iommu->lock);
- 	BLOCKING_INIT_NOTIFIER_HEAD(&iommu->notifier);
- 
+ static unsigned long nr_kernel_pages __initdata;
 
 
