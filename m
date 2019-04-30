@@ -2,110 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E9F101EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:39:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B165A101E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 23:39:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfD3VjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 17:39:12 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45479 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726155AbfD3VjL (ORCPT
+        id S1727310AbfD3Vi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 17:38:57 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:61414 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbfD3Vi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:39:11 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3E4AD236D8;
-        Tue, 30 Apr 2019 17:39:10 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 30 Apr 2019 17:39:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=9349H2ViHXlJUGHErMFiQqJwUGB
-        88NDt1/wQq0/Wh3g=; b=ftwZE9ZTpFyvUhV4lztNeU60jZAupgq/Gzep3WCojzQ
-        DTfyVawYRrsfEVc9aRrIYwAfmC9GwEU5xkyZmAsiO4SwCF1A4iqTU4zqmWzo/qxf
-        2/ezSulz7pmO7ubbYYdkXSCFDEXVcj42pN2wNLc5rF07NNBRuAvl80TyC81iUKky
-        Yl6pSA8nCoMPSs3o4uW8WBGd/1wZeJ4w9F+xyeoe1Q2O0DyZiqHTeWk2PcHKD5x6
-        YMya3oOogPpU1qdFksEW7W7wrsPCZ3u56Y2u0JSvgcW0El0BNwjbpFnaddPnrGyL
-        Zw8YEzi7jUQ1fzQ7qWrdlwTHdvhbi0dFnDpFJlTZGHQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=9349H2
-        ViHXlJUGHErMFiQqJwUGB88NDt1/wQq0/Wh3g=; b=MEebjIxWNESD3EhKg7PEgw
-        P5i1zdNuz88T48wwlNUW+aIhTffT/0+wt/vHOzEPrcvCCq5wswLrOT8J7Awhv0OK
-        sCy+uOcNKlQszQzhoElYhQiKu1PBLEprOIw/DU/8qTkoEK0aoAvZpvtyj2a7lyNY
-        S4gamL6vB9r0fJMANfJ2kr3WuI2qfTcBuwUtlglGH+9ui8dbTEEWzG3R4QVCaqNw
-        w487TaYtdJQmCiP4U9VBtdCVArjm9oi5ScOtXLTt8ROCcghtU+/Vvsx7IkUeWGGz
-        Ty5cPseDfl3hyWa8/we80enYp3zsIxk0qVT5sA4ZmZB05XfxIDPP/S8sfJiXhrHQ
-        ==
-X-ME-Sender: <xms:fsDIXBUm9OwT1BRYg0zn4JQcknJGLxy9AvQevYKvncknWvRob0Iubg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieeigddtudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
-    hrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
-    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
-    hinhdrtggtqeenucfkphepuddvuddrgeegrddvtdegrddvfeehnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgepud
-X-ME-Proxy: <xmx:fsDIXF0KrDD8IpOm3vu1soouyyA6YkD3u69R1efkUf9BMfFNMbPjNQ>
-    <xmx:fsDIXIbk9j8F39F1XXoKi1k74hoJLsGRXVZtVL5d1yjeRskzqevxmA>
-    <xmx:fsDIXIq69vvCnNGsPhg-qrMPMHUvCCx1aQZ5w9LL8TgoUmRfoOPuMw>
-    <xmx:fsDIXGnzNOVNaxq3GNXuRlGJA-PhC5nohY0eXp6kotFLO4sER_3CWw>
-Received: from localhost (ppp121-44-204-235.bras1.syd2.internode.on.net [121.44.204.235])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9C008E424F;
-        Tue, 30 Apr 2019 17:39:08 -0400 (EDT)
-Date:   Wed, 1 May 2019 07:38:27 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] livepatch: Use correct kobject cleanup function
-Message-ID: <20190430213827.GD9454@eros.localdomain>
-References: <20190430001534.26246-1-tobin@kernel.org>
- <20190430001534.26246-3-tobin@kernel.org>
- <alpine.LSU.2.21.1904301256550.8507@pobox.suse.cz>
+        Tue, 30 Apr 2019 17:38:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1556660336; x=1588196336;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=anUh+OtMYhUrCVQIb7GE/UQfYFBo10FlhJ7lgzbqxdA=;
+  b=oUj83RKmbUTGdTX0295gwERKkYmYkRJDyS3EqKD3JwNO3EvZFGDl+a3+
+   kW30Bbe5LstCEgCfSqmE2T0HKzBUrzfK2/pTk1HmihVsx7R7pw1PtMPD/
+   Hv+NcY2dE6Q8YVvfc0Tn4pM3vpT5CAiQrU64vu9BFmTj0Cdb+lPwe8zoh
+   oVn1zhFhySZWeLHU4HYnOmZEOdDs7iXUrs/JF0I13/U6OFpqN3RU3tiEI
+   8YJxZ9ENLpDzAY9TNDiQ+ogAzsiH4a27fHAfsAjgCVsvYpFaWgZtbJ5MV
+   nMBH0JhatwIVFJscWbffyP+bUcWoUX3FNaxRCnq+LFg48w5vNEawOSpbk
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.60,414,1549900800"; 
+   d="scan'208";a="108420245"
+Received: from mail-bn3nam01lp2054.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.54])
+  by ob1.hgst.iphmx.com with ESMTP; 01 May 2019 05:38:55 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IGBYblHDEqgj9ENZPZEgSCuuDD9SM9VthfMLl3QtC/8=;
+ b=HA++E8Eyo7XOsbQirCwyTDZ4kEeU6pW+QM/fQGYrrPlnNSPmiiQF/ZelUdS69Z+RGxxdaMjXOD3WWwj5zUdbk/o/5VfHLlj3+ZkNGrkL/dHJS5oINEfCmjJ0leer9i/bh+F10qRTgDgH3eAkIYohrJWXxgmSFE3jtAwfXwkTzDY=
+Received: from SN6PR04MB4527.namprd04.prod.outlook.com (52.135.120.25) by
+ SN6PR04MB4272.namprd04.prod.outlook.com (52.135.72.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.16; Tue, 30 Apr 2019 21:38:52 +0000
+Received: from SN6PR04MB4527.namprd04.prod.outlook.com
+ ([fe80::c4f:1604:178c:d974]) by SN6PR04MB4527.namprd04.prod.outlook.com
+ ([fe80::c4f:1604:178c:d974%5]) with mapi id 15.20.1835.015; Tue, 30 Apr 2019
+ 21:38:52 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Josef Bacik <jbacik@fb.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Fabio Checconi <fabio@gandalf.sssup.it>,
+        Nauman Rafique <nauman@google.com>,
+        Arianna Avanzini <avanzini.arianna@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] sed-opal.h: remove redundant licence boilerplate
+Thread-Topic: [PATCH 3/5] sed-opal.h: remove redundant licence boilerplate
+Thread-Index: AQHU/4SvaOS1sd4j/kKdXCcOhiLhsw==
+Date:   Tue, 30 Apr 2019 21:38:52 +0000
+Message-ID: <SN6PR04MB4527EE25D45B24D2A5E05183863A0@SN6PR04MB4527.namprd04.prod.outlook.com>
+References: <20190430184243.23436-1-hch@lst.de>
+ <20190430184243.23436-4-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bb69f8ed-32ed-466e-146b-08d6cdb43d32
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB4272;
+x-ms-traffictypediagnostic: SN6PR04MB4272:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB4272E87E0CD5470368B79FE0863A0@SN6PR04MB4272.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 00235A1EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(366004)(376002)(346002)(136003)(189003)(199004)(54906003)(99286004)(26005)(74316002)(25786009)(7736002)(6436002)(76176011)(68736007)(66066001)(53936002)(6116002)(33656002)(3846002)(52536014)(6246003)(4326008)(486006)(186003)(2906002)(305945005)(66446008)(55016002)(110136005)(446003)(66946007)(91956017)(76116006)(71190400001)(66476007)(7696005)(64756008)(476003)(81166006)(81156014)(86362001)(72206003)(256004)(8676002)(102836004)(478600001)(14454004)(229853002)(53546011)(73956011)(316002)(6506007)(66556008)(7416002)(9686003)(8936002)(71200400001)(5660300002)(2004002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4272;H:SN6PR04MB4527.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: gqO6ozeutwTiX1eUqRlmAmm1cFoSteCosYD0ey1toAiIvb66FGUc1MgEliAxsxxTC54R9XDhKpnkp7mMuc172Sq20ra8+wxShYb0RUOW3Cp6KxpNixlfsbvTvNoZX5p2RStrfSYGXlmhKGj6clmRikhVS9uQLT1AXVRJljw0CKlSq6mTfgpZnC5ArGJQWNrJcc343i1YkAgKndPwHgttuTc/vG9o7GptFKHNgHREvLLwXhfCX4rquY0C5XQ4HwUtX2Z22On+ie9kdP/NTJbTH+GOYLR+kxQgpXi2nHFknG97vxkxA3mOxs9sTPI1VLTUBrcW4jx6etUkTeEvSmwB1Kn8SDZqdTDK1woYpABQPxhG39yXPKin0vCgDyLhX9NF78bXwpn4x3Q/dhzQz7jY5ycsHCeNUrDxIHxWfcYhduc=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1904301256550.8507@pobox.suse.cz>
-X-Mailer: Mutt 1.11.4 (2019-03-13)
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb69f8ed-32ed-466e-146b-08d6cdb43d32
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 21:38:52.2492
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 01:00:05PM +0200, Miroslav Benes wrote:
-> On Tue, 30 Apr 2019, Tobin C. Harding wrote:
-> 
-> > The correct cleanup function after a call to kobject_init_and_add() has
-> > succeeded is kobject_del() _not_ kobject_put().  kobject_del() calls
-> > kobject_put().
-> > 
-> > Use correct cleanup function when removing a kobject.
-> > 
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> > ---
-> >  kernel/livepatch/core.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > index 98a7bec41faa..4cce6bb6e073 100644
-> > --- a/kernel/livepatch/core.c
-> > +++ b/kernel/livepatch/core.c
-> > @@ -589,9 +589,8 @@ static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
-> >  
-> >  		list_del(&func->node);
-> >  
-> > -		/* Might be called from klp_init_patch() error path. */
-> 
-> Could you leave the comment as is? If I am not mistaken, it is still 
-> valid. func->kobj_added check is here exactly because the function may be 
-> called as mentioned.
-
-Will put it back in for you on v2
-
-thanks,
-Tobin.
+Looks good.=0A=
+=0A=
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
+On 4/30/19 11:44 AM, Christoph Hellwig wrote:=0A=
+> The file already has the correct SPDX header.=0A=
+> =0A=
+> Signed-off-by: Christoph Hellwig <hch@lst.de>=0A=
+> ---=0A=
+>   include/uapi/linux/sed-opal.h | 9 ---------=0A=
+>   1 file changed, 9 deletions(-)=0A=
+> =0A=
+> diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.=
+h=0A=
+> index e092e124dd16..33e53b80cd1f 100644=0A=
+> --- a/include/uapi/linux/sed-opal.h=0A=
+> +++ b/include/uapi/linux/sed-opal.h=0A=
+> @@ -5,15 +5,6 @@=0A=
+>    * Authors:=0A=
+>    *    Rafael Antognolli <rafael.antognolli@intel.com>=0A=
+>    *    Scott  Bauer      <scott.bauer@intel.com>=0A=
+> - *=0A=
+> - * This program is free software; you can redistribute it and/or modify =
+it=0A=
+> - * under the terms and conditions of the GNU General Public License,=0A=
+> - * version 2, as published by the Free Software Foundation.=0A=
+> - *=0A=
+> - * This program is distributed in the hope it will be useful, but WITHOU=
+T=0A=
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or=
+=0A=
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for=0A=
+> - * more details.=0A=
+>    */=0A=
+>   =0A=
+>   #ifndef _UAPI_SED_OPAL_H=0A=
+> =0A=
+=0A=
