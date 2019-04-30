@@ -2,88 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5318AF87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80AF7F889
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfD3MMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:12:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36548 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfD3MMG (ORCPT
+        id S1727793AbfD3MNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:13:08 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:59304 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfD3MNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:12:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7qQfUICH5ThnTASCph/ZFazPjhwDVaINTXgbGNuii3s=; b=Ip3SQRAEGBB/8yNwpoUc+vXIP
-        PrAq/6zhGfvp21wgXfzhmsvABXgjF/X+6yrY4KLakgDggT/Lc9MnfsPRyztLKeUk+5AOsF8VR+hDk
-        x6Ymg6arDLAU4Nl2T3sskvJvzToimbfO4OThXTOerTgrpKGL3gSTu6FN4SY1Pr9Ctgk2l3sfEDEhQ
-        Ws/QWSkVQYPZg4V/wFgD0zi2Nl25hHntFX1e+pyLLp48HI/VWppkuSRkQgGXxAqGqWcxLW3rqFVUX
-        fr2K4eZNqQSqfQ0RYpA3H/H5Rijna47+ACME8C5bNcOqkTjh5Nq76/ZhBoEC1DAIIHbw74T7AQRIJ
-        oVVtd4EnQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLRbx-0000kk-GH; Tue, 30 Apr 2019 12:11:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 36AE0203C05DB; Tue, 30 Apr 2019 14:11:48 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 14:11:48 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yuyang Du <duyuyang@gmail.com>
-Cc:     will.deacon@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
-        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 19/28] locking/lockdep: Optimize irq usage check when
- marking lock usage bit
-Message-ID: <20190430121148.GV2623@hirez.programming.kicks-ass.net>
-References: <20190424101934.51535-1-duyuyang@gmail.com>
- <20190424101934.51535-20-duyuyang@gmail.com>
- <20190425193247.GU12232@hirez.programming.kicks-ass.net>
- <CAHttsrY4jK2cayBE8zNCSJKDAkzLiBb40GVfQHpJi2YK1nEZaQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHttsrY4jK2cayBE8zNCSJKDAkzLiBb40GVfQHpJi2YK1nEZaQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 30 Apr 2019 08:13:05 -0400
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id 6cCz2000f3XaVaC06cCzUi; Tue, 30 Apr 2019 14:13:04 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hLRd5-00086U-N3; Tue, 30 Apr 2019 14:12:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hLRd5-0000z9-JX; Tue, 30 Apr 2019 14:12:59 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/5] ARM: rskrza1: Add RZ/A1 IRQC and input switches
+Date:   Tue, 30 Apr 2019 14:12:49 +0200
+Message-Id: <20190430121254.3737-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 02:57:37PM +0800, Yuyang Du wrote:
-> Thanks for review.
-> 
-> On Fri, 26 Apr 2019 at 03:32, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Apr 24, 2019 at 06:19:25PM +0800, Yuyang Du wrote:
-> >
-> > After only a quick read of these next patches; this is the one that
-> > worries me most.
-> >
-> > You did mention Frederic's patches, but I'm not entirely sure you're
-> > aware why he's doing them. He's preparing to split the softirq state
-> > into one state per softirq vector.
-> >
-> > See here:
-> >
-> >   https://lkml.kernel.org/r/20190228171242.32144-14-frederic@kernel.org
-> >   https://lkml.kernel.org/r/20190228171242.32144-15-frederic@kernel.org
-> >
-> > IOW he's going to massively explode this storage.
-> 
-> If I understand correctly, he is not going to.
-> 
-> First of all, we can divide the whole usage thing into tracking and checking.
-> 
-> Frederic's fine-grained soft vector state is applied to usage
-> tracking, i.e., which specific vectors a lock is used or enabled.
-> 
-> But for usage checking, which vectors are does not really matter. So,
-> the current size of the arrays and bitmaps are good enough. Right?
+	Hi all,
 
-Frederic? My understanding was that he really was going to split the
-whole thing. The moment you allow masking individual soft vectors, you
-get per-vector dependency chains.
+Unlike on most other Renesas SoCs, the GPIO controller block on RZ/A1
+and RZ/A2 SoCs lack interrupt functionality.  While the GPIOs can be
+routed to the GIC as pin interrupts, this is of limited use, as the
+PL390 or GIC-400 supports rising edge and high-level interrupts only.
+
+Fortunately RZ/A1 and RZ/A2 SoCs contain a small front-end for the GIC,
+allowing to use up to 8 external interrupts, with configurable sense
+select.
+
+Hence this patch series adds DT bindings and a driver for this
+front-end, adds a device node for it in the RZ/A1H DTS, and uses it to
+enable support for the 3 input switches on the Renesas RSK+RZA1
+development board.
+
+Changes compared to v1:
+  - Add Reviewed-by,
+  - Replace gic_spi_base in OF match data by renesas,gic-spi-base in DT,
+  - Document RZ/A2M,
+  - Use u16 for register values,
+  - Use relaxed I/O accessors,
+  - Use "rza1-irqc" as irq_chip class name,
+  - Enable driver on RZ/A2M.
+
+Dependencies:
+  - Patch 3 depends on patch 2,
+  - Patch 4 can be applied as soon as the DT bindings in patch 1 have
+    been accepted,
+  - Patch 5 depends on patch 4.
+
+Upstream strategy:
+  - Patches 1-2 are intended to be applied to the irqchip tree,
+  - Patches 3-5 are meant for the Renesas tree.
+
+This has been tested on RSK+RZA1 with evtest and s2ram wake-up.
+I have verified proper operation of low-level and rising/falling sense
+select, too.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  dt-bindings: interrupt-controller: Add Renesas RZ/A1 Interrupt
+    Controller
+  irqchip: Add Renesas RZ/A1 Interrupt Controller driver
+  soc: renesas: Enable RZ/A1 IRQC on RZ/A1H and RZ/A2M
+  ARM: dts: r7s72100: Add IRQC device node
+  ARM: dts: rskrza1: Add input switches
+
+ .../renesas,rza1-irqc.txt                     |  30 +++
+ arch/arm/boot/dts/r7s72100-rskrza1.dts        |  38 +++
+ arch/arm/boot/dts/r7s72100.dtsi               |   9 +
+ drivers/irqchip/Kconfig                       |   4 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rza1.c            | 235 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   4 +-
+ 7 files changed, 320 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+ create mode 100644 drivers/irqchip/irq-renesas-rza1.c
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
