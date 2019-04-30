@@ -2,79 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE91F90A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14847F911
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfD3MjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:39:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39766 "EHLO mx1.redhat.com"
+        id S1728414AbfD3Mjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:39:40 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:53756 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbfD3MjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:39:11 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C16833091786;
-        Tue, 30 Apr 2019 12:39:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7C2301001E91;
-        Tue, 30 Apr 2019 12:39:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Apr 2019 14:39:08 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 14:39:01 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jann Horn <jannh@google.com>, Kevin Easton <kevin@guarana.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Colascione <dancol@google.com>
-Subject: Re: RFC: on adding new CLONE_* flags [WAS Re: [PATCH 0/4] clone: add
- CLONE_PIDFD]
-Message-ID: <20190430123901.GD23020@redhat.com>
-References: <20190414201436.19502-1-christian@brauner.io>
- <dc05ffe3-c2ff-8b3e-d181-e0cc620bf91d@metux.net>
- <20190415195911.z7b7miwsj67ha54y@yavin>
- <CALCETrWxMnaPvwicqkMLswMynWvJVteazD-bFv3ZnBKWp-1joQ@mail.gmail.com>
- <20190420071406.GA22257@ip-172-31-15-78>
- <CAG48ez0gG4bd-t1wdR2p6-N2FjWbCqm_+ZThKfF7yKnD=KLqAQ@mail.gmail.com>
- <CAG48ez15bf1EJB0XTJsGFpvf8r5pj9+rv1axKVr13H1NW7ARZw@mail.gmail.com>
- <CAHk-=wi_N81mKYFz33ycoWiL7_tGbZBMJOsAs16inYzSza+OEw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi_N81mKYFz33ycoWiL7_tGbZBMJOsAs16inYzSza+OEw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 30 Apr 2019 12:39:11 +0000 (UTC)
+        id S1728143AbfD3MjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:39:03 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44th0h6Skgz9vD35;
+        Tue, 30 Apr 2019 14:39:00 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=jVkBxiSf; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id LdDPldxYfxVO; Tue, 30 Apr 2019 14:39:00 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44th0h5NXhz9vD30;
+        Tue, 30 Apr 2019 14:39:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556627940; bh=nKNkh+9M+azIVENVognMyOnKj/MQdKoYB9p0ZvWJLDs=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=jVkBxiSfiaR98K+iIHgBcU+kOEifPxTZdhWZ+z1u9wHdTkz14Tqtxnt08pzn+aCfH
+         YjXMwTq/dbZp+VwXQBYN4UsHPDaT81p0ZIJubGZRGUVBVzCHoUZMPH1ip+xJD7Umel
+         RBqng6mZxGTLoNtaBsYdqNnl8IcfdMchedC7NKkI=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 205748B8DF;
+        Tue, 30 Apr 2019 14:39:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id DQCJzSfk09IN; Tue, 30 Apr 2019 14:39:02 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B71708B8C2;
+        Tue, 30 Apr 2019 14:39:01 +0200 (CEST)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 7A42F666F8; Tue, 30 Apr 2019 12:39:01 +0000 (UTC)
+Message-Id: <08a881c9ae7cdcbca83ef2c995b17b1f3fbd55ef.1556627571.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1556627571.git.christophe.leroy@c-s.fr>
+References: <cover.1556627571.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 12/16] powerpc: Fix 32-bit handling of MSR_EE on exceptions
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 30 Apr 2019 12:39:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29, Linus Torvalds wrote:
->
-> Linux vfork() is very much a real vfork(). What do you mean?
+[text mostly copied from benh's RFC/WIP]
 
-Yes, but I am wondering if man vfork should clarify what "child terminates"
-actually means. I mean, the child can do clone(CLONE_THREAD) + sys_exit(),
-this will wake the parent thread up before the child process exits or execs.
+ppc32 are still doing something rather gothic and wrong on 32-bit
+which we stopped doing on 64-bit a while ago.
 
-I see nothing wrong, but I was always curious whether it was designed this
-way on purpose or not.
+We have that thing where some handlers "copy" the EE value from the
+original stack frame into the new MSR before transferring to the
+handler.
 
-Oleg.
+Thus for a number of exceptions, we enter the handlers with interrupts
+enabled.
+
+This is rather fishy, some of the stuff that handlers might do early
+on such as irq_enter/exit or user_exit, context tracking, etc...
+should be run with interrupts off afaik.
+
+Generally our handlers know when to re-enable interrupts if needed.
+
+The problem we were having is that we assumed these interrupts would
+return with interrupts enabled. However that isn't the case.
+
+Instead, this patch changes things so that we always enter exception
+handlers with interrupts *off* with the notable exception of syscalls
+which are special (and get a fast path).
+
+Suggested-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/entry_32.S | 116 ++++++++++++++++++++++++-----------------
+ 1 file changed, 67 insertions(+), 49 deletions(-)
+
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index d0cea3deb86c..0c555f9f1543 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -37,6 +37,7 @@
+ #include <asm/feature-fixups.h>
+ #include <asm/barrier.h>
+ #include <asm/kup.h>
++#include <asm/bug.h>
+ 
+ #include "head_32.h"
+ 
+@@ -206,19 +207,42 @@ transfer_to_handler_cont:
+ 	mtspr	SPRN_NRI, r0
+ #endif
+ #ifdef CONFIG_TRACE_IRQFLAGS
++	/*
++	 * When tracing IRQ state (lockdep) we enable the MMU before we call
++	 * the IRQ tracing functions as they might access vmalloc space or
++	 * perform IOs for console output.
++	 *
++	 * To speed up the syscall path where interrupts stay on, let's check
++	 * first if we are changing the MSR value at all.
++	 */
++	tophys(r12, r1)
++	lwz	r12,_MSR(r12)
++	xor	r12,r10,r12
++	andi.	r12,r12,MSR_EE
++	bne	1f
++
++	/* MSR isn't changing, just transition directly */
++#endif
++	mtspr	SPRN_SRR0,r11
++	mtspr	SPRN_SRR1,r10
++	mtlr	r9
++	SYNC
++	RFI				/* jump to handler, enable MMU */
++
++#ifdef CONFIG_TRACE_IRQFLAGS
++1:	/* MSR is changing, re-enable MMU so we can notify lockdep. We need to
++	 * keep interrupts disabled at this point otherwise we might risk
++	 * taking an interrupt before we tell lockdep they are enabled.
++	 */
+ 	lis	r12,reenable_mmu@h
+ 	ori	r12,r12,reenable_mmu@l
++	LOAD_MSR_KERNEL(r0, MSR_KERNEL)
+ 	mtspr	SPRN_SRR0,r12
+-	mtspr	SPRN_SRR1,r10
++	mtspr	SPRN_SRR1,r0
+ 	SYNC
+ 	RFI
+-reenable_mmu:				/* re-enable mmu so we can */
+-	mfmsr	r10
+-	lwz	r12,_MSR(r1)
+-	xor	r10,r10,r12
+-	andi.	r10,r10,MSR_EE		/* Did EE change? */
+-	beq	1f
+ 
++reenable_mmu:
+ 	/*
+ 	 * The trace_hardirqs_off will use CALLER_ADDR0 and CALLER_ADDR1.
+ 	 * If from user mode there is only one stack frame on the stack, and
+@@ -233,14 +257,24 @@ reenable_mmu:				/* re-enable mmu so we can */
+ 	 * they aren't useful past this point (aren't syscall arguments),
+ 	 * the rest is restored from the exception frame.
+ 	 */
++
++	/* Are we enabling or disabling interrupts ? */
++	andi.	r0,r10,MSR_EE
++
+ 	stwu	r1,-32(r1)
+ 	stw	r9,8(r1)
+ 	stw	r11,12(r1)
+ 	stw	r3,16(r1)
+ 	stw	r4,20(r1)
+ 	stw	r5,24(r1)
+-	bl	trace_hardirqs_off
+-	lwz	r5,24(r1)
++
++	bne-	0f
++
++	/* If we are disabling interrupts (normal case), simply log it with
++	 * lockdep
++	 */
++1:	bl	trace_hardirqs_off
++2:	lwz	r5,24(r1)
+ 	lwz	r4,20(r1)
+ 	lwz	r3,16(r1)
+ 	lwz	r11,12(r1)
+@@ -250,15 +284,22 @@ reenable_mmu:				/* re-enable mmu so we can */
+ 	lwz	r6,GPR6(r1)
+ 	lwz	r7,GPR7(r1)
+ 	lwz	r8,GPR8(r1)
+-1:	mtctr	r11
++	mtctr	r11
+ 	mtlr	r9
+ 	bctr				/* jump to handler */
+-#else /* CONFIG_TRACE_IRQFLAGS */
+-	mtspr	SPRN_SRR0,r11
+-	mtspr	SPRN_SRR1,r10
+-	mtlr	r9
+-	SYNC
+-	RFI				/* jump to handler, enable MMU */
++
++	/* If we are enabling interrupt, this is a syscall. They shouldn't
++	 * happen while interrupts are disabled, so let's do a warning here.
++	 */
++0:	trap
++	EMIT_BUG_ENTRY 0b,__FILE__,__LINE__, BUGFLAG_WARNING
++	bl	trace_hardirqs_on
++
++	/* Now enable for real */
++	mfmsr	r10
++	ori	r10,r10,MSR_EE
++	mtmsr	r10
++	b	2b
+ #endif /* CONFIG_TRACE_IRQFLAGS */
+ 
+ #if defined (CONFIG_PPC_BOOK3S_32) || defined(CONFIG_E500)
+@@ -316,29 +357,13 @@ _GLOBAL(DoSyscall)
+ 	rlwinm	r11,r11,0,4,2
+ 	stw	r11,_CCR(r1)
+ #ifdef CONFIG_TRACE_IRQFLAGS
+-	/* Return from syscalls can (and generally will) hard enable
+-	 * interrupts. You aren't supposed to call a syscall with
+-	 * interrupts disabled in the first place. However, to ensure
+-	 * that we get it right vs. lockdep if it happens, we force
+-	 * that hard enable here with appropriate tracing if we see
+-	 * that we have been called with interrupts off
+-	 */
++	/* Make sure interrupts are enabled */
+ 	mfmsr	r11
+ 	andi.	r12,r11,MSR_EE
+-	bne+	1f
+-	/* We came in with interrupts disabled, we enable them now */
+-	bl	trace_hardirqs_on
+-	mfmsr	r11
+-	lwz	r0,GPR0(r1)
+-	lwz	r3,GPR3(r1)
+-	lwz	r4,GPR4(r1)
+-	ori	r11,r11,MSR_EE
+-	lwz	r5,GPR5(r1)
+-	lwz	r6,GPR6(r1)
+-	lwz	r7,GPR7(r1)
+-	lwz	r8,GPR8(r1)
+-	mtmsr	r11
+-1:
++	/* We came in with interrupts disabled, we WARN and mark them enabled
++	 * for lockdep now */
++0:	tweqi	r12, 0
++	EMIT_BUG_ENTRY 0b,__FILE__,__LINE__, BUGFLAG_WARNING
+ #endif /* CONFIG_TRACE_IRQFLAGS */
+ 	lwz	r11,TI_FLAGS(r2)
+ 	andi.	r11,r11,_TIF_SYSCALL_DOTRACE
+@@ -392,8 +417,7 @@ syscall_exit_cont:
+ 	lwz	r8,_MSR(r1)
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	/* If we are going to return from the syscall with interrupts
+-	 * off, we trace that here. It shouldn't happen though but we
+-	 * want to catch the bugger if it does right ?
++	 * off, we trace that here. It shouldn't normally happen.
+ 	 */
+ 	andi.	r10,r8,MSR_EE
+ 	bne+	1f
+@@ -918,13 +942,6 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_TYPE_47x)
+ 	 * off in this assembly code while peeking at TI_FLAGS() and such. However
+ 	 * we need to inform it if the exception turned interrupts off, and we
+ 	 * are about to trun them back on.
+-	 *
+-	 * The problem here sadly is that we don't know whether the exceptions was
+-	 * one that turned interrupts off or not. So we always tell lockdep about
+-	 * turning them on here when we go back to wherever we came from with EE
+-	 * on, even if that may meen some redudant calls being tracked. Maybe later
+-	 * we could encode what the exception did somewhere or test the exception
+-	 * type in the pt_regs but that sounds overkill
+ 	 */
+ 	andi.	r10,r9,MSR_EE
+ 	beq	1f
+@@ -1212,9 +1229,10 @@ do_work:			/* r10 contains MSR_KERNEL here */
+ 	beq	do_user_signal
+ 
+ do_resched:			/* r10 contains MSR_KERNEL here */
+-	/* Note: We don't need to inform lockdep that we are enabling
+-	 * interrupts here. As far as it knows, they are already enabled
+-	 */
++#ifdef CONFIG_TRACE_IRQFLAGS
++	bl	trace_hardirqs_on
++	mfmsr	r10
++#endif
+ 	ori	r10,r10,MSR_EE
+ 	SYNC
+ 	MTMSRD(r10)		/* hard-enable interrupts */
+-- 
+2.13.3
 
