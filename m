@@ -2,50 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9911EFCFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC081FCF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbfD3Pf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:35:27 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52863 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfD3PfV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:35:21 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3UFYnii000575;
-        Wed, 1 May 2019 00:34:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Wed, 01 May 2019 00:34:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3UFYiwL000555
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 1 May 2019 00:34:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in __get_super
-To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <001a113ed5540f411c0568cc8418@google.com>
- <0000000000002cd22305879b22c4@google.com>
- <20190428185109.GD23075@ZenIV.linux.org.uk>
- <20190430025501.GB6740@quack2.suse.cz>
- <20190430031144.GG23075@ZenIV.linux.org.uk>
- <20190430130739.GA11224@quack2.suse.cz>
- <20190430131820.GK23075@ZenIV.linux.org.uk>
- <20190430150753.GA14000@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <aa220178-58d8-ffb7-399b-1d04e92e916f@i-love.sakura.ne.jp>
-Date:   Wed, 1 May 2019 00:34:44 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+        id S1726105AbfD3PfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:35:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49272 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725906AbfD3Pe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:34:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A538374;
+        Tue, 30 Apr 2019 08:34:59 -0700 (PDT)
+Received: from [10.1.196.92] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E52C43F719;
+        Tue, 30 Apr 2019 08:34:56 -0700 (PDT)
+Subject: Re: [PATCH v2 1/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/A1 Interrupt Controller
+To:     Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190430121254.3737-1-geert+renesas@glider.be>
+ <20190430121254.3737-2-geert+renesas@glider.be>
+ <CAL_Jsq+KwOLqd=ZqT-bdM5mp8jfPHu=XingBb6kBsUqHvO=m+g@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <29e95406-b9fb-fbb6-9240-c3914d885e88@arm.com>
+Date:   Tue, 30 Apr 2019 16:34:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190430150753.GA14000@quack2.suse.cz>
+In-Reply-To: <CAL_Jsq+KwOLqd=ZqT-bdM5mp8jfPHu=XingBb6kBsUqHvO=m+g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,94 +93,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/05/01 0:07, Jan Kara wrote:
-> Ah, right. I've missed that in your patch. So your patch should be really
-> fixing the problem. Will you post it officially? Thanks!
+On 30/04/2019 16:02, Rob Herring wrote:
+> On Tue, Apr 30, 2019 at 7:13 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>>
+>> Add DT bindings for the Renesas RZ/A1 Interrupt Controller.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v2:
+>>   - Add "renesas,gic-spi-base",
+>>   - Document RZ/A2M.
+>> ---
+>>  .../renesas,rza1-irqc.txt                     | 30 +++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+>> new file mode 100644
+>> index 0000000000000000..ea8ddb6955338ccd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+>> @@ -0,0 +1,30 @@
+>> +DT bindings for the Renesas RZ/A1 Interrupt Controller
+>> +
+>> +The RZ/A1 Interrupt Controller is a front-end for the GIC found on Renesas
+>> +RZ/A1 and RZ/A2 SoCs:
+>> +  - IRQ sense select for 8 external interrupts, 1:1-mapped to 8 GIC SPI
+>> +    interrupts,
+>> +  - NMI edge select.
+>> +
+>> +Required properties:
+>> +  - compatible: Must be "renesas,<soctype>-irqc", and "renesas,rza1-irqc" as
+>> +               fallback.
+>> +               Examples with soctypes are:
+>> +                 - "renesas,r7s72100-irqc" (RZ/A1H)
+>> +                 - "renesas,r7s9210-irqc" (RZ/A2M)
+>> +  - #interrupt-cells: Must be 2 (an interrupt index and flags, as defined
+>> +                                in interrupts.txt in this directory)
+>> +  - interrupt-controller: Marks the device as an interrupt controller
+>> +  - reg: Base address and length of the memory resource used by the interrupt
+>> +         controller
+>> +  - renesas,gic-spi-base: Lowest GIC SPI interrupt number this block maps to.
+> 
+> Why isn't this just an 'interrupts' property?
 
-I still cannot understand what the problem is.
-According to console output,
+That's likely because of kernel limitations. The DT code does an
+of_populate() on any device that it finds, parse the "interrupts"
+propertiy, resulting in the irq_descs being populated.
 
-----------
-INFO: task syz-executor274:8097 blocked for more than 143 seconds. 
-INFO: task blkid:8099 blocked for more than 143 seconds. 
+That creates havoc, as these interrupts are not for this device, but for
+something that is connected to it. This is merely a bridge of some sort.
 
-1 lock held by syz-executor274/8083:
-2 locks held by syz-executor274/8097:
- #0: 000000007a5ed526 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1f/0x40 block/ioctl.c:192
- #1: 0000000067606e21 (&type->s_umount_key#39){.+.+}, at: __get_super.part.0+0x203/0x2e0 fs/super.c:788
-1 lock held by blkid/8099:
- #0: 000000007a5ed526 (&bdev->bd_mutex){+.+.}, at: blkdev_put+0x34/0x560 fs/block_dev.c:1866 
-----------
+Furthermore, this is a rather long established practice: gic-v2m,
+gic-v3-mbi, mediatek,sysirq, mediatek,cirq... All the bits of glue that
+for one reason or another plug onto the GIC use the same method.
 
-8099 was blocked for too long waiting for 000000007a5ed526 held by 8097.
-8097 was blocked for too long waiting for 0000000067606e21 held by somebody.
-Since there is nobody else holding 0000000067606e21,
-I guessed that the "somebody" which is holding 0000000067606e21 is 8083.
+> Plus, without 'interrupts' walking the hierarchy is broken.
 
-----------
-[ 1107.337625][    C1] CPU: 1 PID: 8083 Comm: syz-executor274 Not tainted 5.1.0-rc6+ #89
-[ 1107.337631][    C1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-[ 1107.337636][    C1] RIP: 0010:debug_lockdep_rcu_enabled.part.0+0xb/0x60
-[ 1107.337648][    C1] Code: 5b 5d c3 e8 67 71 e5 ff 0f 1f 80 00 00 00 00 55 48 89 e5 e8 37 ff ff ff 5d c3 0f 1f 44 00 00 48 b8 00 00 00 00 00 fc ff df 55 <48> 89 e5 53 65 48 8b 1c 25 00 ee 01 00 48 8d bb 7c 08 00 00 48 89
-[ 1107.337652][    C1] RSP: 0018:ffff8880a85274c8 EFLAGS: 00000202
-[ 1107.337661][    C1] RAX: dffffc0000000000 RBX: ffff8880a85275d8 RCX: 1ffffffff12bcd63
-[ 1107.337666][    C1] RDX: 0000000000000000 RSI: ffffffff870d8f3c RDI: ffff8880a85275e0
-[ 1107.337672][    C1] RBP: ffff8880a85274d8 R08: ffff888081e68540 R09: ffffed1015d25bc8
-[ 1107.337677][    C1] R10: ffffed1015d25bc7 R11: ffff8880ae92de3b R12: 0000000000000000
-[ 1107.337683][    C1] R13: ffff8880a694d640 R14: ffff88809541b942 R15: 0000000000000006
-[ 1107.337689][    C1] FS:  0000000000e0b880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-[ 1107.337693][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1107.337699][    C1] CR2: ffffffffff600400 CR3: 0000000092d6f000 CR4: 00000000001406e0
-[ 1107.337704][    C1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1107.337710][    C1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 1107.337713][    C1] Call Trace:
-[ 1107.337717][    C1]  ? debug_lockdep_rcu_enabled+0x71/0xa0
-[ 1107.337721][    C1]  xas_descend+0xbf/0x370
-[ 1107.337724][    C1]  xas_load+0xef/0x150
-[ 1107.337728][    C1]  find_get_entry+0x13d/0x880
-[ 1107.337733][    C1]  ? find_get_entries_tag+0xc10/0xc10
-[ 1107.337736][    C1]  ? mark_held_locks+0xa4/0xf0
-[ 1107.337741][    C1]  ? pagecache_get_page+0x1a8/0x740
-[ 1107.337745][    C1]  pagecache_get_page+0x4c/0x740
-[ 1107.337749][    C1]  __getblk_gfp+0x27e/0x970
-[ 1107.337752][    C1]  __bread_gfp+0x2f/0x300
-[ 1107.337756][    C1]  udf_tread+0xf1/0x140
-[ 1107.337760][    C1]  udf_read_tagged+0x50/0x530
-[ 1107.337764][    C1]  udf_check_anchor_block+0x1ef/0x680
-[ 1107.337768][    C1]  ? blkpg_ioctl+0xa90/0xa90
-[ 1107.337772][    C1]  ? udf_process_sequence+0x35d0/0x35d0
-[ 1107.337776][    C1]  ? submit_bio+0xba/0x480
-[ 1107.337780][    C1]  udf_scan_anchors+0x3f4/0x680
-[ 1107.337784][    C1]  ? udf_check_anchor_block+0x680/0x680
-[ 1107.337789][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[ 1107.337793][    C1]  ? udf_get_last_session+0x120/0x120
-[ 1107.337797][    C1]  udf_load_vrs+0x67f/0xc80
-[ 1107.337801][    C1]  ? udf_scan_anchors+0x680/0x680
-[ 1107.337805][    C1]  ? udf_bread+0x260/0x260
-[ 1107.337809][    C1]  ? lockdep_init_map+0x1be/0x6d0
-[ 1107.337813][    C1]  udf_fill_super+0x7d8/0x16d1
-[ 1107.337817][    C1]  ? udf_load_vrs+0xc80/0xc80
-[ 1107.337820][    C1]  ? vsprintf+0x40/0x40
-[ 1107.337824][    C1]  ? set_blocksize+0x2bf/0x340
-[ 1107.337829][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[ 1107.337833][    C1]  mount_bdev+0x307/0x3c0
-[ 1107.337837][    C1]  ? udf_load_vrs+0xc80/0xc80
-[ 1107.337840][    C1]  udf_mount+0x35/0x40
-[ 1107.337844][    C1]  ? udf_get_pblock_meta25+0x3a0/0x3a0
-[ 1107.337848][    C1]  legacy_get_tree+0xf2/0x200
-[ 1107.337853][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[ 1107.337857][    C1]  vfs_get_tree+0x123/0x450
-[ 1107.337860][    C1]  do_mount+0x1436/0x2c40
-[ 1107.337864][    C1]  ? copy_mount_string+0x40/0x40
-[ 1107.337868][    C1]  ? _copy_from_user+0xdd/0x150
-[ 1107.337873][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[ 1107.337877][    C1]  ? copy_mount_options+0x280/0x3a0
-[ 1107.337881][    C1]  ksys_mount+0xdb/0x150
-[ 1107.337885][    C1]  __x64_sys_mount+0xbe/0x150
-[ 1107.337889][    C1]  do_syscall_64+0x103/0x610
-[ 1107.337893][    C1]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-----------
+Erm... Which hierarchy?
 
-8083 is doing mount(2) but is not holding 00000000bde6230e (loop_ctl_mutex).
-I guessed that something went wrong with 8083 inside __getblk_gfp().
-How can loop_ctl_mutex be relevant to this problem?
+Thanks,
+	
+	M.
+-- 
+Jazz is not dead. It just smells funny...
