@@ -2,82 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61CE8F58A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C52F590
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfD3L2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:28:06 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:7899 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726202AbfD3L2F (ORCPT
+        id S1727608AbfD3L3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:29:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57855 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfD3L3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:28:05 -0400
-X-UUID: e03d9aa27c904b4fbb8476405ca204f3-20190430
-X-UUID: e03d9aa27c904b4fbb8476405ca204f3-20190430
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1463058352; Tue, 30 Apr 2019 19:27:59 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 30 Apr 2019 19:27:58 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 30 Apr 2019 19:27:58 +0800
-Message-ID: <1556623678.4496.1.camel@mtkswgap22>
-Subject: Re: [PATCH v2] mt76: mt7615: add TX/RX antenna pattern capabilities
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>
-CC:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 30 Apr 2019 19:27:58 +0800
-In-Reply-To: <c3f6e202-8c2f-a103-a104-e0d1cde8147b@nbd.name>
-References: <4f7160cb9f52335ce15fccac087fec25e7650884.1556255852.git.ryder.lee@mediatek.com>
-         <c3f6e202-8c2f-a103-a104-e0d1cde8147b@nbd.name>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Apr 2019 07:29:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3UBSFGg1350429
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Apr 2019 04:28:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3UBSFGg1350429
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556623696;
+        bh=oDZ5KraJL4KgMsljNN1FiEACozdkKt3NmYXo5R8ae7E=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=CffJBua1JSJ8mVi7LKwDnpfEYh6QNMhQfKneGTrlzQp0Rb9IlvNqQf5fJFiYNS8q9
+         lW1HIUAy5Rk+hiodiNjbzRdgfcT18dZbbgkZCuXCGZqdTMRoaPVz+U+osBbXtq+kvC
+         grpd1WKaEk1Fc810E/b0zbvF4/b877LJt5BACwlkN7q3979fQ6ykeDzR9wWN9GbTZo
+         THfnHkXbH9dazeu+EJsDNwmijsn46P9tPbSnmfAkMt/CtS00otuNy2pYH3/RJJHTC6
+         kS0Ed70289R+tyjj6vUe7T6vACuNiUfi9rJ8eJByxhy83kZB5ZnXpMccVvg3u5WM4/
+         qihrHt3rt9rdA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3UBSDm31350426;
+        Tue, 30 Apr 2019 04:28:13 -0700
+Date:   Tue, 30 Apr 2019 04:28:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rick Edgecombe <tipbot@zytor.com>
+Message-ID: <tip-7fdfe1e40b225b1d163f9afed2fa3f04442dbaad@git.kernel.org>
+Cc:     hpa@zytor.com, bp@alien8.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, akpm@linux-foundation.org,
+        nadav.amit@gmail.com, will.deacon@arm.com, peterz@infradead.org,
+        rostedt@goodmis.org, linux_dti@icloud.com,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        rick.p.edgecombe@intel.com, ard.biesheuvel@linaro.org,
+        kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        riel@surriel.com, deneen.t.dock@intel.com, luto@kernel.org
+Reply-To: linux_dti@icloud.com, dave.hansen@linux.intel.com,
+          rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+          rick.p.edgecombe@intel.com, ard.biesheuvel@linaro.org,
+          kristen@linux.intel.com, kernel-hardening@lists.openwall.com,
+          deneen.t.dock@intel.com, luto@kernel.org, riel@surriel.com,
+          bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
+          tglx@linutronix.de, torvalds@linux-foundation.org,
+          nadav.amit@gmail.com, will.deacon@arm.com,
+          akpm@linux-foundation.org, peterz@infradead.org
+In-Reply-To: <20190426001143.4983-20-namit@vmware.com>
+References: <20190426001143.4983-20-namit@vmware.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/ftrace: Use vmalloc special flag
+Git-Commit-ID: 7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-04-30 at 11:24 +0200, Felix Fietkau wrote:
-> On 2019-04-26 07:23, Ryder Lee wrote:
-> > Announce antenna pattern cap to adapt PHY and baseband settings.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> > Changes since v2:
-> > - Add a prefix mt76 in the title.
-> > ---
-> >  drivers/net/wireless/mediatek/mt76/mt7615/init.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-> > index 3ab3ff553ef2..122f7a565540 100644
-> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-> > @@ -190,6 +190,8 @@ int mt7615_register_device(struct mt7615_dev *dev)
-> >  			IEEE80211_VHT_CAP_SHORT_GI_160 |
-> >  			IEEE80211_VHT_CAP_MAX_MPDU_LENGTH_11454 |
-> >  			IEEE80211_VHT_CAP_MAX_A_MPDU_LENGTH_EXPONENT_MASK |
-> > +			IEEE80211_VHT_CAP_RX_ANTENNA_PATTERN |
-> > +			IEEE80211_VHT_CAP_TX_ANTENNA_PATTERN |
-> If I read the standard correctly, these flags indicate that the rx/tx
-> antenna pattern does NOT change during association.
-> Doesn't that mean that we should set it in mac80211.c instead, so that
-> it also applies to MT76x2?
-> 
-Right. I will add these flags in common code.
+Commit-ID:  7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
+Gitweb:     https://git.kernel.org/tip/7fdfe1e40b225b1d163f9afed2fa3f04442dbaad
+Author:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+AuthorDate: Thu, 25 Apr 2019 17:11:39 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 30 Apr 2019 12:38:00 +0200
 
-Ryder
+x86/ftrace: Use vmalloc special flag
 
+Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+permissioned memory in vmalloc and remove places where memory was set NX
+and RW before freeing which is no longer needed.
 
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: <akpm@linux-foundation.org>
+Cc: <ard.biesheuvel@linaro.org>
+Cc: <deneen.t.dock@intel.com>
+Cc: <kernel-hardening@lists.openwall.com>
+Cc: <kristen@linux.intel.com>
+Cc: <linux_dti@icloud.com>
+Cc: <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190426001143.4983-20-namit@vmware.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/ftrace.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 53ba1aa3a01f..0caf8122d680 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+ {
+ 	return module_alloc(size);
+ }
+-static inline void tramp_free(void *tramp, int size)
++static inline void tramp_free(void *tramp)
+ {
+-	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-
+-	set_memory_nx((unsigned long)tramp, npages);
+-	set_memory_rw((unsigned long)tramp, npages);
+ 	module_memfree(tramp);
+ }
+ #else
+@@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+ {
+ 	return NULL;
+ }
+-static inline void tramp_free(void *tramp, int size) { }
++static inline void tramp_free(void *tramp) { }
+ #endif
+ 
+ /* Defined as markers to the end of the ftrace default trampolines */
+@@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+ 
++	set_vm_flush_reset_perms(trampoline);
++
+ 	/*
+ 	 * Module allocation needs to be completed by making the page
+ 	 * executable. The page is still writable, which is a security hazard,
+@@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+-	tramp_free(trampoline, *tramp_size);
++	tramp_free(trampoline);
+ 	return 0;
+ }
+ 
+@@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
+ 	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+ 		return;
+ 
+-	tramp_free((void *)ops->trampoline, ops->trampoline_size);
++	tramp_free((void *)ops->trampoline);
+ 	ops->trampoline = 0;
+ }
+ 
