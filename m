@@ -2,101 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A03F658
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B8FF75E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbfD3Lq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:46:27 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56384 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728087AbfD3LqV (ORCPT
+        id S1727165AbfD3L6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:58:47 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35847 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730650AbfD3LrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:46:21 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3UBk69L053322;
-        Tue, 30 Apr 2019 06:46:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1556624766;
-        bh=MS/ebHHo25Z4rkEAJDu2R8iPbpujs41yXsTmY3TMBOA=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=sW33nvnrlbzw36Q4MkQmmsvf19y3+NPrU9FVMx7iRGTb7/LachkvqCEcAo6iDGxIJ
-         eU/E+o03rJW0lfKBTB4mvRocn4rxI0/7II7IB7gBxZggatIKDbbOrVIhKICm+Ic9Vn
-         B3rNp2bCx7SHRHlIPBlkx0ANi9AA68n3tI0SytWQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3UBk60j120491
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Apr 2019 06:46:06 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 30
- Apr 2019 06:46:06 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 30 Apr 2019 06:46:06 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3UBk6BU042431;
-        Tue, 30 Apr 2019 06:46:06 -0500
-Date:   Tue, 30 Apr 2019 06:45:12 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-CC:     Marc Zyngier <marc.zyngier@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>,
-        <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v8 00/14] Add support for TISCI Interrupt controller
- drivers
-Message-ID: <20190430114512.pde3uuh5e3qwve3m@kahuna>
-References: <20190430101230.21794-1-lokeshvutla@ti.com>
+        Tue, 30 Apr 2019 07:47:04 -0400
+X-Originating-IP: 109.213.14.175
+Received: from localhost (alyon-652-1-31-175.w109-213.abo.wanadoo.fr [109.213.14.175])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1D5E31C000C;
+        Tue, 30 Apr 2019 11:47:02 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 13:47:02 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/4] rtc: digicolor: set range
+Message-ID: <20190430114702.GD11339@piout.net>
+References: <20190430093212.28425-1-alexandre.belloni@bootlin.com>
+ <20190430093212.28425-2-alexandre.belloni@bootlin.com>
+ <877ebbu3lz.fsf@tarshish>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190430101230.21794-1-lokeshvutla@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <877ebbu3lz.fsf@tarshish>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15:42-20190430, Lokesh Vutla wrote:
-[...]
-> Changes since v7:
-> - Rebased on top of latest master.
-> - Each patch has respective changes mentioned.
+On 30/04/2019 14:36:24+0300, Baruch Siach wrote:
+> Hi Alexandre,
 > 
-> Grygorii Strashko (1):
->   firmware: ti_sci: Add support to get TISCI handle using of_phandle
+> On Tue, Apr 30 2019, Alexandre Belloni wrote:
 > 
-> Lokesh Vutla (12):
->   firmware: ti_sci: Add support for RM core ops
->   firmware: ti_sci: Add support for IRQ management
->   firmware: ti_sci: Add helper apis to manage resources
->   genirq: Introduce irq_chip_{request,release}_resource_parent() apis
->   gpio: thunderx: Use the default parent apis for
->     {request,release}_resources
->   dt-bindings: irqchip: Introduce TISCI Interrupt router bindings
->   irqchip: ti-sci-intr: Add support for Interrupt Router driver
->   dt-bindings: irqchip: Introduce TISCI Interrupt Aggregator bindings
->   irqchip: ti-sci-inta: Add support for Interrupt Aggregator driver
->   soc: ti: Add MSI domain bus support for Interrupt Aggregator
->   irqchip: ti-sci-inta: Add msi domain support
->   arm64: arch_k3: Enable interrupt controller drivers
+> > While the range of REFERENCE + TIME is actually 33 bits, the counter
+> > itself (TIME) is a 32-bits seconds counter.
+> >
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > ---
+> >  drivers/rtc/rtc-digicolor.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
+> > index 5bb14c56bc9a..e6e16aaac254 100644
+> > --- a/drivers/rtc/rtc-digicolor.c
+> > +++ b/drivers/rtc/rtc-digicolor.c
+> > @@ -206,6 +206,7 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
+> >  	platform_set_drvdata(pdev, rtc);
+> >  
+> >  	rtc->rtc_dev->ops = &dc_rtc_ops;
+> > +	rtc->rtc_dev->range_max = U32_MAX;
 > 
-> Peter Ujfalusi (1):
->   firmware: ti_sci: Add RM mapping table for am654
+> Where can I find documentation on the meaning and usage of the range_max
+> value? I could not find anything in the kernel source.
 > 
 
-For patches 1..5 (Firmware patches):
+It should be set to the maximum UNIX timestamp the RTC can be set to
+while keeping range_min to range_max contiguous.
 
-Acked-by: Nishanth Menon <nm@ti.com>
+In the digicolor case, you could go up to 8589934590 (Wed Mar 16
+12:56:30 UTC 2242) but the driver only writes DC_RTC_REFERENCE and I'm
+not sure it can also update DC_RTC_TIME safely.
 
 -- 
-Regards,
-Nishanth Menon
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
