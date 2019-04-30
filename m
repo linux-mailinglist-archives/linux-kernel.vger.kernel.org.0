@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E0AF622
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F51F765
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfD3Lnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:43:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53776 "EHLO mail.kernel.org"
+        id S1730613AbfD3Lqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:46:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729938AbfD3Lna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:43:30 -0400
+        id S1729801AbfD3Lql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:46:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C4AF21707;
-        Tue, 30 Apr 2019 11:43:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1439020449;
+        Tue, 30 Apr 2019 11:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624609;
-        bh=o3Nsh5rtn77rJHGEWXlfTk4Uolxx2qRsk48vZef8uTI=;
+        s=default; t=1556624800;
+        bh=FIm/dYJUGKyWJsw104A+MAzQhk1rZCq5KdDwZvA7XWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=milMP3x8ab1Ewr61+rG2dbhXcjXskkyx6R5yDhPsUX0MjMNTr5+6OJL+c4QjXvRRY
-         X5xr/ug6jEeGW8lUK65aiOyoCQ43wjJx9rSJ6xuHghnwWT/ADimHKbBPNVBTMZy8Vw
-         GEovBaocybQmsIzkDXbRSASty2g3Y5wEDkXR+QNs=
+        b=NrqnzOQDsqKywnEUQIQWFNkDE8jy72RjJClxU8pgTx/Na1bHaqO9aNDEfQxEsBo9v
+         hCX4fjdg8FmNMFxiS6+CLxHwKmHoH67s5aeAqbkeopmlI1idpenUjFqukuqCmqrN/f
+         SitCB+OS8t/dsZBNzrmqCmO8bw2bnc4aZeXN5AEM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+de00a87b8644a582ae79@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 38/53] tipc: check link name with right length in tipc_nl_compat_link_set
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.19 076/100] aio: fold lookup_kiocb() into its sole caller
 Date:   Tue, 30 Apr 2019 13:38:45 +0200
-Message-Id: <20190430113557.818399894@linuxfoundation.org>
+Message-Id: <20190430113612.324229328@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 8c63bf9ab4be8b83bd8c34aacfd2f1d2c8901c8a upstream.
+commit 833f4154ed560232120bc475935ee1d6a20e159f upstream.
 
-A similar issue as fixed by Patch "tipc: check bearer name with right
-length in tipc_nl_compat_bearer_enable" was also found by syzbot in
-tipc_nl_compat_link_set().
-
-The length to check with should be 'TLV_GET_DATA_LEN(msg->req) -
-offsetof(struct tipc_link_config, name)'.
-
-Reported-by: syzbot+de00a87b8644a582ae79@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/aio.c |   29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -768,7 +768,12 @@ static int tipc_nl_compat_link_set(struc
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1992,24 +1992,6 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat
+ }
+ #endif
  
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
--	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	len = TLV_GET_DATA_LEN(msg->req);
-+	len -= offsetof(struct tipc_link_config, name);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	len = min_t(int, len, TIPC_MAX_LINK_NAME);
- 	if (!string_is_valid(lc->name, len))
+-/* lookup_kiocb
+- *	Finds a given iocb for cancellation.
+- */
+-static struct aio_kiocb *
+-lookup_kiocb(struct kioctx *ctx, struct iocb __user *iocb)
+-{
+-	struct aio_kiocb *kiocb;
+-
+-	assert_spin_locked(&ctx->ctx_lock);
+-
+-	/* TODO: use a hash or array, this sucks. */
+-	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
+-		if (kiocb->ki_user_iocb == iocb)
+-			return kiocb;
+-	}
+-	return NULL;
+-}
+-
+ /* sys_io_cancel:
+  *	Attempts to cancel an iocb previously passed to io_submit.  If
+  *	the operation is successfully cancelled, the resulting event is
+@@ -2038,10 +2020,13 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t
  		return -EINVAL;
+ 
+ 	spin_lock_irq(&ctx->ctx_lock);
+-	kiocb = lookup_kiocb(ctx, iocb);
+-	if (kiocb) {
+-		ret = kiocb->ki_cancel(&kiocb->rw);
+-		list_del_init(&kiocb->ki_list);
++	/* TODO: use a hash or array, this sucks. */
++	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
++		if (kiocb->ki_user_iocb == iocb) {
++			ret = kiocb->ki_cancel(&kiocb->rw);
++			list_del_init(&kiocb->ki_list);
++			break;
++		}
+ 	}
+ 	spin_unlock_irq(&ctx->ctx_lock);
  
 
 
