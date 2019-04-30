@@ -2,83 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5083FD92
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9ADFD9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfD3QMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 12:12:54 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33388 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfD3QMy (ORCPT
+        id S1726324AbfD3QPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 12:15:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36568 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfD3QPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:12:54 -0400
-Received: by mail-qk1-f193.google.com with SMTP id k189so8526092qkc.0;
-        Tue, 30 Apr 2019 09:12:53 -0700 (PDT)
+        Tue, 30 Apr 2019 12:15:44 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v80so2704641pfa.3;
+        Tue, 30 Apr 2019 09:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=To53eP64nDHV0qyky0yhP+wHrXWci3jOJ+vTaEuHq/0=;
+        b=XbQthZPkZqvXjghxbDEcY5YIseGnGzfsKHZyboFhSvRLNdL0xpPhdXwvMicpw/nBpx
+         cF/1XauxMpco0kUxuRvEdA9dqA+UFx5QhDElv28iN9u8mb49m5NJ8pEzdZBshrB9lCIK
+         GpFeDFaKWbP2HR7IZwv+nEvxMn57Mt3ZwW3smIZXthZb7Pwuu2J46CTaGCksl7RJetBO
+         wPnfzt2hrqZHFMkEShir35mzRHTbu5q0JW7+cd8xRtog/JSdGLAPTtpFot3xgQx+IAw7
+         jyC4crFr9jt7ojulM+s2jhr6Hg0Q4DY+Wuw3PfLjRnyHbP1yFwFBZSko+sCkq0ggLa4S
+         pP+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Dw1Sc4DgzUhOMvuweilLKv0I/kx7THnj4Gu6G9qc/A=;
-        b=V9njuefs8h5r7nWTByHu/7skJsBICOSgC+t3zv2Lv5auS+F4kG9z5ftuxNisuUm9KW
-         NpI16KFGqbJrGixjVc4QzMhYTJOTLwx4vIv+D/hKq7KDYpAvAd6wvyE4fvo2ovk4pCjI
-         A8jpqgG/oQfS/R0shXbk5tDxWslVMeHdmFM/MoVtkqaeTpUKeq9hRWUeC66oQFtsOHHq
-         TQVL8zzAIN68XYKGaFGedRhmrWaidq9Gj+7dyIBugHggM2MyklgXmgbeqo3CPrOMMXlZ
-         s69n9vuQzuauq0P8muU/Uv+WB8S1ozQjvltUrcQssXxqiMQ/zBUg5rNeLeJws+IdKO4t
-         YCwg==
-X-Gm-Message-State: APjAAAXlqgx0NWZ6oULx/Gw45MnVyRMkoK5RKdi3w55P4ERODdlD0vOv
-        nI5F1MDP0PSXUyJjmu7FTOg/xCej8pSV6ekwFx4=
-X-Google-Smtp-Source: APXvYqxZ18tw9VclTG8jiPtQwPA/q6phtCiYjGxgL4Pu5OHC2RhANvcUJKMdOjp8gwPa9BT1lygkiVrzaDoTFNwqSCg=
-X-Received: by 2002:a37:b802:: with SMTP id i2mr48165405qkf.343.1556640772741;
- Tue, 30 Apr 2019 09:12:52 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=To53eP64nDHV0qyky0yhP+wHrXWci3jOJ+vTaEuHq/0=;
+        b=RZdnx3537WqXnVVlEtQJL9Y3IJSW+GJcljHsFtKdDHKricSX1WcwrskEon+VwO3pcY
+         liSqar2BpTnlSzXkEuYqjhLas68cJr1JJ3vwEKQ5eQfXt0LpD3vwB5d4Avjy1qjkuDjJ
+         KEozP/gEtoMfbdevBWixNfBUp1ibqGwIfwMW+K5sUmwbWt1qHS+LeB9vmIaM8MrwatcO
+         t4nL+I3N2WjODnavHwgT+HDLb5G8HSidgmurGFZwrgqmox2hZjf/cOaeYTrO9NjjkRPC
+         npVPEPqJI27VDk/pbMLE/KLxm3+X5jMv169TZP+p5xhF1adiW32gUinyZEla5ug8I5m1
+         mR1A==
+X-Gm-Message-State: APjAAAXZzNGOzOPDwdw4aiOTSJ4if1WUKqynMl1r78XtRV4ljpSpPjEG
+        FHJ41IK98pwuoVAJrrPMcek=
+X-Google-Smtp-Source: APXvYqyoF5fxCgwsOl/SkTT9wJUlJSVagV4me5hVlPz9N0VAatBssu6WvukGULT917FSx2PKdRqZTw==
+X-Received: by 2002:a63:360c:: with SMTP id d12mr66418796pga.404.1556640944114;
+        Tue, 30 Apr 2019 09:15:44 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g79sm33164193pfd.144.2019.04.30.09.15.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 09:15:43 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 09:15:42 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pm@vger.kernel.org,
+        Enric Balletbo Serra <enric.balletbo@collabora.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] dt-bindings: power: supply: Add bindings for
+ Microchip UCS1002
+Message-ID: <20190430161542.GB731@roeck-us.net>
+References: <20190430064557.28469-1-andrew.smirnov@gmail.com>
+ <20190430064557.28469-4-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <eeb83498-f37f-e234-4941-2731b81dc78c@synopsys.com>
- <20190422152027.GB11750@kernel.org> <C2D7FE5348E1B147BCA15975FBA2307501A250584C@us01wembx1.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501A250584C@us01wembx1.internal.synopsys.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Apr 2019 18:12:35 +0200
-Message-ID: <CAK8P3a2JrAApXDws+t=q8AnKFkHJZSox7gsgwW-xEJTfs_mdzw@mail.gmail.com>
-Subject: Re: perf tools build broken after v5.1-rc1
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430064557.28469-4-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 7:17 PM Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
->
-> On 4/22/19 8:31 AM, Arnaldo Carvalho de Melo wrote:
-> >> A quick fix for ARC will be to create our own version but I presume all existing
-> >> arches using generic syscall abi are affected. Thoughts ? In lack of ideas I'll
-> >> send out a patch for ARC.
-> >>
-> >> P.S. Why do we need the unistd.h duplication in tools directory, given it could
-> >> have used the in-tree unistd headers directly ?
-> > I have to write down the explanation and have it in a file, but we can't
-> > use anything in the kernel from outside tools/ to avoid adding a burden
-> > to kernel developers that would then have to make sure that the changes
-> > that they make outside tools/ don't break things living there.
->
-> That is a sound guiding principle in general but I don't agree here. unistd is
-> backbone of kernel user interface it has to work and can't possibly be broken even
-> when kernel devs add a new syscall is added or condition-alize existing one. So
-> adding a copy - and deferring the propagation of in-kernel unistd to usersapce
-> won't necessarily help with anything and it just adds the burden of keeping them
-> in sync. Granted we won't necessarily need all the bleeding edge (new syscall
-> updates) into that header, its still more work.
+On Mon, Apr 29, 2019 at 11:45:57PM -0700, Andrey Smirnov wrote:
+> Add bindings for Microchip UCS1002 Programmable USB Port Power
+> Controller with Charger Emulation.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> ---
+>  .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+> new file mode 100644
+> index 000000000000..021fd7aba75e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+> @@ -0,0 +1,27 @@
+> +Microchip UCS1002 USB Port Power Controller
+> +
+> +Required properties:
+> +- compatible		: Should be "microchip,ucs1002";
+> +- reg			: I2C slave address
+> +
+> +Optional properties:
+> +- interrupts-extended	: A list of interrupts lines present (could be either
+> +			  corresponding to A_DET# pin, ALERT# pin, or both)
+> +- interrupt-names	: A list of interrupt names. Should contain (if
+> +			  present):
+> +			  - "a_det" for line connected to A_DET# pin
+> +			  - "alert" for line connected to ALERT# pin
+> +			  Both are expected to be IRQ_TYPE_EDGE_BOTH
+> +Example:
+> +
+> +&i2c3 {
+> +	charger@32 {
+> +		compatible = "microchip,ucs1002";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_ucs1002_pins>;
 
-I think more importantly, it seems completely broken to sync a file from
-asm-generic but not the arch specific file that includes it.
+Document the above ? Or is that optional ?
 
-The 1a787fc5ba18ac7 commit copied over the changes for arm64, but
-missed all the other architectures changed in c8ce48f06503 and the
-related commits.
+[ I am not a DT expert, so feel free to ignore. ]
 
-      Arnd
+Guenter
+
+> +		reg = <0x32>;
+> +		interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
+> +				      <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
+> +		interrupt-names = "a_det", "alert";
+> +	};
+> +};
+> -- 
+> 2.20.1
+> 
