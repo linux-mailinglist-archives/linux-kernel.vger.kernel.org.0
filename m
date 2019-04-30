@@ -2,101 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D52CF20F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 585F1F21B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfD3Ic2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:32:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55014 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbfD3Ic2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:32:28 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U8JsQt158710;
-        Tue, 30 Apr 2019 08:32:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=yWR9MTfmutWwKIN9OJ1tFhcDDCjFC5vqWJwkYOA89/4=;
- b=YKGy5m/GkNSaOWuhhhU1lZANzX7gdYTSvMMyT4V5YBgrFWmrFeXkZGZhdHPW6RpDkFlL
- jkT+RTDok4lMOD6Z+WDW1cYOpqkTFqCB+5w/NYs/E1U1Dma3/HKmbf6OkiOW0EzVjwb4
- ou4mqosGOrG99dRZd5lM6+wN0Bc6HzOaAMqm50w80r/AjYJZJaVjDlgZXxXDVVGMEQom
- nU4c3XcqhwwrdLl4x2C3JsfNlk+NkfNdpISxkUCZs6HymnXUZ3vnw/ef4sX8ALdSlnIc
- hdEWxl8o/4CVmwOOFKULD40ZD3Kj8B6oCx3PFgfbg1PdH/uA71nQuGoPmHKVR/TMio93 gA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2s4fqq2wmh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 08:32:22 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U8UjFs079719;
-        Tue, 30 Apr 2019 08:32:21 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2s4ew142ue-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 08:32:21 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3U8WJkX025399;
-        Tue, 30 Apr 2019 08:32:19 GMT
-Received: from kadam (/196.97.65.153)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 01:32:19 -0700
-Date:   Tue, 30 Apr 2019 11:32:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Chengguang Xu <cgxu519@gmx.com>
-Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] chardev: set variable ret to -EBUSY before
- checking minor range overlap
-Message-ID: <20190430083206.GA2239@kadam>
-References: <20190426073837.23086-1-cgxu519@gmx.com>
+        id S1726580AbfD3IgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:36:10 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:39538 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfD3IgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:36:10 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x3U8Wxfo014580
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 30 Apr 2019 01:33:15 -0700
+Received: from [128.224.162.229] (128.224.162.229) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Apr 2019
+ 01:32:49 -0700
+Message-ID: <5CC8082F.4090903@windriver.com>
+Date:   Tue, 30 Apr 2019 16:32:47 +0800
+From:   Liwei Song <liwei.song@windriver.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190426073837.23086-1-cgxu519@gmx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904300057
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904300057
+To:     Takashi Iwai <tiwai@suse.de>
+CC:     <alsa-devel@alsa-project.org>, Yu Zhao <yuzhao@google.com>,
+        Mark Brown <broonie@kernel.org>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: hda: check RIRB to avoid use NULL pointer
+References: <1556604653-47363-1-git-send-email-liwei.song@windriver.com> <s5himuwhru3.wl-tiwai@suse.de>
+In-Reply-To: <s5himuwhru3.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please don't say RESEND, say [PATCH v2].  RESEND is for when we ignored
-your patch.  (Maybe we made a mistake or maybe the mailing list tagged
-it as spam and deleted it or something).  Use [PATCH v2] instead.
 
-On Fri, Apr 26, 2019 at 03:38:37PM +0800, Chengguang Xu wrote:
-> When allocating dynamic major, the minor range overlap check
-> in __register_chrdev_region() will not fail, so actually
-> there is no real case to passing non negative error code to
-> caller. However, set variable ret to -EBUSY before chekcking
-> minor range overlap will avoid false-positive warning from
-> code analyzing tool(like Smatch) and also make the code more
-> easy to understand.
+
+On 04/30/2019 03:31 PM, Takashi Iwai wrote:
+> On Tue, 30 Apr 2019 08:10:53 +0200,
+> Song liwei wrote:
+>>
+>> From: Liwei Song <liwei.song@windriver.com>
+>>
+>> Fix the following BUG:
+>>
+>> BUG: unable to handle kernel NULL pointer dereference at 000000000000000c
+>> Workqueue: events azx_probe_work [snd_hda_intel]
+>> RIP: 0010:snd_hdac_bus_update_rirb+0x80/0x160 [snd_hda_core]
+>> Call Trace:
+>>  <IRQ>
+>>  azx_interrupt+0x78/0x140 [snd_hda_codec]
+>>  __handle_irq_event_percpu+0x49/0x300
+>>  handle_irq_event_percpu+0x23/0x60
+>>  handle_irq_event+0x3c/0x60
+>>  handle_edge_irq+0xdb/0x180
+>>  handle_irq+0x23/0x30
+>>  do_IRQ+0x6a/0x140
+>>  common_interrupt+0xf/0xf
+>>
+>> The Call Trace happened when run kdump on a NFS rootfs system.
+>> Exist the following calling sequence when boot the second kernel:
+>>
+>> azx_first_init()
+>>    --> azx_acquire_irq()
+>>                       <-- interrupt come in, azx_interrupt() was called
+>>    --> hda_intel_init_chip()
+>>       --> azx_init_chip()
+>>          --> snd_hdac_bus_init_chip()
+>>               --> snd_hdac_bus_init_cmd_io();
+>>                     --> init rirb.buf and corb.buf
+>>
+>> Interrupt happened after azx_acquire_irq() while RIRB still didn't got
+>> initialized, then NULL pointer will be used when process the interrupt.
+>>
+>> Check the value of RIRB to ensure it is not NULL, to aviod some special
+>> case may hang the system.
+>>
+>> Fixes: 14752412721c ("ALSA: hda - Add the controller helper codes to hda-core module")
+>> Signed-off-by: Liwei Song <liwei.song@windriver.com>
 > 
-> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> ---
-
-Then here under the --- cut off line put:
-
-v2: rebase against the latest linux-next
-
-That way we will remember why the patch was sent twice and what changed.
-
->  fs/char_dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Oh, that's indeed a race there.
 > 
+> But I guess the check introduced by the patch is still error-prone.
+> Basically the interrupt handling should be moved after the chip
+> initialization.  I suppose that your platform uses the shared
+> interrupt, not the MSI?
 
-regards,
-dan carpenter
+This is the information from /proc/interrupt
+134:          0        102          0          0  IR-PCI-MSI 514048-edge      snd_hda_intel:card0
+
+
+> 
+> In anyway, alternative (and likely more certain) fix would be to move
+> the azx_acquir_irq() call like the patch below (note: totally
+> untested).  Could you check whether it works?
+
+Yes, It works.
+
+Considering a previous patch like the one you provide will import some issue, 
+so I choose check the invalid value to low the risk, but just as you mentioned,
+It is not a good solution.
+
+commit 542cedec53c9e8b73f3f05bf8468823598c50489
+Author: Yu Zhao <yuzhao@google.com>
+Date:   Tue Sep 11 15:12:46 2018 -0600
+
+    Revert "ASoC: Intel: Skylake: Acquire irq after RIRB allocation"
+    
+    This reverts commit 12eeeb4f4733bbc4481d01df35933fc15beb8b19.
+    
+    The patch doesn't fix accessing memory with null pointer in
+    skl_interrupt().
+    
+    There are two problems: 1) skl_init_chip() is called twice, before
+    and after dma buffer is allocate. The first call sets bus->chip_init
+    which prevents the second from initializing bus->corb.buf and
+    rirb.buf from bus->rb.area. 2) snd_hdac_bus_init_chip() enables
+    interrupt before snd_hdac_bus_init_cmd_io() initializing dma buffers.
+    There is a small window which skl_interrupt() can be called if irq
+    has been acquired. If so, it crashes when using null dma buffer
+    pointers.
+
+Thanks,
+Liwei.
+
+
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> 
+> --- a/sound/pci/hda/hda_intel.c
+> +++ b/sound/pci/hda/hda_intel.c
+> @@ -1788,9 +1788,6 @@ static int azx_first_init(struct azx *chip)
+>  			chip->msi = 0;
+>  	}
+>  
+> -	if (azx_acquire_irq(chip, 0) < 0)
+> -		return -EBUSY;
+> -
+>  	pci_set_master(pci);
+>  	synchronize_irq(bus->irq);
+>  
+> @@ -1904,6 +1901,9 @@ static int azx_first_init(struct azx *chip)
+>  		return -ENODEV;
+>  	}
+>  
+> +	if (azx_acquire_irq(chip, 0) < 0)
+> +		return -EBUSY;
+> +
+>  	strcpy(card->driver, "HDA-Intel");
+>  	strlcpy(card->shortname, driver_short_names[chip->driver_type],
+>  		sizeof(card->shortname));
+> 
+> 
