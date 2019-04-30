@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4681EF70C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7498DF60C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbfD3Ltt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:49:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
+        id S1728405AbfD3LmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:42:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731042AbfD3Lto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:49:44 -0400
+        id S1729166AbfD3LmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:42:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 745E321734;
-        Tue, 30 Apr 2019 11:49:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49CF221707;
+        Tue, 30 Apr 2019 11:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624984;
-        bh=NVg/Po1aldyrbB/KY8mC5/wJ69EYdh7+kZXSQdsRLQ0=;
+        s=default; t=1556624533;
+        bh=xdzXT7iuE8BD5Wk4ArbhgsGfo4b+Mi84Qr64q17W6j0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wLYNtE5/IRKg1igtZNmWP3ZobwP6pkCC5YhGoBXvEAry/Zu/gKmhAejFUMkZnnFo9
-         pl3JqJ5306cn42ljovWbm7tXHi5z3OP0QGYfXPdS0FUGaoOB5l7RyPLLCQva9T6LFg
-         uGy3hsNt8KRKAFJTqY9ETWD0P29uxVzg1/bNQy5s=
+        b=WRemPcEYGsy/cT2/18Yhy7BoCpG+Zg1g8h1tib8wjxGFLj/V5tyIBDJdGsKUc5/Bm
+         8hDfYgwpsJN2EMwdjaNEeGXiI0FaZ+gPzW2swus9AgDpo567dStdzT8zK5YYLWnUQv
+         LaukapQwYv9DyhyLoZNG4dl/Ujd4VMGC2w/SxeQE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 5.0 45/89] drm/vc4: Fix compilation error reported by kbuild test bot
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.14 29/53] intel_th: gth: Fix an off-by-one in output unassigning
 Date:   Tue, 30 Apr 2019 13:38:36 +0200
-Message-Id: <20190430113611.854265437@linuxfoundation.org>
+Message-Id: <20190430113556.353779668@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 462ce5d963f18b71c63f6b7730a35a2ee5273540 upstream.
+commit 91d3f8a629849968dc91d6ce54f2d46abf4feb7f upstream.
 
-A pointer to crtc was missing, resulting in the following build error:
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse: sparse: incorrect type in argument 1 (different base types)
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    expected struct drm_crtc *crtc
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    got struct drm_crtc_state *state
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:39: sparse: sparse: not enough arguments for function vc4_crtc_destroy_state
+Commit 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
+fixes a NULL dereference for all masters except the last one ("256+"),
+which keeps the stale pointer after the output driver had been unassigned.
 
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/2b6ed5e6-81b0-4276-8860-870b54ca3262@linux.intel.com
-Fixes: d08106796a78 ("drm/vc4: Fix memory leak during gpu reset.")
-Cc: <stable@vger.kernel.org> # v4.6+
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Fix the off-by-one.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: 9ed3f22223c3 ("intel_th: Don't reference unassigned outputs")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_crtc.c |    2 +-
+ drivers/hwtracing/intel_th/gth.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vc4/vc4_crtc.c
-+++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-@@ -999,7 +999,7 @@ static void
- vc4_crtc_reset(struct drm_crtc *crtc)
- {
- 	if (crtc->state)
--		vc4_crtc_destroy_state(crtc->state);
-+		vc4_crtc_destroy_state(crtc, crtc->state);
- 
- 	crtc->state = kzalloc(sizeof(struct vc4_crtc_state), GFP_KERNEL);
- 	if (crtc->state)
+--- a/drivers/hwtracing/intel_th/gth.c
++++ b/drivers/hwtracing/intel_th/gth.c
+@@ -624,7 +624,7 @@ static void intel_th_gth_unassign(struct
+ 	othdev->output.port = -1;
+ 	othdev->output.active = false;
+ 	gth->output[port].output = NULL;
+-	for (master = 0; master < TH_CONFIGURABLE_MASTERS; master++)
++	for (master = 0; master <= TH_CONFIGURABLE_MASTERS; master++)
+ 		if (gth->master[master] == port)
+ 			gth->master[master] = -1;
+ 	spin_unlock(&gth->gth_lock);
 
 
