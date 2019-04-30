@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65512EF3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33614EF44
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 05:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbfD3Drq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 23:47:46 -0400
-Received: from mga04.intel.com ([192.55.52.120]:64330 "EHLO mga04.intel.com"
+        id S1730140AbfD3Dsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 23:48:35 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:60191 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729933AbfD3Drq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:47:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 20:47:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,412,1549958400"; 
-   d="scan'208";a="138598084"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga008.jf.intel.com with ESMTP; 29 Apr 2019 20:47:45 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     rui.zhang@intel.com, edubezval@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] drivers: thermal: processor_thermal: Read PPCC on resume
-Date:   Mon, 29 Apr 2019 20:47:43 -0700
-Message-Id: <20190430034743.43576-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
+        id S1730095AbfD3Dsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 23:48:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44tSDZ6zdkz9s9T;
+        Tue, 30 Apr 2019 13:48:30 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1556596111;
+        bh=TlLXOzvzzWmnPRhinkP88A7XOHvI8RucBtZix5fefjs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MGO4bi4v6EhMJYazTwNQ1FCq26Z9lWhZ1zYUv2bpsZZYOJaXSSeXhJGP52kGr8YqL
+         bJDYy6pNxnYV53i1DKeY6JPTq+FOcLjf7A/icUNV9R7tIo/7Zq6HumUynuw0wIkcxC
+         OQpgquRCYBlgfJabUvKEKFuyZJEM6OvrqG4Noin+XvVzqAImWf6cTxvjFzPjFYWyO5
+         5pC0P1CMY2VFIbluoBMfgXDWESwPNvIkT6ZSQF+HcXqM602BpSz9SFBwbnFVzRhIfK
+         ujUz8u6cWp/uqYpL5NZQBD5n55o25Mcz8hF+w5ltWRmzew0Pv+kfYGvBCTBvdPdUtJ
+         BRr2PtqvfM+pQ==
+Date:   Tue, 30 Apr 2019 13:48:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: linux-next: build warning after merge of the thermal tree
+Message-ID: <20190430134823.73bdc4f4@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NhN5W6ljlI1QGFo90A49E2T"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read PPCC power limits on system resume in case those limits changed
-while system was suspended.
+--Sig_/NhN5W6ljlI1QGFo90A49E2T
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../int340x_thermal/processor_thermal_device.c     | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Hi Zhang,
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-index 436c256f111d..acb22157b9ac 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-@@ -465,6 +465,18 @@ static void  proc_thermal_pci_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
- }
- 
-+static int proc_thermal_resume(struct device *dev)
-+{
-+	struct proc_thermal_device *proc_dev;
-+
-+	proc_dev = dev_get_drvdata(dev);
-+	proc_thermal_read_ppcc(proc_dev);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(proc_thermal_pm, NULL, proc_thermal_resume);
-+
- static const struct pci_device_id proc_thermal_pci_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_BDW_THERMAL)},
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_HSB_THERMAL)},
-@@ -489,6 +501,7 @@ static struct pci_driver proc_thermal_pci_driver = {
- 	.probe		= proc_thermal_pci_probe,
- 	.remove		= proc_thermal_pci_remove,
- 	.id_table	= proc_thermal_pci_ids,
-+	.driver.pm	= &proc_thermal_pm,
- };
- 
- static const struct acpi_device_id int3401_device_ids[] = {
-@@ -503,6 +516,7 @@ static struct platform_driver int3401_driver = {
- 	.driver = {
- 		.name = "int3401 thermal",
- 		.acpi_match_table = int3401_device_ids,
-+		.pm = &proc_thermal_pm,
- 	},
- };
- 
--- 
-2.17.2
+After merging the thermal tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
+boolean symbol THERMAL tested for 'm'? test forced to 'n'
+
+Introduced by commit
+
+  be33e4fbbea5 ("thermal/drivers/core: Remove the module Kconfig's option")
+
+There is a test for =3Dm in drivers/net/ethernet/mellanox/mlxsw/Kconfig.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NhN5W6ljlI1QGFo90A49E2T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHxYcACgkQAVBC80lX
+0GwqVQf+Nu5eg45oBphFCXGaZZP5XcNk7vZpnRvH7Y6JvEdRvP2c74VA+swwC0Tq
+xDOiC+UYQw/JxrTkSvdsEi76BE9skB2y1AGHD2rdKpSBsPPF9hSGrwwUmFqCC6Tv
+ncPG5oJM9vSu5xJhCtdG3Fnd2flobPWOt8OYzF7UmWOI/St4kVipWV4RnbYSvGdQ
+9Q/ChBbg/BIR94TYpwC3p1NqwSL9MlP21cc1dX3eUZuKiIoHPXMQMcnwi3FeyEzS
+yUSVxzO44I0Ivu8jfaU6q+5wMicLkOxr95p7kuw/YhAsfgKazZm0EGcwcf4QJku/
+J3WlHz/IPjYv5S8y6INbvc8wef4Q7A==
+=DfbY
+-----END PGP SIGNATURE-----
+
+--Sig_/NhN5W6ljlI1QGFo90A49E2T--
