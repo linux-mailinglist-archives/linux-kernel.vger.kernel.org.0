@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB0EF3E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E87DF3F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfD3KNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:13:54 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56746 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbfD3KNx (ORCPT
+        id S1727458AbfD3KOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:14:00 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:36946 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfD3KN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:13:53 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3UADXVA010141;
-        Tue, 30 Apr 2019 05:13:33 -0500
+        Tue, 30 Apr 2019 06:13:58 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3UADb0M044378;
+        Tue, 30 Apr 2019 05:13:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1556619213;
-        bh=xPQl9JjmQxyn3zo4bM1wLXs+byZ03Zol063XB/EjZcQ=;
+        s=ti-com-17Q1; t=1556619217;
+        bh=aTzbaXCkitoyyObVP7/290TFOKbW9FPc/rnqgRyc600=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=mo6y7xYpMHsgFc7vM+Voz7QCzhSAu67LApEALVUUjrR9mHjKYVlj6KZZ5OYa4qkEZ
-         GLnzyuAGX7cvCctyDrINmtiKuEW+B/RZxUHeCy7s/+8x0TsK6idfx3GCN3IChQXbMk
-         FqVyxCXmb1/Y1K/P82oNiRAa/N4xlMNl6b8CEtos=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3UADXLh126058
+        b=Fo3hbaZklQ3SvglTk45UBDsFWjKtxj09CmQGaGpRFV84SCc1gO/gmQA59MN28iT8Q
+         nkG7vp1OVgOkcfOYJm9KnmRkBdYo4FUqst/LS7EG4HsaBj5TC9J00o2Ec0xJqaWqgp
+         NlxhWfVqFOgmpqYIPT+Aed/J/jwsoxqR4KzoqMRs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3UADbWm124840
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Apr 2019 05:13:33 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 30 Apr 2019 05:13:37 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 30
- Apr 2019 05:13:32 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2019 05:13:37 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 30 Apr 2019 05:13:32 -0500
+ Frontend Transport; Tue, 30 Apr 2019 05:13:37 -0500
 Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3UAD0Y8085082;
-        Tue, 30 Apr 2019 05:13:28 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3UAD0Y9085082;
+        Tue, 30 Apr 2019 05:13:33 -0500
 From:   Lokesh Vutla <lokeshvutla@ti.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
@@ -48,10 +48,11 @@ CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Lokesh Vutla <lokeshvutla@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>
-Subject: [PATCH v8 06/14] genirq: Introduce irq_chip_{request,release}_resource_parent() apis
-Date:   Tue, 30 Apr 2019 15:42:22 +0530
-Message-ID: <20190430101230.21794-7-lokeshvutla@ti.com>
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH v8 07/14] gpio: thunderx: Use the default parent apis for {request,release}_resources
+Date:   Tue, 30 Apr 2019 15:42:23 +0530
+Message-ID: <20190430101230.21794-8-lokeshvutla@ti.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430101230.21794-1-lokeshvutla@ti.com>
 References: <20190430101230.21794-1-lokeshvutla@ti.com>
@@ -64,69 +65,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce irq_chip_{request,release}_resource_parent() apis so
-that these can be used in hierarchical irqchips.
+thunderx_gpio_irq_{request,release}_resources apis are trying to
+{request,release} resources on parent interrupt. There are default
+apis doing the same. Use the default parent apis instead of writing
+the same code snippet.
 
+Cc: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 ---
 Changes since v7:
--None
+- None
 
- include/linux/irq.h |  2 ++
- kernel/irq/chip.c   | 27 +++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ drivers/gpio/gpio-thunderx.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 7ae8de5ad0f2..fb301cf29148 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -625,6 +625,8 @@ extern int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on);
- extern int irq_chip_set_vcpu_affinity_parent(struct irq_data *data,
- 					     void *vcpu_info);
- extern int irq_chip_set_type_parent(struct irq_data *data, unsigned int type);
-+extern int irq_chip_request_resources_parent(struct irq_data *data);
-+extern void irq_chip_release_resources_parent(struct irq_data *data);
- #endif
+diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
+index 1306722faa5a..715371b5102a 100644
+--- a/drivers/gpio/gpio-thunderx.c
++++ b/drivers/gpio/gpio-thunderx.c
+@@ -363,22 +363,16 @@ static int thunderx_gpio_irq_request_resources(struct irq_data *data)
+ {
+ 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
+ 	struct thunderx_gpio *txgpio = txline->txgpio;
+-	struct irq_data *parent_data = data->parent_data;
+ 	int r;
  
- /* Handling of unhandled and spurious interrupts: */
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 51128bea3846..29d6c7d070b4 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1459,6 +1459,33 @@ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
- 	return -ENOSYS;
+ 	r = gpiochip_lock_as_irq(&txgpio->chip, txline->line);
+ 	if (r)
+ 		return r;
+ 
+-	if (parent_data && parent_data->chip->irq_request_resources) {
+-		r = parent_data->chip->irq_request_resources(parent_data);
+-		if (r)
+-			goto error;
+-	}
++	r = irq_chip_request_resources_parent(data);
++	if (r)
++		gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ 
+-	return 0;
+-error:
+-	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ 	return r;
  }
- EXPORT_SYMBOL_GPL(irq_chip_set_wake_parent);
-+
-+/**
-+ * irq_chip_request_resources_parent - Request resources on the parent interrupt
-+ * @data:	Pointer to interrupt specific data
-+ */
-+int irq_chip_request_resources_parent(struct irq_data *data)
-+{
-+	data = data->parent_data;
-+
-+	if (data->chip->irq_request_resources)
-+		return data->chip->irq_request_resources(data);
-+
-+	return -ENOSYS;
-+}
-+EXPORT_SYMBOL_GPL(irq_chip_request_resources_parent);
-+
-+/**
-+ * irq_chip_release_resources_parent - Release resources on the parent interrupt
-+ * @data:	Pointer to interrupt specific data
-+ */
-+void irq_chip_release_resources_parent(struct irq_data *data)
-+{
-+	data = data->parent_data;
-+	if (data->chip->irq_release_resources)
-+		data->chip->irq_release_resources(data);
-+}
-+EXPORT_SYMBOL_GPL(irq_chip_release_resources_parent);
- #endif
  
- /**
+@@ -386,10 +380,8 @@ static void thunderx_gpio_irq_release_resources(struct irq_data *data)
+ {
+ 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
+ 	struct thunderx_gpio *txgpio = txline->txgpio;
+-	struct irq_data *parent_data = data->parent_data;
+ 
+-	if (parent_data && parent_data->chip->irq_release_resources)
+-		parent_data->chip->irq_release_resources(parent_data);
++	irq_chip_release_resources_parent(data);
+ 
+ 	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ }
 -- 
 2.21.0
 
