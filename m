@@ -2,69 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3049F207
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0323AF21E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfD3IbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:31:06 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22719 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfD3IbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:31:06 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 01:31:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,413,1549958400"; 
-   d="scan'208";a="144800557"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.147.114])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Apr 2019 01:31:03 -0700
-Date:   Tue, 30 Apr 2019 16:35:05 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Eric W Biederman <ebiederm@xmission.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ying Huang <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] latencytop lock usage improvement
-Message-ID: <20190430083505.n5mozwybbnwydo3z@shbuild888>
-References: <1556525011-28022-1-git-send-email-feng.tang@intel.com>
- <20190430080910.GI2623@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430080910.GI2623@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1726586AbfD3IiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:38:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43632 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfD3IiE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:38:04 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hLOGz-0002Pv-O3; Tue, 30 Apr 2019 08:37:58 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com
+Cc:     linus.walleij@linaro.org, hotwater438@tutanota.com,
+        hdegoede@redhat.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH v2] pinctrl: intel: Clear interrupt status in mask/unmask callback
+Date:   Tue, 30 Apr 2019 16:37:53 +0800
+Message-Id: <20190430083753.18197-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
+added because clearing interrupt status bit is required to avoid
+unexpected behavior.
 
-On Tue, Apr 30, 2019 at 10:09:10AM +0200, Peter Zijlstra wrote:
-> On Mon, Apr 29, 2019 at 04:03:28PM +0800, Feng Tang wrote:
-> > Hi All,
-> > 
-> > latencytop is a very nice tool for tracing system latency hotspots, and
-> > we heavily use it in our LKP test suites.
-> 
-> What data does latency-top give that perf cannot give you? Ideally we'd
-> remove latencytop entirely.
+Turns out the unmask callback also needs the fix, which can solve weird
+IRQ triggering issues on I2C touchpad ELAN1200.
 
-Thanks for the review. In 0day/LKP test service, we have many tools for
-monitoring and analyzing the test results, perf is the most important
-one, which has the most parts in our auto-generated comparing results.   
-For example to identify spinlock contentions and system hotspots.
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2:
+- Clear interrupt status for both mask/umask cases.
+- Reduce calculation under irq spinlock.
 
-latencytop is another tool we used to find why systems go idle, like why
-workload chose to sleep or waiting for something. 
+ drivers/pinctrl/intel/pinctrl-intel.c | 37 +++++----------------------
+ 1 file changed, 6 insertions(+), 31 deletions(-)
 
-Thanks,
-Feng
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 3b1818184207..717148d2818c 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -913,35 +913,6 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	}
+ }
+ 
+-static void intel_gpio_irq_enable(struct irq_data *d)
+-{
+-	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
+-	const struct intel_community *community;
+-	const struct intel_padgroup *padgrp;
+-	int pin;
+-
+-	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
+-	if (pin >= 0) {
+-		unsigned int gpp, gpp_offset, is_offset;
+-		unsigned long flags;
+-		u32 value;
+-
+-		gpp = padgrp->reg_num;
+-		gpp_offset = padgroup_offset(padgrp, pin);
+-		is_offset = community->is_offset + gpp * 4;
+-
+-		raw_spin_lock_irqsave(&pctrl->lock, flags);
+-		/* Clear interrupt status first to avoid unexpected interrupt */
+-		writel(BIT(gpp_offset), community->regs + is_offset);
+-
+-		value = readl(community->regs + community->ie_offset + gpp * 4);
+-		value |= BIT(gpp_offset);
+-		writel(value, community->regs + community->ie_offset + gpp * 4);
+-		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+-	}
+-}
+-
+ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -954,15 +925,20 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 	if (pin >= 0) {
+ 		unsigned int gpp, gpp_offset;
+ 		unsigned long flags;
+-		void __iomem *reg;
++		void __iomem *reg, *is;
+ 		u32 value;
+ 
+ 		gpp = padgrp->reg_num;
+ 		gpp_offset = padgroup_offset(padgrp, pin);
+ 
+ 		reg = community->regs + community->ie_offset + gpp * 4;
++		is = community->regs + community->is_offset + gpp * 4;
+ 
+ 		raw_spin_lock_irqsave(&pctrl->lock, flags);
++
++		/* Clear interrupt status first to avoid unexpected interrupt */
++		writel(BIT(gpp_offset), is);
++
+ 		value = readl(reg);
+ 		if (mask)
+ 			value &= ~BIT(gpp_offset);
+@@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+ 
+ static struct irq_chip intel_gpio_irqchip = {
+ 	.name = "intel-gpio",
+-	.irq_enable = intel_gpio_irq_enable,
+ 	.irq_ack = intel_gpio_irq_ack,
+ 	.irq_mask = intel_gpio_irq_mask,
+ 	.irq_unmask = intel_gpio_irq_unmask,
+-- 
+2.17.1
+
