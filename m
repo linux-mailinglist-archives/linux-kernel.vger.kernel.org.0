@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 051D2F777
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3303F6B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfD3L7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:59:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59402 "EHLO mail.kernel.org"
+        id S1731337AbfD3LvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:51:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728087AbfD3Lq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:46:28 -0400
+        id S1731325AbfD3LvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:51:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31B6121744;
-        Tue, 30 Apr 2019 11:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AB9820449;
+        Tue, 30 Apr 2019 11:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624787;
-        bh=TjLZqtyb6luG6jJUsMYn1zemKgi8FYvKfA9jey+XKrs=;
+        s=default; t=1556625063;
+        bh=Wb9v6+JfhmpyAoywsRFXiLGKnv7wZi6IPZiBNKCeCaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CyC28JYw1Fj9F+WnRFyEz6SS4vzNj+AhaKCrOABzuLHISegO/066Eu+qV8SunicRG
-         vj4MOWZ+QKH9ybO6VFJTw42WIzLtJvx+K+ZojBzpHpBuxUQvfEtRby7qwmWDP32E7y
-         hOwPq6KSjPH9fmgCyf5BjQf8Sw3Y5So1NbySJplg=
+        b=1u4PGz9kkHgLlXzpZoih99AlXc/GZYZp1kfP1tf00HakK1RMzy7lk3KsN3ltp/cyp
+         C2Ef1UfW9/Q8V8hzIgp7CgBzARHXVT7sFRVv1M6zIwWl+viMxoQESYGRd1fp0McQVX
+         Yq6mhDqpsqy2d2mDvivw+7weDiMgxrG0yq2ao40s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 072/100] aio: abstract out io_event filler helper
+        stable@vger.kernel.org,
+        syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 50/89] tipc: handle the err returned from cmd header function
 Date:   Tue, 30 Apr 2019 13:38:41 +0200
-Message-Id: <20190430113612.146110455@linuxfoundation.org>
+Message-Id: <20190430113612.040475975@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 875736bb3f3ded168469f6a14df7a938416a99d5 upstream.
+commit 2ac695d1d602ce00b12170242f58c3d3a8e36d04 upstream.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Syzbot found a crash:
+
+  BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
+  Call Trace:
+    tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
+    __tipc_nl_compat_dumpit+0x59e/0xda0 net/tipc/netlink_compat.c:215
+    tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:280
+    tipc_nl_compat_handle net/tipc/netlink_compat.c:1226 [inline]
+    tipc_nl_compat_recv+0x1b5f/0x2750 net/tipc/netlink_compat.c:1265
+    genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+    genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+    netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2477
+    genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+    netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+    netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1336
+    netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+    sock_sendmsg_nosec net/socket.c:622 [inline]
+    sock_sendmsg net/socket.c:632 [inline]
+
+  Uninit was created at:
+    __alloc_skb+0x309/0xa20 net/core/skbuff.c:208
+    alloc_skb include/linux/skbuff.h:1012 [inline]
+    netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+    netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+    sock_sendmsg_nosec net/socket.c:622 [inline]
+    sock_sendmsg net/socket.c:632 [inline]
+
+It was supposed to be fixed on commit 974cb0e3e7c9 ("tipc: fix uninit-value
+in tipc_nl_compat_name_table_dump") by checking TLV_GET_DATA_LEN(msg->req)
+in cmd->header()/tipc_nl_compat_name_table_dump_header(), which is called
+ahead of tipc_nl_compat_name_table_dump().
+
+However, tipc_nl_compat_dumpit() doesn't handle the error returned from cmd
+header function. It means even when the check added in that fix fails, it
+won't stop calling tipc_nl_compat_name_table_dump(), and the issue will be
+triggered again.
+
+So this patch is to add the process for the err returned from cmd header
+function in tipc_nl_compat_dumpit().
+
+Reported-by: syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/aio.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ net/tipc/netlink_compat.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1059,6 +1059,15 @@ static inline void iocb_put(struct aio_k
- 	}
- }
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -267,8 +267,14 @@ static int tipc_nl_compat_dumpit(struct
+ 	if (msg->rep_type)
+ 		tipc_tlv_init(msg->rep, msg->rep_type);
  
-+static void aio_fill_event(struct io_event *ev, struct aio_kiocb *iocb,
-+			   long res, long res2)
-+{
-+	ev->obj = (u64)(unsigned long)iocb->ki_user_iocb;
-+	ev->data = iocb->ki_user_data;
-+	ev->res = res;
-+	ev->res2 = res2;
-+}
-+
- /* aio_complete
-  *	Called when the io request on the given iocb is complete.
-  */
-@@ -1086,10 +1095,7 @@ static void aio_complete(struct aio_kioc
- 	ev_page = kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
- 	event = ev_page + pos % AIO_EVENTS_PER_PAGE;
+-	if (cmd->header)
+-		(*cmd->header)(msg);
++	if (cmd->header) {
++		err = (*cmd->header)(msg);
++		if (err) {
++			kfree_skb(msg->rep);
++			msg->rep = NULL;
++			return err;
++		}
++	}
  
--	event->obj = (u64)(unsigned long)iocb->ki_user_iocb;
--	event->data = iocb->ki_user_data;
--	event->res = res;
--	event->res2 = res2;
-+	aio_fill_event(event, iocb, res, res2);
- 
- 	kunmap_atomic(ev_page);
- 	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 	arg = nlmsg_new(0, GFP_KERNEL);
+ 	if (!arg) {
 
 
