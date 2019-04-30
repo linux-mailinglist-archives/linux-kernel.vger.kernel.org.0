@@ -2,85 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69A56F273
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F5AF27B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:10:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfD3JIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:08:11 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36754 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfD3JIL (ORCPT
+        id S1726830AbfD3JI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:08:58 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42838 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfD3JI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:08:11 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u17so10279000lfi.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 02:08:10 -0700 (PDT)
+        Tue, 30 Apr 2019 05:08:56 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c190so7674263qke.9;
+        Tue, 30 Apr 2019 02:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9HjQ88MY4ZiDc1bI5n4MIBBh4bZ2A3E/q/QZEBk7alU=;
-        b=KCIillAxrZrXB5w7B79fb19nYg7F3YCwf/ztmA9aoE9VUD7WLkEyGA1XTGj7Kk7I9I
-         Q513ZwfxLRI6HJ4DrN1ZMjXfa842QSSs6yPwd0FUt+xZKwllptZpyag00LUFcGYK3EsC
-         XdEbFchQbx1GNf/krTIlE74LPo3MefjF2xV0uZ5Rt9BcNTBf/J2/0tgE/CjrS+/46uwD
-         ARjeDWBBqlnHHRKTKdiGH05RWZ9Qh2z5qOAaNQx9+9uWyCnSM+J6HGsn9mtkAkyisNb6
-         WLz5Pn17WNGE47oaQuTDdvGZvJ9oPYfrIEusa3M0SiUmfS8nh2ODl35nGOliRsB/77U5
-         zOrQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LqvnYPQ4d9M13B73C2lxCghPlB6ymNoLCZdoFF0EvzU=;
+        b=KZcmA2f4niqqeByEknlgvYCwFcNZ9VP/keiX4wNYO4YWPJhWEv5DbpN4SSJDP1ZgkW
+         fC75jxAiWjQ7tuRjtsR8bAl1a3KRebWwST0xV9C744PnN3EApN4vKEhjJB7MmAV4Y06x
+         Cw8GL4ez5HaU+RtoYR0CfNIZLRhZk8GSP1zBXc3W8zCjGSSydlZdoaxc8/Ob/YvW6/n1
+         iE4pAW0LmBkb40Gy+gRyAU34G4RkQ1ZThBZzOc2M7OKDzSKrrwKo8xU5aM4FCI7GzTwg
+         GsyiiOB/21Kt7cwbq4QFavJ5uds8u8VaX1mWTr2Yet7d0VChfLKNiJgkcr230zBACriY
+         pV9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9HjQ88MY4ZiDc1bI5n4MIBBh4bZ2A3E/q/QZEBk7alU=;
-        b=CRs2/jDPmNgUUM1lD+017iprN+Uxzi4z7yp1t0bS55eSukG9f7VrrTMHfzQhhwBqDd
-         Yfw1jRKUDIVXVMTSq9/LGeUJ+FVEQVmvEpXDx4hKld+qb+VrcUgKMC4MCf/wXlvCWirA
-         ZjjICN/cBW3tvuqS1Eojvjb+cLZGy+2dLeoOOsLqaxZYSIHl/LWiocQKfR1nprRgvET/
-         Uojb2KhRFCrMVHh+xNuK7YScXZB5/IDKTbk5YBjMseBxeYjvUTtLJ3aEiGvMvJAgD/hQ
-         YANyIuH8IJQbSQBFXTjblitW7H5vZ2zgOLHFy1e55nAAHRBDVVUXkUMZWlsghCJz7HW6
-         RNgQ==
-X-Gm-Message-State: APjAAAXEsdq5kpuBP2HyOIkpSLuE/QYr1LmUVq5rKUshcFIB350xrOID
-        +YPci3TsxVRvnliG5mQ5uCc=
-X-Google-Smtp-Source: APXvYqxC1zZd7LprV/dgF44Ba5ne0SfC/5gxd6UPTeJBnWPoKvFHoqjjCKTMw2d90XkBC0hQgb2Gkw==
-X-Received: by 2002:a19:f50f:: with SMTP id j15mr36291099lfb.135.1556615289352;
-        Tue, 30 Apr 2019 02:08:09 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id u22sm1374696lji.40.2019.04.30.02.08.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 02:08:08 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 45A444603CA; Tue, 30 Apr 2019 12:08:08 +0300 (MSK)
-Date:   Tue, 30 Apr 2019 12:08:08 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        akpm@linux-foundation.org, arunks@codeaurora.org, brgl@bgdev.pl,
-        geert+renesas@glider.be, ldufour@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mguzik@redhat.com, mhocko@kernel.org, rppt@linux.ibm.com,
-        vbabka@suse.cz
-Subject: Re: [PATCH 3/3] prctl_set_mm: downgrade mmap_sem to read lock
-Message-ID: <20190430090808.GC2673@uranus.lan>
-References: <20190418182321.GJ3040@uranus.lan>
- <20190430081844.22597-1-mkoutny@suse.com>
- <20190430081844.22597-4-mkoutny@suse.com>
- <af8f7958-06aa-7134-c750-b7a994368e89@virtuozzo.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LqvnYPQ4d9M13B73C2lxCghPlB6ymNoLCZdoFF0EvzU=;
+        b=GojE6XBEY2rP8JfG77+XSNKwv+cdxdn/YXKJpoK4pzNVJ558meA1HCCwBid5YETzri
+         EH9pJZY/y76gAs5aYP0Q3ycAbNOJ24oBjettwkB9KWQbVtlHKKMheFZBvCLeFCyJYphs
+         5PEwMrtGuvQAkfKRd0gRx5qLKcZ32xdbGXIuM5ocmEkyJCQ7prCisQX2pOBRzxyMeQHa
+         gQOxc17WqCAkiud/VebWS1lrbabvKJLR48PLYm7x2rZNouUb28Iz5Ue7CSV9giIzvh2o
+         V3GM9/nB8qvbPer1cMvLY7vSrkpUNPChAf9tzf263qJfACFvqZxa7fFJ956XxH87go2z
+         YeCg==
+X-Gm-Message-State: APjAAAX//3WRRaajd52z4H4AkIpVbFVPaXMJov5cFo1v2Xkn+JSxUENH
+        JMQkBxZUxa3DeVxuv5IUus97FytERy1aS7huchT7sEKPYeY=
+X-Google-Smtp-Source: APXvYqwJnFMNmOWp4NCMQ/VWckpj+QMhlMDViEHvtuvWCtTXAo1bj68NZ74qvdtrNtiHaUIPQpel6OBjZat4HvJW7TQ=
+X-Received: by 2002:a37:6557:: with SMTP id z84mr24988121qkb.221.1556615334948;
+ Tue, 30 Apr 2019 02:08:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af8f7958-06aa-7134-c750-b7a994368e89@virtuozzo.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com> <20190430082332.GB2677@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190430082332.GB2677@hirez.programming.kicks-ass.net>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 30 Apr 2019 17:08:43 +0800
+Message-ID: <CAAM7YA=YOM79GJK8b7OOQbzT_-sYRD2UFHYithY7Li1yQt5Hog@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: fix improper use of smp_mb__before_atomic()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 11:55:45AM +0300, Kirill Tkhai wrote:
-> > -	up_write(&mm->mmap_sem);
-> > +	spin_unlock(&mm->arg_lock);
-> > +	up_read(&mm->mmap_sem);
-> >  	return error;
-> 
-> Hm, shouldn't spin_lock()/spin_unlock() pair go as a fixup to existing code
-> in a separate patch? 
-> 
-> Without them, the existing code has a problem at least in get_mm_cmdline().
+On Tue, Apr 30, 2019 at 4:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Apr 29, 2019 at 10:15:00PM +0200, Andrea Parri wrote:
+> > This barrier only applies to the read-modify-write operations; in
+> > particular, it does not apply to the atomic64_set() primitive.
+> >
+> > Replace the barrier with an smp_mb().
+> >
+>
+> > @@ -541,7 +541,7 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
+> >                                          long long release_count,
+> >                                          long long ordered_count)
+> >  {
+> > -     smp_mb__before_atomic();
+>
+> same
+>         /*
+>          * XXX: the comment that explain this barrier goes here.
+>          */
+>
 
-Seems reasonable to merge it into patch 1.
+makes sure operations that setup readdir cache (update page cache and
+i_size) are strongly ordered with following atomic64_set.
+
+> > +     smp_mb();
+>
+> >       atomic64_set(&ci->i_complete_seq[0], release_count);
+> >       atomic64_set(&ci->i_complete_seq[1], ordered_count);
+> >  }
+> > --
+> > 2.7.4
+> >
