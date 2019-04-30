@@ -2,76 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B8FF75E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D584AF6ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfD3L6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:58:47 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35847 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730650AbfD3LrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:47:04 -0400
-X-Originating-IP: 109.213.14.175
-Received: from localhost (alyon-652-1-31-175.w109-213.abo.wanadoo.fr [109.213.14.175])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1D5E31C000C;
-        Tue, 30 Apr 2019 11:47:02 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 13:47:02 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] rtc: digicolor: set range
-Message-ID: <20190430114702.GD11339@piout.net>
-References: <20190430093212.28425-1-alexandre.belloni@bootlin.com>
- <20190430093212.28425-2-alexandre.belloni@bootlin.com>
- <877ebbu3lz.fsf@tarshish>
+        id S1731069AbfD3Lxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:53:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50050 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730755AbfD3Lxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:53:43 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76888859FB;
+        Tue, 30 Apr 2019 11:53:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A86E22B3B5;
+        Tue, 30 Apr 2019 11:53:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Apr 2019 13:53:40 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 13:53:33 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        rostedt@goodmis.org, dancol@google.com, sspatil@google.com,
+        jannh@google.com, surenb@google.com, timmurray@google.com,
+        Jonathan Kowalski <bl0pbl33p@gmail.com>,
+        torvalds@linux-foundation.org, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jann Horn <jann@thejh.net>,
+        linux-kselftest@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Serge Hallyn <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, viro@zeniv.linux.org.uk,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] Add polling support to pidfd
+Message-ID: <20190430115332.GB23020@redhat.com>
+References: <20190425190010.46489-1-joel@joelfernandes.org>
+ <20190425222359.sqhboc4x4daznr6r@brauner.io>
+ <20190428162405.GA6757@redhat.com>
+ <20190429140245.GB233442@google.com>
+ <20190429142030.GA17715@redhat.com>
+ <20190429163259.GA201155@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <877ebbu3lz.fsf@tarshish>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190429163259.GA201155@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 30 Apr 2019 11:53:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/04/2019 14:36:24+0300, Baruch Siach wrote:
-> Hi Alexandre,
-> 
-> On Tue, Apr 30 2019, Alexandre Belloni wrote:
-> 
-> > While the range of REFERENCE + TIME is actually 33 bits, the counter
-> > itself (TIME) is a 32-bits seconds counter.
+On 04/29, Joel Fernandes wrote:
+>
+> On Mon, Apr 29, 2019 at 04:20:30PM +0200, Oleg Nesterov wrote:
+> > On 04/29, Joel Fernandes wrote:
+> > >
+> > > However, in your code above, it is avoided because we get:
+> > >
+> > > Task A (poller)		Task B (exiting task being polled)
+> > > ------------            ----------------
+> > > poll() called
+> > > add_wait_queue()
+> > > 			exit_state is set to non-zero
+> > > read exit_state
+> > > remove_wait_queue()
+> > > 			wake_up_all()
 > >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > ---
-> >  drivers/rtc/rtc-digicolor.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
-> > index 5bb14c56bc9a..e6e16aaac254 100644
-> > --- a/drivers/rtc/rtc-digicolor.c
-> > +++ b/drivers/rtc/rtc-digicolor.c
-> > @@ -206,6 +206,7 @@ static int __init dc_rtc_probe(struct platform_device *pdev)
-> >  	platform_set_drvdata(pdev, rtc);
-> >  
-> >  	rtc->rtc_dev->ops = &dc_rtc_ops;
-> > +	rtc->rtc_dev->range_max = U32_MAX;
-> 
-> Where can I find documentation on the meaning and usage of the range_max
-> value? I could not find anything in the kernel source.
-> 
+> > just to clarify... No, sys_poll() path doesn't do remove_wait_queue() until
+> > it returns to user mode, and that is why we can't race with set-exit_code +
+> > wake_up().
+>
+> I didn't follow what you mean, the removal from the waitqueue happens in
+> free_poll_entry() called from poll_freewait() which happens from
+> do_sys_poll() which is before the syscall returns to user mode. Could you
+> explain more?
 
-It should be set to the maximum UNIX timestamp the RTC can be set to
-while keeping range_min to range_max contiguous.
+Hmm. I do not really understand the question... Sure, do_sys_poll() does
+poll_freewait() before sysret or even before return from syscall, but why
+does this matter? This is the exit path, it frees the memory, does fput(),
+etc, f_op->poll() won't be call after that.
 
-In the digicolor case, you could go up to 8589934590 (Wed Mar 16
-12:56:30 UTC 2242) but the driver only writes DC_RTC_REFERENCE and I'm
-not sure it can also update DC_RTC_TIME safely.
+> > pidfd_poll() can race with the exiting task, miss exit_code != 0, and return
+> > zero. However, do_poll() won't block after that and pidfd_poll() will be called
+> > again.
+>
+> Here also I didn't follow what you mean. If exit_code is read as 0 in
+> pidfd_poll(), then in do_poll() the count will be 0 and it will block in
+> poll_schedule_timeout(). Right?
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+No. Please note the pwq->triggered check and please read __pollwake().
+
+But if you want to understand this you can forget about poll/select. It is
+a bit complicated, in particular because it has to do set_current_state()
+right  before schedule() and thus it plays games with pwq->triggered. But in
+essence this doesn't differ too much from the plain wait_event-like code
+(although you can also look at wait_woken/woken_wake_function).
+
+If remove_wait_queue() could happem before wake_up_all() (like in your pseudo-
+code above), then pidfd_poll() or any other ->poll() method could miss _both_
+the condition and wakeup. But sys_poll() doesn't do this, so it is fine to miss
+the condition and rely on wake_up_all() which ensures we won't block and the
+next iteration must see condition == T.
+
+Oleg.
+
