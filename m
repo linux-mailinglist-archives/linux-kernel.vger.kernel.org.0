@@ -2,83 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18BE7FC84
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0005EFC87
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfD3PLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:11:17 -0400
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:38478 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfD3PLR (ORCPT
+        id S1726155AbfD3PMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:12:51 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35156 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfD3PMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:11:17 -0400
-Received: by mail-wr1-f45.google.com with SMTP id k16so21479869wrn.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 08:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PGiYlClgfBOJ5ohsDwi9C047d4chI2F/P2dOK60EZ0o=;
-        b=TfYfer8CbMB5gDd86RRtlcFRd5FvMb8pvW6O1iyrHi8pUZ0V7ZsnagLGIr68rsSXOx
-         VP5xbTv8+aUDBP7J4yPbz72Tm1F4ltBC44P+WlVDZowGnoNFkQ3Ug40TSkzk1I6i4RnY
-         5jTQ/eRoC1NfOZbZQk0qPnszVHke9il+uCzyaV7ThsJ3IA/6HiuBqDJJQIMFt6ANSdCN
-         0tJMzPz7dZLmbZ5kyZeUdbhiIcaScb6gOf9EQwpy6YRecYIeTrzJkVlz2T325VY4OfS1
-         DHLZj/lqUt+2v1in4KC1q3d8BDwsPZw+DgJiyHrF94kRUKB8V24gKqgspKxacqn0qJGB
-         TCKA==
+        Tue, 30 Apr 2019 11:12:50 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w197so11545449oia.2;
+        Tue, 30 Apr 2019 08:12:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PGiYlClgfBOJ5ohsDwi9C047d4chI2F/P2dOK60EZ0o=;
-        b=XqYBeodaQ70TipQ5KIlCJ40tv/6osn1fVKO/4nxOXaZ9QlJQtukHnrkBfD9AIoLESH
-         zVKn9Eq1Lmr4Ndah5oJ1mBpzxovSsx7BRXh6GF7oOdpwStOzAnDArD0x+734x8tZN3g1
-         hjApOgyE0XmamTgN0InKVLlhYaGO3YCaU2z3hvgmRLn3DOwZaEyy0+Yz5igeXvt7/d++
-         Uu1gG3bphDMYMkAS5+ZbIBa/Kcptkw0UcpsF7XmV9RaFyQhWNDLxa8XcBEzLIN72U7eV
-         gIIofnmsWTNFz/wzdzIu8gtdf+sFUuPK8VRZzGKSKYAP2gT65xZABWw1o2dY+s2ICTcd
-         udSg==
-X-Gm-Message-State: APjAAAX9i+V2LH8o20xDTxRjCZptd0dHTFLBsB2kI5eEuW2GO2S6n3kb
-        9HiefqKmbmccFTesr/PGLn/2wLOe
-X-Google-Smtp-Source: APXvYqx7Z4+dHK6NMNWA4hPj6Dlz0il52J7CeL+oP7a6/rDrPEe/wy2Ygzx8XZgTig1Q2rkJoYNP3w==
-X-Received: by 2002:a05:6000:110a:: with SMTP id z10mr1257785wrw.86.1556637076046;
-        Tue, 30 Apr 2019 08:11:16 -0700 (PDT)
-Received: from L2122.tmt.telital.com (static-82-85-31-68.clienti.tiscali.it. [82.85.31.68])
-        by smtp.gmail.com with ESMTPSA id o130sm3255004wmo.43.2019.04.30.08.11.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Apr 2019 08:11:14 -0700 (PDT)
-From:   Daniele Palmas <dnlplm@gmail.com>
-To:     sdias@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, truong@codeaurora.org,
-        dnlplm@gmail.com
-Subject: Re: MHI code review
-Date:   Tue, 30 Apr 2019 17:10:58 +0200
-Message-Id: <1556637058-22331-1-git-send-email-dnlplm@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531166894-30984-1-git-send-email-sdias@codeaurora.org>
-References: <1531166894-30984-1-git-send-email-sdias@codeaurora.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7aahexJfH3+ZCWyzwJ4HVTibyUsm/U8CQ+avun/lb8w=;
+        b=M5GbafMPEw1FpUNuPjUwms7Cxan/YhI0LBNBnJ1NgEifzyephSGFy7trreF1QLuWZN
+         9phJCGSBD9crQT60BJWkeBZS7Be36B4Qpht0y9svV1UC5W42Cwi2JFbAx5R7+fTaWhc6
+         ZUJAvGzg5l3HA/3dODChYMIBwoNJKnT2U9yDXYmeTivpKtHxLK98B9Q7jwvqn+sltgUx
+         rZYXQUDQUAB0IrO52LJKGp4vmQKYrPwYHgUq7tv2g/5LHZzTBJ5HIjUG0pxyY+ULMkp+
+         +PlJ+eUK5NJGibNv0vYV9DkaLrR/mOHxWuoGJZ/0tsm392BWIEIU1stUlXu4ahSz0eHq
+         xbXg==
+X-Gm-Message-State: APjAAAXGD74hm5RcB9NSOHchEisoAEiBDMOg2gzHg5RjR3IcBeYpu+fv
+        ia4I9xI92hsFSxJlr3r+tHCCh9I=
+X-Google-Smtp-Source: APXvYqw+7CtQGpDl9egPhX/Ibog5Hs4VhoUaMkukQMspgHXvHnYdx7igDWd16RY8bjIjwyxtwGAzZQ==
+X-Received: by 2002:aca:55c1:: with SMTP id j184mr3206627oib.119.1556637164785;
+        Tue, 30 Apr 2019 08:12:44 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o1sm16620919otj.11.2019.04.30.08.12.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 08:12:43 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 10:12:43 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Guillaume La Roque <glaroque@baylibre.com>
+Cc:     linus.walleij@linaro.org, mark.rutland@arm.com,
+        khilman@baylibre.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: add a 'drive-strength-uA'
+ property
+Message-ID: <20190430151243.GA6879@bogus>
+References: <20190418124758.24022-1-glaroque@baylibre.com>
+ <20190418124758.24022-2-glaroque@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190418124758.24022-2-glaroque@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sujeev,
+On Thu, Apr 18, 2019 at 02:47:55PM +0200, Guillaume La Roque wrote:
+> This property allow drive-strength parameter in uA instead of mA.
+> 
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> index cef2b5855d60..fc7018459aa2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> @@ -258,6 +258,7 @@ drive-push-pull		- drive actively high and low
+>  drive-open-drain	- drive with open drain
+>  drive-open-source	- drive with open source
+>  drive-strength		- sink or source at most X mA
+> +drive-strength-uA	- sink or source at most X uA
+>  input-enable		- enable input on pin (no effect on output, such as
+>  			  enabling an input buffer)
+>  input-disable		- disable input on pin (no effect on output, such as
+> @@ -326,6 +327,8 @@ arguments are described below.
+>  
+>  - drive-strength takes as argument the target strength in mA.
+>  
+> +- drive-strength-uA takes as argument the target strength in uA.
+> +
 
-> Hi Greg Kroah-Hartman\Arnd Bergmann and community
->
-> Thank you for all the feedback, I believe I have addressed all the comments from previous
-> patches. Also, I am excluding mhi network driver in this series. I still have some modifications
-> to do.
->
-> Please review the new patch series and share your feedback.
->
-> Thanks again
->
-> Sincerely,
-> Sujeev
+We have standard unit suffixes defined in bindings/property-units.txt. 
+Use them please.
 
-are you going to continue working on this series?
-
-Can this series be used with PCIe SDX20/24/55 based modems?
-
-If yes, it would really be important to have this integrated into an official kernel.
-
-Thanks,
-Daniele
+Rob
