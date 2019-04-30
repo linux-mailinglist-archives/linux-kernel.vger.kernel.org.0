@@ -2,110 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B18AEF209
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1999F226
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:42:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfD3IbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:31:17 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37195 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbfD3IbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:31:16 -0400
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id EF872FF80F;
-        Tue, 30 Apr 2019 08:31:12 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 10:40:01 +0200
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] PCI: aardvark: Use LTSSM state to build link training
- flag
-Message-ID: <20190430084000.GT2754@voidbox.localdomain>
-References: <20190316161243.29517-1-repk@triplefau.lt>
- <20190425210439.GG11428@google.com>
- <20190425222756.GR2754@voidbox.localdomain>
- <20190429194532.GA119268@google.com>
+        id S1726570AbfD3ImN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:42:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbfD3ImN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:42:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36AE12080C;
+        Tue, 30 Apr 2019 08:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556613732;
+        bh=hEJeedReyrvMTpELjkKW1DKI7hOCgymeSH+xAu+sczM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dEg27DCShWwjcKfJpSN7jb8hw9W+I6X7E2sxVT9Fj4EuClzFAADCY696yzjHssROH
+         W/LnxaInMXg7CCA0UWJMYF1LKPkU087xraspvXQRxJVPYA9N5OdPaZ7W/OsV4BBFW/
+         R2FFmGMugS74G/TSkL1aMwotBDq30UBehjlQcb9s=
+Date:   Tue, 30 Apr 2019 10:42:10 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Fix kobject memleak
+Message-ID: <20190430084210.GA11737@kroah.com>
+References: <20190430010923.17092-1-tobin@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190429194532.GA119268@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190430010923.17092-1-tobin@kernel.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 02:45:32PM -0500, Bjorn Helgaas wrote:
-> On Fri, Apr 26, 2019 at 12:27:57AM +0200, Remi Pommarel wrote:
-> > On Thu, Apr 25, 2019 at 04:04:39PM -0500, Bjorn Helgaas wrote:
-> > > On Sat, Mar 16, 2019 at 05:12:43PM +0100, Remi Pommarel wrote:
+On Tue, Apr 30, 2019 at 11:09:23AM +1000, Tobin C. Harding wrote:
+> Currently error return from kobject_init_and_add() is not followed by a
+> call to kobject_put().  This means there is a memory leak.
 > 
-> > > It sounds like reading and/or writing some registers during a retrain
-> > > causes some sort of EL1 error?  Is this a separate erratum?  Is there
-> > > a list of the registers and operations (read/write) that are affected?
-> > > The backtrace below suggests that it's actually a read of LNKCAP or
-> > > LNKCTL (not LNKSTA) that caused the error.
-> > 
-> > IIUC, the backtrace below produces an EL1 error when doing a PIO
-> > transfer while the link is still retraining. See my comment below for
-> > more about that. But accessing any root complex's register seems fine.
-> > > 
-> > > It sounds like there are really two problems:
-> > > 
-> > >   1) Reading PCI_EXP_LNKSTA (or the Aardvark equivalent) doesn't give
-> > >      valid data for PCI_EXP_LNKSTA_LT.
-> > 
-> > The 1) is correct.
-> > 
-> > >   2) Sometimes config reads cause EL1 errors.
-> > 
-> > Actually EL1 error happens when we try to access device's register with
-> > a PIO transfer, which is when we try to use the link while it is being
-> > retrained.
-> > 
-> > IMHO, 1) and 2) are linked. ASPM core tries to use the link too early
-> > because it has read invalid data for PCI_EXP_LNKSTA_LT.
+> Add call to kobject_put() in error path of kobject_init_and_add().
 > 
-> From the software point of view, there is no such thing as "using the
-> link too early".  The pattern of:
-> 
->   - Verify that link is up
->   - Access device on other end of link
-> 
-> is always racy because the link can go down at any time due to hotplug
-> or other issues.  In particular, the link can go down after we verify
-> that the link is up, but before we access the device.
-> 
-> Software must be able to deal with that gracefully.  I don't know
-> whether that means catching and recovering from that EL1 error, or
-> masking it, or what.  This is architecture-specific stuff that's
-> outside the scope of PCIe itself.
-> 
-> But a link going down should never directly cause a kernel panic.
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 
-Ah, yes, you are right. There is "worse" than the EL1 error though, boot
-can also hang while accessing those registers when link is not in a
-ready state.
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-So, yes, I do agree that there are two issues here. The
-PCI_EXP_LNKSTA_LT register one and the EL1 error or hang one. On the
-other hand I don't think I can split it in two because this patch only
-fixes the former which happens to not trigger the latter (ASPM core is
-kind enough to wait for the link to be ready after retraining).
-
-Thus the second issue remains and hot plugging for example would
-likely trigger it. I'll try to see with Thomas if we could reach the
-vendor about that.
-
-By the way, I have replied to Lorenzo with, what I think, is a more
-legible patch. I could send a v3 with it if you prefer this one.
-
--- 
-Remi
