@@ -2,136 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6567EF59B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E163F5A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbfD3LaP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 07:30:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40750 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726202AbfD3LaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:30:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 79238AF95;
-        Tue, 30 Apr 2019 11:30:12 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 13:30:11 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC] [PATCH] oops: add "begin trace" + oops_id to match "end
- trace" + oops_id
-Message-ID: <20190430113011.amg6cbpriityo2e5@pathway.suse.cz>
-References: <9b8a2852-60ec-4519-fac8-4e1aa2763970@infradead.org>
+        id S1727977AbfD3Laq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:30:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34359 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfD3Lap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:30:45 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3UBUEME1350830
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Apr 2019 04:30:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3UBUEME1350830
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556623815;
+        bh=WhZbhuJokP1cXy8dq38BMW62S+nhjuqIofFpVeNtwlQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=NUXAOg55Kzf7uIAgTL+FyaFBlKrz37KJiHDG1ojJh7ufwY0QeJFI61DKfNNqmmMS4
+         b6WocASQT10yd3d71erhssxC1uunXAZneiFIPCLJ18jA7mSNsVdqsXP4u44cMI+qCq
+         ZZlsBkHlKWl6enDEUqSob8n6v9kknJsAtRMYYc6/8+dhZwkjMU84bniqHFu3/IXkB9
+         Z9t0LA5nPJHKgIbzc1tzOOfmiGcVgiCWCo3wA/PpGmWzWS4Hf6ORGuqk1XIuQT+5M0
+         8ROB2KsqZyXCnsH1feWvV1BWGYkx0akOFfWF4MyZTOg+s8ITwDBs+S84w0VmCHm8Y1
+         a/myCNAbLxgCA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3UBUDqN1350825;
+        Tue, 30 Apr 2019 04:30:13 -0700
+Date:   Tue, 30 Apr 2019 04:30:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-531bd721812cad4b7f7158b246fba8303b555be7@git.kernel.org>
+Cc:     luto@kernel.org, bp@alien8.de, fenghua.yu@intel.com, hpa@zytor.com,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        bigeasy@linutronix.de, peterz@infradead.org, tglx@linutronix.de,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        oleg@redhat.com
+Reply-To: hpa@zytor.com, bp@alien8.de, fenghua.yu@intel.com,
+          luto@kernel.org, peterz@infradead.org,
+          torvalds@linux-foundation.org, bigeasy@linutronix.de,
+          mingo@kernel.org, tglx@linutronix.de, oleg@redhat.com,
+          linux-kernel@vger.kernel.org, dave.hansen@intel.com
+In-Reply-To: <20190430083126.rilbb76yc27vrem5@linutronix.de>
+References: <20190430083126.rilbb76yc27vrem5@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/fpu] x86/fpu: Remove unnecessary saving of FPU registers
+ in copy_fpstate_to_sigframe()
+Git-Commit-ID: 531bd721812cad4b7f7158b246fba8303b555be7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <9b8a2852-60ec-4519-fac8-4e1aa2763970@infradead.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-04-29 17:08:33, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Print a "begin trace" + oops ID number to match the current
-> "end trace" + oops ID number.
-> 
-> Example:
-> [  193.314027] ---[ begin trace cf01af0ff0925003 ]---
-> [  193.314032] general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-> [  193.314046] CPU: 2 PID: 2884 Comm: bash Tainted: G           O      5.1.0-rc6mod #1
-> [  193.314048] Hardware name: TOSHIBA PORTEGE R835/Portable PC, BIOS Version 4.10   01/08/2013
-> [  193.314058] RIP: 0010:proc_dump_test+0x7c/0x13b [dump_test]
-> [  193.314062] Code: 5c 41 5d 5d c3 be 27 00 00 00 48 c7 c7 60 10 d9 c1 e8 58 b2 85 c6 4c 89 e0 e8 40 41 3f c8 85 c0 41 89 c5 75 39 80 fa 6f 75 3c <a0> 00 00 00 00 00 fc ff df 84 c0 74 04 84 c0 7e 12 c6 04 25 00 00
-> [  193.314065] RSP: 0018:ffff88811ea4fce0 EFLAGS: 00010246
-> [  193.314069] RAX: 0000000000000000 RBX: ffff88811ea4fd48 RCX: 0000000000000015
-> [  193.314072] RDX: 000000000000006f RSI: 0000000000000027 RDI: ffff888117df0064
-> [  193.314075] RBP: ffff88811ea4fcf8 R08: ffff88811ea4fe88 R09: fffffbfff1661c71
-> [  193.314077] R10: 0000000000000001 R11: fffffbfff1661c70 R12: 000056103bd643f0
-> [  193.314080] R13: 0000000000000000 R14: ffff888117c58b48 R15: ffffffffc1d920a0
-> [  193.314083] FS:  00007ff067886b80(0000) GS:ffff88811f200000(0000) knlGS:0000000000000000
-> [  193.314086] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  193.314089] CR2: 000056103bd643f0 CR3: 0000000117ae4005 CR4: 00000000000606e0
-> [  193.314090] Call Trace:
-> {lines deleted for brevity}
-> [  193.314187] RIP: 0033:0x7ff066f64c14
-> [  193.314190] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 1a fc 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-> [  193.314193] RSP: 002b:00007fffaf5eaa08 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [  193.314197] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007ff066f64c14
-> [  193.314199] RDX: 0000000000000002 RSI: 000056103bd643f0 RDI: 0000000000000001
-> [  193.314202] RBP: 000056103bd643f0 R08: 000000000000000a R09: 0000000000000000
-> [  193.314204] R10: 000000000000000a R11: 0000000000000246 R12: 0000000000000002
-> [  193.314206] R13: 0000000000000001 R14: 00007ff067230720 R15: 0000000000000002
-> [  193.314215] Modules linked in: dump_test(O) fuse xt_tcpudp ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack af_packet ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_mangle iptable_raw iptable_security ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter ip_tables x_tables bpfilter uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 hid_generic usbkbd usbmouse videobuf2_common btrfs usbhid videodev hid coretemp hwmon media intel_rapl msr x86_pkg_temp_thermal intel_powerclamp kvm_intel xor mei_hdcp kvm zstd_compress irqbypass raid6_pq arc4 crct10dif_pclmul iTCO_wdt iwldvm libcrc32c crc32_pclmul iTCO_vendor_support crc32c_intel zstd_decompress ghash_clmulni_intel snd_hda_codec_hdmi mac80211 snd_hda_codec_realtek snd_hda_codec_generic ledtrig_audio snd_hda_intel snd_hda_codec aesni_intel
-> [  193.314293]  aes_x86_64 crypto_simd snd_hda_core iwlwifi cryptd snd_hwdep glue_helper sdhci_pci intel_cstate toshiba_acpi sparse_keymap cqhci snd_pcm intel_uncore sr_mod joydev sdhci cdrom intel_rapl_perf wmi input_leds cfg80211 snd_timer mmc_core uio_pdrv_genirq mousedev uio serio_raw pcspkr mei_me rtc_cmos toshiba_haps led_class e1000e thermal snd rfkill evdev industrialio mac_hid mei soundcore lpc_ich pcc_cpufreq battery ac sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua autofs4
-> [  193.314358] ---[ end trace cf01af0ff0925003 ]---
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> Can the "begin trace" event happen multiple times before "end trace"?
-> If so, this code won't handle that situation and the output would be
-> confusing, like this:
->   begin trace 000dead
->   begin trace 000deae
->   end trace 00deae
->   end trace 00deae
-> That would be very bad and this patch should go away.
+Commit-ID:  531bd721812cad4b7f7158b246fba8303b555be7
+Gitweb:     https://git.kernel.org/tip/531bd721812cad4b7f7158b246fba8303b555be7
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Tue, 30 Apr 2019 10:31:26 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 30 Apr 2019 13:07:54 +0200
 
-Oops called via oops_begin() and oops_end() are serialized on
-different CPUs by die_lock. Though they can get nested.
-The nesting level is counted by die_nest_count and could
-be used to compute the correct oops_id.
+x86/fpu: Remove unnecessary saving of FPU registers in copy_fpstate_to_sigframe()
 
-__warn() does not seem to be serialized. It could get
-solved by storing the ID in a local variable and
-passing it as a parameter.
+Since commit:
 
-BTW: Using a function called print_oops_end_marker()
-in a generic __warn() looks a bit misleading.
-A more generic name would be useful. See also below.
+  eeec00d73be2e ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails")
 
+there is no need to have FPU registers saved if
+copy_fpregs_to_sigframe() fails, because we retry it after we resolved
+the fault condition.
 
->  kernel/panic.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> --- lnx-51-rc6.orig/kernel/panic.c
-> +++ lnx-51-rc6/kernel/panic.c
-> @@ -519,9 +522,14 @@ static int init_oops_id(void)
->  }
->  late_initcall(init_oops_id);
->  
-> -void print_oops_end_marker(void)
-> +void print_oops_begin_marker(void)
->  {
->  	init_oops_id();
-> +	pr_warn("---[ begin trace %016llx ]---\n", (unsigned long long)oops_id);
-> +}
-> +
-> +void print_oops_end_marker(void)
-> +{
->  	pr_warn("---[ end trace %016llx ]---\n", (unsigned long long)oops_id);
->  }
->  
-> @@ -546,8 +554,10 @@ void __warn(const char *file, int line,
->  {
->  	disable_trace_on_warning();
->  
-> -	if (args)
-> +	if (args) {
->  		pr_warn(CUT_HERE);
-> +		print_oops_begin_marker();
+Saving the registers is not wrong but it is not necessary and it forces us
+to load the FPU registers on the retry attempt.
 
-Printing both CUT_HERE and begin_marker lines look redundant.
+Don't save the FPU registers if copy_fpstate_to_sigframe() fails.
 
-In fact, the code around pr_warn(CUT_HERE) looks hacky. It guess
-that it is not easy to keep it paired. It might deserve
-a clean up.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jason@zx2c4.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@suse.de
+Cc: jannh@google.com
+Cc: kurt.kanzenbach@linutronix.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: riel@surriel.com
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/20190430083126.rilbb76yc27vrem5@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/fpu/signal.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Best Regards,
-Petr
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 6d6c2d6afde4..08c5059dc4ec 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -157,10 +157,9 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+  */
+ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ {
+-	struct fpu *fpu = &current->thread.fpu;
+ 	struct task_struct *tsk = current;
+ 	int ia32_fxstate = (buf != buf_fx);
+-	int ret = -EFAULT;
++	int ret;
+ 
+ 	ia32_fxstate &= (IS_ENABLED(CONFIG_X86_32) ||
+ 			 IS_ENABLED(CONFIG_IA32_EMULATION));
+@@ -187,9 +186,6 @@ retry:
+ 	pagefault_disable();
+ 	ret = copy_fpregs_to_sigframe(buf_fx);
+ 	pagefault_enable();
+-	if (ret && !test_thread_flag(TIF_NEED_FPU_LOAD))
+-		copy_fpregs_to_fpstate(fpu);
+-	set_thread_flag(TIF_NEED_FPU_LOAD);
+ 	fpregs_unlock();
+ 
+ 	if (ret) {
