@@ -2,106 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5C1FB59
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2AFFC7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfD3OYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:24:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48224 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbfD3OYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:24:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AC2280D;
-        Tue, 30 Apr 2019 07:23:59 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB2183F719;
-        Tue, 30 Apr 2019 07:23:57 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 15:23:55 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>, linux@armlinux.org.uk
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH 1/7] ARM: vdso: Remove dependency with the arch_timer
- driver internals
-Message-ID: <20190430142355.GF17870@fuggles.cambridge.arm.com>
-References: <20190408154907.223536-1-marc.zyngier@arm.com>
- <20190408154907.223536-2-marc.zyngier@arm.com>
+        id S1726203AbfD3PKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:10:02 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25598 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfD3PKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:10:02 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1556634273; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=mfk8MAVDYBh5D+t5N8zXPT0V16NvwKIXypPd7J9iRimMxTcSSW2Ikd9TZ+V+L2hQlqrg+Pt6FcgF45MQyuT0Y/qjWmX+efWN89xMaaCbqbkcGK8zQm3xit8oDHdDmF8RdREAtRVmhZngSjinxrGE6Edlb858ivdJrEd2qiTPqes=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1556634273; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=; 
+        b=Ppn4+dJJOcgnoJ2/7Euo8xzz+czKtorAVcqEcHVW1CeND9KZrRqtgYc4NnmFWn42LHeI5GslDN6ijPXp17CdtsPSsGn+Slthn4pCTTPMXg2gYOUQTaWPjftVzeNsyZniTnfXZNkt66ogjZOE3CCiUagHoVg9CwNwMhnzzVxOgsg=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=strongbox8@zoho.com;
+        dmarc=pass header.from=<strongbox8@zoho.com> header.from=<strongbox8@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:message-id:subject:date:mime-version:content-type; 
+  b=g7f/SM0l7YPsKfWf4XXY773vIoWNkXScXKdqUEoq20PKHtZEgX0ZZNaI3qThm4WFY7hOy7MwzEZ6
+    ioMWF0o5TcuzzfIj5P3eIVMKysK20ZrEBjqaN5xiruYhC2vLzSXI  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1556634273;
+        s=default; d=zoho.com; i=strongbox8@zoho.com;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        l=1352; bh=K5BzyEqf24wVQe40Lud47ZVAeu3TYSMvcKqwIoHWhsQ=;
+        b=ZeaFanAGGV6ujArpeT3QkTx5zPIBAZyNrJgK2crNDcvIYe+myx6btSG/KfAdeUf2
+        0dML8vYXabECniOM2AreFsu25VySbOuTmfuni6/6H2rDxIf/nVlRXMSr+X6vPFc+V6T
+        lufqWfAwMYNwJcPJUcBBNSLdNC/xu8zjKWFpkIhE=
+Received: from archlinux.localdomain (106.2.239.74 [106.2.239.74]) by mx.zohomail.com
+        with SMTPS id 1556634269644614.490180315079; Tue, 30 Apr 2019 07:24:29 -0700 (PDT)
+From:   Perr Zhang <strongbox8@zoho.com>
+To:     pbonzini@redhat.com
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, stable@vger.kernel.org,
+        mingo@redhat.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <20190430142423.3393-1-strongbox8@zoho.com>
+Subject: [PATCH] KVM: x86: revert the order of calls in kvm_fast_pio()
+Date:   Tue, 30 Apr 2019 22:24:23 +0800
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190408154907.223536-2-marc.zyngier@arm.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+In commit 45def77ebf79, the order of function calls in kvm_fast_pio()
+was changed. This causes that the vm(XP,and also XP's iso img) failed
+to boot. This doesn't happen with win10 or ubuntu.
 
-On Mon, Apr 08, 2019 at 04:49:01PM +0100, Marc Zyngier wrote:
-> THe VDSO code uses the kernel helper that was originally designed
-> to abstract the access between 32 and 64bit systems. It worked so
-> far because this function is declared as 'inline'.
-> 
-> As we're about to revamp that part of the code, the VDSO would
-> break. Let's fix it by doing what should have been done from
-> the start, a proper system register access.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm/include/asm/cp15.h   | 2 ++
->  arch/arm/vdso/vgettimeofday.c | 5 +++--
->  2 files changed, 5 insertions(+), 2 deletions(-)
+After revert the order, the vm(XP) succeedes to boot. In addition, the
+change of calls's order of kvm_fast_pio() in commit 45def77ebf79 has no
+obvious reason.
 
-This looks ok to me and I'd like to take the series via arm64, but I
-could do with an Ack from Russell on these 32-bit ARM parts first.
+Fixes: 45def77ebf79 ("KVM: x86: update %rip after emulating IO")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Perr Zhang <strongbox8@zoho.com>
+---
+ arch/x86/kvm/x86.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Will
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a0d1fc80ac5a..248753cb94a1 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6610,13 +6610,12 @@ static int kvm_fast_pio_in(struct kvm_vcpu *vcpu, i=
+nt size,
+=20
+ int kvm_fast_pio(struct kvm_vcpu *vcpu, int size, unsigned short port, int=
+ in)
+ {
+-=09int ret;
++=09int ret =3D kvm_skip_emulated_instruction(vcpu);
+=20
+ =09if (in)
+-=09=09ret =3D kvm_fast_pio_in(vcpu, size, port);
++=09=09return kvm_fast_pio_in(vcpu, size, port) && ret;
+ =09else
+-=09=09ret =3D kvm_fast_pio_out(vcpu, size, port);
+-=09return ret && kvm_skip_emulated_instruction(vcpu);
++=09=09return kvm_fast_pio_out(vcpu, size, port) && ret;
+ }
+ EXPORT_SYMBOL_GPL(kvm_fast_pio);
+=20
+--=20
+2.21.0
 
-> diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
-> index 07e27f212dc7..d2453e2d3f1f 100644
-> --- a/arch/arm/include/asm/cp15.h
-> +++ b/arch/arm/include/asm/cp15.h
-> @@ -68,6 +68,8 @@
->  #define BPIALL				__ACCESS_CP15(c7, 0, c5, 6)
->  #define ICIALLU				__ACCESS_CP15(c7, 0, c5, 0)
->  
-> +#define CNTVCT				__ACCESS_CP15_64(1, c14)
-> +
->  extern unsigned long cr_alignment;	/* defined in entry-armv.S */
->  
->  static inline unsigned long get_cr(void)
-> diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-> index a9dd619c6c29..7bdbf5d5c47d 100644
-> --- a/arch/arm/vdso/vgettimeofday.c
-> +++ b/arch/arm/vdso/vgettimeofday.c
-> @@ -18,9 +18,9 @@
->  #include <linux/compiler.h>
->  #include <linux/hrtimer.h>
->  #include <linux/time.h>
-> -#include <asm/arch_timer.h>
->  #include <asm/barrier.h>
->  #include <asm/bug.h>
-> +#include <asm/cp15.h>
->  #include <asm/page.h>
->  #include <asm/unistd.h>
->  #include <asm/vdso_datapage.h>
-> @@ -123,7 +123,8 @@ static notrace u64 get_ns(struct vdso_data *vdata)
->  	u64 cycle_now;
->  	u64 nsec;
->  
-> -	cycle_now = arch_counter_get_cntvct();
-> +	isb();
-> +	cycle_now = read_sysreg(CNTVCT);
->  
->  	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
->  
-> -- 
-> 2.20.1
-> 
+
+
