@@ -2,75 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E850DF492
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A6FF4E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfD3Kwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:52:35 -0400
-Received: from mail.us.es ([193.147.175.20]:40258 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbfD3Kwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:52:32 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 29138E7BA2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 12:52:28 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 104EEDA737
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 12:52:28 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 0E1DBDA716; Tue, 30 Apr 2019 12:52:28 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 0F618DA701;
-        Tue, 30 Apr 2019 12:52:26 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 30 Apr 2019 12:52:22 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (129.166.216.87.static.jazztel.es [87.216.166.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id CBC7F4265A31;
-        Tue, 30 Apr 2019 12:52:25 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 12:52:25 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     shuah <shuah@kernel.org>,
-        Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
-        linu-kselftest@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH] selftests : netfilter: Wrote a error and exit code for a
- command which needed veth kernel module.
-Message-ID: <20190430105225.bu5pil5fjxkltu4q@salvia>
-References: <20190405163126.7278-1-jeffrin@rajagiritech.edu.in>
- <20190405164746.pfc6wxj4nrynjma4@breakpoint.cc>
- <CAG=yYwnN37OoL1DSN8qPeKWhzVJOcUFtR-7Q9fVT5AULk5S54w@mail.gmail.com>
- <c4660969-1287-0697-13c0-e598327551fb@kernel.org>
- <20190430100256.mfgerggoccagi2hc@breakpoint.cc>
+        id S1727329AbfD3K4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:56:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726877AbfD3K4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 06:56:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F2264AD12;
+        Tue, 30 Apr 2019 10:56:13 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 12:56:10 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, brgl@bgdev.pl,
+        arunks@codeaurora.org, geert+renesas@glider.be, mhocko@kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        ldufour@linux.ibm.com, rppt@linux.ibm.com, mguzik@redhat.com,
+        mkoutny@suse.cz, vbabka@suse.cz, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: get_cmdline use arg_lock instead of mmap_sem
+Message-ID: <20190430105609.GA23779@blackbody.suse.cz>
+References: <20190418182321.GJ3040@uranus.lan>
+ <20190430081844.22597-1-mkoutny@suse.com>
+ <20190430081844.22597-2-mkoutny@suse.com>
+ <4c79fb09-c310-4426-68f7-8b268100359a@virtuozzo.com>
+ <20190430093808.GD2673@uranus.lan>
+ <1a7265fa-610b-1f2a-e55f-b3a307a39bf2@virtuozzo.com>
+ <20190430104517.GF2673@uranus.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Content-Disposition: inline
-In-Reply-To: <20190430100256.mfgerggoccagi2hc@breakpoint.cc>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20190430104517.GF2673@uranus.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc'ing netfilter-devel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:02:56PM +0200, Florian Westphal wrote:
-> shuah <shuah@kernel.org> wrote:
-> > Would you like me to take this patch through ksleftest tree?
-> 
-> Please do, this patch is neither in nf nor nf-next and it looks fine to
-> me.
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Indeed, thanks.
+On Tue, Apr 30, 2019 at 01:45:17PM +0300, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+> It setups these parameters unconditionally. I need to revisit
+> this moment. Technically (if only I'm not missing something
+> obvious) we might have a race here with prctl setting up new
+> params, but this should be harmless since most of them (except
+> stack setup) are purely informative data.
+FTR, when I reviewed that usage, I noticed it was missing the
+synchronization. My understanding was that the mm_struct isn't yet
+shared at this moment. I can see some of the operations take place after
+flush_old_exec (where current->mm = mm_struct), so potentially it is
+shared since then. OTOH, I guess there aren't concurrent parties that
+could access the field at this stage of exec.
+
+My 2 cents,
+Michal
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+amhwRV4jZeXdUhoK2l36XSZ9y4FAlzIKcMACgkQK2l36XSZ
+9y43Zw//ShZK7DYk6l3lLVR4pXSaBs8MdnbIYo7kKlPHwKewLyueV6qPL2+k7sD9
+M0bduFp4pZsGf/v2IG/1k6qStCpTYRFhLwiq9fiNee3j7pUhmxLTbTB6bIHtcU3p
+96TrUAJK0J9Ll3vPRHvi3t6pGARq3M/3I7mVs/oWFGYT8wWy5yKoP1B+BHHbKcky
+4xx3EaFJlwDeBZA8FgxxyrfbMvzLFJ1PgdSuaifuG8VH0wKYZhhzRtVB0U6o2DYF
+MPce7LipyB4FG8NPWk0rWcrS/EjWDLV6zqRaOqYHKBryTYrLo2kyxp42QcbBSHsN
+vSOimjkHLc6wnGE2798Pfsmy53aNucWE1s+vfuoqaGd4hXflp8hYU9MuM8MrV52C
+OHkjozbWRkW0y6E0UGQ3H//7lYU2CTXOatHB0wRn3XeVhDynWaOXwZdcbG4WuzmM
+wM04m8KsDFkLoY/uxSOeDKPPJUdwx/CGfzMvI7or47ic/BkN7GOtbsz4ktNiDg66
+c6hgOEp8jUi+PPsAcEfzIRX7NKpWhpi5MLLTqfY3KGg6UnszjSOb1us4/XTr1Ok+
+WRhUZy+lkVI6/sLy6JlDyCDPQGkM96ZmJC/yRsUqvQeiaUhG99DiU5tL2IZqmbN3
+XQSp5NcX0a7or597DEf0zJXfqO0vkHugAenNGardDU17d0iJH9w=
+=qs9v
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
