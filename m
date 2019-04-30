@@ -2,168 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C17B10352
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 01:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D8D1034C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 01:29:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfD3XbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 19:31:02 -0400
-Received: from mailgw2.fjfi.cvut.cz ([147.32.9.131]:59486 "EHLO
-        mailgw2.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfD3Xa7 (ORCPT
+        id S1726923AbfD3X3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 19:29:01 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43590 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfD3X3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 19:30:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTP id 01D7AA02AE;
-        Wed,  1 May 2019 01:21:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1556666467; i=@fjfi.cvut.cz;
-        bh=z950GQ09xqDj1VQ8RNlQ970vQnKiBdyxx8mQuvYI/WE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=XeYbulpF02/B+BotL1jrRAAWR2oWx9UOG1q6wYhoGQ435DWqxyd+7GDvgNj/C4aLd
-         lLSHAenFeR7nMVm8kJol6dMCDq5pb07QSB/6jh7+wW6LdZNr0RIGUsyX0KCWve/WBq
-         s2SXQ62BEyH7MQClFUS3uYl9wNpI++sIDqOkZ/aI=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw2.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw2.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id M9myyxcmA_3j; Wed,  1 May 2019 01:21:00 +0200 (CEST)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTPS id E5AABA02B8;
-        Wed,  1 May 2019 01:20:59 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw2.fjfi.cvut.cz E5AABA02B8
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id A66A360050; Wed,  1 May 2019 01:20:59 +0200 (CEST)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: [PATCH 3/3] block: sed-opal: check size of shadow mbr
-Date:   Wed,  1 May 2019 01:20:59 +0200
-Message-Id: <1556666459-17948-4-git-send-email-zub@linux.fjfi.cvut.cz>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
-References: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
+        Tue, 30 Apr 2019 19:29:01 -0400
+Received: by mail-pf1-f194.google.com with SMTP id e67so7813261pfe.10;
+        Tue, 30 Apr 2019 16:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pyMMSM+fgLxcULxr3o3ubN2tbBmzJbfDcFZgE1qRVpM=;
+        b=pK5kLEoN76oBaCrVQaxWTbbivV84cg7cfUG/G8dHO9NvOFRYJiM5FTnMLEKOf3jIrB
+         EAIYIOwKT8cpzIzUvx8mZtPxWcKL4g0DpruOl1fo8bv3mUeZZivLSj20e4DBUiFRyiK6
+         Vh9/fkx78iy/iCpSx1EeXfNqGNgHMKBhnlPgXxyz1JUGX+ckmea3Ln1y4BTcGq0Tw3Kw
+         E0eJWK+rhh8KJf5ScvMpAsTaaY1bOSXn901djE5EXUBUmHHIgJ5LxvXDBkginF2z7Nmj
+         53XBeIWbI7/p4OGS3n13VkUyyHhJDeV//Mg7L3zOKxtN6baB+1x4RpmU7gcNpTiwE6R4
+         muTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pyMMSM+fgLxcULxr3o3ubN2tbBmzJbfDcFZgE1qRVpM=;
+        b=ki8g1w3uASYVYxhbpKwRhk6fV3v0RWA9t7dRMgiNk5p0Bbe8lyg3jtvoHezrde7PZV
+         y0zoituy96LhzkWI8AGuWylINex+e2s2+hx4SdWZ/HMAfa7CZgv/ikYScvWcI2FW5u+q
+         q5lUCqZBIuqemuchnyCcCG5ZMRvnSqkq4zEP7WKJkgMk/FEJBts6IIVwOxU+Io2obcI8
+         Yz43cuoK15PUuj8UeVSeChNW17hHhwRTdvqjQC+OHKGY5mNiWExjfh77fMFMPkQR/lB4
+         a+J5skcs4e3l7K8mH13YV5pO3nH+BVk/iHJNIT104MoVaJp0meVkYVsOnhdhAwk19m9I
+         mGBw==
+X-Gm-Message-State: APjAAAVSiqlVzzwc4lyzoG03rCaVto4Wh6bFaucSC2TK/idVbxZwdtBs
+        1giBbMQvJ4PbT6IcPT82DE1u9nwY
+X-Google-Smtp-Source: APXvYqx7y6GOjqZLNyaIYGc+H3Attof7wOD6qPcJ54YeQp4/Jzyu1VslMgO7P2qeteEZd8aJu3vmTg==
+X-Received: by 2002:a62:2587:: with SMTP id l129mr35576226pfl.151.1556666939953;
+        Tue, 30 Apr 2019 16:28:59 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g32sm2635151pgl.16.2019.04.30.16.28.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 16:28:58 -0700 (PDT)
+Subject: Re: [PATCH v4 3/3] dt-bindings: power: supply: Add bindings for
+ Microchip UCS1002
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-pm@vger.kernel.org,
+        Enric Balletbo Serra <enric.balletbo@collabora.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190430064557.28469-1-andrew.smirnov@gmail.com>
+ <20190430064557.28469-4-andrew.smirnov@gmail.com>
+ <20190430161542.GB731@roeck-us.net> <20190430223236.GA10236@bogus>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8e4fa5ae-9547-83b3-d2f6-3a7b7ad32cbf@roeck-us.net>
+Date:   Tue, 30 Apr 2019 16:28:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190430223236.GA10236@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+On 4/30/19 3:32 PM, Rob Herring wrote:
+> On Tue, Apr 30, 2019 at 09:15:42AM -0700, Guenter Roeck wrote:
+>> On Mon, Apr 29, 2019 at 11:45:57PM -0700, Andrey Smirnov wrote:
+>>> Add bindings for Microchip UCS1002 Programmable USB Port Power
+>>> Controller with Charger Emulation.
+>>>
+>>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>>> Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
+>>> Cc: Chris Healy <cphealy@gmail.com>
+>>> Cc: Lucas Stach <l.stach@pengutronix.de>
+>>> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+>>> Cc: Guenter Roeck <linux@roeck-us.net>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: Sebastian Reichel <sre@kernel.org>
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Cc: linux-pm@vger.kernel.org
+>>> ---
+>>>   .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
+>>>   1 file changed, 27 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+>>> new file mode 100644
+>>> index 000000000000..021fd7aba75e
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+>>> @@ -0,0 +1,27 @@
+>>> +Microchip UCS1002 USB Port Power Controller
+>>> +
+>>> +Required properties:
+>>> +- compatible		: Should be "microchip,ucs1002";
+>>> +- reg			: I2C slave address
+>>> +
+>>> +Optional properties:
+>>> +- interrupts-extended	: A list of interrupts lines present (could be either
+>>> +			  corresponding to A_DET# pin, ALERT# pin, or both)
+> 
+> Just make this 'interrupts'. Support for 'interrupts-extended' is
+> implied.
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+>>> +- interrupt-names	: A list of interrupt names. Should contain (if
+>>> +			  present):
+>>> +			  - "a_det" for line connected to A_DET# pin
+>>> +			  - "alert" for line connected to ALERT# pin
+>>> +			  Both are expected to be IRQ_TYPE_EDGE_BOTH
+>>> +Example:
+>>> +
+>>> +&i2c3 {
+>>> +	charger@32 {
+>>> +		compatible = "microchip,ucs1002";
+>>> +		pinctrl-names = "default";
+>>> +		pinctrl-0 = <&pinctrl_ucs1002_pins>;
+>>
+>> Document the above ? Or is that optional ?
+> 
+> I would have said to document this, but recently we had some discussion
+> about allowing this to be implied when there's only a 'default' entry.
+> We'll add it automatically for schemas.
+> 
 
-Check whether the shadow mbr does fit in the provided space on the
-target. Also a proper firmware should handle this case and return an
-error we may prevent problems or even damage with crappy firmwares.
+Good to know. Thanks for the information!
 
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
-Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
----
- block/opal_proto.h | 16 ++++++++++++++++
- block/sed-opal.c   | 39 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
-
-diff --git a/block/opal_proto.h b/block/opal_proto.h
-index b6e352cfe982..5e8df3245eb0 100644
---- a/block/opal_proto.h
-+++ b/block/opal_proto.h
-@@ -106,6 +106,7 @@ enum opal_uid {
- 	OPAL_ENTERPRISE_BANDMASTER0_UID,
- 	OPAL_ENTERPRISE_ERASEMASTER_UID,
- 	/* tables */
-+	OPAL_TABLE_TABLE,
- 	OPAL_LOCKINGRANGE_GLOBAL,
- 	OPAL_LOCKINGRANGE_ACE_RDLOCKED,
- 	OPAL_LOCKINGRANGE_ACE_WRLOCKED,
-@@ -160,6 +161,21 @@ enum opal_token {
- 	OPAL_STARTCOLUMN = 0x03,
- 	OPAL_ENDCOLUMN = 0x04,
- 	OPAL_VALUES = 0x01,
-+	/* table table */
-+	OPAL_TABLE_UID = 0x00,
-+	OPAL_TABLE_NAME = 0x01,
-+	OPAL_TABLE_COMMON = 0x02,
-+	OPAL_TABLE_TEMPLATE = 0x03,
-+	OPAL_TABLE_KIND = 0x04,
-+	OPAL_TABLE_COLUMN = 0x05,
-+	OPAL_TABLE_COLUMNS = 0x06,
-+	OPAL_TABLE_ROWS = 0x07,
-+	OPAL_TABLE_ROWS_FREE = 0x08,
-+	OPAL_TABLE_ROW_BYTES = 0x09,
-+	OPAL_TABLE_LASTID = 0x0A,
-+	OPAL_TABLE_MIN = 0x0B,
-+	OPAL_TABLE_MAX = 0x0C,
-+
- 	/* authority table */
- 	OPAL_PIN = 0x03,
- 	/* locking tokens */
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 5acb873e9037..39e3eecca58d 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -138,6 +138,8 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
- 
- 	/* tables */
- 
-+	[OPAL_TABLE_TABLE]
-+		{ 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01 },
- 	[OPAL_LOCKINGRANGE_GLOBAL] =
- 		{ 0x00, 0x00, 0x08, 0x02, 0x00, 0x00, 0x00, 0x01 },
- 	[OPAL_LOCKINGRANGE_ACE_RDLOCKED] =
-@@ -1139,6 +1141,29 @@ static int generic_get_column(struct opal_dev *dev, const u8 *table,
- 	return finalize_and_send(dev, parse_and_check_status);
- }
- 
-+/*
-+ * see TCG SAS 5.3.2.3 for a description of the available columns
-+ *
-+ * the result is provided in dev->resp->tok[4]
-+ */
-+static int generic_get_table_info(struct opal_dev *dev, enum opal_uid table,
-+				  u64 column)
-+{
-+	u8 uid[OPAL_UID_LENGTH];
-+	const unsigned int half = OPAL_UID_LENGTH/2;
-+
-+	/* sed-opal UIDs can be split in two halves:
-+	 *  first:  actual table index
-+	 *  second: relative index in the table
-+	 * so we have to get the first half of the OPAL_TABLE_TABLE and use the
-+	 * first part of the target table as relative index into that table
-+	 */
-+	memcpy(uid, opaluid[OPAL_TABLE_TABLE], half);
-+	memcpy(uid+half, opaluid[table], half);
-+
-+	return generic_get_column(dev, uid, column);
-+}
-+
- static int gen_key(struct opal_dev *dev, void *data)
- {
- 	u8 uid[OPAL_UID_LENGTH];
-@@ -1554,6 +1579,20 @@ static int write_shadow_mbr(struct opal_dev *dev, void *data)
- 	u64 len;
- 	int err = 0;
- 
-+	/* do we fit in the available shadow mbr space? */
-+	err = generic_get_table_info(dev, OPAL_MBR, OPAL_TABLE_ROWS);
-+	if (err) {
-+		pr_debug("MBR: could not get shadow size\n");
-+		return err;
-+	}
-+
-+	len = response_get_u64(&dev->parsed, 4);
-+	if (shadow->size > len || shadow->offset > len - shadow->size) {
-+		pr_debug("MBR: does not fit in shadow (%llu vs. %llu)\n",
-+			 shadow->offset + shadow->size, len);
-+		return -ENOSPC;
-+	}
-+
- 	/* do the actual transmission(s) */
- 	src = (u8 __user *)(uintptr_t)shadow->data;
- 	while (off < shadow->size) {
--- 
-2.20.1
-
+Guenter
