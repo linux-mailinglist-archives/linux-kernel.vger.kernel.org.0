@@ -2,69 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 005C4FC06
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F29FC11
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfD3O7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:59:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:48686 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfD3O7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:59:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0E68374;
-        Tue, 30 Apr 2019 07:59:45 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 608553F719;
-        Tue, 30 Apr 2019 07:59:44 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 15:59:39 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] io_uring: avoid page allocation warnings
-Message-ID: <20190430145938.GA8314@lakrids.cambridge.arm.com>
-References: <20190430132405.8268-1-mark.rutland@arm.com>
- <20190430141810.GF13796@bombadil.infradead.org>
+        id S1726373AbfD3PAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:00:17 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:35622 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726069AbfD3PAO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:00:14 -0400
+Received: (qmail 3262 invoked by uid 2102); 30 Apr 2019 11:00:13 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Apr 2019 11:00:13 -0400
+Date:   Tue, 30 Apr 2019 11:00:13 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING: Support for this device (Terratec Grabster AV400) is
+ experimental.
+In-Reply-To: <0000000000004101370587c052fb@google.com>
+Message-ID: <Pine.LNX.4.44L0.1904301058150.1465-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430141810.GF13796@bombadil.infradead.org>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 07:18:10AM -0700, Matthew Wilcox wrote:
-> On Tue, Apr 30, 2019 at 02:24:05PM +0100, Mark Rutland wrote:
-> > In io_sqe_buffer_register() we allocate a number of arrays based on the
-> > iov_len from the user-provided iov. While we limit iov_len to SZ_1G,
-> > we can still attempt to allocate arrays exceeding MAX_ORDER.
-> > 
-> > On a 64-bit system with 4KiB pages, for an iov where iov_base = 0x10 and
-> > iov_len = SZ_1G, we'll calculate that nr_pages = 262145. When we try to
-> > allocate a corresponding array of (16-byte) bio_vecs, requiring 4194320
-> > bytes, which is greater than 4MiB. This results in SLUB warning that
-> > we're trying to allocate greater than MAX_ORDER, and failing the
-> > allocation.
-> > 
-> > Avoid this by passing __GFP_NOWARN when allocating arrays for the
-> > user-provided iov_len. We'll gracefully handle the failed allocation,
-> > returning -ENOMEM to userspace.
-> > 
-> > We should probably consider lowering the limit below SZ_1G, or reworking
-> > the array allocations.
+On Tue, 30 Apr 2019, syzbot wrote:
+
+> Hello,
 > 
-> I'd suggest that kvmalloc is probably our friend here ... we don't really
-> want to return -ENOMEM to userspace for this case, I don't think.
+> syzbot found the following crash on:
+> 
+> HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=141ca62d200000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
+> dashboard link: https://syzkaller.appspot.com/bug?extid=af8f8d2ac0d39b0ed3a0
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1405bedd200000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ce3bbb200000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com
+> 
+> usb 1-1: New USB device found, idVendor=0ccd, idProduct=0039, bcdDevice=  
+> d.3c
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> pvrusb2: Hardware description: Terratec Grabster AV400
+> pvrusb2: **********
+> pvrusb2: WARNING: Support for this device (Terratec Grabster AV400) is  
+> experimental.
+> pvrusb2: Important functionality might not be entirely working.
+> pvrusb2: Please consider contacting the driver author to help with further  
+> stabilization of the driver.
+> pvrusb2: **********
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Sure. I'll go verify that the uring code doesn't assume this memory is
-physically contiguous.
+This does seem like a bug in syzbot.  Why does it think this pr_info() 
+output indicates a crash?  Is it fooled by the capitalized "WARNING" at 
+the start of one of the lines?
 
-I also guess we should be passing GFP_KERNEL_ACCOUNT rateh than a plain
-GFP_KERNEL.
+Alan Stern
 
-Thanks,
-Mark.
