@@ -2,94 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 661A5FF62
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42FFFF6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfD3SFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 14:05:54 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60896 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfD3SFu (ORCPT
+        id S1726514AbfD3SIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 14:08:40 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:46295 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbfD3SIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:05:50 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gportay)
-        with ESMTPSA id 67D3F282FE4
-From:   =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Derek Basehore <dbasehore@chromium.org>,
-        Lin Huang <hl@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        kernel@collabora.com
-Subject: [RFC 4/4] arm64: dts: rockchip: Set the display-subsystem devfreq
-Date:   Tue, 30 Apr 2019 14:05:24 -0400
-Message-Id: <20190430180524.22710-5-gael.portay@collabora.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430180524.22710-1-gael.portay@collabora.com>
-References: <20190430180524.22710-1-gael.portay@collabora.com>
+        Tue, 30 Apr 2019 14:08:39 -0400
+Received: by mail-yw1-f67.google.com with SMTP id v15so6574198ywe.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
+        b=J6jpwCXSoU7Eq7a4v/BuGEqdgrF69IaBpqOL12T9GDVAPMr4fSnfDWEJUjRPxcE/aa
+         fNigHE4KOEqlZyENgRu+3RjUamg6DPnkPsUqo+KyKPP54eT63vbbvE3+J28zY2d6CAuk
+         qfCM428MXxMWIy/qHQJK5PMe+FU2XDaiA2WYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
+        b=mGoNk/6KEJJZap9QPmCGuv9aW3nCEBAzlqH3PdSiKSrkfdadCSJGfi8tvRw3q9aWAY
+         G2TlCNlUP3b038xCuW851ZgnjhBJV/O1e+Rf/sTmaHhhXZqpX9ufmjy5C1WvbaA1NlPs
+         2nSN5nZoBVQlcbhs3xFAKXbOcWMETXPeUB9ax4fVqS0GH04Na30cx56ku6OR59t6RR15
+         2i92eK1JXWqeIYFqwO+ZeVqmWYzHcySik9kccQnMTOE2rF99BIByYpSylQjTeiNYBk/2
+         LQgDaekRmEOySTc5RAzpTEfkf3eUgk8C0sF9bK54PfeYPmor34GzlZqlcb899PloLcjV
+         9hAQ==
+X-Gm-Message-State: APjAAAWhm8ci6F2DUZM/pUGtwwbg8h+w6LINnHi7jmtG9toF43eVZ2v0
+        BUK4gTzHIObCKnrriMVvirwvAIA4ixw=
+X-Google-Smtp-Source: APXvYqxU9mcJFyKwOfBosH1NiQkfPb3h+w2S6k3K8xDZHSBd3g/2iG7cDh810tyt7VVjJQCMpFirhQ==
+X-Received: by 2002:a25:1f02:: with SMTP id f2mr57714160ybf.111.1556647717956;
+        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id g187sm9582801ywa.4.2019.04.30.11.08.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id j4so6585712ywk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
+X-Received: by 2002:a25:d488:: with SMTP id m130mr15451236ybf.172.1556647716425;
+ Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+References: <20190429222613.13345-1-mcroce@redhat.com> <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+ <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
+ <20190430160813.GI13796@bombadil.infradead.org> <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
+In-Reply-To: <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Apr 2019 11:08:22 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
+Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
+Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the Dynamic Memory Controller as the display-subsystem's devfreq
-device.
+On Tue, Apr 30, 2019 at 9:30 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Tue, Apr 30, 2019 at 6:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Apr 30, 2019 at 08:42:42AM -0700, Kees Cook wrote:
+> > > On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > > > On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > > > >
+> > > > > Add a const int array containing the most commonly used values,
+> > > > > some macros to refer more easily to the correct array member,
+> > > > > and use them instead of creating a local one for every object file.
+> > > > >
+> > > >
+> > > > Ok it seems that this simply can't be done, because there are at least
+> > > > two points where extra1,2 are set to a non const struct:
+> > > > in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
+> > > > while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
+> > > > and a struct net.
+> > >
+> > > Why can't these be converted to const also? I don't see the pointer
+> > > changing anywhere. They're created in one place and never changed.
+> >
+> > That's not true; I thought the same thing, but you need to see how
+> > they're used in the functions they're called.
+> >
+> > proc_do_defense_mode(struct ctl_table *table, int write,
+> >         struct netns_ipvs *ipvs = table->extra2;
+> >                         update_defense_level(ipvs);
+> > static void update_defense_level(struct netns_ipvs *ipvs)
+> >         spin_lock(&ipvs->dropentry_lock);
+>
+> Indeed. I followed the same code path until I found this:
+>
+>  167                        ipvs->drop_rate = 0;
+>  168                        ipvs->sysctl_drop_packet = 1;
+>
+> so I think that this can't be done like this.
 
-Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3399.dtsi     | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Ah, dang. Yeah, I missed that too.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index 40e78186560b..a5cbbc08f7e1 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -375,6 +375,10 @@
- 		<200000000>;
- };
- 
-+&display_subsystem {
-+	devfreq = <&dmc>;
-+};
-+
- &emmc_phy {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 87ee084fac89..253b476163fd 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -155,7 +155,7 @@
- 		};
- 	};
- 
--	display-subsystem {
-+	display_subsystem: display-subsystem {
- 		compatible = "rockchip,display-subsystem";
- 		ports = <&vopl_out>, <&vopb_out>;
- 	};
+> Mind if I send a v5 without the const qualifier? At least to know the
+> kbuildbot opinion.
+
+Yeah, I think that's likely best.
+
 -- 
-2.21.0
-
+Kees Cook
