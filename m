@@ -2,108 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11001EE59
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022E5EE5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729871AbfD3BXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 21:23:31 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42495 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbfD3BXb (ORCPT
+        id S1729818AbfD3BZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 21:25:00 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:42487 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729626AbfD3BZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 21:23:31 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f23so10438638otl.9;
-        Mon, 29 Apr 2019 18:23:31 -0700 (PDT)
+        Mon, 29 Apr 2019 21:25:00 -0400
+Received: by mail-lj1-f177.google.com with SMTP id r72so6801438ljb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 18:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=46L6eXe4RML6HEmnWiBfNC91mI6xVPDAh1z5zZsGazo=;
+        b=SDsGb1GPwQgNgKpKbSygafBW/pgKbimw8lbnAy03Nzrf/TSYC0bYNNeoHhkuiPZS1N
+         rt2bZziWH0toD71eYItMP3f7ILu0dtOU5fGBeN+FMnl1H8ZWzBuBlUvg80VX1w45LzM3
+         XtOVVlC6yE2Y5iaO/iz9yU7Llk9j86CPB37VwtDIWSWLxaLCUEn++vCtkZ7jUKXwmD1x
+         3q2oFIctOmuj/JFmGvI4H6kTZGz0FpSSTotvUWNdbBsAR2y42ZSnLzMWURdtQiWQGWd0
+         o9XWpGHSryY3HPJRZtjE7V+q+WX6jd/Uh3k2EpIM3+cSHHy/Ka3TIYJbtphApMttUWZH
+         Mlww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fLCNptbAqgGLbxmiV5m9esJWTcO9d7PGiLKbWNbQI4Y=;
-        b=pyInkl149oIz0fINvWOVMsdn8AcUZzZMsqlSa7v85gg4KE35r4uck69xNm/ho+Knq4
-         IzzSs7aMjmL5Eaj+6oFFGMJWvwrQoIb3956nOZPBgl3FX6H5fMKhpHk4dISx6fGnCukc
-         zWcgPF4nwZgI4lIXvZOm/tg7YfbuPlwiXFtfB2h/uxfRlZpdfJ/8UyWyA+fnAe3Ff7OC
-         QROaB0oudBdvbMfvRBtSD+tbC8do0lojlFgN9sX8VFKXonOOnxrqrUmwEr5RLCjdVOMu
-         BDIasEacD+4LbgEW4TtTbCw8lBLG5F3IVAHSYy+J1fDNCrHxwhSklxul5vl/eleUX3uo
-         4SXg==
-X-Gm-Message-State: APjAAAVREX0ePY2/L7rj+HhgwSdB4P5sCe+xd3U7Q/FVfRHH8h9196zA
-        u1H5Svz8POQS9r/0gW369Q==
-X-Google-Smtp-Source: APXvYqxr8Cm+FM9VThpkbETtAkluspE6CKnCHzDXX3Pa3YrGOQn38oLZRa/gk3PUp+5WlkzbxZyFuQ==
-X-Received: by 2002:a9d:6153:: with SMTP id c19mr5171001otk.110.1556587410598;
-        Mon, 29 Apr 2019 18:23:30 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w13sm922030otl.26.2019.04.29.18.23.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 18:23:29 -0700 (PDT)
-Date:   Mon, 29 Apr 2019 20:23:28 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>, heiko@sntech.de,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Artur Petrosyan <Arthur.Petrosyan@synopsys.com>,
-        amstan@chromium.org, linux-rockchip@lists.infradead.org,
-        William Wu <william.wu@rock-chips.com>,
-        linux-usb@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Randy Li <ayaka@soulik.info>, zyw@rock-chips.com,
-        mka@chromium.org, ryandcase@chromium.org,
-        Amelie Delaunay <amelie.delaunay@st.com>, jwerner@chromium.org,
-        dinguyen@opensource.altera.com,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 3/5] Documentation: dt-bindings: Add
- snps,need-phy-for-wake for dwc2 USB
-Message-ID: <20190430012328.GA25660@bogus>
-References: <20190418001356.124334-1-dianders@chromium.org>
- <20190418001356.124334-4-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=46L6eXe4RML6HEmnWiBfNC91mI6xVPDAh1z5zZsGazo=;
+        b=jI9buyHFISfRHab4w0K/vi2671IqfmRW2yv+FFh6KMBrtYja8RXu6ii9oaq4i/XCaW
+         98klA2qc389GN+9BXrUc132znnCbAp59eULr4x17YM50sjnKwsMHaee0RusbYl793aLx
+         AAB1DXltP8ct6tz9erqqsDn2+txPPyTqDoA6dWwSm9DswaGFgQYV1xN88m0rhCt5eVNT
+         SDq3ArgizYMOGdeRfwNgx9OCLlnMtvScNFmvrJ3Y8I4MAP7Vz8VDEgCb0cOuRDo4YNX4
+         rj4iuSk7o+4HyAuN8eg5GlHfcDXE8U9GJMFYc0+spQYGiRieGg91rMNzFnx9qOfY9Z1L
+         9gMQ==
+X-Gm-Message-State: APjAAAXY/qhwJAZwRU43ZbI8PI9+FHFXpat3BGuSBU0cpF0F364oyQWW
+        Rp6ESYZ4VS94gblLiKRiWybSJbRnor4eG/V6E+U=
+X-Google-Smtp-Source: APXvYqxEY9DWbG+NdeFaYsH2OOxfIeR1r3pJOz1HV1CPpoBEutymY/YoRNUOBj1+zxp7VErTJnMYCIV5u6aRp3/utzs=
+X-Received: by 2002:a2e:2b16:: with SMTP id q22mr34984426lje.20.1556587497889;
+ Mon, 29 Apr 2019 18:24:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190418001356.124334-4-dianders@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190427091716.GC99668@gmail.com> <CAERHkruEAVBsh6FphMKqgR2+HjsVVegxjnpOFRNfbrfZDNpc9w@mail.gmail.com>
+ <20190427142137.GA72051@gmail.com> <CAERHkrtaU=Y-Lxypu_7uBbe-mJtG-3friz=ZLhV53X4FXHcEyA@mail.gmail.com>
+ <20190428093304.GA7393@gmail.com> <CAERHkrvaSSR1wRECF1AcLOhpmCAH0ecvFEL5MOFjK05F0xSuzA@mail.gmail.com>
+ <20190428121721.GA121434@gmail.com> <db7c3e51-d013-b3d9-7bce-c247aa2e7144@linux.intel.com>
+ <20190429061422.GA20939@gmail.com> <24bca399-5370-c4b5-725f-979db06bfc29@linux.intel.com>
+ <20190429153916.GB26806@pauld.bos.csb>
+In-Reply-To: <20190429153916.GB26806@pauld.bos.csb>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Tue, 30 Apr 2019 09:24:46 +0800
+Message-ID: <CAERHkrs31scmsmTW18bbCj8+NwS+jPg0=SFjFUPP2y0oJCod1w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/17] Core scheduling v2
+To:     Phil Auld <pauld@redhat.com>
+Cc:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 17, 2019 at 05:13:54PM -0700, Douglas Anderson wrote:
-> Some SoCs with a dwc2 USB controller may need to keep the PHY on to
-> support remote wakeup.  Allow specifying this as a device tree
-> property.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> For relevant prior discussion on this patch, see:
-> 
-> https://lkml.kernel.org/r/1435017144-2971-3-git-send-email-dianders@chromium.org
-> 
-> I didn't make any changes from the prior version since I never found
-> out what Rob thought of my previous arguments.  If folks want a
-> change, perhaps they could choose from these options:
-> 
-> 1. Assume that all dwc2 hosts would like to keep their PHY on for
->    suspend if there's a USB wakeup enabled, thus we totally drop this
->    binding.  This doesn't seem super great to me since I'd bet that
->    many devices that use dwc2 weren't designed for USB wakeup (they
->    may not keep enough clocks or rails on) so we might be wasting
->    power for nothing.
+On Mon, Apr 29, 2019 at 11:39 PM Phil Auld <pauld@redhat.com> wrote:
+>
+> On Mon, Apr 29, 2019 at 09:25:35PM +0800 Li, Aubrey wrote:
+> > .--------------------------------------------------------------------------------------------------------------------------------------.
+> > |NA/AVX vanilla-SMT     [std% / sem%]     cpu% |coresched-SMT   [std% / sem%]     +/-     cpu% |  no-SMT [std% / sem%]   +/-      cpu% |
+> > |--------------------------------------------------------------------------------------------------------------------------------------|
+> > |  1/1        508.5     [ 0.2%/ 0.0%]     2.1% |        504.7   [ 1.1%/ 0.1%]    -0.8%    2.1% |   509.0 [ 0.2%/ 0.0%]   0.1%     4.3% |
+> > |  2/2       1000.2     [ 1.4%/ 0.1%]     4.1% |       1004.1   [ 1.6%/ 0.2%]     0.4%    4.1% |   997.6 [ 1.2%/ 0.1%]  -0.3%     8.1% |
+> > |  4/4       1912.1     [ 1.0%/ 0.1%]     7.9% |       1904.2   [ 1.1%/ 0.1%]    -0.4%    7.9% |  1914.9 [ 1.3%/ 0.1%]   0.1%    15.1% |
+> > |  8/8       3753.5     [ 0.3%/ 0.0%]    14.9% |       3748.2   [ 0.3%/ 0.0%]    -0.1%   14.9% |  3751.3 [ 0.4%/ 0.0%]  -0.1%    30.5% |
+> > | 16/16      7139.3     [ 2.4%/ 0.2%]    30.3% |       7137.9   [ 1.8%/ 0.2%]    -0.0%   30.3% |  7049.2 [ 2.4%/ 0.2%]  -1.3%    60.4% |
+> > | 32/32     10899.0     [ 4.2%/ 0.4%]    60.3% |      10780.3   [ 4.4%/ 0.4%]    -1.1%   55.9% | 10339.2 [ 9.6%/ 0.9%]  -5.1%    97.7% |
+> > | 64/64     15086.1     [11.5%/ 1.2%]    97.7% |      14262.0   [ 8.2%/ 0.8%]    -5.5%   82.0% | 11168.7 [22.2%/ 1.7%] -26.0%   100.0% |
+> > |128/128    15371.9     [22.0%/ 2.2%]   100.0% |      14675.8   [14.4%/ 1.4%]    -4.5%   82.8% | 10963.9 [18.5%/ 1.4%] -28.7%   100.0% |
+> > |256/256    15990.8     [22.0%/ 2.2%]   100.0% |      12227.9   [10.3%/ 1.0%]   -23.5%   73.2% | 10469.9 [19.6%/ 1.7%] -34.5%   100.0% |
+> > '--------------------------------------------------------------------------------------------------------------------------------------'
+> >
+>
+> That's really nice and clear.
+>
+> We start to see the penalty for the coresched at 32/32, leaving some cpus more idle than otherwise.
+> But it's pretty good overall, for this benchmark at least.
+>
+> Is this with stock v2 or with any of the fixes posted after? I wonder how much the fixes for
+> the race that violates the rule effects this, for example.
+>
 
-1b. Use SoC specific compatible strings to enable/disable remote 
-wake-up. We can debate what the default is I guess.
+Yeah, this data is based on v2 without any fixes after.
+I also tried some fixes potential to performance impact but no luck so far.
+Please let me know if anything I missed.
 
-> 2. Rename this property to "snps,wakeup-from-suspend-with-phy" to make
->    it more obvious that this property is intended both to document
->    that wakeup from suspend is possible and that we need the PHY for
->    said wakeup.
-> 3. Rename this property to "snps,can-wakeup-from-suspend" and assume
->    it's implicit that if we can wakeup from suspend that we need to
->    keep the PHY on.  If/when someone shows that a device exists using
->    dwc2 where we can wakeup from suspend without the PHY they can add
->    a new property.
-> 
-> Changes in v2: None
-> 
->  Documentation/devicetree/bindings/usb/dwc2.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Thanks,
+-Aubrey
