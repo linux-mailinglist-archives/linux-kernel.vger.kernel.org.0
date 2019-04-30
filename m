@@ -2,92 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70685F46C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929EAF474
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfD3KpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:45:21 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37810 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfD3KpU (ORCPT
+        id S1727299AbfD3KrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:47:12 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44969 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfD3KrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:45:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id b12so11123022lji.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 03:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D0Zsz5cuLJP69SdJwEsKGX6QwExtlT9EFiLTZhEUga8=;
-        b=bxHjCkoavoWP0hn9Y3zvg9uBa6/OyLqHI5jEpHTFTvFUZkg/G0SnClzHnlOncwQfd/
-         8AJpSAjDKpJaytE5xuwaK8gHuPdq3EOYGTfkU0JbE7sC8Ept3JJ15+MYRxb0x6PzHfl2
-         AhWWFagFddh06QfYTxLFTEHlZJkd4lu28BlpyDa+VOERo0+dvzK56HWlS3dT7dUGD1DB
-         9lv1ZMGobUYNU9iAUHymErxAMtS8tuhcTNTsWxyb517TlnsEZ+yHZCXFmOMhDfwxEiNa
-         rLFDeagMOuR1rkkIJHALJXo0SvmLP3t9/Vcc5XhzVX6i+qNdghV+L0LRvWzGPB3Jma5t
-         +fXA==
+        Tue, 30 Apr 2019 06:47:10 -0400
+Received: by mail-lf1-f68.google.com with SMTP id h18so10315545lfj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 03:47:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D0Zsz5cuLJP69SdJwEsKGX6QwExtlT9EFiLTZhEUga8=;
-        b=oV7jeVIp58qYyABlFOIiRB3IQJHRXjrG5lkUZyHyYs8PDkPH9y0hePkz1BXSEBXuth
-         Z9MAvf7eKLHmqlHhYQsszJJ3QA69lbMxNsFwCemLKh5/yaIWqWO+oyUaBPLm72r6LS9S
-         pOLkd1pWf/8BAD+Lf2l6N++wPO6kYxQdNLgrjtO6fEk7owXZc2BPUN+LaKbaVKMsCAHH
-         59Mio1qW76O0/RmXra4FQDeA0bGZkjY6ARjbzHcyQKr7wcX36Kf9sfonbSrFPDidKFB4
-         bLT2uFwCQ0kDv5PmmVUbxaZ3faeKTi9+XA2L/hhyUT5E48viJRRERHkGxBFkL1pq5xQY
-         a3Eg==
-X-Gm-Message-State: APjAAAWDyobAUnCARMuiYTkf8pbD8S4GCkrw8kpmtUrIIqMMxpnWnPyS
-        QvO0zP4RxI9aNAe37/qhWus=
-X-Google-Smtp-Source: APXvYqzDf7wlVV/tS0AVM5oO9IvgsP46PdHqrHNLvAfCdN4WQJCHqmCHp4cUQ7a3+BNNLwzEOz0lLA==
-X-Received: by 2002:a2e:3e0e:: with SMTP id l14mr35352423lja.125.1556621118804;
-        Tue, 30 Apr 2019 03:45:18 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id f1sm7277893ljc.73.2019.04.30.03.45.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 03:45:18 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 68F874603CA; Tue, 30 Apr 2019 13:45:17 +0300 (MSK)
-Date:   Tue, 30 Apr 2019 13:45:17 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        akpm@linux-foundation.org, arunks@codeaurora.org, brgl@bgdev.pl,
-        geert+renesas@glider.be, ldufour@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mguzik@redhat.com, mhocko@kernel.org, rppt@linux.ibm.com,
-        vbabka@suse.cz
-Subject: Re: [PATCH 1/3] mm: get_cmdline use arg_lock instead of mmap_sem
-Message-ID: <20190430104517.GF2673@uranus.lan>
-References: <20190418182321.GJ3040@uranus.lan>
- <20190430081844.22597-1-mkoutny@suse.com>
- <20190430081844.22597-2-mkoutny@suse.com>
- <4c79fb09-c310-4426-68f7-8b268100359a@virtuozzo.com>
- <20190430093808.GD2673@uranus.lan>
- <1a7265fa-610b-1f2a-e55f-b3a307a39bf2@virtuozzo.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VmpVtnJXoZD7hpcFvy3KfMWpWjz8E7iIMZMr/p/hx08=;
+        b=Mzsigt0Iay9a1zb9TTpjkIZGvp44KL5sd4n3bRpVTXs+YFe5oxFZKqLrFBq5Ra5Etj
+         Z+WCSxLm1WWRD4B7opQN2po8AX5JkGNNQgyJs7SQibqzIgxuEJvGEJl9xzj6hjZjmkxh
+         bP+Khy4pRmJ2HK+e8A/sNg/XFgZQpL9Fk12eXq+wzrtIBVHGobfsGXGkmePJIixpx5TM
+         TSdL7cIB8FrWX8C+naV+yI354mdLIJnCc4au81gAopTghmzzk4nkZ9Qcrgf03nFp2YaM
+         I6mCH4c5tEMdp/GOXLLnvXjmOwq6eZTLEUFoBt3VoCVEkfG3pTZKCy6ToPhl+wwrGXwJ
+         yQFg==
+X-Gm-Message-State: APjAAAWSnR6ZzKFkpBJfxU5rXVa3EWKszyhgexDSeLSLTMmFWOaQsZeY
+        H4ISwjmDxE75jSiQSl5Xa7jK5jGP+XOMZDumczcoVTA/
+X-Google-Smtp-Source: APXvYqwQw358S3PMpr7zTHIOWFDZ2GZkPL/RkKarMWKmXIh0nGsO6gwvqzyuRx+/utLNMRV4qHESkYTIoNTKFCQ2AY0=
+X-Received: by 2002:a19:a417:: with SMTP id q23mr34990275lfc.110.1556621228264;
+ Tue, 30 Apr 2019 03:47:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a7265fa-610b-1f2a-e55f-b3a307a39bf2@virtuozzo.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190429222613.13345-1-mcroce@redhat.com>
+In-Reply-To: <20190429222613.13345-1-mcroce@redhat.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Tue, 30 Apr 2019 12:46:31 +0200
+Message-ID: <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
+To:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:53:51PM +0300, Kirill Tkhai wrote:
-> > 
-> > Well, strictly speaking we probably should but you know setup of
-> > the @arg_start by kernel's elf loader doesn't cause any side
-> > effects as far as I can tell (its been working this lockless
-> > way for years, mmap_sem is taken later in the loader code).
-> > Though for consistency sake we probably should set it up
-> > under the spinlock.
-> 
-> Ok, so elf loader doesn't change these parameters.
-> Thanks for the explanation.
+On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> Add a const int array containing the most commonly used values,
+> some macros to refer more easily to the correct array member,
+> and use them instead of creating a local one for every object file.
+>
 
-It setups these parameters unconditionally. I need to revisit
-this moment. Technically (if only I'm not missing something
-obvious) we might have a race here with prctl setting up new
-params, but this should be harmless since most of them (except
-stack setup) are purely informative data.
+Ok it seems that this simply can't be done, because there are at least
+two points where extra1,2 are set to a non const struct:
+in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
+while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
+and a struct net.
+
+So, sadly making extra1,2 const is a no-go :(
+
+Andrew, I'm thinking to add the "sad and lame" cast in the macro, to
+have a single point where hide it
+
+
+Regards,
+--
+Matteo Croce
+per aspera ad upstream
