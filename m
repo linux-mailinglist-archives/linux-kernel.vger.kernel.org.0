@@ -2,176 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B614FF3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAED8FF2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:58:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfD3SBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 14:01:37 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:46071 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfD3SBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:01:36 -0400
-Received: by mail-vs1-f66.google.com with SMTP id o10so8514453vsp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=udGYYZ0yreK6CtTU+km/hkbu5NAgxUoskOjd7fbDP/U=;
-        b=loVtF8KBjSkZ8K3xAisNVfIzS4JJpgbqd/1xbj5zJ/zndA/l2aYmvKyzT5P2WNF0Ph
-         8EfksqMoTlhy+kreTuVOGfFpGdcIxKSdNaywlFu4kJSR84ljsb1/KB9nPoxLCTN99eEZ
-         73+nUgycHbo2eoku46d5DG3xXX7nj7nXZ3Kkw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=udGYYZ0yreK6CtTU+km/hkbu5NAgxUoskOjd7fbDP/U=;
-        b=AX1yFOcAh0v3EYY0kAl5cQ65uux+wrzL9PVLf1FxDfoMeoaGs5GHaG4BMNbCt/2mQ1
-         VcwC86c6NWZm+TQ1qekohIURSP10cX1Oec+DfRWx1QKlUuboaG0G47EOonw34xk/2cY9
-         IJtS/rZfkEuJzVSwYX0xn49c8yIPzsJJCyJxenw9U+S2fIQENjPaPnl6oTNv/hinTdzx
-         UOXUGB6Sa/Ah28g7lCJw/5r+tlbFU9G/vl9ll4ULH0DFT5lvd5bl8xn84OwE1fWsPm0e
-         iyqf2PV3jDFPi+PrBHm2Ooih4nfF7c7Iswhmvf68oeeCPBNslrU4FheFvIyyGLSKvhRK
-         gV5A==
-X-Gm-Message-State: APjAAAUEXzRPJhrIIzwEEvggHSesFz+piL9bGqBmvT9GN/13A6cueaZO
-        spM+pVPnEnCtiusXijaQIr0Dwq5wTfw=
-X-Google-Smtp-Source: APXvYqw5IaBKdhM/5krXQmB/rCgQiPSrvFUv5K8F1SGviNULc7r6jHcBI0Z/u97XAuq0KAFYjbaXQg==
-X-Received: by 2002:a67:82c8:: with SMTP id e191mr37537009vsd.24.1556647294383;
-        Tue, 30 Apr 2019 11:01:34 -0700 (PDT)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id u3sm3982942vsi.2.2019.04.30.11.01.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 11:01:31 -0700 (PDT)
-Received: by mail-vk1-f180.google.com with SMTP id h127so3306469vkd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:01:31 -0700 (PDT)
-X-Received: by 2002:a1f:3c83:: with SMTP id j125mr35725886vka.92.1556647290472;
- Tue, 30 Apr 2019 11:01:30 -0700 (PDT)
+        id S1726723AbfD3R6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 13:58:24 -0400
+Received: from mga07.intel.com ([134.134.136.100]:46177 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfD3R6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 13:58:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 10:58:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
+   d="scan'208";a="166347217"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by fmsmga002.fm.intel.com with ESMTP; 30 Apr 2019 10:58:22 -0700
+Date:   Tue, 30 Apr 2019 11:01:08 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix intel_pasid_max_id
+Message-ID: <20190430110108.7c751195@jacob-builder>
+In-Reply-To: <20190430072940.10467-1-eric.auger@redhat.com>
+References: <20190430072940.10467-1-eric.auger@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <2236FBA76BA1254E88B949DDB74E612BA4C51962@IRSMSX102.ger.corp.intel.com>
- <20190416120822.GV11158@hirez.programming.kicks-ass.net> <01914abbfc1a4053897d8d87a63e3411@AcuMS.aculab.com>
- <20190416154348.GB3004@mit.edu> <2236FBA76BA1254E88B949DDB74E612BA4C52338@IRSMSX102.ger.corp.intel.com>
- <9cf586757eb44f2c8f167abf078da921@AcuMS.aculab.com> <20190417151555.GG4686@mit.edu>
- <99e045427125403ba2b90c2707d74e02@AcuMS.aculab.com> <2236FBA76BA1254E88B949DDB74E612BA4C5E473@IRSMSX102.ger.corp.intel.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
- <20190426140102.GA4922@mit.edu> <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
- <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net> <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Apr 2019 11:01:02 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jK108afSxMp6qtcdEr-D-ONz80L0C_4p2oLsMsDWvK=zw@mail.gmail.com>
-Message-ID: <CAGXu5jK108afSxMp6qtcdEr-D-ONz80L0C_4p2oLsMsDWvK=zw@mail.gmail.com>
-Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        David Laight <David.Laight@aculab.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 10:51 AM Reshetova, Elena
-<elena.reshetova@intel.com> wrote:
-> base: Simple syscall: 0.1761 microseconds
-> get_random_bytes (4096 bytes per-cpu buffer): 0.1793 microsecons
-> get_random_bytes (64 bytes per-cpu buffer): 0.1866 microsecons
+On Tue, 30 Apr 2019 09:29:40 +0200
+Eric Auger <eric.auger@redhat.com> wrote:
 
-The 4096 size seems pretty good.
+> Extended Capability Register PSS field (PASID Size Supported)
+> corresponds to the PASID bit size -1.
+> 
+> "A value of N in this field indicates hardware supports PASID
+> field of N+1 bits (For example, value of 7 in this field,
+> indicates 8-bit PASIDs are supported)".
+> 
+> Fix the computation of intel_pasid_max_id accordingly.
+> 
+> Fixes: 562831747f62 ("iommu/vt-d: Global PASID name space")
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> ---
+>  drivers/iommu/intel-iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 28cb713d728c..c3f1bfc81d2e 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -3331,7 +3331,7 @@ static int __init init_dmars(void)
+>  		 * than the smallest supported.
+>  		 */
+>  		if (pasid_supported(iommu)) {
+> -			u32 temp = 2 << ecap_pss(iommu->ecap);
+> +			u32 temp = 2 << (ecap_pss(iommu->ecap) + 1);
+here it is "2 << bits" not "1 << bits", so the original code is correct.
 
-> Below is a snip of what I quickly did (relevant parts) to get these numbers.
-> I do initial population of per-cpu buffers in late_initcall, but
-> practice shows that rng might not always be in good state by then.
-> So, we might not have really good randomness then, but I am not sure
-> if this is a practical problem since it only applies to system boot and by
-> the time it booted, it already issued enough syscalls that buffer gets refilled
-> with really good numbers.
-> Alternatively we can also do it on the first syscall that each cpu gets, but I
-> am not sure if that is always guaranteed to have a good randomness.
+But I agree it would be more clear to the spec. if we do:
+1 << (ecap_pss(iommu->ecap) + 1);
+>  
+>  			intel_pasid_max_id = min_t(u32, temp,
+>  						   intel_pasid_max_id);
 
-Populating at first syscall seems like a reasonable way to delay. And
-I agree: I think we should not be too concerned about early RNG state:
-we should design for the "after boot" behaviors.
-
-> diff --git a/lib/percpu-random.c b/lib/percpu-random.c
-> new file mode 100644
-> index 000000000000..3f92c44fbc1a
-> --- /dev/null
-> +++ b/lib/percpu-random.c
-> @@ -0,0 +1,49 @@
-> +#include <linux/types.h>
-> +#include <linux/percpu.h>
-> +#include <linux/random.h>
-> +
-> +static DEFINE_PER_CPU(struct rnd_buffer, stack_rand_offset) __latent_entropy;
-> +
-> +
-> +/*
-> + *    Generate some initially weak seeding values to allow
-> + *    to start the prandom_u32() engine.
-> + */
-> +static int __init stack_rand_offset_init(void)
-> +{
-> +    int i;
-> +
-> +    /* exctract bits to out per-cpu rand buffers */
-> +    for_each_possible_cpu(i) {
-> +        struct rnd_buffer *buffer = &per_cpu(stack_rand_offset, i);
-> +        buffer->byte_counter = 0;
-> +        /* if rng is not initialized, this won't extract us good stuff
-> +         * but we cannot wait for rng to initialize either */
-> +        get_random_bytes(&(buffer->buffer), sizeof(buffer->buffer));
-
-Instead of doing get_random_bytes() here, just set byte_counter =
-RANDOM_BUFFER_SIZE and let random_get_byte() do the work on a per-cpu
-basis?
-
-> +
-> +    }
-> +
-> +    return 0;
-> +}
-> +late_initcall(stack_rand_offset_init);
-> +
-> +unsigned char random_get_byte(void)
-> +{
-> +    struct rnd_buffer *buffer = &get_cpu_var(stack_rand_offset);
-> +    unsigned char res;
-> +
-> +    if (buffer->byte_counter >= RANDOM_BUFFER_SIZE) {
-> +        get_random_bytes(&(buffer->buffer), sizeof(buffer->buffer));
-> +        buffer->byte_counter = 0;
-> +    }
-> +
-> +    res = buffer->buffer[buffer->byte_counter];
-> +    buffer->buffer[buffer->byte_counter] = 0;
-> +    buffer->byte_counter ++;
-> +     put_cpu_var(stack_rand_offset);
-> +    return res;
-> +}
-> +EXPORT_SYMBOL(random_get_byte);
-
-Otherwise, sure, looks good. I remain worried about info leaks of the
-percpu area causing pain down the road, but we find a safer way to do
-this, we can do it later.
-
--- 
-Kees Cook
