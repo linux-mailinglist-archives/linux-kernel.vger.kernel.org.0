@@ -2,156 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 236E5F7E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5F4EF825
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfD3MDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:03:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727465AbfD3MD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:03:28 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5781F20835;
-        Tue, 30 Apr 2019 12:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556625806;
-        bh=vfCr04KFuWTnfRIx5YFbzxFml3k6X036yCo56FLgZHw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JV95ZyezEgr2kzNrEuLil5pkzkqEL+QJXmM8eMx0gozO8Hty8hRwiQUnvITXu+MNW
-         /TO4ACMbTIsFza+bLXSh33ZElmvqbbD2Lu+SHn0q83lDt9L5/3rVYfbjuNqGQUI9S+
-         h66Nn25wjDLCBFUhOOXOrUusqUqAiBXR0jRxXwpM=
-Date:   Tue, 30 Apr 2019 15:03:21 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        id S1729165AbfD3MFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:05:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45888 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728465AbfD3MFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:05:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82D9680D;
+        Tue, 30 Apr 2019 05:05:00 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB4A83F5C1;
+        Tue, 30 Apr 2019 05:04:56 -0700 (PDT)
+Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org,
+        Heiko Stuebner <heiko@sntech.de>,
         Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH v13 16/20] IB/mlx4, arm64: untag user pointers in
- mlx4_get_umem_mr
-Message-ID: <20190430120321.GF6705@mtr-leonro.mtl.com>
-References: <cover.1553093420.git.andreyknvl@google.com>
- <1e2824fd77e8eeb351c6c6246f384d0d89fd2d58.1553093421.git.andreyknvl@google.com>
- <20190429180915.GZ6705@mtr-leonro.mtl.com>
- <20190430111625.GD29799@arrakis.emea.arm.com>
+        David Brown <david.brown@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        murphyt7@tcd.ie, David Woodhouse <dwmw2@infradead.org>
+References: <20190430002952.18909-1-tmurphy@arista.com>
+ <20190430002952.18909-4-tmurphy@arista.com>
+ <20190430111222.GA3191@infradead.org>
+ <da835ce2-f73e-3035-e1d7-d3028cc1a838@arm.com>
+ <20190430113253.GA23210@infradead.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
+Date:   Tue, 30 Apr 2019 13:04:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430111625.GD29799@arrakis.emea.arm.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190430113253.GA23210@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:16:25PM +0100, Catalin Marinas wrote:
-> (trimmed down the cc list slightly as the message bounces)
->
-> On Mon, Apr 29, 2019 at 09:09:15PM +0300, Leon Romanovsky wrote:
-> > On Wed, Mar 20, 2019 at 03:51:30PM +0100, Andrey Konovalov wrote:
-> > > This patch is a part of a series that extends arm64 kernel ABI to allow to
-> > > pass tagged user pointers (with the top byte set to something else other
-> > > than 0x00) as syscall arguments.
-> > >
-> > > mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
-> > > only by done with untagged pointers.
-> > >
-> > > Untag user pointers in this function.
-> > >
-> > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > > ---
-> > >  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
-> > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/mr.c
-> > > index 395379a480cb..9a35ed2c6a6f 100644
-> > > --- a/drivers/infiniband/hw/mlx4/mr.c
-> > > +++ b/drivers/infiniband/hw/mlx4/mr.c
-> > > @@ -378,6 +378,7 @@ static struct ib_umem *mlx4_get_umem_mr(struct ib_udata *udata, u64 start,
-> > >  	 * again
-> > >  	 */
-> > >  	if (!ib_access_writable(access_flags)) {
-> > > +		unsigned long untagged_start = untagged_addr(start);
-> > >  		struct vm_area_struct *vma;
-> > >
-> > >  		down_read(&current->mm->mmap_sem);
-> > > @@ -386,9 +387,9 @@ static struct ib_umem *mlx4_get_umem_mr(struct ib_udata *udata, u64 start,
-> > >  		 * cover the memory, but for now it requires a single vma to
-> > >  		 * entirely cover the MR to support RO mappings.
-> > >  		 */
-> > > -		vma = find_vma(current->mm, start);
-> > > -		if (vma && vma->vm_end >= start + length &&
-> > > -		    vma->vm_start <= start) {
-> > > +		vma = find_vma(current->mm, untagged_start);
-> > > +		if (vma && vma->vm_end >= untagged_start + length &&
-> > > +		    vma->vm_start <= untagged_start) {
-> > >  			if (vma->vm_flags & VM_WRITE)
-> > >  				access_flags |= IB_ACCESS_LOCAL_WRITE;
-> > >  		} else {
-> > > --
-> >
-> > Thanks,
-> > Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
->
-> Thanks for the review.
->
-> > Interesting, the followup question is why mlx4 is only one driver in IB which
-> > needs such code in umem_mr. I'll take a look on it.
->
-> I don't know. Just using the light heuristics of find_vma() shows some
-> other places. For example, ib_umem_odp_get() gets the umem->address via
-> ib_umem_start(). This was previously set in ib_umem_get() as called from
-> mlx4_get_umem_mr(). Should the above patch have just untagged "start" on
-> entry?
+On 30/04/2019 12:32, Christoph Hellwig wrote:
+> On Tue, Apr 30, 2019 at 12:27:02PM +0100, Robin Murphy wrote:
+>>> Hmm, I don't think we need the DMA mask for the MSI mapping, this
+>>> should probably always use a 64-bit mask.
+>>
+>> If that were true then we wouldn't need DMA masks for regular mappings
+>> either. If we have to map the MSI doorbell at all, then we certainly have to
+>> place it at an IOVA that the relevant device is actually capable of
+>> addressing.
+> 
+> Well, as shown by the patch below we don't even look at the DMA mask
+> for the MSI page - we just allocate from bottom to top.
 
-ODP flows are not applicable to any driver except mlx5.
-According to commit message of d8f9cc328c88 ("IB/mlx4: Mark user
-MR as writable if actual virtual memory is writable"), the code in its
-current form needed to deal with different mappings between RDMA memory
-requested and VMA memory underlined.
+In the trivial cookie for unmanaged domains, yes, but in that case the 
+responsibility is on VFIO to provide a suitable (i.e. sub-32-bit) 
+address range for that cookie in the first place. In the managed case, 
+allocation uses the streaming mask via iommu_dma_get_msi_page() calling 
+__iommu_dma_map(). Admittedly the mask can then get overlooked when 
+reusing an existing mapping, which strictly could pose a problem if you 
+have multiple devices with incompatible masks in the same group (and 
+such that the PCI stuff doesn't already mitigate it), but that's such an 
+obscure corner case that I'm reticent to introduce the complication to 
+handle it until it's actually proven necessary.
 
->
-> BTW, what's the provenience of such "start" address here? Is it
-> something that the user would have malloc()'ed? We try to impose some
-> restrictions one what is allowed to be tagged in user so that we don't
-> have to untag the addresses in the kernel. For example, if it was the
-> result of an mmap() on the device file, we don't allow tagging.
-
-The *_reg_user_mr() is called from userspace through ibv_reg_mr() call [1]
-and this is how "address" and access flags are provided.
-
-Right now, the address should point to memory accessible by
-get_user_pages(), however mmap-ed memory uses remap_pfn_range()
-to provide such pages which makes them unusable for get_user_pages().
-
-I would be glad to see this is a current limitation of RDMA stack and
-not as a final design decision.
-
-[1] https://linux.die.net/man/3/ibv_reg_mr
-
->
-> Thanks.
->
-> --
-> Catalin
+Robin.
