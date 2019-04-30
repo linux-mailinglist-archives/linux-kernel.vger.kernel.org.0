@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9471BF5DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5F0F72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfD3Ljb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
+        id S1727211AbfD3L4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:56:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbfD3Lja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:39:30 -0400
+        id S1730875AbfD3Lsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A911321670;
-        Tue, 30 Apr 2019 11:39:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FFC520449;
+        Tue, 30 Apr 2019 11:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624369;
-        bh=4CLCUF53Z45JpjieCHtCn6m3aYIBDfhyKJr/JTnb8DQ=;
+        s=default; t=1556624915;
+        bh=ZjSnPPE3GJxDV7BkqDZlz1xwMuO9b69kcF0NnUB0768=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fPLT/bmA4/4Ptftpe6XhPsT7UfIqdawwgnKhhcdxen+tKakmmgNR9y330J7FsIiXY
-         K7QQcR8pGI7Vgeoj6msV4ZDEFhirPPFSYAXVvZiyMMmYVK99ggRsv1XrG6ZOoOIs2W
-         IHSZ+tbfgk7ISqkYziPLR0LLfLOYYPAagWLUYX7I=
+        b=aG2XUpM6BO/3Txynx4zXmYTbE0uvEiEDlXpaThnyxPiZ5IL3NIFd8IGyJWF7sCD9v
+         KXQSUSM5Oyfh0Vaj/htIwsDvUcH7tsL3B9wW8hVmzP/vzrITlgTUa23kRKzHT9Fz+T
+         fOZohROoE3KYCy3SmTjlxM1Xm6d5npzyzjyrYcn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 01/41] kbuild: simplify ld-option implementation
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 5.0 21/89] arm64: mm: Ensure tail of unaligned initrd is reserved
 Date:   Tue, 30 Apr 2019 13:38:12 +0200
-Message-Id: <20190430113524.762604112@linuxfoundation.org>
+Message-Id: <20190430113611.059391513@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,92 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 0294e6f4a0006856e1f36b8cd8fa088d9e499e98 upstream.
+commit d4d18e3ec6091843f607e8929a56723e28f393a6 upstream.
 
-Currently, linker options are tested by the coordination of $(CC) and
-$(LD) because $(LD) needs some object to link.
+In the event that the start address of the initrd is not aligned, but
+has an aligned size, the base + size will not cover the entire initrd
+image and there is a chance that the kernel will corrupt the tail of the
+image.
 
-As commit 86a9df597cdd ("kbuild: fix linker feature test macros when
-cross compiling with Clang") addressed, we need to make sure $(CC)
-and $(LD) agree the underlying architecture of the passed object.
+By aligning the end of the initrd to a page boundary and then
+subtracting the adjusted start address the memblock reservation will
+cover all pages that contains the initrd.
 
-This could be a bit complex when we combine tools from different groups.
-For example, we can use clang for $(CC), but we still need to rely on
-GCC toolchain for $(LD).
-
-So, I was searching for a way of standalone testing of linker options.
-A trick I found is to use '-v'; this not only prints the version string,
-but also tests if the given option is recognized.
-
-If a given option is supported,
-
-  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
-  GNU ld (Linaro_Binutils-2017.11) 2.28.2.20170706
-  $ echo $?
-  0
-
-If unsupported,
-
-  $ aarch64-linux-gnu-ld -v --fix-cortex-a53-843419
-  GNU ld (crosstool-NG linaro-1.13.1-4.7-2013.04-20130415 - Linaro GCC 2013.04) 2.23.1
-  aarch64-linux-gnu-ld: unrecognized option '--fix-cortex-a53-843419'
-  aarch64-linux-gnu-ld: use the --help option for usage information
-  $ echo $?
-  1
-
-Gold works likewise.
-
-  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-843419
-  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
-  masahiro@pug:~/ref/linux$ echo $?
-  0
-  $ aarch64-linux-gnu-ld.gold -v --fix-cortex-a53-999999
-  GNU gold (Linaro_Binutils-2017.11 2.28.2.20170706) 1.14
-  aarch64-linux-gnu-ld.gold: --fix-cortex-a53-999999: unknown option
-  aarch64-linux-gnu-ld.gold: use the --help option for usage information
-  $ echo $?
-  1
-
-LLD too.
-
-  $ ld.lld -v --gc-sections
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  0
-  $ ld.lld -v --fix-cortex-a53-843419
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  0
-  $ ld.lld -v --fix-cortex-a53-999999
-  ld.lld: error: unknown argument: --fix-cortex-a53-999999
-  LLD 7.0.0 (http://llvm.org/git/lld.git 4a0e4190e74cea19f8a8dc625ccaebdf8b5d1585) (compatible with GNU linkers)
-  $ echo $?
-  1
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-[nc: try-run-cached was added later, just use try-run, which is the
-     current mainline state]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: c756c592e442 ("arm64: Utilize phys_initrd_start/phys_initrd_size")
+Cc: stable@vger.kernel.org
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- scripts/Kbuild.include |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -166,9 +166,7 @@ cc-ldoption = $(call try-run,\
+---
+ arch/arm64/mm/init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -406,7 +406,7 @@ void __init arm64_memblock_init(void)
+ 		 * Otherwise, this is a no-op
+ 		 */
+ 		u64 base = phys_initrd_start & PAGE_MASK;
+-		u64 size = PAGE_ALIGN(phys_initrd_size);
++		u64 size = PAGE_ALIGN(phys_initrd_start + phys_initrd_size) - base;
  
- # ld-option
- # Usage: LDFLAGS += $(call ld-option, -X)
--ld-option = $(call try-run,\
--	$(CC) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
--	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
-+ld-option = $(call try-run, $(LD) $(LDFLAGS) $(1) -v,$(1),$(2))
- 
- # ar-option
- # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+ 		/*
+ 		 * We can only add back the initrd memory if we don't end up
 
 
