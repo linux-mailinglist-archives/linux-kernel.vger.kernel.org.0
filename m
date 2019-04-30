@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 360D4F3FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAE5F403
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfD3KOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:14:30 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37082 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbfD3KO3 (ORCPT
+        id S1727624AbfD3KOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:14:50 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57014 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbfD3KOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:14:29 -0400
+        Tue, 30 Apr 2019 06:14:49 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3UAE5GO044451;
-        Tue, 30 Apr 2019 05:14:05 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3UAE9LQ010243;
+        Tue, 30 Apr 2019 05:14:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1556619245;
-        bh=9T1+9YJFLids0gdsas5L4APsMX65K8+z0t8DADJ616k=;
+        s=ti-com-17Q1; t=1556619249;
+        bh=eIoEDjTeKYsgA/SaW4oqLId+V2Mf5KkOSQteCjwn3nc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vOP3IF7HsaYfY131hD9QwEuI2zZ164xqYnP1dsKwho3tN+rOJft3gAtUEmQMIDO2o
-         6sD64+Uh2JjCHC4GShfe0rdbyXpGCPx7Yivrj+0FMVBGSO8nF69GWZY6kwlTJ9NLPU
-         TNArGxbIlk5+kevAfdKypGkW9eCBxig9rQUZZNg4=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3UAE5V2022606
+        b=PsDooYhYWU0+h4oaYmQ2fIjGdO57I1gyWbVuH6FmR2qXRiw0OAqYv0E6dBIj4VM0R
+         QWqNr2v/ptpVTla/bLuVllcY5hrK/B86NgVjmdIZGWte2xkQbNjg9WNBcFQokLyEH6
+         HmRamBP1QUg1pdQlmpBv+CNebiwRBp/2AjoizAbU=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3UAE9Kj022760
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Apr 2019 05:14:05 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 30 Apr 2019 05:14:09 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 30
- Apr 2019 05:14:04 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2019 05:14:09 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 30 Apr 2019 05:14:04 -0500
+ Frontend Transport; Tue, 30 Apr 2019 05:14:09 -0500
 Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3UAD0YF085082;
-        Tue, 30 Apr 2019 05:14:00 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3UAD0YG085082;
+        Tue, 30 Apr 2019 05:14:05 -0500
 From:   Lokesh Vutla <lokeshvutla@ti.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
@@ -48,10 +48,11 @@ CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Lokesh Vutla <lokeshvutla@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>
-Subject: [PATCH v8 13/14] irqchip: ti-sci-inta: Add msi domain support
-Date:   Tue, 30 Apr 2019 15:42:29 +0530
-Message-ID: <20190430101230.21794-14-lokeshvutla@ti.com>
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH v8 14/14] arm64: arch_k3: Enable interrupt controller drivers
+Date:   Tue, 30 Apr 2019 15:42:30 +0530
+Message-ID: <20190430101230.21794-15-lokeshvutla@ti.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430101230.21794-1-lokeshvutla@ti.com>
 References: <20190430101230.21794-1-lokeshvutla@ti.com>
@@ -64,105 +65,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a msi domain that is child to the INTA domain. Clients
-uses the INTA msi bus layer to allocate irqs in this
-msi domain.
+Select the TISCI Interrupt Router, Aggregator drivers and all its
+dependencies for TI's SoCs based on K3 architecture.
 
+Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 ---
-Changes sinece v7:
+Changes since v7:
 -None
 
- drivers/irqchip/Kconfig           |  1 +
- drivers/irqchip/irq-ti-sci-inta.c | 40 ++++++++++++++++++++++++++++++-
- 2 files changed, 40 insertions(+), 1 deletion(-)
+ arch/arm64/Kconfig.platforms | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 7c84a71bcd88..1fab40487d63 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -441,6 +441,7 @@ config TI_SCI_INTA_IRQCHIP
- 	depends on TI_SCI_PROTOCOL
- 	select IRQ_DOMAIN
- 	select IRQ_DOMAIN_HIERARCHY
-+	select TI_SCI_INTA_MSI_DOMAIN
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index b5ca9c50876d..ab9cac8235b3 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -82,6 +82,11 @@ config ARCH_EXYNOS
+ config ARCH_K3
+ 	bool "Texas Instruments Inc. K3 multicore SoC architecture"
+ 	select PM_GENERIC_DOMAINS if PM
++	select MAILBOX
++	select TI_MESSAGE_MANAGER
++	select TI_SCI_PROTOCOL
++	select TI_SCI_INTR_IRQCHIP
++	select TI_SCI_INTA_IRQCHIP
  	help
- 	  This enables the irqchip driver support for K3 Interrupt aggregator
- 	  over TI System Control Interface available on some new TI's SoCs.
-diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
-index 87e0abe0041f..011b60a49e3f 100644
---- a/drivers/irqchip/irq-ti-sci-inta.c
-+++ b/drivers/irqchip/irq-ti-sci-inta.c
-@@ -18,6 +18,7 @@
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/irqchip/chained_irq.h>
-+#include <linux/soc/ti/ti_sci_inta_msi.h>
- #include <linux/soc/ti/ti_sci_protocol.h>
- #include <asm-generic/msi.h>
- 
-@@ -28,6 +29,9 @@
- #define HWIRQ_TO_DEVID(hwirq)	(((hwirq) >> (TI_SCI_DEV_ID_SHIFT)) & \
- 				 (TI_SCI_DEV_ID_MASK))
- #define HWIRQ_TO_IRQID(hwirq)	((hwirq) & (TI_SCI_IRQ_ID_MASK))
-+#define TO_HWIRQ(dev, index)	((((dev) & TI_SCI_DEV_ID_MASK) << \
-+				 TI_SCI_DEV_ID_SHIFT) | \
-+				((index) & TI_SCI_IRQ_ID_MASK))
- 
- #define MAX_EVENTS_PER_VINT	64
- #define VINT_ENABLE_SET_OFFSET	0x0
-@@ -484,9 +488,34 @@ static const struct irq_domain_ops ti_sci_inta_irq_domain_ops = {
- 	.alloc		= ti_sci_inta_irq_domain_alloc,
- };
- 
-+static struct irq_chip ti_sci_inta_msi_irq_chip = {
-+	.name			= "MSI-INTA",
-+	.flags			= IRQCHIP_SUPPORTS_LEVEL_MSI,
-+};
-+
-+static void ti_sci_inta_msi_set_desc(msi_alloc_info_t *arg,
-+				     struct msi_desc *desc)
-+{
-+	struct platform_device *pdev = to_platform_device(desc->dev);
-+
-+	arg->desc = desc;
-+	arg->hwirq = TO_HWIRQ(pdev->id, desc->inta.dev_index);
-+}
-+
-+static struct msi_domain_ops ti_sci_inta_msi_ops = {
-+	.set_desc	= ti_sci_inta_msi_set_desc,
-+};
-+
-+static struct msi_domain_info ti_sci_inta_msi_domain_info = {
-+	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-+		   MSI_FLAG_LEVEL_CAPABLE),
-+	.ops	= &ti_sci_inta_msi_ops,
-+	.chip	= &ti_sci_inta_msi_irq_chip,
-+};
-+
- static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
- {
--	struct irq_domain *parent_domain, *domain;
-+	struct irq_domain *parent_domain, *domain, *msi_domain;
- 	struct device_node *parent_node, *node;
- 	struct ti_sci_inta_irq_domain *inta;
- 	struct device *dev = &pdev->dev;
-@@ -551,6 +580,15 @@ static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	msi_domain = ti_sci_inta_msi_create_irq_domain(of_node_to_fwnode(node),
-+						&ti_sci_inta_msi_domain_info,
-+						domain);
-+	if (!msi_domain) {
-+		irq_domain_remove(domain);
-+		dev_err(dev, "Failed to allocate msi domain\n");
-+		return -ENOMEM;
-+	}
-+
- 	INIT_LIST_HEAD(&inta->vint_list);
- 	mutex_init(&inta->vint_mutex);
- 
+ 	  This enables support for Texas Instruments' K3 multicore SoC
+ 	  architecture.
 -- 
 2.21.0
 
