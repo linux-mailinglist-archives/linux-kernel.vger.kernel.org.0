@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A47CCF5EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27661F7E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbfD3Lkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46968 "EHLO mail.kernel.org"
+        id S1728959AbfD3MDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:03:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728479AbfD3Lkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:32 -0400
+        id S1729905AbfD3Ln1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:43:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0890321707;
-        Tue, 30 Apr 2019 11:40:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 480D52173E;
+        Tue, 30 Apr 2019 11:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624431;
-        bh=n6bEtCH5PYROpFtTrZGNY0HS5nQHHMu9jBCBwtahPa8=;
+        s=default; t=1556624606;
+        bh=J0ShUQzD1srjF3bzW26x95MrxhY7MvI01lJ6PQT1qB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+h2mPgad/s6umELcBchmKQ2lt7C6VoQBQUM1Y6FFdim70QPY7U6B2uMK/uKzVD0e
-         CjO5tWk8WIYcsIzax+mWj2pCxVlhhfMfW8SDkWzkOlhs5QHSA7icsgzRTf1I3e5kqq
-         DsrnE8chJ/RCelRrdb93yuGGSiAXD4VObXAbIy08=
+        b=gm1hcH5ez1Y+Y5O4mZepX8U62kO4SLyxPcoq03CEZ3aT8hbZ7eaqI5YJGz5sw0Ig9
+         6iveyCgD5LxOJqzjxlV76e8jgP1J7dV6h7HLXlLST/Md5UoVIRsIDfMO8cdwxfq1YO
+         OPCkTSgddlSQ27EqGbXz6ztZ/9vGEOKfWKCeTP6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhu Yanjun <yanjun.zhu@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        stable@vger.kernel.org,
+        syzbot+8b707430713eb46e1e45@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 33/41] net: rds: exchange of 8K and 1M pool
+Subject: [PATCH 4.14 37/53] tipc: check bearer name with right length in tipc_nl_compat_bearer_enable
 Date:   Tue, 30 Apr 2019 13:38:44 +0200
-Message-Id: <20190430113532.335973595@linuxfoundation.org>
+Message-Id: <20190430113557.721290523@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Yanjun <yanjun.zhu@oracle.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 4b9fc7146249a6e0e3175d0acc033fdcd2bfcb17 ]
+commit 6f07e5f06c8712acc423485f657799fc8e11e56c upstream.
 
-Before the commit 490ea5967b0d ("RDS: IB: move FMR code to its own file"),
-when the dirty_count is greater than 9/10 of max_items of 8K pool,
-1M pool is used, Vice versa. After the commit 490ea5967b0d ("RDS: IB: move
-FMR code to its own file"), the above is removed. When we make the
-following tests.
+Syzbot reported the following crash:
 
-Server:
-  rds-stress -r 1.1.1.16 -D 1M
+BUG: KMSAN: uninit-value in memchr+0xce/0x110 lib/string.c:961
+  memchr+0xce/0x110 lib/string.c:961
+  string_is_valid net/tipc/netlink_compat.c:176 [inline]
+  tipc_nl_compat_bearer_enable+0x2c4/0x910 net/tipc/netlink_compat.c:401
+  __tipc_nl_compat_doit net/tipc/netlink_compat.c:321 [inline]
+  tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:354
+  tipc_nl_compat_handle net/tipc/netlink_compat.c:1162 [inline]
+  tipc_nl_compat_recv+0x1ae7/0x2750 net/tipc/netlink_compat.c:1265
+  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+  genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2477
+  genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:622 [inline]
+  sock_sendmsg net/socket.c:632 [inline]
 
-Client:
-  rds-stress -r 1.1.1.14 -s 1.1.1.16 -D 1M
+Uninit was created at:
+  __alloc_skb+0x309/0xa20 net/core/skbuff.c:208
+  alloc_skb include/linux/skbuff.h:1012 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+  netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+  sock_sendmsg_nosec net/socket.c:622 [inline]
+  sock_sendmsg net/socket.c:632 [inline]
 
-The following will appear.
-"
-connecting to 1.1.1.16:4000
-negotiated options, tasks will start in 2 seconds
-Starting up..header from 1.1.1.166:4001 to id 4001 bogus
-..
-tsks  tx/s  rx/s tx+rx K/s  mbi K/s  mbo K/s tx us/c  rtt us
-cpu %
-   1    0    0     0.00     0.00     0.00    0.00 0.00 -1.00
-   1    0    0     0.00     0.00     0.00    0.00 0.00 -1.00
-   1    0    0     0.00     0.00     0.00    0.00 0.00 -1.00
-   1    0    0     0.00     0.00     0.00    0.00 0.00 -1.00
-   1    0    0     0.00     0.00     0.00    0.00 0.00 -1.00
-...
-"
-So this exchange between 8K and 1M pool is added back.
+It was triggered when the bearer name size < TIPC_MAX_BEARER_NAME,
+it would check with a wrong len/TLV_GET_DATA_LEN(msg->req), which
+also includes priority and disc_domain length.
 
-Fixes: commit 490ea5967b0d ("RDS: IB: move FMR code to its own file")
-Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+This patch is to fix it by checking it with a right length:
+'TLV_GET_DATA_LEN(msg->req) - offsetof(struct tipc_bearer_config, name)'.
+
+Reported-by: syzbot+8b707430713eb46e1e45@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rds/ib_fmr.c  |   11 +++++++++++
- net/rds/ib_rdma.c |    3 ---
- 2 files changed, 11 insertions(+), 3 deletions(-)
 
---- a/net/rds/ib_fmr.c
-+++ b/net/rds/ib_fmr.c
-@@ -44,6 +44,17 @@ struct rds_ib_mr *rds_ib_alloc_fmr(struc
- 	else
- 		pool = rds_ibdev->mr_1m_pool;
+---
+ net/tipc/netlink_compat.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -394,7 +394,12 @@ static int tipc_nl_compat_bearer_enable(
+ 	if (!bearer)
+ 		return -EMSGSIZE;
  
-+	if (atomic_read(&pool->dirty_count) >= pool->max_items / 10)
-+		queue_delayed_work(rds_ib_mr_wq, &pool->flush_worker, 10);
+-	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
++	len = TLV_GET_DATA_LEN(msg->req);
++	len -= offsetof(struct tipc_bearer_config, name);
++	if (len <= 0)
++		return -EINVAL;
 +
-+	/* Switch pools if one of the pool is reaching upper limit */
-+	if (atomic_read(&pool->dirty_count) >=  pool->max_items * 9 / 10) {
-+		if (pool->pool_type == RDS_IB_MR_8K_POOL)
-+			pool = rds_ibdev->mr_1m_pool;
-+		else
-+			pool = rds_ibdev->mr_8k_pool;
-+	}
-+
- 	ibmr = rds_ib_try_reuse_ibmr(pool);
- 	if (ibmr)
- 		return ibmr;
---- a/net/rds/ib_rdma.c
-+++ b/net/rds/ib_rdma.c
-@@ -442,9 +442,6 @@ struct rds_ib_mr *rds_ib_try_reuse_ibmr(
- 	struct rds_ib_mr *ibmr = NULL;
- 	int iter = 0;
++	len = min_t(int, len, TIPC_MAX_BEARER_NAME);
+ 	if (!string_is_valid(b->name, len))
+ 		return -EINVAL;
  
--	if (atomic_read(&pool->dirty_count) >= pool->max_items_soft / 10)
--		queue_delayed_work(rds_ib_mr_wq, &pool->flush_worker, 10);
--
- 	while (1) {
- 		ibmr = rds_ib_reuse_mr(pool);
- 		if (ibmr)
 
 
