@@ -2,186 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA3CF213
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583C5F218
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfD3IdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:33:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726119AbfD3IdB (ORCPT
+        id S1726744AbfD3Ief (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:34:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34154 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfD3Iec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:33:01 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3U8MKY1015277
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 04:33:00 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s6hs0axtt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 04:32:59 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 30 Apr 2019 09:32:58 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 30 Apr 2019 09:32:55 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3U8WrrL53608484
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 08:32:53 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D2A1511C04C;
-        Tue, 30 Apr 2019 08:32:53 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0739C11C052;
-        Tue, 30 Apr 2019 08:32:53 +0000 (GMT)
-Received: from [9.152.222.31] (unknown [9.152.222.31])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 30 Apr 2019 08:32:52 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v7 3/4] s390: ap: implement PAPQ AQIC interception in
- kernel
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
-        cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1556283688-556-1-git-send-email-pmorel@linux.ibm.com>
- <1556283688-556-4-git-send-email-pmorel@linux.ibm.com>
- <20190429185002.6041eecc.pasic@linux.ibm.com>
- <14453f04-f13f-f63c-fd8a-d9d8834182e0@linux.ibm.com>
-Date:   Tue, 30 Apr 2019 10:32:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 30 Apr 2019 04:34:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=V1cm2gZOz8Lo0b6Ns70mAemkxqG1bfPxARMsSFPCS1g=; b=yyawsRFSctGJbp5kerTV0THbV
+        hgDUOIPI6GZCmUnowsm0OxIOr0+iYwProTLc4IzyicgxqZcJbMCsVSndTZwimpj6xDrZO71dPcFcc
+        xPQPnTCuw7OvOWaJsRgaarhmAL/eDq2sx9UcdTW3TpIBa9pQxMZ552jeP96SCWsqRtJxNnI5VyYCD
+        iSHj5ogukm+xo7h3qAFQxd/ZkKQJmdfahuer5JDRpWeF9vBATiPbWG76BCIlWzxn80Z80PWjOiB/J
+        uaa9WMvq/JQLyMv5+9DosCkMUkx/B4YpHFL9SyxHFyMZ9VDVE1bu4Fion/TKPMdWRGobXfUhokbXm
+        1+OzT5X7g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLODK-0007XM-I8; Tue, 30 Apr 2019 08:34:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5182E29D2D6D8; Tue, 30 Apr 2019 10:34:09 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 10:34:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH 0/5] Fix improper uses of smp_mb__{before,after}_atomic()
+Message-ID: <20190430083409.GD2677@hirez.programming.kicks-ass.net>
+References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <14453f04-f13f-f63c-fd8a-d9d8834182e0@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19043008-4275-0000-0000-0000032FD3BF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19043008-4276-0000-0000-0000383F2B89
-Message-Id: <efa8840b-35b1-2823-697f-ab56d4898854@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904300057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/04/2019 10:18, Pierre Morel wrote:
-> On 29/04/2019 18:50, Halil Pasic wrote:
->> On Fri, 26 Apr 2019 15:01:27 +0200
->> Pierre Morel <pmorel@linux.ibm.com> wrote:
->>
->>> +static struct ap_queue_status vfio_ap_setirq(struct vfio_ap_queue *q)
->>> +{
->>> +    struct ap_qirq_ctrl aqic_gisa = {};
->>> +    struct ap_queue_status status = {};
->>> +    struct kvm_s390_gisa *gisa;
->>> +    struct kvm *kvm;
->>> +    unsigned long h_nib, h_pfn;
->>> +    int ret;
->>> +
->>> +    q->a_pfn = q->a_nib >> PAGE_SHIFT;
->>> +    ret = vfio_pin_pages(mdev_dev(q->matrix_mdev->mdev), &q->a_pfn, 1,
->>> +                 IOMMU_READ | IOMMU_WRITE, &h_pfn);
->>> +    switch (ret) {
->>> +    case 1:
->>> +        break;
->>> +    case -EINVAL:
->>> +    case -E2BIG:
->>> +        status.response_code = AP_RESPONSE_INVALID_ADDRESS;
->>> +        /* Fallthrough */
->>> +    default:
->>> +        return status;
->>
->> Can we actually hit the default label? AFICT you would return an
->> all-zero status, i.e. status.response_code == 0 'Normal completion'.
+On Mon, Apr 29, 2019 at 10:14:56PM +0200, Andrea Parri wrote:
+> Hello!
 > 
-> hum right, the setting of AP_INVALID_ADDRESS should be in the default 
-> and there is no need for the two error cases, they will match the default.
+> A relatively common misuse of these barriers is to apply these to
+> operations which are not read-modify-write operations, such as
+> atomic_set() and atomic_read(); examples were discussed in [1].
 > 
-> 
->>
->>> +    }
->>> +
->>> +    kvm = q->matrix_mdev->kvm;
->>> +    gisa = kvm->arch.gisa_int.origin;
->>> +
->>> +    h_nib = (h_pfn << PAGE_SHIFT) | (q->a_nib & ~PAGE_MASK);
->>> +    aqic_gisa.gisc = q->a_isc;
->>> +    aqic_gisa.isc = kvm_s390_gisc_register(kvm, q->a_isc);
->>> +    aqic_gisa.ir = 1;
->>> +    aqic_gisa.gisa = gisa->next_alert >> 4;
->>
->> Why gisa->next_alert? Isn't this supposed to get set to gisa origin
->> (without some bits on the left)?
-> 
-> Someone already asked this question.
-> The answer is: look at the ap_qirq_ctrl structure, you will see that the 
-> gisa field is 27 bits wide.
-> 
->>
->>> +
->>> +    status = ap_aqic(q->apqn, aqic_gisa, (void *)h_nib);
->>> +    switch (status.response_code) {
->>> +    case AP_RESPONSE_NORMAL:
->>> +        /* See if we did clear older IRQ configuration */
->>> +        if (q->p_pfn)
->>> +            vfio_unpin_pages(mdev_dev(q->matrix_mdev->mdev),
->>> +                     &q->p_pfn, 1);
->>> +        if (q->p_isc != VFIO_AP_ISC_INVALID)
->>> +            kvm_s390_gisc_unregister(kvm, q->p_isc);
->>> +        q->p_pfn = q->a_pfn;
->>> +        q->p_isc = q->a_isc;
->>> +        break;
->>> +    case AP_RESPONSE_OTHERWISE_CHANGED:
->>> +        /* We could not modify IRQ setings: clear new configuration */
->>> +        vfio_unpin_pages(mdev_dev(q->matrix_mdev->mdev), &q->a_pfn, 1);
->>> +        kvm_s390_gisc_unregister(kvm, q->a_isc);
->>
->> Hm, see below. Wouldn't you want to set a_isc to VFIO_AP_ISC_INVALID?
-> 
-> grrr!!! when did I insert these 3 lines, it was OK in previous series!
-> all 3 lines, vfio_unpin() / gisc_unregister / break must go away.
+> This series attempts to fix those uses by (conservatively) replacing
+> the smp_mb__{before,after}_atomic() barriers with full memory barriers.
 
-No it wasn't, I will correct this.
+I don't think blindly doing this replacement makes the code any better;
+much of the code you found is just straight up dodgy to begin with.
 
-> 
->>
->>> +        break;
->>> +    default:    /* Fall Through */
->>
->> Is it 'break' or is it 'Fall Through'?
-> 
-> it is a fall through
-> 
->>
->>> +        pr_warn("%s: apqn %04x: response: %02x\n", __func__, q->apqn,
->>> +            status.response_code);
->>> +        vfio_ap_free_irq_data(q);
->>> +        break;
->>> +    }
->>> +
->>> +    return status;
->>> +}
-> 
-> 
+I think the people should mostly just consider this a bug report.
 
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Also, remember a memory barrier without a coherent comment is most
+likely a bug anyway.
