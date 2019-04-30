@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94001F833
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C564F857
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbfD3MGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:06:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48896 "EHLO mail.kernel.org"
+        id S1728418AbfD3LkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:40:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727992AbfD3LlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:41:22 -0400
+        id S1727243AbfD3LkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:40:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C14E921670;
-        Tue, 30 Apr 2019 11:41:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 266A6217D4;
+        Tue, 30 Apr 2019 11:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624481;
-        bh=qRmKrYYbqkg1FwSL1lD95/YIPLn4v7ox5OG63TAr2ZE=;
+        s=default; t=1556624418;
+        bh=a5ZeR0MDjNUpU1MX8cFgcVq7fOAd1SREaSmh5eqyE/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ig2rSMqPuAGDv0kQchaR05pqMQ0PzekHV/DzUArNf9LRxfVOzbxKYtnQnw2jYutH0
-         k4ETFoSpe3vX3R3HZgkJE3QF9vTv3E6mGenaR7k9zUX0SxHqJdWaejJSBrY/zKr0Pe
-         WF+dzj3qJauwOZoo9QTVq8uxxlkP+b5FKqllpNqg=
+        b=JRIHTn8avpPm0jmikhJIV+R1lPfWFBdlJqA+6+/Ixkn8+T4iOoXKYgrQ/IbWsISjQ
+         Mixmno2+DSTBjBVDXqICuNhxmNgX13FTI5vbzxlQA1tWkUuQEdDvIoUJLe2O7C5NS6
+         4Lrb5hYjPGs2V4ROBOfOJ61PrQbhc2BiKKZupIEU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, cj.chengjian@huawei.com,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 10/53] sched/numa: Fix a possible divide-by-zero
-Date:   Tue, 30 Apr 2019 13:38:17 +0200
-Message-Id: <20190430113552.326734493@linuxfoundation.org>
+Subject: [PATCH 4.9 07/41] sched/numa: Fix a possible divide-by-zero
+Date:   Tue, 30 Apr 2019 13:38:18 +0200
+Message-Id: <20190430113526.406683131@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -83,7 +83,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -2026,6 +2026,10 @@ static u64 numa_get_avg_runtime(struct t
+@@ -1925,6 +1925,10 @@ static u64 numa_get_avg_runtime(struct t
  	if (p->last_task_numa_placement) {
  		delta = runtime - p->last_sum_exec_runtime;
  		*period = now - p->last_task_numa_placement;
