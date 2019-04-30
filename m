@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB19F617
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D83F6A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729715AbfD3Lm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52594 "EHLO mail.kernel.org"
+        id S1730658AbfD3Lu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:50:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729646AbfD3Lm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:56 -0400
+        id S1731182AbfD3LuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:50:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D076120449;
-        Tue, 30 Apr 2019 11:42:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1400821670;
+        Tue, 30 Apr 2019 11:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624575;
-        bh=6jCE/LR6S7PqdS6et0GPFxE6fo1xtZ44ydYFUFAAU+8=;
+        s=default; t=1556625022;
+        bh=+ebOXy1Dc42e2ylzFgurqpriBg0nrITmuqCC5h/OTV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O8DOhaN6APZCTliv/nEtO2jbcHm04p1R5Aa8fs/2e4BwGHNZUhNQtgdj/B63oDhp+
-         z7gJDsGyX7zk4CDHZsr7UcoPfzTF0dPF88nzyPh2y3LHcwexmnAmlgEdb09rNcUkuF
-         PH9l+8uh7FzUZEWPItJh2RgNvlfaogRPIFzyAQpc=
+        b=xDA1KWAVK8V86Z2Yi1mUr/3+TuNIsPPvA4XhMAt/ukDW0sODPyfEtUrT7bUJxvGBK
+         Vvjo8h5+RkkBEG6Gn3q1C8x1+Yrp4fLfIcWFBTDW9vj/F4ggasJo01ViSDiMB9LoVL
+         MPajDpGA3WtzcL6rJ7WHvDeC1kb/3ILNnTkPLG5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erez Alfasi <ereza@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 46/53] net/mlx5e: ethtool, Remove unsupported SFP EEPROM high pages query
+        stable@vger.kernel.org,
+        syzbot <syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com>,
+        syzbot <syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 62/89] net/rds: Check address length before reading address family
 Date:   Tue, 30 Apr 2019 13:38:53 +0200
-Message-Id: <20190430113558.788242317@linuxfoundation.org>
+Message-Id: <20190430113612.606541047@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erez Alfasi <ereza@mellanox.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit ace329f4ab3ba434be2adf618073c752d083b524 ]
+commit dd3ac9a684358b8c1d5c432ca8322aaf5e4f28ee upstream.
 
-Querying EEPROM high pages data for SFP module is currently
-not supported by our driver and yet queried, resulting in
-invalid FW queries.
+syzbot is reporting uninitialized value at rds_connect() [1] and
+rds_bind() [2]. This is because syzbot is passing ulen == 0 whereas
+these functions expect that it is safe to access sockaddr->family field
+in order to determine minimal address length for validation.
 
-Set the EEPROM ethtool data length to 256 for SFP module will
-limit the reading for page 0 only and prevent invalid FW queries.
+[1] https://syzkaller.appspot.com/bug?id=f4e61c010416c1e6f0fa3ffe247561b60a50ad71
+[2] https://syzkaller.appspot.com/bug?id=a4bf9e41b7e055c3823fdcd83e8c58ca7270e38f
 
-Fixes: bb64143eee8c ("net/mlx5e: Add ethtool support for dump module EEPROM")
-Signed-off-by: Erez Alfasi <ereza@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Reported-by: syzbot <syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |    2 +-
- drivers/net/ethernet/mellanox/mlx5/core/port.c       |    4 ----
- 2 files changed, 1 insertion(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1622,7 +1622,7 @@ static int mlx5e_get_module_info(struct
- 		break;
- 	case MLX5_MODULE_ID_SFP:
- 		modinfo->type       = ETH_MODULE_SFF_8472;
--		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
-+		modinfo->eeprom_len = MLX5_EEPROM_PAGE_LENGTH;
- 		break;
- 	default:
- 		netdev_err(priv->netdev, "%s: cable type not recognized:0x%x\n",
---- a/drivers/net/ethernet/mellanox/mlx5/core/port.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/port.c
-@@ -392,10 +392,6 @@ int mlx5_query_module_eeprom(struct mlx5
- 		size -= offset + size - MLX5_EEPROM_PAGE_LENGTH;
+---
+ net/rds/af_rds.c |    3 +++
+ net/rds/bind.c   |    2 ++
+ 2 files changed, 5 insertions(+)
+
+--- a/net/rds/af_rds.c
++++ b/net/rds/af_rds.c
+@@ -506,6 +506,9 @@ static int rds_connect(struct socket *so
+ 	struct rds_sock *rs = rds_sk_to_rs(sk);
+ 	int ret = 0;
  
- 	i2c_addr = MLX5_I2C_ADDR_LOW;
--	if (offset >= MLX5_EEPROM_PAGE_LENGTH) {
--		i2c_addr = MLX5_I2C_ADDR_HIGH;
--		offset -= MLX5_EEPROM_PAGE_LENGTH;
--	}
++	if (addr_len < offsetofend(struct sockaddr, sa_family))
++		return -EINVAL;
++
+ 	lock_sock(sk);
  
- 	MLX5_SET(mcia_reg, in, l, 0);
- 	MLX5_SET(mcia_reg, in, module, module_num);
+ 	switch (uaddr->sa_family) {
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -173,6 +173,8 @@ int rds_bind(struct socket *sock, struct
+ 	/* We allow an RDS socket to be bound to either IPv4 or IPv6
+ 	 * address.
+ 	 */
++	if (addr_len < offsetofend(struct sockaddr, sa_family))
++		return -EINVAL;
+ 	if (uaddr->sa_family == AF_INET) {
+ 		struct sockaddr_in *sin = (struct sockaddr_in *)uaddr;
+ 
 
 
