@@ -2,129 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4798F890
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E68EF897
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfD3MNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:13:23 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:55080 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfD3MNG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:13:06 -0400
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 6cCz2000C3XaVaC01cCzqb; Tue, 30 Apr 2019 14:13:03 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hLRd5-00086i-UY; Tue, 30 Apr 2019 14:12:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hLRd5-0000zM-QZ; Tue, 30 Apr 2019 14:12:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/5] ARM: dts: rskrza1: Add input switches
-Date:   Tue, 30 Apr 2019 14:12:54 +0200
-Message-Id: <20190430121254.3737-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190430121254.3737-1-geert+renesas@glider.be>
-References: <20190430121254.3737-1-geert+renesas@glider.be>
+        id S1727379AbfD3MQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:16:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbfD3MQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:16:16 -0400
+Received: from linux-8ccs (p5B164EF0.dip0.t-ipconnect.de [91.22.78.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05575205ED;
+        Tue, 30 Apr 2019 12:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556626576;
+        bh=H4/4dT9BDXgmTLrM3JhAKhMqwOU404G2VfdlNa7qgMI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NqWiNKJ7KoJAip0wlu4QLyfLHyp7plR4731w4+lsTQnR4TTWkDySwGLqU9Xt37xkU
+         ZlaBOi61KqfcBVBxvO19pFa8zNBqnDWaVOOcErmKr252MgY4rHMNpfFA9pKGNx7aoM
+         AV130XZMq8j8J1ZMC64B7iz5o3nTWZqS+FGOXTk8=
+Date:   Tue, 30 Apr 2019 14:16:11 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Prarit Bhargava <prarit@redhat.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/module: Reschedule while waiting for modules to
+ finish loading
+Message-ID: <20190430121611.GA29488@linux-8ccs>
+References: <20190429151751.15424-1-prarit@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190429151751.15424-1-prarit@redhat.com>
+X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for input switches SW1-3 on the Renesas RZ/A1 RSK+RZA1
-development board.
++++ Prarit Bhargava [29/04/19 11:17 -0400]:
+>Heiko, do you want a Signed-off-by or a Reported-by?  Either one works
+>for me.
+>
+>P.
+>
+>----8<----
+>
+>On a s390 z14 LAR with 2 cpus about stalls about 3% of the time while
+>loading the s390_trng.ko module.
+>
+>Add a reschedule point to the loop that waits for modules to complete
+>loading.
+>
+>Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>Fixes: linux-next commit f9a75c1d717f ("modules: Only return -EEXIST for modules that have finished loading")
+>Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+>Cc: Jessica Yu <jeyu@kernel.org>
 
-Note that this uses the IRQ interrupts, as the RZ/A1 GPIO controller
-does not include interrupt support.
+Thanks for the fix! Applied to modules-next.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - No changes,
-
-v2:
-  - Use rza1-irqc instead of gic.
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index ff24301dc1be54de..99acfe4fe11aaed9 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- #include "r7s72100.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -28,6 +29,37 @@
- 		reg = <0x08000000 0x02000000>;
- 	};
- 
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&keyboard_pins>;
-+
-+		key-1 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <3 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_1>;
-+			label = "SW1";
-+			wakeup-source;
-+		};
-+
-+		key-2 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <2 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_2>;
-+			label = "SW2";
-+			wakeup-source;
-+		};
-+
-+		key-3 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <5 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_3>;
-+			label = "SW3";
-+			wakeup-source;
-+		};
-+	};
-+
- 	lbsc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -101,6 +133,12 @@
- 			 <RZA1_PINMUX(1, 7, 1)>;	/* RIIC3SDA */
- 	};
- 
-+	keyboard_pins: keyboard {
-+		pinmux = <RZA1_PINMUX(1, 9, 3)>,	/* IRQ3 */
-+			 <RZA1_PINMUX(1, 8, 3)>,	/* IRQ2 */
-+			 <RZA1_PINMUX(1, 11, 3)>;	/* IRQ5 */
-+	};
-+
- 	/* Serial Console */
- 	scif2_pins: serial2 {
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
--- 
-2.17.1
+Jessica
 
