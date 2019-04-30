@@ -2,85 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA95F4C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A67F494
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfD3Kxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:53:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37852 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727985AbfD3Kxh (ORCPT
+        id S1727537AbfD3Kwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:52:40 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34110 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbfD3Kwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:53:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ikNUbjQ0GO+lUn7LT2QVkiEmKgcbEKJuyyeALELjhgg=; b=dzEQb2AmEQuufRP2l8lfhWFQE7
-        x9p8BrwNZdvArmeOZ7HYcmZmBnLK2BrZtf37zAqRsTmqMhaofb3ToDqg5pMmSdjB2vZW5y8ut82N8
-        g3ya5LIPtpiE6jew4t2Q7p02PSO17GoyElNEcykWjAF9RnjeJu72hzQZiquvtO0HjuJtpUXqBdxYq
-        SF65IctMOjKdyRe4yWVAUB0Cf2GpevkVIfas7kxKc7W68GozUcmNQGET+89ogve7WizQqmYywXy+m
-        KrFGKgn+xrOEeSBYhQyK/jDyoJdPXJB+WTH505xlB/ULJdlA5DPBtEnhMKXtp+TBppAd/4kxt9lFm
-        4AcbbFGg==;
-Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLQOA-0008Ft-PN; Tue, 30 Apr 2019 10:53:31 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/25] arm64: trim includes in dma-mapping.c
-Date:   Tue, 30 Apr 2019 06:52:14 -0400
-Message-Id: <20190430105214.24628-26-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430105214.24628-1-hch@lst.de>
-References: <20190430105214.24628-1-hch@lst.de>
+        Tue, 30 Apr 2019 06:52:38 -0400
+Received: by mail-qk1-f195.google.com with SMTP id n68so7836653qka.1;
+        Tue, 30 Apr 2019 03:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LnKYy8jFj+JVpVc0C/UzgZXSpL4E0hdFTQaCn24mwco=;
+        b=ZoSzjyAFUIkT/IJEHAragzsBdlhhXZzJTUJVioDNkVtECy/vvUL0m8oBhzUu+irnqG
+         OkN4BD3T9QdnGO7JhpIvWx3ufxUQST4hhDUljQiTj5W9n7aM+a1ZaQx35XSwQneiwz9R
+         ZfwuvPcaSOEcH9oMkTtq2YbB/0hWzmP4qAlKhF/2HhOqniJRShrkgJboNt0yK+0vks48
+         /lNukNAOpB241V+d0DDTcM5aQBXRfvAEhWgnET/BS4JvN9iodjsmHIUeMD0G9fzbPJPe
+         ddROflj3IUdU+gmVAYmnEsg6sfmsePB1ZPudkwyMJvJQojxZpIOuKbYdozVTLoCqlae5
+         5LxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LnKYy8jFj+JVpVc0C/UzgZXSpL4E0hdFTQaCn24mwco=;
+        b=iPwAt18yxPHA9pA3RfCyeIvsrbhNfV7zUAJ47XwNVAM5CyxEsjVNFWswzGJZFz/rXW
+         pjtwog6Fj+yKcW2yOTDlm5lj/o1TqVvG1uPOBVDOne1Wn4G8EfGyVeP1PEQtOjvIZF0T
+         6oNSuxhO4fkZmiBMF5oENyG/TSg/uMATdNV9cM+UMekENMZ8taXaoB7Jhz/ZFC8s8sw6
+         /bqURkwgCqM/bpZ/fwlsfWB3EzUBLEla6+p1UDuFOB3PcVQwszzY26FpUQzU1d9GsC1s
+         aQGjWl8v3ue1K/YYhIKyNhwIJHj2LCinw8vPJlUnlhZzFoD5O6db4v5xAqOYAGsseuiH
+         Hvbg==
+X-Gm-Message-State: APjAAAWzjpHd41ZVkAFbVuLgyjZCwDcH2waWobXUbT2+xEhvNgvq7P6N
+        lOlTRY6IW8JjAnLcDiVR2H0=
+X-Google-Smtp-Source: APXvYqyEp/ZdUavjs8KgOwRCEG3lYrIV4mo1aOsdTDyV2iNrHd2FUdrlCSxBq31I546BoDKGayR3PQ==
+X-Received: by 2002:a37:2c06:: with SMTP id s6mr48810567qkh.142.1556621557170;
+        Tue, 30 Apr 2019 03:52:37 -0700 (PDT)
+Received: from laptop (189.26.185.89.dynamic.adsl.gvt.net.br. [189.26.185.89])
+        by smtp.gmail.com with ESMTPSA id w58sm19627363qtw.93.2019.04.30.03.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 03:52:35 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 07:52:15 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Greg Edwards <gedwards@ddn.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] blkdev.h: Introduce size_to_sectors hlper function
+Message-ID: <20190430105212.GA1642767@laptop>
+References: <20190430013205.1561708-1-marcos.souza.org@gmail.com>
+ <20190430013205.1561708-2-marcos.souza.org@gmail.com>
+ <yq1bm0ow6iv.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1bm0ow6iv.fsf@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With most of the previous functionality now elsewhere a lot of the
-headers included in this file are not needed.
+On Mon, Apr 29, 2019 at 10:50:32PM -0400, Martin K. Petersen wrote:
+> 
+> Hi Marco,
+> 
+> > +static inline sector_t size_to_sectors(long long size)
+> > +{
+> > +	return size >> SECTOR_SHIFT;
+> > +}
+> > +
+> 
+> FWIW, in SCSI we have:
+> 
+> 	logical_to_sectors()
+>         logical_to_bytes()
+>         bytes_to_logical()
+>         sectors_to_logical()
+> 
+> I'm not attached to "bytes" in any way but it would be nice to be
+> consistent.
+> 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/arm64/mm/dma-mapping.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Thanks for the suggestion. I will send a new version using "bytes_to_sectors"
+instead.
 
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 184ef9ccd69d..1669618db08a 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -5,19 +5,9 @@
-  */
- 
- #include <linux/gfp.h>
--#include <linux/acpi.h>
--#include <linux/memblock.h>
- #include <linux/cache.h>
--#include <linux/export.h>
--#include <linux/slab.h>
--#include <linux/genalloc.h>
--#include <linux/dma-direct.h>
- #include <linux/dma-noncoherent.h>
--#include <linux/dma-contiguous.h>
- #include <linux/dma-iommu.h>
--#include <linux/vmalloc.h>
--#include <linux/swiotlb.h>
--#include <linux/pci.h>
- 
- #include <asm/cacheflush.h>
- 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
+
 -- 
-2.20.1
-
+Thanks,
+Marcos
