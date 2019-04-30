@@ -2,68 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CBE7F91C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037B3F8DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfD3MmA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 08:42:00 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:60226
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726166AbfD3MmA (ORCPT
+        id S1727659AbfD3MaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:30:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32978 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726105AbfD3MaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:42:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 94360B501FA;
-        Tue, 30 Apr 2019 12:29:59 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ROwBk6L1iUy3; Tue, 30 Apr 2019 12:29:59 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 0CA65B501BB;
-        Tue, 30 Apr 2019 12:29:59 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id QvfWm8X6nlqL; Tue, 30 Apr 2019 12:29:58 +0000 (UTC)
-Received: from [100.76.194.7] (unknown [223.237.254.93])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 6F3CBB50197;
-        Tue, 30 Apr 2019 12:29:51 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 30 Apr 2019 08:30:18 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3UCMQAk043552
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 08:30:16 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s6maqe799-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 08:30:16 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
+        Tue, 30 Apr 2019 13:30:15 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 30 Apr 2019 13:30:11 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3UCUAk751314936
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 12:30:10 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52C8FAE055;
+        Tue, 30 Apr 2019 12:30:10 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CC16AE053;
+        Tue, 30 Apr 2019 12:30:08 +0000 (GMT)
+Received: from JAVRIS.in.ibm.com (unknown [9.85.97.254])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 30 Apr 2019 12:30:08 +0000 (GMT)
+Date:   Tue, 30 Apr 2019 18:00:05 +0530
+From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] livepatch: Use static buffer for debugging
+ messages under rq lock
+References: <20190430091049.30413-1-pmladek@suse.com>
+ <20190430091049.30413-3-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: verificacion de email
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administracion web <exportaciones@minpal.gob.ve>
-Date:   Tue, 30 Apr 2019 17:59:43 +0530
-Message-Id: <20190430122951.6F3CBB50197@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430091049.30413-3-pmladek@suse.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-TM-AS-GCONF: 00
+x-cbid: 19043012-0012-0000-0000-00000316DAF1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19043012-0013-0000-0000-0000214F43D1
+Message-Id: <20190430123005.GB18595@JAVRIS.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=768 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904300081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
+On Tue, Apr 30, 2019 at 11:10:49AM +0200, Petr Mladek wrote:
+> klp_try_switch_task() is called under klp_mutex. The buffer for
+> debugging messages might be static.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
-
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
-
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index, copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
-
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
