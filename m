@@ -2,144 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B55100B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2064B100B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 22:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfD3UVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 16:21:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45858 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbfD3UVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 16:21:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s15so22443528wra.12
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 13:20:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=ceeJHtBSX1MGFU9AqEWWLclIY/g0BpWdLn7l5cHsF8k=;
-        b=GOekd8DcCec940JABY49K3GxHAYSm6o8G440Mjm8j9Wt6efcw/ekXXWmEIka8uEJL9
-         NSlu5DjpnykOO97SZVwUMJWAFKD24FgHiy0pLzlQN+lIgKIndwNnkz5Qv265hlKgAZ0e
-         D7ccmoi0js+K5bpVdsuqLqSuZtI5MHJ2AuRi7v0oQId1JubuOre8HmT3LCXuTKu6EAeL
-         V0BoghzNLYZIZwgYlradqgHuMsKR4jsI5V4uT7JYQ/+g/XnVJs2WvtEr025juX94UXkM
-         vE2eEkl4cN0QhN5/Bbuje0Sp2U+5lclsVnyJsDm3LADNsTqIrYLW6RmmWO6ErI4m8tCP
-         2a5Q==
-X-Gm-Message-State: APjAAAXPtn5yfKYa852/26BaeK6pW4/9LUEEIhrUtIq/PWHBmsf+mnKx
-        m2rziFac8PV0Kpm3964Pb9lvUA==
-X-Google-Smtp-Source: APXvYqwTxAXUn7QjPin6Lc7zF8EdF/QJVAvEi0DbtZhFyzvdDKU9RPyk7JSRSnFlUTAz0oSe4AWr2Q==
-X-Received: by 2002:adf:dc08:: with SMTP id t8mr43540656wri.220.1556655658538;
-        Tue, 30 Apr 2019 13:20:58 -0700 (PDT)
-Received: from vitty.brq.redhat.com (ip-62-245-115-84.net.upcbroadband.cz. [62.245.115.84])
-        by smtp.gmail.com with ESMTPSA id r6sm3403663wmc.11.2019.04.30.13.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 13:20:57 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH] x86/kvm/mmu: reset MMU context when 32-bit guest switches PAE
-In-Reply-To: <20190430184229.GE32170@linux.intel.com>
-References: <20190430173326.1956-1-vkuznets@redhat.com> <20190430184229.GE32170@linux.intel.com>
-Date:   Tue, 30 Apr 2019 22:20:56 +0200
-Message-ID: <87v9yv8ct3.fsf@vitty.brq.redhat.com>
+        id S1726667AbfD3UWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 16:22:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbfD3UWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 16:22:46 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B76632087B;
+        Tue, 30 Apr 2019 20:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556655764;
+        bh=Kv35gbOtGUQkDfxOeQBvLR2bGLEYXN6clOrVIU0lC1s=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=fePt9ZRbemBNqPP3fkd7BgqIGS4kI8msSLWCybbFG40jToYR6zcCV3e1wmg5VSqXs
+         V86nT4D1vCZhFWqangwzpie4ZpOuQGkFeMoLPnKBZ5sHe8+2IWooEtkcrf9nKpuf6U
+         KN3PCrCVMr5mu/EEXkgsl02RTv8UWjAFr39PD8yM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alpine.DEB.2.21.9999.1904291506060.7063@viisi.sifive.com>
+References: <20190411082733.3736-2-paul.walmsley@sifive.com> <155656941055.168659.18136739282359756367@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904291506060.7063@viisi.sifive.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/3] clk: analogbits: add Wide-Range PLL library
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Paul Walmsley <paul@pwsan.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Megan Wachs <megan@sifive.com>
+Message-ID: <155665576397.168659.15988829291472885637@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Tue, 30 Apr 2019 13:22:43 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+Quoting Paul Walmsley (2019-04-29 18:14:14)
+> On Mon, 29 Apr 2019, Stephen Boyd wrote:
+> >=20
+> > Nitpick: This might be easier to read with a switch statement:
+> >=20
+> >       switch (post_divr_freq) {
+> >       case 0 ... 11000000:
+> >               return 1;
+> >       case 11000001 ... 18000000:
+> >               return 2;
+> >       case 18000001 ... 30000000:
+> >               return 3;
+> >       case 30000001 ... 50000000:
+> >               return 4;
+> >       case 50000000 ... 80000000:
+> >               return 5;
+> >       case 80000001 ... 130000000:
+> >               return 6;
+> >       }
+> >=20
+> >       return 7;
+>=20
+> To be equivalent to the original code, we'd need to write:
+>=20
+>        switch (post_divr_freq) {
+>        case 0 ... 10999999:
+>                return 1;
+>        case 11000000 ... 17999999:
+>                return 2;
+> (etc.)
+>=20
+> In any case, it's been changed to use the gcc case range operator.
 
-> On Tue, Apr 30, 2019 at 07:33:26PM +0200, Vitaly Kuznetsov wrote:
->> Commit 47c42e6b4192 ("KVM: x86: fix handling of role.cr4_pae and rename it
->> to 'gpte_size'") introduced a regression: 32-bit PAE guests stopped
->
-> "gpte_is_8_bytes" is really confusing in this case. :-(  Unfortunately I
-> can't think I can't think of a better name that isn't ridiculously verbose.
->
->> working. The issue appears to be: when guest switches (enables) PAE we need
->> to re-initialize MMU context (set context->root_level, do
->> reset_rsvds_bits_mask(), ...) but init_kvm_tdp_mmu() doesn't do that
->> because we threw away is_pae(vcpu) flag from mmu role. Restore it to
->> kvm_mmu_extended_role (as we now don't need it in base role) to fix
->> the issue.
->
-> The change makes sense, but I'm amazed that there's a kernel that can
-> actually trigger the bug.  The extended role tracks CR0.PG, so I'm pretty
-> sure hitting this bug requires toggling CR4.PAE *while paging is enabled*.
-> Which is legal, but crazy.  E.g. my 32-bit Linux VM runs fine with and
-> without PAE enabled.
+Ah right, thanks!
 
-Once upon a time the was an operating system called "RHEL5". Some people
-think it's long gone but you know, "no one's ever really gone" :-)
+> > > +{
+> > > +       return (c->flags & WRPLL_FLAGS_INT_FEEDBACK_MASK) ? 2 : 1;
+> > > +}
+> > > +
+> > > +/**
+> > > + * __wrpll_calc_divq() - determine DIVQ based on target PLL output c=
+lock rate
+> > > + * @target_rate: target PLL output clock rate
+> > > + * @vco_rate: pointer to a u64 to store the computed VCO rate into
+> > > + *
+> > > + * Determine a reasonable value for the PLL Q post-divider, based on=
+ the
+> > > + * target output rate @target_rate for the PLL.  Along with returnin=
+g the
+> > > + * computed Q divider value as the return value, this function store=
+s the
+> > > + * desired target VCO rate into the variable pointed to by @vco_rate.
+> > > + *
+> > > + * Context: Any context.  Caller must protect the memory pointed to =
+by
+> > > + *          @vco_rate from simultaneous access or modification.
+> > > + *
+> > > + * Return: a positive integer DIVQ value to be programmed into the h=
+ardware
+> > > + *         upon success, or 0 upon error (since 0 is an invalid DIVQ=
+ value)
+> >=20
+> > Why are we doing that? Can't we return a normal error code and test for
+> > it being negative and then consider the number if its greater than 0 to
+> > be valid?
+>=20
+> One motivation here is that this function returns a divisor value.  So a =
 
->
->> Fixes: 47c42e6b4192 ("KVM: x86: fix handling of role.cr4_pae and rename it to 'gpte_size'")
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> zero represents a divide by zero, which is intrinsically an error for a=20
+> function that returns a divisor.  The other motivation is that the curren=
+t=20
+> return value directly maps to what the hardware expects to see.
+> =20
+> Let me know if you want me to change this anyway.
 
-Thanks!
+Ok, sounds fine.
 
->
->> ---
->> - RFC: it was proven multiple times that mmu code is more complex than it
->>   appears (at least to me) :-)
->
-> LOL, maybe you're just more optimistic than most people.  Every time I
-> look at the code I say something along the lines of "holy $&*#".
->
+>  =20
+> > > + */
+> > > +static u8 __wrpll_calc_divq(u32 target_rate, u64 *vco_rate)
+> >=20
+> > Why does target_rate need to be u32?=20
+>=20
+> I don't think there's any specific requirement for it to be a u32.
 
-:-)
+Ok.
 
->> ---
->>  arch/x86/include/asm/kvm_host.h | 1 +
->>  arch/x86/kvm/mmu.c              | 1 +
->>  2 files changed, 2 insertions(+)
->> 
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index a9d03af34030..c79abe7ca093 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -295,6 +295,7 @@ union kvm_mmu_extended_role {
->>  		unsigned int valid:1;
->>  		unsigned int execonly:1;
->>  		unsigned int cr0_pg:1;
->> +		unsigned int cr4_pae:1;
->>  		unsigned int cr4_pse:1;
->>  		unsigned int cr4_pke:1;
->>  		unsigned int cr4_smap:1;
->> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
->> index e10962dfc203..d9c7b45d231f 100644
->> --- a/arch/x86/kvm/mmu.c
->> +++ b/arch/x86/kvm/mmu.c
->> @@ -4781,6 +4781,7 @@ static union kvm_mmu_extended_role kvm_calc_mmu_role_ext(struct kvm_vcpu *vcpu)
->>  	union kvm_mmu_extended_role ext = {0};
->>  
->>  	ext.cr0_pg = !!is_paging(vcpu);
->> +	ext.cr4_pae = !!is_pae(vcpu);
->
-> This got me thinking, I wonder if we can/should leave the CR4 bits clear
-> if !is_paging().  Technically I think we're unnecessarily purging the MMU
-> when the guest is toggling CR4 bits with CR0.PG==0.
+>=20
+> > Can it be unsigned long?
+>=20
+> There are two basic principles motivating this:
+>=20
+> 1. Use the shortest type that fits what will be contained in the variable.
+>    This increases the chance that static analysis will catch any=20
+>    inadvertent overflows (for example, via gcc -Woverflow).
+>=20
+> 2. Use fixed-width types for hardware-constrained values that are=20
+>    unrelated to the CPU's native word length.  This is a general design=20
+>    practice, both to avoid confusion as to whether the variable's range=20
+>    does in fact depend on the compiler's implementation, and to avoid API=
+=20
+>    problems if the width does change.  Although this last case doesn't=20
+>    apply here, the general application of this practice avoids problems=20
+>    like the longstanding API problem we've had with clk_set_rate(), which=
+=20
+>    can't take a 64 bit clock rate argument if the kernel is built with a =
 
-Yes, probably. Not sure I know any performance critical use-cases with
-CR0.PG==0 but who knows, maybe running hundreds of 8086 emulators IS a
-thing :-)
+>    compiler that uses 32 bit longs.
+>=20
 
-> And I think we can
-> also git rid of the oddball nx flag in struct kvm_mmu.  I'll play around
-> with the code and hopefully send a patch or two.
->
->>  	ext.cr4_smep = !!kvm_read_cr4_bits(vcpu, X86_CR4_SMEP);
->>  	ext.cr4_smap = !!kvm_read_cr4_bits(vcpu, X86_CR4_SMAP);
->>  	ext.cr4_pse = !!is_pse(vcpu);
->> -- 
->> 2.20.1
->> 
+Sure, makes sense.
 
--- 
-Vitaly
+>=20
+> > > +
+> > > +       if (parent_rate > MAX_INPUT_FREQ || parent_rate < MIN_POST_DI=
+VR_FREQ)
+> > > +               return -1;
+> > > +
+> > > +       c->parent_rate =3D parent_rate;
+> > > +       max_r_for_parent =3D div_u64(parent_rate, MIN_POST_DIVR_FREQ);
+> > > +       c->max_r =3D min_t(u8, MAX_DIVR_DIVISOR, max_r_for_parent);
+> >=20
+> > Then this min_t can be min() which is simpler to reason about.
+>=20
+> To me they have the same meaning - min_t doesn't seem too obscure:
+>=20
+> $ fgrep -Ir min_t\( linux/ | wc -l
+> 3320
+> $=20
+>=20
+> and using it means we don't have to use a type that's needlessly large fo=
+r=20
+> the range of values that the variable will contain.  However, if getting =
+
+> rid of min_t() is more important to you than that principle, it can=20
+> of course be changed.  Do you feel strongly about it?
+
+It's not about obscurity. min_t() is an indicator that we have to coerce
+type for comparison with casting. It's nice to avoid casts if possible
+and use native types for the comparison.  assignment. It's good that you
+aren't using min() with a cast though, so this look fine to me and I'm
+not going to stay worried about this.
+
+> > > + * mutually exclusive.  If both bits are set, or both are zero, the =
+struct
+> > > + * analogbits_wrpll_cfg record is uninitialized or corrupt.
+> > > + */
+> > > +#define WRPLL_FLAGS_BYPASS_SHIFT               0
+> > > +#define WRPLL_FLAGS_BYPASS_MASK                BIT(WRPLL_FLAGS_BYPAS=
+S_SHIFT)
+> > > +#define WRPLL_FLAGS_RESET_SHIFT                1
+> > > +#define WRPLL_FLAGS_RESET_MASK         BIT(WRPLL_FLAGS_RESET_SHIFT)
+> > > +#define WRPLL_FLAGS_INT_FEEDBACK_SHIFT 2
+> > > +#define WRPLL_FLAGS_INT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_INT_FEEDBACK_=
+SHIFT)
+> > > +#define WRPLL_FLAGS_EXT_FEEDBACK_SHIFT 3
+> > > +#define WRPLL_FLAGS_EXT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_EXT_FEEDBACK_=
+SHIFT)
+> >=20
+> > Maybe you can use FIELD_GET/FIELD_SET?
+>=20
+> To me BIT() is clearer and more concise.  However, please let me know if =
+
+> the use of the FIELD_*() macros is important to you, and I will change it.
+
+I'm not strong on it so up to you.
+
+> > > + */
+> > > +struct analogbits_wrpll_cfg {
+> > > +       u8 divr;
+> > > +       u8 divq;
+> > > +       u8 range;
+> > > +       u8 flags;
+> > > +       u16 divf;
+> > > +/* private: */
+> > > +       u32 output_rate_cache[DIVQ_VALUES];
+> > > +       unsigned long parent_rate;
+> > > +       u8 max_r;
+> > > +       u8 init_r;
+> > > +};
+> > > +
+> > > +int analogbits_wrpll_configure_for_rate(struct analogbits_wrpll_cfg =
+*c,
+> > > +                                       u32 target_rate,
+> > > +                                       unsigned long parent_rate);
+> > > +
+> > > +unsigned int analogbits_wrpll_calc_max_lock_us(struct analogbits_wrp=
+ll_cfg *c);
+> > > +
+> > > +unsigned long analogbits_wrpll_calc_output_rate(struct analogbits_wr=
+pll_cfg *c,
+> > > +                                               unsigned long parent_=
+rate);
+> >=20
+> > I wonder if it may be better to remove analogbits_ from all these
+> > exported functions. I suspect that it wouldn't conflict if it was
+> > prefixed with wrpll_ and it's shorter this way. Up to you.
+>=20
+> I don't have a strong preference either way.  I've changed it to remove=20
+> the analogbits prefix as you request.
+>=20
+
+Alright sounds good!
+
