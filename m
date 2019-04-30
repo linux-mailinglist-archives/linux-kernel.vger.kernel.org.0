@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B64F819
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94697F786
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfD3LmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:42:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50652 "EHLO mail.kernel.org"
+        id S1728579AbfD3MAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:00:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbfD3LmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:07 -0400
+        id S1730509AbfD3LqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:46:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5344221734;
-        Tue, 30 Apr 2019 11:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2E0C21734;
+        Tue, 30 Apr 2019 11:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624525;
-        bh=LO8wFTwNF9vJQISQKVDfccyEzM1owBxhsLdB5bjoMsI=;
+        s=default; t=1556624769;
+        bh=4aT7aPmrz8QpmHBVDf3yOHh3OlMJCOzD8zKtFRyBRZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkA/RoaEZ79P1/C+v8GlTQGM3iuKwA7LHEvq7aCIkmGEVBp23fUYjTTI6E3PHfpuX
-         BRlgEt7IrVuCzsp9slxhUV74u9K4JMz4H3gynzv3aLw44r3PwdA3Ifs8ClM3flLxta
-         X1I2snAHyHancGn1zLWpbdnh8THQa1fyS76vNQAE=
+        b=BE6Z5uolToWBtzzRGLOCxdWbzrQzpjNTiegJM9BDNOiOWQGc8ZXynNVIRKgQXL4NO
+         W6gAh1KIzr1m8NiKkKL/qbsTgSZmnlvtgBN1GR40KYwCFkEDlQzHkMrh8UUrSGSfxT
+         k+U6T6NJykH6bmFbLRcahzxwCSM+K42mTT+vHxgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru Herghelegiu <aherghelegiu@bitdefender.com>,
-        =?UTF-8?q?Adalbert=20Laz=C4=83r?= <alazar@bitdefender.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        David Howells <dhowells@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 26/53] vsock/virtio: fix kernel panic from virtio_transport_reset_no_sock
-Date:   Tue, 30 Apr 2019 13:38:33 +0200
-Message-Id: <20190430113555.932813873@linuxfoundation.org>
+Subject: [PATCH 4.19 065/100] rxrpc: fix race condition in rxrpc_input_packet()
+Date:   Tue, 30 Apr 2019 13:38:34 +0200
+Message-Id: <20190430113611.879910212@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,102 +45,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adalbert Lazăr <alazar@bitdefender.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 4c404ce23358d5d8fbdeb7a6021a9b33d3c3c167 upstream.
+commit 032be5f19a94de51093851757089133dcc1e92aa upstream.
 
-Previous to commit 22b5c0b63f32 ("vsock/virtio: fix kernel panic
-after device hot-unplug"), vsock_core_init() was called from
-virtio_vsock_probe(). Now, virtio_transport_reset_no_sock() can be called
-before vsock_core_init() has the chance to run.
+After commit 5271953cad31 ("rxrpc: Use the UDP encap_rcv hook"),
+rxrpc_input_packet() is directly called from lockless UDP receive
+path, under rcu_read_lock() protection.
 
-[Wed Feb 27 14:17:09 2019] BUG: unable to handle kernel NULL pointer dereference at 0000000000000110
-[Wed Feb 27 14:17:09 2019] #PF error: [normal kernel read fault]
-[Wed Feb 27 14:17:09 2019] PGD 0 P4D 0
-[Wed Feb 27 14:17:09 2019] Oops: 0000 [#1] SMP PTI
-[Wed Feb 27 14:17:09 2019] CPU: 3 PID: 59 Comm: kworker/3:1 Not tainted 5.0.0-rc7-390-generic-hvi #390
-[Wed Feb 27 14:17:09 2019] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[Wed Feb 27 14:17:09 2019] Workqueue: virtio_vsock virtio_transport_rx_work [vmw_vsock_virtio_transport]
-[Wed Feb 27 14:17:09 2019] RIP: 0010:virtio_transport_reset_no_sock+0x8c/0xc0 [vmw_vsock_virtio_transport_common]
-[Wed Feb 27 14:17:09 2019] Code: 35 8b 4f 14 48 8b 57 08 31 f6 44 8b 4f 10 44 8b 07 48 8d 7d c8 e8 84 f8 ff ff 48 85 c0 48 89 c3 74 2a e8 f7 31 03 00 48 89 df <48> 8b 80 10 01 00 00 e8 68 fb 69 ed 48 8b 75 f0 65 48 33 34 25 28
-[Wed Feb 27 14:17:09 2019] RSP: 0018:ffffb42701ab7d40 EFLAGS: 00010282
-[Wed Feb 27 14:17:09 2019] RAX: 0000000000000000 RBX: ffff9d79637ee080 RCX: 0000000000000003
-[Wed Feb 27 14:17:09 2019] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9d79637ee080
-[Wed Feb 27 14:17:09 2019] RBP: ffffb42701ab7d78 R08: ffff9d796fae70e0 R09: ffff9d796f403500
-[Wed Feb 27 14:17:09 2019] R10: ffffb42701ab7d90 R11: 0000000000000000 R12: ffff9d7969d09240
-[Wed Feb 27 14:17:09 2019] R13: ffff9d79624e6840 R14: ffff9d7969d09318 R15: ffff9d796d48ff80
-[Wed Feb 27 14:17:09 2019] FS:  0000000000000000(0000) GS:ffff9d796fac0000(0000) knlGS:0000000000000000
-[Wed Feb 27 14:17:09 2019] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[Wed Feb 27 14:17:09 2019] CR2: 0000000000000110 CR3: 0000000427f22000 CR4: 00000000000006e0
-[Wed Feb 27 14:17:09 2019] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[Wed Feb 27 14:17:09 2019] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[Wed Feb 27 14:17:09 2019] Call Trace:
-[Wed Feb 27 14:17:09 2019]  virtio_transport_recv_pkt+0x63/0x820 [vmw_vsock_virtio_transport_common]
-[Wed Feb 27 14:17:09 2019]  ? kfree+0x17e/0x190
-[Wed Feb 27 14:17:09 2019]  ? detach_buf_split+0x145/0x160
-[Wed Feb 27 14:17:09 2019]  ? __switch_to_asm+0x40/0x70
-[Wed Feb 27 14:17:09 2019]  virtio_transport_rx_work+0xa0/0x106 [vmw_vsock_virtio_transport]
-[Wed Feb 27 14:17:09 2019] NET: Registered protocol family 40
-[Wed Feb 27 14:17:09 2019]  process_one_work+0x167/0x410
-[Wed Feb 27 14:17:09 2019]  worker_thread+0x4d/0x460
-[Wed Feb 27 14:17:09 2019]  kthread+0x105/0x140
-[Wed Feb 27 14:17:09 2019]  ? rescuer_thread+0x360/0x360
-[Wed Feb 27 14:17:09 2019]  ? kthread_destroy_worker+0x50/0x50
-[Wed Feb 27 14:17:09 2019]  ret_from_fork+0x35/0x40
-[Wed Feb 27 14:17:09 2019] Modules linked in: vmw_vsock_virtio_transport vmw_vsock_virtio_transport_common input_leds vsock serio_raw i2c_piix4 mac_hid qemu_fw_cfg autofs4 cirrus ttm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops virtio_net psmouse drm net_failover pata_acpi virtio_blk failover floppy
+It must therefore use RCU rules :
 
-Fixes: 22b5c0b63f32 ("vsock/virtio: fix kernel panic after device hot-unplug")
-Reported-by: Alexandru Herghelegiu <aherghelegiu@bitdefender.com>
-Signed-off-by: Adalbert Lazăr <alazar@bitdefender.com>
-Co-developed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+- udp_sk->sk_user_data can be cleared at any point in this function.
+  rcu_dereference_sk_user_data() is what we need here.
+
+- Also, since sk_user_data might have been set in rxrpc_open_socket()
+  we must observe a proper RCU grace period before kfree(local) in
+  rxrpc_lookup_local()
+
+v4: @local can be NULL in xrpc_lookup_local() as reported by kbuild test robot <lkp@intel.com>
+        and Julia Lawall <julia.lawall@lip6.fr>, thanks !
+
+v3,v2 : addressed David Howells feedback, thanks !
+
+syzbot reported :
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 19236 Comm: syz-executor703 Not tainted 5.1.0-rc6 #79
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__lock_acquire+0xbef/0x3fb0 kernel/locking/lockdep.c:3573
+Code: 00 0f 85 a5 1f 00 00 48 81 c4 10 01 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85 4a 21 00 00 49 81 7d 00 20 54 9c 89 0f 84 cf f4
+RSP: 0018:ffff88809d7aef58 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000026 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: ffff88809d7af090 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffed1015d05bc7 R11: ffff888089428600 R12: 0000000000000000
+R13: 0000000000000130 R14: 0000000000000001 R15: 0000000000000001
+FS:  00007f059044d700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004b6040 CR3: 00000000955ca000 CR4: 00000000001406f0
+Call Trace:
+ lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4211
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+ skb_queue_tail+0x26/0x150 net/core/skbuff.c:2972
+ rxrpc_reject_packet net/rxrpc/input.c:1126 [inline]
+ rxrpc_input_packet+0x4a0/0x5536 net/rxrpc/input.c:1414
+ udp_queue_rcv_one_skb+0xaf2/0x1780 net/ipv4/udp.c:2011
+ udp_queue_rcv_skb+0x128/0x730 net/ipv4/udp.c:2085
+ udp_unicast_rcv_skb.isra.0+0xb9/0x360 net/ipv4/udp.c:2245
+ __udp4_lib_rcv+0x701/0x2ca0 net/ipv4/udp.c:2301
+ udp_rcv+0x22/0x30 net/ipv4/udp.c:2482
+ ip_protocol_deliver_rcu+0x60/0x8f0 net/ipv4/ip_input.c:208
+ ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_local_deliver+0x1e9/0x520 net/ipv4/ip_input.c:255
+ dst_input include/net/dst.h:450 [inline]
+ ip_rcv_finish+0x1e1/0x300 net/ipv4/ip_input.c:413
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_rcv+0xe8/0x3f0 net/ipv4/ip_input.c:523
+ __netif_receive_skb_one_core+0x115/0x1a0 net/core/dev.c:4987
+ __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5099
+ netif_receive_skb_internal+0x117/0x660 net/core/dev.c:5202
+ napi_frags_finish net/core/dev.c:5769 [inline]
+ napi_gro_frags+0xade/0xd10 net/core/dev.c:5843
+ tun_get_user+0x2f24/0x3fb0 drivers/net/tun.c:1981
+ tun_chr_write_iter+0xbd/0x156 drivers/net/tun.c:2027
+ call_write_iter include/linux/fs.h:1866 [inline]
+ do_iter_readv_writev+0x5e1/0x8e0 fs/read_write.c:681
+ do_iter_write fs/read_write.c:957 [inline]
+ do_iter_write+0x184/0x610 fs/read_write.c:938
+ vfs_writev+0x1b3/0x2f0 fs/read_write.c:1002
+ do_writev+0x15e/0x370 fs/read_write.c:1037
+ __do_sys_writev fs/read_write.c:1110 [inline]
+ __se_sys_writev fs/read_write.c:1107 [inline]
+ __x64_sys_writev+0x75/0xb0 fs/read_write.c:1107
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: 5271953cad31 ("rxrpc: Use the UDP encap_rcv hook")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/vmw_vsock/virtio_transport_common.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ net/rxrpc/input.c        |   12 ++++++++----
+ net/rxrpc/local_object.c |    3 ++-
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -662,6 +662,8 @@ static int virtio_transport_reset(struct
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -1155,19 +1155,19 @@ int rxrpc_extract_header(struct rxrpc_sk
+  * handle data received on the local endpoint
+  * - may be called in interrupt context
+  *
+- * The socket is locked by the caller and this prevents the socket from being
+- * shut down and the local endpoint from going away, thus sk_user_data will not
+- * be cleared until this function returns.
++ * [!] Note that as this is called from the encap_rcv hook, the socket is not
++ * held locked by the caller and nothing prevents sk_user_data on the UDP from
++ * being cleared in the middle of processing this function.
+  *
+  * Called with the RCU read lock held from the IP layer via UDP.
   */
- static int virtio_transport_reset_no_sock(struct virtio_vsock_pkt *pkt)
+ int rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
  {
-+	const struct virtio_transport *t;
-+	struct virtio_vsock_pkt *reply;
- 	struct virtio_vsock_pkt_info info = {
- 		.op = VIRTIO_VSOCK_OP_RST,
- 		.type = le16_to_cpu(pkt->hdr.type),
-@@ -672,15 +674,21 @@ static int virtio_transport_reset_no_soc
- 	if (le16_to_cpu(pkt->hdr.op) == VIRTIO_VSOCK_OP_RST)
- 		return 0;
++	struct rxrpc_local *local = rcu_dereference_sk_user_data(udp_sk);
+ 	struct rxrpc_connection *conn;
+ 	struct rxrpc_channel *chan;
+ 	struct rxrpc_call *call = NULL;
+ 	struct rxrpc_skb_priv *sp;
+-	struct rxrpc_local *local = udp_sk->sk_user_data;
+ 	struct rxrpc_peer *peer = NULL;
+ 	struct rxrpc_sock *rx = NULL;
+ 	unsigned int channel;
+@@ -1175,6 +1175,10 @@ int rxrpc_input_packet(struct sock *udp_
  
--	pkt = virtio_transport_alloc_pkt(&info, 0,
--					 le64_to_cpu(pkt->hdr.dst_cid),
--					 le32_to_cpu(pkt->hdr.dst_port),
--					 le64_to_cpu(pkt->hdr.src_cid),
--					 le32_to_cpu(pkt->hdr.src_port));
--	if (!pkt)
-+	reply = virtio_transport_alloc_pkt(&info, 0,
-+					   le64_to_cpu(pkt->hdr.dst_cid),
-+					   le32_to_cpu(pkt->hdr.dst_port),
-+					   le64_to_cpu(pkt->hdr.src_cid),
-+					   le32_to_cpu(pkt->hdr.src_port));
-+	if (!reply)
- 		return -ENOMEM;
+ 	_enter("%p", udp_sk);
  
--	return virtio_transport_get_ops()->send_pkt(pkt);
-+	t = virtio_transport_get_ops();
-+	if (!t) {
-+		virtio_transport_free_pkt(reply);
-+		return -ENOTCONN;
++	if (unlikely(!local)) {
++		kfree_skb(skb);
++		return 0;
 +	}
-+
-+	return t->send_pkt(reply);
- }
+ 	if (skb->tstamp == 0)
+ 		skb->tstamp = ktime_get_real();
  
- static void virtio_transport_wait_close(struct sock *sk, long timeout)
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -304,7 +304,8 @@ nomem:
+ 	ret = -ENOMEM;
+ sock_error:
+ 	mutex_unlock(&rxnet->local_mutex);
+-	kfree(local);
++	if (local)
++		call_rcu(&local->rcu, rxrpc_local_rcu);
+ 	_leave(" = %d", ret);
+ 	return ERR_PTR(ret);
+ 
 
 
