@@ -2,80 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A350F85B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB708F86A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfD3MIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:08:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55924 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfD3MHz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:07:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ljvGw8ePwJU1BtvdBb7R72Czky3RJZItJhHXPlJxdKk=; b=Nk7xzAVf7JNy+7UJHbgBIyoht
-        HgdUW3DVhipn0yyCVQhcoCtcE/Zfu5epcbiL6N6PUwNm6fV5RKdD1rzjWt4bckbO4dl4ZSqRavLeO
-        ZBRGfsPBLkdlpiAsQL+wWFNpFLsGp7EFssmhhr9pSXtEoAQqZ2NZSWghOoTm9BuwqHb6AIChJbhQN
-        P7XoEGEjJG0iME3GZoe9QbnFRLSjOyv8polIT/OhzZ5WF8G0BI1DBVlPLv1vu/xlSQ0XEgJpp3riY
-        RhReKLQGUb+4yKW+U79uGDYaf7u1gjzXJFzCeIwAESYJVRj4Mhf7uRroQno5+DghOyq/doC/9J37t
-        7mvIbUZFw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLRXy-0005J6-9F; Tue, 30 Apr 2019 12:07:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C22AE203C05DB; Tue, 30 Apr 2019 14:07:40 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 14:07:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 0/5] Allow CPU0 to be nohz full
-Message-ID: <20190430120740.GU2623@hirez.programming.kicks-ass.net>
-References: <20190411033448.20842-1-npiggin@gmail.com>
- <20190425120427.GS4038@hirez.programming.kicks-ass.net>
- <1556592099.38esq4uhhz.astroid@bobo.none>
+        id S1727721AbfD3MIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:08:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727341AbfD3MIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:08:14 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6704930018C2;
+        Tue, 30 Apr 2019 12:08:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1FDDE78DEC;
+        Tue, 30 Apr 2019 12:08:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Apr 2019 14:08:11 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 14:07:59 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        rostedt@goodmis.org, dancol@google.com, sspatil@google.com,
+        jannh@google.com, surenb@google.com, timmurray@google.com,
+        Jonathan Kowalski <bl0pbl33p@gmail.com>,
+        torvalds@linux-foundation.org, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jann Horn <jann@thejh.net>,
+        linux-kselftest@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Serge Hallyn <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, viro@zeniv.linux.org.uk,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] Add polling support to pidfd
+Message-ID: <20190430120759.GC23020@redhat.com>
+References: <20190425190010.46489-1-joel@joelfernandes.org>
+ <20190425222359.sqhboc4x4daznr6r@brauner.io>
+ <20190428162405.GA6757@redhat.com>
+ <20190429140245.GB233442@google.com>
+ <20190429142030.GA17715@redhat.com>
+ <20190429163259.GA201155@google.com>
+ <20190430115332.GB23020@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1556592099.38esq4uhhz.astroid@bobo.none>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190430115332.GB23020@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 30 Apr 2019 12:08:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:46:40PM +1000, Nicholas Piggin wrote:
-> Peter Zijlstra's on April 25, 2019 10:04 pm:
-> > On Thu, Apr 11, 2019 at 01:34:43PM +1000, Nicholas Piggin wrote:
-> >> Since last time, I added a compile time option to opt-out of this
-> >> if the platform does not support suspend on non-zero, and tried to
-> >> improve legibility of changelogs and explain the justification
-> >> better.
-> >> 
-> >> I have been testing this on powerpc/pseries and it seems to work
-> >> fine (the firmware call to suspend can be called on any CPU and
-> >> resumes where it left off), but not included here because the
-> >> code has some bitrot unrelated to this series which I hacked to
-> >> fix. I will discuss it and either send an acked patch to go with
-> >> this series if it is small, or fix it in powerpc tree.
-> >> 
-> > 
-> > Rafael, Frederic, any comments?
-> > 
-> 
-> Sorry to ping again, I guess people are probably busy after vacation.
-> Any chance we could get this in next merge window? Peter are you okay
-> with the config option as it is, then we can look at adapting it to
-> what x86 needs as a follow up (e.g., allow nohz CPU0 for
-> cpu0_hotpluggable case)?
+On 04/30, Oleg Nesterov wrote:
+>
+> > > pidfd_poll() can race with the exiting task, miss exit_code != 0, and return
+> > > zero. However, do_poll() won't block after that and pidfd_poll() will be called
+> > > again.
+> >
+> > Here also I didn't follow what you mean. If exit_code is read as 0 in
+> > pidfd_poll(), then in do_poll() the count will be 0 and it will block in
+> > poll_schedule_timeout(). Right?
+>
+> No. Please note the pwq->triggered check and please read __pollwake().
+>
+> But if you want to understand this you can forget about poll/select. It is
+> a bit complicated, in particular because it has to do set_current_state()
+> right  before schedule() and thus it plays games with pwq->triggered. But in
+> essence this doesn't differ too much from the plain wait_event-like code
+> (although you can also look at wait_woken/woken_wake_function).
+>
+> If remove_wait_queue() could happem before wake_up_all() (like in your pseudo-
+> code above), then pidfd_poll() or any other ->poll() method could miss _both_
+> the condition and wakeup. But sys_poll() doesn't do this, so it is fine to miss
+> the condition and rely on wake_up_all() which ensures we won't block and the
+> next iteration must see condition == T.
 
-Yeah, let me just queue these here patches. Not sure they'll still make
-the upcoming merge window, but we can try.
+Oh, just in case... If it is not clear, of course I am talking about the case
+when wake_up_call() was already called when we check the condition. Otherwise
+everything is simple.
+
+Oleg.
+
