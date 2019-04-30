@@ -2,111 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92BDFF341
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D70F36F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfD3Joy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:44:54 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39171 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfD3Jox (ORCPT
+        id S1727119AbfD3JrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:47:02 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34490 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfD3JrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:44:53 -0400
-Received: by mail-wm1-f66.google.com with SMTP id n25so3083779wmk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 02:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=looTlcqCIB3TJbyTND6k3EZ0RBWBOUlYZpKYaCAdqKk=;
-        b=k1uR299Yxm7EYSAONf0f2K3YOAM0GjiFXsqYolyfZZLTPyI1gj/cbv4DyO9ZJMMo9V
-         zaplBDtNX/iDfN7xaX2w1QFDFgjXVj/d5jAZ+h88IUQDUubQWZtxaRXTMD6XOyVdGCcy
-         PA8KZrF+CCn51wYuRpN3z978NEy4BUA0y5XChjhrGM3V9n4QCoq3AYP2efD/U13xsVsX
-         apuLMtSTLVH5zqkNoSSStkleNMmWoRppX04Wm32W6zOAMsv9N+zXPGE3QQ2a+Xx+s5Ni
-         0NwQhN2rC+YABt5EWFekssoF+dpWSarQBwAXZzOztlay5fsAmT8xixoblGjJWBWE8II9
-         4pYw==
+        Tue, 30 Apr 2019 05:47:02 -0400
+Received: by mail-qt1-f195.google.com with SMTP id j6so15380613qtq.1;
+        Tue, 30 Apr 2019 02:47:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=looTlcqCIB3TJbyTND6k3EZ0RBWBOUlYZpKYaCAdqKk=;
-        b=oo6OFdE2Ox4MYxPQnzVZEACyV4AV0RFkVsRNCoZV5h3AeRlEq7bP5q0In1yzMzRIxu
-         WyKdfpv30Wpznvydgy/E0OVBxcJuL56GF1S6b/hZftdv2PqlLZGKt60FN7Yz9C754dsx
-         65K0WMt3w0c+sm8BWjahE6z9Hs6QwBjo7kVgqDmrfI9cYF3Csr/2lkWMxtMOJRl2sZCa
-         Gy7iQ96z6EWCrrtbIaLAVhxUyqO8IG0GRd6NHklZllD9vusEjuiOP3aTvUPPpvRrDGIg
-         RIdym5t2p08N94j6HMUiaYaeEk12yBWsm3fKooIYxe4Bt70NDJh3It9Z36VOqVZukrmH
-         HYFQ==
-X-Gm-Message-State: APjAAAWF/vE9CBaBUN69BLdFITpxCNQnNO0EWQUjM4hhQWGJ+wwyr0LZ
-        kEb3P+SlPIi8uHqdX/XsPKLmuA==
-X-Google-Smtp-Source: APXvYqxDIo8nKc9Sp0C52XkXJ0RFa5uPzJ7miTrrLAzJ8p8qvVwZQM2Aq2xKA/IZYjIkM1ZaW930hQ==
-X-Received: by 2002:a1c:4b03:: with SMTP id y3mr2522912wma.113.1556617491604;
-        Tue, 30 Apr 2019 02:44:51 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id e10sm24031411wra.52.2019.04.30.02.44.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 02:44:50 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] thermal: rockchip: fix up the tsadc pinctrl
- setting error
-To:     "elaine.zhang" <zhangqing@rock-chips.com>, heiko@sntech.de
-Cc:     rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
-References: <1556187154-22632-1-git-send-email-zhangqing@rock-chips.com>
- <1556187154-22632-2-git-send-email-zhangqing@rock-chips.com>
- <be0170d7-64dc-896d-b847-5be192304791@linaro.org>
- <8d41ea98-e0e8-60c8-3237-ade5d0d169bf@rock-chips.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <70cc3a91-8f5d-da48-a815-eaf2670f9a93@linaro.org>
-Date:   Tue, 30 Apr 2019 11:44:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RIOwKd01cPz5drHzb3qIzwRQR9gVwUVBDVP954q8f1c=;
+        b=JpsAhm9VI9YNepan/eWkCGDi+CirADd/71NBenjaDolpr0/fcTYGm64KXpz6EnFm8s
+         pU6L1wIV+cnvagtMlS12w/VaDqaRfS+nrH0VyhwsEyTJ+deIbu0IUwoqrRJlvmUMwbhU
+         bTr2+hxU0YB48c+20sMGq0MiM07U06FYaiWV1MxEfGCqe9IZA1ylWdmxfOf2etaE7Ai0
+         VLmPu0CFeyiF5cLFoIA/0RueBvxXQaQKWIbYqU84Pn4qlpTPOOtpDemvVdFvwgDyFBDx
+         LkpGkFCpWb8+S+SV/EFTIhJs6ns43xhZ4D1M9Ly0++Dp9uIIef/FkafRxu63xo6XDJQh
+         +8HQ==
+X-Gm-Message-State: APjAAAWGPI8wCPT5otRZGomVrBpNM+rIgvbBe8PFkDkA2kl7AZrjYKBm
+        LaJK5A1t8BrUdpmpPH/WYFavZyAJqmvjYPmhGdw=
+X-Google-Smtp-Source: APXvYqyNRzEnjys7E6qhnDv8wRoS5Eser4iyoztSmhRL/DzrM9iEcc0H3dbxiUkIRRsXATIRQziQknkBUTofH6AHz+k=
+X-Received: by 2002:a05:6214:10c8:: with SMTP id r8mr3468252qvs.161.1556617620578;
+ Tue, 30 Apr 2019 02:47:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8d41ea98-e0e8-60c8-3237-ade5d0d169bf@rock-chips.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190430010037.6216-1-natechancellor@gmail.com>
+ <CAK8P3a0gAnruPgGMFcAfoHpj_zDnsn-RJjYiYUXDDj-CrwoO8A@mail.gmail.com> <20190430093352.GA16941@archlinux-i9>
+In-Reply-To: <20190430093352.GA16941@archlinux-i9>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Apr 2019 11:46:44 +0200
+Message-ID: <CAK8P3a20t1f6Fmjd7HcGVSXCxx9SP2q7_WpZyj16MgnJe8m8zQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Enable -Wsometimes-uninitialized
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/04/2019 11:51, elaine.zhang wrote:
+On Tue, Apr 30, 2019 at 11:33 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+> On Tue, Apr 30, 2019 at 09:16:50AM +0200, Arnd Bergmann wrote:
+> > On Tue, Apr 30, 2019 at 3:01 AM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > This is Clang's version of GCC's -Wmaybe-uninitialized. Up to this
+> > > point, it has not been used because -Wuninitialized has been disabled,
+> > > which also turns off -Wsometimes-uninitialized, meaning that we miss out
+> > > on finding some bugs [1]. In my experience, it appears to be more
+> > > accurate than GCC and catch some things that GCC can't.
+> > >
+> > > All of these warnings have now been fixed in -next across arm, arm64,
+> > > and x86_64 defconfig/allyesconfig so this should be enabled for everyone
+> > > to prevent more from easily creeping in.
+> > >
+> > > As of next-20190429:
+> > >
+> > > $ git log --oneline --grep="sometimes-uninitialized" | wc -l
+> > > 45
+> > >
+> > > [1]: https://lore.kernel.org/lkml/86649ee4-9794-77a3-502c-f4cd10019c36@lca.pw/
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/381
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >
+> > > Masahiro, I am not sure how you want to handle merging this with regards
+> > > to all of the patches floating around in -next but I wanted to send this
+> > > out to let everyone know this is ready to be turned on.
+> > >
+> > > Arnd, are there many remaning -Wsometimes-uninitialized warnings in
+> > > randconfigs?
+> >
+> > No, I don't see any with the patches that I submitted. I haven't checked
+> > if there are any that still need to get merged into linux-next though.
+> >
+> > > diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> > > index 768306add591..f4332981ea85 100644
+> > > --- a/scripts/Makefile.extrawarn
+> > > +++ b/scripts/Makefile.extrawarn
+> > > @@ -72,5 +72,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format)
+> > >  KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+> > >  KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+> > >  KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
+> > > +KBUILD_CFLAGS += $(call cc-option, -Wsometimes-uninitialized)
+> > >  endif
+> > >  endif
+> >
+> > This doesn't look right. Shouldn't you remove the line that turns off
+> > -Wuninitilized
+> > instead of adding only -Wsometimes-uninitialized?
+>
+> Well, there are still some outstanding issues with -Wuninitialized
+> right? Like with DECLARE_WAIT_QUEUE_HEAD_ONSTACK? I'd rather not
+> add warnings to the build but if you feel strongly, we could turn it on
+> then fix them after.
 
-[ ... ]
+Ah, I thought they were all fixed, as I don't see any remaining warnings
+in my tree. It seems that I never send this workaround for
+DECLARE_WAIT_QUEUE_HEAD_ONSTACK:
 
-> pinctrl select to gpio mode when tsadc suspend and shutdown.
-> 
-> When suspend, tsadc is disabled, the otp_pin should revert to the
-> default gpio state.
-> 
->>
->>>         return 0;
->>>   }
->>> @@ -1383,7 +1413,8 @@ static int __maybe_unused
->>> rockchip_thermal_resume(struct device *dev)
->>>       for (i = 0; i < thermal->chip->chn_num; i++)
->>>           rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
->>>   -    pinctrl_pm_select_default_state(dev);
->>> +    if (thermal->tshut_mode == TSHUT_MODE_GPIO)
->>> +        pinctrl_select_state(thermal->pinctrl, thermal->otp_state);
->> And then
->>     pinctrl_select_state(thermal->pinctrl, thermal->pinctrl_state);
-> 
-> pinctrl select to otp mode when tsadc resume.
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 5f3efabc36f4..cbe1ea0fce84 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -68,8 +68,15 @@ extern void __init_waitqueue_head(struct
+wait_queue_head *wq_head, const char *n
+        } while (0)
 
-Ok, thanks for clarifying.
+ #ifdef CONFIG_LOCKDEP
+-# define __WAIT_QUEUE_HEAD_INIT_ONSTACK(name) \
+-       ({ init_waitqueue_head(&name); name; })
++# define __WAIT_QUEUE_HEAD_INIT_ONSTACK(name) {
+                 \
++       .lock           = __SPIN_LOCK_UNLOCKED(name.lock),
+         \
++       .head           = ({
+         \
++               static struct lock_class_key __key;
+         \
++               lockdep_set_class_and_name(&(name).lock, &__key, #
+name);       \
++               (struct list_head){ &(name).head, &(name).head };
+         \
++       }),
+         \
++}
++
+ # define DECLARE_WAIT_QUEUE_HEAD_ONSTACK(name) \
+        struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
+ #else
 
-  -- Daniel
+Are there any others you see?
 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+      Arnd
