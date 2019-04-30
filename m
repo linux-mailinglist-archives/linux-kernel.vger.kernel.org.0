@@ -2,121 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76920EE06
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4098EEDF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfD3Aql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 20:46:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44888 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729238AbfD3Aqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 20:46:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 17:46:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,411,1549958400"; 
-   d="scan'208";a="295632067"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 29 Apr 2019 17:46:37 -0700
-Cc:     baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] iommu: Add helper to get minimal page size of
- domain
-To:     Robin Murphy <robin.murphy@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20190421011719.14909-1-baolu.lu@linux.intel.com>
- <20190421011719.14909-2-baolu.lu@linux.intel.com>
- <05eca601-0264-8141-ceeb-7ef7ad5d5650@arm.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <48ac694e-4551-40e2-f914-6942da810489@linux.intel.com>
-Date:   Tue, 30 Apr 2019 08:40:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729732AbfD3Ak2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 20:40:28 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:44224 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbfD3Ak2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 20:40:28 -0400
+Received: by mail-yw1-f67.google.com with SMTP id j4so4663718ywk.11
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 17:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=LgDHqiBMkIEP2Gjv1b/BPNB6tTx6cNIX8WGn2OufiRQ=;
+        b=F2K/xby4cmu6d2bZoZHJLR5Z4UZj5CGWYwSUm3LxusNt5Jmmm9YeWtE5K9sqrAdZuk
+         gwz6epfbgd98xGZRRXx2zBxmy2oDyAdASJQHHpO8rY3PjpCAFbhU+2RcJuuqUE4ZqfaW
+         /leG3SS/9/y27TwwrXCfbtJGcjzg3UZBYRPMitXPLwSbOuAM8QaXoh6yQaQfT/IcPXeW
+         vuVLqIIdHj1Ou0IAaxfLoslywy/E4eDi9gpDAv1OG1wWf0w2PeT6Qri71vyTbJcrqbUX
+         KEuZ4nD3RjUSl0spMlo3D/3HRKtuTLpV0xrX3NhRVCe+vuVhpPIJcyxcKf7zQhI8Kwau
+         YXQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=LgDHqiBMkIEP2Gjv1b/BPNB6tTx6cNIX8WGn2OufiRQ=;
+        b=OaTx/QksC5ewpu+lf/z5EFPZcbZrbdRpPgvydz/+ixsUdbtWTSDJG2JhIDuwjUFX5s
+         2fsTHyEWIFCXNypNTSuSz4h43C2dLpPHXTGic6FYqLKIkod440d6PlSYciiH/Ha86EPB
+         3f6xfJ9HXj9C/NuTat832UZKp2x1b1imtozeTEulZiK6aJRVPODe7XGllDLuIBSy1LPi
+         8K/DNys5zvgYbxL/EwdIWZoOejfor0X9MTVO5bKWnMDpQRlhQalWaLfV9xrHVZSIEb9z
+         KFMhbh4nRp1a7mR4/Kp0WLX+WXJrlhITgMz+MZjFKKcVVqQ4VnHByIQ7ojpSCLKo3mT7
+         N3+w==
+X-Gm-Message-State: APjAAAW607krTwkcaTYgxm/9h+uupAhp0ffqOIRAqzvhNXIx7JnXU6Cj
+        uCyTY1mtVnXQ8COKLicS9ELfjNsLNRLQ0w==
+X-Google-Smtp-Source: APXvYqwRUNNglVfbfdo5R7L0BKzVxB+n+Hc3Y+ZAEsg00ux13E71kxX4gWJaZPEGNX5YB88pffHYaA==
+X-Received: by 2002:a81:3b13:: with SMTP id i19mr18065733ywa.100.1556584827229;
+        Mon, 29 Apr 2019 17:40:27 -0700 (PDT)
+Received: from cakuba (adsl-173-228-226-134.prtc.net. [173.228.226.134])
+        by smtp.gmail.com with ESMTPSA id x189sm7834917ywb.41.2019.04.29.17.40.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Apr 2019 17:40:27 -0700 (PDT)
+Date:   Mon, 29 Apr 2019 20:40:23 -0400
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] netdevsim: fix fall-through annotation
+Message-ID: <20190429204023.259fe70a@cakuba>
+In-Reply-To: <20190429173807.GA18088@embeddedor>
+References: <20190429173807.GA18088@embeddedor>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-In-Reply-To: <05eca601-0264-8141-ceeb-7ef7ad5d5650@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Mon, 29 Apr 2019 12:38:07 -0500, Gustavo A. R. Silva wrote:
+> Replace "pass through" with a proper "fall through" annotation
+> in order to fix the following warning:
+>=20
+> drivers/net/netdevsim/bus.c: In function =E2=80=98new_device_store=E2=80=
+=99:
+> drivers/net/netdevsim/bus.c:170:14: warning: this statement may fall thro=
+ugh [-Wimplicit-fallthrough=3D]
+>    port_count =3D 1;
+>    ~~~~~~~~~~~^~~
+> drivers/net/netdevsim/bus.c:172:2: note: here
+>   case 2:
+>   ^~~~
+>=20
+> Warning level 3 was used: -Wimplicit-fallthrough=3D3
+>=20
+> This fix is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-On 4/29/19 6:55 PM, Robin Murphy wrote:
-> On 21/04/2019 02:17, Lu Baolu wrote:
->> This makes it possible for other modules to know the minimal
->> page size supported by a domain without the knowledge of the
->> structure details.
->>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   include/linux/iommu.h | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index a5007d035218..46679ef19b7e 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -377,6 +377,14 @@ static inline void iommu_tlb_sync(struct 
->> iommu_domain *domain)
->>           domain->ops->iotlb_sync(domain);
->>   }
->> +static inline unsigned long domain_minimal_pgsize(struct iommu_domain 
->> *domain)
->> +{
->> +    if (domain && domain->pgsize_bitmap)
->> +        return 1 << __ffs(domain->pgsize_bitmap);
-> 
-> Nit: this would probably be more efficient on most architectures as:
-> 
->      if (domain)
->          return domain->pgsize_bitmap & -domain->pgsize_bitmap;
-> 
-
-It looks reasonable to me.
-
-> 
-> I'd also suggest s/minimal/min/ in the name, just to stop it getting too 
-> long. Otherwise, though, I like the idea, and there's at least one other 
-> place (in iommu-dma) that can make use of it straight away.
-
-Okay, I will change the name to domain_min_pgsize().
-
-> 
-> Robin.
-> 
-
-Best regards,
-Lu Baolu
-
->> +
->> +    return 0;
->> +}
->> +
->>   /* PCI device grouping function */
->>   extern struct iommu_group *pci_device_group(struct device *dev);
->>   /* Generic device grouping function */
->> @@ -704,6 +712,11 @@ const struct iommu_ops 
->> *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->>       return NULL;
->>   }
->> +static inline unsigned long domain_minimal_pgsize(struct iommu_domain 
->> *domain)
->> +{
->> +    return 0;
->> +}
->> +
->>   #endif /* CONFIG_IOMMU_API */
->>   #ifdef CONFIG_IOMMU_DEBUGFS
->>
-> 
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
