@@ -2,122 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC82AEE7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B880EE9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbfD3BpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 21:45:04 -0400
-Received: from mail-eopbgr40078.outbound.protection.outlook.com ([40.107.4.78]:10816
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1729893AbfD3B50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 21:57:26 -0400
+Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:28027
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729238AbfD3BpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 21:45:04 -0400
+        id S1729238AbfD3B50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 21:57:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pr/9iXhE0xFHe64EPQfqjQMQ3omKvCH1XiAsXkPYBok=;
- b=GWc0dEtEp7hvHIY4LWxG159EmxvyNUL8RPFRi5wJCqrTGJwXizbMSwcYss6BSx0jMgWlfcOIJwUQaepHUf3QYgY26+eS2e28pxKIsrj8fwbA2dG2WnN7Lm7L050+/JIgEW1u4jRzg5IC71XFQOAM0CWctryC0K400gV6uAkN9TI=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3772.eurprd04.prod.outlook.com (52.134.71.19) with Microsoft SMTP
+ bh=Yfff3VUuI7FcOhQjulztNG48leP+fI44AuIkflJgl58=;
+ b=m8zNQMgmesbA5Qvqbu73itjk8fopxZ2wxo/NZp5eUir5WEd7SnUlPnJAucEl3j09Xnyde8W0/lYs1khktAFJ+oS/Wl2JR6Ly9V/vnT0JYy6tL9tqsdo/SM5CmbGtf3AQoHGHy0qrIFuoYOMVf8o0mjk1CobjmnoP9NE78TjDH4o=
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
+ AM6PR0402MB3829.eurprd04.prod.outlook.com (52.133.29.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.13; Tue, 30 Apr 2019 01:44:58 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e8ca:4f6b:e43:c170]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e8ca:4f6b:e43:c170%3]) with mapi id 15.20.1835.018; Tue, 30 Apr 2019
- 01:44:58 +0000
+ 15.20.1856.10; Tue, 30 Apr 2019 01:55:18 +0000
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::55cc:4406:327:9259]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::55cc:4406:327:9259%3]) with mapi id 15.20.1835.018; Tue, 30 Apr 2019
+ 01:55:18 +0000
 From:   Anson Huang <anson.huang@nxp.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: RE: linux-next: build warning after merge of the clk tree
-Thread-Topic: linux-next: build warning after merge of the clk tree
-Thread-Index: AQHU/upr9yUn43McwUSQoMyNM4mZ0KZT7lcA
-Date:   Tue, 30 Apr 2019 01:44:58 +0000
-Message-ID: <DB3PR0402MB3916B4CE00494BE730C07047F53A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190430101939.76dc077c@canb.auug.org.au>
-In-Reply-To: <20190430101939.76dc077c@canb.auug.org.au>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] clk: imx: pllv3: Fix fall through build warning
+Thread-Topic: [PATCH] clk: imx: pllv3: Fix fall through build warning
+Thread-Index: AQHU/vfDJ+hnJuSvCk6GSL1CreUf2Q==
+Date:   Tue, 30 Apr 2019 01:55:18 +0000
+Message-ID: <1556589033-6080-1-git-send-email-Anson.Huang@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0063.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::27) To AM6PR0402MB3911.eurprd04.prod.outlook.com
+ (2603:10a6:209:1c::10)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2e601f39-0d58-4adf-bf21-08d6cd0d7402
+x-ms-office365-filtering-correlation-id: 68c6c806-fef6-46d2-40f5-08d6cd0ee578
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3772;
-x-ms-traffictypediagnostic: DB3PR0402MB3772:
-x-microsoft-antispam-prvs: <DB3PR0402MB377235D065C9D7884B8A90DCF53A0@DB3PR0402MB3772.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:23;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM6PR0402MB3829;
+x-ms-traffictypediagnostic: AM6PR0402MB3829:
+x-microsoft-antispam-prvs: <AM6PR0402MB382940A6A3A42D3A816F67AAF53A0@AM6PR0402MB3829.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:331;
 x-forefront-prvs: 00235A1EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(346002)(376002)(189003)(199004)(53754006)(13464003)(26005)(486006)(305945005)(2906002)(7736002)(14444005)(53936002)(53546011)(6506007)(71200400001)(71190400001)(256004)(186003)(11346002)(446003)(478600001)(44832011)(25786009)(14454004)(4326008)(74316002)(6246003)(476003)(102836004)(8676002)(76176011)(316002)(7696005)(81166006)(66066001)(81156014)(5660300002)(6436002)(229853002)(33656002)(3846002)(97736004)(99286004)(52536014)(54906003)(68736007)(73956011)(86362001)(110136005)(66946007)(66446008)(6116002)(66476007)(64756008)(9686003)(8936002)(66556008)(76116006)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3772;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(376002)(136003)(189003)(199004)(86362001)(4326008)(2501003)(2201001)(6436002)(81166006)(8936002)(6486002)(66066001)(52116002)(7736002)(66446008)(81156014)(110136005)(64756008)(73956011)(66476007)(66556008)(305945005)(99286004)(50226002)(316002)(25786009)(8676002)(6512007)(53936002)(256004)(14454004)(4744005)(66946007)(186003)(3846002)(6116002)(14444005)(26005)(2906002)(386003)(68736007)(71190400001)(97736004)(478600001)(476003)(486006)(5660300002)(6506007)(2616005)(71200400001)(36756003)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3829;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0Ne6XSmIAwIcncJTQ2mYNm9zcZp60ix+KAEWTNNv5vXkfUz6Q2cm1ROD2kEEAHm/E+WMZ5DNFdSmiTFnUnzTguTcnWLFS7G/NfMIyXKnFcdlzCtq61tD6lX4t/NGaSSW+cHsrhWeYFfmqDmiIaxAPQPbdn8OkBnr7x3bGnbjv8jxAijjc8Qe4GVGskQu8ct+hQMpSCK9/Be8PAqofrEctGzK55Yn4KWk8qrX1qNx1TEJoNqzmo9eblzd5t1V2XYFH97Ld51PBmaM04PwKPyOYj9Bqdzos4m/Q1quET2RAEohFg75uAajcIrJ9SKkRtOgbvdxCgkz1/NmOG8bVt/AJRc0yS+dd/vTSKUjZX5ji/VBliDBQhbf9s+kbLzN2aTOe0h+saJ4AvTigSG7yZplWj83pegu1gaRdDjMq4lChpA=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: um4Cp4BkeckDFY5Y5DLx3bezGZvre+JlN93QVKB+XsfrzCraQGIqgnMK4mLAqpassiMGSuJpW+AvZA9DXftPvH71t+bQ9JhPbeZMobX2yJ0SUi+GYVLS5jdapUU5ZSbBFLCHJHIsHS0JupB8dcdVf/vR5GCNffOC9NXjpDJ8iGj4cqKRXOja3XURtnPX+RDCpYpABNFT+j+j89n6WAPS585vpYqWd5W6N3JZgjeFMBUN7ctOk07Lsluoo1GF6QSWivOEW7W+iWjKosPelKohnz2PgjNhCn1VcNu0dCzhRuQMezYQ3smQIvcZ2nh43z8HBJXTcmb53N9ETZLUPtjugnkyZKQgiEtpXNRhvodt781BMQyUBluGkFYIeYLMROpkGN7C7RIjJ4Qb0YTAFFVZtnEgKj05V5nDx0Aybu9UVJA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e601f39-0d58-4adf-bf21-08d6cd0d7402
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 01:44:58.3339
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68c6c806-fef6-46d2-40f5-08d6cd0ee578
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 01:55:18.7396
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3772
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3829
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stephen
-	Thanks for notice.
-	As it is intentional, I will send out a patch to add "/* fall through */" =
-to avoid this build warning,
-
-Anson.
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Tuesday, April 30, 2019 8:20 AM
-> To: Mike Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>
-> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Ma=
-iling
-> List <linux-kernel@vger.kernel.org>; Anson Huang <anson.huang@nxp.com>;
-> Gustavo A. R. Silva <gustavo@embeddedor.com>; Kees Cook
-> <keescook@chromium.org>
-> Subject: linux-next: build warning after merge of the clk tree
->=20
-> Hi all,
->=20
-> After merging the clk tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall thro=
-ugh [-
-> Wimplicit-fallthrough=3D]
->    pll->denom_offset =3D PLL_IMX7_DENOM_OFFSET;
->                      ^
-> drivers/clk/imx/clk-pllv3.c:454:2: note: here
->   case IMX_PLLV3_AV:
->   ^~~~
->=20
-> Introduced by commit
->=20
->   01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
->=20
-> I get this warning because I am building with -Wimplicit-fallthrough in
-> attempt to catch new additions early.  The gcc warning can be turned off =
-by
-> adding a /* fall through */ comment at the point the fall through happens
-> (assuming that the fall through is intentional).
->=20
-> --
-> Cheers,
-> Stephen Rothwell
+Rml4IGJlbG93IGZhbGwgdGhyb3VnaCBidWlsZCB3YXJuaW5nOg0KDQpkcml2ZXJzL2Nsay9pbXgv
+Y2xrLXBsbHYzLmM6NDUzOjIxOiB3YXJuaW5nOg0KdGhpcyBzdGF0ZW1lbnQgbWF5IGZhbGwgdGhy
+b3VnaCBbLVdpbXBsaWNpdC1mYWxsdGhyb3VnaD1dDQoNCiAgIHBsbC0+ZGVub21fb2Zmc2V0ID0g
+UExMX0lNWDdfREVOT01fT0ZGU0VUOw0KICAgICAgICAgICAgICAgICAgICAgXg0KZHJpdmVycy9j
+bGsvaW14L2Nsay1wbGx2My5jOjQ1NDoyOiBub3RlOiBoZXJlDQogIGNhc2UgSU1YX1BMTFYzX0FW
+Og0KICBefn5+DQoNClNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAu
+Y29tPg0KLS0tDQogZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2My5jIHwgMSArDQogMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xr
+LXBsbHYzLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbHYzLmMNCmluZGV4IGU4OTJiOWEuLmZi
+ZTRmZTAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLXBsbHYzLmMNCisrKyBiL2Ry
+aXZlcnMvY2xrL2lteC9jbGstcGxsdjMuYw0KQEAgLTQ1MSw2ICs0NTEsNyBAQCBzdHJ1Y3QgY2xr
+ICppbXhfY2xrX3BsbHYzKGVudW0gaW14X3BsbHYzX3R5cGUgdHlwZSwgY29uc3QgY2hhciAqbmFt
+ZSwNCiAJY2FzZSBJTVhfUExMVjNfQVZfSU1YNzoNCiAJCXBsbC0+bnVtX29mZnNldCA9IFBMTF9J
+TVg3X05VTV9PRkZTRVQ7DQogCQlwbGwtPmRlbm9tX29mZnNldCA9IFBMTF9JTVg3X0RFTk9NX09G
+RlNFVDsNCisJCS8qIGZhbGwgdGhyb3VnaCAqLw0KIAljYXNlIElNWF9QTExWM19BVjoNCiAJCW9w
+cyA9ICZjbGtfcGxsdjNfYXZfb3BzOw0KIAkJYnJlYWs7DQotLSANCjIuNy40DQoNCg==
