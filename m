@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 034DCF46A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70685F46C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfD3Ko5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:44:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726262AbfD3Ko5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:44:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 14421AD7C;
-        Tue, 30 Apr 2019 10:44:56 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 12:44:55 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     "Tobin C. Harding" <tobin@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] livepatch: Fix kobject memleak
-In-Reply-To: <20190430084254.GB11737@kroah.com>
-Message-ID: <alpine.LSU.2.21.1904301235450.8507@pobox.suse.cz>
-References: <20190430001534.26246-1-tobin@kernel.org> <20190430001534.26246-2-tobin@kernel.org> <20190430084254.GB11737@kroah.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727193AbfD3KpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:45:21 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37810 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfD3KpU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 06:45:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b12so11123022lji.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 03:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D0Zsz5cuLJP69SdJwEsKGX6QwExtlT9EFiLTZhEUga8=;
+        b=bxHjCkoavoWP0hn9Y3zvg9uBa6/OyLqHI5jEpHTFTvFUZkg/G0SnClzHnlOncwQfd/
+         8AJpSAjDKpJaytE5xuwaK8gHuPdq3EOYGTfkU0JbE7sC8Ept3JJ15+MYRxb0x6PzHfl2
+         AhWWFagFddh06QfYTxLFTEHlZJkd4lu28BlpyDa+VOERo0+dvzK56HWlS3dT7dUGD1DB
+         9lv1ZMGobUYNU9iAUHymErxAMtS8tuhcTNTsWxyb517TlnsEZ+yHZCXFmOMhDfwxEiNa
+         rLFDeagMOuR1rkkIJHALJXo0SvmLP3t9/Vcc5XhzVX6i+qNdghV+L0LRvWzGPB3Jma5t
+         +fXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D0Zsz5cuLJP69SdJwEsKGX6QwExtlT9EFiLTZhEUga8=;
+        b=oV7jeVIp58qYyABlFOIiRB3IQJHRXjrG5lkUZyHyYs8PDkPH9y0hePkz1BXSEBXuth
+         Z9MAvf7eKLHmqlHhYQsszJJ3QA69lbMxNsFwCemLKh5/yaIWqWO+oyUaBPLm72r6LS9S
+         pOLkd1pWf/8BAD+Lf2l6N++wPO6kYxQdNLgrjtO6fEk7owXZc2BPUN+LaKbaVKMsCAHH
+         59Mio1qW76O0/RmXra4FQDeA0bGZkjY6ARjbzHcyQKr7wcX36Kf9sfonbSrFPDidKFB4
+         bLT2uFwCQ0kDv5PmmVUbxaZ3faeKTi9+XA2L/hhyUT5E48viJRRERHkGxBFkL1pq5xQY
+         a3Eg==
+X-Gm-Message-State: APjAAAWDyobAUnCARMuiYTkf8pbD8S4GCkrw8kpmtUrIIqMMxpnWnPyS
+        QvO0zP4RxI9aNAe37/qhWus=
+X-Google-Smtp-Source: APXvYqzDf7wlVV/tS0AVM5oO9IvgsP46PdHqrHNLvAfCdN4WQJCHqmCHp4cUQ7a3+BNNLwzEOz0lLA==
+X-Received: by 2002:a2e:3e0e:: with SMTP id l14mr35352423lja.125.1556621118804;
+        Tue, 30 Apr 2019 03:45:18 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id f1sm7277893ljc.73.2019.04.30.03.45.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 03:45:18 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 68F874603CA; Tue, 30 Apr 2019 13:45:17 +0300 (MSK)
+Date:   Tue, 30 Apr 2019 13:45:17 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+        akpm@linux-foundation.org, arunks@codeaurora.org, brgl@bgdev.pl,
+        geert+renesas@glider.be, ldufour@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mguzik@redhat.com, mhocko@kernel.org, rppt@linux.ibm.com,
+        vbabka@suse.cz
+Subject: Re: [PATCH 1/3] mm: get_cmdline use arg_lock instead of mmap_sem
+Message-ID: <20190430104517.GF2673@uranus.lan>
+References: <20190418182321.GJ3040@uranus.lan>
+ <20190430081844.22597-1-mkoutny@suse.com>
+ <20190430081844.22597-2-mkoutny@suse.com>
+ <4c79fb09-c310-4426-68f7-8b268100359a@virtuozzo.com>
+ <20190430093808.GD2673@uranus.lan>
+ <1a7265fa-610b-1f2a-e55f-b3a307a39bf2@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a7265fa-610b-1f2a-e55f-b3a307a39bf2@virtuozzo.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Apr 2019, Greg Kroah-Hartman wrote:
-
-> On Tue, Apr 30, 2019 at 10:15:33AM +1000, Tobin C. Harding wrote:
-> > Currently error return from kobject_init_and_add() is not followed by a
-> > call to kobject_put().  This means there is a memory leak.
+On Tue, Apr 30, 2019 at 12:53:51PM +0300, Kirill Tkhai wrote:
 > > 
-> > Add call to kobject_put() in error path of kobject_init_and_add().
-> > 
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > Well, strictly speaking we probably should but you know setup of
+> > the @arg_start by kernel's elf loader doesn't cause any side
+> > effects as far as I can tell (its been working this lockless
+> > way for years, mmap_sem is taken later in the loader code).
+> > Though for consistency sake we probably should set it up
+> > under the spinlock.
 > 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Ok, so elf loader doesn't change these parameters.
+> Thanks for the explanation.
 
-Well, it does not even compile...
-
-On Tue, 30 Apr 2019, Tobin C. Harding wrote:
-
-> Currently error return from kobject_init_and_add() is not followed by a
-> call to kobject_put().  This means there is a memory leak.
-> 
-> Add call to kobject_put() in error path of kobject_init_and_add().
-> 
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> ---
->  kernel/livepatch/core.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index eb0ee10a1981..98a7bec41faa 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -727,7 +727,9 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
->  	ret = kobject_init_and_add(&func->kobj, &klp_ktype_func,
->  				   &obj->kobj, "%s,%lu", func->old_name,
->  				   func->old_sympos ? func->old_sympos : 1);
-> -	if (!ret)
-> +	if (ret)
-> +		kobject_put(&func->kobj);
-> +	else
->  		func->kobj_added = true;
->  
->  	return ret;
-> @@ -803,8 +805,10 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
->  	name = klp_is_module(obj) ? obj->name : "vmlinux";
->  	ret = kobject_init_and_add(&obj->kobj, &klp_ktype_object,
->  				   &patch->kobj, "%s", name);
-> -	if (ret)
-> +	if (ret) {
-> +		kobject_put(&func->kobj);
-
-kobject_put(&obj->kobj); I suppose.
-
->  		return ret;
-> +	}
->  	obj->kobj_added = true;
->  
->  	klp_for_each_func(obj, func) {
-> @@ -862,8 +866,10 @@ static int klp_init_patch(struct klp_patch *patch)
->  
->  	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
->  				   klp_root_kobj, "%s", patch->mod->name);
-> -	if (ret)
-> +	if (ret) {
-> +		kobject_put(&func->kobj);
-
-kobject_put(&patch->kobj);
-
-Thanks,
-Miroslav
-
+It setups these parameters unconditionally. I need to revisit
+this moment. Technically (if only I'm not missing something
+obvious) we might have a race here with prctl setting up new
+params, but this should be harmless since most of them (except
+stack setup) are purely informative data.
