@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F48F84C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1633F827
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbfD3Lkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46876 "EHLO mail.kernel.org"
+        id S1729116AbfD3MFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:05:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728427AbfD3Lk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:29 -0400
+        id S1729221AbfD3LmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:42:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61ED821707;
-        Tue, 30 Apr 2019 11:40:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9170921734;
+        Tue, 30 Apr 2019 11:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624428;
-        bh=sspXV42TCOAkUcSZ2kigqA1X5pjGlPYYt7R5u7gn3eg=;
+        s=default; t=1556624531;
+        bh=M2A9iqhs/KVUvfAoeL7RgXhLq80Db758QtOaHvcXZro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hn5gRL32EkGyPv6kvFOIp18mmmxobPbT+WA2tefKZcWiHoRFdhCaCxuObrywglW+k
-         3nxOjUfxXrEY21O3c312AJBwVX6vnbs+tMY0WDznAlakMbPiMH1pjsoIOIZ4VOzIkY
-         93S81hHDeT4Fdlm3VnhwYiAWcL+V/JbzZcmNSREA=
+        b=sh0hC6vDJ3rIMvkCZ1IFLzd+hzD4mA6BgmbC4IhcEz0JUGo3hqkBlYm9oKbf7mThX
+         5m72smb937lNGXFuR2QQfKDD2RHZHoNjqBloE3WcT4rGGsRjJDhHWW0UpTOerS+g5o
+         b9t4i30ZEMZxxLshAbgBXjpx8qI6N/nzzJ0FsBAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot <syzbot+047a11c361b872896a4f@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.9 24/41] NFS: Forbid setting AF_INET6 to "struct sockaddr_in"->sin_family.
+        syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com,
+        Ben Hutchings <ben@decadent.org.uk>,
+        David Miller <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 28/53] slip: make slhc_free() silently accept an error pointer
 Date:   Tue, 30 Apr 2019 13:38:35 +0200
-Message-Id: <20190430113530.731893661@linuxfoundation.org>
+Message-Id: <20190430113556.164100265@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 7c2bd9a39845bfb6d72ddb55ce737650271f6f96 upstream.
+commit baf76f0c58aec435a3a864075b8f6d8ee5d1f17e upstream.
 
-syzbot is reporting uninitialized value at rpc_sockaddr2uaddr() [1]. This
-is because syzbot is setting AF_INET6 to "struct sockaddr_in"->sin_family
-(which is embedded into user-visible "struct nfs_mount_data" structure)
-despite nfs23_validate_mount_data() cannot pass sizeof(struct sockaddr_in6)
-bytes of AF_INET6 address to rpc_sockaddr2uaddr().
+This way, slhc_free() accepts what slhc_init() returns, whether that is
+an error or not.
 
-Since "struct nfs_mount_data" structure is user-visible, we can't change
-"struct nfs_mount_data" to use "struct sockaddr_storage". Therefore,
-assuming that everybody is using AF_INET family when passing address via
-"struct nfs_mount_data"->addr, reject if its sin_family is not AF_INET.
+In particular, the pattern in sl_alloc_bufs() is
 
-[1] https://syzkaller.appspot.com/bug?id=599993614e7cbbf66bc2656a919ab2a95fb5d75c
+        slcomp = slhc_init(16, 16);
+        ...
+        slhc_free(slcomp);
 
-Reported-by: syzbot <syzbot+047a11c361b872896a4f@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+for the error handling path, and rather than complicate that code, just
+make it ok to always free what was returned by the init function.
+
+That's what the code used to do before commit 4ab42d78e37a ("ppp, slip:
+Validate VJ compression slot parameters completely") when slhc_init()
+just returned NULL for the error case, with no actual indication of the
+details of the error.
+
+Reported-by: syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com
+Fixes: 4ab42d78e37a ("ppp, slip: Validate VJ compression slot parameters completely")
+Acked-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: David Miller <davem@davemloft.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/super.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/slip/slhc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2047,7 +2047,8 @@ static int nfs23_validate_mount_data(voi
- 		memcpy(sap, &data->addr, sizeof(data->addr));
- 		args->nfs_server.addrlen = sizeof(data->addr);
- 		args->nfs_server.port = ntohs(data->addr.sin_port);
--		if (!nfs_verify_server_address(sap))
-+		if (sap->sa_family != AF_INET ||
-+		    !nfs_verify_server_address(sap))
- 			goto out_no_address;
+--- a/drivers/net/slip/slhc.c
++++ b/drivers/net/slip/slhc.c
+@@ -153,7 +153,7 @@ out_fail:
+ void
+ slhc_free(struct slcompress *comp)
+ {
+-	if ( comp == NULLSLCOMPR )
++	if ( IS_ERR_OR_NULL(comp) )
+ 		return;
  
- 		if (!(data->flags & NFS_MOUNT_TCP))
+ 	if ( comp->tstate != NULLSLSTATE )
 
 
