@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C024F6B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EAACF7D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:03:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbfD3Lve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:51:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39332 "EHLO mail.kernel.org"
+        id S1729930AbfD3Ln1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:43:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730995AbfD3Lvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:51:31 -0400
+        id S1728908AbfD3LnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:43:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94342054F;
-        Tue, 30 Apr 2019 11:51:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 694E821707;
+        Tue, 30 Apr 2019 11:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556625090;
-        bh=M2A9iqhs/KVUvfAoeL7RgXhLq80Db758QtOaHvcXZro=;
+        s=default; t=1556624603;
+        bh=LGZmmeHB8SzFsXOlkPJ5Ap3bq0hhjA0B+TpJ666UMQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JfII/KYtYX0UkgdEsZd5Wx4oWGE7QF6nbC3inm4ZH3RdR2HQVsP5C8tSbF5RBIzT7
-         1TriJjRYCMzIEV63EbiZfiqVkU2s2WVADdT8ZkvwuohKZmwmGZCG8bo0vghzUGP6ci
-         5QULi4saBCP2z3gaSZeV08CM1615vNab03ahLhR0=
+        b=gUNYqevHPgghCx180Byb6EBoipMNbJYSiEcRAIR/UbP0a5EdoAaLycXVxDxfo0sqo
+         n4tCUGR4S3duyTcSCpinabMEY2vXuuGnyjWNZHxj646lDmvqhGv+7LdPLOQvyBUtLE
+         MeFsEuPoKWunzST8njwcrHAmH3Wm1+d0ghKOYfrY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com,
-        Ben Hutchings <ben@decadent.org.uk>,
-        David Miller <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.0 51/89] slip: make slhc_free() silently accept an error pointer
-Date:   Tue, 30 Apr 2019 13:38:42 +0200
-Message-Id: <20190430113612.083040126@linuxfoundation.org>
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Yue Haibing <yuehaibing@huawei.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: [PATCH 4.14 36/53] fm10k: Fix a potential NULL pointer dereference
+Date:   Tue, 30 Apr 2019 13:38:43 +0200
+Message-Id: <20190430113557.603844512@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Yue Haibing <yuehaibing@huawei.com>
 
-commit baf76f0c58aec435a3a864075b8f6d8ee5d1f17e upstream.
+commit 01ca667133d019edc9f0a1f70a272447c84ec41f upstream.
 
-This way, slhc_free() accepts what slhc_init() returns, whether that is
-an error or not.
+Syzkaller report this:
 
-In particular, the pattern in sl_alloc_bufs() is
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN PTI
+CPU: 0 PID: 4378 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:__lock_acquire+0x95b/0x3200 kernel/locking/lockdep.c:3573
+Code: 00 0f 85 28 1e 00 00 48 81 c4 08 01 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 cc 24 00 00 49 81 7d 00 e0 de 03 a6 41 bc 00 00
+RSP: 0018:ffff8881e3c07a40 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000080
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: ffff8881e3c07d98 R11: ffff8881c7f21f80 R12: 0000000000000001
+R13: 0000000000000080 R14: 0000000000000000 R15: 0000000000000001
+FS:  00007fce2252e700(0000) GS:ffff8881f2400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffc7eb0228 CR3: 00000001e5bea002 CR4: 00000000007606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ lock_acquire+0xff/0x2c0 kernel/locking/lockdep.c:4211
+ __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+ __mutex_lock+0xdf/0x1050 kernel/locking/mutex.c:1072
+ drain_workqueue+0x24/0x3f0 kernel/workqueue.c:2934
+ destroy_workqueue+0x23/0x630 kernel/workqueue.c:4319
+ __do_sys_delete_module kernel/module.c:1018 [inline]
+ __se_sys_delete_module kernel/module.c:961 [inline]
+ __x64_sys_delete_module+0x30c/0x480 kernel/module.c:961
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fce2252dc58 EFLAGS: 00000246 ORIG_RAX: 00000000000000b0
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fce2252e6bc
+R13: 00000000004bcca9 R14: 00000000006f6b48 R15: 00000000ffffffff
 
-        slcomp = slhc_init(16, 16);
-        ...
-        slhc_free(slcomp);
+If alloc_workqueue fails, it should return -ENOMEM, otherwise may
+trigger this NULL pointer dereference while unloading drivers.
 
-for the error handling path, and rather than complicate that code, just
-make it ok to always free what was returned by the init function.
-
-That's what the code used to do before commit 4ab42d78e37a ("ppp, slip:
-Validate VJ compression slot parameters completely") when slhc_init()
-just returned NULL for the error case, with no actual indication of the
-details of the error.
-
-Reported-by: syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com
-Fixes: 4ab42d78e37a ("ppp, slip: Validate VJ compression slot parameters completely")
-Acked-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: David Miller <davem@davemloft.net>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 0a38c17a21a0 ("fm10k: Remove create_workqueue")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/slip/slhc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/fm10k/fm10k_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/slip/slhc.c
-+++ b/drivers/net/slip/slhc.c
-@@ -153,7 +153,7 @@ out_fail:
- void
- slhc_free(struct slcompress *comp)
- {
--	if ( comp == NULLSLCOMPR )
-+	if ( IS_ERR_OR_NULL(comp) )
- 		return;
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_main.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
+@@ -58,6 +58,8 @@ static int __init fm10k_init_module(void
+ 	/* create driver workqueue */
+ 	fm10k_workqueue = alloc_workqueue("%s", WQ_MEM_RECLAIM, 0,
+ 					  fm10k_driver_name);
++	if (!fm10k_workqueue)
++		return -ENOMEM;
  
- 	if ( comp->tstate != NULLSLSTATE )
+ 	fm10k_dbg_init();
+ 
 
 
