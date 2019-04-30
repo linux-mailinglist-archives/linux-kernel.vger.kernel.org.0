@@ -2,133 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D9AED80
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FE1ED85
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 02:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfD3AIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 20:08:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63094 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbfD3AIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 20:08:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Apr 2019 17:08:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,411,1549958400"; 
-   d="scan'208";a="166213404"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Apr 2019 17:08:46 -0700
-Date:   Mon, 29 Apr 2019 17:08:46 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
- fops invocation
-Message-ID: <20190430000846.GG31379@linux.intel.com>
-References: <20190428133826.3e142cfd@oasis.local.home>
- <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
- <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
- <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
- <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
- <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
- <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
- <CAHk-=wjyyKDv-WZLXZbVD=V05p2X7eg74z2SpR4TQTxN9JLq4Q@mail.gmail.com>
- <20190429220814.GF31379@linux.intel.com>
- <CAHk-=whpq2=f2LdB-nc52Rd=iZkUH-N-r8OTqEfo+4UaJc7piA@mail.gmail.com>
+        id S1729524AbfD3AKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 20:10:30 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33534 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729063AbfD3AKa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 20:10:30 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y3so5018314plp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 17:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y8Pf9UXyzPjlpRjHiYMPtrNDJ8/3UQU5riBkZSYp9gs=;
+        b=k7Kw5N91Pxko0ghZG+tFO44IQLSLmLpxnt3s2C4Ka8pDBJI7mim2Lk2dlUKF8ZLNot
+         RfLDsDUUUc+VFe0qPlwHOA5zqLJvvxwtOGg/7Hb0GR8p7ebNzp7Us5YVQoeiIhu9Ltwr
+         Ao2kyZGey9qZR1awyZuwdaSkWY17AaOxzyawc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y8Pf9UXyzPjlpRjHiYMPtrNDJ8/3UQU5riBkZSYp9gs=;
+        b=dtWs8lVhzL91RpNFnOvE3gntpRk9MEeHrhrSWJro6wdoxaHJjLhm561+fqdOflTgvS
+         nUTg6rpqCLKNcshtR6ExaT6MXUt/zhNWZjVEmny3Eonx9FC2i3mNpFUfUVlhUTsSkh1P
+         wmOggFqUGqy4dHvvmsb9lU43uEEJWkFVRDd7eMZdtkK5f4PVnEOhYkTRZG0qM7eHkeYT
+         /vRjRrqzPS310j7iz2lz5BG4EuIRKtTmcFoOzNjsbEVZiKjK10yK03T7cPqvdKR9Rzcp
+         2ZqkUazPVk6eFm9pJ/zPsZDXY+L22Bu/4BtUDyAW+hTz3CelM+zJKcd05ypFrtI23rt8
+         /HRw==
+X-Gm-Message-State: APjAAAXoTqmqSUSGJoa3rRyJ8Kft3H6Mo8yuHqOJnk2LC6l4+HPkONyU
+        NOpvdEJ42eV1Vnq/In75fjc3BQ==
+X-Google-Smtp-Source: APXvYqxXWqn4PyYBhaEXrbFBPXd88+0a2CteVhsZB0uDiFIMSkAjoNlIJlfk7AESXUSA6LYf/viT6Q==
+X-Received: by 2002:a17:902:7b8e:: with SMTP id w14mr48845254pll.202.1556583029384;
+        Mon, 29 Apr 2019 17:10:29 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id n65sm59063555pga.92.2019.04.29.17.10.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 17:10:28 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Harish Bandi <c-hbandi@codeaurora.org>,
+        Rocky Liao <rjliao@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v8] Bluetooth: btqca: inject command complete event during fw download
+Date:   Mon, 29 Apr 2019 17:10:24 -0700
+Message-Id: <20190430001024.209688-1-mka@chromium.org>
+X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whpq2=f2LdB-nc52Rd=iZkUH-N-r8OTqEfo+4UaJc7piA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 03:22:09PM -0700, Linus Torvalds wrote:
-> On Mon, Apr 29, 2019 at 3:08 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > FWIW, Lakemont (Quark) doesn't block NMI/SMI in the STI shadow, but I'm
-> > not sure that counters the "horrible errata" statement ;-).  SMI+RSM saves
-> > and restores STI blocking in that case, but AFAICT NMI has no such
-> > protection and will effectively break the shadow on its IRET.
-> 
-> Ugh. I can't say I care deeply about Quark (ie never seemed to go
-> anywhere), but it's odd. I thought it was based on a Pentium core (or
-> i486+?). Are you saying those didn't do it either?
+From: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 
-It's 486 based, but either way I suspect the answer is "yes".  IIRC,
-Knights Corner, a.k.a. Larrabee, also had funkiness around SMM and that
-was based on P54C, though I'm struggling to recall exactly what the
-Larrabee weirdness was.
+From: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 
-> I have this dim memory about talking about this with some (AMD?)
-> engineer, and having an alternative approach for the sti shadow wrt
-> NMI - basically not checking interrupts in the instruction you return
-> to with 'iret'. I don't think it was even conditional on the "iret
-> from NMI", I think it was basically any iret also did the sti shadow
-> thing.
-> 
-> But I can find no actual paper to back that up, so this may be me just
-> making sh*t up.
+Latest qualcomm chips are not sending an command complete event for
+every firmware packet sent to chip. They only respond with a vendor
+specific event for the last firmware packet. This optimization will
+decrease the BT ON time. Due to this we are seeing a timeout error
+message logs on the console during firmware download. Now we are
+injecting a command complete event once we receive an vendor specific
+event for the last RAM firmware packet.
 
-If Intel CPUs ever did anything like that on IRET it's long gone.
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+Changes in v8:
+- renamed QCA_HCI_CC_SUCCESS to QCA_HCI_CC_OPCODE
+- use 0xFC00 as opcode of the injected event instead of 0
+- added Matthias' tags from the v7 review
+---
+ drivers/bluetooth/btqca.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ drivers/bluetooth/btqca.h |  3 +++
+ 2 files changed, 41 insertions(+), 1 deletion(-)
 
-> > KVM is generally ok with respect to STI blocking, but ancient versions
-> > didn't migrate STI blocking and there's currently a hole where
-> > single-stepping a guest (from host userspace) could drop STI_BLOCKING
-> > if a different VM-Exit occurs between the single-step #DB VM-Exit and the
-> > instruction in the shadow.  Though "don't do that" may be a reasonable
-> > answer in that case.
-> 
-> I thought the sti shadow blocked the single-step exception too? I know
-> "mov->ss" does block debug interrupts too.
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index cc12eecd9e4d..ef765ea881b8 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct rome_config *config,
+ 		 * In case VSE is skipped, only the last segment is acked.
+ 		 */
+ 		config->dnld_mode = tlv_patch->download_mode;
++		config->dnld_type = config->dnld_mode;
+ 
+ 		BT_DBG("Total Length           : %d bytes",
+ 		       le32_to_cpu(tlv_patch->total_size));
+@@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
+ 	return err;
+ }
+ 
++static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
++{
++	struct hci_event_hdr *hdr;
++	struct hci_ev_cmd_complete *evt;
++	struct sk_buff *skb;
++
++	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
++	if (!skb)
++		return -ENOMEM;
++
++	hdr = skb_put(skb, sizeof(*hdr));
++	hdr->evt = HCI_EV_CMD_COMPLETE;
++	hdr->plen = sizeof(*evt) + 1;
++
++	evt = skb_put(skb, sizeof(*evt));
++	evt->ncmd = 1;
++	evt->opcode = HCI_OP_NOP;
++
++	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
++
++	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
++
++	return hci_recv_frame(hdev, skb);
++}
++
+ static int qca_download_firmware(struct hci_dev *hdev,
+ 				  struct rome_config *config)
+ {
+@@ -297,11 +323,22 @@ static int qca_download_firmware(struct hci_dev *hdev,
+ 		ret = qca_tlv_send_segment(hdev, segsize, segment,
+ 					    config->dnld_mode);
+ 		if (ret)
+-			break;
++			goto out;
+ 
+ 		segment += segsize;
+ 	}
+ 
++	/* Latest qualcomm chipsets are not sending a command complete event
++	 * for every fw packet sent. They only respond with a vendor specific
++	 * event for the last packet. This optimization in the chip will
++	 * decrease the BT in initialization time. Here we will inject a command
++	 * complete event to avoid a command timeout error message.
++	 */
++	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
++	    config->dnld_type == ROME_SKIP_EVT_VSE))
++		return qca_inject_cmd_complete_event(hdev);
++
++out:
+ 	release_firmware(fw);
+ 
+ 	return ret;
+diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+index 4c4fe2b5b7b7..595abcdaed2d 100644
+--- a/drivers/bluetooth/btqca.h
++++ b/drivers/bluetooth/btqca.h
+@@ -41,6 +41,8 @@
+ #define QCA_WCN3990_POWERON_PULSE	0xFC
+ #define QCA_WCN3990_POWEROFF_PULSE	0xC0
+ 
++#define QCA_HCI_CC_OPCODE		0xFC00
++
+ enum qca_baudrate {
+ 	QCA_BAUDRATE_115200 	= 0,
+ 	QCA_BAUDRATE_57600,
+@@ -82,6 +84,7 @@ struct rome_config {
+ 	char fwname[64];
+ 	uint8_t user_baud_rate;
+ 	enum rome_tlv_dnld_mode dnld_mode;
++	enum rome_tlv_dnld_mode dnld_type;
+ };
+ 
+ struct edl_event_hdr {
+-- 
+2.21.0.593.g511ec345e18-goog
 
-{MOV,POP}SS blocks #DBs, STI does not.
-
-> Or are you saying that it's some "single step by emulation" that just
-> miss setting the STI_BLOCKING flag?
-
-This is the case I was talking about for KVM.  KVM supports single-stepping
-the guest from userpace and uses EFLAGS.TF to do so (since it works on both
-Intel and AMD).  VMX has a consistency check that fails VM-Entry if
-STI_BLOCKING=1, EFLAGS.TF==1, IA32_DEBUGCTL.BTF=0 and there isn't a pending
-single-step #DB, and so KVM clears STI_BLOCKING immediately before entering
-the guest when single-stepping the guest.  If a VM-Exit occurs immediately
-after VM-Entry, e.g. due to hardware interrupt, then KVM will see
-STI_BLOCKING=0 when processing guest events in its run loop and will inject
-any pending interrupts.
-
-I *think* the KVM behavior can be fixed, e.g. I'm not entirely sure why KVM
-takes this approach instead of setting PENDING_DBG.BS, but that's probably
-a moot point.
