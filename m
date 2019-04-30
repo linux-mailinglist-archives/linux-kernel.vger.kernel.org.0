@@ -2,178 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689DDFD6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7611FFD95
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 18:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfD3QGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 12:06:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43709 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfD3QGT (ORCPT
+        id S1726677AbfD3QM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 12:12:59 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37032 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfD3QM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:06:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3UG4HHU1441025
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Apr 2019 09:04:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3UG4HHU1441025
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556640258;
-        bh=/rjmcgFmgp4FJfF1KZLJ/O634csf05g/DF0ZHvo/3Aw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=LqKjHjvI9ZE0Z6Zo6I2Ss66PDpeEx8oCSTmoHtt9L0OGtDkUxt6yVtpaV9IK76AB+
-         GQ3mPLV4kEzW0KMeuZCHTbsW2+mGcG9vNdDoIzqjh0XkzU9NJ00afWlUObTRN3zRvN
-         9yXnlbOtSBo5dBytt0V8sUXa+ICxgyp2HAaFv4k2887RvTa9UAOEHlngbx4kSgiw8H
-         BSVIvCA47nYhQgahBPcsqIhuQDPto7NupmH9eLdCX3Op98qY8DuxV0NSSN01y+BkMI
-         xB7p6d3s5O5/euGWo4sSUhyyrdTTwCNpOT9AcOnmXRP/0ga9R+NF3HJqFnpGB39kWj
-         6W8CE+aL1o+RQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3UG4FHa1441014;
-        Tue, 30 Apr 2019 09:04:15 -0700
-Date:   Tue, 30 Apr 2019 09:04:15 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Gary Hook <tipbot@zytor.com>
-Message-ID: <tip-b51ce3744f115850166f3d6c292b9c8cb849ad4f@git.kernel.org>
-Cc:     bigeasy@linutronix.de, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kent.overstreet@gmail.com,
-        dave.hansen@linux.intel.com, peterz@infradead.org,
-        lirongqing@baidu.com, bp@suse.de, colyli@suse.de, mingo@redhat.com,
-        bbrezillon@kernel.org, Gary.Hook@amd.com, luto@kernel.org,
-        akpm@linux-foundation.org, willy@infradead.org, gary.hook@amd.com,
-        mingo@kernel.org, keescook@chromium.org,
-        alexander.shishkin@linux.intel.com, yamada.masahiro@socionext.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, x86@kernel.org
-Reply-To: mingo@redhat.com, colyli@suse.de, Gary.Hook@amd.com,
-          bbrezillon@kernel.org, lirongqing@baidu.com,
-          dave.hansen@linux.intel.com, peterz@infradead.org, bp@suse.de,
-          tglx@linutronix.de, kent.overstreet@gmail.com,
-          andriy.shevchenko@linux.intel.com, bigeasy@linutronix.de,
-          linux-kernel@vger.kernel.org, x86@kernel.org,
-          alexander.shishkin@linux.intel.com,
-          yamada.masahiro@socionext.com, hpa@zytor.com, mingo@kernel.org,
-          keescook@chromium.org, willy@infradead.org,
-          akpm@linux-foundation.org, luto@kernel.org, gary.hook@amd.com
-In-Reply-To: <155657657552.7116.18363762932464011367.stgit@sosrh3.amd.com>
-References: <155657657552.7116.18363762932464011367.stgit@sosrh3.amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm/mem_encrypt: Disable all instrumentation
- for early SME setup
-Git-Commit-ID: b51ce3744f115850166f3d6c292b9c8cb849ad4f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Apr 2019 12:12:58 -0400
+Received: by mail-lj1-f195.google.com with SMTP id b12so12160834lji.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 09:12:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I8IWSyZfLA4XVOsmM4DscMmixmVfvW4j4t9n7Z2aPEk=;
+        b=W6fmTN0+D899+DLFXEO0qv05jRrqGLHpOnj5hjbo6BgYsF8/3yQk/MgOBusQc/+nur
+         zEcvFY9Ms51BaYKVfQUT4d8XQLgPU3hFz4sUMV31rJJ+EwViTRrCjM/neFZh3KWEKiVH
+         36y5Lj+2NTIPCZFvYHm6hgeuBfzI0lc+RedSY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I8IWSyZfLA4XVOsmM4DscMmixmVfvW4j4t9n7Z2aPEk=;
+        b=EKkhhSHmwOIhSpuoO4SUveo5ty8XkByP79V/x+pFfGlelFQMUazuQpC7DGlX+hfo8N
+         GX3OPTKAVSyL6vzg4oL4oxirzsH1e6PQA04nluU0nxezpFVcYvPYCw31838TQ/X9K5UP
+         +VoeWkcLdg37C74nn4ocjjFQ+v/mOe4MmEeUTis4A5gD3d78moCZhje1GckJJiM2JwN0
+         1z2/MU+M14RrKYmBENYHkIAJ2Jw4JMXrOhSJszFSqmEyGHF/zFKI7B569L5X3pxsDTbX
+         kgpEWbnQ4MUMEmpWhTdsvjyDzjHyzJCNa6yUIWxrem/ebGAdzt2OLzhxgMxREi82kfOM
+         glcw==
+X-Gm-Message-State: APjAAAV1KPIo0kplLgYmkhTCZ1CQG9m0W055/k6N6u8K/BNMEj2LKxSv
+        2ult/Z5+pnJMATTr5M2jjqvCjr2w7Xc=
+X-Google-Smtp-Source: APXvYqzmCnxbxykfyQ/NZIozOUcxZbrMJttdvlo6U7GSPfWDcJmqnOLQ4k2KrK6OXP5M2derK1VZDg==
+X-Received: by 2002:a2e:a0c9:: with SMTP id f9mr4449156ljm.62.1556640774811;
+        Tue, 30 Apr 2019 09:12:54 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id z6sm1442778ljb.56.2019.04.30.09.12.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 09:12:54 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id q10so13334533ljc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 09:12:54 -0700 (PDT)
+X-Received: by 2002:a2e:8090:: with SMTP id i16mr11128807ljg.135.1556640377738;
+ Tue, 30 Apr 2019 09:06:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190428133826.3e142cfd@oasis.local.home> <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+ <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+ <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
+ <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
+ <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
+ <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+ <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
+ <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
+ <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com> <20190430135602.GD2589@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190430135602.GD2589@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 30 Apr 2019 09:06:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
+Message-ID: <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
+Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
+ fops invocation
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b51ce3744f115850166f3d6c292b9c8cb849ad4f
-Gitweb:     https://git.kernel.org/tip/b51ce3744f115850166f3d6c292b9c8cb849ad4f
-Author:     Gary Hook <Gary.Hook@amd.com>
-AuthorDate: Mon, 29 Apr 2019 22:22:58 +0000
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 30 Apr 2019 17:59:08 +0200
+On Tue, Apr 30, 2019 at 6:56 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Apr 29, 2019 at 01:07:33PM -0700, Linus Torvalds wrote:
+> >
+> > We still have that sti sysexit in the 32-bit code.
+>
+> We also have both: "STI; HLT" and "STI; MWAIT" where we rely on the STI
+> shadow.
 
-x86/mm/mem_encrypt: Disable all instrumentation for early SME setup
+I guess the good news is that in all cases we really only ever protect
+against a very unlikely race, and if the race happens it's not
+actually fatal.
 
-Enablement of AMD's Secure Memory Encryption feature is determined very
-early after start_kernel() is entered. Part of this procedure involves
-scanning the command line for the parameter 'mem_encrypt'.
+Yes, if we get an NMI and then an interrupt in between the "st;hlt" we
+might wait for the next interrupt and get a (potentially fairly
+horrible) latency issue. I guess that with maximal luck it might be a
+one-shot timer and not get re-armed, but it sounds very very very
+unlikely.
 
-To determine intended state, the function sme_enable() uses library
-functions cmdline_find_option() and strncmp(). Their use occurs early
-enough such that it cannot be assumed that any instrumentation subsystem
-is initialized.
+Googling around, I actually find a patch from Avi Kivity from back in
+2010 for this exact issue, apparently because kvm got this case wrong
+and somebody hit it. The patch never made it upstream exactly because
+kvm could be fixed and people decided that most real hardware didn't
+have the issue in the first place.
 
-For example, making calls to a KASAN-instrumented function before KASAN
-is set up will result in the use of uninitialized memory and a boot
-failure.
+In the discussion I found, Peter Anvin tried to get confirmation from
+AMD engineers about this too, but I don't see any resolution.
 
-When AMD's SME support is enabled, conditionally disable instrumentation
-of these dependent functions in lib/string.c and arch/x86/lib/cmdline.c.
+Realistically, I don't think you can hit the problem in practice. The
+only way to hit that incredibly small race of "one instruction, *both*
+NMI and interrupts" is to have a lot of interrupts going all at the
+same time, but that will also then solve the latency problem, so the
+very act of triggering it will also fix it.
 
- [ bp: Get rid of intermediary nostackp var and cleanup whitespace. ]
+I don't see any case where it's really bad. The "sti sysexit" race is
+similar, just about latency of user space signal reporting (and
+perhaps any pending TIF_WORK_xyz flags).
 
-Fixes: aca20d546214 ("x86/mm: Add support to make use of Secure Memory Encryption")
-Reported-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Coly Li <colyli@suse.de>
-Cc: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: "luto@kernel.org" <luto@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: "mingo@redhat.com" <mingo@redhat.com>
-Cc: "peterz@infradead.org" <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/155657657552.7116.18363762932464011367.stgit@sosrh3.amd.com
----
- arch/x86/lib/Makefile | 12 ++++++++++++
- lib/Makefile          | 11 +++++++++++
- 2 files changed, 23 insertions(+)
+So maybe we don't care deeply about the sti shadow. It's a potential
+latecy problem when broken, but not a huge issue. And for the
+instruction rewriting hack, moving to "push+sti+ret" also makes a lost
+sti shadow just a "possibly odd stack frame visibility" issue rather
+than anything deeply fatal.
 
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 140e61843a07..3cb3af51ec89 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -6,6 +6,18 @@
- # Produces uninteresting flaky coverage.
- KCOV_INSTRUMENT_delay.o	:= n
- 
-+# Early boot use of cmdline; don't instrument it
-+ifdef CONFIG_AMD_MEM_ENCRYPT
-+KCOV_INSTRUMENT_cmdline.o := n
-+KASAN_SANITIZE_cmdline.o  := n
-+
-+ifdef CONFIG_FUNCTION_TRACER
-+CFLAGS_REMOVE_cmdline.o = -pg
-+endif
-+
-+CFLAGS_cmdline.o := $(call cc-option, -fno-stack-protector)
-+endif
-+
- inat_tables_script = $(srctree)/arch/x86/tools/gen-insn-attr-x86.awk
- inat_tables_maps = $(srctree)/arch/x86/lib/x86-opcode-map.txt
- quiet_cmd_inat_tables = GEN     $@
-diff --git a/lib/Makefile b/lib/Makefile
-index 3b08673e8881..18c2be516ab4 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -17,6 +17,17 @@ KCOV_INSTRUMENT_list_debug.o := n
- KCOV_INSTRUMENT_debugobjects.o := n
- KCOV_INSTRUMENT_dynamic_debug.o := n
- 
-+# Early boot use of cmdline, don't instrument it
-+ifdef CONFIG_AMD_MEM_ENCRYPT
-+KASAN_SANITIZE_string.o := n
-+
-+ifdef CONFIG_FUNCTION_TRACER
-+CFLAGS_REMOVE_string.o = -pg
-+endif
-+
-+CFLAGS_string.o := $(call cc-option, -fno-stack-protector)
-+endif
-+
- lib-y := ctype.o string.o vsprintf.o cmdline.o \
- 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
- 	 idr.o int_sqrt.o extable.o \
+We can probably just write it off as "some old CPU's (and a smattering
+or very rare and not relevant new ones) have potential but unlikely
+latency issues because of a historical CPU mis-design - don't do perf
+on them".
+
+                Linus
