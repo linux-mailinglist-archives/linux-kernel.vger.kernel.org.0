@@ -2,62 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9291CFC9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94828FCDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbfD3PSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:18:53 -0400
-Received: from verein.lst.de ([213.95.11.211]:47154 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfD3PSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:18:52 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id D457F67358; Tue, 30 Apr 2019 17:18:33 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 17:18:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        m.szyprowski@samsung.com, vdumpa@nvidia.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, chris@zankel.net,
-        jcmvbkbc@gmail.com, joro@8bytes.org, dwmw2@infradead.org,
-        tony@atomide.com, akpm@linux-foundation.org, sfr@canb.auug.org.au,
-        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
-        wsa+renesas@sang-engineering.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
-Subject: Re: [RFC/RFT PATCH 1/2] dma-contiguous: Simplify
- dma_*_from_contiguous() function calls
-Message-ID: <20190430151833.GB25447@lst.de>
-References: <20190430015521.27734-1-nicoleotsuka@gmail.com> <20190430015521.27734-2-nicoleotsuka@gmail.com> <20190430105640.GA20021@lst.de> <0e3e6d8b-de44-d23e-a039-8d11b578ec5c@arm.com>
+        id S1726244AbfD3P2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:28:22 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53583 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726017AbfD3P2V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:28:21 -0400
+X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 11:28:21 EDT
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 95B2013CFD;
+        Tue, 30 Apr 2019 11:19:32 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 30 Apr 2019 11:19:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=animalcreek.com;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=mesmtp; bh=PqdKVmAegcUY+01jWk7gCCUC
+        FnxdsWffSKcoSAyZrz0=; b=KLGl4dDWcypYzghgDsD+u5AdKCTJx0WYYG32QPOk
+        VRAEAvLki/saXIZ+FELVvNyd7eBf2kY+a+Lgyt+d3XlYyd/rIlyohecS7+qW6g9e
+        49Kp6aYvS5jv3QcTTDrFEKcl8zesN2nSOQEpftwDoDcraREJhwRM6FjNQ+gVfrfv
+        Jjw=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=PqdKVm
+        AegcUY+01jWk7gCCUCFnxdsWffSKcoSAyZrz0=; b=Xse+7eu6e+7sB7A3vfrfLJ
+        UXqM/IAhrTe87qCpxc0Z7GbAFLTuYr2KNo6haKf5T+UOy8kVtyq4PXYpW5yNVK6h
+        tovKSlKwUijGrJcrcjgs+6dMZpjU/TzEpkUDKrnJa2mmM5n0FMiyF3Fww+QCXSk2
+        +SpHuaGG3oOxg3Q+kL+kLvM/hMwRbY+V02tQSy67kRTkJvM8UR+wtjzWbnWwcZvm
+        2JV+oTolMHJRr8Ppt4S1smYPPmgbKu5x+U/EAsjMHD6XWfVJHkmAjZyq2nOZCkp0
+        9TNee8DAGrr1WC+slp8v5rMuPfuKYq/SGRd00fLPVakamG5VrYplpN6T01bv1v8g
+        ==
+X-ME-Sender: <xms:gmfIXNIp3cgHm5z8P87KAp4zfzY5ZS_E_R4aKo-nfR_eV_Zx6humzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieehgddvkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujghofgesthdtredttdervdenucfhrhhomhepofgrrhhk
+    ucfirhgvvghruceomhhgrhgvvghrsegrnhhimhgrlhgtrhgvvghkrdgtohhmqeenucfkph
+    epieekrddvrdekjedrleehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmghhrvggvrhes
+    rghnihhmrghltghrvggvkhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:gmfIXAMRsaPLqfhQUsdfwSRIsOaWifswxzpnBY04sYzPHfRHrKLaUQ>
+    <xmx:gmfIXNYROxrkfHO9y3_UupmN1f78ui2nxLhrcW1JjYak2qzBoYvOWA>
+    <xmx:gmfIXEyQgwzU5MKiqAZNI3cZSNthcGfmFgflccqtzXSqTEtRkpX6yA>
+    <xmx:hGfIXOtcc0O3WEiGO4HvZqWv4cKhud4QyMiawWAcTNunwmyh_u1ZBQ>
+Received: from blue.animalcreek.com (ip68-2-87-95.ph.ph.cox.net [68.2.87.95])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 84A6B103CC;
+        Tue, 30 Apr 2019 11:19:30 -0400 (EDT)
+Received: by blue.animalcreek.com (Postfix, from userid 1000)
+        id DEAC8A21364; Tue, 30 Apr 2019 08:19:28 -0700 (MST)
+Date:   Tue, 30 Apr 2019 08:19:28 -0700
+From:   Mark Greer <mgreer@animalcreek.com>
+To:     Vaibhav Agarwal <vaibhav.sr@gmail.com>
+Cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
+        Mark Greer <mgreer@animalcreek.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] greybus: audio_manager: fix a missing check of
+ ida_simple_get
+Message-ID: <20190430151928.GA1854@animalcreek.com>
+References: <20190314064525.15756-1-kjlu@umn.edu>
+ <CAAs364_6MpywkbsFdZrT5TEdrD8+u1eTmg-8_KY0dypy_PgMxQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0e3e6d8b-de44-d23e-a039-8d11b578ec5c@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAAs364_6MpywkbsFdZrT5TEdrD8+u1eTmg-8_KY0dypy_PgMxQ@mail.gmail.com>
+Organization: Animal Creek Technologies, Inc.
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 01:37:54PM +0100, Robin Murphy wrote:
-> On 30/04/2019 11:56, Christoph Hellwig wrote:
->> So while I really, really like this cleanup it turns out it isn't
->> actually safe for arm :(  arm remaps the CMA allocation in place
->> instead of using a new mapping, which can be done because they don't
->> share PMDs with the kernel.
->>
->> So we'll probably need a __dma_alloc_from_contiguous version with
->> an additional bool fallback argument - everyone but arms uses
->> dma_alloc_from_contiguous as in your patch, just arm will get the
->> non-fallback one.
->
-> Or we even just implement dma_{alloc,free}_contiguous() as a wrapper around 
-> the existing APIs so that users can be thoroughly checked and converted 
-> one-by-one.
+On Fri, Mar 15, 2019 at 10:49:46AM +0530, Vaibhav Agarwal wrote:
+> On Thu, Mar 14, 2019 at 12:15 PM Kangjie Lu <kjlu@umn.edu> wrote:
+> >
+> > ida_simple_get could fail. The fix inserts a check for its
+> > return value.
+> >
+> > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> > ---
+> >  drivers/staging/greybus/audio_manager.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
+> > index d44b070d8862..c2a4af4c1d06 100644
+> > --- a/drivers/staging/greybus/audio_manager.c
+> > +++ b/drivers/staging/greybus/audio_manager.c
+> > @@ -45,6 +45,9 @@ int gb_audio_manager_add(struct gb_audio_manager_module_descriptor *desc)
+> >         int err;
+> >
+> >         id = ida_simple_get(&module_id, 0, 0, GFP_KERNEL);
+> > +       if (id < 0)
+> > +               return id;
+> > +
+> >         err = gb_audio_manager_module_create(&module, manager_kset,
+> >                                              id, desc);
+> >         if (err) {
+> 
+> Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
 
-Yeah.  Actually given all the contention I wonder if the easiest solution
-for now is to just open code the cma_alloc/cma_free calls in dma-direct
-and dma-iommu, with the hopes that everyone is going to migrate to those
-implementations in the mid-term anyway and dma_alloc_from_contiguous /
-dma_release_from_contiguous just go away..
+I am sorry for not responding until now.  For some strange reason, email
+from this list are being delayed.  I just got this today (April 30).
+
+Thanks for the patch, Kangjie, and thanks for the review, Vaibhav.
+
+And FWIW,
+
+Reviewed-by: Mark Greer <mgreer@animalcreek.com>
+
+Mark
+--
