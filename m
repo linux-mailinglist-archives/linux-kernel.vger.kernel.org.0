@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46ECCF59E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6FAF5A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfD3Lad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:30:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40818 "EHLO mx1.suse.de"
+        id S1727991AbfD3LbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:31:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7148 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726202AbfD3Lac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:30:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6A21AF9A;
-        Tue, 30 Apr 2019 11:30:31 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 13:30:31 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
- reliable stacktrace support
-In-Reply-To: <20190430091049.30413-2-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1904301329060.8507@pobox.suse.cz>
-References: <20190430091049.30413-1-pmladek@suse.com> <20190430091049.30413-2-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726202AbfD3LbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:31:06 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DA2534B59E40D685B94C;
+        Tue, 30 Apr 2019 19:31:02 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Apr 2019
+ 19:31:00 +0800
+Subject: Re: [PATCH] appletalk: Set error code while register_snap_client
+To:     <davem@davemloft.net>, <gregkh@linuxfoundation.org>
+References: <20190430112840.43452-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <b1fdc9c5-ec67-20af-15c6-7e966c2b65e1@huawei.com>
+Date:   Tue, 30 Apr 2019 19:30:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190430112840.43452-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Apr 2019, Petr Mladek wrote:
+patch title need fix, Pls ignore this.
 
-> WARN_ON_ONCE() could not be called safely under rq lock because
-> of console deadlock issues. Fortunately, there is another check
-> for the reliable stacktrace support in klp_enable_patch().
+On 2019/4/30 19:28, YueHaibing wrote:
+> If register_snap_client fails in atalk_init,
+> error code should be set, otherwise it will
+> triggers NULL pointer dereference while unloading
+> module.
 > 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-
-Acked-by: Miroslav Benes <mbenes@suse.cz> with a nit below
-
+> Fixes: 9804501fa122 ("appletalk: Fix potential NULL pointer dereference in unregister_snap_client")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  kernel/livepatch/transition.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+>  net/appletalk/ddp.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-> index 9c89ae8b337a..8e0274075e75 100644
-> --- a/kernel/livepatch/transition.c
-> +++ b/kernel/livepatch/transition.c
-> @@ -263,8 +263,15 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
->  	trace.nr_entries = 0;
->  	trace.max_entries = MAX_STACK_ENTRIES;
->  	trace.entries = entries;
-> +
+> diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+> index 709d254..dbe8b19 100644
+> --- a/net/appletalk/ddp.c
+> +++ b/net/appletalk/ddp.c
+> @@ -1920,6 +1920,7 @@ static int __init atalk_init(void)
+>  	ddp_dl = register_snap_client(ddp_snap_id, atalk_rcv);
+>  	if (!ddp_dl) {
+>  		pr_crit("Unable to register DDP with SNAP.\n");
+> +		rc = -ENOMEM;
+>  		goto out_sock;
+>  	}
+>  
+> 
 
-Unnecessary new line?
-
->  	ret = save_stack_trace_tsk_reliable(task, &trace);
-> -	WARN_ON_ONCE(ret == -ENOSYS);
-> +	/*
-> +	 * pr_warn() under task rq lock might cause a deadlock.
-> +	 * Fortunately, missing reliable stacktrace support has
-> +	 * already been handled when the livepatch was enabled.
-> +	 */
-> +	if (ret == -ENOSYS)
-> +		return ret;
->  	if (ret) {
->  		snprintf(err_buf, STACK_ERR_BUF_SIZE,
->  			 "%s: %s:%d has an unreliable stack\n",
-
-Miroslav
