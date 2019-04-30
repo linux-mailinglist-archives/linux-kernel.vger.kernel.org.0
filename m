@@ -2,108 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D4CF536
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BBAF53C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfD3LOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:14:35 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34254 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727461AbfD3LOf (ORCPT
+        id S1727544AbfD3LQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:16:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44739 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfD3LQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:14:35 -0400
-Received: by mail-vs1-f65.google.com with SMTP id b23so89449vso.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 04:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+apvPOK9hOKuyGFcfXqjcVJRX/KMiOheouDto7GSYrU=;
-        b=OlG3x6DSEKoTSrHDdX3ybp6fgR+JxEYnOW6sgWdoouyfjOMZfIZE834Z0i1m4d147e
-         yh01OWpa7Edvr5/DLSw4qqB8LMCNiX6xfb3u9ldeB5liaei3o+eamVJpoz15S4Di9YII
-         N6OoTOfeYCULR2C/P3lYgfImFJYDCIrkgWUkZczpN1A48fy5NIuyoJS3kmm+qXRQDaW7
-         fQTR+sko1QYp8Y9xuuWEQmS/WEufRgOb11yfjRtsiozp+zLSS624cIH40INcfhqvWQzF
-         5/ZF1BLNue1OMHom1HohEH3No7Eg1JyIyx+xodFErGChH//VZmOfMLRkNZCuTkzjv/Ks
-         d+VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+apvPOK9hOKuyGFcfXqjcVJRX/KMiOheouDto7GSYrU=;
-        b=I6v6F4reGxSTKsYzuWqYjxnqyH34SlcCFCkxIfxMJ8bIu2kDDsUv47crJKYsxfVTKE
-         ZFQqtqbkv0N+gOsvwBtRisetAFHXl3x1v3fnbMeroYS85gqrFOjNJbbYHpRWt8k2JIhy
-         9pFZERI/SrOutK2bjjEzgQQ0QGRxCQS76DUE7paZzSNPpTP5npUBa+gV5Wg9x0qh380H
-         QU8KIlh5vYO1UmlWA0Dr1uXH15NuLMKtzsID0JocH1yPjVocHV1/Z+/bd1ZSREHBtysn
-         f0wBfhQmcmaaackDaMfuBvwkeISGK76W63uQwaI4XNU5+eLzDn77X15yq134ccfAHurN
-         GUZA==
-X-Gm-Message-State: APjAAAU4C3JE+dFeIGR/m+GbJOwHIfXxbjIB4u6O/USheoWi+3D1rHLE
-        bJ5o0kpIy3XBZr6+Qox7kcbKqw+OuBU5vSmu6D2Ymg==
-X-Google-Smtp-Source: APXvYqyAUnACtUpQ/7yb1Sl1GxiGdH/gfNEqoAuzPz1Lm3B7D3UA4Nrusr1PmU9LKsLBG5dbHrkeoO4MOXsyUmN5ypY=
-X-Received: by 2002:a67:c987:: with SMTP id y7mr310439vsk.35.1556622874058;
- Tue, 30 Apr 2019 04:14:34 -0700 (PDT)
+        Tue, 30 Apr 2019 07:16:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x3UBEWJS1346292
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Apr 2019 04:14:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x3UBEWJS1346292
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1556622874;
+        bh=uxzQMi0Dx0Blq16DFl0L8XGG5v6oUGdkcJLD6bZuKWM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=GhhGn8yync+2L4iYJzMthwN6liGoEtRrDBgPDsoIwNPTYspcCcWypv0+U+e+RDPnO
+         BwDku7rDgSxdiE2To26QcqvSw2X32gSe0IqdHu4Vwr91wuu7Qzx8HCpjAgTPiqqLeq
+         g47cjF5/XW59c+QljLbNkx/0+DHGlLhjRCWsYLSq/4zbYbx+no3hpxpwf2G6AoSi5q
+         DEemCkCuat/KNgrYpnqXmZlmvqH4T16+gsqt0Ok4fx7LeeSrEfZPOMwEKY4jfX5GRf
+         9qHT7jdwDJDdcxiP1/721ATH6yEjRsiu569ZFV/mZVF36oHryx5bzLeHn4aGLxmdmc
+         67oX1m8lQ8T8w==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x3UBEWCh1346289;
+        Tue, 30 Apr 2019 04:14:32 -0700
+Date:   Tue, 30 Apr 2019 04:14:32 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Nadav Amit <tipbot@zytor.com>
+Message-ID: <tip-5932c9fd19e6e5ac84756c5c32fe5155d9a6b458@git.kernel.org>
+Cc:     namit@vmware.com, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, dave.hansen@linux.intel.com,
+        kristen@linux.intel.com, linux_dti@icloud.com,
+        kernel-hardening@lists.openwall.com, bp@alien8.de,
+        riel@surriel.com, rick.p.edgecombe@intel.com, mingo@kernel.org,
+        will.deacon@arm.com, tglx@linutronix.de, luto@kernel.org,
+        linux-kernel@vger.kernel.org, deneen.t.dock@intel.com
+Reply-To: will.deacon@arm.com, tglx@linutronix.de,
+          rick.p.edgecombe@intel.com, mingo@kernel.org, riel@surriel.com,
+          luto@kernel.org, linux-kernel@vger.kernel.org,
+          deneen.t.dock@intel.com, kristen@linux.intel.com,
+          linux_dti@icloud.com, dave.hansen@linux.intel.com,
+          ard.biesheuvel@linaro.org, kernel-hardening@lists.openwall.com,
+          bp@alien8.de, peterz@infradead.org, akpm@linux-foundation.org,
+          hpa@zytor.com, namit@vmware.com, torvalds@linux-foundation.org
+In-Reply-To: <20190426001143.4983-23-namit@vmware.com>
+References: <20190426001143.4983-23-namit@vmware.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] mm/tlb: Provide default nmi_uaccess_okay()
+Git-Commit-ID: 5932c9fd19e6e5ac84756c5c32fe5155d9a6b458
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1556264798-18540-1-git-send-email-ludovic.Barre@st.com>
-In-Reply-To: <1556264798-18540-1-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 30 Apr 2019 13:13:57 +0200
-Message-ID: <CAPDyKFqbn=UcbwoH_z+yjrjvHQZaMtmsD=n0yrBV7DAK5VRJEQ@mail.gmail.com>
-Subject: Re: [PATCH V2 0/5] mmc: mmci: add busy detect for stm32 sdmmc variant
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Apr 2019 at 09:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
->
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> This patch series adds busy detect for stm32 sdmmc variant.
-> Some adaptations are required:
-> -Avoid to check and poll busy status when is not expected.
-> -Clear busy status bit if busy_detect_flag and busy_detect_mask are
->  different.
-> -Add hardware busy timeout with MMCIDATATIMER register.
->
-> V2:
-> -mmci_cmd_irq cleanup in separate patch.
-> -simplify the busy_detect_flag exclude
-> -replace sdmmc specific comment in
-> "mmc: mmci: avoid fake busy polling in mmci_irq"
-> to focus on common behavior
->
-> Ludovic Barre (5):
->   mmc: mmci: cleanup mmci_cmd_irq for busy detect feature
->   mmc: mmci: avoid fake busy polling in mmci_irq
->   mmc: mmci: fix clear of busy detect status
->   mmc: mmci: add hardware busy timeout feature
->   mmc: mmci: add busy detect for stm32 sdmmc variant
->
->  drivers/mmc/host/mmci.c | 61 ++++++++++++++++++++++++++++++++++++++-----------
->  drivers/mmc/host/mmci.h |  3 +++
->  2 files changed, 51 insertions(+), 13 deletions(-)
->
-> --
-> 2.7.4
->
+Commit-ID:  5932c9fd19e6e5ac84756c5c32fe5155d9a6b458
+Gitweb:     https://git.kernel.org/tip/5932c9fd19e6e5ac84756c5c32fe5155d9a6b458
+Author:     Nadav Amit <namit@vmware.com>
+AuthorDate: Thu, 25 Apr 2019 17:11:42 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 30 Apr 2019 12:37:48 +0200
 
-Ludovic, just wanted to let you know that I am reviewing and testing
-this series.
+mm/tlb: Provide default nmi_uaccess_okay()
 
-However, while running some tests on Ux500 for validating the busy
-detection code, even without your series applied, I encounter some odd
-behaviors. I am looking into the problem to understand better and will
-let you know as soon as I have some more data to share.
+x86 has an nmi_uaccess_okay(), but other architectures do not.
+Arch-independent code might need to know whether access to user
+addresses is ok in an NMI context or in other code whose execution
+context is unknown.  Specifically, this function is needed for
+bpf_probe_write_user().
 
-Kind regards
-Uffe
+Add a default implementation of nmi_uaccess_okay() for architectures
+that do not have such a function.
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <akpm@linux-foundation.org>
+Cc: <ard.biesheuvel@linaro.org>
+Cc: <deneen.t.dock@intel.com>
+Cc: <kernel-hardening@lists.openwall.com>
+Cc: <kristen@linux.intel.com>
+Cc: <linux_dti@icloud.com>
+Cc: <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190426001143.4983-23-namit@vmware.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/tlbflush.h | 2 ++
+ include/asm-generic/tlb.h       | 9 +++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index f4204bf377fc..e9eae3d6ef02 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -274,6 +274,8 @@ static inline bool nmi_uaccess_okay(void)
+ 	return true;
+ }
+ 
++#define nmi_uaccess_okay nmi_uaccess_okay
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index 6be86c1c5c58..075b353cae86 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -20,6 +20,15 @@
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or switching
++ * the loaded mm.
++ */
++#ifndef nmi_uaccess_okay
++# define nmi_uaccess_okay() true
++#endif
++
+ #ifdef CONFIG_MMU
+ 
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
