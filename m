@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1633F827
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 905E9F784
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729116AbfD3MFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:05:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50842 "EHLO mail.kernel.org"
+        id S1728346AbfD3L77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:59:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfD3LmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:11 -0400
+        id S1730499AbfD3LqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:46:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9170921734;
-        Tue, 30 Apr 2019 11:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10FF820449;
+        Tue, 30 Apr 2019 11:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624531;
-        bh=M2A9iqhs/KVUvfAoeL7RgXhLq80Db758QtOaHvcXZro=;
+        s=default; t=1556624774;
+        bh=D6qSe3zth6MXfbNV0n/iLso/fVj3UaFTCA6CWkO5eIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sh0hC6vDJ3rIMvkCZ1IFLzd+hzD4mA6BgmbC4IhcEz0JUGo3hqkBlYm9oKbf7mThX
-         5m72smb937lNGXFuR2QQfKDD2RHZHoNjqBloE3WcT4rGGsRjJDhHWW0UpTOerS+g5o
-         b9t4i30ZEMZxxLshAbgBXjpx8qI6N/nzzJ0FsBAE=
+        b=X3VLsPfGgN7DUhxcnSl0ZpX9ikpu26kwhwt5bF7ArQ2gXqR8JnUdEvMiHY8PEzR4Q
+         SuPDrZLc3hpdT4aQh7nHCjHbgt3/aITfUJE/QJTggNdX25/Ugkw1qoAwaQZ/wMm6CR
+         t89/p3eRINA60y7qWpcgAwx3oJlBxqf9qlihaE30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com,
-        Ben Hutchings <ben@decadent.org.uk>,
-        David Miller <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 28/53] slip: make slhc_free() silently accept an error pointer
-Date:   Tue, 30 Apr 2019 13:38:35 +0200
-Message-Id: <20190430113556.164100265@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.19 067/100] aio: use assigned completion handler
+Date:   Tue, 30 Apr 2019 13:38:36 +0200
+Message-Id: <20190430113611.948180261@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
+References: <20190430113608.616903219@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit baf76f0c58aec435a3a864075b8f6d8ee5d1f17e upstream.
+commit bc9bff61624ac33b7c95861abea1af24ee7a94fc upstream.
 
-This way, slhc_free() accepts what slhc_init() returns, whether that is
-an error or not.
+We know this is a read/write request, but in preparation for
+having different kinds of those, ensure that we call the assigned
+handler instead of assuming it's aio_complete_rq().
 
-In particular, the pattern in sl_alloc_bufs() is
-
-        slcomp = slhc_init(16, 16);
-        ...
-        slhc_free(slcomp);
-
-for the error handling path, and rather than complicate that code, just
-make it ok to always free what was returned by the init function.
-
-That's what the code used to do before commit 4ab42d78e37a ("ppp, slip:
-Validate VJ compression slot parameters completely") when slhc_init()
-just returned NULL for the error case, with no actual indication of the
-details of the error.
-
-Reported-by: syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com
-Fixes: 4ab42d78e37a ("ppp, slip: Validate VJ compression slot parameters completely")
-Acked-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: David Miller <davem@davemloft.net>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/slip/slhc.c |    2 +-
+ fs/aio.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/slip/slhc.c
-+++ b/drivers/net/slip/slhc.c
-@@ -153,7 +153,7 @@ out_fail:
- void
- slhc_free(struct slcompress *comp)
- {
--	if ( comp == NULLSLCOMPR )
-+	if ( IS_ERR_OR_NULL(comp) )
- 		return;
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1492,7 +1492,7 @@ static inline void aio_rw_done(struct ki
+ 		ret = -EINTR;
+ 		/*FALLTHRU*/
+ 	default:
+-		aio_complete_rw(req, ret, 0);
++		req->ki_complete(req, ret, 0);
+ 	}
+ }
  
- 	if ( comp->tstate != NULLSLSTATE )
 
 
