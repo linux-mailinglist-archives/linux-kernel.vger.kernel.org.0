@@ -2,161 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C90EE52
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09872EE5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 03:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbfD3BWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 21:22:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34887 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729828AbfD3BWs (ORCPT
+        id S1729888AbfD3BX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 21:23:58 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:60035 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729801AbfD3BX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 21:22:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t21so6227521pfh.2;
-        Mon, 29 Apr 2019 18:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=14BtYvopEGYF3ZyX/uprrfiK7My6iDbeW5Kct6Ko73U=;
-        b=nplkksJwpY6fgI5iJvv5KU0Ks/zSTkh+fr7UVRw5o0CqPzmEuk+VHDefPvenM/2HrO
-         NCjOx+1e0KMG94NEfDxm5qVGCjPklp2QnqVBWIJ1AeDxiYf9bI6MKpBkZ8q3KKpdwwv3
-         V3dev3KJ0lzk4mCS3llYiGEhf+jofS7Q+HyzSYBEAP/rGnd07j2Pb6mlfP3mrxK5pfbs
-         9uDA1JnssqHBgqdfNIh+WofAKY3qFwFu+PX3btxPf2chTknzY3cS/X0280i80xEOvVHG
-         qegRmBwatwTzkqMwG5Tn8bvjYU3DwCskpM9dXmVRuxEn3dA/r29URAryWJ50XsUSMEBh
-         E8pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=14BtYvopEGYF3ZyX/uprrfiK7My6iDbeW5Kct6Ko73U=;
-        b=bkiN7k3tU2RovOsvdUjBd5hkWP8FDTSvcFvXhNO6N3/yF8PAHIEJdZcnTE8cMgnxhK
-         W7tq9Y9s25NuXF33WWg3RIIbrQcxkG0Gqw2spW5mxD+f7yuErzCzf5jKoZVbw31bYrKy
-         0QyIrphqTS5m8nTTI6A0KOSyhS7b3cs524PEQbWti4IKzWXx4sZc2fYXSHVi7gMYOlnO
-         wvZC4vQcd9kA/q/cDP0Z/rPb8gWtszudEH63GmpaI6m346fX9ncTkIhvsTdkkK9FtMsN
-         SzZE4JDqPEvcvebmFKXgaf0Pi+LTjrmUmvx9UkO2w504+lmu//0pjUyOncDlnXSH9WNq
-         kbvQ==
-X-Gm-Message-State: APjAAAVxjm2uvqXhzT9QhCdg5ncbTEfs4f+F1o/cAb7Tg8KrxQzourlr
-        3N6ThyHzcuLqyftIqtYSoec=
-X-Google-Smtp-Source: APXvYqwbKT8sggQIxWyPbcv7B73rzvWgAB9NGay/Tkv1ZV8WIg4+0s0TZsiTmORgm/fT02eiQ2iFfw==
-X-Received: by 2002:a63:7:: with SMTP id 7mr4583794pga.108.1556587367869;
-        Mon, 29 Apr 2019 18:22:47 -0700 (PDT)
-Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
-        by smtp.gmail.com with ESMTPSA id s74sm353739pfs.26.2019.04.29.18.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 18:22:47 -0700 (PDT)
-From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-To:     peter_hong@fintek.com.tw, johan@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: [PATCH V9 4/4] USB: serial: f81232: implement break control
-Date:   Tue, 30 Apr 2019 09:22:32 +0800
-Message-Id: <1556587352-19500-4-git-send-email-hpeter+linux_kernel@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1556587352-19500-1-git-send-email-hpeter+linux_kernel@gmail.com>
-References: <1556587352-19500-1-git-send-email-hpeter+linux_kernel@gmail.com>
+        Mon, 29 Apr 2019 21:23:58 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id F069311761;
+        Mon, 29 Apr 2019 21:23:56 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 29 Apr 2019 21:23:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=U802eO
+        OelwertqC80gnxnMwTiQXrwdFYQ7LZKBGQt7c=; b=MPXHHQomdU37KyhhAIgL7L
+        MnoMJElis48Jw0J2mIvl4w3lmexJr+h1/6YjTNa6pm+rv3eIDrWxlMKJ+tmhFQrb
+        dk4OiQ+fQ1PLdl9TKNRcuaLjfNKAoZwbD/WSV6H3KJNp8Sr1cJuH1EMU+FdSNecO
+        QvXOk88p2DNbvDHRtJ7oXBr7TyT9JUu9BoOce38aP50qI6OGcC0q9xdAYYDXIC/A
+        Bwjk6SQTECIVugZnFV81mzH3gSPzB8O4j7adEZPpeb1UuI9MTd8MhPF4kZ+sWR3n
+        d1wLN8zIlzrSsQ+MZCY9PLLcRzBf1XLxrwplRBb4JNrxUqHVA9R57DZZJ5s8Rhxw
+        ==
+X-ME-Sender: <xms:q6PHXEqeLaDbkntYfC-LIbq6ls_z0bV8tKpBLt8jSNzu1HZxROtZmQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdegiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenog
+    etfedtuddqtdduucdludehmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceothhosghinh
+    eskhgvrhhnvghlrdhorhhgqeenucfkphepuddvuddrgeegrddvfedtrddukeeknecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehtohgsihhnsehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedt
+X-ME-Proxy: <xmx:q6PHXIkpFJ7qPLvOs-BaBB24V5PeCU1mNRKVxDPKFva4CKasNtBPIg>
+    <xmx:q6PHXLgGpHtVfF7fQo3XoKjasm-5v97sGje3sXJrh6zG9IHLplJtNA>
+    <xmx:q6PHXAeHQw0KihM5_jTQz8AzmYX8Yv2YTwDjMkRiRLwEoSMDxuxp-g>
+    <xmx:rKPHXCB9hBfgrOCmlMdWVx7l8WgtHe4tgeu9qFevCQhc8kohC7nP0g>
+Received: from localhost (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3FDFD1037C;
+        Mon, 29 Apr 2019 21:23:54 -0400 (EDT)
+Date:   Tue, 30 Apr 2019 11:23:15 +1000
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Wang Hai <wanghai26@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] bridge: Fix error path for kobject_init_and_add()
+Message-ID: <20190430012315.GA18524@eros.localdomain>
+References: <20190430002817.10785-1-tobin@kernel.org>
+ <20190430002817.10785-2-tobin@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430002817.10785-2-tobin@kernel.org>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement Fintek F81232 break on/off with LCR register.
-It's the same with 16550A LCR register layout.
+On Tue, Apr 30, 2019 at 10:28:15AM +1000, Tobin C. Harding wrote:
 
-Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
----
-v9:
-	1: no change
+[snip]
 
-v8:
-	1: no change
+The cover letter appears to have gotten lost, I can resend if it makes
+things better for you Dave.
 
-v7:
-	1: no change
+FTR this is the contents from it:
 
-v6:
-	1: no change
+Hi Dave,
 
-v5:
-	1: no change
+There are a few places in net/ that are not correctly handling the error
+path after calls to kobject_init_and_add().  This set fixes all of these
+for net/
 
-v4:
-	1: no change
+This corrects a memory leak if kobject_init() is not followed by a call
+to kobject_put()
 
-v3:
-	1: using shadow_lcr to save LCR in f81232_break_ctl()
+This set is part of an effort to check/fix all of these mem leaks across
+the kernel tree.
 
- drivers/usb/serial/f81232.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+For reference this is the behaviour that we are trying to achieve
 
-diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-index 6a1e6a27ce16..562c9babd144 100644
---- a/drivers/usb/serial/f81232.c
-+++ b/drivers/usb/serial/f81232.c
-@@ -65,6 +65,7 @@ struct f81232_private {
- 	struct mutex lock;
- 	u8 modem_control;
- 	u8 modem_status;
-+	u8 shadow_lcr;
- 	speed_t baud_base;
- 	struct work_struct lsr_work;
- 	struct work_struct interrupt_work;
-@@ -377,13 +378,23 @@ static void f81232_process_read_urb(struct urb *urb)
- 
- static void f81232_break_ctl(struct tty_struct *tty, int break_state)
- {
--	/* FIXME - Stubbed out for now */
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct f81232_private *priv = usb_get_serial_port_data(port);
-+	int status;
- 
--	/*
--	 * break_state = -1 to turn on break, and 0 to turn off break
--	 * see drivers/char/tty_io.c to see it used.
--	 * last_set_data_urb_value NEVER has the break bit set in it.
--	 */
-+	mutex_lock(&priv->lock);
-+
-+	if (break_state)
-+		priv->shadow_lcr |= UART_LCR_SBC;
-+	else
-+		priv->shadow_lcr &= ~UART_LCR_SBC;
-+
-+	status = f81232_set_register(port, LINE_CONTROL_REGISTER,
-+					priv->shadow_lcr);
-+	if (status)
-+		dev_err(&port->dev, "set break failed: %d\n", status);
-+
-+	mutex_unlock(&priv->lock);
- }
- 
- static int f81232_find_clk(speed_t baudrate)
-@@ -519,6 +530,7 @@ static int f81232_port_disable(struct usb_serial_port *port)
- static void f81232_set_termios(struct tty_struct *tty,
- 		struct usb_serial_port *port, struct ktermios *old_termios)
- {
-+	struct f81232_private *priv = usb_get_serial_port_data(port);
- 	u8 new_lcr = 0;
- 	int status = 0;
- 	speed_t baudrate;
-@@ -572,11 +584,16 @@ static void f81232_set_termios(struct tty_struct *tty,
- 		break;
- 	}
- 
-+	mutex_lock(&priv->lock);
-+
-+	new_lcr |= (priv->shadow_lcr & UART_LCR_SBC);
- 	status = f81232_set_register(port, LINE_CONTROL_REGISTER, new_lcr);
- 	if (status) {
- 		dev_err(&port->dev, "%s failed to set LCR: %d\n",
- 			__func__, status);
- 	}
-+
-+	mutex_unlock(&priv->lock);
- }
- 
- static int f81232_tiocmget(struct tty_struct *tty)
--- 
-2.7.4
+void fn(void)
+{
+	int ret;
 
+	ret = kobject_init_and_add(kobj, ktype, NULL, "foo");
+	if (ret) {
+		kobject_put(kobj);
+		return ret;
+	}
+
+	ret = some_init_fn();
+	if (ret)
+		goto err;
+
+	ret = some_other_init_fn();
+	if (ret)
+		goto other_err;
+
+	kobject_uevent(kobj, KOBJ_ADD);
+	return 0;
+
+other_err:
+	other_clean_up_fn();
+err:
+	kobject_del(kobj);
+	return ret;
+}
+
+
+ Testing: No testing done, built with config options
+
+CONFIG_NET=y
+CONFIG_SYSFS=y
+CONFIG_BRIDGE=y
+
+
+thanks,
+Tobin.
