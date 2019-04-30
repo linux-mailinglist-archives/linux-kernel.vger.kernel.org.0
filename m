@@ -2,75 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3221F8B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9F7F8BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfD3MW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:22:57 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:58384 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbfD3MW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:22:56 -0400
-Received: from tarshish (unknown [10.0.8.2])
+        id S1727717AbfD3MXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:23:05 -0400
+Received: from ms.lwn.net ([45.79.88.28]:48084 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfD3MXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:23:04 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id F3A4444028D;
-        Tue, 30 Apr 2019 15:22:54 +0300 (IDT)
-References: <20190430093212.28425-1-alexandre.belloni@bootlin.com> <20190430093212.28425-4-alexandre.belloni@bootlin.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/4] rtc: digicolor: convert to SPDX identifier
-In-reply-to: <20190430093212.28425-4-alexandre.belloni@bootlin.com>
-Date:   Tue, 30 Apr 2019 15:22:54 +0300
-Message-ID: <8736lzu1gh.fsf@tarshish>
+        by ms.lwn.net (Postfix) with ESMTPSA id 3ADA79AF;
+        Tue, 30 Apr 2019 12:23:03 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 06:23:00 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] dontdiff: update with Kconfig build artifacts
+Message-ID: <20190430062300.7c9cf177@lwn.net>
+In-Reply-To: <1556549630-17605-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1556549630-17605-1-git-send-email-yamada.masahiro@socionext.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+On Mon, 29 Apr 2019 23:53:50 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-On Tue, Apr 30 2019, Alexandre Belloni wrote:
-> Use SPDX-License-Identifier instead of a verbose license text.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Add generated *conf-cfg files.
+> 
+> Commit 694c49a7c01c ("kconfig: drop localization support") removed
+> "gconf.glade.h" and "kxgettext".
+> 
+> "kconfig" and "lxdialog" should not be excluded either.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Acked-by: Baruch Siach <baruch@tkos.co.il>
+Applied, thanks.
 
-baruch
-
-> ---
->  drivers/rtc/rtc-digicolor.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/rtc/rtc-digicolor.c b/drivers/rtc/rtc-digicolor.c
-> index ed2fc1adafd5..0aecc3f8e721 100644
-> --- a/drivers/rtc/rtc-digicolor.c
-> +++ b/drivers/rtc/rtc-digicolor.c
-> @@ -1,14 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Real Time Clock driver for Conexant Digicolor
->   *
->   * Copyright (C) 2015 Paradox Innovation Ltd.
->   *
->   * Author: Baruch Siach <baruch@tkos.co.il>
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License as published by the
-> - * Free Software Foundation; either version 2 of the License, or (at your
-> - * option) any later version.
->   */
->  
->  #include <linux/io.h>
-
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+jon
