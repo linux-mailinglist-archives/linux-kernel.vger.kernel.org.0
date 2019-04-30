@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5F0F72F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E504F86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfD3L4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:56:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34788 "EHLO mail.kernel.org"
+        id S1728193AbfD3LkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:40:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730875AbfD3Lsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:48:36 -0400
+        id S1727380AbfD3Lj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:39:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FFC520449;
-        Tue, 30 Apr 2019 11:48:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A03721734;
+        Tue, 30 Apr 2019 11:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624915;
-        bh=ZjSnPPE3GJxDV7BkqDZlz1xwMuO9b69kcF0NnUB0768=;
+        s=default; t=1556624397;
+        bh=/qjWqKHu3ZXP6yVjNlOP85MfxlesW2a+Jy4lSu2u2kA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aG2XUpM6BO/3Txynx4zXmYTbE0uvEiEDlXpaThnyxPiZ5IL3NIFd8IGyJWF7sCD9v
-         KXQSUSM5Oyfh0Vaj/htIwsDvUcH7tsL3B9wW8hVmzP/vzrITlgTUa23kRKzHT9Fz+T
-         fOZohROoE3KYCy3SmTjlxM1Xm6d5npzyzjyrYcn4=
+        b=I7QtcR5RQwD085q6W2ZNHVdj7jzP9csMtNFuVAYVnF2mBzWlc0/82rkC9BBifzfzX
+         zUO0OJVc3tW2OeN7B/r9YzHnTnYws66x8CoINLjkGc8CbJSVm50XfxLnbifWBx8FPn
+         GMP9sGHY9dLBSxRcXpPJuRhHaT0VQG6hdLyDmnnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 5.0 21/89] arm64: mm: Ensure tail of unaligned initrd is reserved
-Date:   Tue, 30 Apr 2019 13:38:12 +0200
-Message-Id: <20190430113611.059391513@linuxfoundation.org>
+        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.9 02/41] cifs: do not attempt cifs operation on smb2+ rename error
+Date:   Tue, 30 Apr 2019 13:38:13 +0200
+Message-Id: <20190430113524.880372121@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
-References: <20190430113609.741196396@linuxfoundation.org>
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Frank Sorenson <sorenson@redhat.com>
 
-commit d4d18e3ec6091843f607e8929a56723e28f393a6 upstream.
+commit 652727bbe1b17993636346716ae5867627793647 upstream.
 
-In the event that the start address of the initrd is not aligned, but
-has an aligned size, the base + size will not cover the entire initrd
-image and there is a chance that the kernel will corrupt the tail of the
-image.
+A path-based rename returning EBUSY will incorrectly try opening
+the file with a cifs (NT Create AndX) operation on an smb2+ mount,
+which causes the server to force a session close.
 
-By aligning the end of the initrd to a page boundary and then
-subtracting the adjusted start address the memblock reservation will
-cover all pages that contains the initrd.
+If the mount is smb2+, skip the fallback.
 
-Fixes: c756c592e442 ("arm64: Utilize phys_initrd_start/phys_initrd_size")
-Cc: stable@vger.kernel.org
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Frank Sorenson <sorenson@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/init.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/inode.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -406,7 +406,7 @@ void __init arm64_memblock_init(void)
- 		 * Otherwise, this is a no-op
- 		 */
- 		u64 base = phys_initrd_start & PAGE_MASK;
--		u64 size = PAGE_ALIGN(phys_initrd_size);
-+		u64 size = PAGE_ALIGN(phys_initrd_start + phys_initrd_size) - base;
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1722,6 +1722,10 @@ cifs_do_rename(const unsigned int xid, s
+ 	if (rc == 0 || rc != -EBUSY)
+ 		goto do_rename_exit;
  
- 		/*
- 		 * We can only add back the initrd memory if we don't end up
++	/* Don't fall back to using SMB on SMB 2+ mount */
++	if (server->vals->protocol_id != 0)
++		goto do_rename_exit;
++
+ 	/* open-file renames don't work across directories */
+ 	if (to_dentry->d_parent != from_dentry->d_parent)
+ 		goto do_rename_exit;
 
 
