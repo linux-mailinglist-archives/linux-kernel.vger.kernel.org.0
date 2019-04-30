@@ -2,93 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35479EEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 04:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90A0F3AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbfD3CGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 22:06:00 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:18028 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbfD3CGA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 22:06:00 -0400
-Received-SPF: SoftFail (esa5.microchip.iphmx.com: domain of
-  wesley.sheng@microchip.com is inclined to not designate
-  208.19.99.222 as permitted sender) identity=mailfrom;
-  client-ip=208.19.99.222; receiver=esa5.microchip.iphmx.com;
-  envelope-from="wesley.sheng@microchip.com";
-  x-sender="wesley.sheng@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@smtp.microsemi.com) identity=helo;
-  client-ip=208.19.99.222; receiver=esa5.microchip.iphmx.com;
-  envelope-from="wesley.sheng@microchip.com";
-  x-sender="postmaster@smtp.microsemi.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=wesley.sheng@microchip.com; spf=None smtp.helo=postmaster@smtp.microsemi.com; dmarc=fail (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.60,412,1549954800"; 
-   d="scan'208";a="29360171"
-Received: from unknown (HELO smtp.microsemi.com) ([208.19.99.222])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Apr 2019 19:05:55 -0700
-Received: from AUSMBX3.microsemi.net (10.201.34.33) by AUSMBX2.microsemi.net
- (10.201.34.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 29 Apr
- 2019 21:05:53 -0500
-Received: from server1.microsemi.net (10.188.119.166) by ausmbx3.microsemi.net
- (10.201.34.33) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Mon, 29 Apr 2019 21:05:51 -0500
-From:   Wesley Sheng <wesley.sheng@microchip.com>
-To:     <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
-        <linux-ntb@googlegroups.com>, <linux-kernel@vger.kernel.org>
-CC:     <wesleyshenggit@sina.com>, <logang@deltatee.com>,
-        Wesley Sheng <wesley.sheng@microchip.com>
-Subject: [PATCH] NTB: correct ntb_dev_ops and ntb_dev comment typos
-Date:   Tue, 30 Apr 2019 18:04:29 +0800
-Message-ID: <1556618669-2434-1-git-send-email-wesley.sheng@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726882AbfD3KGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:06:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726012AbfD3KGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 06:06:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CF782075E;
+        Tue, 30 Apr 2019 10:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556618802;
+        bh=+Ap5q0BssJykOfkulh2pmXM0tTcQ2jrRz2JM/v7brEg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BUouH29r8bkCC2KymZtwoqwP03PvwSr0ZY0Rdpd65bEZJ8asT1IvaanZyWVdqKir4
+         sWO2nqgKtXlUgPjih+OHD+1eopIT/SuYVI/q4U+usESQRnlkks5kxw+7ZwRX+ToJZE
+         /0sj3Ocug1zBr7lqesb12LYUVKRrc9aPwYbbrRT0=
+Date:   Tue, 30 Apr 2019 12:06:40 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Marek Behun <marek.behun@nic.cz>
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: sysfs attrs for HW ECDSA signature
+Message-ID: <20190430100640.GA6691@kroah.com>
+References: <20190429234752.171b4f2b@nic.cz>
+ <20190430082728.GE8245@kroah.com>
+ <20190430112319.6c4159f9@nic.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430112319.6c4159f9@nic.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment for ntb_dev_ops and ntb_dev incorrectly referred to
-ntb_ctx_ops and ntb_device.
+On Tue, Apr 30, 2019 at 11:23:19AM +0200, Marek Behun wrote:
+> On Tue, 30 Apr 2019 10:27:28 +0200
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Mon, Apr 29, 2019 at 11:47:52PM +0200, Marek Behun wrote:
+> > > Hi Greg and Tejun,
+> > > 
+> > > is it acceptable for a driver to expose sysfs attr files for ECDSA
+> > > signature generation?  
+> >
+> > What is "ECDSA signature generation"?  Is it a crypto thing?  If so, why
+> > not use the crypto api?  If not, what exactly is it?
+> 
+> Hi Greg,
+> It is a crypto thing and it should be accessed via akcipher crypto API.
+> But akcipher userspace crypto API is not implemented in kernel. See
+> below.
 
-Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
----
- include/linux/ntb.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Great, get the akcipher code merged then, that should solve your
+problem.
 
-diff --git a/include/linux/ntb.h b/include/linux/ntb.h
-index 56a92e3..604abc8 100644
---- a/include/linux/ntb.h
-+++ b/include/linux/ntb.h
-@@ -205,7 +205,7 @@ static inline int ntb_ctx_ops_is_valid(const struct ntb_ctx_ops *ops)
- }
- 
- /**
-- * struct ntb_ctx_ops - ntb device operations
-+ * struct ntb_dev_ops - ntb device operations
-  * @port_number:	See ntb_port_number().
-  * @peer_port_count:	See ntb_peer_port_count().
-  * @peer_port_number:	See ntb_peer_port_number().
-@@ -404,7 +404,7 @@ struct ntb_client {
- #define drv_ntb_client(__drv) container_of((__drv), struct ntb_client, drv)
- 
- /**
-- * struct ntb_device - ntb device
-+ * struct ntb_dev - ntb device
-  * @dev:		Linux device object.
-  * @pdev:		PCI device entry of the ntb.
-  * @topo:		Detected topology of the ntb.
--- 
-2.7.4
+> > > According to the one attr = one file principle, it would be better to
+> > > have two files: ecdsa_msg_to_sign (write-only) and ecdsa_signature
+> > > (read-only).
+> > > Would this be acceptable in the kernel for this driver?  
+> > 
+> > Why not use the crypto api, and if that doesn't work, why not just a
+> > char device to read/write?
+> 
+> Because the akcipher userspace crypto API is not merged and it probably
+> will take a lot of time, if it ever will be merged. Till then I would
+> like if this feature was supported on this one device somehow in
+> mainline kernel. As soon as akcipher userspace crypto API is merged, I
+> can rewrite the driver.
 
+No, do not try to route-around the proper api being present and hack up
+something on your own, that way lies madness and you will then have to
+support two apis for the hardware if your char driver is accepted.
+
+Just work on the akcipher code to get that cleaned up properly and
+merged, along with your driver that uses it, and all should be fine.
+
+good luck!
+
+greg k-h
