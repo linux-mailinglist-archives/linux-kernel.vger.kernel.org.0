@@ -2,125 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD22F0B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 08:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE830F0B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 08:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbfD3GqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 02:46:21 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37415 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbfD3GqT (ORCPT
+        id S1726271AbfD3GvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 02:51:11 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40089 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfD3GvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 02:46:19 -0400
-Received: by mail-pl1-f194.google.com with SMTP id z8so6287440pln.4;
-        Mon, 29 Apr 2019 23:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=Pa2jzaEEN+Bapthi2w1tlr699nA1as/teMTVtxXU19Gp41NZgTC+ZPicF6OjpQNEws
-         SJF4k+/6p8THylT3a+Gn5Plq9uzDjvxHFVGJmDCENK+TG3+0TEg/v7qmRiAy+WoRs7tT
-         nqbKY9rArwX9iwiv41zP+T2FZv2lBNnmwUY63WF39LgeH6Iem9KpEKj3I0pG3DZH6lI8
-         yGL6rKQzjpDzPAaCCPEIqya5ywTXtP2KwWRzoxZvFOHxBJPcUyInQ+h2kPhzVuUuEMCN
-         Wl8ydpDDukpj98Qh3xPLiJLm+oqvsvfimnm7rXYD2+plolOGqD0kmMNeSquLUyWlNZTv
-         wcxg==
+        Tue, 30 Apr 2019 02:51:11 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e56so4984441ede.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 23:51:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Fjs/QlJccPdiIzSXEBVK27qZZaOYBQoAnxJi1UWQC3c=;
-        b=k+fJx4cYpavOge1oOExB/qNnZcPYt1+foekuOmShJVD9Ti9moGzli4YJ6KQhP0GOF9
-         mo6sI8JlVbAX8lACqby6Ri0nvK0wooIGasta7bZozeJLdhwVzp9DxYOmR0huG70vv/J+
-         dly5OmMAIy+coMAcDC2VzZP6rqif5rUVSgqo3kzezz9Wsm4JtPAG/ffDArCc9k8sLhFC
-         wVL7m1avFWwvZ47XPGkhVofSOCZfBbUyHO47MYLLYvzQvrw3CLujc9EUUCNqMVsoOs15
-         T7uBPsifXkXXpoUhbA6ik9WfDoaqlJqqPYQfR2s7F6YFLF68IXqT+R4gu6exIDsz+P2f
-         RDMA==
-X-Gm-Message-State: APjAAAW4fq/8KHvZh7HvQdPKWy1xfs6ZgIoy1MX1XAM3K8Lew825N7gd
-        u06okQ1fmIi12aCdgvG+3U7ayepzXEo=
-X-Google-Smtp-Source: APXvYqx9NdgAT7vJ+A6VAcnGARG8Y/LxF90+Qrdv9Cb+womMd0QpIFbTyYw8+iOGP2GTo4rNz6DuRQ==
-X-Received: by 2002:a17:902:7590:: with SMTP id j16mr5736546pll.296.1556606778138;
-        Mon, 29 Apr 2019 23:46:18 -0700 (PDT)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id a9sm47336010pfo.17.2019.04.29.23.46.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Apr 2019 23:46:16 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Enric Balletbo Serra <enric.balletbo@collabora.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] dt-bindings: power: supply: Add bindings for Microchip UCS1002
-Date:   Mon, 29 Apr 2019 23:45:57 -0700
-Message-Id: <20190430064557.28469-4-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430064557.28469-1-andrew.smirnov@gmail.com>
-References: <20190430064557.28469-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qN3VerpaqOdIGuUXTR5dt2XO1wBt2HwygQaOykPSnWA=;
+        b=L/j0tH7Zm//Y2Tetki2qKe9GcQNMINWkRSyftcITh17V6x3ZewHGo1jNj0TckUlBKs
+         8iFfx53bB9ZqwH9Z4Gd8B5y1mjDR6YXRWYbylY3yKM7mc56O1F6dk7t0QQeKrw5Nhey+
+         9nFvpmqxBXICG3wzCy9aidYtMUxH2YDnkI8NDWAQSjc3VSQDru+2CmTUg4ax41ch0+Xi
+         zeckrKTXEfoOI0RqNR4GHuZlyd7K8vMpDtQR+Y7NV94Iv9T/96VmrHYd6I3TF5oiuUhJ
+         VXQkzJsx0ty7nnmQDASOpIKcNh29uaCnLXipWjOCGmwUOfoC8ECOqkoOLpDkwKPpjLfb
+         BYSQ==
+X-Gm-Message-State: APjAAAWnaDnytUXdbc5uxBAsRcDp1kbAbNyO2lW7vxuzI2tK6y96DKFj
+        9xgJsV7iogy9hGaGwzMbGCJu5SrzoQXrt2wfCA0=
+X-Google-Smtp-Source: APXvYqy7IHrFf5cO9MwCM3ULkpQ+lYR72AOeZL73CTeC67+M93PR+Ok//ypK1bnMCaAGlX2bazs3zTog1FBO63/Fa/0=
+X-Received: by 2002:a50:b513:: with SMTP id y19mr19629692edd.100.1556607069701;
+ Mon, 29 Apr 2019 23:51:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190226062012.23746-1-lenb@kernel.org> <20190226190512.GR2861@worktop.programming.kicks-ass.net>
+In-Reply-To: <20190226190512.GR2861@worktop.programming.kicks-ass.net>
+From:   Len Brown <lenb@kernel.org>
+Date:   Tue, 30 Apr 2019 02:50:58 -0400
+Message-ID: <CAJvTdK=SGZy+vbTcCKAmBeQSkeuAW0UxEpKXY2YNvmUofFXNUQ@mail.gmail.com>
+Subject: Re: [PATCH 0/14] v2 multi-die/package topology support
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microchip UCS1002 Programmable USB Port Power
-Controller with Charger Emulation.
+On Tue, Feb 26, 2019 at 2:05 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Feb 26, 2019 at 01:19:58AM -0500, Len Brown wrote:
+> >  Documentation/cputopology.txt                | 72 ++++++++++++++---------
+> >  Documentation/x86/topology.txt               |  6 +-
+> >  arch/x86/include/asm/processor.h             |  5 +-
+> >  arch/x86/include/asm/smp.h                   |  1 +
+> >  arch/x86/include/asm/topology.h              |  5 ++
+> >  arch/x86/kernel/cpu/topology.c               | 85 +++++++++++++++++++++-------
+> >  arch/x86/kernel/smpboot.c                    | 73 +++++++++++++++++++++++-
+> >  arch/x86/xen/smp_pv.c                        |  1 +
+> >  drivers/base/topology.c                      | 22 +++++++
+> >  drivers/hwmon/coretemp.c                     |  9 +--
+> >  drivers/powercap/intel_rapl.c                | 75 +++++++++++++-----------
+> >  drivers/thermal/intel/x86_pkg_temp_thermal.c |  9 +--
+> >  include/linux/topology.h                     |  6 ++
+> >  13 files changed, 276 insertions(+), 93 deletions(-)
+>
+> Should we not also have changes to
+> arch/x86/kernel/cpu/proc.c:show_cpuinfo_cores() ?
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+Good question.
+I was thinking that /proc/cpuinfo was sort of the legacy API, and
+adding a field might break something.
+While adding an attribute to sysfs topology directory was the
+compatible/safe way to make additions.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-new file mode 100644
-index 000000000000..021fd7aba75e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-@@ -0,0 +1,27 @@
-+Microchip UCS1002 USB Port Power Controller
-+
-+Required properties:
-+- compatible		: Should be "microchip,ucs1002";
-+- reg			: I2C slave address
-+
-+Optional properties:
-+- interrupts-extended	: A list of interrupts lines present (could be either
-+			  corresponding to A_DET# pin, ALERT# pin, or both)
-+- interrupt-names	: A list of interrupt names. Should contain (if
-+			  present):
-+			  - "a_det" for line connected to A_DET# pin
-+			  - "alert" for line connected to ALERT# pin
-+			  Both are expected to be IRQ_TYPE_EDGE_BOTH
-+Example:
-+
-+&i2c3 {
-+	charger@32 {
-+		compatible = "microchip,ucs1002";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ucs1002_pins>;
-+		reg = <0x32>;
-+		interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
-+				      <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
-+		interrupt-names = "a_det", "alert";
-+	};
-+};
--- 
-2.20.1
+/proc/cpuinfo has these fields today:
 
+physical id : 0
+    this is the physical package id
+siblings : 8
+    this is the count of cpus in the same package
+core id : 3
+    this is cpu_core_id
+cpu cores : 4
+    this is booted_cores
+
+If one were to make a change here, I'd consider adding the (physical) die_id,
+though it is already in sysfs topology as an attribute.
+
+Not sure if it would then make sense to print the count of cpus in the die.
+Not sure what I'd name it, and this info is already in sysfs as a map and list.
+
+
+Len Brown, Intel Open Source Technology Center
