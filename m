@@ -2,368 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B76FFD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A9A8FFD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 20:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfD3Sng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 14:43:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56916 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbfD3Snb (ORCPT
+        id S1727013AbfD3SnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 14:43:07 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45801 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfD3SnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:43:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p3NrvrF6qnm7Dp1Moin+lw6Rw+p5qp0k6gGSnOMqM/w=; b=g4wrbg0rjuEpwgG6hZdlIgl3Zh
-        L3pdV2nVKTjh00OPPW/KF+MmlDbIU4ObyrZT/JKc3fRq4FmNVLSJs52HEqiQgqV505Ki5ytLBLlPT
-        IpfmU41GaYqisAnLJP+W9IZiP6s2N0FfThdtYAG0UyF/QcfoKx/cZcBJQ2dy88PhQivJd1zpo7WA0
-        UeaKk8PnC6ZtvKTmNKS9ylIg0zzU5udjcThTHt9d2W+Uxk/KzfERhOOQs4Ei9TiLKrW25vzF5ImCG
-        HSlKQx0YFiXY+lb/2zq2SbC+/QtphTQ50pqeUUTOfQK7g3ZuixfT+YrJB7L8yoXI/72fL3b3OG/0R
-        HBaGa1VQ==;
-Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLXix-0000t8-W4; Tue, 30 Apr 2019 18:43:28 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Josef Bacik <jbacik@fb.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Fabio Checconi <fabio@gandalf.sssup.it>,
-        Nauman Rafique <nauman@google.com>,
-        Arianna Avanzini <avanzini.arianna@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] block: add SPDX tags to block layer files missing licensing information
-Date:   Tue, 30 Apr 2019 14:42:43 -0400
-Message-Id: <20190430184243.23436-6-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430184243.23436-1-hch@lst.de>
-References: <20190430184243.23436-1-hch@lst.de>
+        Tue, 30 Apr 2019 14:43:06 -0400
+Received: by mail-io1-f67.google.com with SMTP id e8so13095982ioe.12
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 11:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=DLjxUveV79/tHlmvW7ccnABKpIkFLlfeyoe8liucNic=;
+        b=bQErha4EjiqJxeUe/P9SK3n/xxmcbiBLR5l5w1XVpEEBjl7QZYqpRj+9h9kxiG2rgK
+         1VdF2h9RK9nLj84vXUfJiWNpLmEWovRidP1FT+DQ9cpWymF0fBCsO1BFVXPRn8n4RKxX
+         F2T/FAff9rmIWgf/RoN/sbKtK9jZazHWSAE73Mx3uRcXKOAf3ryoZ3wC6ENAPmmJtn0Y
+         wzVzOKZnRFsSboA44cwHYarKn0G1sU+ofNn0ibC77BPFE2wGvvXx2aWCrtAFVY5CgKI0
+         uwEpJ3JRZMpFgw0Nob+qPPIuEJkkqfxaO917awDUuacRIbUwChHKMncdRXoSqZiH+maR
+         jouw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=DLjxUveV79/tHlmvW7ccnABKpIkFLlfeyoe8liucNic=;
+        b=SW/hFRZm9UcFGqeBmyxsvxItcWElzxJAjkl2bhwdtOrIY4pkEneR0/bTipP9To/DsQ
+         AyDQN8taIEFrKDtT6/w9cSTpPWg5g2tGqY4dp81nFWQBioCG8xQh/RSfDzxp469CKgab
+         XXZa0bjiSZhL/yLgKPK69/zAKJvqtOKupOLZdomdBMZ5kd7pY2FYWXU2gv5Pl+eTnu/t
+         S7qIKgwGcbqwZu2PC2JtnEo683ar9G+5b3CbJbHEXCcT/OEtoaaqDT2XG2KPDiTolnBB
+         NXYuq8t/s+QYz7JSz8lAiWhabv+Ue+quKPvQs3Iq/xeed5TlDkYUtYdBzP2PbC++ED1j
+         tbUQ==
+X-Gm-Message-State: APjAAAUYQmTBnToU5LXo6uVX0UZBx/EQ8j9odSik1rBnv6FMpmvPhaTp
+        gCXluzMOxh/NNW6JhNABvY2ACw==
+X-Google-Smtp-Source: APXvYqzGhGKQGPue8kK8kj48O6yd673gTEubxpzNdjb5TQdDGz6d5hXCIN+puIhxJSsx+8sbr+znfQ==
+X-Received: by 2002:a6b:6004:: with SMTP id r4mr9495485iog.8.1556649785559;
+        Tue, 30 Apr 2019 11:43:05 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id c7sm12214445ioc.63.2019.04.30.11.43.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 11:43:04 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 11:43:03 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Stephen Boyd <sboyd@kernel.org>
+cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Paul Walmsley <paul@pwsan.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Megan Wachs <megan@sifive.com>
+Subject: Re: [PATCH v3 1/3] clk: analogbits: add Wide-Range PLL library
+In-Reply-To: <155664891171.168659.10903540623861208390@swboyd.mtv.corp.google.com>
+Message-ID: <alpine.DEB.2.21.9999.1904301142521.7063@viisi.sifive.com>
+References: <20190411082733.3736-2-paul.walmsley@sifive.com> <155632691100.168659.14460051101205812433@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904262031510.10713@viisi.sifive.com> <alpine.DEB.2.21.9999.1904291141340.7063@viisi.sifive.com>
+ <155657878993.168659.6676692672888882237@swboyd.mtv.corp.google.com> <alpine.DEB.2.21.9999.1904292252120.7063@viisi.sifive.com> <155664891171.168659.10903540623861208390@swboyd.mtv.corp.google.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various block layer files do not have any licensing information at all.
-Add SPDX tags for the default kernel GPLv2 license to those.
+On Tue, 30 Apr 2019, Stephen Boyd wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-cgroup.c        | 1 +
- block/blk-core.c          | 1 +
- block/blk-exec.c          | 1 +
- block/blk-iolatency.c     | 1 +
- block/blk-mq-cpumap.c     | 1 +
- block/blk-mq-sched.c      | 1 +
- block/blk-mq-sysfs.c      | 1 +
- block/blk-mq-tag.c        | 1 +
- block/blk-mq.c            | 1 +
- block/blk-rq-qos.c        | 2 ++
- block/blk-rq-qos.h        | 1 +
- block/blk-settings.c      | 1 +
- block/blk-stat.c          | 1 +
- block/blk-timeout.c       | 1 +
- block/blk-wbt.c           | 1 +
- block/blk-zoned.c         | 1 +
- block/elevator.c          | 1 +
- block/genhd.c             | 1 +
- block/ioctl.c             | 1 +
- block/ioprio.c            | 1 +
- block/mq-deadline.c       | 1 +
- block/partitions/aix.h    | 1 +
- block/partitions/amiga.h  | 1 +
- block/partitions/ibm.h    | 1 +
- block/partitions/karma.h  | 1 +
- block/partitions/msdos.h  | 1 +
- block/partitions/osf.h    | 1 +
- block/partitions/sgi.h    | 1 +
- block/partitions/sun.h    | 1 +
- block/partitions/sysv68.h | 1 +
- block/partitions/ultrix.h | 1 +
- 31 files changed, 32 insertions(+)
+> Quoting Paul Walmsley (2019-04-29 22:57:15)
+> > On Mon, 29 Apr 2019, Stephen Boyd wrote:
+> > 
+> > > Quoting Paul Walmsley (2019-04-29 12:42:07)
+> > > > On Fri, 26 Apr 2019, Paul Walmsley wrote:
+> > > > > On Fri, 26 Apr 2019, Stephen Boyd wrote:
+> > > > > 
+> > > > > > Quoting Paul Walmsley (2019-04-11 01:27:32)
+> > > > > > > Add common library code for the Analog Bits Wide-Range PLL (WRPLL) IP
+> > > > > > > block, as implemented in TSMC CLN28HPC.
+> > > > > > 
+> > > > > > I haven't deeply reviewed at all, but I already get two problems when
+> > > > > > compile testing these patches. I can fix them up if nothing else needs
+> > > > > > fixing.
+> > > > > > 
+> > > > > > drivers/clk/analogbits/wrpll-cln28hpc.c:165 __wrpll_calc_divq() warn: should 'target_rate << divq' be a 64 bit type?
+> > > > > > drivers/clk/sifive/fu540-prci.c:214:16: error: return expression in void function
+> > > > > 
+> > > > > Hmm, that's odd.  I will definitely take a look and repost.
+> > > > 
+> > > > I'm not able to reproduce these problems.  The configs tried here were:
+> > > > 
+> > > > - 64-bit RISC-V defconfig w/ PRCI driver enabled (gcc 8.2.0 built with 
+> > > >   crosstool-NG 1.24.0)
+> > > > 
+> > > > - 32-bit ARM defconfig w/ PRCI driver enabled (gcc 8.3.0 built with 
+> > > >   crosstool-NG 1.24.0)
+> > > > 
+> > > > - 32-bit i386 defconfig w/ PRCI driver enabled (gcc 
+> > > >   5.4.0-6ubuntu1~16.04.11)
+> > > > 
+> > > > Could you post the toolchain and kernel config you're using?
+> > > > 
+> > > 
+> > > I'm running sparse and smatch too.
+> > 
+> > OK.  I was able to reproduce the __wrpll_calc_divq() warning.  It's been 
+> > resolved in the upcoming revision.  
+> > 
+> > But I don't see the second error with either sparse or smatch.  (This is 
+> > with sparse at commit 2b96cd804dc7 and smatch at commit f0092daff69d.)
+> > 
+> 
+> Weird! The return in void function is pretty obvious though so please
+> fix it regardless.
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 617a2b3f7582..b97b479e4f64 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Common Block IO controller cgroup interface
-  *
-diff --git a/block/blk-core.c b/block/blk-core.c
-index a55389ba8779..b044829135c9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 1991, 1992 Linus Torvalds
-  * Copyright (C) 1994,      Karl Keyte: Added support for disk statistics
-diff --git a/block/blk-exec.c b/block/blk-exec.c
-index a34b7d918742..1db44ca0f4a6 100644
---- a/block/blk-exec.c
-+++ b/block/blk-exec.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Functions related to setting various queue properties from drivers
-  */
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 507212d75ee2..d22e61bced86 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Block rq-qos base io controller
-  *
-diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-index 03a534820271..48bebf00a5f3 100644
---- a/block/blk-mq-cpumap.c
-+++ b/block/blk-mq-cpumap.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * CPU <-> hardware queue mapping helpers
-  *
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index aa6bc5c02643..f6e3b10b52eb 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * blk-mq scheduling framework
-  *
-diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
-index 3f9c3f4ac44c..61efc2a29e58 100644
---- a/block/blk-mq-sysfs.c
-+++ b/block/blk-mq-sysfs.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/backing-dev.h>
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index a4931fc7be8a..7513c8eaabee 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Tag allocation using scalable bitmaps. Uses active queue tracking to support
-  * fairer distribution of tags between multiple submitters when a shared tag map
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index fc60ed7e940e..4f15adfbab29 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Block multiqueue core code
-  *
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index d169d7188fa6..3f55b56f24bc 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- #include "blk-rq-qos.h"
- 
- /*
-diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index 564851889550..2300e038b9fa 100644
---- a/block/blk-rq-qos.h
-+++ b/block/blk-rq-qos.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- #ifndef RQ_QOS_H
- #define RQ_QOS_H
- 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 6375afaedcec..ec150f88db09 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Functions related to setting various queue properties from drivers
-  */
-diff --git a/block/blk-stat.c b/block/blk-stat.c
-index 696a04176e4d..940f15d600f8 100644
---- a/block/blk-stat.c
-+++ b/block/blk-stat.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Block stat tracking code
-  *
-diff --git a/block/blk-timeout.c b/block/blk-timeout.c
-index 124c26128bf6..8aa68fae96ad 100644
---- a/block/blk-timeout.c
-+++ b/block/blk-timeout.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Functions related to generic timeout handling of requests.
-  */
-diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-index fd166fbb0f65..313f45a37e9d 100644
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * buffered writeback throttling. loosely based on CoDel. We can't drop
-  * packets for IO scheduling, so the logic is something like this:
-diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 2d98803faec2..ae7e91bd0618 100644
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Zoned block device handling
-  *
-diff --git a/block/elevator.c b/block/elevator.c
-index 2e5399d9f40f..ec55d5fc0b3e 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Block device elevator/IO-scheduler.
-  *
-diff --git a/block/genhd.c b/block/genhd.c
-index 83f5c33d1e80..ad6826628e79 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  gendisk handling
-  */
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 4825c78a6baa..15a0eb80ada9 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- #include <linux/capability.h>
- #include <linux/blkdev.h>
- #include <linux/export.h>
-diff --git a/block/ioprio.c b/block/ioprio.c
-index f9821080c92c..2e0559f157c8 100644
---- a/block/ioprio.c
-+++ b/block/ioprio.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/ioprio.c
-  *
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index 14288f864e94..1876f5712bfd 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  MQ Deadline i/o scheduler - adaptation of the legacy deadline scheduler,
-  *  for the blk-mq scheduling framework
-diff --git a/block/partitions/aix.h b/block/partitions/aix.h
-index e0c66a987523..b4449f0b9f2b 100644
---- a/block/partitions/aix.h
-+++ b/block/partitions/aix.h
-@@ -1 +1,2 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- extern int aix_partition(struct parsed_partitions *state);
-diff --git a/block/partitions/amiga.h b/block/partitions/amiga.h
-index d094585cadaa..7e63f4d9d969 100644
---- a/block/partitions/amiga.h
-+++ b/block/partitions/amiga.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/amiga.h
-  */
-diff --git a/block/partitions/ibm.h b/block/partitions/ibm.h
-index 08fb0804a812..8bf13febb2b6 100644
---- a/block/partitions/ibm.h
-+++ b/block/partitions/ibm.h
-@@ -1 +1,2 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- int ibm_partition(struct parsed_partitions *);
-diff --git a/block/partitions/karma.h b/block/partitions/karma.h
-index c764b2e9df21..48e074d417fb 100644
---- a/block/partitions/karma.h
-+++ b/block/partitions/karma.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/karma.h
-  */
-diff --git a/block/partitions/msdos.h b/block/partitions/msdos.h
-index 38c781c490b3..fcacfc486092 100644
---- a/block/partitions/msdos.h
-+++ b/block/partitions/msdos.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/msdos.h
-  */
-diff --git a/block/partitions/osf.h b/block/partitions/osf.h
-index 20ed2315ec16..4d8088e7ea8c 100644
---- a/block/partitions/osf.h
-+++ b/block/partitions/osf.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/osf.h
-  */
-diff --git a/block/partitions/sgi.h b/block/partitions/sgi.h
-index b9553ebdd5a9..a5b77c3987cf 100644
---- a/block/partitions/sgi.h
-+++ b/block/partitions/sgi.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/sgi.h
-  */
-diff --git a/block/partitions/sun.h b/block/partitions/sun.h
-index 2424baa8319f..ae1b9eed3fd7 100644
---- a/block/partitions/sun.h
-+++ b/block/partitions/sun.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/sun.h
-  */
-diff --git a/block/partitions/sysv68.h b/block/partitions/sysv68.h
-index bf2f5ffa97ac..4fb6b8ec78ae 100644
---- a/block/partitions/sysv68.h
-+++ b/block/partitions/sysv68.h
-@@ -1 +1,2 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- extern int sysv68_partition(struct parsed_partitions *state);
-diff --git a/block/partitions/ultrix.h b/block/partitions/ultrix.h
-index a3cc00b2bded..9f676cead222 100644
---- a/block/partitions/ultrix.h
-+++ b/block/partitions/ultrix.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *  fs/partitions/ultrix.h
-  */
--- 
-2.20.1
+Done.
 
+- Paul
