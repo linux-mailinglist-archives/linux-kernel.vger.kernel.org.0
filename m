@@ -2,96 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBEC7F4E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCA4F4EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfD3LAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:00:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60260 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726294AbfD3LAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:00:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E174CAE63;
-        Tue, 30 Apr 2019 11:00:05 +0000 (UTC)
-Date:   Tue, 30 Apr 2019 13:00:05 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] livepatch: Use correct kobject cleanup function
-In-Reply-To: <20190430001534.26246-3-tobin@kernel.org>
-Message-ID: <alpine.LSU.2.21.1904301256550.8507@pobox.suse.cz>
-References: <20190430001534.26246-1-tobin@kernel.org> <20190430001534.26246-3-tobin@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727514AbfD3LBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:01:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43184 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfD3LBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:01:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PAuk9r9abU+3dCJ7MGM4b0v1HEZtMK1t3kVmT53GYTk=; b=baoWPhmm7krqFeob9riojtfuO
+        CYckS+yO4JyaBL3bHVkCqG90pyiYW52H+sbi63c3dAbKAIZ/ILLKhekzKXYE1/beWP+Qjn2c8zIjc
+        OwmTY/zEDh1LIDSGkFjwgTFvnsdP4HpVOpvY6XZYXdnrRdl5pwABT1MBFbLMtpP8GoIisqD5hZjhf
+        QEKNB5lmBx/6adfw1Dka4bg2huZeFLXdefqqRBAnSU9w554+5WFMKuJOwlZnd3x8FSdMwWI9O01Fu
+        SBNuZa/oC5RnLerY55f0/oU1wPwHV/FQk9Et3pIwJlrz69/UhWRHmlSbRpiYK8j5pPLham6Fzz95b
+        tr1KcrGIw==;
+Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLQVZ-0000GR-R4; Tue, 30 Apr 2019 11:01:10 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-mips@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Subject: provide generic support for uncached segements in dma-direct
+Date:   Tue, 30 Apr 2019 07:00:25 -0400
+Message-Id: <20190430110032.25301-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Apr 2019, Tobin C. Harding wrote:
+Hi all,
 
-> The correct cleanup function after a call to kobject_init_and_add() has
-> succeeded is kobject_del() _not_ kobject_put().  kobject_del() calls
-> kobject_put().
-> 
-> Use correct cleanup function when removing a kobject.
-> 
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> ---
->  kernel/livepatch/core.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index 98a7bec41faa..4cce6bb6e073 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -589,9 +589,8 @@ static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
->  
->  		list_del(&func->node);
->  
-> -		/* Might be called from klp_init_patch() error path. */
-
-Could you leave the comment as is? If I am not mistaken, it is still 
-valid. func->kobj_added check is here exactly because the function may be 
-called as mentioned.
-
-One could argue that the comment is not so important, but the change does 
-not belong to the patch anyway in my opinion.
-
->  		if (func->kobj_added) {
-> -			kobject_put(&func->kobj);
-> +			kobject_del(&func->kobj);
->  		} else if (func->nop) {
->  			klp_free_func_nop(func);
->  		}
-> @@ -625,9 +624,8 @@ static void __klp_free_objects(struct klp_patch *patch, bool nops_only)
->  
->  		list_del(&obj->node);
->  
-> -		/* Might be called from klp_init_patch() error path. */
-
-Same here.
-
->  		if (obj->kobj_added) {
-> -			kobject_put(&obj->kobj);
-> +			kobject_del(&obj->kobj);
->  		} else if (obj->dynamic) {
->  			klp_free_object_dynamic(obj);
->  		}
-> @@ -676,7 +674,7 @@ static void klp_free_patch_finish(struct klp_patch *patch)
->  	 * cannot get enabled again.
->  	 */
->  	if (patch->kobj_added) {
-> -		kobject_put(&patch->kobj);
-> +		kobject_del(&patch->kobj);
->  		wait_for_completion(&patch->finish);
->  	}
-
-Miroslav
+can you take a look at this series?  It lifts the support for mips-style
+uncached segements to the dma-direct layer, thus removing the need
+to have arch_dma_alloc/free routines for these architectures.
