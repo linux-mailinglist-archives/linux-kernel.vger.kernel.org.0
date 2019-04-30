@@ -2,183 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD6AFA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6714F9E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfD3N0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 09:26:15 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:55522 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728737AbfD3N0M (ORCPT
+        id S1728428AbfD3NZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 09:25:45 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44028 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728302AbfD3NZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 09:26:12 -0400
-Received: by mail-qt1-f201.google.com with SMTP id w53so13337650qtj.22
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 06:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=CUfyrLNe/T3EcKv5qduPdE7e3xDRgpU9AlrvCv3qwqI=;
-        b=ACzTueebTGZuzKKoCgKBIgO56T+v/kmKwHjurWtS7UbHoL/8XDJlDb5ck/BSEBSEkL
-         L/cpQLHEpHyLmFxTqXzMv0MYxpPJ/tdSuF6iSO5LSNmbylvOUvYffcEQgPGf+AHIVemF
-         X7c/hUL69n/uOjY+uNJSNPAVfbcNbVaSMzD0uei9BaIXpxtVKCRwsIlHAcYOHL9EFavB
-         iCJAtq03WGCgnaX+tP7fN2qD5Hnfneud42YH1gQK4xFPHVYPeqPOAqGnfhU4Bvx5JZ4h
-         WVQJpJkjflxIoXEbOmqcqlW6kZy64vV5a1g9LW1u4aQq8hQq2UTluPLfVENOwe2MSfHQ
-         GaaA==
+        Tue, 30 Apr 2019 09:25:40 -0400
+Received: by mail-qt1-f195.google.com with SMTP id g4so15999380qtq.10;
+        Tue, 30 Apr 2019 06:25:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=CUfyrLNe/T3EcKv5qduPdE7e3xDRgpU9AlrvCv3qwqI=;
-        b=C5JuNyQvbOKfciEZexzJXjEQojDIo7/0aoFM7XktB5/Nil2hkK+FOVke1Xak2beq7m
-         NsCDiQiYlhqO/b/H0sodlKhyoQLeo9i5sxuwQU4nAc+xj/lzrCeB4V71tJHck6VCsDYS
-         GJNpFkfaaer46Dq+A1Mk0Hi83N+NbvlwuSURRL05Gh/QZUPC2pWrCmVk+1gi75I6O/eZ
-         kXUa3bDde7HyofSvUHh4dKUtxKLhjK340ScowhqWj8Z5dnqcPWqFwMl5JEYLCdTsP7JR
-         8wRueN2PCUa0pCkYhog/FK3BujkOr9rliAiTFHWac8vLm0r6ZXsooFc8UtmEKuaDk+0b
-         w3Pg==
-X-Gm-Message-State: APjAAAWNXXKGrNcr3ShX4VV6OCrey2tPVMvjNYieYrQ/Wc+DSD8e1+om
-        r5FEyPjv+jurcKDOpAUZp5nExwILI9+6h0Fc
-X-Google-Smtp-Source: APXvYqysB3GTYMj0WGj5xIZkllIRnPABiLNbQUXAXOCL1Y4t6SI5ksxcGzuX1TZYAhDJVUrbxfYKc2E7kTYKjt+4
-X-Received: by 2002:a05:620a:482:: with SMTP id 2mr43219855qkr.323.1556630770597;
- Tue, 30 Apr 2019 06:26:10 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 15:25:13 +0200
-In-Reply-To: <cover.1556630205.git.andreyknvl@google.com>
-Message-Id: <d8f017e7ab36f698d05e6cc775115730c917ca77.1556630205.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1556630205.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH v14 17/17] selftests, arm64: add a selftest for passing tagged
- pointers to kernel
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>, Kuehling@google.com,
-        Felix <Felix.Kuehling@amd.com>, Deucher@google.com,
-        Alexander <Alexander.Deucher@amd.com>, Koenig@google.com,
-        Christian <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bsjY1DmhUhB9DtBTlNGVuJNSnH75cc+kYQnpfUCErno=;
+        b=nEXaelipnSNjl18ud7hweMuSiRlTDhwtjK6591mx7kIbpu4NzmYATgUohq3AKIk61r
+         elwjqBZjah3x9W2qXA7bYCLvzkzl4QyADiwjXf5sgaC1kmHPnuB7RVP+LrmbAtHfJs/Q
+         Bc3GXtKNlXRZVah56xbD2wvMItrFd98ygoFkQpYMSwNTWOMQL+928pqk940RHfLEfgu7
+         GRUIBHr6ncmMfn+uZqy+GtbtoY9bWbZUdYkC1uSYP4LtKxRl9IaFRgX55ukGp4bAySXH
+         FtQovYU49Sl/D9kBYihaN35EFQMu5bkLXm1OPGYg6gr99UBxxxxMT4qUyLNT3JgcZvw7
+         2jyg==
+X-Gm-Message-State: APjAAAUNbtiWYIpP2MxL2z/K4yQ3MISJ3l4nrSa6DTilpJxN+YhvqbLM
+        H5jzKVQsuCgy1Gljbs1f1SzLWwO62/mEAONq6ETtZe1H
+X-Google-Smtp-Source: APXvYqybjaI1IwCBTFJUaMgt5CyjzbFifgqt09o7eG704nNEEpC7JPV9jSbZdWGCoQgFFeSJV62/CpkGkHL9lFIfoJw=
+X-Received: by 2002:ac8:2692:: with SMTP id 18mr54601227qto.343.1556630738805;
+ Tue, 30 Apr 2019 06:25:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190402161256.11044-1-daniel.lezcano@linaro.org>
+ <20190402161256.11044-3-daniel.lezcano@linaro.org> <1555922585.26198.19.camel@intel.com>
+ <fb45157c-38c4-7940-3252-af459d446323@linaro.org> <1555999165.26198.39.camel@intel.com>
+ <2c0bc40d-328a-fc96-73da-9d65fee253fb@linaro.org>
+In-Reply-To: <2c0bc40d-328a-fc96-73da-9d65fee253fb@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Apr 2019 15:25:21 +0200
+Message-ID: <CAK8P3a2LAZnBKigo9v0qzaa-WAYkuoueF_jyJtaFrMeLXnDDow@mail.gmail.com>
+Subject: Re: [PATCH 3/7] thermal/drivers/core: Add init section table for self-encapsulation
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a part of a series that extends arm64 kernel ABI to allow to
-pass tagged user pointers (with the top byte set to something else other
-than 0x00) as syscall arguments.
+On Mon, Apr 29, 2019 at 1:23 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 23/04/2019 07:59, Zhang Rui wrote:
+> > Hi, Daniel,
+> >
+> > thanks for clarifying.
+> > It is true that we need to make thermal framework ready as early as
+> > possible. And a static table works for me as long as vmlinux.lds.h is
+> > the proper place.
+> >
+> > Arnd,
+> > are you okay with this patch? if yes, I suppose I can take it through
+> > my tree, right?
+>
+> Arnd?
 
-This patch adds a simple test, that calls the uname syscall with a
-tagged user pointer as an argument. Without the kernel accepting tagged
-user pointers the test fails with EFAULT.
+Sorry for missing this earlier. I have no objections to this, or to merging
+it through the thermal tree.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- tools/testing/selftests/arm64/.gitignore      |  1 +
- tools/testing/selftests/arm64/Makefile        | 11 ++++++++++
- .../testing/selftests/arm64/run_tags_test.sh  | 12 +++++++++++
- tools/testing/selftests/arm64/tags_test.c     | 21 +++++++++++++++++++
- 4 files changed, 45 insertions(+)
- create mode 100644 tools/testing/selftests/arm64/.gitignore
- create mode 100644 tools/testing/selftests/arm64/Makefile
- create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
- create mode 100644 tools/testing/selftests/arm64/tags_test.c
-
-diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
-new file mode 100644
-index 000000000000..e8fae8d61ed6
---- /dev/null
-+++ b/tools/testing/selftests/arm64/.gitignore
-@@ -0,0 +1 @@
-+tags_test
-diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
-new file mode 100644
-index 000000000000..a61b2e743e99
---- /dev/null
-+++ b/tools/testing/selftests/arm64/Makefile
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# ARCH can be overridden by the user for cross compiling
-+ARCH ?= $(shell uname -m 2>/dev/null || echo not)
-+
-+ifneq (,$(filter $(ARCH),aarch64 arm64))
-+TEST_GEN_PROGS := tags_test
-+TEST_PROGS := run_tags_test.sh
-+endif
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
-new file mode 100755
-index 000000000000..745f11379930
---- /dev/null
-+++ b/tools/testing/selftests/arm64/run_tags_test.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+echo "--------------------"
-+echo "running tags test"
-+echo "--------------------"
-+./tags_test
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+else
-+	echo "[PASS]"
-+fi
-diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
-new file mode 100644
-index 000000000000..2bd1830a7ebe
---- /dev/null
-+++ b/tools/testing/selftests/arm64/tags_test.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <stdint.h>
-+#include <sys/utsname.h>
-+
-+#define SHIFT_TAG(tag)		((uint64_t)(tag) << 56)
-+#define SET_TAG(ptr, tag)	(((uint64_t)(ptr) & ~SHIFT_TAG(0xff)) | \
-+					SHIFT_TAG(tag))
-+
-+int main(void)
-+{
-+	struct utsname *ptr = (struct utsname *)malloc(sizeof(*ptr));
-+	void *tagged_ptr = (void *)SET_TAG(ptr, 0x42);
-+	int err = uname(tagged_ptr);
-+
-+	free(ptr);
-+	return err;
-+}
--- 
-2.21.0.593.g511ec345e18-goog
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
