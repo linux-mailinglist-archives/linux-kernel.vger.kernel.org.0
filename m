@@ -2,361 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8FEAFEB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF01FECA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 19:26:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfD3RTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 13:19:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:63980 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfD3RTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 13:19:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 10:19:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,414,1549958400"; 
-   d="scan'208";a="166454562"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Apr 2019 10:19:40 -0700
-Date:   Tue, 30 Apr 2019 10:22:25 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 19/19] iommu/vt-d: Add svm/sva invalidate function
-Message-ID: <20190430102225.5331e25c@jacob-builder>
-In-Reply-To: <ddcc3770-d5f4-e6a1-db63-45a6412f8c52@redhat.com>
-References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1556062279-64135-20-git-send-email-jacob.jun.pan@linux.intel.com>
-        <26398960-f484-d5dd-eff5-c44810528194@redhat.com>
-        <20190429154146.20e0c13c@jacob-builder>
-        <ddcc3770-d5f4-e6a1-db63-45a6412f8c52@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726412AbfD3RZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 13:25:59 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41062 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfD3RZ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 13:25:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f6so7146682pgs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 10:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b1DzYDHHMbPUeqMoDW3yyKVFzl5dp1X1tpd8mfSFUCM=;
+        b=g5CaxFLepwBRV+fZdbdUIzpj8w2kHwz9ygdaWgBIEjAcbZyjM9cWhm0nLyITorTmSY
+         ExdaN2iDSLgn+2lfNQJ9mLJS1qVnJIMXcx1PNoVeZpMGp2w44MUfNilKAt1WyNMDnfAc
+         s3uSvru5O80ScQqYEs6MPJ//qet6xLhNrMqi5ZZGnIpYHuJcgPRfyvghnCoEoV6rUj5F
+         MnxiXDNKcJ77JCmSM2I++I5dU1g9uLwj26Nmo94pOSBCdwONccqfrK3Y7U8+AH7Vvedb
+         Q/RaqTdzZvJA+27E6AvRJ2Fw82sQKPgYfuyS+RvaV5uHu8gWxPhL/JizsfraWfeHH5qH
+         FmjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b1DzYDHHMbPUeqMoDW3yyKVFzl5dp1X1tpd8mfSFUCM=;
+        b=B10d1kgZqP9f1d++t9VUOgHHWSpplWQ5rkdClFs67ZRLGUr2VnNlAOGCl+BQBooJhc
+         49xc7cl9TV16iYLTZVNg0Jr1pbmlVLtf57BzFDapDt4KSNziJ83Yk772DF/mW6hNeV6/
+         6hIsskts/5VjG9tqYAAfGKHo6rAjj7eXtndlSFoXYMjU29lxC7XRKd+F/y/f1xBSdPXK
+         kFu7IqgpkYA3yobrxC8z+cu+CG21iJh2bZ2XCpnwmEEPGO9dcNb80FqsYA9m0AMelnmr
+         wxZ9kIoX04ULbk+M7RRI8/xv/HEL1EpCcezA3vrra6jXD/SUdhbmtNgiH+zKwTPVwO89
+         ybBA==
+X-Gm-Message-State: APjAAAXZuuWPi+RRj51OQjZhp+nAutDCeldM69vhA9nqoy7gfz1iwiFd
+        5ZB/Kg/vcTjj01HTLh1hCTcofAaWiDwU35K8w8vjTQ==
+X-Google-Smtp-Source: APXvYqxKoFOLcBHV9onh2oXJOsDo42NNxClYegTos4ScfdggCUdMvMzUJpr+4tr+0OZA48aC5U9cQc80U3ISbHps4Kc=
+X-Received: by 2002:a62:46c7:: with SMTP id o68mr12353818pfi.54.1556645157228;
+ Tue, 30 Apr 2019 10:25:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <0000000000004101370587c052fb@google.com>
+In-Reply-To: <0000000000004101370587c052fb@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 30 Apr 2019 19:25:45 +0200
+Message-ID: <CAAeHK+zn-26NHw8seueTyQV1o=O9x0U3m9-jV4V70Ctfutk8Fg@mail.gmail.com>
+Subject: Re: WARNING: Support for this device (Terratec Grabster AV400) is experimental.
+To:     syzbot <syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: multipart/mixed; boundary="000000000000a3be3f0587c2b106"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Apr 2019 08:57:30 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
+--000000000000a3be3f0587c2b106
+Content-Type: text/plain; charset="UTF-8"
 
-> On 4/30/19 12:41 AM, Jacob Pan wrote:
-> > On Fri, 26 Apr 2019 19:23:03 +0200
-> > Auger Eric <eric.auger@redhat.com> wrote:
-> >   
-> >> Hi Jacob,
-> >> On 4/24/19 1:31 AM, Jacob Pan wrote:  
-> >>> When Shared Virtual Address (SVA) is enabled for a guest OS via
-> >>> vIOMMU, we need to provide invalidation support at IOMMU API and
-> >>> driver level. This patch adds Intel VT-d specific function to
-> >>> implement iommu passdown invalidate API for shared virtual
-> >>> address.
-> >>>
-> >>> The use case is for supporting caching structure invalidation
-> >>> of assigned SVM capable devices. Emulated IOMMU exposes queue
-> >>> invalidation capability and passes down all descriptors from the
-> >>> guest to the physical IOMMU.
-> >>>
-> >>> The assumption is that guest to host device ID mapping should be
-> >>> resolved prior to calling IOMMU driver. Based on the device
-> >>> handle, host IOMMU driver can replace certain fields before
-> >>> submit to the invalidation queue.
-> >>>
-> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> >>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> >>> ---
-> >>>  drivers/iommu/intel-iommu.c | 159
-> >>> ++++++++++++++++++++++++++++++++++++++++++++ 1 file changed, 159
-> >>> insertions(+)
-> >>>
-> >>> diff --git a/drivers/iommu/intel-iommu.c
-> >>> b/drivers/iommu/intel-iommu.c index 89989b5..54a3d22 100644
-> >>> --- a/drivers/iommu/intel-iommu.c
-> >>> +++ b/drivers/iommu/intel-iommu.c
-> >>> @@ -5338,6 +5338,164 @@ static void
-> >>> intel_iommu_aux_detach_device(struct iommu_domain *domain,
-> >>> aux_domain_remove_dev(to_dmar_domain(domain), dev); }
-> >>>  
-> >>> +/*
-> >>> + * 2D array for converting and sanitizing IOMMU generic TLB
-> >>> granularity to
-> >>> + * VT-d granularity. Invalidation is typically included in the
-> >>> unmap operation
-> >>> + * as a result of DMA or VFIO unmap. However, for assigned device
-> >>> where guest
-> >>> + * could own the first level page tables without being shadowed
-> >>> by QEMU. In
-> >>> + * this case there is no pass down unmap to the host IOMMU as a
-> >>> result of unmap
-> >>> + * in the guest. Only invalidations are trapped and passed down.
-> >>> + * In all cases, only first level TLB invalidation (request with
-> >>> PASID) can be
-> >>> + * passed down, therefore we do not include IOTLB granularity for
-> >>> request
-> >>> + * without PASID (second level).
-> >>> + *
-> >>> + * For an example, to find the VT-d granularity encoding for
-> >>> IOTLB
-> >>> + * type and page selective granularity within PASID:
-> >>> + * X: indexed by iommu cache type
-> >>> + * Y: indexed by enum iommu_inv_granularity
-> >>> + * [IOMMU_INV_TYPE_TLB][IOMMU_INV_GRANU_PAGE_PASID]
-> >>> + *
-> >>> + * Granu_map array indicates validity of the table. 1: valid, 0:
-> >>> invalid
-> >>> + *
-> >>> + */
-> >>> +const static int
-> >>> inv_type_granu_map[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
-> >>> = {    
-> >> The size is frozen for a given uapi version so I guess you can
-> >> hardcode the limits for a given version.  
-> > I guess I could, I just felt more readable this way.  
-> >>> +	/* PASID based IOTLB, support PASID selective and page
-> >>> selective */
-> >>> +	{0, 1, 1},
-> >>> +	/* PASID based dev TLBs, only support all PASIDs or
-> >>> single PASID */
-> >>> +	{1, 1, 0},
-> >>> +	/* PASID cache */
-> >>> +	{1, 1, 0}
-> >>> +};
-> >>> +
-> >>> +const static u64
-> >>> inv_type_granu_table[NR_IOMMU_CACHE_TYPE][NR_IOMMU_CACHE_INVAL_GRANU]
-> >>> = {
-> >>> +	/* PASID based IOTLB */
-> >>> +	{0, QI_GRAN_NONG_PASID, QI_GRAN_PSI_PASID},
-> >>> +	/* PASID based dev TLBs */
-> >>> +	{QI_DEV_IOTLB_GRAN_ALL, QI_DEV_IOTLB_GRAN_PASID_SEL, 0},
-> >>> +	/* PASID cache */
-> >>> +	{QI_PC_ALL_PASIDS, QI_PC_PASID_SEL, 0},
-> >>> +};    
-> >> Can't you use a single matrix instead, ie. inv_type_granu_table
-> >>  
-> > The reason i have an additional inv_type_granu_map[] matrix is that
-> > some of fields can be 0 but still valid. A single matrix would not
-> > be able to tell the difference between a valid 0 or invalid field.  
-> Ah OK sorry I missed that.
-> >>> +
-> >>> +static inline int to_vtd_granularity(int type, int granu, u64
-> >>> *vtd_granu) +{
-> >>> +	if (type >= NR_IOMMU_CACHE_TYPE || granu >=
-> >>> NR_IOMMU_CACHE_INVAL_GRANU ||
-> >>> +		!inv_type_granu_map[type][granu])
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	*vtd_granu = inv_type_granu_table[type][granu];
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static inline u64 to_vtd_size(u64 granu_size, u64 nr_granules)
-> >>> +{
-> >>> +	u64 nr_pages;    
-> >> direct initialization?  
-> > will do, thanks  
-> >>> +	/* VT-d size is encoded as 2^size of 4K pages, 0 for 4k,
-> >>> 9 for 2MB, etc.
-> >>> +	 * IOMMU cache invalidate API passes granu_size in bytes,
-> >>> and number of
-> >>> +	 * granu size in contiguous memory.
-> >>> +	 */
-> >>> +
-> >>> +	nr_pages = (granu_size * nr_granules) >> VTD_PAGE_SHIFT;
-> >>> +	return order_base_2(nr_pages);
-> >>> +}
-> >>> +
-> >>> +static int intel_iommu_sva_invalidate(struct iommu_domain
-> >>> *domain,
-> >>> +		struct device *dev, struct
-> >>> iommu_cache_invalidate_info *inv_info) +{
-> >>> +	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-> >>> +	struct device_domain_info *info;
-> >>> +	struct intel_iommu *iommu;
-> >>> +	unsigned long flags;
-> >>> +	int cache_type;
-> >>> +	u8 bus, devfn;
-> >>> +	u16 did, sid;
-> >>> +	int ret = 0;
-> >>> +	u64 granu;
-> >>> +	u64 size;
-> >>> +
-> >>> +	if (!inv_info || !dmar_domain ||
-> >>> +		inv_info->version !=
-> >>> IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	if (!dev || !dev_is_pci(dev))
-> >>> +		return -ENODEV;
-> >>> +
-> >>> +	iommu = device_to_iommu(dev, &bus, &devfn);
-> >>> +	if (!iommu)
-> >>> +		return -ENODEV;
-> >>> +
-> >>> +	spin_lock(&iommu->lock);
-> >>> +	spin_lock_irqsave(&device_domain_lock, flags);    
-> >> mix of _irqsave and non _irqsave looks suspicious to me.  
-> > It should be in reverse order. Any other concerns?  
-> I understand both locks are likely to be taken in ISR context so
-> _irqsave should be called on the first call.
-Yes, that is what i meant in reverse order.
-	spin_lock_irqsave(&device_domain_lock, flags); 
-	spin_lock(&iommu->lock);
+On Tue, Apr 30, 2019 at 4:36 PM syzbot
+<syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=141ca62d200000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
+> dashboard link: https://syzkaller.appspot.com/bug?extid=af8f8d2ac0d39b0ed3a0
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1405bedd200000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ce3bbb200000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com
+>
+> usb 1-1: New USB device found, idVendor=0ccd, idProduct=0039, bcdDevice=
+> d.3c
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> pvrusb2: Hardware description: Terratec Grabster AV400
+> pvrusb2: **********
+> pvrusb2: WARNING: Support for this device (Terratec Grabster AV400) is
+> experimental.
+> pvrusb2: Important functionality might not be entirely working.
+> pvrusb2: Please consider contacting the driver author to help with further
+> stabilization of the driver.
+> pvrusb2: **********
 
-then the unlocking part will remain the same.
+#syz test: https://github.com/google/kasan.git usb-fuzzer
 
-> >>> +	info = iommu_support_dev_iotlb(dmar_domain, iommu, bus,
-> >>> devfn);
-> >>> +	if (!info) {
-> >>> +		ret = -EINVAL;
-> >>> +		goto out_unlock;
-> >>> +	}
-> >>> +	did = dmar_domain->iommu_did[iommu->seq_id];
-> >>> +	sid = PCI_DEVID(bus, devfn);
-> >>> +	size = to_vtd_size(inv_info->addr_info.granule_size,
-> >>> inv_info->addr_info.nb_granules); +
-> >>> +	for_each_set_bit(cache_type, (unsigned long
-> >>> *)&inv_info->cache, NR_IOMMU_CACHE_TYPE) { +
-> >>> +		ret = to_vtd_granularity(cache_type,
-> >>> inv_info->granularity, &granu);
-> >>> +		if (ret) {
-> >>> +			pr_err("Invalid range type %d, granu
-> >>> %d\n", cache_type,    
-> >> s/Invalid range type %d, granu %d/Invalid cache type/granu
-> >> combination (%d/%d)  
-> > sounds good, indeed it is the combination that is invalid.  
-> >>> +				inv_info->granularity);
-> >>> +			break;
-> >>> +		}
-> >>> +
-> >>> +		switch (BIT(cache_type)) {
-> >>> +		case IOMMU_CACHE_INV_TYPE_IOTLB:
-> >>> +			if (size && (inv_info->addr_info.addr &
-> >>> ((BIT(VTD_PAGE_SHIFT + size)) - 1))) {
-> >>> +				pr_err("Address out of range,
-> >>> 0x%llx, size order %llu\n",
-> >>> +					inv_info->addr_info.addr,
-> >>> size);
-> >>> +				ret = -ERANGE;
-> >>> +				goto out_unlock;
-> >>> +			}
-> >>> +
-> >>> +			qi_flush_piotlb(iommu, did,
-> >>> mm_to_dma_pfn(inv_info->addr_info.addr),
-> >>> +
-> >>> inv_info->addr_info.pasid,
-> >>> +					size, granu);
-> >>> +
-> >>> +			/*
-> >>> +			 * Always flush device IOTLB if ATS is
-> >>> enabled since guest
-> >>> +			 * vIOMMU exposes CM = 1, no device IOTLB
-> >>> flush will be passed
-> >>> +			 * down. REVISIT: cannot assume Linux
-> >>> guest
-> >>> +			 */
-> >>> +			if (info->ats_enabled) {
-> >>> +				qi_flush_dev_piotlb(iommu, sid,
-> >>> info->pfsid,
-> >>> +
-> >>> inv_info->addr_info.pasid, info->ats_qdep,
-> >>> +
-> >>> inv_info->addr_info.addr, size,
-> >>> +						granu);
-> >>> +			}
-> >>> +			break;
-> >>> +		case IOMMU_CACHE_INV_TYPE_DEV_IOTLB:
-> >>> +			if (info->ats_enabled) {
-> >>> +				qi_flush_dev_piotlb(iommu, sid,
-> >>> info->pfsid,
-> >>> +
-> >>> inv_info->addr_info.pasid, info->ats_qdep,
-> >>> +
-> >>> inv_info->addr_info.addr, size,
-> >>> +						granu);
-> >>> +			} else
-> >>> +				pr_warn("Passdown device IOTLB
-> >>> flush w/o ATS!\n"); +
-> >>> +			break;
-> >>> +		case IOMMU_CACHE_INV_TYPE_PASID:
-> >>> +			qi_flush_pasid_cache(iommu, did, granu,
-> >>> inv_info->pasid); +
-> >>> +			break;
-> >>> +		default:
-> >>> +			dev_err(dev, "Unsupported IOMMU
-> >>> invalidation type %d\n",
-> >>> +				cache_type);
-> >>> +			ret = -EINVAL;
-> >>> +		}
-> >>> +	}
-> >>> +out_unlock:
-> >>> +	spin_unlock(&iommu->lock);
-> >>> +	spin_unlock_irqrestore(&device_domain_lock, flags);    
-> >> I would expect the opposite order  
-> > yes, i reversed in the lock order such that irq is disabled.  
-> spin_unlock_irqsave(&iommu->lock, flags);
-> spin_lock(&device_domain_lock);
-> ../..
-> spin_unlock_irqrestore(&device_domain_lock);
-> spin_unlock_irqrestore(&iommu->lock);
-> ?
-> 
-I meant this:
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-	spin_lock_irqsave(&device_domain_lock, flags); 
-	spin_lock(&iommu->lock);
+--000000000000a3be3f0587c2b106
+Content-Type: text/x-patch; charset="US-ASCII"; name="pvrusb2.patch"
+Content-Disposition: attachment; filename="pvrusb2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jv42brmq0>
+X-Attachment-Id: f_jv42brmq0
 
-...
-
-	spin_unlock(&iommu->lock);
-	spin_unlock_irqrestore(&device_domain_lock, flags);
-
-> Thanks
-> 
-> Eric
-> >>> +
-> >>> +	return ret;
-> >>> +}
-> >>> +
-> >>>  static int intel_iommu_map(struct iommu_domain *domain,
-> >>>  			   unsigned long iova, phys_addr_t hpa,
-> >>>  			   size_t size, int iommu_prot)
-> >>> @@ -5769,6 +5927,7 @@ const struct iommu_ops intel_iommu_ops = {
-> >>>  	.dev_disable_feat	= intel_iommu_dev_disable_feat,
-> >>>  	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
-> >>>  #ifdef CONFIG_INTEL_IOMMU_SVM
-> >>> +	.cache_invalidate	= intel_iommu_sva_invalidate,
-> >>>  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
-> >>>  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
-> >>>  #endif
-> >>>     
-> >> Thanks
-> >>
-> >> Eric  
-> > 
-> > Thank you so much for your review. I will roll up the next version
-> > soon, hopefully this week.
-> > 
-> > Jacob
-> >   
-
-[Jacob Pan]
+Y29tbWl0IGYxNWNmYTgwOWVjMDM1ZWViYzBiZWMwN2JjOWUxZGQyMTIzMjgxYTUKQXV0aG9yOiBB
+bmRyZXkgS29ub3ZhbG92IDxhbmRyZXlrbnZsQGdvb2dsZS5jb20+CkRhdGU6ICAgV2VkIEFwciAx
+NyAxOTo0MDo0MCAyMDE5ICswMjAwCgogICAgbWVkaWE6IHB2cnVzYjI6IHVzZSBhIGRpZmZlcmVu
+dCBmb3JtYXQgZm9yIHdhcm5pbmdzCiAgICAKICAgIFdoZW4gdGhlIHB2cnVzYjIgZHJpdmVyIGRl
+dGVjdHMgdGhhdCB0aGVyZSdzIHNvbWV0aGluZyB3cm9uZyB3aXRoIHRoZQogICAgZGV2aWNlLCBp
+dCBwcmludHMgYSB3YXJuaW5nIG1lc3NhZ2UuIFJpZ2h0IG5vdyB0aG9zZSBtZXNzYWdlIGFyZSBw
+cmludGVkCiAgICBpbiB0d28gZGlmZmVyZW50IGZvcm1hdHM6CiAgICAKICAgIDEuICoqKldBUk5J
+TkcqKiogbWVzc2FnZSBoZXJlCiAgICAyLiBXQVJOSU5HOiBtZXNzYWdlIGhlcmUKICAgIAogICAg
+VGhlcmUncyBhbiBpc3N1ZSB3aXRoIHRoZSBzZWNvbmQgZm9ybWF0LiBTeXprYWxsZXIgcmVjb2du
+aXplcyBpdCBhcyBhCiAgICBtZXNzYWdlIHByb2R1Y2VkIGJ5IGEgV0FSTl9PTigpLCB3aGljaCBp
+cyB1c2VkIHRvIGluZGljYXRlIGEgYnVnIGluIHRoZQogICAga2VybmVsLiBIb3dldmVyIHB2cnVz
+YjIgcHJpbnRzIHRob3NlIHdhcm5pbmdzIHRvIGluZGljYXRlIGFuIGlzc3VlIHdpdGgKICAgIHRo
+ZSBkZXZpY2UsIG5vdCB0aGUgYnVnIGluIHRoZSBrZXJuZWwuCiAgICAKICAgIFRoaXMgcGF0Y2gg
+Y2hhbmdlcyB0aGUgcHZydXNiMiBkcml2ZXIgdG8gY29uc2lzdGVudGx5IHVzZSB0aGUgZmlyc3QK
+ICAgIHdhcm5pbmcgbWVzc2FnZSBmb3JtYXQuIFRoaXMgd2lsbCB1bmJsb2NrIHN5emthbGxlciB0
+ZXN0aW5nIG9mIHRoaXMKICAgIGRyaXZlci4KICAgIAogICAgU2lnbmVkLW9mZi1ieTogQW5kcmV5
+IEtvbm92YWxvdiA8YW5kcmV5a252bEBnb29nbGUuY29tPgoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+bWVkaWEvdXNiL3B2cnVzYjIvcHZydXNiMi1oZHcuYyBiL2RyaXZlcnMvbWVkaWEvdXNiL3B2cnVz
+YjIvcHZydXNiMi1oZHcuYwppbmRleCA0NDZhOTk5ZGQyY2UuLmEwZjdiMTAwNDVkMiAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9tZWRpYS91c2IvcHZydXNiMi9wdnJ1c2IyLWhkdy5jCisrKyBiL2RyaXZl
+cnMvbWVkaWEvdXNiL3B2cnVzYjIvcHZydXNiMi1oZHcuYwpAQCAtMTY3OCw3ICsxNjc4LDcgQEAg
+c3RhdGljIGludCBwdnIyX2RlY29kZXJfZW5hYmxlKHN0cnVjdCBwdnIyX2hkdyAqaGR3LGludCBl
+bmFibGVmbCkKIAl9CiAJaWYgKCFoZHctPmZsYWdfZGVjb2Rlcl9taXNzZWQpIHsKIAkJcHZyMl90
+cmFjZShQVlIyX1RSQUNFX0VSUk9SX0xFR1MsCi0JCQkgICAiV0FSTklORzogTm8gZGVjb2RlciBw
+cmVzZW50Iik7CisJCQkgICAiKioqV0FSTklORyoqKiBObyBkZWNvZGVyIHByZXNlbnQiKTsKIAkJ
+aGR3LT5mbGFnX2RlY29kZXJfbWlzc2VkID0gITA7CiAJCXRyYWNlX3N0Yml0KCJmbGFnX2RlY29k
+ZXJfbWlzc2VkIiwKIAkJCSAgICBoZHctPmZsYWdfZGVjb2Rlcl9taXNzZWQpOwpAQCAtMjM2NCw3
+ICsyMzY0LDcgQEAgc3RydWN0IHB2cjJfaGR3ICpwdnIyX2hkd19jcmVhdGUoc3RydWN0IHVzYl9p
+bnRlcmZhY2UgKmludGYsCiAJaWYgKGhkd19kZXNjLT5mbGFnX2lzX2V4cGVyaW1lbnRhbCkgewog
+CQlwdnIyX3RyYWNlKFBWUjJfVFJBQ0VfSU5GTywgIioqKioqKioqKioiKTsKIAkJcHZyMl90cmFj
+ZShQVlIyX1RSQUNFX0lORk8sCi0JCQkgICAiV0FSTklORzogU3VwcG9ydCBmb3IgdGhpcyBkZXZp
+Y2UgKCVzKSBpcyBleHBlcmltZW50YWwuIiwKKwkJCSAgICIqKipXQVJOSU5HKioqIFN1cHBvcnQg
+Zm9yIHRoaXMgZGV2aWNlICglcykgaXMgZXhwZXJpbWVudGFsLiIsCiAJCQkJCQkJICAgICAgaGR3
+X2Rlc2MtPmRlc2NyaXB0aW9uKTsKIAkJcHZyMl90cmFjZShQVlIyX1RSQUNFX0lORk8sCiAJCQkg
+ICAiSW1wb3J0YW50IGZ1bmN0aW9uYWxpdHkgbWlnaHQgbm90IGJlIGVudGlyZWx5IHdvcmtpbmcu
+Iik7CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3VzYi9wdnJ1c2IyL3B2cnVzYjItaTJjLWNv
+cmUuYyBiL2RyaXZlcnMvbWVkaWEvdXNiL3B2cnVzYjIvcHZydXNiMi1pMmMtY29yZS5jCmluZGV4
+IDhmMDIzMDg1YzJkOS4uNDNlNTRiZGJkNGFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL21lZGlhL3Vz
+Yi9wdnJ1c2IyL3B2cnVzYjItaTJjLWNvcmUuYworKysgYi9kcml2ZXJzL21lZGlhL3VzYi9wdnJ1
+c2IyL3B2cnVzYjItaTJjLWNvcmUuYwpAQCAtMzQzLDExICszNDMsMTEgQEAgc3RhdGljIGludCBp
+MmNfaGFja19jeDI1ODQwKHN0cnVjdCBwdnIyX2hkdyAqaGR3LAogCiAJaWYgKChyZXQgIT0gMCkg
+fHwgKCpyZGF0YSA9PSAweDA0KSB8fCAoKnJkYXRhID09IDB4MGEpKSB7CiAJCXB2cjJfdHJhY2Uo
+UFZSMl9UUkFDRV9FUlJPUl9MRUdTLAotCQkJICAgIldBUk5JTkc6IERldGVjdGVkIGEgd2VkZ2Vk
+IGN4MjU4NDAgY2hpcDsgdGhlIGRldmljZSB3aWxsIG5vdCB3b3JrLiIpOworCQkJICAgIioqKldB
+Uk5JTkcqKiogRGV0ZWN0ZWQgYSB3ZWRnZWQgY3gyNTg0MCBjaGlwOyB0aGUgZGV2aWNlIHdpbGwg
+bm90IHdvcmsuIik7CiAJCXB2cjJfdHJhY2UoUFZSMl9UUkFDRV9FUlJPUl9MRUdTLAotCQkJICAg
+IldBUk5JTkc6IFRyeSBwb3dlciBjeWNsaW5nIHRoZSBwdnJ1c2IyIGRldmljZS4iKTsKKwkJCSAg
+ICIqKipXQVJOSU5HKioqIFRyeSBwb3dlciBjeWNsaW5nIHRoZSBwdnJ1c2IyIGRldmljZS4iKTsK
+IAkJcHZyMl90cmFjZShQVlIyX1RSQUNFX0VSUk9SX0xFR1MsCi0JCQkgICAiV0FSTklORzogRGlz
+YWJsaW5nIGZ1cnRoZXIgYWNjZXNzIHRvIHRoZSBkZXZpY2UgdG8gcHJldmVudCBvdGhlciBmb3Vs
+LXVwcy4iKTsKKwkJCSAgICIqKipXQVJOSU5HKioqIERpc2FibGluZyBmdXJ0aGVyIGFjY2VzcyB0
+byB0aGUgZGV2aWNlIHRvIHByZXZlbnQgb3RoZXIgZm91bC11cHMuIik7CiAJCS8vIFRoaXMgYmxv
+Y2tzIGFsbCBmdXJ0aGVyIGNvbW11bmljYXRpb24gd2l0aCB0aGUgcGFydC4KIAkJaGR3LT5pMmNf
+ZnVuY1sweDQ0XSA9IE5VTEw7CiAJCXB2cjJfaGR3X3JlbmRlcl91c2VsZXNzKGhkdyk7CmRpZmYg
+LS1naXQgYS9kcml2ZXJzL21lZGlhL3VzYi9wdnJ1c2IyL3B2cnVzYjItc3RkLmMgYi9kcml2ZXJz
+L21lZGlhL3VzYi9wdnJ1c2IyL3B2cnVzYjItc3RkLmMKaW5kZXggNmI2NTFmOGI1NGRmLi4zN2Rj
+Mjk5YTFjYTIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvdXNiL3B2cnVzYjIvcHZydXNiMi1z
+dGQuYworKysgYi9kcml2ZXJzL21lZGlhL3VzYi9wdnJ1c2IyL3B2cnVzYjItc3RkLmMKQEAgLTM1
+Myw3ICszNTMsNyBAQCBzdHJ1Y3QgdjRsMl9zdGFuZGFyZCAqcHZyMl9zdGRfY3JlYXRlX2VudW0o
+dW5zaWduZWQgaW50ICpjb3VudHB0ciwKIAkJYmNudCA9IHB2cjJfc3RkX2lkX3RvX3N0cihidWYs
+c2l6ZW9mKGJ1ZiksZm1zayk7CiAJCXB2cjJfdHJhY2UoCiAJCQlQVlIyX1RSQUNFX0VSUk9SX0xF
+R1MsCi0JCQkiV0FSTklORzogRmFpbGVkIHRvIGNsYXNzaWZ5IHRoZSBmb2xsb3dpbmcgc3RhbmRh
+cmQocyk6ICUuKnMiLAorCQkJIioqKldBUk5JTkcqKiogRmFpbGVkIHRvIGNsYXNzaWZ5IHRoZSBm
+b2xsb3dpbmcgc3RhbmRhcmQocyk6ICUuKnMiLAogCQkJYmNudCxidWYpOwogCX0KIAo=
+--000000000000a3be3f0587c2b106--
