@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9926F84D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16E0AF622
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfD3MHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:07:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47078 "EHLO mail.kernel.org"
+        id S1729960AbfD3Lnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:43:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728503AbfD3Lke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:34 -0400
+        id S1729938AbfD3Lna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:43:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD3EB217D8;
-        Tue, 30 Apr 2019 11:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C4AF21707;
+        Tue, 30 Apr 2019 11:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624434;
-        bh=CPJPH/Jy78usenS4z0bRi7H8YQmGs3/daJzXJGYgHrM=;
+        s=default; t=1556624609;
+        bh=o3Nsh5rtn77rJHGEWXlfTk4Uolxx2qRsk48vZef8uTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Wg6b0LZs7If/3Goe+9dzA+oyUFdEuisupuJALHa0jJFqN/57zNl180a36mIJh4mz
-         0W/wOTHE9pzTz7473Z2l8cXzWGN0vdpmHtgs/f0Kd0/DbUPRKe63pqwucczHZeQ4ri
-         Pj2Jceld4/+FDvvvPqbfBKoE6f4zlgVVPtw5RUFE=
+        b=milMP3x8ab1Ewr61+rG2dbhXcjXskkyx6R5yDhPsUX0MjMNTr5+6OJL+c4QjXvRRY
+         X5xr/ug6jEeGW8lUK65aiOyoCQ43wjJx9rSJ6xuHghnwWT/ADimHKbBPNVBTMZy8Vw
+         GEovBaocybQmsIzkDXbRSASty2g3Y5wEDkXR+QNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
+        stable@vger.kernel.org,
+        syzbot+de00a87b8644a582ae79@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 34/41] team: fix possible recursive locking when add slaves
+Subject: [PATCH 4.14 38/53] tipc: check link name with right length in tipc_nl_compat_link_set
 Date:   Tue, 30 Apr 2019 13:38:45 +0200
-Message-Id: <20190430113532.534243885@linuxfoundation.org>
+Message-Id: <20190430113557.818399894@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 925b0c841e066b488cc3a60272472b2c56300704 ]
+commit 8c63bf9ab4be8b83bd8c34aacfd2f1d2c8901c8a upstream.
 
-If we add a bond device which is already the master of the team interface,
-we will hold the team->lock in team_add_slave() first and then request the
-lock in team_set_mac_address() again. The functions are called like:
+A similar issue as fixed by Patch "tipc: check bearer name with right
+length in tipc_nl_compat_bearer_enable" was also found by syzbot in
+tipc_nl_compat_link_set().
 
-- team_add_slave()
- - team_port_add()
-   - team_port_enter()
-     - team_modeop_port_enter()
-       - __set_port_dev_addr()
-         - dev_set_mac_address()
-           - bond_set_mac_address()
-             - dev_set_mac_address()
-  	       - team_set_mac_address
+The length to check with should be 'TLV_GET_DATA_LEN(msg->req) -
+offsetof(struct tipc_link_config, name)'.
 
-Although team_upper_dev_link() would check the upper devices but it is
-called too late. Fix it by adding a checking before processing the slave.
-
-v2: Do not split the string in netdev_err()
-
-Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reported-by: syzbot+de00a87b8644a582ae79@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/team/team.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1163,6 +1163,12 @@ static int team_port_add(struct team *te
- 		return -EINVAL;
- 	}
+---
+ net/tipc/netlink_compat.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -768,7 +768,12 @@ static int tipc_nl_compat_link_set(struc
  
-+	if (netdev_has_upper_dev(dev, port_dev)) {
-+		netdev_err(dev, "Device %s is already an upper device of the team interface\n",
-+			   portname);
-+		return -EBUSY;
-+	}
+ 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ 
+-	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
++	len = TLV_GET_DATA_LEN(msg->req);
++	len -= offsetof(struct tipc_link_config, name);
++	if (len <= 0)
++		return -EINVAL;
 +
- 	if (port_dev->features & NETIF_F_VLAN_CHALLENGED &&
- 	    vlan_uses_dev(dev)) {
- 		netdev_err(dev, "Device %s is VLAN challenged and team device has VLAN set up\n",
++	len = min_t(int, len, TIPC_MAX_LINK_NAME);
+ 	if (!string_is_valid(lc->name, len))
+ 		return -EINVAL;
+ 
 
 
