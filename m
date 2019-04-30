@@ -2,111 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C6CFF486
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA95F4C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbfD3KwV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 06:52:21 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:41503 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727333AbfD3KwR (ORCPT
+        id S1727409AbfD3Kxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:53:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37852 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbfD3Kxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:52:17 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-219-o3Z4AmsVPhKcl9wCrASykQ-1; Tue, 30 Apr 2019 11:52:14 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
- 30 Apr 2019 11:52:13 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 30 Apr 2019 11:52:13 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Phong Tran' <tranmanphong@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        "pantelis.antoniou@konsulko.com" <pantelis.antoniou@konsulko.com>
-CC:     "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] of: replace be32_to_cpu to be32_to_cpup
-Thread-Topic: [PATCH] of: replace be32_to_cpu to be32_to_cpup
-Thread-Index: AQHU/zOHQCFPeP9s40qeT2QsFKHyGqZUhhqA
-Date:   Tue, 30 Apr 2019 10:52:13 +0000
-Message-ID: <46b3e8edf27e4c8f98697f9e7f2117d6@AcuMS.aculab.com>
-References: <20190430090044.16345-1-tranmanphong@gmail.com>
-In-Reply-To: <20190430090044.16345-1-tranmanphong@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 30 Apr 2019 06:53:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ikNUbjQ0GO+lUn7LT2QVkiEmKgcbEKJuyyeALELjhgg=; b=dzEQb2AmEQuufRP2l8lfhWFQE7
+        x9p8BrwNZdvArmeOZ7HYcmZmBnLK2BrZtf37zAqRsTmqMhaofb3ToDqg5pMmSdjB2vZW5y8ut82N8
+        g3ya5LIPtpiE6jew4t2Q7p02PSO17GoyElNEcykWjAF9RnjeJu72hzQZiquvtO0HjuJtpUXqBdxYq
+        SF65IctMOjKdyRe4yWVAUB0Cf2GpevkVIfas7kxKc7W68GozUcmNQGET+89ogve7WizQqmYywXy+m
+        KrFGKgn+xrOEeSBYhQyK/jDyoJdPXJB+WTH505xlB/ULJdlA5DPBtEnhMKXtp+TBppAd/4kxt9lFm
+        4AcbbFGg==;
+Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLQOA-0008Ft-PN; Tue, 30 Apr 2019 10:53:31 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 25/25] arm64: trim includes in dma-mapping.c
+Date:   Tue, 30 Apr 2019 06:52:14 -0400
+Message-Id: <20190430105214.24628-26-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190430105214.24628-1-hch@lst.de>
+References: <20190430105214.24628-1-hch@lst.de>
 MIME-Version: 1.0
-X-MC-Unique: o3Z4AmsVPhKcl9wCrASykQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran
-> Sent: 30 April 2019 10:01
-> The cell is a pointer to __be32.
-> with the be32_to_cpu a lot of clang warning show that:
-> 
-> ./include/linux/of.h:238:37: warning: multiple unsequenced modifications
-> to 'cell' [-Wunsequenced]
->                 r = (r << 32) | be32_to_cpu(*(cell++));
->                                                   ^~
-> ./include/linux/byteorder/generic.h:95:21: note: expanded from macro
-> 'be32_to_cpu'
->                     ^
-> ./include/uapi/linux/byteorder/little_endian.h:40:59: note: expanded
-> from macro '__be32_to_cpu'
->                                                           ^
-> ./include/uapi/linux/swab.h:118:21: note: expanded from macro '__swab32'
->         ___constant_swab32(x) :                 \
->                            ^
-> ./include/uapi/linux/swab.h:18:12: note: expanded from macro
-> '___constant_swab32'
->         (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
->                   ^
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  include/linux/of.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index e240992e5cb6..1c35fc8f19b0 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -235,7 +235,7 @@ static inline u64 of_read_number(const __be32 *cell, int size)
->  {
->  	u64 r = 0;
->  	while (size--)
-> -		r = (r << 32) | be32_to_cpu(*(cell++));
-> +		r = (r << 32) | be32_to_cpup(cell++);
->  	return r;
+With most of the previous functionality now elsewhere a lot of the
+headers included in this file are not needed.
 
-That is a very strange loop.
-It is probably equivalent to:
-	r = be32_to_cpu(*cell);
-	if (size)
-		r = r << 32 | be32_to_cpu(cell[1]);
-	return r;
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arm64/mm/dma-mapping.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-In any case replacing the while with (say):
-	for (; size--; cell++)
-		r = (r << 32) | be32_to_cpu(*cell);
-would remove the ambiguity.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index 184ef9ccd69d..1669618db08a 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -5,19 +5,9 @@
+  */
+ 
+ #include <linux/gfp.h>
+-#include <linux/acpi.h>
+-#include <linux/memblock.h>
+ #include <linux/cache.h>
+-#include <linux/export.h>
+-#include <linux/slab.h>
+-#include <linux/genalloc.h>
+-#include <linux/dma-direct.h>
+ #include <linux/dma-noncoherent.h>
+-#include <linux/dma-contiguous.h>
+ #include <linux/dma-iommu.h>
+-#include <linux/vmalloc.h>
+-#include <linux/swiotlb.h>
+-#include <linux/pci.h>
+ 
+ #include <asm/cacheflush.h>
+ 
+-- 
+2.20.1
 
