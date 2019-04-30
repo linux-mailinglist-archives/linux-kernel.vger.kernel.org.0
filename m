@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35541FB91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78360FB95
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfD3OdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:33:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44302 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbfD3OdI (ORCPT
+        id S1726698AbfD3OgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:36:08 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:51696 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfD3OgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:33:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z16so6916046pgv.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:33:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kqS0xUpYWHV2KKYrwWSzkNORD9GWhMTFKscheBDY6SY=;
-        b=tzF1u1RoWkduWv0+xPHHl/FHoW82nr4RoepicXe75nIhkhv0Z83aSutJv7RXUnvvln
-         b+YHzaJJuyiwfYl3Bhe6GeQriNX6ezzisbujhkoyGZi3eRBZ9Ssv6OaR9dU26gHb6PQ1
-         sIIVc6FzIk8ALMa4f8suqQ8w/UavtYgxMGdRZEjcZO8JDrI2uMS8E42mIosE2ysx7JUR
-         jPIBaf22MwBo+TaHdyBYYg3jReUyJkIAA8oH4zudbloeGwRe3g146yEYU0i/vFgK+ZVx
-         lQH/EmbB9Z9DSN9YuNMTcgsJJyM8AcpHJC3/xnG9xHggRInbWiwwk/QFJr7huyuWBUDY
-         6bLA==
+        Tue, 30 Apr 2019 10:36:07 -0400
+Received: by mail-it1-f198.google.com with SMTP id f196so2515100itf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:36:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kqS0xUpYWHV2KKYrwWSzkNORD9GWhMTFKscheBDY6SY=;
-        b=F0pAwwi06T6OeWITx5REIqdyZIRgRrWBCmNqDfYf7XSiXkMjh240gyyr+L5QaYwYnO
-         SbPgmEMK0HzE0ToTnSavlgQIl7+/xCX5HH8bKQq1mzt2UwXy2guiE/hYHbnohGb/0sHw
-         uQqJVlIKlijf8aljshh6dWu3NRLEDN4BYpePcCQRmZOWhWS3w2DbcdOapSbiscoiOlNq
-         n+IH3EYA+wAIF7sYSEtZvqrVDgkOAFjUL6hMYKwLTnaVBQtP0FSC8uUymCxQW2gR5C8t
-         UgOBWjyjEDH5R54t1sgpzBrS0drse+cSNF8TCBRvfcurYlzFvFYaz+N4IksG4QNrzjw+
-         fPjQ==
-X-Gm-Message-State: APjAAAV2WEfJUoHKfIVLxbZ7cMsZ57wgnuWf5GEzbkYfkGM316AfB5r7
-        pjPyY4RTCEet53UulxQ8YglmSE+uazqepvayqFGwXQ==
-X-Google-Smtp-Source: APXvYqzoXmDdXU1unld0QhbwYUzlQK4qL/xbHvJGqsh7X8UsgwzODrG87qfn7g+7upf/9T11B0K8fGClva2frt9ZL0k=
-X-Received: by 2002:a63:5c24:: with SMTP id q36mr15138678pgb.314.1556634787476;
- Tue, 30 Apr 2019 07:33:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VMgx+6iCouIm6T5SwvF74+0r6jbRUy69gSjvtJBIKSQ=;
+        b=O+Hx8olv5WFCjqS0w6CDqo7GcXIep5FO4QHL7RfviTiVF2CNeuJELKHhSN52BuZ3Ny
+         emL8dNOQ2XLADqRyl3nH+iQQVTE7ERnL5O4YUnXo1bxjNv8ZeLj1JvC7UQWKdzCuCgzT
+         qc88QG7p46/VC12rMgTP/PcZUMesS0yEUM5DEw4+FUYRLJcYzJgxXVCHDty8M5/fIFAS
+         cGXV7YF4ejUZXiHnNSDQ3q8j0rP1a4TMaq0FgBN1Q/DYNVGzyyf4MXvnpBZKGPuRvbdO
+         ww0Z9Cax8YacXWUj7/LfRORU6dnASgIqq6WpPCrM4X3GuZYnu6hZfHoMcYIplFi/0AiY
+         EJcA==
+X-Gm-Message-State: APjAAAXdAgDrskC7Cmcu8Xa70uOxj8OYFsMiUzZmetViHaRaChbM8bDi
+        8PosLBBpRy2CbA+cjwDWgH6Kk/CWoO9VzW1WyBrLih8eJqss
+X-Google-Smtp-Source: APXvYqww/ewYXb9i3zqf03E6NoKS0d1c1UmjiyQxO4HoOQO7SuLXd192xFmZI/8UqdLnSUPSIFEXRwaZjXMr0X+UDcLq/KkO++/U
 MIME-Version: 1.0
-References: <20190416154138.124734-1-venture@google.com> <20190430004211.GA28272@bogus>
-In-Reply-To: <20190430004211.GA28272@bogus>
-From:   Patrick Venture <venture@google.com>
-Date:   Tue, 30 Apr 2019 07:32:56 -0700
-Message-ID: <CAO=notwuAhWQry-yO9-5zQud7Mo_3=Q5gKaE4doijSrS=v_pXw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: Add ir38064 as a trivial device
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, trivial@kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a05:660c:9c2:: with SMTP id i2mr3941634itl.80.1556634967014;
+ Tue, 30 Apr 2019 07:36:07 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 07:36:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004101370587c052fb@google.com>
+Subject: WARNING: Support for this device (Terratec Grabster AV400) is experimental.
+From:   syzbot <syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 5:42 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Apr 16, 2019 at 08:41:38AM -0700, Patrick Venture wrote:
-> > The ir38064 is a voltage regulator from Infineon.
-> >
-> > Signed-off-by: Patrick Venture <venture@google.com>
-> > ---
-> >  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
->
-> Patch 1 and 2 applied.
+Hello,
 
-Thanks!
+syzbot found the following crash on:
 
->
-> Rob
+HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=141ca62d200000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
+dashboard link: https://syzkaller.appspot.com/bug?extid=af8f8d2ac0d39b0ed3a0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1405bedd200000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ce3bbb200000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com
+
+usb 1-1: New USB device found, idVendor=0ccd, idProduct=0039, bcdDevice=  
+d.3c
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+pvrusb2: Hardware description: Terratec Grabster AV400
+pvrusb2: **********
+pvrusb2: WARNING: Support for this device (Terratec Grabster AV400) is  
+experimental.
+pvrusb2: Important functionality might not be entirely working.
+pvrusb2: Please consider contacting the driver author to help with further  
+stabilization of the driver.
+pvrusb2: **********
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
