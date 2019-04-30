@@ -2,107 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5CD1024C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9517B10251
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfD3WYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 18:24:35 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35640 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfD3WYf (ORCPT
+        id S1727379AbfD3WZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 18:25:20 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45213 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbfD3WZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:24:35 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w197so12637454oia.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 15:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fredlawl-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uZ1PM87ohnji9r872rj74D6Fq0/brGlUbTKwwr5a4q4=;
-        b=nFOLQnmPRb0/JY/yvlCkC3oJJBGeUK8FlyZN3L1GY5xyfkwe9bli7sUi3VEPO0lwe2
-         mUvOrBq5ZhzEytWPtts8NVsji1tKsp9ntb1GB2V94eNJFLbmJcM2nzBUFMoXykIJqvXm
-         DNLV4wmm4WP9NaQX8R5aHTil2Wmo7jbh9D0/eg3OcAm7oQGfPcVHnuMKVPV7ZyAz0Qe0
-         /aWIjUnObS1IiTkkwNenowUmzwYGwnYi+Y05WmQG+MPEfQvE20qs1AWTaAiUdHOk2m9a
-         LRg0JdbAzKMXlJs9AkugORRXVQi03QBKd3aKOrm2Jo9GSe2PeFnNh6aEAHgbJ11WeQwe
-         nTBQ==
+        Tue, 30 Apr 2019 18:25:20 -0400
+Received: by mail-ot1-f68.google.com with SMTP id a10so4627902otl.12;
+        Tue, 30 Apr 2019 15:25:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uZ1PM87ohnji9r872rj74D6Fq0/brGlUbTKwwr5a4q4=;
-        b=Zj9j+MxRrNGz4cI2kKGRpgMgx1Gn22N62EYRsuPuuNjaQ0A/TDRr8CGsuCZzLXtN6s
-         yXLZO2S2gWoYc/LLYVJsMR+ZPaLVLm8shi1ksL0qAkB0tNfWj7uS2xkQE1lnhZki++di
-         uThjzjKkVpinEOn7TE5ij6/r7ddo2JQE8CYRMW8YXW3rzoCZhasVVLCf/4dq0JvCYiQI
-         6g45KqWk4xp5jssIjfPKrLOYT0/JC7AwfgkWYuDWgFe1h+EnnLrEYoFJTYYrDJruENK9
-         VJ593pY85zUmqSaG6JoBZE5t0bCxf9az56ss+SyG0U06R44mMWJYxfwTBi7AWRAHjxdq
-         Hk2g==
-X-Gm-Message-State: APjAAAXz2q5atj1f1Ad/BIjmV1MJINiwmnFX/MkXkU5Rtm5TReS+MSW5
-        SB9QFRCfEfVE+npiahO63rX7jg==
-X-Google-Smtp-Source: APXvYqyz6UUC1VeOH+MU0VesR8d3jpajolEW8TlyLuBJR+0sciV/7J3SsuS7ITWRFimevejVWQBOVg==
-X-Received: by 2002:aca:c696:: with SMTP id w144mr1836254oif.126.1556663074332;
-        Tue, 30 Apr 2019 15:24:34 -0700 (PDT)
-Received: from Fredericks-MacBook-Pro.local ([2600:1700:18a0:11d0:99ba:d92:93c8:8fb9])
-        by smtp.gmail.com with ESMTPSA id k65sm16084979oia.16.2019.04.30.15.24.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 15:24:33 -0700 (PDT)
-Subject: Re: [PATCH 1/4] PCI: Replace dev_*() printk wrappers with pci_*()
- printk wrappers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-        lukas@wunner.de, keith.busch@intel.com, mr.nuke.me@gmail.com,
-        liudongdong3@huawei.com, thesven73@gmail.com
-References: <20190427191304.32502-1-fred@fredlawl.com>
- <20190427191304.32502-2-fred@fredlawl.com>
- <20190428154339.GT9224@smile.fi.intel.com>
-From:   Frederick Lawler <fred@fredlawl.com>
-Message-ID: <a15490fb-3afc-868a-117e-351cd9726bf2@fredlawl.com>
-Date:   Tue, 30 Apr 2019 17:25:08 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 PostboxApp/6.1.14
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=brf7Bb8id6Hk+i6bJxTGFqDIbEXOeaazWSGC46nmM0E=;
+        b=q1dqTYSsmG2wGpGZ413+9r0yGpHyUVwFtezx4Qyx+inMM9IZ+PWElnmSeW0EX7RrNf
+         dfdsTYl7MG2J30dHJ55TPAhATThahRlYXoKU/TmNrovjm9SesiGPbbK9lZdsSeNpE09V
+         uDpfscTJKBofEPxusXMYzReVY0iQPPYdGM34P+KlOjYW7fOg3BYPWl5OrhBZVhvUICfk
+         wWTOgcTGPlfpYVbpeU2bmeM5QI6zbYJwDYN+JaYaqLphn5pYvRpFTTbiLIjDw2yvwMJh
+         n/N8JSXSQobnPLb+cQLhgPfaWjz+4LzLc+wrN0usNniUNDa2z2if3FVUdTRJqJnU35iY
+         kqoQ==
+X-Gm-Message-State: APjAAAXaXRU1U4tiq8ciY4MymgY033fNVdRwHFF02NgAw5yXYp38hdJw
+        jveFxwHPNX/sAwUcGFqX3qGboo8=
+X-Google-Smtp-Source: APXvYqyyRL+scZJ1xlL9sgDE1ulI6fxpWupwNB6e11rvDCaYex/jkYDco3+Yr1qYKX+MCz5J3CuiUA==
+X-Received: by 2002:a9d:5c09:: with SMTP id o9mr13588147otk.311.1556663119307;
+        Tue, 30 Apr 2019 15:25:19 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n3sm15918317oia.46.2019.04.30.15.25.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 15:25:18 -0700 (PDT)
+Date:   Tue, 30 Apr 2019 17:25:18 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, tglx@linutronix.de,
+        jason@lakedaemon.net,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>,
+        linus.walleij@linaro.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v8 10/14] dt-bindings: irqchip: Introduce TISCI Interrupt
+ Aggregator bindings
+Message-ID: <20190430222518.GA8786@bogus>
+References: <20190430101230.21794-1-lokeshvutla@ti.com>
+ <20190430101230.21794-11-lokeshvutla@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190428154339.GT9224@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430101230.21794-11-lokeshvutla@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy,
-
-Andy Shevchenko wrote on 4/28/19 10:43 AM:
-> On Sat, Apr 27, 2019 at 02:13:01PM -0500, fred@fredlawl.com wrote:
->> From: Frederick Lawler <fred@fredlawl.com>
->>
->> Replace remaining instances of dev_*() printk wrappers with pci_*()
->> printk wrappers. No functional change intended.
+On Tue, 30 Apr 2019 15:42:26 +0530, Lokesh Vutla wrote:
+> Add the DT binding documentation for Interrupt Aggregator driver.
 > 
->> -		pci_printk(KERN_DEBUG, parent, "can't find device of ID%04x\n",
->> -			   e_info->id);
->> +		pci_dbg(parent, "can't find device of ID%04x\n", e_info->id);
-> 
-> These are not equivalent.
-> 
->> -		dev_printk(KERN_DEBUG, device, "alloc AER rpc failed\n");
->> +		pci_dbg(pdev, "alloc AER rpc failed\n");
-> 
-> Ditto.
-> 
->> -		dev_printk(KERN_DEBUG, device, "request AER IRQ %d failed\n",
->> -			   dev->irq);
->> +		pci_dbg(pdev, "request AER IRQ %d failed\n", dev->irq);
-> 
-> Ditto.
-> 
-> And so on.
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+> Changes since v7:
+> - None
+>  .../interrupt-controller/ti,sci-inta.txt      | 66 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
 > 
 
-Thanks for the review. Clearly this was an oversight on my part and I'll 
-have that corrected. Thanks!
-
-
-Frederick Lawler
-
+Reviewed-by: Rob Herring <robh@kernel.org>
