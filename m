@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAC72F740
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A8DF675
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730778AbfD3Lr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:47:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33668 "EHLO mail.kernel.org"
+        id S1730438AbfD3LsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:48:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730212AbfD3Lrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:47:53 -0400
+        id S1730772AbfD3Lr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:47:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4A421670;
-        Tue, 30 Apr 2019 11:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2510E2054F;
+        Tue, 30 Apr 2019 11:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624873;
-        bh=kNLEkDNqDIPHFOrHu1Pv3oTZu0+9OW87EzZ8XsfrTgA=;
+        s=default; t=1556624875;
+        bh=yge4E7KebFg2Quye//YHCc98uYDAOoFCwRnlY9Uh2dw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=an/p+eJih/7XNA35kTHAUn2E4khQ9k/VKNSpUQLgtkT/e7PK2U6wF4YfpqvnfyOJD
-         9tTV997/0CfbQgJgkAP9zFVqpl3XoT0xuMUEdi9aBvMcK7eD39s1QNHJI6n5uOkGoK
-         zP2NsfyhXtCCYK2omjBIqoE6fvZZFeXWF0BWe/yA=
+        b=htdQ6KY5tN52tz+9B6MQ2wb61xNYIqiZz+uxWAb7Vz3a1+fvndfEPrLAaZyH0YnMr
+         opofe0DO+Y1onQO/yEvG86jj8tYGZgLXUNLODMh4MOey3gy5niCJ3HNkWk50V4qDfz
+         rlFknkB9FxrZtRDdbKzweHonLTbmp9zREr3Zy/MA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 093/100] team: fix possible recursive locking when add slaves
-Date:   Tue, 30 Apr 2019 13:39:02 +0200
-Message-Id: <20190430113613.211637903@linuxfoundation.org>
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Jun Xiao <xiaojun2@hisilicon.com>
+Subject: [PATCH 4.19 094/100] net: hns: Fix WARNING when hns modules installed
+Date:   Tue, 30 Apr 2019 13:39:03 +0200
+Message-Id: <20190430113613.268465382@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
 References: <20190430113608.616903219@linuxfoundation.org>
@@ -44,53 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Jun Xiao <xiaojun2@hisilicon.com>
 
-[ Upstream commit 925b0c841e066b488cc3a60272472b2c56300704 ]
+Commit dfdf26babc98 upstream
 
-If we add a bond device which is already the master of the team interface,
-we will hold the team->lock in team_add_slave() first and then request the
-lock in team_set_mac_address() again. The functions are called like:
+this patch need merge to 4.19.y stable kernel
 
-- team_add_slave()
- - team_port_add()
-   - team_port_enter()
-     - team_modeop_port_enter()
-       - __set_port_dev_addr()
-         - dev_set_mac_address()
-           - bond_set_mac_address()
-             - dev_set_mac_address()
-  	       - team_set_mac_address
+Fix Conflict:already fixed the confilct dfdf26babc98 with Yonglong Liu
 
-Although team_upper_dev_link() would check the upper devices but it is
-called too late. Fix it by adding a checking before processing the slave.
+stable candidate:user cannot connect to the internet via hns dev
+by default setting without this patch
 
-v2: Do not split the string in netdev_err()
+we have already verified this patch on kunpeng916 platform,
+and it works well.
 
-Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Jun Xiao <xiaojun2@hisilicon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1160,6 +1160,13 @@ static int team_port_add(struct team *te
- 		return -EINVAL;
- 	}
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -1169,6 +1169,12 @@ int hns_nic_init_phy(struct net_device *
+ 	if (!h->phy_dev)
+ 		return 0;
  
-+	if (netdev_has_upper_dev(dev, port_dev)) {
-+		NL_SET_ERR_MSG(extack, "Device is already an upper device of the team interface");
-+		netdev_err(dev, "Device %s is already an upper device of the team interface\n",
-+			   portname);
-+		return -EBUSY;
-+	}
++	phy_dev->supported &= h->if_support;
++	phy_dev->advertising = phy_dev->supported;
 +
- 	if (port_dev->features & NETIF_F_VLAN_CHALLENGED &&
- 	    vlan_uses_dev(dev)) {
- 		NL_SET_ERR_MSG(extack, "Device is VLAN challenged and team device has VLAN set up");
++	if (h->phy_if == PHY_INTERFACE_MODE_XGMII)
++		phy_dev->autoneg = false;
++
+ 	if (h->phy_if != PHY_INTERFACE_MODE_XGMII) {
+ 		phy_dev->dev_flags = 0;
+ 
+@@ -1180,15 +1186,6 @@ int hns_nic_init_phy(struct net_device *
+ 	if (unlikely(ret))
+ 		return -ENODEV;
+ 
+-	phy_dev->supported &= h->if_support;
+-	phy_dev->advertising = phy_dev->supported;
+-
+-	if (h->phy_if == PHY_INTERFACE_MODE_XGMII)
+-		phy_dev->autoneg = false;
+-
+-	if (h->phy_if == PHY_INTERFACE_MODE_SGMII)
+-		phy_stop(phy_dev);
+-
+ 	return 0;
+ }
+ 
 
 
