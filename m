@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F51F765
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B33F624
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbfD3Lqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
+        id S1729982AbfD3Lnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:43:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbfD3Lql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:46:41 -0400
+        id S1729953AbfD3Lnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:43:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1439020449;
-        Tue, 30 Apr 2019 11:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DA8521670;
+        Tue, 30 Apr 2019 11:43:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624800;
-        bh=FIm/dYJUGKyWJsw104A+MAzQhk1rZCq5KdDwZvA7XWk=;
+        s=default; t=1556624612;
+        bh=9pHvpcKgOX608CuYZV0lk0tPUwVrFtVe9H1Tma0SJGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NrqnzOQDsqKywnEUQIQWFNkDE8jy72RjJClxU8pgTx/Na1bHaqO9aNDEfQxEsBo9v
-         hCX4fjdg8FmNMFxiS6+CLxHwKmHoH67s5aeAqbkeopmlI1idpenUjFqukuqCmqrN/f
-         SitCB+OS8t/dsZBNzrmqCmO8bw2bnc4aZeXN5AEM=
+        b=vyko1YFOW0OPcx3Hwze3CU3kQ2BQcGjBMDWICgKM9ov5hONiwzeOolGG02GpiYzzm
+         hd6VKDd+OVioHMghCdELGmyKcoT+AR3KIJaELq5KqqbH1eV0nIo72JDSJE2o9bfOGq
+         /g9OhL2l9v9OJu+CgU6TPwkNhi3youLx1F7fv0XE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 076/100] aio: fold lookup_kiocb() into its sole caller
-Date:   Tue, 30 Apr 2019 13:38:45 +0200
-Message-Id: <20190430113612.324229328@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 39/53] dm integrity: change memcmp to strncmp in dm_integrity_ctr
+Date:   Tue, 30 Apr 2019 13:38:46 +0200
+Message-Id: <20190430113557.982220951@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 833f4154ed560232120bc475935ee1d6a20e159f upstream.
+commit 0d74e6a3b6421d98eeafbed26f29156d469bc0b5 upstream.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
+If the string opt_string is small, the function memcmp can access bytes
+that are beyond the terminating nul character. In theory, it could cause
+segfault, if opt_string were located just below some unmapped memory.
+
+Change from memcmp to strncmp so that we don't read bytes beyond the end
+of the string.
+
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/aio.c |   29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/md/dm-integrity.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1992,24 +1992,6 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat
- }
- #endif
- 
--/* lookup_kiocb
-- *	Finds a given iocb for cancellation.
-- */
--static struct aio_kiocb *
--lookup_kiocb(struct kioctx *ctx, struct iocb __user *iocb)
--{
--	struct aio_kiocb *kiocb;
--
--	assert_spin_locked(&ctx->ctx_lock);
--
--	/* TODO: use a hash or array, this sucks. */
--	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
--		if (kiocb->ki_user_iocb == iocb)
--			return kiocb;
--	}
--	return NULL;
--}
--
- /* sys_io_cancel:
-  *	Attempts to cancel an iocb previously passed to io_submit.  If
-  *	the operation is successfully cancelled, the resulting event is
-@@ -2038,10 +2020,13 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t
- 		return -EINVAL;
- 
- 	spin_lock_irq(&ctx->ctx_lock);
--	kiocb = lookup_kiocb(ctx, iocb);
--	if (kiocb) {
--		ret = kiocb->ki_cancel(&kiocb->rw);
--		list_del_init(&kiocb->ki_list);
-+	/* TODO: use a hash or array, this sucks. */
-+	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
-+		if (kiocb->ki_user_iocb == iocb) {
-+			ret = kiocb->ki_cancel(&kiocb->rw);
-+			list_del_init(&kiocb->ki_list);
-+			break;
-+		}
- 	}
- 	spin_unlock_irq(&ctx->ctx_lock);
- 
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -2917,17 +2917,17 @@ static int dm_integrity_ctr(struct dm_ta
+ 				goto bad;
+ 			}
+ 			ic->sectors_per_block = val >> SECTOR_SHIFT;
+-		} else if (!memcmp(opt_string, "internal_hash:", strlen("internal_hash:"))) {
++		} else if (!strncmp(opt_string, "internal_hash:", strlen("internal_hash:"))) {
+ 			r = get_alg_and_key(opt_string, &ic->internal_hash_alg, &ti->error,
+ 					    "Invalid internal_hash argument");
+ 			if (r)
+ 				goto bad;
+-		} else if (!memcmp(opt_string, "journal_crypt:", strlen("journal_crypt:"))) {
++		} else if (!strncmp(opt_string, "journal_crypt:", strlen("journal_crypt:"))) {
+ 			r = get_alg_and_key(opt_string, &ic->journal_crypt_alg, &ti->error,
+ 					    "Invalid journal_crypt argument");
+ 			if (r)
+ 				goto bad;
+-		} else if (!memcmp(opt_string, "journal_mac:", strlen("journal_mac:"))) {
++		} else if (!strncmp(opt_string, "journal_mac:", strlen("journal_mac:"))) {
+ 			r = get_alg_and_key(opt_string, &ic->journal_mac_alg,  &ti->error,
+ 					    "Invalid journal_mac argument");
+ 			if (r)
 
 
