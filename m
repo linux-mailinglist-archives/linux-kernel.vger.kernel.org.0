@@ -2,35 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2290FF71B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 874B8F68C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:49:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbfD3LtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:49:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35606 "EHLO mail.kernel.org"
+        id S1730973AbfD3LtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730934AbfD3LtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:49:10 -0400
+        id S1730278AbfD3LtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:49:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B2362177B;
-        Tue, 30 Apr 2019 11:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C858B21670;
+        Tue, 30 Apr 2019 11:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624949;
-        bh=ZBbxzEzM68irpAlpYV2xErPYncDbMHz9b36z2Ynmjd0=;
+        s=default; t=1556624952;
+        bh=3Tq88hR5hv0Ak6dU50bZT9K8PkyxvQU6ZbbPLIXGtXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iQ0liYcHbalUI0cit/ips0burQQy3Qik9lfR3tXWugFdZ4TiaNOlrAVhm5P30PrFo
-         lwvgqhjwOlX2Pj1Y1gApktSMHDyW4zXhpAq9io20G1z3sVnpgyFdQ3edBuvjNoRiRT
-         hYsT3uNs/MPt5hMIAxTZNnejNk7zY1UOjtcq7A9A=
+        b=FZjC8/T4kZg8JQ/cB/8jdivw+P59pDzk7czZzyGv8ZhT3niOVAc3VouiTg0JyIOl+
+         8Q6CNHL4bT/OufsjMv5ZiuJx/HaF10Q669xzUwNNSqjHqwp7sFuAnvdho6OqyZdBMw
+         G1qNxQSZf9YXj+a3a9HWl0lDX0H/pHYXo2LoNcGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        "J. Bruce Fields" <bfields@redhat.com>, stable@kernel.org
-Subject: [PATCH 5.0 33/89] sunrpc: dont mark uninitialised items as VALID.
-Date:   Tue, 30 Apr 2019 13:38:24 +0200
-Message-Id: <20190430113611.449275841@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, gs0622@gmail.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 5.0 34/89] perf/x86/intel: Update KBL Package C-state events to also include PC8/PC9/PC10 counters
+Date:   Tue, 30 Apr 2019 13:38:25 +0200
+Message-Id: <20190430113611.481702887@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
 References: <20190430113609.741196396@linuxfoundation.org>
@@ -43,57 +51,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Harry Pan <harry.pan@intel.com>
 
-commit d58431eacb226222430940134d97bfd72f292fcd upstream.
+commit 82c99f7a81f28f8c1be5f701c8377d14c4075b10 upstream.
 
-A recent commit added a call to cache_fresh_locked()
-when an expired item was found.
-The call sets the CACHE_VALID flag, so it is important
-that the item actually is valid.
-There are two ways it could be valid:
-1/ If ->update has been called to fill in relevant content
-2/ if CACHE_NEGATIVE is set, to say that content doesn't exist.
+Kaby Lake (and Coffee Lake) has PC8/PC9/PC10 residency counters.
 
-An expired item that is waiting for an update will be neither.
-Setting CACHE_VALID will mean that a subsequent call to cache_put()
-will be likely to dereference uninitialised pointers.
+This patch updates the list of Kaby/Coffee Lake PMU event counters
+from the snb_cstates[] list of events to the hswult_cstates[]
+list of events, which keeps all previously supported events and
+also adds the PKG_C8, PKG_C9 and PKG_C10 residency counters.
 
-So we must make sure the item is valid, and we already have code to do
-that in try_to_negate_entry().  This takes the hash lock and so cannot
-be used directly, so take out the two lines that we need and use them.
+This allows user space tools to profile them through the perf interface.
 
-Now cache_fresh_locked() is certain to be called only on
-a valid item.
-
-Cc: stable@kernel.org # 2.6.35
-Fixes: 4ecd55ea0742 ("sunrpc: fix cache_head leak due to queued request")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: gs0622@gmail.com
+Link: http://lkml.kernel.org/r/20190424145033.1924-1-harry.pan@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/cache.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/events/intel/cstate.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/sunrpc/cache.c
-+++ b/net/sunrpc/cache.c
-@@ -54,6 +54,7 @@ static void cache_init(struct cache_head
- 	h->last_refresh = now;
- }
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -76,15 +76,15 @@
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
+  *			       perf code: 0x04
+- *			       Available model: HSW ULT,CNL
++ *			       Available model: HSW ULT,KBL,CNL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
+  *			       perf code: 0x05
+- *			       Available model: HSW ULT,CNL
++ *			       Available model: HSW ULT,KBL,CNL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+  *			       perf code: 0x06
+- *			       Available model: HSW ULT,GLM,CNL
++ *			       Available model: HSW ULT,KBL,GLM,CNL
+  *			       Scope: Package (physical package)
+  *
+  */
+@@ -572,8 +572,8 @@ static const struct x86_cpu_id intel_cst
+ 	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_DESKTOP, snb_cstates),
+ 	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_X, snb_cstates),
  
-+static inline int cache_is_valid(struct cache_head *h);
- static void cache_fresh_locked(struct cache_head *head, time_t expiry,
- 				struct cache_detail *detail);
- static void cache_fresh_unlocked(struct cache_head *head,
-@@ -105,6 +106,8 @@ static struct cache_head *sunrpc_cache_a
- 			if (cache_is_expired(detail, tmp)) {
- 				hlist_del_init_rcu(&tmp->cache_list);
- 				detail->entries --;
-+				if (cache_is_valid(tmp) == -EAGAIN)
-+					set_bit(CACHE_NEGATIVE, &tmp->flags);
- 				cache_fresh_locked(tmp, 0, detail);
- 				freeme = tmp;
- 				break;
+-	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_MOBILE,  snb_cstates),
+-	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_DESKTOP, snb_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_MOBILE,  hswult_cstates),
++	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_DESKTOP, hswult_cstates),
+ 
+ 	X86_CSTATES_MODEL(INTEL_FAM6_CANNONLAKE_MOBILE, cnl_cstates),
+ 
 
 
