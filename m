@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7F0F760
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF3AF688
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfD3L6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60422 "EHLO mail.kernel.org"
+        id S1730418AbfD3LtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730649AbfD3LrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:47:04 -0400
+        id S1730216AbfD3Lsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:48:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1D3020449;
-        Tue, 30 Apr 2019 11:47:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9683A20449;
+        Tue, 30 Apr 2019 11:48:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624823;
-        bh=S0SOl4WlJ3Nkb7wjdnQgB3nyI8KIwfRHP3+uxXnFOrw=;
+        s=default; t=1556624934;
+        bh=dvAnglenaAPPEDdrNg0L+1ChK2siq9KNAMIzym/7tvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wgNr8khph1GC1A27p5IcN1FVLN/KtHU6Uj5ELSrTpbtKbrQioDx0uAbuaLyaBwXYD
-         sZFCVpIgQuGKndKgoyGjDjKvlrQydLLoftz4Iht5NsrHGznAQGH4V031fhc6qMzhwJ
-         Irz27+adxX3Yn4Xjy5MUKfMRc0eh8fTEnePwEYas=
+        b=Cjmt9FTkaymuKw/cF4wfVQ4YLFebqQquqij+6EqCeNP15Q32GEUZesiV/sHxeFBEN
+         GtL1Ofq24PgL7ImbmVqEZOg+q//JQ63pJLGb7nNogYCwfrJO6pvomzs/wDsQ5hBNzq
+         9WNjYim6lujACTP/1iA4FBzlg3sYghl4rEbyT0Do=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.19 049/100] drm/vc4: Fix compilation error reported by kbuild test bot
-Date:   Tue, 30 Apr 2019 13:38:18 +0200
-Message-Id: <20190430113611.343971382@linuxfoundation.org>
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 5.0 28/89] ceph: ensure d_name stability in ceph_dentry_hash()
+Date:   Tue, 30 Apr 2019 13:38:19 +0200
+Message-Id: <20190430113611.284744685@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-References: <20190430113608.616903219@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+From: Jeff Layton <jlayton@kernel.org>
 
-commit 462ce5d963f18b71c63f6b7730a35a2ee5273540 upstream.
+commit 76a495d666e5043ffc315695f8241f5e94a98849 upstream.
 
-A pointer to crtc was missing, resulting in the following build error:
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse: sparse: incorrect type in argument 1 (different base types)
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    expected struct drm_crtc *crtc
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:44: sparse:    got struct drm_crtc_state *state
-drivers/gpu/drm/vc4/vc4_crtc.c:1045:39: sparse: sparse: not enough arguments for function vc4_crtc_destroy_state
+Take the d_lock here to ensure that d_name doesn't change.
 
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/2b6ed5e6-81b0-4276-8860-870b54ca3262@linux.intel.com
-Fixes: d08106796a78 ("drm/vc4: Fix memory leak during gpu reset.")
-Cc: <stable@vger.kernel.org> # v4.6+
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_crtc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/dir.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vc4/vc4_crtc.c
-+++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-@@ -998,7 +998,7 @@ static void
- vc4_crtc_reset(struct drm_crtc *crtc)
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1470,6 +1470,7 @@ void ceph_dentry_lru_del(struct dentry *
+ unsigned ceph_dentry_hash(struct inode *dir, struct dentry *dn)
  {
- 	if (crtc->state)
--		vc4_crtc_destroy_state(crtc->state);
-+		vc4_crtc_destroy_state(crtc, crtc->state);
+ 	struct ceph_inode_info *dci = ceph_inode(dir);
++	unsigned hash;
  
- 	crtc->state = kzalloc(sizeof(struct vc4_crtc_state), GFP_KERNEL);
- 	if (crtc->state)
+ 	switch (dci->i_dir_layout.dl_dir_hash) {
+ 	case 0:	/* for backward compat */
+@@ -1477,8 +1478,11 @@ unsigned ceph_dentry_hash(struct inode *
+ 		return dn->d_name.hash;
+ 
+ 	default:
+-		return ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
++		spin_lock(&dn->d_lock);
++		hash = ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
+ 				     dn->d_name.name, dn->d_name.len);
++		spin_unlock(&dn->d_lock);
++		return hash;
+ 	}
+ }
+ 
 
 
