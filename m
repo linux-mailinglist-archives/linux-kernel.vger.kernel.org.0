@@ -2,63 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B7AF5D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB845F5E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfD3LiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:38:23 -0400
-Received: from foss.arm.com ([217.140.101.70]:45200 "EHLO foss.arm.com"
+        id S1728431AbfD3LkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:40:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbfD3LiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:38:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C47080D;
-        Tue, 30 Apr 2019 04:38:22 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 164F23F5C1;
-        Tue, 30 Apr 2019 04:38:20 -0700 (PDT)
-Subject: Re: [PATCH 02/26] arm64/iommu: improve mmap bounds checking
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190422175942.18788-1-hch@lst.de>
- <20190422175942.18788-3-hch@lst.de>
- <306b7a19-4eb5-d1d8-5250-40f3ba9bca16@arm.com> <20190429190120.GA5637@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <a96caa67-ac59-9ce8-aabc-2601c9a10203@arm.com>
-Date:   Tue, 30 Apr 2019 12:38:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728408AbfD3LkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:40:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B061B2177B;
+        Tue, 30 Apr 2019 11:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556624421;
+        bh=1v3inFiLJzSCitqpL2LAc8O+IpCjNakfSNz/Xoc3Gdo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ct2IG2aBPHUM+FgmSMZSnbSmAj6skz3yseulXh2fA4yeBEJyKhaVbDGCMHReuv7Dd
+         R4Rgnr7KLLYTJu14Wp2niXY3sUluHLScSEQHjEPl27ru3bo28XP2bP3Kh6FKqoovYG
+         sazh+ySQeLt5UdKb2egbaF2Pblv9i6fQWJoCFCTg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 08/41] ceph: ensure d_name stability in ceph_dentry_hash()
+Date:   Tue, 30 Apr 2019 13:38:19 +0200
+Message-Id: <20190430113526.560682600@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
+References: <20190430113524.451237916@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <20190429190120.GA5637@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/04/2019 20:01, Christoph Hellwig wrote:
-> On Mon, Apr 29, 2019 at 01:35:46PM +0100, Robin Murphy wrote:
->> On 22/04/2019 18:59, Christoph Hellwig wrote:
->>> The nr_pages checks should be done for all mmap requests, not just those
->>> using remap_pfn_range.
->>
->> I think it probably makes sense now to just squash this with #22 one way or
->> the other, but if you really really still want to keep it as a separate
->> patch with a misleading commit message then I'm willing to keep my
->> complaints to myself :)
-> 
-> Well, I split this out in response to your earlier comments, so if you
-> prefer it squasheѕ back in I can do that..
+From: Jeff Layton <jlayton@kernel.org>
 
-AFAICS I only ever suggested splitting the original "fix and refactor" 
-commit into the fix (patch #1) and the refactor - I think we've just 
-ended up adding more "refactor" on top in the evolution of the series :)
+commit 76a495d666e5043ffc315695f8241f5e94a98849 upstream.
 
-Robin.
+Take the d_lock here to ensure that d_name doesn't change.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/ceph/dir.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1471,6 +1471,7 @@ void ceph_dentry_lru_del(struct dentry *
+ unsigned ceph_dentry_hash(struct inode *dir, struct dentry *dn)
+ {
+ 	struct ceph_inode_info *dci = ceph_inode(dir);
++	unsigned hash;
+ 
+ 	switch (dci->i_dir_layout.dl_dir_hash) {
+ 	case 0:	/* for backward compat */
+@@ -1478,8 +1479,11 @@ unsigned ceph_dentry_hash(struct inode *
+ 		return dn->d_name.hash;
+ 
+ 	default:
+-		return ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
++		spin_lock(&dn->d_lock);
++		hash = ceph_str_hash(dci->i_dir_layout.dl_dir_hash,
+ 				     dn->d_name.name, dn->d_name.len);
++		spin_unlock(&dn->d_lock);
++		return hash;
+ 	}
+ }
+ 
+
+
