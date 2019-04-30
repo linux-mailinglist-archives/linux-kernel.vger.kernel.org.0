@@ -2,142 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99971F001
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 07:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D38EEFE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 07:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfD3Fdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 01:33:46 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:37525 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfD3Fdp (ORCPT
+        id S1726120AbfD3F0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 01:26:24 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39641 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3F0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 01:33:45 -0400
-Received: by mail-vs1-f66.google.com with SMTP id w13so7300320vsc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:33:45 -0700 (PDT)
+        Tue, 30 Apr 2019 01:26:23 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l18so6287987pgj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dAZB9m78vyMqVnCUT5sxg+zHI1l8qWvxtWApzbGtN1A=;
-        b=iRmEmm4IrU6e+wZHgKHwQwIr0tcTTb9ixCcFFUV+Q+c6fi2SKUyMCAt/qUlgKI5Zjz
-         JohZhhouXMXuxCAlnL7+6YHVlqjsv5zhMjn+o41T14oN8A6DN+HAOIRuUdSHnW9rAwE2
-         LY5Jyu7Yvsvk8uDEVZrh9r7avMXSXUJJPl1cs=
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=Bpxrrn0nhxg0QxbDmzcOwQzwDv1LTHTm0Bu1+pUS7w8=;
+        b=nO/HIlKtfAK2/1SkYjs9tvdr0hQBtMHhY7aKlt/T59XLtvScCsjGuvSdoWwODP1Fnk
+         g+y27oy0qEq3YmJhkAIzcoBj/FDGUGg1OmHRCyoHMXEvj7I1Ehr1BE63S0t5LbQ+FnP3
+         ZuUmJmrlvmbkugShZo1RZv89Qy4f3wYp4XSTSej/hfm1wGpp9O5ibgr41I7rHXulXmnV
+         9LmhdIyHB/TZbUkIkXJzL67/kmpRHd2uz03LuwTmfXQKOsWPx/Dw1O6NgYtADHgpe2Re
+         2UQYk4/EjLTNVNm6BJLTbZjpJD2gjapyhvzuDPBtxBxL74BbueTzkv9OREFXIcwG+a3I
+         R9GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dAZB9m78vyMqVnCUT5sxg+zHI1l8qWvxtWApzbGtN1A=;
-        b=kH/MqMIr3bcv8w5WZjNQFIPZ+e+vfYiOzE84j981WCxPk81w90u+12VGwJi7g65zC7
-         ZTqjNG0DihKI469olbUUMdey/M/Rfw/ohMDvYjhU886yNHIQoiP0zPDC6RYsP9gFPobS
-         xjqHjYPvUAcvsfMjgamhlV1K6EqLrfkOPNxSAw1uiyM5/SfWDvHtuPBVVznEi3rQopRm
-         faljgMFh+uEfabn5dID7FSJIaCOhTjdpIhxtq2lnbC8ycccvhyFY4Cjx5Y1lE/iUmleF
-         +rtR6o3qsvJEJ0f+Q7dCG1ZVuEbPxDRNfw3z51l3VRY7K4V82fCvMydGX14AYSVnSpRA
-         V+zg==
-X-Gm-Message-State: APjAAAVq7kF9g2m3B8JrwpundK4JkTL42Ov0pz6SlluQ16wTpuH9b9LZ
-        zKZxCE/HKkWfwkzvaMBtO5i54Y7Pl64=
-X-Google-Smtp-Source: APXvYqzRfpcanSCUQGcJNbNo2b+4plYLTvORQOpegGPP2hhLOtTUMhI+2209o/GGzj2mYop2k+CxRA==
-X-Received: by 2002:a67:b343:: with SMTP id b3mr32213280vsm.237.1556602424570;
-        Mon, 29 Apr 2019 22:33:44 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id z192sm23173003vkd.45.2019.04.29.22.33.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 22:33:44 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id s11so7326507vsn.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 22:33:44 -0700 (PDT)
-X-Received: by 2002:a67:e88c:: with SMTP id x12mr9502003vsn.87.1556601955497;
- Mon, 29 Apr 2019 22:25:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190418001356.124334-1-dianders@chromium.org>
- <20190418001356.124334-4-dianders@chromium.org> <20190430012328.GA25660@bogus>
-In-Reply-To: <20190430012328.GA25660@bogus>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 29 Apr 2019 22:25:52 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UdtgAZBxuwjrrXtKT1sMfaELF8V193BF=UHg9fvM+yRw@mail.gmail.com>
-Message-ID: <CAD=FV=UdtgAZBxuwjrrXtKT1sMfaELF8V193BF=UHg9fvM+yRw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] Documentation: dt-bindings: Add
- snps,need-phy-for-wake for dwc2 USB
-To:     Rob Herring <robh@kernel.org>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Artur Petrosyan <Arthur.Petrosyan@synopsys.com>,
-        Alexandru M Stan <amstan@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        William Wu <william.wu@rock-chips.com>,
-        linux-usb@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Randy Li <ayaka@soulik.info>, Chris <zyw@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Julius Werner <jwerner@chromium.org>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=Bpxrrn0nhxg0QxbDmzcOwQzwDv1LTHTm0Bu1+pUS7w8=;
+        b=mDOG9MLJxx1Rb91HFmV1slUh7Tjmcq7Vl7dh6cLf+Xux10VrIdT0MWmDUvrUttvf3d
+         vEjqktyNo3jwk+zHB5+M5rvmocBpNm3jArxI9HA54uKUycHUh6+E/s1b1Rlq8ZLdjP14
+         SBkJ49awGjad06WPcFheBHPA9KDwhmI8kbjd8j1aJQp71+7Rp474ulcIamnuF1ar3Vhr
+         3kbzg4bCyUuU88y/vAQqqv0X+rdoDvRaA5+QBHGmh7SC9e1//DyLuUdYnKJwh2TNdqgd
+         5br+tgXDA5mpEXRU7VquHFvH/9H+zR+E7jh9AJLjH50gvhf6u1u9kfxnidfYJVoOf5Ay
+         6TYg==
+X-Gm-Message-State: APjAAAV9f78cH699sS2dFEx8dJ4DGhGkabdQlA6GFMnDRhOoO6xkp5ib
+        Tge4spQpcQVt5u/SsVBgwE/twog36do=
+X-Google-Smtp-Source: APXvYqw9y61EBVVqfdNsoj2n24fD1cpqlHi4M+njFWS/yRijvHvuAm+WHa/NpkTB4ca9k7JEsq0fcg==
+X-Received: by 2002:a62:4852:: with SMTP id v79mr68254296pfa.72.1556601982356;
+        Mon, 29 Apr 2019 22:26:22 -0700 (PDT)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id m8sm54492464pgn.59.2019.04.29.22.26.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 22:26:21 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <D81FA0ED-7F7D-4B57-BE9A-26C5941D8FFE@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_E49322AE-A695-47B8-8F15-BAD54F0C2D97";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC][PATCHSET] sorting out RCU-delayed stuff in
+ ->destroy_inode()
+Date:   Mon, 29 Apr 2019 23:26:15 -0600
+In-Reply-To: <20190430042623.GJ23075@ZenIV.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+References: <20190416174900.GT2217@ZenIV.linux.org.uk>
+ <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
+ <20190430030914.GF23075@ZenIV.linux.org.uk>
+ <F01D238D-8A6C-4629-ABC5-4A8BAC25951F@dilger.ca>
+ <20190430042623.GJ23075@ZenIV.linux.org.uk>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Mon, Apr 29, 2019 at 6:23 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Apr 17, 2019 at 05:13:54PM -0700, Douglas Anderson wrote:
-> > Some SoCs with a dwc2 USB controller may need to keep the PHY on to
-> > support remote wakeup.  Allow specifying this as a device tree
-> > property.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > For relevant prior discussion on this patch, see:
-> >
-> > https://lkml.kernel.org/r/1435017144-2971-3-git-send-email-dianders@chromium.org
-> >
-> > I didn't make any changes from the prior version since I never found
-> > out what Rob thought of my previous arguments.  If folks want a
-> > change, perhaps they could choose from these options:
-> >
-> > 1. Assume that all dwc2 hosts would like to keep their PHY on for
-> >    suspend if there's a USB wakeup enabled, thus we totally drop this
-> >    binding.  This doesn't seem super great to me since I'd bet that
-> >    many devices that use dwc2 weren't designed for USB wakeup (they
-> >    may not keep enough clocks or rails on) so we might be wasting
-> >    power for nothing.
->
-> 1b. Use SoC specific compatible strings to enable/disable remote
-> wake-up. We can debate what the default is I guess.
-
-Unfortunately it's more than just SoC.  While you need the SoC to be
-able to support this type of wakeup, you also need the board design,
-firmware design, regulator design, etc.  ...so I don't think we can
-just use the SoC specific compatible string.
-
-In fact, while testing this I found that USB wakeup was totally broken
-unless I enabled "deep suspend" mode on my system.  Something about
-the clocks / wakeup sources in the shallow suspend totally blocked it
-and I couldn't figure out what.
-
-...so I believe it really needs to be something where someone has
-said: I tested it out on this board and everything is setup properly
-to support USB wakeup.
+--Apple-Mail=_E49322AE-A695-47B8-8F15-BAD54F0C2D97
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
 
-> > 2. Rename this property to "snps,wakeup-from-suspend-with-phy" to make
-> >    it more obvious that this property is intended both to document
-> >    that wakeup from suspend is possible and that we need the PHY for
-> >    said wakeup.
-> > 3. Rename this property to "snps,can-wakeup-from-suspend" and assume
-> >    it's implicit that if we can wakeup from suspend that we need to
-> >    keep the PHY on.  If/when someone shows that a device exists using
-> >    dwc2 where we can wakeup from suspend without the PHY they can add
-> >    a new property.
-> >
-> > Changes in v2: None
-> >
-> >  Documentation/devicetree/bindings/usb/dwc2.txt | 3 +++
-> >  1 file changed, 3 insertions(+)
+> On Apr 29, 2019, at 10:26 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>=20
+> On Mon, Apr 29, 2019 at 10:18:04PM -0600, Andreas Dilger wrote:
+>>>=20
+>>> 	void			*i_private; /* fs or device private =
+pointer */
+>>> +	void (*free_inode)(struct inode *);
+>>=20
+>> It seems like a waste to increase the size of every struct inode just =
+to access
+>> a static pointer.  Is this the only place that ->free_inode() is =
+called?  Why
+>> not move the ->free_inode() pointer into inode->i_fop->free_inode() =
+so that it
+>> is still directly accessible at this point.
+>=20
+> i_op, surely?
+
+Yes, i_op is what I was thinking.
+
+> In any case, increasing sizeof(struct inode) is not a problem -
+
+> if anything, I'd turn ->i_fop into an anon union with that.  As in,
+>=20
+> diff --git a/fs/inode.c b/fs/inode.c
+> index fb45590d284e..627e1766503a 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -211,8 +211,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
+> static void i_callback(struct rcu_head *head)
+> {
+> 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
+> -	if (inode->i_sb->s_op->free_inode)
+> -		inode->i_sb->s_op->free_inode(inode);
+> +	if (inode->free_inode)
+> +		inode->free_inode(inode);
+> 	else
+> 		free_inode_nonrcu(inode);
+> }
+> @@ -236,6 +236,7 @@ static struct inode *alloc_inode(struct =
+super_block *sb)
+> 			if (!ops->free_inode)
+> 				return NULL;
+> 		}
+> +		inode->free_inode =3D ops->free_inode;
+> 		i_callback(&inode->i_rcu);
+> 		return NULL;
+> 	}
+
+> @@ -276,6 +277,7 @@ static void destroy_inode(struct inode *inode)
+> 		if (!ops->free_inode)
+> 			return;
+> 	}
+> +	inode->free_inode =3D ops->free_inode;
+> 	call_rcu(&inode->i_rcu, i_callback);
+> }
+
+This seems like kind of a hack.  I guess your goal is to have =
+->free_inode
+accessible regardless of whether the filesystem has installed its own =
+->i_op
+methods or not, and i_fop is no longer used by this point.
+
+That said, this seems better than increasing the size of struct inode.
+
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 2e9b9f87caca..92732286b748 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -694,7 +694,10 @@ struct inode {
+> #ifdef CONFIG_IMA
+> 	atomic_t		i_readcount; /* struct files open RO */
+> #endif
+> -	const struct file_operations	*i_fop;	/* former =
+->i_op->default_file_ops */
+> +	union {
+> +		const struct file_operations	*i_fop;	/* former =
+->i_op->default_file_ops */
+> +		void (*free_inode)(struct inode *);
+> +	};
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_E49322AE-A695-47B8-8F15-BAD54F0C2D97
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlzH3HgACgkQcqXauRfM
+H+B8Uw/+Pe3e89BpYfhV3O4jATQofqb9PH/+i8TAZmKTVOC09IO5ole1zpaWHGV+
+8FQmrVvHUrUZLvz3GZJYAA7djWqJHIN58yPUllps35f6SGqfj54rEwwq3QAFSqFR
+kOiDHHtWpASu0oVRDG1Lw0xijx8wrTmfmdWOTTYSL0o58uFCFhcuBdU9oaBi/Wrs
+9RHwrQb4pffl6aCMP6FTVp+DdqVtIRMQ4UNOKrJiwa8SLuJSCw1Nwj7tzwOIXu7e
+z2R9sFUQHOVx1r7cOgCrP+zpIZTNmOI7lsJnPUwgod5i4lLJqBylrGmz9B/lWbln
+2PPtaUkFbB1VVnhxnz4K06Fp2AEE3S8DEzAwEyitCnb+FKvV9fCdRC/m/mx1pFhj
+Icc/L+2F8xuYcw1EqB/Nyc2UAVs7VgpUEnedUUwBWjg+Md5zT+BeZY6qOxzwGhXq
+vp3O2hSlRhNjgsGVpkWt7awa6JlUbvw1F76ktl2tiqiWl45X75FOS2RyjLxFt8Yw
+FIqp29O8HauMdaEQb1CXvgemvnzM3f6om8NCN6q+zAz8RUjwK6N1x+z0f95iHEq9
+ZXxY4KYHW3cjhlhKyZpiowqlMq+1I43NWhJFhMi2AVrEzDBBleBSdH617/R6hNbd
+XJMyvjDo67gvOJ1UJeX+wAISpQz5M6l6EEZqoe/GcZTEtR9UNfw=
+=a4F4
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E49322AE-A695-47B8-8F15-BAD54F0C2D97--
