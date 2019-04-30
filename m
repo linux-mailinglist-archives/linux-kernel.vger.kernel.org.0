@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E4FBF5F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F0AF7FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfD3Lkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:40:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47540 "EHLO mail.kernel.org"
+        id S1728200AbfD3MEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:04:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728600AbfD3Lks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:40:48 -0400
+        id S1729552AbfD3Lmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:42:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA09121734;
-        Tue, 30 Apr 2019 11:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8848A20449;
+        Tue, 30 Apr 2019 11:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624447;
-        bh=vgmPRk/9/S1fAFZzg4K4FanFVfEiwbJUQ4AGa/rCjGc=;
+        s=default; t=1556624570;
+        bh=nC3+Q6S7iw4pMjjH8pVtDfWZcmhsZdW7aHwFzlp0uX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruOS1u+YiqKFR263LFe4O7xobL4TMqlnXG/VClL05Hl1BHfnqb3vJJIRjN9bxf6Wt
-         HcpEnbQYBFWBjIdP/MgcVJcojyhV7mlKfZW9G15SfRUCBXnM5lFUtwDfhpkFp+qmfE
-         hY/ko1vaoojnht35dGmgrO7R7Hrge95JFRCH8uhQ=
+        b=LUfoNBp4NKDHpunUtEADe8t6jSaz/GxD8oOwLsHg6pfnZCp9skjSjXuuNGOgFo4ze
+         nzzJ4C96p98DmUNtmQoD4K73P7AypIGx7n5MwESGEyWdWLgHrJSvT/I7nM5avibiE8
+         dl/nPnV1C5Y5NRkJ+sALnjxRjwveJ1g5wPoXVDFw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 39/41] ipv6: remove dependency of nf_defrag_ipv6 on ipv6 module
-Date:   Tue, 30 Apr 2019 13:38:50 +0200
-Message-Id: <20190430113534.694357144@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Stephen Suryaputra <ssuryaextr@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 44/53] ipv4: add sanity checks in ipv4_link_failure()
+Date:   Tue, 30 Apr 2019 13:38:51 +0200
+Message-Id: <20190430113558.516701265@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-References: <20190430113524.451237916@linuxfoundation.org>
+In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
+References: <20190430113549.400132183@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,397 +45,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 70b095c84326640eeacfd69a411db8fc36e8ab1a ]
+[ Upstream commit 20ff83f10f113c88d0bb74589389b05250994c16 ]
 
-IPV6=m
-DEFRAG_IPV6=m
-CONNTRACK=y yields:
+Before calling __ip_options_compile(), we need to ensure the network
+header is a an IPv4 one, and that it is already pulled in skb->head.
 
-net/netfilter/nf_conntrack_proto.o: In function `nf_ct_netns_do_get':
-net/netfilter/nf_conntrack_proto.c:802: undefined reference to `nf_defrag_ipv6_enable'
-net/netfilter/nf_conntrack_proto.o:(.rodata+0x640): undefined reference to `nf_conntrack_l4proto_icmpv6'
+RAW sockets going through a tunnel can end up calling ipv4_link_failure()
+with total garbage in the skb, or arbitrary lengthes.
 
-Setting DEFRAG_IPV6=y causes undefined references to ip6_rhash_params
-ip6_frag_init and ip6_expire_frag_queue so it would be needed to force
-IPV6=y too.
+syzbot report :
 
-This patch gets rid of the 'followup linker error' by removing
-the dependency of ipv6.ko symbols from netfilter ipv6 defrag.
+BUG: KASAN: stack-out-of-bounds in memcpy include/linux/string.h:355 [inline]
+BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x294/0x1120 net/ipv4/ip_options.c:123
+Write of size 69 at addr ffff888096abf068 by task syz-executor.4/9204
 
-Shared code is placed into a header, then used from both.
+CPU: 0 PID: 9204 Comm: syz-executor.4 Not tainted 5.1.0-rc5+ #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+ kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+ memcpy+0x38/0x50 mm/kasan/common.c:133
+ memcpy include/linux/string.h:355 [inline]
+ __ip_options_echo+0x294/0x1120 net/ipv4/ip_options.c:123
+ __icmp_send+0x725/0x1400 net/ipv4/icmp.c:695
+ ipv4_link_failure+0x29f/0x550 net/ipv4/route.c:1204
+ dst_link_failure include/net/dst.h:427 [inline]
+ vti6_xmit net/ipv6/ip6_vti.c:514 [inline]
+ vti6_tnl_xmit+0x10d4/0x1c0c net/ipv6/ip6_vti.c:553
+ __netdev_start_xmit include/linux/netdevice.h:4414 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4423 [inline]
+ xmit_one net/core/dev.c:3292 [inline]
+ dev_hard_start_xmit+0x1b2/0x980 net/core/dev.c:3308
+ __dev_queue_xmit+0x271d/0x3060 net/core/dev.c:3878
+ dev_queue_xmit+0x18/0x20 net/core/dev.c:3911
+ neigh_direct_output+0x16/0x20 net/core/neighbour.c:1527
+ neigh_output include/net/neighbour.h:508 [inline]
+ ip_finish_output2+0x949/0x1740 net/ipv4/ip_output.c:229
+ ip_finish_output+0x73c/0xd50 net/ipv4/ip_output.c:317
+ NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+ ip_output+0x21f/0x670 net/ipv4/ip_output.c:405
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ raw_send_hdrinc net/ipv4/raw.c:432 [inline]
+ raw_sendmsg+0x1d2b/0x2f20 net/ipv4/raw.c:663
+ inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ sock_sendmsg+0xdd/0x130 net/socket.c:661
+ sock_write_iter+0x27c/0x3e0 net/socket.c:988
+ call_write_iter include/linux/fs.h:1866 [inline]
+ new_sync_write+0x4c7/0x760 fs/read_write.c:474
+ __vfs_write+0xe4/0x110 fs/read_write.c:487
+ vfs_write+0x20c/0x580 fs/read_write.c:549
+ ksys_write+0x14f/0x2d0 fs/read_write.c:599
+ __do_sys_write fs/read_write.c:611 [inline]
+ __se_sys_write fs/read_write.c:608 [inline]
+ __x64_sys_write+0x73/0xb0 fs/read_write.c:608
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458c29
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f293b44bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458c29
+RDX: 0000000000000014 RSI: 00000000200002c0 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f293b44c6d4
+R13: 00000000004c8623 R14: 00000000004ded68 R15: 00000000ffffffff
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The buggy address belongs to the page:
+page:ffffea00025aafc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x1fffc0000000000()
+raw: 01fffc0000000000 0000000000000000 ffffffff025a0101 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888096abef80: 00 00 00 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 f2
+ ffff888096abf000: f2 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888096abf080: 00 00 f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00
+                         ^
+ ffff888096abf100: 00 00 00 00 f1 f1 f1 f1 00 00 f3 f3 00 00 00 00
+ ffff888096abf180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Fixes: ed0de45a1008 ("ipv4: recompile ip options in ipv4_link_failure")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Stephen Suryaputra <ssuryaextr@gmail.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ipv6.h                        |   29 --------
- include/net/ipv6_frag.h                   |  104 ++++++++++++++++++++++++++++++
- net/ieee802154/6lowpan/reassembly.c       |    2 
- net/ipv6/netfilter/nf_conntrack_reasm.c   |   17 +++-
- net/ipv6/netfilter/nf_defrag_ipv6_hooks.c |    3 
- net/ipv6/reassembly.c                     |   92 ++------------------------
- net/openvswitch/conntrack.c               |    1 
- 7 files changed, 126 insertions(+), 122 deletions(-)
- create mode 100644 include/net/ipv6_frag.h
+ net/ipv4/route.c |   34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -511,35 +511,6 @@ static inline bool ipv6_prefix_equal(con
- }
- #endif
- 
--struct inet_frag_queue;
--
--enum ip6_defrag_users {
--	IP6_DEFRAG_LOCAL_DELIVER,
--	IP6_DEFRAG_CONNTRACK_IN,
--	__IP6_DEFRAG_CONNTRACK_IN	= IP6_DEFRAG_CONNTRACK_IN + USHRT_MAX,
--	IP6_DEFRAG_CONNTRACK_OUT,
--	__IP6_DEFRAG_CONNTRACK_OUT	= IP6_DEFRAG_CONNTRACK_OUT + USHRT_MAX,
--	IP6_DEFRAG_CONNTRACK_BRIDGE_IN,
--	__IP6_DEFRAG_CONNTRACK_BRIDGE_IN = IP6_DEFRAG_CONNTRACK_BRIDGE_IN + USHRT_MAX,
--};
--
--void ip6_frag_init(struct inet_frag_queue *q, const void *a);
--extern const struct rhashtable_params ip6_rhash_params;
--
--/*
-- *	Equivalent of ipv4 struct ip
-- */
--struct frag_queue {
--	struct inet_frag_queue	q;
--
--	int			iif;
--	unsigned int		csum;
--	__u16			nhoffset;
--	u8			ecn;
--};
--
--void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq);
--
- static inline bool ipv6_addr_any(const struct in6_addr *a)
- {
- #if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && BITS_PER_LONG == 64
---- /dev/null
-+++ b/include/net/ipv6_frag.h
-@@ -0,0 +1,104 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _IPV6_FRAG_H
-+#define _IPV6_FRAG_H
-+#include <linux/kernel.h>
-+#include <net/addrconf.h>
-+#include <net/ipv6.h>
-+#include <net/inet_frag.h>
-+
-+enum ip6_defrag_users {
-+	IP6_DEFRAG_LOCAL_DELIVER,
-+	IP6_DEFRAG_CONNTRACK_IN,
-+	__IP6_DEFRAG_CONNTRACK_IN	= IP6_DEFRAG_CONNTRACK_IN + USHRT_MAX,
-+	IP6_DEFRAG_CONNTRACK_OUT,
-+	__IP6_DEFRAG_CONNTRACK_OUT	= IP6_DEFRAG_CONNTRACK_OUT + USHRT_MAX,
-+	IP6_DEFRAG_CONNTRACK_BRIDGE_IN,
-+	__IP6_DEFRAG_CONNTRACK_BRIDGE_IN = IP6_DEFRAG_CONNTRACK_BRIDGE_IN + USHRT_MAX,
-+};
-+
-+/*
-+ *	Equivalent of ipv4 struct ip
-+ */
-+struct frag_queue {
-+	struct inet_frag_queue	q;
-+
-+	int			iif;
-+	__u16			nhoffset;
-+	u8			ecn;
-+};
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+static inline void ip6frag_init(struct inet_frag_queue *q, const void *a)
-+{
-+	struct frag_queue *fq = container_of(q, struct frag_queue, q);
-+	const struct frag_v6_compare_key *key = a;
-+
-+	q->key.v6 = *key;
-+	fq->ecn = 0;
-+}
-+
-+static inline u32 ip6frag_key_hashfn(const void *data, u32 len, u32 seed)
-+{
-+	return jhash2(data,
-+		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
-+}
-+
-+static inline u32 ip6frag_obj_hashfn(const void *data, u32 len, u32 seed)
-+{
-+	const struct inet_frag_queue *fq = data;
-+
-+	return jhash2((const u32 *)&fq->key.v6,
-+		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
-+}
-+
-+static inline int
-+ip6frag_obj_cmpfn(struct rhashtable_compare_arg *arg, const void *ptr)
-+{
-+	const struct frag_v6_compare_key *key = arg->key;
-+	const struct inet_frag_queue *fq = ptr;
-+
-+	return !!memcmp(&fq->key, key, sizeof(*key));
-+}
-+
-+static inline void
-+ip6frag_expire_frag_queue(struct net *net, struct frag_queue *fq)
-+{
-+	struct net_device *dev = NULL;
-+	struct sk_buff *head;
-+
-+	rcu_read_lock();
-+	spin_lock(&fq->q.lock);
-+
-+	if (fq->q.flags & INET_FRAG_COMPLETE)
-+		goto out;
-+
-+	inet_frag_kill(&fq->q);
-+
-+	dev = dev_get_by_index_rcu(net, fq->iif);
-+	if (!dev)
-+		goto out;
-+
-+	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
-+	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
-+
-+	/* Don't send error if the first segment did not arrive. */
-+	head = fq->q.fragments;
-+	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !head)
-+		goto out;
-+
-+	head->dev = dev;
-+	skb_get(head);
-+	spin_unlock(&fq->q.lock);
-+
-+	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
-+	kfree_skb(head);
-+	goto out_rcu_unlock;
-+
-+out:
-+	spin_unlock(&fq->q.lock);
-+out_rcu_unlock:
-+	rcu_read_unlock();
-+	inet_frag_put(&fq->q);
-+}
-+#endif
-+#endif
---- a/net/ieee802154/6lowpan/reassembly.c
-+++ b/net/ieee802154/6lowpan/reassembly.c
-@@ -25,7 +25,7 @@
- 
- #include <net/ieee802154_netdev.h>
- #include <net/6lowpan.h>
--#include <net/ipv6.h>
-+#include <net/ipv6_frag.h>
- #include <net/inet_frag.h>
- 
- #include "6lowpan_i.h"
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -33,9 +33,8 @@
- 
- #include <net/sock.h>
- #include <net/snmp.h>
--#include <net/inet_frag.h>
-+#include <net/ipv6_frag.h>
- 
--#include <net/ipv6.h>
- #include <net/protocol.h>
- #include <net/transp_v6.h>
- #include <net/rawv6.h>
-@@ -158,7 +157,7 @@ static void nf_ct_frag6_expire(unsigned
- 	fq = container_of((struct inet_frag_queue *)data, struct frag_queue, q);
- 	net = container_of(fq->q.net, struct net, nf_frag.frags);
- 
--	ip6_expire_frag_queue(net, fq);
-+	ip6frag_expire_frag_queue(net, fq);
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -1192,25 +1192,39 @@ static struct dst_entry *ipv4_dst_check(
+ 	return dst;
  }
  
- /* Creation primitives. */
-@@ -634,16 +633,24 @@ static struct pernet_operations nf_ct_ne
- 	.exit = nf_ct_net_exit,
- };
- 
-+static const struct rhashtable_params nfct_rhash_params = {
-+	.head_offset		= offsetof(struct inet_frag_queue, node),
-+	.hashfn			= ip6frag_key_hashfn,
-+	.obj_hashfn		= ip6frag_obj_hashfn,
-+	.obj_cmpfn		= ip6frag_obj_cmpfn,
-+	.automatic_shrinking	= true,
-+};
-+
- int nf_ct_frag6_init(void)
+-static void ipv4_link_failure(struct sk_buff *skb)
++static void ipv4_send_dest_unreach(struct sk_buff *skb)
  {
- 	int ret = 0;
+ 	struct ip_options opt;
+-	struct rtable *rt;
+ 	int res;
  
--	nf_frags.constructor = ip6_frag_init;
-+	nf_frags.constructor = ip6frag_init;
- 	nf_frags.destructor = NULL;
- 	nf_frags.qsize = sizeof(struct frag_queue);
- 	nf_frags.frag_expire = nf_ct_frag6_expire;
- 	nf_frags.frags_cache_name = nf_frags_cache_name;
--	nf_frags.rhash_params = ip6_rhash_params;
-+	nf_frags.rhash_params = nfct_rhash_params;
- 	ret = inet_frags_init(&nf_frags);
- 	if (ret)
- 		goto out;
---- a/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
-+++ b/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
-@@ -14,8 +14,7 @@
- #include <linux/skbuff.h>
- #include <linux/icmp.h>
- #include <linux/sysctl.h>
--#include <net/ipv6.h>
--#include <net/inet_frag.h>
-+#include <net/ipv6_frag.h>
- 
- #include <linux/netfilter_ipv6.h>
- #include <linux/netfilter_bridge.h>
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -57,7 +57,7 @@
- #include <net/rawv6.h>
- #include <net/ndisc.h>
- #include <net/addrconf.h>
--#include <net/inet_frag.h>
-+#include <net/ipv6_frag.h>
- #include <net/inet_ecn.h>
- 
- static const char ip6_frag_cache_name[] = "ip6-frags";
-@@ -79,61 +79,6 @@ static struct inet_frags ip6_frags;
- static int ip6_frag_reasm(struct frag_queue *fq, struct sk_buff *prev,
- 			  struct net_device *dev);
- 
--void ip6_frag_init(struct inet_frag_queue *q, const void *a)
--{
--	struct frag_queue *fq = container_of(q, struct frag_queue, q);
--	const struct frag_v6_compare_key *key = a;
--
--	q->key.v6 = *key;
--	fq->ecn = 0;
--}
--EXPORT_SYMBOL(ip6_frag_init);
--
--void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq)
--{
--	struct net_device *dev = NULL;
--	struct sk_buff *head;
+ 	/* Recompile ip options since IPCB may not be valid anymore.
++	 * Also check we have a reasonable ipv4 header.
+ 	 */
+-	memset(&opt, 0, sizeof(opt));
+-	opt.optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
 -
 -	rcu_read_lock();
--	spin_lock(&fq->q.lock);
--
--	if (fq->q.flags & INET_FRAG_COMPLETE)
--		goto out;
--
--	inet_frag_kill(&fq->q);
--
--	dev = dev_get_by_index_rcu(net, fq->iif);
--	if (!dev)
--		goto out;
--
--	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
--	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
--
--	/* Don't send error if the first segment did not arrive. */
--	head = fq->q.fragments;
--	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !head)
--		goto out;
--
--	/* But use as source device on which LAST ARRIVED
--	 * segment was received. And do not use fq->dev
--	 * pointer directly, device might already disappeared.
--	 */
--	head->dev = dev;
--	skb_get(head);
--	spin_unlock(&fq->q.lock);
--
--	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
--	kfree_skb(head);
--	goto out_rcu_unlock;
--
--out:
--	spin_unlock(&fq->q.lock);
--out_rcu_unlock:
+-	res = __ip_options_compile(dev_net(skb->dev), &opt, skb, NULL);
 -	rcu_read_unlock();
--	inet_frag_put(&fq->q);
--}
--EXPORT_SYMBOL(ip6_expire_frag_queue);
 -
- static void ip6_frag_expire(unsigned long data)
- {
- 	struct frag_queue *fq;
-@@ -142,7 +87,7 @@ static void ip6_frag_expire(unsigned lon
- 	fq = container_of((struct inet_frag_queue *)data, struct frag_queue, q);
- 	net = container_of(fq->q.net, struct net, ipv6.frags);
+-	if (res)
++	if (!pskb_network_may_pull(skb, sizeof(struct iphdr)) ||
++	    ip_hdr(skb)->version != 4 || ip_hdr(skb)->ihl < 5)
+ 		return;
  
--	ip6_expire_frag_queue(net, fq);
-+	ip6frag_expire_frag_queue(net, fq);
- }
++	memset(&opt, 0, sizeof(opt));
++	if (ip_hdr(skb)->ihl > 5) {
++		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
++			return;
++		opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
++
++		rcu_read_lock();
++		res = __ip_options_compile(dev_net(skb->dev), &opt, skb, NULL);
++		rcu_read_unlock();
++
++		if (res)
++			return;
++	}
+ 	__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0, &opt);
++}
++
++static void ipv4_link_failure(struct sk_buff *skb)
++{
++	struct rtable *rt;
++
++	ipv4_send_dest_unreach(skb);
  
- static struct frag_queue *
-@@ -701,42 +646,19 @@ static struct pernet_operations ip6_frag
- 	.exit = ipv6_frags_exit_net,
- };
- 
--static u32 ip6_key_hashfn(const void *data, u32 len, u32 seed)
--{
--	return jhash2(data,
--		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
--}
--
--static u32 ip6_obj_hashfn(const void *data, u32 len, u32 seed)
--{
--	const struct inet_frag_queue *fq = data;
--
--	return jhash2((const u32 *)&fq->key.v6,
--		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
--}
--
--static int ip6_obj_cmpfn(struct rhashtable_compare_arg *arg, const void *ptr)
--{
--	const struct frag_v6_compare_key *key = arg->key;
--	const struct inet_frag_queue *fq = ptr;
--
--	return !!memcmp(&fq->key, key, sizeof(*key));
--}
--
--const struct rhashtable_params ip6_rhash_params = {
-+static const struct rhashtable_params ip6_rhash_params = {
- 	.head_offset		= offsetof(struct inet_frag_queue, node),
--	.hashfn			= ip6_key_hashfn,
--	.obj_hashfn		= ip6_obj_hashfn,
--	.obj_cmpfn		= ip6_obj_cmpfn,
-+	.hashfn			= ip6frag_key_hashfn,
-+	.obj_hashfn		= ip6frag_obj_hashfn,
-+	.obj_cmpfn		= ip6frag_obj_cmpfn,
- 	.automatic_shrinking	= true,
- };
--EXPORT_SYMBOL(ip6_rhash_params);
- 
- int __init ipv6_frag_init(void)
- {
- 	int ret;
- 
--	ip6_frags.constructor = ip6_frag_init;
-+	ip6_frags.constructor = ip6frag_init;
- 	ip6_frags.destructor = NULL;
- 	ip6_frags.qsize = sizeof(struct frag_queue);
- 	ip6_frags.frag_expire = ip6_frag_expire;
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -23,6 +23,7 @@
- #include <net/netfilter/nf_conntrack_seqadj.h>
- #include <net/netfilter/nf_conntrack_zones.h>
- #include <net/netfilter/ipv6/nf_defrag_ipv6.h>
-+#include <net/ipv6_frag.h>
- 
- #ifdef CONFIG_NF_NAT_NEEDED
- #include <linux/netfilter/nf_nat.h>
+ 	rt = skb_rtable(skb);
+ 	if (rt)
 
 
