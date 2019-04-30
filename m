@@ -2,83 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7282F2A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A62F2BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfD3JSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:18:50 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4844 "EHLO mga06.intel.com"
+        id S1726765AbfD3JYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:24:23 -0400
+Received: from mail.nic.cz ([217.31.204.67]:40526 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbfD3JSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:18:50 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 02:18:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,413,1549958400"; 
-   d="scan'208";a="146944618"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.147.114])
-  by orsmga003.jf.intel.com with ESMTP; 30 Apr 2019 02:18:46 -0700
-Date:   Tue, 30 Apr 2019 17:22:48 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Eric W Biederman <ebiederm@xmission.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ying Huang <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] latencytop lock usage improvement
-Message-ID: <20190430092248.b7ztl733nhu7acjd@shbuild888>
-References: <1556525011-28022-1-git-send-email-feng.tang@intel.com>
- <20190430080910.GI2623@hirez.programming.kicks-ass.net>
- <20190430083505.n5mozwybbnwydo3z@shbuild888>
- <20190430091033.GN2623@hirez.programming.kicks-ass.net>
+        id S1725938AbfD3JYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 05:24:23 -0400
+Received: from localhost (unknown [172.20.6.125])
+        by mail.nic.cz (Postfix) with ESMTPS id 0887E604CA;
+        Tue, 30 Apr 2019 11:23:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1556616260; bh=qndt+RdDJTdMmo4kMJYNIBsyzaZbZnZzTcgCBJFC1/0=;
+        h=Date:From:To;
+        b=r+A4QEPvZLnp4dsI4u+FkG0VS+5M6mgH1DKBCYx+w5iSUL1X21OPtRvtXulg83ghh
+         BC7r8aEGrdeTAzJrLft1cIM0NrPPwmASNG9DYiVpJLo0PCs/N2Nw70ldLnkzZ8EKwR
+         cbcIIqH9Q+5DmptMaJusWBd42O72q1+bam0j6gVo=
+Date:   Tue, 30 Apr 2019 11:23:19 +0200
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: sysfs attrs for HW ECDSA signature
+Message-ID: <20190430112319.6c4159f9@nic.cz>
+In-Reply-To: <20190430082728.GE8245@kroah.com>
+References: <20190429234752.171b4f2b@nic.cz>
+        <20190430082728.GE8245@kroah.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430091033.GN2623@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Tue, 30 Apr 2019 10:27:28 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-On Tue, Apr 30, 2019 at 11:10:33AM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 30, 2019 at 04:35:05PM +0800, Feng Tang wrote:
-> > Hi Peter,
+> On Mon, Apr 29, 2019 at 11:47:52PM +0200, Marek Behun wrote:
+> > Hi Greg and Tejun,
 > > 
-> > On Tue, Apr 30, 2019 at 10:09:10AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Apr 29, 2019 at 04:03:28PM +0800, Feng Tang wrote:
-> > > > Hi All,
-> > > > 
-> > > > latencytop is a very nice tool for tracing system latency hotspots, and
-> > > > we heavily use it in our LKP test suites.
-> > > 
-> > > What data does latency-top give that perf cannot give you? Ideally we'd
-> > > remove latencytop entirely.
-> > 
-> > Thanks for the review. In 0day/LKP test service, we have many tools for
-> > monitoring and analyzing the test results, perf is the most important
-> > one, which has the most parts in our auto-generated comparing results.   
-> > For example to identify spinlock contentions and system hotspots.
-> > 
-> > latencytop is another tool we used to find why systems go idle, like why
-> > workload chose to sleep or waiting for something. 
+> > is it acceptable for a driver to expose sysfs attr files for ECDSA
+> > signature generation?  
+>
+> What is "ECDSA signature generation"?  Is it a crypto thing?  If so, why
+> not use the crypto api?  If not, what exactly is it?
+
+Hi Greg,
+It is a crypto thing and it should be accessed via akcipher crypto API.
+But akcipher userspace crypto API is not implemented in kernel. See
+below.
+
+> > The thing is that
+> >   1. AFAIK there isn't another API for userspace to do this.
+> >      There were attempts in 2015 to expose akcipher via netlink to
+> >      userspace, but the patchseries were not accepted.  
 > 
-> You're not answering the question; why can't you use perf for that? ISTR
-> we explicitly added support for things like that.
+> Pointers to that patchset?  Why was it not accepted?
 
-I was not very familiar with perf before. And after my last reply,
-I googled a little, and found "perf sched latency" has the simliar
-function, except I can't directly get the call chain, any suggestion
-for this? thanks!
+Here are the replies to the last attempt
+https://marc.info/?t=150234726200004&r=1&w=2
+This was back in 2017, apparently there were some problems and it was not
+merged even after 8 versions.
 
-- Feng
+> >   2. even if it was possible, that specific device for which I am
+> >      writing this driver does not provide the ability to set the
+> >      private key to sign with - the private key is just burned during
+> >      manufacturing and cannot be read, only signed with.  
+> 
+> Why does this matter?
 
+If it was implemented via akcipher, the user would be unable to set
+private key, which is a method the akcipher implementation should
+implement. But this probably is not that big a problem.
+
+> > The current version of my driver exposes do_sign file in
+> > /sys/firmware/turris_mox directory.
+> > 
+> > Userspace should write message to sign and then can read the signature
+> > from this do_sign file.  
+> 
+> How big are messages and signatures?  Why does this have to be a sysfs
+> api?
+
+Messages are 521 bits, I rounded them to 68 bytes. The idea is that a
+sha512 hash of the original message is to be signed.
+Signatures are 136 bytes.
+
+> > According to the one attr = one file principle, it would be better to
+> > have two files: ecdsa_msg_to_sign (write-only) and ecdsa_signature
+> > (read-only).
+> > Would this be acceptable in the kernel for this driver?  
+> 
+> Why not use the crypto api, and if that doesn't work, why not just a
+> char device to read/write?
+
+Because the akcipher userspace crypto API is not merged and it probably
+will take a lot of time, if it ever will be merged. Till then I would
+like if this feature was supported on this one device somehow in
+mainline kernel. As soon as akcipher userspace crypto API is merged, I
+can rewrite the driver.
+
+A char device to read/write would be possible. The sysfs API
+seemed more strainthforward. Should I do the char device approach
+instead?
+
+> > I have also another question, if you would not mind:
+> > 
+> > This driver is dependant on a mailbox driver I have also written
+> > ("mailbox: Add support for Armada 37xx rWTM mailbox"), but I have not
+> > received any review for this driver from the mailbox subsystem
+> > maintainer, and I have already sent three versions (on 12/17/2018,
+> > 03/01/2019 and 03/15/2019).
+> > What should I do in this case?  
+> 
+> Poke the maintainer again :)
+
+I will,
+
+Thanks.
+
+Marek
