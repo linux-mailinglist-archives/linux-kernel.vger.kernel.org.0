@@ -2,44 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE22F39B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 457CCF3AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfD3KDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:03:00 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:35186 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726012AbfD3KDA (ORCPT
+        id S1726967AbfD3KDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:03:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39268 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfD3KDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:03:00 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1hLPbE-000587-GJ; Tue, 30 Apr 2019 12:02:56 +0200
-Date:   Tue, 30 Apr 2019 12:02:56 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     shuah <shuah@kernel.org>
-Cc:     Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
-        pablo@netfilter.org, Florian Westphal <fw@strlen.de>,
-        linu-kselftest@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests : netfilter: Wrote a error and exit code for a
- command which needed veth kernel module.
-Message-ID: <20190430100256.mfgerggoccagi2hc@breakpoint.cc>
-References: <20190405163126.7278-1-jeffrin@rajagiritech.edu.in>
- <20190405164746.pfc6wxj4nrynjma4@breakpoint.cc>
- <CAG=yYwnN37OoL1DSN8qPeKWhzVJOcUFtR-7Q9fVT5AULk5S54w@mail.gmail.com>
- <c4660969-1287-0697-13c0-e598327551fb@kernel.org>
+        Tue, 30 Apr 2019 06:03:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=39jQJu1pe1SwtBVRvFUc6v25BF8YLDJOZ0iwNDid4sw=; b=fdnM3+wGbwVZVEY3nKXdhgTFR
+        dq4kMJ+M/Fo86URyNEmTqhegBWXLApJtT1cQCGRZhE6IZgMwQiHRjEo8hJGtuqkxLyMjmKEDAKuyQ
+        icr8yNzbCiQ2e41Qa2oBfmZ4FideevgGfmHlEa+fU+m6ajhdDFVFRLXOlA82MPsKlWYhwJ2HkMo2S
+        C7O+ZIHCpudnuP31kKcPZG6CLicEOjvLI8IBqI0uPtvnpFts0NHIognu5ezPVFBey150X1IQ/WB4Y
+        Qd2ezr6+P5S1kKWDn8btJxjGsTt80qQaX25iU7shLfYzMj9TAt0VaxKnfY7mb6CKWQEmp4GEAEFhn
+        /ntbriRvg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLPbd-0000S6-5u; Tue, 30 Apr 2019 10:03:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9B6DD29A242E4; Tue, 30 Apr 2019 12:03:18 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 12:03:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com
+Subject: Re: Question about sched_setaffinity()
+Message-ID: <20190430100318.GP2623@hirez.programming.kicks-ass.net>
+References: <20190427180246.GA15502@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c4660969-1287-0697-13c0-e598327551fb@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190427180246.GA15502@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-shuah <shuah@kernel.org> wrote:
-> Would you like me to take this patch through ksleftest tree?
+On Sat, Apr 27, 2019 at 11:02:46AM -0700, Paul E. McKenney wrote:
 
-Please do, this patch is neither in nf nor nf-next and it looks fine to
-me.
+> This actually passes rcutorture.  But, as Andrea noted, not klitmus.
+> After some investigation, it turned out that klitmus was creating kthreads
+> with PF_NO_SETAFFINITY, hence the failures.  But that prompted me to
+> put checks into my code: After all, rcutorture can be fooled.
+> 
+> 	void synchronize_rcu(void)
+> 	{
+> 		int cpu;
+> 
+> 		for_each_online_cpu(cpu) {
+> 			sched_setaffinity(current->pid, cpumask_of(cpu));
+> 			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
+> 		}
+> 	}
+> 
+> This triggers fairly quickly, usually in less than a minute of rcutorture
+> testing.
+>
+> And further investigation shows that sched_setaffinity()
+> always returned 0. 
+
+> Is this expected behavior?  Is there some configuration or setup that I
+> might be missing?
+
+ISTR there is hotplug involved in RCU torture? In that case, it can be
+sched_setaffinity() succeeds to place us on a CPU, which CPU hotplug
+then takes away. So when we run the WARN thingy, we'll be running on a
+different CPU than expected.
+
+If OTOH, your loop is written like (as it really should be):
+
+	void synchronize_rcu(void)
+	{
+		int cpu;
+
+		cpus_read_lock();
+		for_each_online_cpu(cpu) {
+			sched_setaffinity(current->pid, cpumask_of(cpu));
+			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
+		}
+		cpus_read_unlock();
+	}
+
+Then I'm not entirely sure how we can return 0 and not run on the
+expected CPU. If we look at __set_cpus_allowed_ptr(), the only paths out
+to 0 are:
+
+ - if the mask didn't change
+ - if we already run inside the new mask
+ - if we migrated ourself with the stop-task
+ - if we're not in fact running
+
+That last case should never trigger in your circumstances, since @p ==
+current and current is obviously running. But for completeness, the
+wakeup of @p would do the task placement in that case.
+
