@@ -2,80 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CDA0F8E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7424F938
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfD3MbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:31:08 -0400
-Received: from mail.us.es ([193.147.175.20]:49734 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfD3MbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:31:07 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id AE7E811FF80
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 14:31:05 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 99CDEDA713
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 14:31:05 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 990F5DA712; Tue, 30 Apr 2019 14:31:05 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 8D924DA707;
-        Tue, 30 Apr 2019 14:31:03 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 30 Apr 2019 14:31:03 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (129.166.216.87.static.jazztel.es [87.216.166.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 546204265A31;
-        Tue, 30 Apr 2019 14:31:03 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 14:31:02 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nat: avoid unused-variable warning
-Message-ID: <20190430123102.xia5kwlkqsvinqvi@salvia>
-References: <20190325135336.2107801-1-arnd@arndb.de>
+        id S1727646AbfD3MsJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Apr 2019 08:48:09 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:35844
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726166AbfD3MsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:48:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id F3BECB5026A;
+        Tue, 30 Apr 2019 12:31:24 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 2ZQkoG8yhP01; Tue, 30 Apr 2019 12:31:24 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 61B11B50277;
+        Tue, 30 Apr 2019 12:31:24 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 5AvX7DFJ9oif; Tue, 30 Apr 2019 12:31:24 +0000 (UTC)
+Received: from [100.76.194.7] (unknown [223.237.254.93])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id EB144B50258;
+        Tue, 30 Apr 2019 12:31:16 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190325135336.2107801-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: verificacion de email
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administracion web <exportaciones@minpal.gob.ve>
+Date:   Tue, 30 Apr 2019 18:01:08 +0530
+Message-Id: <20190430123116.EB144B50258@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 02:53:05PM +0100, Arnd Bergmann wrote:
-> masq_refcnt6 was added at the start of the file, but it is
-> only used in the option IPv6 section of the file, causing
-> a harmless compiler warning if IPv6 is disabled:
-> 
-> net/netfilter/nf_nat_masquerade.c:15:21: error: 'masq_refcnt6' defined but not used [-Werror=unused-variable]
->  static unsigned int masq_refcnt6 __read_mostly;
-> 
-> Move the variable next to the user to avoid that warning.
-> 
-> Fixes: 46f7487e161b ("netfilter: nat: don't register device notifier twice")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ----
-> This is an older patch stack, for some reason I seem to have never
-> sent it, and I can't find any indication of anyone else sending
-> a similar fix, so sending this out now.
-> 
-> If it's already fixed upstream, please ignore.
+Aviso de seguridad:
 
-Yes, Florian fixed this in nf-next.
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index, copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
