@@ -2,105 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457CCF3AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF2AF3CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 12:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfD3KDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 06:03:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39268 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfD3KDW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 06:03:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=39jQJu1pe1SwtBVRvFUc6v25BF8YLDJOZ0iwNDid4sw=; b=fdnM3+wGbwVZVEY3nKXdhgTFR
-        dq4kMJ+M/Fo86URyNEmTqhegBWXLApJtT1cQCGRZhE6IZgMwQiHRjEo8hJGtuqkxLyMjmKEDAKuyQ
-        icr8yNzbCiQ2e41Qa2oBfmZ4FideevgGfmHlEa+fU+m6ajhdDFVFRLXOlA82MPsKlWYhwJ2HkMo2S
-        C7O+ZIHCpudnuP31kKcPZG6CLicEOjvLI8IBqI0uPtvnpFts0NHIognu5ezPVFBey150X1IQ/WB4Y
-        Qd2ezr6+P5S1kKWDn8btJxjGsTt80qQaX25iU7shLfYzMj9TAt0VaxKnfY7mb6CKWQEmp4GEAEFhn
-        /ntbriRvg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLPbd-0000S6-5u; Tue, 30 Apr 2019 10:03:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9B6DD29A242E4; Tue, 30 Apr 2019 12:03:18 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 12:03:18 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com
-Subject: Re: Question about sched_setaffinity()
-Message-ID: <20190430100318.GP2623@hirez.programming.kicks-ass.net>
-References: <20190427180246.GA15502@linux.ibm.com>
+        id S1727210AbfD3KL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 06:11:56 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50937 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726930AbfD3KL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 06:11:56 -0400
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 44tckx63cWz9sBr; Tue, 30 Apr 2019 20:11:53 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1556619113; bh=/3cVNERTeFNHsUu9N/NoL+9iM4miE3OQ/3mWOShCetQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YADHNTpgxSe0EKuGzE4A8KBo387NkTzsK47lXBVfvDMfrxrylvn1IrLnm+Ic3Hsht
+         66jPJh0khrpXf8dcgZDLjItpY1WuMYUr3eJBZLlf0JZeaRqJTffklbU4yccaqyLoFY
+         WXlPUtcNffp2rnPfd0VSRjzpyocOj3HxoOCsAHwIc3woDjwTdq25lco5x/s+nCZIHa
+         gDkxC0BKknl85ITtZs3JL6Nch17VFz/OwqW9rHhK2RqKMO5FpesErdsk1AVyrfwq37
+         XUOSCSm0N59pkDi2jjKXhKLR9nqHKglGp95cnJH3kTIwA26uZwNlsquKmg77jnsxRE
+         tJQKc4QtRhscg==
+Date:   Tue, 30 Apr 2019 20:03:23 +1000
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     benh@kernel.crashing.org, mpe@ellerman.id.au,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: PPC: Book3S HV: smb->smp comment fixup
+Message-ID: <20190430100323.GF32205@blackberry>
+References: <20190425195339.12609-1-palmer@sifive.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190427180246.GA15502@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190425195339.12609-1-palmer@sifive.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 27, 2019 at 11:02:46AM -0700, Paul E. McKenney wrote:
-
-> This actually passes rcutorture.  But, as Andrea noted, not klitmus.
-> After some investigation, it turned out that klitmus was creating kthreads
-> with PF_NO_SETAFFINITY, hence the failures.  But that prompted me to
-> put checks into my code: After all, rcutorture can be fooled.
+On Thu, Apr 25, 2019 at 12:53:39PM -0700, Palmer Dabbelt wrote:
+> I made the same typo when trying to grep for uses of smp_wmb and figured
+> I might as well fix it.
 > 
-> 	void synchronize_rcu(void)
-> 	{
-> 		int cpu;
-> 
-> 		for_each_online_cpu(cpu) {
-> 			sched_setaffinity(current->pid, cpumask_of(cpu));
-> 			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
-> 		}
-> 	}
-> 
-> This triggers fairly quickly, usually in less than a minute of rcutorture
-> testing.
->
-> And further investigation shows that sched_setaffinity()
-> always returned 0. 
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 
-> Is this expected behavior?  Is there some configuration or setup that I
-> might be missing?
+Thanks, patch applied to my kvm-ppc-next tree.
 
-ISTR there is hotplug involved in RCU torture? In that case, it can be
-sched_setaffinity() succeeds to place us on a CPU, which CPU hotplug
-then takes away. So when we run the WARN thingy, we'll be running on a
-different CPU than expected.
-
-If OTOH, your loop is written like (as it really should be):
-
-	void synchronize_rcu(void)
-	{
-		int cpu;
-
-		cpus_read_lock();
-		for_each_online_cpu(cpu) {
-			sched_setaffinity(current->pid, cpumask_of(cpu));
-			WARN_ON_ONCE(raw_smp_processor_id() != cpu);
-		}
-		cpus_read_unlock();
-	}
-
-Then I'm not entirely sure how we can return 0 and not run on the
-expected CPU. If we look at __set_cpus_allowed_ptr(), the only paths out
-to 0 are:
-
- - if the mask didn't change
- - if we already run inside the new mask
- - if we migrated ourself with the stop-task
- - if we're not in fact running
-
-That last case should never trigger in your circumstances, since @p ==
-current and current is obviously running. But for completeness, the
-wakeup of @p would do the task placement in that case.
-
+Paul.
