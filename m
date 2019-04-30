@@ -2,135 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F79102CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE331102D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:53:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbfD3Wve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 18:51:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35149 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbfD3Wvd (ORCPT
+        id S1727648AbfD3WxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 18:53:04 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40666 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbfD3WxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:51:33 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g24so8900781otq.2;
-        Tue, 30 Apr 2019 15:51:32 -0700 (PDT)
+        Tue, 30 Apr 2019 18:53:03 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b3so7413415plr.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 15:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=bDztD/ujVpn8NFHqaBmoePCgiisBaSiTIMPziP0Fi7o=;
+        b=ob84DQ66+PN+jmJEe9bawx9ajfBeBS0ZwkSg7XsXrPpkdyMWZl4lpCjjUf1uV5Pxqn
+         +xYGWWQ9erdpom1KVqwLHl4RiBHrswQkt3IEXggZbG3agcWQ8Fn+kboeIt1d3+vi6W4D
+         5rAPZozZ2fQf9FtDSws0CO3LzI61WA9ZdDm+rsFT7FrAj7wmdFe/fFzSFq84cGNoHH6M
+         M2E0NXgbGMdBtedJeVBzQJtzIBQF9Yo7HKibYQdpqhchkTDhfbTZ6NSOGn+biBIBS5cS
+         7D2CiAkqpDOuiOkxaERjtolAay5m+zQIN5zRr8EMvOAqITAcd+GeCTEBK/aWijVLqGU6
+         tG2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3hmHPTgV/bi1eZA1TKy2C+Ms5iNmeogSof6Y1DoOt64=;
-        b=ftCh8Kjiu4WSchjQKeW/SwicMc/oqBMKKJbbhnYPJ+8EZqB1YETPl9x6VPpmZwqRi3
-         DPeNdCffBnPw3Wk0UZtlxyeTaJu6OX6WbwMNKR6m1j/MiFfHwJGvLhps3A2PBHDcmdrn
-         dRzUxqgx2fZLHQ0crg2N/ss7MwxkNAgHOvYXloS8GuRDDMroMMFRS32UO31fhfLYzGg6
-         xkZppSYQKgkZJPb1XiRcbG3nZxAc2j1pyo/Iu8dSSIsUA8mleYU0jS2A7SCDBaYI+xPQ
-         F8xuJXRbDyiZUgPgAeHuD5hOWygi1fXGP3JOnepP/YTgLTVywjYmIQiyhXRFrv8/3IUT
-         XMCw==
-X-Gm-Message-State: APjAAAVDaYPDNwXqBwoKhIWf0kt99t10bUJQdNkLlW6jRW98icfeQPY3
-        w4KvpDvz25Ds7aU2rk2waw==
-X-Google-Smtp-Source: APXvYqzCvqmsBL7hdv+MANoijnliQcs7gcB/JlqgrpY74V90wibJ6XokQDyfNO5RXAHNGjOAnjvGmQ==
-X-Received: by 2002:a05:6830:2106:: with SMTP id i6mr1714548otc.146.1556664691778;
-        Tue, 30 Apr 2019 15:51:31 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 3sm10756189oti.45.2019.04.30.15.51.30
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=bDztD/ujVpn8NFHqaBmoePCgiisBaSiTIMPziP0Fi7o=;
+        b=gb4Db7ydf5wowcEckPjKfWegpuyBA8UgNoK4d8I9n89F1xXMpOIce8SvbqCq/riZJQ
+         y9IDiUJ4ZbmycmieGXJ+JGDYuBtQj6J70mN2NGT9ELYdT08s4sh7Sxj16ui2EEFUhdF3
+         56wxT2Ds+PE4JnseUWt3NY5VsucCdXEvESnRchIctL9+ScER1wQdJUwFdFkgYonE7Z2Y
+         Od0b95P7T82zaA+seff6elf92Sl/yWzrTRHjx7Ku/ld7Mn2qZSbzkIa/GHA3+A4sRABT
+         s/9i1R/XOh/Pji6Hjqf0zMyaab1MNqmNOMEAg3UUKY4OD4s8wGOkRjII6mZrrU8xFWlw
+         11uA==
+X-Gm-Message-State: APjAAAVQylFfMjEERFJPwq3fsKS71QIOLom60+7P5L6MtKhZC7oomOhg
+        cTsjngJCoA4R1ob4MGH7PfY=
+X-Google-Smtp-Source: APXvYqzxfVaCacRpduoD2Xwazbs85NCmpezPFY44gKLxahC3sY2HvIa6YLQ6tX0Wk4DmgXr6SlZm2g==
+X-Received: by 2002:a17:902:a3:: with SMTP id a32mr1820708pla.111.1556664783054;
+        Tue, 30 Apr 2019 15:53:03 -0700 (PDT)
+Received: from localhost ([61.68.7.233])
+        by smtp.gmail.com with ESMTPSA id i3sm52883816pfa.90.2019.04.30.15.53.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 15:51:30 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 17:51:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: net: add qca,ar71xx.txt documentation
-Message-ID: <20190430225130.GA10771@bogus>
-References: <20190422064046.2822-1-o.rempel@pengutronix.de>
- <20190422064046.2822-2-o.rempel@pengutronix.de>
+        Tue, 30 Apr 2019 15:53:01 -0700 (PDT)
+Date:   Wed, 01 May 2019 08:52:55 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH] powerpc: vdso: drop unnecessary cc-ldoption
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20190423211116.261111-1-ndesaulniers@google.com>
+        <CAKwvOd=dBLXQUzv8R3-JqF=pUTH0-5O3v+_ceekT3W23VxtDbg@mail.gmail.com>
+In-Reply-To: <CAKwvOd=dBLXQUzv8R3-JqF=pUTH0-5O3v+_ceekT3W23VxtDbg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190422064046.2822-2-o.rempel@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1556664541.74fhfupxpn.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 22, 2019 at 08:40:44AM +0200, Oleksij Rempel wrote:
-> Add binding documentation for Atheros/QCA networking IP core used
-> in many routers.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  .../devicetree/bindings/net/qca,ar71xx.txt    | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/qca,ar71xx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qca,ar71xx.txt b/Documentation/devicetree/bindings/net/qca,ar71xx.txt
-> new file mode 100644
-> index 000000000000..56abf224de2c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/qca,ar71xx.txt
-> @@ -0,0 +1,44 @@
+Nick Desaulniers's on May 1, 2019 6:25 am:
+> On Tue, Apr 23, 2019 at 2:11 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+>>
+>> Towards the goal of removing cc-ldoption, it seems that --hash-style=3D
+>> was added to binutils 2.17.50.0.2 in 2006. The minimal required version
+>> of binutils for the kernel according to
+>> Documentation/process/changes.rst is 2.20.
+>>
+>> Link: https://gcc.gnu.org/ml/gcc/2007-01/msg01141.html
+>> Cc: clang-built-linux@googlegroups.com
+>> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+>> ---
+>>  arch/powerpc/kernel/vdso32/Makefile | 5 ++---
+>>  arch/powerpc/kernel/vdso64/Makefile | 5 ++---
+>>  2 files changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/powerpc/kernel/vdso32/Makefile b/arch/powerpc/kernel/v=
+dso32/Makefile
+>> index ce199f6e4256..06f54d947057 100644
+>> --- a/arch/powerpc/kernel/vdso32/Makefile
+>> +++ b/arch/powerpc/kernel/vdso32/Makefile
+>> @@ -26,9 +26,8 @@ GCOV_PROFILE :=3D n
+>>  KCOV_INSTRUMENT :=3D n
+>>  UBSAN_SANITIZE :=3D n
+>>
+>> -ccflags-y :=3D -shared -fno-common -fno-builtin
+>> -ccflags-y +=3D -nostdlib -Wl,-soname=3Dlinux-vdso32.so.1 \
+>> -               $(call cc-ldoption, -Wl$(comma)--hash-style=3Dboth)
+>> +ccflags-y :=3D -shared -fno-common -fno-builtin -nostdlib \
+>> +       -Wl,-soname=3Dlinux-vdso32.so.1 -Wl,--hash-style=3Dboth
+>>  asflags-y :=3D -D__VDSO32__ -s
+>>
+>>  obj-y +=3D vdso32_wrapper.o
+>> diff --git a/arch/powerpc/kernel/vdso64/Makefile b/arch/powerpc/kernel/v=
+dso64/Makefile
+>> index 28e7d112aa2f..32ebb3522ea1 100644
+>> --- a/arch/powerpc/kernel/vdso64/Makefile
+>> +++ b/arch/powerpc/kernel/vdso64/Makefile
+>> @@ -12,9 +12,8 @@ GCOV_PROFILE :=3D n
+>>  KCOV_INSTRUMENT :=3D n
+>>  UBSAN_SANITIZE :=3D n
+>>
+>> -ccflags-y :=3D -shared -fno-common -fno-builtin
+>> -ccflags-y +=3D -nostdlib -Wl,-soname=3Dlinux-vdso64.so.1 \
+>> -               $(call cc-ldoption, -Wl$(comma)--hash-style=3Dboth)
+>> +ccflags-y :=3D -shared -fno-common -fno-builtin -nostdlib \
+>> +       -Wl,-soname=3Dlinux-vdso64.so.1 -Wl,--hash-style=3Dboth
+>>  asflags-y :=3D -D__VDSO64__ -s
+>>
+>>  obj-y +=3D vdso64_wrapper.o
+>> --
+>> 2.21.0.593.g511ec345e18-goog
+>>
+>=20
+> bumping for review
 
-Needs some title and info about what this h/w is.
+This looks like a good cleanup.
 
-> +Required properties:
-> +- compatible:	Should be "qca,<soc>-eth". Currently support compatibles are:
-> +		qca,ar7100-eth - Atheros AR7100
-> +		qca,ar7240-eth - Atheros AR7240
-> +		qca,ar7241-eth - Atheros AR7241
-> +		qca,ar7242-eth - Atheros AR7242
-> +		qca,ar9130-eth - Atheros AR9130
-> +		qca,ar9330-eth - Atheros AR9330
-> +		qca,ar9340-eth - Atheros AR9340
-> +		qca,qca9530-eth - Qualcomm Atheros QCA9530
-> +		qca,qca9550-eth - Qualcomm Atheros QCA9550
-> +		qca,qca9560-eth - Qualcomm Atheros QCA9560
-> +
-> +- reg : Address and length of the register set for the device
-> +- interrupts : Should contain eth interrupt
-> +- phy-mode : See ethernet.txt file in the same directory
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 
-Is there a subset of valid modes?
-
-> +- clocks: the clock used by the core
-> +- clock-names: the names of the clock listed in the clocks property. These are
-> +	"mdio".
-
-Seems strange that's the only clock.
-
-> +- resets: Should contain phandles to the reset signals
-> +- reset-names: Should contain the names of reset signal listed in the resets
-> +		property. These are "mac" and "mdio"
-> +
-> +Optional properties:
-> +- phy-handle : phandle to the PHY device connected to this device.
-> +- fixed-link : Assume a fixed link. See fixed-link.txt in the same directory.
-> +  Use instead of phy-handle.
-> +
-> +Optional subnodes:
-> +- mdio : specifies the mdio bus, used as a container for phy nodes
-> +  according to phy.txt in the same directory
-> +
-> +Example:
-> +
-> +ethernet@1a000000 {
-> +	compatible = "qca,ar9330-eth";
-> +	reg = <0x1a000000 0x200>;
-> +	interrupts = <5>;
-> +	resets = <&rst 13>, <&rst 23>;
-> +	reset-names = "mac", "mdio";
-> +	clocks = <&pll ATH79_CLK_MDIO>;
-> +	clock-names = "mdio";
-> +	phy-mode = "gmii";
-> +};
-> -- 
-> 2.20.1
-> 
+=
