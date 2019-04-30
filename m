@@ -2,58 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD82EEC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 04:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B67EEC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 04:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfD3CXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Apr 2019 22:23:31 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:33220 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729803AbfD3CXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Apr 2019 22:23:31 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id DE5905C0355; Tue, 30 Apr 2019 04:22:38 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 04:22:38 +0200
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] staging: fieldbus: anybus-s: force endiannes
- annotation
-Message-ID: <20190430022238.GA22593@osadl.at>
-References: <1556517940-13725-1-git-send-email-hofrat@osadl.org>
- <CAGngYiVDFL1fm2oKALXORNziX6pdcBBNtp7rSnj_FBdr6u4j5w@mail.gmail.com>
+        id S1729926AbfD3CbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Apr 2019 22:31:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33879 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729877AbfD3CbX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Apr 2019 22:31:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s7so8551758ljh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 19:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7bXLV+X1SboPUgfWfwBzkogeRLHq9rIZ+BOOT2J1Fvk=;
+        b=NCQTeCycXmEyoLD3XSPWnZUF+hXdPskjwYAWiIQuU1WhztQQ6dqXbSCj4NSwXP8DWN
+         ZjcvtRAgsvdgAc/3KSLAFxaK4kcCHoNxoycA6JsPI8ky1/xJP5BClUWpKZT4TRT9XT4m
+         1DJsH/YCVSV0nucpo2++hoaf5DTQ5zm7Bsf9A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7bXLV+X1SboPUgfWfwBzkogeRLHq9rIZ+BOOT2J1Fvk=;
+        b=k68LUu2ps+mut+Sbxn4R3VfIyUi+WJslW5Tytb5i2Z5H/Ry/gMbM/8JP6ZGltCTym8
+         wOWmCFhEi9kzEj6vqsSRPbTlFQE+lVRwLydO1JZWhE9SWZ1AKIUUS7qdpg1oBII4Nzqr
+         5PW8SlsWONZgVp2cWUa5hPRZamEhSP5Nc7sWsHcPqc+lK0TcWr27L2y+6MI3WlGApyC1
+         BwjnHCTGigDMtM46VgfUpFlLbB2uSKrAaRpr6kre3vZEFf8wSNyglQd3Kbf0cFf9Uzfp
+         MjjJ1QxWQpfxy2V0BNLtIbRF+PjQfmPdWBtUNY041i9i3hACVSE4SEwpU+oVBXZA4VNe
+         VGYw==
+X-Gm-Message-State: APjAAAWte75G7W9X12HCHhNdWaM5mwNVd4ukFklN6i+rr3dOS/O5sMYq
+        q8qNvIJ4pkVa2UcnSI11rxj8LfhFeXM=
+X-Google-Smtp-Source: APXvYqzX4LIrn9Lmm39zgQZZIL72HkotBiUDOa5hEvDGjKyEEmCYpJ8w2Jtdomo+3DCkQ4WilN3WnA==
+X-Received: by 2002:a2e:5dd2:: with SMTP id v79mr35261295lje.22.1556591481343;
+        Mon, 29 Apr 2019 19:31:21 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id j6sm8591285ljc.0.2019.04.29.19.31.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2019 19:31:20 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id h126so9587379lfh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Apr 2019 19:31:20 -0700 (PDT)
+X-Received: by 2002:a19:ca02:: with SMTP id a2mr33690036lfg.88.1556591178970;
+ Mon, 29 Apr 2019 19:26:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGngYiVDFL1fm2oKALXORNziX6pdcBBNtp7rSnj_FBdr6u4j5w@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com>
+ <CAHk-=wjphmrQXMfbw9j-tTzDvJ+Uc+asMHdFa=1_1xZoYVUC=g@mail.gmail.com>
+ <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
+ <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
+ <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
+ <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+ <CAHk-=wjyyKDv-WZLXZbVD=V05p2X7eg74z2SpR4TQTxN9JLq4Q@mail.gmail.com>
+ <20190429220814.GF31379@linux.intel.com> <CAHk-=whpq2=f2LdB-nc52Rd=iZkUH-N-r8OTqEfo+4UaJc7piA@mail.gmail.com>
+ <20190430000846.GG31379@linux.intel.com> <20190430004504.GH31379@linux.intel.com>
+In-Reply-To: <20190430004504.GH31379@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Apr 2019 19:26:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjXHfVkrO6ftk9FGtAbpCsaEBa+tGrC8qjV6RUJHu+pCg@mail.gmail.com>
+Message-ID: <CAHk-=wjXHfVkrO6ftk9FGtAbpCsaEBa+tGrC8qjV6RUJHu+pCg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] x86/ftrace: make ftrace_int3_handler() not to skip
+ fops invocation
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:03:36AM -0400, Sven Van Asbroeck wrote:
-> On Mon, Apr 29, 2019 at 2:11 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
+On Mon, Apr 29, 2019 at 5:45 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Mon, Apr 29, 2019 at 05:08:46PM -0700, Sean Christopherson wrote:
 > >
-> > V2: As requested by Sven Van Asbroeck <thesven73@gmail.com> make the
-> >     impact of the patch clear in the commit message.
-> 
-> Thank you, but did you miss my comment about creating a local variable
-> instead? See:
-> https://lkml.org/lkml/2019/4/28/97
+> > It's 486 based, but either way I suspect the answer is "yes".  IIRC,
+> > Knights Corner, a.k.a. Larrabee, also had funkiness around SMM and that
+> > was based on P54C, though I'm struggling to recall exactly what the
+> > Larrabee weirdness was.
+>
+> Aha!  Found an ancient comment that explicitly states P5 does not block
+> NMI/SMI in the STI shadow, while P6 does block NMI/SMI.
 
-Did not miss it - I just don't think that makes it any more
-understandable - the __force __be16 makes it clear I believe
-that this is correct, sparse does not like this though - so tell
-sparse. The local variable would need to be explained as it is
-functionally not necessary - therefor I find it more confusing
-that using  __force here.
+Ok, so the STI shadow really wouldn't be reliable on those machines. Scary.
 
-If that rational is wrong let me know.
+Of course, the good news is that hopefully nobody has them any more,
+and if they do, they presumably don't use fancy NMI profiling etc, so
+any actual NMI's are probably relegated purely to largely rare and
+effectively fatal errors anyway (ie memory parity errors).
 
-thx!
-hofrat
-
+                     Linus
