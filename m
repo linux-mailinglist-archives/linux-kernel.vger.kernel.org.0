@@ -2,125 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA25BF326
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79BAEF329
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:38:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfD3Jhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:37:54 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38642 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfD3Jhx (ORCPT
+        id S1727079AbfD3JiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:38:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46228 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfD3JiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:37:53 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w11so4958085edl.5;
-        Tue, 30 Apr 2019 02:37:52 -0700 (PDT)
+        Tue, 30 Apr 2019 05:38:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h21so12084958ljk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 02:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=drPZ7KoEDZSmxCF+WsAn2EdRoQpZ9ONUXMxh/61qnOY=;
-        b=aNvxekfqNqjBjZximPsvLr2kRZDfj/FaSXo2W0BuDi4PI/n49Kro/yAVpAiSkjA/FZ
-         A9a+2mgS4KR9OzuZ4iXOvlxEo6SIj6bzEhvj/D5/H7k5vHAVzl1xhrf4Q19MKJWUDLLJ
-         5zeQXrWaF+EriPjmiSI+gUwvpmVyLTyvaeM82WVoxD8gcxFHZIhwLXjnHKvynrYddBmk
-         B/K0BAM5Ab38A8OJxcjoRVnLjmgJ693xcuH0pV5M7o6n7AScB2Koq6b7gpwCczJ6rAWF
-         LLJAJop8kY82YlMTv+xkXrl2tlnqBT2iWYl7Y5s/pNF3OoF8wnPZITJMgfAD+cml01Wb
-         nOww==
+        bh=zYjnml+G09Y2iH7YOBy1RnUmEBfOtgqF9A/Rh/pjRIY=;
+        b=ukGEBlNWpw3ngsxHEBXIQvlOeQhk4/p8R6GklmoB2a/Xv4c2NAwqOW+cNq7yBLyL2B
+         dBM9smuHxp7kZy66IxNEH6kzgwI4RJd82xvidtZDKhUdNbLaEsENurzJ+oj57ObbDtPs
+         2gPE4aJopsgxoW0EJ3MNExq6DgBsaZ+Kv6Jfluqf0CtBIn88GNQzHCmQolL80H1brM2K
+         yijxEgwd99V9DqOpzUHXvBwaNvpoxs9k9tTcEX9MRgfaanxEYssrdayZTUb/xuilfH7/
+         y9GV0XIkScDJQx2nQUJrqtsIXjr2x18uJzzzUjE/TilqtUizxTCPjBmxTC6/AOgrlhFc
+         HKig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=drPZ7KoEDZSmxCF+WsAn2EdRoQpZ9ONUXMxh/61qnOY=;
-        b=OOv4RKndLkrFvJpe6Kc9v7bklElA8x5EmNW1C6xuduN9cWlmYETCmgq9zlKvP9gKMV
-         kpSAqGWLKhVTGtQoMWPkr1E80qxbTOehz/8Od9+t4fTdgNC0L9OAWqLY1cfHcoLnaiyL
-         8jo5FEN1FNgO9j8ZDOay/mbqdjORWVuKpnXvdiTR0Ra0ZxfnV5fd2i1ZWmMz6RTXjo4Q
-         Y+lh5/MkYoc4moxTs7LkpXMeNFY7ciYEGZpsF0JbGoo3pD3JSIy7TeUpzzefM7+ogf8N
-         /48N1Wq2hUjXRLKmCOvBomYibIp2EdRXxiRnW/c2gh4u3UoPmTXn/QI28KavSeCAFFqw
-         hS2Q==
-X-Gm-Message-State: APjAAAU4ckIAlXOUqWvEnmTjELmHZq2olPG1mKMQMtzxHSbk78lqLe4+
-        YP4pT2qL3uQuq+7e1FPP/oc=
-X-Google-Smtp-Source: APXvYqzCLE+57MgejEVLrV4lXRIfrhIdN91f5tmUH6A98tC/stesp++PZAFiDzr4K2t7wXcpwZKXlw==
-X-Received: by 2002:a17:906:3e91:: with SMTP id a17mr33572986ejj.73.1556617071923;
-        Tue, 30 Apr 2019 02:37:51 -0700 (PDT)
-Received: from archlinux-i9 ([2a01:4f9:2b:2b84::2])
-        by smtp.gmail.com with ESMTPSA id o62sm8745742eda.42.2019.04.30.02.37.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Apr 2019 02:37:50 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 02:37:49 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     robh+dt@kernel.org, frowand.list@gmail.com,
-        pantelis.antoniou@konsulko.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] of: replace be32_to_cpu to be32_to_cpup
-Message-ID: <20190430093749.GA29126@archlinux-i9>
-References: <20190430090044.16345-1-tranmanphong@gmail.com>
+        bh=zYjnml+G09Y2iH7YOBy1RnUmEBfOtgqF9A/Rh/pjRIY=;
+        b=oA8rZ3PBj06sSA8s3hBgKX35s1u//j9t2mdi8WBxvBZbKcVG8WqjYHi3vqkFOXvJ4H
+         cYPHTeMyFEdMmzXUSd0OuEr66OdZ7kxgC8EBRCKZOKByWSRupbJzVYW9Zp+rpXnvj42D
+         Sm0qsl10YicI1ReeTa3Rv804AJ9noQQnPa5+w69BNcZbLL9xq2pFCJvfFMZgPcCn/FGM
+         dcImPFk2/gSjBaT5ShtXl0tcxaZTF3SX3sSWpc1J6aMCGM4Rl/DhXH/AMwjVRAtIVUmy
+         K8TXNa74b4gLyyZr4o3OdtQP3NTp/WCy3CRqBShepihlxZSjS6wusnRZFI1Toaio6pbN
+         aBWw==
+X-Gm-Message-State: APjAAAUhxMieGq2E5TVCc35Ki6Y2f/QIO4GBxZ4oILhosX4ZtDPvyNwx
+        VyjrVcuQ2/KQIrOMbPqrAwY=
+X-Google-Smtp-Source: APXvYqxOGwnTEPiPGzR1pnewgUsAD0rmNHah8NK5uqndt/a8Ai7cN9+BqLVfK2dgtlDwZGL1HRdMqw==
+X-Received: by 2002:a2e:8648:: with SMTP id i8mr36897627ljj.166.1556617090058;
+        Tue, 30 Apr 2019 02:38:10 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id l16sm7876890lfk.44.2019.04.30.02.38.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Apr 2019 02:38:09 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 840A24603CA; Tue, 30 Apr 2019 12:38:08 +0300 (MSK)
+Date:   Tue, 30 Apr 2019 12:38:08 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+        akpm@linux-foundation.org, arunks@codeaurora.org, brgl@bgdev.pl,
+        geert+renesas@glider.be, ldufour@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mguzik@redhat.com, mhocko@kernel.org, rppt@linux.ibm.com,
+        vbabka@suse.cz
+Subject: Re: [PATCH 1/3] mm: get_cmdline use arg_lock instead of mmap_sem
+Message-ID: <20190430093808.GD2673@uranus.lan>
+References: <20190418182321.GJ3040@uranus.lan>
+ <20190430081844.22597-1-mkoutny@suse.com>
+ <20190430081844.22597-2-mkoutny@suse.com>
+ <4c79fb09-c310-4426-68f7-8b268100359a@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190430090044.16345-1-tranmanphong@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <4c79fb09-c310-4426-68f7-8b268100359a@virtuozzo.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Nick and the list
-
-On Tue, Apr 30, 2019 at 04:00:44PM +0700, Phong Tran wrote:
-> The cell is a pointer to __be32.
-> with the be32_to_cpu a lot of clang warning show that:
+On Tue, Apr 30, 2019 at 12:09:57PM +0300, Kirill Tkhai wrote:
 > 
-> ./include/linux/of.h:238:37: warning: multiple unsequenced modifications
-> to 'cell' [-Wunsequenced]
->                 r = (r << 32) | be32_to_cpu(*(cell++));
->                                                   ^~
-> ./include/linux/byteorder/generic.h:95:21: note: expanded from macro
-> 'be32_to_cpu'
->                     ^
-> ./include/uapi/linux/byteorder/little_endian.h:40:59: note: expanded
-> from macro '__be32_to_cpu'
->                                                           ^
-> ./include/uapi/linux/swab.h:118:21: note: expanded from macro '__swab32'
->         ___constant_swab32(x) :                 \
->                            ^
-> ./include/uapi/linux/swab.h:18:12: note: expanded from macro
-> '___constant_swab32'
->         (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
->                   ^
+> This looks OK for me.
 > 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  include/linux/of.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index e240992e5cb6..1c35fc8f19b0 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -235,7 +235,7 @@ static inline u64 of_read_number(const __be32 *cell, int size)
->  {
->  	u64 r = 0;
->  	while (size--)
-> -		r = (r << 32) | be32_to_cpu(*(cell++));
-> +		r = (r << 32) | be32_to_cpup(cell++);
->  	return r;
->  }
->  
-> -- 
-> 2.21.0
-> 
+> But speaking about existing code it's a secret for me, why we ignore arg_lock
+> in binfmt code, e.g. in load_elf_binary().
 
-While the patch does remove the warning, I am not convinced that this
-isn't a clang bug based on my brief analysis here:
-
-https://github.com/ClangBuiltLinux/linux/issues/460#issuecomment-487808008
-
-However, I'm waiting for people smarter than I am to comment on whether
-that sounds correct or not.
-
-I am not familiar with the various different big/little endian functions
-enough to review this but thank you for the patch!
-
-Nathan
+Well, strictly speaking we probably should but you know setup of
+the @arg_start by kernel's elf loader doesn't cause any side
+effects as far as I can tell (its been working this lockless
+way for years, mmap_sem is taken later in the loader code).
+Though for consistency sake we probably should set it up
+under the spinlock.
