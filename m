@@ -2,89 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54670F263
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 003FAF269
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfD3JA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:00:26 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62951 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfD3JA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:00:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 02:00:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,413,1549958400"; 
-   d="scan'208";a="169232126"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 30 Apr 2019 02:00:21 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 30 Apr 2019 12:00:21 +0300
-Date:   Tue, 30 Apr 2019 12:00:21 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     mh@mike.franken.de
-Cc:     lukas@wunner.de, tiwai@suse.de, bhelgaas@google.com,
-        ckellner@redhat.com, gregkh@linuxfoundation.org, jslaby@suse.cz,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Furquan Shaikh <furquan@google.com>, linux-acpi@vger.kernel.org
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and
- thunderbolt)
-Message-ID: <20190430090021.GF26516@lahna.fi.intel.com>
-References: <s5hsgu0ihyg.wl-tiwai@suse.de>
- <EksOpJxc6GB@mike.franken.de>
+        id S1726723AbfD3JDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:03:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34473 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfD3JDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 05:03:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id c13so5554843pgt.1;
+        Tue, 30 Apr 2019 02:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=28WGuCBBFm21UZ3ZuAiDJTw/9QkSfSZcOBb9vRhxge4=;
+        b=AQrDmWwpNT+T395B8Q9G4G5VWjsfcSlK0ptV8eLmSNUWJlydaj7dFw2aFVcLf9nz+Q
+         LJ+Yd7QeX7DeJbSin61VEqmXYzMQpkK9UvpbklwKPwgl7aY/IL5LyQNpvXXLwpKXrwfV
+         iuZ0Xns3XCEqKUAqFs2Y84JMvYuUHT6J0i39usAvPx6xkFe33KuOPoMrxZks5swRB83K
+         khEssQHN/lBOUuWR7l/xqFALwKgNkWnCYFhYEyMUw0UpohJrqMC2U4OGUtclvIkBBvIg
+         bwoVdu8o+hJFKdURNZ0oxR21Zvk5OqU5iKlFRm20Q6KR47Ty6mtbmfxkusNESRgsDf8l
+         2lJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=28WGuCBBFm21UZ3ZuAiDJTw/9QkSfSZcOBb9vRhxge4=;
+        b=cAHsFhi6EX/T2mA/cB/vGrxhgA2QX9Lio+gHDSTNtzgjQCruIrmFZENgwReNFOh0/z
+         F+kYxQmCeqCuah5btmCj81xIr/iPsrWto4Qy4yP2G5NiYVFAZ+jmh/wj/QeBUpj3iBwl
+         TFN01qWPxcjnWjJXHZWvF9m2PfX+VXwBZX4ToxWJ/sqqf4ieeMv8RAMAZPlbLpdx0TbD
+         1uGj1O8tiYAn9ztGRyuYe/1Wv3q3zYT6nkVhwEAit7U3sith/xFDMaWvdDc80QIk+d40
+         499uIJeEuj0WemPmoOzjfPfYrC445oLZud5F/Nx5O2m9QkBrfiwYRFPPg+uD8gghUht/
+         O98A==
+X-Gm-Message-State: APjAAAWfFQc3pipj4dpOMwDiBkVmuhyfKlwYQMM+kTJzPrS9GIb0vDEm
+        BW22lW7escGnpBXDLXE7298=
+X-Google-Smtp-Source: APXvYqzqAsQgtyWufMxSD/Apnr8EtqzXxFoda5uMAJZ2kpQWycUmF6FNEIzQ6E0tkUW4qSjR3gxUZA==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr63480562pgh.86.1556614983164;
+        Tue, 30 Apr 2019 02:03:03 -0700 (PDT)
+Received: from debian.net.fpt ([42.114.18.133])
+        by smtp.gmail.com with ESMTPSA id a10sm46354308pfc.21.2019.04.30.02.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 02:03:02 -0700 (PDT)
+From:   Phong Tran <tranmanphong@gmail.com>
+To:     robh+dt@kernel.org, frowand.list@gmail.com,
+        pantelis.antoniou@konsulko.com
+Cc:     natechancellor@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>
+Subject: [PATCH] of: replace be32_to_cpu to be32_to_cpup
+Date:   Tue, 30 Apr 2019 16:00:44 +0700
+Message-Id: <20190430090044.16345-1-tranmanphong@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <EksOpJxc6GB@mike.franken.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Rafael, Furquan and linux-acpi
+The cell is a pointer to __be32.
+with the be32_to_cpu a lot of clang warning show that:
 
-(The original thread is here https://lore.kernel.org/lkml/s5hy33siofw.wl-tiwai@suse.de/T/#u)
+./include/linux/of.h:238:37: warning: multiple unsequenced modifications
+to 'cell' [-Wunsequenced]
+                r = (r << 32) | be32_to_cpu(*(cell++));
+                                                  ^~
+./include/linux/byteorder/generic.h:95:21: note: expanded from macro
+'be32_to_cpu'
+                    ^
+./include/uapi/linux/byteorder/little_endian.h:40:59: note: expanded
+from macro '__be32_to_cpu'
+                                                          ^
+./include/uapi/linux/swab.h:118:21: note: expanded from macro '__swab32'
+        ___constant_swab32(x) :                 \
+                           ^
+./include/uapi/linux/swab.h:18:12: note: expanded from macro
+'___constant_swab32'
+        (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
+                  ^
 
-On Tue, Apr 30, 2019 at 10:39:00AM +0200, Michael Hirmke wrote:
-> Hi Takashi,
-> 
-> [...]
-> >>> I also have XPS 9370 but not that particular dock. I will check tomorrow
-> >>> if I can reproduce it as well.
-> >>
-> >> There aren't too many changes between 5.0.7 and 5.0.8 that touch
-> >> PCI/ACPI. This is just a shot in the dark but could you try to revert:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.gi
-> >>   t/commit/?h=linux-5.0.y&id=da6a87fb0ad43ae811519d2e0aa325c7f792b13a
-> >>
-> >> and see if it makes any difference?
-> 
-> >OK, I'm building a test kernel package with the revert in OBS
-> >home:tiwai:bsc1133486 repo.  A new kernel will be
-> >kernel-default-5.0.10-*g8edeab8:
-> >  http://download.opensuse.org/repositories/home:/tiwai:/bsc1133486/standard/
-> 
-> >Michael, once when the new kernel is ready, please give it a try.
-> 
-> as far as I can see, state is back to normal with this kernel.
-> No more error messages or crashing modules and all devices seem to work
-> as expected.
-> Only thing is, that the external devices connected to the Thunderbolt
-> dock are coming up a little bit slower than with 5.0.7 - but this is
-> nothing, I'd worry about.
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+---
+ include/linux/of.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for testing.
+diff --git a/include/linux/of.h b/include/linux/of.h
+index e240992e5cb6..1c35fc8f19b0 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -235,7 +235,7 @@ static inline u64 of_read_number(const __be32 *cell, int size)
+ {
+ 	u64 r = 0;
+ 	while (size--)
+-		r = (r << 32) | be32_to_cpu(*(cell++));
++		r = (r << 32) | be32_to_cpup(cell++);
+ 	return r;
+ }
+ 
+-- 
+2.21.0
 
-Rafael, it seems that commit c8b1917c8987 ("ACPICA: Clear status of GPEs
-before enabling them") causes problem with Thunderbolt controllers if
-you boot with device (dock) connected.
-
-I think the reason is the same that got fixed in v4.14 with commit
-ecc1165b8b74 ("ACPICA: Dispatch active GPEs at init time") which the
-above commit essentially undoes if I understand it correctly.
