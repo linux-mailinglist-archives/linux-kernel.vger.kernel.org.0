@@ -2,97 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 060E8F224
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B18AEF209
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 10:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfD3Ijt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 04:39:49 -0400
-Received: from mail-n.franken.de ([193.175.24.27]:54041 "EHLO drew.franken.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725938AbfD3Ijs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:39:48 -0400
-Received: from perth.hirmke.de (aquarius.franken.de [193.175.24.89])
-        (Authenticated sender: antares)
-        by mail-n.franken.de (Postfix) with ESMTPSA id 7E220721E2830
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 10:39:45 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by perth.hirmke.de (Postfix) with ESMTP id 3C025964AD0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 10:39:45 +0200 (CEST)
-X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
-        occurs 7 times
-Received: from perth.hirmke.de ([127.0.0.1])
-        by localhost (perth.hirmke.de [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id XFZ9nsj8Y-NI for <linux-kernel@vger.kernel.org>;
-        Tue, 30 Apr 2019 10:39:44 +0200 (CEST)
-Received: by perth.hirmke.de (Postfix, from userid 10)
-        id 1B332964A5A; Tue, 30 Apr 2019 10:39:41 +0200 (CEST)
-Received: by mike.franken.de (OpenXP/5.0.34 (Linux) (x86_64));
-          30 Apr 2019 10:39:33 +0200
-Date:   30 Apr 2019 10:39:00 +0200
-From:   opensuse@mike.franken.de (Michael Hirmke)
-To:     jslaby@suse.cz
-Cc:     tiwai@suse.de
-Cc:     bhelgaas@google.com
-Cc:     ckellner@redhat.com
-Cc:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Cc:     lukas@wunner.de
-Cc:     mika.westerberg@linux.intel.com
-Message-ID: <EksOpJxc6GB@mike.franken.de>
-In-Reply-To: <s5hsgu0ihyg.wl-tiwai@suse.de>
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and thunderbolt)
-User-Agent: OpenXP/5.0.34 (Linux) (x86_64)
+        id S1726664AbfD3IbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 04:31:17 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37195 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfD3IbQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:31:16 -0400
+X-Originating-IP: 88.190.179.123
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id EF872FF80F;
+        Tue, 30 Apr 2019 08:31:12 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 10:40:01 +0200
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Ellie Reeves <ellierevves@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] PCI: aardvark: Use LTSSM state to build link training
+ flag
+Message-ID: <20190430084000.GT2754@voidbox.localdomain>
+References: <20190316161243.29517-1-repk@triplefau.lt>
+ <20190425210439.GG11428@google.com>
+ <20190425222756.GR2754@voidbox.localdomain>
+ <20190429194532.GA119268@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline;
- modification-date="30 Apr 2019 08:38:55 +0000";
- read-date="Tue, 30 Apr 2019 10:38:55 +0200";
- creation-date="Tue, 30 Apr 2019 10:38:55 +0200"
-Organization: Kommunikationsnetz Franken e.V. (Nuernberg)
-Reply-To: mh@mike.franken.de
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=disabled version=3.4.1
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail-n.franken.de
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429194532.GA119268@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Takashi,
+On Mon, Apr 29, 2019 at 02:45:32PM -0500, Bjorn Helgaas wrote:
+> On Fri, Apr 26, 2019 at 12:27:57AM +0200, Remi Pommarel wrote:
+> > On Thu, Apr 25, 2019 at 04:04:39PM -0500, Bjorn Helgaas wrote:
+> > > On Sat, Mar 16, 2019 at 05:12:43PM +0100, Remi Pommarel wrote:
+> 
+> > > It sounds like reading and/or writing some registers during a retrain
+> > > causes some sort of EL1 error?  Is this a separate erratum?  Is there
+> > > a list of the registers and operations (read/write) that are affected?
+> > > The backtrace below suggests that it's actually a read of LNKCAP or
+> > > LNKCTL (not LNKSTA) that caused the error.
+> > 
+> > IIUC, the backtrace below produces an EL1 error when doing a PIO
+> > transfer while the link is still retraining. See my comment below for
+> > more about that. But accessing any root complex's register seems fine.
+> > > 
+> > > It sounds like there are really two problems:
+> > > 
+> > >   1) Reading PCI_EXP_LNKSTA (or the Aardvark equivalent) doesn't give
+> > >      valid data for PCI_EXP_LNKSTA_LT.
+> > 
+> > The 1) is correct.
+> > 
+> > >   2) Sometimes config reads cause EL1 errors.
+> > 
+> > Actually EL1 error happens when we try to access device's register with
+> > a PIO transfer, which is when we try to use the link while it is being
+> > retrained.
+> > 
+> > IMHO, 1) and 2) are linked. ASPM core tries to use the link too early
+> > because it has read invalid data for PCI_EXP_LNKSTA_LT.
+> 
+> From the software point of view, there is no such thing as "using the
+> link too early".  The pattern of:
+> 
+>   - Verify that link is up
+>   - Access device on other end of link
+> 
+> is always racy because the link can go down at any time due to hotplug
+> or other issues.  In particular, the link can go down after we verify
+> that the link is up, but before we access the device.
+> 
+> Software must be able to deal with that gracefully.  I don't know
+> whether that means catching and recovering from that EL1 error, or
+> masking it, or what.  This is architecture-specific stuff that's
+> outside the scope of PCIe itself.
+> 
+> But a link going down should never directly cause a kernel panic.
 
-[...]
->>> I also have XPS 9370 but not that particular dock. I will check tomorrow
->>> if I can reproduce it as well.
->>
->> There aren't too many changes between 5.0.7 and 5.0.8 that touch
->> PCI/ACPI. This is just a shot in the dark but could you try to revert:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.gi
->>   t/commit/?h=linux-5.0.y&id=da6a87fb0ad43ae811519d2e0aa325c7f792b13a
->>
->> and see if it makes any difference?
+Ah, yes, you are right. There is "worse" than the EL1 error though, boot
+can also hang while accessing those registers when link is not in a
+ready state.
 
->OK, I'm building a test kernel package with the revert in OBS
->home:tiwai:bsc1133486 repo.  A new kernel will be
->kernel-default-5.0.10-*g8edeab8:
->  http://download.opensuse.org/repositories/home:/tiwai:/bsc1133486/standard/
+So, yes, I do agree that there are two issues here. The
+PCI_EXP_LNKSTA_LT register one and the EL1 error or hang one. On the
+other hand I don't think I can split it in two because this patch only
+fixes the former which happens to not trigger the latter (ASPM core is
+kind enough to wait for the link to be ready after retraining).
 
->Michael, once when the new kernel is ready, please give it a try.
+Thus the second issue remains and hot plugging for example would
+likely trigger it. I'll try to see with Thomas if we could reach the
+vendor about that.
 
-as far as I can see, state is back to normal with this kernel.
-No more error messages or crashing modules and all devices seem to work
-as expected.
-Only thing is, that the external devices connected to the Thunderbolt
-dock are coming up a little bit slower than with 5.0.7 - but this is
-nothing, I'd worry about.
+By the way, I have replied to Lorenzo with, what I think, is a more
+legible patch. I could send a v3 with it if you prefer this one.
 
->thanks,
-
-Thank *you*.
-
->Takashi
-
-Bye.
-Michael.
 -- 
-Michael Hirmke
+Remi
