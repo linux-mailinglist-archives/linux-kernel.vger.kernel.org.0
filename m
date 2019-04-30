@@ -2,121 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17371F847
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A350F85B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:08:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbfD3MHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:07:00 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:51322 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727948AbfD3MG6 (ORCPT
+        id S1727632AbfD3MIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 08:08:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55924 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfD3MHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:06:58 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3UBv3l2016156;
-        Tue, 30 Apr 2019 14:06:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=0TJCqpAByJcnuLJ0JtSeGC0DKLxILjaYjgU3/kNbuek=;
- b=NmBhW31fR9zLCaqeXjHXtkG5/BQARi8G719yE+lA8MT+RIjgdhnjtI1rVcuizf7yT2ha
- fjDWIVwaVZSlTvU+BQ5dakHKoI4uCLaihfSydWw9ymEnQMIQw/okuMvLQsvrMGWXKxXZ
- GvMl+PTikZK8q0t2qdIM6Wp0qCLDy9SPY+96JOdYQJcfWmBAHr/aaxtWiOTacXyqWHrf
- OhfzASaUV7E5u14LxjwzJJcXL1ttxOO+/P3p/A2fZvY4GtqzZxcfIFzrtwOb5hAL8VqO
- AezCbzmDnt4DyRPwqmw/Ndi+MwL2iff+nGvUwXGhPOUAN1SdbLZ9QxNc/dxu4MPizXjI 7Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2s61q8dqy5-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 30 Apr 2019 14:06:47 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 082673A;
-        Tue, 30 Apr 2019 12:06:47 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D06F22516;
-        Tue, 30 Apr 2019 12:06:46 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.48) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 30 Apr
- 2019 14:06:46 +0200
-Subject: Re: [PATCH V2 0/5] mmc: mmci: add busy detect for stm32 sdmmc variant
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1556264798-18540-1-git-send-email-ludovic.Barre@st.com>
- <CAPDyKFqbn=UcbwoH_z+yjrjvHQZaMtmsD=n0yrBV7DAK5VRJEQ@mail.gmail.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <74b91eb4-e5a3-38b2-f732-29cdd058eb6a@st.com>
-Date:   Tue, 30 Apr 2019 14:06:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 30 Apr 2019 08:07:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ljvGw8ePwJU1BtvdBb7R72Czky3RJZItJhHXPlJxdKk=; b=Nk7xzAVf7JNy+7UJHbgBIyoht
+        HgdUW3DVhipn0yyCVQhcoCtcE/Zfu5epcbiL6N6PUwNm6fV5RKdD1rzjWt4bckbO4dl4ZSqRavLeO
+        ZBRGfsPBLkdlpiAsQL+wWFNpFLsGp7EFssmhhr9pSXtEoAQqZ2NZSWghOoTm9BuwqHb6AIChJbhQN
+        P7XoEGEjJG0iME3GZoe9QbnFRLSjOyv8polIT/OhzZ5WF8G0BI1DBVlPLv1vu/xlSQ0XEgJpp3riY
+        RhReKLQGUb+4yKW+U79uGDYaf7u1gjzXJFzCeIwAESYJVRj4Mhf7uRroQno5+DghOyq/doC/9J37t
+        7mvIbUZFw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLRXy-0005J6-9F; Tue, 30 Apr 2019 12:07:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C22AE203C05DB; Tue, 30 Apr 2019 14:07:40 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 14:07:40 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 0/5] Allow CPU0 to be nohz full
+Message-ID: <20190430120740.GU2623@hirez.programming.kicks-ass.net>
+References: <20190411033448.20842-1-npiggin@gmail.com>
+ <20190425120427.GS4038@hirez.programming.kicks-ass.net>
+ <1556592099.38esq4uhhz.astroid@bobo.none>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqbn=UcbwoH_z+yjrjvHQZaMtmsD=n0yrBV7DAK5VRJEQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556592099.38esq4uhhz.astroid@bobo.none>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 4/30/19 1:13 PM, Ulf Hansson wrote:
-> On Fri, 26 Apr 2019 at 09:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
->>
->> From: Ludovic Barre <ludovic.barre@st.com>
->>
->> This patch series adds busy detect for stm32 sdmmc variant.
->> Some adaptations are required:
->> -Avoid to check and poll busy status when is not expected.
->> -Clear busy status bit if busy_detect_flag and busy_detect_mask are
->>   different.
->> -Add hardware busy timeout with MMCIDATATIMER register.
->>
->> V2:
->> -mmci_cmd_irq cleanup in separate patch.
->> -simplify the busy_detect_flag exclude
->> -replace sdmmc specific comment in
->> "mmc: mmci: avoid fake busy polling in mmci_irq"
->> to focus on common behavior
->>
->> Ludovic Barre (5):
->>    mmc: mmci: cleanup mmci_cmd_irq for busy detect feature
->>    mmc: mmci: avoid fake busy polling in mmci_irq
->>    mmc: mmci: fix clear of busy detect status
->>    mmc: mmci: add hardware busy timeout feature
->>    mmc: mmci: add busy detect for stm32 sdmmc variant
->>
->>   drivers/mmc/host/mmci.c | 61 ++++++++++++++++++++++++++++++++++++++-----------
->>   drivers/mmc/host/mmci.h |  3 +++
->>   2 files changed, 51 insertions(+), 13 deletions(-)
->>
->> --
->> 2.7.4
->>
+On Tue, Apr 30, 2019 at 12:46:40PM +1000, Nicholas Piggin wrote:
+> Peter Zijlstra's on April 25, 2019 10:04 pm:
+> > On Thu, Apr 11, 2019 at 01:34:43PM +1000, Nicholas Piggin wrote:
+> >> Since last time, I added a compile time option to opt-out of this
+> >> if the platform does not support suspend on non-zero, and tried to
+> >> improve legibility of changelogs and explain the justification
+> >> better.
+> >> 
+> >> I have been testing this on powerpc/pseries and it seems to work
+> >> fine (the firmware call to suspend can be called on any CPU and
+> >> resumes where it left off), but not included here because the
+> >> code has some bitrot unrelated to this series which I hacked to
+> >> fix. I will discuss it and either send an acked patch to go with
+> >> this series if it is small, or fix it in powerpc tree.
+> >> 
+> > 
+> > Rafael, Frederic, any comments?
+> > 
 > 
-> Ludovic, just wanted to let you know that I am reviewing and testing
-> this series.
-> 
-> However, while running some tests on Ux500 for validating the busy
-> detection code, even without your series applied, I encounter some odd
-> behaviors. I am looking into the problem to understand better and will
-> let you know as soon as I have some more data to share.
+> Sorry to ping again, I guess people are probably busy after vacation.
+> Any chance we could get this in next merge window? Peter are you okay
+> with the config option as it is, then we can look at adapting it to
+> what x86 needs as a follow up (e.g., allow nohz CPU0 for
+> cpu0_hotpluggable case)?
 
-Oops, don't hesitate to share your status, if I could help.
-
-> 
-> Kind regards
-> Uffe
-> 
+Yeah, let me just queue these here patches. Not sure they'll still make
+the upcoming merge window, but we can try.
