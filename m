@@ -2,66 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34403F304
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81190F311
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 11:34:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfD3JdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 05:33:17 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:56211 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbfD3JdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:33:12 -0400
-X-Originating-IP: 109.213.14.175
-Received: from localhost (alyon-652-1-31-175.w109-213.abo.wanadoo.fr [109.213.14.175])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id A4AB71BF213;
-        Tue, 30 Apr 2019 09:33:10 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4/4] rtc: pcap: convert to SPDX identifier
-Date:   Tue, 30 Apr 2019 11:33:02 +0200
-Message-Id: <20190430093302.28648-4-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190430093302.28648-1-alexandre.belloni@bootlin.com>
-References: <20190430093302.28648-1-alexandre.belloni@bootlin.com>
+        id S1727234AbfD3Jdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 05:33:46 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:44208 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbfD3Jdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 05:33:46 -0400
+Received: from zn.tnic (p200300EC2F073600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:3600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 393941EC0AD8;
+        Tue, 30 Apr 2019 11:33:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1556616824;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Ljxzd7ohjGfa/y1AJl6pGQde15gtyslFFyhUFGUUNAU=;
+        b=lotr40/nuVuGL3vT4h5G5VutB3s/wvjt+rcxHxqIws9p6QtZFSfqlfc2dZuJpC7m5U4E1/
+        EGKwZUYIHuHBHu5Fxt7TTO3z0aZx/cnJdDp7mGCIRz0LYOTzconMBId6hWj/0xCxBhjksk
+        Z8s4M+PeugmXqVWcwWeZW5A353F/qcA=
+Date:   Tue, 30 Apr 2019 11:33:38 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Len Brown <lenb@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/14] v2 multi-die/package topology support
+Message-ID: <20190430093338.GA3518@zn.tnic>
+References: <20190226062012.23746-1-lenb@kernel.org>
+ <20190226190512.GR2861@worktop.programming.kicks-ass.net>
+ <CAJvTdK=SGZy+vbTcCKAmBeQSkeuAW0UxEpKXY2YNvmUofFXNUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJvTdK=SGZy+vbTcCKAmBeQSkeuAW0UxEpKXY2YNvmUofFXNUQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use SPDX-License-Identifier instead of a verbose license text.
+On Tue, Apr 30, 2019 at 02:50:58AM -0400, Len Brown wrote:
+> If one were to make a change here, I'd consider adding the (physical) die_id,
+> though it is already in sysfs topology as an attribute.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-pcap.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ From: Documentation/x86/topology.txt
 
-diff --git a/drivers/rtc/rtc-pcap.c b/drivers/rtc/rtc-pcap.c
-index d424339f7abb..178bfb1dea21 100644
---- a/drivers/rtc/rtc-pcap.c
-+++ b/drivers/rtc/rtc-pcap.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  pcap rtc code for Motorola EZX phones
-  *
-@@ -5,11 +6,6 @@
-  *  Copyright (c) 2009 Daniel Ribeiro <drwyrm@gmail.com>
-  *
-  *  Based on Motorola's rtc.c Copyright (c) 2003-2005 Motorola
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License version 2 as
-- *  published by the Free Software Foundation.
-- *
-  */
- 
- #include <linux/kernel.h>
+"The kernel does not care about the concept of physical sockets because
+a socket has no relevance to software. It's an electromechanical
+component. In the past a socket always contained a single package
+(see below), but with the advent of Multi Chip Modules (MCM) a socket
+can hold more than one package. So there might be still references to
+sockets in the code, but they are of historical nature and should be
+cleaned up."
+
+So that die thing has only small relevance to some software, as you say:
+
+"These topology changes primarily impact parts of the kernel and some
+applciations that care about package MSR scope."
+
+So if there's no real need to add it there, then it probably shouldn't
+be added. The topology is already too complex - so much so, that tools
+are even generating PDFs from it :)
+
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
