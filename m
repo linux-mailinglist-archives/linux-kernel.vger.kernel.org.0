@@ -2,103 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8F510272
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 685411027F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 00:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfD3Wgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 18:36:32 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42633 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbfD3Wgc (ORCPT
+        id S1727421AbfD3Wi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 18:38:57 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46325 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726056AbfD3Wi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:36:32 -0400
-Received: by mail-oi1-f194.google.com with SMTP id k9so9626535oig.9;
-        Tue, 30 Apr 2019 15:36:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/mJXhoJojCpUvedjSobrKy+qo2rbTnzoSCiZ/p9K6Ps=;
-        b=HS3qWGlhAnoIUv5Z8F9TepKxybv9lUZk3N85N5Vy18uHAUvtbjQFHo2KS1pfXTznEP
-         cHDJIBm+Am5c5EzgCXgn5S9llXdoJogmzFF4yPxcWQmnm8MCOvg6+R32ao40zpg56mnh
-         uVK98vbzkcUvQ/PojvXrPx8HZW27S2/0Gz4bTXVbNDHTRGQ4yhpi3ksdIo1uMWUkDo61
-         9GvHLEOx0VECzMCmcw6llntpWb0zMvtLFOVYahIzt5/9oQfczKXqPIgGz602UBfAh5VP
-         dNpbqBosdv8ck/MM03hEB4TzWho3I4CmrZhqweTSCSF5J8QEa6K4UMNGHOKtwZoif8nw
-         Yw/Q==
-X-Gm-Message-State: APjAAAVHd0UFLg+rdtYHqvC74+wQ441dTwtWwRjg4IlcdakZL/xrsJW/
-        l0oPty8xevLni9DXgQBXrjeqN8Y=
-X-Google-Smtp-Source: APXvYqwWpWTkDLi/5cn+5ZNlMzpXt22goFTzWSrZmnH77oxGSI9CYCDloavg5F/4ChkQG7MOO7VPjA==
-X-Received: by 2002:aca:b505:: with SMTP id e5mr4667584oif.136.1556663791364;
-        Tue, 30 Apr 2019 15:36:31 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e21sm3956588otr.38.2019.04.30.15.36.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 15:36:30 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 17:36:29 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        krzk@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v3 3/4] Documentation: devicetree: add PPMU events
- description
-Message-ID: <20190430223629.GA22317@bogus>
-References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20190419134822eucas1p29c6eff0f500311749b33c4f556123cf0@eucas1p2.samsung.com>
- <1555681688-19643-4-git-send-email-l.luba@partner.samsung.com>
+        Tue, 30 Apr 2019 18:38:56 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id D71741474F;
+        Tue, 30 Apr 2019 18:38:55 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 30 Apr 2019 18:38:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=Shvvh6bYkVynmPVjaxxYGOnJjtN
+        JnW6pe8SSFGB+9gs=; b=E7Py6SObItEMXdwpDk49INqD+0vHqT/Vbw/krJ6zjUs
+        U9X5tnXLt00rRAIuulfe4Yp8EoSQbcN1o6+Cmn8UXQdaC8gc/3gal55BXsCdmma1
+        dSLUKFpziZQmp48uoHxsOo+g2ynGtMl1/nwY5tkLpFzrspxpRmabbpyXp75nX/+j
+        ER3kwznjUMbm0JefHnms5bBDE5zGYfccsZt1ee8TgpfUr7hbavVVYwedINXr9nH9
+        mZJcB/pPsUi9j4aRbk/EqDoCHpwz+MxX2VWm0hLFUrdjiLujK6WbwlYD7wpTxned
+        dpE36f/KvLwdmT+71oWbqXbY/zLb/8S/WyljpSV7tQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Shvvh6
+        bYkVynmPVjaxxYGOnJjtNJnW6pe8SSFGB+9gs=; b=lT4vftptI4eKVotuLn6OCs
+        WoBZwAw4Uz1TUGD7KlPqeIddftZSfzTx9O/OaYfEEN2mYrXmSVBsw50f2U+JvKYe
+        Uj0Rk7oqLoSgoezEv7ww8nTXgpRtvRfAZk3GGh++BJ8Uaq8VmPhiHHeCcngKRayP
+        ifmsCxojpuABDhL3IRXLsHPe8fqdggpxDVATJXwrqXtDfAcoe2Fm0PsaIKWO001g
+        0zXCpaKuUdA8fe7h/fdZP7FZc4zi59OJ10OzIQczMsaYbe4XfLlvZBV2W3Kahi3p
+        5b/PR5ILdpj23iUD8alj4RvaPDdnG8e+uQhCQ4ZK/1PQ9acrXfZvcmOyM5jItltw
+        ==
+X-ME-Sender: <xms:fs7IXL61kTmkx1T9LjrBThP45xlTZQWdl2rB-BUXve_4JFQIgpBGzw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieeigddufecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
+    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
+    hinhdrtggtqeenucfkphepuddvuddrgeegrddvtdegrddvfeehnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:fs7IXHcfIdGnp86k4kWzuvRqaK7hkNPGB_rpLVcLvayDKZ84bSVLOQ>
+    <xmx:fs7IXEKt9hWqUmrFoh322Um06JgI2Nai9C67EBtd9OAeY1fZQLg4ZA>
+    <xmx:fs7IXFljeKCvwGnOuUvtwqLdtjG3hczDSf1rlW4bu78LK9hBKRs6CQ>
+    <xmx:f87IXJX92_jjmtkSP-vL6EMahcL73jhWnVYpOf4rf6Uv1A9ujdME_w>
+Received: from localhost (ppp121-44-204-235.bras1.syd2.internode.on.net [121.44.204.235])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5C1B6E4547;
+        Tue, 30 Apr 2019 18:38:53 -0400 (EDT)
+Date:   Wed, 1 May 2019 08:38:07 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Wang Hai <wanghai26@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] bridge: Fix error path for kobject_init_and_add()
+Message-ID: <20190430223807.GE9454@eros.localdomain>
+References: <20190430002817.10785-1-tobin@kernel.org>
+ <20190430002817.10785-2-tobin@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1555681688-19643-4-git-send-email-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190430002817.10785-2-tobin@kernel.org>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 19, 2019 at 03:48:07PM +0200, Lukasz Luba wrote:
-> Extend the documenation by events description with new 'event-data-type'
-> field. Add example how the event might be defined in DT.
+On Tue, Apr 30, 2019 at 10:28:15AM +1000, Tobin C. Harding wrote:
 
-Why do we need event types in DT? We don't do this for other h/w such as 
-ARM PMU.
+[snip]
 
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  .../devicetree/bindings/devfreq/event/exynos-ppmu.txt  | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> index 3e36c1d..47feb5f 100644
-> --- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> +++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> @@ -145,3 +145,21 @@ Example3 : PPMUv2 nodes in exynos5433.dtsi are listed below.
->  			reg = <0x104d0000 0x2000>;
->  			status = "disabled";
->  		};
-> +
-> +The 'event' type specified in the PPMU node defines 'event-name'
-> +which also contains 'id' number and optionally 'event-data-type'.
-> +
-> +Example:
-> +
-> +		events {
-> +			ppmu_leftbus_0: ppmu-event0-leftbus {
-> +				event-name = "ppmu-event0-leftbus";
-> +				event-data-type = <PPMU_RO_DATA_CNT>;
-> +			};
-> +		};
-> +
-> +The 'event-data-type' defines the type of data which shell be counted
-> +by the counter. You can check include/dt-bindings/pmu/exynos_ppmu.h for
-> +all possible type, i.e. count read requests, count write data in bytes,
-> +etc. This field is optional and when it is missing, the driver code will
-> +use default data type.
-> -- 
-> 2.7.4
-> 
+Please do not consider this series for merge.  There is a bit of
+confusion here.
+
+There are a few of theses patches live on various LKML lists.  Have to
+consolidate all the knowledge.  When I _actually_ know how to use
+kobject correctly I'll re-spin.
+
+Thanks for your patience.
+
+	Tobin
