@@ -2,100 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99108F5A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46ECCF59E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbfD3Lak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 07:30:40 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15611 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbfD3Lak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:30:40 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cc831c10000>; Tue, 30 Apr 2019 04:30:09 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 30 Apr 2019 04:30:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 30 Apr 2019 04:30:39 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 30 Apr
- 2019 11:30:38 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 30 Apr
- 2019 11:30:38 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 30 Apr 2019 11:30:38 +0000
-Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cc831dc0003>; Tue, 30 Apr 2019 04:30:38 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <vkoul@kernel.org>, <dan.j.williams@intel.com>, <tiwai@suse.com>
-CC:     <jonathanh@nvidia.com>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] [RFC] dmaengine: add fifo_size member
-Date:   Tue, 30 Apr 2019 17:00:28 +0530
-Message-ID: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727915AbfD3Lad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:30:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40818 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726202AbfD3Lac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:30:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A6A21AF9A;
+        Tue, 30 Apr 2019 11:30:31 +0000 (UTC)
+Date:   Tue, 30 Apr 2019 13:30:31 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
+ reliable stacktrace support
+In-Reply-To: <20190430091049.30413-2-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1904301329060.8507@pobox.suse.cz>
+References: <20190430091049.30413-1-pmladek@suse.com> <20190430091049.30413-2-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1556623809; bh=AH+q4xpuhOjvbuUu+/2uIx5A6NBKPe1QLxkPOVg1H7g=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=EkDUb7qA27dFZrFmJITvZIkKP9+U7Zf2yP0qu14TcCUS8apyFLBShJ42wst5bN7C2
-         RGTut2NU6SczZwm6DP5TDswAOXF/VFb+4WAFQXdWqofziwlRNsJfVXbsJKUHEQka0x
-         K07H4Ue4ZJfImQc6KKe/y3LXLxzhT5Bw9AgGxrT8YYtHPwmDalNx/XV7d448Ff1hCe
-         YIMExb31Z1MFQUeSlz/Zyj4aBeocylldTZOwNr0wdve/ec6ZuilyPqNaijZqx0UQ97
-         0q0QMEB9X9o5azZ9qcXLkyoPmqNMATZcZ30SLMQMSyxhuZvxmEuWfRECB5wcT3ZkY0
-         l5WmtAYwesiEw==
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During the DMA transfers from memory to I/O, it was observed that transfers
-were inconsistent and resulted in glitches for audio playback. It happened
-because fifo size on DMA did not match with slave channel configuration.
+On Tue, 30 Apr 2019, Petr Mladek wrote:
 
-currently 'dma_slave_config' structure does not have a field for fifo size.
-Hence the platform pcm driver cannot pass the fifo size as a slave_config.
-Note that 'snd_dmaengine_dai_dma_data' structure has fifo_size field which
-cannot be used to pass the size info. This patch introduces fifo_size field
-and the same can be populated on slave side. Users can set required size
-for slave peripheral (multiple channels can be independently running with
-different fifo sizes) and the corresponding sizes are programmed through
-dma_slave_config on DMA side.
+> WARN_ON_ONCE() could not be called safely under rq lock because
+> of console deadlock issues. Fortunately, there is another check
+> for the reliable stacktrace support in klp_enable_patch().
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-Request for feedback/suggestions.
+Acked-by: Miroslav Benes <mbenes@suse.cz> with a nit below
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- include/linux/dmaengine.h | 3 +++
- 1 file changed, 3 insertions(+)
+> ---
+>  kernel/livepatch/transition.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> index 9c89ae8b337a..8e0274075e75 100644
+> --- a/kernel/livepatch/transition.c
+> +++ b/kernel/livepatch/transition.c
+> @@ -263,8 +263,15 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
+>  	trace.nr_entries = 0;
+>  	trace.max_entries = MAX_STACK_ENTRIES;
+>  	trace.entries = entries;
+> +
 
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index d49ec5c..9ec198b 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -351,6 +351,8 @@ enum dma_slave_buswidth {
-  * @slave_id: Slave requester id. Only valid for slave channels. The dma
-  * slave peripheral will have unique id as dma requester which need to be
-  * pass as slave config.
-+ * @fifo_size: Fifo size value. The dma slave peripheral can configure required
-+ * fifo size and the same needs to be passed as slave config.
-  *
-  * This struct is passed in as configuration data to a DMA engine
-  * in order to set up a certain channel for DMA transport at runtime.
-@@ -376,6 +378,7 @@ struct dma_slave_config {
- 	u32 dst_port_window_size;
- 	bool device_fc;
- 	unsigned int slave_id;
-+	u32 fifo_size;
- };
- 
- /**
--- 
-2.7.4
+Unnecessary new line?
 
+>  	ret = save_stack_trace_tsk_reliable(task, &trace);
+> -	WARN_ON_ONCE(ret == -ENOSYS);
+> +	/*
+> +	 * pr_warn() under task rq lock might cause a deadlock.
+> +	 * Fortunately, missing reliable stacktrace support has
+> +	 * already been handled when the livepatch was enabled.
+> +	 */
+> +	if (ret == -ENOSYS)
+> +		return ret;
+>  	if (ret) {
+>  		snprintf(err_buf, STACK_ERR_BUF_SIZE,
+>  			 "%s: %s:%d has an unreliable stack\n",
+
+Miroslav
