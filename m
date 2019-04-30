@@ -2,125 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDAD2F158
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 09:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291D1F161
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 09:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfD3HeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 03:34:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbfD3HeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 03:34:11 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF63F3084249;
-        Tue, 30 Apr 2019 07:34:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-98.rdu2.redhat.com [10.10.121.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B533B4BF;
-        Tue, 30 Apr 2019 07:34:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix net namespace cleanup
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        id S1726533AbfD3Hey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 03:34:54 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35133 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfD3Hey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 03:34:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z26so11836016ljj.2;
+        Tue, 30 Apr 2019 00:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9CHE1lmmOCD1ZhFRGNkGzvfqQEM23kbmhQLG9DNgUJs=;
+        b=vB96vkVf6/kI96T1U6JnZMQT9LspImJhGteLAYv67EBNbLW4sXFN/lFmHIEZTQ6c7j
+         dAGNJjV5mx3lYzN6aJon/X2c+loKo+e5L/V5J1ebzc8PvJtb8t5eJFHGvOuLNb1Ndp3C
+         iEejhzoI/9EA0o+hYYaraImUB4g36CpB+6wJGmmB5jhGr+D8qhBopQu6AE+0wTqWYSeO
+         RjLYnxFz+PjahW0mNwbqbk2fxf+T0Tnh2O+LvvgyVYRwQi/MCs20FDaeuXTqLBLU5QLa
+         dyRGguYvFvm6keGuZTwnbmhUBlQihDZR/18Z9AL7Hkwo1NGihCJnGOZFGEKU7lg+RBr0
+         jvSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9CHE1lmmOCD1ZhFRGNkGzvfqQEM23kbmhQLG9DNgUJs=;
+        b=tBnWVY91h340+Ew9YSwRoZwOdaWdOxhkrH4jtXa+rcGH54LneH1fgz+GCjzjTA5lk3
+         0Df51iLFwO2exxyePB8SC56hmocOmJoxUH/6Mm7aw3pyUwjdr8KMPdVtl9Y8bTFmP2LC
+         JG3yoNLeK++ESE8JCsN/d3rDXgUc1H5d4ZCKKVZ0K+0U6UnC0NJtsTF59or3CWtxTJmT
+         C5gZxFFSifhKVckCQT8UA/XIkc2PP/C6cBTtD/uYsIFTfr6mwDxYhAOSc5xguWbIGbEO
+         PijiMhf98EPrw9jWfcnYhHj6oXKChs4YSz0d1Lh6lFbwKy9fDreR6d3QnmT0jHi2V+e7
+         uN0w==
+X-Gm-Message-State: APjAAAWMBV0jC8Vs0GVsMNOTwEXb7DK+MYEjjzGP9OmbQwFj7xDcCyk0
+        NiHIJENX2oiZsEuFnSHmKUvv1+YC
+X-Google-Smtp-Source: APXvYqyI8WfpiQqMpqsNaPSItXHBYEo5oMwlAZgWbDuGOy5jfZJo16/81JMFBVnKMLAFb96IpEKTDg==
+X-Received: by 2002:a2e:9a0f:: with SMTP id o15mr25054986lji.130.1556609691970;
+        Tue, 30 Apr 2019 00:34:51 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.133.52])
+        by smtp.gmail.com with ESMTPSA id v23sm2400572ljk.14.2019.04.30.00.34.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 00:34:51 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Tue, 30 Apr 2019 08:34:08 +0100
-Message-ID: <155660964874.18872.7446174793302616529.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 0/7] Adjust hybrid polling sleep time
+Date:   Tue, 30 Apr 2019 10:34:12 +0300
+Message-Id: <cover.1556609582.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 30 Apr 2019 07:34:10 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In rxrpc_destroy_all_calls(), there are two phases: (1) make sure the
-->calls list is empty, emitting error messages if not, and (2) wait for the
-RCU cleanup to happen on outstanding calls (ie. ->nr_calls becomes 0).
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-To avoid taking the call_lock, the function prechecks ->calls and if empty,
-it returns to avoid taking the lock - this is wrong, however: it still
-needs to go and do the second phase and wait for ->nr_calls to become 0.
+Sleep time for adaptive hybrid polling is coarse and can be improved to
+decrease CPU load. Use variation of the 3-sigma rule and runtime
+tuning.
 
-Without this, the rxrpc_net struct may get deallocated before we get to the
-RCU cleanup for the last calls.  This can lead to:
+This approach gives up to 2x CPU load reduction keeping the same latency
+distribution and throughput.
 
-  Slab corruption (Not tainted): kmalloc-16k start=ffff88802b178000, len=16384
-  050: 6b 6b 6b 6b 6b 6b 6b 6b 61 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkakkkkkkk
+Pavel Begunkov (7):
+  blk-iolatency: Fix zero mean in previous stats
+  blk-stats: Introduce explicit stat staging buffers
+  blk-mq: Fix disabled hybrid polling
+  blk-stats: Add left mean deviation to blk_stats
+  blk-mq: Precalculate hybrid polling time
+  blk-mq: Track num of overslept by hybrid poll rqs
+  blk-mq: Adjust hybrid poll sleep time
 
-Note the "61" at offset 0x58.  This corresponds to the ->nr_calls member of
-struct rxrpc_net (which is >9k in size, and thus allocated out of the 16k
-slab).
+ block/blk-core.c          |   7 +-
+ block/blk-iolatency.c     |  60 ++++++++++----
+ block/blk-mq-debugfs.c    |  14 ++--
+ block/blk-mq.c            | 163 ++++++++++++++++++++++++++++----------
+ block/blk-stat.c          |  67 +++++++++++++---
+ block/blk-stat.h          |  15 +++-
+ include/linux/blk_types.h |   9 +++
+ include/linux/blkdev.h    |  17 +++-
+ 8 files changed, 271 insertions(+), 81 deletions(-)
 
-
-Fix this by flipping the condition on the if-statement, putting the locked
-section inside the if-body and dropping the return from there.  The
-function will then always go on to wait for the RCU cleanup on outstanding
-calls.
-
-Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- net/rxrpc/call_object.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index 8aa2937b069f..fe96881a334d 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -604,30 +604,30 @@ void rxrpc_destroy_all_calls(struct rxrpc_net *rxnet)
- 
- 	_enter("");
- 
--	if (list_empty(&rxnet->calls))
--		return;
-+	if (!list_empty(&rxnet->calls)) {
-+		write_lock(&rxnet->call_lock);
- 
--	write_lock(&rxnet->call_lock);
-+		while (!list_empty(&rxnet->calls)) {
-+			call = list_entry(rxnet->calls.next,
-+					  struct rxrpc_call, link);
-+			_debug("Zapping call %p", call);
- 
--	while (!list_empty(&rxnet->calls)) {
--		call = list_entry(rxnet->calls.next, struct rxrpc_call, link);
--		_debug("Zapping call %p", call);
-+			rxrpc_see_call(call);
-+			list_del_init(&call->link);
- 
--		rxrpc_see_call(call);
--		list_del_init(&call->link);
-+			pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
-+			       call, atomic_read(&call->usage),
-+			       rxrpc_call_states[call->state],
-+			       call->flags, call->events);
- 
--		pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
--		       call, atomic_read(&call->usage),
--		       rxrpc_call_states[call->state],
--		       call->flags, call->events);
-+			write_unlock(&rxnet->call_lock);
-+			cond_resched();
-+			write_lock(&rxnet->call_lock);
-+		}
- 
- 		write_unlock(&rxnet->call_lock);
--		cond_resched();
--		write_lock(&rxnet->call_lock);
- 	}
- 
--	write_unlock(&rxnet->call_lock);
--
- 	atomic_dec(&rxnet->nr_calls);
- 	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
- }
+-- 
+2.21.0
 
