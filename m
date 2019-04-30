@@ -2,74 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372F8F9C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497B9F9CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 15:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfD3NS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 09:18:27 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44922 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfD3NS1 (ORCPT
+        id S1727430AbfD3NUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 09:20:31 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38297 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfD3NUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 09:18:27 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hLSeL-0002Js-1r; Tue, 30 Apr 2019 13:18:21 +0000
-Date:   Tue, 30 Apr 2019 14:18:21 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: task hung in __get_super
-Message-ID: <20190430131820.GK23075@ZenIV.linux.org.uk>
-References: <001a113ed5540f411c0568cc8418@google.com>
- <0000000000002cd22305879b22c4@google.com>
- <20190428185109.GD23075@ZenIV.linux.org.uk>
- <20190430025501.GB6740@quack2.suse.cz>
- <20190430031144.GG23075@ZenIV.linux.org.uk>
- <20190430130739.GA11224@quack2.suse.cz>
+        Tue, 30 Apr 2019 09:20:31 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e18so6861279lja.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 06:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GxUTvEwj+NBZpurZ2Ig0gOAGnCDy3ToJRSMidXZgrwA=;
+        b=nbHTatfrSBU52QO6/XAOdHj9n3sbWKACiGEOroIP1njriZJp1154c0zcMmUOEddftb
+         RHJG5EOjKR045xHsmGwBRk25Zpt4plyqn/QjXipfndHY4PBSZlr5wG+o+/JwaTTPxM2T
+         MhoVB9YsVgacvd6KF90nDt0wxErlKPxttItAjzHqChSUXtBUcL7DiCOtUiI8jtGV7l9u
+         /GRXc024g7onhK63Wn5BuFgcj1Jpq59TJA3MVz5rJv+nnUP5E3LhdOkx2Z1fDCT5B/Ez
+         8uTClrIbXDUjeJm3JKcRdmGlroD9T1vDJT8AYsYZwtLLO5K78rkzLewM9joqBiOrcpzh
+         wTjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GxUTvEwj+NBZpurZ2Ig0gOAGnCDy3ToJRSMidXZgrwA=;
+        b=Rz1IqRf7fU3HgBPP0aFWqz+Zc5mDRqmYp78uJ8XWzm86vbLOdNpxd5QUfNvyu3Q75J
+         WeEp+n6W6KbetxZp7fK7gNb9VLlnQ0yR2V6zzCmIySIt/8fmKr0fzQnErGIcQgi+zdNy
+         lpTkZECob3aKjWdXkp6SS8ax6u8xxK8WVQ0iL/iauV8O7tRgNKtn3IabimKi60Jx0dlz
+         FPCu1u9/sv26TqZGfMX2u2jyeM7F1gwLqp1rDBY57BWpVk+tGE5y2YxJGdwcuPFtrLKA
+         AmP3T7wRIIy2IGs5mpvkFVxM9vhGQCH/5IMMGmK8ohHco6NXMPcJpGcuftHl42docEkv
+         81VA==
+X-Gm-Message-State: APjAAAW2orGX5LMZX9HpcBw+CDyBevCLy1Smxi6kVmQ0XAtpugFptcBo
+        tXFHhww0mlICTOdv/+gpQWCJFROsDjRrP8bNXrlMLg==
+X-Google-Smtp-Source: APXvYqz6/C5cOSAi+LjOLFLkuA/ISsQ8fKMilHFI35qQ0Q11aqKw0onTyfbnQdSYNfhdSjCiVudD/DPj+qhrxqtjTUA=
+X-Received: by 2002:a2e:3a0f:: with SMTP id h15mr35417830lja.194.1556630428902;
+ Tue, 30 Apr 2019 06:20:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430130739.GA11224@quack2.suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <CA+G9fYuZhS+QfgM0HrNm4B8Yb+0kwScxaURJDYXKPY-ML_L0cQ@mail.gmail.com>
+ <35ebc45a-5894-e2ab-3a97-2ce3f7efda44@xs4all.nl>
+In-Reply-To: <35ebc45a-5894-e2ab-3a97-2ce3f7efda44@xs4all.nl>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 30 Apr 2019 18:50:17 +0530
+Message-ID: <CA+G9fYuTpeu1MdLVe3ZNp3Bvx0c79mXwh2qun5MWseEweRO=FQ@mail.gmail.com>
+Subject: Re: vidioc_g_edid: BUG: Unable to handle kernel NULL pointer
+ dereference at virtual address 00000716
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org,
+        Sami Tolvanen <samitolvanen@google.com>,
+        paul.kocialkowski@bootlin.com, ezequiel@collabora.com,
+        treding@nvidia.com, niklas.soderlund+renesas@ragnatech.se,
+        sakari.ailus@linux.intel.com,
+        Hans Verkuil <hans.verkuil@cisco.com>, mchehab@kernel.org,
+        lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 03:07:39PM +0200, Jan Kara wrote:
-> On Tue 30-04-19 04:11:44, Al Viro wrote:
-> > On Tue, Apr 30, 2019 at 04:55:01AM +0200, Jan Kara wrote:
-> > 
-> > > Yeah, you're right. And if we push the patch a bit further to not take
-> > > loop_ctl_mutex for invalid ioctl number, that would fix the problem. I
-> > > can send a fix.
-> > 
-> > Huh?  We don't take it until in lo_simple_ioctl(), and that patch doesn't
-> > get to its call on invalid ioctl numbers.  What am I missing here?
-> 
-> Doesn't it? blkdev_ioctl() calls into __blkdev_driver_ioctl() for
-> unrecognized ioctl numbers. That calls into lo_ioctl() in case of a loop
-> device. lo_ioctl() calls into lo_simple_ioctl() for ioctl numbers it
-> doesn't recognize and lo_simple_ioctl() will lock loop_ctl_mutex as you
-> say.
+Hi Hans,
 
-Not with the patch upthread.  lo_ioctl() part was
+On Tue, 30 Apr 2019 at 12:58, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>
+> On 4/30/19 9:10 AM, Naresh Kamboju wrote:
+> > v4l2-compliance test running on linux stable 4.9 reported kernel bug.
+> > The crash is pointing to kernel module "vivid.ko" which was loaded by
+> > test case. (  modprobe vivid.ko)
+> >
+> >
+>
+> It's a CEC related bug, this vivid patch should fix it. It's a backport of
+> commit ed356f110403 ("media: vivid: check if the cec_adapter is valid"). This
+> commit was only backported to 4.12 and up since it didn't apply to older kernels.
 
-@@ -1567,10 +1564,9 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 	case LOOP_SET_BLOCK_SIZE:
- 		if (!(mode & FMODE_WRITE) && !capable(CAP_SYS_ADMIN))
- 			return -EPERM;
--		/* Fall through */
-+		return lo_simple_ioctl(lo, cmd, arg);
- 	default:
--		err = lo_simple_ioctl(lo, cmd, arg);
--		break;
-+		return -EINVAL;
- 	}
- 
- 	return err;
+I have tested this patch on x86_64 and confirms this works.
+v4l2-compliance test runs to complete successfully.
 
-so anything unrecognized doesn't make it to lo_simple_ioctl() at all.
+
+>
+> Feel free to post this patch (after testing!) to the stable mailinglist for
+> inclusion into 4.9.
+
+I will post this patch on stable mailing list.
+
+>
+> Regards,
+>
+>         Hans
+>
+> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> ---
+> --- a/drivers/media/platform/vivid/vivid-vid-common.c   2019-04-30 09:23:37.296797292 +0200
+> +++ b/drivers/media/platform/vivid/vivid-vid-common.c   2019-04-30 09:24:09.581261759 +0200
+> @@ -841,6 +841,7 @@
+>         if (edid->start_block + edid->blocks > dev->edid_blocks)
+>                 edid->blocks = dev->edid_blocks - edid->start_block;
+>         memcpy(edid->edid, dev->edid, edid->blocks * 128);
+> -       cec_set_edid_phys_addr(edid->edid, edid->blocks * 128, adap->phys_addr);
+> +       if (adap)
+> +               cec_set_edid_phys_addr(edid->edid, edid->blocks * 128, adap->phys_addr);
+>         return 0;
+>  }
+
+
+Best regards
+Naresh Kamboju
