@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E12D21032B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 01:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCB910356
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 01:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfD3XMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 19:12:18 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34884 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfD3XMS (ORCPT
+        id S1727459AbfD3XbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 19:31:10 -0400
+Received: from mailgw2.fjfi.cvut.cz ([147.32.9.131]:59484 "EHLO
+        mailgw2.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbfD3Xa7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 19:12:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w197so12717625oia.2;
-        Tue, 30 Apr 2019 16:12:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8Kaz0HzSce5UNE/bdT7lOJbyMWjOGQSNQhXNQdmqdS0=;
-        b=cQ5IywG2uJhiQCfZqVl1eYsmJJItNOjy9Dqoz5hB5W1qlOwglUCYXp7ZEiV+fxg6Qi
-         3qN7Q5GPv1zFuhuBrA58BvPCak6tr1qsYO9S9aL2qz3ooU/z4N4zwvRP3kgrnRbn0L2A
-         0thuzqHRY6ewMzet2ivXajl1UrrF43Oo4T/C4RnIRsVcnSnXXtybJr0dFavzeVWzGL9m
-         W+mejUJSIZ4PC8fio4ShzdrBw4SPVxDFJ/yJl7sUvQv0ZYaDHqOtcCGjJXcKuzFpa4To
-         xZOdgdhk5mx3OSFsAFIcSb4j8/p1oAJpvqRWAqXWD/vDrAirGsuF4eD1W+XUc8NU7qZF
-         rpvQ==
-X-Gm-Message-State: APjAAAVzssXweaZvLvy5skCpRK9/UEOG7wVlQk0/4Zd+u0MOr0PrCSYI
-        r9C15YpjU16tBxVbjkdeM1qic0QTAzk=
-X-Google-Smtp-Source: APXvYqzmU7J8Jyis0/HpmPawqrY+cd6LELrQPuOHWXXTQ7fuZCaHzNCH9tMw56lzVdYSKIKHoo0hEA==
-X-Received: by 2002:aca:f4cf:: with SMTP id s198mr4598529oih.153.1556665937217;
-        Tue, 30 Apr 2019 16:12:17 -0700 (PDT)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id p8sm17018925oib.9.2019.04.30.16.12.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 16:12:16 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id y64so7167440oia.7;
-        Tue, 30 Apr 2019 16:12:16 -0700 (PDT)
-X-Received: by 2002:aca:4e83:: with SMTP id c125mr4539473oib.13.1556665936485;
- Tue, 30 Apr 2019 16:12:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190430051723.31345-1-yinbo.zhu@nxp.com>
-In-Reply-To: <20190430051723.31345-1-yinbo.zhu@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 30 Apr 2019 18:12:05 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQ4RYhe5n_ZA_xrhG8VARsvV3cwVgnuinedb2VHKkDzbQ@mail.gmail.com>
-Message-ID: <CADRPPNQ4RYhe5n_ZA_xrhG8VARsvV3cwVgnuinedb2VHKkDzbQ@mail.gmail.com>
-Subject: Re: [PATCH v1] mmc: dt: add DT bindings for ls1028a eSDHC host controller
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>, "Y.b. Lu" <yangbo.lu@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Apr 2019 19:30:59 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTP id 4D0A9A02D4;
+        Wed,  1 May 2019 01:21:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1556666468; i=@fjfi.cvut.cz;
+        bh=ilYqmYI1sLVecoSemBH0A3zy0RgR2DNeT9RBT5MmbSo=;
+        h=From:To:Cc:Subject:Date;
+        b=L8t0ORuGVcRX15rlXRKApnMQCXn6AHSyw2OZ82HybvsnSeSGSFvrbjfLhaea4B0vK
+         vhl3wF6T/IYabjEVeLDFzQa+ANvHBwnwLvZ7vu47GzQpnxKb3dvixIMDXj+4d5rZuB
+         82dPXFY40bwJdX81d1mNzBo9NkkxXnt+VCqeqOXg=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw2.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw2.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id 2RPag0q5S8ZB; Wed,  1 May 2019 01:21:00 +0200 (CEST)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTPS id 8DB6FA022D;
+        Wed,  1 May 2019 01:20:59 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw2.fjfi.cvut.cz 8DB6FA022D
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 37BB46004D; Wed,  1 May 2019 01:20:59 +0200 (CEST)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH 0/3] block: sed-opal: add support for shadow MBR done flag and write
+Date:   Wed,  1 May 2019 01:20:56 +0200
+Message-Id: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:16 AM Yinbo Zhu <yinbo.zhu@nxp.com> wrote:
->
-> From: Yinbo Zhu <yinbo.zhu@nxp.com>
+This patch series extends SED Opal support: it adds IOCTL for setting the shadow
+MBR done flag which can be useful for unlocking an Opal disk on boot and it adds
+IOCTL for writing to the shadow MBR.
 
-The patch title better to be "dt-bindings: mmc: ..."
->
-> Add "fsl,ls1028a-esdhc" bindings for ls1028a eSDHC host controller
->
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  .../devicetree/bindings/mmc/fsl-esdhc.txt          |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/fsl-esdhc.txt b/Documentation/devicetree/bindings/mmc/fsl-esdhc.txt
-> index 99c5cf8..a7250b9 100644
-> --- a/Documentation/devicetree/bindings/mmc/fsl-esdhc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/fsl-esdhc.txt
-> @@ -21,6 +21,7 @@ Required properties:
->         "fsl,ls1043a-esdhc"
->         "fsl,ls1046a-esdhc"
->         "fsl,ls2080a-esdhc"
-> +       "fsl,ls1028a-esdhc"
+The code has been already submitted in [1] but it was suggested to split this
+part off. In comparison to that version, I tried to apply Scott's suggestions
+from [2].
 
-Better to be alphabetical order.
+This series requires the previously-submitted Opal cleanup patches[3]. It
+applies on current linux-next/master (e.g. next-20190430).
 
->    - clock-frequency : specifies eSDHC base clock frequency.
->
->  Optional properties:
-> --
-> 1.7.1
->
+I successfully tested toggling the MBR done flag and writing the shadow MBR
+using some tools I hacked together[4] with a Samsung SSD 850 EVO drive.
+
+[1] https://lore.kernel.org/lkml/1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz/
+[2] https://lore.kernel.org/lkml/20190210182655.GA20491@hacktheplanet/
+[3] https://lore.kernel.org/lkml/1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz/
+[4] https://gitlab.com/zub2/opalctl
+
+Jonas Rabenstein (3):
+  block: sed-opal: add ioctl for done-mark of shadow mbr
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: check size of shadow mbr
+
+ block/opal_proto.h            |  16 ++++
+ block/sed-opal.c              | 160 +++++++++++++++++++++++++++++++++-
+ include/linux/sed-opal.h      |   2 +
+ include/uapi/linux/sed-opal.h |  20 +++++
+ 4 files changed, 196 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
+
