@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD15BF829
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 14:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2CFF70A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 13:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729181AbfD3MF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 08:05:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50752 "EHLO mail.kernel.org"
+        id S1731046AbfD3Ltp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 07:49:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729187AbfD3LmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:42:09 -0400
+        id S1731039AbfD3Ltm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 07:49:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E68D421743;
-        Tue, 30 Apr 2019 11:42:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D989C20449;
+        Tue, 30 Apr 2019 11:49:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556624528;
-        bh=yNF5fBcZBeHofcbFX4RGA8qq7oiAsCqYqoSBSysuYh8=;
+        s=default; t=1556624981;
+        bh=7GntyMXcWt4UU0gvioaIi9lga+nZyYFukfanMAnLfzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cYC+f2YtB/dvMjO3W9lsg2u2qWzCLH3ymlPcIHEH8c2L6hhrGr//FFXxcr/H4jPAx
-         Zp48pQ+Gnrk95JHG6nioHL4XdjktRy9BzCRgVI1r/le525rmdS7Fk2w48HqVJ7mDJV
-         3kN55pS0KDzTx0yXXQuEEhk93c2PvfrjpYbOKGvw=
+        b=kC47u7pG+/KX/WAdJv4eb7B1UnmWKBuY2lazb4AhCUrdBUGl/NDwAMZ/A134F1e7U
+         CF6iax2fuGRdfPz2Rf+1XmMFa8EzfevPR2MvYHShufh7g/LaY3OJP1jncvN072f11u
+         cKg+Sq79Gyrfy93wAJhV7yuPfZTNiqC3eB3deXFc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 27/53] tipc: handle the err returned from cmd header function
-Date:   Tue, 30 Apr 2019 13:38:34 +0200
-Message-Id: <20190430113556.049274931@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 5.0 44/89] Revert "drm/i915/fbdev: Actually configure untiled displays"
+Date:   Tue, 30 Apr 2019 13:38:35 +0200
+Message-Id: <20190430113611.821040876@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430113549.400132183@linuxfoundation.org>
-References: <20190430113549.400132183@linuxfoundation.org>
+In-Reply-To: <20190430113609.741196396@linuxfoundation.org>
+References: <20190430113609.741196396@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +42,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Dave Airlie <airlied@redhat.com>
 
-commit 2ac695d1d602ce00b12170242f58c3d3a8e36d04 upstream.
+commit 9fa246256e09dc30820524401cdbeeaadee94025 upstream.
 
-Syzbot found a crash:
+This reverts commit d179b88deb3bf6fed4991a31fd6f0f2cad21fab5.
 
-  BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
-  Call Trace:
-    tipc_nl_compat_name_table_dump+0x54f/0xcd0 net/tipc/netlink_compat.c:872
-    __tipc_nl_compat_dumpit+0x59e/0xda0 net/tipc/netlink_compat.c:215
-    tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:280
-    tipc_nl_compat_handle net/tipc/netlink_compat.c:1226 [inline]
-    tipc_nl_compat_recv+0x1b5f/0x2750 net/tipc/netlink_compat.c:1265
-    genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
-    genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
-    netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2477
-    genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
-    netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-    netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1336
-    netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
-    sock_sendmsg_nosec net/socket.c:622 [inline]
-    sock_sendmsg net/socket.c:632 [inline]
+This commit is documented to break userspace X.org modesetting driver in certain configurations.
 
-  Uninit was created at:
-    __alloc_skb+0x309/0xa20 net/core/skbuff.c:208
-    alloc_skb include/linux/skbuff.h:1012 [inline]
-    netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
-    netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
-    sock_sendmsg_nosec net/socket.c:622 [inline]
-    sock_sendmsg net/socket.c:632 [inline]
+The X.org modesetting userspace driver is broken. No fixes are available yet. In order for this patch to be applied it either needs a config option or a workaround developed.
 
-It was supposed to be fixed on commit 974cb0e3e7c9 ("tipc: fix uninit-value
-in tipc_nl_compat_name_table_dump") by checking TLV_GET_DATA_LEN(msg->req)
-in cmd->header()/tipc_nl_compat_name_table_dump_header(), which is called
-ahead of tipc_nl_compat_name_table_dump().
+This has been reported a few times, saying it's a userspace problem is clearly against the regression rules.
 
-However, tipc_nl_compat_dumpit() doesn't handle the error returned from cmd
-header function. It means even when the check added in that fix fails, it
-won't stop calling tipc_nl_compat_name_table_dump(), and the issue will be
-triggered again.
-
-So this patch is to add the process for the err returned from cmd header
-function in tipc_nl_compat_dumpit().
-
-Reported-by: syzbot+3ce8520484b0d4e260a5@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=109806
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Cc: <stable@vger.kernel.org> # v3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -262,8 +262,14 @@ static int tipc_nl_compat_dumpit(struct
- 	if (msg->rep_type)
- 		tipc_tlv_init(msg->rep, msg->rep_type);
+--- a/drivers/gpu/drm/i915/intel_fbdev.c
++++ b/drivers/gpu/drm/i915/intel_fbdev.c
+@@ -336,8 +336,8 @@ static bool intel_fb_initial_config(stru
+ 				    bool *enabled, int width, int height)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
++	unsigned long conn_configured, conn_seq, mask;
+ 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
+-	unsigned long conn_configured, conn_seq;
+ 	int i, j;
+ 	bool *save_enabled;
+ 	bool fallback = true, ret = true;
+@@ -355,9 +355,10 @@ static bool intel_fb_initial_config(stru
+ 		drm_modeset_backoff(&ctx);
  
--	if (cmd->header)
--		(*cmd->header)(msg);
-+	if (cmd->header) {
-+		err = (*cmd->header)(msg);
-+		if (err) {
-+			kfree_skb(msg->rep);
-+			msg->rep = NULL;
-+			return err;
-+		}
-+	}
+ 	memcpy(save_enabled, enabled, count);
+-	conn_seq = GENMASK(count - 1, 0);
++	mask = GENMASK(count - 1, 0);
+ 	conn_configured = 0;
+ retry:
++	conn_seq = conn_configured;
+ 	for (i = 0; i < count; i++) {
+ 		struct drm_fb_helper_connector *fb_conn;
+ 		struct drm_connector *connector;
+@@ -370,8 +371,7 @@ retry:
+ 		if (conn_configured & BIT(i))
+ 			continue;
  
- 	arg = nlmsg_new(0, GFP_KERNEL);
- 	if (!arg) {
+-		/* First pass, only consider tiled connectors */
+-		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
++		if (conn_seq == 0 && !connector->has_tile)
+ 			continue;
+ 
+ 		if (connector->status == connector_status_connected)
+@@ -475,10 +475,8 @@ retry:
+ 		conn_configured |= BIT(i);
+ 	}
+ 
+-	if (conn_configured != conn_seq) { /* repeat until no more are found */
+-		conn_seq = conn_configured;
++	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
+ 		goto retry;
+-	}
+ 
+ 	/*
+ 	 * If the BIOS didn't enable everything it could, fall back to have the
 
 
