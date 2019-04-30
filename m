@@ -2,92 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C05FC8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F7DFC97
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 17:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfD3POz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 11:14:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52827 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfD3POz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:14:55 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=lindsey)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1hLUSx-00068L-0T; Tue, 30 Apr 2019 15:14:43 +0000
-Date:   Tue, 30 Apr 2019 10:14:37 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wang Hai <wanghai26@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] bridge: Fix error path for kobject_init_and_add()
-Message-ID: <20190430151437.GA13709@lindsey>
-References: <20190430002817.10785-1-tobin@kernel.org>
- <20190430002817.10785-2-tobin@kernel.org>
+        id S1726289AbfD3PRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 11:17:50 -0400
+Received: from mout.gmx.net ([212.227.17.20]:37775 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725942AbfD3PRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:17:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1556637462;
+        bh=txCz050phlpvCdvRPIpnThNinbh6jWb3GzAgzB4V4u4=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=jFkEp1/H6t0C57tqMXbydH3SlZxblnLiollftpyraQqkx7L0rrXNU61lbNgADNWnq
+         nS8gyZ0xUAgcGUMbP5Uerr+78Fp6a2eZWJehrNaFT+ho15OmqCm0QUf760qCc6O+8d
+         YJwx0C/DVObUbV28pbl8j4fGdwjY2d12NL+Ios20=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([109.90.232.66]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MAwXh-1hSL551xcH-00BOET; Tue, 30
+ Apr 2019 17:17:42 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] mfd: ab8500-debugfs: Fix a typo ("deubgfs")
+Date:   Tue, 30 Apr 2019 17:17:26 +0200
+Message-Id: <20190430151726.7032-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430002817.10785-2-tobin@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dsJixy6+MJT3hkm5M0MbCX3Ml9BDfe2QiE2R5JwgWbqemoCrFig
+ 8C10Wvs7BMQji33zLDBMwQvJyJatVREuMzWE5EOITNHxEdwqeLVDFJC6sWwfSqPo3o4y//9
+ XSaF1YP0pJqo8Zy8ns+oh8h2JbXDdKC9PqMsCatwmkFER3cBB3IzOXLtPXnd++PKIkyZo+N
+ XYDpb+saV0Xu7KHmMXSnA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zD4gzko6JBI=:xzyU4z+Vgsqyi7ODLDHoW5
+ tueFJvF9M+MRwbbReuAXG8HLFzBASPZs9K9h02joHAMhygJ+BgwAedGn8umdzStC1/hGQkIBj
+ sqIzGj1c5qwZcSL9IFj9SBU/8SXgooc26HaDQTrqxk1sGp5aHgawyD5o3cJT3eX69I7rYf57a
+ Xs7h8Xs3mQ4CqxOrMoX80rPLsxdqJj1vt3nj4LPzVl5bXjTsCXeWuimpvXrEOTANgQYzieDdP
+ BIurK2nRbG36AvMeJEfNGcmyo9tfVBOjuHVRRiGCm/OsnS9soMoueDRjafECbnyuB6sh45Mu5
+ 8iwZWJ6hBY0NZq9w/nKU3rkdMRYzjv6kX/FgZ0+XC6VVKHXnjgkTUJT8htyb51uCcx7sitoXp
+ g9zpEskw4IEVVPyDiu66O7F/bU5D8mjKtR9DzrOy4JdTsStKIxWWlbIMsPcBS/o5XvHhR8N6U
+ wdg1hQwayowgn8jspylTXNjgEtZXz+KK38c0FQ7rnfKxHBwBmQjC+gOAInp8t99ZKnhtlfHkG
+ r2OR5GwPuunndxZOnRGoZp7awTqLM90BuZX4RCNa8835emNZxuqNi1/EiT57vqI06n7rq2eQp
+ f4zs5th8BAecqI8oif4n1nqQIS6KAgODidG9xbCQ+TNFL1131qA5cJxwyJnelht27absbFETj
+ vZEF058IbwZCUHcUKT6F/6fLbvL1s5lg/IJcJtwTjQAOmLzryC1mo7KZxFBQ/AwLe7XBCygrG
+ PAPqvV2+SvtkcN/JKcUX3yn4i+/ZHBqw8S+64JiQBpPinwwoH+xigOeB0PrZN7DjFdipJ61jA
+ bcRWEw9Dv8LfUGyZU0K4TlC2QRmgPwPVxGdAIpXOzK1Eo0YjITVSfXLVL8emzxLiTOO9wWrn6
+ HSB0hqZDu7FCdxCzBe8etLGzXw2SUHHO1QcPY/Nks7H3CzhAN0PjAzz6bV5JYOv3XAKFTy00+
+ kEeSjY6MtGQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-04-30 10:28:15, Tobin C. Harding wrote:
-> Currently error return from kobject_init_and_add() is not followed by a
-> call to kobject_put().  This means there is a memory leak.
-> 
-> Add call to kobject_put() in error path of kobject_init_and_add().
-> 
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> ---
->  net/bridge/br_if.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-> index 41f0a696a65f..e5c8c9941c51 100644
-> --- a/net/bridge/br_if.c
-> +++ b/net/bridge/br_if.c
-> @@ -607,8 +607,10 @@ int br_add_if(struct net_bridge *br, struct net_device *dev,
->  
->  	err = kobject_init_and_add(&p->kobj, &brport_ktype, &(dev->dev.kobj),
->  				   SYSFS_BRIDGE_PORT_ATTR);
-> -	if (err)
-> +	if (err) {
-> +		kobject_put(&p->kobj);
->  		goto err1;
-> +	}
+"debugfs" was misspelled.
 
-I think this is duplicating the code under the err2 label and doing so
-in a way that would introduce a double free.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/mfd/ab8500-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the refcount hits 0 in the kobject_put(), release_nbp() is called
-which calls kfree() on the p pointer. However, the p pointer is never
-set to NULL like what's done under the err2 label. Once we're back in
-br_add_if(), kfree() is called on the p pointer again just before
-returning.
+diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
+index 8d652b2f9d14..f70d3f6a959b 100644
+=2D-- a/drivers/mfd/ab8500-debugfs.c
++++ b/drivers/mfd/ab8500-debugfs.c
+@@ -2587,7 +2587,7 @@ static ssize_t ab8500_unsubscribe_write(struct file =
+*file,
+ }
 
-I think it would be better if you just jumped to the err2 label instead
-of err1. err1 will no longer be used so, unfortunately, you'll have to
-refactor all the labels at the same time.
+ /*
+- * - several deubgfs nodes fops
++ * - several debugfs nodes fops
+  */
 
-Tyler
+ static const struct file_operations ab8500_bank_fops =3D {
+=2D-
+2.20.1
 
->  
->  	err = br_sysfs_addif(p);
->  	if (err)
-> -- 
-> 2.21.0
-> 
