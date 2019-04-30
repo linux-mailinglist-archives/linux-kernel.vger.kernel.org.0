@@ -2,117 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE88FB8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35541FB91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Apr 2019 16:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfD3OcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 10:32:10 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.152]:14299 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726916AbfD3OcJ (ORCPT
+        id S1727600AbfD3OdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 10:33:09 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44302 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbfD3OdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 10:32:09 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id BF0BF553F
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 09:32:07 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id LTnjhMl0jYTGMLTnjhRfpK; Tue, 30 Apr 2019 09:32:07 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.119.203] (port=51452 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hLTni-001KJq-JX; Tue, 30 Apr 2019 09:32:06 -0500
-Date:   Tue, 30 Apr 2019 09:32:06 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: imx: clk-pllv3: mark expected switch fall-throughs
-Message-ID: <20190430143206.GA4035@embeddedor>
+        Tue, 30 Apr 2019 10:33:08 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z16so6916046pgv.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 07:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kqS0xUpYWHV2KKYrwWSzkNORD9GWhMTFKscheBDY6SY=;
+        b=tzF1u1RoWkduWv0+xPHHl/FHoW82nr4RoepicXe75nIhkhv0Z83aSutJv7RXUnvvln
+         b+YHzaJJuyiwfYl3Bhe6GeQriNX6ezzisbujhkoyGZi3eRBZ9Ssv6OaR9dU26gHb6PQ1
+         sIIVc6FzIk8ALMa4f8suqQ8w/UavtYgxMGdRZEjcZO8JDrI2uMS8E42mIosE2ysx7JUR
+         jPIBaf22MwBo+TaHdyBYYg3jReUyJkIAA8oH4zudbloeGwRe3g146yEYU0i/vFgK+ZVx
+         lQH/EmbB9Z9DSN9YuNMTcgsJJyM8AcpHJC3/xnG9xHggRInbWiwwk/QFJr7huyuWBUDY
+         6bLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqS0xUpYWHV2KKYrwWSzkNORD9GWhMTFKscheBDY6SY=;
+        b=F0pAwwi06T6OeWITx5REIqdyZIRgRrWBCmNqDfYf7XSiXkMjh240gyyr+L5QaYwYnO
+         SbPgmEMK0HzE0ToTnSavlgQIl7+/xCX5HH8bKQq1mzt2UwXy2guiE/hYHbnohGb/0sHw
+         uQqJVlIKlijf8aljshh6dWu3NRLEDN4BYpePcCQRmZOWhWS3w2DbcdOapSbiscoiOlNq
+         n+IH3EYA+wAIF7sYSEtZvqrVDgkOAFjUL6hMYKwLTnaVBQtP0FSC8uUymCxQW2gR5C8t
+         UgOBWjyjEDH5R54t1sgpzBrS0drse+cSNF8TCBRvfcurYlzFvFYaz+N4IksG4QNrzjw+
+         fPjQ==
+X-Gm-Message-State: APjAAAV2WEfJUoHKfIVLxbZ7cMsZ57wgnuWf5GEzbkYfkGM316AfB5r7
+        pjPyY4RTCEet53UulxQ8YglmSE+uazqepvayqFGwXQ==
+X-Google-Smtp-Source: APXvYqzoXmDdXU1unld0QhbwYUzlQK4qL/xbHvJGqsh7X8UsgwzODrG87qfn7g+7upf/9T11B0K8fGClva2frt9ZL0k=
+X-Received: by 2002:a63:5c24:: with SMTP id q36mr15138678pgb.314.1556634787476;
+ Tue, 30 Apr 2019 07:33:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.203
-X-Source-L: No
-X-Exim-ID: 1hLTni-001KJq-JX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.203]:51452
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190416154138.124734-1-venture@google.com> <20190430004211.GA28272@bogus>
+In-Reply-To: <20190430004211.GA28272@bogus>
+From:   Patrick Venture <venture@google.com>
+Date:   Tue, 30 Apr 2019 07:32:56 -0700
+Message-ID: <CAO=notwuAhWQry-yO9-5zQud7Mo_3=Q5gKaE4doijSrS=v_pXw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: Add ir38064 as a trivial device
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, trivial@kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+On Mon, Apr 29, 2019 at 5:42 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Apr 16, 2019 at 08:41:38AM -0700, Patrick Venture wrote:
+> > The ir38064 is a voltage regulator from Infineon.
+> >
+> > Signed-off-by: Patrick Venture <venture@google.com>
+> > ---
+> >  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+>
+> Patch 1 and 2 applied.
 
-This patch fixes the following warnings:
+Thanks!
 
-drivers/clk/imx/clk-pllv3.c: In function ‘imx_clk_pllv3’:
-drivers/clk/imx/clk-pllv3.c:446:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   pll->div_shift = 1;
-   ~~~~~~~~~~~~~~~^~~
-drivers/clk/imx/clk-pllv3.c:447:2: note: here
-  case IMX_PLLV3_USB:
-  ^~~~
-drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   pll->denom_offset = PLL_IMX7_DENOM_OFFSET;
-                     ^
-drivers/clk/imx/clk-pllv3.c:454:2: note: here
-  case IMX_PLLV3_AV:
-  ^~~~
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/clk/imx/clk-pllv3.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index e892b9a836e5..4110e713d259 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -444,6 +444,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 		break;
- 	case IMX_PLLV3_USB_VF610:
- 		pll->div_shift = 1;
-+		/* fall through */
- 	case IMX_PLLV3_USB:
- 		ops = &clk_pllv3_ops;
- 		pll->powerup_set = true;
-@@ -451,6 +452,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 	case IMX_PLLV3_AV_IMX7:
- 		pll->num_offset = PLL_IMX7_NUM_OFFSET;
- 		pll->denom_offset = PLL_IMX7_DENOM_OFFSET;
-+		/* fall through */
- 	case IMX_PLLV3_AV:
- 		ops = &clk_pllv3_av_ops;
- 		break;
--- 
-2.21.0
-
+>
+> Rob
