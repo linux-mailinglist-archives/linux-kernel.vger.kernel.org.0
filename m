@@ -2,30 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D28310CF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 20:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEFBD10D02
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbfEAS6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 14:58:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfEAS63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 14:58:29 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D793420675;
-        Wed,  1 May 2019 18:58:25 +0000 (UTC)
-Date:   Wed, 1 May 2019 14:58:24 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S1726138AbfEATF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 15:05:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44491 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfEATF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 15:05:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id c6so9764317lji.11
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sel235hwbH6X1YvFcp9cC7JRXnS2M4BkT9uwVxDW2CQ=;
+        b=hKJ92qX+WBtDkwAkIRCoWA4GuXtRFgmwNS/x4HHoRL1Cph8V9Ovoot3NqLu+fqUiqM
+         Qth2QafTxUxf+Pm3vpTn95XuskqJEgEpvVEeBMW2fZtoLYrabbeAmSNI1KU3JXjTPrP/
+         nm6QVbnOD2fawZyDG5MwCG7W040aS+7zbGhdM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sel235hwbH6X1YvFcp9cC7JRXnS2M4BkT9uwVxDW2CQ=;
+        b=DAG9lcDs0MbewIo0Aq5N8LAS6v49peYGJPFLgtOYw6KM31pTu1wHtkYQyjKc/AqKJZ
+         TeXMLaf2wZdi7NhpnLpf0hPAJRG+mR1ityFDgOvz0a4HeB7aVjN+dKBFH607F9jfWlhO
+         yr6AFVpU10hgYURKtrCW6uzdCaQStO36bHnLIRduUlHhQAv3KW2F8VEBWcOteaM404pw
+         HkZhcl8nAwzKbaWd3U/Ga/PpwClKseo6gm3/OOVMOiwVqP7BYd/0SKDANihKnw42oUTb
+         D6rVLMJa/5BrKc13+dLSOOLZbq+iVv/6S7nVnQzosdDIQ8k5xuUf6kH7g4Y8oW8v4NW/
+         1YBA==
+X-Gm-Message-State: APjAAAWutria99B5vuIL0qIuAk/w10Ksz2i9rVZiN4JEEFpS0JAChGKd
+        i1TSW2PAveJ1KNkknzdbAE7MPYpJk58=
+X-Google-Smtp-Source: APXvYqxzUiy+YK1byj6WXWMe+eoK7mRECKF5Vk9jw+aIx7HD6qus5VA+nedrWL//sYZZpSmt9OYx3w==
+X-Received: by 2002:a2e:9746:: with SMTP id f6mr4105105ljj.127.1556737556782;
+        Wed, 01 May 2019 12:05:56 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id t7sm8229632ljj.87.2019.05.01.12.05.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 12:05:56 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id u17so68082lfi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:05:56 -0700 (PDT)
+X-Received: by 2002:ac2:547a:: with SMTP id e26mr18577958lfn.148.1556737161870;
+ Wed, 01 May 2019 11:59:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190501113238.0ab3f9dd@gandalf.local.home> <CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com>
+ <20190501145200.6c095d7f@oasis.local.home>
+In-Reply-To: <20190501145200.6c095d7f@oasis.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 May 2019 11:59:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMZJeMCW5MA25WFJZeYYWCOWr0nGaHhJ7kg+zsu5FY_A@mail.gmail.com>
+Message-ID: <CAHk-=wgMZJeMCW5MA25WFJZeYYWCOWr0nGaHhJ7kg+zsu5FY_A@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3] ftrace/x86_64: Emulate call function while
+ updating in breakpoint handler
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Nicolai Stange <nstange@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Jiri Kosina <jikos@kernel.org>,
         Miroslav Benes <mbenes@suse.cz>,
@@ -45,148 +84,22 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         live-patching@vger.kernel.org,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>
-Subject: Re: [RFC][PATCH] ftrace/x86: Emulate call function while updating
- in breakpoint handler
-Message-ID: <20190501145824.08aed43a@gandalf.local.home>
-In-Reply-To: <20190501131117.GW2623@hirez.programming.kicks-ass.net>
-References: <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
- <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
- <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
- <20190430135602.GD2589@hirez.programming.kicks-ass.net>
- <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
- <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
- <20190430130359.330e895b@gandalf.local.home>
- <20190430132024.0f03f5b8@gandalf.local.home>
- <20190430134913.4e29ce72@gandalf.local.home>
- <CAHk-=wjJ8D74+FDcXGL65Q9aB0cc7B4vr2s2rS6V4d4a3hU-1Q@mail.gmail.com>
- <20190501131117.GW2623@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 May 2019 15:11:17 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, May 1, 2019 at 11:52 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> I got Peter's patch working. Here it is. What do you think?
 
-> On Tue, Apr 30, 2019 at 11:33:21AM -0700, Linus Torvalds wrote:
-> > Anyway, since Andy really likes the entry code change, can we have
-> > that patch in parallel and judge the difference that way? Iirc, that
-> > was x86-64 specific too.  
-> 
-> Here goes, compile tested only...
-> 
-> It obviously needs a self-test, but that shoulnd't be too hard to
-> arrange.
-> 
+I can tell from just looking at it for five seconds that at least the
+32-bit case is buggy.
 
-I was able to get it applied (with slight tweaking) but it then
-crashed. But that was due to incorrect updates in the
-ftrace_int3_handler().
+You can't look at CS(%rsp) without first also checking that you're not
+coming from vm86 mode.
 
-> ---
->  arch/x86/entry/entry_32.S            |  7 +++++++
->  arch/x86/entry/entry_64.S            | 14 ++++++++++++--
->  arch/x86/include/asm/text-patching.h | 20 ++++++++++++++++++++
->  arch/x86/kernel/ftrace.c             | 24 +++++++++++++++++++-----
->  4 files changed, 58 insertions(+), 7 deletions(-)
+But other than that I guess it does end up being pretty simple.
 
-
->  #endif /* _ASM_X86_TEXT_PATCHING_H */
-> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> index ef49517f6bb2..90d319687d7e 100644
-> --- a/arch/x86/kernel/ftrace.c
-> +++ b/arch/x86/kernel/ftrace.c
-> @@ -29,6 +29,7 @@
->  #include <asm/kprobes.h>
->  #include <asm/ftrace.h>
->  #include <asm/nops.h>
-> +#include <asm/text-patching.h>
->  
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  
-> @@ -231,6 +232,7 @@ int ftrace_modify_call(struct dyn_ftrace *rec,
-> unsigned long old_addr, }
->  
->  static unsigned long ftrace_update_func;
-> +static unsigned long ftrace_update_func_call;
->  
->  static int update_ftrace_func(unsigned long ip, void *new)
->  {
-> @@ -259,6 +261,8 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
->  	unsigned char *new;
->  	int ret;
->  
-> +	ftrace_update_func_call = (unsigned long)func;
-> +
->  	new = ftrace_call_replace(ip, (unsigned long)func);
->  	ret = update_ftrace_func(ip, new);
->  
-> @@ -295,12 +299,19 @@ int ftrace_int3_handler(struct pt_regs *regs)
->  		return 0;
->  
->  	ip = regs->ip - 1;
-> -	if (!ftrace_location(ip) && !is_ftrace_caller(ip))
-> -		return 0;
-> -
-> -	regs->ip += MCOUNT_INSN_SIZE - 1;
-> +	if (ftrace_location(ip)) {
-> +		int3_emulate_call(regs, ftrace_update_func_call);
-
-Should be:
-
-		int3_emulate_call(regs, (unsigned long)ftrace_regs_caller);
-
-> +		return 1;
-> +	} else if (is_ftrace_caller(ip)) {
-> +		if (!ftrace_update_func_call) {
-> +			int3_emulate_jmp(regs, regs->ip - INT3_INSN_SIZE + CALL_INSN_SIZE);
-
-I see what you did here, but I think:
-
-			int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
-
-looks better. But that said, we could in the beginning do:
-
-	ip = regs->ip - INT3_INSN_SIZE;
-
-instead of
-
-	ip = regs->ip - 1;
-
-I made these updates and posted them to Linus.
-
--- Steve
-
-
-> +			return 1;
-> +		}
-> +		int3_emulate_call(regs, ftrace_update_func_call);
-> +		return 1;
-> +	}
->  
-> -	return 1;
-> +	return 0;
->  }
->  NOKPROBE_SYMBOL(ftrace_int3_handler);
->  
-> @@ -859,6 +870,8 @@ void arch_ftrace_update_trampoline(struct
-> ftrace_ops *ops) 
->  	func = ftrace_ops_get_func(ops);
->  
-> +	ftrace_update_func_call = (unsigned long)func;
-> +
->  	/* Do a safe modify in case the trampoline is executing */
->  	new = ftrace_call_replace(ip, (unsigned long)func);
->  	ret = update_ftrace_func(ip, new);
-> @@ -960,6 +973,7 @@ static int ftrace_mod_jmp(unsigned long ip, void
-> *func) {
->  	unsigned char *new;
->  
-> +	ftrace_update_func_call = 0UL;
->  	new = ftrace_jmp_replace(ip, (unsigned long)func);
->  
->  	return update_ftrace_func(ip, new);
+             Linus
