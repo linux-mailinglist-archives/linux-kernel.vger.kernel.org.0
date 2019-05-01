@@ -2,80 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D12B710402
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 04:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FA410410
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 05:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfEAC3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 22:29:41 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:50488 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfEAC3l (ORCPT
+        id S1726124AbfEADA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 23:00:57 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57075 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725909AbfEADAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 22:29:41 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23990394AbfEAC3gOuPKs (ORCPT
-        <rfc822;sparclinux@vger.kernel.org> + 4 others);
-        Wed, 1 May 2019 04:29:36 +0200
-Date:   Wed, 1 May 2019 03:29:36 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        andrew@aj.id.au, andriy.shevchenko@linux.intel.com, vz@mleia.com,
-        slemieux.tyco@gmail.com, khilman@baylibre.com, liviu.dudau@arm.com,
-        sudeep.holla@arm.com, lorenzo.pieralisi@arm.com,
-        "David S. Miller" <davem@davemloft.net>, jacmet@sunsite.dk,
-        linux@prisktech.co.nz, matthias.bgg@gmail.com,
-        linux-mips@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH 06/41] drivers: tty: serial: sb1250-duart: use dev_err()
- instead of printk()
-In-Reply-To: <1556369542-13247-7-git-send-email-info@metux.net>
-Message-ID: <alpine.LFD.2.21.1905010257020.30973@eddie.linux-mips.org>
-References: <1556369542-13247-1-git-send-email-info@metux.net> <1556369542-13247-7-git-send-email-info@metux.net>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 30 Apr 2019 23:00:55 -0400
+Received: from callcc.thunk.org (adsl-173-228-226-134.prtc.net [173.228.226.134])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x412xVCE001527
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Apr 2019 22:59:32 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 95C10420023; Tue, 30 Apr 2019 22:59:30 -0400 (EDT)
+Date:   Tue, 30 Apr 2019 22:59:30 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Olaf Weber <olaf@sgi.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] unicode: refactor the rule for regenerating utf8data.h
+Message-ID: <20190501025930.GB5377@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Olaf Weber <olaf@sgi.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-fsdevel@vger.kernel.org
+References: <1556507731-830-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556507731-830-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 27 Apr 2019, Enrico Weigelt, metux IT consult wrote:
+On Mon, Apr 29, 2019 at 12:15:31PM +0900, Masahiro Yamada wrote:
+> scripts/mkutf8data is used only when regenerating utf8data.h,
+> which never happens in the normal kernel build. However, it is
+> irrespectively built if CONFIG_UNICODE is enabled.
+> 
+> Moreover, there is no good reason for it to reside in the scripts/
+> directory since it is only used in fs/unicode/.
+> 
+> Hence, move it from scripts/ to fs/unicode/.
+> 
+> In some cases, we bypass build artifacts in the normal build. The
+> conventional way to do so is to surround the code with ifdef REGENERATE_*.
+> 
+> For example,
+> 
+>  - 7373f4f83c71 ("kbuild: add implicit rules for parser generation")
+>  - 6aaf49b495b4 ("crypto: arm,arm64 - Fix random regeneration of S_shipped")
+> 
+> I rewrote the rule in a more kbuild'ish style.
+> 
+> In the normal build, utf8data.h is just shipped from the check-in file.
+> 
+> $ make
+>   [ snip ]
+>   SHIPPED fs/unicode/utf8data.h
+>   CC      fs/unicode/utf8-norm.o
+>   CC      fs/unicode/utf8-core.o
+>   CC      fs/unicode/utf8-selftest.o
+>   AR      fs/unicode/built-in.a
+> 
+> If you want to generate utf8data.h based on UCD, put *.txt files into
+> fs/unicode/, then pass REGENERATE_UTF8DATA=1 from the command line.
+> The mkutf8data tool will be automatically compiled to generate the
+> utf8data.h from the *.txt files.
+> 
+> $ make REGENERATE_UTF8DATA=1
+>   [ snip ]
+>   HOSTCC  fs/unicode/mkutf8data
+>   GEN     fs/unicode/utf8data.h
+>   CC      fs/unicode/utf8-norm.o
+>   CC      fs/unicode/utf8-core.o
+>   CC      fs/unicode/utf8-selftest.o
+>   AR      fs/unicode/built-in.a
+> 
+> I renamed the check-in utf8data.h to utf8data.h_shipped so that this
+> will work for the out-of-tree build.
+> 
+> You can update it based on the latest UCD like this:
+> 
+> $ make REGENERATE_UTF8DATA=1 fs/unicode/
+> $ cp fs/unicode/utf8data.h fs/unicode/utf8data.h_shipped
+> 
+> Also, I added entries to .gitignore and dontdiff.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v2:
+>  - Make this work correctly with O= option
 
-> diff --git a/drivers/tty/serial/sb1250-duart.c b/drivers/tty/serial/sb1250-duart.c
-> index 329aced..655961c 100644
-> --- a/drivers/tty/serial/sb1250-duart.c
-> +++ b/drivers/tty/serial/sb1250-duart.c
-> @@ -663,7 +663,6 @@ static void sbd_release_port(struct uart_port *uport)
->  
->  static int sbd_map_port(struct uart_port *uport)
->  {
-> -	const char *err = KERN_ERR "sbd: Cannot map MMIO\n";
->  	struct sbd_port *sport = to_sport(uport);
->  	struct sbd_duart *duart = sport->duart;
->  
-> @@ -671,7 +670,7 @@ static int sbd_map_port(struct uart_port *uport)
->  		uport->membase = ioremap_nocache(uport->mapbase,
->  						 DUART_CHANREG_SPACING);
->  	if (!uport->membase) {
-> -		printk(err);
-> +		dev_err(uport->dev, "Cannot map MMIO (base)\n");
->  		return -ENOMEM;
->  	}
->  
-> @@ -679,7 +678,7 @@ static int sbd_map_port(struct uart_port *uport)
->  		sport->memctrl = ioremap_nocache(duart->mapctrl,
->  						 DUART_CHANREG_SPACING);
->  	if (!sport->memctrl) {
-> -		printk(err);
-> +		dev_err(uport->dev, "Cannot map MMIO (ctrl)\n");
->  		iounmap(uport->membase);
->  		uport->membase = NULL;
->  		return -ENOMEM;
+Thanks, I've updated my tree to use this version of the commit.
 
- Hmm, what's the point to have separate messages, which consume extra 
-memory, for a hardly if at all possible error condition?
-
-  Maciej
+	     	     	     	    	 - Ted
