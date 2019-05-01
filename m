@@ -2,94 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F9C10933
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 16:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2605910938
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 16:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfEAOiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 10:38:17 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34837 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfEAOiQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 10:38:16 -0400
-Received: by mail-it1-f193.google.com with SMTP id l140so8825677itb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 07:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cI0F8wRwu0fEyj22FjTXNrCgEdAQZ+e+m8fsh/HMJP0=;
-        b=QlmN9OXbl70ygTYnVQ1m080vaU5Xb09/V8O6NTERO74GoLtQzR2wuMdATpGLgA/6mR
-         vQAbVNVA9ged2JMgrW+eVv/Q2a7LYhlsmpYV5rhAfJuuM2Tmu2QERU8ZPnyxCDBBhoBV
-         f230QOPkSyHC2KSLLbKD9lpLXf6A64eWtA06MzpeY62Dop6gp3kLWSj07xxClxSE5RDv
-         euqiccsyUKmOL6xN1uHGcQ37HaLGrXMsl0AEbh0BfdjI4Zed2Cdpv7kIH1RP4Uuza4Oc
-         xLvk0vBiNzxdHelwLBhqAC7v5sw+mycJGJslzmR6kMqQ0Fjz774ZEbC5ICgpcAAmpatX
-         OO+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cI0F8wRwu0fEyj22FjTXNrCgEdAQZ+e+m8fsh/HMJP0=;
-        b=BV8Cn5gCojQmWSkNm4lhdsGa1T8HjUoz1Nw5fGRvy6B4GlfTA2wIHB6dC9NsoXgv6X
-         fTB7Y4wGGS1mn9sV8WNTo6G2XQNGQAJ++kBQNS1VP7E82sX2hFTxuOJqR+jGnqLWlHuE
-         IelJ+xquewZx5EM3ybHPWW8mvVquwMpSJ9xjziaqduIocg6T785bdvUfdYtNzzlIZ+c0
-         lALpijMz9/REgjyeIqDsdUDY9xbjkcnrt7e4382C6bC4E8ZmtV4bBOnBpuVm3SOyFW0M
-         Eju9dZV7Z4TiWHk8zCbGOx+NJAQ7Uj5/gXg8M+nnYY7hCMEwws31L8SozdXYFNDHM2Ue
-         o+kA==
-X-Gm-Message-State: APjAAAXlLJ7BeO9fcZq9p5ll33/tWfbFKIZgsJQ9PDxqJ33kEDhF41rS
-        R4gNWN3dxy1VxbDrItQl5og=
-X-Google-Smtp-Source: APXvYqwHzdWNVJFXYbV2rDEG/39h99taIsvEPBtAHNTmcHtPSkZijtdScWJSiwMfrcCfxbTu8vLtKQ==
-X-Received: by 2002:a24:6416:: with SMTP id t22mr8259204itc.176.1556721495770;
-        Wed, 01 May 2019 07:38:15 -0700 (PDT)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id w184sm2957224ita.9.2019.05.01.07.38.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 07:38:15 -0700 (PDT)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] staging: fieldbus: anybus-s: fix wait_for_completion_timeout return handling
-Date:   Wed,  1 May 2019 10:38:12 -0400
-Message-Id: <20190501143812.7672-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726877AbfEAOkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 10:40:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726729AbfEAOkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 10:40:37 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759BB21743;
+        Wed,  1 May 2019 14:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556721636;
+        bh=u/Mw+fWUEc/keOY00CbYB4GGaE1NsH7Iz/SacOTrmu0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=F7oM7ztQcFOIiPuXKfJ1EcCi/n1iNrrmqRFjtEtw9XTElgEUNQlR9iDiFZpc2fBV5
+         dPJ6afxmUSOfsYesgZIq5YWSanIDuec0xGb4XS8DSAQHwhC695wPcx3vOHoBe6TxhW
+         ugZJv8xufT3ixjf0W+E9RioFUaaDz5xqbf41YDyE=
+Received: by mail-qt1-f169.google.com with SMTP id e5so13249883qtq.2;
+        Wed, 01 May 2019 07:40:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAVFnxP1ATi/Z+ZMDqPjY/X3+Qo4a8ovUWxEG2yLY4cFNbov9uRU
+        DbsMQ/yThMjKG4m9f0m291LKZmYKaMldurHzsA==
+X-Google-Smtp-Source: APXvYqytLK1Pq61l7Qct4WHvSayk3d/X1r8PSrqTB8epWaZOFI7gczb2hse2g9sw9rEdqH94e1h3AhLCMTwrfTg02ic=
+X-Received: by 2002:aed:306c:: with SMTP id 99mr4346058qte.38.1556721635726;
+ Wed, 01 May 2019 07:40:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190426124620.28881-1-kishon@ti.com>
+In-Reply-To: <20190426124620.28881-1-kishon@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 1 May 2019 09:40:24 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+fR3-9c2pgDAL4EJebbiUntW46C_HAD5zoNaXRvojbHA@mail.gmail.com>
+Message-ID: <CAL_Jsq+fR3-9c2pgDAL4EJebbiUntW46C_HAD5zoNaXRvojbHA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: PCI: Add PCI EP DT binding documentation for AM654
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+On Fri, Apr 26, 2019 at 7:47 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>
+> Add devicetree binding documentation for PCIe in EP mode present in
+> AM654 SoC.
+>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../devicetree/bindings/pci/pci-keystone.txt  | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 
-wait_for_completion_timeout() returns unsigned long (0 on timeout or
-remaining jiffies) not int. Assigning this return value to int may
-theoretically overflow (though not in this case where TIMEOUT is
-only HZ*2).
-
-Fix this inconsistency by wrapping the wait_for_completion_timeout
-into the if().
-
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Reviewed-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- drivers/staging/fieldbus/anybuss/host.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/fieldbus/anybuss/host.c b/drivers/staging/fieldbus/anybuss/host.c
-index e34d4249f5a7..a64fe03b61fa 100644
---- a/drivers/staging/fieldbus/anybuss/host.c
-+++ b/drivers/staging/fieldbus/anybuss/host.c
-@@ -1325,11 +1325,10 @@ anybuss_host_common_probe(struct device *dev,
- 	 *   interrupt came in: ready to go !
- 	 */
- 	reset_deassert(cd);
--	ret = wait_for_completion_timeout(&cd->card_boot, TIMEOUT);
--	if (ret == 0)
-+	if (!wait_for_completion_timeout(&cd->card_boot, TIMEOUT)) {
- 		ret = -ETIMEDOUT;
--	if (ret < 0)
- 		goto err_reset;
-+	}
- 	/*
- 	 * according to the anybus docs, we're allowed to read these
- 	 * without handshaking / reserving the area
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
