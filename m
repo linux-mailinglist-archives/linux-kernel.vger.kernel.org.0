@@ -2,89 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E3C10541
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 07:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B051054A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 07:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726091AbfEAFbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 01:31:16 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40429 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfEAFbQ (ORCPT
+        id S1726138AbfEAFkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 01:40:13 -0400
+Received: from sv41.sixcore.ne.jp ([219.94.200.42]:57151 "EHLO
+        sv41.sixcore.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfEAFkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 01:31:16 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so7771715plr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 22:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hJGfLPSlXzuDQII6G9FALVwQaMMai8r6WJCEuagoSSY=;
-        b=rx8+mRDr7uB513B1QlZ0yFUEOHTB5qybmgkFdh2zQUxBqedApwYu+doW87pZNZlL1R
-         h6bwD1t33VlUHjxYTjhprLqFCdjQPz9625heZ8btkekZs4ONNhMAh7hK3rlEuTl7iPGx
-         aqDA32BmZUtYG+5xR5mhpGF1ma47lmaWiuR1KgMuKn7JLgaO37Yv7YQ2LGN8Y8Q0QZfS
-         6oyuvfoihrlR5ZwtZ7/zu0ahqgSLS4wo3z6/MKdeHQPyUB/6p6wczRE6xbX8JcK/uqMv
-         K3Ye285PbVKnpB4e63GX/RgD7rFxz5du1Md0JXQQQl3X2meLo/+1z09kaAPvFbLDpLe5
-         hkqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hJGfLPSlXzuDQII6G9FALVwQaMMai8r6WJCEuagoSSY=;
-        b=fphjT/CMb0kQfzfP3xg0CAam5axIxDtgrAbGpr1FI0qQgKhYqGvygzxcxzsgkDvAMf
-         xdXOBmzti56zY3EiNb5VShD82wLnzuIq4LUDegysUe9RO92FTK3LocVtw1fzTtaAVzti
-         71USUZtuaTBdTUQGeFYy+I5y1u/t0DNbP8oGwoNw+p+hNJHlL6CMJh0MfR2uZdLlnsIi
-         uOWMJJkEpG8z8kV1OiaJwoCuP914Ypl0GGkVd7RnBfhHdg8VtF0y+OTQ1KaGYz5EJItS
-         p0IhQELyxQk3iPduJUN3OJCaaNgiEIXZtt+J6ahv2iGPNWZkY12XlWcwo8p+LsAYsOK8
-         osyQ==
-X-Gm-Message-State: APjAAAV/7qzvUbR2EzkWxIgPgFSM4AFvSq+Iq/WWrJ8ndpvb+HsRVrkw
-        dLyVTzLlhMaBhpRc67UcBv8=
-X-Google-Smtp-Source: APXvYqxoerCH7+5HGdXjF6wwjvKIeawAx6VlCaf7+1k4K+pXX0cyWk4hGTP86fKDCPuMZNTFDxCDBA==
-X-Received: by 2002:a17:902:521:: with SMTP id 30mr73353039plf.248.1556688675061;
-        Tue, 30 Apr 2019 22:31:15 -0700 (PDT)
-Received: from localhost ([2601:640:e:200:bc53:6e04:b584:e900])
-        by smtp.gmail.com with ESMTPSA id b14sm47835587pfi.92.2019.04.30.22.31.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 22:31:13 -0700 (PDT)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-To:     Aaron Tomlin <atomlin@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yury Norov <ynorov@marvell.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH] mm/slub: avoid double string traverse in kmem_cache_flags()
-Date:   Tue, 30 Apr 2019 22:31:11 -0700
-Message-Id: <20190501053111.7950-1-ynorov@marvell.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 May 2019 01:40:13 -0400
+X-Greylist: delayed 443 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 May 2019 01:40:12 EDT
+Received: from virusgw1.sixcore.ne.jp (virusgw1.sixcore.ne.jp [219.94.200.191])
+        by sv41.sixcore.ne.jp (Postfix) with ESMTP id 7CB642205B8F;
+        Wed,  1 May 2019 14:32:45 +0900 (JST)
+Received: from sv41.sixcore.ne.jp (219.94.200.42)
+ by virusgw1.sixcore.ne.jp (F-Secure/fsigk_smtp/521/virusgw1.sixcore.ne.jp);
+ Wed, 01 May 2019 14:32:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/521/virusgw1.sixcore.ne.jp)
+Received: by sv41.sixcore.ne.jp (Postfix, from userid 1002)
+        id C39682205968; Wed,  1 May 2019 14:32:44 +0900 (JST)
+Received: from 197.239.81.8
+        (SquirrelMail authenticated user info@tosayama.org)
+        by tosayama.org with HTTP;
+        Wed, 1 May 2019 14:32:44 +0900 (JST)
+Message-ID: <23679.197.239.81.8.1556688764.squirrel@tosayama.org>
+Date:   Wed, 1 May 2019 14:32:44 +0900 (JST)
+Subject: read and get back to me
+From:   "Mr Anbrose Fred" <ambrosefred1@gmail.com>
+Reply-To: mrfredambriose@yandex.com
+User-Agent: SquirrelMail/
+MIME-Version: 1.0
+Content-Type: text/plain;charset=iso-2022-jp
+Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+Importance: Normal
+To:     undisclosed-recipients:;
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If ',' is not found, kmem_cache_flags() calls strlen() to find the end
-of line. We can do it in a single pass using strchrnul().
 
-Signed-off-by: Yury Norov <ynorov@marvell.com>
----
- mm/slub.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 4922a0394757..85f90370a293 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1317,9 +1317,7 @@ slab_flags_t kmem_cache_flags(unsigned int object_size,
- 		char *end, *glob;
- 		size_t cmplen;
- 
--		end = strchr(iter, ',');
--		if (!end)
--			end = iter + strlen(iter);
-+		end = strchrnul(iter, ',');
- 
- 		glob = strnchr(iter, end - iter, '*');
- 		if (glob)
+
 -- 
-2.17.1
+Greetings
 
+I wonder why you continue neglecting my emails. Please, acknowledge the
+receipt of this message in reference to the subject above as I intend
+to send to you the details of the project.
+
+Sometimes, try to check your spam box because most of these
+correspondences
+fall out sometimes in SPAM folder.
+
+Best regards.
+Mr. Ambrose Fred
