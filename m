@@ -2,79 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF99410A90
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D1310A9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfEAQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbfEAQFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:05:06 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F9DD20644;
-        Wed,  1 May 2019 16:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556726705;
-        bh=E8F/3pKddi/VN9Od3ETGWYRD3ebxn03vf7dBr53qS4g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0/eU5QSfIyvSF6qY8MTgbPncQaNyEZNbt2FqPgGJoHj6SoRxdIwDUKZJe7/KEPPBL
-         LY2qgf1rYgLo44rQdrC2nTFAHQKpvF9yNIb5cGGhPZCiZ2CkMgcDcLGh1oCTZdkfgi
-         g1KUkxgFGvyo4nEYXAhKQOEU3Qouf77KGZONrXaQ=
-Date:   Wed, 1 May 2019 18:05:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
-        srinivas.kandagatla@linaro.org,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH v4 02/22] soundwire: fix SPDX license for header files
-Message-ID: <20190501160503.GB19281@kroah.com>
-References: <20190501155745.21806-1-pierre-louis.bossart@linux.intel.com>
- <20190501155745.21806-3-pierre-louis.bossart@linux.intel.com>
+        id S1726594AbfEAQHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:07:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35032 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfEAQHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 12:07:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BmsOCWOL+giQZS37PMaeMlSUUcjDPMjoPtCe2tkT52w=; b=lhopa3nnuzOqrafzg9Kkz+1vj
+        zRcrs1JNVduVklckswJUOJDeGXueBDJQqfe1bSXKFFYz+EsgYkSK7QTDiq3dyTN5Zu8rRkrb/ofe5
+        iy9J+NYQ3/g3/e7Zat5sBySIWPF6fPyuj2jZ6mPvZrOwkVDcX0us/ysxTVD3wQzLoAtP/7/+Ys2/w
+        pPThqLdy0UCS/EfbjlATohXf8BTo98B+eFvbYkSIsp0MfV8tc20cD0hvWpavUXG2l7N44tjLh3AQv
+        JF2JvKvOFoXfDZCheLkQDFGqx0qyb9unfIa7+drB+xOUy2K53E4eWNNsYhLcV5F7gFtvRxhMTTIhR
+        NT/oC7BdA==;
+Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLrlJ-0008Km-QG; Wed, 01 May 2019 16:07:14 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: fix filler_t callback type mismatches
+Date:   Wed,  1 May 2019 12:06:32 -0400
+Message-Id: <20190501160636.30841-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501155745.21806-3-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 10:57:25AM -0500, Pierre-Louis Bossart wrote:
-> No C++ comments in .h files
+Casting mapping->a_ops->readpage to filler_t causes an indirect call
+type mismatch with Control-Flow Integrity checking. This change fixes
+the mismatch in read_cache_page_gfp and read_mapping_page by adding
+using a NULL filler argument as an indication to call ->readpage
+directly, and by passing the right parameter callbacks in nfs and jffs2.
 
-That's not really the issue here.
-
-> 
-> Reviewed-by: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/bus.h            | 4 ++--
->  drivers/soundwire/cadence_master.h | 4 ++--
->  drivers/soundwire/intel.h          | 4 ++--
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-> index c77de05b8100..2f8436584e7f 100644
-> --- a/drivers/soundwire/bus.h
-> +++ b/drivers/soundwire/bus.h
-> @@ -1,5 +1,5 @@
-> -// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> -// Copyright(c) 2015-17 Intel Corporation.
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +/* Copyright(c) 2015-17 Intel Corporation. */
-
-The first line is fine to change, as that was the requirement (although
-I think it has now been fixed), the second line is just taste, whatever
-you want, it's not a requirement.
-
-But I really don't care, it's not my code :)
-
-thanks,
-
-greg k-h
