@@ -2,82 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B92A10B7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C8910B84
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfEAQnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:43:47 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35960 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfEAQnr (ORCPT
+        id S1726747AbfEAQoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:44:16 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37379 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfEAQoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:43:47 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 85so8534073pgc.3;
-        Wed, 01 May 2019 09:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hCSVytESz3Q+D4Rhyjxyxt2cp+x2VgroJNnJusXnblY=;
-        b=Bvrw7tAXHLL2ASfME96js8WKxak0Rnee0TveON6p4bNle7a/tVRL4PVj8icZN1jcfh
-         Gt9qWHdrYFaykYq2RXIkmulxRH/oCFlXFHsqJRYkRZTW5YfM6/kB+z8kJfpV9S1oTr49
-         nudAnKm6yoDaFZ1dJWiOZmqrw3XfXriiZX85pgw3IBQSH7fUBrkWX1V2ZSRfOoBEaqrO
-         ZeGwaFKyly80mZEfzuN1xovlxDvRnfY7Ln3NTje1IciAjRkL8YGO8uvhyzq0mTukfhug
-         CVByzYshsRDVaoHGnTVpCy/gqZfznrj/KXuoY4nrkk2g0m8kAnDaSlbLjlb9b+wbw1OQ
-         SJiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hCSVytESz3Q+D4Rhyjxyxt2cp+x2VgroJNnJusXnblY=;
-        b=tWZnzXdd418ZyvX89Gw2oVAYIupbrAdYC1W+6TioK4APZb8XxI6r4CKRtvnsgi3Xc9
-         nKAA6t2+/fyTM1UhhGYs4uRi0jSDzDjD+VvVwRrGdilZ4YKK3BPbMzOhcG+FNa2Cm+3b
-         cbx8FZZXNIEOxMgVAD2/+6B1gaADaxR+qO4QEE28no0Uu7GwNom+kpgK0UlUJmM0qiAH
-         CXusLcX+xCPStQcCSg/t/kakOqkzVDnxe62G2LK8R1nK/UsUJIYgSX0Z7y++o0qePrX3
-         isWOoRRwA4wFQFrO7qAqBLoIS0hS7gan5KWLELtEs8lSNvyPoH8no8SCQAuhX/IpznED
-         sHAQ==
-X-Gm-Message-State: APjAAAVW7Hamp03HaWBS41/4txmvEhcXjpe8BIvqOu4nIKPoYGk/xCro
-        2140EfElhBzWnAR4oC9rcmM=
-X-Google-Smtp-Source: APXvYqw9HVqjfxFo+D/1M1OGoWppewKKdbwh5N/pyeUxzz5GqAMgqXItwO4iNwDknosGOuFsoOZrWA==
-X-Received: by 2002:a65:64c9:: with SMTP id t9mr73975884pgv.221.1556729026592;
-        Wed, 01 May 2019 09:43:46 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b14sm49875493pfi.92.2019.05.01.09.43.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 09:43:45 -0700 (PDT)
-Date:   Wed, 1 May 2019 09:43:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/41] 4.9.172-stable review
-Message-ID: <20190501164344.GA16175@roeck-us.net>
-References: <20190430113524.451237916@linuxfoundation.org>
+        Wed, 1 May 2019 12:44:16 -0400
+Received: from excalibur.cnev.de ([213.196.200.188]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MKKd7-1h3NB22Z3P-00Lomo; Wed, 01 May 2019 18:43:59 +0200
+Received: from karsten by excalibur.cnev.de with local (Exim 4.89)
+        (envelope-from <merker@debian.org>)
+        id 1hLsKq-0008J7-9P; Wed, 01 May 2019 18:43:56 +0200
+Date:   Wed, 1 May 2019 18:43:56 +0200
+From:   Karsten Merker <merker@debian.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        "zong@andestech.com" <zong@andestech.com>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: Add an Image header that boot loader can parse.
+Message-ID: <20190501164355.ce76wjmq6sszrf5g@excalibur.cnev.de>
+References: <mhng-cab2c6b9-f623-4286-99a4-61e4b3a58761@palmer-si-x1e>
+ <e801ca8b-c8e2-d8b1-d55a-744414db77e3@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190430113524.451237916@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e801ca8b-c8e2-d8b1-d55a-744414db77e3@wdc.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:gQfgRV52/wutLP5y4mCshUvfjXUXinHlk5dmAqDo68cRBMaQlCw
+ rMRY/Jx6izGcZPqiRMaSb8TjWhuJqrPuMAF0Fn/0Q/dASGB8KEcGrzvbkC+MlFBwE54km/c
+ LZJ1xJzk3KnHcCEUwGyz6l354+2IcaYV8khYD6vipm2Ux7lPy8qoDldT2oEghZd9pVZgYD2
+ OhOx/c3oYlexeVwooxJig==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sDbHHpX80m8=:h9K1eA/AIbnevYg/2MjTYp
+ Cz/vGhw0jx6Rtn/drvlUS4qRjpysjAndbHb5S4rgGxjUqadjr1dy+r9xhlyZWbbwA6RKLJny5
+ emXj7SB+er8B30aMNeU3UcEihU4EIWklCWilbUa/o7Bl26x1Kf6324T20osihtUq9FmczgszF
+ NFIA1iwxmHl7UyjYRhZkb3XACeDAy0AWaR4kt+i1D2HVNvyIi54/jSWxQ1zP8mT2Bajnpt15Q
+ XcTx7h9QCZ14U/tu1wk6zNUv5gb6Op+CUFu0MhEjC8OC8fHC6ASrWsCYxFABGcr0+b1VY0A4D
+ dmxex9febOQEt0kVFfq0NI9ixcip3RnfWZE4cB703e1InyKGO5UtBwL5g01yvpFF+wzfI/1Rm
+ /H9uyaas5JfiNXvDeomTsrk6woMDxLpsLmEZ4duR+4kezNpd06/WxhdMRQq79JPoA1HQ67F45
+ NRzR9IgW8blSJxg2NztAfcPNKdKGMJly6CFS+IcTA6X+40vRpTgxpfVu272dPmJHhArZCtO7R
+ drHt+61Yw0fxHjMQ2kzmIzYKyqPtSYvPCWXMZwSF2zUarFd6mZgUeKgOHkIGvYNOpmnuwLK2c
+ pgNe+urP0WZJAVHX6dJYvhz+FBS4Iv6Mjq0S0c3Y7ZZaQ2ET9QOfYgYeAC4reeYns4n81Vaxn
+ KqSesOAjZMMUfmCBvYcvG465EHdp0+aCokXMRLZnY7SOwfMubkmjT5H7IxPaSUAClpaFL/wGW
+ JzYKAewCRpDa/VDw2M5qPtv0Nq4XfZXi+kMutg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 01:38:11PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.172 release.
-> There are 41 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Apr 29, 2019 at 10:42:40PM -0700, Atish Patra wrote:
+> On 4/29/19 4:40 PM, Palmer Dabbelt wrote:
+> > On Tue, 23 Apr 2019 16:25:06 PDT (-0700), atish.patra@wdc.com wrote:
+> > > Currently, last stage boot loaders such as U-Boot can accept only
+> > > uImage which is an unnecessary additional step in automating boot flows.
+> > > 
+> > > Add a simple image header that boot loaders can parse and directly
+> > > load kernel flat Image. The existing booting methods will continue to
+> > > work as it is.
+> > > 
+> > > Tested on both QEMU and HiFive Unleashed using OpenSBI + U-Boot + Linux.
+> > > 
+> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > ---
+> > >   arch/riscv/include/asm/image.h | 32 ++++++++++++++++++++++++++++++++
+> > >   arch/riscv/kernel/head.S       | 28 ++++++++++++++++++++++++++++
+> > >   2 files changed, 60 insertions(+)
+> > >   create mode 100644 arch/riscv/include/asm/image.h
+> > > 
+> > > diff --git a/arch/riscv/include/asm/image.h b/arch/riscv/include/asm/image.h
+> > > new file mode 100644
+> > > index 000000000000..76a7e0d4068a
+> > > --- /dev/null
+> > > +++ b/arch/riscv/include/asm/image.h
+> > > @@ -0,0 +1,32 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +#ifndef __ASM_IMAGE_H
+> > > +#define __ASM_IMAGE_H
+> > > +
+> > > +#define RISCV_IMAGE_MAGIC	"RISCV"
+> > > +
+> > > +#ifndef __ASSEMBLY__
+> > > +/*
+> > > + * struct riscv_image_header - riscv kernel image header
+> > > + *
+> > > + * @code0:		Executable code
+> > > + * @code1:		Executable code
+> > > + * @text_offset:	Image load offset
+> > > + * @image_size:		Effective Image size
+> > > + * @reserved:		reserved
+> > > + * @magic:		Magic number
+> > > + * @reserved:		reserved
+> > > + */
+> > > +
+> > > +struct riscv_image_header {
+> > > +	u32 code0;
+> > > +	u32 code1;
+> > > +	u64 text_offset;
+> > > +	u64 image_size;
+> > > +	u64 res1;
+> > > +	u64 magic;
+> > > +	u32 res2;
+> > > +	u32 res3;
+> > > +};
+> > 
+> > I don't want to invent our own file format.  Is there a reason we can't just
+> > use something standard?  Off the top of my head I can think of ELF files and
+> > multiboot.
 > 
-> Responses should be made by Thu 02 May 2019 11:34:41 AM UTC.
-> Anything received after that time might be too late.
+> Additional header is required to accommodate PE header format. Currently,
+> this is only used for booti command but it will be reused for EFI headers as
+> well. Linux kernel Image can pretend as an EFI application if PE/COFF header
+> is present. This removes the need of an explicit EFI boot loader and EFI
+> firmware can directly load Linux (obviously after EFI stub implementation
+> for RISC-V).
 > 
+> ARM64 follows the similar header format as well.
+> https://www.kernel.org/doc/Documentation/arm64/booting.txt
 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 320 pass: 320 fail: 0
+Hello Atish,
 
-Guenter
+the arm64 header looks a bit different (quoted from the
+aforementioned URL):
+
+  u32 code0;                    /* Executable code */
+  u32 code1;                    /* Executable code */
+  u64 text_offset;              /* Image load offset, little endian */
+  u64 image_size;               /* Effective Image size, little endian */
+  u64 flags;                    /* kernel flags, little endian */
+  u64 res2      = 0;            /* reserved */
+  u64 res3      = 0;            /* reserved */
+  u64 res4      = 0;            /* reserved */
+  u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
+  u32 res5;                     /* reserved (used for PE COFF offset) */
+
+What I am unclear about is in which ways a RISC-V PE/COFF header
+differs from an arm64 one as the arm64 struct is longer than your
+RISC-V header and for arm64 the PE offset field is in the last
+field, i.e. outside of the area covered by your RISC-V structure
+definition.  Can you perhaps explain this part in a bit more
+detail or does anybody else have a pointer to a specification of
+the RISC-V PE/COFF header format (I have found a lot of documents
+about COFF in general, but nothing specific to RISC-V).
+
+Regards,
+Karsten
+-- 
+Ich widerspreche hiermit ausdrücklich der Nutzung sowie der
+Weitergabe meiner personenbezogenen Daten für Zwecke der Werbung
+sowie der Markt- oder Meinungsforschung.
