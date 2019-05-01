@@ -2,70 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A41D10DA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC32610DA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfEAUBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 16:01:07 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34441 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbfEAUBH (ORCPT
+        id S1726245AbfEAUB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 16:01:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42027 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfEAUB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 16:01:07 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n15so83211ota.1;
-        Wed, 01 May 2019 13:01:06 -0700 (PDT)
+        Wed, 1 May 2019 16:01:28 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k9so11632216oig.9;
+        Wed, 01 May 2019 13:01:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HxbNQi9DeZ2IJLgdIUVTw8HAwd2FcPK6Vz/jlq7BRoc=;
-        b=qWYrQxsnaeocSKQFVcRphBkA+vycl3wfxbMvcbh6w51iBZqqrzHsnlfDrmXw4HeUlP
-         gdNWtOFltDo27ymGE0JLiSKjMG2Lim8qYypZUbCbjAeh9MblDhIyb/rTep0D7526Tys/
-         iICmLFmBS9dJYCHZ3L9lB0DMHCwfQsrBafFdqrNzMG/WZS1zCaN7vdFp8yHq/lcw6vh4
-         2afxJkJeVtUQ+fV3UVd1UpEt6lRzSOzfU6u+kwAq5rqKhDIn4qWpNp8dnNcehjmY06bg
-         9+OpjtWXx6gI9R90su2E3HYTJMy/RDVteapxetfzpYYFFmmVGCCUa2sE4SkBnsFaVlDf
-         4uAg==
-X-Gm-Message-State: APjAAAUdrXzVuW576feo8uN1wa3bf0EnyYgEvoTMZmY+G7tNDfRgXIIn
-        6HQD9Ai7oga6j+FXKgGdfg==
-X-Google-Smtp-Source: APXvYqzcF2UnIXneOHc3vVzJEv6m01JtjNnKY2BTBLXgguBiPwEBqQ+LDGuHzLgGqqLZG3bvV/MztA==
-X-Received: by 2002:a9d:2066:: with SMTP id n93mr14060248ota.193.1556740866212;
-        Wed, 01 May 2019 13:01:06 -0700 (PDT)
+        bh=qIHTWDGzYQZkJHiXkUezp72uwINxeVDukTjbaIhuiTs=;
+        b=R2Wd9mnXHRshVfmnyfesUrYm7DYErdCjeHNc1CgndFDB+XpPWxl4b0rivaqfHjFXqy
+         KxkaU3EEBMyGFIXITdLFdEyK4/nrIFwAinxa6EPTHhZ9p9SVE+LfCdmQ8hV4fsiDkxJu
+         dbF2VLNloc3n8pS8DRu/vMmDXLMncFGM2RJzpLQjRjji4UBKXV7SyRiqlj5qVzndmvEy
+         2wc+7xNfSpUJxUmG+RFZ6GguXMGIRlFeltMrd3qcHw2EUzcwHk8vzJRwJYasFZ62fGGX
+         Y43zSoJHQOkL0z9+3VtKnrDGp0QauM3mFdkj2R8QoGbHqvvmxEuOR0tm8HcJIGMeVYwZ
+         wvBw==
+X-Gm-Message-State: APjAAAUzwiLk8ASQHjK3BufS83KUvN5i+SLtq/d4g85/JvkzTVnjUy/d
+        x67u3e04WoSZoL6xrqTWkA==
+X-Google-Smtp-Source: APXvYqwwvwj4oDg/bmeUnn4vK+Jak43dJ5tnDPhQiN/4HMQjCLWKMf5r4j6Hlke3L5ETSZw1m0/USA==
+X-Received: by 2002:aca:c4c3:: with SMTP id u186mr56454oif.82.1556740887017;
+        Wed, 01 May 2019 13:01:27 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r4sm16901646oia.2.2019.05.01.13.01.04
+        by smtp.gmail.com with ESMTPSA id w131sm17543434oig.29.2019.05.01.13.01.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 13:01:04 -0700 (PDT)
-Date:   Wed, 1 May 2019 15:01:04 -0500
+        Wed, 01 May 2019 13:01:25 -0700 (PDT)
+Date:   Wed, 1 May 2019 15:01:25 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        baylibre-upstreaming@groups.io,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: pwm: Update bindings for the Meson
- G12A Family
-Message-ID: <20190501200104.GA29281@bogus>
-References: <20190423133646.5705-1-narmstrong@baylibre.com>
- <20190423133646.5705-2-narmstrong@baylibre.com>
+To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc:     robh+dt@kernel.org, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, srv_heupstream@mediatek.com,
+        hui.liu@mediatek.com, yingjoe.chen@mediatek.com,
+        sean.wang@mediatek.com, erin.lo@mediatek.com,
+        eddie.huang@mediatek.com, matthias.bgg@gmail.com,
+        s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-iio@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: adc: mt8183: add binding document
+Message-ID: <20190501200125.GA29927@bogus>
+References: <20190424011112.14283-1-zhiyong.tao@mediatek.com>
+ <20190424011112.14283-2-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190423133646.5705-2-narmstrong@baylibre.com>
+In-Reply-To: <20190424011112.14283-2-zhiyong.tao@mediatek.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Apr 2019 15:36:44 +0200, Neil Armstrong wrote:
-> Update the doc to explicitly support Meson G12A Family.
-> The 2 first (A & B) AO PWM uses different clock source than the last 2
-> (C & D) AO PWM modules, thus we need to differentiate them.
+On Wed, 24 Apr 2019 09:11:11 +0800, Zhiyong Tao wrote:
+> The commit adds mt8183 compatible node in binding document.
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 > ---
->  Documentation/devicetree/bindings/pwm/pwm-meson.txt | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/iio/adc/mt6577_auxadc.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
