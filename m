@@ -2,152 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBC310C7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703EB10C97
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 20:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfEARzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 13:55:11 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41867 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfEARzJ (ORCPT
+        id S1726308AbfEASIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 14:08:10 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42498 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfEASIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 13:55:09 -0400
-Received: by mail-io1-f66.google.com with SMTP id r10so15442606ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 10:55:09 -0700 (PDT)
+        Wed, 1 May 2019 14:08:09 -0400
+Received: by mail-lj1-f193.google.com with SMTP id r72so11767538ljb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 11:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6ugiQw2wmXsizkXcJVBBH7E80UNKwak/4AnnndV8B0U=;
-        b=CMlH0fg6MSe0yGgM9xkAMZ/NyW0I63R3XsYDPFR9TW0ziXvksqmtD1tc1jsCb0vR2o
-         8BQCaWD2MKxTmoPhVwOofqJnv5lkXWjl4tBhjTy6bXJyCb+I3rjpyimlSyUoTo7OZ1V1
-         2T1Dx9MIkKmBZ/uEZA/mBMi/oa5EkcJ7iK20w=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/1/pQlD+UKjcy9BQef1uO7G8NLgF3ClUu5utleWV5U8=;
+        b=SD+L1zZxq3h7DQlOdVxAz8bLmC20f34sU3I1jlvMvjehPVfqTcXtJ+Hwy0wlTmDIe5
+         ZLaHqL3C8OOgHUXO6bwxpGoSuwoZz3oAEkyG+sz7yDMhvcRmvy06STay7znm1I1QvhVO
+         zhHdFU/CRi9/1FtAUFa9dZP2Hcbq7SwkLVz84=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6ugiQw2wmXsizkXcJVBBH7E80UNKwak/4AnnndV8B0U=;
-        b=Hj2KUnYleLw8HNlM7TsfJAvfaCGKkJVLFqIu1d926xhbIjtr8/SRStJ/t4cT0uBUrB
-         W2tO8He+5w5/dA+vUKPLUaJypY/nwjvOxy++E1Ln5H2/0ZTeKJ9zYjcjOKVS0V+CSYsO
-         gai6tbfvkk+F5rQxUJ9nNKLgmKDQQlR5d4m5WNAgqORs62d8ubesdX9lFy6JpEHivAsF
-         OH4Ek/MS2IwPNgm7Puz7GvygbOcHCvbYpou729ELExhxha1+CxfB0FHnc06+344mGqi5
-         FmjInkfrr1jBc86OCuQTDd5bM0RyFsmPuvEwD9gN7XKVycq+U4+q75Mee/ozjZUCMO/8
-         WdKw==
-X-Gm-Message-State: APjAAAVHjHHQjmuLsHhl5r4zy9s3ex7Wghon6p/7/wk6fF/7kniHrOb0
-        3qNkZ5Qo+XFAIKZbmm79m6202Q==
-X-Google-Smtp-Source: APXvYqwhYaiNHFycxu5o4Vfs7eXTVNDib9H2MggZucpTu66eESNUATwh7pwGL5bEL+NhIKY6GJNzTA==
-X-Received: by 2002:a6b:b585:: with SMTP id e127mr621510iof.197.1556733308703;
-        Wed, 01 May 2019 10:55:08 -0700 (PDT)
-Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id f204sm3424627itc.26.2019.05.01.10.55.08
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/1/pQlD+UKjcy9BQef1uO7G8NLgF3ClUu5utleWV5U8=;
+        b=emdCNbct1EZhc8Vr//6x9CzKpkdCQp0OOs8DwHAk1UX6Sb3Z5ux/HPkYf7VgdUSmqL
+         qOg6hsixwTd7gl885TxRdI4VhV5+4aBRhAGX+CbceB+3V7ZkTHntmhrcksfUi9FhHpqR
+         vzBhPc8Io4GyDcC0VOxs/0Vh21ZLJLtFALBec0OX0oPzAOywiHJ2WySYXKmsha3MX7l2
+         wpVzidCqWKIgy0+KiB3YG37BHpMdE5+RCjFCqGmFP7ry3FiIoNU0rBq1eMvv0qWMV34x
+         ACZM8cIq5qUI8bBz0jbRmcgTCI9cMtNKkClvduNvW+uY/OtEYI+A7GCfvMjq8eO+dIEy
+         P8pQ==
+X-Gm-Message-State: APjAAAVpkzom6eVLWCcYvDhzHs8yJ9lXDCd5NgEujIc5/NSGyc9YOsXU
+        1FJW3V7Y33SxQhhiQ12+ZxoK5/2NLyg=
+X-Google-Smtp-Source: APXvYqzPuqW/uASBw3Mjso2Pa8kLxdaFx/tkyL8Cx94kqvfJuDhlUg5bD1Ih8/ThZT/HZpd8drMXrQ==
+X-Received: by 2002:a2e:984d:: with SMTP id e13mr18377786ljj.61.1556734087467;
+        Wed, 01 May 2019 11:08:07 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id f15sm8882541lfa.89.2019.05.01.11.08.06
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 10:55:08 -0700 (PDT)
-From:   Raul E Rangel <rrangel@chromium.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     djkurtz@chromium.org, Raul E Rangel <rrangel@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [RFC PATCH 2/2] mmc: sdhci: Quirk for AMD SDHC Device 0x7906
-Date:   Wed,  1 May 2019 11:54:57 -0600
-Message-Id: <20190501175457.195855-2-rrangel@chromium.org>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-In-Reply-To: <20190501175457.195855-1-rrangel@chromium.org>
-References: <20190501175457.195855-1-rrangel@chromium.org>
+        Wed, 01 May 2019 11:08:07 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id b12so14956205lji.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 11:08:06 -0700 (PDT)
+X-Received: by 2002:a2e:3e0e:: with SMTP id l14mr39363092lja.125.1556733683510;
+ Wed, 01 May 2019 11:01:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190501113238.0ab3f9dd@gandalf.local.home>
+In-Reply-To: <20190501113238.0ab3f9dd@gandalf.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 May 2019 11:01:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com>
+Message-ID: <CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3] ftrace/x86_64: Emulate call function while
+ updating in breakpoint handler
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD SDHC 0x7906 requires a hard reset to clear all internal state.
-Otherwise it can get into a bad state where the DATA lines are always
-read as zeros.
+This looks sane to me, although I'm surprised that we didn't already
+have an annotation for the nonstandard stack frame for asm files. That
+probably would be cleaner in a separate commit, but I guess it doesn't
+matter.
 
-This change requires firmware that can transition the device into
-D3Cold for it to work correctly. If the firmware does not support
-transitioning to D3Cold then the power state transitions are a no-op.
+Anyway, I'm willing to consider the entry code version if it looks a
+_lot_ simpler than this (so I'd like to see them side-by-side), but
+it's not like this looks all that complicated to me either.
 
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
----
-
- drivers/mmc/host/sdhci-pci-core.c | 51 ++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 99b0fec2836b..532fbcbd373b 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -25,6 +25,7 @@
- #include <linux/mmc/mmc.h>
- #include <linux/scatterlist.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/gpio.h>
- #include <linux/pm_runtime.h>
- #include <linux/mmc/slot-gpio.h>
-@@ -1498,11 +1499,59 @@ static int amd_probe(struct sdhci_pci_chip *chip)
- 	return 0;
- }
- 
-+static u32 sdhci_read_present_state(struct sdhci_host *host)
-+{
-+	return sdhci_readl(host, SDHCI_PRESENT_STATE);
-+}
-+
-+void amd_sdhci_reset(struct sdhci_host *host, u8 mask)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 present_state;
-+
-+	/*
-+	 * SDHC 0x7906 requires a hard reset to clear all internal state.
-+	 * Otherwise it can get into a bad state where the DATA lines are always
-+	 * read as zeros.
-+	 */
-+	if (pdev->device == 0x7906 && (mask & SDHCI_RESET_ALL)) {
-+		pci_clear_master(pdev);
-+
-+		pci_save_state(pdev);
-+
-+		pci_set_power_state(pdev, PCI_D3cold);
-+		pr_debug("%s: power_state=%u\n", mmc_hostname(host->mmc),
-+			pdev->current_state);
-+		pci_set_power_state(pdev, PCI_D0);
-+
-+		pci_restore_state(pdev);
-+
-+		/*
-+		 * SDHCI_RESET_ALL says the card detect logic should not be
-+		 * reset, but since we need to reset the entire controller
-+		 * we should wait until the card detect logic has stabilized.
-+		 *
-+		 * This normally takes about 40ms.
-+		 */
-+		readx_poll_timeout(
-+			sdhci_read_present_state,
-+			host,
-+			present_state,
-+			present_state & SDHCI_CD_STABLE,
-+			10000,
-+			100000
-+		);
-+	}
-+
-+	return sdhci_reset(host, mask);
-+}
-+
- static const struct sdhci_ops amd_sdhci_pci_ops = {
- 	.set_clock			= sdhci_set_clock,
- 	.enable_dma			= sdhci_pci_enable_dma,
- 	.set_bus_width			= sdhci_set_bus_width,
--	.reset				= sdhci_reset,
-+	.reset				= amd_sdhci_reset,
- 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
- };
- 
--- 
-2.21.0.593.g511ec345e18-goog
-
+               Linus
