@@ -2,152 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2881710684
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 11:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123191067C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 11:45:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfEAJsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 05:48:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37748 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726336AbfEAJsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 05:48:21 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C6025F73C997A760BED0;
-        Wed,  1 May 2019 17:48:19 +0800 (CST)
-Received: from HGHY2Y004646261.china.huawei.com (10.184.12.158) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 1 May 2019 17:48:10 +0800
-From:   Zenghui Yu <yuzenghui@huawei.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-CC:     <marc.zyngier@arm.com>, <christoffer.dall@arm.com>,
-        <linux@armlinux.org.uk>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <james.morse@arm.com>,
-        <julien.thierry@arm.com>, <suzuki.poulose@arm.com>,
-        <steve.capper@arm.com>, <wanghaibin.wang@huawei.com>,
-        Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH 5/5] KVM: arm/arm64: Add support for creating PMD contiguous hugepages at stage2
-Date:   Wed, 1 May 2019 09:44:27 +0000
-Message-ID: <1556703867-22396-6-git-send-email-yuzenghui@huawei.com>
-X-Mailer: git-send-email 2.6.4.windows.1
-In-Reply-To: <1556703867-22396-1-git-send-email-yuzenghui@huawei.com>
-References: <1556703867-22396-1-git-send-email-yuzenghui@huawei.com>
+        id S1726256AbfEAJpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 05:45:45 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52080 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfEAJpp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 05:45:45 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t76so2759029wmt.1;
+        Wed, 01 May 2019 02:45:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xUDmUA+ta1A8+ZzMN2QQ5gPy8NIraQiuCwNXfvnc3LU=;
+        b=EIcjNNDrIAAlYhvhmHymJLhL+XLLnJY1aBq0L0DvAaxpUfIhRnILNAzyf276LJyLGj
+         D3xOO9ZlOCaFbCYzLT0u9hWY+RDMfe5mUhj3iBmxbJds2O+og07K/tewFZr2r5PoveHB
+         TY646FY/E3s9al13kNvogIzxx+chLkCCSLa9C8r5qlx0876VwaOL1oUrUS8Gki8/1u8o
+         UVHgulvV2ExDgbKxGzTjAHhMzqgSIKDoaPfzCa/Z5m0xZXHogMtyAV+ejWk48Y2ng/b5
+         508DTd81QDQX7O3PT+Xw6yPs+XK+CuG5Ks+0UPNoQWtiSRc3nwiACILVCt0Hnv/gowrG
+         nqJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xUDmUA+ta1A8+ZzMN2QQ5gPy8NIraQiuCwNXfvnc3LU=;
+        b=DA2zs1g5chGjTv1vHV/K/do3pKN3hH556jPkP/gYRWwPqIufCD7hWu4uG5AhVcxcUF
+         PHEItcU5xRECGeIga/f4/qQKi3r9TtRaZJzox4xYjNof5FZnfQGNgzTeUBR7FfuKaixl
+         LiuKhL9ljQBv78ReDQPA/00mXdaAKQXasdqaWWzvj+OvbTwMcZejRMRzXsKa2qKCA/Tm
+         S/jy6/KjeLNDFsFBW6LHE0wz7rz+NFgQ1sd7ujpaUi525eHry7RhUzqJKw3daig32ASv
+         HumSABftuIjIWnJEQThWL8R7UCrJ+k5MOY0Pnv5RUlARTbx4ob9fiZG2zPo5odza7Ys3
+         LQGw==
+X-Gm-Message-State: APjAAAVAQA/Ww9Vw5PaIfWk9x/B+QPznD3LkuvLA+dGOMh7ffC9pEvGK
+        SgVDRJ5WwQhCZkE+BIU99Qif9UaJ
+X-Google-Smtp-Source: APXvYqx0kSkYbFSFBuSRwlNKOJIivQ2x22eh3PljcjtDR78OCSwKn00bZUOPJwu09jPtlBD3ljmlvg==
+X-Received: by 2002:a05:600c:1191:: with SMTP id i17mr2598746wmf.84.1556703943200;
+        Wed, 01 May 2019 02:45:43 -0700 (PDT)
+Received: from [192.168.1.19] (chf176.neoplus.adsl.tpnet.pl. [83.31.3.176])
+        by smtp.gmail.com with ESMTPSA id d11sm4542656wmb.39.2019.05.01.02.45.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 02:45:42 -0700 (PDT)
+Subject: Re: [PATCH v3 0/7] LMU Common code intro
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190430191730.19450-1-dmurphy@ti.com>
+ <34088323-9b40-7dea-5449-6a01bb721c00@gmail.com>
+Message-ID: <8166c0c1-facf-14da-7c71-5bc5a3cc23f7@gmail.com>
+Date:   Wed, 1 May 2019 11:45:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+In-Reply-To: <34088323-9b40-7dea-5449-6a01bb721c00@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With this patch, we now support PMD contiguous hugepages at stage2, with
-following additional page size at stage2:
+Ekhm, I forgot to add the main recipient.
 
-                CONT PMD
-                --------
- 4K granule:      32M
-16K granule:       1G
-64K granule:      16G
+Adding Lee.
 
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
----
- virt/kvm/arm/mmu.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+On 5/1/19 12:05 AM, Jacek Anaszewski wrote:
+> Hi Lee,
+> 
+> This patch set has dependency on the previous one for lm3532, which
+> also touches ti-lmu.txt bindings, and for which I already created
+> immutable branch. Now if I created another immutable branch for
+> this patch set we would have to resolve conflicts between the two,
+> as they would both be based on 5.1-rc1. Adds much overhead and
+> is error prone. Therefore I propose to apply this patch set on
+> top of my merge of LED tree with the immutable branch for lm3532.
+> 
+> Please let me know if you see it differently. I'll wait for your
+> response until Friday, and then proceed with the above as I think
+> it should be harmless for MFD.
+> 
+> Best regards,
+> Jacek Anaszewski
+> 
+> On 4/30/19 9:17 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> I have added the Reviewed-by for dt bindings as well as made the 
+>> Kconfig change
+>> pointed out for the common code flag
+>>
+>> Dan
+>>
+>> Dan Murphy (7):
+>>    dt-bindings: mfd: LMU: Fix lm3632 dt binding example
+>>    dt-bindings: mfd: LMU: Add the ramp up/down property
+>>    dt-bindings: mfd: LMU: Add ti,brightness-resolution
+>>    leds: TI LMU: Add common code for TI LMU devices
+>>    dt-bindings: ti-lmu: Modify dt bindings for the LM3697
+>>    mfd: ti-lmu: Remove support for LM3697
+>>    leds: lm3697: Introduce the lm3697 driver
+>>
+>>   .../devicetree/bindings/leds/leds-lm3697.txt  |  73 ++++
+>>   .../devicetree/bindings/mfd/ti-lmu.txt        |  56 ++-
+>>   drivers/leds/Kconfig                          |  15 +
+>>   drivers/leds/Makefile                         |   2 +
+>>   drivers/leds/leds-lm3697.c                    | 395 ++++++++++++++++++
+>>   drivers/leds/ti-lmu-led-common.c              | 155 +++++++
+>>   drivers/mfd/Kconfig                           |   2 +-
+>>   drivers/mfd/ti-lmu.c                          |  17 -
+>>   include/linux/mfd/ti-lmu-register.h           |  44 --
+>>   include/linux/mfd/ti-lmu.h                    |   1 -
+>>   include/linux/ti-lmu-led-common.h             |  47 +++
+>>   11 files changed, 712 insertions(+), 95 deletions(-)
+>>   create mode 100644 
+>> Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>   create mode 100644 drivers/leds/leds-lm3697.c
+>>   create mode 100644 drivers/leds/ti-lmu-led-common.c
+>>   create mode 100644 include/linux/ti-lmu-led-common.h
+>>
+> 
+> 
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index fdd6314..7173589 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1125,6 +1125,66 @@ static pte_t *stage2_get_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
- 	return pte_offset_kernel(pmd, addr);
- }
- 
-+static inline pgprot_t pmd_pgprot(pmd_t pmd)
-+{
-+	unsigned long pfn = pmd_pfn(pmd);
-+
-+	return __pgprot(pmd_val(pfn_pmd(pfn, __pgprot(0))) ^ pmd_val(pmd));
-+}
-+
-+static int stage2_set_cont_pmds(struct kvm *kvm, struct kvm_mmu_memory_cache
-+				*cache, phys_addr_t addr, const pmd_t *new_pmd)
-+{
-+	pmd_t *pmd, old_pmd;
-+	unsigned long pfn, dpfn;
-+	int i;
-+	pgprot_t hugeprot;
-+	phys_addr_t baddr;
-+
-+	/* Start with the first pmd. */
-+	addr &= CONT_PMD_MASK;
-+	pfn = pmd_pfn(*new_pmd);
-+	dpfn = PMD_SIZE >> PAGE_SHIFT;
-+	hugeprot = pmd_pgprot(*new_pmd);
-+
-+retry:
-+	pmd = stage2_get_pmd(kvm, cache, addr);
-+	VM_BUG_ON(!pmd);
-+
-+	old_pmd = *pmd;
-+
-+	/* Skip page table update if there is no change */
-+	if (pmd_val(old_pmd) == pmd_val(*new_pmd))
-+		return 0;
-+
-+	/*
-+	 * baddr and the following loop is for only one scenario:
-+	 * logging cancel ... Can we do it better?
-+	 */
-+	baddr = addr;
-+	for (i = 0; i < CONT_PMDS; i++, pmd++, baddr += PMD_SIZE) {
-+		if (pmd_present(*pmd) && !pmd_thp_or_huge(*pmd)) {
-+			unmap_stage2_range(kvm, baddr, S2_PMD_SIZE);
-+			goto retry;
-+		}
-+	}
-+
-+	pmd = stage2_get_pmd(kvm, cache, addr);
-+
-+	for (i = 0; i < CONT_PMDS; i++, pmd++, addr += PMD_SIZE, pfn += dpfn) {
-+		if (pmd_present(old_pmd)) {
-+			pmd_clear(pmd);
-+			kvm_tlb_flush_vmid_ipa(kvm, addr);
-+		} else {
-+			get_page(virt_to_page(pmd));
-+		}
-+
-+		kvm_set_pmd(pmd, pfn_pmd(pfn, hugeprot));
-+	}
-+
-+	return 0;
-+}
-+
- static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
- 			       *cache, phys_addr_t addr, const pmd_t *new_pmd)
- {
-@@ -1894,6 +1954,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	 * 3 levels, i.e, PMD is not folded.
- 	 */
- 	if (vma_pagesize == CONT_PTE_SIZE || vma_pagesize == PMD_SIZE ||
-+	    vma_pagesize == CONT_PMD_SIZE ||
- 	    (vma_pagesize == PUD_SIZE && kvm_stage2_has_pmd(kvm)))
- 		gfn = (fault_ipa & huge_page_mask(hstate_vma(vma))) >> PAGE_SHIFT;
- 	up_read(&current->mm->mmap_sem);
-@@ -1982,6 +2043,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 						 needs_exec);
- 
- 		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-+	} else if (vma_pagesize == CONT_PMD_SIZE) {
-+		pmd_t new_pmd = stage2_build_pmd(pfn, mem_type, writable,
-+						 needs_exec, true);
-+
-+		ret = stage2_set_cont_pmds(kvm, memcache, fault_ipa, &new_pmd);
- 	} else if (vma_pagesize == PMD_SIZE) {
- 		pmd_t new_pmd = stage2_build_pmd(pfn, mem_type, writable,
- 						 needs_exec, false);
 -- 
-1.8.3.1
-
-
+Best regards,
+Jacek Anaszewski
