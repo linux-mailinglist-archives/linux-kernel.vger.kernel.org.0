@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFCA10D14
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EA510D18
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbfEATNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 15:13:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfEATNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 15:13:34 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A6FD2081C;
-        Wed,  1 May 2019 19:13:31 +0000 (UTC)
-Date:   Wed, 1 May 2019 15:13:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [RFC][PATCH] ftrace/x86: Emulate call function while updating
- in breakpoint handler
-Message-ID: <20190501151330.023cc620@gandalf.local.home>
-In-Reply-To: <CAHk-=wjCoycqdVjvWkkFnVRQS9fHEzdmiAG4uUV8B04xv7ZVwA@mail.gmail.com>
-References: <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
-        <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
-        <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
-        <20190430135602.GD2589@hirez.programming.kicks-ass.net>
-        <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
-        <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
-        <20190430130359.330e895b@gandalf.local.home>
-        <20190430132024.0f03f5b8@gandalf.local.home>
-        <20190430134913.4e29ce72@gandalf.local.home>
-        <CAHk-=wjJ8D74+FDcXGL65Q9aB0cc7B4vr2s2rS6V4d4a3hU-1Q@mail.gmail.com>
-        <20190501131117.GW2623@hirez.programming.kicks-ass.net>
-        <CAHk-=wjCoycqdVjvWkkFnVRQS9fHEzdmiAG4uUV8B04xv7ZVwA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726194AbfEATPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 15:15:38 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37470 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfEATPi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 15:15:38 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b12so27060lji.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lN/T7u/Fwv/EZb1xnNEtQOimSnN0fKeQ0FgHDhL5cBA=;
+        b=HvfwSa7BpGPqmfwAzZ8rcwbDFlwJ4hpWrUJPUJsE3eFt11Goqpt/1vRLjP3ywENTuY
+         dHU3/RLqF3UuRqIzs9xTtBjXGT8I4/ZoBAqOCvP3p2tk3ZFfaLdIevoAP1l8HEodf3iR
+         PHCme2zGJAitP3pVoN3U2mC3yMFKw/yYOtzWo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lN/T7u/Fwv/EZb1xnNEtQOimSnN0fKeQ0FgHDhL5cBA=;
+        b=oX4uxWDS2lp3wFK5GTbf6oSbqxR3tAY4SmJStUvvYZnNomDn9YdLXdH2B5yDEuLKtX
+         h5C57X/77yXELpD5JCy0hxmxy8eaa/DojMj2tRtNWDVjMtsE89Nt6/CxE4Lj/pzQyz6N
+         emE0/tK0TFk/w/+wHpdeeD2+QPevixswpWz9AwjdiaQgdYNDlgGWUFMbU/YKxObNmRe8
+         KzCPyox8bWmTUb6ZkJrrRtjUYSfMd/rOKnoBlElGeeyGLFsks80EIYdeFbberS7GDGig
+         JUSZ7nwTXleTiuLXYUrkDMMlAnM5uApIGMZdjVlh4fVf8KWKcwf+gRJdn6rzc1f8GslH
+         vNlw==
+X-Gm-Message-State: APjAAAXf9REIeg8rKxvY1jLFl6U/Y1KQhFc+bcvn+9h8rTuULwRTjPri
+        DWLCwJ02YeGu5XRZva4aE+RTxVdK3TEc/AiGUhaauw==
+X-Google-Smtp-Source: APXvYqyWGF2NMYI9BPDRGBc0+XeTHClGa9e/p6VaS1O+iWmSKYioFVks55J90nFQb5uomXM+1AtzGfJ8x74N1uVJ3YQ=
+X-Received: by 2002:a2e:8e8a:: with SMTP id z10mr8422799ljk.172.1556738136636;
+ Wed, 01 May 2019 12:15:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1556306615-37990-1-git-send-email-kdasu.kdev@gmail.com> <8e1b5dd6-3f8d-9288-7c43-5d7650269397@gmail.com>
+In-Reply-To: <8e1b5dd6-3f8d-9288-7c43-5d7650269397@gmail.com>
+From:   Kamal Dasu <kamal.dasu@broadcom.com>
+Date:   Wed, 1 May 2019 15:15:00 -0400
+Message-ID: <CAKekbeux0To7EEDYa=6YHaPrE_p95i812qxi6hcanN2guX6mKg@mail.gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: brcmnand: fix bch ecc layout for large page nand
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Kamal Dasu <kdasu.kdev@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        open list <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 May 2019 12:03:52 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, May 1, 2019 at 2:35 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> On 4/26/19 12:22 PM, Kamal Dasu wrote:
+> > The oobregion->offset for large page nand parts was wrong, change
+> > fixes this error in calculation.
+>
+> Should this have a Fixes tag so this can be backported to stable trees
+> seemingly automatically? Thanks!
+>
 
-> On Wed, May 1, 2019 at 6:11 AM Peter Zijlstra <peterz@infradead.org> wrote:
+The brcmnand files got moved, however should have the fixes tag, will
+send V2 patch.
+
 > >
-> > Here goes, compile tested only...  
-> 
-> Ugh, two different threads. This has the same bug (same source) as the
-> one Steven posted:
-> 
-> > --- a/arch/x86/entry/entry_32.S
-> > +++ b/arch/x86/entry/entry_32.S
-> > @@ -1479,6 +1479,13 @@ ENTRY(int3)
-> >         ASM_CLAC
-> >         pushl   $-1                             # mark this as an int
+> > Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> > ---
+> >  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > +       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
-> > +       jnz     .Lfrom_usermode_no_gap
-> > +       .rept 6
-> > +       pushl   5*4(%esp)
-> > +       .endr
-> > +.Lfrom_usermode_no_gap:  
-> 
-> This will corrupt things horribly if you still use vm86 mode. Checking
-> CS RPL is simply not correct.
-
-I never tested the 32 bit version of this. And we could just not
-implement it (I don't think there's live kernel patching for it
-either).
-
-But this doesn't make it any worse than my version, because under the
-full testing of my patch with the trampolines, I would easily crash the
-32 bit version. That was one reason I made my last patch only support 64
-bit.
-
-Under light load, 32 bit works, but when I stress it (running perf and
-ftrace together) it blows up. Could be an NMI issue.
-
--- Steve
-
+> > diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> > index 482c6f0..3eefea7 100644
+> > --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> > +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> > @@ -939,7 +939,7 @@ static int brcmnand_bch_ooblayout_ecc(struct mtd_info *mtd, int section,
+> >       if (section >= sectors)
+> >               return -ERANGE;
+> >
+> > -     oobregion->offset = (section * (sas + 1)) - chip->ecc.bytes;
+> > +     oobregion->offset = ((section + 1) * sas) - chip->ecc.bytes;
+> >       oobregion->length = chip->ecc.bytes;
+> >
+> >       return 0;
+> >
+>
+>
+> --
+> Florian
