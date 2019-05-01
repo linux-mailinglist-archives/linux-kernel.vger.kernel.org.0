@@ -2,107 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9306510DFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996F010E0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfEAU14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 16:27:56 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33778 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfEAU1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 16:27:55 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s11so152210otp.0;
-        Wed, 01 May 2019 13:27:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KS4hKGNIVioMcRHyezKTJtPmApQ7+oYbfRHxucc7wGI=;
-        b=qQowgEQa4pJtG31D+1wJXPwTge6IcqSfLcNCfS2BYQPPdvDj888fDUXE+CyC/HGQOI
-         VMLdxAEUp6xodYsC4w0OTfV/xxXxaDU3FQEym6jhVHszZSbBNcmb3QYhj7VBNrEt4HcM
-         nWtN0hkpr776HCuZwQpiVLE2RWcBuz31GOv7wHh+P/RA9KHqdOQGcrgMCdBbzA0qn7Fw
-         ajJ2dwXeibTi0DH8ZEKdwyfz5Vxb9thYIDIERCLUKZRmc0omsSr0Fj4zAGjTn0lnYcqE
-         ZR/04JypL/jTGHHlANGs2m43eUzQzG1oorzwmo5ZKSveqLQvvHeYiCKxLfapkwgwb/Yk
-         yL5A==
-X-Gm-Message-State: APjAAAVzUkN+3X71seXEpc7emW9nVgchgHL+Prjcu0HL0d8CrrHfuHoR
-        mGMVWmGyQ8Szqr0LbtVhVA==
-X-Google-Smtp-Source: APXvYqy2rYdK9ldoX9mWUXMnNnuvyEUUSkKlODoSZcJLLwSinumT9uIuGEHWyxrQzf0cIfbbiVfBAw==
-X-Received: by 2002:a05:6830:c7:: with SMTP id x7mr335551oto.67.1556742474995;
-        Wed, 01 May 2019 13:27:54 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b51sm18601731otc.8.2019.05.01.13.27.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 13:27:53 -0700 (PDT)
-Date:   Wed, 1 May 2019 15:27:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Henry Chen <henryc.chen@mediatek.com>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Nicolas Boichat <drinkcat@google.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC V2 08/11] dt-bindings: interconnect: add MT8183
- interconnect dt-bindings
-Message-ID: <20190501202753.GA2862@bogus>
-References: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
- <1556614265-12745-9-git-send-email-henryc.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556614265-12745-9-git-send-email-henryc.chen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726188AbfEAUby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 16:31:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbfEAUbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 16:31:53 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C8CD20656;
+        Wed,  1 May 2019 20:31:53 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hLvtQ-0006Y2-Ah; Wed, 01 May 2019 16:31:52 -0400
+Message-Id: <20190501202830.347656894@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 01 May 2019 16:28:30 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [RFC][PATCH 0/2] ftrace/x86: Allow for breakpoint handlers to emulate call functions
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 04:51:02PM +0800, Henry Chen wrote:
-> Add interconnect provider dt-bindings for MT8183.
-> 
-> Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
-> ---
->  .../bindings/interconnect/mtk,mt8183.txt           | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt b/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
-> new file mode 100644
-> index 0000000..1cf1841
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
-> @@ -0,0 +1,24 @@
-> +Mediatek MT8183 interconnect binding
 
-This should be part of the dvfsrc binding.
+I split Peter's patch up into two. One that implements the gap in the
+breakpoint handler, and supplies the helper functions. And the other one
+that adds ftrace as the user of that code.
 
-> +
-> +MT8183 interconnect providers support dram bandwidth requirements. The provider
-> +is able to communicate with the DVFSRC and send the dram bandwidth to it.
-> +Provider nodes must reside within an DVFSRC device node.
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +			"mediatek,mt8183-emi-icc"
-> +- #interconnect-cells : should contain 1
-> +
-> +Examples:
-> +
-> +dvfsrc@10012000 {
-> +	compatible = "mediatek,mt8183-dvfsrc";
-> +	reg = <0 0x10012000 0 0x1000>;
-> +	clocks = <&infracfg CLK_INFRA_DVFSRC>;
-> +	clock-names = "dvfsrc";
-> +	ddr_emi: interconnect {
-> +		compatible = "mediatek,mt8183-emi-icc";
-> +		#interconnect-cells = <1>;
+Peter, I need an offical "Signed-off-by" from you for these.
 
-No need for a child node here. Just move #interconnect-cells to the 
-parent.
+I'm currently running them through my full test suite (which will also
+test 32bit). If they work I think these may be the final set to go.
 
-Rob
+Let me know if there's any issues.
+
+-- Steve
+
+
+
+Peter Zijlstra (2):
+      x86: Allow breakpoints to emulate call functions
+      ftrace/x86: Emulate call function while updating in breakpoint handler
+
+----
+ arch/x86/entry/entry_32.S            | 11 +++++++++++
+ arch/x86/entry/entry_64.S            | 14 ++++++++++++--
+ arch/x86/include/asm/text-patching.h | 20 ++++++++++++++++++++
+ arch/x86/kernel/ftrace.c             | 25 ++++++++++++++++++++-----
+ 4 files changed, 63 insertions(+), 7 deletions(-)
