@@ -2,76 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C06D710D7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F0F10D86
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:56:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfEATuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 15:50:22 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35760 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfEATuV (ORCPT
+        id S1726205AbfEAT4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 15:56:25 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:62667 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfEAT4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 15:50:21 -0400
-Received: by mail-ot1-f66.google.com with SMTP id g24so54692otq.2;
-        Wed, 01 May 2019 12:50:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4aS2uE1D91mkrl/gYeWQtzT+PKkraqjyORTXhMdPTWc=;
-        b=CLsCrl92AN4eW8Drf5Lp07Aqira5qR87/PwV8rJqrq4Mv+X+4/2yAXjnWrlxhSZOXu
-         3pbpbQyQpNSYLpbaoJDHTCUcwv1WH3drYUEH+UnNCxSFx4ZPbJxVQ2WaRB24k8yAwz93
-         xHKRmMTivetJuU1wYMy1gZblOH6q7DjeLBdUmIxnVohfLhWUmbtUyE/65TKnj4bI0tV8
-         n0unMCLHZx3UiDMiJ2BXqm/EVCP+ICtknU+mdN9ARxThuhIRLOsKdJRjDMW8N4v0AUpn
-         FlPux9OMpqqj6Oj8GwjAIUaRLnA5bo23GAMGKMNJPMqz8ZxOvRRQtjxgGY8zZy0OPTa1
-         ENcQ==
-X-Gm-Message-State: APjAAAXBYxx7BOaNCg0ElxTg+ERo4fAFBhxoKfdkwHZNc9PY5m/Xav/E
-        6XYzGlfy5Qw3LIDzZGyApg==
-X-Google-Smtp-Source: APXvYqwGNT8oOeMnhcZ+vSGs9Gi6hU6lT2YIKllylFBKjcxVlXfqb2L6uc1z343lFHswKPCjvxaXXA==
-X-Received: by 2002:a9d:6344:: with SMTP id y4mr20118098otk.11.1556740221087;
-        Wed, 01 May 2019 12:50:21 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m124sm16994766oia.3.2019.05.01.12.50.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 12:50:20 -0700 (PDT)
-Date:   Wed, 1 May 2019 14:50:19 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: sound: sun4i-spdif: Add Allwinner H6
- compatible
-Message-ID: <20190501195019.GA13211@bogus>
-References: <20190419191730.9437-1-peron.clem@gmail.com>
- <20190419191730.9437-2-peron.clem@gmail.com>
+        Wed, 1 May 2019 15:56:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1556740584; x=1588276584;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HiC1BhVQDcUK5m3uXFgIx1Wx/ouIkY0QSuBsbL+0D6U=;
+  b=WdX5uj0r5xv7crksoS68bQw0kbOs8j//bOkKEbkR2hQTZdvxBMpELa2S
+   lMdUOO3PHEz9l9c/lT26+K93nRcex7X+sqFMqtU4w5xR0jiI4/b7WqeUg
+   I1+/vcTm2UX0Tu4bZhhKK1u/HncjkvtOKaGKahRgiLZ1IaolM62AmUB6l
+   93+0psj0DlNr7d7fiSi2Aia5YpgGe/Csu8xyVkM8A0323Tta5ZZagfiG8
+   2Vkt9WkAImKQLRBDUWOmlIWEhRITBTL4KEhezsKQgFW76Nf0lpaIA+aTw
+   uW0u2fBFAPF/00wFfaB4oDB6vYgJgfklGTXucJ+iZbqNbC/5WE2j52OHA
+   g==;
+X-IronPort-AV: E=Sophos;i="5.60,418,1549900800"; 
+   d="scan'208";a="107289431"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 02 May 2019 03:56:23 +0800
+IronPort-SDR: QpppXnE1FEY0wGN/NLuqMb9J1bmKcLwMNXPd5dDjC2bjBrp09FASLMjXeS5oCRNHmO7syIDhWG
+ 6s9Xho2x107ArVKNsy5jcenTLkGVHz5yRYJpMTzxieAY5gccWVJHKGoM18okPBNP7fhxH7cmD9
+ 8k8kDWpI+BYcRi1F2SJpf2A4M00DYXcX7PjCQ5bFuQaAvp+T6Z/opKZscVLEJXdddv7v6nDpxd
+ QX493hGezikLIuLX8YCOmQxPrEvJ3JrSHBsxSHNiEWlt1hHYxnQEBZVwBc4MeMhGoJ5fHFUwRx
+ wmG0EcatmFe/6TFvGif4n2Pv
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 01 May 2019 12:32:43 -0700
+IronPort-SDR: 64bfk7lvm02jAvWULVkiHb/LDqgE0xh3Jfd2ZwMXj3wwvTcqloWgF4crIPBBElJ+uAqK8WOvXg
+ GxUEGfa4SH4uti10/WBT/xLdSi+O3g7k68OGaRp6/gZz16Zw5xg40885TNsmzlC5qXp+ZiV49e
+ lMH/GQPI5qAMQ+xEyuHJOS2M9AeVJJlUKySfll9O+eHlzODL7TigzC3JW08F/O0U3fNi+hp1Qu
+ CqwSo4nIIJBDkyeFwWkfE09yEdXggZGLPEc+bU8yYi5IIqRBdL45HyLwewfTwdJdk03ERuADwU
+ QdY=
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 01 May 2019 12:56:22 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Zong Li <zong@andestech.com>, mark.rutland@arm.com,
+        merker@debian.org
+Subject: [v2 PATCH] RISC-V: Add a PE/COFF compliant Image header.
+Date:   Wed,  1 May 2019 12:56:07 -0700
+Message-Id: <20190501195607.32553-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190419191730.9437-2-peron.clem@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Apr 2019 21:17:26 +0200, =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= wrote:
-> Allwinner H6 has a SPDIF controller with an increase of the fifo
-> size and a sligher difference in memory mapping compare which
-> make it not compatible with the previous generation H3/A64.
-> 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> ---
->  Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+Currently, last stage boot loaders such as U-Boot can accept only
+uImage which is an unnecessary additional step in automating boot flows.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Add a PE/COFF compliant image header that boot loaders can parse and
+directly load kernel flat Image. The existing booting methods will continue
+to work as it is.
+
+Another goal of this header is to support EFI stub for RISC-V in future.
+EFI specification needs PE/COFF image header in the beginning of the kernel
+image in order to load it as an EFI application. In order to support
+EFI stub, code0 should be replaced with "MZ" magic string and res5(at
+offset 0x3c) should point to the rest of the PE/COFF header (which will
+be added during EFI support).
+
+Tested on both QEMU and HiFive Unleashed using OpenSBI + U-Boot + Linux.
+
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+Changes from v1-v2:
+1. Added additional reserved elements to make it fully PE compatible.
+---
+ arch/riscv/include/asm/image.h | 37 ++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/head.S       | 30 +++++++++++++++++++++++++++
+ 2 files changed, 67 insertions(+)
+ create mode 100644 arch/riscv/include/asm/image.h
+
+diff --git a/arch/riscv/include/asm/image.h b/arch/riscv/include/asm/image.h
+new file mode 100644
+index 000000000000..927333ededee
+--- /dev/null
++++ b/arch/riscv/include/asm/image.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_IMAGE_H
++#define __ASM_IMAGE_H
++
++#define RISCV_IMAGE_MAGIC	"RISCV"
++
++#ifndef __ASSEMBLY__
++/*
++ * struct riscv_image_header - riscv kernel image header
++ *
++ * @code0:		Executable code
++ * @code1:		Executable code
++ * @text_offset:	Image load offset
++ * @image_size:		Effective Image size
++ * @reserved:		reserved
++ * @reserved:		reserved
++ * @reserved:		reserved
++ * @magic:		Magic number
++ * @reserved:		reserved
++ * @reserved:		reserved (will be used for PE COFF offset)
++ */
++
++struct riscv_image_header {
++	u32 code0;
++	u32 code1;
++	u64 text_offset;
++	u64 image_size;
++	u64 res1;
++	u64 res2;
++	u64 res3;
++	u64 magic;
++	u32 res4;
++	u32 res5;
++};
++#endif /* __ASSEMBLY__ */
++#endif /* __ASM_IMAGE_H */
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index fe884cd69abd..12d660d929ba 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -19,9 +19,39 @@
+ #include <asm/thread_info.h>
+ #include <asm/page.h>
+ #include <asm/csr.h>
++#include <asm/image.h>
+ 
+ __INIT
+ ENTRY(_start)
++	/*
++	 * Image header expected by Linux boot-loaders. The image header data
++	 * structure is described in asm/image.h.
++	 * Do not modify it without modifying the structure and all bootloaders
++	 * that expects this header format!!
++	 */
++	/* jump to start kernel */
++	j _start_kernel
++	/* reserved */
++	.word 0
++	.balign 8
++#if __riscv_xlen == 64
++	/* Image load offset(2MB) from start of RAM */
++	.dword 0x200000
++#else
++	/* Image load offset(4MB) from start of RAM */
++	.dword 0x400000
++#endif
++	/* Effective size of kernel image */
++	.dword _end - _start
++	.dword 0
++	.dword 0
++	.dword 0
++	.asciz RISCV_IMAGE_MAGIC
++	.word 0
++	.word 0
++
++.global _start_kernel
++_start_kernel:
+ 	/* Mask all interrupts */
+ 	csrw sie, zero
+ 
+-- 
+2.21.0
+
