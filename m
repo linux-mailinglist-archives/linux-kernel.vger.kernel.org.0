@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2B91047F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A8E104CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfEAEYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 00:24:40 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45261 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfEAEYh (ORCPT
+        id S1726503AbfEAE0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 00:26:02 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35388 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfEAEYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 00:24:37 -0400
-Received: by mail-io1-f66.google.com with SMTP id e8so14059011ioe.12;
-        Tue, 30 Apr 2019 21:24:37 -0700 (PDT)
+        Wed, 1 May 2019 00:24:38 -0400
+Received: by mail-io1-f68.google.com with SMTP id r18so14121213ioh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 21:24:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=J4b7TkIYUMmkQjs+CQkshNUOKz4889qj9fmJ7q/gBYo=;
-        b=HcWPvHDQ7xJf7yrnow7qP+NR98kxvIXAAv9JX7CGw8LUAI74bjKo1TtnDTG9MSZmQJ
-         wqnUAQc5dRB2P49xgr1wFkL9b2VSvHnis5UlXJIsAsuCUsyjz/JIcbSnNMQg0RWV3YZp
-         ncJsAeYZEZfQg2xQqsfflLRtog5X79HHFCqUYqQAbuDIsjZ2nuf+xSWOeYiNOdfW0+TI
-         Ki0cI6C/IRb3v/odIWZOYWaVZjjYNgatGAdyiwp2dPnPxnKMyBmXzRjqFTsLmX040Uqk
-         1IJHCz1je/4XxU/ZLg9aPXzuO1sBQRz/jn8esKAN+hGVAFRsGfHyhBGTDEDlt+oowgqz
-         s8oQ==
+        bh=uD3OvFcls30SXN52XBWKTLWJTDIBIfXTSrwZineFKm8=;
+        b=g6Qo2DhocXBthkfzHjb5lXWzSD2Rg61uT1VPPiyZmosOuPUCtNw/L7rlkgjhjFeawF
+         AYy6RKE7m2aJoljKCiWbwtjFjbi5pqNovdknBJi9O020X2Z1tJdX3FMYHH5Fri697UHf
+         w3Rfk26XjZ91vPbizxJILLB2Tey1S/qU5wHuiFtmVWeeB+a3F9oUIaMpkRIRM3D/+/8i
+         dRFcHJT11Xi12wIYidmJhPivJC4VAFhdpCgrsPc4N7mJU5ZBuHrwPYRo9cek05hkHTGx
+         RDT5lIzwP2Kqmm65DweyHwMqZqjOkbtCpwz3G+ogiuYQnMoDYJTE+MUMQId0oruLCG1R
+         v01A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=J4b7TkIYUMmkQjs+CQkshNUOKz4889qj9fmJ7q/gBYo=;
-        b=BJ1SKBZvhOOld7VhqFqfoVZNL+3BI+UoBYjnds0apS+MjzRh0Rklq0Pk+JmZwj5VWP
-         c47pkVFP8ngIFnTyFziQIoY40qI28esMc0Puy6gS54LaGKZ/0bY2wbLbqQ9LUh9C1Wff
-         fIvzzU4/z1UcQ+OaMisBJDKXVVtd19bLpnyKRBfhVY/xxTy4aJnSMbEyS47504LgWUjm
-         PW/deE2Llvcl2GQay4qXWDuUh3p59KUR0uUdCvq8t7RdLqCdNaGlC+zsVcDMmfwXjI06
-         2NMW5tPdgY+dJMjSLZfxjtvjGlEiihWdQ0XCXXGSP5eJTRtyl7HMqWJ1YD6eSOSgYo3U
-         WwZQ==
-X-Gm-Message-State: APjAAAW1b6Q3+/ztAtblvIvADV3+WdAntHB11ny7c2GTHMi7XrIkutGh
-        wiJYvk4eHq0xNkK/QvfXBRI=
-X-Google-Smtp-Source: APXvYqxYIK7SiHNZSLVzElf26DCeHT4mspKGbdeq2UUaKvsLrRoasDxg7311ai+L3rrOBb+sXi3uAw==
-X-Received: by 2002:a6b:5909:: with SMTP id n9mr34400029iob.42.1556684676714;
-        Tue, 30 Apr 2019 21:24:36 -0700 (PDT)
+        bh=uD3OvFcls30SXN52XBWKTLWJTDIBIfXTSrwZineFKm8=;
+        b=TRhUtCl4abav+5ss1sZmNiDVxiDHiLmRu5M166d7unYjF5tEQb9kT9alrF1uxo50d5
+         H3Ddwh3R4xnW+nzVHnwLxRq9YPy7p7csjm08RsvFPo2pvAjYnFEt95Od8C1lfvAiHh/F
+         ZL8B7e03QTyFjTAEquzL/yO4zp2K4JqWSdMqfzFxTLOhmATetN3mZtmaxDwxEqBmdp/w
+         LwNjWvPUszkIMImGlg+zbMKNleWBsqWrdMQBIEJUUQMSBzUzj/E2C2ihjVKHnZDRCorv
+         1i4uHnR39Gu7taDRAm9KvVqYrE1/fOPkHpetPKM+JSZha5m56pg+55nGFIbswUInbky3
+         7SpA==
+X-Gm-Message-State: APjAAAXTbH42pvTmNG1eSCoRPHp1aWyW+dAT9gaBLUuuZXJpr8I8a+Wv
+        ZpOGKUAkkP7T8iUn/s2lNhg=
+X-Google-Smtp-Source: APXvYqyQhAzojkHBWUoRpPkxj27UOO7RtOpy8g6IcIXUi0BCJp5H+z+RAP5y/mIXodO24dbhzA6r2Q==
+X-Received: by 2002:a5e:8216:: with SMTP id l22mr17088870iom.269.1556684677910;
+        Tue, 30 Apr 2019 21:24:37 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.35
+        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 21:24:35 -0700 (PDT)
+        Tue, 30 Apr 2019 21:24:37 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-        linux-doc@vger.kernel.org
-Subject: [PATCH 02/18] topology: Simplify cputopology.txt formatting and wording
-Date:   Wed,  1 May 2019 00:24:11 -0400
-Message-Id: <1feeb124ad50bac8093e78240a6de6dbf5ff3456.1556657368.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+Subject: [PATCH 03/18] x86 smpboot: Rename match_die() to match_pkg()
+Date:   Wed,  1 May 2019 00:24:12 -0400
+Message-Id: <44a39ba11153106d2b029d9cffee1b062bdbce4b.1556657368.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
@@ -66,130 +65,44 @@ From: Len Brown <len.brown@intel.com>
 
 Syntax only, no functional or semantic change.
 
-Signed-off-by: Len Brown <len.brown@intel.com>
-Cc: linux-doc@vger.kernel.org
----
- Documentation/cputopology.txt | 46 +++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+This routine matches packages, not die, so name it thus.
 
-diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-index c6e7e9196a8b..cb61277e2308 100644
---- a/Documentation/cputopology.txt
-+++ b/Documentation/cputopology.txt
-@@ -3,79 +3,79 @@ How CPU topology info is exported via sysfs
- ===========================================
+Signed-off-by: Len Brown <len.brown@intel.com>
+---
+ arch/x86/kernel/smpboot.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index ce1a67b70168..3f8bbfb26c18 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -455,7 +455,7 @@ static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+  * multicore group inside a NUMA node.  If this happens, we will
+  * discard the MC level of the topology later.
+  */
+-static bool match_die(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
++static bool match_pkg(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ {
+ 	if (c->phys_proc_id == o->phys_proc_id)
+ 		return true;
+@@ -546,7 +546,7 @@ void set_cpu_sibling_map(int cpu)
+ 	for_each_cpu(i, cpu_sibling_setup_mask) {
+ 		o = &cpu_data(i);
  
- Export CPU topology info via sysfs. Items (attributes) are similar
--to /proc/cpuinfo output of some architectures:
-+to /proc/cpuinfo output of some architectures.  They reside in
-+/sys/devices/system/cpu/cpuX/topology/:
+-		if ((i == cpu) || (has_mp && match_die(c, o))) {
++		if ((i == cpu) || (has_mp && match_pkg(c, o))) {
+ 			link_mask(topology_core_cpumask, cpu, i);
  
--1) /sys/devices/system/cpu/cpuX/topology/physical_package_id:
-+physical_package_id:
+ 			/*
+@@ -570,7 +570,7 @@ void set_cpu_sibling_map(int cpu)
+ 			} else if (i != cpu && !c->booted_cores)
+ 				c->booted_cores = cpu_data(i).booted_cores;
+ 		}
+-		if (match_die(c, o) && !topology_same_node(c, o))
++		if (match_pkg(c, o) && !topology_same_node(c, o))
+ 			x86_has_numa_in_package = true;
+ 	}
  
- 	physical package id of cpuX. Typically corresponds to a physical
- 	socket number, but the actual value is architecture and platform
- 	dependent.
- 
--2) /sys/devices/system/cpu/cpuX/topology/core_id:
-+core_id:
- 
- 	the CPU core ID of cpuX. Typically it is the hardware platform's
- 	identifier (rather than the kernel's).  The actual value is
- 	architecture and platform dependent.
- 
--3) /sys/devices/system/cpu/cpuX/topology/book_id:
-+book_id:
- 
- 	the book ID of cpuX. Typically it is the hardware platform's
- 	identifier (rather than the kernel's).	The actual value is
- 	architecture and platform dependent.
- 
--4) /sys/devices/system/cpu/cpuX/topology/drawer_id:
-+drawer_id:
- 
- 	the drawer ID of cpuX. Typically it is the hardware platform's
- 	identifier (rather than the kernel's).	The actual value is
- 	architecture and platform dependent.
- 
--5) /sys/devices/system/cpu/cpuX/topology/thread_siblings:
-+thread_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
- 	core as cpuX.
- 
--6) /sys/devices/system/cpu/cpuX/topology/thread_siblings_list:
-+thread_siblings_list:
- 
- 	human-readable list of cpuX's hardware threads within the same
- 	core as cpuX.
- 
--7) /sys/devices/system/cpu/cpuX/topology/core_siblings:
-+core_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
- 	physical_package_id.
- 
--8) /sys/devices/system/cpu/cpuX/topology/core_siblings_list:
-+core_siblings_list:
- 
- 	human-readable list of cpuX's hardware threads within the same
- 	physical_package_id.
- 
--9) /sys/devices/system/cpu/cpuX/topology/book_siblings:
-+book_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
- 	book_id.
- 
--10) /sys/devices/system/cpu/cpuX/topology/book_siblings_list:
-+book_siblings_list:
- 
- 	human-readable list of cpuX's hardware threads within the same
- 	book_id.
- 
--11) /sys/devices/system/cpu/cpuX/topology/drawer_siblings:
-+drawer_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
- 	drawer_id.
- 
--12) /sys/devices/system/cpu/cpuX/topology/drawer_siblings_list:
-+drawer_siblings_list:
- 
- 	human-readable list of cpuX's hardware threads within the same
- 	drawer_id.
- 
--To implement it in an architecture-neutral way, a new source file,
--drivers/base/topology.c, is to export the 6 to 12 attributes. The book
--and drawer related sysfs files will only be created if CONFIG_SCHED_BOOK
--and CONFIG_SCHED_DRAWER are selected.
-+Architecture-neutral, drivers/base/topology.c, exports these attributes.
-+However, the book and drawer related sysfs files will only be created if
-+CONFIG_SCHED_BOOK and CONFIG_SCHED_DRAWER are selected, respectively.
- 
--CONFIG_SCHED_BOOK and CONFIG_DRAWER are currently only used on s390, where
--they reflect the cpu and cache hierarchy.
-+CONFIG_SCHED_BOOK and CONFIG_SCHED_DRAWER are currently only used on s390,
-+where they reflect the cpu and cache hierarchy.
- 
- For an architecture to support this feature, it must define some of
- these macros in include/asm-XXX/topology.h::
-@@ -98,10 +98,10 @@ To be consistent on all architectures, include/linux/topology.h
- provides default definitions for any of the above macros that are
- not defined by include/asm-XXX/topology.h:
- 
--1) physical_package_id: -1
--2) core_id: 0
--3) sibling_cpumask: just the given CPU
--4) core_cpumask: just the given CPU
-+1) topology_physical_package_id: -1
-+2) topology_core_id: 0
-+3) topology_sibling_cpumask: just the given CPU
-+4) topology_core_cpumask: just the given CPU
- 
- For architectures that don't support books (CONFIG_SCHED_BOOK) there are no
- default definitions for topology_book_id() and topology_book_cpumask().
 -- 
 2.18.0-rc0
 
