@@ -2,104 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3DA103A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE78F103A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfEABG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 21:06:59 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41545 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727578AbfEABG4 (ORCPT
+        id S1727177AbfEABLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 21:11:45 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40557 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbfEABLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 21:06:56 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d9so7547020pls.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:06:56 -0700 (PDT)
+        Tue, 30 Apr 2019 21:11:45 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d31so7653263pgl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:11:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OLqlCdGifnXbJDeVsXrWrzyh1Q2u7Oi69jQbP0f+asI=;
-        b=f57FHpJ5TFR88oCECdqZ5veBYfcE1BKJQLnole8kARqKQqmUBSto9h3qlLmU4gyISD
-         JMwn+Olvo/q5gs3AsNwtxVjNTSiHanUefEgJGXeqM2RAXhPx7O3cnkEqGpdfQnfL7KAO
-         xtNs1P4JLOROUf9HljO5LCnRKpr/svXGq3l6OJ2yynGwhQeWL+1f+gGqIAyT/yMLCEes
-         xdDR/8n3c1VwJifrFIsDjpYjhv1vVCw0HsAZp0KJrHfghaBQ6eeZvnVv3X0N0gvzfQB6
-         DvjPX+Tv9H6RLm3siGibNr9a4ra9lR4l4WBTV282f8xoKQXjQpTNrXhuMk/qY0oXHgP+
-         h7Vg==
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cLbFfePIXhHKlqLDWpLXnrFweDYBpHhu10xEmMt/WgI=;
+        b=Y1ONhyuhP1pR7OIKl9yssecBqsAP3IDLG2BDOW0p3ekW4bmjco6hF0oh4qeo4OGLmO
+         /Rda5XzA6cOveDKxoWw+CKnBj8RQ8DSnGYh98gg86coQHU+HglcN5MpQ6wzU/+Gv2+N6
+         QrZ6wHBv8+GnnHbujl+B7iQoan2vFQKbafOUFtFP+F9T50p6iwEOTmQJm6ImaQYoFZxk
+         yZNEherIvyqUNzbr8JHl79kyGQfo8s/RNAWpgthG/d6rgX8lGjvajCYwR0jRdxUDQ5k1
+         EvPFAD0PqTWEYahqcUDLYvPEjXuojfI25x+KIgklkO7WBt+MH53fA+czcN9cZ5QYjliJ
+         +a7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OLqlCdGifnXbJDeVsXrWrzyh1Q2u7Oi69jQbP0f+asI=;
-        b=LI7kXfE+3T48wiWqojhDv82bOaYzSf1g6r8XqMT1UPj5pgHhtezZLJTMkG5lcIhYG1
-         vpuVK8uZc+xipKBPejguAuIWCHImAlb0gk0KHtxEbn0s2ObJYfQxIUupZS3r4JMt+9Cl
-         A/BiMk+VaB6CHoyIFVSPCBvZCE4R8UlXTqtHzlHuBoNCwWCSVMBb+iT4RuEy1RWLR1am
-         NTYt5TbKBLJ6osOq31/iusBC1dSvHXP+BJioUClue6jWwrsMvDBWg2eWazdsZ3DwM7QB
-         74/9i0asjXx44RpxZfZ099RoGAkZs5O0tqiRJQe1LZNsaKMsDmeuM+FLh15olBjtuqfW
-         6dag==
-X-Gm-Message-State: APjAAAWbBZ1ZzSobsXFm851WprBeUSC/2JbYB2bZJOxiCzJ3YZlwOF55
-        /iGiQQpwNAPvYxg873OX4OM=
-X-Google-Smtp-Source: APXvYqxNDihCBF3w9VIZv+La7NAGr9r46gV71wHBl31KYr9Uyqd8211ztTSUU/REYyg8Eurk5DDBGg==
-X-Received: by 2002:a17:902:7d8f:: with SMTP id a15mr72879435plm.3.1556672816197;
-        Tue, 30 Apr 2019 18:06:56 -0700 (PDT)
-Received: from localhost ([2601:640:7:332f:bc53:6e04:b584:e900])
-        by smtp.gmail.com with ESMTPSA id d8sm41008582pgv.34.2019.04.30.18.06.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 18:06:55 -0700 (PDT)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Tobin C . Harding" <tobin@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Yury Norov <ynorov@marvell.com>, Yury Norov <yury.norov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 7/7] cpumask: don't calculate length of the input string
-Date:   Tue, 30 Apr 2019 18:06:36 -0700
-Message-Id: <20190501010636.30595-8-ynorov@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190501010636.30595-1-ynorov@marvell.com>
-References: <20190501010636.30595-1-ynorov@marvell.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cLbFfePIXhHKlqLDWpLXnrFweDYBpHhu10xEmMt/WgI=;
+        b=tGbFwHOyGJRMKZNJhrNcX6Y7GZfGKCVQUbwENFmKpIZchSdtlcxPizvOqvZ9QqZROU
+         g0XVYHdeNiZnSdrWEkHsKeEuh9ZOnhBs4hn3UrZXuabzqgfn+uLSv92g+VeMagAHOR6U
+         AoW1Sl19UYaOmZlN+5YMrzZ2nRlMk6WvYlCn+vSnIgQMGtpkhc39M1eUotkHe363DeFO
+         zFHTDtCFbQxgnRuCJmpgAvUfsM2XFWJuTUZQP93PNQIFUiEFYE2DGvK/mDTcPm2XbmVq
+         WGNIFlFRGypTkVif83vsXyZ0sQU+MJCXW7IilyO8/jCN5EqzbP6vROMnOAJIvhroGDAe
+         8ajQ==
+X-Gm-Message-State: APjAAAWs4LOK3wJJtM7I7FOtyjFyjLZyKl9i9HeGojOMMKnuGthivEpR
+        rwPR5G2WQyJ2u86OhZIuqZYIZQ==
+X-Google-Smtp-Source: APXvYqxbk62+b0D2+4MUmsK4Q+HXp47m8Z6MP2AWcwzvS1ti1bXxDroalbmsrbxny+Ss6ukUDHZzBA==
+X-Received: by 2002:a63:d803:: with SMTP id b3mr42635926pgh.267.1556673103560;
+        Tue, 30 Apr 2019 18:11:43 -0700 (PDT)
+Received: from localhost.localdomain (36-239-226-61.dynamic-ip.hinet.net. [36.239.226.61])
+        by smtp.gmail.com with ESMTPSA id w38sm31539531pgk.90.2019.04.30.18.11.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 18:11:42 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Guodong Xu <guodong.xu@linaro.org>,
+        Wang Xiaoyin <hw.wangxiaoyin@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: hi6xxx: Switch to SPDX identifier
+Date:   Wed,  1 May 2019 09:11:31 +0800
+Message-Id: <20190501011131.16186-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New design of inner bitmap_parse() allows to avoid
-calculating the size of a null-terminated string.
+Convert HiSilicon hi6xxx PMIC drivers to SPDX identifier.
 
-Signed-off-by: Yury Norov <ynorov@marvell.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- include/linux/cpumask.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/regulator/hi6421-regulator.c     | 24 +++++++++-------------
+ drivers/regulator/hi6421v530-regulator.c | 26 ++++++++++--------------
+ drivers/regulator/hi655x-regulator.c     | 22 ++++++++------------
+ 3 files changed, 30 insertions(+), 42 deletions(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 21755471b1c3..d55d015edc58 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -633,9 +633,7 @@ static inline int cpumask_parselist_user(const char __user *buf, int len,
-  */
- static inline int cpumask_parse(const char *buf, struct cpumask *dstp)
- {
--	unsigned int len = strchrnul(buf, '\n') - buf;
--
--	return bitmap_parse(buf, len, cpumask_bits(dstp), nr_cpumask_bits);
-+	return bitmap_parse(buf, UINT_MAX, cpumask_bits(dstp), nr_cpumask_bits);
- }
+diff --git a/drivers/regulator/hi6421-regulator.c b/drivers/regulator/hi6421-regulator.c
+index 6c7ea4eb4bb0..5ac3d7c29725 100644
+--- a/drivers/regulator/hi6421-regulator.c
++++ b/drivers/regulator/hi6421-regulator.c
+@@ -1,17 +1,13 @@
+-/*
+- * Device driver for regulators in Hi6421 IC
+- *
+- * Copyright (c) <2011-2014> HiSilicon Technologies Co., Ltd.
+- *              http://www.hisilicon.com
+- * Copyright (c) <2013-2014> Linaro Ltd.
+- *              http://www.linaro.org
+- *
+- * Author: Guodong Xu <guodong.xu@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Device driver for regulators in Hi6421 IC
++//
++// Copyright (c) <2011-2014> HiSilicon Technologies Co., Ltd.
++//              http://www.hisilicon.com
++// Copyright (c) <2013-2014> Linaro Ltd.
++//              http://www.linaro.org
++//
++// Author: Guodong Xu <guodong.xu@linaro.org>
  
- /**
+ #include <linux/slab.h>
+ #include <linux/device.h>
+diff --git a/drivers/regulator/hi6421v530-regulator.c b/drivers/regulator/hi6421v530-regulator.c
+index c09bc71538a5..06ae65199afd 100644
+--- a/drivers/regulator/hi6421v530-regulator.c
++++ b/drivers/regulator/hi6421v530-regulator.c
+@@ -1,18 +1,14 @@
+-/*
+- * Device driver for regulators in Hi6421V530 IC
+- *
+- * Copyright (c) <2017> HiSilicon Technologies Co., Ltd.
+- *              http://www.hisilicon.com
+- * Copyright (c) <2017> Linaro Ltd.
+- *              http://www.linaro.org
+- *
+- * Author: Wang Xiaoyin <hw.wangxiaoyin@hisilicon.com>
+- *         Guodong Xu <guodong.xu@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Device driver for regulators in Hi6421V530 IC
++//
++// Copyright (c) <2017> HiSilicon Technologies Co., Ltd.
++//              http://www.hisilicon.com
++// Copyright (c) <2017> Linaro Ltd.
++//              http://www.linaro.org
++//
++// Author: Wang Xiaoyin <hw.wangxiaoyin@hisilicon.com>
++//         Guodong Xu <guodong.xu@linaro.org>
+ 
+ #include <linux/mfd/hi6421-pmic.h>
+ #include <linux/module.h>
+diff --git a/drivers/regulator/hi655x-regulator.c b/drivers/regulator/hi655x-regulator.c
+index 6f6635daa026..ac2ee2030211 100644
+--- a/drivers/regulator/hi655x-regulator.c
++++ b/drivers/regulator/hi655x-regulator.c
+@@ -1,16 +1,12 @@
+-/*
+- * Device driver for regulators in Hi655x IC
+- *
+- * Copyright (c) 2016 Hisilicon.
+- *
+- * Authors:
+- * Chen Feng <puck.chen@hisilicon.com>
+- * Fei  Wang <w.f@huawei.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Device driver for regulators in Hi655x IC
++//
++// Copyright (c) 2016 Hisilicon.
++//
++// Authors:
++// Chen Feng <puck.chen@hisilicon.com>
++// Fei  Wang <w.f@huawei.com>
+ 
+ #include <linux/bitops.h>
+ #include <linux/device.h>
 -- 
 2.17.1
 
