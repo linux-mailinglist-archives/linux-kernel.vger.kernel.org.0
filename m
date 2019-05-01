@@ -2,82 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A1610A85
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF99410A90
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfEAQDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:03:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33718 "EHLO mail.kernel.org"
+        id S1726604AbfEAQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:05:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfEAQDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:03:30 -0400
+        id S1726452AbfEAQFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 12:05:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C9BD20644;
-        Wed,  1 May 2019 16:03:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F9DD20644;
+        Wed,  1 May 2019 16:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556726609;
-        bh=mnIuvBhXvxVWCM0Ol0pmBbWXdrP8m+9JSsiDpeKY73c=;
+        s=default; t=1556726705;
+        bh=E8F/3pKddi/VN9Od3ETGWYRD3ebxn03vf7dBr53qS4g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qLclv/xBs7sULBQxUJBEM3Rm71LyF6Vr2eP3uj2I8azsljZeE65MyWuVrOLFSGHFq
-         /3f42R/PHJJAO00qE5f62GRIEGp66OzEPC938WAltr4+LPqsN1r3UUyjqsGhanh4/b
-         KpGRT2VEiRXhEaQWsmo5PDnue8GAcarApCKEdUi8=
-Date:   Wed, 1 May 2019 18:03:27 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Arvid Brodin <arvid.brodin@enea.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: isp1760-hcd: Fix fall-through annotations
-Message-ID: <20190501160327.GA19281@kroah.com>
-References: <20190501153934.GA20025@embeddedor>
+        b=0/eU5QSfIyvSF6qY8MTgbPncQaNyEZNbt2FqPgGJoHj6SoRxdIwDUKZJe7/KEPPBL
+         LY2qgf1rYgLo44rQdrC2nTFAHQKpvF9yNIb5cGGhPZCiZ2CkMgcDcLGh1oCTZdkfgi
+         g1KUkxgFGvyo4nEYXAhKQOEU3Qouf77KGZONrXaQ=
+Date:   Wed, 1 May 2019 18:05:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
+        srinivas.kandagatla@linaro.org,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [PATCH v4 02/22] soundwire: fix SPDX license for header files
+Message-ID: <20190501160503.GB19281@kroah.com>
+References: <20190501155745.21806-1-pierre-louis.bossart@linux.intel.com>
+ <20190501155745.21806-3-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190501153934.GA20025@embeddedor>
+In-Reply-To: <20190501155745.21806-3-pierre-louis.bossart@linux.intel.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 10:39:34AM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/usb/isp1760/isp1760-hcd.c: In function ‘collect_qtds’:
-> drivers/usb/isp1760/isp1760-hcd.c:788:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->       mem_reads8(hcd->regs, qtd->payload_addr,
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         qtd->data_buffer,
->         ~~~~~~~~~~~~~~~~~
->         qtd->actual_length);
->         ~~~~~~~~~~~~~~~~~~~
-> drivers/usb/isp1760/isp1760-hcd.c:792:5: note: here
->      case OUT_PID:
->      ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case, the code comments are modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Notice that this code has been out there since 2011, and who
-> introduced the question mark was the original developer.
-> 
-> It'd be good if someone can confirm that the fall-through
-> has been intentional all this time.
+On Wed, May 01, 2019 at 10:57:25AM -0500, Pierre-Louis Bossart wrote:
+> No C++ comments in .h files
 
-Yes, it looks intentional.  Messy, and as no one has complained since
-2011, let's leave it alone, I'll queue this up.
+That's not really the issue here.
+
+> 
+> Reviewed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/soundwire/bus.h            | 4 ++--
+>  drivers/soundwire/cadence_master.h | 4 ++--
+>  drivers/soundwire/intel.h          | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+> index c77de05b8100..2f8436584e7f 100644
+> --- a/drivers/soundwire/bus.h
+> +++ b/drivers/soundwire/bus.h
+> @@ -1,5 +1,5 @@
+> -// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> -// Copyright(c) 2015-17 Intel Corporation.
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/* Copyright(c) 2015-17 Intel Corporation. */
+
+The first line is fine to change, as that was the requirement (although
+I think it has now been fixed), the second line is just taste, whatever
+you want, it's not a requirement.
+
+But I really don't care, it's not my code :)
 
 thanks,
 
