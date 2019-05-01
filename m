@@ -2,103 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC3110D5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE41110D50
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfEATmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 15:42:35 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36818 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfEATme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 15:42:34 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y8so92979ljd.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1aWTopvtcpE1sMBLog+svv/V7Oyc8azAzAFUDC8QSPA=;
-        b=g5Olcm90ZhHiM7hLghWqEsHCmJOQJKveCq93FgS32/SOMLiESIU19RmapyE9Ee9EYf
-         ViBeexnj6bwofQ4qsmRyD1ujInNeMtVrrzEmNmw9ZRifskM7p87DSr1orgBEPN8GpwJA
-         AtMCjbwPS+2qzsxmpJz+Cd9TiwHXhMCbJ9VGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1aWTopvtcpE1sMBLog+svv/V7Oyc8azAzAFUDC8QSPA=;
-        b=g3ciL8KCJoHJ4kryt9gYxYG59QyIMtGqm7p1yunVUx5Txkns1wAjYeJRAmy3heljJj
-         v2nRV/2fqj+hm1ArJRsG1b378nqP2+9YLQEVJ+M0DC3EfpT7ubLq5KZO7aRo4a8Gbc+0
-         WOLecYgIUZ3UZjn5KDKEZR4pN/0Byad2UtqtxSRzuj0MMXA6UhysXF2Oz080c6S2mBgZ
-         syaXOvWQqAzsxNNAR39eab47u+TqZut0mLqlOccYs/B5tKo+mNPMgkm/hv2PsVYbOECj
-         yMu8qGlKfcUP0ePJO6L39bDx4Axi25t9jFpgIOH6A8JDywFuAwHpuGgwF2nSkWJfeedb
-         7hTg==
-X-Gm-Message-State: APjAAAVggbkq/aaBQEdfSaKB+VWnSs7UNtl/76guqP0umcXsPxD87d4e
-        lvr8zhHQQUn15H4UGFK0Q+TpXru77zg=
-X-Google-Smtp-Source: APXvYqw1f3Kq+k6kBpt5s8DgRzzl3a46s3nP5FryPj3GBx5K9tdoHn7Au3vrYgtzcczQay1Sqt+QUA==
-X-Received: by 2002:a2e:2b16:: with SMTP id q22mr40574625lje.20.1556739752634;
-        Wed, 01 May 2019 12:42:32 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id v11sm8963811lfb.68.2019.05.01.12.42.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 12:42:32 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id e18so84015lja.5
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:42:32 -0700 (PDT)
-X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr4971551ljq.118.1556739386764;
- Wed, 01 May 2019 12:36:26 -0700 (PDT)
+        id S1726145AbfEATin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 15:38:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726004AbfEATim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 15:38:42 -0400
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17C8D21670;
+        Wed,  1 May 2019 19:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556739521;
+        bh=3r13nXEJ/55Q/6bcHEMx6ujePRfuqPpaN3lyt842VmY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=089rLRllTb8+Hm/6P1egJyBZnX9sB8aKtVtWwogTnxXRsJuTn4DBQ1NC8Si4aWC4v
+         sOFQ9CsmsKXAG5eYC4HMcDNFQIvoZM3tSAjl6Y8Ew1+szgJd0yOz16wQ8wG6YeVwGl
+         vfLQ4gipfpktss6CffbKiN0D3er8MCXTYV0qxtIk=
+Received: by mail-qt1-f175.google.com with SMTP id c13so1160670qtn.8;
+        Wed, 01 May 2019 12:38:41 -0700 (PDT)
+X-Gm-Message-State: APjAAAWkdBpmbmll8h1l8zXj4ep1AQk6ok68FquOlGAtr+qp+aN51SUB
+        NndaEau4edhsPI8V1u7WE7fqu7mR3FhZeE6Lag==
+X-Google-Smtp-Source: APXvYqyvDY9yv37xfenzQ3oQK4fKJuQiVVo4N665MF6Ku+f5ZwXO7oFy/tj3G/zv+m8eSK7TOR5xnEpNff7satGEkbc=
+X-Received: by 2002:aed:3f6b:: with SMTP id q40mr21394587qtf.26.1556739520237;
+ Wed, 01 May 2019 12:38:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190501113238.0ab3f9dd@gandalf.local.home> <CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com>
- <20190501145200.6c095d7f@oasis.local.home> <CAHk-=wgMZJeMCW5MA25WFJZeYYWCOWr0nGaHhJ7kg+zsu5FY_A@mail.gmail.com>
- <20190501191716.GV7905@worktop.programming.kicks-ass.net>
-In-Reply-To: <20190501191716.GV7905@worktop.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 May 2019 12:36:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whWOStbe8nAxuaovrmqsq_YW-rDFu1AkpgisaWMqdMibg@mail.gmail.com>
-Message-ID: <CAHk-=whWOStbe8nAxuaovrmqsq_YW-rDFu1AkpgisaWMqdMibg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v3] ftrace/x86_64: Emulate call function while
- updating in breakpoint handler
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
+References: <20190430121254.3737-1-geert+renesas@glider.be>
+ <20190430121254.3737-2-geert+renesas@glider.be> <CAL_Jsq+KwOLqd=ZqT-bdM5mp8jfPHu=XingBb6kBsUqHvO=m+g@mail.gmail.com>
+ <29e95406-b9fb-fbb6-9240-c3914d885e88@arm.com> <CAL_Jsq+FJDdka9BMcXvGveBHiUf=YUU=3gz3e2wxjtXZ+K+NEA@mail.gmail.com>
+ <CAMuHMdWgrcfABOVZti+BYn6ujcYjUHNL7oeyJLgaxB8uPp5hwg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWgrcfABOVZti+BYn6ujcYjUHNL7oeyJLgaxB8uPp5hwg@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 1 May 2019 14:38:28 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKq0KP9H4DumyxJTjD=7rqwgOM=+5jHhkUxQqamrA3h7g@mail.gmail.com>
+Message-ID: <CAL_JsqKq0KP9H4DumyxJTjD=7rqwgOM=+5jHhkUxQqamrA3h7g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/A1 Interrupt Controller
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+        Jason Cooper <jason@lakedaemon.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 1, 2019 at 12:17 PM Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, May 1, 2019 at 2:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> Something like so then?
+> Hi Rob,
+>
+> On Tue, Apr 30, 2019 at 10:26 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > On Tue, Apr 30, 2019 at 10:34 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > > On 30/04/2019 16:02, Rob Herring wrote:
+> > > > On Tue, Apr 30, 2019 at 7:13 AM Geert Uytterhoeven
+> > > > <geert+renesas@glider.be> wrote:
+> > > >>
+> > > >> Add DT bindings for the Renesas RZ/A1 Interrupt Controller.
+> > > >>
+> > > >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > >> ---
+> > > >> v2:
+> > > >>   - Add "renesas,gic-spi-base",
+> > > >>   - Document RZ/A2M.
+> > > >> ---
+> > > >>  .../renesas,rza1-irqc.txt                     | 30 +++++++++++++++++++
+> > > >>  1 file changed, 30 insertions(+)
+> > > >>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+> > > >>
+> > > >> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+> > > >> new file mode 100644
+> > > >> index 0000000000000000..ea8ddb6955338ccd
+> > > >> --- /dev/null
+> > > >> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+> > > >> @@ -0,0 +1,30 @@
+> > > >> +DT bindings for the Renesas RZ/A1 Interrupt Controller
+> > > >> +
+> > > >> +The RZ/A1 Interrupt Controller is a front-end for the GIC found on Renesas
+> > > >> +RZ/A1 and RZ/A2 SoCs:
+> > > >> +  - IRQ sense select for 8 external interrupts, 1:1-mapped to 8 GIC SPI
+> > > >> +    interrupts,
+> > > >> +  - NMI edge select.
+> > > >> +
+> > > >> +Required properties:
+> > > >> +  - compatible: Must be "renesas,<soctype>-irqc", and "renesas,rza1-irqc" as
+> > > >> +               fallback.
+> > > >> +               Examples with soctypes are:
+> > > >> +                 - "renesas,r7s72100-irqc" (RZ/A1H)
+> > > >> +                 - "renesas,r7s9210-irqc" (RZ/A2M)
+> > > >> +  - #interrupt-cells: Must be 2 (an interrupt index and flags, as defined
+> > > >> +                                in interrupts.txt in this directory)
+> > > >> +  - interrupt-controller: Marks the device as an interrupt controller
+> > > >> +  - reg: Base address and length of the memory resource used by the interrupt
+> > > >> +         controller
+> > > >> +  - renesas,gic-spi-base: Lowest GIC SPI interrupt number this block maps to.
+> > > >
+> > > > Why isn't this just an 'interrupts' property?
+> > >
+> > > That's likely because of kernel limitations. The DT code does an
+> > > of_populate() on any device that it finds, parse the "interrupts"
+> > > propertiy, resulting in the irq_descs being populated.
+> > >
+> > > That creates havoc, as these interrupts are not for this device, but for
+> > > something that is connected to it. This is merely a bridge of some sort.
+> >
+> > 'interrupt-map' would avoid that problem I think.
+>
+> "interrupt-map" seems to be meant for translation on a bus?
+> What to do with the child and parent unit addresses fields?
+> The parent unit address size depends on the #address-cells of the parent
+> interrupt-controller (i.e. GIC, so it's zero).
+> But the child unit address size depends on the #address-cells of the bus node
+> on which the child is located, so that's a (non-zero) bus #address-cells
+> (from the root node), not an interrupt-controller #address-cells.
 
-Yes, that looks correct.
+The #address-cells is always retrieved from the interrupt-parent node
+(or its parent). The interrupt-parent can implicitly be the child's
+parent, but that is rarely used in modern systems.
 
-We have those X86_EFLAGS_VM tests pretty randomly scattered around,
-and I wish there was some cleaner model for this, but I also guess
-that there's no point in worrying about the 32-bit code much.
+> Each line in an interrupt-map also contains a child interrupt specifier.
+> As the RZ/A1 IRQC supports 8 interrupt inputs with 4 sense types,
+> that would mean 32 lines? Or should I just ignore the senses here,
+> and specify 0?
 
-                Linus
+You can ignore parts of the child cells with interrupt-map-mask, so
+you should just need 8 entries.
+
+> i.e. interrupt-map = <0 0 0 &gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH,
+>                       0 1 0 &gic GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH,
+>                       0 2 0 &gic GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH,
+>                       0 3 0 &gic GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH,
+>                       0 4 0 &gic GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH,
+>                       0 5 0 &gic GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH,
+>                       0 6 0 &gic GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH,
+>                       0 7 0 &gic GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>
+> (using zero for the child unit addresses, too)?
+>
+> > > Furthermore, this is a rather long established practice: gic-v2m,
+> > > gic-v3-mbi, mediatek,sysirq, mediatek,cirq... All the bits of glue that
+> > > for one reason or another plug onto the GIC use the same method.
+> >
+> > All handling the mapping to the parent in their own way...
+> >
+> > > > Plus, without 'interrupts' walking the hierarchy is broken.
+> > >
+> > > Erm... Which hierarchy?
+> >
+> > of_irq_init() expects that an interrupt-controller without an
+> > interrupt-parent is the root controller. So you're right. We only need
+>
+> That applies to IRQCHIP_DECLARE() drivers only, not platform device
+> drivers, right?
+
+Right.
+
+Rob
