@@ -2,126 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC0C10DFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9306510DFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfEAU1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 16:27:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46936 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726077AbfEAU1T (ORCPT
+        id S1726321AbfEAU14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 16:27:56 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33778 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfEAU1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 16:27:19 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x41KMsc9036783
-        for <linux-kernel@vger.kernel.org>; Wed, 1 May 2019 16:27:18 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s7gh8n603-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 16:27:17 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 1 May 2019 21:27:16 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 May 2019 21:27:14 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x41KRDMx27656232
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 May 2019 20:27:14 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6A0BB205F;
-        Wed,  1 May 2019 20:27:13 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAEF0B2065;
-        Wed,  1 May 2019 20:27:13 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  1 May 2019 20:27:13 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D6EE516C19D9; Wed,  1 May 2019 13:27:13 -0700 (PDT)
-Date:   Wed, 1 May 2019 13:27:13 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com
-Subject: Re: Question about sched_setaffinity()
-Reply-To: paulmck@linux.ibm.com
-References: <20190427180246.GA15502@linux.ibm.com>
- <20190430100318.GP2623@hirez.programming.kicks-ass.net>
- <20190430105129.GA3923@linux.ibm.com>
- <20190430115551.GT2623@hirez.programming.kicks-ass.net>
- <20190501191213.GX3923@linux.ibm.com>
- <20190501151655.51469a4c@gandalf.local.home>
+        Wed, 1 May 2019 16:27:55 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s11so152210otp.0;
+        Wed, 01 May 2019 13:27:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KS4hKGNIVioMcRHyezKTJtPmApQ7+oYbfRHxucc7wGI=;
+        b=qQowgEQa4pJtG31D+1wJXPwTge6IcqSfLcNCfS2BYQPPdvDj888fDUXE+CyC/HGQOI
+         VMLdxAEUp6xodYsC4w0OTfV/xxXxaDU3FQEym6jhVHszZSbBNcmb3QYhj7VBNrEt4HcM
+         nWtN0hkpr776HCuZwQpiVLE2RWcBuz31GOv7wHh+P/RA9KHqdOQGcrgMCdBbzA0qn7Fw
+         ajJ2dwXeibTi0DH8ZEKdwyfz5Vxb9thYIDIERCLUKZRmc0omsSr0Fj4zAGjTn0lnYcqE
+         ZR/04JypL/jTGHHlANGs2m43eUzQzG1oorzwmo5ZKSveqLQvvHeYiCKxLfapkwgwb/Yk
+         yL5A==
+X-Gm-Message-State: APjAAAVzUkN+3X71seXEpc7emW9nVgchgHL+Prjcu0HL0d8CrrHfuHoR
+        mGMVWmGyQ8Szqr0LbtVhVA==
+X-Google-Smtp-Source: APXvYqy2rYdK9ldoX9mWUXMnNnuvyEUUSkKlODoSZcJLLwSinumT9uIuGEHWyxrQzf0cIfbbiVfBAw==
+X-Received: by 2002:a05:6830:c7:: with SMTP id x7mr335551oto.67.1556742474995;
+        Wed, 01 May 2019 13:27:54 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b51sm18601731otc.8.2019.05.01.13.27.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 13:27:53 -0700 (PDT)
+Date:   Wed, 1 May 2019 15:27:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Henry Chen <henryc.chen@mediatek.com>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Nicolas Boichat <drinkcat@google.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC V2 08/11] dt-bindings: interconnect: add MT8183
+ interconnect dt-bindings
+Message-ID: <20190501202753.GA2862@bogus>
+References: <1556614265-12745-1-git-send-email-henryc.chen@mediatek.com>
+ <1556614265-12745-9-git-send-email-henryc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190501151655.51469a4c@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19050120-0040-0000-0000-000004E9BA8C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011030; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000285; SDB=6.01197178; UDB=6.00627891; IPR=6.00978032;
- MB=3.00026686; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-01 20:27:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050120-0041-0000-0000-000008F5BED2
-Message-Id: <20190501202713.GY3923@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905010126
+In-Reply-To: <1556614265-12745-9-git-send-email-henryc.chen@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 03:16:55PM -0400, Steven Rostedt wrote:
-> On Wed, 1 May 2019 12:12:13 -0700
-> "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+On Tue, Apr 30, 2019 at 04:51:02PM +0800, Henry Chen wrote:
+> Add interconnect provider dt-bindings for MT8183.
 > 
+> Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
+> ---
+>  .../bindings/interconnect/mtk,mt8183.txt           | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
 > 
-> > OK, what I did was to apply the patch at the end of this email to -rcu
-> > branch dev, then run rcutorture as follows:
-> > 
-> > nohup tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 8 --duration 2 --configs "TRIVIAL" --bootargs "trace_event=sched:sched_switch,sched:sched_wakeup ftrace=function_graph ftrace_graph_filter=sched_setaffinity,migration_cpu_stop"
-> > 
-> > This resulted in the console output that I placed here:
-> > 
-> > http://www2.rdrop.com/~paulmck/submission/console.log.gz
-> > 
-> > But I don't see calls to sched_setaffinity() or migration_cpu_stop().
-> > Steve, is something else needed on the kernel command line in addition to
-> > the following?
-> > 
-> > ftrace=function_graph ftrace_graph_filter=sched_setaffinity,migration_cpu_stop
-> 
-> Do you have function graph enabled in the config?
-> 
-> [    2.098303] ftrace bootup tracer 'function_graph' not registered.
+> diff --git a/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt b/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
+> new file mode 100644
+> index 0000000..1cf1841
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interconnect/mtk,mt8183.txt
+> @@ -0,0 +1,24 @@
+> +Mediatek MT8183 interconnect binding
 
-I guess I don't!  Thank you, will fix.
+This should be part of the dvfsrc binding.
 
-Let's see...
+> +
+> +MT8183 interconnect providers support dram bandwidth requirements. The provider
+> +is able to communicate with the DVFSRC and send the dram bandwidth to it.
+> +Provider nodes must reside within an DVFSRC device node.
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +			"mediatek,mt8183-emi-icc"
+> +- #interconnect-cells : should contain 1
+> +
+> +Examples:
+> +
+> +dvfsrc@10012000 {
+> +	compatible = "mediatek,mt8183-dvfsrc";
+> +	reg = <0 0x10012000 0 0x1000>;
+> +	clocks = <&infracfg CLK_INFRA_DVFSRC>;
+> +	clock-names = "dvfsrc";
+> +	ddr_emi: interconnect {
+> +		compatible = "mediatek,mt8183-emi-icc";
+> +		#interconnect-cells = <1>;
 
-My .config has CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y.  It looks like I
-need CONFIG_FUNCTION_GRAPH_TRACER=y, which I don't have.  And it looks
-like that needs CONFIG_FUNCTION_TRACER=y, which I also don't have.
-But I do have CONFIG_HAVE_FUNCTION_TRACER=y.  So I should add this
-to my rcutorture command line:
+No need for a child node here. Just move #interconnect-cells to the 
+parent.
 
---kconfig "CONFIG_FUNCTION_TRACER=y CONFIG_FUNCTION_GRAPH_TRACER=y".
-
-I fired this up.  Here is hoping!  ;-)
-
-And it does have sched_setaffinity(), woo-hoo!!!  I overwrote the old file:
-
-	http://www2.rdrop.com/~paulmck/submission/console.log.gz
-
-							Thanx, Paul
-
+Rob
