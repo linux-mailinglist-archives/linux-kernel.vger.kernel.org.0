@@ -2,245 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68126103BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1B9103C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 04:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfEABvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 21:51:43 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45834 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfEABvm (ORCPT
+        id S1727525AbfEACDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 22:03:35 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34788 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfEACDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 21:51:42 -0400
-Received: by mail-vs1-f66.google.com with SMTP id o10so9157860vsp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:51:42 -0700 (PDT)
+        Tue, 30 Apr 2019 22:03:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s7so11838314ljh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 19:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=06LICDfjCeCtvVUkBORNi2vtZVpAhIUAW1k7qKawkC4=;
-        b=j6fmWbqC7a7BBUo2lPeQez2tJf5Zgp111u3x/f4c4UZKQzbMQLEf3aF5oaD85bXQdb
-         t/dAWXeGctu5hwKcP/L+ocQoEikwxwmjBJ2FdoWCGDFdd0/2zAMxOD6oV/7oR8l9OgYn
-         zCJFYMTm8yPHu7NOGDd9qCKPnJuut694tNiyY=
+         :cc;
+        bh=tmXNfPLOFbb8hAF6Vl5xp7lQQxPxX9F/tPvuKsQzATU=;
+        b=Uv7TmbDCtMO9OVF1wwQKKT6KJaz16R9pk7p/lUNKiKQoViWyOjhOShjt1rXzEbmmks
+         pmlBHurjILNX0wuRZI3kdDTmXE+0EIMcNfEle/j05RKDoGD+a48SSxnYFMopH7Zi/0N8
+         k24pIeuX0qpCiaq30SlxmkHDKBRv2OvNH9Mws=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=06LICDfjCeCtvVUkBORNi2vtZVpAhIUAW1k7qKawkC4=;
-        b=AkAZ7xMI5h8V6eUJm90i/AA1owLAK3IQ6pSwZSubAyszxsl7/d5rYtB+IkmLReuZRV
-         Y211O/I9XnXK7w1B1kCIIpuGp10j+/u/MLVQ1eTEqjG/zrQmkiEdqLoFsGmkVDMH8ldp
-         s97STA+GNg3eJ1taNtOyERMBxs3fZUgFJuJgus7arOclgyCafpWhfm0q0EOe3igXsrav
-         4iybh8EBVC7GO2sOZV9UTgvyF8QMBdau2KLJOmu1ModMDBs374WK+65KMIFLxA0hAjkD
-         RpvDfiFYXeyidhQaQJAvsb45G7ccdvXf8E6fFUmaGR8rP/BlrTLu0FR5QJQEnmufVxs8
-         cHPg==
-X-Gm-Message-State: APjAAAVVLhqc20xqjbtzNks2aU2QmAgo3c+kTkkshkHCKFlUDgwa+LSl
-        s+7z0HJE290eKHN1nWE3qYfoFhTzOvg=
-X-Google-Smtp-Source: APXvYqysvSzaadfrg4DEsvr8kODh0AJIkIeAI5L31zWe7EOFP9ENk4FXJhpDSjEyhDcwQuhUjRjh0A==
-X-Received: by 2002:a67:e3d1:: with SMTP id k17mr14234569vsm.86.1556675501409;
-        Tue, 30 Apr 2019 18:51:41 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 2sm44291813vke.27.2019.04.30.18.51.36
+         :message-id:subject:to:cc;
+        bh=tmXNfPLOFbb8hAF6Vl5xp7lQQxPxX9F/tPvuKsQzATU=;
+        b=mxoiDg9e4Ig+IbJYYsVRiVNnSECnAmIxSLDizkksXDuhRsSkKmLZx/yq6pkPWRKx1s
+         X9T3T2TL08peYoumWnOoLcmYvUXrQj4szYSDqVMFPDHA8owq4jNT0Ji2MYYp7EQov79v
+         d1l+nvcx70uLRIjDQKIuBageiO+iAe7TQmcWx4/YunK8lbqX9+edMTvuQkAtUxQtkzHm
+         7EZXz6R4IkdS/MWFUO/dDcVjEo8mSU3o49Gd69wJrR3VCNO7jNUjLtFxXefKjxs67fQk
+         KGjlZ2xc2ci5w3nbtK/bHG267JttEkvQNe8hS7qbx66sdTzy5lE1IwOVAOVaMYh/YSV7
+         AT1w==
+X-Gm-Message-State: APjAAAWwzP+/OS02T/4hSrt95hE64cAMUbXYJs5e3MH04iihMcDVhg/o
+        7HlQIlvQxruxrYtTtWqJ8c3y6ThEK9Q=
+X-Google-Smtp-Source: APXvYqzmRA5XhKDhoh0h26fM/anK2lsm1QCzqX+RcZjTSU/to7aBc6f7L6wcNz/mLFDGD9/AVvbPPA==
+X-Received: by 2002:a2e:9ed3:: with SMTP id h19mr38019487ljk.129.1556676212507;
+        Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id w2sm6045213ljh.72.2019.04.30.19.03.32
         for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 18:51:37 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id b74so6054974vsd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:51:36 -0700 (PDT)
-X-Received: by 2002:a67:7cd1:: with SMTP id x200mr7091738vsc.144.1556675496267;
- Tue, 30 Apr 2019 18:51:36 -0700 (PDT)
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id b12so13366765lji.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
+X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr34056779ljj.79.1556675903960;
+ Tue, 30 Apr 2019 18:58:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190418001356.124334-1-dianders@chromium.org>
- <20190418001356.124334-2-dianders@chromium.org> <SN1PR12MB243108D1EF3239EC4F730ACDA7390@SN1PR12MB2431.namprd12.prod.outlook.com>
- <CAD=FV=UOmfNeuZPrDcZRdwAkF4yRifCpBGUuZTsmmz0UVEZ+yA@mail.gmail.com> <SN1PR12MB24317F315C5A4DFE70F9CB0DA73A0@SN1PR12MB2431.namprd12.prod.outlook.com>
-In-Reply-To: <SN1PR12MB24317F315C5A4DFE70F9CB0DA73A0@SN1PR12MB2431.namprd12.prod.outlook.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 30 Apr 2019 18:51:35 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UWGOWiCpy5qUY8oFHPyxdYJe7OsdWBDuCNcXBu5BJoGA@mail.gmail.com>
-Message-ID: <CAD=FV=UWGOWiCpy5qUY8oFHPyxdYJe7OsdWBDuCNcXBu5BJoGA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] usb: dwc2: bus suspend/resume for hosts with DWC2_POWER_DOWN_PARAM_NONE
-To:     Artur Petrosyan <Arthur.Petrosyan@synopsys.com>
-Cc:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "amstan@chromium.org" <amstan@chromium.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        William Wu <william.wu@rock-chips.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Randy Li <ayaka@soulik.info>,
-        "zyw@rock-chips.com" <zyw@rock-chips.com>,
-        "mka@chromium.org" <mka@chromium.org>,
-        "ryandcase@chromium.org" <ryandcase@chromium.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        "jwerner@chromium.org" <jwerner@chromium.org>,
-        "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190428133826.3e142cfd@oasis.local.home> <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
+ <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
+ <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
+ <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
+ <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
+ <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
+ <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
+ <20190430135602.GD2589@hirez.programming.kicks-ass.net> <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
+ <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
+ <20190430130359.330e895b@gandalf.local.home> <20190430132024.0f03f5b8@gandalf.local.home>
+ <20190430134913.4e29ce72@gandalf.local.home> <20190430175334.423821c0@gandalf.local.home>
+ <20190430213517.7bcfaf8e@oasis.local.home>
+In-Reply-To: <20190430213517.7bcfaf8e@oasis.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 30 Apr 2019 18:58:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whpS92oz-FkzaVdTEXVMre1NQioiLfqyEYYkmrVoVvgzw@mail.gmail.com>
+Message-ID: <CAHk-=whpS92oz-FkzaVdTEXVMre1NQioiLfqyEYYkmrVoVvgzw@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2] ftrace/x86: Emulate call function while updating
+ in breakpoint handler
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Apr 29, 2019 at 11:06 PM Artur Petrosyan
-<Arthur.Petrosyan@synopsys.com> wrote:
+On Tue, Apr 30, 2019 at 6:35 PM Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> Hi,
 >
-> On 4/29/2019 21:34, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Mon, Apr 29, 2019 at 1:43 AM Artur Petrosyan
-> > <Arthur.Petrosyan@synopsys.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 4/18/2019 04:15, Douglas Anderson wrote:
-> >>> This is an attempt to rehash commit 0cf884e819e0 ("usb: dwc2: add bus
-> >>> suspend/resume for dwc2") on ToT.  That commit was reverted in commit
-> >>> b0bb9bb6ce01 ("Revert "usb: dwc2: add bus suspend/resume for dwc2"")
-> >>> because apparently it broke the Altera SOCFPGA.
-> >>>
-> >>> With all the changes that have happened to dwc2 in the meantime, it's
-> >>> possible that the Altera SOCFPGA will just magically work with this
-> >>> change now.  ...and it would be good to get bus suspend/resume
-> >>> implemented.
-> >>>
-> >>> This change is a forward port of one that's been living in the Chrome
-> >>> OS 3.14 kernel tree.
-> >>>
-> >>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> >>> ---
-> >>> This patch was last posted at:
-> >>>
-> >>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.kernel.or=
-g_r_1446237173-2D15263-2D1-2Dgit-2Dsend-2Demail-2Ddianders-40chromium.org&d=
-=3DDwIDAg&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqr=
-C_D7niMJI&m=3DMMfe-4lZePyty6F5zfQ54kiYGuJWNulyRat944LkOsc&s=3DnExFpAPP_0plZ=
-fO5LMG1B-mqt1vyCvE35elVcyVgs8Y&e=3D
-> >>>
-> >>> ...and appears to have died the death of silence.  Maybe it could get
-> >>> some bake time in linuxnext if we can't find any proactive testing?
-> >>>
-> >>> I will also freely admit that I don't know tons about the theory
-> >>> behind this patch.  I'm mostly just re-hashing the original commit
-> >>> from Kever that was reverted since:
-> >>> * Turning on partial power down on rk3288 doesn't "just work".  I
-> >>>     don't get hotplug events.  This is despite dwc2 auto-detecting th=
-at
-> >>>     we are power optimized.
-> >> What do you mean by doesn't "just work" ? It seem to me that even afte=
-r
-> >> adding this patch you don't get issues fixed.
-> >> You mention that you don't get the hotplug events. Please provide dwc2
-> >> debug logs and register dumps on this issue.
-> >
-> > I mean that partial power down in the currently upstream driver
-> > doesn't work.  AKA: if I turn on partial power down in the upstream
-> > driver then hotplug events break.  I can try to provide some logs.  On
-> > what exact version of the code do you want logs?  Just your series?
-> > Just my series?  Mainline?  Some attempt at combining both series?  As
-> > I said things seem to sorta work with the combined series.  I can try
-> > to clarify if that's the series you want me to test with.  ...or I can
-> > wait for your next version?
-> As I said this patch doesn't fix the issue with hotplug. With this patch
-> or without the hotplug behaves as it was. I have tested it on our setup.
->
-> Have you debugged your patch? Does it make any difference on your setup
-> ? Does it fix the issue with hotplug?
+> Probably easier to move it from inline asm to ftrace_X.S and use the
+> lockdep TRACE_ON/OFF macros.
 
-I think we're still not taking on the same page.
+Yeah, that should clean up the percpu stuff too since we have helper
+macros for it for *.S files anyway.
 
-My patch makes no attempt to make partial power down mode work.  My
-patch attempts to make things work a little better when using
-DWC2_POWER_DOWN_PARAM_NONE.  There is no use testing my patch with
-partial power down as it shouldn't have any impact there.
+I only did the asm() in C because it made the "look, something like
+this" patch simpler to test (and it made it easy to check the
+generated asm file). Not because it was a good idea ;)
 
-
-> > I am by no means an expert on dwc2, but an assumption made in my patch
-> > is that even cores that can't support partial power down can still
-> > save some amount of power when hcd_suspend is called.
-> Have you tried to debug dwc2 with power_down =3D=3D DWC2_POWER_DOWN_PARAM=
-_NONE ?
-> >
-> > Some evidence that this should be possible: looking at mainline Linux
-> > and at dwc2_port_suspend(), I see:
-> >
-> > * It is currently called even when we have DWC2_POWER_DOWN_PARAM_NONE
-> Currently (without your and my patches) (looking at mainline Linux) the
-> function dwc2_port_suspend() is called anyway because its call is issued
-> by the system. But it performs entering to suspend only in case of
-> DWC2_POWER_DOWN_PARAM_PARTIAL.
->
-> This is not an assumption. What I am pointing out is based on debugging
-> and before making assumptions without debugging for me seems not ok.
->
-> Currently without your patch and without my patches. In the
-> dwc2_port_suspend() it will enter to suspend only in case that
-> power_down =3D=3D DWC2_POWER_DOWN_PARAM_PARTIAL. Because if you look at t=
-he
-> code more carefully you will see
->
->         if (hsotg->params.power_down !=3D DWC2_POWER_DOWN_PARAM_PARTIAL)
->                 goto skip_power_saving;
->
-> This says if power_down is not DWC2_POWER_DOWN_PARAM_PARTIAL then skip
-> power saving.
->
-> So but after your patch. If power_down is DWC2_POWER_DOWN_PARAM_NONE it
-> tries to suspend.
-
-We must be looking at different code.  I'm looking at Linux's tree, AKA:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/usb/dwc2/hcd.c#n3488
-
-I took a mainline kernel ("v5.1-rc7-5-g83a50840e72a") and added
-printouts in dwc2_port_suspend() next to where it set HPRT0_SUSP and
-PCGCTL_STOPPCLK in dwc2_port_suspend().
-
-[  454.906364] dwc2 ff540000.usb: I'm setting HPRT0_SUSP
-[  454.906367] dwc2 ff540000.usb: I'm setting PCGCTL_STOPPCLK
-
-...and just to confirm:
-
-# grep '^power' /sys/kernel/debug/*.usb/params
-/sys/kernel/debug/ff540000.usb/params:power_down                    : 0
-/sys/kernel/debug/ff580000.usb/params:power_down                    : 0
-
-So I'm really quite convinced that on mainline Linux with
-DWC2_POWER_DOWN_PARAM_NONE that dwc2_port_suspend() sets HPRT0_SUSP
-and PCGCTL_STOPPCLK.
-
-
-> > ...I believe that the net effect of my patch ends up doing both those
-> > same two things in hcd_suspend.  That is: when power_down is
-> > DWC2_POWER_DOWN_PARAM_NONE I believe my patch is really just doing the
-> > same thing that dwc2_port_suspend() would do in the same case.  Is
-> > that not OK?
-> No if your patch is doing the same thing as it was doing before what is
-> the purpose of the patch ?
-
-The purpose is to make _dwc2_hcd_suspend() work more correctly in the
-case where power_down is DWC2_POWER_DOWN_PARAM_NONE
-
-
-> My testes show that your patch doesn't fix the issue related partial
-> power down.
-
-Right.  I have been trying to say that my patch doesn't do anything at
-all for partial power down.  I am simply trying to make
-DWC2_POWER_DOWN_PARAM_NONE work more correctly.
-
-I haven't run all the power consumption tests in quite a long time and
-I'll try to get it hooked up tomorrow to confirm that my patch really
-truly is still needed to help with power consumption.  I did confirm
-that at least there are cases where _dwc2_hcd_suspend() is called and
-my patch is what sets the important bits.
-
--Doug
+                 Linus
