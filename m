@@ -2,70 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 001B410EB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2581310EC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbfEAVoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 17:44:23 -0400
-Received: from www62.your-server.de ([213.133.104.62]:43006 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfEAVoW (ORCPT
+        id S1726268AbfEAVuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 17:50:05 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:48907 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726116AbfEAVuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 17:44:22 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hLx1R-0008PH-NM; Wed, 01 May 2019 23:44:13 +0200
-Received: from [173.228.226.134] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hLx1R-000OV8-8R; Wed, 01 May 2019 23:44:13 +0200
-Subject: Re: [PATCH v2] bpf, x32: Fix bug for BPF_JMP | {BPF_JSGT, BPF_JSLE,
- BPF_JSLT, BPF_JSGE}
-To:     Wang YanQing <udknight@gmail.com>, ast@kernel.org,
-        davem@davemloft.net, kuznet@ms2.inr.ac.ru, tglx@linutronix.de,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190427082826.GA16311@udknight>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <aca27db2-5c16-6bf8-e601-be8b42678cd4@iogearbox.net>
-Date:   Wed, 1 May 2019 23:44:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 1 May 2019 17:50:04 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 9DB62573;
+        Wed,  1 May 2019 17:44:58 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 01 May 2019 17:44:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=ggWj5DjDJpxIqBqNYfbm9smFUYn
+        /s2NYjsoBI7Eb148=; b=rP0H0ZpXeAvnj+1Sd+SDFFwycEL+HdqyxFxfk5aFcjt
+        RKxPasu+tK7saOVj2gU6xsUxRbfecYFFq9dyfBxxbwO6+oOoBvcGv7RLqN/tsiGG
+        cGjWOHqqMZb1gqWeoSt3suq9SgoYEpuAf52LKyxCbUynIu+lJiTT4pB9phz50ECj
+        OfDoSC/Ioxx2yd2ty1sXzwPDHlNRDxkU4R85ZjjJ7J0xq4clwq3XXNCvKQQcCaLC
+        FMJVe5KSEiaKLJeguFymMVhFVIKOCmL+m5q2TpucPaHKB80DmAKMtqNMih946dXf
+        ek84AlOuDtQpeuiqZi21nHvsrEosbmmKSJFr6x8j55g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ggWj5D
+        jDJpxIqBqNYfbm9smFUYn/s2NYjsoBI7Eb148=; b=hZ660TKs8z5yiQMtbNqn1H
+        N43yl/VrmLY3yYCYsU1HiXUUnmdLIfWMb7hpuUmIBeFsNW+1ofn/0e5zU5kzq556
+        f83EJYLdVlM6Fm/hPCnm/Vb46zq8h/ryXThW6jQWa1o/A7iUEXbUpxhpBU121dI8
+        yp0UxLHBoZO8R1vr5DKMtB8LADmpzl5OQVfW+mnXNvcmOdif4XQUIeV1KtF8C3TN
+        vzw+F0ZTEyCjSBQlSp8fBJKYo9r4RydY7BcD3C233CErq4064ouvcKK5tW0dk2is
+        Di24/NpNc+j0zcvsK7kFH7T5axUJNlZADDiAE/BNPi8E54h+kTOP1R8rIURqQQgw
+        ==
+X-ME-Sender: <xms:WRPKXP-KlDXFbHslR5EzmQJ9nQa7KcK8XGECFvZFtWqc69YsZMj5bw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieejgdduieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdlfedtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppeduvddurdeggedrvddtgedrvdefheenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:WRPKXBSo5z2x8AaugsC3tWq8KBRfXEVaLtNCFh14dCDpctZBMa2QvQ>
+    <xmx:WRPKXGkQZttyGywWfRtgdWy2738RfZq1I20M5xJ5cGkff9gKJGsZKw>
+    <xmx:WRPKXMWQhSuw-rqBw28gMY9slrSEmlFSW3rytCDAhDaNvN-GGnhJWQ>
+    <xmx:WhPKXFeKwa0vtzsplO2_ZshVu9zY45CaYU3h_zXxzTEY2W5U-nAQOg>
+Received: from localhost (ppp121-44-204-235.bras1.syd2.internode.on.net [121.44.204.235])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1DCB0103D0;
+        Wed,  1 May 2019 17:44:55 -0400 (EDT)
+Date:   Thu, 2 May 2019 07:44:23 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: kobject_init_and_add() confusion
+Message-ID: <20190501214423.GC18827@eros.localdomain>
+References: <20190430233803.GB10777@eros.localdomain>
+ <CAJZ5v0g34RZmugeBm63UT3XRvUmdJtvCAjcowdwDffrRorrscQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190427082826.GA16311@udknight>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25436/Wed May  1 09:58:19 2019)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0g34RZmugeBm63UT3XRvUmdJtvCAjcowdwDffrRorrscQ@mail.gmail.com>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2019 10:28 AM, Wang YanQing wrote:
-> The current method to compare 64-bit numbers for conditional jump is:
+On Wed, May 01, 2019 at 09:54:16AM +0200, Rafael J. Wysocki wrote:
+> On Wed, May 1, 2019 at 1:38 AM Tobin C. Harding <me@tobin.cc> wrote:
+> >
+> > Hi,
+> >
+> > Looks like I've created a bit of confusion trying to fix memleaks in
+> > calls to kobject_init_and_add().  Its spread over various patches and
+> > mailing lists so I'm starting a new thread and CC'ing anyone that
+> > commented on one of those patches.
+> >
+> > If there is a better way to go about this discussion please do tell me.
+> >
+> > The problem
+> > -----------
+> >
+> > Calls to kobject_init_and_add() are leaking memory throughout the kernel
+> > because of how the error paths are handled.
+> >
+> > The solution
+> > ------------
+> >
+> > Write the error path code correctly.
+> >
+> > Example
+> > -------
+> >
+> > We have samples/kobject/kobject-example.c but it uses
+> > kobject_create_and_add().  I thought of adding another example file here
+> > but could not think of how to do it off the top of my head without being
+> > super contrived.  Can add this to the TODO list if it will help.
+> >
+> > Here is an attempted canonical usage of kobject_init_and_add() typical
+> > of the code that currently is getting it wrong.  This is the second time
+> > I've written this and the first time it was wrong even after review (you
+> > know who you are, you are definitely buying the next round of drinks :)
+> >
+> >
+> > Assumes we have an object in memory already that has the kobject
+> > embedded in it. Variable 'kobj' below would typically be &ptr->kobj
+> >
+> >
+> >         void fn(void)
+> >         {
+> >                 int ret;
+> >
+> >                 ret = kobject_init_and_add(kobj, ktype, NULL, "foo");
+> >                 if (ret) {
+> >                         /*
+> >                          * This means kobject_init() has succeeded
+> >                          * but kobject_add() failed.
+> >                          */
+> >                         goto err_put;
+> >                 }
+> >
+> >                 ret = some_init_fn();
+> >                 if (ret) {
+> >                         /*
+> >                          * We need to wind back kobject_add() AND kobject_put().
 > 
-> 1) Compare the high 32-bit first.
-> 
-> 2) If the high 32-bit isn't the same, then goto step 4.
-> 
-> 3) Compare the low 32-bit.
-> 
-> 4) Check the desired condition.
-> 
-> This method is right for unsigned comparison, but it is buggy for signed
-> comparison, because it does signed comparison for low 32-bit too.
-> 
-> There is only one sign bit in 64-bit number, that is the MSB in the 64-bit
-> number, it is wrong to treat low 32-bit as signed number and do the signed
-> comparison for it.
-> 
-> This patch fixes the bug and adds a testcase in selftests/bpf for such bug.
-> 
-> Signed-off-by: Wang YanQing <udknight@gmail.com>
+> kobject_add() and kobject_init() I suppose?
 
-Applied, thanks!
+You are correct, my mistake.
+
+> >                          * kobject_add() incremented the refcount in
+> >                          * kobj->parent, that needs to be decremented THEN we need
+> >                          * the call to kobject_put() to decrement the refcount of kobj.
+> >                          */
+> 
+> So actually, if you look at kobject_cleanup(), it calls kobject_del()
+> if kobj->state_in_sysfs is set.
+> 
+> Now, if you look at kobject_add_internal(), it sets
+> kobj->state_in_sysfs when about to return 0 (success).
+> 
+> Therefore calling kobject_put() without the preceding kobject_del() is
+> not a bug technically, even though it will trigger the "auto cleanup
+> kobject_del" message with debug enabled.
+
+Thanks for this explanation.  Points noted.
+
+> 
+> >                         goto err_del;
+> >                 }
+> >
+> >                 ret = some_other_init_fn();
+> >                 if (ret)
+> >                         goto other_err;
+> >
+> >                 kobject_uevent(kobj, KOBJ_ADD);
+> >                 return 0;
+> >
+> >         other_err:
+> >                 other_clean_up_fn();
+> >         err_del:
+> >                 kobject_del(kobj);
+> >         err_put:
+> >                 kobject_put(kobj);
+> >
+> >                 return ret;
+> >         }
+> >
+> >
+> > Have I got this correct?
+> >
+> > TODO
+> > ----
+> >
+> > - Fix all the callsites to kobject_init_and_add()
+> > - Further clarify the function docstring for kobject_init_and_add() [perhaps]
+> > - Add a section to Documentation/kobject.txt [optional]
+> > - Add a sample usage file under samples/kobject [optional]
+> 
+> The plan sounds good to me, but there is one thing to note IMO:
+> kobject_cleanup() invokes the ->release() callback for the ktype, so
+> these callbacks need to be able to cope with kobjects after a failing
+> kobject_add() which may not be entirely obvious to developers
+> introducing them ATM.
+
+During docs fixes I'll try to work this in.
+
+Thanks,
+Tobin.
