@@ -2,77 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18B1310EAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 001B410EB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:44:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfEAVoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 17:44:04 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52177 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfEAVoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 17:44:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 44vX360ssTz9s9y;
-        Thu,  2 May 2019 07:44:01 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1556747042;
-        bh=G+FqxP1wCqdR3zuvAR4o7OCUkf/l0kFwCNAUzf5oDGk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ltnYKZ0Ctm0KXW9Owuky480KdqAR5BeZIrIG1+R100XsjmVOSptD91pHSp4MHRoYX
-         D1c9o/FgFOnNVDH2GBZhbLpWfyJMZy/Cm3fvNpYbKvR6vCBPoqbgmd5hZ1giiGt1iJ
-         QGlzGFCK+PnU3wKycWSzavTIOgKEx1DZ3zNkDD/IwemGi7qZ6jnk7AxgcTHRL8/e7G
-         V05Phbq7/nrxE7+cs0sIfmyHvOvu7xDAaGFfoo87MGRZReCA1HLg2cVwdxX/BLjt5i
-         yGaLlurK8p2+optpjpN2Ii0OQj7YzlkPh9Oia8EAI1jUlccOf/5NSil1fslEr4e5zv
-         uxMeuH7UcRdCA==
-Date:   Thu, 2 May 2019 07:43:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the clk tree
-Message-ID: <20190502074358.4966fc20@canb.auug.org.au>
+        id S1726358AbfEAVoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 17:44:23 -0400
+Received: from www62.your-server.de ([213.133.104.62]:43006 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfEAVoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 17:44:22 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hLx1R-0008PH-NM; Wed, 01 May 2019 23:44:13 +0200
+Received: from [173.228.226.134] (helo=localhost.localdomain)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hLx1R-000OV8-8R; Wed, 01 May 2019 23:44:13 +0200
+Subject: Re: [PATCH v2] bpf, x32: Fix bug for BPF_JMP | {BPF_JSGT, BPF_JSLE,
+ BPF_JSLT, BPF_JSGE}
+To:     Wang YanQing <udknight@gmail.com>, ast@kernel.org,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, tglx@linutronix.de,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190427082826.GA16311@udknight>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <aca27db2-5c16-6bf8-e601-be8b42678cd4@iogearbox.net>
+Date:   Wed, 1 May 2019 23:44:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DV0zWxCcxi5k4otIIDmjcJC"; protocol="application/pgp-signature"
+In-Reply-To: <20190427082826.GA16311@udknight>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25436/Wed May  1 09:58:19 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/DV0zWxCcxi5k4otIIDmjcJC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 04/27/2019 10:28 AM, Wang YanQing wrote:
+> The current method to compare 64-bit numbers for conditional jump is:
+> 
+> 1) Compare the high 32-bit first.
+> 
+> 2) If the high 32-bit isn't the same, then goto step 4.
+> 
+> 3) Compare the low 32-bit.
+> 
+> 4) Check the desired condition.
+> 
+> This method is right for unsigned comparison, but it is buggy for signed
+> comparison, because it does signed comparison for low 32-bit too.
+> 
+> There is only one sign bit in 64-bit number, that is the MSB in the 64-bit
+> number, it is wrong to treat low 32-bit as signed number and do the signed
+> comparison for it.
+> 
+> This patch fixes the bug and adds a testcase in selftests/bpf for such bug.
+> 
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
 
-Hi all,
-
-Commit
-
-  a048fe996b51 ("clk: imx: pllv4: add fractional-N pll support")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DV0zWxCcxi5k4otIIDmjcJC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKEx4ACgkQAVBC80lX
-0Gx/8wf+JusGDcy35pqrz8vvXerevz/daug2TWzUPo8G/be5pylAxC0XPh7sSbb2
-iKnkGLvyB7z8VPIcAzjmuw/wVNrdKxrLxR7ms5xcWrGnHQeTGHOz/BkrplBGUA+6
-KwUnpPZ/qrlh6h2KFoi3Td5/fm0B+mO2Wnf2j8uoBkOkrf0svULOMsDco6kwT09b
-QafRtyGG/g8VKAPbA55BY61upTn33NxXA1gv2WyXUO2AEqGHN2Niz7z4E/dfK9ci
-kBCExeVsubRkZMImYC16MJYYFN8RBsAdaKwukDQI2V6XVlJe6+07Mx440S4OWCJE
-fwmis57JD/9fkwXi+dkIgjOJeIhvyg==
-=hu6v
------END PGP SIGNATURE-----
-
---Sig_/DV0zWxCcxi5k4otIIDmjcJC--
+Applied, thanks!
