@@ -2,77 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E46B10EA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A442810EB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfEAVmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 17:42:24 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33171 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfEAVmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 17:42:24 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 44vX193pzMz9s9y;
-        Thu,  2 May 2019 07:42:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1556746941;
-        bh=5hiGaQoIG0uAw4xFMIcub/IVsipRRaSm2u/2wIbwaoc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RXpd2YWqol42y1AFutefbR/glDVLcZG2/ZDptlhbAHHXETJPaFaK+uXVQ/2A560AQ
-         dRqS0lmUnNvL02FhyNr69wrgtbCvL47652g+j1lXdyHZ6aVw4dQ12JswHu7b0DsQWr
-         s64fOnRGst1vFJbHe/RSctksDyYZoUq8JXhh1aS/XO2pBeyRqodwDTqeKYxoMLgjFM
-         516mN9DFp9/w4vIEgU4NEiigUafxY6p1nin+Prx0WK71dd8WzgKPeE87x+SPMKY/a1
-         YX4U+cLQRhmvDAXoI8okuz85CZNIgyLzjSHA+3Cb/3IaQwQkQeMDperQ4JUcDioEas
-         S9UwFfDzHhJzA==
-Date:   Thu, 2 May 2019 07:42:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the kbuild tree
-Message-ID: <20190502074207.01ae28ba@canb.auug.org.au>
+        id S1726139AbfEAVoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 17:44:08 -0400
+Received: from www62.your-server.de ([213.133.104.62]:42956 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfEAVoF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 17:44:05 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hLx14-0008OJ-3n; Wed, 01 May 2019 23:43:50 +0200
+Received: from [173.228.226.134] (helo=localhost.localdomain)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hLx13-000M1d-Ia; Wed, 01 May 2019 23:43:49 +0200
+Subject: Re: [PATCH] bpf, x32: Fix bug for BPF_ALU64 | BPF_NEG
+To:     Wang YanQing <udknight@gmail.com>, ast@kernel.org,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, tglx@linutronix.de,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190428023302.GA29326@udknight>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <091c2ed4-a07f-cc75-7b18-1c7cb7068652@iogearbox.net>
+Date:   Wed, 1 May 2019 23:43:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nz79D.vKLeh/Sf1bfBDs.U2"; protocol="application/pgp-signature"
+In-Reply-To: <20190428023302.GA29326@udknight>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25436/Wed May  1 09:58:19 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/nz79D.vKLeh/Sf1bfBDs.U2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 04/28/2019 04:33 AM, Wang YanQing wrote:
+> The current implementation has two errors:
+> 1: The second xor instruction will clear carry flag which
+>    is necessary for following sbb instruction.
+> 2: The select coding for sbb instruction is wrong, the coding
+>    is "sbb dreg_hi,ecx", but what we need is "sbb ecx,dreg_hi".
+> 
+> This patch rewrites the implementation and fixes the errors.
+> 
+> This patch fixes below errors reported by bpf/test_verifier in x32
+> platform when the jit is enabled:
+> "
+> 0: (b4) w1 = 4
+> 1: (b4) w2 = 4
+> 2: (1f) r2 -= r1
+> 3: (4f) r2 |= r1
+> 4: (87) r2 = -r2
+> 5: (c7) r2 s>>= 63
+> 6: (5f) r1 &= r2
+> 7: (bf) r0 = r1
+> 8: (95) exit
+> processed 9 insns (limit 131072), stack depth 0
+> 0: (b4) w1 = 4
+> 1: (b4) w2 = 4
+> 2: (1f) r2 -= r1
+> 3: (4f) r2 |= r1
+> 4: (87) r2 = -r2
+> 5: (c7) r2 s>>= 63
+> 6: (5f) r1 &= r2
+> 7: (bf) r0 = r1
+> 8: (95) exit
+> processed 9 insns (limit 131072), stack depth 0
+> ......
+> Summary: 1189 PASSED, 125 SKIPPED, 15 FAILED
+> "
+> 
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
 
-Hi Masahiro,
-
-Commit
-
-  7b6954a982e7 ("scripts: override locale from environment when running rec=
-ordmcount.pl")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nz79D.vKLeh/Sf1bfBDs.U2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKEq8ACgkQAVBC80lX
-0GwWRQf7B3SsBzdthPP+lVz35l6tnQsMF6k5txw9wWHEEZR1B6xB/8+yvMmXgrSB
-Z5LAfY4HmlqmHpzi2DvU3uZRUH2J46xmOCpTWYAFdOyUwb2Jc8kRJDCHuzJ26Qkr
-+/Cc4JlirhZ1OHrbIANuC/gXj9F5vxHJ+zekOMP6ws1ERlMw5/6RYXLkfXOY5xVm
-QJs+8beHWkRULtM4iP+lNcTdpHdGNKneO62MTA5BD0XdXpL0WHrdSsUJNSKLMC40
-/tPM8XQHxjFWpueziiUfmKoY2jm2NZuQ1gbRGlUxI0FachJ5PPOXgxoKuphRqWE/
-KLNHC7fzoGC6sUhr1yxdVqiuRdCulQ==
-=XrbI
------END PGP SIGNATURE-----
-
---Sig_/nz79D.vKLeh/Sf1bfBDs.U2--
+Applied, thanks!
