@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 375A610AF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 579F910B27
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfEAQPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:15:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48164 "EHLO
+        id S1727297AbfEAQQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:16:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48212 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbfEAQPU (ORCPT
+        with ESMTP id S1726525AbfEAQPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:15:20 -0400
+        Wed, 1 May 2019 12:15:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QPoTGxLCgA6kANSA55vLG8+JEuPteK6oE/nA+tFRi50=; b=m9sDxFpmhA5G6ORIpQB5z7NMNW
-        iPKfze4CTDE1TL3bb5DImS4EM+ISzlegCodUB28YBBFY2q4prHtnNVgSIQdAVUPfeu2pdnICT5BN3
-        BBG11Dn9a6TPhr7KR3BqBHW4RLVRzb72y7i/JQo6YNZhCfrp11L59nest0QXLWYRr9xWHfElHzMfa
-        OooAeeTsaY3Nt9muU5tQuPXxczDYYbESyhsqw6M/STe5sWQQeOauUNZdmoHOv49IKm6o4B2NhIcyV
-        GYf6jnpgI2yDTkcHrOxX/wMebg+jH3V6UoS9fXsQXbXz4VKCtpFJjthOJacbIeTf80R5KHIkTA3ZK
-        0G79U73w==;
+        bh=uE0SUF9R6HRjOzvlq5LUiCSk/9QnkZULKelbq3k3kpo=; b=cfaw2NiUXX6xQhxKdoTuUyb7fI
+        +4t8nfMW/atwwy8AbpP0Nwow+GT/aev5KYTawmMw8xfPKTbY1ISzBk53AMlesYJaysDgvi/Eu4okE
+        Id6B02Qo390DpKSclladcU3VcqAGP5Ou+v277Z7mufkyuUhU838WMnwpAmJC5OPdRso69SRzdOMXl
+        APrlR2226KUN4tQT2AWGxEJFEPEooFJ+L/1UYi1BU4Q8nEqApuN1dQPYAy+ghspYe+xhe+kVaA5jB
+        MyR5PjwQKdrHRUZ94XIyA/gIp2hrr4UY+89Roh7KZYjMElSJsvPSWZM4ha3JxZsCs8FpMbAHju1Bo
+        XXLMer6w==;
 Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLrt3-0005eD-Lf; Wed, 01 May 2019 16:15:13 +0000
+        id 1hLrt5-0005eQ-De; Wed, 01 May 2019 16:15:15 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
@@ -37,9 +37,9 @@ Cc:     Hannes Reinecke <hare@suse.de>, Lee Duncan <lduncan@suse.com>,
         =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
         linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
         osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH 12/24] libfc: switch to SPDX tags
-Date:   Wed,  1 May 2019 12:14:05 -0400
-Message-Id: <20190501161417.32592-13-hch@lst.de>
+Subject: [PATCH 13/24] libfcoe: switch to SPDX tags
+Date:   Wed,  1 May 2019 12:14:06 -0400
+Message-Id: <20190501161417.32592-14-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190501161417.32592-1-hch@lst.de>
 References: <20190501161417.32592-1-hch@lst.de>
@@ -55,33 +55,22 @@ Use the the GPLv2 SPDX tag instead of verbose boilerplate text.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/libfc/fc_disc.c  | 14 +-------------
- drivers/scsi/libfc/fc_elsct.c | 14 +-------------
- drivers/scsi/libfc/fc_exch.c  | 14 +-------------
- drivers/scsi/libfc/fc_fcp.c   | 14 +-------------
- drivers/scsi/libfc/fc_frame.c | 14 +-------------
- drivers/scsi/libfc/fc_libfc.c | 14 +-------------
- drivers/scsi/libfc/fc_libfc.h | 14 +-------------
- drivers/scsi/libfc/fc_lport.c | 14 +-------------
- drivers/scsi/libfc/fc_npiv.c  | 14 +-------------
- drivers/scsi/libfc/fc_rport.c | 14 +-------------
- include/scsi/fc/fc_encaps.h   | 14 +-------------
- include/scsi/fc/fc_fc2.h      | 14 +-------------
- include/scsi/fc/fc_fcoe.h     | 14 +-------------
- include/scsi/fc/fc_fcp.h      | 14 +-------------
- include/scsi/fc/fc_fip.h      | 14 +-------------
- include/scsi/fc/fc_ms.h       | 17 +++--------------
- include/scsi/libfc.h          | 14 +-------------
- 17 files changed, 19 insertions(+), 222 deletions(-)
+ drivers/scsi/fcoe/fcoe.c           | 14 +-------------
+ drivers/scsi/fcoe/fcoe.h           | 14 +-------------
+ drivers/scsi/fcoe/fcoe_ctlr.c      | 14 +-------------
+ drivers/scsi/fcoe/fcoe_sysfs.c     | 14 +-------------
+ drivers/scsi/fcoe/fcoe_transport.c | 14 +-------------
+ include/scsi/libfcoe.h             | 14 +-------------
+ 6 files changed, 6 insertions(+), 78 deletions(-)
 
-diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
-index f969a71348ef..4b00477e51e7 100644
---- a/drivers/scsi/libfc/fc_disc.c
-+++ b/drivers/scsi/libfc/fc_disc.c
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index 8ba8862d3292..4ee69560cc8c 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
 @@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright(c) 2007 - 2008 Intel Corporation. All rights reserved.
+  * Copyright(c) 2007 - 2009 Intel Corporation. All rights reserved.
   *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
@@ -99,139 +88,10 @@ index f969a71348ef..4b00477e51e7 100644
   * Maintained at www.Open-FCoE.org
   */
  
-diff --git a/drivers/scsi/libfc/fc_elsct.c b/drivers/scsi/libfc/fc_elsct.c
-index 6384a98048af..8e033facded7 100644
---- a/drivers/scsi/libfc/fc_elsct.c
-+++ b/drivers/scsi/libfc/fc_elsct.c
-@@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(c) 2008 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
-index 42bcf7f3a0f9..025cd2ff9f65 100644
---- a/drivers/scsi/libfc/fc_exch.c
-+++ b/drivers/scsi/libfc/fc_exch.c
-@@ -1,21 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  * Copyright(c) 2008 Red Hat, Inc.  All rights reserved.
-  * Copyright(c) 2008 Mike Christie
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
-index b1bd283be51c..0e619e7481db 100644
---- a/drivers/scsi/libfc/fc_fcp.c
-+++ b/drivers/scsi/libfc/fc_fcp.c
-@@ -1,21 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  * Copyright(c) 2008 Red Hat, Inc.  All rights reserved.
-  * Copyright(c) 2008 Mike Christie
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/drivers/scsi/libfc/fc_frame.c b/drivers/scsi/libfc/fc_frame.c
-index 0382ac06906e..56c390a365b7 100644
---- a/drivers/scsi/libfc/fc_frame.c
-+++ b/drivers/scsi/libfc/fc_frame.c
-@@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/drivers/scsi/libfc/fc_libfc.c b/drivers/scsi/libfc/fc_libfc.c
-index dbadbc81b24b..9a6927d17941 100644
---- a/drivers/scsi/libfc/fc_libfc.c
-+++ b/drivers/scsi/libfc/fc_libfc.c
-@@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(c) 2009 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/drivers/scsi/libfc/fc_libfc.h b/drivers/scsi/libfc/fc_libfc.h
-index b74189d89322..01269b66e625 100644
---- a/drivers/scsi/libfc/fc_libfc.h
-+++ b/drivers/scsi/libfc/fc_libfc.h
+diff --git a/drivers/scsi/fcoe/fcoe.h b/drivers/scsi/fcoe/fcoe.h
+index 6aa4820f6cc0..15ee5a83ec04 100644
+--- a/drivers/scsi/fcoe/fcoe.h
++++ b/drivers/scsi/fcoe/fcoe.h
 @@ -1,19 +1,7 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
@@ -253,14 +113,15 @@ index b74189d89322..01269b66e625 100644
   * Maintained at www.Open-FCoE.org
   */
  
-diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
-index ff943f477d6f..1db7ef904ab7 100644
---- a/drivers/scsi/libfc/fc_lport.c
-+++ b/drivers/scsi/libfc/fc_lport.c
-@@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+index 7dc4ffa24430..d2d17ed113ed 100644
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -1,20 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
+  * Copyright (c) 2008-2009 Cisco Systems, Inc.  All rights reserved.
+  * Copyright (c) 2009 Intel Corporation.  All rights reserved.
   *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
@@ -278,14 +139,14 @@ index ff943f477d6f..1db7ef904ab7 100644
   * Maintained at www.Open-FCoE.org
   */
  
-diff --git a/drivers/scsi/libfc/fc_npiv.c b/drivers/scsi/libfc/fc_npiv.c
-index c168321b560e..fa1d585b9041 100644
---- a/drivers/scsi/libfc/fc_npiv.c
-+++ b/drivers/scsi/libfc/fc_npiv.c
+diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
+index c3dcbdc3aa64..b6a3bbe9ee2b 100644
+--- a/drivers/scsi/fcoe/fcoe_sysfs.c
++++ b/drivers/scsi/fcoe/fcoe_sysfs.c
 @@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright(c) 2009 Intel Corporation. All rights reserved.
+  * Copyright(c) 2011 - 2012 Intel Corporation. All rights reserved.
   *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
@@ -303,14 +164,14 @@ index c168321b560e..fa1d585b9041 100644
   * Maintained at www.Open-FCoE.org
   */
  
-diff --git a/drivers/scsi/libfc/fc_rport.c b/drivers/scsi/libfc/fc_rport.c
-index dfba4921b265..48273b5ee16d 100644
---- a/drivers/scsi/libfc/fc_rport.c
-+++ b/drivers/scsi/libfc/fc_rport.c
+diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
+index 29fe3426f9f2..0d5363ee8ecb 100644
+--- a/drivers/scsi/fcoe/fcoe_transport.c
++++ b/drivers/scsi/fcoe/fcoe_transport.c
 @@ -1,19 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright(c) 2007 - 2008 Intel Corporation. All rights reserved.
+  * Copyright(c) 2008 - 2011 Intel Corporation. All rights reserved.
   *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
@@ -328,163 +189,15 @@ index dfba4921b265..48273b5ee16d 100644
   * Maintained at www.Open-FCoE.org
   */
  
-diff --git a/include/scsi/fc/fc_encaps.h b/include/scsi/fc/fc_encaps.h
-index f180c3e16220..a7bded5e1fe5 100644
---- a/include/scsi/fc/fc_encaps.h
-+++ b/include/scsi/fc/fc_encaps.h
-@@ -1,19 +1,7 @@
+diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
+index bb8092fa1e36..ecf3e5978166 100644
+--- a/include/scsi/libfcoe.h
++++ b/include/scsi/libfcoe.h
+@@ -1,20 +1,8 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- #ifndef _FC_ENCAPS_H_
-diff --git a/include/scsi/fc/fc_fc2.h b/include/scsi/fc/fc_fc2.h
-index 0b2671431305..fa95de50f7dc 100644
---- a/include/scsi/fc/fc_fc2.h
-+++ b/include/scsi/fc/fc_fc2.h
-@@ -1,19 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/include/scsi/fc/fc_fcoe.h b/include/scsi/fc/fc_fcoe.h
-index d5dcd6062815..e6c086c06777 100644
---- a/include/scsi/fc/fc_fcoe.h
-+++ b/include/scsi/fc/fc_fcoe.h
-@@ -1,19 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/include/scsi/fc/fc_fcp.h b/include/scsi/fc/fc_fcp.h
-index 9c8702942b61..35b07e83b9bd 100644
---- a/include/scsi/fc/fc_fcp.h
-+++ b/include/scsi/fc/fc_fcp.h
-@@ -1,19 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- *
-  * Maintained at www.Open-FCoE.org
-  */
- 
-diff --git a/include/scsi/fc/fc_fip.h b/include/scsi/fc/fc_fip.h
-index 9710254fd98c..e0a3423ba09e 100644
---- a/include/scsi/fc/fc_fip.h
-+++ b/include/scsi/fc/fc_fip.h
-@@ -1,18 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright 2008 Cisco Systems, Inc.  All rights reserved.
-- *
-- * This program is free software; you may redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-- * SOFTWARE.
-  */
- #ifndef _FC_FIP_H_
- #define _FC_FIP_H_
-diff --git a/include/scsi/fc/fc_ms.h b/include/scsi/fc/fc_ms.h
-index f52b921b5c70..78c82e437bb2 100644
---- a/include/scsi/fc/fc_ms.h
-+++ b/include/scsi/fc/fc_ms.h
-@@ -1,17 +1,6 @@
--/* * Copyright(c) 2011 Intel Corporation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright(c) 2011 Intel Corporation. All rights reserved.
-  *
-  * Maintained at www.Open-FCoE.org
-  */
-diff --git a/include/scsi/libfc.h b/include/scsi/libfc.h
-index 2109844be53d..76cb9192319a 100644
---- a/include/scsi/libfc.h
-+++ b/include/scsi/libfc.h
-@@ -1,19 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(c) 2007 Intel Corporation. All rights reserved.
+  * Copyright (c) 2008-2009 Cisco Systems, Inc.  All rights reserved.
+  * Copyright (c) 2007-2008 Intel Corporation.  All rights reserved.
   *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
