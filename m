@@ -2,55 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 066A910483
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B91104C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfEAEYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 00:24:46 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36901 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfEAEYo (ORCPT
+        id S1726465AbfEAEZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 00:25:37 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50873 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfEAEYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 00:24:44 -0400
-Received: by mail-io1-f67.google.com with SMTP id a23so14113561iot.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 21:24:44 -0700 (PDT)
+        Wed, 1 May 2019 00:24:45 -0400
+Received: by mail-it1-f196.google.com with SMTP id q14so8375519itk.0;
+        Tue, 30 Apr 2019 21:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=aWDs9PCEBA88ORBTKQ0Gcg8/cpkSrRQa+GNVhlLVMRk=;
-        b=Ug9gHnyWoVgXhvTmE46tDYEzaa6cRpPEExIw0YBhOkLHjfLwfYZDg283on3GCX3v5s
-         UPam6H8AW55/ixZmPYig7uLjVvd+8+bTwEYOrzQ6KnBp9Pkzh7ROF+Bv03GdOAA8JxHO
-         Qxq2/N8F2NFp/nG5yxWvqChmY6Ba3weqPpFM5/z7IBiBCybrPqtubwcpFqU5xRu6QFVZ
-         ZzEjKbGOTiLBugEnJNKzGaY1qH93tfQJf69Nto4dj4cTdh5jfKeZu439GjXc9pNeGT06
-         LE+aggIzTNa0c9I0fCiiL8sKQUxRrCv8mLfxqIY+XnljSVsqzY6pSe88mmg4cGfumK0m
-         w/pQ==
+        bh=ovDsv1zygxqsz+aM2MZ2wBAE8qWaN9gCYdGAVIqjCpQ=;
+        b=OraoV+8GUOkNSgX84+Q8zD9nlTMzPGH3E8/IryUIAt+Y2MMkRywldq77T122sv6aAb
+         7QiiLd0/8qUfgN1SEZDfH0AOI0ooTe5Go59O8EujRVF3vteCkeqtoXCQ0G6Kmc3kO8zI
+         t24N9kyAhQDL9t8nUR9nCCy0k+wc7aF3u7gsIQUeqZZqHK5cozaqVM9kcZ3S/4jYWjnV
+         GkGZ9e+E5Q7W1KK61E7vQKyMOafy+I3FcCoddQrNlHbVqtWj8R7XpN0eA3daeH3wXy0+
+         d2JXCj/85DXVukB5pPA5ePft+2uHphvd7EofnAMd8eXqUtRRwcRJv7/yTl8jVFFDXiEO
+         gqNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=aWDs9PCEBA88ORBTKQ0Gcg8/cpkSrRQa+GNVhlLVMRk=;
-        b=URi5Te4qvqgHNxkZLoRMYTpi89L8xHz+EDHvT7AeUiTzjmfbSgRYM08XronbTB2pix
-         q9gjpT2AtyGK676dcwNcazMf9Dy3DdQhrWvu6bfjy0pFjrbFZOv8I/12pWp37fScrY2t
-         Q0UJ/1UKv/ZfVTwovhIM5GTBM2UxyTiWhKkkakv4vf2uH3/AVIDF7k+Xv+ViGK4tV7CS
-         ZJHwTrCemDUABHatJtlMuvWSLKqcGBHGwBPc21/BzWQAyZ2LBxaUX0uynN2QC2xs+bpL
-         p/68kXrQZU+cJUOMucHvdQ9c0lUG+OC050KBv2cCmhkPu62Fq+HExEcqIC+Rsy4+MRoh
-         4rDw==
-X-Gm-Message-State: APjAAAVk92cfJjY0hPGQNmVL/P5wj3VP27XOJdodt1ODcnGxEEm3y+DI
-        YJ/TOQ7KbzDnaBJJgB+53Co=
-X-Google-Smtp-Source: APXvYqwGf+0LgaZ0NClpxojbk9QUHOaMJV8mpk/Qebauv4BR5B+UzZIvJBwPcCVsiGeYNeRQ/tey6w==
-X-Received: by 2002:a5d:9d06:: with SMTP id j6mr1985045ioj.85.1556684683747;
-        Tue, 30 Apr 2019 21:24:43 -0700 (PDT)
+        bh=ovDsv1zygxqsz+aM2MZ2wBAE8qWaN9gCYdGAVIqjCpQ=;
+        b=TV1EQYp0GdNqEvM2/5AMmWCN26D6mkanMbtyFKdKciBLLxreJsQYg4pj9IVPqHpghO
+         +RGbiFrkSv1ZDys8tTjc3RIp1Gd0jQjBGIV56UkOYqN8MdoxNN/IixPo9hHN3b26AT07
+         g/oizWlC7174J/hp2rr+rVW6/PIjIsS8dLUO36zx3vuWShAi13lSo56Be2bHzouxEbdJ
+         S6G+BdOXugf8x+laOS1cBOG+hJv05L7irkqc9Hhw05O8JzNItCEnpMwMMVJhy/ivb4io
+         LTcOT7ii5dkEBOiFNlARr6BjUMhGi3rFJHkYIbwoNuroM71nGCHZZQpQagZ88iQdFWl2
+         ZxFQ==
+X-Gm-Message-State: APjAAAUv5R46+VeOQVesVpmV+u2HWbLJXCAGA7JkmCfAvb2QWuKm0xjg
+        r49cc/LJcOJbGOWhwOfZTg4=
+X-Google-Smtp-Source: APXvYqzfQqSMdvhgAbICOZbG7illtwnkA1ltAuo7YpHuAsWy0ALADXLXHvwGf4zsxF+vcNGzLRQLyQ==
+X-Received: by 2002:a24:f8c7:: with SMTP id a190mr6256531ith.72.1556684684994;
+        Tue, 30 Apr 2019 21:24:44 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.42
+        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 21:24:43 -0700 (PDT)
+        Tue, 30 Apr 2019 21:24:44 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
-Subject: [PATCH 08/18] x86 topology: Define topology_logical_die_id()
-Date:   Wed,  1 May 2019 00:24:17 -0400
-Message-Id: <c836939fb740197cb4fe6f7c025cbd91b08c359d.1556657368.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Subject: [PATCH 09/18] powercap/intel_rapl: Simplify rapl_find_package()
+Date:   Wed,  1 May 2019 00:24:18 -0400
+Message-Id: <b7a7b6e72e76510dc8dedb3e1b8b20de7cdca432.1556657368.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
@@ -61,150 +62,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Len Brown <len.brown@intel.com>
+From: Zhang Rui <rui.zhang@intel.com>
 
-Define topology_logical_die_id() ala
-existing topology_logical_package_id()
+Syntax only, no functional or semantic change.
 
-Tested-by: Zhang Rui <rui.zhang@intel.com>
+Simplify how the code to discover a package is called.
+Rename find_package_by_id() to rapl_find_package_domain()
+
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Len Brown <len.brown@intel.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: linux-pm@vger.kernel.org
 ---
- arch/x86/include/asm/processor.h |  1 +
- arch/x86/include/asm/topology.h  |  5 ++++
- arch/x86/kernel/cpu/common.c     |  1 +
- arch/x86/kernel/smpboot.c        | 45 ++++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+)
+ drivers/powercap/intel_rapl.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 5f45488b1a9d..def963d0b805 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -118,6 +118,7 @@ struct cpuinfo_x86 {
- 	/* Core id: */
- 	u16			cpu_core_id;
- 	u16			cpu_die_id;
-+	u16			logical_die_id;
- 	/* Index into per_cpu list: */
- 	u16			cpu_index;
- 	u32			microcode;
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 3777dbe9c0ff..9de16b4f6023 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -106,6 +106,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
+diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
+index 4347f15165f8..3c3c0c23180b 100644
+--- a/drivers/powercap/intel_rapl.c
++++ b/drivers/powercap/intel_rapl.c
+@@ -264,8 +264,9 @@ static struct powercap_control_type *control_type; /* PowerCap Controller */
+ static struct rapl_domain *platform_rapl_domain; /* Platform (PSys) domain */
  
- #define topology_logical_package_id(cpu)	(cpu_data(cpu).logical_proc_id)
- #define topology_physical_package_id(cpu)	(cpu_data(cpu).phys_proc_id)
-+#define topology_logical_die_id(cpu)		(cpu_data(cpu).logical_die_id)
- #define topology_die_id(cpu)			(cpu_data(cpu).cpu_die_id)
- #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
- 
-@@ -131,13 +132,17 @@ static inline int topology_max_smt_threads(void)
- }
- 
- int topology_update_package_map(unsigned int apicid, unsigned int cpu);
-+int topology_update_die_map(unsigned int dieid, unsigned int cpu);
- int topology_phys_to_logical_pkg(unsigned int pkg);
-+int topology_phys_to_logical_die(unsigned int die, unsigned int cpu);
- bool topology_is_primary_thread(unsigned int cpu);
- bool topology_smt_supported(void);
- #else
- #define topology_max_packages()			(1)
- static inline int
- topology_update_package_map(unsigned int apicid, unsigned int cpu) { return 0; }
-+static inline int
-+topology_update_die_map(unsigned int dieid, unsigned int cpu) { return 0; }
- static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
- static inline int topology_phys_to_logical_die(unsigned int die,
- 		unsigned int cpu) { return 0; }
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index cb28e98a0659..24f96c9771af 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1285,6 +1285,7 @@ static void validate_apic_and_package_id(struct cpuinfo_x86 *c)
- 		       cpu, apicid, c->initial_apicid);
- 	}
- 	BUG_ON(topology_update_package_map(c->phys_proc_id, cpu));
-+	BUG_ON(topology_update_die_map(c->cpu_die_id, cpu));
- #else
- 	c->logical_proc_id = 0;
- #endif
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 05f9cfdddffd..a114375e14f7 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -101,6 +101,7 @@ EXPORT_PER_CPU_SYMBOL(cpu_info);
- unsigned int __max_logical_packages __read_mostly;
- EXPORT_SYMBOL(__max_logical_packages);
- static unsigned int logical_packages __read_mostly;
-+static unsigned int logical_die __read_mostly;
- 
- /* Maximum number of SMT threads on any online core */
- int __read_mostly __max_smt_threads = 1;
-@@ -302,6 +303,26 @@ int topology_phys_to_logical_pkg(unsigned int phys_pkg)
- 	return -1;
- }
- EXPORT_SYMBOL(topology_phys_to_logical_pkg);
-+/**
-+ * topology_phys_to_logical_die - Map a physical die id to logical
-+ *
-+ * Returns logical die id or -1 if not found
-+ */
-+int topology_phys_to_logical_die(unsigned int die_id, unsigned int cur_cpu)
-+{
-+	int cpu;
-+	int proc_id = cpu_data(cur_cpu).phys_proc_id;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct cpuinfo_x86 *c = &cpu_data(cpu);
-+
-+		if (c->initialized && c->cpu_die_id == die_id &&
-+		    c->phys_proc_id == proc_id)
-+			return c->logical_die_id;
-+	}
-+	return -1;
-+}
-+EXPORT_SYMBOL(topology_phys_to_logical_die);
- 
- /**
-  * topology_update_package_map - Update the physical to logical package map
-@@ -326,6 +347,29 @@ int topology_update_package_map(unsigned int pkg, unsigned int cpu)
- 	cpu_data(cpu).logical_proc_id = new;
- 	return 0;
- }
-+/**
-+ * topology_update_die_map - Update the physical to logical die map
-+ * @die:	The die id as retrieved via CPUID
-+ * @cpu:	The cpu for which this is updated
-+ */
-+int topology_update_die_map(unsigned int die, unsigned int cpu)
-+{
-+	int new;
-+
-+	/* Already available somewhere? */
-+	new = topology_phys_to_logical_die(die, cpu);
-+	if (new >= 0)
-+		goto found;
-+
-+	new = logical_die++;
-+	if (new != die) {
-+		pr_info("CPU %u Converting physical %u to logical die %u\n",
-+			cpu, die, new);
-+	}
-+found:
-+	cpu_data(cpu).logical_die_id = new;
-+	return 0;
-+}
- 
- void __init smp_store_boot_cpu_info(void)
+ /* caller to ensure CPU hotplug lock is held */
+-static struct rapl_package *find_package_by_id(int id)
++static struct rapl_package *rapl_find_package_domain(int cpu)
  {
-@@ -335,6 +379,7 @@ void __init smp_store_boot_cpu_info(void)
- 	*c = boot_cpu_data;
- 	c->cpu_index = id;
- 	topology_update_package_map(c->phys_proc_id, id);
-+	topology_update_die_map(c->cpu_die_id, id);
- 	c->initialized = true;
++	int id = topology_physical_package_id(cpu);
+ 	struct rapl_package *rp;
+ 
+ 	list_for_each_entry(rp, &rapl_packages, plist) {
+@@ -1300,7 +1301,7 @@ static int __init rapl_register_psys(void)
+ 	rd->rpl[0].name = pl1_name;
+ 	rd->rpl[1].prim_id = PL2_ENABLE;
+ 	rd->rpl[1].name = pl2_name;
+-	rd->rp = find_package_by_id(0);
++	rd->rp = rapl_find_package_domain(0);
+ 
+ 	power_zone = powercap_register_zone(&rd->power_zone, control_type,
+ 					    "psys", NULL,
+@@ -1456,8 +1457,9 @@ static void rapl_remove_package(struct rapl_package *rp)
  }
+ 
+ /* called from CPU hotplug notifier, hotplug lock held */
+-static struct rapl_package *rapl_add_package(int cpu, int pkgid)
++static struct rapl_package *rapl_add_package(int cpu)
+ {
++	int id = topology_physical_package_id(cpu);
+ 	struct rapl_package *rp;
+ 	int ret;
+ 
+@@ -1466,7 +1468,7 @@ static struct rapl_package *rapl_add_package(int cpu, int pkgid)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	/* add the new package to the list */
+-	rp->id = pkgid;
++	rp->id = id;
+ 	rp->lead_cpu = cpu;
+ 
+ 	/* check if the package contains valid domains */
+@@ -1497,12 +1499,11 @@ static struct rapl_package *rapl_add_package(int cpu, int pkgid)
+  */
+ static int rapl_cpu_online(unsigned int cpu)
+ {
+-	int pkgid = topology_physical_package_id(cpu);
+ 	struct rapl_package *rp;
+ 
+-	rp = find_package_by_id(pkgid);
++	rp = rapl_find_package_domain(cpu);
+ 	if (!rp) {
+-		rp = rapl_add_package(cpu, pkgid);
++		rp = rapl_add_package(cpu);
+ 		if (IS_ERR(rp))
+ 			return PTR_ERR(rp);
+ 	}
+@@ -1512,11 +1513,10 @@ static int rapl_cpu_online(unsigned int cpu)
+ 
+ static int rapl_cpu_down_prep(unsigned int cpu)
+ {
+-	int pkgid = topology_physical_package_id(cpu);
+ 	struct rapl_package *rp;
+ 	int lead_cpu;
+ 
+-	rp = find_package_by_id(pkgid);
++	rp = rapl_find_package_domain(cpu);
+ 	if (!rp)
+ 		return 0;
  
 -- 
 2.18.0-rc0
