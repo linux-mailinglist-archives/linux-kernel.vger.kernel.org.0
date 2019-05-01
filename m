@@ -2,104 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEFBD10D02
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 21:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F01FB10CF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 20:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfEATF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 15:05:59 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44491 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfEATF7 (ORCPT
+        id S1726196AbfEAS7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 14:59:32 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40010 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfEAS7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 15:05:59 -0400
-Received: by mail-lj1-f194.google.com with SMTP id c6so9764317lji.11
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sel235hwbH6X1YvFcp9cC7JRXnS2M4BkT9uwVxDW2CQ=;
-        b=hKJ92qX+WBtDkwAkIRCoWA4GuXtRFgmwNS/x4HHoRL1Cph8V9Ovoot3NqLu+fqUiqM
-         Qth2QafTxUxf+Pm3vpTn95XuskqJEgEpvVEeBMW2fZtoLYrabbeAmSNI1KU3JXjTPrP/
-         nm6QVbnOD2fawZyDG5MwCG7W040aS+7zbGhdM=
+        Wed, 1 May 2019 14:59:32 -0400
+Received: by mail-oi1-f195.google.com with SMTP id y64so8991555oia.7
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 11:59:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sel235hwbH6X1YvFcp9cC7JRXnS2M4BkT9uwVxDW2CQ=;
-        b=DAG9lcDs0MbewIo0Aq5N8LAS6v49peYGJPFLgtOYw6KM31pTu1wHtkYQyjKc/AqKJZ
-         TeXMLaf2wZdi7NhpnLpf0hPAJRG+mR1ityFDgOvz0a4HeB7aVjN+dKBFH607F9jfWlhO
-         yr6AFVpU10hgYURKtrCW6uzdCaQStO36bHnLIRduUlHhQAv3KW2F8VEBWcOteaM404pw
-         HkZhcl8nAwzKbaWd3U/Ga/PpwClKseo6gm3/OOVMOiwVqP7BYd/0SKDANihKnw42oUTb
-         D6rVLMJa/5BrKc13+dLSOOLZbq+iVv/6S7nVnQzosdDIQ8k5xuUf6kH7g4Y8oW8v4NW/
-         1YBA==
-X-Gm-Message-State: APjAAAWutria99B5vuIL0qIuAk/w10Ksz2i9rVZiN4JEEFpS0JAChGKd
-        i1TSW2PAveJ1KNkknzdbAE7MPYpJk58=
-X-Google-Smtp-Source: APXvYqxzUiy+YK1byj6WXWMe+eoK7mRECKF5Vk9jw+aIx7HD6qus5VA+nedrWL//sYZZpSmt9OYx3w==
-X-Received: by 2002:a2e:9746:: with SMTP id f6mr4105105ljj.127.1556737556782;
-        Wed, 01 May 2019 12:05:56 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id t7sm8229632ljj.87.2019.05.01.12.05.56
+        bh=z+2ax8ZyIZztFylyBB7zkL9d45BwY6plRBtZFuq3Y0w=;
+        b=oyJ09WdWiVE0ksKnaDfs0Z4mLFfDvEXJw6m608TVk1sKMmop0OjokhympI+55/xnLo
+         lAXc9+Xx71OTCA30IlLTbymxlotbE2lUGrGx0Gui/mDqchB5iT7KyWbhL7c5npaalhgG
+         HFhTaP3ouDosEdzpld7AiDIxcLQSJwhjoSe9uACpeJrElf7MgWiIl6rKPqw7TQdXkxbz
+         HyWBiBv7TfKB1WP+b/4m4/89hajS/fm9mr+IdvbuZvMT7RUpUdT43a/KOuGpKWlQK7Ir
+         cGpJX8JH3WWF5n6tYd5TsaHUwtuDan/dAo6bC1VfE/rtqJOQuZpDl+h8iAsesKCz188v
+         FTfw==
+X-Gm-Message-State: APjAAAXDZIKGBq/M+grnoeYc5XseQCPBfRLN6sUeK7lteVAoTUssOI70
+        eevV02ccgir0kFzL1wPMj7Apymesikw=
+X-Google-Smtp-Source: APXvYqxuF4ZrOgKgDN0G9B9VnqV2zgqYYxKIGoLFBWyyXfd2L57ctRqtiDPclK1WMovCbQvG0Z7shg==
+X-Received: by 2002:aca:4c51:: with SMTP id z78mr5464667oia.106.1556737171215;
+        Wed, 01 May 2019 11:59:31 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id p1sm16039834otl.75.2019.05.01.11.59.30
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 12:05:56 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id u17so68082lfi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 12:05:56 -0700 (PDT)
-X-Received: by 2002:ac2:547a:: with SMTP id e26mr18577958lfn.148.1556737161870;
- Wed, 01 May 2019 11:59:21 -0700 (PDT)
+        Wed, 01 May 2019 11:59:30 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id t184so12006422oie.11
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 11:59:30 -0700 (PDT)
+X-Received: by 2002:aca:d984:: with SMTP id q126mr7776664oig.108.1556737169867;
+ Wed, 01 May 2019 11:59:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190501113238.0ab3f9dd@gandalf.local.home> <CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com>
- <20190501145200.6c095d7f@oasis.local.home>
-In-Reply-To: <20190501145200.6c095d7f@oasis.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 May 2019 11:59:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgMZJeMCW5MA25WFJZeYYWCOWr0nGaHhJ7kg+zsu5FY_A@mail.gmail.com>
-Message-ID: <CAHk-=wgMZJeMCW5MA25WFJZeYYWCOWr0nGaHhJ7kg+zsu5FY_A@mail.gmail.com>
-Subject: Re: [RFC][PATCH v3] ftrace/x86_64: Emulate call function while
- updating in breakpoint handler
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+References: <1554475256-4805-1-git-send-email-roy.pledge@nxp.com>
+In-Reply-To: <1554475256-4805-1-git-send-email-roy.pledge@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Wed, 1 May 2019 13:59:18 -0500
+X-Gmail-Original-Message-ID: <CADRPPNSLGYDGnhVfJAYk66=bP2oZVtJiynwwgLiKiAKeSseR7w@mail.gmail.com>
+Message-ID: <CADRPPNSLGYDGnhVfJAYk66=bP2oZVtJiynwwgLiKiAKeSseR7w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] soc: fsl: dpio: Add support for memory backed
+ QBMan portals
+To:     Roy Pledge <roy.pledge@nxp.com>
+Cc:     "stuyoder@gmail.com" <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 1, 2019 at 11:52 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, Apr 5, 2019 at 9:42 AM Roy Pledge <roy.pledge@nxp.com> wrote:
 >
-> I got Peter's patch working. Here it is. What do you think?
+> This patch series adds support for QBMan memory backed portals which is
+> avaialble in devices containing QBMan verion 5.0 and above (for example
+> NXP's LX2160A SoC).
+>
+> Memory backed portals can be mapped as normal cacheable/shareable memory
+> which allows the portals to migrate between cores without needing manual
+> cache manipulations by the CPU.
+>
+> The patches add support for the new portal attributes in the fsl-mc bus
+> drivers as well as modifying the QBMan driver to use the new portal read
+> trigger mechanism.
+>
+> Changes since v1:
+>  * Support older DPRC command in case of older MC firmware
+>  * Fix issue with padding in command
+>
+>
+> Roy Pledge (2):
+>   bus: mc-bus: Add support for mapping shareable portals
+>   soc: fsl: dpio: Add support for memory backed QBMan portals
 
-I can tell from just looking at it for five seconds that at least the
-32-bit case is buggy.
+Both applied for next.  Thanks.
 
-You can't look at CS(%rsp) without first also checking that you're not
-coming from vm86 mode.
-
-But other than that I guess it does end up being pretty simple.
-
-             Linus
+>
+>  drivers/bus/fsl-mc/dprc.c           |  30 +++++++-
+>  drivers/bus/fsl-mc/fsl-mc-bus.c     |  15 +++-
+>  drivers/bus/fsl-mc/fsl-mc-private.h |  17 ++++-
+>  drivers/soc/fsl/dpio/dpio-driver.c  |  23 ++++--
+>  drivers/soc/fsl/dpio/qbman-portal.c | 148 ++++++++++++++++++++++++++++++------
+>  drivers/soc/fsl/dpio/qbman-portal.h |   5 ++
+>  6 files changed, 199 insertions(+), 39 deletions(-)
+>
+> --
+> 2.7.4
+>
