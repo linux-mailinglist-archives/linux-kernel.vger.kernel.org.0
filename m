@@ -2,185 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7355710FB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 01:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2302411020
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 01:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfEAXDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 19:03:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35312 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfEAXDp (ORCPT
+        id S1726186AbfEAXMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 19:12:44 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44978 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfEAXMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 19:03:45 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f7so581318wrs.2;
-        Wed, 01 May 2019 16:03:44 -0700 (PDT)
+        Wed, 1 May 2019 19:12:44 -0400
+Received: by mail-pl1-f193.google.com with SMTP id l2so101509plt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 16:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9dwIam3UIpcq7Xll5Xc0hLS4by0pOvzP1sRyP0/58rI=;
-        b=pkLdASeUDAmknYB3Kxj2XChtbSOk7YvC+ym+Adfae/F1s4GyQzjLAcCBRbc8ENHwPe
-         xQr/hvTsUrssIY2EozTWEOQCjZEz+BamJvgs0V3VfV+rP76+E5HYm7i4ZAH7JaVEAPA+
-         ZeK1MjzNhIB1zVIN0WJ9AJdUXbwMkY6SU5f/UMjn6zaSuntjVELPgzofGg34gKlRx7D7
-         eSwWirk9ShUgt8pUyhtxigNHlw9Soo0C4VcJXAPSbesg0UTbtG18o4knOmTX8o6k5YT1
-         2FgNBmbVstfyO2vXy2j1VEn4Xi7AD6n2aoLQZnV5K4T1VHJelDx56KBsx+wN4Md6Ek+a
-         QOFA==
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=xkHY0Vk0CxJ06DIPyqIQG5n7Y+l7wmOyvhLV4dHGd9M=;
+        b=C9jW4+Wf+dG9vgT4hlyOesCrC6DT31u4n5QFfZ4h83VmJwVBANCoa2/4T7aNfba6O/
+         Knev24dh6CyFTdVrpgU/LF1LvjWfogUqgxcQpxw0jJknCi09EFFhBTFVnDBhZ1IIUjjP
+         SWfdvb4gNYZInR0Poe2Cc0xZY0C+qsmoyhn/oMeSlpZ9MEor77ihhqx2bbsWLDFChWCi
+         6n8XsSL6uEnRD7wSNTbC62rw8zEdy/XYk0Ri+YLGy3jMA1vuZ8JV7tMEUOkBTg8oqI2e
+         0c4Cu4BdaxiN5JFG+g5yZcwZThco7XvxoXDbdR0NICQ1jIJ6yCiNagCiXWDb1oKz0UEe
+         bNNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9dwIam3UIpcq7Xll5Xc0hLS4by0pOvzP1sRyP0/58rI=;
-        b=BJJFdGgleFZX/Fscm54JAXK4bQ+XKE7dAcGj15GFuFSg/jrir0DulK8D+T0ws1vAZ4
-         1aFUU8nOxz6sv9PuH605MDWe8q0+PEEeU48LwJpbbC9R7SfhXGgSa0qFBDxBGPFzeiWu
-         kcvigvHtQeNVZGbG0TYD5LEnT7NluM6fr6OUpP2Z5rupABdxcz5mr+nGXaStOGCb0Qg0
-         l7dHyLFcAJ7GEgN4lR7kJ0XR+GNIvJ5YwzqN7DTHfzofFhukiBTYmX/byQKEucG3+OwG
-         eHIJOmDDkUo9tG/qsrmhH6F+zrgg+J00aIvxbXlipKpgUnQ9YSJ/TLmXWcwkcyKeX3lv
-         PH/g==
-X-Gm-Message-State: APjAAAX6qur2YJtOodoieblt7hOPMjxYglQVEDm9I3tmL4cOVfEZ7uIE
-        nZ1LwmWtPI70QBT0Jvx7jDTobcCNxLZZWsEBtcg=
-X-Google-Smtp-Source: APXvYqxtUeux1nJc2m6hnvZUzCnT9ES2c+qfw6SZO0tQjD1yhuvvaE3dtWzGF9ppq5YnpzPycuOPtCv3nL18iWRl0eM=
-X-Received: by 2002:adf:e811:: with SMTP id o17mr368176wrm.30.1556751823159;
- Wed, 01 May 2019 16:03:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=xkHY0Vk0CxJ06DIPyqIQG5n7Y+l7wmOyvhLV4dHGd9M=;
+        b=HP2eYlteogQ5pz+IcR9NloftxP6DfhIpzjpPTl4JJ3cr6YTbIfcM4Vcu+MXNhHzFe8
+         WTTwCZXiuRfAAZJ++EPb8lRNynWIvGxz43ik44E7VYOP4iYfM9LSPIyVR0nlz++I2NIl
+         s0B/7ZcnRcwIWWeq2hgm+2sW41YTQlG1Slb0x8OaHv/iOpnI7UZzIjJkn5HYehI0JIuu
+         CZWOw6vAB3qQJKtjE8FJLeHe4V4XZSlNi+9PJdm+v/OmzNbexHIVX4LhE7gz8kYfpz+j
+         Ara94J16CcWxplytrkDr4RBINSuZidgK8UPjy64+WQBzKb/d37Y4UGxumyCDRIhRLQUi
+         l27w==
+X-Gm-Message-State: APjAAAXJcO/3BpS0pcEoyiWp3GhUHDQdFfEoEsEWhDZ6uNqF77sqYgQY
+        HJSCgvP9QY+LOGNlDHXbRpTEHRvM
+X-Google-Smtp-Source: APXvYqyyNUsriZFwlNNi9BYNctRtO2Ir6dekDtDCQOGJakWCRwdlJTZtC/P8pWDGVUU7/R80WMqfNQ==
+X-Received: by 2002:a17:902:302:: with SMTP id 2mr275822pld.232.1556752363524;
+        Wed, 01 May 2019 16:12:43 -0700 (PDT)
+Received: from localhost ([61.68.7.233])
+        by smtp.gmail.com with ESMTPSA id i10sm93944058pfj.7.2019.05.01.16.12.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 16:12:42 -0700 (PDT)
+Date:   Thu, 02 May 2019 09:12:34 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v4] powerpc/pseries: Remove limit in wait for dying CPU
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     Gautham R Shenoy <ego@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+References: <20190423223914.3882-1-bauerman@linux.ibm.com>
+        <877ebbsb8u.fsf@linux.ibm.com> <87v9yve02x.fsf@morokweng.localdomain>
+        <8736lyrzmh.fsf@linux.ibm.com>
+In-Reply-To: <8736lyrzmh.fsf@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190426212112.5624-1-fancer.lancer@gmail.com>
- <20190426212112.5624-2-fancer.lancer@gmail.com> <20190426214631.GV4041@lunn.ch>
- <20190426233511.qnkgz75ag7axt5lp@mobilestation> <f27df721-47aa-a708-aaee-69be53def814@gmail.com>
- <CA+h21hpTRCrD=FxDr=ihDPr+Pdhu6hXT3xcKs47-NZZZ3D9zyg@mail.gmail.com>
- <20190429211225.ce7cspqwvlhwdxv6@mobilestation> <CAFBinCBxgMr6ZkOSGfXZ9VwJML=GnzrL+FSo5jMpN27L2o5+JA@mail.gmail.com>
-In-Reply-To: <CAFBinCBxgMr6ZkOSGfXZ9VwJML=GnzrL+FSo5jMpN27L2o5+JA@mail.gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Thu, 2 May 2019 02:03:31 +0300
-Message-ID: <CA+h21hq_4rMXaOgr4ZQjiwwvpKSZmRoTg__PZisWZCz3pzCPOA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] net: phy: realtek: Change TX-delay setting for
- RGMII modes only
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Serge Semin <Sergey.Semin@t-platforms.ru>,
-        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1556752043.jyg2z3kgaw.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 May 2019 at 00:16, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
->  Hello Serge,
->
-> On Mon, Apr 29, 2019 at 11:12 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> [...]
-> > > > > Apparently the current config_init method doesn't support RXID setting.
-> > > > > The patch introduced current function code was submitted by
-> > > > > Martin Blumenstingl in 2016:
-> > > > > https://patchwork.kernel.org/patch/9447581/
-> > > > > and was reviewed by Florian. So we'd better ask him why it was ok to mark
-> > > > > the RGMII_ID as supported while only TX-delay could be set.
-> > > > > I also failed to find anything regarding programmatic rtl8211f delays setting
-> > > > > in the Internet. So at this point we can set TX-delay only for f-model of the PHY.
-> let me give you a bit of context on that patch:
-> most boards (SBCs and TV boxes) with an Amlogic SoC and a Gigabit
-> Ethernet PHY use a Realtek RTL8211F PHY. we were seeing high packet
-> loss when transmitting from the board to another device.
-> it took us very long to understand that a combination of different
-> hardware and driver pieces lead to this issue:
-> - in the MAC driver we enabled a 2ns TX delay by default, like Amlogic
-> does it in their vendor (BSP) kernel
-> - we used the upstream Realtek RTL8211F PHY driver which only enabled
-> the TX delay if requested (it never disabled the TX delay)
-> - hardware defaults or pin strapping of the Realtek RTL8211F PHY
-> enabled the TX delay in the PHY
->
-> This means that the TX delay was applied twice: once at the MAC and
-> once at the PHY.
-> That lead to high packet loss when transmitting data.
-> To solve that I wrote the patch you mentioned, which has since been
-> ported over to u-boot (for a non-Amlogic related board)
->
-> > > > > Anyway lets clarify the situation before to proceed further. You are suggesting
-> > > > > to return an error in case if either RGMII_ID or RGMII_RXID interface mode is
-> > > > > requested to be enabled for the PHY. It's fair seeing the driver can't fully
-> > > > > support either of them.
-> I don't have any datasheet for the Realtek RTL8211F PHY and I'm not in
-> the position to get one (company contracts seem to be required for
-> this).
-> Linux is not my main job, I do driver development in my spare time.
->
-> there may or may not be a register or pin strapping to configure the RX delay.
-> due to this I decided to leave the RX delay behavior "not defined"
-> instead of rejecting RGMII_RXID and RGMII_ID.
->
-> > > > That is how I read Andrew's suggestion and it is reasonable. WRT to the
-> > > > original changes from Martin, he is probably the one you would want to
-> > > > add to this conversation in case there are any RX delay control knobs
-> > > > available, I certainly don't have the datasheet, and Martin's change
-> > > > looks and looked reasonable, seemingly independent of the direction of
-> > > > this very conversation we are having.
-> the changes in patch 1 are looking good to me (except that I would use
-> phy_modify_paged instead of open-coding it, functionally it's
-> identical with what you have already)
->
-> I'm not sure about patch 2:
-> personally I would wait for someone to come up with the requirement to
-> use RGMII_RXID with a RTL8211F PHY.
-> that person will then a board to test the changes and (hopefully) a
-> datasheet to explain the RX delay situation with that PHY.
-> that way we only change the RGMII_RXID behavior once (when someone
-> requests support for it) instead of twice (now with your change, later
-> on when someone needs RGMII_RXID support in the RTL8211F driver)
->
-> that said, the change in patch 2 itself looks fine on Amlogic boards
-> (because all upstream .dts let the MAC generate the TX delay). I
-> haven't runtime-tested your patch there yet.
-> but there seem to be other boards (than the Amlogic ones, the RTL8211F
-> PHY driver discussion in u-boot was not related to an Amlogic board)
-> out there with a RTL8211F PHY (these may or may not be supported in
-> mainline Linux or u-boot and may or may not use RGMII_RXID where you
-> are now changing the behavior). that's not a problem by itself, but
-> you should be aware of this.
->
-> [...]
-> > rtl8211(e|f) TX/RX delays can be configured either by external pins
-> > strapping or via software registers. This is one of the clue to provide
-> > a proper config_init method code. But not all rtl8211f phys provide
-> > that software register, and if they do it only concerns TX-delay (as we
-> > aware of). So we need to take this into account when creating the updated
-> > versions of these functions.
-> >
-> > (Martin, I also Cc'ed you in this discussion, so if you have anything to
-> > say in this matter, please don't hesitate to comment.)
-> Amlogic boards, such as the Hardkernel Odroid-C1 and Odroid-C2 as well
-> as the Khadas VIM2 use a "RTL8211F" RGMII PHY. I don't know whether
-> there are multiple versions of this PHY. all RTL8211F I have seen so
-> far did behave exactly the same.
->
-> I also don't know whether the RX delay is configurable (by pin
-> strapping or some register) on RTL8211F PHYs because I don't have
-> access to the datasheet.
->
->
-> Martin
+Nathan Lynch's on May 2, 2019 12:57 am:
+> Hi Thiago,
+>=20
+> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+>> Nathan Lynch <nathanl@linux.ibm.com> writes:
+>>> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+>>>> +		while (true) {
+>>>>  			cpu_status =3D smp_query_cpu_stopped(pcpu);
+>>>>  			if (cpu_status =3D=3D QCSS_STOPPED ||
+>>>>  			    cpu_status =3D=3D QCSS_HARDWARE_ERROR)
+>>>>  				break;
+>>>> -			cpu_relax();
+>>>> +			udelay(100);
+>>>>  		}
+>>>>  	}
+>>>
+>>> I agree with looping indefinitely but doesn't it need a cond_resched()
+>>> or similar check?
+>>
+>> If there's no kernel or hypervisor bug, it shouldn't take more than a
+>> few tens of ms for this loop to complete (Gautham measured a maximum of
+>> 10 ms on a POWER9 with an earlier version of this patch).
+>=20
+> 10ms is twice the default scheduler quantum...
+>=20
+>=20
+>> In case of bugs related to CPU hotplug (either in the kernel or the
+>> hypervisor), I was hoping that the resulting lockup warnings would be a
+>> good indicator that something is wrong. :-)
+>=20
+> Not convinced we should assume something is wrong if it takes a few
+> dozen ms to complete the operation.
 
-Hi Martin, Sergey,
+Right, and if there is no kernel or hypervisor bug then it will stop
+eventually :)
 
-I had another look and it seems that Realtek has designated the same
-PHY ID for the RTL8211F and RTL8211FS. However the F is a 40-pin
-package and the FS is a 48-pin package. The datasheet for the F
-doesn't mention about the MDIO bit for TXDLY being implemented,
-whereas for FS it does. That can mean anything, really, but as I only
-have access to a board with the FS chip, I can't easily check. Maybe
-Martin can confirm that his chip's designation is really not FS.
-But my point still remains, though. The F and FS share the same PHY
-ID, and one supports only RGMII while the other can be configured for
-SGMII as well. Good luck being ultra-correct in the phy-mode checking
-when you can't distinguish the chip. But in general DT description is
-chief and should not be contradicted. Perhaps an argument could be
-made for the RGMII delays as they constitute an exception to the "HW
-description" rule.
+> AFAIK we don't have any guarantees
+> about the maximum latency of stop-self, and it can be affected by other
+> activity in the system, whether we're in shared processor mode, etc. Not
+> to mention smp_query_cpu_stopped has to acquire the global RTAS lock and
+> be serialized with other tasks calling into RTAS. So I am concerned
+> about generating spurious warnings here.
+
+Agreed.
+
+>=20
+> If for whatever reason the operation is taking too long, drmgr or
+> whichever application is initiating the change will appear to stop
+> making progress. It's not too hard to find out what's going on with
+> facilities like perf or /proc/pid/stack.
+>=20
+>=20
+>> Though perhaps adding a cond_resched() every 10 ms or so, with a
+>> WARN_ON() if it loops for more than 50 ms would be better.
+>=20
+> A warning doesn't seem appropriate to me, and cond_resched should be
+> invoked in each iteration. Or just msleep(1) in each iteration would be
+> fine, I think.
+>=20
+> But I'd like to bring in some more context -- here is the body of
+> pseries_cpu_die:
+>=20
+> static void pseries_cpu_die(unsigned int cpu)
+> {
+> 	int tries;
+> 	int cpu_status =3D 1;
+> 	unsigned int pcpu =3D get_hard_smp_processor_id(cpu);
+>=20
+> 	if (get_preferred_offline_state(cpu) =3D=3D CPU_STATE_INACTIVE) {
+> 		cpu_status =3D 1;
+> 		for (tries =3D 0; tries < 5000; tries++) {
+> 			if (get_cpu_current_state(cpu) =3D=3D CPU_STATE_INACTIVE) {
+> 				cpu_status =3D 0;
+> 				break;
+> 			}
+> 			msleep(1);
+> 		}
+> 	} else if (get_preferred_offline_state(cpu) =3D=3D CPU_STATE_OFFLINE) {
+>=20
+> 		for (tries =3D 0; tries < 25; tries++) {
+> 			cpu_status =3D smp_query_cpu_stopped(pcpu);
+> 			if (cpu_status =3D=3D QCSS_STOPPED ||
+> 			    cpu_status =3D=3D QCSS_HARDWARE_ERROR)
+> 				break;
+> 			cpu_relax();
+> 		}
+> }
+>=20
+> This patch alters the behavior of the second loop (the CPU_STATE_OFFLINE
+> branch). The CPU_STATE_INACTIVE branch is used when the offline behavior
+> is to use H_CEDE instead of stop-self, correct?
+>=20
+> And isn't entering H_CEDE expected to be quite a bit faster than
+> stop-self? If so, why does that path get five whole seconds[*] while
+> we're bikeshedding about tens of milliseconds for stop-self? :-)
+>=20
+> [*] And should it be made to retry indefinitely as well?
+
+I think so.
 
 Thanks,
--Vladimir
+Nick
+=
