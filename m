@@ -2,64 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385AD10BD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99AE410BE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbfEAROU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 13:14:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50670 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbfEAROU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 13:14:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1376C20835;
-        Wed,  1 May 2019 17:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556730859;
-        bh=bIys+josMoWSS35pZLTP5GuoNAmMkIfOp7dfq30+0GY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qUbdmv7J4NyFhY9XZ0Lak3kFKY9BOeyx+dXdJ9/hPCHOYGXgiSiSQHQsx72F2LLmj
-         11pVkX9RNzIjp9zWaoC3g/EB4XmRwr0EIewP4MWh2+fgljiqOZaZDS36bLmPVRrcpr
-         xr/5UuB0+XxkPZiTKyf6oJmifX/wrvDgBHVpllrM=
-Date:   Wed, 1 May 2019 19:14:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.0 00/89] 5.0.11-stable review
-Message-ID: <20190501171416.GA28949@kroah.com>
-References: <20190430113609.741196396@linuxfoundation.org>
- <20190501164452.GD16175@roeck-us.net>
+        id S1726194AbfEARR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 13:17:28 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33779 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfEARR2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 13:17:28 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f23so16061322ljc.0;
+        Wed, 01 May 2019 10:17:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tb3e5ndhy+yPYfLxxwqvS+VC2wvQfTcibV/Zpc10t8Q=;
+        b=M6re7UiwzFF81SnvukKzpOhzXOVMusmPCGgYLA0vFDmgKc+WjzPpsG9q2me+FOZrUK
+         55erpX71KWunJAh5MXpnVoW4KxPWQGbCyN5+w1hn40qIVvC5eB43ErBvrZ6wZok/vbW2
+         uqt5PrFvhVhjXPAmxCQqhXHwTxNHbeFIBlBN6yIYd+u28S3DVPnVgxnvssnM6Hq6zdeO
+         RlOFuVTYCwZ35nTLZaW4TNexXJgIIVNq0xkMrH4KJ4TKgkGUCPcvIZK+ij5J5Azffzi3
+         ByDC3sOmKjns6h5AyldOQrlX5a3jBmNHO8jLwJede/8NuAZBXQfyC5Vye7LxkT5YPkaZ
+         cZvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tb3e5ndhy+yPYfLxxwqvS+VC2wvQfTcibV/Zpc10t8Q=;
+        b=PBhR8+om3Eq+SQowSnWesTVw2lF1PskkC/ix665qCLtgBlJ8n/+WMbRg6ULRMqd9mW
+         frUmJXOFpV4mY1uSMA682UxCidiJ2ixW6T4fn/YjPYpG8hya09THndZflnfZvykxaNBk
+         yGnjXS9XOba8MSL5Sv8ax1PNGHnmDaQDlk5OkXZxtWaAq/7kSL/ILh6uzNP8+vnH2Y1h
+         rfr46GvhqMF0EZqQnuu9iii3WqbWSyyzyV4rjO68f915rOUydOJtMX0mPX9GD1iBDmv8
+         6OiZy3DWae0uwM8L+zaxF6SJL3IZv1MOoiVZPfV9sv9fERClIqehVQYAS1ZNVNNfovF3
+         aVFQ==
+X-Gm-Message-State: APjAAAUtcasoZ1R46zI3ky3SExtCRTzFEwv1GoUZqzuqOAVun4bFxFJ/
+        bk1kVyUEACNtZCFntyFXcIn1ZZjF/MD6E/5UrKc=
+X-Google-Smtp-Source: APXvYqwQLXbgeLz+rgT79Zp142ymbrEJCJe2sY3bjwnPhirtV576CfqsSAvz58YD9Q1Mw/IiKthO54oGaz/Ho4ZoktY=
+X-Received: by 2002:a2e:92ce:: with SMTP id k14mr16778740ljh.83.1556731045705;
+ Wed, 01 May 2019 10:17:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501164452.GD16175@roeck-us.net>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190501134158.15307-1-colin.king@canonical.com>
+In-Reply-To: <20190501134158.15307-1-colin.king@canonical.com>
+From:   Yi-Hung Wei <yihung.wei@gmail.com>
+Date:   Wed, 1 May 2019 10:17:15 -0700
+Message-ID: <CAG1aQhLQ5kLV4TuYU0fwTviDoaZmryyZ+kWbsj=Bdo+CxFXQtA@mail.gmail.com>
+Subject: Re: [ovs-dev] [PATCH][next] openvswitch: check for null pointer
+ return from nla_nest_start_noflag
+To:     Colin King <colin.king@canonical.com>
+Cc:     Pravin B Shelar <pshelar@ovn.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        ovs dev <dev@openvswitch.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 09:44:52AM -0700, Guenter Roeck wrote:
-> On Tue, Apr 30, 2019 at 01:37:51PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.0.11 release.
-> > There are 89 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu 02 May 2019 11:35:03 AM UTC.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 159 pass: 159 fail: 0
-> Qemu test results:
-> 	total: 349 pass: 349 fail: 0
+On Wed, May 1, 2019 at 6:42 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The call to nla_nest_start_noflag can return null in the unlikely
+> event that nla_put returns -EMSGSIZE.  Check for this condition to
+> avoid a null pointer dereference on pointer nla_reply.
+>
+> Addresses-Coverity: ("Dereference null return value")
+> Fixes: 11efd5cb04a1 ("openvswitch: Support conntrack zone limit")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  net/openvswitch/conntrack.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
+> index c4128082f88b..333ec5f298fe 100644
+> --- a/net/openvswitch/conntrack.c
+> +++ b/net/openvswitch/conntrack.c
+> @@ -2175,6 +2175,10 @@ static int ovs_ct_limit_cmd_get(struct sk_buff *skb, struct genl_info *info)
+>                 return PTR_ERR(reply);
+>
+>         nla_reply = nla_nest_start_noflag(reply, OVS_CT_LIMIT_ATTR_ZONE_LIMIT);
+> +       if (!nla_reply) {
+> +               err = -EMSGSIZE;
+> +               goto exit_err;
+> +       }
+>
+>         if (a[OVS_CT_LIMIT_ATTR_ZONE_LIMIT]) {
+>                 err = ovs_ct_limit_get_zone_limit(
+> --
+Thanks for the bug fix.  Should it be on net rather than net-next?
 
-Wonderful, thanks for testing all of these and letting me know.
-
-greg k-h
+Acked-by: Yi-Hung Wei <yihung.wei@gmail.com>
