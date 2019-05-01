@@ -2,151 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7CB7104F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E41A10508
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 07:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfEAEhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 00:37:48 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36497 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfEAEhp (ORCPT
+        id S1726091AbfEAE5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 00:57:53 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38874 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfEAE5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 00:37:45 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 85so7848354pgc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 21:37:45 -0700 (PDT)
+        Wed, 1 May 2019 00:57:53 -0400
+Received: by mail-vs1-f65.google.com with SMTP id v141so2549684vsc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 21:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a10hGuK3vdCOEjNUJMZxmg7vPboJuN/bkuHq4KflRrI=;
-        b=pDVa8e7jbf89RlDz7t1+7lQQ+gTrLa77cMVKC9yzBXt2ZLJ0JEj/hwmcULHc622DgJ
-         3kIrUqha4lTIRi7Y+3OGpb3Z4iCFXn3zrarCVhLebOkzUpvOyvL35hYNH/zkbL97xw2S
-         ZCu1Xn0NiiZrCYi++EtqzAonCHVqP4OetOyUAwDA2Tt1Qg4sNW8iSYQGJKR1L7o/kdsi
-         mVPU6SCgzyZ9L6A674KvQtkVOZ1KYE/3mTtKOfAzErDR79jQcEZuzPs5wi/e2O/frGo2
-         HVrwooQxILs73RIAzRRqQ8lD/8BhZdiHLigNfww2WuM+8GC9gC4tcCLyJFClGCW7wPH9
-         HWLw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:sender:from:date:message-id
+         :subject:to:cc;
+        bh=P35e7lRyscrNykmykjGORtzoqMJ17nJ+ZLBUjZaf8W8=;
+        b=jk3uZai79rictqwRVoY5gVykyQX0rWp6GdiDrCKWKzfZ4vsvSxpOEhFSoxnRtgJDeU
+         q5Opb8dbwtHsOX53YvBfMezNSGEQ8MqWkffC4vtjqTAhKh+nHxjrn/xZn+yydAKDkEw6
+         Z1J9ctz4jOk0r6sDeSQZLs8PLgc44OyDzKxpmCnWI2ADv1+madbSWR9yp4THp9lQcF+Z
+         eNte0ic17ursuxPZekHtbHpl88XHHwzCYFsq/q66mrEKR+w6V6K/05AFdpCvSLNW4Gel
+         zRe9VzOz52AUx/XwQLJvDHJkczICRgSunDQtDqa9ib2s9I+77V+fdUMMXTzEJrXO5oS8
+         /eCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=a10hGuK3vdCOEjNUJMZxmg7vPboJuN/bkuHq4KflRrI=;
-        b=kMbVnTfSUhYaFkRcbnSLTom1k5NSLb+Zwc4/qBVBXqZe5INGvn4e4PgLe+clZgXTFw
-         3vSbrCSJkS0KnmkjQVr0peOjc00KphBsfaAzgH6fwYEtfOlsWlmP1WKAZ3FnZC2AMh1c
-         hsT1zYB0HL8ZuCxpX294PfXTbwdjoqFJ3ynrqNIk408TKjbGu0LzBCGpgdhQgXrWEUmv
-         kJZ/asua3Ih9zPlXAJQVuxWozfrLhrETCaHk/+vzeE9WgmASrIt40r8VNTjgrZCSdwxr
-         X8ZQwG9t1fZh+Y64ePsEgU/gxqU2RZxXb9QSrGgYIu8Di+31COM/i4oh66QnZJiGIqTy
-         n5uQ==
-X-Gm-Message-State: APjAAAWya+Fw+TdzsEF9JBXspzfgI01mdJA/lcRopoMNe4mRdfv9hxrK
-        OgM97Kbmb5Mkdn6nXTOkEhzoLQ==
-X-Google-Smtp-Source: APXvYqxDL3tBlXKBoiRHapCs8F39VS8hqCDS0TDifmuNZad6+uhihpKq85ibaXI51cIOXSctG7fOEQ==
-X-Received: by 2002:a63:541d:: with SMTP id i29mr43040926pgb.174.1556685464670;
-        Tue, 30 Apr 2019 21:37:44 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q128sm55912865pga.60.2019.04.30.21.37.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 21:37:43 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:sender:from
+         :date:message-id:subject:to:cc;
+        bh=P35e7lRyscrNykmykjGORtzoqMJ17nJ+ZLBUjZaf8W8=;
+        b=SJqBdrGc4m4X2djORuwfUgHq1xlaRUXFSNahliQ1EzvxXtfOg1AQbSZGHHVYNHyJBk
+         u6cw83NIVztdGR03IDJc9QJ2VI82NBFpA2CZC456esYK2wG6AqHzdyCRSwhd8m/HojZ1
+         dDJlhue4LBohNg86h9fzo6DX1d/SBKCvqH/DHvUxIr+bRWK6gEhzl3mJqzq/tcjohoxR
+         b9i2HgGkdNwSoUpEf425WWO1CytbEKFkXbJCiFlQv5nooN+g22ROiZdNZXXDh/wxe2AH
+         DSn3YSvwgVQbMrB/5FMHWf9mHjN5oa8eHbpVb+BU8MwhDuVKjcHVGHhV8quoXlh5dDYg
+         Dqew==
+X-Gm-Message-State: APjAAAWKm9OIe1o8iSzCWKLaURJZNNmLX4ipCVjciF4EG0K7JWn+goEb
+        VG6ZjAXV+bkRdejsH/yF2l2zieGZ1WdBjJHqmm8=
+X-Google-Smtp-Source: APXvYqzEnB4DoeQEjRUTP7Rrb9UtV8lh5NMof5rUud2cq+tj+Q8YHXzKJgoWfF0WXAVfSYHdvgCImZvT9GBs+RmBqoM=
+X-Received: by 2002:a05:6102:119:: with SMTP id z25mr9470996vsq.145.1556686672284;
+ Tue, 30 Apr 2019 21:57:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <1556620535-10060-1-git-send-email-arunks@codeaurora.org> <20190430110624.GB16204@fuggles.cambridge.arm.com>
+In-Reply-To: <20190430110624.GB16204@fuggles.cambridge.arm.com>
+X-Google-Sender-Delegation: getarunks@gmail.com
+From:   Arun KS <arunks.linux@gmail.com>
+Date:   Wed, 1 May 2019 10:27:41 +0530
+X-Google-Sender-Auth: p5VwC2BvVDMs0Em29d4QJN7nPsQ
+Message-ID: <CAKZGPAOprkJfBXeMqx+ipVh4xqMUCbZdoS=mjBzLO9=LQniU9A@mail.gmail.com>
+Subject: Re: arm64: Fix size of __early_cpu_boot_status
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Arun KS <arunks@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 4/4] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date:   Tue, 30 Apr 2019 21:37:34 -0700
-Message-Id: <20190501043734.26706-5-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190501043734.26706-1-bjorn.andersson@linaro.org>
-References: <20190501043734.26706-1-bjorn.andersson@linaro.org>
+        Jun Yao <yaojun8558363@gmail.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sibi Sankar <sibis@codeaurora.org>
+On Tue, Apr 30, 2019 at 4:39 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Tue, Apr 30, 2019 at 04:05:04PM +0530, Arun KS wrote:
+> > __early_cpu_boot_status is of type long. Use quad
+> > assembler directive to allocate proper size.
+> >
+> > Signed-off-by: Arun KS <arunks@codeaurora.org>
+> > ---
+> >  arch/arm64/kernel/head.S | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> > index eecf792..115f332 100644
+> > --- a/arch/arm64/kernel/head.S
+> > +++ b/arch/arm64/kernel/head.S
+> > @@ -684,7 +684,7 @@ ENTRY(__boot_cpu_mode)
+> >   * with MMU turned off.
+> >   */
+> >  ENTRY(__early_cpu_boot_status)
+> > -     .long   0
+> > +     .quad   0
+>
+> Yikes. How did you spot this? Did we end up corrupting an adjacent variable,
+> or does the alignment in the linker script save us in practice?
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+Rite now there is no adjacent variable. But I was adding one and it
+was getting corrupted.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Changes since v6:
-- None
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 666bc88d3e81..2f3ab6acda3d 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1672,6 +1672,64 @@
- 			};
- 		};
- 
-+		mss_pil: remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
-+
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sdm845-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
--- 
-2.18.0
-
+Regards,
+Arun
+>
+> Will
