@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C69DB10B1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7E510B2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfEAQPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:15:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47966 "EHLO
+        id S1727216AbfEAQRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:17:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48038 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfEAQPI (ORCPT
+        with ESMTP id S1726855AbfEAQPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:15:08 -0400
+        Wed, 1 May 2019 12:15:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9gqGkobIhZryEowiPA+7IhnJAwe31pJ4qW8m9/0O+C8=; b=A92pWCzAxl29kmydRFgKcXNRiV
-        p5ql0XMeMdI+sp7yCytrZ4hVXUmuz2t5iQyyeHHKsfoyr9Q+RAsYfR/jUdsgREUocgT3fAgSGPPUP
-        XoVfO9BrgtV46YIQDNpJ2wW0NTAMdT5pbW5gqpSXSiHrCWr64b47MKmh46yf1wZ17aMX+uVC72xdp
-        Z4U/mjzblzdA15RgO0UkZabIhhfq04zF4yfMROYTGGm0+7wi9vYGdEu1iWt5dNVS16sg7r1/mZJ0x
-        5UttJRPJ12c4UZFG5XI5/4Rmi2RuPpcR8Rln2+pIui+ISi6VHx5kmUr614u576XqIGvAEi0gUOspA
-        d5k6fgkQ==;
+        bh=rf+zVHOEufIc57I2MfhfRfMgrx+SEyKtZIOdBU8Q4Bg=; b=Y1Q8R4LKro94W/nFYy10WBJIOK
+        D5qIsfQCDdVTNJlcavMEGfkf85XscyDdw7E4XNCrrXqxqD5cjSxlELeFmYe4QDumtAJzBkk70lrap
+        EVFCtZEmK8Jh9T0PQi70cIuhhzyREIBhAoU/bnGxYEx/vO7IYQvfifappcUSctx4iNjHghso818Is
+        aWRzD/9F15ubPrv5ijQ7wdKDJbtayEfmda2VjWyOol6Qj8fZdK+9ihDBvg9MF1+RBn9Gbsbj91BdP
+        vZ1+5dc3DDxtXz18YPvBr9cAJnV3cwIqV3xeajbmgBg+q5A691uw+zgPWil+gt5lvQMYskdJzDCP0
+        XSRZOl/g==;
 Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLrsq-0004PG-Fj; Wed, 01 May 2019 16:15:00 +0000
+        id 1hLrsr-0004PT-Uy; Wed, 01 May 2019 16:15:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
@@ -37,9 +37,9 @@ Cc:     Hannes Reinecke <hare@suse.de>, Lee Duncan <lduncan@suse.com>,
         =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
         linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
         osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/24] scsi_transport.h: switch to SPDX tags
-Date:   Wed,  1 May 2019 12:13:57 -0400
-Message-Id: <20190501161417.32592-5-hch@lst.de>
+Subject: [PATCH 05/24] scsi_transport_fc: remove duplicate GPL boilerplate text
+Date:   Wed,  1 May 2019 12:13:58 -0400
+Message-Id: <20190501161417.32592-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190501161417.32592-1-hch@lst.de>
 References: <20190501161417.32592-1-hch@lst.de>
@@ -51,23 +51,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the the GPLv2+ SPDX tag instead of verbose boilerplate text.
+The FC transport class uapi headers already have proper SPDX tags,
+remove the duplicate boilerplate text.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/scsi/scsi_transport.h | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ include/uapi/scsi/scsi_bsg_fc.h     | 15 ---------------
+ include/uapi/scsi/scsi_netlink_fc.h | 15 ---------------
+ 2 files changed, 30 deletions(-)
 
-diff --git a/include/scsi/scsi_transport.h b/include/scsi/scsi_transport.h
-index a3dcb1bfb362..a0643b9f6f13 100644
---- a/include/scsi/scsi_transport.h
-+++ b/include/scsi/scsi_transport.h
-@@ -1,21 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /* 
-  *  Transport specific attributes.
+diff --git a/include/uapi/scsi/scsi_bsg_fc.h b/include/uapi/scsi/scsi_bsg_fc.h
+index 62597d86beed..52f32a60d056 100644
+--- a/include/uapi/scsi/scsi_bsg_fc.h
++++ b/include/uapi/scsi/scsi_bsg_fc.h
+@@ -3,21 +3,6 @@
+  *  FC Transport BSG Interface
   *
-  *  Copyright (c) 2003 Silicon Graphics, Inc.  All rights reserved.
+  *  Copyright (C) 2008   James Smart, Emulex Corporation
 - *
 - *  This program is free software; you can redistribute it and/or modify
 - *  it under the terms of the GNU General Public License as published by
@@ -82,9 +82,36 @@ index a3dcb1bfb362..a0643b9f6f13 100644
 - *  You should have received a copy of the GNU General Public License
 - *  along with this program; if not, write to the Free Software
 - *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
   */
- #ifndef SCSI_TRANSPORT_H
- #define SCSI_TRANSPORT_H
+ 
+ #ifndef SCSI_BSG_FC_H
+diff --git a/include/uapi/scsi/scsi_netlink_fc.h b/include/uapi/scsi/scsi_netlink_fc.h
+index 060f563c38a2..a39023579051 100644
+--- a/include/uapi/scsi/scsi_netlink_fc.h
++++ b/include/uapi/scsi/scsi_netlink_fc.h
+@@ -3,21 +3,6 @@
+  *  FC Transport Netlink Interface
+  *
+  *  Copyright (C) 2006   James Smart, Emulex Corporation
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
+- *
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- *
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+  */
+ #ifndef SCSI_NETLINK_FC_H
+ #define SCSI_NETLINK_FC_H
 -- 
 2.20.1
 
