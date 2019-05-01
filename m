@@ -2,122 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF3310F0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 00:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE0010F14
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 00:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfEAWim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 18:38:42 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:40666 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726144AbfEAWil (ORCPT
+        id S1726242AbfEAWnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 18:43:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37442 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfEAWnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 18:38:41 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x41MYNdW004293
-        for <linux-kernel@vger.kernel.org>; Wed, 1 May 2019 15:38:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=iIazPrlt7tOWnA4QOJ1iZhFr3bvbXxhMyXLj+/1AyVo=;
- b=j8s/grND7dbtTkbGg4Oidn9G/lEmLB02oSc61IkhyEn3fGtswvwxqTDQrbR3yMYO++fH
- GKRJBJ8SlfhOrFRRYkZFht5+pf4oQOPYmsukdQOAxG3SW26cY5DXPhTBf76pX0bYx/3A
- 0JmjbboaRFUQr6QNa+Ecx4SUhq2FKPjo+cA= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2s7d0q1mhn-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 15:38:40 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Wed, 1 May 2019 15:38:38 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
-        id 8A7AAD5ED26F; Wed,  1 May 2019 15:38:38 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>, <sdasari@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] misc: aspeed-lpc-ctrl: Correct return values
-Date:   Wed, 1 May 2019 15:38:36 -0700
-Message-ID: <20190501223836.1670096-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Wed, 1 May 2019 18:43:06 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id F07E92639E2
+Received: by earth.universe (Postfix, from userid 1000)
+        id 595FA3C0D1B; Thu,  2 May 2019 00:43:02 +0200 (CEST)
+Date:   Thu, 2 May 2019 00:43:02 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pm@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Enric Balletbo Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] Driver for UCS1002
+Message-ID: <20190501224302.o5ydj253synve6wl@earth.universe>
+References: <20190501033434.18548-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-01_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n44xbk2hl33sq6zz"
+Content-Disposition: inline
+In-Reply-To: <20190501033434.18548-1-andrew.smirnov@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corrected some of return values with appropriate meanings.
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- drivers/misc/aspeed-lpc-ctrl.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+--n44xbk2hl33sq6zz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
-index 332210e06e98..97ae341109d5 100644
---- a/drivers/misc/aspeed-lpc-ctrl.c
-+++ b/drivers/misc/aspeed-lpc-ctrl.c
-@@ -68,7 +68,6 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
- 		unsigned long param)
- {
- 	struct aspeed_lpc_ctrl *lpc_ctrl = file_aspeed_lpc_ctrl(file);
--	struct device *dev = file->private_data;
- 	void __user *p = (void __user *)param;
- 	struct aspeed_lpc_ctrl_mapping map;
- 	u32 addr;
-@@ -93,8 +92,8 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
- 
- 		/* If memory-region is not described in device tree */
- 		if (!lpc_ctrl->mem_size) {
--			dev_err(dev, "Didn't find reserved memory\n");
--			return -EINVAL;
-+			pr_err("aspeed_lpc_ctrl: ioctl: Didn't find reserved memory\n");
-+			return -ENXIO;
- 		}
- 
- 		map.size = lpc_ctrl->mem_size;
-@@ -134,16 +133,16 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
- 
- 		if (map.window_type == ASPEED_LPC_CTRL_WINDOW_FLASH) {
- 			if (!lpc_ctrl->pnor_size) {
--				dev_err(dev, "Didn't find host pnor flash\n");
--				return -EINVAL;
-+				pr_err("aspeed_lpc_ctrl: ioctl: Didn't find host pnor flash\n");
-+				return -ENXIO;
- 			}
- 			addr = lpc_ctrl->pnor_base;
- 			size = lpc_ctrl->pnor_size;
- 		} else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
- 			/* If memory-region is not described in device tree */
- 			if (!lpc_ctrl->mem_size) {
--				dev_err(dev, "Didn't find reserved memory\n");
--				return -EINVAL;
-+				pr_err("aspeed_lpc_ctrl: ioctl: Didn't find reserved memory\n");
-+				return -ENXIO;
- 			}
- 			addr = lpc_ctrl->mem_base;
- 			size = lpc_ctrl->mem_size;
-@@ -239,7 +238,7 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
- 		of_node_put(node);
- 		if (rc) {
- 			dev_err(dev, "Couldn't address to resource for reserved memory\n");
--			return -ENOMEM;
-+			return -ENXIO;
- 		}
- 
- 		lpc_ctrl->mem_size = resource_size(&resm);
--- 
-2.17.1
+Hi,
 
+On Tue, Apr 30, 2019 at 08:34:31PM -0700, Andrey Smirnov wrote:
+> This small series adds a driver for UCS1002 Programmable USB Port
+> Power Controller with Charger Emulation. See [page] for product page
+> and [datasheet] for device dataseet. Hopefully each individual patch
+> is self explanatory.
+>=20
+> Note that this series is a revival of the upstreaming effort by Enric
+> Balletbo Serra last version of which can be found at [original-effort]
+>=20
+> Feedback is welcome!
+
+Patchset looks good to me (except for the indention issue).
+
+-- Sebastian
+
+--n44xbk2hl33sq6zz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlzKIPYACgkQ2O7X88g7
++pqNLRAAkY95bhDG6g1qJtAYZ8gFvVWHVckBHUobqlNSl+pR5I5+oCvDOJXRb8Uk
+N1P4dm2/4uVdzrpM5JGYsLS8iOYjkhmZSbBJEMTqW44sp6dm6hr8zIITjHzJvCA6
+rnV1BjjjOb8fK/ORZYKzU4Y0o+GSPJnbjR9dPTkL+el5Ny0T5H4Iq++fc1lJTGNl
+hN1R8tLp4kN4B8Ku/nFIcbivIOS2P9RdOh6nq28oyCVKLgSu/45QNPzG55bH+KzG
+9BuNoSNwpHygY1qXLB8CWOBteeCfO+5E5GKyWFOrZqdGMSrLJ2UavKdV7WZ0uUNd
+GGncWjbIf6UARekeK7vaT59QFbPoRwBwwPI4dVJJM+Zt18V/sxzTbI68xGzOAsWe
+NK6chymww6w64aXd+c07BKke9+uQyj5nY/fYe2i4xjdfJ5IW2R2u3sILZLSU+dqd
+pYprce94mdoZausZVxYaRoFo0GFM5zSfLDOYj1sigqip/8C1gAMAtPO33D4MLOp0
+p9dcVZOGyrJ0uTnxBrWuP4nSkc0Shh8G+1m6qpoVJ9ilhf+YCp1PW7VNaVyWJOcs
+pjmER4uRJv5OYZ6RCqAJj1LesY9RTXzfm7nWWe+ZRF5m6e+cn+XOBBhVJEiLQFkN
+J8q+NHLHl8ankKkbZ3kMK0BxVItHQfI0PB3ixlgraf+75TkIk8M=
+=JQiP
+-----END PGP SIGNATURE-----
+
+--n44xbk2hl33sq6zz--
