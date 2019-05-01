@@ -2,83 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F140108C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 16:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB65108CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 16:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfEAOG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 10:06:29 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40108 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfEAOG2 (ORCPT
+        id S1726640AbfEAOHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 10:07:41 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:52715 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfEAOHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 10:06:28 -0400
-Received: by mail-it1-f195.google.com with SMTP id k64so9921267itb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 07:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=E795LI6DFPTjELna7wlroDOyVglvCzshh15J6Ms0wog=;
-        b=Y0X8dbtpTJH88c0UyuELfUtVSgnpvcgCOv73m6I/PeXDyk+qjzYKemxyxfx4FXTVai
-         on2+G2znWnUGCfCxV9mmb09yvIKARMfY1bqaYwTJ/GlX9WuWSFcgWoIbnWrQ2V/WeF7N
-         /mI8gxnzHGN29OXPObhc1gi9bvcmaMNKgK7NDcfECIb/f7tjSpn/z9UPGk0l80e1/TWY
-         b6l/p6YuHG/wbRz/e7R0otPBp2dJTO4BzOFVQEQesgHLiBu2VKixDM/HhU9vQz96XyAP
-         a41z1l3MR0SjzZ3Qh1th+RTgvsL43tTxJmca4+gv8LFylzXe0EsdMDvIurWJf/7/fx8L
-         Z0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=E795LI6DFPTjELna7wlroDOyVglvCzshh15J6Ms0wog=;
-        b=LZbf4lzfjozzpTsVlgc/o1D8trycxXMgnCh9Jhorx8q1yxnsTJqsKrzc2W80m0szpX
-         cnna5caeGL3ss0Q2gfG8IGhusccGD17BZIyX76T2ME0ysIEiOb70reTM723cfon8T13F
-         ayTtIyDCrJgIGJIvgBs4YKOAb5iYlHr0gQcs4NukRR83sjzeRqOIejXzgX1HO6Y53uWk
-         56XXKeZLI3Ffd07eCVaDiKkBj33zVEmhqWTZ18GHNQY+RG+CQxQ3T5iNRM4U4CVwmXVq
-         Y/AUHu2yBid4SVhPqQXkrbXpD9YYBvnBxVLWNXwXNWmvY86gWAlFnrvX+jQZ3oH7sS9Q
-         3Qxg==
-X-Gm-Message-State: APjAAAVau3XbPP/cWUDHXVJzOHphVfQa/QpUH5KC6lWJb58HrwqS/CGg
-        dWRXyRnfKL2TXAW4XYKau6O14kYm
-X-Google-Smtp-Source: APXvYqxgL1mDtVg2oA0par6BPfWok5HhVd0uQ5RRYEH+v6yNP7dls5c8kQGAjyiJ3Jyxp7sRmukmuA==
-X-Received: by 2002:a24:3246:: with SMTP id j67mr8195403ita.70.1556719587910;
-        Wed, 01 May 2019 07:06:27 -0700 (PDT)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id j132sm13466179iof.37.2019.05.01.07.06.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 07:06:27 -0700 (PDT)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] staging/fieldbus-dev for 5.2
-Date:   Wed,  1 May 2019 10:06:24 -0400
-Message-Id: <20190501140624.6931-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 May 2019 10:07:41 -0400
+X-Originating-IP: 90.66.53.80
+Received: from localhost (lfbn-1-3034-80.w90-66.abo.wanadoo.fr [90.66.53.80])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id ACB99FF807;
+        Wed,  1 May 2019 14:07:38 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v2] rtc: drop set_mms and set_mmss64
+Date:   Wed,  1 May 2019 16:07:35 +0200
+Message-Id: <20190501140735.2607-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit a4965d98b4d1ffa5b22f2039bc9e87898aff4976:
+There are no users of set_mms and set_mmss64 as they have all been
+converted to set_time and are handling the tm to time conversion on their
+own.
 
-  staging: comedi: comedi_isadma: Use a non-NULL device for DMA API (2019-04-27 15:00:35 +0200)
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/interface.c | 6 ------
+ drivers/rtc/systohc.c   | 6 +-----
+ include/linux/rtc.h     | 2 --
+ 3 files changed, 1 insertion(+), 13 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 56ed0c3a8c85..4124f4dd376b 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -145,12 +145,6 @@ int rtc_set_time(struct rtc_device *rtc, struct rtc_time *tm)
+ 		err = -ENODEV;
+ 	else if (rtc->ops->set_time)
+ 		err = rtc->ops->set_time(rtc->dev.parent, tm);
+-	else if (rtc->ops->set_mmss64)
+-		err = rtc->ops->set_mmss64(rtc->dev.parent,
+-					   rtc_tm_to_time64(tm));
+-	else if (rtc->ops->set_mmss)
+-		err = rtc->ops->set_mmss(rtc->dev.parent,
+-					 rtc_tm_to_time64(tm));
+ 	else
+ 		err = -EINVAL;
+ 
+diff --git a/drivers/rtc/systohc.c b/drivers/rtc/systohc.c
+index 8bf8e0c1e8fd..8b70f0520e13 100644
+--- a/drivers/rtc/systohc.c
++++ b/drivers/rtc/systohc.c
+@@ -30,8 +30,7 @@ int rtc_set_ntp_time(struct timespec64 now, unsigned long *target_nsec)
+ 	if (!rtc)
+ 		goto out_err;
+ 
+-	if (!rtc->ops || (!rtc->ops->set_time && !rtc->ops->set_mmss64 &&
+-			  !rtc->ops->set_mmss))
++	if (!rtc->ops || !rtc->ops->set_time)
+ 		goto out_close;
+ 
+ 	/* Compute the value of tv_nsec we require the caller to supply in
+@@ -53,9 +52,6 @@ int rtc_set_ntp_time(struct timespec64 now, unsigned long *target_nsec)
+ 
+ 	rtc_time64_to_tm(to_set.tv_sec, &tm);
+ 
+-	/* rtc_hctosys exclusively uses UTC, so we call set_time here, not
+-	 * set_mmss.
+-	 */
+ 	err = rtc_set_time(rtc, &tm);
+ 
+ out_close:
+diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+index 48d3f8e0b64f..df666cf29ef1 100644
+--- a/include/linux/rtc.h
++++ b/include/linux/rtc.h
+@@ -79,8 +79,6 @@ struct rtc_class_ops {
+ 	int (*read_alarm)(struct device *, struct rtc_wkalrm *);
+ 	int (*set_alarm)(struct device *, struct rtc_wkalrm *);
+ 	int (*proc)(struct device *, struct seq_file *);
+-	int (*set_mmss64)(struct device *, time64_t secs);
+-	int (*set_mmss)(struct device *, unsigned long secs);
+ 	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+ 	int (*read_offset)(struct device *, long *offset);
+ 	int (*set_offset)(struct device *, long offset);
+-- 
+2.20.1
 
-  git@gitlab.com:TheSven73/linux.git tags/fieldbus-dev-for-5.2
-
-for you to fetch changes up to 7721d1955e07f42670ea761a37b5661626b75891:
-
-  staging: fieldbus: anybus-s: fix wait_for_completion_timeout return handling (2019-04-29 09:35:19 -0400)
-
-----------------------------------------------------------------
-staging/fieldbus-dev patch for v5.2
-
-This contains just a single, non-critical bugfix.
-It has been tested on real hardware.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-
-----------------------------------------------------------------
-Nicholas Mc Guire (1):
-      staging: fieldbus: anybus-s: fix wait_for_completion_timeout return handling
-
- drivers/staging/fieldbus/anybuss/host.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
