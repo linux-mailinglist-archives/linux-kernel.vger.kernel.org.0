@@ -2,115 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1281E10703
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 12:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BAC410706
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 12:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfEAKgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 06:36:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40865 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfEAKgH (ORCPT
+        id S1726320AbfEAKhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 06:37:09 -0400
+Received: from mailgw2.fjfi.cvut.cz ([147.32.9.131]:37416 "EHLO
+        mailgw2.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfEAKhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 06:36:07 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u17so4474027pfn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 03:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=uepw+mfuloh+jLBG3kb0aMinc0ROEt2j9Im/Cxk8ZGs=;
-        b=dhtcXE4Z7Tclim9+rYNg6EgB1hHMUgXE00H3zIe7f1At8ET0Um0TQ8lxymeI+DKd9F
-         NTr8QVV7kvcVtnxXK08dtVEQAC5pzEKTQJOv1YyxC5cKkj2SXTkEUxg6oureGlT9MdSW
-         vkhzLO6W0lJby9vVv6c7/GKpB+U0wspH1VRGsMAKlHFdcG/zsMkn6lYFkJE+wkpG/Beb
-         BK1w918Memkj9K4fNEU7JB/W1qVvv0L6wHA7su16cVyEuoyZtE5dNNXZNIrfYq1FtsU/
-         Wwm30/EXDm1YyXx0x1PokydFNSGk+y6+jvcUbhtP1H/jqPw9U24mvEPt62/MHDPg5BtV
-         T2GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uepw+mfuloh+jLBG3kb0aMinc0ROEt2j9Im/Cxk8ZGs=;
-        b=CUZD2uO+kUs1im3twz+xH1PqUc+SEksLNl/aj8Pxt9tpgwMRBF7G2gFxOwKXB8uvDQ
-         HBUHmK75tEnT/EFK4OBqFISZHzL9xcyX7nlfnamZzZ+mBMa5gM01RmpCldp5fbCcisBe
-         ZCzzHjnbWfD141heksf6u+c4vatTNDRkXMKMTLrkj0JPcizLEeIYRLNHBVl2rtZJ54LH
-         3/Cd/nIEbhlZybcblHMIl5zs/T39FL9vRTbTvZ0jYbkYSxqoVH9dAlhjxdEWRUulLjBg
-         S9vlKr+R44qudyvp8lOBsbYrQiHhvv18V18Mo20vB/95azQf00sQYysFlSyf1DEdPWY1
-         5OcA==
-X-Gm-Message-State: APjAAAWwj+CwQEbJ7IojaMXIfFtCxMtzyskUmOEam+o4d3JC+9XGTYCE
-        kCVMfm49rBXG3kmYoXfjp/0Qp8DhgcU=
-X-Google-Smtp-Source: APXvYqxBQq3NVY3DfQ3GqA7F81Kl3BhX3fpO/89q/Erx07WaIF59Pt4Tt7xDXd/ZOc4a5+zfJ4jMAw==
-X-Received: by 2002:a63:165f:: with SMTP id 31mr73874636pgw.321.1556706966862;
-        Wed, 01 May 2019 03:36:06 -0700 (PDT)
-Received: from localhost.localdomain ([103.87.57.94])
-        by smtp.gmail.com with ESMTPSA id 13sm56012563pfi.172.2019.05.01.03.36.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 03:36:06 -0700 (PDT)
-From:   Vatsala Narang <vatsalanarang@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     hadess@hadess.net, hdegoede@redhat.com, Larry.Finger@lwfinger.net,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        julia.lawall@lip6.fr, Vatsala Narang <vatsalanarang@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: core: Use !x in place of NULL comparison.
-Date:   Wed,  1 May 2019 16:05:47 +0530
-Message-Id: <20190501103547.10095-1-vatsalanarang@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 May 2019 06:37:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTP id 02625A0261;
+        Wed,  1 May 2019 12:37:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1556707026; i=@fjfi.cvut.cz;
+        bh=xUNgtvQRFKyYsdfzqHIQRM1/8TevvQ9MUZytgCe0Bcg=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=AS7jt7FKvTgOTl13fyJcvaOTmNJ2dZf4ZuuB17hfuzLpXKbkjnJ9YmDqdAUvphajn
+         YYnHoGYNT8phdmDr3oRDhSeVcuZC+Bf6ZNFTZbQaMA+eUDtosG332AHP0oBgX10g6m
+         mKIOk1DPak4GBM7EkEAAILym7uJqpLbBOAHli7fo=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw2.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw2.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id sWmveC4fgvN5; Wed,  1 May 2019 12:36:41 +0200 (CEST)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw2.fjfi.cvut.cz (Postfix) with ESMTPS id 5D1DAA00DC;
+        Wed,  1 May 2019 12:36:41 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw2.fjfi.cvut.cz 5D1DAA00DC
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 147DB6004D; Wed,  1 May 2019 12:36:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id E8CC06002A;
+        Wed,  1 May 2019 12:36:40 +0200 (CEST)
+Date:   Wed, 1 May 2019 12:36:40 +0200 (CEST)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH 1/3] block: sed-opal: add ioctl for done-mark of shadow
+ mbr
+In-Reply-To: <1556666459-17948-2-git-send-email-zub@linux.fjfi.cvut.cz>
+Message-ID: <alpine.LRH.2.21.1905010145240.19150@linux.fjfi.cvut.cz>
+References: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz> <1556666459-17948-2-git-send-email-zub@linux.fjfi.cvut.cz>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid NULL comparison, compare using boolean operator.
+On Wed, 1 May 2019, David Kozub wrote:
 
-Issue found using coccinelle.
+> @@ -104,6 +109,12 @@ struct opal_mbr_data {
+> 	__u8 __align[7];
+> };
+>
+> +struct opal_mbr_done {
+> +	struct opal_key key;
+> +	__u8 done_flag;
+> +	__u8 __align[7];
+> +};
 
-Signed-off-by: Vatsala Narang <vatsalanarang@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_io.c      | 2 +-
- drivers/staging/rtl8723bs/core/rtw_sta_mgt.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+While I just copied opal_mbr_data here, I wonder what is the point of 
+__align in these structs. By itself it just pads the structure to have a 
+size that is a multiple of 8. Is this to make sure that anything that lies 
+past the structure is 8-bytes aligned (assuming the start is 8-bytes 
+aligned too), perhaps for 32bit userspace with 64bit kernel?
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_io.c b/drivers/staging/rtl8723bs/core/rtw_io.c
-index d341069097e2..a92bc19b196a 100644
---- a/drivers/staging/rtl8723bs/core/rtw_io.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_io.c
-@@ -156,7 +156,7 @@ int rtw_init_io_priv(struct adapter *padapter, void (*set_intf_ops)(struct adapt
- 	struct io_priv *piopriv = &padapter->iopriv;
- 	struct intf_hdl *pintf = &piopriv->intf;
- 
--	if (set_intf_ops == NULL)
-+	if (!set_intf_ops)
- 		return _FAIL;
- 
- 	piopriv->padapter = padapter;
-diff --git a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-index 67b8840ee2fd..bdc52d8d5625 100644
---- a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-@@ -316,7 +316,7 @@ u32 rtw_free_stainfo(struct adapter *padapter, struct sta_info *psta)
- 	struct	sta_priv *pstapriv = &padapter->stapriv;
- 	struct hw_xmit *phwxmit;
- 
--	if (psta == NULL)
-+	if (!psta)
- 		goto exit;
- 
- 
-@@ -520,7 +520,7 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
- 	u8 *addr;
- 	u8 bc_addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 
--	if (hwaddr == NULL)
-+	if (!hwaddr)
- 		return NULL;
- 
- 	if (IS_MCAST(hwaddr))
-@@ -565,7 +565,7 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
- 
- 	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
- 
--	if (psta == NULL) {
-+	if (!psta) {
- 		res = _FAIL;
- 		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_, ("rtw_alloc_stainfo fail"));
- 		goto exit;
--- 
-2.17.1
+And if it's this, is it needed for these IOCTL structs? (I can see it 
+being useful for struct opal_key.)
 
+Best regards,
+David
