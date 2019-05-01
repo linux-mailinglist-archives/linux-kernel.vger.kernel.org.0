@@ -2,277 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E443A10585
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 08:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E201059A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 08:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbfEAGmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 02:42:46 -0400
-Received: from mx2.yrkesakademin.fi ([85.134.45.195]:31431 "EHLO
-        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfEAGmq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 02:42:46 -0400
-Subject: Re: perf build broken in 5.1-rc7
-To:     Song Liu <liu.song.a23@gmail.com>
-CC:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <560abacf-da1d-7f55-755c-2086096bdf2c@mageia.org>
- <fff8c124-505c-91b7-ff4b-cabca894b689@mageia.org>
- <CAPhsuW7dS9TXOAW--U2q9-zmsgS4_K+uZYLnbPra+r+2LjJKDQ@mail.gmail.com>
- <b773df70-58e6-69f8-d566-282b0f7ae579@mageia.org>
- <CAPhsuW5O7sBdxorngkROCVRPGgRGV2se8mjT-q=O_guxC6Z7SA@mail.gmail.com>
-From:   Thomas Backlund <tmb@mageia.org>
-Message-ID: <2e3b5a9d-b9ad-62ba-b3b0-d455dec8c031@mageia.org>
-Date:   Wed, 1 May 2019 09:42:38 +0300
+        id S1726175AbfEAGpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 02:45:13 -0400
+Received: from mga05.intel.com ([192.55.52.43]:44968 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbfEAGpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 02:45:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Apr 2019 23:45:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,416,1549958400"; 
+   d="scan'208";a="147194485"
+Received: from lixinshe-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.212.94])
+  by orsmga003.jf.intel.com with ESMTP; 30 Apr 2019 23:45:01 -0700
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1hLixs-0001t9-M9; Wed, 01 May 2019 14:43:36 +0800
+Date:   Wed, 1 May 2019 14:43:36 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>, mgorman@techsingularity.net,
+        riel@surriel.com, hannes@cmpxchg.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, keith.busch@intel.com,
+        dan.j.williams@intel.com, fan.du@intel.com, ying.huang@intel.com,
+        ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 RFC PATCH 0/9] Another Approach to Use PMEM as NUMA Node
+Message-ID: <20190501064336.jktcqkvz27ihpqh3@wfg-t540p.sh.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW5O7sBdxorngkROCVRPGgRGV2se8mjT-q=O_guxC6Z7SA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-WatchGuard-Spam-ID: str=0001.0A0C020B.5CC93FE1.003A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.195
-X-WatchGuard-Mail-From: tmb@mageia.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190417091748.GF655@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Den 01-05-2019 kl. 06:37, skrev Song Liu:
-> On Tue, Apr 30, 2019 at 6:31 AM Thomas Backlund <tmb@mageia.org> wrote:
->>
->> Den 30-04-2019 kl. 16:06, skrev Song Liu:
->>> On Tue, Apr 30, 2019 at 12:55 AM Thomas Backlund <tmb@mageia.org> wrote:
->>>> Den 30-04-2019 kl. 10:26, skrev Thomas Backlund:
->>>>> Building perf in 5.1-rc5/6/7 fails:
->>>>>
->>>>>
->>>>> Build start:
->>>>>
->>>>>
->>>>>     make -s -C tools/perf NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1
->>>>> WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_STRLCPY=1
->>>>> NO_BIONIC=1 NO_JVMTI=1 prefix=/usr lib=lib64 all
->>>>>      BUILD:   Doing 'make -j32' parallel build
->>>>>      HOSTCC   fixdep.o
->>>>>      HOSTLD   fixdep-in.o
->>>>>      LINK     fixdep
->>>>> Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/vmx.h'
->>>>> differs from latest version at 'arch/x86/include/uapi/asm/vmx.h'
->>>>> diff -u tools/arch/x86/include/uapi/asm/vmx.h
->>>>> arch/x86/include/uapi/asm/vmx.h
->>>>>
->>>>> Auto-detecting system features:
->>>>> ...                         dwarf: [ on  ]
->>>>> ...            dwarf_getlocations: [ on  ]
->>>>> ...                         glibc: [ on  ]
->>>>> ...                          gtk2: [ on  ]
->>>>> ...                      libaudit: [ on  ]
->>>>> ...                        libbfd: [ on  ]
->>>>> ...                        libelf: [ on  ]
->>>>> ...                       libnuma: [ on  ]
->>>>> ...        numa_num_possible_cpus: [ on  ]
->>>>> ...                       libperl: [ on  ]
->>>>> ...                     libpython: [ on  ]
->>>>> ...                      libslang: [ on  ]
->>>>> ...                     libcrypto: [ on  ]
->>>>> ...                     libunwind: [ on  ]
->>>>> ...            libdw-dwarf-unwind: [ on  ]
->>>>> ...                          zlib: [ on  ]
->>>>> ...                          lzma: [ on  ]
->>>>> ...                     get_cpuid: [ on  ]
->>>>> ...                           bpf: [ on  ]
->>>>> ...                        libaio: [ on  ]
->>>>> ...        disassembler-four-args: [ OFF ]
->>>>>
->>>>> Makefile.config:473: No sys/sdt.h found, no SDT events are defined,
->>>>> please install systemtap-sdt-devel or systemtap-sdt-dev
->>>>> Makefile.config:853: No libbabeltrace found, disables 'perf data' CTF
->>>>> format support, please install libbabeltrace-dev[el]/libbabeltrace-ctf-dev
->>>>>
->>>>>
->>>>> And breaks with:
->>>>>
->>>>>
->>>>> CC       ui/setup.o
->>>>> util/annotate.c: In function 'symbol__disassemble_bpf':
->>>>> util/annotate.c:1767:29: error: incompatible type for argument 1 of
->>>>> 'disassembler'
->>>>>      disassemble = disassembler(bfdf);
->>>>>                                 ^~~~
->>>>> In file included from util/annotate.c:1689:
->>>>> /usr/include/dis-asm.h:325:63: note: expected 'enum bfd_architecture'
->>>>> but argument is of type 'bfd *' {aka 'struct bfd *'}
->>>>>     extern disassembler_ftype disassembler (enum bfd_architecture arc,
->>>>>                                             ~~~~~~~~~~~~~~~~~~~~~~^~~
->>>>> util/annotate.c:1767:16: error: too few arguments to function
->>>>> 'disassembler'
->>>>>      disassemble = disassembler(bfdf);
->>>>>                    ^~~~~~~~~~~~
->>>>> In file included from util/annotate.c:1689:
->>>>> /usr/include/dis-asm.h:325:27: note: declared here
->>>>>     extern disassembler_ftype disassembler (enum bfd_architecture arc,
->>>>>                               ^~~~~~~~~~~~
->>>>>      CC       arch/x86/util/header.o
->>>>>      CC       arch/x86/util/tsc.o
->>>>>      CC       arch/x86/util/pmu.o
->>>>> mv: cannot stat 'util/.annotate.o.tmp': No such file or directory
->>>>>      CC       bench/futex-requeue.o
->>>>>      CC       arch/x86/util/kvm-stat.o
->>>>> make[4]: ***
->>>>> [/work/rpmbuild/BUILD/kernel-x86_64/linux-5.0/tools/build/Makefile.build:97:
->>>>> util/annotate.o] Error 1
->>>>> make[4]: *** Waiting for unfinished jobs....
->>>>>      CC       util/build-id.o
->>>>>
->>>>>
->>>>>
->>>> And I forgot...
->>>>
->>>> Reverting:
->>>>    From 6987561c9e86eace45f2dbb0c564964a63f4150a Mon Sep 17 00:00:00 2001
->>>> From: Song Liu <songliubraving@fb.com>
->>>> Date: Mon, 11 Mar 2019 22:30:48 -0700
->>>> Subject: perf annotate: Enable annotation of BPF programs
->>>>
->>>> Makes it build again.
->>>>
->>>> --
->>>> Thomas
->>>>
->>> Hi Thomas,
->>>
->>> Which system are you running this test on? I would like to repro it in a VM.
->>>
->>> Thanks,
->>> Song
->>
->> Mageia Cauldron currently stabilizing to become Mageia 7 in ~1 month.
+On Wed, Apr 17, 2019 at 11:17:48AM +0200, Michal Hocko wrote:
+>On Tue 16-04-19 12:19:21, Yang Shi wrote:
 >>
 >>
->> Basesystem is:
+>> On 4/16/19 12:47 AM, Michal Hocko wrote:
+>[...]
+>> > Why cannot we simply demote in the proximity order? Why do you make
+>> > cpuless nodes so special? If other close nodes are vacant then just use
+>> > them.
 >>
->> binutils-2.32-5.mga7
->> (includes all fixes from upstream binutils-2_32-branch)
->>
->> gcc-8.3.1-0.20190419.2.mga7
->>
->> glibc-2.29-7.mga7
->> (includes all fixes from upstream glibc release/2.29/master branch up to
->> 2019-04-15 for now)
->>
->>
->> kernel-desktop-5.1.0-0.rc7.1.mga7
->> kernel-userspace-headers-5.1.0-0.rc7.1.mga7
->>
->>
->> --
->>
->> Thomas
->>
->>
-> I am trying to install Mageia 7 beta 3, but hit some issue. While I try fix it,
-> could you please try clean everything under tools/ and retry:
+>> We could. But, this raises another question, would we prefer to just demote
+>> to the next fallback node (just try once), if it is contended, then just
+>> swap (i.e. DRAM0 -> PMEM0 -> Swap); or would we prefer to try all the nodes
+>> in the fallback order to find the first less contended one (i.e. DRAM0 ->
+>> PMEM0 -> DRAM1 -> PMEM1 -> Swap)?
 >
->    make -C tools/ clean
->    make -C tools/perf -j
+>I would go with the later. Why, because it is more natural. Because that
+>is the natural allocation path so I do not see why this shouldn't be the
+>natural demotion path.
 
+"Demotion" should be more performance wise by "demoting to the
+next-level (cheaper/slower) memory". Otherwise something like this
+may happen.
 
-Still fails:
+DRAM0 pressured => demote cold pages to DRAM1 
+DRAM1 pressured => demote cold pages to DRAM0
 
-util/annotate.c: In function 'symbol__disassemble_bpf':
-util/annotate.c:1767:29: error: incompatible type for argument 1 of 
-'disassembler'
-   disassemble = disassembler(bfdf);
-                              ^~~~
-In file included from util/annotate.c:1689:
-/usr/include/dis-asm.h:325:63: note: expected 'enum bfd_architecture' 
-but argument is of type 'bfd *' {aka 'struct bfd *'}
-  extern disassembler_ftype disassembler (enum bfd_architecture arc,
-                                          ~~~~~~~~~~~~~~~~~~~~~~^~~
-util/annotate.c:1767:16: error: too few arguments to function 'disassembler'
-   disassemble = disassembler(bfdf);
-                 ^~~~~~~~~~~~
-In file included from util/annotate.c:1689:
-/usr/include/dis-asm.h:325:27: note: declared here
-  extern disassembler_ftype disassembler (enum bfd_architecture arc,
-                            ^~~~~~~~~~~~
-   CC       scripts/python/Perf-Trace-Util/Context.o
-   CC       bench/mem-memcpy-x86-64-lib.o
-   CC       tests/parse-events.o
-   CC       util/block-range.o
-mv: cannot stat 'util/.annotate.o.tmp': No such file or directory
-make[4]: *** 
-[/work/5.1/linux-5.1-rc7-mga07/tools/build/Makefile.build:97: 
-util/annotate.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-   CC       ui/util.o
+Kind of DRAM0/DRAM1 exchanged a fraction of the demoted cold pages,
+which looks not helpful for overall system performance.
 
->
-> If it still fails, how about building bpftool?
->
->    make -C tools/bpf -j
+Over time, it's even possible some cold pages get "demoted" in path
+DRAM0=>DRAM1=>DRAM0=>DRAM1=>...
 
-
-Also fails:
-
-
-Auto-detecting system features:
-...                        libbfd: [ on  ]
-...        disassembler-four-args: [ OFF ]
-
-   CC       bpf_jit_disasm.o
-   CC       bpf_dbg.o
-   CC       bpf_asm.o
-   BISON    bpf_exp.yacc.c
-   DESCEND  bpftool
-make[1]: Entering directory 
-'/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpftool'
-/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpf_jit_disasm.c: In function 
-'get_asm_insns':
-/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpf_jit_disasm.c:81:29: error: 
-incompatible type for argument 1 of 'disassembler'
-   disassemble = disassembler(bfdf);
-                              ^~~~
-In file included from 
-/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpf_jit_disasm.c:24:
-/usr/include/dis-asm.h:325:63: note: expected 'enum bfd_architecture' 
-but argument is of type 'bfd *' {aka 'struct bfd *'}
-  extern disassembler_ftype disassembler (enum bfd_architecture arc,
-                                          ~~~~~~~~~~~~~~~~~~~~~~^~~
-/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpf_jit_disasm.c:81:16: error: 
-too few arguments to function 'disassembler'
-   disassemble = disassembler(bfdf);
-                 ^~~~~~~~~~~~
-In file included from 
-/work/5.1/linux-5.1-rc7-mga07/tools/bpf/bpf_jit_disasm.c:24:
-/usr/include/dis-asm.h:325:27: note: declared here
-  extern disassembler_ftype disassembler (enum bfd_architecture arc,
-                            ^~~~~~~~~~~~
-make: *** [Makefile:57: bpf_jit_disasm.o] Error 1
-make: *** Waiting for unfinished jobs....
-
-
-
-So is this a bug in feature misdetection?
-
-
-In your commit message you state:
-
-"And making all this dependent on HAVE_LIBBFD_SUPPORT and
-HAVE_LIBBPF_SUPPORT:"
-
-
-Now we obviously have libbfd.
-
-But if the HAVE_LIBBPF_SUPPORT means tools/lib/bpf, then I havent 
-packaged that yet, so why is it detecting it as available ?
-
-
---
-
-Thomas
-
-
+Thanks,
+Fengguang
