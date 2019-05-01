@@ -2,148 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ABB4109CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 17:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7868C109D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 17:10:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfEAPJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 11:09:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60714 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbfEAPJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 11:09:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38D97A78;
-        Wed,  1 May 2019 08:09:25 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9B6F3F719;
-        Wed,  1 May 2019 08:09:23 -0700 (PDT)
-Date:   Wed, 1 May 2019 16:09:21 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] io_uring: avoid page allocation warnings
-Message-ID: <20190501150921.GE11740@lakrids.cambridge.arm.com>
-References: <20190430132405.8268-1-mark.rutland@arm.com>
- <20190430141810.GF13796@bombadil.infradead.org>
- <20190430145938.GA8314@lakrids.cambridge.arm.com>
- <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
- <20190430170302.GD8314@lakrids.cambridge.arm.com>
- <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
- <20190501103026.GA11740@lakrids.cambridge.arm.com>
- <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
+        id S1726978AbfEAPJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 11:09:56 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:42722 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbfEAPJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 11:09:56 -0400
+Received: from [195.37.15.138] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hLqrj-000435-PA; Wed, 01 May 2019 17:09:47 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [DO NOT MERGE] [PATCH 2/2] arm64: rockchip: rk3399: nanopc-t4: Enable FriendlyELEC HD702E eDP panel
+Date:   Wed, 01 May 2019 17:09:46 +0200
+Message-ID: <59905981.qcSMt8CUfq@phil>
+In-Reply-To: <CAMty3ZBdko3+p6SoKYH-Mwism-Qnp3F5u7JV8YQTHzNP8A5kEg@mail.gmail.com>
+References: <20190501121448.3812-1-jagan@amarulasolutions.com> <cc16498b-71f8-04ce-44d1-25417fd64757@arm.com> <CAMty3ZBdko3+p6SoKYH-Mwism-Qnp3F5u7JV8YQTHzNP8A5kEg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 06:41:43AM -0600, Jens Axboe wrote:
-> On 5/1/19 4:30 AM, Mark Rutland wrote:
-> > On Tue, Apr 30, 2019 at 12:11:59PM -0600, Jens Axboe wrote:
-> >> On 4/30/19 11:03 AM, Mark Rutland wrote:
-> >>> I've just had a go at that, but when using kvmalloc() with or without
-> >>> GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
-> >>> syzkaller prog below:
-> >>>
-> >>> ----
-> >>> Syzkaller reproducer:
-> >>> # {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
-> >>> r0 = io_uring_setup(0x378, &(0x7f00000000c0))
-> >>> sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
-> >>> io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
-> >>> ----
-> >>>
-> >>> ... I'm a bit worried that opens up a trivial DoS.
-> >>>
-> >>> Thoughts?
-> >>
-> >> Can you post the patch you used?
-> > 
-> > Diff below.
+Am Mittwoch, 1. Mai 2019, 16:09:46 CEST schrieb Jagan Teki:
+> On Wed, May 1, 2019 at 6:17 PM Robin Murphy <robin.murphy@arm.com> wrote:
+> >
+> > On 01/05/2019 13:14, Jagan Teki wrote:
+> > > FriendlyELEC HD702E is one of optional LCD panel for
+> > > NanoPC T4 eDP interface.
+> > >
+> > > It features 800x1280 resolutions, with built in GT9271 captive
+> > > touchscreen and adjustable backlight via PWM.
+> > >
+> > > eDP panel connections are:
+> > > - VCC3V3_SYS: 3.3V panel power supply
+> > > - GPIO4_C2: PWM0_BL pin
+> > > - GPIO4_D5_LCD_BL_EN: Backlight enable pin
+> > > - VCC12V0_SYS: 12V backlight power supply
+> > > - Touchscreen connected via I2C4
+> > > - GPIO1_C4_TP_INT: touchscreen interrupt pin
+> > > - GPIO1_B5_TP_RST: touchscreen reset pin
+> > >
+> > > Add support for it.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Note: we need to disable hdmi-cec pinctrl to work with
+> > > edp-hpd since both share same pin, otherwise we can
+> > > encounter below error during bootup
+> > > [    1.047726] rockchip-pinctrl pinctrl: pin gpio4-23 already requested by ff940000.hdmi; cannot claim for ff970000.edp
+> > > [    1.048655] rockchip-pinctrl pinctrl: pin-151 (ff970000.edp) status -22
+> > > [    1.049235] rockchip-pinctrl pinctrl: could not request pin 151 (gpio4-23) from group edp-hpd  on device rockchip-pinctrl
+> > > [    1.050191] rockchip-dp ff970000.edp: Error applying setting, reverse things back
+> > > [    1.050867] rockchip-dp: probe of ff970000.edp failed with error -22
+> >
+> > Hmm, AFAICS that pin is exclusively wired to the HDMI connector and not
+> > used for the eDP interface, so really it's the fault of rk3399.dtsi for
+> > trying to claim it unconditionally. Ideally we'd pull those pinctrl
+> > properties out into the board DTs which do actually need them, but the
+> > quick and easy approach would be to add some "/delete-property/ ..."
+> > workarounds to the &edp node here.
 > 
-> And the reproducer, that was never posted.
+> Thought that initially, but the same pin shared between HDMI CEC and
+> eDP hotplug with different bit function to enable.
+> 
+> gpio4c7_sel
+> GPIO4C[7] iomux select
+> 2'b00: gpio
+> 2'b01: hdmi_cecinout
+> 2'b10: edp_hotplug
+> 2'b11: reserved
+> 
+> GPIO4_C7/HDMI_CECINOUT/EDP_HOTPLUG is the shared pin, which is
+> available in any nanopc-t4 as well in rk3399 datasheet, look like it's
+> an SoC pin that driver hotplug to eDP and ie same reason is pinmux in
+> rk3399.dtsi.
 
-It was; the "Syzakller reproducer" above is the reproducer I used with
-syz-repro.
+Yes the pin of the soc is shared between those functions, so you'll
+have to check the schematics of your board where this pin is going
+to.
 
-I've manually minimized that to C below. AFAICT, that hits a leak, which
-is what's triggering the OOM after the program is run a number of times
-with the previously posted kvmalloc patch.
+If you check the schematics [0] page 11, GPIO4_C7's signal is named HDMI_CEC
+and on page 18 you can see that it goes as expected to the cec-pin of the
+hdmi connector. 
 
-Per /proc/meminfo, that memory isn't accounted anywhere.
+So the Nanopc-T4 should only select the cec signal.
 
-> Patch looks fine to me. Note
-> that buffer registration is under the protection of RLIMIT_MEMLOCK.
-> That's usually very limited for non-root, as root you can of course
-> consume as much as you want and OOM the system.
 
-Sure.
+Heiko
+[0] http://wiki.friendlyarm.com/wiki/images/f/f4/NanoPC-T4-1802-Schematic.pdf
 
-As above, it looks like there's a leak, regardless.
 
-Thanks,
-Mark.
 
----->8----
-#include <stdint.h>
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <linux/uio.h>
-
-// NOTE: arm64 syscall numbers
-#ifndef __NR_io_uring_register
-#define __NR_io_uring_register 427
-#endif
-#ifndef __NR_io_uring_setup
-#define __NR_io_uring_setup 425
-#endif
-
-#define __IORING_REGISTER_BUFFERS         0
-	
-struct __io_sqring_offsets {
-	uint32_t head;
-	uint32_t tail;
-	uint32_t ring_mask;
-	uint32_t ring_entries;
-	uint32_t flags;
-	uint32_t dropped;
-	uint32_t array;
-	uint32_t resv1;
-	uint64_t resv2;
-};
-
-struct __io_uring_params {
-	uint32_t sq_entries;
-	uint32_t cq_entries;
-	uint32_t flags;
-	uint32_t sq_thread_cpu;
-	uint32_t sq_thread_idle;
-	uint32_t resv[5];
-	struct __io_sqring_offsets sq_off;
-	struct __io_sqring_offsets cq_off;
-
-};
-
-static struct __io_uring_params params; 
-
-static struct iovec iov = {
-	.iov_base = (void *)0x10,
-	.iov_len  = 1024 * 1024 * 1024,
-};
-
-int main(void)
-{
-	int fd;
-
-	fd = syscall(__NR_io_uring_setup, 0x1, &params);
-	syscall(__NR_io_uring_register, fd, __IORING_REGISTER_BUFFERS, &iov, 1);
-
-	return 0;
-}
