@@ -2,48 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8603110DB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5498D10DB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfEAUFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 16:05:05 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:36550 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfEAUFE (ORCPT
+        id S1726207AbfEAUFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 16:05:09 -0400
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:42341 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfEAUFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 16:05:04 -0400
-Received: by mail-qk1-f201.google.com with SMTP id a12so241436qkb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 13:05:03 -0700 (PDT)
+        Wed, 1 May 2019 16:05:06 -0400
+Received: by mail-oi1-f202.google.com with SMTP id r84so126767oia.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 13:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=j1UWHDT4a3S43XmXoocO/8/QcdoleiLleSM+fFU5j3U=;
-        b=mtpE+O46RBE22iwEhucexJJgTrsWylAuSBqpI5XhAI2/MeOj7YRLypQhc67Y+v3/5L
-         q80eU0MCTyAnnU7g51a1M+L88zcMYhjx4P8giwZ7qTvDeO8YeKRoKJEeAMmZ3181NlzP
-         mSHNS9cnwDT/g7HBzdYXNphlRoy6lq5icoPfSiF8p1gelb1vx4vK7rHCLzrvM9LK9jYO
-         JMFwXyN1F5T28Y0cA837E9SuXW9smPtVeGTLGyf1iYj+nOzV/mFcKi0DlJb+saUyvU1b
-         IikDOanxDREBARGqKRsOs5FHl1AQSCDEGd1UdFeUvzMzV1CysMm0eN4ulhoKzeyEa3dF
-         yLHg==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=pgwmPCltNlT2qJblASiCpctnwqNtjlaYefBmlV3joCA=;
+        b=AMFmjeknKhEaJ/eh9jtp+QJfhvY+QPJUVoke8a327Koi6aQNO6J+ln7j6aJIvHIwYE
+         8IaY5sY50qyQX7VW6CSR6VKL2/C/yiEv1tEMiYnkWXzxI3tTx7dzZRy24C3bkXZrOaZH
+         v/6HKXlBiUnlx5g7RvwIWd47qfARkNLLJnu58vsP28Lf1xLzun0VrCJFZRKTjcBj0CQZ
+         kxCjc+1RHyqrjlKu5XlAbLWMaP23VslEyGRa0EylGu9Rj7xob49sFengp78TMf1739MD
+         inCxLoW1GbMipIAKe2nmPiN2XN2Kz2sB3z1MEjJhaomm/uvvldW+EC4afPJwobojLOTN
+         IgOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=j1UWHDT4a3S43XmXoocO/8/QcdoleiLleSM+fFU5j3U=;
-        b=PWNXcDJGkbkg5jgXDDtYgioeqUPUBmGDm0BtnfYaQqFd7ZFCRDMDXpBD8Wl3L/UNJ2
-         zBInArf1x778xeWHBDD5PcfqqTE39MMCkTba4+JahAtUF7uQfGKrmYvaGxcNXcONva+o
-         jziruKT/wPp58VHnkiFX1sofr3+L5dLbTKRU8pARY+4zr0zLP1f41RHBMbBOzqYOFWBk
-         Rc09ka1V+Tcix7F6jp8GSPCkDpCJohkKrl9k8YPT5ampT/HYGXEQVcQko+3wKKqM2eG/
-         MIGlS4q50GksAYKujlPOsSjKY1rdOZT1I7keH1Urh/DnswKHKD5hMy0BR4QAa32vQhcf
-         2x0Q==
-X-Gm-Message-State: APjAAAW2j+Eq+Mx8CUPhBcAi6naBVBQF+HF/Pe7BNj33Qh9O6dmdsCbO
-        vmMhPGF84+oLQkLId4iACQMUvy1800swcyz57Gg=
-X-Google-Smtp-Source: APXvYqwcmhUFSe0z7HnkFa2sbWE1j+IB2dn0B0YnDnOj177FZGCi3JFg2JIbv4Tt1UYGkEqVWbyRaVUYx0Dd0E4fsH4=
-X-Received: by 2002:a0c:8183:: with SMTP id 3mr71929qvd.206.1556741103412;
- Wed, 01 May 2019 13:05:03 -0700 (PDT)
-Date:   Wed,  1 May 2019 13:04:49 -0700
-Message-Id: <20190501200451.255615-1-samitolvanen@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=pgwmPCltNlT2qJblASiCpctnwqNtjlaYefBmlV3joCA=;
+        b=B8aUkd+BciurFfCPIxPvoggdYEHPmrzDZTPypt1BJDBsXgcbZxduzaI8pe6jLlxbXu
+         HjytV/zuSV/J/rZsQaNrueZ+yeWWWsO+voSmEj4h8v+tXc2nQhH63pIuQ8S+aoxqEbbU
+         v0MXe32AZ7obp9n59y/RZJ4X6WAg9kPHu9i2asMn5HRofFLmmpGOenq/AxtlBbhhN/bn
+         hsySit6+KoNqzaLSK8RdRC6EXOtis28ED5keH2Bwkkp5FPDS5Klhl6YprErAyBFQnekx
+         qEYKxjml9t0I9zK6G8Z0yOhOktEH6JNUGRpZS8wbOwE/OizL6LoU6lBtyWxY8Wri+WYI
+         wS2A==
+X-Gm-Message-State: APjAAAVI9ZefMkEEN+pNIJeydOZ3Uv5WaE+sz3aHJzcnJYbToIEBH+i4
+        lW2HpgwB3fLeahm0YiwK22quqeQonZwfVxdGZSc=
+X-Google-Smtp-Source: APXvYqy0WApsbwDI8BfA3Z5wQECjBctYDbr5V6gFmoYub0j5ti+nozhzvzn4wnXwl6X5IMNDwLQwrHjL3uHCJNYqsPM=
+X-Received: by 2002:a9d:6153:: with SMTP id c19mr6049632otk.110.1556741105717;
+ Wed, 01 May 2019 13:05:05 -0700 (PDT)
+Date:   Wed,  1 May 2019 13:04:50 -0700
+In-Reply-To: <20190501200451.255615-1-samitolvanen@google.com>
+Message-Id: <20190501200451.255615-2-samitolvanen@google.com>
 Mime-Version: 1.0
+References: <20190501200451.255615-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH 0/2] fix function type mismatches in syscall wrappers
+Subject: [PATCH 1/2] arm64: fix syscall_fn_t type
 From:   Sami Tolvanen <samitolvanen@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
@@ -57,18 +61,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches fix type mismatches in arm64 syscall wrapper
-definitions, which trip indirect call checks with Control-Flow
-Integrity.
+Use const struct pt_regs * instead of struct pt_regs * as
+the argument type to fix indirect call type mismatches with
+Control-Flow Integrity checking.
 
-Sami Tolvanen (2):
-  arm64: fix syscall_fn_t type
-  arm64: use the correct function type in SYSCALL_DEFINE0
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ arch/arm64/include/asm/syscall.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/include/asm/syscall.h         |  2 +-
- arch/arm64/include/asm/syscall_wrapper.h | 18 +++++++++---------
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
+diff --git a/arch/arm64/include/asm/syscall.h b/arch/arm64/include/asm/syscall.h
+index a179df3674a1a..6206ab9bfcfc5 100644
+--- a/arch/arm64/include/asm/syscall.h
++++ b/arch/arm64/include/asm/syscall.h
+@@ -20,7 +20,7 @@
+ #include <linux/compat.h>
+ #include <linux/err.h>
+ 
+-typedef long (*syscall_fn_t)(struct pt_regs *regs);
++typedef long (*syscall_fn_t)(const struct pt_regs *regs);
+ 
+ extern const syscall_fn_t sys_call_table[];
+ 
 -- 
 2.21.0.593.g511ec345e18-goog
 
