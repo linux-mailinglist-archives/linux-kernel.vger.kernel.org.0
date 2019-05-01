@@ -2,82 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464C510B87
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A069910B8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfEAQoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:44:32 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40025 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfEAQoc (ORCPT
+        id S1726890AbfEAQo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:44:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51491 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfEAQo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:44:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so8409247plr.7;
-        Wed, 01 May 2019 09:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mLW1IJtKcn4AO05PMMXbdDMKQlkkrPR+HtN72nu7gJA=;
-        b=KX1kJh9q+gxShrD1asj6IlglPgupIkL8J9+5jcCaZN7+WQpDb9xGXO2H7pSY6EPWus
-         PKVRkWtsBDRB5UyZs8C2vzA251I+XwKGfAXPT1YYIfHNljMwjnpJMFU8pWUtQVjasuv4
-         sNodkf9Ed/q8Se4bKIqtehXfwauYQ6MdX46zrwdv5iwVy2usfIakVqbnjwlMByhvic3Z
-         YSbG9fo9JGBngeW51mjF2OE1IwZlwe4zQcsNxOQXhRJQaIh2UQCVZSEe1VFiZ2i9e1g3
-         w8wzGmo9oNTx0CR5rggjTm5hyiRSyjvj1ffODdiSeqAkRnIVPzf89nRkX70De2TFD0dj
-         wVwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mLW1IJtKcn4AO05PMMXbdDMKQlkkrPR+HtN72nu7gJA=;
-        b=JucP7aXhabQH4wYJNm6DngYUiWHXYOmSAaXXJ7lS2lq7Kpue/owqwKZ1+/O2b3wlkv
-         7bJOnQEZL26nctUttyp1f1W3CpM0QOyktJMQCXFm9biOYZQSevDqbqRmbPWjPpFv251K
-         NlSa82Rq9/qouJda59gUke1jYeurEj0ug+63SC+IG/rdq9K4uChP81oDlBoHeG7p3cbk
-         Opn3Gfvr+w63BeH2jS+Hvmap/BEiUBwnRbEcIhvd8sZ8tYRDeR8Stz9cV3vh3H/OflhJ
-         zCGuFvjNuTytdmgxM2uiHqHsi8doXV33q8fh+XRdk+yp/B9gQpZEUxMpkpVKGa1JXn5S
-         ot8Q==
-X-Gm-Message-State: APjAAAVBJ6dH/purBr+221UU5TO1uaQTMad5X8HnijULZSOINvpeTNWG
-        69eNJ8mYC3P3zDoVYI2RXkY=
-X-Google-Smtp-Source: APXvYqzD4dpfbxUhLW9ntFB+D1YLkOZK0b99riOXtBxiVDoEJw8hXKlkNoGkJe36obg0Dnn3xg4MHg==
-X-Received: by 2002:a17:902:e287:: with SMTP id cf7mr78599264plb.217.1556729071986;
-        Wed, 01 May 2019 09:44:31 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o2sm59961580pgq.1.2019.05.01.09.44.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 09:44:31 -0700 (PDT)
-Date:   Wed, 1 May 2019 09:44:30 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/100] 4.19.38-stable review
-Message-ID: <20190501164430.GC16175@roeck-us.net>
-References: <20190430113608.616903219@linuxfoundation.org>
+        Wed, 1 May 2019 12:44:57 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hLsLc-00033V-Ci; Wed, 01 May 2019 18:44:44 +0200
+Date:   Wed, 1 May 2019 18:44:44 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     "kernelci.org bot" <bot@kernelci.org>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, Thomas Gleixner <tglx@linutronix.de>,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com, Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
+Subject: Re: next/master boot bisection: next-20190430 on beagle-xm
+Message-ID: <20190501164444.iclxlzrxofqnj4bn@linutronix.de>
+References: <5cc8b55c.1c69fb81.c3759.1c27@mx.google.com>
+ <20190501153711.pxmapo2k3n5ynqrc@linutronix.de>
+ <20190501162944.GW8004@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190430113608.616903219@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190501162944.GW8004@atomide.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 01:37:29PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.38 release.
-> There are 100 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2019-05-01 09:29:44 [-0700], Tony Lindgren wrote:
+> Hi,
 > 
-> Responses should be made by Thu 02 May 2019 11:34:55 AM UTC.
-> Anything received after that time might be too late.
+> * Sebastian Andrzej Siewior <bigeasy@linutronix.de> [190501 15:37]:
+> > 
+> > On 2019-04-30 13:51:40 [-0700], kernelci.org bot wrote:
+> > > next/master boot bisection: next-20190430 on beagle-xm
+> > > 
+> > > Summary:
+> > >   Start:      f43b05fd4c17 Add linux-next specific files for 20190430
+> > >   Details:    https://kernelci.org/boot/id/5cc84d7359b514b7ab55847b
+> > >   Plain log:  https://storage.kernelci.org//next/master/next-20190430/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-7/lab-baylibre/boot-omap3-beagle-xm.txt
+> > >   HTML log:   https://storage.kernelci.org//next/master/next-20190430/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-7/lab-baylibre/boot-omap3-beagle-xm.html
+> > >   Result:     6d25be5782e4 sched/core, workqueues: Distangle worker accounting from rq lock
+> > > 
+> > > Checks:
+> > >   revert:     PASS
+> > >   verify:     PASS
+> > > 
+> > > Parameters:
+> > >   Tree:       next
+> > >   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > >   Branch:     master
+> > >   Target:     beagle-xm
+> > >   CPU arch:   arm
+> > >   Lab:        lab-baylibre
+> > >   Compiler:   gcc-7
+> > >   Config:     multi_v7_defconfig+CONFIG_SMP=n
+> > >   Test suite: boot
+> > > 
+> > > Breaking commit found:
+> > > 
+> > > -------------------------------------------------------------------------------
+> > > commit 6d25be5782e482eb93e3de0c94d0a517879377d0
+> > > Author: Thomas Gleixner <tglx@linutronix.de>
+> > > Date:   Wed Mar 13 17:55:48 2019 +0100
+> > > 
+> > >     sched/core, workqueues: Distangle worker accounting from rq lock
+> > 
+> > According to the bootlog it just stopped its output. This commit is in
+> > next since a week or two so I don't understand why this pops up now.
 > 
+> Adding Kevin to Cc, he just confirmed on #armlinux irc that he is able to
+> reproduce this with CONFIG_SMP=n and root=/dev/ram0. I could not reproduce
+> this issue so far on omap3 with NFSroot at least.
 
-Build results:
-	total: 156 pass: 156 fail: 0
-Qemu test results:
-	total: 349 pass: 349 fail: 0
+So that problem remains even that the job for today passed?
+ 
+> > I just revived my BBB and I can boot that commit in question. Currently
+> > that as close as I get to a beagle-xm. 
+> > Looking at
+> > 	https://kernelci.org/boot/id/5cc9a64359b514a77f5584af/
+> > it seems that the very same board managed to boot linux-next for
+> > next-20190501.
+> > 
+> > Side note: I can't boot next-20190501 on my BBB, bisect points to commit
+> >   1a5cd7c23cc52 ("bus: ti-sysc: Enable all clocks directly during init to read revision")
+> > 
+> > any idea?
+> 
+> Oh interesting thanks for letting me know. Next boots fine for me here
+> with NFSroot on BBB.
+> 
+> Do you have some output on what happens so I can investigate?
 
-Guenter
+Nope, the console remains dark.
+
+> Regards,
+> 
+> Tony
+
+Sebastian
