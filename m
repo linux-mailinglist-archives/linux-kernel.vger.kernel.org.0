@@ -2,115 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1B9103C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 04:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF77103C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfEACDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 22:03:35 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34788 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfEACDe (ORCPT
+        id S1727479AbfEAB7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 21:59:07 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54694 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfEAB7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 22:03:34 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s7so11838314ljh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 19:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tmXNfPLOFbb8hAF6Vl5xp7lQQxPxX9F/tPvuKsQzATU=;
-        b=Uv7TmbDCtMO9OVF1wwQKKT6KJaz16R9pk7p/lUNKiKQoViWyOjhOShjt1rXzEbmmks
-         pmlBHurjILNX0wuRZI3kdDTmXE+0EIMcNfEle/j05RKDoGD+a48SSxnYFMopH7Zi/0N8
-         k24pIeuX0qpCiaq30SlxmkHDKBRv2OvNH9Mws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tmXNfPLOFbb8hAF6Vl5xp7lQQxPxX9F/tPvuKsQzATU=;
-        b=mxoiDg9e4Ig+IbJYYsVRiVNnSECnAmIxSLDizkksXDuhRsSkKmLZx/yq6pkPWRKx1s
-         X9T3T2TL08peYoumWnOoLcmYvUXrQj4szYSDqVMFPDHA8owq4jNT0Ji2MYYp7EQov79v
-         d1l+nvcx70uLRIjDQKIuBageiO+iAe7TQmcWx4/YunK8lbqX9+edMTvuQkAtUxQtkzHm
-         7EZXz6R4IkdS/MWFUO/dDcVjEo8mSU3o49Gd69wJrR3VCNO7jNUjLtFxXefKjxs67fQk
-         KGjlZ2xc2ci5w3nbtK/bHG267JttEkvQNe8hS7qbx66sdTzy5lE1IwOVAOVaMYh/YSV7
-         AT1w==
-X-Gm-Message-State: APjAAAWwzP+/OS02T/4hSrt95hE64cAMUbXYJs5e3MH04iihMcDVhg/o
-        7HlQIlvQxruxrYtTtWqJ8c3y6ThEK9Q=
-X-Google-Smtp-Source: APXvYqzmRA5XhKDhoh0h26fM/anK2lsm1QCzqX+RcZjTSU/to7aBc6f7L6wcNz/mLFDGD9/AVvbPPA==
-X-Received: by 2002:a2e:9ed3:: with SMTP id h19mr38019487ljk.129.1556676212507;
-        Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id w2sm6045213ljh.72.2019.04.30.19.03.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id b12so13366765lji.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 19:03:32 -0700 (PDT)
-X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr34056779ljj.79.1556675903960;
- Tue, 30 Apr 2019 18:58:23 -0700 (PDT)
+        Tue, 30 Apr 2019 21:59:07 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hLeWX-00044J-5V; Wed, 01 May 2019 01:59:05 +0000
+Date:   Wed, 1 May 2019 02:59:05 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCHSET] sorting out RCU-delayed stuff in
+ ->destroy_inode()
+Message-ID: <20190501015904.GP23075@ZenIV.linux.org.uk>
+References: <20190416174900.GT2217@ZenIV.linux.org.uk>
+ <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
+ <20190430030914.GF23075@ZenIV.linux.org.uk>
+ <CAHk-=wiMvCR0iENUVorfU-3EMC7G8RNSeHSQrz9tndP1uSg2BQ@mail.gmail.com>
+ <20190430040043.GH23075@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20190428133826.3e142cfd@oasis.local.home> <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
- <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
- <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
- <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
- <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
- <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
- <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
- <20190430135602.GD2589@hirez.programming.kicks-ass.net> <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
- <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
- <20190430130359.330e895b@gandalf.local.home> <20190430132024.0f03f5b8@gandalf.local.home>
- <20190430134913.4e29ce72@gandalf.local.home> <20190430175334.423821c0@gandalf.local.home>
- <20190430213517.7bcfaf8e@oasis.local.home>
-In-Reply-To: <20190430213517.7bcfaf8e@oasis.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 30 Apr 2019 18:58:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whpS92oz-FkzaVdTEXVMre1NQioiLfqyEYYkmrVoVvgzw@mail.gmail.com>
-Message-ID: <CAHk-=whpS92oz-FkzaVdTEXVMre1NQioiLfqyEYYkmrVoVvgzw@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2] ftrace/x86: Emulate call function while updating
- in breakpoint handler
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430040043.GH23075@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 6:35 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
->
-> Probably easier to move it from inline asm to ftrace_X.S and use the
-> lockdep TRACE_ON/OFF macros.
+On Tue, Apr 30, 2019 at 05:00:43AM +0100, Al Viro wrote:
 
-Yeah, that should clean up the percpu stuff too since we have helper
-macros for it for *.S files anyway.
+> Where would you put that synchronize_rcu()?  Doing that before ->put_super()
+> is too early - inode references might be dropped in there.  OTOH, doing
+> that after that point means that while struct super_block itself will be
+> there, any number of data structures hanging from it might be not.
+> 
+> So we are still very limited in what we can do inside ->free_inode()
+> instance *and* we get bunch of synchronize_rcu() for no good reason.
+> 
+> Note that for normal lockless accesses (lockless ->d_revalidate(), ->d_hash(),
+> etc.) we are just fine with having struct super_block freeing RCU-delayed
+> (along with any data structures we might need) - the superblock had
+> been seen at some point after we'd taken rcu_read_lock(), so its
+> freeing won't happen until we drop it.  So we don't need synchronize_rcu()
+> for that.
+> 
+> Here the problem is that we are dealing with another RCU callback;
+> synchronize_rcu() would be needed for it, but it will only protect that
+> intermediate dereference of ->i_sb; any rcu-delayed stuff scheduled
+> from inside ->put_super() would not be ordered wrt ->free_inode().
+> And if we are doing that just for the sake of that one dereference,
+> we might as well do it before scheduling i_callback().
+> 
+> PS: we *are* guaranteed that module will still be there (unregister_filesystem()
+> does synchronize_rcu() and rcu_barrier() is done before kmem_cache_destroy()
+> in assorted exit_foo_fs()).
 
-I only did the asm() in C because it made the "look, something like
-this" patch simpler to test (and it made it easy to check the
-generated asm file). Not because it was a good idea ;)
+After playing with that for a while, I think that adding barriers on
+superblock freeing (or shutdown) should wait, assuming we do them at
+all.
 
-                 Linus
+Right now no ->free_inode() instances look at superblock or anything
+associated with it; moreover, there's no good candidate code that
+could be moved there and would benefit from such access.  So we
+don't have any material to see what could be useful to protect.
+
+Access to ->i_sb->s_op->free_inode itself is the only exception and
+moving that to before the rcu delay is both less invasive and a _lot_
+more robust than playing with synchronize_rcu().  We can do that
+without growing struct inode or storing it for long periods -
+->i_fop is only accessed for struct inode with positive refcount,
+so we can put that into anon union with the ->free_inode value,
+setting it just before we schedule execution of i_callback()
+(and before the direct call of the same in alloc_inode() failure
+exit).
+
+IMO the following is the sane incremental for the coming window purposes;
+if we get a convincing case for ->free_inode() doing something that could
+benefit from being ordered wrt parts of fs shutdown, we can always deal
+with synchronize_rcu() later.  Existing instances will be fine, and IMO
+separating RCU-delayed parts of inode destruction from the rest is
+worthwhile on its own.
+
+Objections?
+
+diff --git a/Documentation/filesystems/porting b/Documentation/filesystems/porting
+index 9d80f9e0855e..b8d3ddd8b8db 100644
+--- a/Documentation/filesystems/porting
++++ b/Documentation/filesystems/porting
+@@ -655,3 +655,11 @@ in your dentry operations instead.
+ 		* if ->free_inode() is non-NULL, it gets scheduled by call_rcu()
+ 		* combination of NULL ->destroy_inode and NULL ->free_inode is
+ 		  treated as NULL/free_inode_nonrcu, to preserve the compatibility.
++
++	Note that the callback (be it via ->free_inode() or explicit call_rcu()
++	in ->destroy_inode()) is *NOT* ordered wrt superblock destruction;
++	as the matter of fact, the superblock and all associated structures
++	might be already gone.  The filesystem driver is guaranteed to be still
++	there, but that's it.  Freeing memory in the callback is fine; doing
++	more than that is possible, but requires a lot of care and is best
++	avoided.
+diff --git a/fs/inode.c b/fs/inode.c
+index fb45590d284e..627e1766503a 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -211,8 +211,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
+ static void i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+-	if (inode->i_sb->s_op->free_inode)
+-		inode->i_sb->s_op->free_inode(inode);
++	if (inode->free_inode)
++		inode->free_inode(inode);
+ 	else
+ 		free_inode_nonrcu(inode);
+ }
+@@ -236,6 +236,7 @@ static struct inode *alloc_inode(struct super_block *sb)
+ 			if (!ops->free_inode)
+ 				return NULL;
+ 		}
++		inode->free_inode = ops->free_inode;
+ 		i_callback(&inode->i_rcu);
+ 		return NULL;
+ 	}
+@@ -276,6 +277,7 @@ static void destroy_inode(struct inode *inode)
+ 		if (!ops->free_inode)
+ 			return;
+ 	}
++	inode->free_inode = ops->free_inode;
+ 	call_rcu(&inode->i_rcu, i_callback);
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2e9b9f87caca..92732286b748 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -694,7 +694,10 @@ struct inode {
+ #ifdef CONFIG_IMA
+ 	atomic_t		i_readcount; /* struct files open RO */
+ #endif
+-	const struct file_operations	*i_fop;	/* former ->i_op->default_file_ops */
++	union {
++		const struct file_operations	*i_fop;	/* former ->i_op->default_file_ops */
++		void (*free_inode)(struct inode *);
++	};
+ 	struct file_lock_context	*i_flctx;
+ 	struct address_space	i_data;
+ 	struct list_head	i_devices;
