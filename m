@@ -2,355 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6CC11043
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 01:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D690C11063
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 01:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfEAXmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 19:42:23 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34620 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfEAXmV (ORCPT
+        id S1726256AbfEAXrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 19:47:48 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:48149 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbfEAXrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 19:42:21 -0400
-Received: by mail-it1-f196.google.com with SMTP id p18so4195621itm.1;
-        Wed, 01 May 2019 16:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=00VoYupkltIIZPHq0j4gOx9hJNR8372CM8lIROdA4bc=;
-        b=r6PUDJpRjbcHYbtQbB4R82KvgyHeXkk9Wto6+ocWTHnY4RDC1sejzDiQJe+2QpGjQk
-         O7AO0jaXsY8vmgRmYTYa0TPHG7CtnIfouikVIBHFwjSb9I0WyxpIhsyQ7W/9RmiCtcMw
-         85drwVMQlOD5X8N8dtgiUWmwBjedqlItWbFxAOOQvDxM5efWEVxRG8/T+/jQU1/qQZ9E
-         4FQVNEmZ5pA5i+mreP3BhCFSMhCZCYz5RcwYN3LK9ECpoLh0AadlXb50tXuV1ZnGdEyn
-         ecYSK8Xc80T5Nm9y9cCtPZfPp5WjeqhFnuwfWQjLtn/zMEEfjWLk9Hd2jKekhE3FB+Ej
-         R5nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=00VoYupkltIIZPHq0j4gOx9hJNR8372CM8lIROdA4bc=;
-        b=VyhvE/G0duZuR71VZDixTp4bNQ+lEDlKNlj95R49Nl5g7NTs+AZOdLEqfpv0JuQD1E
-         cUhhJlkmEJyOfq+i8KEI2YwUN21F3+V3agrVndg4+koFkDuXXJqVhBdL6Wpkx9A20toG
-         nvHpWE0ehe+doMCSm51S42b6wtC1e1JhUr0EzO15ws0zDzqalC+NhN19TOEhnxHLYgS5
-         fPwGkoTdl84oppHh/40PHrAPBRtc3PKBsO0dJvDgCx65IywVKS0h2tePW6YiRkExawBw
-         ku8A6JCTroeqHFHzdOErADItGt5Ju7Sv528n91VwsGVpnCBK/bKHZfeW6p0IqhCH4i5L
-         EHUQ==
-X-Gm-Message-State: APjAAAWIrM9W35yHrrzfbnR1Z3IaYmPkPD8zuxhneXe3ON0Hb1Kh0ng9
-        zrQb+GEGkVjXP99k3SJg/2c=
-X-Google-Smtp-Source: APXvYqweRxMpxvQfc4b6wx4nGXWdtHgFvNtylAAY3DqjO33nX8gm4fXZClvO1lIErhNGoKKisWGH8Q==
-X-Received: by 2002:a05:660c:12ce:: with SMTP id k14mr215145itd.23.1556754140432;
-        Wed, 01 May 2019 16:42:20 -0700 (PDT)
-Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id m3sm2392507ion.69.2019.05.01.16.42.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 16:42:19 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Wed, 1 May 2019 19:47:47 -0400
+Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 724F343A39D;
+        Thu,  2 May 2019 09:47:42 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hLywu-0005T3-OO; Thu, 02 May 2019 09:47:40 +1000
+Date:   Thu, 2 May 2019 09:47:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 16/16] PM / devfreq: Introduce driver for NVIDIA Tegra20
-Date:   Thu,  2 May 2019 02:38:15 +0300
-Message-Id: <20190501233815.32643-17-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190501233815.32643-1-digetx@gmail.com>
-References: <20190501233815.32643-1-digetx@gmail.com>
+Subject: Re: [LSF/MM TOPIC] Direct block mapping through fs for device
+Message-ID: <20190501234740.GN1454@dread.disaster.area>
+References: <20190426013814.GB3350@redhat.com>
+ <20190426062816.GG1454@dread.disaster.area>
+ <20190426152044.GB13360@redhat.com>
+ <20190427012516.GH1454@dread.disaster.area>
+ <20190429132643.GB3036@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429132643.GB3036@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=UJetJGXy c=1 sm=1 tr=0 cx=a_idp_d
+        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=SQEkvxGnTnKDDvOy9_cA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devfreq driver for NVIDIA Tegra20 SoC's. The driver periodically
-reads out Memory Controller counters and adjusts memory frequency based
-on the memory clients activity.
+On Mon, Apr 29, 2019 at 09:26:45AM -0400, Jerome Glisse wrote:
+> On Sat, Apr 27, 2019 at 11:25:16AM +1000, Dave Chinner wrote:
+> > On Fri, Apr 26, 2019 at 11:20:45AM -0400, Jerome Glisse wrote:
+> > > On Fri, Apr 26, 2019 at 04:28:16PM +1000, Dave Chinner wrote:
+> > > > On Thu, Apr 25, 2019 at 09:38:14PM -0400, Jerome Glisse wrote:
+> > > > > I see that they are still empty spot in LSF/MM schedule so i would like to
+> > > > > have a discussion on allowing direct block mapping of file for devices (nic,
+> > > > > gpu, fpga, ...). This is mm, fs and block discussion, thought the mm side
+> > > > > is pretty light ie only adding 2 callback to vm_operations_struct:
+> > > > 
+> > > > The filesystem already has infrastructure for the bits it needs to
+> > > > provide. They are called file layout leases (how many times do I
+> > > > have to keep telling people this!), and what you do with the lease
+> > > > for the LBA range the filesystem maps for you is then something you
+> > > > can negotiate with the underlying block device.
+> > > > 
+> > > > i.e. go look at how xfs_pnfs.c works to hand out block mappings to
+> > > > remote pNFS clients so they can directly access the underlying
+> > > > storage. Basically, anyone wanting to map blocks needs a file layout
+> > > > lease and then to manage the filesystem state over that range via
+> > > > these methods in the struct export_operations:
+> > > > 
+> > > >         int (*get_uuid)(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
+> > > >         int (*map_blocks)(struct inode *inode, loff_t offset,
+> > > >                           u64 len, struct iomap *iomap,
+> > > >                           bool write, u32 *device_generation);
+> > > >         int (*commit_blocks)(struct inode *inode, struct iomap *iomaps,
+> > > >                              int nr_iomaps, struct iattr *iattr);
+> > > > 
+> > > > Basically, before you read/write data, you map the blocks. if you've
+> > > > written data, then you need to commit the blocks (i.e. tell the fs
+> > > > they've been written to).
+> > > > 
+> > > > The iomap will give you a contiguous LBA range and the block device
+> > > > they belong to, and you can then use that to whatever smart DMA stuff
+> > > > you need to do through the block device directly.
+> > > > 
+> > > > If the filesystem wants the space back (e.g. because truncate) then
+> > > > the lease will be revoked. The client then must finish off it's
+> > > > outstanding operations, commit them and release the lease. To access
+> > > > the file range again, it must renew the lease and remap the file
+> > > > through ->map_blocks....
+> > > 
+> > > Sorry i should have explain why lease do not work. Here are list of
+> > > lease shortcoming AFAIK:
+> > >     - only one process
+> > 
+> > Sorry, what? The lease is taken by a application process that then
+> > hands out the mapping to whatever parts of it - processes, threads,
+> > remote clients, etc - need access. If your application doesn't
+> > have an access co-ordination method, then you're already completely
+> > screwed.
+> 
+> Then i am completely screw :) The thing is that today mmap of a file
+> does not mandate any kind of synchronization between process than
+> mmap files and thus we have a lot of existing applications that are
+> just happy with that programming model and i do not see any reasons
+> to force something new on them.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- MAINTAINERS                       |   8 ++
- drivers/devfreq/Kconfig           |  10 ++
- drivers/devfreq/Makefile          |   1 +
- drivers/devfreq/tegra20-devfreq.c | 212 ++++++++++++++++++++++++++++++
- 4 files changed, 231 insertions(+)
- create mode 100644 drivers/devfreq/tegra20-devfreq.c
+The whole model is fundamentally broken, and instead of making
+things really fucking complex to try and work around the brokenness
+we should simply /fix the underlying problem/.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 98edc38bfd7b..e7e434f74038 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10098,6 +10098,14 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
- 
-+MEMORY FREQUENCY SCALING DRIVER FOR NVIDIA TEGRA20
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
- W:	http://www.linux-mm.org
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index a6bba6e1e7d9..1530dbefa31f 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -100,6 +100,16 @@ config ARM_TEGRA_DEVFREQ
- 	  It reads ACTMON counters of memory controllers and adjusts the
- 	  operating frequencies and voltages with OPP support.
- 
-+config ARM_TEGRA20_DEVFREQ
-+	tristate "NVIDIA Tegra20 DEVFREQ Driver"
-+	depends on (TEGRA_MC && TEGRA20_EMC) || COMPILE_TEST
-+	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-+	select PM_OPP
-+	help
-+	  This adds the DEVFREQ driver for the Tegra20 family of SoCs.
-+	  It reads Memory Controller counters and adjusts the operating
-+	  frequencies and voltages with OPP support.
-+
- config ARM_RK3399_DMC_DEVFREQ
- 	tristate "ARM RK3399 DMC DEVFREQ Driver"
- 	depends on ARCH_ROCKCHIP
-diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index 47e5aeeebfd1..338ae8440db6 100644
---- a/drivers/devfreq/Makefile
-+++ b/drivers/devfreq/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
- obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
- obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
- obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra30-devfreq.o
-+obj-$(CONFIG_ARM_TEGRA20_DEVFREQ)	+= tegra20-devfreq.o
- 
- # DEVFREQ Event Drivers
- obj-$(CONFIG_PM_DEVFREQ_EVENT)		+= event/
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-new file mode 100644
-index 000000000000..ff82bac9ee4e
---- /dev/null
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -0,0 +1,212 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * NVIDIA Tegra20 devfreq driver
-+ *
-+ * Copyright (C) 2019 GRATE-DRIVER project
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/devfreq.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+
-+#include <soc/tegra/mc.h>
-+
-+#include "governor.h"
-+
-+#define MC_STAT_CONTROL				0x90
-+#define MC_STAT_EMC_CLOCK_LIMIT			0xa0
-+#define MC_STAT_EMC_CLOCKS			0xa4
-+#define MC_STAT_EMC_CONTROL			0xa8
-+#define MC_STAT_EMC_COUNT			0xb8
-+
-+#define EMC_GATHER_CLEAR			(1 << 8)
-+#define EMC_GATHER_ENABLE			(3 << 8)
-+
-+struct tegra_devfreq {
-+	struct devfreq *devfreq;
-+	struct clk *emc_clock;
-+	void __iomem *regs;
-+};
-+
-+static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-+				u32 flags)
-+{
-+	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-+	struct devfreq *devfreq = tegra->devfreq;
-+	struct dev_pm_opp *opp;
-+	unsigned long rate;
-+	int err;
-+
-+	opp = devfreq_recommended_opp(dev, freq, flags);
-+	if (IS_ERR(opp))
-+		return PTR_ERR(opp);
-+
-+	rate = dev_pm_opp_get_freq(opp);
-+	dev_pm_opp_put(opp);
-+
-+	err = clk_set_min_rate(tegra->emc_clock, rate);
-+	if (err)
-+		return err;
-+
-+	err = clk_set_rate(tegra->emc_clock, 0);
-+	if (err)
-+		goto restore_min_rate;
-+
-+	return 0;
-+
-+restore_min_rate:
-+	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
-+
-+	return err;
-+}
-+
-+static int tegra_devfreq_get_dev_status(struct device *dev,
-+					struct devfreq_dev_status *stat)
-+{
-+	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
-+
-+	/*
-+	 * EMC_COUNT returns number of memory events, that number is lower
-+	 * than the number of clocks. Conversion ratio of 1/8 results in a
-+	 * bit higher bandwidth than actually needed, it is good enough for
-+	 * the time being because drivers don't support requesting minimum
-+	 * needed memory bandwidth yet.
-+	 *
-+	 * TODO: adjust the ratio value once relevant drivers will support
-+	 * memory bandwidth management.
-+	 */
-+	stat->busy_time = readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
-+	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 8;
-+	stat->current_frequency = clk_get_rate(tegra->emc_clock);
-+
-+	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
-+	writel_relaxed(EMC_GATHER_ENABLE, tegra->regs + MC_STAT_CONTROL);
-+
-+	return 0;
-+}
-+
-+static struct devfreq_dev_profile tegra_devfreq_profile = {
-+	.polling_ms	= 500,
-+	.target		= tegra_devfreq_target,
-+	.get_dev_status	= tegra_devfreq_get_dev_status,
-+};
-+
-+static struct tegra_mc *tegra_get_memory_controller(void)
-+{
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	struct tegra_mc *mc;
-+
-+	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra20-mc-gart");
-+	if (!np)
-+		return ERR_PTR(-ENOENT);
-+
-+	pdev = of_find_device_by_node(np);
-+	of_node_put(np);
-+	if (!pdev)
-+		return ERR_PTR(-ENODEV);
-+
-+	mc = platform_get_drvdata(pdev);
-+	if (!mc)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	return mc;
-+}
-+
-+static int tegra_devfreq_probe(struct platform_device *pdev)
-+{
-+	struct tegra_devfreq *tegra;
-+	struct tegra_mc *mc;
-+	unsigned long max_rate;
-+	unsigned long rate;
-+	int err;
-+
-+	mc = tegra_get_memory_controller();
-+	if (IS_ERR(mc)) {
-+		err = PTR_ERR(mc);
-+		dev_err(&pdev->dev, "failed to get memory controller: %d\n",
-+			err);
-+		return err;
-+	}
-+
-+	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-+	if (!tegra)
-+		return -ENOMEM;
-+
-+	/* EMC is a system-critical clock that is always enabled */
-+	tegra->emc_clock = devm_clk_get(&pdev->dev, "emc");
-+	if (IS_ERR(tegra->emc_clock)) {
-+		err = PTR_ERR(tegra->emc_clock);
-+		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-+		return err;
-+	}
-+
-+	tegra->regs = mc->regs;
-+
-+	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
-+
-+	for (rate = 0; rate <= max_rate; rate++) {
-+		rate = clk_round_rate(tegra->emc_clock, rate);
-+
-+		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-+		if (err) {
-+			dev_err(&pdev->dev, "failed to add opp: %d\n", err);
-+			goto remove_opps;
-+		}
-+	}
-+
-+	/*
-+	 * Reset statistic gathers state, select global bandwidth for the
-+	 * statistics collection mode and set clocks counter saturation
-+	 * limit to maximum.
-+	 */
-+	writel_relaxed(0x00000000, tegra->regs + MC_STAT_CONTROL);
-+	writel_relaxed(0x00000000, tegra->regs + MC_STAT_EMC_CONTROL);
-+	writel_relaxed(0xffffffff, tegra->regs + MC_STAT_EMC_CLOCK_LIMIT);
-+
-+	platform_set_drvdata(pdev, tegra);
-+
-+	tegra->devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-+					    DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
-+	if (IS_ERR(tegra->devfreq)) {
-+		err = PTR_ERR(tegra->devfreq);
-+		goto remove_opps;
-+	}
-+
-+	return 0;
-+
-+remove_opps:
-+	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-+
-+	return err;
-+}
-+
-+static int tegra_devfreq_remove(struct platform_device *pdev)
-+{
-+	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
-+
-+	devfreq_remove_device(tegra->devfreq);
-+	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver tegra_devfreq_driver = {
-+	.probe		= tegra_devfreq_probe,
-+	.remove		= tegra_devfreq_remove,
-+	.driver		= {
-+		.name	= "tegra20-devfreq",
-+	},
-+};
-+module_platform_driver(tegra_devfreq_driver);
-+
-+MODULE_ALIAS("platform:tegra20-devfreq");
-+MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
-+MODULE_DESCRIPTION("NVIDIA Tegra20 devfreq driver");
-+MODULE_LICENSE("GPL v2");
+
+> Here i am only trying an optimization by possibly skipping the page
+> cache intermediary if filesystem and blocks device allows it and can
+> do it (depending on any number of runtime conditions).
+
+And that's where all the problems and demons lie.
+
+> So lease is inherently not compatible with mmap of file by multiple
+> processes. I understand you want to push your access model but the
+> reality is that we have existing applications that just do not fit
+> that model and i do not see any reasons to ask them to change, it
+> is never a successful approach.
+
+That's bullshit.
+
+I'm tired of you saying "we must use mmap" and then ignoring the
+people saying "mmap on files for direct block device access is
+broken - use a layout lease and then /mmap the block device
+directly/".
+
+You don't need to change how the applications work - they just need
+to add a layer of /access arbitration/ to get direct access to the
+block device.
+
+That's the whole point of filesystems - they are an access
+arbitration layer for a block device. That's why people use them
+instead of manging raw block device space themselves. We have
+multiple different applications - some which have nothing to do with
+RDMA, peer-to-peer hardware, etc that want direct access to the
+block device that is managed by a local filesystem. mmap()ing files
+simply doesn't work for them because remote access arbitrartion is a
+set of network protocols, not hardware devices.
+
+We want all these application to be able to work together in a sane
+way. Your insistence that your applications /must/ use mmap to
+directly access block devices, but then /must/ abstract taht direct
+access to the block device by mmap()ing files without any guarantee
+that the file mapping is stable is a horrible, unstable, and largely
+unworkable architecture.
+
+Just because your applications do it now doesn't mean it's the right
+way to do it. The stupid thing about all this is that the change to
+use layout leases and layout mapping requests in the applications is
+actually very minimal (yeah, if you have a layout lease then FIEMAP
+output will actually be stable for the lease range!), and if the
+applications and systems are set up properly then the probability of
+lease revocation is almost non-existent.
+
+You still set up your direct access mapping from the application via
+mmap(), except now it's via mmap() on the block device rather than
+through the file.
+
+This is exactly the same model as the pNFS remote access - the
+remote client is given a block device mapping, and it goes and
+accesses it directly via iscsi, iSER, or whatever RDMA transport the
+block device provides the pNFS client. The local filesystem that
+handed out the layout lease /just doesn't care/ how the application
+interacts with the block device or what it does with the mapping.
+
+And guess what? This works with DAX filesystems and block devices,
+too, without the application even having to be aware it's on DAX
+capable filesystems and hardware.
+
+I'm arguing for a sane, generic method of offloading direct access
+to the block device underneath a filesystem. I'm not trying to
+change the way your applications or you peer-to-peer application
+mappings work. All I want is that these *filesystem bypass*
+storage access methods all use the same access arbitration interface
+with the same semantics, and so applications can be completely
+agnostic as to what filesystem and/or hardware lies underneath them.
+
+> > What's a "device file" and how is that any difference from a normal
+> > kernel file?
+> 
+> Many device driver expose object (for instance all the GPU driver) through
+> their device file and allow userspace to mmap the device file to access
+> those object. At a given offset in the device file you will find a given
+> object and this can be per application or global to all application.
+
+This is irrelevant for how you access the block device underneath
+a local filesystem. The application has to do something to map these
+objects in the "device file" correctly, just like it needs to do
+something to correctly map the storage underneath the filesystem.
+
+> > Please stop trying to invent new and excitingly complex ways to do
+> > direct block access because we ialready have infrastructure we know
+> > works, we already support and is flexible enough to provide exactly
+> > the sort of direct block device access mechainsms that you are
+> > asking for.
+> 
+> I understand you do not like mmap but it has been around long enough
+> that it is extensively use and we have to accept that. There is no
+> changing all the applications that exist out there and that rely on
+> mmap and this is for those applications that such optimization would
+> help.
+
+You're arguing that "mmap() works for me, so it's good enough for
+everyone" but filesystem engineers have known this is not true
+for years. I also really don't buy this "file leases are going to
+fundamentally change how applications work" argument. All it changes
+is what the application mmap()s to get direct access to the
+underlying storage.  It works with any storage hardware and it works
+with both local and remote direct access because it completely
+avoids the need for the filesystem to manage data transfers and/or
+storage hardware.
+
+From the filesystem architecture perspective, we need a clean,
+generic, reliable filesystem bypass mechanism people can build any
+application on top of. File-backed mappings simply do not provide
+the necessary semantics, APIs, guarantees or revocation model
+(SIGBUS != revocation model) that we know are required by various
+existing userspace applications. Your application(s) are not the
+only direct storage access applications people are trying to
+implement, nor are they the only ones we'll have to support. They
+all need to use the same interface and methods - anything else is
+simply going to be an unsupportable, shitty mess.
+
+Cheers,
+
+Dave.
 -- 
-2.21.0
-
+Dave Chinner
+david@fromorbit.com
