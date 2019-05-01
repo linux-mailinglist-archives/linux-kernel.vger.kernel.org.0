@@ -2,165 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F6BC10C6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE0C10C7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbfEARun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 13:50:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfEARum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 13:50:42 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A4CC2063F;
-        Wed,  1 May 2019 17:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556733041;
-        bh=c1wj1L2mmEp3b5Zc4h0P4p/sRviKAqQNIMtj49lFokg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gG+sCU7Pn+mQT5F91kLO8vO2FqssmxCjlJLDuSvhFBgsFLDPE20VbFliRvcxUTqYW
-         fVAjvtF/VHvokMcFJ9bJ5f9NiePZ8U7ua4194GOFbGJ191dIFLdVADwBTFhWpXm+Dt
-         U/k/vMGI81AXUxcNqct2TGxXPKcnz7hzbnFdBTc0=
-Received: by mail-qk1-f178.google.com with SMTP id p19so10594044qkm.10;
-        Wed, 01 May 2019 10:50:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAU72fu9/sqAXS1JB7Ui8775tD55q5vdVrK0WISnDjVpoS/a2m/r
-        llC5mlFwFvlH1RJsei1xIyfUsPlsiYpGJodmUQ==
-X-Google-Smtp-Source: APXvYqxaALIZpIXVBCrI5e0AF+QhkCcGm6801hN03DMuRHPJPYGqONfx33oDbS0RZyhIRlVGgu4C1MuY3dbTFHDfvjc=
-X-Received: by 2002:a37:5c81:: with SMTP id q123mr39758359qkb.29.1556733040411;
- Wed, 01 May 2019 10:50:40 -0700 (PDT)
+        id S1726220AbfEARzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 13:55:07 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38301 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfEARzH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 13:55:07 -0400
+Received: by mail-it1-f193.google.com with SMTP id q19so11002636itk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 10:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Uxj4eaoNpSrPRNPfGOWw+nAI5ei5rNPE4Zz0eGAIncQ=;
+        b=JNruUJ7gsvMMumZ5pwArN8KMnaLlMBIibpuZxx7BAJD42ZxX7b3LrmqnqYo4/MDqFO
+         dvgVUfvRHdOK6AmG1okETPXKrxva+eI2kSuHkKwklwv00I0EiXx+5052rRbZ3fGqVDEm
+         vg8ndfuvDOEQzQb6N/j82EgIcbHlGmTNurlfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Uxj4eaoNpSrPRNPfGOWw+nAI5ei5rNPE4Zz0eGAIncQ=;
+        b=iUqIKAXqCGtl7Jz5rhatoOeJopNdaAUE9CHFxR5368w00dkeLaeFUWDJlcugF1U3N8
+         bJAvHHSiV7VqdHN/Do50JN+9SswYw6uRTGcoUQ5/ao5tyN0hI6ieYMTjSQQAuDJehGB3
+         1/MXRzvNM6A7hNsCR9f/NyW3StL7gCVDOYB7J51BYKIbsm9v9lp01G/KthnRlON/BcO0
+         iB04kAuY9AIrD+hYpYXd4T5b1+6kc5biyQi6zifs4fo2eSlczu+blIa2qM0T/Fce54A9
+         XDTWY4idVIG3dTf6JxNAQUo0frCH+CR8+O5A/dLIx2CP4vRfHc+rZt02cqQ+9ASrXHdv
+         +xVA==
+X-Gm-Message-State: APjAAAU1GSyhj9WAV2741YwWnOZLd/xzPe1NC8F2l5x2qxV/a3m2YVy5
+        QMGnsRLe4kDew4pJ7MEGAkXHCg==
+X-Google-Smtp-Source: APXvYqzpVR6PQtpadZMu+h/Pzk97UCjaX+Mujf8dWuxCZ8cPgJOzT/0R0gqaARbn9CKksFrazn09PQ==
+X-Received: by 2002:a24:29d4:: with SMTP id p203mr9259864itp.63.1556733306079;
+        Wed, 01 May 2019 10:55:06 -0700 (PDT)
+Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id t24sm10175129ioc.1.2019.05.01.10.55.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 10:55:05 -0700 (PDT)
+From:   Raul E Rangel <rrangel@chromium.org>
+To:     linux-mmc@vger.kernel.org
+Cc:     djkurtz@chromium.org, Raul E Rangel <rrangel@chromium.org>,
+        hongjiefang <hongjiefang@asrmicro.com>,
+        Jennifer Dahm <jennifer.dahm@ni.com>,
+        linux-kernel@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [RFC PATCH 1/2] mmc: sdhci: Manually check card status after reset
+Date:   Wed,  1 May 2019 11:54:56 -0600
+Message-Id: <20190501175457.195855-1-rrangel@chromium.org>
+X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
 MIME-Version: 1.0
-References: <20190423114424.3578-1-yinbo.zhu@nxp.com>
-In-Reply-To: <20190423114424.3578-1-yinbo.zhu@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 1 May 2019 12:50:29 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+4g+inxc+qcC3oLrXuR+L9AMvXFShGaU5Y3iRDsK3P6A@mail.gmail.com>
-Message-ID: <CAL_Jsq+4g+inxc+qcC3oLrXuR+L9AMvXFShGaU5Y3iRDsK3P6A@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: ls1028: dtsi: Add esdhc node in dtsi
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "Y.b. Lu" <yangbo.lu@nxp.com>, Jiafei Pan <jiafei.pan@nxp.com>,
-        Ashish Kumar <ashish.kumar@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 6:42 AM Yinbo Zhu <yinbo.zhu@nxp.com> wrote:
->
-> From: Ashish Kumar <Ashish.Kumar@nxp.com>
->
-> This patch is to add esdhc node and enable SD UHS-I,
-> eMMC HS200 for ls1028ardb/ls1028aqds board.
->
-> Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  .../boot/dts/freescale/fsl-ls1028a-qds.dts    |  8 ++++++
->  .../boot/dts/freescale/fsl-ls1028a-rdb.dts    | 13 +++++++++
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 27 +++++++++++++++++++
->  3 files changed, 48 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> index 14c79f4691ea..180e5d2a00d1 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> @@ -42,6 +42,14 @@
->         status = "okay";
->  };
->
-> +&esdhc {
-> +       status = "okay";
-> +};
-> +
-> +&esdhc1 {
-> +       status = "okay";
-> +};
-> +
->  &i2c0 {
->         status = "okay";
->
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> index f86b054a74ae..1bfaf4294db4 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> @@ -30,6 +30,19 @@
->         };
->  };
->
-> +&esdhc {
-> +       status = "okay";
-> +       sd-uhs-sdr104;
-> +       sd-uhs-sdr50;
-> +       sd-uhs-sdr25;
-> +       sd-uhs-sdr12;
-> +       };
-> +
-> +&esdhc1 {
-> +       status = "okay";
-> +       mmc-hs200-1_8v;
-> +       };
-> +
->  &i2c0 {
->         status = "okay";
->
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 2896bbcfa3bb..d13cd3fb455b 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -274,6 +274,33 @@
->                         status = "disabled";
->                 };
->
-> +               esdhc: esdhc@2140000 {
+There is a race condition between resetting the SDHCI controller and
+disconnecting the card.
 
-mmc@...
+For example:
+0) Card is connected and transferring data
+1) mmc_sd_reset is called to reset the controller due to a data error
+2) sdhci_set_ios calls sdhci_do_reset
+3) SOFT_RESET_ALL is toggled which clears the IRQs the controller has
+configured.
+4) Wait for SOFT_RESET_ALL to clear
+5) CD logic notices card is gone and CARD_PRESENT goes low, but since the
+   IRQs are not configured a CARD_REMOVED interrupt is never raised.
+6) IRQs are enabled again
+7) mmc layer never notices the device is disconnected. The SDHCI layer
+   will keep returning -ENOMEDIUM. This results in a card that is always
+   present and not functional.
 
-> +                       compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-> +                       reg = <0x0 0x2140000 0x0 0x10000>;
-> +                       interrupts = <0 28 0x4>; /* Level high type */
-> +                       clock-frequency = <0>;
+Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+---
+You can see an example of the following two patches here:
+https://privatebin.net/?b0f5953716d34ca6#C699bCBQ99NdvspfDW7CMucT8CJG4DgL+yUNPyepDCo=
+Line 8213: EILSEQ
+Line 8235: SDHC is hard reset
+Line 8240: Controller completes reset and card is no longer present
+Line 8379: mmc_sd_reset notices card is missing and issues a card_event
+           and schedules a detect change.
+Line 8402: Don't init the card since it's already gone.
+Line 8717: Marks card as removed
+Line 8820: mmc_sd_remove removes the block device
 
-Filled in by bootloader? If so, add a comment.
+I am running into a kernel panic. A task gets stuck for more than 120
+seconds. I keep seeing blkdev_close in the stack trace, so maybe I'm not
+calling something correctly?
 
-> +                       clocks = <&clockgen 2 1>;
-> +                       voltage-ranges = <1800 1800 3300 3300>;
-> +                       sdhci,auto-cmd12;
-> +                       little-endian;
-> +                       bus-width = <4>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               esdhc1: esdhc@2150000 {
+Here is the panic: https://privatebin.net/?8ec48c1547d19975#dq/h189w5jmTlbMKKAwZjUr4bhm7Q2AgvGdRqc5BxAc=
 
-mmc@...
+I sometimes see the following:
+[  547.943974] udevd[144]: seq 2350 '/devices/pci0000:00/0000:00:14.7/mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0p1' is taking a long time
 
-> +                       compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-> +                       reg = <0x0 0x2150000 0x0 0x10000>;
-> +                       interrupts = <0 63 0x4>; /* Level high type */
-> +                       clock-frequency = <0>;
-> +                       clocks = <&clockgen 2 1>;
-> +                       voltage-ranges = <1800 1800 3300 3300>;
-> +                       sdhci,auto-cmd12;
-> +                       broken-cd;
-> +                       little-endian;
-> +                       bus-width = <4>;
-> +                       status = "disabled";
-> +               };
-> +
->                 sata: sata@3200000 {
->                         compatible = "fsl,ls1028a-ahci";
->                         reg = <0x0 0x3200000 0x0 0x10000>,
-> --
-> 2.17.1
->
+I was getting the kernel panic on a 4.14 kernel: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/f3dc032faf4d074f20ada437e2d081a28ac699da/drivers/mmc/host
+So I'm guessing I'm missing an upstream fix.
+
+Do the patches look correct or am I doing something that would cause a
+kernel panic?
+
+I have a DUT setup with a GPIO I can use to toggle the CD pin. I ran a
+test where I connect and then randomly, between 0s - 1s disconnect the
+card. This got over 20k iterations before the panic. Though when I do it
+manually and stop for 2 minutes the panic happens.
+
+Any help would be appreciated.
+
+Thanks,
+Raul
+
+
+ drivers/mmc/core/sd.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index 265e1aeeb9d8..9206c4297d66 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -1242,7 +1242,27 @@ static int mmc_sd_runtime_resume(struct mmc_host *host)
+ 
+ static int mmc_sd_hw_reset(struct mmc_host *host)
+ {
++	int present;
+ 	mmc_power_cycle(host, host->card->ocr);
++
++	present = host->ops->get_cd(host);
++
++	/* The card status could have changed while resetting. */
++	if ((mmc_card_removed(host->card) && present) ||
++	    (!mmc_card_removed(host->card) && !present)) {
++		pr_info("%s: card status changed during reset\n",
++		       mmc_hostname(host));
++		host->ops->card_event(host);
++		mmc_detect_change(host, 0);
++	}
++
++	/* Don't perform unnecessary transactions if the card is missing. */
++	if (!present) {
++		pr_info("%s: card was removed during reset\n",
++			mmc_hostname(host));
++		return -ENOMEDIUM;
++	}
++
+ 	return mmc_sd_init_card(host, host->card->ocr, host->card);
+ }
+ 
+-- 
+2.21.0.593.g511ec345e18-goog
+
