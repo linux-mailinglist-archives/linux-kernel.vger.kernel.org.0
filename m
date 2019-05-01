@@ -2,149 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8178109FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 17:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933AC10A0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 17:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfEAPZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 11:25:06 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34260 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfEAPZF (ORCPT
+        id S1726804AbfEAP33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 11:29:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46799 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbfEAP33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 11:25:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e9so411504wrc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 08:25:04 -0700 (PDT)
+        Wed, 1 May 2019 11:29:29 -0400
+Received: by mail-io1-f68.google.com with SMTP id m14so4163504ion.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 08:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dnCVASXEPfC7FII5Fy/nSbQ8uR8+Ly3wRUufo71BHro=;
-        b=Fz4lDrO5EOlduWF6uAcUY+gytq80mhcFdo73iBEaoTB6srVo+auLCcCsKbP+FWG+h3
-         OD+QhT3HlUehrs2VNoPfaTDXuKHBlVpsK1aqNlhrDic8rNO47IFCbSqrS4L6p8an5uvi
-         LXmnSs7ygFZrHEaL6G9cu/rrBu91h/00Q5kz4=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w9icvTpHr/0UAUYKXVxAi0Mjttdtx3G15AY7sawXcdw=;
+        b=GmHq9NsEB0M1Qo6k1yWcAHJTK0LWrOuMLjXx9IWyix/blgs73E4lFLnPvnhmLAAS5u
+         nwqL5nI6DiCbISjtx1RjtFET5bxHiEOPGBOyCGyDbh/tfZlYZTXA6UDZVjaqSVCb60Bh
+         Og8GxSsoOVPGIn+hKcIX6dSyo0eablzlos+vwYtQayNZgF4rWR3xH5xVSlpYyteP3SDS
+         3SoEqVtQn4apu/yRc564DLei1YlkoLjOn93D2lvn8uWV+fK8AMgTkGWwbsTHZnHqwfZs
+         fs7npyoefdRfvUWewCSTCEurMzYSKUFufcv/2sLNSRT5WUMow1oL5g+kogrIdBZWEIih
+         abFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dnCVASXEPfC7FII5Fy/nSbQ8uR8+Ly3wRUufo71BHro=;
-        b=JKc9l2+3xrdkErwra8rUI3WvtDl4C8HO/g1p+gLQXR8Jo5mF6dw8u69zb0AoR6nAnK
-         wxAckbGtvGlnxrAXmUU2ArlITycqLyEnzWm30RLg8fktEQqPveuR29fIjvhztxqGN14D
-         hq0OvfSN80Ioe2j/1hfJtzygssOSRrCAghk5p/fp51PwE7kL+F/NVg5nWbtn/cNeS7N9
-         uF//HoGd5rxg7JcsoBfMkbEJGKgYXW4m4Ip1gOiD0j2M/m0EdLzPrjihhLTe4aveqFNQ
-         TPvtWc+PvlRNIzsFYZSeo/liEE6uBEa374lMfQcQBy5oreotOSzwA7qEM8hKDm1khkyt
-         URyA==
-X-Gm-Message-State: APjAAAUrqUsWYVVU84naERIMV5Gwl65WmRZGoFGMk8qY+c1IuYUUM6kF
-        Su2mRpkEfz6DIMl3yurnGxZuPJtf6Cc6IuavDoVruw==
-X-Google-Smtp-Source: APXvYqzwe5ifWXo+JysSH/l2XXvlDOPp4yfZ8GaGFKMc+ujM+MUFItj0lA+eEOUSuKWPR901Bj+uu2EqlirmPq6I9qQ=
-X-Received: by 2002:adf:fcc8:: with SMTP id f8mr34825124wrs.250.1556724303574;
- Wed, 01 May 2019 08:25:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w9icvTpHr/0UAUYKXVxAi0Mjttdtx3G15AY7sawXcdw=;
+        b=sjjwbJ2gSDJzbnZhbg6tYbpumEtwBuiGBXRVlSN+32rdbYPHlP+xdMoFUxgFpCTf/R
+         BNX+vht7T7VCMsGO28HnU3N9gH+pMt1Sqt+DhFKlz2poazot+jyB5FRGuh8ZJPHByULW
+         bO4lg3YeO0wHE8QXzRMby9cLno8XIIvm5J+R1p5v+2xjZDKRqyNDlws6JlIs7HJV52Wo
+         pf9g3Af0ye0NsQMmyBAsHp8roxRwoz3FzDyr4OciGG76InVPp3iW1eVxZewXNufat7wD
+         nnVlT21J6Us1YBPcSbZE88/eRi708lLKEf4Gwbd0GZXCHm/LPbvyCpUksRXFsXDPnZwt
+         6Keg==
+X-Gm-Message-State: APjAAAVWSwMOLVrwO7lT4ZRi6X6g5KeHcARgq51C3ilesydrQRxcf2RJ
+        icYkPEZFbxiV8y6CDvTIcEMqQw==
+X-Google-Smtp-Source: APXvYqxxdhXPqY0wown7mv3DfGcCQbx7MWnNeZLu50Ky50fVdx2xvbdy2IE0njr544wEEG5wdyV9qQ==
+X-Received: by 2002:a6b:6f11:: with SMTP id k17mr20872583ioc.76.1556724568160;
+        Wed, 01 May 2019 08:29:28 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id y7sm4851938ioq.87.2019.05.01.08.29.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 08:29:26 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: avoid page allocation warnings
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20190430132405.8268-1-mark.rutland@arm.com>
+ <20190430141810.GF13796@bombadil.infradead.org>
+ <20190430145938.GA8314@lakrids.cambridge.arm.com>
+ <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
+ <20190430170302.GD8314@lakrids.cambridge.arm.com>
+ <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
+ <20190501103026.GA11740@lakrids.cambridge.arm.com>
+ <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
+ <20190501150921.GE11740@lakrids.cambridge.arm.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <88fee953-ea3e-b9c0-650c-60faea07dd04@kernel.dk>
+Date:   Wed, 1 May 2019 09:29:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1555038815-31916-1-git-send-email-srinath.mannam@broadcom.com>
- <20190501113038.GA7961@e121166-lin.cambridge.arm.com> <20190501125530.GA15590@google.com>
- <119be78f-34f5-c19b-d41b-f7279e968b46@arm.com>
-In-Reply-To: <119be78f-34f5-c19b-d41b-f7279e968b46@arm.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Wed, 1 May 2019 20:54:51 +0530
-Message-ID: <CABe79T4TM555y5ePpvoT3OcgVDbRzQUjTQmqeJWNbHT-8FTnaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] PCIe Host request to reserve IOVA
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, poza@codeaurora.org,
-        Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190501150921.GE11740@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On 5/1/19 9:09 AM, Mark Rutland wrote:
+> On Wed, May 01, 2019 at 06:41:43AM -0600, Jens Axboe wrote:
+>> On 5/1/19 4:30 AM, Mark Rutland wrote:
+>>> On Tue, Apr 30, 2019 at 12:11:59PM -0600, Jens Axboe wrote:
+>>>> On 4/30/19 11:03 AM, Mark Rutland wrote:
+>>>>> I've just had a go at that, but when using kvmalloc() with or without
+>>>>> GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
+>>>>> syzkaller prog below:
+>>>>>
+>>>>> ----
+>>>>> Syzkaller reproducer:
+>>>>> # {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
+>>>>> r0 = io_uring_setup(0x378, &(0x7f00000000c0))
+>>>>> sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
+>>>>> io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
+>>>>> ----
+>>>>>
+>>>>> ... I'm a bit worried that opens up a trivial DoS.
+>>>>>
+>>>>> Thoughts?
+>>>>
+>>>> Can you post the patch you used?
+>>>
+>>> Diff below.
+>>
+>> And the reproducer, that was never posted.
+> 
+> It was; the "Syzakller reproducer" above is the reproducer I used with
+> syz-repro.
+> 
+> I've manually minimized that to C below. AFAICT, that hits a leak, which
+> is what's triggering the OOM after the program is run a number of times
+> with the previously posted kvmalloc patch.
+> 
+> Per /proc/meminfo, that memory isn't accounted anywhere.
+> 
+>> Patch looks fine to me. Note
+>> that buffer registration is under the protection of RLIMIT_MEMLOCK.
+>> That's usually very limited for non-root, as root you can of course
+>> consume as much as you want and OOM the system.
+> 
+> Sure.
+> 
+> As above, it looks like there's a leak, regardless.
 
-Thank you so much for all the information.
+The leak is that we're not releasing imu->bvec in case of error. I fixed
+a missing kfree -> kvfree as well in your patch, with this rolled up
+version it works for me.
 
-Regards,
-Srinath.
 
-On Wed, May 1, 2019 at 6:51 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 2019-05-01 1:55 pm, Bjorn Helgaas wrote:
-> > On Wed, May 01, 2019 at 12:30:38PM +0100, Lorenzo Pieralisi wrote:
-> >> On Fri, Apr 12, 2019 at 08:43:32AM +0530, Srinath Mannam wrote:
-> >>> Few SOCs have limitation that their PCIe host can't allow few inbound
-> >>> address ranges. Allowed inbound address ranges are listed in dma-ranges
-> >>> DT property and this address ranges are required to do IOVA mapping.
-> >>> Remaining address ranges have to be reserved in IOVA mapping.
-> >>>
-> >>> PCIe Host driver of those SOCs has to list resource entries of allowed
-> >>> address ranges given in dma-ranges DT property in sorted order. This
-> >>> sorted list of resources will be processed and reserve IOVA address for
-> >>> inaccessible address holes while initializing IOMMU domain.
-> >>>
-> >>> This patch set is based on Linux-5.0-rc2.
-> >>>
-> >>> Changes from v3:
-> >>>    - Addressed Robin Murphy review comments.
-> >>>      - pcie-iproc: parse dma-ranges and make sorted resource list.
-> >>>      - dma-iommu: process list and reserve gaps between entries
-> >>>
-> >>> Changes from v2:
-> >>>    - Patch set rebased to Linux-5.0-rc2
-> >>>
-> >>> Changes from v1:
-> >>>    - Addressed Oza review comments.
-> >>>
-> >>> Srinath Mannam (3):
-> >>>    PCI: Add dma_ranges window list
-> >>>    iommu/dma: Reserve IOVA for PCIe inaccessible DMA address
-> >>>    PCI: iproc: Add sorted dma ranges resource entries to host bridge
-> >>>
-> >>>   drivers/iommu/dma-iommu.c           | 19 ++++++++++++++++
-> >>>   drivers/pci/controller/pcie-iproc.c | 44 ++++++++++++++++++++++++++++++++++++-
-> >>>   drivers/pci/probe.c                 |  3 +++
-> >>>   include/linux/pci.h                 |  1 +
-> >>>   4 files changed, 66 insertions(+), 1 deletion(-)
-> >>
-> >> Bjorn, Joerg,
-> >>
-> >> this series should not affect anything in the mainline other than its
-> >> consumer (ie patch 3); if that's the case should we consider it for v5.2
-> >> and if yes how are we going to merge it ?
-> >
-> > I acked the first one
-> >
-> > Robin reviewed the second
-> > (https://lore.kernel.org/lkml/e6c812d6-0cad-4cfd-defd-d7ec427a6538@arm.com)
-> > (though I do agree with his comment about DMA_BIT_MASK()), Joerg was OK
-> > with it if Robin was
-> > (https://lore.kernel.org/lkml/20190423145721.GH29810@8bytes.org).
-> >
-> > Eric reviewed the third (and pointed out a typo).
-> >
-> > My Kconfiggery never got fully answered -- it looks to me as though it's
-> > possible to build pcie-iproc without the DMA hole support, and I thought
-> > the whole point of this series was to deal with those holes
-> > (https://lore.kernel.org/lkml/20190418234241.GF126710@google.com).  I would
-> > have expected something like making pcie-iproc depend on IOMMU_SUPPORT.
-> > But Srinath didn't respond to that, so maybe it's not an issue and it
-> > should only affect pcie-iproc anyway.
->
-> Hmm, I'm sure I had at least half-written a reply on that point, but I
-> can't seem to find it now... anyway, the gist is that these inbound
-> windows are generally set up to cover the physical address ranges of
-> DRAM and anything else that devices might need to DMA to. Thus if you're
-> not using an IOMMU, the fact that devices can't access the gaps in
-> between doesn't matter because there won't be anything there anyway; it
-> only needs mitigating if you do use an IOMMU and start giving arbitrary
-> non-physical addresses to the endpoint.
->
-> > So bottom line, I'm fine with merging it for v5.2.  Do you want to merge
-> > it, Lorenzo, or ...?
->
-> This doesn't look like it will conflict with the other DMA ops and MSI
-> mapping changes currently in-flight for iommu-dma, so I have no
-> objection to it going through the PCI tree for 5.2.
->
-> Robin.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 18cecb6a0151..3e817d40fb96 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2443,7 +2443,7 @@ static int io_sqe_buffer_unregister(struct io_ring_ctx *ctx)
+ 
+ 		if (ctx->account_mem)
+ 			io_unaccount_mem(ctx->user, imu->nr_bvecs);
+-		kfree(imu->bvec);
++		kvfree(imu->bvec);
+ 		imu->nr_bvecs = 0;
+ 	}
+ 
+@@ -2533,11 +2533,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 
+ 		ret = 0;
+ 		if (!pages || nr_pages > got_pages) {
+-			kfree(vmas);
+-			kfree(pages);
+-			pages = kmalloc_array(nr_pages, sizeof(struct page *),
++			kvfree(vmas);
++			kvfree(pages);
++			pages = kvmalloc_array(nr_pages, sizeof(struct page *),
+ 						GFP_KERNEL);
+-			vmas = kmalloc_array(nr_pages,
++			vmas = kvmalloc_array(nr_pages,
+ 					sizeof(struct vm_area_struct *),
+ 					GFP_KERNEL);
+ 			if (!pages || !vmas) {
+@@ -2549,7 +2549,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			got_pages = nr_pages;
+ 		}
+ 
+-		imu->bvec = kmalloc_array(nr_pages, sizeof(struct bio_vec),
++		imu->bvec = kvmalloc_array(nr_pages, sizeof(struct bio_vec),
+ 						GFP_KERNEL);
+ 		ret = -ENOMEM;
+ 		if (!imu->bvec) {
+@@ -2588,6 +2588,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			}
+ 			if (ctx->account_mem)
+ 				io_unaccount_mem(ctx->user, nr_pages);
++			kvfree(imu->bvec);
+ 			goto err;
+ 		}
+ 
+@@ -2610,12 +2611,12 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 
+ 		ctx->nr_user_bufs++;
+ 	}
+-	kfree(pages);
+-	kfree(vmas);
++	kvfree(pages);
++	kvfree(vmas);
+ 	return 0;
+ err:
+-	kfree(pages);
+-	kfree(vmas);
++	kvfree(pages);
++	kvfree(vmas);
+ 	io_sqe_buffer_unregister(ctx);
+ 	return ret;
+ }
+
+-- 
+Jens Axboe
+
