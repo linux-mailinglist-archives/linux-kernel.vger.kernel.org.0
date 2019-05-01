@@ -2,156 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E66B310849
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 15:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3BD61084E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 15:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbfEANWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 09:22:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725993AbfEANWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 09:22:54 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67D95206DF;
-        Wed,  1 May 2019 13:22:51 +0000 (UTC)
-Date:   Wed, 1 May 2019 09:22:49 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Nicolai Stange <nstange@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch\/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        "open list\:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [RFC][PATCH v2] ftrace/x86: Emulate call function while
- updating in breakpoint handler
-Message-ID: <20190501092249.54cdbd94@gandalf.local.home>
-In-Reply-To: <87muk6vavb.fsf@suse.de>
-References: <20190428133826.3e142cfd@oasis.local.home>
-        <CALCETrXvmZPHsfRVnW0AtyddfN-2zaCmWn+FsrF6XPTOFd_Jmw@mail.gmail.com>
-        <CAHk-=whtt4K2f0KPtG-4Pykh3FK8UBOjD8jhXCUKB5nWDj_YRA@mail.gmail.com>
-        <CALCETrWELBCK-kqX5FCEDVUy8kCT-yVu7m_7Dtn=GCsHY0Du5A@mail.gmail.com>
-        <CAHk-=wgewK4eFhF3=0RNtk1KQjMANFH6oDE=8m=84RExn2gxhw@mail.gmail.com>
-        <CAHk-=whay7eN6+2gZjY-ybRbkbcqAmgrLwwszzHx8ws3c=S-MA@mail.gmail.com>
-        <CALCETrXzVU0Q7u1q=QFPaDr=aojjF5cjbOi9CxxXnp5GqTqsWA@mail.gmail.com>
-        <CAHk-=wg1QPz0m+7jnVcjQgkySUQLzAXE8_PZARV-vWYK27LB=w@mail.gmail.com>
-        <20190430135602.GD2589@hirez.programming.kicks-ass.net>
-        <CAHk-=wg7vUGMRHyBsLig6qiPK0i4_BK3bRrTN+HHHziUGg1P_A@mail.gmail.com>
-        <CALCETrXujRWxwkgAwB+8xja3N9H22t52AYBYM_mbrjKKZ624Eg@mail.gmail.com>
-        <20190430130359.330e895b@gandalf.local.home>
-        <20190430132024.0f03f5b8@gandalf.local.home>
-        <20190430134913.4e29ce72@gandalf.local.home>
-        <20190430175334.423821c0@gandalf.local.home>
-        <87muk6vavb.fsf@suse.de>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726514AbfEANYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 09:24:38 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43050 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfEANYi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 09:24:38 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x41DODn5122797;
+        Wed, 1 May 2019 08:24:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1556717053;
+        bh=DoqH1vNO7AsfyS0xG3FhuLdkRzV3gYfFQeg3zGj35MQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yVPXkUyF2A7NVafOIMQ3/1Ve8xiuqT+HH3fE4wnx2KQJ8JFdopE89cATxQh7lgml1
+         jAM15t5nMES/RiuqCPUaTHsMnM6CUm1ks70bgN+ZB2H6mBpAOPqLjmU6Nl+aQYwysK
+         oa8viAgCcpc6q/iNS19xz9J3CxfuyfeYB540n5s0=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x41DODCt118774
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 May 2019 08:24:13 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 1 May
+ 2019 08:24:13 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 1 May 2019 08:24:13 -0500
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x41DO7Wa022405;
+        Wed, 1 May 2019 08:24:09 -0500
+Subject: Re: [PATCH v8 00/14] Add support for TISCI Interrupt controller
+ drivers
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>
+CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>,
+        <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+References: <20190430101230.21794-1-lokeshvutla@ti.com>
+ <30f5c877-a4dc-8ad9-0ad0-c172a60dc853@arm.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <7edd8582-ce51-60a0-24e1-c45fe6725705@ti.com>
+Date:   Wed, 1 May 2019 18:53:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <30f5c877-a4dc-8ad9-0ad0-c172a60dc853@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 01 May 2019 10:26:32 +0200
-Nicolai Stange <nstange@suse.de> wrote:
+Hi Marc,
 
-> > +extern asmlinkage void ftrace_emulate_call_irqon(void);
-> > +extern asmlinkage void ftrace_emulate_call_irqoff(void);
-> > +extern asmlinkage void ftrace_emulate_call_nmi(void);
-> > +extern asmlinkage void ftrace_emulate_call_update_irqoff(void);
-> > +extern asmlinkage void ftrace_emulate_call_update_irqon(void);
-> > +extern asmlinkage void ftrace_emulate_call_update_nmi(void);
-> > +
-> > +static DEFINE_PER_CPU(void *, ftrace_bp_call_return);
-> > +static DEFINE_PER_CPU(void *, ftrace_bp_call_nmi_return);  
+On 01/05/19 5:28 PM, Marc Zyngier wrote:
+> On 30/04/2019 11:12, Lokesh Vutla wrote:
+>> TI AM65x SoC based on K3 architecture introduced support for Events
+>> which are message based interrupts with minimal latency. These events
+>> are not compatible with regular interrupts and are valid only through
+>> an event transport lane. An Interrupt Aggregator(INTA) is introduced
+>> to convert these events to interrupts. INTA can also group 64 events
+>> into a single interrupt. Now the SoC has many peripherals and a large
+>> number of event sources (time sync or DMA), the use of events is
+>> completely dependent on a user's specific application, which drives a
+>> need for maximum flexibility in which event sources are used in the
+>> system. It is also completely up to software control as to how the
+>> events are serviced.
+>>
+>> Because of the huge flexibility there are certain standard peripherals
+>> (like GPIO etc)where all interrupts cannot be directly corrected to host
+>> interrupt controller. For this purpose, Interrupt Router(INTR) is
+>> introduced in the SoC. INTR just does a classic interrupt redirection.
+>>
+>> So the SoC has 3 types of interrupt controllers:
+>> - GIC500
+>> - Interrupt Router
+>> - Interrupt Aggregator
+>>
+>> Below is a diagrammatic view of how SoC integration of these interrupt
+>> controllers:(https://pastebin.ubuntu.com/p/9ngV3jdGj2/)
+>>
+>> Device Index-x               Device Index-y
+>>            |                         |
+>>            |                         |
+>>                       ....
+>>             \                       /
+>>              \                     /
+>>               \  (global events)  /
+>>           +---------------------------+   +---------+
+>>           |                           |   |         |
+>>           |             INTA          |   |  GPIO   |
+>>           |                           |   |         |
+>>           +---------------------------+   +---------+
+>>                          |   (vint)            |
+>>                          |                     |
+>>                         \|/                    |
+>>           +---------------------------+        |
+>>           |                           |<-------+
+>>           |           INTR            |
+>>           |                           |
+>>           +---------------------------+
+>>                          |
+>>                          |
+>>                         \|/ (gic irq)
+>>           +---------------------------+
+>>           |                           |
+>>           |             GIC           |
+>>           |                           |
+>>           +---------------------------+
+>>
+>> While at it, TISCI abstracts the handling of all above IRQ routes where
+>> interrupt sources are not directly connected to host interrupt controller.
+>> That would be configuration of Interrupt Aggregator and Interrupt Router.
+>>
+>> This series adds support for:
+>> - TISCI commands needed for IRQ configuration
+>> - Interrupt Router(INTR) driver.
+>> - Interrupt Aggregator(INTA) driver.
+>> - Interrupt Aggregator MSI bus layer.
+>>
+>> Marc,
+>> 	As discussed offline, the firmware changes are going to come within
+>> 	a day or so. These changes are tested against local binary which is
+>> 	bound to release.
+>>
+>> Boot Log: https://pastebin.ubuntu.com/p/YwprMKXdg4/
+>>
+>> Changes since v7:
+>> - Rebased on top of latest master.
+>> - Each patch has respective changes mentioned.
+>>
+>> Grygorii Strashko (1):
+>>   firmware: ti_sci: Add support to get TISCI handle using of_phandle
+>>
+>> Lokesh Vutla (12):
+>>   firmware: ti_sci: Add support for RM core ops
+>>   firmware: ti_sci: Add support for IRQ management
+>>   firmware: ti_sci: Add helper apis to manage resources
+>>   genirq: Introduce irq_chip_{request,release}_resource_parent() apis
+>>   gpio: thunderx: Use the default parent apis for
+>>     {request,release}_resources
+>>   dt-bindings: irqchip: Introduce TISCI Interrupt router bindings
+>>   irqchip: ti-sci-intr: Add support for Interrupt Router driver
+>>   dt-bindings: irqchip: Introduce TISCI Interrupt Aggregator bindings
+>>   irqchip: ti-sci-inta: Add support for Interrupt Aggregator driver
+>>   soc: ti: Add MSI domain bus support for Interrupt Aggregator
+>>   irqchip: ti-sci-inta: Add msi domain support
+>>   arm64: arch_k3: Enable interrupt controller drivers
+>>
+>> Peter Ujfalusi (1):
+>>   firmware: ti_sci: Add RM mapping table for am654
+>>
+>>  .../bindings/arm/keystone/ti,sci.txt          |   3 +-
+>>  .../interrupt-controller/ti,sci-inta.txt      |  66 ++
+>>  .../interrupt-controller/ti,sci-intr.txt      |  82 +++
+>>  MAINTAINERS                                   |   6 +
+>>  arch/arm64/Kconfig.platforms                  |   5 +
+>>  drivers/firmware/ti_sci.c                     | 651 ++++++++++++++++++
+>>  drivers/firmware/ti_sci.h                     | 102 +++
+>>  drivers/gpio/gpio-thunderx.c                  |  16 +-
+>>  drivers/irqchip/Kconfig                       |  23 +
+>>  drivers/irqchip/Makefile                      |   2 +
+>>  drivers/irqchip/irq-ti-sci-inta.c             | 615 +++++++++++++++++
+>>  drivers/irqchip/irq-ti-sci-intr.c             | 275 ++++++++
+>>  drivers/soc/ti/Kconfig                        |   6 +
+>>  drivers/soc/ti/Makefile                       |   1 +
+>>  drivers/soc/ti/ti_sci_inta_msi.c              | 146 ++++
+>>  include/linux/irq.h                           |   2 +
+>>  include/linux/irqdomain.h                     |   1 +
+>>  include/linux/msi.h                           |  10 +
+>>  include/linux/soc/ti/ti_sci_inta_msi.h        |  23 +
+>>  include/linux/soc/ti/ti_sci_protocol.h        | 124 ++++
+>>  kernel/irq/chip.c                             |  27 +
+>>  21 files changed, 2173 insertions(+), 13 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>  create mode 100644 drivers/irqchip/irq-ti-sci-inta.c
+>>  create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
+>>  create mode 100644 drivers/soc/ti/ti_sci_inta_msi.c
+>>  create mode 100644 include/linux/soc/ti/ti_sci_inta_msi.h
 > 
-> Andy mentioned #DB and #MC exceptions here:
-> https://lkml.kernel.org/r/C55DED25-C60D-4731-9A6B-92BDA8771766@amacapital.net
+> Lokesh,
 > 
-> I think that #DB won't be possible, provided the trampolines below get
-> tagged as NOKPROBE (do_int3() and ftrace_int3_handler() already have
-> it).
+> Thanks for having respun this quickly.
 > 
-> It's highly theoretic, but tracing do_machine_check() could clobber
-> ftrace_bp_call_return or ftrace_bp_call_nmi_return?
+> I've applied the first 13 patches to irqchip-next (after tidying up some
+> of the commit messages). I've left the last patch for armsoc to take,
+> unless you guys insist on me taking it.
 
-Probably shouldn't trace do_machine_check() then ;-)
-
-> 
-> 
-> > +#ifdef CONFIG_SMP
-> > +#ifdef CONFIG_X86_64
-> > +# define BP_CALL_RETURN		"%gs:ftrace_bp_call_return"
-> > +# define BP_CALL_NMI_RETURN	"%gs:ftrace_bp_call_nmi_return"
-> > +#else
-> > +# define BP_CALL_RETURN		"%fs:ftrace_bp_call_return"
-> > +# define BP_CALL_NMI_RETURN	"%fs:ftrace_bp_call_nmi_return"
-> > +#endif
-> > +#else /* SMP */
-> > +# define BP_CALL_RETURN		"ftrace_bp_call_return"
-> > +# define BP_CALL_NMI_RETURN	"ftrace_bp_call_nmi_return"
-> > +#endif
-> > +
-> > +/* To hold the ftrace_caller address to push on the stack */
-> > +void *ftrace_caller_func = (void *)ftrace_caller;  
-> 
-> The live patching ftrace_ops need ftrace_regs_caller.
-
-Ah, you're right. Luckily ftrace_regs_caller is a superset of
-ftrace_caller. That is, those only needing ftrace_caller can do fine
-with ftrace_regs_caller (but not vice versa).
-
-Easy enough to fix.
+I prefer if everything goes as a single bundle, unless arm-soc maintainers
+object. Want to start posting DT nodes.
 
 > 
+> If nothing horrible appears in -next tomorrow, I'll send the 5.2 PR with
+> this series.
+
+Awesome.
+
 > 
-> > +
-> > +asm(
-> > +	".text\n"
-> > +
-> > +	/* Trampoline for function update with interrupts enabled */
-> > +	".global ftrace_emulate_call_irqoff\n"
-> > +	".type ftrace_emulate_call_irqoff, @function\n"
-> > +	"ftrace_emulate_call_irqoff:\n\t"
-> > +		"push "BP_CALL_RETURN"\n\t"
-> > +		"push ftrace_caller_func\n"
-> > +		"sti\n\t"
-> > +		"ret\n\t"
-> > +	".size ftrace_emulate_call_irqoff, .-ftrace_emulate_call_irqoff\n"
-> > +
-> > +	/* Trampoline for function update with interrupts disabled*/
-> > +	".global ftrace_emulate_call_irqon\n"  
-> 
-> The naming is perhaps a bit confusing, i.e. "update with interrupts
-> disabled" vs. "irqon"... How about swapping irqoff<->irqon?
+> Hopefully we won't see more of this madness any time soon... :-/
 
-I just used the terminology Linus used. It is confusing. Perhaps just
-call it ftrace_emulate_call (for non sti case) and
-ftrace_emulate_call_sti for the sti case. That should remove the
-confusion.
+IRQCHIP is one part of it. Fun is yet to start with DMA.
 
--- Steve
-
-
+Thanks and regards,
+Lokesh
