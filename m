@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7366104C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 945F9104BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 06:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbfEAEYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 00:24:49 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50873 "EHLO
+        id S1726328AbfEAEYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 00:24:51 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40839 "EHLO
         mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfEAEYr (ORCPT
+        with ESMTP id S1726231AbfEAEYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 00:24:47 -0400
-Received: by mail-it1-f194.google.com with SMTP id q14so8375549itk.0;
-        Tue, 30 Apr 2019 21:24:46 -0700 (PDT)
+        Wed, 1 May 2019 00:24:48 -0400
+Received: by mail-it1-f194.google.com with SMTP id k64so8370229itb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 21:24:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=qcB7eahk6uost1tJIP3FkNXq29ur/hHJU+gIkVwerH0=;
-        b=uMor4wOx1ZLr2G3gOGF6ab7dikp6w2DgpktbI+wkIPfyzPs6HbtYlbaWKnj+fVmf0o
-         XjzvO3lUS+HT1YuHxDq7O5OOBoBfJrzwgwuqA0uG+zkaB1CQOrPwSphZBzfniqtmapyC
-         VcnPwMZy5cudBIOtFz+HFRmwjAUYrK/XBxpPBkT2NyTYgDvjGcH3Bddz9q8BkHT/DLgG
-         z3+x/rm4UweUS7KUzOBpzfAYH0daxusXgFZdyRFl2Hoxgd9LZPOmpV6B/4z4kicdRu7K
-         ZC8MQTwf5tSJwtH1DDRihBbtTpGUhG34IHiDFl/G/n68gLoSjDutVpdKCrJWPX3gxilr
-         FH5A==
+        bh=EqYgwV/DljsSwmFELEFQhJ3qI+LrWWEch0hPKLG0mz8=;
+        b=UNKL7rZLURJmJhc1JUtT8n2YD7NCang6ss2FL0Prx73u739wMCYSh3xbvTtRIutoXu
+         8Shvd93FVcyS9HGePW5a3oKM5DrOellE0kACry0GUu2jagI68LMzIMvHG/cQ5MfKqODZ
+         O9Ms/6BjYOBsNIkD+s52Fu6NfOCUHENkFTVnwDCy3kQTS7pleKIJWRz7RpOO4WSMJm9M
+         VtEia7SZ1tvNqsgQyHEROd2sXaxpcqQJ6qOJOguNU5erGtu7NrdIRgramXKoL9Kjmig8
+         R2sM5IXZDqUcubBoqEwzY4w7MHRFqI/6xLXaoEXch8+DR3ySvCLMvlP/DxsM9M6R8/yc
+         FIaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=qcB7eahk6uost1tJIP3FkNXq29ur/hHJU+gIkVwerH0=;
-        b=hWtSZrBYycZLGkVGj8NMr8qA2lipc+OrlczW6YoJLrjhHj2G0L83fKqDaWF5JE8iZo
-         Jn/by2W7Q7NjVcY02/kEDhnHcSr4CW9+Ja1p/cd5KuGHs3Db7GajDaxWUc1Zc9DmxD+6
-         Nbgtczm3iBkntLuM9LzWhg1c3y77oagxj9+qRJIpLL3XX3BWqUhvzjwuziYnxMxss5wW
-         uJ1NmzWKwtzTXBGUMbi/ljtfyWSKuCMB5QhQ8/q8CPshaqNwCtmooqmARud49SpvEZAf
-         NgyNgRpNEFoVqGY3SZDgBxkt84Ck+fF6U58OUAvU8hQucwInpuoChsR0e1mftSz2AS3d
-         10kA==
-X-Gm-Message-State: APjAAAWBMjl2YnahpKOb5BLSVWyz67XZ6AGhy/yQWDMECY2mfssmgHjT
-        2osMBhLmcZPN3G1lV3/s/5o=
-X-Google-Smtp-Source: APXvYqye8kYvpn5qEeWNrq2qg7L3u8FpZxzy67MpiWA9zuWYliU0Hl5E3x8sIvlGE1xBhILmbj0T4A==
-X-Received: by 2002:a24:ca05:: with SMTP id k5mr7268302itg.71.1556684686115;
-        Tue, 30 Apr 2019 21:24:46 -0700 (PDT)
+        bh=EqYgwV/DljsSwmFELEFQhJ3qI+LrWWEch0hPKLG0mz8=;
+        b=NijaTsBvw0+ml40+hyZcYPo+VhsCVvqqm1mvsE7jhIgswrecv+LXJ9JxBNG9BaWIYR
+         Nsjn25B0e4PL+Nq+VN0diH2WBYpf0E4MgydU0gk1OkN6O9I9F1IyUTVzpLHj9Plf+M1q
+         jnTJEBb8swkPJVGWTjAgIpevhFyYktyhg9SjnsZNhqeBC0c3hZf/f6SZ40EUb3V9o6eO
+         K9ZmS/Lh4eHvlOUZ6jAOzipXc0IKzQF9AJYZtJparw/0Q58yfxySNTAmS6DckrV3KXWN
+         tZoAYyVJO0XPcLalQZg2e0Zc35Keb5a5V5rxUH8oVS0Vqi7gBO9Jlk00Cq4+sRz3yTAc
+         bEaw==
+X-Gm-Message-State: APjAAAVMqirMD64NQZ3f+PFKTQePFUfjntzqML4zyeju4cC0VNE+kT/n
+        O8izqcNhRA4czzAk/g1cL18=
+X-Google-Smtp-Source: APXvYqxxou/FX4m5YRkeTwtOoBkE2V4jVoC0/VoDJp/vrqtUd/W0nAUQRCjVnXIwTubfL5Pei0L6hA==
+X-Received: by 2002:a05:660c:685:: with SMTP id n5mr6868053itk.57.1556684687274;
+        Tue, 30 Apr 2019 21:24:47 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.45
+        by smtp.gmail.com with ESMTPSA id b8sm2569728itb.20.2019.04.30.21.24.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 21:24:45 -0700 (PDT)
+        Tue, 30 Apr 2019 21:24:46 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Subject: [PATCH 10/18] powercap/intel_rapl: Support multi-die/package
-Date:   Wed,  1 May 2019 00:24:19 -0400
-Message-Id: <9f6958c231347e639e322de8d8c3de6859559345.1556657368.git.len.brown@intel.com>
+        Len Brown <len.brown@intel.com>
+Subject: [PATCH 11/18] thermal/x86_pkg_temp_thermal: Support multi-die/package
+Date:   Wed,  1 May 2019 00:24:20 -0400
+Message-Id: <e6a6fcd9ad6a1cb8da31d467277dd519eecdbd31.1556657368.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1556657368.git.len.brown@intel.com>
@@ -64,44 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhang Rui <rui.zhang@intel.com>
 
-RAPL "package" domains are actually implemented in hardware per-die.
-Thus, the new multi-die/package systems have mulitple domains
-within each physical package.
+Package temperature sensors are actually implemented in hardware per-die.
+Thus, the new multi-die/package systems sport mulitple package thermal
+zones for each package.
 
-Update the intel_rapl driver to be "die aware" -- exporting multiple
-domains within a single package, when present.
-No change on single die/package systems.
+Update the x86_pkg_temp_thermal to be "multi-die-aware", so it can
+expose multiple zones per package, instead of just one.
 
 Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Len Brown <len.brown@intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: linux-pm@vger.kernel.org
 ---
- drivers/powercap/intel_rapl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thermal/intel/x86_pkg_temp_thermal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-index 3c3c0c23180b..9202dbcef96d 100644
---- a/drivers/powercap/intel_rapl.c
-+++ b/drivers/powercap/intel_rapl.c
-@@ -266,7 +266,7 @@ static struct rapl_domain *platform_rapl_domain; /* Platform (PSys) domain */
- /* caller to ensure CPU hotplug lock is held */
- static struct rapl_package *rapl_find_package_domain(int cpu)
+diff --git a/drivers/thermal/intel/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+index 1ef937d799e4..405b3858900a 100644
+--- a/drivers/thermal/intel/x86_pkg_temp_thermal.c
++++ b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+@@ -122,7 +122,7 @@ static int pkg_temp_debugfs_init(void)
+  */
+ static struct pkg_device *pkg_temp_thermal_get_dev(unsigned int cpu)
  {
--	int id = topology_physical_package_id(cpu);
-+	int id = topology_logical_die_id(cpu);
- 	struct rapl_package *rp;
+-	int pkgid = topology_logical_package_id(cpu);
++	int pkgid = topology_logical_die_id(cpu);
  
- 	list_for_each_entry(rp, &rapl_packages, plist) {
-@@ -1459,7 +1459,7 @@ static void rapl_remove_package(struct rapl_package *rp)
- /* called from CPU hotplug notifier, hotplug lock held */
- static struct rapl_package *rapl_add_package(int cpu)
+ 	if (pkgid >= 0 && pkgid < max_packages)
+ 		return packages[pkgid];
+@@ -353,7 +353,7 @@ static int pkg_thermal_notify(u64 msr_val)
+ 
+ static int pkg_temp_thermal_device_add(unsigned int cpu)
  {
--	int id = topology_physical_package_id(cpu);
-+	int id = topology_logical_die_id(cpu);
- 	struct rapl_package *rp;
- 	int ret;
+-	int pkgid = topology_logical_package_id(cpu);
++	int pkgid = topology_logical_die_id(cpu);
+ 	u32 tj_max, eax, ebx, ecx, edx;
+ 	struct pkg_device *pkgdev;
+ 	int thres_count, err;
+@@ -449,7 +449,7 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ 	 * worker will see the package anymore.
+ 	 */
+ 	if (lastcpu) {
+-		packages[topology_logical_package_id(cpu)] = NULL;
++		packages[topology_logical_die_id(cpu)] = NULL;
+ 		/* After this point nothing touches the MSR anymore. */
+ 		wrmsr(MSR_IA32_PACKAGE_THERM_INTERRUPT,
+ 		      pkgdev->msr_pkg_therm_low, pkgdev->msr_pkg_therm_high);
+@@ -515,7 +515,7 @@ static int __init pkg_temp_thermal_init(void)
+ 	if (!x86_match_cpu(pkg_temp_thermal_ids))
+ 		return -ENODEV;
  
+-	max_packages = topology_max_packages();
++	max_packages = topology_max_packages() * topology_max_die_per_package();
+ 	packages = kcalloc(max_packages, sizeof(struct pkg_device *),
+ 			   GFP_KERNEL);
+ 	if (!packages)
 -- 
 2.18.0-rc0
 
