@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E631103A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:07:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3DA103A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 03:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfEABHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Apr 2019 21:07:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33840 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbfEABGz (ORCPT
+        id S1726514AbfEABG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Apr 2019 21:06:59 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41545 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbfEABG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Apr 2019 21:06:55 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c13so6688108pgt.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:06:54 -0700 (PDT)
+        Tue, 30 Apr 2019 21:06:56 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d9so7547020pls.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Apr 2019 18:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wExpGLZKhNx1VZ7ZHIX8KvYhTnTsNmRUJIKjaZd8NgY=;
-        b=ZXTk/v/EIJcWUtjDjiyZR515Mh7HvC4u30UhGbmvZFNlhaawH9vafqkDOs6D+Fenf0
-         7h4Xm+RH9dBrEcwqeDiSzTpAA5/N8NwBTCrzCxxwHS85PcbRMT270XsX9MkOHokjcD4g
-         EsUqTQ7KueXKEHPNZBlHvpSedfVxbgjSgi6SH7zZfwMQfEwbGYwfSV60fcs9S2hva69F
-         h7/nbAty7yPUfaO7jI9n2/NFWZ8E09fFda7Ug0C9lfADVrwufF9r83ud8hzmU2cDHuh4
-         /B20eOhAXU84HvIYLWfUUHCuNQ1WofhM7PbQEHcZrm1Nx7qLuoAvXH24HWhxZeCCadFe
-         cY9w==
+        bh=OLqlCdGifnXbJDeVsXrWrzyh1Q2u7Oi69jQbP0f+asI=;
+        b=f57FHpJ5TFR88oCECdqZ5veBYfcE1BKJQLnole8kARqKQqmUBSto9h3qlLmU4gyISD
+         JMwn+Olvo/q5gs3AsNwtxVjNTSiHanUefEgJGXeqM2RAXhPx7O3cnkEqGpdfQnfL7KAO
+         xtNs1P4JLOROUf9HljO5LCnRKpr/svXGq3l6OJ2yynGwhQeWL+1f+gGqIAyT/yMLCEes
+         xdDR/8n3c1VwJifrFIsDjpYjhv1vVCw0HsAZp0KJrHfghaBQ6eeZvnVv3X0N0gvzfQB6
+         DvjPX+Tv9H6RLm3siGibNr9a4ra9lR4l4WBTV282f8xoKQXjQpTNrXhuMk/qY0oXHgP+
+         h7Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wExpGLZKhNx1VZ7ZHIX8KvYhTnTsNmRUJIKjaZd8NgY=;
-        b=muQhbw92FgibajkfWjLFMln9u9yFGxLAzf7ka41CgOf7Vf8TYzNxXKhCHjSx1ABtDZ
-         LQ6Ly894g86IvubNXmn55T3DHXpv26T9Nl2xoY6f5IX/KFSmbziFsz/cSX+fhi0nIpvf
-         n4+fzqlVfvAi/opimWG6NqUdwYpsDw15+VC2kgny9JqybDCWmWV0kmcBe0aSSO8RXCS4
-         VGPdiT2ah+fxDwAZ9FfOkxWiEB0H4DttwG1cXw8OKj6KjU6ZC98MuscUNkjlfqhXDbsW
-         FAcNhiXq0IdCTCeGjL2voFNK6WzaG1KToTujMkSG2pYv+SufXkZnwQWDGyC/B5VBbmoR
-         GElg==
-X-Gm-Message-State: APjAAAVh+OJUzhPL4WMdtNZtwS2Bta/J43LJfI9voSJUmhX8ntIv0DOj
-        EmF/xCf9171jHVzs5y0SFN8=
-X-Google-Smtp-Source: APXvYqydtY+NEielE5bVNgrQGXpnejzDqwg3eqMik0zPFkU8p2EumiUX5157oUH8xqsSL1l0W4CMQw==
-X-Received: by 2002:a65:62c3:: with SMTP id m3mr44211937pgv.159.1556672814554;
-        Tue, 30 Apr 2019 18:06:54 -0700 (PDT)
+        bh=OLqlCdGifnXbJDeVsXrWrzyh1Q2u7Oi69jQbP0f+asI=;
+        b=LI7kXfE+3T48wiWqojhDv82bOaYzSf1g6r8XqMT1UPj5pgHhtezZLJTMkG5lcIhYG1
+         vpuVK8uZc+xipKBPejguAuIWCHImAlb0gk0KHtxEbn0s2ObJYfQxIUupZS3r4JMt+9Cl
+         A/BiMk+VaB6CHoyIFVSPCBvZCE4R8UlXTqtHzlHuBoNCwWCSVMBb+iT4RuEy1RWLR1am
+         NTYt5TbKBLJ6osOq31/iusBC1dSvHXP+BJioUClue6jWwrsMvDBWg2eWazdsZ3DwM7QB
+         74/9i0asjXx44RpxZfZ099RoGAkZs5O0tqiRJQe1LZNsaKMsDmeuM+FLh15olBjtuqfW
+         6dag==
+X-Gm-Message-State: APjAAAWbBZ1ZzSobsXFm851WprBeUSC/2JbYB2bZJOxiCzJ3YZlwOF55
+        /iGiQQpwNAPvYxg873OX4OM=
+X-Google-Smtp-Source: APXvYqxNDihCBF3w9VIZv+La7NAGr9r46gV71wHBl31KYr9Uyqd8211ztTSUU/REYyg8Eurk5DDBGg==
+X-Received: by 2002:a17:902:7d8f:: with SMTP id a15mr72879435plm.3.1556672816197;
+        Tue, 30 Apr 2019 18:06:56 -0700 (PDT)
 Received: from localhost ([2601:640:7:332f:bc53:6e04:b584:e900])
-        by smtp.gmail.com with ESMTPSA id y8sm46334731pgk.20.2019.04.30.18.06.53
+        by smtp.gmail.com with ESMTPSA id d8sm41008582pgv.34.2019.04.30.18.06.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 18:06:54 -0700 (PDT)
+        Tue, 30 Apr 2019 18:06:55 -0700 (PDT)
 From:   Yury Norov <yury.norov@gmail.com>
 X-Google-Original-From: Yury Norov <ynorov@marvell.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -66,9 +66,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     Yury Norov <ynorov@marvell.com>, Yury Norov <yury.norov@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
         Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 6/7] lib: new testcases for bitmap_parse{_user}
-Date:   Tue, 30 Apr 2019 18:06:35 -0700
-Message-Id: <20190501010636.30595-7-ynorov@marvell.com>
+Subject: [PATCH 7/7] cpumask: don't calculate length of the input string
+Date:   Tue, 30 Apr 2019 18:06:36 -0700
+Message-Id: <20190501010636.30595-8-ynorov@marvell.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190501010636.30595-1-ynorov@marvell.com>
 References: <20190501010636.30595-1-ynorov@marvell.com>
@@ -77,47 +77,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New version of bitmap_parse() is unified with bitmap_parse_list(),
-and therefore:
- - weakens rules on whitespaces and commas between hex chunks;
- - in addition to \0 allows using \n as the line ending symbol;
- - allows passing UINT_MAX or any other big number as the length
-   of input string instead of actual string length.
-
-The patch covers the cases.
+New design of inner bitmap_parse() allows to avoid
+calculating the size of a null-terminated string.
 
 Signed-off-by: Yury Norov <ynorov@marvell.com>
 ---
- lib/test_bitmap.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/cpumask.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index 731e107d811a..9e6b87895108 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -343,14 +343,22 @@ static const unsigned long parse_test2[] __initconst = {
- };
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 21755471b1c3..d55d015edc58 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -633,9 +633,7 @@ static inline int cpumask_parselist_user(const char __user *buf, int len,
+  */
+ static inline int cpumask_parse(const char *buf, struct cpumask *dstp)
+ {
+-	unsigned int len = strchrnul(buf, '\n') - buf;
+-
+-	return bitmap_parse(buf, len, cpumask_bits(dstp), nr_cpumask_bits);
++	return bitmap_parse(buf, UINT_MAX, cpumask_bits(dstp), nr_cpumask_bits);
+ }
  
- static const struct test_bitmap_parselist parse_tests[] __initconst = {
-+	{0, "",				&parse_test[0 * step], 32, 0},
-+	{0, " ",			&parse_test[0 * step], 32, 0},
- 	{0, "0",			&parse_test[0 * step], 32, 0},
-+	{0, "0\n",			&parse_test[0 * step], 32, 0},
- 	{0, "1",			&parse_test[1 * step], 32, 0},
- 	{0, "deadbeef",			&parse_test[2 * step], 32, 0},
- 	{0, "1,0",			&parse_test[3 * step], 33, 0},
-+	{0, "deadbeef,\n,0,1",		&parse_test[2 * step], 96, 0},
- 
- 	{0, "deadbeef,1,0",		&parse_test2[0 * 2 * step], 96, 0},
- 	{0, "baadf00d,deadbeef,1,0",	&parse_test2[1 * 2 * step], 128, 0},
- 	{0, "badf00d,deadbeef,1,0",	&parse_test2[2 * 2 * step], 124, 0},
-+	{0, "badf00d,deadbeef,1,0",	&parse_test2[2 * 2 * step], 124, NO_LEN},
-+	{0, "  badf00d,deadbeef,1,0  ",	&parse_test2[2 * 2 * step], 124, 0},
-+	{0, " , badf00d,deadbeef,1,0 , ",	&parse_test2[2 * 2 * step], 124, 0},
-+	{0, " , badf00d, ,, ,,deadbeef,1,0 , ",	&parse_test2[2 * 2 * step], 124, 0},
- 
- 	{-EINVAL,    "goodfood,deadbeef,1,0",	NULL, 128, 0},
- 	{-EOVERFLOW, "3,0",			NULL, 33, 0},
+ /**
 -- 
 2.17.1
 
