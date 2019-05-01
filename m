@@ -2,114 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B73810C5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5DD10C7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 19:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfEARoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 13:44:54 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46268 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbfEARot (ORCPT
+        id S1726333AbfEARw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 13:52:28 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33796 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfEARw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 13:44:49 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r7so5657789wrr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 10:44:48 -0700 (PDT)
+        Wed, 1 May 2019 13:52:28 -0400
+Received: by mail-pl1-f193.google.com with SMTP id ck18so4201512plb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 10:52:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u+Ql5mHSMk+0fTV1OjTlpH+o3EUFvYfu0ZLtx/m3LZE=;
-        b=Rn/kHLMk1rIsG0yFXA4VWx7uwELTv5x9d/ypmEX/n0KXoi0g5sBRJ0MwpstrDIQkjS
-         knZI4xyiYzTnmBcv+zqc+WQiVVancadD6X9atgK2lNrtChnZEarmiRpm12N6woUiIwHt
-         vv1+WmmraQLnk7NhROnOrnWMDrzfDJuEJu4f8AyVkRaspPeC1IAi9k1KjC5FYyPal5z7
-         LXLOFMhGDfMun8iPJsq5b0REh9xueO0JM0bTo/QEZMSU64S6R0eGwBdSijWYDKakjUFI
-         /Z3J1uO8tcW51WCb4PtySEfiPlB70AXRZnQPzA5Q0BIHXIh1HXu0ghd2CuiiAaD/EGoo
-         M/XA==
+        h=from:to:cc:subject:date:message-id;
+        bh=c4GVYXdtGXK+NpA236Nt4eW2tTRsHxltrkwbVfBnPco=;
+        b=J3pNtOClY2+lUvtAtbd2zfi7C3Bh0DJu8CPT7XYaBWgulAPLIWCZDKrOSyO5FPUKT5
+         BwzjMNsitZNFmAJd5BM/edhuoljJoT3hkYvQz1Bmx7MtNhijbPKlJAukPx+FyflryLiM
+         ysG9pN82/50/qOb3CjLWDbXer0cYdfiiuQMRT4JZRdt0IaK86LnuEhZJ/+vSwB7PpuuJ
+         RLemfSoMn67+eXCEfxwG+6YhS0FAgfTYoRwQlMOtNqM3x2odcvV3qCe346FBw06OLyeX
+         qKTvJLvp8WaSr5KYqNE/6VLF4UeIGpDgWD6tdc8qPm9LdX0Fdv8r48TI3mJrpGk+dWmJ
+         O9Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=u+Ql5mHSMk+0fTV1OjTlpH+o3EUFvYfu0ZLtx/m3LZE=;
-        b=GGYPH0LY/v7r40BxN16Ii4HuuohbiC9X8433q93/XQCoL97YNR+pPPIBosAz/i5qPC
-         vFjz/U2fdYvHbB5/Q5AiapEelNAzZQbDOBT6ZZf2M8nmztWd085SzAd8fUMCkv10kqoo
-         +lnTCRj2mBO13Yx0XvekkKUcb0uGBXSaDqo6YqAxSFOxhqtb7/37ZPh+tGVgnGEv9WDr
-         cLD8V2L7VfFSQ1i6KSsOwtGKBIG/LsDeYy95n89owPSjyW00Mznyyl+Fbz4uq/oCVsdv
-         UTh14EDEUK6YwCoPqZ8c6a9vDp7siJ2wjTF01/XFrtVwy+qKPgI+3BPQy5viCLHjMk8a
-         i/Cw==
-X-Gm-Message-State: APjAAAXvBlhz6ZvKU3hzTnp8MC/qoQOyzXv23iOtgjXloEtTdbROtMJK
-        YqlvzOLY3T+Y9AZiZpaCLcs9sKc+
-X-Google-Smtp-Source: APXvYqw2KUaUDqblwd3WBpIAuORUY6HRHOQFBNPvG4i7pYN2NDzY2zKXcfp5U/hia/yph7ZPvnEtDQ==
-X-Received: by 2002:a05:6000:145:: with SMTP id r5mr11679984wrx.19.1556732687283;
-        Wed, 01 May 2019 10:44:47 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id h81sm9923329wmf.33.2019.05.01.10.44.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=c4GVYXdtGXK+NpA236Nt4eW2tTRsHxltrkwbVfBnPco=;
+        b=KCvDyVznvXa8uWZXnqVLAYjOP81Buy7QcoSOCtfRcqnnuhbp8Eha2kCuJZmicD7Gze
+         PjXq+s8dimyvM/hPk0TmseInjMfxwLBmHdB8y92p99T+K96GI6CoS71yGAaJzbRcY5QY
+         s1Tz8Gj3dgQOCqI9gH5Jsqr1sBoy4O6qbpHCYhx4JLIUpRAmdEhr27C3CaEVgx+oXcgC
+         IdGshus8jsC6oq0CxkIQMFAoHjl7sopGwtSnx/hEfru9ANy7Dv7PgHzONST4RPoLLJ7P
+         RtJpzBwh2hiDHREW7ROWohiNKHlZqp192yVIK8UYxEn9sUxeNZAiJhvU6QmBfvizQxt3
+         1Rrg==
+X-Gm-Message-State: APjAAAWvryFsiISaPhh8RqF5zyQzzh479c7IffPwFryYFx5mNtNV/8EJ
+        aOQQ1oWlvQzqBPZ04savcUY=
+X-Google-Smtp-Source: APXvYqyLj2w6QJeDUo/CBCheOxjdP1ZWlHLztJ310vNkx6Gcd8jk+hQIhOsniYvjqD0JY8yQPAKO9w==
+X-Received: by 2002:a17:902:b210:: with SMTP id t16mr78192056plr.84.1556733147678;
+        Wed, 01 May 2019 10:52:27 -0700 (PDT)
+Received: from mail.broadcom.com ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id j5sm54182472pfe.15.2019.05.01.10.52.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 10:44:46 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, Dalit Ben Zoor <dbenzoor@habana.ai>
-Subject: [PATCH 3/3] habanalabs: increase timeout if working with simulator
-Date:   Wed,  1 May 2019 20:44:40 +0300
-Message-Id: <20190501174440.28557-3-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190501174440.28557-1-oded.gabbay@gmail.com>
-References: <20190501174440.28557-1-oded.gabbay@gmail.com>
+        Wed, 01 May 2019 10:52:26 -0700 (PDT)
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: [PATCH] mtd: nand: raw: brcmnand: When oops in progress use pio and interrupt polling
+Date:   Wed,  1 May 2019 13:46:15 -0400
+Message-Id: <1556733121-20133-1-git-send-email-kdasu.kdev@gmail.com>
+X-Mailer: git-send-email 1.9.0.138.g2de3478
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dalit Ben Zoor <dbenzoor@habana.ai>
+If mtd_oops is in progress switch to polling for nand command completion
+interrupts and use PIO mode wihtout DMA so that the mtd_oops buffer can
+be completely written in the assinged nand partition. This is needed in
+cases where the panic does not happen on cpu0 and there is only one online
+CPU and the panic is not on cpu0.
 
-Where there is a spike in the CPU consumption, it may cause
-random failures in the C/I since the KMD timeout for CPU
-and/or QMAN0 jobs expires and it stops communicating to the simulator.
-This commit fixes it by increasing timeout on polling functions
-if working with simulator.
-
-Signed-off-by: Dalit Ben Zoor <dbenzoor@habana.ai>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 ---
- drivers/misc/habanalabs/device.c     | 8 +++++++-
- drivers/misc/habanalabs/habanalabs.h | 7 ++++++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c | 55 ++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 0e0b9ec71c80..91a9e47a3482 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -1147,7 +1147,13 @@ int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr,
- 	 * either by the direct access of the device or by another core
- 	 */
- 	u32 *paddr = (u32 *) (uintptr_t) addr;
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
-+	ktime_t timeout;
+diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+index 482c6f0..cfbe51a 100644
+--- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+@@ -823,6 +823,12 @@ static inline bool has_flash_dma(struct brcmnand_controller *ctrl)
+ 	return ctrl->flash_dma_base;
+ }
+ 
++static inline void disable_flash_dma_xfer(struct brcmnand_controller *ctrl)
++{
++	if (has_flash_dma(ctrl))
++		ctrl->flash_dma_base = 0;
++}
 +
-+	/* timeout should be longer when working with simulator */
-+	if (!hdev->pdev)
-+		timeout_us *= 10;
+ static inline bool flash_dma_buf_ok(const void *buf)
+ {
+ 	return buf && !is_vmalloc_addr(buf) &&
+@@ -1237,15 +1243,58 @@ static void brcmnand_cmd_ctrl(struct nand_chip *chip, int dat,
+ 	/* intentionally left blank */
+ }
+ 
++static bool is_mtd_oops_in_progress(void)
++{
++	int i = 0;
 +
-+	timeout = ktime_add_us(ktime_get(), timeout_us);
++#ifdef CONFIG_MTD_OOPS
++	if (oops_in_progress && smp_processor_id()) {
++		int cpu = 0;
++
++		for_each_online_cpu(cpu)
++			++i;
++	}
++#endif
++	return i == 1 ? true : false;
++}
++
++static bool brcmstb_nand_wait_for_completion(struct nand_chip *chip)
++{
++	struct brcmnand_host *host = nand_get_controller_data(chip);
++	struct brcmnand_controller *ctrl = host->ctrl;
++	bool err = false;
++	int sts;
++
++	if (is_mtd_oops_in_progress()) {
++		/* Switch to interrupt polling and PIO mode */
++		disable_flash_dma_xfer(ctrl);
++		sts = bcmnand_ctrl_poll_status(ctrl, NAND_CTRL_RDY |
++					       NAND_STATUS_READY,
++					       NAND_CTRL_RDY |
++					       NAND_STATUS_READY, 0);
++		err = (sts < 0) ? true : false;
++	} else {
++		unsigned long timeo = msecs_to_jiffies(
++						NAND_POLL_STATUS_TIMEOUT_MS);
++		/* wait for completion interrupt */
++		sts = wait_for_completion_timeout(&ctrl->done, timeo);
++		err = (sts <= 0) ? true : false;
++	}
++
++	return err;
++}
++
+ static int brcmnand_waitfunc(struct nand_chip *chip)
+ {
+ 	struct brcmnand_host *host = nand_get_controller_data(chip);
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+-	unsigned long timeo = msecs_to_jiffies(100);
++	bool err = false;
  
- 	might_sleep();
+ 	dev_dbg(ctrl->dev, "wait on native cmd %d\n", ctrl->cmd_pending);
+-	if (ctrl->cmd_pending &&
+-			wait_for_completion_timeout(&ctrl->done, timeo) <= 0) {
++	if (ctrl->cmd_pending)
++		err = brcmstb_nand_wait_for_completion(chip);
++
++	if (err) {
+ 		u32 cmd = brcmnand_read_reg(ctrl, BRCMNAND_CMD_START)
+ 					>> brcmnand_cmd_shift(ctrl);
  
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 0da80e8eab42..71243b319920 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -1042,7 +1042,12 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
- 
- #define hl_poll_timeout(hdev, addr, val, cond, sleep_us, timeout_us) \
- ({ \
--	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	ktime_t __timeout; \
-+	/* timeout should be longer when working with simulator */ \
-+	if (hdev->pdev) \
-+		__timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	else \
-+		__timeout = ktime_add_us(ktime_get(), (timeout_us * 10)); \
- 	might_sleep_if(sleep_us); \
- 	for (;;) { \
- 		(val) = RREG32(addr); \
 -- 
-2.17.1
+1.9.0.138.g2de3478
 
