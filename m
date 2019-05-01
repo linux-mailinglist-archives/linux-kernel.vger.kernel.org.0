@@ -2,73 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47F0010B04
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECAD210AD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 18:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbfEAQPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 12:15:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48440 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfEAQPl (ORCPT
+        id S1726654AbfEAQOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 12:14:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45895 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfEAQOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 12:15:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cC6LJAycF0WEXN1PiWNfS+TYLowm8sPMN91Aj88qDwo=; b=XMp1By9pBXIazfy6Hr5U4dnsqH
-        oT+8Ype/+4B+jECj/8pA+ARGFcm4khCv4XGAzxQD21x4c1PsBCBi/X4Z2gJJiMV51EbuURFSZ0N4A
-        fmAWGhtPmOgWjbH7DUCyXMq3OP8646AntV2HGVQ6zgAtRUosYs/ug3WRUGe6nICZYcnB545jWKkwJ
-        h7e5GkijeNRpAfhKGnMDDMTX9J+LCB60hMsslrpQkNbq2eua2qgNFQq8oKQPDUL5DTQaGvq9xIvlo
-        WPjK2+vhjgI//AAgJbVyvRct3MtbkKqlmT9ORMIeETlYZHkL6rboggzADjcgHdVyJDrhU7zjsWu6F
-        3/W/Nk1Q==;
-Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLrtP-0005hN-FZ; Wed, 01 May 2019 16:15:35 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Hannes Reinecke <hare@suse.de>, Lee Duncan <lduncan@suse.com>,
-        Chris Leech <cleech@redhat.com>, Willem Riede <osst@riede.org>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
-        linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
-        osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chriosstoph Hellwig <hch@losst.de>
-Subject: [PATCH 24/24] osst: add a SPDX tag to osst.c
-Date:   Wed,  1 May 2019 12:14:17 -0400
-Message-Id: <20190501161417.32592-25-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190501161417.32592-1-hch@lst.de>
-References: <20190501161417.32592-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 1 May 2019 12:14:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id e24so8794699pfi.12;
+        Wed, 01 May 2019 09:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MtPcWFimi13xS3IBIx9BAJvwvZMDedknu7EfbmKtTWY=;
+        b=FQJpgIglCJ0STefvmKylU7hCbm9/3Ti8NdGAjxmYsarjZNYLDciepWCd3aHOjfpkWl
+         wmAa5L2N7Y6yFny/vBSqk7W7BI5FhkmYq0U59el4Mybcq9InW0WjBJUGeg1ogQZNkGBt
+         GueH03/qpPNvi2UpJ3QBCgx6ZCBgVneWvbOPXk8sqjB3KU3POR5rOPhmSvHQC3weufdw
+         kEbZf44EgL+zNX3U/5tonWDsUuEK6IWRuorC++4JOoDBUps2fxX/Hw7Tr26dJOQ3PXif
+         T4JTAF72jU1r+mHcH1yvPRUzjMAqDu7MU6iq+Kpv8QgvJu3MNZinuKTzg317rIpVEbHa
+         i5jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MtPcWFimi13xS3IBIx9BAJvwvZMDedknu7EfbmKtTWY=;
+        b=AiT+RGJIme7UINYCCe24wcvJSI6cbSF2mksWBjg1gY7KS1hTX8tZyZ/AxmTXF26uli
+         GdMosyXoLIYHN37erIViIBRCT9d1wMYFEYiQrXxoCEyo+z5VZqTIToQXfkVihm54M8ok
+         v/Qetm/nxmiUk0Sbi+cMk9Um7voR7wMGLvFW4CTAbpP8TC+NHiB/PkVlOKdH20+jGepG
+         8+ZTAMhn1wiprAY5hvIl+FYA/abfcXDSsYvCMB9dBLFi48to43jWE5VAqZhlg0WBrTa4
+         lfPqwjHCmCf0VjJY/Ikxe3mbuSKepS03ajWdhBl+ok7Fu6D9Q6GVDs5uykiLZGN1EOmO
+         6J7g==
+X-Gm-Message-State: APjAAAUhWFPYujBwcuPs3JYY4Bs5DhXBbFAzv2jjmTpKy3Ye1I7L8/8E
+        truvwsf6SpoUK1iEtKFEkUaTKSw6
+X-Google-Smtp-Source: APXvYqyHYU9WI4SIoemO/0OUMF/xgVkvo4cWypdtmSh6f0UJvj0k5fgpL7UiIzxsX9urC7r36EOPMg==
+X-Received: by 2002:a62:2b4e:: with SMTP id r75mr28501975pfr.131.1556727285407;
+        Wed, 01 May 2019 09:14:45 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 132sm32102040pfw.87.2019.05.01.09.14.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 09:14:44 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH] drm/msm/mdp5: Fix mdp5_cfg_init error return
+Date:   Wed,  1 May 2019 09:14:37 -0700
+Message-Id: <20190501161437.15728-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-osst.c is the only osst file missing licensing information.  Add a
-GPLv2 tag for the default kernel license.
+If mdp5_cfg_init fails because of an unknown major version, a null pointer
+dereference occurs.  This is because the caller of init expects error
+pointers, but init returns NULL on error.  Fix this by returning the
+expected values on error.
 
-Signed-off-by: Chriosstoph Hellwig <hch@losst.de>
+Fixes: 2e362e1772b8 (drm/msm/mdp5: introduce mdp5_cfg module)
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- drivers/scsi/osst.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index be3c73ebbfde..fe4f0e7d6359 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying
-   file Documentation/scsi/st.txt for more information.
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
+index ea8f7d7daf7f..52e23780fce1 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
+@@ -721,7 +721,7 @@ struct mdp5_cfg_handler *mdp5_cfg_init(struct mdp5_kms *mdp5_kms,
+ 	if (cfg_handler)
+ 		mdp5_cfg_destroy(cfg_handler);
+ 
+-	return NULL;
++	return ERR_PTR(ret);
+ }
+ 
+ static struct mdp5_cfg_platform *mdp5_get_config(struct platform_device *dev)
 -- 
-2.20.1
+2.17.1
 
