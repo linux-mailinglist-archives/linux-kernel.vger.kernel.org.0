@@ -2,78 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC8D10EC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 23:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D5610EE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 00:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfEAVwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 17:52:43 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59101 "EHLO ozlabs.org"
+        id S1726341AbfEAWBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 18:01:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:31714 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbfEAVwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 17:52:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 44vXF43fYlz9s9y;
-        Thu,  2 May 2019 07:52:40 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1556747560;
-        bh=qnz/9ptAcsBuobXUVKSqpT8XkQecU09ic3sbybNQz3E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Jbg+GEkGkkHmXfj1tLuLc1EdqH5DkD4NtRsmMj3HTgYTjGzPWLrydxlmnYC8keKft
-         /tf0FaNkJx/IxQaG8XCQNIgXlZwujotOPbh9oVunfo8mT8egz93JM+aH8SBI4gi55B
-         4gBsXhMv4FB4g+SAEQIkoiCg4OmRPVBTW0c64hezEzAmSEBRKao9HeycvZjCK0F547
-         vAXSCuOGeshJFcHLLH2QsZf3KGOsbwavMTKw5RnFkcmKEyndoxkRAnkVUlsK5Ibnyd
-         brgDooMXLB5K1dHEmd1LX3CXXTgmG/xGkMIEkDkY1jQ7+uzx9FfA/ZDKtzVa20enrX
-         8pMN0Wbv3u4Ag==
-Date:   Thu, 2 May 2019 07:52:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the battery tree
-Message-ID: <20190502075238.4069504b@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0a_cVyywzwlbVbVtXroyX+r"; protocol="application/pgp-signature"
+        id S1726137AbfEAWBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 18:01:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 May 2019 15:01:53 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga002.jf.intel.com with ESMTP; 01 May 2019 15:01:49 -0700
+Message-ID: <1c69263279be0b2f6582e58a0bf28bc213d94693.camel@intel.com>
+Subject: Re: [PATCH] binfmt_elf: Extract .note.gnu.property from an ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Wed, 01 May 2019 14:54:23 -0700
+In-Reply-To: <20190501213709.GD28500@bombadil.infradead.org>
+References: <20190501211217.5039-1-yu-cheng.yu@intel.com>
+         <20190501213709.GD28500@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0a_cVyywzwlbVbVtXroyX+r
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2019-05-01 at 14:37 -0700, Matthew Wilcox wrote:
+> On Wed, May 01, 2019 at 02:12:17PM -0700, Yu-cheng Yu wrote:
+> > +++ b/fs/Kconfig.binfmt
+> > @@ -35,6 +35,10 @@ config COMPAT_BINFMT_ELF
+> >  config ARCH_BINFMT_ELF_STATE
+> >  	bool
+> >  
+> > +config ARCH_USE_GNU_PROPERTY
+> > +	bool
+> > +	depends on 64BIT
+> 
+> I don't think this is right.  I think you should get rid of the depends line
+> and instead select the symbol from each of argh64 and x86 Kconfig files.
 
-Hi Sebastian,
+That makes sense.  Thanks!
 
-Commit
-
-  465089b4abe0 ("TODO")
-
-is missing a Signed-off-by from its author and committer.
-
-Not much of a commit message either :-)
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0a_cVyywzwlbVbVtXroyX+r
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKFSYACgkQAVBC80lX
-0GzQOwf+MdhKg/J6psrSaKrUn05TrccqmE37O7UOHqLIRKUtr5T1quU7dMeJaG3w
-Vg4hb730/tWlnCK+4eKBWIjQ0yCcSdbqr04CT4oz5EMn1d0q+qHjjr2QmI8l97AK
-8AxEu+RgCJTcSJ4KW8CMQzjbPim0QO4p45qYs3504sx6jmfwV14lV5lbqTl4nn7s
-lgBYy4CU8lpmaj5s2BOAnfQapd0d8mTqHLk2Xou8FKX6h25c0MX6K9tIgg6NYsPd
-fzfi9pdCBktm/Ku6HruYDvlTn1tC3B7BGF/D3gUK6dRMDtvdzFhuczLySdd3ukWz
-T0tEQDvcuzmejtO7JY255kgPsbFWhA==
-=+/KP
------END PGP SIGNATURE-----
-
---Sig_/0a_cVyywzwlbVbVtXroyX+r--
+Yu-cheng
