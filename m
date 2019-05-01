@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C9110DB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B47610DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 May 2019 22:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfEAUFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 16:05:09 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:48022 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbfEAUFI (ORCPT
+        id S1726264AbfEAUHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 16:07:14 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36899 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbfEAUHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 16:05:08 -0400
-Received: by mail-pf1-f202.google.com with SMTP id c15so7082905pfc.14
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 13:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=MlQndH9JHFu7S8ddgNAyiZUD6B/g+xVzIb+RnIGAaWs=;
-        b=fnHCAaSHp7jm7BX0qFctNdwaGrY7oLfabmSkvoB4dtQBJxSdCKtEx2jxC7FIC3GCxO
-         YlgBkWApyHsNLL6q2+7r2CJg2KnpX2OwDbqGgxNeA53OCgvKuTcxuVB48/S3RpXYbdDY
-         xQI022cfV27rAtSh9fzNB5ly9uYCGubQ/ylCHl9zpyxnc+YN2gOllzLs4Xjgd9TiL++l
-         kMDg+NtQ5Q8uH53COQDUocIYQW0e30MTDPCh60KDEcJ33zjTNRHn9njPDqkCGujG/mVs
-         xQ7iK4l6ssYko9wzto0NLq97Khegf/K37bxoKrlRFtekyZwm6Khlvp/QHuQOSfA9pGKn
-         uedg==
+        Wed, 1 May 2019 16:07:14 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 143so1525382oii.4;
+        Wed, 01 May 2019 13:07:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=MlQndH9JHFu7S8ddgNAyiZUD6B/g+xVzIb+RnIGAaWs=;
-        b=Dvj+nstUczFl8Kvwtl5K9SoTAEc6my6EWg99BeP+/lygJdPwMnKTM+q6HHRWYbC70y
-         BMnPqkN1Qx90gtJWRhdI/JVbQGusD8wdja16kgXCCHX2tYpdzFWqH33xCTE3yIWuL6VV
-         GV5K40QXSEOFZUEGIO7lFFRShclyxtrGeBFTq7i/WSXuhGGPmC8r459pl0ZMRexlNt9U
-         r6WivOnDZcWUxzm03hHpIeRWBlueKqwU6WcGhyKoXKT/bkHLsUudqXITBeVgv5mPvgey
-         UFfEwPsXqeW2HxzsXG+KI+cMVi5pn+f07zkuiEonQXru3/LwzZThlq1ZzNVCCq3d0AGx
-         GuGA==
-X-Gm-Message-State: APjAAAXhUmDORcRV7V55LEj38KNczal14Ezp/CvG3Qy5rpaxtYg5Gh/2
-        5f/vO8ZiGZ9yFDI+A0RXGuDPQwVBrKs/ic6n5Zc=
-X-Google-Smtp-Source: APXvYqwBclqb9p4MTO0VP/jDbcmcoD0wl/ivARDRHYgzxLNfoOJhYoTrwu/lUR7tBPdfO3m6nARfIKPs1tbACW0AiWU=
-X-Received: by 2002:a63:da51:: with SMTP id l17mr34321605pgj.115.1556741107820;
- Wed, 01 May 2019 13:05:07 -0700 (PDT)
-Date:   Wed,  1 May 2019 13:04:51 -0700
-In-Reply-To: <20190501200451.255615-1-samitolvanen@google.com>
-Message-Id: <20190501200451.255615-3-samitolvanen@google.com>
-Mime-Version: 1.0
-References: <20190501200451.255615-1-samitolvanen@google.com>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH 2/2] arm64: use the correct function type in SYSCALL_DEFINE0
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mKg6SA0SX5HV854mYVNTFbSlG/IOsGPH6fFYgeCQFmk=;
+        b=LslzHIYy8d9It+IUvj6m0PERlqGiIrc6DAUtHdG5a1B6oZgVZ7XprLQRU+YHmzgPIz
+         c3M4M+7nQ7bMkcA18iWQxvWWAfORw9anlP4HQk+htJnKVGGmYsbHe7Zot1Cp0AZ+dack
+         YBx8H2gVReWnZwFhB+u7zXjMhSVhtt1Z0lMPqEKFPQZCbt+ox6NCdAN1xLio3+cRlQMa
+         zC4yFF9XaNcC+Nr7O2MeRQlMS74qwX/GR1vX6muBBB/7ECZUAsCi3fNYM5seUr7v+aAn
+         7BGufZwXeoiiVw5cB1U7YjtWHL52mxnK9ch4/cpKd4G9EzrmEnxD53Pu+Q9/ZNuQO2xD
+         viSg==
+X-Gm-Message-State: APjAAAWBgcviHFexS90izNnp2e05YVA3f11umLcIuO5PqvuZTATj9mNz
+        h1pKlVGeel7lnTm74BTQ0g==
+X-Google-Smtp-Source: APXvYqx5r0LA6i5YuqMDOd9NBN4QAPVZsvNiRZb0YS/Pv4676PBqH7lCEcuJdpsY+bfpypfvpEhe4g==
+X-Received: by 2002:aca:ec41:: with SMTP id k62mr42673oih.147.1556741233322;
+        Wed, 01 May 2019 13:07:13 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h24sm15848390otr.39.2019.05.01.13.07.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 13:07:12 -0700 (PDT)
+Date:   Wed, 1 May 2019 15:07:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     "broonie@kernel.org" <broonie@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "plyatov@gmail.com" <plyatov@gmail.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 08/15] dt-bindings: spi: imx: add i.mx6ul to state
+ errata fixed
+Message-ID: <20190501200711.GA31231@bogus>
+References: <1556265512-9130-1-git-send-email-yibin.gong@nxp.com>
+ <1556265512-9130-9-git-send-email-yibin.gong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556265512-9130-9-git-send-email-yibin.gong@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although a syscall defined using SYSCALL_DEFINE0 doesn't accept
-parameters, use the correct function type to avoid indirect call
-type mismatches with Control-Flow Integrity checking.
+On Fri, Apr 26, 2019 at 08:05:51AM +0000, Robin Gong wrote:
+> ERR009165 fixed from i.mx6ul, add it to show the errata fixed.
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
+> index 2d32641..32c4263d 100644
+> --- a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
+> +++ b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
+> @@ -10,6 +10,8 @@ Required properties:
+>    - "fsl,imx35-cspi" for SPI compatible with the one integrated on i.MX35
+>    - "fsl,imx51-ecspi" for SPI compatible with the one integrated on i.MX51
+>    - "fsl,imx53-ecspi" for SPI compatible with the one integrated on i.MX53 and later Soc
+> +  - "fsl,imx6ul-ecspi" ERR009165 fixed on i.MX6UL and later Soc
+> +    (https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf)
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- arch/arm64/include/asm/syscall_wrapper.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+What about other i.MX6 chips?
 
-diff --git a/arch/arm64/include/asm/syscall_wrapper.h b/arch/arm64/include/asm/syscall_wrapper.h
-index a4477e515b798..507d0ee6bc690 100644
---- a/arch/arm64/include/asm/syscall_wrapper.h
-+++ b/arch/arm64/include/asm/syscall_wrapper.h
-@@ -30,10 +30,10 @@
- 	}										\
- 	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
- 
--#define COMPAT_SYSCALL_DEFINE0(sname)					\
--	asmlinkage long __arm64_compat_sys_##sname(void);		\
--	ALLOW_ERROR_INJECTION(__arm64_compat_sys_##sname, ERRNO);	\
--	asmlinkage long __arm64_compat_sys_##sname(void)
-+#define COMPAT_SYSCALL_DEFINE0(sname)							\
-+	asmlinkage long __arm64_compat_sys_##sname(const struct pt_regs *__unused);	\
-+	ALLOW_ERROR_INJECTION(__arm64_compat_sys_##sname, ERRNO);			\
-+	asmlinkage long __arm64_compat_sys_##sname(const struct pt_regs *__unused)
- 
- #define COND_SYSCALL_COMPAT(name) \
- 	cond_syscall(__arm64_compat_sys_##name);
-@@ -62,11 +62,11 @@
- 	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
- 
- #ifndef SYSCALL_DEFINE0
--#define SYSCALL_DEFINE0(sname)					\
--	SYSCALL_METADATA(_##sname, 0);				\
--	asmlinkage long __arm64_sys_##sname(void);		\
--	ALLOW_ERROR_INJECTION(__arm64_sys_##sname, ERRNO);	\
--	asmlinkage long __arm64_sys_##sname(void)
-+#define SYSCALL_DEFINE0(sname)							\
-+	SYSCALL_METADATA(_##sname, 0);						\
-+	asmlinkage long __arm64_sys_##sname(const struct pt_regs *__unused);	\
-+	ALLOW_ERROR_INJECTION(__arm64_sys_##sname, ERRNO);			\
-+	asmlinkage long __arm64_sys_##sname(const struct pt_regs *__unused)
- #endif
- 
- #ifndef COND_SYSCALL
--- 
-2.21.0.593.g511ec345e18-goog
+Seems like this is missing some fallbacks. The binding doc should make 
+it clear what are all valid combinations of compatible strings.
 
+>    - "fsl,imx8mq-ecspi" for SPI compatible with the one integrated on i.MX8M
+>  - reg : Offset and length of the register set for the device
+>  - interrupts : Should contain CSPI/eCSPI interrupt
+> -- 
+> 2.7.4
+> 
