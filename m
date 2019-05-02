@@ -2,103 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3380311DF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A066311DFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbfEBPgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:36:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43736 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728343AbfEBPgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:36:07 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w33so179230edb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 08:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IeCbek7GxN78jmKl6HDSULctY9a079sA8sLhO9KSXCE=;
-        b=J04pm3uinBZj07mQUc20QoDfp+OQk/UzptzIcSRRvJQ+i19xBQyz7UfnOlAK1p63BP
-         0hBiwZvxaaLGWRcC+VrF0LkpwlOR1UA1i2R3snOKvD7L2UbudEv8MjBkKgtRLhI5AK64
-         +ajHM23pkTed/0m9GmNqamhAvr7SzAISWxzAKDHmUrK7V7yni2jLai0IAq33C+iJDI5n
-         vys9SsRMh2mmR4MMQ4o/E9FfPT9tqsg1pQgNNbAYJbopon/cuMATXAkju4JdqQI80A8U
-         lE4FFPwdswVeraFDpUWin5auZ+HT9MMpiC8xpByUz81NDaAJFOqUD+QQqbi6NYSx46e+
-         Ns1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IeCbek7GxN78jmKl6HDSULctY9a079sA8sLhO9KSXCE=;
-        b=XyK0qIn7ohpy0aWCZp/EDVGa5Kx7kl1UWHeqNuThe0natSz7GH+eJtmEwLSfqOhZnq
-         3g6oSt1wPPOnCfpBC1b+0Pm76NFFiSVL0M/qrAhBcCQ3TmIbCy8xsW7hqbGmC+xQchHi
-         dLcAWvjxYqbbJWOLrfM7LSJs8Um1EkqcAegn3wsVVYQ5+YXCwSvZC4NIfwoniJJXme5P
-         b1Xj9Al+itYOWl1l8RcpheW2iYC+ZU5M8So1maAnGDyHL25tBlqTVWF5vdChZbXArXus
-         +LgdV9Ebpzl54U1rH4vgp1/eJ0rKSzMicUH66XPJ5dq1T/eH0o9zwouMe4RonX6zbTp1
-         qMiA==
-X-Gm-Message-State: APjAAAXeIcbvxaOTaKLPft4gKLPVKnK7TyfEFR6P++5sRYsqp93Qv1uG
-        6tF2F8fNHZ58d1BbbMs34sk=
-X-Google-Smtp-Source: APXvYqx2dUlDAJbP5jPeB6xQOpTTqQTTzZYY1NEWzH8taBIya6BsF/hTANqdbRNRRF/OpyE8xQJ/mg==
-X-Received: by 2002:a50:be01:: with SMTP id a1mr3094467edi.12.1556811365468;
-        Thu, 02 May 2019 08:36:05 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f9:2b:2b84::2])
-        by smtp.gmail.com with ESMTPSA id e18sm7386693ejf.77.2019.05.02.08.36.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 08:36:04 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] kasan: Zero initialize tag in __kasan_kmalloc
-Date:   Thu,  2 May 2019 08:35:38 -0700
-Message-Id: <20190502153538.2326-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S1728366AbfEBPgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:36:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41706 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727175AbfEBPgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:36:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E6DF5AB91;
+        Thu,  2 May 2019 15:36:28 +0000 (UTC)
+Subject: Re: [PATCH v9 2/2] phy: Add driver for mixel mipi dphy found on NXP's
+ i.MX8 SoCs
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
+        Robert Chiras <robert.chiras@nxp.com>
+References: <cover.1556633413.git.agx@sigxcpu.org>
+ <b999b07673e59c676d2e43a786b635beb056e9bf.1556633413.git.agx@sigxcpu.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Linux GmbH
+Message-ID: <4ce62b78-64ac-ca84-733f-bc4d10a67c54@suse.de>
+Date:   Thu, 2 May 2019 17:36:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
+In-Reply-To: <b999b07673e59c676d2e43a786b635beb056e9bf.1556633413.git.agx@sigxcpu.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with -Wuninitialized and CONFIG_KASAN_SW_TAGS unset, Clang
-warns:
+Am 30.04.19 um 16:40 schrieb Guido Günther:
+> This adds support for the Mixel DPHY as found on i.MX8 CPUs but since
+> this is an IP core it will likely be found on others in the future. So
+> instead of adding this to the nwl host driver make it a generic PHY
+> driver.
+> 
+> The driver supports the i.MX8MQ. Support for i.MX8QM and i.MX8QXP can be
+> added once the necessary system controller bits are in via
+> mixel_dphy_devdata.
+> 
+> Co-authored-by: Robert Chiras <robert.chiras@nxp.com>
 
-mm/kasan/common.c:484:40: warning: variable 'tag' is uninitialized when
-used here [-Wuninitialized]
-        kasan_unpoison_shadow(set_tag(object, tag), size);
-                                              ^~~
+This should be Co-developed-by and is lacking a Signed-off-by from that
+author. Robert, can you please provide one?
 
-set_tag ignores tag in this configuration but clang doesn't realize it
-at this point in its pipeline, as it points to arch_kasan_set_tag as
-being the point where it is used, which will later be expanded to
-(void *)(object) without a use of tag. Just zero initialize tag, as it
-removes this warning and doesn't change the meaning of the code.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/465
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- mm/kasan/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+Thanks,
+Andreas
 
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 36afcf64e016..4c5af68f2a8b 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -464,7 +464,7 @@ static void *__kasan_kmalloc(struct kmem_cache *cache, const void *object,
- {
- 	unsigned long redzone_start;
- 	unsigned long redzone_end;
--	u8 tag;
-+	u8 tag = 0;
- 
- 	if (gfpflags_allow_blocking(flags))
- 		quarantine_reduce();
 -- 
-2.21.0
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG Nürnberg)
