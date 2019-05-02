@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C17EB11CEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15EDE11F31
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfEBP0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:26:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
+        id S1726492AbfEBPWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbfEBP01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:27 -0400
+        id S1726406AbfEBPWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:22:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C760120B7C;
-        Thu,  2 May 2019 15:26:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 862152081C;
+        Thu,  2 May 2019 15:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810786;
-        bh=ffm1ZePdkczTXlneRZz7fsIlj9QJKLtDsTaRRetpzSk=;
+        s=default; t=1556810525;
+        bh=mCAzXQYMfAxlLqu0U3V4Avl84lWfKttGlE1GuRFcAKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5RQLC5ccRtMOYkPr9gKwIyvmmwBREsQ4XWF1a3Bi7IE/EFUO8+paIPp8hsTjU+06
-         MslcVyjCqiQ0UXosJ2480TAN22zxiu7jVh2A/jXG1c3aIWgUA9TLLylcZz/mCRIUJB
-         hwyQ/X8ZYKZbyMnecJ2IoUjWDCq0e/oLicGo900Y=
+        b=eLwZmErPi8pgqFlo1nlPNeRnAvugtnfBJdVdpywvJssDufV8+ognZbzx2aRxVtqp8
+         lKBNrrb22jduZ6jN7YJdhXU6yNipgJaJ6AIqK+sz/Jdpj9ehShOm2VnF27JTgAHbJs
+         pNFqdjW9iCBV5edgUsC3EOpyYEmRC8G+U8sGjGyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Guido Kiener <guido.kiener@rohde-schwarz.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 29/72] usb: gadget: net2280: Fix net2280_dequeue()
+Subject: [PATCH 4.9 05/32] s390: limit brk randomization to 32MB
 Date:   Thu,  2 May 2019 17:20:51 +0200
-Message-Id: <20190502143335.814488479@linuxfoundation.org>
+Message-Id: <20190502143317.201689230@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f1d3fba17cd4eeea20397f1324b7b9c69a6a935c ]
+[ Upstream commit cd479eccd2e057116d504852814402a1e68ead80 ]
 
-When a request must be dequeued with net2280_dequeue() e.g. due
-to a device clear action and the same request is finished by the
-function scan_dma_completions() then the function net2280_dequeue()
-does not find the request in the following search loop and
-returns the error -EINVAL without restoring the status ep->stopped.
-Thus the endpoint keeps blocked and does not receive any data
-anymore.
-This fix restores the status and does not issue an error message.
+For a 64-bit process the randomization of the program break is quite
+large with 1GB. That is as big as the randomization of the anonymous
+mapping base, for a test case started with '/lib/ld64.so.1 <exec>'
+it can happen that the heap is placed after the stack. To avoid
+this limit the program break randomization to 32MB for 64-bit and
+keep 8MB for 31-bit.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Guido Kiener <guido.kiener@rohde-schwarz.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Reported-by: Stefan Liebler <stli@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/net2280.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/include/asm/elf.h | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
-index c57046b1da0e..ee872cad5270 100644
---- a/drivers/usb/gadget/udc/net2280.c
-+++ b/drivers/usb/gadget/udc/net2280.c
-@@ -1273,9 +1273,9 @@ static int net2280_dequeue(struct usb_ep *_ep, struct usb_request *_req)
- 			break;
- 	}
- 	if (&req->req != _req) {
-+		ep->stopped = stopped;
- 		spin_unlock_irqrestore(&ep->dev->lock, flags);
--		dev_err(&ep->dev->pdev->dev, "%s: Request mismatch\n",
--								__func__);
-+		ep_dbg(ep->dev, "%s: Request mismatch\n", __func__);
- 		return -EINVAL;
- 	}
+diff --git a/arch/s390/include/asm/elf.h b/arch/s390/include/asm/elf.h
+index 8d665f1b29f8..f0fe566a9910 100644
+--- a/arch/s390/include/asm/elf.h
++++ b/arch/s390/include/asm/elf.h
+@@ -215,11 +215,14 @@ do {								\
  
+ /*
+  * Cache aliasing on the latest machines calls for a mapping granularity
+- * of 512KB. For 64-bit processes use a 512KB alignment and a randomization
+- * of up to 1GB. For 31-bit processes the virtual address space is limited,
+- * use no alignment and limit the randomization to 8MB.
++ * of 512KB for the anonymous mapping base. For 64-bit processes use a
++ * 512KB alignment and a randomization of up to 1GB. For 31-bit processes
++ * the virtual address space is limited, use no alignment and limit the
++ * randomization to 8MB.
++ * For the additional randomization of the program break use 32MB for
++ * 64-bit and 8MB for 31-bit.
+  */
+-#define BRK_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x3ffffUL)
++#define BRK_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x1fffUL)
+ #define MMAP_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x3ff80UL)
+ #define MMAP_ALIGN_MASK	(is_compat_task() ? 0 : 0x7fUL)
+ #define STACK_RND_MASK	MMAP_RND_MASK
 -- 
 2.19.1
 
