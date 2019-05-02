@@ -2,144 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0CC211EE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E40D11EEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfEBPmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:42:09 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:34206 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727884AbfEBPmI (ORCPT
+        id S1728298AbfEBPm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:42:57 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54324 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727852AbfEBPmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:42:08 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 89775C0198;
-        Thu,  2 May 2019 15:42:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1556811729; bh=sgRu//45SGD2+j7pnvClXQRPL0bt1vFUZdg5WSZt8bo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=KEfs7RdYNOY0g05GxZy7Qg/rrMEDhyeoinimve0FYMBxjYihj8dmyVA9yxTOZn+hT
-         GsDEksMD6LUwyJZx3MQVXz1e9OrKRqiach0IFEM45j/PRFMi8vdKniz4kg6bg6mj3N
-         jEZLrFi9iJUlV3heNhy4buiSDQclzMltaMy+zTVPsbA9yKCA7E0wngLZWEBiTRI3P4
-         xnuODvXh/mnbJ+k7z4NkKt2Zi5f1vhRkGuS0xwx6o7Pad81R7JhjWMOjLv4bGwOpcV
-         er/Ar4Ab2PdTzgFIgUL1HKmX5ACa1eN3Ju4OueLdOHBdf41I9CwziUWgP+tUVN5C6V
-         PKnmm9nE9PLyg==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 7F78FA00A1;
-        Thu,  2 May 2019 15:42:07 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 2 May 2019 08:42:07 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 2 May 2019 21:12:15 +0530
-Received: from [10.10.161.89] (10.10.161.89) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 2 May 2019 21:12:14 +0530
-Subject: Re: [PATCH] ARC: [plat-hsdk]: Add missing multicast filter bins
- number to GMAC node
-To:     Jose Abreu <Jose.Abreu@synopsys.com>, <devicetree@vger.kernel.org>,
-        <linux-snps-arc@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Newsgroups: gmane.linux.kernel
-References: <7f36bbadc0df4c93c396690dab59f34775de3874.1556788240.git.joabreu@synopsys.com>
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <56933076-879c-78a0-4bae-2613203b93b1@synopsys.com>
-Date:   Thu, 2 May 2019 08:41:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 2 May 2019 11:42:55 -0400
+Received: by mail-it1-f194.google.com with SMTP id a190so4106695ite.4
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 08:42:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HgRltt9mKzKFkWid2jC0d7CivMviw3PVlrovQvkWUY0=;
+        b=O9/HfWL3UvwxCHJFkzkMph2Nnviw8rDOoib6l8c+NaX4b66t8HPovC+8H+IPDfzERq
+         IQTKNTx90hXFy108h7lvAXA0EVa5TquvuMhHDFYZ/CaWtb2hQXRBo1ikSbOY+fIzryxm
+         u9QbQcqVwxuqt4FyRj1jbKips8qkFIIahPTA4tXB2ZLDo2YS7tWZq7BqlujEMEUqE6jq
+         M2LjvmBADn7eolaG4gwHWpqb23AHybSOFSghO8xtwPyt+5j4ZLVlHQ2zqwxfApgDzUhN
+         BWGIHmQKD3f8C7y2k07b5XVARyvhnmm4z0ya1JY+E5J3UAhS0D+WyCYywaFNOB3ZRMvp
+         f+kA==
+X-Gm-Message-State: APjAAAXaRUt+mKR9mPBlovnMpeu0qfNz1hY8wfxKtXnVp1YwBV5HRRSj
+        oAx0yPSwTNzgH7aLUeHppsugdw==
+X-Google-Smtp-Source: APXvYqzEE6fGCQnogPRhO8dCkQ+ch5Y4EWRqETjULbeEJ7Mnea0b6DvrcjoovagYfJos3eSUEjIYdg==
+X-Received: by 2002:a02:a1d4:: with SMTP id o20mr3155865jah.49.1556811774318;
+        Thu, 02 May 2019 08:42:54 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id 127sm33865iox.65.2019.05.02.08.42.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 02 May 2019 08:42:53 -0700 (PDT)
+Date:   Thu, 2 May 2019 09:42:49 -0600
+From:   Raul Rangel <rrangel@chromium.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org,
+        "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>,
+        djkurtz@chromium.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        "Sen, Pankaj" <Pankaj.Sen@amd.com>,
+        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
+        Avri Altman <avri.altman@wdc.com>, gene.chen@amd.com,
+        Chris.Wang@amd.com
+Subject: Re: [RFC PATCH 2/2] mmc: sdhci: Quirk for AMD SDHC Device 0x7906
+Message-ID: <20190502154249.GA25027@google.com>
+References: <20190501175457.195855-1-rrangel@chromium.org>
+ <20190501175457.195855-2-rrangel@chromium.org>
+ <08c3dc49-f5cb-401d-b900-12879f469728@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <7f36bbadc0df4c93c396690dab59f34775de3874.1556788240.git.joabreu@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.89]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08c3dc49-f5cb-401d-b900-12879f469728@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC Alexey, Eugeniy who maintain hsdk support !
+Ou Thu, May 02, 2019 at 09:32:16AM +0300, Adrian Hunter wrote:
 
-On 5/2/19 8:12 AM, Jose Abreu wrote:
-> GMAC controller on HSDK boards supports 256 Hash Table size so we need to
-> add the multicast filter bins property. This allows for the Hash filter
-> to work properly using stmmac driver.
-> 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> Cc: Joao Pinto <jpinto@synopsys.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> ---
->  arch/arc/boot/dts/hsdk.dts | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-> index 69bc1c9e8e50..b0f059377ab0 100644
-> --- a/arch/arc/boot/dts/hsdk.dts
-> +++ b/arch/arc/boot/dts/hsdk.dts
-> @@ -187,6 +187,7 @@
->  			interrupt-names = "macirq";
->  			phy-mode = "rgmii";
->  			snps,pbl = <32>;
-> +			snps,multicast-filter-bins = <256>;
->  			clocks = <&gmacclk>;
->  			clock-names = "stmmaceth";
->  			phy-handle = <&phy0>;
-> 
+Gene or Chris,
+Can you sign off on the patch.
 
+Thanks,
+Raul
+> Cc: some AMD people
+> 
+> On 1/05/19 8:54 PM, Raul E Rangel wrote:
+> > AMD SDHC 0x7906 requires a hard reset to clear all internal state.
+> > Otherwise it can get into a bad state where the DATA lines are always
+> > read as zeros.
+> > 
+> > This change requires firmware that can transition the device into
+> > D3Cold for it to work correctly. If the firmware does not support
+> > transitioning to D3Cold then the power state transitions are a no-op.
+> > 
+> > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> > ---
+> > 
+> >  drivers/mmc/host/sdhci-pci-core.c | 51 ++++++++++++++++++++++++++++++-
+> >  1 file changed, 50 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> > index 99b0fec2836b..532fbcbd373b 100644
+> > --- a/drivers/mmc/host/sdhci-pci-core.c
+> > +++ b/drivers/mmc/host/sdhci-pci-core.c
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/mmc/mmc.h>
+> >  #include <linux/scatterlist.h>
+> >  #include <linux/io.h>
+> > +#include <linux/iopoll.h>
+> >  #include <linux/gpio.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/mmc/slot-gpio.h>
+> > @@ -1498,11 +1499,59 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+> >  	return 0;
+> >  }
+> >  
+> > +static u32 sdhci_read_present_state(struct sdhci_host *host)
+> > +{
+> > +	return sdhci_readl(host, SDHCI_PRESENT_STATE);
+> > +}
+> > +
+> > +void amd_sdhci_reset(struct sdhci_host *host, u8 mask)
+> > +{
+> > +	struct sdhci_pci_slot *slot = sdhci_priv(host);
+> > +	struct pci_dev *pdev = slot->chip->pdev;
+> > +	u32 present_state;
+> > +
+> > +	/*
+> > +	 * SDHC 0x7906 requires a hard reset to clear all internal state.
+> > +	 * Otherwise it can get into a bad state where the DATA lines are always
+> > +	 * read as zeros.
+> > +	 */
+> > +	if (pdev->device == 0x7906 && (mask & SDHCI_RESET_ALL)) {
+> > +		pci_clear_master(pdev);
+> > +
+> > +		pci_save_state(pdev);
+> > +
+> > +		pci_set_power_state(pdev, PCI_D3cold);
+> > +		pr_debug("%s: power_state=%u\n", mmc_hostname(host->mmc),
+> > +			pdev->current_state);
+> > +		pci_set_power_state(pdev, PCI_D0);
+> > +
+> > +		pci_restore_state(pdev);
+> > +
+> > +		/*
+> > +		 * SDHCI_RESET_ALL says the card detect logic should not be
+> > +		 * reset, but since we need to reset the entire controller
+> > +		 * we should wait until the card detect logic has stabilized.
+> > +		 *
+> > +		 * This normally takes about 40ms.
+> > +		 */
+> > +		readx_poll_timeout(
+> > +			sdhci_read_present_state,
+> > +			host,
+> > +			present_state,
+> > +			present_state & SDHCI_CD_STABLE,
+> > +			10000,
+> > +			100000
+> > +		);
+> > +	}
+> > +
+> > +	return sdhci_reset(host, mask);
+> > +}
+> > +
+> >  static const struct sdhci_ops amd_sdhci_pci_ops = {
+> >  	.set_clock			= sdhci_set_clock,
+> >  	.enable_dma			= sdhci_pci_enable_dma,
+> >  	.set_bus_width			= sdhci_set_bus_width,
+> > -	.reset				= sdhci_reset,
+> > +	.reset				= amd_sdhci_reset,
+> >  	.set_uhs_signaling		= sdhci_set_uhs_signaling,
+> >  };
+> >  
+> > 
+> 
