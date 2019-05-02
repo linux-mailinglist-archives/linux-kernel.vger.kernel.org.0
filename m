@@ -2,106 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A34711641
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 11:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D8C1164F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 11:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbfEBJOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 05:14:03 -0400
-Received: from mail-eopbgr20055.outbound.protection.outlook.com ([40.107.2.55]:3678
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfEBJOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 05:14:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=No6VOHotBjroEzf8XP7A3n+Gq2eh8H0kmMwc0LpTHSU=;
- b=o9vUcqTYFC8/VTf+u8BVivoxpZFwvpHbUEy+IB3khnDKi/tvR1j6T3ppncRXNQ4frTSeDK8KtazXudIvBoxnawdmM0O9SYVAByhEcTHIhf7wsWdWj5T5IxqaowPvvYyIoHfrAudWJrY88l2oUi9ehSYdGPZ4+4aH2KaHC1C0h8U=
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
- VE1PR04MB6671.eurprd04.prod.outlook.com (20.179.235.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1835.13; Thu, 2 May 2019 09:13:58 +0000
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::6c03:86ad:729d:e311]) by VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::6c03:86ad:729d:e311%7]) with mapi id 15.20.1835.018; Thu, 2 May 2019
- 09:13:58 +0000
-From:   "S.j. Wang" <shengjiu.wang@nxp.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "timur@kernel.org" <timur@kernel.org>,
-        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH V4] ASoC: fsl_esai: Add pm runtime function
-Thread-Topic: [EXT] Re: [PATCH V4] ASoC: fsl_esai: Add pm runtime function
-Thread-Index: AQHU/WmQi9S3A4SFvU+3BSdrbwsfSKZXJceAgABrFmA=
-Date:   Thu, 2 May 2019 09:13:58 +0000
-Message-ID: <VE1PR04MB6479F3EED50613DF8F041713E3340@VE1PR04MB6479.eurprd04.prod.outlook.com>
-References: <c4cf809a66b8c98de11e43f7e9fa2823cf3c5ba6.1556417687.git.shengjiu.wang@nxp.com>
- <20190502023945.GA19532@sirena.org.uk>
-In-Reply-To: <20190502023945.GA19532@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shengjiu.wang@nxp.com; 
-x-originating-ip: [180.155.251.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 935e1227-1c19-4f41-cb84-08d6cede8263
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6671;
-x-ms-traffictypediagnostic: VE1PR04MB6671:
-x-microsoft-antispam-prvs: <VE1PR04MB667147118A8A339FA0792780E3340@VE1PR04MB6671.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0025434D2D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(39860400002)(366004)(189003)(199004)(71190400001)(9686003)(86362001)(6436002)(6246003)(71200400001)(25786009)(64756008)(55016002)(256004)(7736002)(186003)(8936002)(5660300002)(14444005)(33656002)(74316002)(4326008)(73956011)(66946007)(99286004)(81166006)(53936002)(81156014)(76116006)(4744005)(8676002)(52536014)(476003)(11346002)(478600001)(486006)(66476007)(2906002)(6506007)(305945005)(102836004)(14454004)(7696005)(76176011)(66556008)(6116002)(229853002)(6916009)(66066001)(316002)(54906003)(3846002)(66446008)(446003)(68736007)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6671;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: rxlTSIfnfEs9KYzzMCRtzGGaFuCCeLe4VKmpgoCnmhV0YjNIQ8//x3lMORRldz+IXhV05ixQnCWO0pJbulF2MrCgXI94NuALTTskwZGnXcN2GS34HqQnXABfuK9D8Nj/8pvpVadCU9vfQinyU8CgWBBZQZJ1vjfIw/uNjKcEue1s4f5rJZMmArxa0DlXFHs2FT3cYHq5CnoPFvBVE7biKbHgbrp8yEIHu0Hd2fqI/Bm7o7Xl+sufhVBrBv50++oRPeNO5bqKaRMAZdEiweV+kNczCIwCO+bNkf65RiTnfs5v6qeQFuLlKe69FzI4sk1KwS4ruOtFWbxUpO9JrDRWb10kn2SR3qyGmY5PIV8IeJCStweUu8PVbkAsEJ4usjzrPp6nFVch+QwhV9WmEgn/mA0BMIWtGgh6k9i5My2jf3g=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726372AbfEBJOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 05:14:47 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42819 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbfEBJOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 05:14:46 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r72so1478946ljb.9;
+        Thu, 02 May 2019 02:14:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=75CLUTL0d7u5RORnBeeuCEW2GM3XaJs15ow0fkM3pWg=;
+        b=JyTqm9SOfvwgk3l27Y9L1tJeeB5Aj7fL3LVDhdG0UmGvXf+CjleW/Wu6o486vO0wJo
+         AwnIfxaCg1cBdsJGpHMPbloJ7Ckfp6haPL3IVUoBMKyYYo6pIwwkWXn8jnuazpCSLXUt
+         q6/Weo22peWSnsxmVVdecAlatPIAf1SHFj3VKbkUFXbcG7vdp/1OpevhoBL2K2/8lrlk
+         nkGFMZUrnCx5RuxCK/iufUS//+45XlL77xlGxFe635Usb31Ue12nnSDIpM85HhJMHq5I
+         QNw4h3UELq/KLLVZTYh1DID37krqRj2xMxhPovIIXaRqYdzRuFlVFgogOr/erQRiIzD5
+         3yow==
+X-Gm-Message-State: APjAAAXNbtDo3cdLayDkbx3OxbSmNF4sOhC4y+z84zm23aZ/e+PA+CpR
+        UcWj0vgqnsTHoO1U3/CA/fU=
+X-Google-Smtp-Source: APXvYqyYo8Y3X8GGi5SXLBnOjAgqJuyoR11B5eY2gwvTwyZi8vDQ7tv5Cqz6VB+UQf917yhOMRv5jQ==
+X-Received: by 2002:a2e:300f:: with SMTP id w15mr1364865ljw.42.1556788482496;
+        Thu, 02 May 2019 02:14:42 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id p19sm9241233lfc.48.2019.05.02.02.14.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 May 2019 02:14:41 -0700 (PDT)
+Date:   Thu, 2 May 2019 12:14:34 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH v14 4/8] dt-bindings: mfd: Document first ROHM BD70528
+ bindings
+Message-ID: <37014b510628fbb5cfb9bbd3481d02005d98ba0b.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 935e1227-1c19-4f41-cb84-08d6cede8263
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 09:13:58.3942
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6671
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark
+Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+drivers) and 4 GPIO pins which can be configured for I/O or
+as interrupt sources withe configurable trigger levels.
 
-> On Sun, Apr 28, 2019 at 02:24:54AM +0000, S.j. Wang wrote:
-> > Add pm runtime support and move clock handling there.
-> > Close the clocks at suspend to reduce the power consumption.
-> >
-> > fsl_esai_suspend is replaced by pm_runtime_force_suspend.
-> > fsl_esai_resume is replaced by pm_runtime_force_resume.
->=20
-> This doesn't apply against for-5.2 again.  Sorry about this, I think this=
- one is
-> due to some messups with my scripts which caused some patches to be
-> dropped for a while (and it's likely to be what happened the last time as
-> well).  Can you check and resend again please?  Like I say sorry about th=
-is, I
-> think it's my mistake.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Changelog v14: No changes
 
-I am checking, but I don't know why this patch failed in your side. I=20
-Tried to apply this patch on for-5.1, for 5.2,  for-linus  and for-next, al=
-l are
-Successful.  The git is git://git.kernel.org/pub/scm/linux/kernel/git/broon=
-ie/sound.git.
+ .../bindings/mfd/rohm,bd70528-pmic.txt        | 102 ++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
 
-I can't reproduce your problem. Is there any my operation wrong?
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+new file mode 100644
+index 000000000000..c3c02ce73cde
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+@@ -0,0 +1,102 @@
++* ROHM BD70528 Power Management Integrated Circuit bindings
++
++BD70528MWV is an ultra-low quiescent current general purpose, single-chip,
++power management IC for battery-powered portable devices. The IC
++integrates 3 ultra-low current consumption buck converters, 3 LDOs and 2
++LED Drivers. Also included are 4 GPIOs, a real-time clock (RTC), a 32kHz
++clock gate, high-accuracy VREF for use with an external ADC, flexible
++dual-input power path, 10 bit SAR ADC for battery temperature monitor and
++1S battery charger with scalable charge currents.
++
++Required properties:
++ - compatible		: Should be "rohm,bd70528"
++ - reg			: I2C slave address.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: To indicate BD70528 acts as an interrupt controller.
++ - #interrupt-cells	: Should be 2. Usage is compliant to the 2 cells
++			  variant of ../interrupt-controller/interrupts.txt
++ - gpio-controller	: To indicate BD70528 acts as a GPIO controller.
++ - #gpio-cells		: Should be 2. The first cell is the pin number and
++			  the second cell is used to specify flags. See
++			  ../gpio/gpio.txt for more information.
++ - #clock-cells		: Should be 0.
++ - regulators:		: List of child nodes that specify the regulators.
++			  Please see ../regulator/rohm,bd70528-regulator.txt
++
++Optional properties:
++ - clock-output-names	: Should contain name for output clock.
++
++Example:
++/* External oscillator */
++osc: oscillator {
++	compatible = "fixed-clock";
++	#clock-cells = <1>;
++	clock-frequency  = <32768>;
++	clock-output-names = "osc";
++};
++
++pmic: pmic@4b {
++	compatible = "rohm,bd70528";
++	reg = <0x4b>;
++	interrupt-parent = <&gpio1>;
++	interrupts = <29 GPIO_ACTIVE_LOW>;
++	clocks = <&osc 0>;
++	#clock-cells = <0>;
++	clock-output-names = "bd70528-32k-out";
++	#gpio-cells = <2>;
++	gpio-controller;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++
++	regulators {
++		buck1: BUCK1 {
++			regulator-name = "buck1";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <3400000>;
++			regulator-boot-on;
++			regulator-ramp-delay = <125>;
++		};
++		buck2: BUCK2 {
++			regulator-name = "buck2";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++			regulator-ramp-delay = <125>;
++		};
++		buck3: BUCK3 {
++			regulator-name = "buck3";
++			regulator-min-microvolt = <800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-boot-on;
++			regulator-ramp-delay = <250>;
++		};
++		ldo1: LDO1 {
++			regulator-name = "ldo1";
++			regulator-min-microvolt = <1650000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++		};
++		ldo2: LDO2 {
++			regulator-name = "ldo2";
++			regulator-min-microvolt = <1650000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++		};
++
++		ldo3: LDO3 {
++			regulator-name = "ldo3";
++			regulator-min-microvolt = <1650000>;
++			regulator-max-microvolt = <3300000>;
++		};
++		led_ldo1: LED_LDO1 {
++			regulator-name = "led_ldo1";
++			regulator-min-microvolt = <200000>;
++			regulator-max-microvolt = <300000>;
++		};
++		led_ldo2: LED_LDO2 {
++			regulator-name = "led_ldo2";
++			regulator-min-microvolt = <200000>;
++			regulator-max-microvolt = <300000>;
++		};
++	};
++};
+-- 
+2.17.2
 
-Best regards
-Wang shengjiu
 
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
