@@ -2,108 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF42121EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7740121F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfEBSct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 14:32:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35379 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfEBSct (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 14:32:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t87so965017pfa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:32:48 -0700 (PDT)
+        id S1726326AbfEBSft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 14:35:49 -0400
+Received: from mail-eopbgr780134.outbound.protection.outlook.com ([40.107.78.134]:28020
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726120AbfEBSft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 14:35:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=93c55uhr4KFGF95BkRemJ3knn+tMaubaMhwZFRLRXyQ=;
-        b=BR7x3x90tpA0KZFNAitTfhjS1qplr4LpXzdvRCOHwFsakQ7p4g8+DisaRgPLRBmfHR
-         2HI5DZW4Nr/seQW7j67Z5l68jgNwhu2J7r6yvkHLwJ5YZgFhHALh/ow4VRZeC7LwQFxk
-         HMN6deHYkyLeVgyRQ3kOHnTXVYWdh3p3Pq6vY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=93c55uhr4KFGF95BkRemJ3knn+tMaubaMhwZFRLRXyQ=;
-        b=D6onT4gSmDCMtKizjmSLAwD18NTOtTgOcLtkPm5YITVrG3wG0LZ0ep65KwR1iEgpjK
-         UccKW9IpZMGGT2tlO1WkZWRviMSh74Z5KngIU+/SFHciOm1S1dDOOeVnM79OjHlqvoUS
-         HIUg1m/AcnWHBp4U20pGa2s8uedGF/Z2YzGsA3eFAYPvrs9vlEWbwnKr8XGFw6iaMkAt
-         mZwGnuPPzquqncjBTiGT33ZIFoZduuTmNQAmDGpdf/okeK8KDzjwy99DTZZ26EcWkcVq
-         Wp2ezdk1y/CIPyN7zFeOqw2OtflYbCkJ8U7BXMLQ0m04iUxlca5fLNlw9nW8d2d7V4vP
-         EXmQ==
-X-Gm-Message-State: APjAAAXH8F0YNbyLgaeDzbTS0WvQ9pq5gSDm0W0D+ItaWHMOmuQHOTrW
-        zL8Qjc5YCgnN2KzzQ4Xc/WUV9A==
-X-Google-Smtp-Source: APXvYqzOG3Iud4yqTJfLgrP/J9PSYnjxJFAsqN3VfssLJ4G8hndLNeozzfAGi1vq6o1D6P6OQGv/qA==
-X-Received: by 2002:a63:c64c:: with SMTP id x12mr5476408pgg.379.1556821968507;
-        Thu, 02 May 2019 11:32:48 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id k12sm14531027pfk.86.2019.05.02.11.32.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 11:32:47 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] thermal: cpu_cooling: Actually trace CPU load in thermal_power_cpu_get_power
-Date:   Thu,  2 May 2019 11:32:38 -0700
-Message-Id: <20190502183238.182058-1-mka@chromium.org>
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I/XmzCjUHCoKTwllZAAgUIsEIG3Zo4aQ59S/+ISYqQA=;
+ b=Idkl2BWw46PtdOSdAGsUnnwnyA1zDs+hRfgSuIeDPcHnOB+cUJzHuqDJ90XfLB5Ff4ie/QSx+Bgcqc7eBYglYhemt3gZ+LWScqjw2TLxp5mLgcKxBg3UpnlK2YDBPSE4/FW5EelE0tqKvQqSzSNezRy+paEpRH3g9nQ/2abxb6c=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1582.namprd22.prod.outlook.com (10.174.167.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.13; Thu, 2 May 2019 18:35:46 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::b9d6:bf19:ec58:2765]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::b9d6:bf19:ec58:2765%7]) with mapi id 15.20.1835.018; Thu, 2 May 2019
+ 18:35:46 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Serge Semin <fancer.lancer@gmail.com>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        James Hogan <jhogan@kernel.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Juergen Gross <jgross@suse.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH 04/12] mips: Reserve memory for the kernel image resources
+Thread-Topic: [PATCH 04/12] mips: Reserve memory for the kernel image
+ resources
+Thread-Index: AQHU+ibQQIEJaXUkgEWNBapHcAUrdaZYN2eA
+Date:   Thu, 2 May 2019 18:35:46 +0000
+Message-ID: <MWHPR2201MB1277F3E8F0039C632E3B74AFC1340@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20190423224748.3765-5-fancer.lancer@gmail.com>
+In-Reply-To: <20190423224748.3765-5-fancer.lancer@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0026.prod.exchangelabs.com (2603:10b6:a02:80::39)
+ To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:24::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.94.197.246]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 595d6150-df1b-4b30-bc9a-08d6cf2cfdef
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR2201MB1582;
+x-ms-traffictypediagnostic: MWHPR2201MB1582:
+x-microsoft-antispam-prvs: <MWHPR2201MB158280D2DE2A25DB658FC9F9C1340@MWHPR2201MB1582.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0025434D2D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(376002)(366004)(39840400004)(199004)(189003)(33656002)(53936002)(52116002)(9686003)(99286004)(54906003)(229853002)(7696005)(6916009)(6436002)(186003)(4326008)(486006)(6116002)(476003)(3846002)(2906002)(26005)(11346002)(42882007)(102836004)(6506007)(386003)(446003)(44832011)(71190400001)(71200400001)(8676002)(66066001)(81166006)(7736002)(478600001)(55016002)(76176011)(74316002)(7416002)(52536014)(316002)(66476007)(66556008)(73956011)(64756008)(66446008)(66946007)(256004)(14444005)(25786009)(8936002)(81156014)(14454004)(68736007)(5660300002)(305945005)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1582;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: v96UwCGNSirMJ6JPCGHer3fEqZ+BEd7ooGhS1HbdanTevwJri6AWiNgZsdMz4GgQvWtNjviEk/qyhVJ4Doxg7KsATBG424kR7nPXP/UKWETBRFjVGbrIAVfYITUZ3M2MOke4AWEtaEnbuwq+HDiYTL1fWtIlWgoBjiyBrUt0XZXe9vwgBkBC3QetkoJ5MeZtJIejwys8/KuEsT2l0AwxxLMGrLeszaRLv7luEcnbjk+XU9MpA1V+bqjMStacMhOBA1e7ucvRUsVGXXCbVjLAFBwOFlfDw8F6TB8zBs0QDZ6j9HP+IzuE7vfz9VhC7pB8YkyLoZSTxUVzLcLoeJE4aZ9CDSRHWxwFvhS5VKBs7CTi/ysL51q5TzzuD6W6L0H3odwJdTdP7rRlz8tOs3Px7cM/7iTynkQRfGdzidvIhKs=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 595d6150-df1b-4b30-bc9a-08d6cf2cfdef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 18:35:46.7833
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1582
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPU load values passed to the thermal_power_cpu_get_power
-tracepoint are zero for all CPUs, unless, unless the
-thermal_power_cpu_limit tracepoint is enabled too:
-
-  irq/41-rockchip-98    [000] ....   290.972410: thermal_power_cpu_get_power:
-  cpus=0000000f freq=1800000 load={{0x0,0x0,0x0,0x0}} dynamic_power=4815
-
-vs
-
-  irq/41-rockchip-96    [000] ....    95.773585: thermal_power_cpu_get_power:
-  cpus=0000000f freq=1800000 load={{0x56,0x64,0x64,0x5e}} dynamic_power=4959
-  irq/41-rockchip-96    [000] ....    95.773596: thermal_power_cpu_limit:
-  cpus=0000000f freq=408000 cdev_state=10 power=416
-
-There seems to be no good reason for omitting the CPU load information
-depending on another tracepoint. My guess is that the intention was to
-check whether thermal_power_cpu_get_power is (still) enabled, however
-'load_cpu != NULL' already indicates that it was at least enabled when
-cpufreq_get_requested_power() was entered, there seems little gain
-from omitting the assignment if the tracepoint was just disabled, so
-just remove the check.
-
-Fixes: 6828a4711f99 ("thermal: add trace events to the power allocator governor")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/thermal/cpu_cooling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index f7c1f49ec87f..b437804e099b 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -458,7 +458,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
- 			load = 0;
- 
- 		total_load += load;
--		if (trace_thermal_power_cpu_limit_enabled() && load_cpu)
-+		if (load_cpu)
- 			load_cpu[i] = load;
- 
- 		i++;
--- 
-2.21.0.593.g511ec345e18-goog
-
+SGVsbG8sDQoNClNlcmdlIFNlbWluIHdyb3RlOg0KPiBUaGUgcmVzZXJ2ZWRfZW5kIHZhcmlhYmxl
+IGhhZCBiZWVuIHVzZWQgYnkgdGhlIGJvb3RtZW1faW5pdCgpIGNvZGUNCj4gdG8gZmluZCBhIGxv
+d2VzdCBsaW1pdCBvZiBtZW1vcnkgYXZhaWxhYmxlIGZvciBtZW1tYXAgYmxvYi4gVGhlIG9yaWdp
+bmFsDQo+IGNvZGUganVzdCB0cmllZCB0byBmaW5kIGEgZnJlZSBtZW1vcnkgc3BhY2UgaGlnaGVy
+IHRoYW4ga2VybmVsIHdhcyBwbGFjZWQuDQo+IFRoaXMgbGltaXRhdGlvbiBzZWVtcyBqdXN0aWZp
+ZWQgZm9yIHRoZSBtZW1tYXAgcmFnaW9uIHNlYXJjaCBwcm9jZXNzLCBidXQNCj4gSSBjYW4ndCBz
+ZWUgYW55IG9idmlvdXMgcmVhc29uIHRvIHJlc2VydmUgdGhlIHVudXNlZCBzcGFjZSBiZWxvdyBr
+ZXJuZWwNCj4gc2VlaW5nIHNvbWUgcGxhdGZvcm1zIHBsYWNlIGl0IG11Y2ggaGlnaGVyIHRoYW4g
+c3RhbmRhcmQgMU1CLiBNb3Jlb3Zlcg0KPiB0aGUgUkVMT0NBVElPTiBjb25maWcgZW5hYmxlcyBp
+dCB0byBiZSBsb2FkZWQgYXQgYW55IG1lbW9yeSBhZGRyZXNzLg0KPiBTbyBsZXRzIHJlc2VydmUg
+dGhlIG1lbW9yeSBvY2N1cGllZCBieSB0aGUga2VybmVsIG9ubHksIGxlYXZpbmcgdGhlIHJlZ2lv
+bg0KPiBiZWxvdyBiZWluZyBmcmVlIGZvciBhbGxvY2F0aW9ucy4gQWZ0ZXIgZG9pbmcgdGhpcyB3
+ZSBjYW4gbm93IGRpc2NhcmQgdGhlDQo+IGNvZGUgZnJlZWluZyBhIHNwYWNlIGJldHdlZW4ga2Vy
+bmVsIF90ZXh0IGFuZCBWTUxJTlVYX0xPQURfQUREUkVTUyBzeW1ib2xzDQo+IHNpbmNlIGl0J3Mg
+Z29pbmcgdG8gYmUgZnJlZSBhbnl3YXkgKHVubGVzcyBtYXJrZWQgYXMgcmVzZXJ2ZWQgYnkNCj4g
+cGxhdGZvcm1zKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFNlcmdlIFNlbWluIDxmYW5jZXIubGFu
+Y2VyQGdtYWlsLmNvbT4NCg0KQXBwbGllZCB0byBtaXBzLW5leHQuDQoNClRoYW5rcywNCiAgICBQ
+YXVsDQoNClsgVGhpcyBtZXNzYWdlIHdhcyBhdXRvLWdlbmVyYXRlZDsgaWYgeW91IGJlbGlldmUg
+YW55dGhpbmcgaXMgaW5jb3JyZWN0DQogIHRoZW4gcGxlYXNlIGVtYWlsIHBhdWwuYnVydG9uQG1p
+cHMuY29tIHRvIHJlcG9ydCBpdC4gXQ0K
