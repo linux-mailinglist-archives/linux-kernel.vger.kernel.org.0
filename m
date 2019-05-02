@@ -2,145 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE64D11C35
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5519E11C44
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfEBPJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:09:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37468 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBPI7 (ORCPT
+        id S1726446AbfEBPLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:11:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726270AbfEBPLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:08:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id k23so3871717wrd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 08:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1TNCGeuNp8G84cQrEGm4SyYivnE2nikv/Arz+uWr9Jw=;
-        b=USy5IvwgOnGnOL8SWon1LPB1/ICXuB+9vrTlwuLJWWIxXY3xlg2aV0KR7Wy6caebP4
-         dbJ4J7osOT+lmfedLKQJnryv0kBU+rsTJdNgy0cDRPHXe/LnwJQoQXA5FvbvRfVQFuS6
-         sVwDJkL+/lwkqLDZgwSQVASys6vuIxwJBMeIV4DAnfH+Hq53BRK7OsXAVjhTbgM5YA9t
-         zJeLMgevqe+3qOWChIcrnlOfJ+mm8ECn781DZCStkxRLuoN2g83jh9bocnX+I49v+sZl
-         UzLGPuZxYizcvu9C537+7KLjW/4GC9bKCIVxNi3ZnjgXzrXcK3AW6mED72jyugftSP2+
-         KrYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1TNCGeuNp8G84cQrEGm4SyYivnE2nikv/Arz+uWr9Jw=;
-        b=PnOqSu9Z3zZ4px8Oa0QZ8ZQDDzPcEx+oNOi0xHXd9wHAbzxIjQ62S0tFlXJDYgayBq
-         IHYGHyYgwdYtUtZjXic1xytH+YNRSrvFF2+ZIQjdvQaZQz5Qev+s5lE7ZjL5+PNaSfwr
-         k1SM6vPv+bQYIF9+A6MbjcYm6zIwF5hWXEF23a/30ZxYcTMMSgqS/t4QkCxAuUa/vYxj
-         BUmBq/ZXrno04ixkOzxzgNeJ8Rvv0CBzi+72o9fitOeRDJknET4hoKBMCPmtgv7qQF3E
-         b5SU2sb6D/jWDr/2JW5eanFCFtyE1q/9uY0H9MNalEvjfrg8H5JzWxvuflm+Hzp9Axya
-         7vgg==
-X-Gm-Message-State: APjAAAWyYa8mVEULuwDJjohk8XG4uR4Fa7JNGxOqJyJhc870eVewghnG
-        /d/YY0rQuJ0BrpuleeoJdOs=
-X-Google-Smtp-Source: APXvYqxzeFSAwlc0RDYWzY3a0mDpTjm74oIp1tg2x4HfHStqFZMXO79HoyEB/0vjt0FC7/B0PTEQ/A==
-X-Received: by 2002:a5d:6b10:: with SMTP id v16mr3178292wrw.294.1556809737491;
-        Thu, 02 May 2019 08:08:57 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q26sm6013672wmq.25.2019.05.02.08.08.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 08:08:56 -0700 (PDT)
-Date:   Thu, 2 May 2019 17:08:53 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Message-ID: <20190502150853.GA16779@gmail.com>
-References: <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
- <20190426140102.GA4922@mit.edu>
- <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
- <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
- <303fc4ee5ac04e4fac104df1188952e8@AcuMS.aculab.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C6C2C3@IRSMSX102.ger.corp.intel.com>
- <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
- <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
+        Thu, 2 May 2019 11:11:03 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42F7WYO067791
+        for <linux-kernel@vger.kernel.org>; Thu, 2 May 2019 11:11:01 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s81j5vk94-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:11:01 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Thu, 2 May 2019 16:11:00 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 2 May 2019 16:10:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x42FAuLs21954804
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 May 2019 15:10:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C94CFA4053;
+        Thu,  2 May 2019 15:10:56 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F9A0A4051;
+        Thu,  2 May 2019 15:10:56 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.60])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  2 May 2019 15:10:56 +0000 (GMT)
+Date:   Thu, 2 May 2019 17:10:55 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: Linux 5.1-rc5
+In-Reply-To: <20190502143110.GC17577@kroah.com>
+References: <CAHk-=wjvcuyCQGnfOhooaL1H4H63qXO=xgo+9yncSOG=eK+kbA@mail.gmail.com>
+        <20190415051919.GA31481@infradead.org>
+        <CAHk-=wj7jgMOVFW0tiU-X+zhg6+Rn7mEBTej+f26rV3zXezOSA@mail.gmail.com>
+        <20190502122128.GA2670@kroah.com>
+        <20190502161758.26972bb2@mschwideX1>
+        <20190502143110.GC17577@kroah.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050215-0020-0000-0000-0000033897C2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050215-0021-0000-0000-0000218B205B
+Message-Id: <20190502171055.132f023c@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=931 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905020102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2 May 2019 16:31:10 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-* Andy Lutomirski <luto@kernel.org> wrote:
+> On Thu, May 02, 2019 at 04:17:58PM +0200, Martin Schwidefsky wrote:
+> > On Thu, 2 May 2019 14:21:28 +0200
+> > Greg KH <gregkh@linuxfoundation.org> wrote:
+> >   
+> > > On Mon, Apr 15, 2019 at 09:17:10AM -0700, Linus Torvalds wrote:  
+> > > > On Sun, Apr 14, 2019 at 10:19 PM Christoph Hellwig <hch@infradead.org> wrote:    
+> > > > >
+> > > > > Can we please have the page refcount overflow fixes out on the list
+> > > > > for review, even if it is after the fact?    
+> > > > 
+> > > > They were actually on a list for review long before the fact, but it
+> > > > was the security mailing list. The issue actually got discussed back
+> > > > in January along with early versions of the patches, but then we
+> > > > dropped the ball because it just wasn't on anybody's radar and it got
+> > > > resurrected late March. Willy wrote a rather bigger patch-series, and
+> > > > review of that is what then resulted in those commits. So they may
+> > > > look recent, but that's just because the original patches got
+> > > > seriously edited down and rewritten.
+> > > > 
+> > > > That said, powerpc and s390 should at least look at maybe adding a
+> > > > check for the page ref in their gup paths too. Powerpc has the special
+> > > > gup_hugepte() case, and s390 has its own version of gup entirely. I
+> > > > was actually hoping the s390 guys would look at using the generic gup
+> > > > code.
+> > > > 
+> > > > I ruthlessly also entirely ignored MIPS, SH and sparc, since they seem
+> > > > largely irrelevant, partly since even theoretically this whole issue
+> > > > needs a _lot_ of memory.
+> > > > 
+> > > > Michael, Martin, see commit 6b3a70773630 ("Merge branch 'page-refs'
+> > > > (page ref overflow)"). You may or may not really care.    
+> > > 
+> > > I've now queued these patches up for the next round of stable releases,
+> > > as some people seem to care about these.
+> > > 
+> > > I didn't see any follow-on patches for s390 or ppc64 hit the tree for
+> > > these changes, am I just missing them and should also queue up a few
+> > > more to handle this issue on those platforms?  
+> > 
+> > I fixed that with a different approach. The following two patches are
+> > queued for the next merge window:
+> > 
+> > d1874a0c2805 "s390/mm: make the pxd_offset functions more robust"
+> > 1a42010cdc26 "s390/mm: convert to the generic get_user_pages_fast code"
+> > 
+> > With these two s390 now uses the generic gup code in mm/gup.c  
+> 
+> Nice!  Do you want me to queue those up for the stable backports once
+> they hit a public -rc release?
 
-> Or we decide that calling get_random_bytes() is okay with IRQs off and 
-> this all gets a bit simpler.
+Yes please!
 
-BTW., before we go down this path any further, is the plan to bind this 
-feature to a real CPU-RNG capability, i.e. to the RDRAND instruction, 
-which excludes a significant group of x86 of CPUs?
+-- 
+blue skies,
+   Martin.
 
-Because calling tens of millions of system calls per second will deplete 
-any non-CPU-RNG sources of entropy and will also starve all other users 
-of random numbers, which might have a more legitimate need for 
-randomness, such as the networking stack ...
+"Reality continues to ruin my life." - Calvin.
 
-I.e. I'm really *super sceptical* of this whole plan, as currently 
-formulated.
-
-If we bind it to RDRAND then we shouldn't be using the generic 
-drivers/char/random.c pool *at all*, but just call the darn instruction 
-directly. This is an x86 patch-set after all, right?
-
-Furthermore the following post suggests that RDRAND isn't a per CPU 
-capability, but a core or socket level facility, depending on CPU make:
-
-  https://stackoverflow.com/questions/10484164/what-is-the-latency-and-throughput-of-the-rdrand-instruction-on-ivy-bridge
-
-8 gigabits/sec sounds good throughput in principle, if there's no 
-scalability pathologies with that.
-
-It would also be nice to know whether RDRAND does buffering *internally*, 
-in which case it might be better to buffer as little at the system call 
-level as possible, to allow the hardware RNG buffer to rebuild between 
-system calls.
-
-I.e. I'd suggest to retrieve randomness via a fixed number of RDRAND-r64 
-calls (where '1' is a perfectly valid block size - it should be 
-measured), which random bits are then used as-is for the ~6 bits of 
-system call stack offset. (I'd even suggest 7 bits: that skips a full 
-cache line almost for free and makes the fuzz actually meaningful: no 
-spear attacker will take a 1/128, 0.8% chance to successfully attack a 
-critical system.)
-
-Then those 64*N random bits get buffered and consumed in 5-7 bit chunk, 
-in a super efficient fashion, possibly inlining the fast path, totally 
-outside the flow of the drivers/char/random.c
-
-Any non-CPU source of randomness for system calls and plans to add 
-several extra function calls to every x86 system call is crazy talk I 
-believe...
-
-Thanks,
-
-	Ingo
