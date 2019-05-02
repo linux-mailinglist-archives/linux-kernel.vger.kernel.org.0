@@ -2,134 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 350E01222B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E154512217
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfEBSvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 14:51:40 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46611 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBSvk (ORCPT
+        id S1726466AbfEBSop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 14:44:45 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:34353 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfEBSoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 14:51:40 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h21so3120327ljk.13
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:51:38 -0700 (PDT)
+        Thu, 2 May 2019 14:44:44 -0400
+Received: by mail-yw1-f68.google.com with SMTP id u14so2373038ywe.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:44:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jRZt+D8O8akEME1deiXcwDybfKiwpthrXzyaDQKQw+o=;
-        b=DOe1Odxc1gK8brv9R5zvAAh8GUyJ0YnhuXPXnXKLY6rlveLN+SrMsrIhlmdzjwzc3A
-         +gpmg7E+x+gFu/OGE9tnfORqGbP7/EJEKg5bLaODW4PNZqGswJ1xp/er7T39ChKACNGs
-         gUroHv8DdOMTYzXZZhWIDTz6VqI7ZdBhWPnGk=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0H6/1V6/5CIKh3CDtEYPw4qJMt0j8mXo9dQuEOmaJ2c=;
+        b=TAjDKfRewk/UKamdlBYp4Z/f6fr9mzmhTBqPKn6Tso2lr/AkBQ1LMwAK9XIDmPfqWH
+         1X2g+ZiCkYEJEIfn+6n2PJc1Ev9G5K81J+GgEo5MfNluS5utNruV2aiJWOsWhO1L39V3
+         Z6C+J9uqiqXPYgQ6dcQSGANxw+xbHRVZAHWyN5hgFksgs/XhUgIKGl/0h+zrDIy2eofo
+         aoMe+6WRmr7JILlqWxy3H4DaUeYvmUJdygIwom0nYWR8nN82LMnNt4srD1UZaJjPLcot
+         OJpUgaV5+1lK6hPsIBFneSFAOj6A3kBGy7IE9y3T5wB9bI5Hesqt1uBVI3nJujocribj
+         yDpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jRZt+D8O8akEME1deiXcwDybfKiwpthrXzyaDQKQw+o=;
-        b=dbQEldQIp6waaxS/AYplu6/6/6uZ1OMImx3iCQXBM3pDWhVjr0RT9xe1UyAtRS2CRL
-         7SY2RaaNzj2tOI7jBuTt3sub52SjPbzQiA5o97fUQVRUhO3M8TK/s9oRsYmP1xGsmFsp
-         Yp6/Ok0GqRAV3rvFJ1XSjemDl6T/ORssdDgHDi8gEsM/Micgx6BbCZXIr3Un1Bh9jXTw
-         6ZV0Ed3z3hb46HMw7292i6HS2kQkgMsAO59Ccy4eofIh3TpZ2E+Pgi2dgrVQAnKQjHRz
-         sEgdliL9RiTEtjyLwi/oqhI2LJStzmNVA8PIqqoro6zZhSTjss0s6BzHuuYtSbdccBp6
-         kBlw==
-X-Gm-Message-State: APjAAAWuBr60qMEtYRpiSP0m1uyaR/R5lPcEtbfZ1vJSj1FHfPFpd2BJ
-        RjJ4cr/536NnAf7SyQ7XlkH1Y9TwKA8=
-X-Google-Smtp-Source: APXvYqz75hwNfBzsxvhfbt080ImCb6f1uQUYXmdzXobdWAzEPno/fqLaoRPBkzPAv+h97YU5ggm0jg==
-X-Received: by 2002:a2e:9283:: with SMTP id d3mr2857941ljh.8.1556823097483;
-        Thu, 02 May 2019 11:51:37 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id z6sm2832450ljb.56.2019.05.02.11.51.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 11:51:37 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id e18so3165617lja.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:51:37 -0700 (PDT)
-X-Received: by 2002:a2e:9a84:: with SMTP id p4mr2295002lji.22.1556822633649;
- Thu, 02 May 2019 11:43:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190501202830.347656894@goodmis.org> <20190501203152.397154664@goodmis.org>
- <20190501232412.1196ef18@oasis.local.home> <20190502162133.GX2623@hirez.programming.kicks-ass.net>
- <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com> <20190502181811.GY2623@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 2 May 2019 11:43:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
-Message-ID: <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0H6/1V6/5CIKh3CDtEYPw4qJMt0j8mXo9dQuEOmaJ2c=;
+        b=QjU8eMwQaeDzSuyK99CEPr0HUiItYlxubdGGims0g/8UieczN8O/jsnOjwNQPNxGUQ
+         LEh1X/Wog/gVYoQHStn15QHLPQJi4DkFewoiqkjFF21q40NXz8WO6G1jrYP7mEdsqLgW
+         HXl0j6Xlw8pEaUM1D/4kQMxsBHB5xsvAGkrN/2vMsIZGGWybZclLpC7YR1DI0ViG2gSa
+         aZ+UEm0wvHFsmv40m9xfYNz+3oT+sLC+VWo/R5hebaBq9su9Sc2r8yhHOfNBt0lDVDfP
+         j+Gbbls2ikmQTl2Des/h2EkNQ8xw59bxedL9kErhBCWBrWOAkLmLyLutO46Rh9ze7fUM
+         wfdg==
+X-Gm-Message-State: APjAAAUM2zRENrGTEYO+0eOFa6bYCwJVFKsvfQCvjW60wTUmo/mq+9FE
+        dqBUAxRQCwMFhnrsSccD2liU8Q==
+X-Google-Smtp-Source: APXvYqym/T/mBRrGXQQDSpwxLouliK+q+GpIj38u16aTEyLNBYQwSdaMmlgY9yKwhmdV2+JjJHDJNw==
+X-Received: by 2002:a25:5d0f:: with SMTP id r15mr4433647ybb.373.1556822683578;
+        Thu, 02 May 2019 11:44:43 -0700 (PDT)
+Received: from ziepe.ca (adsl-173-228-226-134.prtc.net. [173.228.226.134])
+        by smtp.gmail.com with ESMTPSA id q204sm16965820ywq.44.2019.05.02.11.44.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 May 2019 11:44:42 -0700 (PDT)
+Received: from jgg by jggl.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hMGhG-00026A-3l; Thu, 02 May 2019 15:44:42 -0300
+Date:   Thu, 2 May 2019 15:44:42 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v13 16/20] IB/mlx4, arm64: untag user pointers in
+ mlx4_get_umem_mr
+Message-ID: <20190502184442.GA31165@ziepe.ca>
+References: <cover.1553093420.git.andreyknvl@google.com>
+ <1e2824fd77e8eeb351c6c6246f384d0d89fd2d58.1553093421.git.andreyknvl@google.com>
+ <20190429180915.GZ6705@mtr-leonro.mtl.com>
+ <20190430111625.GD29799@arrakis.emea.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430111625.GD29799@arrakis.emea.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 11:18 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> We could fix this by not using the common exit path on int3; not sure we
-> want to go there, but that is an option.
+On Tue, Apr 30, 2019 at 12:16:25PM +0100, Catalin Marinas wrote:
+> > Interesting, the followup question is why mlx4 is only one driver in IB which
+> > needs such code in umem_mr. I'll take a look on it.
+> 
+> I don't know. Just using the light heuristics of find_vma() shows some
+> other places. For example, ib_umem_odp_get() gets the umem->address via
+> ib_umem_start(). This was previously set in ib_umem_get() as called from
+> mlx4_get_umem_mr(). Should the above patch have just untagged "start" on
+> entry?
 
-I don't think it's an option in general, because *some* int3
-invocations will need all the usual error return.
+I have a feeling that there needs to be something for this in the odp
+code..
 
-But I guess we could make "int3 from kernel space" special.
+Presumably mmu notifiers and what not also use untagged pointers? Most
+likely then the umem should also be storing untagged pointers.
 
-I'm not sure how much that would help, but it might be worth looking into.
+This probably becomes problematic because we do want the tag in cases
+talking about the base VA of the MR..
 
-> ARGH; I knew it was too pretty :/ Yes, something like what you suggest
-> will be needed, I'll go look at that once my brain recovers a bit from
-> staring at entry code all day.
-
-Looks like it works based on your other email.
-
-What would it look like with the "int3-from-kernel is special" modification?
-
-Because *if* we can make the "kernel int3" entirely special, that
-would make the "Eww factor" much less of this whole thing.
-
-I forget: is #BP _only_ for the "int3" instruction? I know we have
-really nasty cases with #DB (int1) because of "pending exceptions
-happen on the first instruction in kernel space", and that makes it
-really really nasty to handle with all the stack switch and %cr3
-handling etc.
-
-But if "int3 from kernel space" _only_ happens on actual "int3"
-instructions, then we really could just special-case that case. We'd
-know that %cr3 has been switched, we'd know that we don't need to do
-fsgs switching, we'd know we already have a good stack and percpu data
-etc set up.
-
-So then special casing #BP would actually allow us to have a simple
-and straightforward kernel-int3-only sequence?
-
-And then having that odd stack setup special case would be *much* more
-palatable to me.
-
-               Linus
+Jason
