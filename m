@@ -2,122 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D30211103
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 03:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 141AB110FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 03:52:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfEBByQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 21:54:16 -0400
-Received: from mga18.intel.com ([134.134.136.126]:61668 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfEBByQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 21:54:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 May 2019 18:54:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,419,1549958400"; 
-   d="scan'208";a="145299326"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 01 May 2019 18:54:12 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] swiotlb: Factor out slot allocation and free
-To:     Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
-References: <20190421011719.14909-1-baolu.lu@linux.intel.com>
- <20190421011719.14909-3-baolu.lu@linux.intel.com>
- <20190422164555.GA31181@lst.de>
- <0c6e5983-312b-0d6b-92f5-64861cd6804d@linux.intel.com>
- <20190423061232.GB12762@lst.de>
- <dff50b2c-5e31-8b4a-7fdf-99d17852746b@linux.intel.com>
- <20190424144532.GA21480@lst.de>
- <a189444b-15c9-8069-901d-8cdf9af7fc3c@linux.intel.com>
- <20190426150433.GA19930@lst.de>
- <93b3d627-782d-cae0-2175-77a5a8b3fe6e@linux.intel.com>
- <90182d27-5764-7676-8ca6-b2773a40cfe1@arm.com>
- <1361b6ab-c3cf-d8ab-5f6b-9d9b7797bf02@linux.intel.com>
- <c044c51a-d348-ca37-3eaa-5475e3fec6c9@arm.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <998eadf0-0435-1a6b-7234-71554d95bb70@linux.intel.com>
-Date:   Thu, 2 May 2019 09:47:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726256AbfEBBwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 21:52:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44398 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfEBBwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 May 2019 21:52:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xNjOP9gg2QMy4x3ICBZoOoeoO4NbjsoS8XWQ33F0y5I=; b=e1Cdnr7Mt+nZArvTOHcIt/dcH
+        Ie+TXMWhFAYA5HNxT+y63lHRcgthMLNLL/PSs84r2uhvCLp73HMv7fZ+6i58oeYNTdQzpVsYqdBF3
+        nSsIM/r501mqjtAIkshkaSAWXLi3+lfbyh811CpB3RgxxHaVYJa6loRHloXhQ1iJ/dbbmb3AJHj1t
+        pj+KBXXwUGZS7zTl5dGTlNJJTY1q4Id6eY+DUeLIZg2fShSdrsNHDR9dS/jmOXHnDsJZoKQLz3Qn1
+        j4DV7gXZmiWBaXasQ1mnVROZhkNd7/lbqMTeCiyj5EpOonGLtzfwRwoMya+eznp6sO5aOwOgMiYnW
+        PWVOs2XIQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hM0tT-0005DI-4W; Thu, 02 May 2019 01:52:15 +0000
+Date:   Wed, 1 May 2019 18:52:14 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM TOPIC] Direct block mapping through fs for device
+Message-ID: <20190502015214.GB8099@bombadil.infradead.org>
+References: <20190426013814.GB3350@redhat.com>
+ <20190426062816.GG1454@dread.disaster.area>
+ <20190426152044.GB13360@redhat.com>
+ <20190427012516.GH1454@dread.disaster.area>
+ <20190429132643.GB3036@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <c044c51a-d348-ca37-3eaa-5475e3fec6c9@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190429132643.GB3036@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Mon, Apr 29, 2019 at 09:26:45AM -0400, Jerome Glisse wrote:
+> This is a filesystem opt-in feature if a given filesystem do not want
+> to implement it then just do not implement it and it will use page
+> cache. It is not mandatory i am not forcing anyone. The first reasons
+> for those are not filesystem but mmap of device file. But as LSF/MM
+> is up i thought it would be a good time to maybe propose that for file-
+> system too. If you do not want that for your filesystem then just NAK
+> any patch that add that to filesystem you care about.
 
-On 4/30/19 5:53 PM, Robin Murphy wrote:
-> On 30/04/2019 03:02, Lu Baolu wrote:
->> Hi Robin,
->>
->> On 4/29/19 7:06 PM, Robin Murphy wrote:
->>> On 29/04/2019 06:10, Lu Baolu wrote:
->>>> Hi Christoph,
->>>>
->>>> On 4/26/19 11:04 PM, Christoph Hellwig wrote:
->>>>> On Thu, Apr 25, 2019 at 10:07:19AM +0800, Lu Baolu wrote:
->>>>>> This is not VT-d specific. It's just how generic IOMMU works.
->>>>>>
->>>>>> Normally, IOMMU works in paging mode. So if a driver issues DMA with
->>>>>> IOVA  0xAAAA0123, IOMMU can remap it with a physical address 
->>>>>> 0xBBBB0123.
->>>>>> But we should never expect IOMMU to remap 0xAAAA0123 with physical
->>>>>> address of 0xBBBB0000. That's the reason why I said that IOMMU 
->>>>>> will not
->>>>>> work there.
->>>>>
->>>>> Well, with the iommu it doesn't happen.  With swiotlb it obviosuly
->>>>> can happen, so drivers are fine with it.  Why would that suddenly
->>>>> become an issue when swiotlb is called from the iommu code?
->>>>>
->>>>
->>>> I would say IOMMU is DMA remapping, not DMA engine. :-)
->>>
->>> I'm not sure I really follow the issue here - if we're copying the 
->>> buffer to the bounce page(s) there's no conceptual difference from 
->>> copying it to SWIOTLB slot(s), so there should be no need to worry 
->>> about the original in-page offset.
->>>
->>>  From the reply up-thread I guess you're trying to include an 
->>> optimisation to only copy the head and tail of the buffer if it spans 
->>> multiple pages, and directly map the ones in the middle, but AFAICS 
->>> that's going to tie you to also using strict mode for TLB 
->>> maintenance, which may not be a win overall depending on the balance 
->>> between invalidation bandwidth vs. memcpy bandwidth. At least if we 
->>> use standard SWIOTLB logic to always copy the whole thing, we should 
->>> be able to release the bounce pages via the flush queue to allow 
->>> 'safe' lazy unmaps.
->>>
->>
->> With respect, even we use the standard SWIOTLB logic, we need to use
->> the strict mode for TLB maintenance.
->>
->> Say, some swiotbl slots are used by untrusted device for bounce page
->> purpose. When the device driver unmaps the IOVA, the slots are freed but
->> the mapping is still cached in IOTLB, hence the untrusted device is 
->> still able to access the slots. Then the slots are allocated to other
->> devices. This makes it possible for the untrusted device to access
->> the data buffer of other devices.
-> 
-> Sure, that's indeed how it would work right now - however since the 
-> bounce pages will be freed and reused by the DMA API layer itself (at 
-> the same level as the IOVAs) I see no technical reason why we couldn't 
-> investigate deferred freeing as a future optimisation.
+No.  This is stupid, broken, and wrong.  I know we already have
+application-visible differences between filesystems, and every single one
+of those is a bug.  They may be hard bugs to fix, they may be bugs that we
+feel like we can't fix, they may never be fixed.  But they are all bugs.
 
-Yes, agreed.
+Applications should be able to work on any Linux filesystem without
+having to care what it is.  Code has a tendency to far outlive its
+authors expectations (and indeed sometimes its authors).  If 'tar' had
+an #ifdef XFS / #elsif EXT4 / #elsif BTRFS / ... #endif, that would be
+awful.
 
-Best regards,
-Lu Baolu
+We need the same semantics across all major filesystems.  Anything else
+is us making application developers lives harder than necessary, and
+that's unacceptable.
