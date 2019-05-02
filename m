@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913A511D01
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8431F11D9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbfEBP1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:27:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
+        id S1728284AbfEBPb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:31:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728061AbfEBP1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:27:48 -0400
+        id S1729068AbfEBPby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:31:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 324D42081C;
-        Thu,  2 May 2019 15:27:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6600A20C01;
+        Thu,  2 May 2019 15:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810867;
-        bh=mVORm+0ku597W0sEvQH4ehVlIGITPVEsH7yBofTk18Q=;
+        s=default; t=1556811113;
+        bh=HbsuwdOIgem/E0Mlci7TCiK8L+RXj1IGzfey9vqEvCY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xcZHBVlftuha1J8nTsXXEKYC+zyPby/96kZ6RqDr1aX2nRx+Sb0AlfvyjnuBuguBf
-         mYASRRCZ1ZZhYNx9tT5oyk1o9u8ddf5LK79yu9f3F4owEGClsu8dNa0f0a3UseUkE2
-         uhTnbS2ssV2mieWBHrE1G0mjHB9ceKmLXgsjH2T8=
+        b=ItgcUYSBqnY+6Xvgh2QsxxieaUgwaDFaEa1fR+hNc002Nzl0ZKtxSePmXj8m/RnRY
+         S3Gg7tySvqECIvfi0uQyTdesxXxUOUnjVKEmS3wQMKBW7V/AvzWwD7pirFXt4yEpnU
+         e7zylUW0MaNSUyHyNqjVip4HyrsWtRLLi79TvvqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mukesh Ojha <mojha@codeaurora.org>,
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chris Healy <cphealy@gmail.com>, linux-gpio@vger.kernel.org,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 60/72] usb: u132-hcd: fix resource leak
+Subject: [PATCH 5.0 080/101] gpio: of: Check propname before applying "cs-gpios" quirks
 Date:   Thu,  2 May 2019 17:21:22 +0200
-Message-Id: <20190502143338.128027661@linuxfoundation.org>
+Message-Id: <20190502143345.235274686@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f276e002793cdb820862e8ea8f76769d56bba575 ]
+[ Upstream commit e5545c94e43b8f6599ffc01df8d1aedf18ee912a ]
 
-if platform_driver_register fails, cleanup the allocated resource
-gracefully.
+SPI GPIO device has more than just "cs-gpio" property in its node and
+would request those GPIOs as a part of its initialization. To avoid
+applying CS-specific quirk to all of them add a check to make sure
+that propname is "cs-gpios".
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/usb/host/u132-hcd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpiolib-of.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-index 5b8a3d9530c4..5cac83aaeac3 100644
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -3202,6 +3202,9 @@ static int __init u132_hcd_init(void)
- 	printk(KERN_INFO "driver %s\n", hcd_name);
- 	workqueue = create_singlethread_workqueue("u132");
- 	retval = platform_driver_register(&u132_platform_driver);
-+	if (retval)
-+		destroy_workqueue(workqueue);
-+
- 	return retval;
- }
- 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a1dd2f1c0d02..9470563f2506 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -119,7 +119,8 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * to determine if the flags should have inverted semantics.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_SPI_MASTER) &&
+-	    of_property_read_bool(np, "cs-gpios")) {
++	    of_property_read_bool(np, "cs-gpios") &&
++	    !strcmp(propname, "cs-gpios")) {
+ 		struct device_node *child;
+ 		u32 cs;
+ 		int ret;
 -- 
 2.19.1
 
