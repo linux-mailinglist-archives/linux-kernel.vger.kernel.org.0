@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A2111CC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7036311E54
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbfEBPYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:24:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40588 "EHLO mail.kernel.org"
+        id S1728227AbfEBP2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:28:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfEBPYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:24:38 -0400
+        id S1726877AbfEBP20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:28:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADA382085A;
-        Thu,  2 May 2019 15:24:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 930F1214DA;
+        Thu,  2 May 2019 15:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810678;
-        bh=rfnD1DDuit9QawVxPT4jQHRi6d0WphtiqeoarjV9JJo=;
+        s=default; t=1556810906;
+        bh=7v1BeYu2wyp5sZIlcIHXzFbRN1Twg/ra8ChEFniQ45g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqwydqLrzkdPNZdrJlecWERtxIKEj6GohGLbS7W3MawTX+Y0+qExzSZM7NkrnVHzz
-         /+FcO7/7mSG3PQyubklBbuSsBYbf1lSFfkNykfd/qqVzyzxVQ2X9VEp7HyUmLusS3B
-         zlHQAoKMPgrIXZXPPF9NUt++laCGkw7U0l5OqSeg=
+        b=rl6k0nooyAaEYaERYD8pS2se2lwJLffB/eV9Up+4tdMUIx5vOYXT00/3akO0gK1jZ
+         v129E9I4PRTF7Vi9Gj759i7M3d3ITMrWqXRmDOwna91ONCOGUwDJyK6mEHz1qe6OlZ
+         4psPCSQznRWGXLQqbAwlBNRYcafDLkSfZ/73FLwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 38/49] drm/meson: Uninstall IRQ handler
+Subject: [PATCH 4.19 53/72] ARM: davinci: fix build failure with allnoconfig
 Date:   Thu,  2 May 2019 17:21:15 +0200
-Message-Id: <20190502143328.724426473@linuxfoundation.org>
+Message-Id: <20190502143337.621159192@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2d8f92897ad816f5dda54b2ed2fd9f2d7cb1abde ]
+[ Upstream commit 2dbed152e2d4c3fe2442284918d14797898b1e8a ]
 
-meson_drv_unbind() doesn't unregister the IRQ handler, which can lead to
-use-after-free if the IRQ fires after unbind:
+allnoconfig build with just ARCH_DAVINCI enabled
+fails because drivers/clk/davinci/* depends on
+REGMAP being enabled.
 
-[   64.656876] Unable to handle kernel paging request at virtual address ffff000011706dbc
-...
-[   64.662001] pc : meson_irq+0x18/0x30 [meson_drm]
+Fix it by selecting REGMAP_MMIO when building in
+DaVinci support.
 
-I'm assuming that a similar problem could happen on the error path of
-bind(), so uninstall the IRQ handler there as well.
-
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190322152657.13752-2-jean-philippe.brucker@arm.com
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpu/drm/meson/meson_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 1a1b0b9cf1fa..0608243c3387 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -277,10 +277,12 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 
- 	ret = drm_dev_register(drm, 0);
- 	if (ret)
--		goto free_drm;
-+		goto uninstall_irq;
- 
- 	return 0;
- 
-+uninstall_irq:
-+	drm_irq_uninstall(drm);
- free_drm:
- 	drm_dev_unref(drm);
- 
-@@ -298,6 +300,7 @@ static void meson_drv_unbind(struct device *dev)
- 	struct drm_device *drm = priv->drm;
- 
- 	drm_dev_unregister(drm);
-+	drm_irq_uninstall(drm);
- 	drm_kms_helper_poll_fini(drm);
- 	drm_fbdev_cma_fini(priv->fbdev);
- 	drm_mode_config_cleanup(drm);
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index cd4c74daf71e..51794c7fa6d5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -612,6 +612,7 @@ config ARCH_DAVINCI
+ 	select HAVE_IDE
+ 	select PM_GENERIC_DOMAINS if PM
+ 	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select REGMAP_MMIO
+ 	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
 -- 
 2.19.1
 
