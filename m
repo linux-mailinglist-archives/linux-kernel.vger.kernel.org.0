@@ -2,72 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C916D119A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A6B11969
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfEBNAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 09:00:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfEBNAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 09:00:16 -0400
-Received: from localhost (adsl-173-228-226-134.prtc.net [173.228.226.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EB5B20449;
-        Thu,  2 May 2019 13:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556802015;
-        bh=AB8PxNisNU5ClJBfJqv7NcYp3vkyF+A18H85xfGkbro=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aJSMVLh7p0l71cF2ADm3uI+py6eXbn9SQKZrMTXznbeHGZkuboKq9HzSaEC6DoAGp
-         bY5VNnLEEIwjQNCrdTyfbbx3FcrHgiG4M7tN1qsWetRqu7VIvyl32Re90KD2zP1E7w
-         K65E6mE7CEHw7Bfjc70M4gW2knlh62VVk1M0YZb4=
-Date:   Thu, 2 May 2019 08:53:27 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Fabien Dessenne <fabien.dessenne@st.com>
-Subject: Re: [PATCH AUTOSEL 5.0 70/98] tty: fix NULL pointer issue when
- tty_port ops is not set
-Message-ID: <20190502125327.GD11584@sasha-vm>
-References: <20190422194205.10404-1-sashal@kernel.org>
- <20190422194205.10404-70-sashal@kernel.org>
- <20190422204002.GA5474@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190422204002.GA5474@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726514AbfEBMzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:55:02 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:55590 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfEBMzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:55:02 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hMBEn-000103-Sz; Thu, 02 May 2019 14:54:58 +0200
+Message-ID: <3e8291cb2491e9a1830afdb903ed2c52e9f7475c.camel@sipsolutions.net>
+Subject: Re: [PATCH net-next 3/3] netlink: add validation of NLA_F_NESTED
+ flag
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 02 May 2019 14:54:56 +0200
+In-Reply-To: <75a0887b3eb70005c272685d8ef9a712f37d7a54.1556798793.git.mkubecek@suse.cz>
+References: <cover.1556798793.git.mkubecek@suse.cz>
+         <75a0887b3eb70005c272685d8ef9a712f37d7a54.1556798793.git.mkubecek@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 22, 2019 at 10:40:02PM +0200, Greg Kroah-Hartman wrote:
->On Mon, Apr 22, 2019 at 03:41:37PM -0400, Sasha Levin wrote:
->> From: Fabien Dessenne <fabien.dessenne@st.com>
->>
->> [ Upstream commit f4e68d58cf2b20a581759bbc7228052534652673 ]
->>
->> Unlike 'client_ops' which is initialized to 'default_client_ops', the
->> port operations 'ops' may be left to NULL.
->> Check the 'ops' value before checking the 'ops->x' value.
->>
->> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
->> ---
->>  drivers/tty/tty_port.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->
->Nope, I have a revert for this in my tree for 5.2-rc1, no need for this
->in any stable tree, it doesn't do anything :)
->
->Please drop it from all branches, thanks.
+On Thu, 2019-05-02 at 12:48 +0000, Michal Kubecek wrote:
+> Add new validation flag NL_VALIDATE_NESTED which adds three consistency
+> checks of NLA_F_NESTED_FLAG:
+> 
+>   - the flag is set on attributes with NLA_NESTED{,_ARRAY} policy
+>   - the flag is not set on attributes with other policies except NLA_UNSPEC
+>   - the flag is set on attribute passed to nla_parse_nested()
 
-Dropped from my queue, thanks!
+Looks good to me!
 
---
-Thanks,
-Sasha
+> @@ -415,7 +418,8 @@ enum netlink_validation {
+>  #define NL_VALIDATE_STRICT (NL_VALIDATE_TRAILING |\
+>  			    NL_VALIDATE_MAXTYPE |\
+>  			    NL_VALIDATE_UNSPEC |\
+> -			    NL_VALIDATE_STRICT_ATTRS)
+> +			    NL_VALIDATE_STRICT_ATTRS |\
+> +			    NL_VALIDATE_NESTED)
+
+This is fine _right now_, but in general we cannot keep adding here
+after the next release :-)
+
+>  int netlink_rcv_skb(struct sk_buff *skb,
+>  		    int (*cb)(struct sk_buff *, struct nlmsghdr *,
+> @@ -1132,6 +1136,10 @@ static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
+>  				   const struct nla_policy *policy,
+>  				   struct netlink_ext_ack *extack)
+>  {
+> +	if (!(nla->nla_type & NLA_F_NESTED)) {
+> +		NL_SET_ERR_MSG_ATTR(extack, nla, "nested attribute expected");
+
+Maybe reword that to say "NLA_F_NESTED is missing" or so? The "nested
+attribute expected" could result in a lot of headscratching (without
+looking at the code) because it looks nested if you do nla_nest_start()
+etc.
+
+> +		return -EINVAL;
+> +	}
+>  	return __nla_parse(tb, maxtype, nla_data(nla), nla_len(nla), policy,
+>  			   NL_VALIDATE_STRICT, extack);
+
+I'd probably put a blank line there but ymmv.
+
+>  }
+> diff --git a/lib/nlattr.c b/lib/nlattr.c
+> index adc919b32bf9..92da65cb6637 100644
+> --- a/lib/nlattr.c
+> +++ b/lib/nlattr.c
+> @@ -184,6 +184,21 @@ static int validate_nla(const struct nlattr *nla, int maxtype,
+>  		}
+>  	}
+>  
+> +	if (validate & NL_VALIDATE_NESTED) {
+> +		if ((pt->type == NLA_NESTED || pt->type == NLA_NESTED_ARRAY) &&
+> +		    !(nla->nla_type & NLA_F_NESTED)) {
+> +			NL_SET_ERR_MSG_ATTR(extack, nla,
+> +					    "nested attribute expected");
+> +			return -EINVAL;
+> +		}
+> +		if (pt->type != NLA_NESTED && pt->type != NLA_NESTED_ARRAY &&
+> +		    pt->type != NLA_UNSPEC && (nla->nla_type & NLA_F_NESTED)) {
+> +			NL_SET_ERR_MSG_ATTR(extack, nla,
+> +					    "nested attribute not expected");
+> +			return -EINVAL;
+
+Same comment here wrt. the messages, I think they should more explicitly
+refer to the flag.
+
+johannes
+
+(PS: if you CC me on this address I generally can respond quicker)
+
