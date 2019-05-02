@@ -2,91 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DBB123AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF8C3123B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfEBUwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 16:52:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbfEBUwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 16:52:43 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E7980C05681F;
-        Thu,  2 May 2019 20:52:42 +0000 (UTC)
-Received: from jsavitz.bos.com (dhcp-17-168.bos.redhat.com [10.18.17.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 19B4A5DA34;
-        Thu,  2 May 2019 20:52:41 +0000 (UTC)
-From:   Joel Savitz <jsavitz@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Savitz <jsavitz@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1726393AbfEBU4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 16:56:41 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44850 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbfEBU4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 16:56:40 -0400
+Received: by mail-io1-f67.google.com with SMTP id r71so3444603iod.11
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 13:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W3LPddwCKGY2xDs2u/DUWFbBGqANYJTYynM8oS/U41s=;
+        b=KgC8Txd4sqFpfNVIU5Wc0c0htULB4U6DQmgHOL62Lo4Qhb7H8HeoP6A5oyBRfRlIxH
+         nbujZgFqKo77czxlk/kYHMvFORPVv3giYwy/vyNp+e5oH4IrW1KDEJN1DWBhUNtI7QWi
+         Jud+60EOp+yWaRfrdV/xm2B2vgIN4UsTjluESbASHsPOg2gqqxpsMYXqfKwILZWxH4Qf
+         xY8RD73W6/ytjIAP8KEyoS53A04zKtk6p1VGqlaftgWj7DFwAErc2E/gr9bz3vf8H1Ae
+         y3fHfE6gJdC97GBgVgLqfluYDtX+PSbeRDTlYIaOf3VAmN5x9tJYBIkgwJ8kvCLdXigZ
+         Rhkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W3LPddwCKGY2xDs2u/DUWFbBGqANYJTYynM8oS/U41s=;
+        b=bRtoz/d6I5cu1wQm6UQgJIyGHHcCZiy4GY6qnWhQrQ8wxBBlZYaKD8EW4JdDXz1I0o
+         klZFB7KRh5vCAF4Ai/6CObqKcJWG3f7KvtECaECk71LA7vT+7mn3rqxo/ZsRbCq1WMN7
+         r0JL2qPTnuc0HhpH7z675ku4VedU/dtpTBaDpBUVVre509ITO3JjzeQGdxlHelFS7GsD
+         DJ6RPW4wXG/OUWBMEBsKwdfAvg7vd49uJ+XVBJ7D6XX1nQxtzji2yW7tk22YE3qRoRch
+         1jwfmVjMcmI0VPLDJPfPQmxowuVRHe/nGvVaVBm0H8mjYkapyh/kGn5q5Vs80t12X85J
+         W2ag==
+X-Gm-Message-State: APjAAAUJEE+WQ3EDkGNKbmm2GCT887fo7N60QbMv+Gc+pKRbLkQlmSdy
+        BZOfHWTVsxqIuL7818XV0vSogHR/m5m6rVOZYyDSow==
+X-Google-Smtp-Source: APXvYqw8fJr5vPiI/5b4rrryNsL0YNv88XUlTZMDz7MCDm+On7B/QMbwAD7N2VgsEzqDAu88wY0gE9GedHWaSxSS7n4=
+X-Received: by 2002:a6b:7b47:: with SMTP id m7mr4208092iop.173.1556830599457;
+ Thu, 02 May 2019 13:56:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190227202658.197113-1-matthewgarrett@google.com>
+ <20190227202658.197113-3-matthewgarrett@google.com> <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
+ <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
+ <CAKv+Gu9PF4u=-7QL4e36Q3S5kC4+5Z=yLYHLT9jE+eNY7YUV7A@mail.gmail.com> <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
+In-Reply-To: <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 2 May 2019 22:56:27 +0200
+Message-ID: <CAKv+Gu9GpmK7-kb2GJuhrL2Qau7ebqDdy4-LdwFDmPz-Os0quw@mail.gmail.com>
+Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Yury Norov <norov.maillist@gmail.com>
-Subject: [PATCH v2 2/2] prctl.2: Document the new PR_GET_TASK_SIZE option
-Date:   Thu,  2 May 2019 16:52:22 -0400
-Message-Id: <1556830342-32307-3-git-send-email-jsavitz@redhat.com>
-In-Reply-To: <1556830342-32307-1-git-send-email-jsavitz@redhat.com>
-References: <1556830342-32307-1-git-send-email-jsavitz@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 02 May 2019 20:52:43 +0000 (UTC)
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a short explanation of the new PR_GET_TASK_SIZE option for the benefit
-of future generations.
+On Thu, 2 May 2019 at 20:04, Matthew Garrett <mjg59@google.com> wrote:
+>
+> On Thu, May 2, 2019 at 12:15 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> >
+> > (+ Ingo)
+> >
+> > On Tue, 30 Apr 2019 at 21:52, Matthew Garrett <mjg59@google.com> wrote:
+> > >
+> > > On Tue, Apr 30, 2019 at 6:07 AM Bartosz Szczepanek <bsz@semihalf.com> wrote:
+> > > >
+> > > > I may be a little late with this comment, but I've just tested these
+> > > > patches on aarch64 platform (from the top of jjs/master) and got
+> > > > kernel panic ("Unable to handle kernel read", full log at the end of
+> > > > mail). I think there's problem with below call to
+> > > > tpm2_calc_event_log_size(), where physical address of efi.tpm_log is
+> > > > passed as (void *) and never remapped:
+> > >
+> > > Yes, it looks like this is just broken. Can you try with the attached patch?
+> >
+> > I'm a bit uncomfortable with EFI code that is obviously broken and
+> > untested being queued for the next merge window in another tree.
+>
+> The patchset was Cc:ed to linux-efi@. Is there anything else I should
+> have done to ensure you picked it up rather than Jarkko?
 
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
----
- man2/prctl.2 | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/man2/prctl.2 b/man2/prctl.2
-index 06d8e13c7..35a6a3919 100644
---- a/man2/prctl.2
-+++ b/man2/prctl.2
-@@ -49,6 +49,7 @@
- .\" 2013-01-10 Kees Cook, document PR_SET_PTRACER
- .\" 2012-02-04 Michael Kerrisk, document PR_{SET,GET}_CHILD_SUBREAPER
- .\" 2014-11-10 Dave Hansen, document PR_MPX_{EN,DIS}ABLE_MANAGEMENT
-+.\" 2019-05-02 Joel Savitz, document PR_GET_TASK_SIZE
- .\"
- .\"
- .TH PRCTL 2 2019-03-06 "Linux" "Linux Programmer's Manual"
-@@ -1375,6 +1376,14 @@ system call on Tru64).
- for information on versions and architectures)
- Return unaligned access control bits, in the location pointed to by
- .IR "(unsigned int\ *) arg2" .
-+.TP
-+.B PR_GET_TASK_SIZE
-+Copy the value of TASK_SIZE to the userspace address in
-+.IR "(unsigned long\ *) arg2" .
-+Return
-+.B EFAULT
-+if this operation fails.
-+
- .SH RETURN VALUE
- On success,
- .BR PR_GET_DUMPABLE ,
--- 
-2.18.1
-
+No, I am not saying it was you who did anything wrong - Jarkko and I
+should probably have aligned better. But my own testing wouldn't have
+caught this particular issue either (I am still in the process of
+getting access to ARM machines with a TPM), so it wouldn't have made a
+huge difference in any case.
