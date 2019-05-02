@@ -2,183 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9DD12213
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:43:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 350E01222B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfEBSnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 14:43:52 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42294 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfEBSnr (ORCPT
+        id S1726201AbfEBSvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 14:51:40 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46611 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBSvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 14:43:47 -0400
-Received: by mail-qk1-f194.google.com with SMTP id x19so2116170qki.9
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:43:46 -0700 (PDT)
+        Thu, 2 May 2019 14:51:40 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h21so3120327ljk.13
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:51:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=8p3wsS4SMTLuQgzuXCRhTKHP61mCg8wFpFeHB9x4QIQ=;
-        b=Kz0i1rO4XLenBHe0eXayRavWGw7pvnIFj5qwbjyLHk/JTkjzzMAusXSgeGztfw2jXT
-         AzH2pV256L4jup5CB6VA42JG9lRPJYVWLrtDJCQDUK4EQXR2yj8Q80TY24L817JHSxmh
-         spuIx6Z5shY9RIx1zMZAOkq55ZwXnBzneYb/OA0UTekFNXQmtBsUfMzl9t9YQELg8HsA
-         BLChCaBKaoUuHkqkKNUfkT6HH30xNnSWRNZ6LbGEPBplAiDSCMZ4JS7ykdoiUMoi5e/r
-         DseTc2Ralec84SLyABLLfoTQtUvda4DOocw5xSVDm+Kl2UHGf8zyXwN93fFAbcyycuLE
-         MRaw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jRZt+D8O8akEME1deiXcwDybfKiwpthrXzyaDQKQw+o=;
+        b=DOe1Odxc1gK8brv9R5zvAAh8GUyJ0YnhuXPXnXKLY6rlveLN+SrMsrIhlmdzjwzc3A
+         +gpmg7E+x+gFu/OGE9tnfORqGbP7/EJEKg5bLaODW4PNZqGswJ1xp/er7T39ChKACNGs
+         gUroHv8DdOMTYzXZZhWIDTz6VqI7ZdBhWPnGk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8p3wsS4SMTLuQgzuXCRhTKHP61mCg8wFpFeHB9x4QIQ=;
-        b=MiZji+umQflqiE6KVlDrk+8NxlvH+a0MVrCooEGZKoTXGkKJpzyV77i33ZF2xZJw6G
-         kNhEjd8i8WOgo8eql9jDcBcxgi8ZJgrQs9nujTx2jVgCaFSv74tXYWwedHcGHQx5K1zY
-         PeUU3MjlRI18aqn8SRgJZDFFfey9jkSGbjai3KtdBbujnhApRqDSPNavSVXHsyYzrE1I
-         G67cVMH4pOceCDshQ56YmvZ59GNG4AsCqPyIe4C1GnDSLK6sUPtpAcnFdXLlxEaKui52
-         39UFGUcvHrvyPbJhNYkPSNLsFu2kpMDMhxwviPj9FJ10S9DHXCCV0SXKy/frYgEmA+G7
-         MKbQ==
-X-Gm-Message-State: APjAAAXue3vyk7lhr7GN8WRcfIEWTKSIOCF6/ojIAitTAz6rmErfVHD1
-        WFlnfNP66cF3dN7181JjkMX4DQ==
-X-Google-Smtp-Source: APXvYqwlR182BydaUd9wxvHRObZ5OHWhUVdD8TWzfsPIOWEf+7ldGKtgZ4Wt4Y7sgMqeTtP2DX+lSg==
-X-Received: by 2002:a37:6087:: with SMTP id u129mr4356847qkb.300.1556822626323;
-        Thu, 02 May 2019 11:43:46 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id 8sm25355751qtr.32.2019.05.02.11.43.44
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jRZt+D8O8akEME1deiXcwDybfKiwpthrXzyaDQKQw+o=;
+        b=dbQEldQIp6waaxS/AYplu6/6/6uZ1OMImx3iCQXBM3pDWhVjr0RT9xe1UyAtRS2CRL
+         7SY2RaaNzj2tOI7jBuTt3sub52SjPbzQiA5o97fUQVRUhO3M8TK/s9oRsYmP1xGsmFsp
+         Yp6/Ok0GqRAV3rvFJ1XSjemDl6T/ORssdDgHDi8gEsM/Micgx6BbCZXIr3Un1Bh9jXTw
+         6ZV0Ed3z3hb46HMw7292i6HS2kQkgMsAO59Ccy4eofIh3TpZ2E+Pgi2dgrVQAnKQjHRz
+         sEgdliL9RiTEtjyLwi/oqhI2LJStzmNVA8PIqqoro6zZhSTjss0s6BzHuuYtSbdccBp6
+         kBlw==
+X-Gm-Message-State: APjAAAWuBr60qMEtYRpiSP0m1uyaR/R5lPcEtbfZ1vJSj1FHfPFpd2BJ
+        RjJ4cr/536NnAf7SyQ7XlkH1Y9TwKA8=
+X-Google-Smtp-Source: APXvYqz75hwNfBzsxvhfbt080ImCb6f1uQUYXmdzXobdWAzEPno/fqLaoRPBkzPAv+h97YU5ggm0jg==
+X-Received: by 2002:a2e:9283:: with SMTP id d3mr2857941ljh.8.1556823097483;
+        Thu, 02 May 2019 11:51:37 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id z6sm2832450ljb.56.2019.05.02.11.51.37
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 11:43:45 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, akpm@linux-foundation.org,
-        mhocko@suse.com, dave.hansen@linux.intel.com,
-        dan.j.williams@intel.com, keith.busch@intel.com,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
-        thomas.lendacky@amd.com, ying.huang@intel.com,
-        fengguang.wu@intel.com, bp@suse.de, bhelgaas@google.com,
-        baiyaowei@cmss.chinamobile.com, tiwai@suse.de, jglisse@redhat.com,
-        david@redhat.com
-Subject: [v5 3/3] device-dax: "Hotremove" persistent memory that is used like normal RAM
-Date:   Thu,  2 May 2019 14:43:37 -0400
-Message-Id: <20190502184337.20538-4-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502184337.20538-1-pasha.tatashin@soleen.com>
-References: <20190502184337.20538-1-pasha.tatashin@soleen.com>
+        Thu, 02 May 2019 11:51:37 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id e18so3165617lja.5
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:51:37 -0700 (PDT)
+X-Received: by 2002:a2e:9a84:: with SMTP id p4mr2295002lji.22.1556822633649;
+ Thu, 02 May 2019 11:43:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190501202830.347656894@goodmis.org> <20190501203152.397154664@goodmis.org>
+ <20190501232412.1196ef18@oasis.local.home> <20190502162133.GX2623@hirez.programming.kicks-ass.net>
+ <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com> <20190502181811.GY2623@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 2 May 2019 11:43:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
+Message-ID: <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is now allowed to use persistent memory like a regular RAM, but
-currently there is no way to remove this memory until machine is
-rebooted.
+On Thu, May 2, 2019 at 11:18 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> We could fix this by not using the common exit path on int3; not sure we
+> want to go there, but that is an option.
 
-This work expands the functionality to also allows hotremoving
-previously hotplugged persistent memory, and recover the device for use
-for other purposes.
+I don't think it's an option in general, because *some* int3
+invocations will need all the usual error return.
 
-To hotremove persistent memory, the management software must first
-offline all memory blocks of dax region, and than unbind it from
-device-dax/kmem driver. So, operations should look like this:
+But I guess we could make "int3 from kernel space" special.
 
-echo offline > /sys/devices/system/memory/memoryN/state
-...
-echo dax0.0 > /sys/bus/dax/drivers/kmem/unbind
+I'm not sure how much that would help, but it might be worth looking into.
 
-Note: if unbind is done without offlining memory beforehand, it won't be
-possible to do dax0.0 hotremove, and dax's memory is going to be part of
-System RAM until reboot.
+> ARGH; I knew it was too pretty :/ Yes, something like what you suggest
+> will be needed, I'll go look at that once my brain recovers a bit from
+> staring at entry code all day.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
----
- drivers/dax/dax-private.h |  2 ++
- drivers/dax/kmem.c        | 41 +++++++++++++++++++++++++++++++++++----
- 2 files changed, 39 insertions(+), 4 deletions(-)
+Looks like it works based on your other email.
 
-diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-index a45612148ca0..999aaf3a29b3 100644
---- a/drivers/dax/dax-private.h
-+++ b/drivers/dax/dax-private.h
-@@ -53,6 +53,7 @@ struct dax_region {
-  * @pgmap - pgmap for memmap setup / lifetime (driver owned)
-  * @ref: pgmap reference count (driver owned)
-  * @cmp: @ref final put completion (driver owned)
-+ * @dax_mem_res: physical address range of hotadded DAX memory
-  */
- struct dev_dax {
- 	struct dax_region *region;
-@@ -62,6 +63,7 @@ struct dev_dax {
- 	struct dev_pagemap pgmap;
- 	struct percpu_ref ref;
- 	struct completion cmp;
-+	struct resource *dax_kmem_res;
- };
- 
- static inline struct dev_dax *to_dev_dax(struct device *dev)
-diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
-index 4c0131857133..3d0a7e702c94 100644
---- a/drivers/dax/kmem.c
-+++ b/drivers/dax/kmem.c
-@@ -71,21 +71,54 @@ int dev_dax_kmem_probe(struct device *dev)
- 		kfree(new_res);
- 		return rc;
- 	}
-+	dev_dax->dax_kmem_res = new_res;
- 
- 	return 0;
- }
- 
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+static int dev_dax_kmem_remove(struct device *dev)
-+{
-+	struct dev_dax *dev_dax = to_dev_dax(dev);
-+	struct resource *res = dev_dax->dax_kmem_res;
-+	resource_size_t kmem_start = res->start;
-+	resource_size_t kmem_size = resource_size(res);
-+	int rc;
-+
-+	/*
-+	 * We have one shot for removing memory, if some memory blocks were not
-+	 * offline prior to calling this function remove_memory() will fail, and
-+	 * there is no way to hotremove this memory until reboot because device
-+	 * unbind will succeed even if we return failure.
-+	 */
-+	rc = remove_memory(dev_dax->target_node, kmem_start, kmem_size);
-+	if (rc) {
-+		dev_err(dev,
-+			"DAX region %pR cannot be hotremoved until the next reboot\n",
-+			res);
-+		return rc;
-+	}
-+
-+	/* Release and free dax resources */
-+	release_resource(res);
-+	kfree(res);
-+	dev_dax->dax_kmem_res = NULL;
-+
-+	return 0;
-+}
-+#else
- static int dev_dax_kmem_remove(struct device *dev)
- {
- 	/*
--	 * Purposely leak the request_mem_region() for the device-dax
--	 * range and return '0' to ->remove() attempts. The removal of
--	 * the device from the driver always succeeds, but the region
--	 * is permanently pinned as reserved by the unreleased
-+	 * Without hotremove purposely leak the request_mem_region() for the
-+	 * device-dax range and return '0' to ->remove() attempts. The removal
-+	 * of the device from the driver always succeeds, but the region is
-+	 * permanently pinned as reserved by the unreleased
- 	 * request_mem_region().
- 	 */
- 	return 0;
- }
-+#endif /* CONFIG_MEMORY_HOTREMOVE */
- 
- static struct dax_device_driver device_dax_kmem_driver = {
- 	.drv = {
--- 
-2.21.0
+What would it look like with the "int3-from-kernel is special" modification?
 
+Because *if* we can make the "kernel int3" entirely special, that
+would make the "Eww factor" much less of this whole thing.
+
+I forget: is #BP _only_ for the "int3" instruction? I know we have
+really nasty cases with #DB (int1) because of "pending exceptions
+happen on the first instruction in kernel space", and that makes it
+really really nasty to handle with all the stack switch and %cr3
+handling etc.
+
+But if "int3 from kernel space" _only_ happens on actual "int3"
+instructions, then we really could just special-case that case. We'd
+know that %cr3 has been switched, we'd know that we don't need to do
+fsgs switching, we'd know we already have a good stack and percpu data
+etc set up.
+
+So then special casing #BP would actually allow us to have a simple
+and straightforward kernel-int3-only sequence?
+
+And then having that odd stack setup special case would be *much* more
+palatable to me.
+
+               Linus
