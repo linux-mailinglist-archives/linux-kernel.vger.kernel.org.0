@@ -2,241 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 641A312012
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497081204F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfEBQZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:25:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51147 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfEBQZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:25:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p21so3686491wmc.0;
-        Thu, 02 May 2019 09:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OMunPQaVSstTa2sPVSZhzlVtlE+/TQJXLadjah4hR08=;
-        b=FAsw2ER1/ZpkWocR3zu5UHhWQChbz82rIJiB3K6apB0fRNtixGluSAb44GUmUqO5pc
-         HK32NKXmOb4jI/DIL1MIo8y29EDN6qI3HmaMiKuas0Q/SDUv/MfnWuSTNd6fu3YHW1fj
-         2+jtHqyMJmZihUKhLFPGB2aQtq+Jrdf49+QdsYEkz2mqhtBFUhw2kFIwaD6wBbK3xNYE
-         aKCnTejUDwoj6hRK//T2Yif42TfKISNssVW2MCm7nk5xdfyOCEki5C3f5LvLWHHDRX3x
-         2L2c0Jnb8sQc9EcR6ClTOecF9iNnk7O4pqVo1bmzEROAGthiG5k1/vhoQVY2B7MLRLXM
-         iWrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OMunPQaVSstTa2sPVSZhzlVtlE+/TQJXLadjah4hR08=;
-        b=dljXYXNhAhu+vvguMP5qRvjmXcBceA6NW5tZS9ytCrrSJF1p7wDCPiZuVXVzju4SW0
-         p+Z9XypPI1WP44OdqTchdRHTWfrELGUrWfACaVaI2FMr4eGX1dWQfdRl/s/JGnJSUvBs
-         ORPC7nuTgySMYgp3u10jl9KdiC0qrNf7ND+7vXa6Tlj/cuiR9q8tCCK3ivnUGIgYjJ0n
-         7bijcicaqwzubEGLcUZoiYL315P2dlunovZPPdWK2quxj8pvPxoyUufek+j6UxsIH/vs
-         QChbcfoC2HR3UwdXdWbFxgUM30pA42XTgnpgRYbazXcAerDnMkru3wBRSaB87R6D4ukq
-         8xIg==
-X-Gm-Message-State: APjAAAVtSiPd4XJ4l4LyQbfKpJWoeZAQ+VYcay3Btxg7eSJIBt/nN+qW
-        z+XzUG4g7FlyTrNejGfGTs35oxcn0Y76SG+e0UA=
-X-Google-Smtp-Source: APXvYqzkmgDmEomBZgx1jIEpRwv0AXAvCX+ZJ3zDN6KQAmdRedobwJRsgSOLmKIGRtFUH4rHhNIxIGoHR8/xE5cgWuQ=
-X-Received: by 2002:a1c:e904:: with SMTP id q4mr2906888wmc.43.1556814312796;
- Thu, 02 May 2019 09:25:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190429001706.7449-1-olteanv@gmail.com>
-In-Reply-To: <20190429001706.7449-1-olteanv@gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Thu, 2 May 2019 19:25:01 +0300
-Message-ID: <CA+h21hrezraBUP8aY85m=T7qAU1u58iiidGeQqdrNDenyL+Rnw@mail.gmail.com>
-Subject: Re: [PATCH v4 net-next 00/12] NXP SJA1105 DSA driver
-To:     Florian Fainelli <f.fainelli@gmail.com>, vivien.didelot@gmail.com,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+        id S1726689AbfEBQd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:33:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:6989 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbfEBQd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 12:33:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 09:33:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,422,1549958400"; 
+   d="scan'208";a="296427717"
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga004.jf.intel.com with ESMTP; 02 May 2019 09:33:23 -0700
+Message-ID: <91611b9e159799bbf603b65cf7bb6b37dd81b075.camel@intel.com>
+Subject: Re: [PATCH] binfmt_elf: Extract .note.gnu.property from an ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org
+Date:   Thu, 02 May 2019 09:25:56 -0700
+In-Reply-To: <20190502161424.GQ3567@e103592.cambridge.arm.com>
+References: <20190501211217.5039-1-yu-cheng.yu@intel.com>
+         <20190502111003.GO3567@e103592.cambridge.arm.com>
+         <5b2c6cee345e00182e97842ae90c02cdcd830135.camel@intel.com>
+         <20190502161424.GQ3567@e103592.cambridge.arm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Apr 2019 at 03:18, Vladimir Oltean <olteanv@gmail.com> wrote:
->
-> This patchset adds a DSA driver for the SPI-controlled NXP SJA1105
-> switch.  Due to the hardware's unfriendliness, most of its state needs
-> to be shadowed in kernel memory by the driver. To support this and keep
-> a decent amount of cleanliness in the code, a new generic API for
-> converting between CPU-accessible ("unpacked") structures and
-> hardware-accessible ("packed") structures is proposed and used.
->
-> The driver is GPL-2.0 licensed. The source code files which are licensed
-> as BSD-3-Clause are hardware support files and derivative of the
-> userspace NXP sja1105-tool program, which is BSD-3-Clause licensed.
->
-> TODO items:
-> * Add support for traffic.
-> * Add full support for the P/Q/R/S series. The patches were mostly
->   tested on a first-generation T device.
-> * Add timestamping support and PTP clock manipulation.
-> * Figure out how the tc-taprio hardware offload that was just proposed
->   by Vinicius can be used to configure the switch's time-aware scheduler.
-> * Rework link state callbacks to use phylink once the SGMII port
->   is supported.
->
-> Changes in v4:
-> 1. Previous patchset was broken apart, and for the moment the driver is
->    configuring the switch as unmanaged. Support for regular and management
->    traffic, as well as for PTP timestamping, will be submitted once the
->    basic driver is accepted. Some core DSA patches were also broken out
->    of the series, and are a dependency for this series:
->    https://patchwork.ozlabs.org/project/netdev/list/?series=105069
-> 2. Addressed Jiri Pirko's feedback about too generic function and macro
->    naming.
-> 3. Re-introduced ETH_P_DSA_8021Q.
->
-> v3 patchset can be found at:
-> https://lkml.org/lkml/2019/4/12/978
->
-> Changes in v3:
-> 1. Removed the patch for a dedicated Ethertype to use with 802.1Q DSA
->    tagging
-> 2. Changed the SJA1105 switch tagging protocol sysfs label from
->    "sja1105" to "8021q" to denote to users such as tcpdump that the
->    structure is more generic.
-> 3. Respun previous patch "net: dsa: Allow drivers to modulate between
->    presence and absence of tagging". Current equivalent patch is called
->    "net: dsa: Allow drivers to filter packets they can decode source
->    port from" and at least allows reception of management traffic during
->    the time when switch tagging is not enabled.
-> 4. Added DSA-level fixes for the bridge core not unsetting
->    vlan_filtering when ports leave. The global VLAN filtering is treated
->    as a special case. Made the mt7530 driver use this. This patch
->    benefits the SJA1105 because otherwise traffic in standalone mode
->    would no longer work after removing the ports from a vlan_filtering
->    bridge, since the driver and the hardware would be in an inconsistent
->    state.
-> 5. Restructured the documentation as rst. This depends upon the recently
->    submitted "[PATCH net-next] Documentation: net: dsa: transition to
->    the rst format": https://patchwork.ozlabs.org/patch/1084658/.
->
-> v2 patchset can be found at:
-> https://www.spinics.net/lists/netdev/msg563454.html
->
-> Changes in v2:
-> 1. Device ID is no longer auto-detected but enforced based on explicit DT
->    compatible string. This helps with stricter checking of DT bindings.
-> 2. Group all device-specific operations into a sja1105_info structure and
->    avoid using the IS_ET() and IS_PQRS() macros at runtime as much as possible.
-> 3. Added more verbiage to commit messages and documentation.
-> 4. Treat the case where RGMII internal delays are requested through DT bindings
->    and return error.
-> 5. Miscellaneous cosmetic cleanup in sja1105_clocking.c
-> 6. Not advertising link features that are not supported, such as pause frames
->    and the half duplex modes.
-> 7. Fixed a mistake in previous patchset where the switch tagging was not
->    actually enabled (lost during a rebase). This brought up another uncaught
->    issue where switching at runtime between tagging and no-tagging was not
->    supported by DSA. Fixed up the mistake in "net: dsa: sja1105: Add support
->    for traffic through standalone ports", and added the new patch "net: dsa:
->    Allow drivers to modulate between presence and absence of tagging" to
->    address the other issue.
-> 8. Added a workaround for switch resets cutting a frame in the middle of
->    transmission, which would throw off some link partners.
-> 9. Changed the TPID from ETH_P_EDSA (0xDADA) to a newly introduced one:
->    ETH_P_DSA_8021Q (0xDADB). Uncovered another mistake in the previous patchset
->    with a missing ntohs(), which was not caught because 0xDADA is
->    endian-agnostic.
-> 10. Made NET_DSA_TAG_8021Q select VLAN_8021Q
-> 11. Renamed __dsa_port_vlan_add to dsa_port_vid_add and not to
->     dsa_port_vlan_add_trans, as suggested, because the corresponding _del function
->     does not have a transactional phase and the naming is more uniform this way.
->
-> v1 patchset can be found at:
-> https://www.spinics.net/lists/netdev/msg561589.html
->
-> Changes from RFC:
-> 1. Removed the packing code for the static configuration tables that were
->    not currently used
-> 2. Removed the code for unpacking a static configuration structure from
->    a memory buffer (not used)
-> 3. Completely removed the SGMII stubs, since the configuration is not
->    complete anyway.
-> 4. Moved some code from the SJA1105 introduction commit into the patch
->    that used it.
-> 5. Made the code for checking global VLAN filtering generic and made b53
->    driver use it.
-> 6. Made mt7530 driver use the new generic dp->vlan_filtering
-> 7. Fixed check for stringset in .get_sset_count
-> 8. Minor cleanup in sja1105_clocking.c
-> 9. Fixed a confusing typo in DSA
->
-> RFC can be found at:
-> https://www.mail-archive.com/netdev@vger.kernel.org/msg291717.html
->
-> Vladimir Oltean (12):
->   lib: Add support for generic packing operations
->   net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch
->   net: dsa: sja1105: Add support for FDB and MDB management
->   net: dsa: sja1105: Error out if RGMII delays are requested in DT
->   ether: Add dedicated Ethertype for pseudo-802.1Q DSA tagging
->   net: dsa: sja1105: Add support for VLAN operations
->   net: dsa: sja1105: Add support for ethtool port counters
->   net: dsa: sja1105: Add support for configuring address aging time
->   net: dsa: sja1105: Prevent PHY jabbering during switch reset
->   net: dsa: sja1105: Reject unsupported link modes for AN
->   Documentation: net: dsa: Add details about NXP SJA1105 driver
->   dt-bindings: net: dsa: Add documentation for NXP SJA1105 driver
->
->  .../devicetree/bindings/net/dsa/sja1105.txt   |  157 ++
->  Documentation/networking/dsa/index.rst        |    1 +
->  Documentation/networking/dsa/sja1105.rst      |  167 ++
->  Documentation/packing.txt                     |  150 ++
->  MAINTAINERS                                   |   14 +
->  drivers/net/dsa/Kconfig                       |    2 +
->  drivers/net/dsa/Makefile                      |    1 +
->  drivers/net/dsa/sja1105/Kconfig               |   15 +
->  drivers/net/dsa/sja1105/Makefile              |   10 +
->  drivers/net/dsa/sja1105/sja1105.h             |  154 ++
->  drivers/net/dsa/sja1105/sja1105_clocking.c    |  602 +++++++
->  .../net/dsa/sja1105/sja1105_dynamic_config.c  |  533 ++++++
->  .../net/dsa/sja1105/sja1105_dynamic_config.h  |   43 +
->  drivers/net/dsa/sja1105/sja1105_ethtool.c     |  418 +++++
->  drivers/net/dsa/sja1105/sja1105_main.c        | 1459 +++++++++++++++++
->  drivers/net/dsa/sja1105/sja1105_spi.c         |  591 +++++++
->  .../net/dsa/sja1105/sja1105_static_config.c   |  988 +++++++++++
->  .../net/dsa/sja1105/sja1105_static_config.h   |  254 +++
->  include/linux/dsa/sja1105.h                   |   23 +
->  include/linux/packing.h                       |   49 +
->  include/uapi/linux/if_ether.h                 |    1 +
->  lib/Makefile                                  |    2 +-
->  lib/packing.c                                 |  211 +++
->  23 files changed, 5844 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/sja1105.txt
->  create mode 100644 Documentation/networking/dsa/sja1105.rst
->  create mode 100644 Documentation/packing.txt
->  create mode 100644 drivers/net/dsa/sja1105/Kconfig
->  create mode 100644 drivers/net/dsa/sja1105/Makefile
->  create mode 100644 drivers/net/dsa/sja1105/sja1105.h
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_clocking.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_dynamic_config.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_dynamic_config.h
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_ethtool.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_main.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_spi.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_static_config.c
->  create mode 100644 drivers/net/dsa/sja1105/sja1105_static_config.h
->  create mode 100644 include/linux/dsa/sja1105.h
->  create mode 100644 include/linux/packing.h
->  create mode 100644 lib/packing.c
->
-> --
-> 2.17.1
->
+On Thu, 2019-05-02 at 17:14 +0100, Dave Martin wrote:
+> On Thu, May 02, 2019 at 08:47:06AM -0700, Yu-cheng Yu wrote:
+> > On Thu, 2019-05-02 at 12:10 +0100, Dave Martin wrote:
+> > > On Wed, May 01, 2019 at 02:12:17PM -0700, Yu-cheng Yu wrote:
+> > > > An ELF file's .note.gnu.property indicates features the executable file
+> > > > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
+> > > > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
+> > > > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
+> > 
+> > [...]
+> > > A couple of questions before I look in more detail:
+> > > 
+> > > 1) Can we rely on PT_GNU_PROPERTY being present in the phdrs to describe
+> > > the NT_GNU_PROPERTY_TYPE_0 note?  If so, we can avoid trying to parse
+> > > irrelevant PT_NOTE segments.
+> > 
+> > Some older linkers can create multiples of NT_GNU_PROPERTY_TYPE_0.  The code
+> > scans all PT_NOTE segments to ensure there is only one
+> > NT_GNU_PROPERTY_TYPE_0. 
+> > If there are multiples, then all are considered invalid.
+> 
+> I'm concerned that in the arm64 case we would waste some effort by
+> scanning multiple notes.
+> 
+> Could we do something like iterating over the phdrs, and if we find
+> exactly one PT_GNU_PROPERTY then use that, else fall back to scanning
+> all PT_NOTEs?
 
-Hi Dave,
+That makes sense to me, but the concern is that we don't know the
+PT_GNU_PROPERTY the only one.  This probably needs to be discussed with more
+people.
 
-Just thought I'd check up on this and found something that looks like a mistake.
-In patchwork it looks like the series is in the "Changes Requested"
-state. However I didn't notice any comment that was requesting any
-change?
+> > > 2) Are there standard types for things like the program property header?
+> > > If not, can we add something in elf.h?  We should try to coordinate with
+> > > libc on that.  Something like
+> > > 
+> > > typedef __u32 Elf_Word;
+> > > 
+> > > typedef struct {
+> > > 	Elf_Word pr_type;
+> > > 	Elf_Word pr_datasz;
+> > > } Elf_Gnu_Prophdr;
+> > > 
+> > > (i.e., just the header part from [1], with a more specific name -- which
+> > > I just made up).
+> > 
+> > Yes, I will fix that.
+> > 
+> > [...]
+> > > 3) It looks like we have to go and re-parse all the notes for every
+> > > property requested by the arch code.
+> > 
+> > As explained above, it is necessary to scan all PT_NOTE segments.  But there
+> > should be only one NT_GNU_PROPERTY_TYPE_0 in an ELF file.  Once that is
+> > found,
+> > perhaps we can store it somewhere, or call into the arch code as you
+> > mentioned
+> > below.  I will look into that.
+> 
+> Just to get something working on arm64, I'm working on some hacks that
+> move things around a bit -- I'll post when I have something.
+> 
+> Did you have any view on my other point, below?
 
-Thank you,
--Vladimir
+That should work.  I will also make some changes for that.
+
+> 
+> Cheers
+> ---Dave
+> 
+> > > For now there is only one property requested anyway, so this is probably
+> > > not too bad.  But could we flip things around so that we have some
+> > > CONFIG_ARCH_WANTS_ELF_GNU_PROPERTY (say), and have the ELF core code
+> > > call into the arch backend for each property found?
+> > > 
+> > > The arch could provide some hook
+> > > 
+> > > 	int arch_elf_has_gnu_property(const Elf_Gnu_Prophdr *prop,
+> > > 					const void *data);
+> > > 
+> > > to consume the properties as they are found.
+> > > 
+> > > This would effectively replace the arch_setup_property() hook you
+> > > currently have.
+> > > 
+> > > Cheers
+> > > ---Dave
+> > > 
+> > > [1] https://github.com/hjl-tools/linux-abi/wiki/Linux-Extensions-to-gABI
