@@ -2,68 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC5F1189E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B931183B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfEBMBH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 May 2019 08:01:07 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:56631
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726189AbfEBMBH (ORCPT
+        id S1726335AbfEBLft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 07:35:49 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33776 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbfEBLfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:01:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 9CBA0B492EE;
-        Thu,  2 May 2019 11:34:49 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3dtdZOa3rvvm; Thu,  2 May 2019 11:34:49 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 02B91B49268;
-        Thu,  2 May 2019 11:34:49 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sylW9J7Ien_E; Thu,  2 May 2019 11:34:48 +0000 (UTC)
-Received: from [100.73.113.231] (unknown [223.237.215.67])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 856B8B49301;
-        Thu,  2 May 2019 11:34:41 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Thu, 2 May 2019 07:35:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j11so1640007lfm.0;
+        Thu, 02 May 2019 04:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ocallahan-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=j++TiTibQtSVl9YAF3/oqacqYf/6ZNJGN6BZGgzoCww=;
+        b=0H9qZOLdO21+HdB9rbdwA4TdkIwgdYm+/OeqS3IwlILWryk4o/i6fMK92cnzjlf5d+
+         0OAwzQOkeD28c7YH6eco8BUodMbodQLIvMA9K/+hCj9FFBanIhHsDTxWIaOFko8EKel3
+         zSFRM58Enni/0sfu1lojb+Rh0349rNJQwgnCVUMe353c38F3CMEFovePsjxDPeRfeIx/
+         utSiV3/LMYR2Dqu3XV4xeErBtRaiDgc5Sv6BSJuLmXC6Es8cPhdkIirs2LVr0GMugKnW
+         NBPJtLw2jgN5szGLBemMxX5/jwWj73+3M2fiJlRQZpw9YccJDve++TtuuJsE8ML9PRrE
+         NoqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=j++TiTibQtSVl9YAF3/oqacqYf/6ZNJGN6BZGgzoCww=;
+        b=LzL8/o0JZ8WQ/PaA9eYx8Nz886+Ks3cXE67uAJEtk51k96rwG38RpQ/lvsfFYuFlaA
+         TrjzaPVGxRflPQgqNagU+anIfDO1S2JrrxqOyXGxfFCj1d/OZa8lhN8oUNn/3HVxp4x8
+         TKKF+ckYezFEDIv0v8jQovfZpjL4Y2OsLmE3LLI/0pQo83i7rP/qX8HKTfKo6QoKRLpy
+         1hKg9L5drT6T5WlzMARwmrN2V6/Pp70nSsLRpVVtzNb/EmPTPKOqo0YbtUEa16ejKPft
+         53FQMZ5qPHZKT9U57YxD/rqXoFlhgdbskH7caVMt75P48VXWJHY4eRWCJ5bkt9i6s56L
+         6PAA==
+X-Gm-Message-State: APjAAAWwhPUmxxRP/42BqWUBXaJWJIbUUg3GSTJbkmCPx0V3+ct15LNL
+        fVA7Cx/ZQswpkHMWDboT7kiAvinvVt4a/Nj+5Hk=
+X-Google-Smtp-Source: APXvYqzxeUby9yFoLptAe0k7AKsIZUdYS+XMP7+LA0QnUSMXo1qvkRNSzH4R87VA/WRCVh9nvlZswwxjI6mg8WhdsxI=
+X-Received: by 2002:ac2:5a47:: with SMTP id r7mr1883560lfn.116.1556796946527;
+ Thu, 02 May 2019 04:35:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Verifica tu cuenta
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador web <exportaciones@minpal.gob.ve>
-Date:   Thu, 02 May 2019 17:04:33 +0530
-Message-Id: <20190502113441.856B8B49301@smspyt.cancun.gob.mx>
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com> <20190426083144.GA126896@gmail.com>
+ <20190426095802.GA35515@gmail.com> <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
+ <20190427084752.GA99668@gmail.com> <20190427104615.GA55518@gmail.com>
+In-Reply-To: <20190427104615.GA55518@gmail.com>
+Reply-To: robert@ocallahan.org
+From:   "Robert O'Callahan" <robert@ocallahan.org>
+Date:   Thu, 2 May 2019 23:35:35 +1200
+Message-ID: <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call isolation
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
+On Sat, Apr 27, 2019 at 10:46 PM Ingo Molnar <mingo@kernel.org> wrote:
+>  - A C language runtime that is a subset of current C syntax and
+>    semantics used in the kernel, and which doesn't allow access outside
+>    of existing objects and thus creates a strictly enforced separation
+>    between memory used for data, and memory used for code and control
+>    flow.
+>
+>  - This would involve, at minimum:
+>
+>     - tracking every type and object and its inherent length and valid
+>       access patterns, and never losing track of its type.
+>
+>     - being a lot more organized about initialization, i.e. no
+>       uninitialized variables/fields.
+>
+>     - being a lot more strict about type conversions and pointers in
+>       general.
+>
+>     - ... and a metric ton of other details.
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+Several research groups have tried to do this, and it is very
+difficult to do. In particular this was almost exactly the goal of
+C-Cured [1]. Much more recently, there's Microsoft's CheckedC [2] [3],
+which is less ambitious. Check the references of the latter for lots
+of relevant work. If anyone really pursues this they should talk
+directly to researchers who've worked on this, e.g. George Necula; you
+need to know what *didn't* work well, which is hard to glean from
+papers. (Academic publishing is broken that way.)
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+One problem with adopting "safe C" or Rust in the kernel is that most
+of your security mitigations (e.g. KASLR, CFI, other randomizations)
+probably need to remain in place as long as there is a significant
+amount of C in the kernel, which means the benefits from eliminating
+them will be realized very far in the future, if ever, which makes the
+whole exercise harder to justify.
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+Having said that, I think there's a good case to be made for writing
+kernel code in Rust, e.g. sketchy drivers. The classes of bugs
+prevented in Rust are significantly broader than your usual safe-C
+dialect (e.g. data races).
 
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+[1] https://web.eecs.umich.edu/~weimerw/p/p477-necula.pdf
+[2] https://www.microsoft.com/en-us/research/uploads/prod/2019/05/checkedc-post2019.pdf
+[3] https://github.com/Microsoft/checkedc
 
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
+Rob
+-- 
+Su ot deraeppa sah dna Rehtaf eht htiw saw hcihw, efil lanrete eht uoy
+ot mialcorp ew dna, ti ot yfitset dna ti nees evah ew; deraeppa efil
+eht. Efil fo Drow eht gninrecnoc mialcorp ew siht - dehcuot evah sdnah
+ruo dna ta dekool evah ew hcihw, seye ruo htiw nees evah ew hcihw,
+draeh evah ew hcihw, gninnigeb eht morf saw hcihw taht.
