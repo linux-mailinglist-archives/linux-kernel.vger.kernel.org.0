@@ -2,65 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F9B8118CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2666118D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfEBMOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:14:48 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60991 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfEBMOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:14:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 05:14:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,421,1549958400"; 
-   d="scan'208";a="154129005"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 May 2019 05:14:44 -0700
-Subject: Re: [PATCH v2] xhci: Convert xhci_handshake() to use
- readl_poll_timeout_atomic()
-To:     Raul Rangel <rrangel@chromium.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux-usb@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20190208014816.21869-1-andrew.smirnov@gmail.com>
- <20190429200541.GA116440@google.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <c102196e-1250-307f-0b2e-d76c62a161a0@linux.intel.com>
-Date:   Thu, 2 May 2019 15:17:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726369AbfEBMSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:18:48 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41851 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbfEBMSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:18:48 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c12so3036209wrt.8
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 05:18:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8yhaNFcdvOpPcpBYXUdsomaKk+La2YImNQmSmSh3PjY=;
+        b=SZbstBAyWZbN8X23/VP/9UhABke/igJxDJHJXB7ekMR7k3qBy+2f19eHpUZX5I08QV
+         tTytHe/uhg8qsFMTNfklzN5ZSg0BYys58sh/b8IzQsJD0Pmf2KDRJehfrtPzev/RDOh3
+         AU6e7dc/yW6EjebbghR2bq7+ekr2NGzHd3s8cVdxDQ5/mIJb8wS9oY+9QkU/vBeot2cZ
+         uWxEAgGCDwUHnTeWuqWBshvrUNEp/bxUcbDDF7nDG79Z6VJrfTvtRaLd/h6aZIpHU0y1
+         GIRP3mlVC5fW5U0Ce8rwO9h6nHKBOVxrNleoF0o4rauPZyFM8bEPPNJ9CvmL5vcQosnR
+         yJlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8yhaNFcdvOpPcpBYXUdsomaKk+La2YImNQmSmSh3PjY=;
+        b=VEVAru3iX31RIvstCnJanrdveKwvhlDP7R3lxw9gCfsi4DKoK2BhwHyTDBwPvUnS1M
+         HKIDaDHxOkvtA2BTfkl1s7X4Fm0MGK0vxMO26ctHnrHr6crNLriPyyb7RDMqUw3jOv7S
+         dKtsu6hpGRTdUdm3rnB3+TYgMr/IO11gyL9r0Z7qlQo8BFmT8Qe0rl1wIq7+E04GYRjE
+         dAGChCfo1uqDklGInvwhAzbBoSR9W2e+tW0nbjOgUQhY1RC6mOt0Ait6dyCvD1Ct/7Yh
+         vpun++OgKcNB4qMkZFVYDM2O/Igk4LesWDz2vpeAArtTGpBA9N0krh9y/MZbbJXJ+0JB
+         UnMA==
+X-Gm-Message-State: APjAAAVjbclDUQnugbBasz2b1PJBWHp1vGlvGTFYg4QtmrsQ6wl/bWz4
+        Iq+jQt8mH34EuI29YeoAIND9GA==
+X-Google-Smtp-Source: APXvYqybnz8QnbpKmcrmKh2L8LuuDVThIoXDaPzBG94Oj9LaHY0YI2yFN/HK2nR6zlXFItMIhB9G0w==
+X-Received: by 2002:adf:e70a:: with SMTP id c10mr1268627wrm.278.1556799526486;
+        Thu, 02 May 2019 05:18:46 -0700 (PDT)
+Received: from localhost.localdomain (aputeaux-684-1-8-187.w90-86.abo.wanadoo.fr. [90.86.125.187])
+        by smtp.gmail.com with ESMTPSA id f6sm4392842wmh.13.2019.05.02.05.18.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 05:18:45 -0700 (PDT)
+From:   Fabien Parent <fparent@baylibre.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, matthias.bgg@gmail.com, wenzhen.yu@mediatek.com,
+        sean.wang@mediatek.com, ryder.lee@mediatek.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Fabien Parent <fparent@baylibre.com>
+Subject: [PATCH 1/2] dt-bindings: mediatek: audsys: add support for MT8516
+Date:   Thu,  2 May 2019 14:18:42 +0200
+Message-Id: <20190502121843.14493-1-fparent@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190429200541.GA116440@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.4.2019 23.05, Raul Rangel wrote:
-> On Thu, Feb 07, 2019 at 05:48:16PM -0800, Andrey Smirnov wrote:
->> Xhci_handshake() implements the algorithm already captured by
->> readl_poll_timeout_atomic(). Convert the former to use the latter to
->> avoid repetition.
->>
->> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Tested-by: Raul E Rangel <rrangel@chromium.org>
-> Reviewed-by: Raul E Rangel <rrangel@chromium.org>
-> 
-> This fixes a bug on the AMD Stoneyridge platform. usleep(1) sometimes
-> takes over 10ms. This means a 5 second timeout can easily take over 15
-> seconds which will trigger the watchdog and reboot the system.
-> 
-> Thanks for the patch.
+Add AUDSYS device tree bindings documentation for MediaTek MT8516 SoC.
 
-Adding to queue
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+---
+ .../bindings/arm/mediatek/mediatek,audsys.txt   |  1 +
+ include/dt-bindings/clock/mt8516-clk.h          | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
--Mathias
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index d1606b2c3e63..a4d07108bd4c 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- "mediatek,mt2701-audsys", "syscon"
+ 	- "mediatek,mt7622-audsys", "syscon"
+ 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
++	- "mediatek,mt8516-audsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The AUDSYS controller uses the common clk binding from
+diff --git a/include/dt-bindings/clock/mt8516-clk.h b/include/dt-bindings/clock/mt8516-clk.h
+index 9cfca53cd78d..816447b98edd 100644
+--- a/include/dt-bindings/clock/mt8516-clk.h
++++ b/include/dt-bindings/clock/mt8516-clk.h
+@@ -208,4 +208,21 @@
+ #define CLK_TOP_MSDC2_INFRA		176
+ #define CLK_TOP_NR_CLK			177
+ 
++/* AUDSYS */
++
++#define CLK_AUD_AFE			0
++#define CLK_AUD_I2S			1
++#define CLK_AUD_22M			2
++#define CLK_AUD_24M			3
++#define CLK_AUD_INTDIR			4
++#define CLK_AUD_APLL2_TUNER		5
++#define CLK_AUD_APLL_TUNER		6
++#define CLK_AUD_HDMI			7
++#define CLK_AUD_SPDF			8
++#define CLK_AUD_ADC			9
++#define CLK_AUD_DAC			10
++#define CLK_AUD_DAC_PREDIS		11
++#define CLK_AUD_TML			12
++#define CLK_AUD_NR_CLK			13
++
+ #endif /* _DT_BINDINGS_CLK_MT8516_H */
+-- 
+2.20.1
 
