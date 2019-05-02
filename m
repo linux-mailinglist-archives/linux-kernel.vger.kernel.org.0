@@ -2,94 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 046201242A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A2A1242C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfEBVdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 17:33:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55544 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfEBVdN (ORCPT
+        id S1726203AbfEBVfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 17:35:02 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46379 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfEBVfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 17:33:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZXqnuo0JSIuRggTcqyOSAvcyo1xhZ/4jSajZfdhhW24=; b=RQWf4StrNHmwEF6NAVXxFPJ2s
-        Sxzl51CDrOJuvMAA+fYwI41eZ3d7WnH69VgOI8/coS6GZjyfBkyouvMkqz0y4EFDW6C90it/y+BMI
-        lstFwapGleV7DCIkgIZCWUp78icSvdsGnF5QiJREea/5Sw6MNdWEEGOIFUwkl15Yx1+ai0jlv3w91
-        +yrUGaP4xHamqYJCQa6ZPGC0dYo1uWWJGS+rA8yjN4/fPvrYV9Wu2PDu4v0yjn4rk7OzEJt25cg7C
-        nC1O8DHz7/yJdbKdhlfmTV8mChs6Kt8K8AGEb7fQWqMw48YUjfCXSTLGkvupy9TvKXNgjlIhJmEXi
-        1/2p9Dl+A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMJJq-0004Nq-5V; Thu, 02 May 2019 21:32:42 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69A4F209A1C85; Thu,  2 May 2019 23:32:39 +0200 (CEST)
-Date:   Thu, 2 May 2019 23:32:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-Message-ID: <20190502213239.GA2623@hirez.programming.kicks-ass.net>
-References: <20190501202830.347656894@goodmis.org>
- <20190501203152.397154664@goodmis.org>
- <20190501232412.1196ef18@oasis.local.home>
- <20190502162133.GX2623@hirez.programming.kicks-ass.net>
- <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
- <20190502181811.GY2623@hirez.programming.kicks-ass.net>
- <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
- <20190502202146.GZ2623@hirez.programming.kicks-ass.net>
- <CAHk-=wh8bi5c_GkyjPtDAiaXaZRqtmhWs30usUvs4qK_F+c9tg@mail.gmail.com>
+        Thu, 2 May 2019 17:35:02 -0400
+Received: by mail-io1-f66.google.com with SMTP id m14so3511749ion.13
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 14:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=pMCFqBmZdC2vIWtn/6JNsusyEuOW8+QTsv2O54WuzUg=;
+        b=e07d0lQCKzDv9Pdj3LJf94ZrkmLPrhGTTb9t5r/pMCO0MFre+kVK6z18QHIbdfEFqe
+         QIPvdNmtAqexsvZAQxjRjex0UbMOHX5cjV8s33nyOEvtLOloHXwFV/1oeTPmkkzb0W2x
+         M9AgCuMRjJKsNmF4F8UMagA1FEY5uZJFRKPrfruKh/4diYXqEQeXax/jOnxIyLmvgkil
+         VBOLEim18u7aTcqZEt1Mj7ycE7SPVU0+LfDJ033T8IRPKK6cos4W7op2HYn3sJr1Dmgz
+         iZRKMTWtA+ysQTxVYsQOsOFjkcj4F23sV5uVBWWuRgqYrUZI/n2W2MRnm4UWSJDrrpzb
+         e5Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pMCFqBmZdC2vIWtn/6JNsusyEuOW8+QTsv2O54WuzUg=;
+        b=sqaAROpaTHg36iEOl8nAW9+qPdRgFMrt5CNN29vxAp9YHfbzzbNgGx0DVHWYaDy1MS
+         YhnfhHTuv0xoMYPv6Obb+FSFwbxujx2Gixy9WsseySsjFT07GW8nPEga76P9Kmuv6gvz
+         uInLHV3iRx1r6fdw6NK0Z9SN4W/luqoSrRjAlmEMk3MnauCaxQLrEaUidFi5osO5j15B
+         JMhWvnHuDNKUCJWLPJyvH4k0HEcg1VWSkgxcQlAo6ctsjbg4Fv+EuoR1axgHTHBwurJb
+         3Qdr0uv6Xv7j2+ms47hFPrWMZKVe8rQNB9999Fw8JkUd3F5aUVjO/7nlMFy78BixClQf
+         2fIw==
+X-Gm-Message-State: APjAAAXlutc/VDejXE+q8o2d+nete0dCykk+7ktGyg+oUP7Wh3RNWnun
+        FVzeU0VOQB2D1iAvWdifBJDLkRxH+XJUA5U3lR4=
+X-Google-Smtp-Source: APXvYqwzSOceS5/xcw0gTuP+SY/RE9jqNlomRR/cAUf+hVXzMB+xebhHX9V5hy7mideq/+9iuaJ31DO64FWCni88ey0=
+X-Received: by 2002:a5d:9d48:: with SMTP id k8mr4642213iok.194.1556832901192;
+ Thu, 02 May 2019 14:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh8bi5c_GkyjPtDAiaXaZRqtmhWs30usUvs4qK_F+c9tg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1556830342-32307-1-git-send-email-jsavitz@redhat.com>
+ <8bb9fe29-65d3-e977-1932-4a2f17ead333@redhat.com> <20190502211002.GG2488@uranus.lan>
+ <CAL1p7m6sYp_A4PB-K9gc8QKnPLHe92y2yMq7TqnUJuQPqR+MOA@mail.gmail.com>
+In-Reply-To: <CAL1p7m6sYp_A4PB-K9gc8QKnPLHe92y2yMq7TqnUJuQPqR+MOA@mail.gmail.com>
+From:   Yury Norov <norov.maillist@gmail.com>
+Date:   Thu, 2 May 2019 14:34:49 -0700
+Message-ID: <CAJu-Uz4rnMCR5-zHj=Ub1xZD=mmw3z1-mEg+M=qWXV3yO7OJkg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] sys/prctl: expose TASK_SIZE value to userspace
+To:     Joel Savitz <jsavitz@redhat.com>
+Cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 01:49:29PM -0700, Linus Torvalds wrote:
+=D1=87=D1=82, 2 =D0=BC=D0=B0=D1=8F 2019 =D0=B3. =D0=B2 14:23, Joel Savitz <=
+jsavitz@redhat.com>:
+>
+> Yes, this the change, thanks to the suggestion of Yury Norov.
 
-> We *could* also make this kernel-mode-only do_int3() be a special
-> function, and do something like
+Joel, could you please stop top-posting?
 
-I think I prefer the variant we have now. The int3_emulate_*() things
-work uniformly and as expected on 32 and 64 bit (it would even work for
-userspace if it weren't for SMAP).
+> I also now explicitly mention the expected userspace destination type
+> in the manpage patch.
+>
+> Best,
+> Joel Savitz
+>
+>
+> On Thu, May 2, 2019 at 5:10 PM Cyrill Gorcunov <gorcunov@gmail.com> wrote=
+:
+> >
+> > On Thu, May 02, 2019 at 05:01:38PM -0400, Waiman Long wrote:
+> > >
+> > > What did you change in v2 versus v1?
+> >
+> > Seems unsigned long long has been changed to unsigned long.
 
-So while the 32bit kernel entry is 'special' all the INT3 handlers can
-uniformly prod at pt_regs in a natural way and have it work.
+Sorry guys, I replied to Joel, but accidentally dropped the folks.
+Find discussion below.
 
-Making it special -- just for 32bit, seems like the wrong thing to me.
+=D1=87=D1=82, 2 =D0=BC=D0=B0=D1=8F 2019 =D0=B3. =D0=B2 13:50, Joel Savitz <=
+jsavitz@redhat.com>:
+>
+> While I disagree that kernel memory is exposed, as the 8-byte
+> (unsigned long long) value of task_size is initialized by the
+> assignment of TASK_SIZE, I agree with your suggestion, as the current
+> code may corrupt the userspace stack of the caller unless provided
+> with the address of an unsigned long long, an unusual type to store a
+> value of word size.
+>
+> As such, I have adopted your suggestion and added type information to
+> my manpage patch. Expect the v2 to be posted shortly.
+>
+> Thank you for your review.
+>
+> Best,
+> Joel Savitz
+>
+> On Thu, May 2, 2019 at 3:41 PM Yury Norov <norov.maillist@gmail.com> wrot=
+e:
+> >
+> > =D1=87=D1=82, 2 =D0=BC=D0=B0=D1=8F 2019 =D0=B3. =D0=B2 12:15, Joel Savi=
+tz <jsavitz@redhat.com>:
+> > >
+> > > When PR_GET_TASK_SIZE is passed to prctl, the kernel will attempt to
+> > > copy the value of TASK_SIZE to the userspace address in arg2.
+> >
+> > but you copy the value of task_size.
+> >
+> > > Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+> > > ---
+> > >  include/uapi/linux/prctl.h |  3 +++
+> > >  kernel/sys.c               | 10 ++++++++++
+> > >  2 files changed, 13 insertions(+)
+> > >
+> > > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> > > index 094bb03b9cc2..2335fe0a8db8 100644
+> > > --- a/include/uapi/linux/prctl.h
+> > > +++ b/include/uapi/linux/prctl.h
+> > > @@ -229,4 +229,7 @@ struct prctl_mm_map {
+> > >  # define PR_PAC_APDBKEY                        (1UL << 3)
+> > >  # define PR_PAC_APGAKEY                        (1UL << 4)
+> > >
+> > > +/* Get the process virtual memory size */
+> > > +#define PR_GET_TASK_SIZE               55
+> > > +
+> > >  #endif /* _LINUX_PRCTL_H */
+> > > diff --git a/kernel/sys.c b/kernel/sys.c
+> > > index 12df0e5434b8..7ced7dbd035d 100644
+> > > --- a/kernel/sys.c
+> > > +++ b/kernel/sys.c
+> > > @@ -2252,6 +2252,13 @@ static int propagate_has_child_subreaper(struc=
+t task_struct *p, void *data)
+> > >         return 1;
+> > >  }
+> > >
+> > > +static int prctl_get_tasksize(void __user * uaddr)
+> > > +{
+> > > +       unsigned long long task_size =3D TASK_SIZE;
+> > > +       return copy_to_user(uaddr, &task_size, sizeof(unsigned long l=
+ong))
+> > > +                       ? -EFAULT : 0;
+> > > +}
+> > > +
+> >
+> > task_size is unsigned long. On 32-bit systems you will end up exposing =
+4 bytes
+> > of kernel memory. You should switch to sizeof(unsigned long).
+> >
+> > Your code is broken for compat arches. Take a look at the definition
+> > of TASK_SIZE
+> > for arm64, for example.
+> >
+> > Thanks,
+> > Yury
