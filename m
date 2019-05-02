@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B2911E92
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 554B311EFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfEBPiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:38:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48324 "EHLO mail.kernel.org"
+        id S1727674AbfEBP0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:26:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbfEBPaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:30:05 -0400
+        id S1727663AbfEBP0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:26:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52F9420C01;
-        Thu,  2 May 2019 15:30:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D393C2081C;
+        Thu,  2 May 2019 15:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811004;
-        bh=eN6soJ3TpOF/EPFMS28aOsh3zauJV4nUZIBAaAxAP9U=;
+        s=default; t=1556810762;
+        bh=kw0SEU1fYOOVed2EWjsU4W6r8umOhNzjGb+OOAZ2sms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LDSHABrGCUP9h/JwsmV7ukQN+JaA9U3TkyQb5AVl1UB8Y++3kUhIjI3uXnS37O/PE
-         UMNRJCs9n2XWtTX7kPFAKFKrg415YI+9Dliz3tHCTGDgnz4zKcH4PTNHfk79r+U3+2
-         pAwD4W6pMkN7kctoWA9EO3zGcQ/8F52/kQx8AHgg=
+        b=QYwzPkZq+uIXEgqqO6ET2IyXOw/AKF2rIDFJRR5ppK8ix1FgeOKpWOEDAtL8+Hfcs
+         KWHwT5CcjyN94IXiJPQkC1kkIKEAM+qZQ6ApGFXgakGJY1Ih5P+GuEVCEFpeinTkcC
+         RAmRpzrO7IwVFpsizh+Jm2rXW3yoNT94E9daAGKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Christ <s.christ@phytec.de>,
-        Christian Hemp <c.hemp@phytec.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 039/101] ARM: dts: pfla02: increase phy reset duration
-Date:   Thu,  2 May 2019 17:20:41 +0200
-Message-Id: <20190502143342.307911368@linuxfoundation.org>
+Subject: [PATCH 4.19 20/72] s390/qeth: fix race when initializing the IP address table
+Date:   Thu,  2 May 2019 17:20:42 +0200
+Message-Id: <20190502143334.955647649@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 032f85c9360fb1a08385c584c2c4ed114b33c260 ]
+[ Upstream commit 7221b727f0079a32aca91f657141e1de564d4b97 ]
 
-Increase the reset duration to ensure correct phy functionality. The
-reset duration is taken from barebox commit 52fdd510de ("ARM: dts:
-pfla02: use long enough reset for ethernet phy"):
+The ucast IP table is utilized by some of the L3-specific sysfs attributes
+that qeth_l3_create_device_attributes() provides. So initialize the table
+_before_ registering the attributes.
 
-  Use a longer reset time for ethernet phy Micrel KSZ9031RNX. Otherwise a
-  small percentage of modules have 'transmission timeouts' errors like
-
-  barebox@Phytec phyFLEX-i.MX6 Quad Carrier-Board:/ ifup eth0
-  warning: No MAC address set. Using random address 7e:94:4d:02:f8:f3
-  eth0: 1000Mbps full duplex link detected
-  eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-
-Cc: Stefan Christ <s.christ@phytec.de>
-Cc: Christian Hemp <c.hemp@phytec.de>
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Fixes: 3180f956668e ("ARM: dts: Phytec imx6q pfla02 and pbab01 support")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: ebccc7397e4a ("s390/qeth: add missing hash table initializations")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/s390/net/qeth_l3_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-index 1b50b01e9bac..65d03c5d409b 100644
---- a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-@@ -90,6 +90,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
- 	phy-mode = "rgmii";
-+	phy-reset-duration = <10>; /* in msecs */
- 	phy-reset-gpios = <&gpio3 23 GPIO_ACTIVE_LOW>;
- 	phy-supply = <&vdd_eth_io_reg>;
- 	status = "disabled";
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index 7f71ca0d08e7..9c5e801b3f6c 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -2586,12 +2586,14 @@ static int qeth_l3_probe_device(struct ccwgroup_device *gdev)
+ 	struct qeth_card *card = dev_get_drvdata(&gdev->dev);
+ 	int rc;
+ 
++	hash_init(card->ip_htable);
++
+ 	if (gdev->dev.type == &qeth_generic_devtype) {
+ 		rc = qeth_l3_create_device_attributes(&gdev->dev);
+ 		if (rc)
+ 			return rc;
+ 	}
+-	hash_init(card->ip_htable);
++
+ 	hash_init(card->ip_mc_htable);
+ 	card->options.layer2 = 0;
+ 	card->info.hwtrap = 0;
 -- 
 2.19.1
 
