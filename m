@@ -2,171 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D163511A94
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8954E11AA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfEBN4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 09:56:31 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41147 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEBN4a (ORCPT
+        id S1726366AbfEBOB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 10:01:56 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:4669 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBOBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 09:56:30 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d8so1942275lfb.8;
-        Thu, 02 May 2019 06:56:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/VM2EPbaQGkjwVj3LHXmEyZv0mSCYwQuitq78e8x8+4=;
-        b=H6m5bt83WI7VgIZVTkwD1ttH62PtSUVQE215GE+U8PrTRo/dM2WWHvDiniWHJ0PI6h
-         4unbflDaJu3DrgNKv8ea4U1sz9xwqHN6S0mTBQJmgMpgKt8X3zmApkyghCMAA8Jij+TZ
-         0nKd6axbRd1T4Uxuh8bMq/BwuaA6me7ZykLW0cZXuZxyc3CfV3RSCmsWoorQKmFrZg1y
-         eGXId/PmAPahkORX2HR7y0ZZlhwoXOxZJxHJHTfLT1v6KArIbGlpxP/eSG+rtDYE4Pgb
-         rfy1ie5kUP1RA77qpLoNEmpZ8hyOI5gEMhtoaHqJxY6nOe11qROklP0WzM8kVsEudYHy
-         oFzw==
-X-Gm-Message-State: APjAAAXnuZy+dTVPUUR/hreMdbbI/xAit1hutiM+FE0LZDO5yDuDGyra
-        geGFZ4HunSCVy0YFmM2+TAE=
-X-Google-Smtp-Source: APXvYqz/5j7YFIF0fcF9qHJWGYVHusZfI5dnPpLYjeKOGVNBnoEJ5oH5NzA7po/x6AC+jW/IGg9myA==
-X-Received: by 2002:a19:7d04:: with SMTP id y4mr2112437lfc.153.1556805387716;
-        Thu, 02 May 2019 06:56:27 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q15sm4106884lfh.59.2019.05.02.06.56.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 06:56:26 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1hMCCS-0005iF-Dj; Thu, 02 May 2019 15:56:37 +0200
-Date:   Thu, 2 May 2019 15:56:36 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] USB: serial: io_edgeport: mark expected switch
- fall-throughs
-Message-ID: <20190502135636.GT26546@localhost>
-References: <20190501213329.GA26972@embeddedor>
- <20190502102608.GS26546@localhost>
- <df1feb28-58d0-7ac8-644d-0b48e5078edf@embeddedor.com>
+        Thu, 2 May 2019 10:01:55 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,421,1549954800"; 
+   d="scan'208";a="31761172"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 02 May 2019 07:01:54 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch07.mchp-main.com
+ (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Thu, 2 May 2019
+ 07:01:53 -0700
+Date:   Thu, 2 May 2019 16:01:16 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Raag Jadav <raagjadav@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] i2c: at91: handle TXRDY interrupt spam
+Message-ID: <20190502140116.rim72idpgvq4h4vc@M43218.corp.atmel.com>
+Mail-Followup-To: Raag Jadav <raagjadav@gmail.com>,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1556005008-6318-1-git-send-email-raagjadav@gmail.com>
+ <20190429090005.f6ydghzu5n5yruav@M43218.corp.atmel.com>
+ <20190429223332.GA3908@pc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df1feb28-58d0-7ac8-644d-0b48e5078edf@embeddedor.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190429223332.GA3908@pc>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 08:22:30AM -0500, Gustavo A. R. Silva wrote:
+On Tue, Apr 30, 2019 at 04:03:32AM +0530, Raag Jadav wrote:
+> External E-Mail
 > 
 > 
-> On 5/2/19 5:26 AM, Johan Hovold wrote:
-> > On Wed, May 01, 2019 at 04:33:29PM -0500, Gustavo A. R. Silva wrote:
-> >> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> >> cases where we are expecting to fall through.
-> >>
-> >> This patch fixes the following warnings:
-> >>
-> >> drivers/usb/serial/io_edgeport.c: In function ‘process_rcvd_data’:
-> >> drivers/usb/serial/io_edgeport.c:1750:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >>     if (bufferLength == 0) {
-> >>        ^
-> >> drivers/usb/serial/io_edgeport.c:1755:3: note: here
-> >>    case EXPECT_HDR2:
-> >>    ^~~~
-> >> drivers/usb/serial/io_edgeport.c:1810:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >>      if (bufferLength == 0) {
-> >>         ^
-> >> drivers/usb/serial/io_edgeport.c:1816:3: note: here
-> >>    case EXPECT_DATA: /* Expect data */
-> >>    ^~~~
-> >>
-> >> Warning level 3 was used: -Wimplicit-fallthrough=3
-> >>
-> >> Notice that, in this particular case, the code comments are modified
-> >> in accordance with what GCC is expecting to find.
-> >>
-> >> This patch is part of the ongoing efforts to enable
-> >> -Wimplicit-fallthrough.
-> >>
-> >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> >> ---
-> >> Changes in v2:
-> >>  - Warning level 3 is now used: -Wimplicit-fallthrough=3
-> >>    instead of warning level 2.
-> >>  - All warnings in the switch statement are addressed now.
-> >>
-> >> Notice that these are the last remaining fall-through warnings
-> >> in the USB subsystem. :)
+> On Mon, Apr 29, 2019 at 11:00:05AM +0200, Ludovic Desroches wrote:
+> > Hello Raag,
 > > 
-> >>  drivers/usb/serial/io_edgeport.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-> >> index 4ca31c0e4174..7ad10328f4e2 100644
-> >> --- a/drivers/usb/serial/io_edgeport.c
-> >> +++ b/drivers/usb/serial/io_edgeport.c
-> >> @@ -1751,7 +1751,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
-> >>  				edge_serial->rxState = EXPECT_HDR2;
-> >>  				break;
-> >>  			}
-> >> -			/* otherwise, drop on through */
-> >> +			/* Fall through - otherwise, drop on through */
-> >>  		case EXPECT_HDR2:
-> >>  			edge_serial->rxHeader2 = *buffer;
-> >>  			++buffer;
-> >> @@ -1813,6 +1813,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
-> >>  				}
-> >>  				/* Else, drop through */
-> >>  			}
-> >> +			/* Fall through */
-> >>  		case EXPECT_DATA: /* Expect data */
+> > On Tue, Apr 23, 2019 at 01:06:48PM +0530, Raag Jadav wrote:
+> > > External E-Mail
+> > > 
+> > > 
+> > > Performing i2c write operation while SDA or SCL line is held
+> > > or grounded by slave device, we go into infinite at91_twi_write_next_byte
+> > > loop with TXRDY interrupt spam.
 > > 
-> > Looks like you forgot to take the original review feedback you got into
-> > account:
+> > Sorry but I am not sure to have the full picture, the controller is in
+> > slave or master mode?
 > > 
-> > 	https://lkml.kernel.org/r/87k1zf4k24.fsf@miraculix.mork.no
+> > SVREAD is only used in slave mode. When SVREAD is set, it means that a read
+> > access is performed and your issue concerns the write operation.
 > > 
+> > Regards
+> > 
+> > Ludovic
 > 
-> Oh, the thing is that the fall-through comments have to be placed at
-> the very bottom of the case. Also, based on that feedback, this time
-> I left the "Else, drop through" comment in place, so people can be
-> informed that such fall-through is conditional.
-> 
-> What do you think about this:
-> 
-> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-> index 4ca31c0e4174..52f27fc82563 100644
-> --- a/drivers/usb/serial/io_edgeport.c
-> +++ b/drivers/usb/serial/io_edgeport.c
-> @@ -1751,7 +1751,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->                                 edge_serial->rxState = EXPECT_HDR2;
->                                 break;
->                         }
-> -                       /* otherwise, drop on through */
-> +                       /* Fall through - otherwise, drop on through */
->                 case EXPECT_HDR2:
->                         edge_serial->rxHeader2 = *buffer;
->                         ++buffer;
-> @@ -1813,6 +1813,11 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->                                 }
->                                 /* Else, drop through */
->                         }
-> +                       /* Beware that, currently, there are at least three
-> +                        * break statements in this case block, so the
-> +                        * fall-through marked below is NOT unconditional.
-> +                        */
-> +                       /* Fall through */
->                 case EXPECT_DATA: /* Expect data */
->                         if (bufferLength < edge_serial->rxBytesRemaining) {
->                                 rxLen = bufferLength;
+> Yes, even though the datasheet suggests that SVREAD is irrelevant in master mode,
+> TXRDY and SVREAD are the only ones being set in status register upon reproducing the issue.
+> Couldn't think of a better way to handle such strange behaviour.
+> Any suggestions would be appreciated.
 
-It's better than v2, but I thought you said you were gonna look into
-restructuring the code to maintain (or even improve) readability?
+I have the confirmation that you can't rely on the SVREAD flag when in
+master mode. This flag should always have the same value.
 
-Johan
+I am trying to understand what could lead to your situation. Can you
+give me more details. What kind of device it is? What does lead to this
+situation? Does it happen randomly or not?
+
+Regards
+
+Ludovic
+
+> 
+> Cheers,
+> Raag
+> 
+> > 
+> > > 
+> > > Signed-off-by: Raag Jadav <raagjadav@gmail.com>
+> > > ---
+> > >  drivers/i2c/busses/i2c-at91.c | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
+> > > index 3f3e8b3..b2f5fdb 100644
+> > > --- a/drivers/i2c/busses/i2c-at91.c
+> > > +++ b/drivers/i2c/busses/i2c-at91.c
+> > > @@ -72,6 +72,7 @@
+> > >  #define	AT91_TWI_TXCOMP		BIT(0)	/* Transmission Complete */
+> > >  #define	AT91_TWI_RXRDY		BIT(1)	/* Receive Holding Register Ready */
+> > >  #define	AT91_TWI_TXRDY		BIT(2)	/* Transmit Holding Register Ready */
+> > > +#define	AT91_TWI_SVREAD		BIT(3)	/* Slave Read */
+> > >  #define	AT91_TWI_OVRE		BIT(6)	/* Overrun Error */
+> > >  #define	AT91_TWI_UNRE		BIT(7)	/* Underrun Error */
+> > >  #define	AT91_TWI_NACK		BIT(8)	/* Not Acknowledged */
+> > > @@ -571,7 +572,10 @@ static irqreturn_t atmel_twi_interrupt(int irq, void *dev_id)
+> > >  		at91_disable_twi_interrupts(dev);
+> > >  		complete(&dev->cmd_complete);
+> > >  	} else if (irqstatus & AT91_TWI_TXRDY) {
+> > > -		at91_twi_write_next_byte(dev);
+> > > +		if ((status & AT91_TWI_SVREAD) && (dev->buf_len == 0))
+> > > +			at91_twi_write(dev, AT91_TWI_IDR, AT91_TWI_TXRDY);
+> > > +		else
+> > > +			at91_twi_write_next_byte(dev);
+> > >  	}
+> > >  
+> > >  	/* catch error flags */
+> > > -- 
+> > > 2.7.4
+> > > 
+> > > 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
