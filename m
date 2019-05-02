@@ -2,108 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEFD411ED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 342C411C7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbfEBPlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:41:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727017AbfEBP2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:28:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74A8F2177B;
-        Thu,  2 May 2019 15:28:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810935;
-        bh=vaKOv5VLQ0ocqDN2T1ujpP65YlTvzlsEjWaiC3OLZbw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g8sOuOU68u3XmOwDvUhlwhb19/JuKumtAjqN/fFDdihqXElYWauQMM18R0anj/OzN
-         dFNdXKwZm1YXbnktKV5bGCLmk83llBCexX9CJGRzoQ2PFr2zcu3cHXFi1gRbbU6mPB
-         Jvs/dNypNCqMv0F387L5QzMeuHcdF6AexGlJ2r/I=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 013/101] mt76: mt76x2: fix 2.4 GHz channel gain settings
-Date:   Thu,  2 May 2019 17:20:15 +0200
-Message-Id: <20190502143341.052632347@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726397AbfEBPUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:20:23 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35794 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbfEBPUW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:20:22 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y197so3157963wmd.0;
+        Thu, 02 May 2019 08:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5iZHfQ8GDd0Ls6ejuDG8WIo78Gj60D8gd5oYhOzj700=;
+        b=jzQVifsYy8fMTiCtgC1O/9kll4n/Bj8/l/rsGB4yIXwPIjtgnwSG+x57tTQeXNRS80
+         iLyJbX0f0w+pO0yQ2b4vnHUVDTsr/BMS8rX4nhkj7Vvs35/YFozk7UL1NsM0P2RZ59iM
+         Nc4dRwS4LJB1eLeikglNxQql9LvadPnzaAIaE+W55cwtiGo3evT7P/NSDExizrE/vdCK
+         FqTE48KQmO+PbE0P5rVeU8k+aVroL+uQHkCFzjIW+vcda2K7R+tkGG0/AHpLdnU0Ezfj
+         zjlItED5vppiw32GpvjIsHmnpXNVWabcs5oGKMrWTsggLyVmPETq7jDG+ZeynKNSVet4
+         pzqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5iZHfQ8GDd0Ls6ejuDG8WIo78Gj60D8gd5oYhOzj700=;
+        b=UyGxVhHnOaxh38n1ULkP5jV6ODu6PrAXiTgWAoxQzogDgLz3pOasDxNE8BqX1Ycf4/
+         zh2ybY4P+nup4puaNMyLNC+/egIFVIuIZO6ZDQSPbiNi2AHSaUBeEUarW8IuaOKvtOBL
+         FcL8kCI6Yfls2hadZujDSbDmi4NIsxF3LkBLXA1c8YsiszUedInWZyeXa3LnfwcAkVUJ
+         rUu3dopKqnaew3UPQTA2BW/Tmj8KPGj8S0m2vzIZXKVTk4aVEDHFgxlslgMj7LCNKkz8
+         MP1hrkzxMAQVmt2hZiqTKBXRDTM2JcIV2PmPI4lx2kVgcEGXNsdnYyol9IRijH1/ntDW
+         PwDQ==
+X-Gm-Message-State: APjAAAUKkaprRmvIYcEs+KM6KM1JC1zSb9kKv32rgeNnNOQ9dcoB1AlI
+        h2UU2I14JtAwkyV59DZxTRs=
+X-Google-Smtp-Source: APXvYqz2a88pHyfeJ1r7bzIgwGeuv5y1UhZAVXtEWIBuqYBjV11xhWa33BRF5AukmEhqJIMBc7tEnw==
+X-Received: by 2002:a7b:c353:: with SMTP id l19mr2664125wmj.12.1556810420312;
+        Thu, 02 May 2019 08:20:20 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id q7sm8729877wmc.11.2019.05.02.08.20.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 May 2019 08:20:19 -0700 (PDT)
+Date:   Thu, 2 May 2019 17:20:16 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Robert O'Callahan <robert@ocallahan.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH 2/7] x86/sci: add core implementation for system call
+ isolation
+Message-ID: <20190502152016.GA51567@gmail.com>
+References: <1556228754-12996-1-git-send-email-rppt@linux.ibm.com>
+ <1556228754-12996-3-git-send-email-rppt@linux.ibm.com>
+ <20190426083144.GA126896@gmail.com>
+ <20190426095802.GA35515@gmail.com>
+ <CALCETrV3xZdaMn_MQ5V5nORJbcAeMmpc=gq1=M9cmC_=tKVL3A@mail.gmail.com>
+ <20190427084752.GA99668@gmail.com>
+ <20190427104615.GA55518@gmail.com>
+ <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOp6jLa1Rs2xrhJ2wpWoFbJGHyB99OX9doQZc+dNqOSUMgURsw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b8cfd87ac24273e36fbd3ecda631f3ba6566d493 ]
 
-AGC register 35, 37 override for the low gain setting should only be done
-on 5 GHz. Also, 2.4 GHz needs a different value for register 35
+* Robert O'Callahan <robert@ocallahan.org> wrote:
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
----
- .../net/wireless/mediatek/mt76/mt76x2/phy.c   | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+> On Sat, Apr 27, 2019 at 10:46 PM Ingo Molnar <mingo@kernel.org> wrote:
+> >  - A C language runtime that is a subset of current C syntax and
+> >    semantics used in the kernel, and which doesn't allow access outside
+> >    of existing objects and thus creates a strictly enforced separation
+> >    between memory used for data, and memory used for code and control
+> >    flow.
+> >
+> >  - This would involve, at minimum:
+> >
+> >     - tracking every type and object and its inherent length and valid
+> >       access patterns, and never losing track of its type.
+> >
+> >     - being a lot more organized about initialization, i.e. no
+> >       uninitialized variables/fields.
+> >
+> >     - being a lot more strict about type conversions and pointers in
+> >       general.
+> >
+> >     - ... and a metric ton of other details.
+> 
+> Several research groups have tried to do this, and it is very
+> difficult to do. In particular this was almost exactly the goal of
+> C-Cured [1]. Much more recently, there's Microsoft's CheckedC [2] [3],
+> which is less ambitious. Check the references of the latter for lots
+> of relevant work. If anyone really pursues this they should talk
+> directly to researchers who've worked on this, e.g. George Necula; you
+> need to know what *didn't* work well, which is hard to glean from
+> papers. (Academic publishing is broken that way.)
+> 
+> One problem with adopting "safe C" or Rust in the kernel is that most
+> of your security mitigations (e.g. KASLR, CFI, other randomizations)
+> probably need to remain in place as long as there is a significant
+> amount of C in the kernel, which means the benefits from eliminating
+> them will be realized very far in the future, if ever, which makes the
+> whole exercise harder to justify.
+> 
+> Having said that, I think there's a good case to be made for writing
+> kernel code in Rust, e.g. sketchy drivers. The classes of bugs
+> prevented in Rust are significantly broader than your usual safe-C
+> dialect (e.g. data races).
+> 
+> [1] https://web.eecs.umich.edu/~weimerw/p/p477-necula.pdf
+> [2] https://www.microsoft.com/en-us/research/uploads/prod/2019/05/checkedc-post2019.pdf
+> [3] https://github.com/Microsoft/checkedc
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/phy.c b/drivers/net/wireless/mediatek/mt76/mt76x2/phy.c
-index 11167b7af668..2f618536ef2a 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2/phy.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2/phy.c
-@@ -285,6 +285,7 @@ void mt76x2_phy_update_channel_gain(struct mt76x02_dev *dev)
- {
- 	u8 *gain = dev->cal.agc_gain_init;
- 	u8 low_gain_delta, gain_delta;
-+	u32 agc_35, agc_37;
- 	bool gain_change;
- 	int low_gain;
- 	u32 val;
-@@ -321,6 +322,16 @@ void mt76x2_phy_update_channel_gain(struct mt76x02_dev *dev)
- 	else
- 		low_gain_delta = 14;
- 
-+	agc_37 = 0x2121262c;
-+	if (dev->mt76.chandef.chan->band == NL80211_BAND_2GHZ)
-+		agc_35 = 0x11111516;
-+	else if (low_gain == 2)
-+		agc_35 = agc_37 = 0x08080808;
-+	else if (dev->mt76.chandef.width == NL80211_CHAN_WIDTH_80)
-+		agc_35 = 0x10101014;
-+	else
-+		agc_35 = 0x11111116;
-+
- 	if (low_gain == 2) {
- 		mt76_wr(dev, MT_BBP(RXO, 18), 0xf000a990);
- 		mt76_wr(dev, MT_BBP(AGC, 35), 0x08080808);
-@@ -329,15 +340,13 @@ void mt76x2_phy_update_channel_gain(struct mt76x02_dev *dev)
- 		dev->cal.agc_gain_adjust = 0;
- 	} else {
- 		mt76_wr(dev, MT_BBP(RXO, 18), 0xf000a991);
--		if (dev->mt76.chandef.width == NL80211_CHAN_WIDTH_80)
--			mt76_wr(dev, MT_BBP(AGC, 35), 0x10101014);
--		else
--			mt76_wr(dev, MT_BBP(AGC, 35), 0x11111116);
--		mt76_wr(dev, MT_BBP(AGC, 37), 0x2121262C);
- 		gain_delta = 0;
- 		dev->cal.agc_gain_adjust = low_gain_delta;
- 	}
- 
-+	mt76_wr(dev, MT_BBP(AGC, 35), agc_35);
-+	mt76_wr(dev, MT_BBP(AGC, 37), agc_37);
-+
- 	dev->cal.agc_gain_cur[0] = gain[0] - gain_delta;
- 	dev->cal.agc_gain_cur[1] = gain[1] - gain_delta;
- 	mt76x2_phy_set_gain_val(dev);
--- 
-2.19.1
+So what might work better is if we defined a Rust dialect that used C 
+syntax. I.e. the end result would be something like the 'c2rust' or 
+'citrus' projects, where code like this would be directly translatable to 
+Rust:
+
+void gz_compress(FILE * in, gzFile out)
+{
+	char buf[BUFLEN];
+	int len;
+	int err;
+
+	for (;;) {
+		len = fread(buf, 1, sizeof(buf), in);
+		if (ferror(in)) {
+			perror("fread");
+			exit(1);
+		}
+		if (len == 0)
+			break;
+		if (gzwrite(out, buf, (unsigned)len) != len)
+			error(gzerror(out, &err));
+	}
+	fclose(in);
+
+	if (gzclose(out) != Z_OK)
+		error("failed gzclose");
+}
 
 
+#[no_mangle]
+pub unsafe extern "C" fn gz_compress(mut in_: *mut FILE, mut out: gzFile) {
+    let mut buf: [i8; 16384];
+    let mut len;
+    let mut err;
+    loop  {
+        len = fread(buf, 1, std::mem::size_of_val(&buf), in_);
+        if ferror(in_) != 0 { perror("fread"); exit(1); }
+        if len == 0 { break ; }
+        if gzwrite(out, buf, len as c_uint) != len {
+            error(gzerror(out, &mut err));
+        };
+    }
+    fclose(in_);
+    if gzclose(out) != Z_OK { error("failed gzclose"); };
+}
 
+Example taken from:
+
+   https://gitlab.com/citrus-rs/citrus
+
+Does this make sense?
+
+Thanks,
+
+	Ingo
