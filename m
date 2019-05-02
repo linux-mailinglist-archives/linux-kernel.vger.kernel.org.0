@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4044D1209F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3479F1209D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfEBQy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:54:29 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38287 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfEBQyJ (ORCPT
+        id S1726780AbfEBQyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:54:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45256 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbfEBQyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:54:09 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 10so1418830pfo.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:54:08 -0700 (PDT)
+        Thu, 2 May 2019 12:54:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i21so1311104pgi.12
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Akvar0z3H2C4Po+4q/PqqG5fzv7JGnOTC1Q3ZfsqLhU=;
-        b=fC1fKb4UtdDJy+EmO1Gym1hhgWjGO3rGFwZni5C2m9o/yy56e4k/VuEbNtE5wdlYbT
-         9t9fkXDGp9Hf38G7rtbxc7AZxJ82RLFxjeG3VNayNl/PJnrJVxHerN59gizF8GK2sBB/
-         0Jd8Eabzc3vaCa6Y8CqD6KjcuEx3vyJzECm9Uz6d8p3fkVRdQTygykJKdyZa0BsE0jvc
-         S0eGFoEFF1lyCtMPM4QsGU6xBZiCfFOM9q59zFqkZV63H7HLzt1WV+J11lgNzezF5ATf
-         HGzR9JN/MAKLXOa1sSBWRrnpp5Pndhp1QULWXHvTn0ddGIXoHceAgemoViMFxkFetEEj
-         CKjA==
+        bh=vRavtCuEgDmIK+L0LjCzpchEvsYFUuSGMHsKbPl1OXo=;
+        b=p1iuQ8jp93efREIh6tYMi7eudLPjh6BqGeUJEt+25legIa8wXytBuW36/RYS3b9GRD
+         zhPlnLD9gMJp4+rT1NG5f9R7MUbqdBxDKnkIXc/nYmYox4ISoh9TrNuLHPtoH+9CwvYT
+         ysz8ess489SK5iVoYQViyDaSkP5qFfOkTqolR+qOUit3Z2XakRcEFTJPGT6FPJFOC0Rc
+         g2eDFre6sXVSAvBL7dFH1aesDippUpYcqi6PBM4umc8pEHTI82Zxm8O0TO9JCwPK3n4u
+         wP8GJzCCarOZWhrzPbwBTNcgjqM8b+bQs8q8EHs9nvrQPOG2VmRiqru+PsGr7vYrNVeR
+         Aw3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Akvar0z3H2C4Po+4q/PqqG5fzv7JGnOTC1Q3ZfsqLhU=;
-        b=o48TX2yLudwAp9hucjhmd8FnHTWVBK3huQ9qKUHduCjVP8DObeollh/YYCW4HzwruS
-         kD+P/FmsLYyu02+YZXr0v3ccw7hhRaBZ0plLZl/jKtJDM0cgs2J9KBeQGSx8QHdN6xOQ
-         o19cU53rPTeCX+SHPDJmoF1pyYF2hK4a0L8xzzC//HvlM3lalCk1zT2uxtLZeVnUjT/W
-         xFR5yhbN/wWKt+IT883ofz3ZycjXVjPCvzsAlXOmk9h7JfUQsUGZ62oF66zBP/sEANJA
-         8VXbhGQANOFx6Kd5xMmMsYE+1pNqdqc3urzkKT9OP5PwT2JnJKZRziP5J6zRHEsG5K8G
-         vlNQ==
-X-Gm-Message-State: APjAAAVlQ6sZ4zZQL0fODK9pjilduajGn/E/NMlamX8fAVV/5rTAZdi/
-        C6pcIE4H69BoSn00AB5n6/iWkiKruV8=
-X-Google-Smtp-Source: APXvYqyeyXwssHT1qjn2P4lp23bJGQNZPL+x2k1nwyT2Te9BxDQPkk63jNbgkCyEDO64qv5sdeRFrw==
-X-Received: by 2002:a63:8b4b:: with SMTP id j72mr5048125pge.318.1556816048509;
-        Thu, 02 May 2019 09:54:08 -0700 (PDT)
+        bh=vRavtCuEgDmIK+L0LjCzpchEvsYFUuSGMHsKbPl1OXo=;
+        b=dvsbW3He6i8v4BxMqADzsBPy2J5OQ/0EKxclMfughEaB7cfe1O560vMvBubofDkHFg
+         KNjpEmORor92nrKjkTsiUhTPspi4XWhgPDeXGU5B/qQdqIS7eTUcsw35vJ+p69LZ0qqo
+         CDqIbL1SoCc/XoPEcJpIoszKlLa/LnbcOzLox+R5CSi2SvmuJ+eC4BYRAfnWHR0esBZ3
+         cz0jaFwUEuzmHXnfVFSCGrl2VIBkMcKnbBB72ujO516s3CAmaYnF8FG6CVX5mS+jHsoY
+         fYMOsxWgekX8ltUFtxPNMD+sXEPqfmDAcCvgMQGaLO8CGMmRcm6IBl10s0z0tM8SVAUk
+         Vl/Q==
+X-Gm-Message-State: APjAAAXZ96NcQrJd4GmbVcNWnQ6VMiKOxF/JrWU015Ao8QL0OCF5DVu4
+        Z959dL7sOPec43Kw+DQBtrCfFg==
+X-Google-Smtp-Source: APXvYqzuEa4AvvzUuF+vRnu4cN2uHh5br+nlbOPlgO29fCu9f+FQqF4a72vx9pr8GZSfiJCLoTg6ag==
+X-Received: by 2002:a63:ef46:: with SMTP id c6mr5003771pgk.392.1556816049674;
+        Thu, 02 May 2019 09:54:09 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id j2sm69949pff.77.2019.05.02.09.54.07
+        by smtp.gmail.com with ESMTPSA id j2sm69949pff.77.2019.05.02.09.54.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 09:54:07 -0700 (PDT)
+        Thu, 02 May 2019 09:54:08 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] dt-bindings: arm: coresight: Add new compatible for static replicator
-Date:   Thu,  2 May 2019 10:54:02 -0600
-Message-Id: <20190502165405.31573-2-mathieu.poirier@linaro.org>
+Subject: [PATCH 2/4] coresight: replicator: Add new device id for static replicator
+Date:   Thu,  2 May 2019 10:54:03 -0600
+Message-Id: <20190502165405.31573-3-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190502165405.31573-1-mathieu.poirier@linaro.org>
 References: <20190502165405.31573-1-mathieu.poirier@linaro.org>
@@ -60,64 +60,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Leo Yan <leo.yan@linaro.org>
 
-CoreSight uses below bindings for replicator:
+This patch adds a device id for the new static replicator compatible
+string; it changes the driver name from "coresight-replicator" to
+"coresight-static-replicator" as well.
 
-  Dynamic replicator, aka. configurable replicator:
-    "arm,coresight-dynamic-replicator", "arm,primecell";
-
-  Static replicator, aka. non-configurable replicator:
-    "arm,coresight-replicator";
-
-The compatible string "arm,coresight-replicator" is not an explicit
-naming to express the replicator is 'static'.  To unify the naming
-convention, this patch introduces a new compatible string
-"arm,coresight-static-replicator" for the static replicator; the
-compatible string "arm,coresight-replicator" is kept for backward
-compatibility, but tag it as obsolete and suggest to use the new
-compatible string.
-
-As result CoreSight replicator have below bindings:
-
-  Dynamic replicator:
-    "arm,coresight-dynamic-replicator", "arm,primecell";
-
-  Static replicator:
-    "arm,coresight-static-replicator";
-    "arm,coresight-replicator"; (obsolete)
+This patch also gives warning when use the replicator obsolete DT
+binding.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/coresight.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/hwtracing/coresight/coresight-replicator.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-index f8aff65ab921..d02d160fa8ac 100644
---- a/Documentation/devicetree/bindings/arm/coresight.txt
-+++ b/Documentation/devicetree/bindings/arm/coresight.txt
-@@ -69,7 +69,10 @@ its hardware characteristcs.
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index 4e0da85efd2d..8c9ce74498e1 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -189,6 +189,9 @@ static int replicator_probe(struct device *dev, struct resource *res)
+ 		dev->platform_data = pdata;
+ 	}
  
- 	* compatible: Currently supported value is (note the absence of the
- 	  AMBA markee):
--		- "arm,coresight-replicator"
-+		- Coresight Non-configurable Replicator:
-+			"arm,coresight-static-replicator";
-+			"arm,coresight-replicator"; (OBSOLETE. For backward
-+				compatibility and will be removed)
++	if (of_device_is_compatible(np, "arm,coresight-replicator"))
++		pr_warn_once("Uses OBSOLETE CoreSight replicator binding\n");
++
+ 	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+ 	if (!drvdata)
+ 		return -ENOMEM;
+@@ -285,13 +288,14 @@ static const struct dev_pm_ops replicator_dev_pm_ops = {
  
- 	* port or ports: see "Graph bindings for Coresight" below.
+ static const struct of_device_id static_replicator_match[] = {
+ 	{.compatible = "arm,coresight-replicator"},
++	{.compatible = "arm,coresight-static-replicator"},
+ 	{}
+ };
  
-@@ -169,7 +172,7 @@ Example:
- 		/* non-configurable replicators don't show up on the
- 		 * AMBA bus.  As such no need to add "arm,primecell".
- 		 */
--		compatible = "arm,coresight-replicator";
-+		compatible = "arm,coresight-static-replicator";
- 
- 		out-ports {
- 			#address-cells = <1>;
+ static struct platform_driver static_replicator_driver = {
+ 	.probe          = static_replicator_probe,
+ 	.driver         = {
+-		.name   = "coresight-replicator",
++		.name   = "coresight-static-replicator",
+ 		.of_match_table = static_replicator_match,
+ 		.pm	= &replicator_dev_pm_ops,
+ 		.suppress_bind_attrs = true,
 -- 
 2.17.1
 
