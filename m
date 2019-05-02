@@ -2,87 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 610BC1117B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C889111A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbfEBC3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:29:44 -0400
-Received: from mail-yw1-f45.google.com ([209.85.161.45]:37322 "EHLO
-        mail-yw1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbfEBC3o (ORCPT
+        id S1726521AbfEBCkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:40:19 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:47459 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726386AbfEBCj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:29:44 -0400
-Received: by mail-yw1-f45.google.com with SMTP id a62so493377ywa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 19:29:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H1U2mJXBbnkWOnvmjM7JApU8kCjuCk0GAzDiJe0SSQ8=;
-        b=HhyNhPER21cKXrmuPmPHmnjvXbBpYYCdGpMAWXbBnuVSKm35ii3+zr47c07qUIxCtE
-         kpxIKagdzxPIIgRSrfKgEd7BwxlESTY+lWAn8RzsWw/E5ZP3yQHRL57GtD5cUsViV5Ot
-         16t1lQ///dE+3A/FI39hvUZadgfIhWD+VnHI3SP5Ic6H3azruGl+VZUqFPILyyadS6GG
-         lbI30N99yOtU5qE+sWz7oKl0fK3kaT7ATJxWt4D+HG+tch1RA93Yegpx2wuD41x0ktMP
-         mETEUEtXJHfn0qPrOI6JGR0o9Z0gRRWQzUZryzc1ph6iwNmK8KVCUivX9qKk/5mEwU33
-         gdyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H1U2mJXBbnkWOnvmjM7JApU8kCjuCk0GAzDiJe0SSQ8=;
-        b=X5g+AjFiZO3EzLEj9EWrIZO9EgW0E1LBKTtlRTE+Ew0/MT4VDVplDM2oRnpDv2DeLK
-         t+TKKuy/ZKyMFv3G2MSUTQgNpOULJ8gOU9HwDZ1WrCK5GMucmvl2ywiByI5fUYs+JMVr
-         oyDByDkOUtoiyWW08WGqHoucLN6slwnnqPK3A7b/QZI8WxFSLbgozip4XkvZE7kaP2mN
-         eKwqlDrbrBDaCbpooar9C9YZ1/Vs5WBTq9FUCdqHbyrte16Xywm+Ww025+yyAu4gNO7Q
-         3GVwpIELAfTAASXUYEKb6HhATWl60/Ivohh1aK4Qw63R9sgn2UNbmLiGhsgfVK8vO97C
-         ptFw==
-X-Gm-Message-State: APjAAAVnr1c/eaKrVt8VhxCJxf8v3QF2mV+tQ5P/AudylZB0pQSmYuDn
-        dyLiMD/qBcgHHheR0E43o2Q=
-X-Google-Smtp-Source: APXvYqwiqBdAZ2Op0tTtlyQx/W77Z7fZU/x3DkLyj8DO/TL4D0NenRU2IltJnGLYqvLRkaPf6n34xA==
-X-Received: by 2002:a81:9203:: with SMTP id j3mr933715ywg.511.1556764183630;
-        Wed, 01 May 2019 19:29:43 -0700 (PDT)
-Received: from [10.230.25.168] ([192.19.224.250])
-        by smtp.gmail.com with ESMTPSA id h3sm7436807ywb.87.2019.05.01.19.29.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 19:29:42 -0700 (PDT)
-Subject: Re: [PATCH v2] mtd: rawnand: brcmnand: fix bch ecc layout for large
- page nand
-To:     Kamal Dasu <kdasu.kdev@gmail.com>, linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-References: <1556738544-29857-1-git-send-email-kdasu.kdev@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <baffcda4-84f8-cd5f-8872-a2e2572024ff@gmail.com>
-Date:   Wed, 1 May 2019 19:29:39 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 1 May 2019 22:39:59 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 2948A658;
+        Wed,  1 May 2019 22:32:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 01 May 2019 22:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=g7oDYn0FII0T/Yixf
+        mxwmi9xKUU1gQhrv1XNZ2l/Aog=; b=1AlxjvtWqz6uPLhuiKS/7HT1o57XrVoP9
+        jBiYitao8Glgghf9QiX9Qlmqfa3BP99WSImI08GgertYCmAA4ZSa5opbhkepI8z/
+        kC7K2bPocryh5UANj4Tv0S/eE14SNAdmWksd6FXXdgjjaJrDVtZvkZRoU71EKoc8
+        FfMCbhfZyQLHaLPp3bI6epvNBcFaI75v0yDfn6EC4a5Mqyk6VZ9Pp+9aH6fVI0Zq
+        4rXg1tnryb/V+Obk2B0ni17Wcvkuw4eNPmKXw/P6xXXPEwRP0HNrq7HT51duw/do
+        JdL+9S99Lrlf0yDxXATcnUVpAcMo//Wfm3Q+o2IJigl34GenhWhXA==
+X-ME-Sender: <xms:vlbKXLv_p91ClTqjEGTIKVr6EQoj7FVdXQAsVQcfTdT5sYb14T4AgQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieekgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhnucev
+    rdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkphepud
+    dvuddrgeegrddvtdegrddvfeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgsihhn
+    sehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:vlbKXE198qRD5-2msi22zIZW5nYYRYNC-OXDGcbOO3LsFSZe6SL82Q>
+    <xmx:vlbKXA_gkou5Ygtm0DLL1Y_Tr1lC4uxE88ijqkifuHRkrrBiugwMog>
+    <xmx:vlbKXCASCeRWEmyEodxZpdQbGyq8iAgOhRn81KpBkUKD8eVR2Dexiw>
+    <xmx:v1bKXLSmw6-fThuLQ4stDG0aBAx51mOFURnzGOSqlQdLRp2fHecdWw>
+Received: from eros.localdomain (ppp121-44-204-235.bras1.syd2.internode.on.net [121.44.204.235])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 77E91E407B;
+        Wed,  1 May 2019 22:32:27 -0400 (EDT)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/5] kobject: Add and use init predicate
+Date:   Thu,  2 May 2019 12:31:37 +1000
+Message-Id: <20190502023142.20139-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <1556738544-29857-1-git-send-email-kdasu.kdev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+This set patches kobject to add a predicate function for determining the
+initialization state of a kobject.  Stripped down, the predicate is:
+
+	bool kobject_is_initialized(struct kobject *kobj)
+	{
+		return kobj->state_initialized
+	}
+
+This is RFC because there are merge conflicts with Greg's driver-core
+tree.  I'm guessing this is caused by the cleanup patches (#2 and #3).
+If the set is deemed likeable then I can re-work the set targeting
+whomever's tree this would go in through.
+
+Applies on top of:
+
+	mainline tag: v5.1-rc6
+	livepatching branch: for-next
+
+Series Description
+------------------
+	
+Patch #1 is a memleak patch, previously posted and not overly
+interesting.  Comment by Greg on the thread on that patch was the
+incentive for this series.
+
+Patch #2 and #3 are kobject kernel-doc comment clean ups.  Can be
+dropped if not liked.
+
+Patch #4 adds the predicate function to the kobject API.
+
+Patch #5 uses the new predicate to remove the custom logic from livepatch
+for tracking kobject initialization state.
+
+Testing
+-------
+
+Kernel build configuration
+
+	$ egrep LIVEPATCH .config
+	CONFIG_HAVE_LIVEPATCH=y
+	CONFIG_LIVEPATCH=y
+	CONFIG_TEST_LIVEPATCH=m
+
+	$ egrep FTRACE .config
+	CONFIG_KPROBES_ON_FTRACE=y
+	CONFIG_HAVE_KPROBES_ON_FTRACE=y
+	CONFIG_HAVE_DYNAMIC_FTRACE=y
+	CONFIG_HAVE_DYNAMIC_FTRACE_WITH_REGS=y
+	CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+	CONFIG_FTRACE=y
+	CONFIG_FTRACE_SYSCALLS=y
+	CONFIG_DYNAMIC_FTRACE=y
+	CONFIG_DYNAMIC_FTRACE_WITH_REGS=y
+	CONFIG_FTRACE_MCOUNT_RECORD=y
+	# CONFIG_FTRACE_STARTUP_TEST is not set
+
+Builds fine but doesn't boot in Qemu.  I've never run dynamic Ftrace, it
+appears to crash during this.  Was hoping to run the livepatch tests but
+not sure how to at this moment.  Is dynamic Ftrace and livepatch testing
+something that can even be done in a VM or do I need to do this or
+baremetal?
+
+Thanks for taking the time to look at this.
+
+	Tobin
 
 
-On 5/1/2019 12:22 PM, Kamal Dasu wrote:
-> The oobregion->offset for large page nand parts was wrong, change
-> fixes this error in calculation.
-> 
-> Fixes: ef5eeea6e911 ("mtd: nand: brcm: switch to mtd_ooblayout_ops")
-> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+Tobin C. Harding (5):
+  livepatch: Fix kobject memleak
+  kobject: Remove docstring reference to kset
+  kobject: Fix kernel-doc comment first line
+  kobject: Add kobject initialized predicate
+  livepatch: Do not manually track kobject initialization
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+ include/linux/kobject.h   |  2 ++
+ include/linux/livepatch.h |  6 ----
+ kernel/livepatch/core.c   | 28 +++++++++---------
+ lib/kobject.c             | 60 +++++++++++++++++++++++----------------
+ 4 files changed, 51 insertions(+), 45 deletions(-)
+
 -- 
-Florian
+2.21.0
+
