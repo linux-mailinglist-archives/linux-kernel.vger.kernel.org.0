@@ -2,113 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA0A11861
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29BB411880
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbfEBLso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 07:48:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33214 "EHLO mail.kernel.org"
+        id S1726363AbfEBLvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 07:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfEBLsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 07:48:42 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726268AbfEBLvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 07:51:13 -0400
+Received: from localhost (unknown [171.76.113.243])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22F972081C;
-        Thu,  2 May 2019 11:48:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24CE02081C;
+        Thu,  2 May 2019 11:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556797721;
-        bh=NxECKS4hO+fvuuCrWF9YKIVWO4SJGdSkM8vdKG2zimY=;
+        s=default; t=1556797873;
+        bh=4c4LQfXQVE08v5td1K/+nThtbJXOBTc9/qJt2A/+2+c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ds5BuqKmOB7afrbcN0Xt+UHtJ8ipUSsJUzAyDjWk1qH1nzsBNaeQIfRIwDfKi1m2K
-         BTNO7v+q/sQLq5BPkz4ktdAm71+ks5/iTh6GtHvxLKz5bSrAnqFFSP+A1gLPEROOdz
-         rUh42R8UgAsbD26YA8QbjexKESx/pQc0k30YZH5s=
-Date:   Thu, 2 May 2019 13:48:39 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>, mh@mike.franken.de,
-        Lukas Wunner <lukas@wunner.de>, Takashi Iwai <tiwai@suse.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, ckellner@redhat.com,
-        Jiri Slaby <jslaby@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Furquan Shaikh <furquan@google.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Robert Moore <robert.moore@intel.com>
-Subject: Re: [REGRESSION 5.0.8] Dell thunderbolt dock broken (xhci_hcd and
- thunderbolt)
-Message-ID: <20190502114839.GC24696@kroah.com>
-References: <s5hsgu0ihyg.wl-tiwai@suse.de>
- <EksOpJxc6GB@mike.franken.de>
- <20190430090021.GF26516@lahna.fi.intel.com>
- <CAJZ5v0j_fYqtMv07C-V_9fCJ6=1ec3GjvT2M7PXVNSbZpoM67Q@mail.gmail.com>
+        b=t2kQ0mFpj73C1tCaMzXBgrFWY/FMwfrfeVgEHZFocgt5dubhERbcZme1mu0eDDn6f
+         PO7DkNFNM6JvDKsKN0mFZtUS491601QpVQJuYfPRLvt6COPlsqjY/G9I17QExfFnUd
+         T5d9ybzXcnpaVXN2sxWcZQPluYd3vNtqobvpVwZ4=
+Date:   Thu, 2 May 2019 17:21:03 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: qcom: qcs404: Add PCIe related nodes
+Message-ID: <20190502115103.GL3845@vkoul-mobl.Dlink>
+References: <20190502002408.10719-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j_fYqtMv07C-V_9fCJ6=1ec3GjvT2M7PXVNSbZpoM67Q@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190502002408.10719-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 11:37:48AM +0200, Rafael J. Wysocki wrote:
-> On Tue, Apr 30, 2019 at 11:00 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > +Rafael, Furquan and linux-acpi
-> >
-> > (The original thread is here https://lore.kernel.org/lkml/s5hy33siofw.wl-tiwai@suse.de/T/#u)
-> >
-> > On Tue, Apr 30, 2019 at 10:39:00AM +0200, Michael Hirmke wrote:
-> > > Hi Takashi,
-> > >
-> > > [...]
-> > > >>> I also have XPS 9370 but not that particular dock. I will check tomorrow
-> > > >>> if I can reproduce it as well.
-> > > >>
-> > > >> There aren't too many changes between 5.0.7 and 5.0.8 that touch
-> > > >> PCI/ACPI. This is just a shot in the dark but could you try to revert:
-> > > >>
-> > > >>   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.gi
-> > > >>   t/commit/?h=linux-5.0.y&id=da6a87fb0ad43ae811519d2e0aa325c7f792b13a
-> > > >>
-> > > >> and see if it makes any difference?
-> > >
-> > > >OK, I'm building a test kernel package with the revert in OBS
-> > > >home:tiwai:bsc1133486 repo.  A new kernel will be
-> > > >kernel-default-5.0.10-*g8edeab8:
-> > > >  http://download.opensuse.org/repositories/home:/tiwai:/bsc1133486/standard/
-> > >
-> > > >Michael, once when the new kernel is ready, please give it a try.
-> > >
-> > > as far as I can see, state is back to normal with this kernel.
-> > > No more error messages or crashing modules and all devices seem to work
-> > > as expected.
-> > > Only thing is, that the external devices connected to the Thunderbolt
-> > > dock are coming up a little bit slower than with 5.0.7 - but this is
-> > > nothing, I'd worry about.
-> >
-> > Thanks for testing.
-> >
-> > Rafael, it seems that commit c8b1917c8987 ("ACPICA: Clear status of GPEs
-> > before enabling them") causes problem with Thunderbolt controllers if
-> > you boot with device (dock) connected.
-> >
-> > I think the reason is the same that got fixed in v4.14 with commit
-> > ecc1165b8b74 ("ACPICA: Dispatch active GPEs at init time") which the
-> > above commit essentially undoes if I understand it correctly.
+On 01-05-19, 17:24, Bjorn Andersson wrote:
+> The QCS404 has a PCIe2 PHY and a Qualcomm PCIe controller, add these to
+> the platform dtsi and enable them for the EVB with the perst gpio
+> and analog supplies defined.
 > 
-> OK, I'll queue up a revert of that one then, thanks!
+> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> Erik, I think that commit c8b1917c8987 has been picked up by the
-> upstream ACPICA already.  If I'm not mistaken, it needs to be reverted
-> from there as well.
+> The patch depends on the acceptance of:
+> https://lore.kernel.org/lkml/20190502002138.10646-1-bjorn.andersson@linaro.org/
+> https://lore.kernel.org/lkml/20190502001406.10431-2-bjorn.andersson@linaro.org/
+> https://lore.kernel.org/lkml/20190502001955.10575-3-bjorn.andersson@linaro.org/
+> 
+> Changes since v2:
+> - None
+> 
+>  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 25 +++++++++
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi     | 67 ++++++++++++++++++++++++
 
-I've queued the revert up in the stable trees as it has hit Linus's tree
-now, and will push out a new round of stable kernels soon.
+I would have preferred the evb changes to follow the node addition but
+that is matter of preference :)
 
-thanks,
+>  2 files changed, 92 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> index 2c3127167e3c..988d21ca0df1 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> @@ -68,6 +68,22 @@
+>  	};
+>  };
+>  
+> +&pcie {
+> +	status = "ok";
+> +
+> +	perst-gpio = <&tlmm 43 GPIO_ACTIVE_LOW>;
+> +
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&perst_state>;
+> +};
+> +
+> +&pcie_phy {
+> +	status = "ok";
+> +
+> +	vdda-vp-supply = <&vreg_l3_1p05>;
+> +	vdda-vph-supply = <&vreg_l5_1p8>;
+> +};
+> +
+>  &remoteproc_adsp {
+>  	status = "ok";
+>  };
+> @@ -184,6 +200,15 @@
+>  };
+>  
+>  &tlmm {
+> +	perst_state: perst {
+> +		pins = "gpio43";
+> +		function = "gpio";
+> +
+> +		drive-strength = <2>;
+> +		bias-disable;
+> +		output-low;
+> +	};
+> +
+>  	sdc1_on: sdc1-on {
+>  		clk {
+>  			pins = "sdc1_clk";
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> index ffedf9640af7..f41feab8996c 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -4,6 +4,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/qcom,gcc-qcs404.h>
+>  #include <dt-bindings/clock/qcom,rpmcc.h>
+> +#include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -383,6 +384,7 @@
+>  			compatible = "qcom,gcc-qcs404";
+>  			reg = <0x01800000 0x80000>;
+>  			#clock-cells = <1>;
+> +			#reset-cells = <1>;
 
-greg k-h
+But this one doesn't belong here..
+
+Rest lgtm.
+
+-- 
+~Vinod
