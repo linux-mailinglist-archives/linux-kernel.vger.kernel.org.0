@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C84E11CD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E6F11CD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfEBPZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:25:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41132 "EHLO mail.kernel.org"
+        id S1727487AbfEBPZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:25:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbfEBPZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:25:05 -0400
+        id S1727476AbfEBPZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:25:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD36720675;
-        Thu,  2 May 2019 15:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8DD020449;
+        Thu,  2 May 2019 15:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810704;
-        bh=OIiIwFpL32ezEt1GXclMSHdGI81OzQ4c3atY4iwVccE=;
+        s=default; t=1556810712;
+        bh=AjiXTbQ+wFTjj3aP/Q6+dQXyutOY9jFe48P2zMrHrsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Oyo/0+ODlOAXNIICkcVL7XZfHEKVEHDsXigy0lt7ac54H5zb/Irn18+l8A24ycHH
-         RcX5W7qsCBtthNsg3e7EDA4VUhHJc+XEyDRmJiW0+uc0y9MjU1qtWN/FjKx3ruNJ/T
-         KLeeHX0KKuj3OjTzGpJTEWAzI7toofmwtpOTBJ+M=
+        b=Gy+erdd7dQdhoC+oM7J1cUk1agt5BjGyKXDHu5MH+u2Gh/BhxfLJ1AZSLEbl5Fwkd
+         v7HtYd3O69/lS6ZYY5jMWLJjxHDp4Xg4Hnmpml+9H4lfGzcuaczFtj1AUGhxp+a1jH
+         UQ/tdVIf1ynyl8CRJ3i8NvOEZJcbxzrUH3GLbBQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 30/49] net/sched: dont dereference a->goto_chain to read the chain index
-Date:   Thu,  2 May 2019 17:21:07 +0200
-Message-Id: <20190502143327.657639861@linuxfoundation.org>
+Subject: [PATCH 4.14 31/49] ARM: dts: imx6qdl: Fix typo in imx6qdl-icore-rqs.dtsi
+Date:   Thu,  2 May 2019 17:21:08 +0200
+Message-Id: <20190502143327.822226131@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
 References: <20190502143323.397051088@linuxfoundation.org>
@@ -44,37 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fe384e2fa36ca084a456fd30558cccc75b4b3fbd ]
+[ Upstream commit 41b37f4c0fa67185691bcbd30201cad566f2f0d1 ]
 
-callers of tcf_gact_goto_chain_index() can potentially read an old value
-of the chain index, or even dereference a NULL 'goto_chain' pointer,
-because 'goto_chain' and 'tcfa_action' are read in the traffic path
-without caring of concurrent write in the control path. The most recent
-value of chain index can be read also from a->tcfa_action (it's encoded
-there together with TC_ACT_GOTO_CHAIN bits), so we don't really need to
-dereference 'goto_chain': just read the chain id from the control action.
+This patch fixes a spelling typo.
 
-Fixes: e457d86ada27 ("net: sched: add couple of goto_chain helpers")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+Fixes: cc42603de320 ("ARM: dts: imx6q-icore-rqs: Add Engicam IMX6 Q7 initial support")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- include/net/tc_act/tc_gact.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/tc_act/tc_gact.h b/include/net/tc_act/tc_gact.h
-index e82d93346b63..bb74ea83d57d 100644
---- a/include/net/tc_act/tc_gact.h
-+++ b/include/net/tc_act/tc_gact.h
-@@ -51,7 +51,7 @@ static inline bool is_tcf_gact_goto_chain(const struct tc_action *a)
- 
- static inline u32 tcf_gact_goto_chain_index(const struct tc_action *a)
- {
--	return a->goto_chain->index;
-+	return READ_ONCE(a->tcfa_action) & TC_ACT_EXT_VAL_MASK;
- }
- 
- #endif /* __NET_TC_GACT_H */
+diff --git a/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi b/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
+index 7ca291e9dbdb..80f1b3fb6abc 100644
+--- a/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
+@@ -222,7 +222,7 @@
+ 	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
+ 	vmcc-supply = <&reg_sd3_vmmc>;
+ 	cd-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+-	bus-witdh = <4>;
++	bus-width = <4>;
+ 	no-1-8-v;
+ 	status = "okay";
+ };
+@@ -233,7 +233,7 @@
+ 	pinctrl-1 = <&pinctrl_usdhc4_100mhz>;
+ 	pinctrl-2 = <&pinctrl_usdhc4_200mhz>;
+ 	vmcc-supply = <&reg_sd4_vmmc>;
+-	bus-witdh = <8>;
++	bus-width = <8>;
+ 	no-1-8-v;
+ 	non-removable;
+ 	status = "okay";
 -- 
 2.19.1
 
