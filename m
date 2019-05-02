@@ -2,45 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C228D11130
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A08111158
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfEBCTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:19:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56386 "EHLO
+        id S1726847AbfEBCUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:20:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56768 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfEBCTA (ORCPT
+        with ESMTP id S1726592AbfEBCTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:00 -0400
+        Wed, 1 May 2019 22:19:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=oA8tzqPqM1UUXhOEIjynTm5arH7kOmcJGLh2VgChYiI=; b=qDPxsBUrGKyQ
-        S+xY+JYIvUXlyRzFFltRYzOxfKVVSx9k5JCpkcZvqQ6PYBZTTAaG9JtzoGVkMg/EVPotwOCZiLJI/
-        IgTZXizDzKoXkFpZ1KzjX9UjmqLoEL8PrcXG0u7ivCBTK4SMlSeQDadiUCkCaMxMd0Jus+0wdDund
-        f+XXM=;
+        List-Archive; bh=EVE8bSshKnItl0eubjnAOH03ySne216GQtby64RJnLw=; b=o/KTDwk9QvFN
+        JbyIwDUjCkoApEnDiMcp9eGEfksDBNbbkmixJ9q/eSkc5uf5H6M0obEMaeddqAgL8hk/PRnu4e9Te
+        5mKxR1TIbJaifkAs6AjbZ1aGIhQliBJMt8vkmthjnB1bHjAT38RgLDP9jzaUe7RLx+kCGXaUb4K+M
+        JYbLE=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1JI-0005uO-0m; Thu, 02 May 2019 02:18:56 +0000
+        id 1hM1JJ-0005ul-Lx; Thu, 02 May 2019 02:18:58 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 1E126441D3E; Thu,  2 May 2019 03:18:53 +0100 (BST)
+        id C9DFB441D3C; Thu,  2 May 2019 03:18:54 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+To:     Fabien Dessenne <fabien.dessenne@st.com>
+Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
         Mark Brown <broonie@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Applied "regulator: vexpress: Get rid of struct vexpress_regulator" to the regulator tree
-In-Reply-To: <20190429113542.476-1-axel.lin@ingics.com>
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Applied "spi: stm32: return the get_irq error" to the spi tree
+In-Reply-To: <1556109524-21874-1-git-send-email-fabien.dessenne@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021853.1E126441D3E@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:53 +0100 (BST)
+Message-Id: <20190502021854.C9DFB441D3C@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: vexpress: Get rid of struct vexpress_regulator
+   spi: stm32: return the get_irq error
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,121 +75,37 @@ to this mail.
 Thanks,
 Mark
 
-From eeb1b2355a6f06c4995ce282e247afffb946d983 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Mon, 29 Apr 2019 19:35:41 +0800
-Subject: [PATCH] regulator: vexpress: Get rid of struct vexpress_regulator
+From 8d1467a68426c61807c97163459b481ecb714523 Mon Sep 17 00:00:00 2001
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Date: Wed, 24 Apr 2019 14:38:44 +0200
+Subject: [PATCH] spi: stm32: return the get_irq error
 
-The *regdev and *regmap can be replaced by local variables in probe().
-Only desc of struct vexpress_regulator is really need, so just use
-struct regulator_desc directly and remove struct vexpress_regulator.
+During probe, return the "get_irq" error value instead of -ENOENT. This
+allows the driver to be defer probed if needed.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Acked-by: Amelie Delaunay <amelie.delaunay@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/vexpress-regulator.c | 53 +++++++++++---------------
- 1 file changed, 22 insertions(+), 31 deletions(-)
+ drivers/spi/spi-stm32.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/vexpress-regulator.c b/drivers/regulator/vexpress-regulator.c
-index ca4230fe9e77..a15a1319436a 100644
---- a/drivers/regulator/vexpress-regulator.c
-+++ b/drivers/regulator/vexpress-regulator.c
-@@ -23,17 +23,10 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/vexpress.h>
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index 4186ed20d796..b222ce8d083e 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1839,8 +1839,9 @@ static int stm32_spi_probe(struct platform_device *pdev)
  
--struct vexpress_regulator {
--	struct regulator_desc desc;
--	struct regulator_dev *regdev;
--	struct regmap *regmap;
--};
--
- static int vexpress_regulator_get_voltage(struct regulator_dev *regdev)
- {
--	struct vexpress_regulator *reg = rdev_get_drvdata(regdev);
--	u32 uV;
--	int err = regmap_read(reg->regmap, 0, &uV);
-+	unsigned int uV;
-+	int err = regmap_read(regdev->regmap, 0, &uV);
- 
- 	return err ? err : uV;
- }
-@@ -41,9 +34,7 @@ static int vexpress_regulator_get_voltage(struct regulator_dev *regdev)
- static int vexpress_regulator_set_voltage(struct regulator_dev *regdev,
- 		int min_uV, int max_uV, unsigned *selector)
- {
--	struct vexpress_regulator *reg = rdev_get_drvdata(regdev);
--
--	return regmap_write(reg->regmap, 0, min_uV);
-+	return regmap_write(regdev->regmap, 0, min_uV);
- }
- 
- static const struct regulator_ops vexpress_regulator_ops_ro = {
-@@ -57,44 +48,44 @@ static const struct regulator_ops vexpress_regulator_ops = {
- 
- static int vexpress_regulator_probe(struct platform_device *pdev)
- {
--	struct vexpress_regulator *reg;
-+	struct regulator_desc *desc;
- 	struct regulator_init_data *init_data;
- 	struct regulator_config config = { };
-+	struct regulator_dev *rdev;
-+	struct regmap *regmap;
- 
--	reg = devm_kzalloc(&pdev->dev, sizeof(*reg), GFP_KERNEL);
--	if (!reg)
-+	desc = devm_kzalloc(&pdev->dev, sizeof(*desc), GFP_KERNEL);
-+	if (!desc)
- 		return -ENOMEM;
- 
--	reg->regmap = devm_regmap_init_vexpress_config(&pdev->dev);
--	if (IS_ERR(reg->regmap))
--		return PTR_ERR(reg->regmap);
-+	regmap = devm_regmap_init_vexpress_config(&pdev->dev);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
- 
--	reg->desc.name = dev_name(&pdev->dev);
--	reg->desc.type = REGULATOR_VOLTAGE;
--	reg->desc.owner = THIS_MODULE;
--	reg->desc.continuous_voltage_range = true;
-+	desc->name = dev_name(&pdev->dev);
-+	desc->type = REGULATOR_VOLTAGE;
-+	desc->owner = THIS_MODULE;
-+	desc->continuous_voltage_range = true;
- 
- 	init_data = of_get_regulator_init_data(&pdev->dev, pdev->dev.of_node,
--					       &reg->desc);
-+					       desc);
- 	if (!init_data)
- 		return -EINVAL;
- 
- 	init_data->constraints.apply_uV = 0;
- 	if (init_data->constraints.min_uV && init_data->constraints.max_uV)
--		reg->desc.ops = &vexpress_regulator_ops;
-+		desc->ops = &vexpress_regulator_ops;
- 	else
--		reg->desc.ops = &vexpress_regulator_ops_ro;
-+		desc->ops = &vexpress_regulator_ops_ro;
- 
-+	config.regmap = regmap;
- 	config.dev = &pdev->dev;
- 	config.init_data = init_data;
--	config.driver_data = reg;
- 	config.of_node = pdev->dev.of_node;
- 
--	reg->regdev = devm_regulator_register(&pdev->dev, &reg->desc, &config);
--	if (IS_ERR(reg->regdev))
--		return PTR_ERR(reg->regdev);
--
--	platform_set_drvdata(pdev, reg);
-+	rdev = devm_regulator_register(&pdev->dev, desc, &config);
-+	if (IS_ERR(rdev))
-+		return PTR_ERR(rdev);
- 
- 	return 0;
- }
+ 	spi->irq = platform_get_irq(pdev, 0);
+ 	if (spi->irq <= 0) {
+-		dev_err(&pdev->dev, "no irq: %d\n", spi->irq);
+-		ret = -ENOENT;
++		ret = spi->irq;
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "failed to get irq: %d\n", ret);
+ 		goto err_master_put;
+ 	}
+ 	ret = devm_request_threaded_irq(&pdev->dev, spi->irq,
 -- 
 2.20.1
 
