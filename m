@@ -2,96 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAEBE11A97
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F9211A7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfEBN4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 09:56:46 -0400
-Received: from mfb02-md.ns.itscom.net ([175.177.155.110]:50375 "EHLO
-        mfb02-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBN4p (ORCPT
+        id S1726334AbfEBNsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 09:48:52 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:65520 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726203AbfEBNsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 09:56:45 -0400
-X-Greylist: delayed 574 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 09:56:44 EDT
-Received: from mail03-md.ns.itscom.net (mail03-md.ns.itscom.net [175.177.155.113])
-        by mfb02-md.ns.itscom.net (Postfix) with ESMTP id DCEB617489F8
-        for <linux-kernel@vger.kernel.org>; Thu,  2 May 2019 22:47:10 +0900 (JST)
-Received: from cmsa01-mds.s.noc.itscom.net (cmsa01-md.ns.itscom.net [175.177.0.91])
-        by mail03-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 4F3C4FF0530;
-        Thu,  2 May 2019 22:47:09 +0900 (JST)
-Received: from jromail.nowhere ([219.110.243.48])
-        by cmsa-md with ESMTP
-        id MC3JhjzYCz4K5MC3JhE3t5; Thu, 02 May 2019 22:47:09 +0900
-Received: from jro by jrobl id 1hMC3J-0000ZV-0P ; Thu, 02 May 2019 22:47:09 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: [PATCH] OVL: add honoracl=off mount option.
-To:     NeilBrown <neilb@suse.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>,
-        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
-        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <8736lx4goa.fsf@notabene.neil.brown.name>
-References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com> <20161205151933.GA17517@fieldses.org> <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com> <20161205162559.GB17517@fieldses.org> <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com> <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de> <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com> <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com> <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com> <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com> <20161206185806.GC31197@fieldses.org> <87bm0l4nra.fsf@notabene.neil.brown.name> <8736lx4goa.fsf@notabene.neil.brown.name>
+        Thu, 2 May 2019 09:48:52 -0400
+X-UUID: de439af8b9254a9896a23ebec1854f85-20190502
+X-UUID: de439af8b9254a9896a23ebec1854f85-20190502
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yingjoe.chen@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1561821656; Thu, 02 May 2019 21:48:22 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 May 2019 21:48:21 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 2 May 2019 21:48:08 +0800
+Message-ID: <1556804888.28808.6.camel@mtksdaap41>
+Subject: Re: [PATCH 1/2] pinctrl: mediatek: Add mtk_eint_pm_ops to common-v2
+From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     <linux-mediatek@lists.infradead.org>,
+        Chuanjia Liu <Chuanjia.Liu@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <evgreen@chromium.org>,
+        <swboyd@chromium.org>, <linux-gpio@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 2 May 2019 21:48:08 +0800
+In-Reply-To: <20190429032551.65975-2-drinkcat@chromium.org>
+References: <20190429032551.65975-1-drinkcat@chromium.org>
+         <20190429032551.65975-2-drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2199.1556804828.1@jrobl>
-Date:   Thu, 02 May 2019 22:47:08 +0900
-Message-ID: <2200.1556804828@jrobl>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NeilBrown:
-> If the upper and lower layers use incompatible ACL formats, it is not
-> possible to copy the ACL xttr from one to the other, so overlayfs
-> cannot work with them.
-> This happens particularly with NFSv4 which uses system.nfs4_acl, and
-> ext4 which uses system.posix_acl_access.
+On Mon, 2019-04-29 at 11:25 +0800, Nicolas Boichat wrote:
+> pinctrl variants that include pinctrl-mtk-common-v2.h (and not
+> pinctrl-mtk-common.h) also need to use mtk_eint_pm_ops to setup
+> wake mask properly, so copy over the pm_ops to v2.
+> 
+> It is not easy to merge the 2 copies (or move
+> mtk_eint_suspend/resume to mtk-eint.c), as we need to
+> dereference pctrl->eint, and struct mtk_pinctrl *pctl has a
+> different structure definition for v1 and v2.
+> 
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> Reviewed-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+> ---
+>  .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 19 +++++++++++++++++++
+>  .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> index 20e1c890e73b30c..7e19b5a4748eafe 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> @@ -723,3 +723,22 @@ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+>  
+>  	return 0;
+>  }
+> +
+> +static int mtk_eint_suspend(struct device *device)
+> +{
+> +	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+> +
+> +	return mtk_eint_do_suspend(pctl->eint);
+> +}
+> +
+> +static int mtk_eint_resume(struct device *device)
+> +{
+> +	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+> +
+> +	return mtk_eint_do_resume(pctl->eint);
+> +}
+> +
+> +const struct dev_pm_ops mtk_eint_pm_ops = {
+> +	.suspend_noirq = mtk_eint_suspend,
+> +	.resume_noirq = mtk_eint_resume,
+> +};
 
-FYI,
-Aufs had met the same problem many years ago, and I introduced some
-options called ICEX (Ignore Copyup Error on Xattr).
+This is identical to the one in pinctrl-mtk-common.c and will have name
+clash if both pinctrl-mtk-common.c and pinctrl-mtk-common-v2.c are
+built.
 
-(from the design doc in aufs)
-----------------------------------------
-For example, the src branch supports ACL but the dst branch doesn't
-because the dst branch may natively un-support it or temporary
-un-support it due to "noacl" mount option. Of course, the dst branch fs
-may NOT return an error even if the XATTR is not supported. It is
-totally up to the branch fs.
+It would be better if we try to merge both version into mtk-eint.c, this
+way we could also remove some global functions.
 
-Anyway when the aufs internal copy-up gets an error from the dst branch
-fs, then aufs tries removing the just copied entry and returns the error
-to the userspace. The worst case of this situation will be all copy-up
-will fail.
-
-For the copy-up operation, there two basic approaches.
-- copy the specified XATTR only (by category above), and return the
-  error unconditionally if it happens.
-- copy all XATTR, and ignore the error on the specified category only.
-
-In order to support XATTR and to implement the correct behaviour, aufs
-chooses the latter approach and introduces some new branch attributes,
-"icexsec", "icexsys", "icextr", "icexusr", and "icexoth".
-They correspond to the XATTR namespaces (see above). Additionally, to be
-convenient, "icex" is also provided which means all "icex*" attributes
-are set (here the word "icex" stands for "ignore copy-error on XATTR").
-
-The meaning of these attributes is to ignore the error from setting
-XATTR on that branch.
-Note that aufs tries copying all XATTR unconditionally, and ignores the
-error from the dst branch according to the specified attributes.
-----------------------------------------
-
-But recent nfs4 got changed its behaviour around ACL, and it didn't pass
-my local tests.  I had posted about that, but got no reply.
+Joe.C
 
 
-J. R. Okajima
