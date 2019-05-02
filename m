@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA2812285
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D416412283
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfEBTQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 15:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33204 "EHLO mail.kernel.org"
+        id S1726551AbfEBTQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 15:16:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbfEBTQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 15:16:04 -0400
+        id S1726510AbfEBTQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 15:16:05 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0FAC2087F;
-        Thu,  2 May 2019 19:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C52962133F;
+        Thu,  2 May 2019 19:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556824563;
-        bh=ztapzPlmSiYCt4nMj4OICaKQS1K1FzkfxA+tbrWwVwI=;
+        s=default; t=1556824564;
+        bh=zTKiB59yTAOgeXBzuwna1gvCfKgXqxqkpL/Tomsj28c=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=eMrYT3UX28W25Euer93AaJnulBqVmpc32cms0MggPiO5wp9eeSwrNlLdQwCngEQ5n
-         givX2m0+SIAdnN1iM0gLD5kqaSjuZ/pb4b0W117KuU49NQJaPpzqZqNGowqzM5LADL
-         tFtBjW9BlWA9KTuh4yeZ5YcdQN+r54vyM3L62dlM=
+        b=ekPBI3vq7auZZwdZAild0WCJENM03KV6CnckxH933Qnzjv5Zl2jn2Ai4o+Y3HHvny
+         ujCQFwFfRrInuGl0HmX7gDDv25/vkPyonq6hrwCUCSGyXXyxAfNAq13Vhh/u7qcMDG
+         q077FNxphmKvNqejhVkUKyWnsWZWLX4ZeSSPgPm0=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -35,9 +35,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Julia Cartwright <julia@ni.com>
-Subject: [PATCH RT 2/4] powerpc/pseries/iommu: Use a locallock instead local_irq_save()
-Date:   Thu,  2 May 2019 14:15:37 -0500
-Message-Id: <abec789dc411b74f8033fb340c792e94cd2372ba.1556824516.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH RT 3/4] tty/sysrq: Convert show_lock to raw_spinlock_t
+Date:   Thu,  2 May 2019 14:15:38 -0500
+Message-Id: <7433082948d7d5062f1d3fbbcae07616a8e07a98.1556824516.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1556824516.git.tom.zanussi@linux.intel.com>
 References: <cover.1556824516.git.tom.zanussi@linux.intel.com>
@@ -48,7 +48,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Julien Grall <julien.grall@arm.com>
 
 v3.18.138-rt116-rc1 stable review patch.
 If anyone has any objections, please let me know.
@@ -56,98 +56,65 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit 5c1b4cd70e2ca0c81038b65babe6dc66086322e0 ]
+[ Upstream commit db80c207bffd0f49e984e9889ce62279bc3abd6c ]
 
-The locallock protects the per-CPU variable tce_page. The function
-attempts to allocate memory while tce_page is protected (by disabling
-interrupts).
+Systems which don't provide arch_trigger_cpumask_backtrace() will
+invoke showacpu() from a smp_call_function() function which is invoked
+with disabled interrupts even on -RT systems.
 
-Use local_irq_save() instead of local_irq_disable().
+The function acquires the show_lock lock which only purpose is to
+ensure that the CPUs don't print simultaneously. Otherwise the
+output would clash and it would be hard to tell the output from CPUx
+apart from CPUy.
 
+On -RT the spin_lock() can not be acquired from this context. A
+raw_spin_lock() is required. It will introduce the system's latency
+by performing the sysrq request and other CPUs will block on the lock
+until the request is done. This is okay because the user asked for a
+backtrace of all active CPUs and under "normal circumstances in
+production" this path should not be triggered.
+
+Signed-off-by: Julien Grall <julien.grall@arm.com>
+[bigeasy@linuxtronix.de: commit description]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable-rt@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 
  Conflicts:
-	arch/powerpc/platforms/pseries/iommu.c
+        drivers/tty/sysrq.c
 ---
- arch/powerpc/platforms/pseries/iommu.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/tty/sysrq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 05a2c9eefc08..acc6f64f0cb8 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -36,6 +36,7 @@
- #include <linux/crash_dump.h>
- #include <linux/memory.h>
- #include <linux/of.h>
-+#include <linux/locallock.h>
- #include <asm/io.h>
- #include <asm/prom.h>
- #include <asm/rtas.h>
-@@ -177,6 +178,7 @@ static int tce_build_pSeriesLP(struct iommu_table *tbl, long tcenum,
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index f97e7dac3a98..36ed02aa5575 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -206,7 +206,7 @@ static struct sysrq_key_op sysrq_showlocks_op = {
+ #endif
+ 
+ #ifdef CONFIG_SMP
+-static DEFINE_SPINLOCK(show_lock);
++static DEFINE_RAW_SPINLOCK(show_lock);
+ 
+ static void showacpu(void *dummy)
+ {
+@@ -216,10 +216,10 @@ static void showacpu(void *dummy)
+ 	if (idle_cpu(smp_processor_id()))
+ 		return;
+ 
+-	spin_lock_irqsave(&show_lock, flags);
++	raw_spin_lock_irqsave(&show_lock, flags);
+ 	printk(KERN_INFO "CPU%d:\n", smp_processor_id());
+ 	show_stack(NULL, NULL);
+-	spin_unlock_irqrestore(&show_lock, flags);
++	raw_spin_unlock_irqrestore(&show_lock, flags);
  }
  
- static DEFINE_PER_CPU(__be64 *, tce_page);
-+static DEFINE_LOCAL_IRQ_LOCK(tcp_page_lock);
- 
- static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 				     long npages, unsigned long uaddr,
-@@ -197,7 +199,8 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		                           direction, attrs);
- 	}
- 
--	local_irq_save(flags);	/* to protect tcep and the page behind it */
-+	/* to protect tcep and the page behind it */
-+	local_lock_irqsave(tcp_page_lock, flags);
- 
- 	tcep = __get_cpu_var(tce_page);
- 
-@@ -208,7 +211,7 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		tcep = (__be64 *)__get_free_page(GFP_ATOMIC);
- 		/* If allocation fails, fall back to the loop implementation */
- 		if (!tcep) {
--			local_irq_restore(flags);
-+			local_unlock_irqrestore(tcp_page_lock, flags);
- 			return tce_build_pSeriesLP(tbl, tcenum, npages, uaddr,
- 					    direction, attrs);
- 		}
-@@ -242,7 +245,7 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		tcenum += limit;
- 	} while (npages > 0 && !rc);
- 
--	local_irq_restore(flags);
-+	local_unlock_irqrestore(tcp_page_lock, flags);
- 
- 	if (unlikely(rc == H_NOT_ENOUGH_RESOURCES)) {
- 		ret = (int)rc;
-@@ -397,13 +400,14 @@ static int tce_setrange_multi_pSeriesLP(unsigned long start_pfn,
- 	u64 rc = 0;
- 	long l, limit;
- 
--	local_irq_disable();	/* to protect tcep and the page behind it */
-+	/* to protect tcep and the page behind it */
-+	local_lock_irq(tcp_page_lock);
- 	tcep = __get_cpu_var(tce_page);
- 
- 	if (!tcep) {
- 		tcep = (__be64 *)__get_free_page(GFP_ATOMIC);
- 		if (!tcep) {
--			local_irq_enable();
-+			local_unlock_irq(tcp_page_lock);
- 			return -ENOMEM;
- 		}
- 		__get_cpu_var(tce_page) = tcep;
-@@ -449,7 +453,7 @@ static int tce_setrange_multi_pSeriesLP(unsigned long start_pfn,
- 
- 	/* error cleanup: caller will clear whole range */
- 
--	local_irq_enable();
-+	local_unlock_irq(tcp_page_lock);
- 	return rc;
- }
- 
+ static void sysrq_showregs_othercpus(struct work_struct *dummy)
 -- 
 2.14.1
 
