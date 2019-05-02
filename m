@@ -2,100 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C90DB1214F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 19:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7423C12162
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 19:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfEBRzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 13:55:16 -0400
-Received: from caffeine.csclub.uwaterloo.ca ([129.97.134.17]:44981 "EHLO
-        caffeine.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725962AbfEBRzQ (ORCPT
+        id S1726413AbfEBR6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 13:58:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41808 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBR6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 13:55:16 -0400
-Received: by caffeine.csclub.uwaterloo.ca (Postfix, from userid 20367)
-        id DC830461D3A; Thu,  2 May 2019 13:55:13 -0400 (EDT)
-Date:   Thu, 2 May 2019 13:55:13 -0400
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>
-Subject: Re: [Intel-wired-lan] i40e X722 RSS problem with NAT-Traversal IPsec
- packets
-Message-ID: <20190502175513.ei7kjug3az6fe753@csclub.uwaterloo.ca>
-References: <20190501205215.ptoi2czhklte5jbm@csclub.uwaterloo.ca>
- <CAKgT0UczVvREiXwde6yJ8_i9RT2z7FhenEutXJKW8AmDypn_0g@mail.gmail.com>
- <20190502151140.gf5ugodqamtdd5tz@csclub.uwaterloo.ca>
- <CAKgT0Uc_OUAcPfRe6yCSwpYXCXomOXKG2Yvy9c1_1RJn-7Cb5g@mail.gmail.com>
- <20190502171636.3yquioe3gcwsxlus@csclub.uwaterloo.ca>
- <CAKgT0Ufk8LXMb9vVWfvgbjbQFKAuenncf95pfkA0P1t-3+Ni_g@mail.gmail.com>
+        Thu, 2 May 2019 13:58:22 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gportay)
+        with ESMTPSA id 59086260C68
+From:   =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lin Huang <hl@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Derek Basehore <dbasehore@chromium.org>,
+        Randy Li <ayaka@soulik.info>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Mark Rutland <mark.rutland@arm.com>, kernel@collabora.com,
+        =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>
+Subject: [PATCH v5 0/5] Add support for drm/rockchip to dynamically control the DDR frequency.
+Date:   Thu,  2 May 2019 13:58:14 -0400
+Message-Id: <20190502175820.25382-1-gael.portay@collabora.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0Ufk8LXMb9vVWfvgbjbQFKAuenncf95pfkA0P1t-3+Ni_g@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-From:   lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 10:28:22AM -0700, Alexander Duyck wrote:
-> The thing is the firmware has to have some idea what it is dealing
-> with. As far as I know I don't believe port number 4500 is being
-> auto-flagged as any special type. In the case of the other tunnel
-> types such as VXLAN, NVGRE, and GENEVE the driver has to set a port
-> value indicating that the port will receive special handling. If it
-> isn't added via i40e_udp_tunnel_add then the firmware/hardware
-> shouldn't know anything about the tunnel.
+Dear all,
 
-Well that makes some sense.  I was wondering why there didn't seem to
-be an on/off switch for that feature.
+The rk3399 platform has a DFI controller that can monitor DDR load and a
+DMC driver that talks with the TF-A (Trusted Firmware-A) to dynamically
+set the DDR frequency with following flow.
 
-> It really isn't that unusual of a feature. Many NICs have this
-> functionality now. In order to support it we usually have to populate
-> the port values for the device so the internal parser knows to expect
-> them.
-> 
-> That is one of the reasons I suggested testing with netperf as I did
-> below. Basically if we construct all the outer headers the same as
-> your packet we can see if some specific combination is causing a
-> parsing issue. I tested the netperf approach on an XL710 and didn't
-> see any issues, but perhaps the XL722 is doing something differently.
-> 
-> Thanks. If nothing else it should make it possible to just use
-> tcpreplay if needed to reproduce the issue.
+             kernel                          Trusted Firmware-A
+                                                  (bl31)
+        monitor ddr load
+                |
+                |
+        get_target_rate
+                |
+                |           pass rate to TF-A
+        clk_set_rate(ddr) --------------------->run ddr dvs flow
+                                                    |
+                                                    |
+                 <------------------------------end ddr dvs flow
+                |
+                |
+              return
 
-Here is the same packets as before with the link level header included
-(I forgot to use -XX rather than -X):
+These patches add support for devfreq to dynamically control the DDR
+frequency for the gru chromebooks. By default it uses the
+'simple_ondemand' governor which can adjust the frequency based on the
+DDR load.
 
-13:43:49.081567 54:ee:75:30:f1:e1 > a4:bf:01:4e:0c:87, ethertype IPv4 (0x0800), length 174: (tos 0x0, ttl 64, id 21783, offset 0, flags [DF], proto UDP (17), length 160)
-    1.99.99.2.4500 > 1.99.99.1.4500: [no cksum] UDP-encap: ESP(spi=0x8de82290,seq=0x6a56), length 132
-        0x0000:  a4bf 014e 0c87 54ee 7530 f1e1 0800 4500  ...N..T.u0....E.
-        0x0010:  00a0 5517 4000 4011 1c6d 0163 6302 0163  ..U.@.@..m.cc..c
-        0x0020:  6301 1194 1194 008c 0000 8de8 2290 0000  c..........."...
-        0x0030:  6a56 72da 0734 52f6 406e 9346 f946 c698  jVr..4R.@n.F.F..
-        0x0040:  a38c 280c 94da 53e1 91e0 35bf 812a 4500  ..(...S...5..*E.
-        0x0050:  6003 ca7d 6872 a50b d41a 5c4d 7c22 3fb8  `..}hr....\M|"?.
-        0x0060:  56d8 2a0f bc3f d3a6 5853 682c 914c c1b1  V.*..?..XSh,.L..
-        0x0070:  c5c3 94e8 4789 d8b4 4ab4 e5f9 d20a e5ef  ....G...J.......
-        0x0080:  de1d 05dd e98a 996b 5c11 6657 b667 6af1  .......k\.fW.gj.
-        0x0090:  2a97 694b 16de 74e2 f8fe 13a3 d45e e3e9  *.iK..t......^..
-        0x00a0:  f0b1 b83b 99e3 55cb b40b 5ba8 9c23       ...;..U...[..#
-13:43:49.081658 a4:bf:01:4e:0c:87 > 54:ee:75:30:f1:e1, ethertype IPv4 (0x0800), length 174: (tos 0x0, ttl 64, id 44552, offset 0, flags [none], proto UDP (17), length 160)
-    1.99.99.1.4500 > 1.99.99.2.4500: [no cksum] UDP-encap: ESP(spi=0x1d4ecfdf,seq=0x6a56), length 132
-        0x0000:  54ee 7530 f1e1 a4bf 014e 0c87 0800 4500  T.u0.....N....E.
-        0x0010:  00a0 ae08 0000 4011 037c 0163 6301 0163  ......@..|.cc..c
-        0x0020:  6302 1194 1194 008c 0000 1d4e cfdf 0000  c..........N....
-        0x0030:  6a56 28ca 4809 8933 911d f2be 4510 e757  jV(.H..3....E..W
-        0x0040:  3885 7d26 5238 8c58 38e3 6c07 2f8e 335a  8.}&R8.X8.l./.3Z
-        0x0050:  6d48 2a72 4619 e8a3 c421 bc54 48b2 6239  mH*rF....!.TH.b9
-        0x0060:  5e07 7e89 a68e 0161 4e6a 5b6f 8b89 9f53  ^.~....aNj[o...S
-        0x0070:  4c40 1c6c d159 60f8 68e7 24db 8b21 2ec2  L@.l.Y`.h.$..!..
-        0x0080:  4b67 9b83 643b b0ac 6e2d bf4f 1ee1 9508  Kg..d;..n-.O....
-        0x0090:  d1bd dcd4 74ee e4dc 78d0 578a 5905 1f4d  ....t...x.W.Y..M
-        0x00a0:  74be e643 910b b4d3 f428 8822 e22b       t..C.....(.".+
+Waiting for your feedback.
 
-I will try to see what I can do with netperf.
+Best regards,
+Gaël
+
+Note: The RFC and the first patchset contained three patches to sync the
+DDR frequency change within the vblank. These patches was submitted
+separatly in a dedicated RFC[1].
+
+[1]: https://lkml.org/lkml/2019/4/30/1066
+
+Changes in v5:
+- [PATCH v4 5/5] Remove use of DRAM setting defines.
+		 Remove new DRAM setting header.
+- [PATCH v5 6/6] Remove references of unexistant defines in documentation (new
+                 patch).
+
+Changes in v4:
+- [PATCH v3 1/5] Add Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>.
+- [PATCH v3 2/5] Add Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>.
+- [PATCH v3 3/5] Add Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>.
+- [PATCH v3 4/5] Remove board related DDR settings (moved to 5/5).
+- [PATCH v3 5/5] Add board related DDR settings (moved from 5/5).
+
+Changes in v3:
+- [PATCH v2 1/5] Add Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>.
+- [PATCH v2 2/5] Add Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>.
+- [PATCH v2 3/5] Add Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>.
+		 Remove comments.
+		 Move pmu dt parsing after dt-parsing of timings to fix
+		  data->odt_dis_freq value.
+- [PATCH v2 5/5] Remove display_subsystem nodes.
+
+Changes in v2:
+- [PATCH 1/8] Really add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>.
+- [PATCH 4/8] Removed from patchset.
+- [PATCH 5/8] Removed from patchset.
+- [PATCH 6/8] Removed from patchset.
+- [PATCH 7/8] Reword the commit message to reflect the removal of
+              rk3390-dram-default-timing.dts in v1.
+- [PATCH 8/8] Move center-supply attribute of dmc node in file
+              rk3399-gru-chromebook.dtsi (where ppvar_centerlogic is
+	      defined).
+
+Changes in v1:
+- [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+- [RFC 1/10] s/Generic/General/ (Robin Murphy)
+- [RFC 2/10] Add reviewed and acked tags from Chanwoo Choi and Rob Herring
+- [RFC 3/10] Add an explanation for platform SIP calls.
+- [RFC 3/10] Change if statement for a switch.
+- [RFC 3/10] Rename ddr_flag to odt_enable to be more clear.
+- [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
+- [RFC 7/10] Removed from the series. I did not found a use case where this matters.
+- [RFC 8/10] Move rk3399-dram.h to dt-includes.
+- [RFC 8/10] Put sdram default values under the dmc node.
+- [RFC 8/10] Removed rk3399-dram-default-timing.dts
+
+Enric Balletbo i Serra (3):
+  devfreq: rockchip-dfi: Move GRF definitions to a common place.
+  dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
+  devfreq: rk3399_dmc: Pass ODT and auto power down parameters to TF-A.
+
+Gaël PORTAY (1):
+  dt-bindings: devfreq: rk3399_dmc: Remove references of unexistant
+    defines
+
+Lin Huang (2):
+  arm64: dts: rk3399: Add dfi and dmc nodes.
+  arm64: dts: rockchip: Enable dmc and dfi nodes on gru.
+
+ .../bindings/devfreq/rk3399_dmc.txt           | 75 +++++++++----------
+ .../dts/rockchip/rk3399-gru-chromebook.dtsi   |  4 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  | 45 +++++++++++
+ .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 +++++++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 19 +++++
+ drivers/devfreq/event/rockchip-dfi.c          | 23 ++----
+ drivers/devfreq/rk3399_dmc.c                  | 71 +++++++++++++++++-
+ include/soc/rockchip/rk3399_grf.h             | 21 ++++++
+ include/soc/rockchip/rockchip_sip.h           |  1 +
+ 9 files changed, 232 insertions(+), 56 deletions(-)
+ create mode 100644 include/soc/rockchip/rk3399_grf.h
 
 -- 
-Len Sorensen
+2.21.0
+
