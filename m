@@ -2,81 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AD912098
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4044D1209F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfEBQyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:54:10 -0400
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:34090 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfEBQyI (ORCPT
+        id S1726830AbfEBQy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:54:29 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38287 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbfEBQyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:54:08 -0400
-Received: by mail-pg1-f181.google.com with SMTP id c13so1339173pgt.1
+        Thu, 2 May 2019 12:54:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 10so1418830pfo.5
         for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:54:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+hdxvpCXVtGpDJISGPH1holqF4XwrImqrdJb9+2HhCY=;
-        b=CrKIZgqRmvuhmRQD/2JgtANStHORnzNgR8StTXldSzdnm/04SIPqkjNG2tnKfTF0F7
-         AVxcUgmHLbzdHmW9XnG9sOYoseJrFAvQo7pkgd97/gdSi2f1qk+1ySbJlry6yiTnplIy
-         trrXqStm4zO/0L14QA6HSWpsdPJc8jItPcUjrqPIJ8tD13Kc5UTOLR/r0pfIG5H2oRZ7
-         AtBki9c/WAP/bkvyo9BKRRKo4WY1vnxBYSOczYBB5d+NESCrDkjhdX7LefeLujHZheoj
-         EI8hmelbswwCPlmubCIZ3t3CoiuykKe7axxzlm/xDYl6D9GDG55PZPOSgaJ0Es1o+3l2
-         RjaA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Akvar0z3H2C4Po+4q/PqqG5fzv7JGnOTC1Q3ZfsqLhU=;
+        b=fC1fKb4UtdDJy+EmO1Gym1hhgWjGO3rGFwZni5C2m9o/yy56e4k/VuEbNtE5wdlYbT
+         9t9fkXDGp9Hf38G7rtbxc7AZxJ82RLFxjeG3VNayNl/PJnrJVxHerN59gizF8GK2sBB/
+         0Jd8Eabzc3vaCa6Y8CqD6KjcuEx3vyJzECm9Uz6d8p3fkVRdQTygykJKdyZa0BsE0jvc
+         S0eGFoEFF1lyCtMPM4QsGU6xBZiCfFOM9q59zFqkZV63H7HLzt1WV+J11lgNzezF5ATf
+         HGzR9JN/MAKLXOa1sSBWRrnpp5Pndhp1QULWXHvTn0ddGIXoHceAgemoViMFxkFetEEj
+         CKjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+hdxvpCXVtGpDJISGPH1holqF4XwrImqrdJb9+2HhCY=;
-        b=ZaOvL2AaNo1wPZkHnrJGJuDO9MaxQhjgRt1/782T/eCD2OcT9LDkUatrYyriaXcEu9
-         giXhKYUiaPLdsmTNQFch9/xorYCeB1GZVSXp5IWQg2Vlqm5SplyIsPoj6cQkQJ3EjkxC
-         7AIEROBpiMwdHlaTwSVse4f5gdEq/q/s96Yc9zKoLQNVpG21wSVfemC0a+67dvcRfvkB
-         8/MWxCi9y0wVgUMTdy25+jPgG2ZRDV4PTjwMDHaaSpi3ZKi5b9Ve0fnQaNR/9Qp1G5gS
-         uXxzmmb7742Xmu7FNvl7CrP1wkNDCbTvc+RHq7HUxyr9QZuPBiwqjGkd131NkmfaiCzT
-         hckQ==
-X-Gm-Message-State: APjAAAWBa4fHUekc8O8wbNIg7SkLPjL/pJTzwjycco/hYlGWJRYMZJ0G
-        wOkv/p2kMQBVAoVT1y9YCLZ+Y2MLe68=
-X-Google-Smtp-Source: APXvYqyMk7BxKC6gCE857QESGNKupmNDXSr9J09HFerrUAsQIUDKdq8qP4O/VYibZ2Yp3oKUrRjlaQ==
-X-Received: by 2002:a63:af0a:: with SMTP id w10mr5016100pge.67.1556816047282;
-        Thu, 02 May 2019 09:54:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Akvar0z3H2C4Po+4q/PqqG5fzv7JGnOTC1Q3ZfsqLhU=;
+        b=o48TX2yLudwAp9hucjhmd8FnHTWVBK3huQ9qKUHduCjVP8DObeollh/YYCW4HzwruS
+         kD+P/FmsLYyu02+YZXr0v3ccw7hhRaBZ0plLZl/jKtJDM0cgs2J9KBeQGSx8QHdN6xOQ
+         o19cU53rPTeCX+SHPDJmoF1pyYF2hK4a0L8xzzC//HvlM3lalCk1zT2uxtLZeVnUjT/W
+         xFR5yhbN/wWKt+IT883ofz3ZycjXVjPCvzsAlXOmk9h7JfUQsUGZ62oF66zBP/sEANJA
+         8VXbhGQANOFx6Kd5xMmMsYE+1pNqdqc3urzkKT9OP5PwT2JnJKZRziP5J6zRHEsG5K8G
+         vlNQ==
+X-Gm-Message-State: APjAAAVlQ6sZ4zZQL0fODK9pjilduajGn/E/NMlamX8fAVV/5rTAZdi/
+        C6pcIE4H69BoSn00AB5n6/iWkiKruV8=
+X-Google-Smtp-Source: APXvYqyeyXwssHT1qjn2P4lp23bJGQNZPL+x2k1nwyT2Te9BxDQPkk63jNbgkCyEDO64qv5sdeRFrw==
+X-Received: by 2002:a63:8b4b:: with SMTP id j72mr5048125pge.318.1556816048509;
+        Thu, 02 May 2019 09:54:08 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id j2sm69949pff.77.2019.05.02.09.54.06
+        by smtp.gmail.com with ESMTPSA id j2sm69949pff.77.2019.05.02.09.54.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 09:54:06 -0700 (PDT)
+        Thu, 02 May 2019 09:54:07 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] coresight: next v5.1-rc7 
-Date:   Thu,  2 May 2019 10:54:01 -0600
-Message-Id: <20190502165405.31573-1-mathieu.poirier@linaro.org>
+Subject: [PATCH 1/4] dt-bindings: arm: coresight: Add new compatible for static replicator
+Date:   Thu,  2 May 2019 10:54:02 -0600
+Message-Id: <20190502165405.31573-2-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190502165405.31573-1-mathieu.poirier@linaro.org>
+References: <20190502165405.31573-1-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Leo Yan <leo.yan@linaro.org>
 
-Please see if you can add these to your tree for the coming merge window.
-They are confined to the CoreSight subsystem and have been in linux-next for
-a week now.
+CoreSight uses below bindings for replicator:
 
-We can simply wait for the next cycle if you think it is too late for this one.
+  Dynamic replicator, aka. configurable replicator:
+    "arm,coresight-dynamic-replicator", "arm,primecell";
 
-Thanks,
-Mathieu
+  Static replicator, aka. non-configurable replicator:
+    "arm,coresight-replicator";
 
-Leo Yan (4):
-  dt-bindings: arm: coresight: Add new compatible for static replicator
-  coresight: replicator: Add new device id for static replicator
-  dt-bindings: arm: coresight: Unify funnel DT binding
-  coresight: funnel: Support static funnel
+The compatible string "arm,coresight-replicator" is not an explicit
+naming to express the replicator is 'static'.  To unify the naming
+convention, this patch introduces a new compatible string
+"arm,coresight-static-replicator" for the static replicator; the
+compatible string "arm,coresight-replicator" is kept for backward
+compatibility, but tag it as obsolete and suggest to use the new
+compatible string.
 
- .../devicetree/bindings/arm/coresight.txt     |  60 +++++++--
- .../hwtracing/coresight/coresight-funnel.c    | 116 ++++++++++++++----
- .../coresight/coresight-replicator.c          |   6 +-
- 3 files changed, 147 insertions(+), 35 deletions(-)
+As result CoreSight replicator have below bindings:
 
+  Dynamic replicator:
+    "arm,coresight-dynamic-replicator", "arm,primecell";
+
+  Static replicator:
+    "arm,coresight-static-replicator";
+    "arm,coresight-replicator"; (obsolete)
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/coresight.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+index f8aff65ab921..d02d160fa8ac 100644
+--- a/Documentation/devicetree/bindings/arm/coresight.txt
++++ b/Documentation/devicetree/bindings/arm/coresight.txt
+@@ -69,7 +69,10 @@ its hardware characteristcs.
+ 
+ 	* compatible: Currently supported value is (note the absence of the
+ 	  AMBA markee):
+-		- "arm,coresight-replicator"
++		- Coresight Non-configurable Replicator:
++			"arm,coresight-static-replicator";
++			"arm,coresight-replicator"; (OBSOLETE. For backward
++				compatibility and will be removed)
+ 
+ 	* port or ports: see "Graph bindings for Coresight" below.
+ 
+@@ -169,7 +172,7 @@ Example:
+ 		/* non-configurable replicators don't show up on the
+ 		 * AMBA bus.  As such no need to add "arm,primecell".
+ 		 */
+-		compatible = "arm,coresight-replicator";
++		compatible = "arm,coresight-static-replicator";
+ 
+ 		out-ports {
+ 			#address-cells = <1>;
 -- 
 2.17.1
 
