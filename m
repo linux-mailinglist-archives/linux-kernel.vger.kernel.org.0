@@ -2,144 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A475D11B93
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 082B711B98
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfEBOgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 10:36:23 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46852 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBOgW (ORCPT
+        id S1726383AbfEBOhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 10:37:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59430 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBOhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 10:36:22 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v15so1694995ywe.13;
-        Thu, 02 May 2019 07:36:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kB2jz2u+F6Q0PrHO/rPXXO1DBKOlGlVPQ5PtRrKLBRU=;
-        b=hdvPcYfM7okLZlk99hAf5q86Wcmg2dBie6sIJAzC/4d4worv95OD50EX+5DSPCLcnH
-         gFESpXSrFqGTdj3/55F5bJUMv1/halwkLCOFJtssjEP7JRfz66PzBYQoEtRv+jBd3ZF4
-         TTPj+MMmUvIiuCorxF188NZmgattobSc/zr8wpN/WkACroTrQMMxMGGLJ2M6ShIOQmFi
-         EaBuTaW5+dD8h4WhA9Wk73+J01yq2OKfSh2+6NJ3yV3pHOrl1+ikgQwA/Ef93zy8XRrh
-         9a+Y1eczafCFH8krQMAcRhZUmHAX53BrxTuuveIaQBktiMCRKBZJJSZZMfqHlRpSjYT4
-         wBbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kB2jz2u+F6Q0PrHO/rPXXO1DBKOlGlVPQ5PtRrKLBRU=;
-        b=Edm62LcsEfRGzjC/5W4Cxpur86QiEmkvNMcS1z0uHBzcCM1xNAtN0kzIO2+7lOqpLr
-         DBr8uZDvTxM11FtNKtKoDlPdyzKwK08gQpODcnXISnfMeychwdQd9gwiiw3pPdKktOup
-         LWxwbNwfjWvQmsK5O6QvXbiqC2DU3zz6TrXp9GlLaB3WyYbSPTbWiw5po/SwKenKzzi4
-         i4ohLUHSZzpbI8j4wrzDVAAA1lEaioZgD7SsbRAt6ur83ZC2m66o0nNNlZA0kEQ4mtq6
-         WBsbL0u4Eqw+TCNW6eF0CZsZ8Fi+C2rQMMy5BB5rsLuRRkngD+mmjOb5/XtTNHuWhKkz
-         gmkA==
-X-Gm-Message-State: APjAAAUCsb9JGrnv7mGaqQNDUdNNT4iPXqZ7Rh+k/cEwH9ncoUy8IbX1
-        vOBKDzhCaG9GOJxTC4CPJDI=
-X-Google-Smtp-Source: APXvYqysMXSSiIHCqYNISToKilZfyS/F0wyKwqaCYD9iL9SVAl6HIW9TIAZuV06hUQltAP6YiD2SQQ==
-X-Received: by 2002:a25:81cd:: with SMTP id n13mr3498430ybm.293.1556807781364;
-        Thu, 02 May 2019 07:36:21 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (adsl-173-228-226-134.prtc.net. [173.228.226.134])
-        by smtp.gmail.com with ESMTPSA id z206sm13761532ywa.20.2019.05.02.07.36.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 07:36:19 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id F174F4111F; Thu,  2 May 2019 10:36:18 -0400 (EDT)
-Date:   Thu, 2 May 2019 10:36:18 -0400
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Rich Felker <dalias@libc.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Subject: Re: perf tools build broken after v5.1-rc1
-Message-ID: <20190502143618.GH21436@kernel.org>
-References: <eeb83498-f37f-e234-4941-2731b81dc78c@synopsys.com>
- <20190422152027.GB11750@kernel.org>
- <C2D7FE5348E1B147BCA15975FBA2307501A250584C@us01wembx1.internal.synopsys.com>
- <CAK8P3a2JrAApXDws+t=q8AnKFkHJZSox7gsgwW-xEJTfs_mdzw@mail.gmail.com>
- <20190501204115.GF21436@kernel.org>
- <C2D7FE5348E1B147BCA15975FBA2307501A2506BF3@us01wembx1.internal.synopsys.com>
+        Thu, 2 May 2019 10:37:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1537260863; Thu,  2 May 2019 14:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556807872;
+        bh=LFrnrg1kd52WYVEfpqt6x7qXfH3+6LG4aPrINU56sFQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PggLeIyrqgYZTXaGSJYZRamicPs/efCCoHcRQGtm223IYL7xcFnkgzNmaWb31vh22
+         en6LdMJYHmhQsCBOZcjtDjBYaedMPbXHmqc43yeK9MoFvOUBKTM7g22jk6HCEUUfel
+         giCm2bHOd+JBepEV9w1oclysnr1ZTSQnNKBYHpNs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6B901607C3;
+        Thu,  2 May 2019 14:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1556807871;
+        bh=LFrnrg1kd52WYVEfpqt6x7qXfH3+6LG4aPrINU56sFQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AZixdJk/U74e2NG2xXw2qB0k18C4BojmhLUimCgLlQJ3NbXItjLv6raL1y9JuR7sd
+         iwV/NWforWtg/Hywt/9BKAchq+elwr7kg62wC7VY0091OTr3wWzJ6CECs49ueTMCy4
+         OX6rFDDo6g/SYVFsxxoCSCAo0/XFmctFfV6QzWAg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B901607C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH][next] KVM: PPC: Book3S HV: XIVE: fix spelling mistake
+ "acessing" -> "accessing"
+To:     Colin King <colin.king@canonical.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190502102313.25093-1-colin.king@canonical.com>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <a7883281-bae0-694e-8436-f385023c1f88@codeaurora.org>
+Date:   Thu, 2 May 2019 20:07:39 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501A2506BF3@us01wembx1.internal.synopsys.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190502102313.25093-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, May 01, 2019 at 09:17:52PM +0000, Vineet Gupta escreveu:
-> On 5/1/19 1:41 PM, Arnaldo Carvalho de Melo wrote:
-> >> The 1a787fc5ba18ac7 commit copied over the changes for arm64, but
-> >> missed all the other architectures changed in c8ce48f06503 and the
-> >> related commits.
-> > Right, I have a patch copying the missing headers, and that fixed the
-> > build with the glibc-based toolchain, but then broke the uCLibc one :-\
- 
-> tools/perf/util/cloexec.c  #includes <sys/syscall.h> which for glibc includes
-> asm/unistd.h
- 
-> uClibc <sys/syscall.h> OTOH #include <bits/sysnum.h> containign#define __NR_*
-> (generated by parsing kernel's unistd). This header does the right thing by
-> chekcing for redefs, but in the end we still collide with newly added
-> tools/arc/arc/*/**/unistd.h which doesn't have conditional definitions. I'm sure
-> this is not an ARC problem, any uClibc build would be affected. Do you have a arm
-> uclibc toolchain to test ?
 
-This solves it for fedora:29,
-arc_gnu_2017.09-rc2_prebuilt_uclibc_le_arc700_linux_install,
-arc_gnu_2019.03-rc1_prebuilt_uclibc_le_archs_linux_install and
-arc_gnu_2019.03-rc1_prebuilt_glibc_le_archs_linux_install.
+On 5/2/2019 3:53 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a pr_err message, fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 
-Also ok with:
+Cheers,
+-Mukesh
 
-  make -C tools/perf build-test
 
-Now build testing with the full set of containers.
-
-- Arnaldo
-
-commit 1931594a680dba28e98b526192dd065430c850c0
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Thu May 2 09:26:23 2019 -0400
-
-    perf tools: Remove needless asm/unistd.h include fixing build in some places
-    
-    We were including sys/syscall.h and asm/unistd.h, since sys/syscall.h
-    includes asm/unistd.h, sometimes this leads to the redefinition of
-    defines, breaking the build.
-    
-    Noticed on ARC with uCLibc.
-    
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-    Cc: Arnd Bergmann <arnd@arndb.de>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Rich Felker <dalias@libc.org>
-    Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-    Link: https://lkml.kernel.org/n/tip-xjpf80o64i2ko74aj2jih0qg@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-diff --git a/tools/perf/util/cloexec.c b/tools/perf/util/cloexec.c
-index ca0fff6272be..06f48312c5ed 100644
---- a/tools/perf/util/cloexec.c
-+++ b/tools/perf/util/cloexec.c
-@@ -7,7 +7,6 @@
- #include "asm/bug.h"
- #include "debug.h"
- #include <unistd.h>
--#include <asm/unistd.h>
- #include <sys/syscall.h>
- 
- static unsigned long flag = PERF_FLAG_FD_CLOEXEC;
+> ---
+>   arch/powerpc/kvm/book3s_xive_native.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3s_xive_native.c
+> index 5e14df1a4403..6a8e698c4b6e 100644
+> --- a/arch/powerpc/kvm/book3s_xive_native.c
+> +++ b/arch/powerpc/kvm/book3s_xive_native.c
+> @@ -235,7 +235,7 @@ static vm_fault_t xive_native_esb_fault(struct vm_fault *vmf)
+>   	arch_spin_unlock(&sb->lock);
+>   
+>   	if (WARN_ON(!page)) {
+> -		pr_err("%s: acessing invalid ESB page for source %lx !\n",
+> +		pr_err("%s: accessing invalid ESB page for source %lx !\n",
+>   		       __func__, irq);
+>   		return VM_FAULT_SIGBUS;
+>   	}
