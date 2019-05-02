@@ -2,91 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D59A1243F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7670D12436
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfEBVnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 17:43:40 -0400
-Received: from mx3.wp.pl ([212.77.101.9]:26469 "EHLO mx3.wp.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfEBVnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 17:43:40 -0400
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 17:43:39 EDT
-Received: (wp-smtpd smtp.wp.pl 39377 invoked from network); 2 May 2019 23:36:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1556833016; bh=FUkkXb89M9Ju/1kq/ADsVeKz9TuN3gFh0/5qWIJyqMI=;
-          h=From:To:Cc:Subject;
-          b=RlBJrdS6MuaSJuLbf4MIN2cIzqbD3OoXOTFURjat2VMT37CSlBBypklfBAelYjAej
-           WZrM5DIXYzYNiUH/lPxvz5WA967a4xnCJoGcYqoDoALXBT8hiwRGsCiRNTcywS3pB0
-           qJoQ//XkzU5b0CN7GCtVhHx5ONYrWCPKeQPxgly8=
-Received: from pc-201-108-240-185-static.strong-pc.com (HELO localhost.localdomain) (spaz16@wp.pl@[185.240.108.201])
-          (envelope-sender <spaz16@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <igorkuo@gmail.com>; 2 May 2019 23:36:56 +0200
-From:   =?UTF-8?q?B=C5=82a=C5=BCej=20Szczygie=C5=82?= <spaz16@wp.pl>
-Cc:     igorkuo@gmail.com,
-        =?UTF-8?q?B=C5=82a=C5=BCej=20Szczygie=C5=82?= <spaz16@wp.pl>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: fix A4Tech horizontal scrolling
-Date:   Thu,  2 May 2019 23:36:39 +0200
-Message-Id: <20190502213639.7632-1-spaz16@wp.pl>
-X-Mailer: git-send-email 2.21.0
+        id S1726334AbfEBVgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 17:36:43 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33273 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBVgn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 17:36:43 -0400
+Received: by mail-ot1-f67.google.com with SMTP id s11so3547142otp.0;
+        Thu, 02 May 2019 14:36:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=68ezu1CC+9jQwedrlXKi1B7o3NkSj3TSJKQOha2Am3U=;
+        b=oZdJNMNvRp08zZCLpiszpTic6dfJ4mM0cR1DOUZrCXAbNie0W5Vg0CNGxWSjE/uiYC
+         9J5kZRDS+c7ynf5ZeONNCJp9FgXqDxC5PbNz9wj49dHiDRUUo2q6ZRC4He5nYmwc9SpV
+         EKPgDvNmzbQuE5N9EhHU/xDKY/9SO3GiZjq3dzx01kIHv5ykHo3OhN3L0ZTiGPlDLvaI
+         ojtLJWjE5EhXu89uYDLYK54FWe+maZJ/crqSruYi9NkGQd38lSiyLPwzNCtEBwFwL1j7
+         rAGNzTsZPgCha7lOcbqyzAvfoa/rmWS39Psb1PEJAe0qi7O66aF2Gwd8jm/Tmgy7fF8/
+         SVwQ==
+X-Gm-Message-State: APjAAAX/K6X4svGZXM4DSDPPxUp78RHmGXkr50YEFiCs87/K6zu+uCCV
+        gPDDlJwgZjI8vZ8eM03i1Q==
+X-Google-Smtp-Source: APXvYqyVHjgextdRZdHLuL/OkF0dTrVbN6LNb+8KdVWK52/DvUyad7LssZXEokGeIAvDrcFVsBZDIg==
+X-Received: by 2002:a9d:37e6:: with SMTP id x93mr4079435otb.351.1556833002225;
+        Thu, 02 May 2019 14:36:42 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e9sm135608otf.48.2019.05.02.14.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 May 2019 14:36:41 -0700 (PDT)
+Date:   Thu, 2 May 2019 16:36:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: Add binding for Qualcomm PCIe2
+ PHY
+Message-ID: <20190502213640.GA21552@bogus>
+References: <20190502001406.10431-1-bjorn.andersson@linaro.org>
+ <20190502001406.10431-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 75b21af65cda25fe36520aade8dfb94b
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [YfMH]                               
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190502001406.10431-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since recent high resolution scrolling changes the A4Tech driver must
-check for the "REL_WHEEL_HI_RES" usage code.
+On Wed,  1 May 2019 17:14:05 -0700, Bjorn Andersson wrote:
+> The Qualcomm PCIe2 PHY is a Synopsys based PCIe PHY found in a number of
+> Qualcomm platforms, add a binding to describe this.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - Add #clock-cells
+> 
+>  .../bindings/phy/qcom-pcie2-phy.txt           | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+> 
 
-Fixes: 2dc702c991e3774af9d7ce410eef410ca9e2357e (HID: input: use the
-Resolution Multiplier for high-resolution scrolling)
-
-Signed-off-by: Błażej Szczygieł <spaz16@wp.pl>
----
- drivers/hid/hid-a4tech.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
-index 9428ea7cdf8a..fafb9fa558e7 100644
---- a/drivers/hid/hid-a4tech.c
-+++ b/drivers/hid/hid-a4tech.c
-@@ -38,7 +38,7 @@ static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,
- {
- 	struct a4tech_sc *a4 = hid_get_drvdata(hdev);
- 
--	if (usage->type == EV_REL && usage->code == REL_WHEEL)
-+	if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES)
- 		set_bit(REL_HWHEEL, *bit);
- 
- 	if ((a4->quirks & A4_2WHEEL_MOUSE_HACK_7) && usage->hid == 0x00090007)
-@@ -60,7 +60,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
- 	input = field->hidinput->input;
- 
- 	if (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8) {
--		if (usage->type == EV_REL && usage->code == REL_WHEEL) {
-+		if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES) {
- 			a4->delayed_value = value;
- 			return 1;
- 		}
-@@ -77,7 +77,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
- 		return 1;
- 	}
- 
--	if (usage->code == REL_WHEEL && a4->hw_wheel) {
-+	if (usage->code == REL_WHEEL_HI_RES && a4->hw_wheel) {
- 		input_event(input, usage->type, REL_HWHEEL, value);
- 		return 1;
- 	}
--- 
-2.21.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
