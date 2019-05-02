@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CA0311CD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C7E11C9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfEBPZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:25:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41752 "EHLO mail.kernel.org"
+        id S1726824AbfEBPWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbfEBPZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:25:28 -0400
+        id S1726797AbfEBPWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:22:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DDBE20C01;
-        Thu,  2 May 2019 15:25:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70CD6216FD;
+        Thu,  2 May 2019 15:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810727;
-        bh=r+ZSj1TIX7JKLkzV3urREXxfRbXAatv90V2Lp5h6Nps=;
+        s=default; t=1556810563;
+        bh=CfDOrmqhvB71SpN/Uis/7pUbTsJcuGsoD1/3ZjtSGlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P3T7qzYMAlhBl2cEQQxvy18+2/AxBux75ckLZ03qtmvMCVDh97uEkRisyF8yWPWl4
-         HmjgIqQFwrnkftjLdG6b/Eo+Im3fxrX+TEeddnsKy62SVU8mRgqocPJWHFOZXZ02az
-         HBdrnHLqGlxrsf6ug96/copYjWn1gMeyufVOJi1U=
+        b=G0QGNcsvdgUvURc13tgg5e46oj61wt4cYxCua16uy8goxmLIjBfmgrjmbF4bzw/lO
+         vLE5TS9ZdyINKaXPE3G11N9SjH3Vh8a0RWzGt2+koNzEoiLaYY/oBQZt6xfKTZg3zY
+         JPZJZefXuBLOG263TCW7ZTCUT/ZhU+fw2SPkMPuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, raymond pang <raymondpangxd@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 37/49] drm/meson: Fix invalid pointer in meson_drv_unbind()
+Subject: [PATCH 4.9 28/32] libata: fix using DMA buffers on stack
 Date:   Thu,  2 May 2019 17:21:14 +0200
-Message-Id: <20190502143328.617041308@linuxfoundation.org>
+Message-Id: <20190502143322.591277926@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 776e78677f514ecddd12dba48b9040958999bd5a ]
+[ Upstream commit dd08a8d9a66de4b54575c294a92630299f7e0fe7 ]
 
-meson_drv_bind() registers a meson_drm struct as the device's privdata,
-but meson_drv_unbind() tries to retrieve a drm_device. This may cause a
-segfault on shutdown:
+When CONFIG_VMAP_STACK=y, __pa() returns incorrect physical address for
+a stack virtual address. Stack DMA buffers must be avoided.
 
-[ 5194.593429] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000197
- ...
-[ 5194.788850] Call trace:
-[ 5194.791349]  drm_dev_unregister+0x1c/0x118 [drm]
-[ 5194.795848]  meson_drv_unbind+0x50/0x78 [meson_drm]
-
-Retrieve the right pointer in meson_drv_unbind().
-
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190322152657.13752-1-jean-philippe.brucker@arm.com
+Signed-off-by: raymond pang <raymondpangxd@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpu/drm/meson/meson_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/libata-zpodd.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 5deb44ac6791..1a1b0b9cf1fa 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -294,8 +294,8 @@ static int meson_drv_bind(struct device *dev)
- 
- static void meson_drv_unbind(struct device *dev)
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index 0ad96c647541..7017a81d53cf 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -51,38 +51,52 @@ static int eject_tray(struct ata_device *dev)
+ /* Per the spec, only slot type and drawer type ODD can be supported */
+ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
  {
--	struct drm_device *drm = dev_get_drvdata(dev);
--	struct meson_drm *priv = drm->dev_private;
-+	struct meson_drm *priv = dev_get_drvdata(dev);
-+	struct drm_device *drm = priv->drm;
+-	char buf[16];
++	char *buf;
+ 	unsigned int ret;
+-	struct rm_feature_desc *desc = (void *)(buf + 8);
++	struct rm_feature_desc *desc;
+ 	struct ata_taskfile tf;
+ 	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
+-			0, sizeof(buf),
++			0, 16,
+ 			0, 0, 0,
+ 	};
  
- 	drm_dev_unregister(drm);
- 	drm_kms_helper_poll_fini(drm);
++	buf = kzalloc(16, GFP_KERNEL);
++	if (!buf)
++		return ODD_MECH_TYPE_UNSUPPORTED;
++	desc = (void *)(buf + 8);
++
+ 	ata_tf_init(dev, &tf);
+ 	tf.flags = ATA_TFLAG_ISADDR | ATA_TFLAG_DEVICE;
+ 	tf.command = ATA_CMD_PACKET;
+ 	tf.protocol = ATAPI_PROT_PIO;
+-	tf.lbam = sizeof(buf);
++	tf.lbam = 16;
+ 
+ 	ret = ata_exec_internal(dev, &tf, cdb, DMA_FROM_DEVICE,
+-				buf, sizeof(buf), 0);
+-	if (ret)
++				buf, 16, 0);
++	if (ret) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
+ 
+-	if (be16_to_cpu(desc->feature_code) != 3)
++	if (be16_to_cpu(desc->feature_code) != 3) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
+ 
+-	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1)
++	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_SLOT;
+-	else if (desc->mech_type == 1 && desc->load == 0 && desc->eject == 1)
++	} else if (desc->mech_type == 1 && desc->load == 0 &&
++		   desc->eject == 1) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_DRAWER;
+-	else
++	} else {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
+ }
+ 
+ /* Test if ODD is zero power ready by sense code */
 -- 
 2.19.1
 
