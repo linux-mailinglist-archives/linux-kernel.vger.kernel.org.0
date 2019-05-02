@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B82A311CEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C8D11D77
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfEBP0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:26:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43426 "EHLO mail.kernel.org"
+        id S1728852AbfEBPat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727793AbfEBP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:42 -0400
+        id S1727377AbfEBPas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:30:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35CD720449;
-        Thu,  2 May 2019 15:26:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D400F2081C;
+        Thu,  2 May 2019 15:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810801;
-        bh=9cfkjKJhKFyg+kUI5gYHuFHBzIfYZ/2LtqZ2CTwKTI4=;
+        s=default; t=1556811048;
+        bh=IntiuBaH0skzQDjeZ66JasE10npj0bxke5OBWuHmkHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2SndJlxrIYn8L20HFvaGGAJ8tMQGECcrkCgxs662DGwI69CHdmR3yuNohytAFtQaV
-         wwHekmqR8Hkb6cHFEs/IUTqfw299ZPMLEswyoS+UZNPazgZEd3HqImNvYGvBzHDGe0
-         d7tAlgVR61/nPUc8VlWorgpM+Haim213mvFuNe5w=
+        b=C1VhgK7waMZtlko34Om3Mo59luppuqQf3W1UgK4Lo9nHkdUdmzRhdrkfI6fwxZKA8
+         /pnTPVXvoJXxyK3D/lFIw30uj0TQI2nkgRRTVl8roiEI7K2CipBlQ/MB5V6+/9e6SJ
+         O+Q29GKb6BsZTEoy06buGwWvqYWr5NZXyGkXLk2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Nishanth Menon <nm@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Thierry Reding <treding@nvidia.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 34/72] net: ks8851: Reassert reset pin if chip ID check fails
+Subject: [PATCH 5.0 054/101] drm/tegra: hub: Fix dereference before check
 Date:   Thu,  2 May 2019 17:20:56 +0200
-Message-Id: <20190502143336.216832866@linuxfoundation.org>
+Message-Id: <20190502143343.285843755@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,43 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 761cfa979a0c177d6c2d93ef5585cd79ae49a7d5 ]
+[ Upstream commit 7cf77b273a8fc51e7de622fa6691abd4436a9a6b ]
 
-Commit 73fdeb82e963 ("net: ks8851: Add optional vdd_io regulator and
-reset gpio") amended the ks8851 driver to briefly assert the chip's
-reset pin on probe. It also amended the probe routine's error path to
-reassert the reset pin if a subsequent initialization step fails.
-
-However the commit misplaced reassertion of the reset pin in the error
-path such that it is not performed if the check of the Chip ID and
-Enable Register (CIDER) fails. The error path is therefore slightly
-asymmetrical to the probe routine's body. Fix it.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Nishanth Menon <nm@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/micrel/ks8851.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/hub.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
-index a93f8e842c07..1633fa5c709c 100644
---- a/drivers/net/ethernet/micrel/ks8851.c
-+++ b/drivers/net/ethernet/micrel/ks8851.c
-@@ -1554,9 +1554,9 @@ static int ks8851_probe(struct spi_device *spi)
- 	free_irq(ndev->irq, ks);
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index 922a48d5a483..c7c612579270 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -378,14 +378,16 @@ static int tegra_shared_plane_atomic_check(struct drm_plane *plane,
+ static void tegra_shared_plane_atomic_disable(struct drm_plane *plane,
+ 					      struct drm_plane_state *old_state)
+ {
+-	struct tegra_dc *dc = to_tegra_dc(old_state->crtc);
+ 	struct tegra_plane *p = to_tegra_plane(plane);
++	struct tegra_dc *dc;
+ 	u32 value;
  
- err_irq:
-+err_id:
- 	if (gpio_is_valid(gpio))
- 		gpio_set_value(gpio, 0);
--err_id:
- 	regulator_disable(ks->vdd_reg);
- err_reg:
- 	regulator_disable(ks->vdd_io);
+ 	/* rien ne va plus */
+ 	if (!old_state || !old_state->crtc)
+ 		return;
+ 
++	dc = to_tegra_dc(old_state->crtc);
++
+ 	/*
+ 	 * XXX Legacy helpers seem to sometimes call ->atomic_disable() even
+ 	 * on planes that are already disabled. Make sure we fallback to the
 -- 
 2.19.1
 
