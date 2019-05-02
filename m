@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E0E11521
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3439114FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:10:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfEBILP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 04:11:15 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46814 "EHLO
+        id S1726001AbfEBIKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 04:10:36 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10358 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726378AbfEBIKi (ORCPT
+        by vger.kernel.org with ESMTP id S1726264AbfEBIKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 04:10:38 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42860sX006127;
-        Thu, 2 May 2019 10:10:19 +0200
+        Thu, 2 May 2019 04:10:35 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42828JO023659;
+        Thu, 2 May 2019 10:10:20 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=qsRqvviEBACZshMNCC3W3q/ZdBJX0rfci2XIVx7jSmI=;
- b=gtqhfvIFelmsDDXXiKo+qWnGfPERQFXm5QUB+bxBUrKSZlqNZAJBbJaeivuxIDYFo/hG
- gmMFFBsI4fvBeanBlap4vbwGi/OU5xjvV3WYRf2v0c79YzdShdQgOH6Lr48RWKNcIVKP
- Ja/lE4wan/zEDCkeMglLfZCxd6EZJwbOSJj1NQqO6PJZVlsG87CbEFvJp8sdCBs4RijF
- pLiioChEh1TST6BKJ2BzRUoYcI2CEoopfieKB6Phy6YybWp/joJM3bT8XInc5hNyqmWh
- arPegyuncEohWfkCDILU1pwXpKO273nVIvnM608O/cTF4H/bxUmjabNBzS5x29OVqAS4 Uw== 
+ bh=znP6MuezR8h50yNvDKE3YfX4j0A9PVjb37XPJEMCwbU=;
+ b=OJHuatp2xrdeg8+qugcJrJ67kI+rH6UoWzukJgyz7kVOnFXLq2v/AYNHU1H6YFAeV6pR
+ Q1j0QRnAuhFy5hLFZnKdJuhT+ue6DfmoBOS00aSARGCb47HJBiD4HUJ/0/v91wpqkKuw
+ bVPGB1r/ZE9ZTwb4HXmV7U/DknaquIjx33ckC6yWzyKr9/O8ZZIqy0/AGayqhXDY+u2P
+ MUHY///UWAM+8kI7cRnsAPD5Gw0gtDOul6U/pQICssUSBFKDYsA3wQzfhjxn1ZODIgP+
+ 2LN7CZZMZGGuoAJh1W2HX7wGw4AH95WZl13UoANBD24JlKxnqB2ZrNi31bhHcbUo8iny zw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2s6xgcq494-1
+        by mx08-00178001.pphosted.com with ESMTP id 2s6xhbf3q9-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 02 May 2019 10:10:18 +0200
+        Thu, 02 May 2019 10:10:20 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 046A831;
-        Thu,  2 May 2019 08:10:17 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D060BEDE;
-        Thu,  2 May 2019 08:10:17 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019
- 10:10:17 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2152B3F;
+        Thu,  2 May 2019 08:10:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E2EB3FD8;
+        Thu,  2 May 2019 08:10:18 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 2 May 2019
+ 10:10:18 +0200
 Received: from localhost (10.129.4.86) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019 10:10:17 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019 10:10:18 +0200
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -55,9 +55,9 @@ CC:     Fabien Dessenne <fabien.dessenne@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         "Ludovic Barre" <ludovic.barre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3 1/8] dt-bindings: stm32: add bindings for ML-AHB interconnect
-Date:   Thu, 2 May 2019 10:09:59 +0200
-Message-ID: <1556784606-3016-2-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH v3 2/8] dt-bindings: remoteproc: add bindings for stm32 remote processor driver
+Date:   Thu, 2 May 2019 10:10:00 +0200
+Message-ID: <1556784606-3016-3-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
@@ -71,57 +71,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the ML-AHB interconnect for stm32 SoCs.
+Add the device tree bindings document for the stm32 remoteproc devices.
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- .../devicetree/bindings/arm/stm32/mlahb.txt        | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt | 63 ++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/mlahb.txt b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+diff --git a/Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt b/Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
 new file mode 100644
-index 0000000..3f5b779
+index 0000000..a495757
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
-@@ -0,0 +1,37 @@
-+ML-AHB interconnect bindings
-+
-+These bindings describe the STM32 SoCs ML-AHB interconnect bus which connects
-+a Cortex-M subsystem with dedicated memories.
-+The MCU SRAM and RETRAM memory parts can be accessed through different addresses
-+(see "RAM aliases" in [1]) using different buses (see [2]) : balancing the
-+Cortex-M firmware accesses among those ports allows to tune the system
-+performance.
-+
-+[1]: https://www.st.com/resource/en/reference_manual/dm00327659.pdf
-+[2]: https://wiki.st.com/stm32mpu/wiki/STM32MP15_RAM_mapping
++++ b/Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+@@ -0,0 +1,63 @@
++STMicroelectronics STM32 Remoteproc
++-----------------------------------
++This document defines the binding for the remoteproc component that loads and
++boots firmwares on the ST32MP family chipset.
 +
 +Required properties:
-+- compatible: should be "simple-bus"
-+- dma-ranges: describes memory addresses translation between the local CPU and
-+	   the remote Cortex-M processor. Each memory region, is declared with
-+	   3 parameters:
-+		 - param 1: device base address (Cortex-M processor address)
-+		 - param 2: physical base address (local CPU address)
-+		 - param 3: size of the memory region.
++- compatible:	Must be "st,stm32mp1-m4"
++- reg:		Address ranges of the RETRAM and MCU SRAM memories used by the
++		remote processor.
++- resets:	Reference to a reset controller asserting the remote processor.
++- st,syscfg-holdboot: Reference to the system configuration which holds the
++		remote processor reset hold boot
++	1st cell: phandle of syscon block
++	2nd cell: register offset containing the hold boot setting
++	3rd cell: register bitmask for the hold boot field
++- st,syscfg-tz: Reference to the system configuration which holds the RCC trust
++		zone mode
++	1st cell: phandle to syscon block
++	2nd cell: register offset containing the RCC trust zone mode setting
++	3rd cell: register bitmask for the RCC trust zone mode bit
 +
-+The Cortex-M remote processor accessed via the mlahb interconnect is described
-+by a child node.
++Optional properties:
++- interrupts:	Should contain the watchdog interrupt
++- mboxes:	This property is required only if the rpmsg/virtio functionality
++		is used. List of phandle and mailbox channel specifiers:
++		- a channel (a) used to communicate through virtqueues with the
++		  remote proc.
++		  Bi-directional channel:
++		      - from local to remote = send message
++		      - from remote to local = send message ack
++		- a channel (b) working the opposite direction of channel (a)
++		- a channel (c) used by the local proc to notify the remote proc
++		  that it is about to be shut down.
++		  Unidirectional channel:
++		      - from local to remote, where ACK from the remote means
++		        that it is ready for shutdown
++- mbox-names:	This property is required if the mboxes property is used.
++		- must be "vq0" for channel (a)
++		- must be "vq1" for channel (b)
++		- must be "shutdown" for channel (c)
++- memory-region: List of phandles to the reserved memory regions associated with
++		the remoteproc device. This is variable and describes the
++		memories shared with the remote processor (eg: remoteproc
++		firmware and carveouts, rpmsg vrings, ...).
++		(see ../reserved-memory/reserved-memory.txt)
++- st,syscfg-pdds: Reference to the system configuration which holds the remote
++		processor deep sleep setting
++	1st cell: phandle to syscon block
++	2nd cell: register offset containing the deep sleep setting
++	3rd cell: register bitmask for the deep sleep bit
++- st,auto_boot:	If defined, when remoteproc is probed, it loads the default
++		firmware and starts the remote processor.
 +
 +Example:
-+mlahb {
-+	compatible = "simple-bus";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	dma-ranges = <0x00000000 0x38000000 0x10000>,
-+		     <0x10000000 0x10000000 0x60000>,
-+		     <0x30000000 0x30000000 0x60000>;
-+
 +	m4_rproc: m4@38000000 {
-+		...
++		compatible = "st,stm32mp1-m4";
++		reg = <0x00000000 0x10000>,
++		      <0x10000000 0x40000>,
++		      <0x30000000 0x40000>;
++		resets = <&rcc MCU_R>;
++		st,syscfg-holdboot = <&rcc 0x10C 0x1>;
++		st,syscfg-tz = <&rcc 0x000 0x1>;
 +	};
-+};
 -- 
 2.7.4
 
