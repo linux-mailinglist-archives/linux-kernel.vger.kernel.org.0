@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26EFC11F07
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F070011D61
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfEBPpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:45:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42334 "EHLO mail.kernel.org"
+        id S1728610AbfEBPaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:30:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbfEBPZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:25:51 -0400
+        id S1728591AbfEBPaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:30:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72D7220449;
-        Thu,  2 May 2019 15:25:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 312C3214DA;
+        Thu,  2 May 2019 15:29:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810750;
-        bh=CKB00b82O/m91mqSznLKclqk4o1K3nQnzd/FY7DCOsw=;
+        s=default; t=1556810999;
+        bh=fpzIvYxbbVMxE87nXsbrxX8bl+v/uaZPk+QbJ4RNM7s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1jLmzMTyYPBKqScl0r3Z/LJtQZQPFU+bxaMmYM7C0QS8yNRfBNT9v9aHV7oGAF9i3
-         5Io2DCwIIYTf/Ef1Z04ivNQKT7M+YZtRZ/GBaiiA2NiCBBk/aVFSpUIohPeycIYnxF
-         oxCIsc0uFIkxoBNO/QcYRbqmWwa6Bm4gb9z1977o=
+        b=gIJP18gVbSCQEqdvLHcMg4Ks2bsN9DapI4XKCU5e21+QYQVWaDVo4siQJjV+3q35R
+         TO4VIvKburyn1esTBlJI0KQIWjR7f/vpoTTJcM9oHQIIRWNvyMDzzagMW/qcaC0PhH
+         6xyyR3W9e03VMlnsxesAg5I9LSksXGO4K+8DkTu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 08/72] s390: limit brk randomization to 32MB
-Date:   Thu,  2 May 2019 17:20:30 +0200
-Message-Id: <20190502143334.101925504@linuxfoundation.org>
+Subject: [PATCH 5.0 029/101] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
+Date:   Thu,  2 May 2019 17:20:31 +0200
+Message-Id: <20190502143341.621454889@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cd479eccd2e057116d504852814402a1e68ead80 ]
+[ Upstream commit ac0cdb3d990108df795b676cd0d0e65ac34b2273 ]
 
-For a 64-bit process the randomization of the program break is quite
-large with 1GB. That is as big as the randomization of the anonymous
-mapping base, for a test case started with '/lib/ld64.so.1 <exec>'
-it can happen that the heap is placed after the stack. To avoid
-this limit the program break randomization to 32MB for 64-bit and
-keep 8MB for 31-bit.
+Add the missing uart_unregister_driver() and i2c_del_driver() before return
+from sc16is7xx_init() in the error handling case.
 
-Reported-by: Stefan Liebler <stli@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/s390/include/asm/elf.h | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sc16is7xx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/include/asm/elf.h b/arch/s390/include/asm/elf.h
-index 7d22a474a040..f74639a05f0f 100644
---- a/arch/s390/include/asm/elf.h
-+++ b/arch/s390/include/asm/elf.h
-@@ -252,11 +252,14 @@ do {								\
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 268098681856..114e94f476c6 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1509,7 +1509,7 @@ static int __init sc16is7xx_init(void)
+ 	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
+-		return ret;
++		goto err_i2c;
+ 	}
+ #endif
  
- /*
-  * Cache aliasing on the latest machines calls for a mapping granularity
-- * of 512KB. For 64-bit processes use a 512KB alignment and a randomization
-- * of up to 1GB. For 31-bit processes the virtual address space is limited,
-- * use no alignment and limit the randomization to 8MB.
-+ * of 512KB for the anonymous mapping base. For 64-bit processes use a
-+ * 512KB alignment and a randomization of up to 1GB. For 31-bit processes
-+ * the virtual address space is limited, use no alignment and limit the
-+ * randomization to 8MB.
-+ * For the additional randomization of the program break use 32MB for
-+ * 64-bit and 8MB for 31-bit.
-  */
--#define BRK_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x3ffffUL)
-+#define BRK_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x1fffUL)
- #define MMAP_RND_MASK	(is_compat_task() ? 0x7ffUL : 0x3ff80UL)
- #define MMAP_ALIGN_MASK	(is_compat_task() ? 0 : 0x7fUL)
- #define STACK_RND_MASK	MMAP_RND_MASK
+@@ -1517,10 +1517,18 @@ static int __init sc16is7xx_init(void)
+ 	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
+-		return ret;
++		goto err_spi;
+ 	}
+ #endif
+ 	return ret;
++
++err_spi:
++#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
++	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
++#endif
++err_i2c:
++	uart_unregister_driver(&sc16is7xx_uart);
++	return ret;
+ }
+ module_init(sc16is7xx_init);
+ 
 -- 
 2.19.1
 
