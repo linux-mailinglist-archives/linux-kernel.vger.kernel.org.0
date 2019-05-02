@@ -2,96 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C2411F7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 811B711F96
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfEBPsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:48:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726958AbfEBPsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:48:41 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42Fl4El006839
-        for <linux-kernel@vger.kernel.org>; Thu, 2 May 2019 11:48:40 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s81j3x4xp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:48:39 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 2 May 2019 16:48:38 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 2 May 2019 16:48:34 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x42FmX7O47448276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 May 2019 15:48:33 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EC26A404D;
-        Thu,  2 May 2019 15:48:33 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E117A4051;
-        Thu,  2 May 2019 15:48:32 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.95.175])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  2 May 2019 15:48:31 +0000 (GMT)
-Subject: Re: [PATCH] kexec_buffer measure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     prakhar srivastava <prsriva02@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>
-Date:   Thu, 02 May 2019 11:48:21 -0400
-In-Reply-To: <1555978681.4914.305.camel@linux.ibm.com>
-References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
-         <1555978681.4914.305.camel@linux.ibm.com>
+        id S1726445AbfEBP4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:56:12 -0400
+Received: from mga06.intel.com ([134.134.136.31]:8954 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbfEBP4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:56:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 08:56:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,422,1549958400"; 
+   d="scan'208";a="147702137"
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga007.fm.intel.com with ESMTP; 02 May 2019 08:56:09 -0700
+Message-ID: <ed56d7930e630213d74a7df8b9144d01415dac7c.camel@intel.com>
+Subject: Re: [PATCH] binfmt_elf: Extract .note.gnu.property from an ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org
+Date:   Thu, 02 May 2019 08:48:42 -0700
+In-Reply-To: <20190502142951.GP3567@e103592.cambridge.arm.com>
+References: <20190501211217.5039-1-yu-cheng.yu@intel.com>
+         <20190502111003.GO3567@e103592.cambridge.arm.com>
+         <20190502142951.GP3567@e103592.cambridge.arm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19050215-0012-0000-0000-000003179DCD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050215-0013-0000-0000-000021500DB5
-Message-Id: <1556812101.4134.28.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=975 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905020105
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc'ing Paul, John, Casey]
-
-On Mon, 2019-04-22 at 20:18 -0400, Mimi Zohar wrote:
-> [Cc'ing LSM mailing list]
+On Thu, 2019-05-02 at 15:29 +0100, Dave Martin wrote:
+> On Thu, May 02, 2019 at 12:10:04PM +0100, Dave Martin wrote:
+> > On Wed, May 01, 2019 at 02:12:17PM -0700, Yu-cheng Yu wrote:
 > 
-> On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
+> [...]
 > 
-> > 2) Adding a LSM hook
-> > We are doing both the command line and kernel version measurement in IMA.
-> > Can you please elaborate on how this can be used outside of the scenario?
-> > That will help me come back with a better design and code. I am
-> > neutral about this.
+> > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c > > index
+> > > 7d09d125f148..40aa4a4fd64d 100644
+> > > --- a/fs/binfmt_elf.c
+> > > +++ b/fs/binfmt_elf.c
+> > > @@ -1076,6 +1076,19 @@ static int load_elf_binary(struct linux_binprm
+> > > *bprm)
+> > >  		goto out_free_dentry;
+> > >  	}
+> > >  
+> > > +	if (interpreter) {
+> > > +		retval = arch_setup_property(&loc->interp_elf_ex,
+> > > +					     interp_elf_phdata,
+> > > +					     interpreter, true);
+> > > +	} else {
+> > > +		retval = arch_setup_property(&loc->elf_ex,
+> > > +					     elf_phdata,
+> > > +					     bprm->file, false);
+> > > +	}
 > 
-> As I said previously, initially you might want to only measure the
-> kexec boot command line, but will you ever want to verify or audit log
-> the boot command line hash?  Perhaps LSMs would be interested in the
-> boot command line.  Should this be an LSM hook?
+> This will be too late for arm64, since we need to twiddle the mmap prot
+> flags for the executable's pages based on the detected properties.
+> 
+> Can we instead move this much earlier, letting the arch code stash
+> something in arch_state that can be consumed later on?
+> 
+> This also has the advantage that we can report errors to the execve()
+> caller before passing the point of no return (i.e., flush_old_exec()).
 
-From an LSM perspective, is there any interest in the boot command line?
+I will look into that.
 
-Mimi
+> 
+> [...]
+> 
+> > > diff --git a/fs/gnu_property.c b/fs/gnu_property.c
+> 
+> [...]
+> 
+> > > +int get_gnu_property(void *ehdr_p, void *phdr_p, struct file *f,
+> > > +		     u32 pr_type, u32 *property)
+> > > +{
+> > > +	struct elf64_hdr *ehdr64 = ehdr_p;
+> > > +	int err = 0;
+> > > +
+> > > +	*property = 0;
+> > > +
+> > > +	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
+> > > +		struct elf64_phdr *phdr64 = phdr_p;
+> > > +
+> > > +		err = scan_segments_64(f, phdr64, ehdr64->e_phnum,
+> > > +				       pr_type, property);
+> > > +		if (err < 0)
+> > > +			goto out;
+> > > +	} else {
+> > > +#ifdef CONFIG_COMPAT
+> > > +		struct elf32_hdr *ehdr32 = ehdr_p;
+> > > +
+> > > +		if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32) {
+> > > +			struct elf32_phdr *phdr32 = phdr_p;
+> > > +
+> > > +			err = scan_segments_32(f, phdr32, ehdr32-
+> > > >e_phnum,
+> > > +					       pr_type, property);
+> > > +			if (err < 0)
+> > > +				goto out;
+> > > +		}
+> > > +#else
+> > > +	WARN_ONCE(1, "Exec of 32-bit app, but CONFIG_COMPAT is not
+> > > enabled.\n");
+> > > +	return -ENOTSUPP;
+> > > +#endif
+> > > +	}
+> 
+> We have already made a ton of assumptions about the ELF class by this
+> point, and we don't seem to check it explicitly elsewhere, so it is a
+> bit weird to police it specifically here.
+> 
+> Can we simply pass the assumed ELF class as a parameter instead?
 
+Yes.
+
+Yu-cheng
