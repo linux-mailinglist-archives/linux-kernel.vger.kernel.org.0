@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B22112CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 07:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5EA112D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 07:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfEBF6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 01:58:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60776 "EHLO mx1.suse.de"
+        id S1726353AbfEBF7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 01:59:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60818 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725763AbfEBF6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 01:58:42 -0400
+        id S1725763AbfEBF7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 01:59:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1D2FAC4B;
-        Thu,  2 May 2019 05:58:40 +0000 (UTC)
-Subject: Re: [PATCH 01/24] scsi: add SPDX tags to scsi midlayer files missing
- licensing information
+        by mx1.suse.de (Postfix) with ESMTP id 79EB8ABE1;
+        Thu,  2 May 2019 05:59:08 +0000 (UTC)
+Subject: Re: [PATCH 02/24] scsi: switch the remaining scsi midlayer files to
+ use SPDX tags
 To:     Christoph Hellwig <hch@lst.de>,
         "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
@@ -28,14 +28,14 @@ Cc:     Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
         linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
         osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
 References: <20190501161417.32592-1-hch@lst.de>
- <20190501161417.32592-2-hch@lst.de>
+ <20190501161417.32592-3-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <2ae616f8-e150-0213-537c-d035ce0f6d57@suse.de>
-Date:   Thu, 2 May 2019 07:58:39 +0200
+Message-ID: <7c02b3f0-f53e-ec56-bbab-1eebaa904a71@suse.de>
+Date:   Thu, 2 May 2019 07:59:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190501161417.32592-2-hch@lst.de>
+In-Reply-To: <20190501161417.32592-3-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -45,20 +45,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 5/1/19 6:13 PM, Christoph Hellwig wrote:
-> Add the default kernel GPLv2 annotation to SCSI midlayer files missing
-> any licensing information.
+> Use the GPLv2 SPDX tag instead of verbose boilerplate text.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   drivers/scsi/hosts.c        | 1 +
->   drivers/scsi/scsi.c         | 1 +
->   drivers/scsi/scsi_debugfs.h | 1 +
->   drivers/scsi/scsi_error.c   | 1 +
->   drivers/scsi/scsi_ioctl.c   | 1 +
->   drivers/scsi/scsi_lib.c     | 1 +
->   drivers/scsi/scsi_pm.c      | 1 +
->   drivers/scsi/scsi_sysfs.c   | 1 +
->   8 files changed, 8 insertions(+)
+>   drivers/scsi/scsi_logging.c |  3 +--
+>   drivers/scsi/scsi_sysctl.c  |  2 +-
+>   drivers/scsi/scsi_trace.c   | 14 +-------------
+>   3 files changed, 3 insertions(+), 16 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
