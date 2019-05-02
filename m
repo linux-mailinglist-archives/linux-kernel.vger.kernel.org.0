@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0AD11A3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F76A11A4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfEBNeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 09:34:04 -0400
-Received: from mail2.sp2max.com.br ([138.185.4.9]:45810 "EHLO
+        id S1726404AbfEBNeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 09:34:08 -0400
+Received: from mail2.sp2max.com.br ([138.185.4.9]:45834 "EHLO
         mail2.sp2max.com.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfEBNeD (ORCPT
+        with ESMTP id S1726267AbfEBNeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 09:34:03 -0400
+        Thu, 2 May 2019 09:34:04 -0400
 Received: from pgsop.sopnet.com.ar (unknown [179.40.38.12])
         (Authenticated sender: pablo@fliagreco.com.ar)
-        by mail2.sp2max.com.br (Postfix) with ESMTPA id A0E767B05A2;
-        Thu,  2 May 2019 10:33:59 -0300 (-03)
+        by mail2.sp2max.com.br (Postfix) with ESMTPA id 7F0767B2FF1;
+        Thu,  2 May 2019 10:34:00 -0300 (-03)
 From:   Pablo Greco <pgreco@centosproject.org>
 To:     linux-sunxi@googlegroups.com
 Cc:     Pablo Greco <pgreco@centosproject.org>,
@@ -24,12 +24,14 @@ Cc:     Pablo Greco <pgreco@centosproject.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/5] ARM: dts: sun8i: v40 Rewrite BPi M2 Berry DTS based on BPi M2 Ultra
-Date:   Thu,  2 May 2019 10:33:44 -0300
-Message-Id: <1556804030-25291-1-git-send-email-pgreco@centosproject.org>
+Subject: [PATCH v6 1/5] ARM: dts: sun8i: v40: bananapi-m2-berry: Add GPIO pin-bank regulator supplies
+Date:   Thu,  2 May 2019 10:33:45 -0300
+Message-Id: <1556804030-25291-2-git-send-email-pgreco@centosproject.org>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1556804030-25291-1-git-send-email-pgreco@centosproject.org>
+References: <1556804030-25291-1-git-send-email-pgreco@centosproject.org>
 X-SP2Max-MailScanner-Information: Please contact the ISP for more information
-X-SP2Max-MailScanner-ID: A0E767B05A2.A27CA
+X-SP2Max-MailScanner-ID: 7F0767B2FF1.A2C29
 X-SP2Max-MailScanner: Sem Virus encontrado
 X-SP2Max-MailScanner-SpamCheck: nao spam, SpamAssassin (not cached,
         escore=-2.9, requerido 6, autolearn=not spam, ALL_TRUSTED -1.00,
@@ -41,52 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BPi M2 Berry is a trimmed down version of the BPi M2 Ultra, completely
-software compatible.
+The bananapi-m2-berry has the PMIC providing voltage to all the pin-bank
+supply rails from its various regulator outputs, tie them to the pio
+node.
 
-Changes include:
-- 2GiB -> 1GiB
-- no eMMC
-- no onboard microphone
-- no IR
-- no blue LED
-- no charging (and power jack to USB)
-- dropped USB2 and connect USB1 to a 4-port HUB.
+Signed-off-by: Pablo Greco <pgreco@centosproject.org>
+---
+ arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Changes in v6:
-- Removed patch already queued for 5.3
-- Reworked which nodes are added according to the new patch order
-- Squashed bt and wifi patches
-
-Changes in v5:
-- Changed commit order
-- Removed regulator-always-on from gpio regulators
-- Copied commit log for the bluetooth node from the m2-ultra
-
-Changes in v4:
-- Went back to v2
-- Added GPIO pin-bank regulators (both m2-ultra and m2-berry)
-
-Changes in v3:
-- Removed "Sort device node dereferences" (already applied)
-- Added basic pio node
-- Tied GMAC regulators to the pio (both m2-ultra and m2-berry)
-
-Changes in v2:
-- Split into smaller patches
-
-Pablo Greco (5):
-  ARM: dts: sun8i: v40: bananapi-m2-berry: Add GPIO pin-bank regulator  
-      supplies
-  ARM: dts: sun8i: v40: bananapi-m2-berry: Enable GMAC ethernet
-    controller
-  ARM: dts: sun8i: v40: bananapi-m2-berry: Enable HDMI output
-  ARM: dts: sun8i: v40: bananapi-m2-berry: Enable AHCI
-  ARM: dts: sun8i: v40: bananapi-m2-berry: Add Bluetooth device node
-
- arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts | 123 ++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
-
+diff --git a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+index f05cabd..27297f4 100644
+--- a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
++++ b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+@@ -123,6 +123,21 @@
+ 	status = "okay";
+ };
+ 
++&pio {
++	vcc-pa-supply = <&reg_aldo2>;
++	vcc-pc-supply = <&reg_dcdc1>;
++	vcc-pd-supply = <&reg_dcdc1>;
++	vcc-pe-supply = <&reg_eldo1>;
++	vcc-pf-supply = <&reg_dcdc1>;
++	vcc-pg-supply = <&reg_dldo1>;
++};
++
++&reg_aldo2 {
++	regulator-min-microvolt = <2500000>;
++	regulator-max-microvolt = <2500000>;
++	regulator-name = "vcc-pa";
++};
++
+ &reg_aldo3 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <2700000>;
 -- 
 1.8.3.1
 
