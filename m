@@ -2,58 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CAE113B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A369113E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbfEBHIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 03:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
+        id S1726852AbfEBHLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 03:11:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:49661 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfEBHIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 03:08:04 -0400
-Received: from localhost (unknown [171.76.113.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726833AbfEBHLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 03:11:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C67852085A;
-        Thu,  2 May 2019 07:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556780883;
-        bh=4UFPxs6JvZxakaeyG4qDIBh4IL4y8hXBZwN3SfTw9Z8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vX1nueDloxy/jwbPpl+bD+/PQL4Nk27eLeLLscm7SW5XQiUXI29+PY+3e9U7ZjKF6
-         wCLA0qtUDD/MY01BCYAYW0IpzL7HX2MhxHG1C2GQO3Ye9OAUeBx0CgWnqfFmIHyQVh
-         S3FHSrrgSHqAwTYnwXK6pH5eGcftsVqFqkgHhCKA=
-Date:   Thu, 2 May 2019 12:37:53 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com
-Subject: Re: [alsa-devel] [PATCH v4 00/22] soundwire: code cleanup
-Message-ID: <20190502070753.GK3845@vkoul-mobl.Dlink>
-References: <20190501155745.21806-1-pierre-louis.bossart@linux.intel.com>
- <20190502055812.GG3845@vkoul-mobl.Dlink>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44vmf63cncz9s9G;
+        Thu,  2 May 2019 17:11:42 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v1 2/4] powerpc/mm: Move book3s64 specifics in subdirectory mm/book3s64
+In-Reply-To: <c4afde657ef9e4ad0266ae62e9907313c41c4a16.1553853405.git.christophe.leroy@c-s.fr>
+References: <cover.1553853405.git.christophe.leroy@c-s.fr> <c4afde657ef9e4ad0266ae62e9907313c41c4a16.1553853405.git.christophe.leroy@c-s.fr>
+Date:   Thu, 02 May 2019 17:11:40 +1000
+Message-ID: <87sgtx5o0j.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502055812.GG3845@vkoul-mobl.Dlink>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-05-19, 11:28, Vinod Koul wrote:
-> On 01-05-19, 10:57, Pierre-Louis Bossart wrote:
-> > SoundWire support will be provided in Linux with the Sound Open
-> > Firmware (SOF) on Intel platforms. Before we start adding the missing
-> > pieces, there are a number of warnings and style issues reported by
-> > checkpatch, cppcheck and Coccinelle that need to be cleaned-up.
-> 
-> Applied all expect 2, 3, 6 and 22
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Split 2, 3, 22, updated log for 6 and pushed
+> Many files in arch/powerpc/mm are only for book3S64. This patch
+> creates a subdirectory for them.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/mm/Makefile                           | 25 +++----------------
+>  arch/powerpc/mm/book3s64/Makefile                  | 28 ++++++++++++++++++++++
+>  arch/powerpc/mm/{ => book3s64}/hash64_4k.c         |  0
+>  arch/powerpc/mm/{ => book3s64}/hash64_64k.c        |  0
+>  arch/powerpc/mm/{ => book3s64}/hash_native_64.c    |  0
+>  arch/powerpc/mm/{ => book3s64}/hash_utils_64.c     |  0
+>  arch/powerpc/mm/{ => book3s64}/hugepage-hash64.c   |  0
+>  .../powerpc/mm/{ => book3s64}/hugetlbpage-hash64.c |  0
+>  arch/powerpc/mm/{ => book3s64}/hugetlbpage-radix.c |  0
+>  .../mm/{ => book3s64}/mmu_context_book3s64.c       |  0
+>  arch/powerpc/mm/{ => book3s64}/mmu_context_iommu.c |  0
+>  arch/powerpc/mm/{ => book3s64}/pgtable-book3s64.c  |  0
+>  arch/powerpc/mm/{ => book3s64}/pgtable-hash64.c    |  0
+>  arch/powerpc/mm/{ => book3s64}/pgtable-radix.c     |  0
+>  arch/powerpc/mm/{ => book3s64}/pkeys.c             |  0
+>  arch/powerpc/mm/{ => book3s64}/slb.c               |  0
+>  arch/powerpc/mm/{ => book3s64}/subpage-prot.c      |  0
+>  arch/powerpc/mm/{ => book3s64}/tlb-radix.c         |  0
+>  arch/powerpc/mm/{ => book3s64}/tlb_hash64.c        |  0
+>  arch/powerpc/mm/{ => book3s64}/vphn.c              |  0
+>  arch/powerpc/mm/{ => book3s64}/vphn.h              |  0
+>  arch/powerpc/mm/numa.c                             |  2 +-
+>  22 files changed, 32 insertions(+), 23 deletions(-)
+>  create mode 100644 arch/powerpc/mm/book3s64/Makefile
+>  rename arch/powerpc/mm/{ => book3s64}/hash64_4k.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hash64_64k.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hash_native_64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hash_utils_64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hugepage-hash64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hugetlbpage-hash64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/hugetlbpage-radix.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/mmu_context_book3s64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/mmu_context_iommu.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/pgtable-book3s64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/pgtable-hash64.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/pgtable-radix.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/pkeys.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/slb.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/subpage-prot.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/tlb-radix.c (100%)
+>  rename arch/powerpc/mm/{ => book3s64}/tlb_hash64.c (100%)
 
--- 
-~Vinod
+Do you mind if I take this but rework the destination names in the process?
+
+I don't like having eg. book3s64/pgtable-book3s64.c
+
+And some of the other names could use a bit of cleanup too.
+
+What about:
+
+ arch/powerpc/mm/{hash64_4k.c => book3s64/hash_4k.c}
+ arch/powerpc/mm/{hash64_64k.c => book3s64/hash_64k.c}
+ arch/powerpc/mm/{hugepage-hash64.c => book3s64/hash_hugepage.c}
+ arch/powerpc/mm/{hugetlbpage-hash64.c => book3s64/hash_hugetlbpage.c}
+ arch/powerpc/mm/{hash_native_64.c => book3s64/hash_native.c}
+ arch/powerpc/mm/{pgtable-hash64.c => book3s64/hash_pgtable.c}
+ arch/powerpc/mm/{tlb_hash64.c => book3s64/hash_tlb.c}
+ arch/powerpc/mm/{hash_utils_64.c => book3s64/hash_utils.c}
+ arch/powerpc/mm/{mmu_context_iommu.c => book3s64/iommu_api.c}
+ arch/powerpc/mm/{mmu_context_book3s64.c => book3s64/mmu_context.c}
+ arch/powerpc/mm/{pgtable-book3s64.c => book3s64/pgtable.c}
+ arch/powerpc/mm/{hugetlbpage-radix.c => book3s64/radix_hugetlbpage.c}
+ arch/powerpc/mm/{pgtable-radix.c => book3s64/radix_pgtable.c}
+ arch/powerpc/mm/{tlb-radix.c => book3s64/radix_tlb.c}
+
+cheers
