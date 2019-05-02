@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CA711F7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3205E11CF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfEBPse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:48:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38786 "EHLO mail.kernel.org"
+        id S1727912AbfEBP1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:27:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726958AbfEBPXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:11 -0400
+        id S1727872AbfEBP1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:27:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C60F52081C;
-        Thu,  2 May 2019 15:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E884320675;
+        Thu,  2 May 2019 15:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810590;
-        bh=VkXJd7GfaGTCPs1rwOP60Aow9q6IaXg/4ZcqNq+ta3M=;
+        s=default; t=1556810823;
+        bh=FDNU4kDC2n76Cl9nLieE106/2Os9s6nt8AFRwtENVIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=znZC7yxAqgSKcCi6GLwzXvtMhpZCtAoEKfkW6MdQjZOFIqRmrXpNFEhUpe0h9y2wv
-         Zv0puLsyrM/taZ4iqG3U2VS+7W0OfvAmiuTbuDrPfuNF4Ry/6m7AQq6BSBC7JCA98Q
-         1UXfwYKqujcoV4/ZHe8JoSqg229ggdmeMj9bzyDc=
+        b=U3swyAHHUo+ZIT/E/cr9a8xJ20zrZAH8IG3mSXWBPzDLVUn7/Q+RMadX0u7FPt8ap
+         W0iy2YwLmQyTTxAgAPPtlAxjLYwyO7QgVV9loW+OCJlQmlep2MK20b9ec6p1qKxH65
+         aDntSVtx6dh7I24W+z9Bmawma4E4LE5zFUZeOpnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
+        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
         "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 17/32] net: ks8851: Delay requesting IRQ until opened
+Subject: [PATCH 4.19 41/72] net: macb: Add null check for PCLK and HCLK
 Date:   Thu,  2 May 2019 17:21:03 +0200
-Message-Id: <20190502143320.148720624@linuxfoundation.org>
+Message-Id: <20190502143336.755702883@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,92 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d268f31552794abf5b6aa5af31021643411f25f5 ]
+[ Upstream commit cd5afa91f078c0787be0a62b5ef90301c00b0271 ]
 
-The ks8851 driver currently requests the IRQ before registering the
-net_device.  Because the net_device name is used as IRQ name and is
-still "eth%d" when the IRQ is requested, it's impossibe to tell IRQs
-apart if multiple ks8851 chips are present.  Most other drivers delay
-requesting the IRQ until the net_device is opened.  Do the same.
+Both PCLK and HCLK are "required" clocks according to macb devicetree
+documentation. There is a chance that devm_clk_get doesn't return a
+negative error but just a NULL clock structure instead. In such a case
+the driver proceeds as usual and uses pclk value 0 to calculate MDC
+divisor which is incorrect. Hence fix the same in clock initialization.
 
-The driver doesn't enable interrupts on the chip before opening the
-net_device and disables them when closing it, so there doesn't seem to
-be a need to request the IRQ already on probe.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Tristram Ha <Tristram.Ha@microchip.com>
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/micrel/ks8851.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
-index a8c5641ff955..ff6cab4f6343 100644
---- a/drivers/net/ethernet/micrel/ks8851.c
-+++ b/drivers/net/ethernet/micrel/ks8851.c
-@@ -797,6 +797,15 @@ static void ks8851_tx_work(struct work_struct *work)
- static int ks8851_net_open(struct net_device *dev)
- {
- 	struct ks8851_net *ks = netdev_priv(dev);
-+	int ret;
-+
-+	ret = request_threaded_irq(dev->irq, NULL, ks8851_irq,
-+				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+				   dev->name, ks);
-+	if (ret < 0) {
-+		netdev_err(dev, "failed to get irq\n");
-+		return ret;
-+	}
- 
- 	/* lock the card, even if we may not actually be doing anything
- 	 * else at the moment */
-@@ -911,6 +920,8 @@ static int ks8851_net_stop(struct net_device *dev)
- 		dev_kfree_skb(txb);
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 8abea1c3844f..7d7b51383adf 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3323,14 +3323,20 @@ static int macb_clk_init(struct platform_device *pdev, struct clk **pclk,
+ 		*hclk = devm_clk_get(&pdev->dev, "hclk");
  	}
  
-+	free_irq(dev->irq, ks);
+-	if (IS_ERR(*pclk)) {
++	if (IS_ERR_OR_NULL(*pclk)) {
+ 		err = PTR_ERR(*pclk);
++		if (!err)
++			err = -ENODEV;
 +
- 	return 0;
- }
+ 		dev_err(&pdev->dev, "failed to get macb_clk (%u)\n", err);
+ 		return err;
+ 	}
  
-@@ -1542,14 +1553,6 @@ static int ks8851_probe(struct spi_device *spi)
- 	ks8851_read_selftest(ks);
- 	ks8851_init_mac(ks);
- 
--	ret = request_threaded_irq(spi->irq, NULL, ks8851_irq,
--				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
--				   ndev->name, ks);
--	if (ret < 0) {
--		dev_err(&spi->dev, "failed to get irq\n");
--		goto err_irq;
--	}
--
- 	ret = register_netdev(ndev);
- 	if (ret) {
- 		dev_err(&spi->dev, "failed to register network device\n");
-@@ -1562,11 +1565,7 @@ static int ks8851_probe(struct spi_device *spi)
- 
- 	return 0;
- 
--
- err_netdev:
--	free_irq(ndev->irq, ks);
--
--err_irq:
- err_id:
- 	if (gpio_is_valid(gpio))
- 		gpio_set_value(gpio, 0);
-@@ -1587,7 +1586,6 @@ static int ks8851_remove(struct spi_device *spi)
- 		dev_info(&spi->dev, "remove\n");
- 
- 	unregister_netdev(priv->netdev);
--	free_irq(spi->irq, priv);
- 	if (gpio_is_valid(priv->gpio))
- 		gpio_set_value(priv->gpio, 0);
- 	regulator_disable(priv->vdd_reg);
+-	if (IS_ERR(*hclk)) {
++	if (IS_ERR_OR_NULL(*hclk)) {
+ 		err = PTR_ERR(*hclk);
++		if (!err)
++			err = -ENODEV;
++
+ 		dev_err(&pdev->dev, "failed to get hclk (%u)\n", err);
+ 		return err;
+ 	}
 -- 
 2.19.1
 
