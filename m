@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF2E11C8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6FF11DFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfEBPWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37366 "EHLO mail.kernel.org"
+        id S1728608AbfEBPgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:36:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbfEBPWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:22:11 -0400
+        id S1728810AbfEBPan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:30:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A16B52081C;
-        Thu,  2 May 2019 15:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B326C20B7C;
+        Thu,  2 May 2019 15:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810530;
-        bh=wvOR1Uv2MR8p49iQslFGEWWv9UDcGrkNlEPhyTw2zP4=;
+        s=default; t=1556811043;
+        bh=5IKcHb/BiqpQ9jsv0SapryPbCO4oCW5m2Nfmbwo9D9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yIP132cYp/x+y7/sEybt54FTZ8BtmpT3h7YznLBk6M1YJSh8M1iwxisRgs0vA7aUP
-         ec2OVAfNsPksK3OKef7tlwx40uH7v9KCQ2KhmgARZpnJcEv2vQTytKDWA1RvS/Y68M
-         /h2J1MUuRn8zhweIknhlEdKQJakwbDG7GGtpPoIg=
+        b=C7QItkPQpmtOvEVNC3XrdBi7O7JPOLsHMTYZTCG5mwryqWFePS3kk5SwJigg5uHar
+         dJ3R+JL67ebuyXHN0vowrV53SAiGZDXn54OxOuNT6ov/TQUgSZ5GB1r4KEmX0hISYq
+         SrUnB5JaBG7zMIzK2evSxdwnruvNgLSV+/vnQHFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?V=C3=A1clav=20Zindulka?= <vaclav.zindulka@tlapnet.cz>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 07/32] netfilter: nft_set_rbtree: check for inactive element after flag mismatch
-Date:   Thu,  2 May 2019 17:20:53 +0200
-Message-Id: <20190502143317.550077918@linuxfoundation.org>
+Subject: [PATCH 5.0 052/101] net/sched: dont dereference a->goto_chain to read the chain index
+Date:   Thu,  2 May 2019 17:20:54 +0200
+Message-Id: <20190502143343.161539260@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 05b7639da55f5555b9866a1f4b7e8995232a6323 ]
+[ Upstream commit fe384e2fa36ca084a456fd30558cccc75b4b3fbd ]
 
-Otherwise, we hit bogus ENOENT when removing elements.
+callers of tcf_gact_goto_chain_index() can potentially read an old value
+of the chain index, or even dereference a NULL 'goto_chain' pointer,
+because 'goto_chain' and 'tcfa_action' are read in the traffic path
+without caring of concurrent write in the control path. The most recent
+value of chain index can be read also from a->tcfa_action (it's encoded
+there together with TC_ACT_GOTO_CHAIN bits), so we don't really need to
+dereference 'goto_chain': just read the chain id from the control action.
 
-Fixes: e701001e7cbe ("netfilter: nft_rbtree: allow adjacent intervals with dynamic updates")
-Reported-by: Václav Zindulka <vaclav.zindulka@tlapnet.cz>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: e457d86ada27 ("net: sched: add couple of goto_chain helpers")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- net/netfilter/nft_set_rbtree.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ include/net/tc_act/tc_gact.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
-index 93820e0d8814..4ee8acded0a4 100644
---- a/net/netfilter/nft_set_rbtree.c
-+++ b/net/netfilter/nft_set_rbtree.c
-@@ -191,10 +191,6 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 		else if (d > 0)
- 			parent = parent->rb_right;
- 		else {
--			if (!nft_set_elem_active(&rbe->ext, genmask)) {
--				parent = parent->rb_left;
--				continue;
--			}
- 			if (nft_rbtree_interval_end(rbe) &&
- 			    !nft_rbtree_interval_end(this)) {
- 				parent = parent->rb_left;
-@@ -203,6 +199,9 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 				   nft_rbtree_interval_end(this)) {
- 				parent = parent->rb_right;
- 				continue;
-+			} else if (!nft_set_elem_active(&rbe->ext, genmask)) {
-+				parent = parent->rb_left;
-+				continue;
- 			}
- 			nft_set_elem_change_active(net, set, &rbe->ext);
- 			return rbe;
+diff --git a/include/net/tc_act/tc_gact.h b/include/net/tc_act/tc_gact.h
+index ef8dd0db70ce..56935bf027a7 100644
+--- a/include/net/tc_act/tc_gact.h
++++ b/include/net/tc_act/tc_gact.h
+@@ -56,7 +56,7 @@ static inline bool is_tcf_gact_goto_chain(const struct tc_action *a)
+ 
+ static inline u32 tcf_gact_goto_chain_index(const struct tc_action *a)
+ {
+-	return a->goto_chain->index;
++	return READ_ONCE(a->tcfa_action) & TC_ACT_EXT_VAL_MASK;
+ }
+ 
+ #endif /* __NET_TC_GACT_H */
 -- 
 2.19.1
 
