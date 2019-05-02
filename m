@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B59C11CF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0621411C8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:22:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfEBP0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:26:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43454 "EHLO mail.kernel.org"
+        id S1726602AbfEBPWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbfEBP0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:45 -0400
+        id S1726573AbfEBPWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:22:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5EBB2081C;
-        Thu,  2 May 2019 15:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1359F20B7C;
+        Thu,  2 May 2019 15:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810804;
-        bh=KlR5qBkFFwyurYyyRxUc8BxwSlXbeqURBub8Huv9Img=;
+        s=default; t=1556810540;
+        bh=kWQ+BR2bt9YKyfOZkuevkxa5xHHEhv4G6qbod7AJGIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRBhNBHNZ6I6WzMcXNR3P/3WSIwVXXm3HtTmttDw6iruuXtqTGxT9KWKnj+rTrpRA
-         APi9bDDWZ816cFFhLjEuPD65eaeK/rQTAjM91ch7Ybq++mH7T8tS8Zy4yzhPUl+e8a
-         w3iXgTpfXVSRylBCre/JscinkEPY4yQg8LZhLDFs=
+        b=e1s78eDkORFOoyvnxvYE9fT4Fpi8+j9U08DcFS/JBDL932bxHbaGG30a4S/iZwbpa
+         rHU3IAdGvdNtilwJbiv8KodcQOZkWy3eoCLFbTfp71rLeIUUq7Tht1wU4XAqKDZ9Jm
+         fjLPyd9pxAkV35BlHcgtM0BOKA3s1nZJY5BXKpRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Guido Kiener <guido.kiener@rohde-schwarz.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 35/72] net: ks8851: Delay requesting IRQ until opened
+Subject: [PATCH 4.9 11/32] usb: gadget: net2280: Fix overrun of OUT messages
 Date:   Thu,  2 May 2019 17:20:57 +0200
-Message-Id: <20190502143336.320146336@linuxfoundation.org>
+Message-Id: <20190502143318.704653010@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,92 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d268f31552794abf5b6aa5af31021643411f25f5 ]
+[ Upstream commit 9d6a54c1430647355a5e23434881b2ca3d192b48 ]
 
-The ks8851 driver currently requests the IRQ before registering the
-net_device.  Because the net_device name is used as IRQ name and is
-still "eth%d" when the IRQ is requested, it's impossibe to tell IRQs
-apart if multiple ks8851 chips are present.  Most other drivers delay
-requesting the IRQ until the net_device is opened.  Do the same.
+The OUT endpoint normally blocks (NAK) subsequent packets when a
+short packet was received and returns an incomplete queue entry to
+the gadget driver. Thereby the gadget driver can detect a short packet
+when reading queue entries with a length that is not equal to a
+multiple of packet size.
 
-The driver doesn't enable interrupts on the chip before opening the
-net_device and disables them when closing it, so there doesn't seem to
-be a need to request the IRQ already on probe.
+The start_queue() function enables receiving OUT packets regardless of
+the content of the OUT FIFO. This results in a race: With the current
+code, it's possible that the "!ep->is_in && (readl(&ep->regs->ep_stat)
+& BIT(NAK_OUT_PACKETS))" test in start_dma() will fail, then a short
+packet will be received, and then start_queue() will call
+stop_out_naking(). That's what we don't want (OUT naking gets turned
+off while there is data in the FIFO) because then the next driver
+request might receive a mixture of old and new packets.
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Tristram Ha <Tristram.Ha@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+With the patch, this race can't occur because the FIFO's state is
+tested after we know that OUT naking is already turned on, and OUT
+naking is stopped only when both of the conditions are met.  This
+ensures that all received data is delivered to the gadget driver,
+which can detect a short packet now before new packets are appended
+to the last short packet.
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Guido Kiener <guido.kiener@rohde-schwarz.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/micrel/ks8851.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/usb/gadget/udc/net2280.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
-index 1633fa5c709c..c9faec4c5b25 100644
---- a/drivers/net/ethernet/micrel/ks8851.c
-+++ b/drivers/net/ethernet/micrel/ks8851.c
-@@ -785,6 +785,15 @@ static void ks8851_tx_work(struct work_struct *work)
- static int ks8851_net_open(struct net_device *dev)
- {
- 	struct ks8851_net *ks = netdev_priv(dev);
-+	int ret;
-+
-+	ret = request_threaded_irq(dev->irq, NULL, ks8851_irq,
-+				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+				   dev->name, ks);
-+	if (ret < 0) {
-+		netdev_err(dev, "failed to get irq\n");
-+		return ret;
-+	}
+diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
+index 7a8c36642293..57b88f4f49c5 100644
+--- a/drivers/usb/gadget/udc/net2280.c
++++ b/drivers/usb/gadget/udc/net2280.c
+@@ -870,9 +870,6 @@ static void start_queue(struct net2280_ep *ep, u32 dmactl, u32 td_dma)
+ 	(void) readl(&ep->dev->pci->pcimstctl);
  
- 	/* lock the card, even if we may not actually be doing anything
- 	 * else at the moment */
-@@ -899,6 +908,8 @@ static int ks8851_net_stop(struct net_device *dev)
- 		dev_kfree_skb(txb);
- 	}
- 
-+	free_irq(dev->irq, ks);
-+
- 	return 0;
+ 	writel(BIT(DMA_START), &dma->dmastat);
+-
+-	if (!ep->is_in)
+-		stop_out_naking(ep);
  }
  
-@@ -1529,14 +1540,6 @@ static int ks8851_probe(struct spi_device *spi)
- 	ks8851_read_selftest(ks);
- 	ks8851_init_mac(ks);
+ static void start_dma(struct net2280_ep *ep, struct net2280_request *req)
+@@ -911,6 +908,7 @@ static void start_dma(struct net2280_ep *ep, struct net2280_request *req)
+ 			writel(BIT(DMA_START), &dma->dmastat);
+ 			return;
+ 		}
++		stop_out_naking(ep);
+ 	}
  
--	ret = request_threaded_irq(spi->irq, NULL, ks8851_irq,
--				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
--				   ndev->name, ks);
--	if (ret < 0) {
--		dev_err(&spi->dev, "failed to get irq\n");
--		goto err_irq;
--	}
--
- 	ret = register_netdev(ndev);
- 	if (ret) {
- 		dev_err(&spi->dev, "failed to register network device\n");
-@@ -1549,11 +1552,7 @@ static int ks8851_probe(struct spi_device *spi)
- 
- 	return 0;
- 
--
- err_netdev:
--	free_irq(ndev->irq, ks);
--
--err_irq:
- err_id:
- 	if (gpio_is_valid(gpio))
- 		gpio_set_value(gpio, 0);
-@@ -1574,7 +1573,6 @@ static int ks8851_remove(struct spi_device *spi)
- 		dev_info(&spi->dev, "remove\n");
- 
- 	unregister_netdev(priv->netdev);
--	free_irq(spi->irq, priv);
- 	if (gpio_is_valid(priv->gpio))
- 		gpio_set_value(priv->gpio, 0);
- 	regulator_disable(priv->vdd_reg);
+ 	tmp = dmactl_default;
 -- 
 2.19.1
 
