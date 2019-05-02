@@ -2,98 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F7B118AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FD9118BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfEBMLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:11:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37556 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbfEBMLB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:11:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id k23so3015967wrd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 05:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oCtO7F4iCfswKyRGi7bOSLphK4gIn4iJZV2uNp5ivzs=;
-        b=Gn8SvsLQMxKlYfYvb5wfkMqO5ckj8c3meyR1C3aEF7HNubkJ1NYdrJV78Fn4DIcTc2
-         750uPQfLMl89SFZVsmnEJSvaPPNSwxsgI9dXKjMCp1D61Qha+89LL/J4SCUdIsk/J0dX
-         sFXO4IQo2P0IQtqgww6Tm2hVB0yxjd55TI6Ed3Y9xvMGF5PWOSlwCZlFLC5IS7WPB+sO
-         Y0fjL8vgivscCL6P0QoLWuwI5Wsl2E2ihgRT9AewjeuhAB3aMlikCoxqnbCC4x5upxwp
-         DFnouu0WnTTIOg6TR60OvVdUtOQULErUwESdhxKc24p93FG6V2sFDU1c8uHzJNKS89oI
-         ieBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oCtO7F4iCfswKyRGi7bOSLphK4gIn4iJZV2uNp5ivzs=;
-        b=KCQMJwgkiYfzalILd9Jl0BTWWacD+bkKHasmdt9wu0jrepA9tBblKB7HGjOBK/F4lB
-         2G+OD4bNlMyDkJ5+wGa0EGNuLzOZ88nlyIqH9ZGvJA9gpZCpcs70urS/Wlx1aoKm61/r
-         1l+jIoHRKVFWx3PDH1FgoaavZuti3JaHBOIAXFjSBBDH0GBXI0H0p2XjaK/hdHR3VxMy
-         5ufGZZiTzt8B8fRbauZ4yxWUz0zoAXgV5zHkjmb3jHZEkbesKVMkUHhgaGx0fSjmXj8H
-         aSNShqNP9p4xJtz77DQ5U8fAh8C/B5lwPRUbEPZh752kCGuKEepr17HQGkUmcyBjrc6w
-         jIXg==
-X-Gm-Message-State: APjAAAWu9K2CcaHx35kQpy92Ti/yJaBm8/5Y1ATHdcnHhUFZarPiZwQP
-        tlFgQTkWB8QWMPsELTjxcoWLuQ==
-X-Google-Smtp-Source: APXvYqwiOYJrXyeXMjSrke5vRgXR13G0kZTQzgHmDuQOjoYmPdNvfpQ6nGVxnTDki5cdAAvppT14Iw==
-X-Received: by 2002:adf:e984:: with SMTP id h4mr2580423wrm.32.1556799059924;
-        Thu, 02 May 2019 05:10:59 -0700 (PDT)
-Received: from localhost.localdomain (aputeaux-684-1-8-187.w90-86.abo.wanadoo.fr. [90.86.125.187])
-        by smtp.gmail.com with ESMTPSA id u9sm3648348wmd.14.2019.05.02.05.10.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 05:10:59 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, matthias.bgg@gmail.com, perex@perex.cz,
-        tiwai@suse.com, kaichieh.chuang@mediatek.com,
-        shunli.wang@mediatek.com
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 5/5] ASoC: mediatek: mt8516: register ADDA DAI
-Date:   Thu,  2 May 2019 14:10:41 +0200
-Message-Id: <20190502121041.8045-6-fparent@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190502121041.8045-1-fparent@baylibre.com>
-References: <20190502121041.8045-1-fparent@baylibre.com>
+        id S1726515AbfEBMLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:11:20 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:5378 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726501AbfEBMLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:11:19 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44vvHm3PrRz9txbD;
+        Thu,  2 May 2019 14:11:16 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=bIqFgS6W; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 85-dP5nXS5-Y; Thu,  2 May 2019 14:11:16 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44vvHm1bbTz9txbC;
+        Thu,  2 May 2019 14:11:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556799076; bh=K+3HbF0k8U9kzLuov5Fm/KEAbxDnzuIT8BsXj82K3n8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bIqFgS6WgXUsxNL6vv3SX/LN3c0X1vwPk2YfK20MalsA70YYDx4SE9JvUdgivEa1p
+         GpuxI+tAFWbvNmf1Hhvmx3XcaHATRVF38iJw8Gd6oR2UwBZnSI5CDdThr6XVbMUDzi
+         6bp48ajjxDcJ0SuNhQs1yjLcp7BUlpti0tEWEv+k=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8E77A8B8F7;
+        Thu,  2 May 2019 14:11:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id WNNQZJ3gXNeX; Thu,  2 May 2019 14:11:17 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2E90D8B899;
+        Thu,  2 May 2019 14:11:17 +0200 (CEST)
+Subject: Re: [PATCH v2 01/17] powerpc/mm: Don't BUG() in hugepd_page()
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, aneesh.kumar@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1556258134.git.christophe.leroy@c-s.fr>
+ <ff4366d14b3ef4de6af835a880a772477577139f.1556258135.git.christophe.leroy@c-s.fr>
+ <87o94lxdxe.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <d8e3c5e3-553b-da0a-46d9-b3f555c767d0@c-s.fr>
+Date:   Thu, 2 May 2019 14:11:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <87o94lxdxe.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register the ADDA DAI driver into the MT8516 PCM driver.
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
----
- sound/soc/mediatek/mt8516/mt8516-afe-pcm.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/mediatek/mt8516/mt8516-afe-pcm.c b/sound/soc/mediatek/mt8516/mt8516-afe-pcm.c
-index 84fbb5dbbd14..e1fd9290dd8f 100644
---- a/sound/soc/mediatek/mt8516/mt8516-afe-pcm.c
-+++ b/sound/soc/mediatek/mt8516/mt8516-afe-pcm.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- 
-+#include "mt8516-afe-common.h"
- #include "mt8516-afe-regs.h"
- 
- #include "../common/mtk-afe-platform-driver.h"
-@@ -670,6 +671,7 @@ static int mt8516_dai_memif_register(struct mtk_base_afe *afe)
- typedef int (*dai_register_cb)(struct mtk_base_afe *);
- static const dai_register_cb dai_register_cbs[] = {
- 	mt8516_dai_memif_register,
-+	mt8516_dai_adda_register,
- };
- 
- static int mt8516_afe_component_probe(struct snd_soc_component *component)
--- 
-2.20.1
+Le 02/05/2019 à 14:02, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> Use VM_BUG_ON() instead of BUG_ON(), as those BUG_ON()
+>> are not there to catch runtime errors but to catch errors
+>> during development cycle only.
+> 
+> I've dropped this one and the next, because I don't like VM_BUG_ON().
+> 
+> Why not? Because it's contradictory. It's a condition that's so
+> important that we should BUG, but only if the kernel has been built
+> specially for debugging.
+> 
+> I don't really buy the development cycle distinction, it's not like we
+> have a rigorous test suite that we run and then we declare everything's
+> gold and ship a product. We often don't find bugs until they're hit in
+> the wild.
+> 
+> For example the recent corruption Joel discovered with STRICT_KERNEL_RWX
+> could have been caught by a BUG_ON() to check we weren't patching kernel
+> text in radix__change_memory_range(), but he wouldn't have been using
+> CONFIG_DEBUG_VM. (See 8adddf349fda)
+> 
+> I know Aneesh disagrees with me on this, so maybe you two can convince
+> me otherwise.
+> 
 
+I have no strong oppinion about this. In v1, I replaced them with a 
+WARN_ON(), and Aneesh suggested to go with VM_BUG_ON() instead.
+
+My main purpose was to reduce the amount of BUG/BUG_ON and I thought 
+those were good candidates, but if you prefer keeping the BUG(), that's 
+ok for me. Or maybe you prefered v1 alternatives (series at 
+https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=98170) ?
+
+Christophe
