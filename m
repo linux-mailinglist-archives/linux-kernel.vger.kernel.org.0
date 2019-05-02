@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A066311DFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B070011EDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbfEBPgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:36:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41706 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727175AbfEBPgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:36:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E6DF5AB91;
-        Thu,  2 May 2019 15:36:28 +0000 (UTC)
-Subject: Re: [PATCH v9 2/2] phy: Add driver for mixel mipi dphy found on NXP's
- i.MX8 SoCs
-To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
-        Robert Chiras <robert.chiras@nxp.com>
-References: <cover.1556633413.git.agx@sigxcpu.org>
- <b999b07673e59c676d2e43a786b635beb056e9bf.1556633413.git.agx@sigxcpu.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Johan Hovold <johan@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Linux GmbH
-Message-ID: <4ce62b78-64ac-ca84-733f-bc4d10a67c54@suse.de>
-Date:   Thu, 2 May 2019 17:36:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728466AbfEBPlh convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 May 2019 11:41:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54788 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727608AbfEBPlg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:41:36 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hMDpD-0003Af-Oh; Thu, 02 May 2019 17:40:44 +0200
+Date:   Thu, 2 May 2019 17:40:43 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] x86/fpu: Remove the _GPL from the kernel_fpu_begin/end()
+ export
+Message-ID: <20190502154043.gfv4iplcvzjz3mc6@linutronix.de>
+References: <761345df6285930339aced868ebf8ec459091383.1556807897.git.luto@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b999b07673e59c676d2e43a786b635beb056e9bf.1556633413.git.agx@sigxcpu.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <761345df6285930339aced868ebf8ec459091383.1556807897.git.luto@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 30.04.19 um 16:40 schrieb Guido Günther:
-> This adds support for the Mixel DPHY as found on i.MX8 CPUs but since
-> this is an IP core it will likely be found on others in the future. So
-> instead of adding this to the nwl host driver make it a generic PHY
-> driver.
+On 2019-05-02 07:42:14 [-0700], Andy Lutomirski wrote:
+> The FPU is not a super-Linuxy internal detail, so remove the _GPL
+> from its export.  Without something like this patch, it's impossible
+> for even highly license-respecting non-GPL modules to use the FPU,
+> which seems silly to me.  After all, the FPU is a CPU feature, not
+> really a kernel feature at all.
 > 
-> The driver supports the i.MX8MQ. Support for i.MX8QM and i.MX8QXP can be
-> added once the necessary system controller bits are in via
-> mixel_dphy_devdata.
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc:: Borislav Petkov <bp@suse.de>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Nicolai Stange <nstange@suse.de>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86@kernel.org
+> Cc: stable@vger.kernel.org
+> Fixes: 12209993e98c ("x86/fpu: Don't export __kernel_fpu_{begin,end}()")
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> ---
 > 
-> Co-authored-by: Robert Chiras <robert.chiras@nxp.com>
+> This fixes a genuine annoyance for ZFS on Linux.  Regardless of what
+> one may think about the people who distribute ZFS on Linux
+> *binaries*, as far as I know, the source and the users who build it
+> themselves are entirely respectful of everyone's license.  I have no
+> problem with EXPORT_SYMBOL_GPL() in general, but let's please avoid
+> using it for things that aren't fundamentally Linux internals.
 
-This should be Co-developed-by and is lacking a Signed-off-by from that
-author. Robert, can you please provide one?
+Please don't start this. We have everything _GPL that is used for FPU
+related code and only a few functions are exported because KVM needs it.
+Also with the recent FPU rework it is much easier to get this wrong so I
+would not want for any OOT code to mess with it.
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+And again: It does not change whether or not ZFS can be used on Linux
+(excluding the license issue). They simply can't use crc32 with their
+SSE assembly and this is it.
 
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+Sebastian
