@@ -2,192 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E321243A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D628112442
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfEBVlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 17:41:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55368 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfEBVlw (ORCPT
+        id S1726300AbfEBVoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 17:44:17 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34899 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfEBVoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 17:41:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y2so4474831wmi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 14:41:50 -0700 (PDT)
+        Thu, 2 May 2019 17:44:17 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p26so3601927edr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 14:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=War2A0BOAbp9GPGMi2vdiNC4OWUlay+EdjS3sCge9Bk=;
-        b=tIG8RNUh4+cHOE8iaUA4ZU94KHEMJsE/6WIdRFiK8x6sc9GI/dOk+wXYGPLJV1y1TT
-         Fmx3NqmEMbqhIsMQZzxtnGnkurwMZbvgb+JD65zb5Fq1dNNtIWQ0AZjHO0/iEbXBaV5Q
-         uBs6CkjIoUFSiX0cyksEECWqMff4F7/Zrw0Grtqce0e8VO8amXV1FabBNGbLIA3ohBY6
-         XfOBWblMg3RgcJSw7ZRSym1u9WMmTCEShq6H6408x1iA8oKcfx68bi9/EMGwR5sVxWJ1
-         As4uR8ZfRkURFVA6A0YfH6QgJZMMTzJwGA7sfaev2By9yes5h5mSsIoIEPC2ShZdFQTQ
-         ftDQ==
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5M1sYxztvRbU0Fa/m7JfJ32dW4ShTmR9C1tXAmSl9NA=;
+        b=FzpJluqE8MT8R7KzNDAA+VV7d4aWPXZhrp3K5YMAXZxxiZZ6fYFQ5zbU9NlBDKECes
+         MWoiTAJCs+7sPBWpT1Rxuulv9jtTZbDJGiBhMB7lIm6G/KUczLlvveUmM1iPdFLYeexo
+         IOU4qqWXmVSzD9ZxD+gW+iKULcqVfkEcBUjS1B6sC9kGbtPt2Dab6QVlZx8mt4g0/qoG
+         5ZD1c338yDDUyweXNUvUG4S43Li/Iw+oLV96NwbU0qECbgkMP9TnBxdProYtCNL6jC2L
+         wFl5cC1a9xlr4P4DDQ1D/fDnH1qxAIAIpw55J72hMWqnXG0jkAiGeOI9jNLyRjpObojc
+         Im2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=War2A0BOAbp9GPGMi2vdiNC4OWUlay+EdjS3sCge9Bk=;
-        b=Ruy4EcNXJbr6M7+0upe2OIoi9x3FeRGjPreJcE7zT6c+cgYlEVDABHeD53mZmEJnid
-         tTrS8YQo7yoLL4x+GDGNraE5UAOfNhxt/bny0gIM2OrP/dNMwf9gjJkUjx0MfEMQfdpd
-         CxZAPAbW8KG0xeAS0Uoxirn09Rcfx28S1tWy5VysknMzJZ8B5dmsqFNajbq82gH72Ynt
-         R1pCcnk7/xXniyPj0mUwVE0B/Lkh7AhqNeF14vBzBsAKAhwKDfYeHEF90ygo+BYIZYo9
-         udwba6fHj/i1EWFXnktgCZrEnxpfwFuXvxDiHWR8Z5Mb65JWN9gv2iPU0cKTA65QIkjf
-         1VLA==
-X-Gm-Message-State: APjAAAUpQc3bU2Hzl5kTxNFufcPnc05NiCz2UJZAMgBJSpHg15+X2XY2
-        Nb3XIUaTN+w137Y/YiJEcPM=
-X-Google-Smtp-Source: APXvYqzv0Ge2Wf6G3J96Pe76QE3G9bpmy7gUZDimyUbrDY7fIrv85yKW8LfOEJZiXBeB+lvE8yqP8A==
-X-Received: by 2002:a1c:d14c:: with SMTP id i73mr3634429wmg.21.1556833309736;
-        Thu, 02 May 2019 14:41:49 -0700 (PDT)
-Received: from [10.67.50.73] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id y197sm249397wmd.34.2019.05.02.14.41.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 14:41:48 -0700 (PDT)
-Subject: Re: [PATCH] perf vendor events arm64: Add Cortex-A72 events
-To:     John Garry <john.garry@huawei.com>, linux-kernel@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "moderated list:ARM PMU PROFILING AND DEBUGGING" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190407213422.19059-1-f.fainelli@gmail.com>
- <1a7b28b0-3fee-f3b9-0e83-61a2759c0555@huawei.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <f1e76036-1626-153d-efba-2eabf6e1075f@gmail.com>
-Date:   Thu, 2 May 2019 14:41:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5M1sYxztvRbU0Fa/m7JfJ32dW4ShTmR9C1tXAmSl9NA=;
+        b=FmQjUFqwM9hmv+fsvemQYO9ELB/c4IiRnX3KU6LvPlZxtvip+jOX/CL/SWde4qkPoG
+         tzXrizVK8woEHLTbNEdTaqtWkcw/ISZjbz+gh7PpIU9IKJFTF1TpsV90j+IFna3Q34br
+         zhGF3VwOGIh/yWjv2+nI3UgNkPp007PDq5DmYO8UEfg5YnealS9YS/n54knWXonUfw7T
+         DT/tgx6crR1fGfQ8NDdXlhR7O8wk0qIs/z55JT02ZUw/XRcqvM+AwoktKqlqE/dFbtM2
+         HnQd3boD5/x9WCwuq7EsTEXtKZ1K+zs0F7uUery7kSIVLgjjsQ4fQBFbqUlQof2zFFxZ
+         WZrA==
+X-Gm-Message-State: APjAAAUvyKN6JlLc9ygzdrCm+49yYNA7PHiE7rJSk6liWj0mlfZ3kubp
+        8tWUSbApuFZ5BKYiMthkvrC0bp5jVMQl1jdkx34djQ==
+X-Google-Smtp-Source: APXvYqxeJH8VqaVL7Zjd6Rvf5LMww1Pe4MoQbjo+ebA5qkSTSmTih8DDTnyUTRRZHQUWg7xIsCSI2MUju1UEOzGkYxY=
+X-Received: by 2002:a17:906:3fca:: with SMTP id k10mr3124739ejj.126.1556833454254;
+ Thu, 02 May 2019 14:44:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1a7b28b0-3fee-f3b9-0e83-61a2759c0555@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190502184337.20538-1-pasha.tatashin@soleen.com> <76dfe7943f2a0ceaca73f5fd23e944dfdc0309d1.camel@intel.com>
+In-Reply-To: <76dfe7943f2a0ceaca73f5fd23e944dfdc0309d1.camel@intel.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 2 May 2019 17:44:03 -0400
+Message-ID: <CA+CK2bA=E4zRFb0Qky=baOQi_LF4x4eu8KVdEkhPJo3wWr8dYQ@mail.gmail.com>
+Subject: Re: [v5 0/3] "Hotremove" persistent memory
+To:     "Verma, Vishal L" <vishal.l.verma@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "tiwai@suse.de" <tiwai@suse.de>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "david@redhat.com" <david@redhat.com>, "bp@suse.de" <bp@suse.de>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "zwisler@kernel.org" <zwisler@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        "Wu, Fengguang" <fengguang.wu@intel.com>,
+        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/11/19 6:01 AM, John Garry wrote:
-> On 07/04/2019 22:34, Florian Fainelli wrote:
->> The Cortex-A72 supports all ARMv8 recommended events up to the
->> RC_ST_SPEC (0x91) event, create an appropriate JSON file for mapping
->> those events and update the mapfile.csv for matching the Cortex-A72 MIDR
->> to that file.
->>
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>  .../arm64/arm/cortex-a72/core-imp-def.json    | 206 ++++++++++++++++++
->>  tools/perf/pmu-events/arch/arm64/mapfile.csv  |   1 +
->>  2 files changed, 207 insertions(+)
->>  create mode 100644
->> tools/perf/pmu-events/arch/arm64/arm/cortex-a72/core-imp-def.json
->>
->> diff --git
->> a/tools/perf/pmu-events/arch/arm64/arm/cortex-a72/core-imp-def.json
->> b/tools/perf/pmu-events/arch/arm64/arm/cortex-a72/core-imp-def.json
->> new file mode 100644
->> index 000000000000..eb82fc8529c6
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a72/core-imp-def.json
->> @@ -0,0 +1,206 @@
->> +[
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_RD",
->> +    },
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_WR",
->> +    },
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_REFILL_RD",
->> +    },
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_REFILL_WR",
->> +    },
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_REFILL_INNER",
-> 
-> I'm just checking the A72 TRM, and this does not seem to be included,
-> that being event number 0x44.
-> 
->> +    },
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_REFILL_OUTER",
->> +    },
-> 
-> Or this.
-> 
->> +    {
->> +        "ArchStdEvent": "L1D_CACHE_WB_VICTIM",
->> +    },
->> +    {
-> 
-> Please check this.
+On Thu, May 2, 2019 at 4:50 PM Verma, Vishal L <vishal.l.verma@intel.com> wrote:
+>
+> On Thu, 2019-05-02 at 14:43 -0400, Pavel Tatashin wrote:
+> > The series of operations look like this:
+> >
+> > 1. After boot restore /dev/pmem0 to ramdisk to be consumed by apps.
+> >    and free ramdisk.
+> > 2. Convert raw pmem0 to devdax
+> >    ndctl create-namespace --mode devdax --map mem -e namespace0.0 -f
+> > 3. Hotadd to System RAM
+> >    echo dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+> >    echo dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+> >    echo online_movable > /sys/devices/system/memoryXXX/state
+> > 4. Before reboot hotremove device-dax memory from System RAM
+> >    echo offline > /sys/devices/system/memoryXXX/state
+> >    echo dax0.0 > /sys/bus/dax/drivers/kmem/unbind
+>
+> Hi Pavel,
+>
+> I am working on adding this sort of a workflow into a new daxctl command
+> (daxctl-reconfigure-device)- this will allow changing the 'mode' of a
+> dax device to kmem, online the resulting memory, and with your patches,
+> also attempt to offline the memory, and change back to device-dax.
+>
+> In running with these patches, and testing the offlining part, I ran
+> into the following lockdep below.
+>
+> This is with just these three patches on top of -rc7.
 
-Indeed, thanks!
--- 
-Florian
+Hi Verma,
+
+Thank you for testing. I wonder if there is a command sequence that I
+could run to reproduce it?
+Also, could you please send your config and qemu arguments.
+
+Thank you,
+Pasha
+
+>
+>
+> [  +0.004886] ======================================================
+> [  +0.001576] WARNING: possible circular locking dependency detected
+> [  +0.001506] 5.1.0-rc7+ #13 Tainted: G           O
+> [  +0.000929] ------------------------------------------------------
+> [  +0.000708] daxctl/22950 is trying to acquire lock:
+> [  +0.000548] 00000000f4d397f7 (kn->count#424){++++}, at: kernfs_remove_by_name_ns+0x40/0x80
+> [  +0.000922]
+>               but task is already holding lock:
+> [  +0.000657] 000000002aa52a9f (mem_sysfs_mutex){+.+.}, at: unregister_memory_section+0x22/0xa0
+> [  +0.000960]
+>               which lock already depends on the new lock.
+>
+> [  +0.001001]
+>               the existing dependency chain (in reverse order) is:
+> [  +0.000837]
+>               -> #3 (mem_sysfs_mutex){+.+.}:
+> [  +0.000631]        __mutex_lock+0x82/0x9a0
+> [  +0.000477]        unregister_memory_section+0x22/0xa0
+> [  +0.000582]        __remove_pages+0xe9/0x520
+> [  +0.000489]        arch_remove_memory+0x81/0xc0
+> [  +0.000510]        devm_memremap_pages_release+0x180/0x270
+> [  +0.000633]        release_nodes+0x234/0x280
+> [  +0.000483]        device_release_driver_internal+0xf4/0x1d0
+> [  +0.000701]        bus_remove_device+0xfc/0x170
+> [  +0.000529]        device_del+0x16a/0x380
+> [  +0.000459]        unregister_dev_dax+0x23/0x50
+> [  +0.000526]        release_nodes+0x234/0x280
+> [  +0.000487]        device_release_driver_internal+0xf4/0x1d0
+> [  +0.000646]        unbind_store+0x9b/0x130
+> [  +0.000467]        kernfs_fop_write+0xf0/0x1a0
+> [  +0.000510]        vfs_write+0xba/0x1c0
+> [  +0.000438]        ksys_write+0x5a/0xe0
+> [  +0.000521]        do_syscall_64+0x60/0x210
+> [  +0.000489]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  +0.000637]
+>               -> #2 (mem_hotplug_lock.rw_sem){++++}:
+> [  +0.000717]        get_online_mems+0x3e/0x80
+> [  +0.000491]        kmem_cache_create_usercopy+0x2e/0x270
+> [  +0.000609]        kmem_cache_create+0x12/0x20
+> [  +0.000507]        ptlock_cache_init+0x20/0x28
+> [  +0.000506]        start_kernel+0x240/0x4d0
+> [  +0.000480]        secondary_startup_64+0xa4/0xb0
+> [  +0.000539]
+>               -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+> [  +0.000784]        cpus_read_lock+0x3e/0x80
+> [  +0.000511]        online_pages+0x37/0x310
+> [  +0.000469]        memory_subsys_online+0x34/0x60
+> [  +0.000611]        device_online+0x60/0x80
+> [  +0.000611]        state_store+0x66/0xd0
+> [  +0.000552]        kernfs_fop_write+0xf0/0x1a0
+> [  +0.000649]        vfs_write+0xba/0x1c0
+> [  +0.000487]        ksys_write+0x5a/0xe0
+> [  +0.000459]        do_syscall_64+0x60/0x210
+> [  +0.000482]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  +0.000646]
+>               -> #0 (kn->count#424){++++}:
+> [  +0.000669]        lock_acquire+0x9e/0x180
+> [  +0.000471]        __kernfs_remove+0x26a/0x310
+> [  +0.000518]        kernfs_remove_by_name_ns+0x40/0x80
+> [  +0.000583]        remove_files.isra.1+0x30/0x70
+> [  +0.000555]        sysfs_remove_group+0x3d/0x80
+> [  +0.000524]        sysfs_remove_groups+0x29/0x40
+> [  +0.000532]        device_remove_attrs+0x42/0x80
+> [  +0.000522]        device_del+0x162/0x380
+> [  +0.000464]        device_unregister+0x16/0x60
+> [  +0.000505]        unregister_memory_section+0x6e/0xa0
+> [  +0.000591]        __remove_pages+0xe9/0x520
+> [  +0.000492]        arch_remove_memory+0x81/0xc0
+> [  +0.000568]        try_remove_memory+0xba/0xd0
+> [  +0.000510]        remove_memory+0x23/0x40
+> [  +0.000483]        dev_dax_kmem_remove+0x29/0x57 [kmem]
+> [  +0.000608]        device_release_driver_internal+0xe4/0x1d0
+> [  +0.000637]        unbind_store+0x9b/0x130
+> [  +0.000464]        kernfs_fop_write+0xf0/0x1a0
+> [  +0.000685]        vfs_write+0xba/0x1c0
+> [  +0.000594]        ksys_write+0x5a/0xe0
+> [  +0.000449]        do_syscall_64+0x60/0x210
+> [  +0.000481]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  +0.000619]
+>               other info that might help us debug this:
+>
+> [  +0.000889] Chain exists of:
+>                 kn->count#424 --> mem_hotplug_lock.rw_sem --> mem_sysfs_mutex
+>
+> [  +0.001269]  Possible unsafe locking scenario:
+>
+> [  +0.000652]        CPU0                    CPU1
+> [  +0.000505]        ----                    ----
+> [  +0.000523]   lock(mem_sysfs_mutex);
+> [  +0.000422]                                lock(mem_hotplug_lock.rw_sem);
+> [  +0.000905]                                lock(mem_sysfs_mutex);
+> [  +0.000793]   lock(kn->count#424);
+> [  +0.000394]
+>                *** DEADLOCK ***
+>
+> [  +0.000665] 7 locks held by daxctl/22950:
+> [  +0.000458]  #0: 000000005f6d3c13 (sb_writers#4){.+.+}, at: vfs_write+0x159/0x1c0
+> [  +0.000943]  #1: 00000000e468825d (&of->mutex){+.+.}, at: kernfs_fop_write+0xbd/0x1a0
+> [  +0.000895]  #2: 00000000caa17dbb (&dev->mutex){....}, at: device_release_driver_internal+0x1a/0x1d0
+> [  +0.001019]  #3: 000000002119b22c (device_hotplug_lock){+.+.}, at: remove_memory+0x16/0x40
+> [  +0.000942]  #4: 00000000150c8efe (cpu_hotplug_lock.rw_sem){++++}, at: try_remove_memory+0x2e/0xd0
+> [  +0.001019]  #5: 000000003d6b2a0f (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x25/0x120
+> [  +0.001118]  #6: 000000002aa52a9f (mem_sysfs_mutex){+.+.}, at: unregister_memory_section+0x22/0xa0
+> [  +0.001033]
+>               stack backtrace:
+> [  +0.000507] CPU: 5 PID: 22950 Comm: daxctl Tainted: G           O      5.1.0-rc7+ #13
+> [  +0.000896] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.org 04/01/2014
+> [  +0.001360] Call Trace:
+> [  +0.000293]  dump_stack+0x85/0xc0
+> [  +0.000390]  print_circular_bug.isra.41.cold.60+0x15c/0x195
+> [  +0.000651]  check_prev_add.constprop.50+0x5fd/0xbe0
+> [  +0.000563]  ? call_rcu_zapped+0x80/0x80
+> [  +0.000449]  __lock_acquire+0xcee/0xfd0
+> [  +0.000437]  lock_acquire+0x9e/0x180
+> [  +0.000428]  ? kernfs_remove_by_name_ns+0x40/0x80
+> [  +0.000531]  __kernfs_remove+0x26a/0x310
+> [  +0.000451]  ? kernfs_remove_by_name_ns+0x40/0x80
+> [  +0.000529]  ? kernfs_name_hash+0x12/0x80
+> [  +0.000462]  kernfs_remove_by_name_ns+0x40/0x80
+> [  +0.000513]  remove_files.isra.1+0x30/0x70
+> [  +0.000483]  sysfs_remove_group+0x3d/0x80
+> [  +0.000458]  sysfs_remove_groups+0x29/0x40
+> [  +0.000477]  device_remove_attrs+0x42/0x80
+> [  +0.000461]  device_del+0x162/0x380
+> [  +0.000399]  device_unregister+0x16/0x60
+> [  +0.000442]  unregister_memory_section+0x6e/0xa0
+> [  +0.001232]  __remove_pages+0xe9/0x520
+> [  +0.000443]  arch_remove_memory+0x81/0xc0
+> [  +0.000459]  try_remove_memory+0xba/0xd0
+> [  +0.000460]  remove_memory+0x23/0x40
+> [  +0.000461]  dev_dax_kmem_remove+0x29/0x57 [kmem]
+> [  +0.000603]  device_release_driver_internal+0xe4/0x1d0
+> [  +0.000590]  unbind_store+0x9b/0x130
+> [  +0.000409]  kernfs_fop_write+0xf0/0x1a0
+> [  +0.000448]  vfs_write+0xba/0x1c0
+> [  +0.000395]  ksys_write+0x5a/0xe0
+> [  +0.000382]  do_syscall_64+0x60/0x210
+> [  +0.000418]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  +0.000573] RIP: 0033:0x7fd1f7442fa8
+> [  +0.000407] Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 8d 05 75 77 0d 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
+> [  +0.002119] RSP: 002b:00007ffd48f58e28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> [  +0.000833] RAX: ffffffffffffffda RBX: 000000000210c817 RCX: 00007fd1f7442fa8
+> [  +0.000795] RDX: 0000000000000007 RSI: 000000000210c817 RDI: 0000000000000003
+> [  +0.000816] RBP: 0000000000000007 R08: 000000000210c7d0 R09: 00007fd1f74d4e80
+> [  +0.000808] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+> [  +0.000819] R13: 00007fd1f72b9ce8 R14: 0000000000000000 R15: 00007ffd48f58e70
