@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7882511EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C84E11CD0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfEBPnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:43:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44012 "EHLO mail.kernel.org"
+        id S1727447AbfEBPZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727167AbfEBP1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:27:14 -0400
+        id S1727431AbfEBPZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:25:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 176702081C;
-        Thu,  2 May 2019 15:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD36720675;
+        Thu,  2 May 2019 15:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810833;
-        bh=5bPuPdaKczs4UqEYiFRfvaXCm3/b733eld0mt8DMLF0=;
+        s=default; t=1556810704;
+        bh=OIiIwFpL32ezEt1GXclMSHdGI81OzQ4c3atY4iwVccE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yohsB8nwxLwZlE/Kq3Xo05vLcvekzEn094AWfTtZQdy/GB84slZovWOVb/xjUN/xH
-         8yFKnX3ft0CJdtxsu4zuU7hLsTT57Uxw5dSnfAaYbzkZlBVyAI8H8zYVEwHC4GcOtO
-         qXyjb6DYM64mRG4VxsgRCiDq15x2len8KhuX5Zsc=
+        b=0Oyo/0+ODlOAXNIICkcVL7XZfHEKVEHDsXigy0lt7ac54H5zb/Irn18+l8A24ycHH
+         RcX5W7qsCBtthNsg3e7EDA4VUhHJc+XEyDRmJiW0+uc0y9MjU1qtWN/FjKx3ruNJ/T
+         KLeeHX0KKuj3OjTzGpJTEWAzI7toofmwtpOTBJ+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 45/72] NFS: Fix a typo in nfs_init_timeout_values()
+Subject: [PATCH 4.14 30/49] net/sched: dont dereference a->goto_chain to read the chain index
 Date:   Thu,  2 May 2019 17:21:07 +0200
-Message-Id: <20190502143337.048238268@linuxfoundation.org>
+Message-Id: <20190502143327.657639861@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5a698243930c441afccec04e4d5dc8febfd2b775 ]
+[ Upstream commit fe384e2fa36ca084a456fd30558cccc75b4b3fbd ]
 
-Specifying a retrans=0 mount parameter to a NFS/TCP mount, is
-inadvertently causing the NFS client to rewrite any specified
-timeout parameter to the default of 60 seconds.
+callers of tcf_gact_goto_chain_index() can potentially read an old value
+of the chain index, or even dereference a NULL 'goto_chain' pointer,
+because 'goto_chain' and 'tcfa_action' are read in the traffic path
+without caring of concurrent write in the control path. The most recent
+value of chain index can be read also from a->tcfa_action (it's encoded
+there together with TC_ACT_GOTO_CHAIN bits), so we don't really need to
+dereference 'goto_chain': just read the chain id from the control action.
 
-Fixes: a956beda19a6 ("NFS: Allow the mount option retrans=0")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: e457d86ada27 ("net: sched: add couple of goto_chain helpers")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- fs/nfs/client.c | 2 +-
+ include/net/tc_act/tc_gact.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 96d5f8135eb9..751ca65da8a3 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -459,7 +459,7 @@ void nfs_init_timeout_values(struct rpc_timeout *to, int proto,
- 	case XPRT_TRANSPORT_RDMA:
- 		if (retrans == NFS_UNSPEC_RETRANS)
- 			to->to_retries = NFS_DEF_TCP_RETRANS;
--		if (timeo == NFS_UNSPEC_TIMEO || to->to_retries == 0)
-+		if (timeo == NFS_UNSPEC_TIMEO || to->to_initval == 0)
- 			to->to_initval = NFS_DEF_TCP_TIMEO * HZ / 10;
- 		if (to->to_initval > NFS_MAX_TCP_TIMEOUT)
- 			to->to_initval = NFS_MAX_TCP_TIMEOUT;
+diff --git a/include/net/tc_act/tc_gact.h b/include/net/tc_act/tc_gact.h
+index e82d93346b63..bb74ea83d57d 100644
+--- a/include/net/tc_act/tc_gact.h
++++ b/include/net/tc_act/tc_gact.h
+@@ -51,7 +51,7 @@ static inline bool is_tcf_gact_goto_chain(const struct tc_action *a)
+ 
+ static inline u32 tcf_gact_goto_chain_index(const struct tc_action *a)
+ {
+-	return a->goto_chain->index;
++	return READ_ONCE(a->tcfa_action) & TC_ACT_EXT_VAL_MASK;
+ }
+ 
+ #endif /* __NET_TC_GACT_H */
 -- 
 2.19.1
 
