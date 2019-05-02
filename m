@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7285911DA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA9011E4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfEBPcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:32:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51680 "EHLO mail.kernel.org"
+        id S1728147AbfEBP2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:28:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728320AbfEBPcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:32:10 -0400
+        id S1728124AbfEBP2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:28:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C296620C01;
-        Thu,  2 May 2019 15:32:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8884F217F9;
+        Thu,  2 May 2019 15:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811129;
-        bh=g12iT4gdSLDmpyEcT8+qkZptIkafLkOcusTzNzd0og8=;
+        s=default; t=1556810883;
+        bh=g5WyNPA/QqcB+9T8YAbD78uEc7IjUwCwmyAd3x5SmyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PtEHHwB/QVo9pMFPnedMQZx1heo+BYj8oTZGws9nlYVcKR1CPvmWwXJLE7oTaGtmK
-         WRgBLLcbqRNkal47eCV+cjAKdFUtb+P5TuO5vsFlIRg0jglrMOgTyssp8ZnAy+DZQg
-         TZnExlidBo60+Cjb2ZUg0PPBUwDq1bC/LNHd7OHg=
+        b=0WUsHqUsTjIbpyRzenGJIPGeazlPJPu2XEYrDiHefJ8Nm3oUHeZnbAfpz5QHX4e5O
+         5m/0kJRypjfkFkq5qfFZ++mc1RKtNusbT3SIcfpUvd2itIXbjfMHh2+cTAiaRzDM7W
+         QNTBfnkzNak/AZyRODJsBPEcgUTOD4/twKaKEJ94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Huang <wei@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Martin George <marting@netapp.com>,
+        Gargi Srinivas <sring@netapp.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 086/101] KVM: selftests: assert on exit reason in CR4/cpuid sync test
+Subject: [PATCH 4.19 66/72] nvme-multipath: relax ANA state check
 Date:   Thu,  2 May 2019 17:21:28 +0200
-Message-Id: <20190502143345.623099440@linuxfoundation.org>
+Message-Id: <20190502143338.545674853@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8df98ae0ab2ead9a02228756eec26f8d7b17f499 ]
+[ Upstream commit cc2278c413c3a06a93c23ee8722e4dd3d621de12 ]
 
-...so that the test doesn't end up in an infinite loop if it fails for
-whatever reason, e.g. SHUTDOWN due to gcc inserting stack canary code
-into ucall() and attempting to derefence a null segment.
+When undergoing state transitions I/O might be requeued, hence
+we should always call nvme_mpath_set_live() to schedule requeue_work
+whenever the nvme device is live, independent on whether the
+old state was live or not.
 
-Fixes: ca359066889f7 ("kvm: selftests: add cr4_cpuid_sync_test")
-Cc: Wei Huang <wei@redhat.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Martin George <marting@netapp.com>
+Signed-off-by: Gargi Srinivas <sring@netapp.com>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- .../kvm/x86_64/cr4_cpuid_sync_test.c          | 35 ++++++++++---------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ drivers/nvme/host/multipath.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c b/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-index d503a51fad30..7c2c4d4055a8 100644
---- a/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/cr4_cpuid_sync_test.c
-@@ -87,22 +87,25 @@ int main(int argc, char *argv[])
- 	while (1) {
- 		rc = _vcpu_run(vm, VCPU_ID);
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index da8f5ad30c71..260248fbb8fe 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -349,15 +349,12 @@ static inline bool nvme_state_is_live(enum nvme_ana_state state)
+ static void nvme_update_ns_ana_state(struct nvme_ana_group_desc *desc,
+ 		struct nvme_ns *ns)
+ {
+-	enum nvme_ana_state old;
+-
+ 	mutex_lock(&ns->head->lock);
+-	old = ns->ana_state;
+ 	ns->ana_grpid = le32_to_cpu(desc->grpid);
+ 	ns->ana_state = desc->state;
+ 	clear_bit(NVME_NS_ANA_PENDING, &ns->flags);
  
--		if (run->exit_reason == KVM_EXIT_IO) {
--			switch (get_ucall(vm, VCPU_ID, &uc)) {
--			case UCALL_SYNC:
--				/* emulate hypervisor clearing CR4.OSXSAVE */
--				vcpu_sregs_get(vm, VCPU_ID, &sregs);
--				sregs.cr4 &= ~X86_CR4_OSXSAVE;
--				vcpu_sregs_set(vm, VCPU_ID, &sregs);
--				break;
--			case UCALL_ABORT:
--				TEST_ASSERT(false, "Guest CR4 bit (OSXSAVE) unsynchronized with CPUID bit.");
--				break;
--			case UCALL_DONE:
--				goto done;
--			default:
--				TEST_ASSERT(false, "Unknown ucall 0x%x.", uc.cmd);
--			}
-+		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
-+			    "Unexpected exit reason: %u (%s),\n",
-+			    run->exit_reason,
-+			    exit_reason_str(run->exit_reason));
-+
-+		switch (get_ucall(vm, VCPU_ID, &uc)) {
-+		case UCALL_SYNC:
-+			/* emulate hypervisor clearing CR4.OSXSAVE */
-+			vcpu_sregs_get(vm, VCPU_ID, &sregs);
-+			sregs.cr4 &= ~X86_CR4_OSXSAVE;
-+			vcpu_sregs_set(vm, VCPU_ID, &sregs);
-+			break;
-+		case UCALL_ABORT:
-+			TEST_ASSERT(false, "Guest CR4 bit (OSXSAVE) unsynchronized with CPUID bit.");
-+			break;
-+		case UCALL_DONE:
-+			goto done;
-+		default:
-+			TEST_ASSERT(false, "Unknown ucall 0x%x.", uc.cmd);
- 		}
- 	}
- 
+-	if (nvme_state_is_live(ns->ana_state) && !nvme_state_is_live(old))
++	if (nvme_state_is_live(ns->ana_state))
+ 		nvme_mpath_set_live(ns);
+ 	mutex_unlock(&ns->head->lock);
+ }
 -- 
 2.19.1
 
