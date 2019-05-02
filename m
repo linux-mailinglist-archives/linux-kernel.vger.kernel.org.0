@@ -2,138 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF8C11101
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 03:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A10D11109
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 03:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfEBByL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 21:54:11 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34532 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfEBByL (ORCPT
+        id S1726276AbfEBB5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 21:57:49 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45839 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfEBB5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 21:54:11 -0400
-Received: by mail-ot1-f65.google.com with SMTP id n15so687747ota.1;
-        Wed, 01 May 2019 18:54:10 -0700 (PDT)
+        Wed, 1 May 2019 21:57:48 -0400
+Received: by mail-qt1-f195.google.com with SMTP id t1so51875qtc.12;
+        Wed, 01 May 2019 18:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Z+DRQaFjZkBlZYOjQJXjHBpmiOuABPVHwmMcg8Ng0pg=;
+        b=EF+G73WBZk1M7Xoi3RyKWPF+13GKMkKe9MjVF+zQsg4hIUYj418u686I5KU1WDbrco
+         DdhJ/za0mzWk4alweKYT2vGuVOGQT/H50P7+E6RjGUm8RIIKeQj2VlmyOCiHgqxirpJo
+         OXD5N6IDmKF8eEZi0J9zuzXBDIdkEIOk3YIJOzUNf5peUkEUxukBkdeI6BXA0f06w7t2
+         nJcPEv9wFb1OvrOX1QkZ17MPoJwwvNg6fK7bRRlk+5cGCy2PFyxpN4++CMy9pHtxeOja
+         7Furc0HOXpB8KyeTanrig84OfZWf5Zv+KDyBO89cpkWWs088qkpgZHsAAIePkHjssXdn
+         wtmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=vVw1C6lqqEObhIEkQJZC6varaqiUoICZFVm+SicOMFc=;
-        b=Fy5825i5JqkJeGG4+leTy52sMOYlfW7Jqy5oWHA5KZLx6d4gSsyYVEwkiECwWDXPkQ
-         6sx13ZMMAVhjcDxdJGXXuUBtm1Cenxa9Ko+B34AlVn1vzWMYYUEzvLxkbA6m0IwljgRc
-         1IfXRq+QZH9C/D6hUXz7dDugcVWThKgF8SXGpqJ7KSO1Dru0Y4C+1GcOYkOFb0xmYQrT
-         eopen7ltZv3+JjgBZF3ea1KQ8zX2r/4Psb50YysYznKk723SmrSgCFpnCO63HfcrxTR8
-         4jPuZiQCeYgh2bZpk93dafh9LWTIjbK+TW48g4YEunG+OnRvd1ZyJ8l0/nkcPVXqyntR
-         eUYw==
-X-Gm-Message-State: APjAAAUiWDm6RdINnYJOXRwnhIWBUSB2L1o6RNTIPiitRyD5zBiH95Vj
-        wdnef7Tx0wkAnWj81KpOXg==
-X-Google-Smtp-Source: APXvYqyvSe6l1vLK4cJ5ZxTy/PVn9hSglfwCtCezdanzmXnY1wQ1v0aNKpAxBDRzN1UG/UMo5gmWdg==
-X-Received: by 2002:a9d:6c07:: with SMTP id f7mr740077otq.339.1556762050377;
-        Wed, 01 May 2019 18:54:10 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f17sm8630963oto.5.2019.05.01.18.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 18:54:09 -0700 (PDT)
-Date:   Wed, 1 May 2019 20:54:08 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kyungmin.park@samsung.com, bbrezillon@kernel.org,
-        miquel.raynal@bootlin.com, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        mark.rutland@arm.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 4/5] dt-binding: mtd: onenand/samsung: Add device tree
- support
-Message-ID: <20190502015408.GA11612@bogus>
-References: <20190426164224.11327-1-pawel.mikolaj.chmiel@gmail.com>
- <20190426164224.11327-5-pawel.mikolaj.chmiel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190426164224.11327-5-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Z+DRQaFjZkBlZYOjQJXjHBpmiOuABPVHwmMcg8Ng0pg=;
+        b=APUch7H2eIquwMLV2ulVSCLfUstwCnFpJBJLzSISYRS7H/s6C98vNEItU8H5LsyaRP
+         yEgKmpe9khe9nHC6iQf9CRQ875pwpr/2lm7G/NiABQetNNhAnOZv6EsCo8Yyzqoqiewx
+         49XN25RuTUGgbjylF6l9c9zjQyUU+1uspoS3dpHX/+YHKC+yMoh6dBqG6fYn1z2+BNOd
+         uPTeaOO20Z0xQ/oYTQXRPuwPUe7NMnJ4EpbZaM5QKhrDPkl27IG1rud40b43xq52V8fB
+         MyLs/vPf6P7b2kK8pRZlv513HOCPAYZ3ftx2Ic0/VdCCsFl9fu9IKVxj7dHG9JwgoOBp
+         aUVg==
+X-Gm-Message-State: APjAAAWLvXgIFg6VySPj8YFjbhj6cvlf950BPiHQqjmuUAAq4xwKlG8i
+        6jPPE/kYX3sicfg5zrb5H8qLZVtzp6U=
+X-Google-Smtp-Source: APXvYqy7LW/LUMw4O7vB+JMioj0y9zvvE+9HVQB3/3M1B7S640Jp8OxbzTdOnco4YkD+yRWmVQdfAg==
+X-Received: by 2002:a0c:99d7:: with SMTP id y23mr1171716qve.0.1556762267214;
+        Wed, 01 May 2019 18:57:47 -0700 (PDT)
+Received: from localhost.localdomain (189.26.185.89.dynamic.adsl.gvt.net.br. [189.26.185.89])
+        by smtp.gmail.com with ESMTPSA id d55sm9031059qtb.59.2019.05.01.18.57.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 18:57:46 -0700 (PDT)
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-block@vger.kernel.org
+Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Greg Edwards <gedwards@ddn.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] blkdev.h: Introduce bytes_to_sectors helper function
+Date:   Wed,  1 May 2019 22:57:27 -0300
+Message-Id: <20190502015728.71468-2-marcos.souza.org@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190502015728.71468-1-marcos.souza.org@gmail.com>
+References: <20190502015728.71468-1-marcos.souza.org@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 06:42:23PM +0200, Paweł Chmiel wrote:
-> From: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> This patch adds dt-bindings for Samsung OneNAND driver.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  .../bindings/mtd/samsung-onenand.txt          | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-onenand.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/samsung-onenand.txt b/Documentation/devicetree/bindings/mtd/samsung-onenand.txt
-> new file mode 100644
-> index 000000000000..341d97cc1513
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/samsung-onenand.txt
-> @@ -0,0 +1,46 @@
-> +Device tree bindings for Samsung SoC OneNAND controller
-> +
-> +Required properties:
-> + - compatible : value should be either of the following.
-> +   (a) "samsung,s3c6400-onenand" - for onenand controller compatible with
-> +       S3C6400 SoC,
-> +   (b) "samsung,s3c6410-onenand" - for onenand controller compatible with
-> +       S3C6410 SoC,
-> +   (c) "samsung,s5pc100-onenand" - for onenand controller compatible with
-> +       S5PC100 SoC,
-> +   (d) "samsung,s5pv210-onenand" - for onenand controller compatible with
-> +       S5PC110/S5PV210 SoCs.
-> +
-> + - reg : two memory mapped register regions:
-> +   - first entry: control registers.
-> +   - second and next entries: memory windows of particular OneNAND chips;
-> +     for variants a), b) and c) only one is allowed, in case of d) up to
-> +     two chips can be supported.
-> +
-> + - interrupt-parent : phandle of interrupt controller to which the OneNAND
-> +   controller is wired,
+This function takes an argument to specify the size of a block device,
+in bytes, and return the number of sectors of 512 bytes.
 
-This is implied and can be removed.
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+---
+ Changes from v1:
+ Rename size_to_sectors to bytes_to_sectors. (Martin K. Petersen)
 
-> + - interrupts : specifier of interrupt signal to which the OneNAND controller
-> +   is wired; should contain just one entry.
-> + - clock-names : should contain two entries:
-> +   - "bus" - bus clock of the controller,
-> +   - "onenand" - clock supplied to OneNAND memory.
+ Changes from RFC:
+ Reworked the documentation of size_to_sectors by removing a sentence that was
+ explaining the size -> sectors math, which wasn't necessary given the
+ description prior to the example. (suggested by Chaitanya)
 
-If the clock just goes to the OneNAND device, then it should be in the 
-nand device node rather than the controller node.
+ include/linux/blkdev.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-> + - clock: should contain list of phandles and specifiers for all clocks listed
-> +   in clock-names property.
-> + - #address-cells : must be 1,
-> + - #size-cells : must be 1.
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 317ab30d2904..7ade2e24dbae 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -871,6 +871,23 @@ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
+ #define SECTOR_SIZE (1 << SECTOR_SHIFT)
+ #endif
+ 
++/**
++ * bytes_to_sectors - Convert size in bytes to number of sectors of 512 bytes
++ * @bytes: number of bytes to be converted to sectors
++ *
++ * Description:
++ * Kernel I/O operations are always made in "sectors". In order to set the
++ * correct number of sectors for a given number of bytes, we need to group the
++ * number of bytes in "sectors of 512 bytes" by shifting the size value by 9,
++ * which is the same than dividing the size by 512.
++ *
++ * Returns the number of sectors by the given number of bytes.
++ */
++static inline sector_t bytes_to_sectors(long long bytes)
++{
++	return bytes >> SECTOR_SHIFT;
++}
++
+ /*
+  * blk_rq_pos()			: the current sector
+  * blk_rq_bytes()		: bytes left in the entire request
+-- 
+2.16.4
 
-This implies some child nodes. What are the child nodes?
-
-> +
-> +For partition table parsing (optional) please refer to:
-> + [1] Documentation/devicetree/bindings/mtd/partition.txt
-> +
-> +Example for an s5pv210 board:
-> +
-> +	onenand@b0600000 {
-> +		compatible = "samsung,s5pv210-onenand";
-> +		reg = <0xb0600000 0x2000>, <0xb0000000 0x20000>;
-> +		interrupt-parent = <&vic1>;
-> +		interrupts = <31>;
-> +		clock-names = "bus", "onenand";
-> +		clocks = <&clocks NANDXL>, <&clocks DOUT_FLASH>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +	};
-> -- 
-> 2.20.1
-> 
