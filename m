@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D16811C9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8767811CB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfEBPXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:23:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38544 "EHLO mail.kernel.org"
+        id S1727187AbfEBPYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:24:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfEBPXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:00 -0400
+        id S1726521AbfEBPX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:23:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4765620675;
-        Thu,  2 May 2019 15:22:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45B3620675;
+        Thu,  2 May 2019 15:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810579;
-        bh=lBH4euxWsbc31ffPe/vjrAQWtFU+61FTad3Lf8HK/fU=;
+        s=default; t=1556810638;
+        bh=LWbf59hWOGa48MXU4u1gRBfv7NgBBEpEqdzsjS+HTGo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xn9+fgBkzRIGEvmHGi8pcEB6PRqrnbWzPDPcBywEO8IwkrISI1ghGXrhebNB4jNBj
-         EZVSIvhZQCRxuK7TJXvXNLV/yUuQH8T4ThGufGYNdsrwSn43PuUJtODQWNYtmNpd9Z
-         hs4USm5tdeOT+GCKbsFa9r5tuzCZRvTcMSwXZmq8=
+        b=XCFgEg9gIBgd1Ha8Z4hBjNF3xFQESeEB1WmQb5nxhGBhoPizFgqEdUEo/n3OOqB/y
+         9lAzwE9/PWzigj7H8lIGXi11iH1v4zcxpuvPdU4onv9T/3IuzFeVfGcV7a1eAyBS8r
+         FVu5+CJKZq5l+nvFjqHBpkd9Y3XiGM14N+xyiTLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Guido Kiener <guido.kiener@rohde-schwarz.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Nishanth Menon <nm@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 13/32] usb: gadget: net2272: Fix net2272_dequeue()
+Subject: [PATCH 4.14 22/49] net: ks8851: Reassert reset pin if chip ID check fails
 Date:   Thu,  2 May 2019 17:20:59 +0200
-Message-Id: <20190502143319.113341619@linuxfoundation.org>
+Message-Id: <20190502143326.769493558@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 091dacc3cc10979ab0422f0a9f7fcc27eee97e69 ]
+[ Upstream commit 761cfa979a0c177d6c2d93ef5585cd79ae49a7d5 ]
 
-Restore the status of ep->stopped in function net2272_dequeue().
+Commit 73fdeb82e963 ("net: ks8851: Add optional vdd_io regulator and
+reset gpio") amended the ks8851 driver to briefly assert the chip's
+reset pin on probe. It also amended the probe routine's error path to
+reassert the reset pin if a subsequent initialization step fails.
 
-When the given request is not found in the endpoint queue
-the function returns -EINVAL without restoring the state of
-ep->stopped. Thus the endpoint keeps blocked and does not transfer
-any data anymore.
+However the commit misplaced reassertion of the reset pin in the error
+path such that it is not performed if the check of the Chip ID and
+Enable Register (CIDER) fails. The error path is therefore slightly
+asymmetrical to the probe routine's body. Fix it.
 
-This fix is only compile-tested, since we do not have a
-corresponding hardware. An analogous fix was tested in the sibling
-driver. See "usb: gadget: net2280: Fix net2280_dequeue()"
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Guido Kiener <guido.kiener@rohde-schwarz.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Nishanth Menon <nm@ti.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/net2272.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/micrel/ks8851.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
-index 40396a265a3f..f57d293a1791 100644
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -958,6 +958,7 @@ net2272_dequeue(struct usb_ep *_ep, struct usb_request *_req)
- 			break;
- 	}
- 	if (&req->req != _req) {
-+		ep->stopped = stopped;
- 		spin_unlock_irqrestore(&ep->dev->lock, flags);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
+index 556666b0d756..546a79b9cb15 100644
+--- a/drivers/net/ethernet/micrel/ks8851.c
++++ b/drivers/net/ethernet/micrel/ks8851.c
+@@ -1545,9 +1545,9 @@ static int ks8851_probe(struct spi_device *spi)
+ 	free_irq(ndev->irq, ks);
+ 
+ err_irq:
++err_id:
+ 	if (gpio_is_valid(gpio))
+ 		gpio_set_value(gpio, 0);
+-err_id:
+ 	regulator_disable(ks->vdd_reg);
+ err_reg:
+ 	regulator_disable(ks->vdd_io);
 -- 
 2.19.1
 
