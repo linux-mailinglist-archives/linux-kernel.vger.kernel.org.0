@@ -2,92 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63311194F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7193511992
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfEBMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:48:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33940 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726278AbfEBMsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:48:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 055F3ADE0;
-        Thu,  2 May 2019 12:48:00 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 60A55E00D0; Thu,  2 May 2019 14:48:00 +0200 (CEST)
-Message-Id: <0a54a4db49c20e76a998ea3e4548b22637fbad34.1556798793.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1556798793.git.mkubecek@suse.cz>
-References: <cover.1556798793.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next 1/3] genetlink: do not validate dump requests if
- there is no policy
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
-Date:   Thu,  2 May 2019 14:48:00 +0200 (CEST)
+        id S1726777AbfEBM4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:56:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726404AbfEBM4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:56:50 -0400
+Received: from localhost (adsl-173-228-226-134.prtc.net [173.228.226.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39FB420449;
+        Thu,  2 May 2019 12:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556801809;
+        bh=yj300TW+fJqT6K6BSGF2jtEG/Xt4a4FDcEA/4LmZcjs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N1CNu64DdNDI6n6Pd4zvz/PjlpDiFGriUxmGgT0/aEEIlVYPNO5MpTGqG7iTelmKQ
+         JozEqiBnuNmR0hNLn0yOAQTnPD5zKtk6yBqYPUuJl8FJoyUq8mFmzKss3kpaJ/vgJM
+         2NV/TrbxUU0gmrBBPMtprJNCOepEvFx6dTFGe1Ek=
+Date:   Thu, 2 May 2019 08:50:01 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        yuzenghui@huawei.com, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kvmarm@lists.cs.columbia.edu
+Subject: Re: [PATCH AUTOSEL 5.0 29/98] KVM: arm/arm64: Enforce PTE mappings
+ at stage2 when needed
+Message-ID: <20190502125001.GB11584@sasha-vm>
+References: <20190422194205.10404-1-sashal@kernel.org>
+ <20190422194205.10404-29-sashal@kernel.org>
+ <e166bc0d-5184-6dda-15ef-2f24d2e42203@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e166bc0d-5184-6dda-15ef-2f24d2e42203@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike do requests, dump genetlink requests now perform strict validation
-by default even if the genetlink family does not set policy and maxtype
-because it does validation and parsing on its own (e.g. because it wants to
-allow different message format for different commands). While the null
-policy will be ignored, maxtype (which would be zero) is still checked so
-that any attribute will fail validation.
+On Tue, Apr 23, 2019 at 10:27:26AM +0100, Suzuki K Poulose wrote:
+>Hi Sasha,
+>
+>On 04/22/2019 08:40 PM, Sasha Levin wrote:
+>>From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>>[ Upstream commit a80868f398554842b14d07060012c06efb57c456 ]
+>>
+>>commit 6794ad5443a2118 ("KVM: arm/arm64: Fix unintended stage 2 PMD mappings")
+>>made the checks to skip huge mappings, stricter. However it introduced
+>>a bug where we still use huge mappings, ignoring the flag to
+>>use PTE mappings, by not reseting the vma_pagesize to PAGE_SIZE.
+>>
+>>Also, the checks do not cover the PUD huge pages, that was
+>>under review during the same period. This patch fixes both
+>>the issues.
+>>
+>>Fixes : 6794ad5443a2118 ("KVM: arm/arm64: Fix unintended stage 2 PMD mappings")
+>>Reported-by: Zenghui Yu <yuzenghui@huawei.com>
+>>Cc: Zenghui Yu <yuzenghui@huawei.com>
+>>Cc: Christoffer Dall <christoffer.dall@arm.com>
+>>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+>
+>Please be aware that we need a follow up fix for this patch to fix the
+>problem for THP backed memory.
+>
+>http://lists.infradead.org/pipermail/linux-arm-kernel/2019-April/645324.html
+>
+>
+>It should appear upstream soon.
 
-The solution is to only call __nla_validate() from genl_family_rcv_msg()
-if family->maxtype is set.
+Since it's not upstream yet, I'll drop this patch for now and queue it
+for a later release.
 
-Fixes: ef6243acb478 ("genetlink: optionally validate strictly/dumps")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- net/netlink/genetlink.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
-
-diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
-index 72668759cd2b..9814d6dbd2d6 100644
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -537,21 +537,25 @@ static int genl_family_rcv_msg(const struct genl_family *family,
- 			return -EOPNOTSUPP;
- 
- 		if (!(ops->validate & GENL_DONT_VALIDATE_DUMP)) {
--			unsigned int validate = NL_VALIDATE_STRICT;
- 			int hdrlen = GENL_HDRLEN + family->hdrsize;
- 
--			if (ops->validate & GENL_DONT_VALIDATE_DUMP_STRICT)
--				validate = NL_VALIDATE_LIBERAL;
--
- 			if (nlh->nlmsg_len < nlmsg_msg_size(hdrlen))
- 				return -EINVAL;
- 
--			rc = __nla_validate(nlmsg_attrdata(nlh, hdrlen),
--					    nlmsg_attrlen(nlh, hdrlen),
--					    family->maxattr, family->policy,
--					    validate, extack);
--			if (rc)
--				return rc;
-+			if (family->maxattr) {
-+				unsigned int validate = NL_VALIDATE_STRICT;
-+
-+				if (ops->validate &
-+				    GENL_DONT_VALIDATE_DUMP_STRICT)
-+					validate = NL_VALIDATE_LIBERAL;
-+				rc = __nla_validate(nlmsg_attrdata(nlh, hdrlen),
-+						    nlmsg_attrlen(nlh, hdrlen),
-+						    family->maxattr,
-+						    family->policy,
-+						    validate, extack);
-+				if (rc)
-+					return rc;
-+			}
- 		}
- 
- 		if (!family->parallel_ops) {
--- 
-2.21.0
-
+--
+Thanks,
+Sasha
