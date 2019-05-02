@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 665301115D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 764551114A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfEBCTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:19:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56422 "EHLO
+        id S1726679AbfEBCTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:19:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57010 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfEBCTB (ORCPT
+        with ESMTP id S1726578AbfEBCTR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:01 -0400
+        Wed, 1 May 2019 22:19:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=s/aeLHmcSaCGZGW2T/ryaeA0ktI3wfHggwlvpiCdiGs=; b=pBr7tviub0M4
-        Y7B+GAiIE0/H/6glIphSg1+JN79huRE/j+YTI3NQ8U8Ngjerot3AmpFSTaWjMQnGMlH6D7sZc9AUF
-        3KdkDIC/cUuL6ULBrrDQkXR65KG+hNHiJxGyDwLWrIXCheEHEoXTtb4tYDKdoVda2u6WvOL4XHiHy
-        b4dDw=;
+        List-Archive; bh=oL192bTqvDNtO9/zE8dKxXdEjuXQ5GVJqZjrNkHIiv0=; b=ejSnNLhmGS24
+        sls3P/G7RzMkZS565WSQhaU5mCwz0fX0bYJqSOL3FuzXHUGOvvXd3gB8S+6FJPfmPGljZXyQijMZi
+        0fSH9svyRKZwmwOUqcDAgR3LJiLxwX4nXnvigGl2IRba5ZF8xBUTAbiNblCX5ZOlRwmSfbSn/XTdv
+        tMC38=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1J8-0005tL-2M; Thu, 02 May 2019 02:18:46 +0000
+        id 1hM1JE-0005u2-9f; Thu, 02 May 2019 02:18:52 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 03B03441D3B; Thu,  2 May 2019 03:18:43 +0100 (BST)
+        id 6798B441D3E; Thu,  2 May 2019 03:18:49 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        festevam@gmail.com, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mark Brown <broonie@kernel.org>, nicoleotsuka@gmail.com,
-        perex@perex.cz, timur@kernel.org, tiwai@suse.com,
-        Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_micfil: Remove set but not used variable 'osr'" to the asoc tree
-In-Reply-To:  <20190417150915.37968-1-yuehaibing@huawei.com>
+        Hulk Robot <hulkci@huawei.com>, kaichieh.chuang@mediatek.com,
+        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        matthias.bgg@gmail.com, perex@perex.cz, shunli.wang@mediatek.com,
+        tiwai@suse.com
+Subject: Applied "ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to module" to the asoc tree
+In-Reply-To:  <20190417152932.36436-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021843.03B03441D3B@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:42 +0100 (BST)
+Message-Id: <20190502021849.6798B441D3E@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_micfil: Remove set but not used variable 'osr'
+   ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to module
 
 has been applied to the asoc tree at
 
@@ -74,42 +74,48 @@ to this mail.
 Thanks,
 Mark
 
-From a0c34c7629bee46ffd8121987d27df25a6433cc7 Mon Sep 17 00:00:00 2001
+From f2a1fdb50d3187266a91bcf99b504e99695772a6 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 17 Apr 2019 23:09:15 +0800
-Subject: [PATCH] ASoC: fsl_micfil: Remove set but not used variable 'osr'
+Date: Wed, 17 Apr 2019 23:29:32 +0800
+Subject: [PATCH] ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to
+ module
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+During randconfig builds, I occasionally run into an invalid configuration
 
-sound/soc/fsl/fsl_micfil.c: In function 'get_clk_div':
-sound/soc/fsl/fsl_micfil.c:154:6: warning: variable 'osr' set but not used [-Wunused-but-set-variable]
+WARNING: unmet direct dependencies detected for SND_SOC_TS3A227E
+  Depends on [m]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && I2C [=m]
+  Selected by [y]:
+  - SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_MT8183 [=y]
 
-It is never used since introduction in
-commit 47a70e6fc9a8 ("ASoC: Add MICFIL SoC Digital Audio Interface driver.")
+sound/soc/codecs/ts3a227e.o: In function `ts3a227e_i2c_probe':
+ts3a227e.c:(.text+0x684): undefined reference to `__devm_regmap_init_i2c'
+sound/soc/codecs/ts3a227e.o: In function `ts3a227e_driver_init':
+ts3a227e.c:(.init.text+0x18): undefined reference to `i2c_register_driver'
+sound/soc/codecs/ts3a227e.o: In function `ts3a227e_driver_exit':
+ts3a227e.c:(.exit.text+0x14): undefined reference to `i2c_del_driver'
 
+This patch add I2C dependency to fix this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: ebbddc75bbe8 ("ASoC: Mediatek: MT8183: Add machine driver with DA7219")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_micfil.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/soc/mediatek/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/fsl/fsl_micfil.c b/sound/soc/fsl/fsl_micfil.c
-index 40c07e756481..f7f2d29f1bfe 100644
---- a/sound/soc/fsl/fsl_micfil.c
-+++ b/sound/soc/fsl/fsl_micfil.c
-@@ -151,12 +151,9 @@ static inline int get_clk_div(struct fsl_micfil *micfil,
- {
- 	u32 ctrl2_reg;
- 	long mclk_rate;
--	int osr;
- 	int clk_div;
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index 874404bcccfd..f70b7109f2b6 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -118,6 +118,7 @@ config SND_SOC_MT8183
  
- 	regmap_read(micfil->regmap, REG_MICFIL_CTRL2, &ctrl2_reg);
--	osr = 16 - ((ctrl2_reg & MICFIL_CTRL2_CICOSR_MASK)
--		    >> MICFIL_CTRL2_CICOSR_SHIFT);
- 
- 	mclk_rate = clk_get_rate(micfil->mclk);
- 
+ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
+ 	tristate "ASoC Audio driver for MT8183 with MT6358 TS3A227E MAX98357A codec"
++	depends on I2C
+ 	depends on SND_SOC_MT8183
+ 	select SND_SOC_MT6358
+ 	select SND_SOC_MAX98357A
 -- 
 2.20.1
 
