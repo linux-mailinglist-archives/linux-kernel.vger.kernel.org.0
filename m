@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764551114A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4095D11131
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbfEBCTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:19:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57010 "EHLO
+        id S1726575AbfEBCTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:19:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56338 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbfEBCTR (ORCPT
+        with ESMTP id S1726386AbfEBCS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:17 -0400
+        Wed, 1 May 2019 22:18:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=oL192bTqvDNtO9/zE8dKxXdEjuXQ5GVJqZjrNkHIiv0=; b=ejSnNLhmGS24
-        sls3P/G7RzMkZS565WSQhaU5mCwz0fX0bYJqSOL3FuzXHUGOvvXd3gB8S+6FJPfmPGljZXyQijMZi
-        0fSH9svyRKZwmwOUqcDAgR3LJiLxwX4nXnvigGl2IRba5ZF8xBUTAbiNblCX5ZOlRwmSfbSn/XTdv
-        tMC38=;
+        List-Archive; bh=ZcNijybSobRcFQoGTYet85RhrCMx6iNYMPeitpK9a1M=; b=Vis2EvpXRnRY
+        bakEPUmYygT1tZrhb8WDbGtzVFYB4tgo+yxNzK/WGRHC9abJ6kUdK2SV8LKXB+6YQQFe3bNL8C4Xu
+        wp35GMMdNgFISjP5TqAXMkFrXxjJ7vOq006fNe/VhcFUopvrT6gjRClK18XBUC4P4ss6vWOo56VRH
+        VkX5s=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1JE-0005u2-9f; Thu, 02 May 2019 02:18:52 +0000
+        id 1hM1JH-0005uM-G7; Thu, 02 May 2019 02:18:55 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 6798B441D3E; Thu,  2 May 2019 03:18:49 +0100 (BST)
+        id 9A4C8441D41; Thu,  2 May 2019 03:18:52 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Hulk Robot <hulkci@huawei.com>, kaichieh.chuang@mediatek.com,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        matthias.bgg@gmail.com, perex@perex.cz, shunli.wang@mediatek.com,
-        tiwai@suse.com
-Subject: Applied "ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to module" to the asoc tree
-In-Reply-To:  <20190417152932.36436-1-yuehaibing@huawei.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Applied "regulator: vexpress: Switch to SPDX identifier" to the regulator tree
+In-Reply-To: <20190429113542.476-2-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021849.6798B441D3E@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:49 +0100 (BST)
+Message-Id: <20190502021852.9A4C8441D41@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:52 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,11 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to module
+   regulator: vexpress: Switch to SPDX identifier
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -74,48 +73,41 @@ to this mail.
 Thanks,
 Mark
 
-From f2a1fdb50d3187266a91bcf99b504e99695772a6 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 17 Apr 2019 23:29:32 +0800
-Subject: [PATCH] ASoC: Mediatek: MT8183: Fix build err while CONFIG_I2C set to
- module
+From c5e911add161f356aa5adf6cca33d02946006053 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Mon, 29 Apr 2019 19:35:42 +0800
+Subject: [PATCH] regulator: vexpress: Switch to SPDX identifier
 
-During randconfig builds, I occasionally run into an invalid configuration
-
-WARNING: unmet direct dependencies detected for SND_SOC_TS3A227E
-  Depends on [m]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && I2C [=m]
-  Selected by [y]:
-  - SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_MT8183 [=y]
-
-sound/soc/codecs/ts3a227e.o: In function `ts3a227e_i2c_probe':
-ts3a227e.c:(.text+0x684): undefined reference to `__devm_regmap_init_i2c'
-sound/soc/codecs/ts3a227e.o: In function `ts3a227e_driver_init':
-ts3a227e.c:(.init.text+0x18): undefined reference to `i2c_register_driver'
-sound/soc/codecs/ts3a227e.o: In function `ts3a227e_driver_exit':
-ts3a227e.c:(.exit.text+0x14): undefined reference to `i2c_del_driver'
-
-This patch add I2C dependency to fix this.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: ebbddc75bbe8 ("ASoC: Mediatek: MT8183: Add machine driver with DA7219")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/mediatek/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/vexpress-regulator.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
-index 874404bcccfd..f70b7109f2b6 100644
---- a/sound/soc/mediatek/Kconfig
-+++ b/sound/soc/mediatek/Kconfig
-@@ -118,6 +118,7 @@ config SND_SOC_MT8183
+diff --git a/drivers/regulator/vexpress-regulator.c b/drivers/regulator/vexpress-regulator.c
+index a15a1319436a..1235f46e633e 100644
+--- a/drivers/regulator/vexpress-regulator.c
++++ b/drivers/regulator/vexpress-regulator.c
+@@ -1,15 +1,6 @@
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * Copyright (C) 2012 ARM Limited
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (C) 2012 ARM Limited
  
- config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
- 	tristate "ASoC Audio driver for MT8183 with MT6358 TS3A227E MAX98357A codec"
-+	depends on I2C
- 	depends on SND_SOC_MT8183
- 	select SND_SOC_MT6358
- 	select SND_SOC_MAX98357A
+ #define DRVNAME "vexpress-regulator"
+ #define pr_fmt(fmt) DRVNAME ": " fmt
 -- 
 2.20.1
 
