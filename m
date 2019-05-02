@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B40611CA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2779A11CFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfEBPXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:23:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39002 "EHLO mail.kernel.org"
+        id S1727569AbfEBP1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:27:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfEBPXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:21 -0400
+        id S1727996AbfEBP1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:27:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 767D32081C;
-        Thu,  2 May 2019 15:23:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EC8E214DA;
+        Thu,  2 May 2019 15:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810601;
-        bh=ycWLMFE2XQW9iKBkq/OI1zu6AiL1FtXWMJkW9Ii0U3Q=;
+        s=default; t=1556810852;
+        bh=d3m7PQSSBTdvSaJ14Zwtv2BlPgAGJByr5swq2PYGtRU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LluKtpkcoBArR1YdCsJirnwLqBojtFAF9aFgucpJiDOBWxIzyljsqkyvS8iyYbjNC
-         2eZUssm8KY4hFTzY7qobyU3o2/6sBm39H8uJ1mC+uQp6EVKJi4BLF+Z1G5LhYFLmIL
-         S/yWVRatgP+cWgk8+oXiY/ol1qs4eDDZ0idfN5SI=
+        b=S7AdOSyc1BKBd7u4jE7IgsLnGefu12Dq7kFhMtwHLkzFgvyzs8sNKSQnHDq/kH4Cj
+         59L700mxXHffMqgf43rqmRPRRXyDXMphK0oRXGT31F/6K7id1w/nqRAtCLFxNP3yyk
+         OvnaGl485ULDyfKsG/v8F1bdff0DsX08Of+bp6PA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <paulo@paulo.ac>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.14 01/49] selinux: use kernel linux/socket.h for genheaders and mdp
-Date:   Thu,  2 May 2019 17:20:38 +0200
-Message-Id: <20190502143323.805175101@linuxfoundation.org>
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Florian Westphal <fw@strlen.de>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 4.19 17/72] netfilter: bridge: set skb transport_header before entering NF_INET_PRE_ROUTING
+Date:   Thu,  2 May 2019 17:20:39 +0200
+Message-Id: <20190502143334.689747978@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,67 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara <paulo@paulo.ac>
+[ Upstream commit e166e4fdaced850bee3d5ee12a5740258fb30587 ]
 
-commit dfbd199a7cfe3e3cd8531e1353cdbd7175bfbc5e upstream.
+Since Commit 21d1196a35f5 ("ipv4: set transport header earlier"),
+skb->transport_header has been always set before entering INET
+netfilter. This patch is to set skb->transport_header for bridge
+before entering INET netfilter by bridge-nf-call-iptables.
 
-When compiling genheaders and mdp from a newer host kernel, the
-following error happens:
+It also fixes an issue that sctp_error() couldn't compute a right
+csum due to unset skb->transport_header.
 
-    In file included from scripts/selinux/genheaders/genheaders.c:18:
-    ./security/selinux/include/classmap.h:238:2: error: #error New
-    address family defined, please update secclass_map.  #error New
-    address family defined, please update secclass_map.  ^~~~~
-    make[3]: *** [scripts/Makefile.host:107:
-    scripts/selinux/genheaders/genheaders] Error 1 make[2]: ***
-    [scripts/Makefile.build:599: scripts/selinux/genheaders] Error 2
-    make[1]: *** [scripts/Makefile.build:599: scripts/selinux] Error 2
-    make[1]: *** Waiting for unfinished jobs....
-
-Instead of relying on the host definition, include linux/socket.h in
-classmap.h to have PF_MAX.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Paulo Alcantara <paulo@paulo.ac>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-[PM: manually merge in mdp.c, subject line tweaks]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
+Reported-by: Li Shuang <shuali@redhat.com>
+Suggested-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- scripts/selinux/genheaders/genheaders.c |    1 -
- scripts/selinux/mdp/mdp.c               |    1 -
- security/selinux/include/classmap.h     |    1 +
- 3 files changed, 1 insertion(+), 2 deletions(-)
+ net/bridge/br_netfilter_hooks.c | 1 +
+ net/bridge/br_netfilter_ipv6.c  | 2 ++
+ 2 files changed, 3 insertions(+)
 
---- a/scripts/selinux/genheaders/genheaders.c
-+++ b/scripts/selinux/genheaders/genheaders.c
-@@ -9,7 +9,6 @@
- #include <string.h>
- #include <errno.h>
- #include <ctype.h>
--#include <sys/socket.h>
+diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+index 3b0a03b92080..212c184c1eee 100644
+--- a/net/bridge/br_netfilter_hooks.c
++++ b/net/bridge/br_netfilter_hooks.c
+@@ -515,6 +515,7 @@ static unsigned int br_nf_pre_routing(void *priv,
+ 	nf_bridge->ipv4_daddr = ip_hdr(skb)->daddr;
  
- struct security_class_mapping {
- 	const char *name;
---- a/scripts/selinux/mdp/mdp.c
-+++ b/scripts/selinux/mdp/mdp.c
-@@ -32,7 +32,6 @@
- #include <stdlib.h>
- #include <unistd.h>
- #include <string.h>
--#include <sys/socket.h>
+ 	skb->protocol = htons(ETH_P_IP);
++	skb->transport_header = skb->network_header + ip_hdr(skb)->ihl * 4;
  
- static void usage(char *name)
- {
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/capability.h>
-+#include <linux/socket.h>
+ 	NF_HOOK(NFPROTO_IPV4, NF_INET_PRE_ROUTING, state->net, state->sk, skb,
+ 		skb->dev, NULL,
+diff --git a/net/bridge/br_netfilter_ipv6.c b/net/bridge/br_netfilter_ipv6.c
+index 5811208863b7..09d5e0c7b3ba 100644
+--- a/net/bridge/br_netfilter_ipv6.c
++++ b/net/bridge/br_netfilter_ipv6.c
+@@ -235,6 +235,8 @@ unsigned int br_nf_pre_routing_ipv6(void *priv,
+ 	nf_bridge->ipv6_daddr = ipv6_hdr(skb)->daddr;
  
- #define COMMON_FILE_SOCK_PERMS "ioctl", "read", "write", "create", \
-     "getattr", "setattr", "lock", "relabelfrom", "relabelto", "append", "map"
+ 	skb->protocol = htons(ETH_P_IPV6);
++	skb->transport_header = skb->network_header + sizeof(struct ipv6hdr);
++
+ 	NF_HOOK(NFPROTO_IPV6, NF_INET_PRE_ROUTING, state->net, state->sk, skb,
+ 		skb->dev, NULL,
+ 		br_nf_pre_routing_finish_ipv6);
+-- 
+2.19.1
+
 
 
