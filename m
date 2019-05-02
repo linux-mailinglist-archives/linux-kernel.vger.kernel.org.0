@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35581206C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1594B12085
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfEBQni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:43:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:13781 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfEBQni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:43:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 09:43:37 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 02 May 2019 09:43:37 -0700
-Date:   Thu, 2 May 2019 09:46:24 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Auger Eric <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        Vincent Stehle <Vincent.Stehle@arm.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 05/23] iommu: Introduce cache_invalidate API
-Message-ID: <20190502094624.43924be8@jacob-builder>
-In-Reply-To: <6af5ddb7-75ad-7d3f-b303-f6f06adb1bf0@arm.com>
-References: <20190408121911.24103-1-eric.auger@redhat.com>
-        <20190408121911.24103-6-eric.auger@redhat.com>
-        <a9745aef-8686-c761-e3d0-dd0e98a1f5b2@arm.com>
-        <e5d2fdd6-4ce1-863e-5198-0b05d727a5b6@redhat.com>
-        <6af5ddb7-75ad-7d3f-b303-f6f06adb1bf0@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726571AbfEBQsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:48:05 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34864 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfEBQsF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 12:48:05 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p26so2737702edr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rcAYlClV3WYMLJTodjrLc+GMcN8cBX8qnEYUrl9knag=;
+        b=SFbei6R/fTHbrGWi+/N+oWim6SS5KPKvxv1TfgMvbJ1pIR8OajbduDS3nFo+mTzicg
+         XVys/It0mRnuhAz4kjM8EiZPi2qESa1Ad7BuVtZXc1AhD6SYmi1WTfMnCEAxTNkaT811
+         wtR9FZXA8gRcO+e/pbRwpO9NwRgtNQkNQixypgNzB90FxwHw7uDXDkb5kVruMBFHCmWK
+         aDFBzlffvUNDnS4Q6tEIHtK+tlNPSguzMFFvyNwltQHrvgbB4cHlbIie4LsGFzTGdkuJ
+         7Yg0FEJD9BqWiLWh/W+DXQN7jVHxZsopXpdlsd205vwlCjzC9uuOvIUXoBsgyR88IvAg
+         zT4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rcAYlClV3WYMLJTodjrLc+GMcN8cBX8qnEYUrl9knag=;
+        b=qdB+ueB+etR+mH5kca/lBXHklnl612oHdqUPE+9MauTM0JF2TQRScgluq6Ufdx60+c
+         k6VnuYmzUrE2pvwI24ReWOBqgRrFfJTd9qzd4cNxwb5YMQPFgZecdq4hqDLj3e7P4Ubx
+         ZiW4OxraS5guTe4dvXJfD0oeD3NcsBu5bEW15AE2konYfnHA5JOMyZ3YO4Me84L7Vv77
+         roG8tByI3nt9mMApNCjHL8y1uETJqi9Fc/jazYhYp10TqSPyw/mHn6JMeKOPtBxHQsxW
+         oBDQ6ePXRBIT3oI1esxmfiDUBArVBaapWLGYK492Kb4aVl7zhQs6TQq8XqqZVOrHngL+
+         Odpg==
+X-Gm-Message-State: APjAAAWHja5sUpdCgKRQtqF9ojWlXp+u83d+KxR/8iYp0Ios5edvvWOb
+        NHVge3MRdbj2l6R4FpRntD0MaTsXjoWfP0Nrq3zGXQ==
+X-Google-Smtp-Source: APXvYqzbaWRuAebout5s4Iqp5ku1hhP9/l4QkLIfxTg/R4+sKpNKvDwBBtR0sOzGL8kxvPpg3HdXxRKpBddZWv64kk8=
+X-Received: by 2002:a17:906:3154:: with SMTP id e20mr2340820eje.263.1556815683667;
+ Thu, 02 May 2019 09:48:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190501191846.12634-1-pasha.tatashin@soleen.com>
+ <20190501191846.12634-3-pasha.tatashin@soleen.com> <CAPcyv4iPzpP-gzuDtPB2ixd6_uTuO8-YdVSfGw_Dq=igaKuOEg@mail.gmail.com>
+In-Reply-To: <CAPcyv4iPzpP-gzuDtPB2ixd6_uTuO8-YdVSfGw_Dq=igaKuOEg@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 2 May 2019 12:47:52 -0400
+Message-ID: <CA+CK2bB3G_tO04M1eXPdm4b=OojD6QpYkW51YArj6z44RhQo+g@mail.gmail.com>
+Subject: Re: [v4 2/2] device-dax: "Hotremove" persistent memory that is used
+ like normal RAM
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 May 2019 11:53:34 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+> Currently the kmem driver can be built as a module, and I don't see a
+> need to drop that flexibility. What about wrapping these core
+> routines:
+>
+>     unlock_device_hotplug
+>     __remove_memory
+>     walk_memory_range
+>     lock_device_hotplug
+>
+> ...into a common exported (gpl) helper like:
+>
+>     int try_remove_memory(int nid, struct resource *res)
+>
+> Because as far as I can see there's nothing device-dax specific about
+> this "try remove iff offline" functionality outside of looking up the
+> related 'struct resource'. The check_devdax_mem_offlined_cb callback
+> can be made generic if the callback argument is the resource pointer.
 
-> On 02/05/2019 07:58, Auger Eric wrote:
-> > Hi Jean-Philippe,
-> > 
-> > On 5/1/19 12:38 PM, Jean-Philippe Brucker wrote:  
-> >> On 08/04/2019 13:18, Eric Auger wrote:  
-> >>> +int iommu_cache_invalidate(struct iommu_domain *domain, struct
-> >>> device *dev,
-> >>> +			   struct iommu_cache_invalidate_info
-> >>> *inv_info) +{
-> >>> +	int ret = 0;
-> >>> +
-> >>> +	if (unlikely(!domain->ops->cache_invalidate))
-> >>> +		return -ENODEV;
-> >>> +
-> >>> +	ret = domain->ops->cache_invalidate(domain, dev,
-> >>> inv_info); +
-> >>> +	return ret;  
-> >>
-> >> Nit: you don't really need ret
-> >>
-> >> The UAPI looks good to me, so
-> >>
-> >> Reviewed-by: Jean-Philippe Brucker
-> >> <jean-philippe.brucker@arm.com>  
-> > Just to make sure, do you accept changes proposed by Jacob in
-> > https://lkml.org/lkml/2019/4/29/659 ie.
-> > - the addition of NR_IOMMU_INVAL_GRANU in enum
-> > iommu_inv_granularity and
-> > - the addition of NR_IOMMU_CACHE_TYPE  
-> 
-> Ah sorry, I forgot about that, I'll review the next version. Yes they
-> can be useful (maybe call them IOMMU_INV_GRANU_NR and
-> IOMMU_CACHE_INV_TYPE_NR?). I guess it's legal to export in UAPI values
-> that will change over time, as VFIO also does it in its enums.
-> 
-I am fine with the names. Maybe you can put this patch in your sva/api
-branch once you reviewed it? Having a common branch for common code
-makes life so much easier.
+Makes sense, I will do both things that you suggested.
+
+Thank you,
+Pasha
