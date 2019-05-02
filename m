@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7036311E54
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE1311C9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbfEBP2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:28:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45648 "EHLO mail.kernel.org"
+        id S1726900AbfEBPW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726877AbfEBP20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:28:26 -0400
+        id S1726852AbfEBPWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:22:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 930F1214DA;
-        Thu,  2 May 2019 15:28:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70006217F5;
+        Thu,  2 May 2019 15:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810906;
-        bh=7v1BeYu2wyp5sZIlcIHXzFbRN1Twg/ra8ChEFniQ45g=;
+        s=default; t=1556810572;
+        bh=UxxP16QCIPhoLx3KhYdXtv4AQlgH/cih9ULv5+o93Hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rl6k0nooyAaEYaERYD8pS2se2lwJLffB/eV9Up+4tdMUIx5vOYXT00/3akO0gK1jZ
-         v129E9I4PRTF7Vi9Gj759i7M3d3ITMrWqXRmDOwna91ONCOGUwDJyK6mEHz1qe6OlZ
-         4psPCSQznRWGXLQqbAwlBNRYcafDLkSfZ/73FLwo=
+        b=pKRpRxO+nVbnYNSievM5ytlwk3J2KRiS1dhUZwHHZk2O292ZwCVNwU7UTlXHO+u+t
+         RL9GtPVhIwqatY6L7gdUoDOKSZaNBAM7NzrRYbsi6zmmiNAx4MZoXvthCx5DzaG95S
+         Qj3SBhgflrhKNSeM1X2qfjqYzHQ0+5x98rfDNY0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 53/72] ARM: davinci: fix build failure with allnoconfig
-Date:   Thu,  2 May 2019 17:21:15 +0200
-Message-Id: <20190502143337.621159192@linuxfoundation.org>
+Subject: [PATCH 4.9 30/32] kconfig/[mn]conf: handle backspace (^H) key
+Date:   Thu,  2 May 2019 17:21:16 +0200
+Message-Id: <20190502143323.212877920@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2dbed152e2d4c3fe2442284918d14797898b1e8a ]
+[ Upstream commit 9c38f1f044080392603c497ecca4d7d09876ff99 ]
 
-allnoconfig build with just ARCH_DAVINCI enabled
-fails because drivers/clk/davinci/* depends on
-REGMAP being enabled.
+Backspace is not working on some terminal emulators which do not send the
+key code defined by terminfo. Terminals either send '^H' (8) or '^?' (127).
+But currently only '^?' is handled. Let's also handle '^H' for those
+terminals.
 
-Fix it by selecting REGMAP_MMIO when building in
-DaVinci support.
-
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/arm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ scripts/kconfig/lxdialog/inputbox.c | 3 ++-
+ scripts/kconfig/nconf.c             | 2 +-
+ scripts/kconfig/nconf.gui.c         | 3 ++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index cd4c74daf71e..51794c7fa6d5 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -612,6 +612,7 @@ config ARCH_DAVINCI
- 	select HAVE_IDE
- 	select PM_GENERIC_DOMAINS if PM
- 	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 	select USE_OF
- 	select ZONE_DMA
+diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
+index d58de1dc5360..510049a7bd1d 100644
+--- a/scripts/kconfig/lxdialog/inputbox.c
++++ b/scripts/kconfig/lxdialog/inputbox.c
+@@ -126,7 +126,8 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
+ 			case KEY_DOWN:
+ 				break;
+ 			case KEY_BACKSPACE:
+-			case 127:
++			case 8:   /* ^H */
++			case 127: /* ^? */
+ 				if (pos) {
+ 					wattrset(dialog, dlg.inputbox.atr);
+ 					if (input_x == 0) {
+diff --git a/scripts/kconfig/nconf.c b/scripts/kconfig/nconf.c
+index d42d534a66cd..f7049e288e93 100644
+--- a/scripts/kconfig/nconf.c
++++ b/scripts/kconfig/nconf.c
+@@ -1046,7 +1046,7 @@ static int do_match(int key, struct match_state *state, int *ans)
+ 		state->match_direction = FIND_NEXT_MATCH_UP;
+ 		*ans = get_mext_match(state->pattern,
+ 				state->match_direction);
+-	} else if (key == KEY_BACKSPACE || key == 127) {
++	} else if (key == KEY_BACKSPACE || key == 8 || key == 127) {
+ 		state->pattern[strlen(state->pattern)-1] = '\0';
+ 		adj_match_dir(&state->match_direction);
+ 	} else
+diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
+index 4b2f44c20caf..9a65035cf787 100644
+--- a/scripts/kconfig/nconf.gui.c
++++ b/scripts/kconfig/nconf.gui.c
+@@ -439,7 +439,8 @@ int dialog_inputbox(WINDOW *main_window,
+ 		case KEY_F(F_EXIT):
+ 		case KEY_F(F_BACK):
+ 			break;
+-		case 127:
++		case 8:   /* ^H */
++		case 127: /* ^? */
+ 		case KEY_BACKSPACE:
+ 			if (cursor_position > 0) {
+ 				memmove(&result[cursor_position-1],
 -- 
 2.19.1
 
