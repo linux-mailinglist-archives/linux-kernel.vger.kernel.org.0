@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DEB11D79
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D58911CB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbfEBPaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:30:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49642 "EHLO mail.kernel.org"
+        id S1727171AbfEBPX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:23:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbfEBPav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:30:51 -0400
+        id S1726521AbfEBPXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:23:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B91F20B7C;
-        Thu,  2 May 2019 15:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D15BA20675;
+        Thu,  2 May 2019 15:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811050;
-        bh=Qc4WrYPkG7zpu49vQ/9U7rHXma7VTH1nY6PgLIOK7Bs=;
+        s=default; t=1556810633;
+        bh=WXyegsyKEmqZpDPXlLMlEes5aVGl9UTln7Gj+Pu2KWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VWeOewu2omTC2wDh4uKIJiRXje+4Ow6155tfjCsqXdxN2tfPb2muUy3zrH4Ginkx5
-         Tpi8Krl8gYabNXUOFHP5T0vWOSXFFR8qU9AxteZfM94Gf/SK/72jLlAk8/GlTd4t8o
-         zN2o18sZcUjhe6wJJI1HWq4Ii+10+phgcRpJpfK0=
+        b=ieXa+GfPkcu/UHwyPDlIV+V/W5SN8/2oFVgyDEIcALBQLlVspAbh1QphC+afoqmtt
+         TXhqk42zMKrLMv6+t6OnfSIcKcygptEarOaVCmMJMjbWbHiq3Cr9+svBaFCqChTMBF
+         DZ6yRPb9mJubATTyiOu4CiDGFA2imnP8SPpgCNg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Stefan Christ <s.christ@phytec.de>,
+        Christian Hemp <c.hemp@phytec.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 055/101] NFS: Fix a typo in nfs_init_timeout_values()
+Subject: [PATCH 4.14 20/49] ARM: dts: pfla02: increase phy reset duration
 Date:   Thu,  2 May 2019 17:20:57 +0200
-Message-Id: <20190502143343.350822916@linuxfoundation.org>
+Message-Id: <20190502143326.527704630@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5a698243930c441afccec04e4d5dc8febfd2b775 ]
+[ Upstream commit 032f85c9360fb1a08385c584c2c4ed114b33c260 ]
 
-Specifying a retrans=0 mount parameter to a NFS/TCP mount, is
-inadvertently causing the NFS client to rewrite any specified
-timeout parameter to the default of 60 seconds.
+Increase the reset duration to ensure correct phy functionality. The
+reset duration is taken from barebox commit 52fdd510de ("ARM: dts:
+pfla02: use long enough reset for ethernet phy"):
 
-Fixes: a956beda19a6 ("NFS: Allow the mount option retrans=0")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+  Use a longer reset time for ethernet phy Micrel KSZ9031RNX. Otherwise a
+  small percentage of modules have 'transmission timeouts' errors like
+
+  barebox@Phytec phyFLEX-i.MX6 Quad Carrier-Board:/ ifup eth0
+  warning: No MAC address set. Using random address 7e:94:4d:02:f8:f3
+  eth0: 1000Mbps full duplex link detected
+  eth0: transmission timeout
+  T eth0: transmission timeout
+  T eth0: transmission timeout
+  T eth0: transmission timeout
+  T eth0: transmission timeout
+
+Cc: Stefan Christ <s.christ@phytec.de>
+Cc: Christian Hemp <c.hemp@phytec.de>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Fixes: 3180f956668e ("ARM: dts: Phytec imx6q pfla02 and pbab01 support")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- fs/nfs/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index fb1cf1a4bda2..90d71fda65ce 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -453,7 +453,7 @@ void nfs_init_timeout_values(struct rpc_timeout *to, int proto,
- 	case XPRT_TRANSPORT_RDMA:
- 		if (retrans == NFS_UNSPEC_RETRANS)
- 			to->to_retries = NFS_DEF_TCP_RETRANS;
--		if (timeo == NFS_UNSPEC_TIMEO || to->to_retries == 0)
-+		if (timeo == NFS_UNSPEC_TIMEO || to->to_initval == 0)
- 			to->to_initval = NFS_DEF_TCP_TIMEO * HZ / 10;
- 		if (to->to_initval > NFS_MAX_TCP_TIMEOUT)
- 			to->to_initval = NFS_MAX_TCP_TIMEOUT;
+diff --git a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
+index d81b0078a100..25b0704c6054 100644
+--- a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
+@@ -89,6 +89,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+ 	phy-mode = "rgmii";
++	phy-reset-duration = <10>; /* in msecs */
+ 	phy-reset-gpios = <&gpio3 23 GPIO_ACTIVE_LOW>;
+ 	phy-supply = <&vdd_eth_io_reg>;
+ 	status = "disabled";
 -- 
 2.19.1
 
