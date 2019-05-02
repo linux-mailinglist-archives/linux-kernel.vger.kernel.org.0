@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0517611F16
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA0311CD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfEBPp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:45:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41674 "EHLO mail.kernel.org"
+        id S1727564AbfEBPZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:25:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727535AbfEBPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:25:25 -0400
+        id S1727549AbfEBPZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:25:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DDD02085A;
-        Thu,  2 May 2019 15:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DDBE20C01;
+        Thu,  2 May 2019 15:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810725;
-        bh=ScwvABuIX5SNOY3h9VyzHGHSbN5CenFYu9PNSsG5ZXI=;
+        s=default; t=1556810727;
+        bh=r+ZSj1TIX7JKLkzV3urREXxfRbXAatv90V2Lp5h6Nps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bv1TpbPyXAXm8iSz7drStLd17nyQ/dRXEbP3P8XJGcWU5VNy7TA/Sd/Lz0ETGrZ3A
-         bGkxKdtkFeGHhEx9O9PYj2PeusjFoO5rfxHMLtIAgWrUq+O3Svynkr9qDuskYRAW6f
-         tTA0bTlHfoYBcVyVv0FnZUIdZgqPB21xB3a6WHz4=
+        b=P3T7qzYMAlhBl2cEQQxvy18+2/AxBux75ckLZ03qtmvMCVDh97uEkRisyF8yWPWl4
+         HmjgIqQFwrnkftjLdG6b/Eo+Im3fxrX+TEeddnsKy62SVU8mRgqocPJWHFOZXZ02az
+         HBdrnHLqGlxrsf6ug96/copYjWn1gMeyufVOJi1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 36/49] gpio: aspeed: fix a potential NULL pointer dereference
-Date:   Thu,  2 May 2019 17:21:13 +0200
-Message-Id: <20190502143328.401758664@linuxfoundation.org>
+Subject: [PATCH 4.14 37/49] drm/meson: Fix invalid pointer in meson_drv_unbind()
+Date:   Thu,  2 May 2019 17:21:14 +0200
+Message-Id: <20190502143328.617041308@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
 References: <20190502143323.397051088@linuxfoundation.org>
@@ -45,32 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6cf4511e9729c00a7306cf94085f9cc3c52ee723 ]
+[ Upstream commit 776e78677f514ecddd12dba48b9040958999bd5a ]
 
-In case devm_kzalloc, the patch returns ENOMEM to avoid potential
-NULL pointer dereference.
+meson_drv_bind() registers a meson_drm struct as the device's privdata,
+but meson_drv_unbind() tries to retrieve a drm_device. This may cause a
+segfault on shutdown:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+[ 5194.593429] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000197
+ ...
+[ 5194.788850] Call trace:
+[ 5194.791349]  drm_dev_unregister+0x1c/0x118 [drm]
+[ 5194.795848]  meson_drv_unbind+0x50/0x78 [meson_drm]
+
+Retrieve the right pointer in meson_drv_unbind().
+
+Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190322152657.13752-1-jean-philippe.brucker@arm.com
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpio/gpio-aspeed.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/meson/meson_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index f03fe916eb9d..f6d1bda8a802 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -861,6 +861,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 5deb44ac6791..1a1b0b9cf1fa 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -294,8 +294,8 @@ static int meson_drv_bind(struct device *dev)
  
- 	gpio->offset_timer =
- 		devm_kzalloc(&pdev->dev, gpio->chip.ngpio, GFP_KERNEL);
-+	if (!gpio->offset_timer)
-+		return -ENOMEM;
+ static void meson_drv_unbind(struct device *dev)
+ {
+-	struct drm_device *drm = dev_get_drvdata(dev);
+-	struct meson_drm *priv = drm->dev_private;
++	struct meson_drm *priv = dev_get_drvdata(dev);
++	struct drm_device *drm = priv->drm;
  
- 	return aspeed_gpio_setup_irqs(gpio, pdev);
- }
+ 	drm_dev_unregister(drm);
+ 	drm_kms_helper_poll_fini(drm);
 -- 
 2.19.1
 
