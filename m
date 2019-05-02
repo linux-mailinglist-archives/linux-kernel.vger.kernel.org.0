@@ -2,45 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B48411111C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 782C511156
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfEBCSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:18:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54792 "EHLO
+        id S1726612AbfEBCTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:19:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56602 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfEBCSQ (ORCPT
+        with ESMTP id S1726496AbfEBCTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:18:16 -0400
+        Wed, 1 May 2019 22:19:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sDWuThU3xsEo4SgQTOzat0wz9Zc/a+PRsiFsYfLhmUE=; b=WYv+9b1SJiKI
-        GYh1I3M03W+FsWQOrm2gPdMUKmBTls8GQ63brUZ2buaglD6KEQgSaQumt3AFfjiGQOzZmT30wbbM/
-        iczEDCOJ6EUACi38bRmcMtm1uSmo50YHzxP43Rp9Tc1yCxxoRC+NxS9SWHYrHVP/xkOxdbmAW8px2
-        yNkGE=;
+        List-Archive; bh=JSlPcUnFqX1tN5EF+WG+3VLibdvupztBzoEMjhd4pBY=; b=g7HBSZHxEi41
+        FbJOFo6XXTQJJ4jd7ljgytbHAlajKmV+/HndsXkAQtOvo+vHj106e0vJhsG1vuijAWw29aiNl3EzG
+        l/oQinOz18TveSp+rV+4A6u9ko4jCwW9hCw7RotfC5h/NLZMi2ntyWQSGKNgQlD9a849ZiCNpPHal
+        mCKTk=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1IV-0005pt-75; Thu, 02 May 2019 02:18:07 +0000
+        id 1hM1IX-0005qB-G5; Thu, 02 May 2019 02:18:09 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 9926D441D56; Thu,  2 May 2019 03:18:03 +0100 (BST)
+        id 39C17441D3C; Thu,  2 May 2019 03:18:06 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Logesh <logesh.kolandavel@timesys.com>
-Cc:     Adam.Thomson.Opensource@diasemi.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, logesh.kolandavel@timesys.com,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz,
-        support.opensource@diasemi.com, tiwai@suse.com
-Subject: Applied "ASoC: da7213: fix DAI_CLK_EN register bit overwrite" to the asoc tree
-In-Reply-To: <20190501090424.28861-1-logesh.kolandavel@timesys.com>
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     alsa-devel@alsa-project.org,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Timur Tabi <timur@kernel.org>,
+        Viorel Suman <viorel.suman@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>
+Subject: Applied "ASoC: fsl_audmix: cache pdev->dev pointer" to the asoc tree
+In-Reply-To:  <1554894380-25153-5-git-send-email-viorel.suman@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021803.9926D441D56@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:03 +0100 (BST)
+Message-Id: <20190502021806.39C17441D3C@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:06 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +65,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: da7213: fix DAI_CLK_EN register bit overwrite
+   ASoC: fsl_audmix: cache pdev->dev pointer
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,54 +90,99 @@ to this mail.
 Thanks,
 Mark
 
-From 414a7321d60bc0abced4a760e22b8187e2b4aecf Mon Sep 17 00:00:00 2001
-From: Logesh <logesh.kolandavel@timesys.com>
-Date: Wed, 1 May 2019 14:34:24 +0530
-Subject: [PATCH] ASoC: da7213: fix DAI_CLK_EN register bit overwrite
+From 62be484f7ad8443c393293a415392fbf3190c864 Mon Sep 17 00:00:00 2001
+From: Viorel Suman <viorel.suman@nxp.com>
+Date: Wed, 10 Apr 2019 11:06:39 +0000
+Subject: [PATCH] ASoC: fsl_audmix: cache pdev->dev pointer
 
-If the da7213 codec is configured as Master with the DAPM power down
-delay time set, 'snd_soc_component_write' function overwrites the
-DAI_CLK_EN bit of DAI_CLK_MODE register which leads to audio play
-only once until it re-initialize after codec power up.
+There should be no trouble to understand dev = pdev->dev.
+This can save some space to have more print info or save
+some wrapped lines.
 
-Signed-off-by: Logesh <logesh.kolandavel@timesys.com>
-Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+Suggested-by: Nicolin Chen <nicoleotsuka@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7213.c | 5 ++++-
- sound/soc/codecs/da7213.h | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ sound/soc/fsl/fsl_audmix.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index 92d006a5283e..425c11d63e49 100644
---- a/sound/soc/codecs/da7213.c
-+++ b/sound/soc/codecs/da7213.c
-@@ -1305,7 +1305,10 @@ static int da7213_set_dai_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
- 	/* By default only 64 BCLK per WCLK is supported */
- 	dai_clk_mode |= DA7213_DAI_BCLKS_PER_WCLK_64;
+diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
+index dc802d5c4ccd..3897a54a11fe 100644
+--- a/sound/soc/fsl/fsl_audmix.c
++++ b/sound/soc/fsl/fsl_audmix.c
+@@ -456,6 +456,7 @@ MODULE_DEVICE_TABLE(of, fsl_audmix_ids);
  
--	snd_soc_component_write(component, DA7213_DAI_CLK_MODE, dai_clk_mode);
-+	snd_soc_component_update_bits(component, DA7213_DAI_CLK_MODE,
-+			    DA7213_DAI_BCLKS_PER_WCLK_MASK |
-+			    DA7213_DAI_CLK_POL_MASK | DA7213_DAI_WCLK_POL_MASK,
-+			    dai_clk_mode);
- 	snd_soc_component_update_bits(component, DA7213_DAI_CTRL, DA7213_DAI_FORMAT_MASK,
- 			    dai_ctrl);
- 	snd_soc_component_write(component, DA7213_DAI_OFFSET, dai_offset);
-diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
-index 5a78dba1dcb5..9d31efc3cfe5 100644
---- a/sound/soc/codecs/da7213.h
-+++ b/sound/soc/codecs/da7213.h
-@@ -181,7 +181,9 @@
- #define DA7213_DAI_BCLKS_PER_WCLK_256				(0x3 << 0)
- #define DA7213_DAI_BCLKS_PER_WCLK_MASK				(0x3 << 0)
- #define DA7213_DAI_CLK_POL_INV					(0x1 << 2)
-+#define DA7213_DAI_CLK_POL_MASK					(0x1 << 2)
- #define DA7213_DAI_WCLK_POL_INV					(0x1 << 3)
-+#define DA7213_DAI_WCLK_POL_MASK				(0x1 << 3)
- #define DA7213_DAI_CLK_EN_MASK					(0x1 << 7)
+ static int fsl_audmix_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct fsl_audmix *priv;
+ 	struct resource *res;
+ 	const char *mdrv;
+@@ -463,52 +464,50 @@ static int fsl_audmix_probe(struct platform_device *pdev)
+ 	void __iomem *regs;
+ 	int ret;
  
- /* DA7213_DAI_CTRL = 0x29 */
+-	of_id = of_match_device(fsl_audmix_ids, &pdev->dev);
++	of_id = of_match_device(fsl_audmix_ids, dev);
+ 	if (!of_id || !of_id->data)
+ 		return -EINVAL;
+ 
+ 	mdrv = of_id->data;
+ 
+-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	/* Get the addresses */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	regs = devm_ioremap_resource(&pdev->dev, res);
++	regs = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 
+-	priv->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "ipg", regs,
++	priv->regmap = devm_regmap_init_mmio_clk(dev, "ipg", regs,
+ 						 &fsl_audmix_regmap_config);
+ 	if (IS_ERR(priv->regmap)) {
+-		dev_err(&pdev->dev, "failed to init regmap\n");
++		dev_err(dev, "failed to init regmap\n");
+ 		return PTR_ERR(priv->regmap);
+ 	}
+ 
+-	priv->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
++	priv->ipg_clk = devm_clk_get(dev, "ipg");
+ 	if (IS_ERR(priv->ipg_clk)) {
+-		dev_err(&pdev->dev, "failed to get ipg clock\n");
++		dev_err(dev, "failed to get ipg clock\n");
+ 		return PTR_ERR(priv->ipg_clk);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, priv);
+-	pm_runtime_enable(&pdev->dev);
++	pm_runtime_enable(dev);
+ 
+-	ret = devm_snd_soc_register_component(&pdev->dev, &fsl_audmix_component,
++	ret = devm_snd_soc_register_component(dev, &fsl_audmix_component,
+ 					      fsl_audmix_dai,
+ 					      ARRAY_SIZE(fsl_audmix_dai));
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to register ASoC DAI\n");
++		dev_err(dev, "failed to register ASoC DAI\n");
+ 		return ret;
+ 	}
+ 
+-	priv->pdev = platform_device_register_data(&pdev->dev, mdrv, 0, NULL,
+-						   0);
++	priv->pdev = platform_device_register_data(dev, mdrv, 0, NULL, 0);
+ 	if (IS_ERR(priv->pdev)) {
+ 		ret = PTR_ERR(priv->pdev);
+-		dev_err(&pdev->dev, "failed to register platform %s: %d\n",
+-			mdrv, ret);
++		dev_err(dev, "failed to register platform %s: %d\n", mdrv, ret);
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1
 
