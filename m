@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7D9111F54
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3822511EF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfEBPX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:23:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39112 "EHLO mail.kernel.org"
+        id S1728029AbfEBPot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:44:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfEBPX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:26 -0400
+        id S1726607AbfEBP0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:26:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B338A20675;
-        Thu,  2 May 2019 15:23:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C48FA20C01;
+        Thu,  2 May 2019 15:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810606;
-        bh=8QoOLA2arZzGnx3Ye1ntHdQCr/hlpEVYqBpnGIy5P2Y=;
+        s=default; t=1556810781;
+        bh=uGYza00XV509ulcCWStHCVAXfERLnsbLdzv62TTibjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jY6WsmgZK3Bueed7DxunV7zNG5rvO2I/Qyr2mDhnD1GkDJEpl4tDDfNknQliRBc1K
-         ZoVUd+HC0BoL3vg4uHiKdu620T7RZ5PwE344I9gwABo497uVPtg29M3ibgVOWT2MBJ
-         grr56cMC3eCP1IOQ1Ulj+MWO2RhDXtorNOmMCTSw=
+        b=SLuAJnzM++Jl4FoZL9UnrnoYDMJtHXVN0VQUnW8PRMLYae7vaFwuulwSdhI5MEEG0
+         WEJZrhti4tQxXWNXhTu5Zb1abFZ0LZNnkatk/9CbV7qgUQCGqcVmHNzzMGjiF3DMFV
+         OAue22Fq7A4TzjRSmQ2OLr1kwNIDbISAvTzN/MTE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?V=C3=A1clav=20Zindulka?= <vaclav.zindulka@tlapnet.cz>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 11/49] netfilter: nft_set_rbtree: check for inactive element after flag mismatch
-Date:   Thu,  2 May 2019 17:20:48 +0200
-Message-Id: <20190502143325.495677584@linuxfoundation.org>
+Subject: [PATCH 4.19 27/72] usb: dwc3: pci: add support for Comet Lake PCH ID
+Date:   Thu,  2 May 2019 17:20:49 +0200
+Message-Id: <20190502143335.591920570@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 05b7639da55f5555b9866a1f4b7e8995232a6323 ]
+[ Upstream commit 7ae622c978db6b2e28b4fced6ecd2a174492059d ]
 
-Otherwise, we hit bogus ENOENT when removing elements.
+This patch simply adds a new PCI Device ID
 
-Fixes: e701001e7cbe ("netfilter: nft_rbtree: allow adjacent intervals with dynamic updates")
-Reported-by: Václav Zindulka <vaclav.zindulka@tlapnet.cz>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- net/netfilter/nft_set_rbtree.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/usb/dwc3/dwc3-pci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
-index d83a4ec5900d..6f3205de887f 100644
---- a/net/netfilter/nft_set_rbtree.c
-+++ b/net/netfilter/nft_set_rbtree.c
-@@ -224,10 +224,6 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 		else if (d > 0)
- 			parent = parent->rb_right;
- 		else {
--			if (!nft_set_elem_active(&rbe->ext, genmask)) {
--				parent = parent->rb_left;
--				continue;
--			}
- 			if (nft_rbtree_interval_end(rbe) &&
- 			    !nft_rbtree_interval_end(this)) {
- 				parent = parent->rb_left;
-@@ -236,6 +232,9 @@ static void *nft_rbtree_deactivate(const struct net *net,
- 				   nft_rbtree_interval_end(this)) {
- 				parent = parent->rb_right;
- 				continue;
-+			} else if (!nft_set_elem_active(&rbe->ext, genmask)) {
-+				parent = parent->rb_left;
-+				continue;
- 			}
- 			nft_rbtree_flush(net, set, rbe);
- 			return rbe;
+diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
+index fdc6e4e403e8..8cced3609e24 100644
+--- a/drivers/usb/dwc3/dwc3-pci.c
++++ b/drivers/usb/dwc3/dwc3-pci.c
+@@ -29,6 +29,7 @@
+ #define PCI_DEVICE_ID_INTEL_BXT_M		0x1aaa
+ #define PCI_DEVICE_ID_INTEL_APL			0x5aaa
+ #define PCI_DEVICE_ID_INTEL_KBP			0xa2b0
++#define PCI_DEVICE_ID_INTEL_CMLH		0x02ee
+ #define PCI_DEVICE_ID_INTEL_GLK			0x31aa
+ #define PCI_DEVICE_ID_INTEL_CNPLP		0x9dee
+ #define PCI_DEVICE_ID_INTEL_CNPH		0xa36e
+@@ -305,6 +306,9 @@ static const struct pci_device_id dwc3_pci_id_table[] = {
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_MRFLD),
+ 	  (kernel_ulong_t) &dwc3_pci_mrfld_properties, },
+ 
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_CMLH),
++	  (kernel_ulong_t) &dwc3_pci_intel_properties, },
++
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_SPTLP),
+ 	  (kernel_ulong_t) &dwc3_pci_intel_properties, },
+ 
 -- 
 2.19.1
 
