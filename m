@@ -2,84 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B1A12430
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D59A1243F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 23:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbfEBVgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 17:36:08 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40787 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBVgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 17:36:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id w6so3517215otl.7;
-        Thu, 02 May 2019 14:36:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QOVychIUmtDG8Tll/ecV8whoYD0pZhfgpjrLj+GI7lA=;
-        b=P61jLT5/FAYMIFhaieyqRt/Q1QotErIkYPZe/eCAJbfA0wkTQdN/8DdU4rDgH7I1zq
-         cj/21HRsz2Gl0YagOn6iUk4WZLO/76cXiOxiis5Xa2pMWzgiCZ4I+mXFn4CDaYU1chm7
-         ylG7V4v4nQVyaxp5fT/1BzLFrDqgqp/mfIVNgS7679pJO0PYr6U4ufqksHDHo97jMIIb
-         W9uhIWYE9jOqCCVVA3X4f5nFxECZsZL4X07N1RZMRyCnafBl/3wmXHEmNm7xg1WuJlrD
-         2dpC5wMZP2CVj2IsVuEcQOGGai9fJ//F5q/BF4bR1pjM2htxRLLbhhnoS27xIcw2l59C
-         qQkg==
-X-Gm-Message-State: APjAAAXE5zMJbDTzBW7zhmpOTtTje4u+KP9eqe6bBm/Gx2pnKjS6a0PI
-        ertlLbIJW4wph4BjdXlQeg==
-X-Google-Smtp-Source: APXvYqzIKpF2SpUiGqboXp/KmEVvROVVZj0uRCj2SNazB/0BEXuociHSUGYQnO9Q7HpLJFsgEabH2g==
-X-Received: by 2002:a9d:7d06:: with SMTP id v6mr4009955otn.187.1556832966725;
-        Thu, 02 May 2019 14:36:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n185sm213641oif.8.2019.05.02.14.36.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 14:36:06 -0700 (PDT)
-Date:   Thu, 2 May 2019 16:36:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 1/2] drm/panel: simple: Add FriendlyELEC HD702E 800x1280
- LCD panel
-Message-ID: <20190502213605.GA20606@bogus>
-References: <20190501121448.3812-1-jagan@amarulasolutions.com>
+        id S1726265AbfEBVnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 17:43:40 -0400
+Received: from mx3.wp.pl ([212.77.101.9]:26469 "EHLO mx3.wp.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726022AbfEBVnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 17:43:40 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 17:43:39 EDT
+Received: (wp-smtpd smtp.wp.pl 39377 invoked from network); 2 May 2019 23:36:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1556833016; bh=FUkkXb89M9Ju/1kq/ADsVeKz9TuN3gFh0/5qWIJyqMI=;
+          h=From:To:Cc:Subject;
+          b=RlBJrdS6MuaSJuLbf4MIN2cIzqbD3OoXOTFURjat2VMT37CSlBBypklfBAelYjAej
+           WZrM5DIXYzYNiUH/lPxvz5WA967a4xnCJoGcYqoDoALXBT8hiwRGsCiRNTcywS3pB0
+           qJoQ//XkzU5b0CN7GCtVhHx5ONYrWCPKeQPxgly8=
+Received: from pc-201-108-240-185-static.strong-pc.com (HELO localhost.localdomain) (spaz16@wp.pl@[185.240.108.201])
+          (envelope-sender <spaz16@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <igorkuo@gmail.com>; 2 May 2019 23:36:56 +0200
+From:   =?UTF-8?q?B=C5=82a=C5=BCej=20Szczygie=C5=82?= <spaz16@wp.pl>
+Cc:     igorkuo@gmail.com,
+        =?UTF-8?q?B=C5=82a=C5=BCej=20Szczygie=C5=82?= <spaz16@wp.pl>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: fix A4Tech horizontal scrolling
+Date:   Thu,  2 May 2019 23:36:39 +0200
+Message-Id: <20190502213639.7632-1-spaz16@wp.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501121448.3812-1-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 75b21af65cda25fe36520aade8dfb94b
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [YfMH]                               
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  1 May 2019 17:44:47 +0530, Jagan Teki wrote:
-> HD702E lcd is FriendlyELEC developed eDP LCD panel with 800x1280
-> resolution. It has built in Goodix, GT9271 captive touchscreen
-> with backlight adjustable via PWM.
-> 
-> Add support for it.
-> 
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  .../display/panel/friendlyarm,hd702e.txt      | 29 +++++++++++++++++++
->  drivers/gpu/drm/panel/panel-simple.c          | 26 +++++++++++++++++
->  2 files changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/friendlyarm,hd702e.txt
-> 
+Since recent high resolution scrolling changes the A4Tech driver must
+check for the "REL_WHEEL_HI_RES" usage code.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: 2dc702c991e3774af9d7ce410eef410ca9e2357e (HID: input: use the
+Resolution Multiplier for high-resolution scrolling)
+
+Signed-off-by: Błażej Szczygieł <spaz16@wp.pl>
+---
+ drivers/hid/hid-a4tech.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
+index 9428ea7cdf8a..fafb9fa558e7 100644
+--- a/drivers/hid/hid-a4tech.c
++++ b/drivers/hid/hid-a4tech.c
+@@ -38,7 +38,7 @@ static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,
+ {
+ 	struct a4tech_sc *a4 = hid_get_drvdata(hdev);
+ 
+-	if (usage->type == EV_REL && usage->code == REL_WHEEL)
++	if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES)
+ 		set_bit(REL_HWHEEL, *bit);
+ 
+ 	if ((a4->quirks & A4_2WHEEL_MOUSE_HACK_7) && usage->hid == 0x00090007)
+@@ -60,7 +60,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
+ 	input = field->hidinput->input;
+ 
+ 	if (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8) {
+-		if (usage->type == EV_REL && usage->code == REL_WHEEL) {
++		if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES) {
+ 			a4->delayed_value = value;
+ 			return 1;
+ 		}
+@@ -77,7 +77,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
+ 		return 1;
+ 	}
+ 
+-	if (usage->code == REL_WHEEL && a4->hw_wheel) {
++	if (usage->code == REL_WHEEL_HI_RES && a4->hw_wheel) {
+ 		input_event(input, usage->type, REL_HWHEEL, value);
+ 		return 1;
+ 	}
+-- 
+2.21.0
+
