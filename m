@@ -2,146 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D61A5120C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 19:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B013D120D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 19:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfEBRDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 13:03:36 -0400
-Received: from mail-io1-f47.google.com ([209.85.166.47]:42365 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfEBRDf (ORCPT
+        id S1726720AbfEBREr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 13:04:47 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11354 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBREq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 13:03:35 -0400
-Received: by mail-io1-f47.google.com with SMTP id c24so2742315iom.9;
-        Thu, 02 May 2019 10:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LUiMncgAwtaWZCSEj/35h4lgUlhcfQV0foFT/AHquDY=;
-        b=DyXXNWeD7vh/snUyFgfiILnsJ4fdLsazUl9wToiOVlna2UuoQRo6FctvgvRYNHF7sX
-         r0bf64Fug3CV5QUm9+Yu4iedlhFkVCJ1JgS7rnMAxQVpG51U1aQm1eACsF8k475Hq5te
-         CiH3r+pGqeBB89r0UKwAJQfkyarzLQodbQtkJd7yuGz8/z9ZfNIK82EQ6iFa/S7KwxdD
-         OOLVyhiAINbg/TnzTRs+EMJT7FrxHC/d/UPV29JxH/Fs7eSWIcsKluK/JUDDGqPGUbq6
-         7l4YZXYCFc+ecUT6t21u/7+VEbtGnt17NWVFJtTXIiVVPhRp1zpaQxt1i7X1H89atnhN
-         WjMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LUiMncgAwtaWZCSEj/35h4lgUlhcfQV0foFT/AHquDY=;
-        b=m79Ldgf7Xm1NsQh1gsX4hmQ0XxPqjswhnHxCCAzivOiIZnaR/hJ/8lZuJXHazkiqlN
-         HMKgZc0eCai8k93DSoHTiXrHyJh3lgT/0uoYHdPCOoUW5cr8jN1OhXgiqGDga10hk2sP
-         NNwhbSHTyL78715fvz/uQtrxLTuCnr1NtHb+GfTiCM3qjeIRCuZqASLRrzjcLXC8lDoP
-         wqtPwDbOIQkqqaAoB8Qy3WUAXDWdAP2zr9CLrBDDMtyx3vhzwfpRd1U5jPTExqzk46+i
-         63B9sUL86p7+tQMoWwf5w9hLwzQ/o3m5HOpZLS0RoSw5WKGApy5ysVISy/1RlY4U5RK7
-         4ETA==
-X-Gm-Message-State: APjAAAVM68X4sKrkOtZ+AFgJYHh4u8rDChfrfU2oCvoB0HXB0wwScJv6
-        9G53c3P84AUJlHkYEoeatnoT3+mDnSkaM475P910gvaz
-X-Google-Smtp-Source: APXvYqyJOGqY1Zb1AUWAAc4tgreWZxWaR2i9c+3SX2R1SOEyGhJM6QEWw8PlJGcHP/t79OcrfNl9Yl7UrzED3KE103E=
-X-Received: by 2002:a6b:93d7:: with SMTP id v206mr1747447iod.200.1556816614363;
- Thu, 02 May 2019 10:03:34 -0700 (PDT)
+        Thu, 2 May 2019 13:04:46 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ccb23280000>; Thu, 02 May 2019 10:04:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 02 May 2019 10:04:44 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 02 May 2019 10:04:44 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 May
+ 2019 17:04:44 +0000
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 May
+ 2019 17:04:34 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 2 May 2019 17:04:35 +0000
+Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5ccb23200001>; Thu, 02 May 2019 10:04:34 -0700
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <Jisheng.Zhang@synaptics.com>, <thierry.reding@gmail.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>,
+        <sagar.tv@gmail.com>, <vidyas@nvidia.com>
+Subject: [PATCH V4 1/2] PCI: dwc: Add API support to de-initialize host
+Date:   Thu, 2 May 2019 22:34:25 +0530
+Message-ID: <20190502170426.28688-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20190501205215.ptoi2czhklte5jbm@csclub.uwaterloo.ca>
- <CAKgT0UczVvREiXwde6yJ8_i9RT2z7FhenEutXJKW8AmDypn_0g@mail.gmail.com> <20190502151140.gf5ugodqamtdd5tz@csclub.uwaterloo.ca>
-In-Reply-To: <20190502151140.gf5ugodqamtdd5tz@csclub.uwaterloo.ca>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Thu, 2 May 2019 10:03:23 -0700
-Message-ID: <CAKgT0Uc_OUAcPfRe6yCSwpYXCXomOXKG2Yvy9c1_1RJn-7Cb5g@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] i40e X722 RSS problem with NAT-Traversal IPsec packets
-To:     Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1556816681; bh=KU92sWXq4K53rDOlHCdvyaqWnJeE7djISnWrJVyYy44=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=dnr+o15REp7Ky9MInLuEg9Ote+2ZG7Dws5xAAjRGOjdol4zzlcnouPO9txwtXtOnJ
+         QyhWjYScgxxXAM2+Z8j05tYLt9pTXN+vlje581E7DqmbBs8A+UOP0nZ8FdC+Kjyjts
+         wzFvWrF/ikuUsMwTY05Gt5GiH/DheOwnYrgEzbUOCX6WR5QEbDirUgeMUEcnyh9iDv
+         KfGIfoN4loEiPTkvsJmoYttT0BGJu/YV6wwF/ezyuAR2oh1HGtV+jGxpGenowxNtNF
+         uuWv2bLxg+btizFEO4BEcqNE88kQ0BwRWTHjwk5Hi0jSmnA1ev59K4LNEqc43xklRI
+         1zxfEibc8rUjg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 8:11 AM Lennart Sorensen
-<lsorense@csclub.uwaterloo.ca> wrote:
->
-> On Wed, May 01, 2019 at 03:52:57PM -0700, Alexander Duyck wrote:
-> > I'm not sure how RSS will do much for you here. Basically you only
-> > have the source IP address as your only source of entropy when it
-> > comes to RSS since the destination IP should always be the same if you
-> > are performing a server role and terminating packets on the local
-> > system and as far as the ports in your example you seem to only be
-> > using 4500 for both the source and the destination.
->
-> I have thousands of IPsec clients connecting.  Simply treating them as
-> normal UDP packets would work.  The IP address is different, and often
-> the port too.
+Add an API to group all the tasks to be done to de-initialize host which
+can then be called by any DesignWare core based driver implementations
+while adding .remove() support in their respective drivers.
 
-Thanks for the clarification. I just wanted to verify that I know we
-have had similar complaints in the past and it turns out those were
-only using one set of IP addresses.
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+Changes from v3:
+* Added check if (pci_msi_enabled() && !pp->ops->msi_host_init) before calling
+  dw_pcie_free_msi() API to mimic init path
 
-> > In your testing are you only looking at a point to point connection
-> > between two systems, or do you have multiple systems accessing the
-> > system you are testing? I ask as the only way this should do any
-> > traffic spreading via RSS would be if the source IPs are different and
-> > that would require multiple client systems accessing the server.
->
-> I tried changing the client IP address and the RSS hash key.  It never
-> changed to another queue.  Something is broken.
+Changes from v2:
+* Rebased on top of linux-next top of the tree branch
 
-Okay, so if changing the RSS hash key has not effect then it is likely
-not being used.
+Changes from v1:
+* s/Designware/DesignWare
 
-> > In the case of other encapsulation types over UDP, such as VXLAN, I
-> > know that a hash value is stored in the UDP source port location
-> > instead of the true source port number. This allows the RSS hashing to
-> > occur on this extra information which would allow for a greater
-> > diversity in hash results. Depending on how you are generating the ESP
-> > encapsulation you might look at seeing if it would be possible to have
-> > a hash on the inner data used as the UDP source port in the outgoing
-> > packets. This would help to resolve this sort of issue.
->
-> Well it works on every other network card except this one.  Every other
-> intel card in the past we have used had no problem doing this right.
+ drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
+ drivers/pci/controller/dwc/pcie-designware.h      | 5 +++++
+ 2 files changed, 13 insertions(+)
 
-The question is what is different about this card, and I don't have an
-immediate answer so we would need to do some investigation.
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 77db32529319..d069e4290180 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	return ret;
+ }
+ 
++void dw_pcie_host_deinit(struct pcie_port *pp)
++{
++	pci_stop_root_bus(pp->root_bus);
++	pci_remove_root_bus(pp->root_bus);
++	if (pci_msi_enabled() && !pp->ops->msi_host_init)
++		dw_pcie_free_msi(pp);
++}
++
+ static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ 				     u32 devfn, int where, int size, u32 *val,
+ 				     bool write)
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index deab426affd3..4f48ec78c7b9 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
+ void dw_pcie_free_msi(struct pcie_port *pp);
+ void dw_pcie_setup_rc(struct pcie_port *pp);
+ int dw_pcie_host_init(struct pcie_port *pp);
++void dw_pcie_host_deinit(struct pcie_port *pp);
+ int dw_pcie_allocate_domains(struct pcie_port *pp);
+ #else
+ static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+@@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
++static inline void dw_pcie_host_deinit(struct pcie_port *pp)
++{
++}
++
+ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
+ {
+ 	return 0;
+-- 
+2.17.1
 
-> You want all the packets for a given ipsec tunnel to go to the same queue.
-> That is not a problem here.  What you don't want is every ipsec packet
-> from everyone going to the same queue (always queue 0).  So simply
-> treating them as UDP packets with a source and destination IP and port
-> would work perfectly fine.  The X722 isn't doing that.  It is always
-> assigning a hash value of 0 to these packets.
-
-You had stated in your earlier email that "Other UDP packets are
-fine". Perhaps we need to do some further isolation to identify why
-the ESP over UDP packets are not being hashed on while other UDP
-packets are.
-
-Would it be possible to provide a couple of raw Ethernet frames
-instead of IP packets for us to examine? I noticed the two packets you
-sent earlier didn't start until the IP header. One possibility would
-be that if we had any extra outer headers or trailers added to the
-packet that could possibly cause issues since that might either make
-the packet not parsable or possibly flag it as some sort of length
-error when the size of the packet doesn't match what is reported in
-the headers.
-
-One other thing we may want to look at doing is trying to identify the
-particular part of the packets that might be causing the hash to not
-be generated. One way to do that would be to use something like
-netperf to generate packets and send them toward your test system.
-Something like the command line below could be used to send packets
-that should be similar to the ones you provided earlier:
-     netperf -H <target IP> -t UDP_STREAM -N -- -P 4500,4500 -m 132
-
-If the packets generated by netperf were not hashed that would tell us
-then it may be some sort of issue with how UDP packets are being
-parsed, and from there we could narrow things down by modifying port
-numbers and changing packet sizes. If that does get hashed then we
-need to start looking outside of the IP/UDP header parsing for
-possible issues since there is likely something else causing the
-issue.
-
-Thanks.
-
-- Alex
