@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF91B11D7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA47911D80
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfEBPbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:31:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50032 "EHLO mail.kernel.org"
+        id S1728945AbfEBPbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:31:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728922AbfEBPbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:31:04 -0400
+        id S1728930AbfEBPbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:31:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06565216FD;
-        Thu,  2 May 2019 15:31:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B07820C01;
+        Thu,  2 May 2019 15:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811063;
-        bh=mR+u4Caz6YnEub7R/AE3gj73TlqcHvIq8vNBjHJ9mjQ=;
+        s=default; t=1556811066;
+        bh=iMJvmuREUSOV9dkIFK+GQdhws+68M5+NrRRDFWHfCK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x01/xsX/+OG9JY7UQMHWFGNlG7s13uxUe73Uw6nkm4tuQIcEa9uNcDRcy40oRqa5O
-         5T9WsdciRuZkrt4CHaqTQ3kc+rRWrX6vdaW8Zyd7gIJPFQRYO2Jeooh0boTTAFlpm0
-         nj2oFnIPagWzpQZ6SGgIdUYzvD0myIlac43uo0lk=
+        b=T75cVN/aLcAna1RSTAubZAK1+7antRjmujG/MOArOZtG8q0NWsRtI7MGn1SOiBpGH
+         cDTiiceIQQ84tqyfdsGHn5DllitC2eMcOnZURjvrFs+TtLSWVa7vybqu77nIg7Kix5
+         dYOmP9Opq3U+St7EBJN8sQ6ASu4vU0gzPpjEQXyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@redhat.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 059/101] drm: Fix drm_release() and device unplug
-Date:   Thu,  2 May 2019 17:21:01 +0200
-Message-Id: <20190502143343.626814362@linuxfoundation.org>
+Subject: [PATCH 5.0 060/101] gpio: aspeed: fix a potential NULL pointer dereference
+Date:   Thu,  2 May 2019 17:21:02 +0200
+Message-Id: <20190502143343.704810235@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
 References: <20190502143339.434882399@linuxfoundation.org>
@@ -47,70 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3f04e0a6cfebf48152ac64502346cdc258811f79 ]
+[ Upstream commit 6cf4511e9729c00a7306cf94085f9cc3c52ee723 ]
 
-If userspace has open fd(s) when drm_dev_unplug() is run, it will result
-in drm_dev_unregister() being called twice. First in drm_dev_unplug() and
-then later in drm_release() through the call to drm_put_dev().
+In case devm_kzalloc, the patch returns ENOMEM to avoid potential
+NULL pointer dereference.
 
-Since userspace already holds a ref on drm_device through the drm_minor,
-it's not necessary to add extra ref counting based on no open file
-handles. Instead just drm_dev_put() unconditionally in drm_dev_unplug().
-
-We now have this:
-- Userpace holds a ref on drm_device as long as there's open fd(s)
-- The driver holds a ref on drm_device as long as it's bound to the
-  struct device
-
-When both sides are done with drm_device, it is released.
-
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Sean Paul <sean@poorly.run>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190208140103.28919-2-noralf@tronnes.org
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_drv.c  | 6 +-----
- drivers/gpu/drm/drm_file.c | 6 ++----
- 2 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-aspeed.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 12e5e2be7890..7a59b8b3ed5a 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -381,11 +381,7 @@ void drm_dev_unplug(struct drm_device *dev)
- 	synchronize_srcu(&drm_unplug_srcu);
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index 854bce4fb9e7..217507002dbc 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -1224,6 +1224,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
  
- 	drm_dev_unregister(dev);
--
--	mutex_lock(&drm_global_mutex);
--	if (dev->open_count == 0)
--		drm_dev_put(dev);
--	mutex_unlock(&drm_global_mutex);
-+	drm_dev_put(dev);
+ 	gpio->offset_timer =
+ 		devm_kzalloc(&pdev->dev, gpio->chip.ngpio, GFP_KERNEL);
++	if (!gpio->offset_timer)
++		return -ENOMEM;
+ 
+ 	return aspeed_gpio_setup_irqs(gpio, pdev);
  }
- EXPORT_SYMBOL(drm_dev_unplug);
- 
-diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-index 46f48f245eb5..3f20f598cd7c 100644
---- a/drivers/gpu/drm/drm_file.c
-+++ b/drivers/gpu/drm/drm_file.c
-@@ -479,11 +479,9 @@ int drm_release(struct inode *inode, struct file *filp)
- 
- 	drm_file_free(file_priv);
- 
--	if (!--dev->open_count) {
-+	if (!--dev->open_count)
- 		drm_lastclose(dev);
--		if (drm_dev_is_unplugged(dev))
--			drm_put_dev(dev);
--	}
-+
- 	mutex_unlock(&drm_global_mutex);
- 
- 	drm_minor_release(minor);
 -- 
 2.19.1
 
