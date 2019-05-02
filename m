@@ -2,135 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577341191C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AD11192E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfEBMc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:32:29 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:37692 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfEBMc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:32:28 -0400
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 7QYP200023XaVaC01QYPMH; Thu, 02 May 2019 14:32:26 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hMAsw-0007e7-Vi; Thu, 02 May 2019 14:32:22 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hMAsw-0000nj-UF; Thu, 02 May 2019 14:32:22 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/5] ARM: dts: rskrza1: Add input switches
-Date:   Thu,  2 May 2019 14:32:20 +0200
-Message-Id: <20190502123220.3016-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190502123220.3016-1-geert+renesas@glider.be>
-References: <20190502123220.3016-1-geert+renesas@glider.be>
+        id S1726607AbfEBMdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:33:15 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52163 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726267AbfEBMdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:33:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=hIZ2r4SHmJaCkF2EdisXrrWwKAQXEwuZvn4QXzFxD7w=; b=zJCC6NV/LulBNFOyb7zANwOp7f
+        2OjqNtVlSchdm8gSp8kJaAcCM+qtp5Cv+n4jZKNZUaWYtUVazU7MzLbfMSUMZDBlQuV+rdMSpPRiD
+        MNI2CCar4Z/sWrAmBsfc1rZ4lgXhxtHQiaOStuqOtze/dYdAL/rnKQJ81TGhwghncOl8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hMAtJ-00087U-Bv; Thu, 02 May 2019 14:32:45 +0200
+Date:   Thu, 2 May 2019 14:32:45 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Joergen Andreasen <joergen.andreasen@microchip.com>
+Cc:     netdev@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] net: mscc: ocelot: Implement port policers
+ via tc command
+Message-ID: <20190502123245.GB9844@lunn.ch>
+References: <20190502094029.22526-1-joergen.andreasen@microchip.com>
+ <20190502094029.22526-3-joergen.andreasen@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190502094029.22526-3-joergen.andreasen@microchip.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for input switches SW1-3 on the Renesas RZ/A1 RSK+RZA1
-development board.
+Hi Joergen
 
-Note that this uses the IRQ interrupts, as the RZ/A1 GPIO controller
-does not include interrupt support.
+> +
+> +#define MSCC_RC(expr)				\
+> +	do {					\
+> +		int __rc__ = (expr);		\
+> +		if (__rc__ < 0)			\
+> +			return __rc__;		\
+> +	}					\
+> +	while (0)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - No changes,
+I'm sure checkpatch warned about this. A return inside a macros is a
+bad idea. I inherited code doing this, and broke it when adding
+locking, because it was not obvious there was a return.
 
-v2:
-  - No changes,
+> +
+> +/* The following two functions do the same as in iproute2 */
+> +#define TIME_UNITS_PER_SEC	1000000
+> +static unsigned int tc_core_tick2time(unsigned int tick)
+> +{
+> +	return (tick * (u32)PSCHED_TICKS2NS(1)) / 1000;
+> +}
+> +
+> +static unsigned int tc_calc_xmitsize(u64 rate, unsigned int ticks)
+> +{
+> +	return div_u64(rate * tc_core_tick2time(ticks), TIME_UNITS_PER_SEC);
+> +}
 
-v1:
-  - Use rza1-irqc instead of gic.
+Should these but put somewhere others can use them?
 
-v0:
-  - Sent as an RFC in a reply to another thread.
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+> +
+> +enum mscc_qos_rate_mode {
+> +	MSCC_QOS_RATE_MODE_DISABLED, /* Policer/shaper disabled */
+> +	MSCC_QOS_RATE_MODE_LINE, /* Measure line rate in kbps incl. IPG */
+> +	MSCC_QOS_RATE_MODE_DATA, /* Measures data rate in kbps excl. IPG */
+> +	MSCC_QOS_RATE_MODE_FRAME, /* Measures frame rate in fps */
+> +	__MSCC_QOS_RATE_MODE_END,
+> +	NUM_MSCC_QOS_RATE_MODE = __MSCC_QOS_RATE_MODE_END,
+> +	MSCC_QOS_RATE_MODE_MAX = __MSCC_QOS_RATE_MODE_END - 1,
+> +};
+> +
+> +/* Round x divided by y to nearest integer. x and y are integers */
+> +#define MSCC_ROUNDING_DIVISION(x, y) (((x) + ((y) / 2)) / (y))
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index ff24301dc1be54de..99acfe4fe11aaed9 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- #include "r7s72100.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -28,6 +29,37 @@
- 		reg = <0x08000000 0x02000000>;
- 	};
- 
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&keyboard_pins>;
-+
-+		key-1 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <3 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_1>;
-+			label = "SW1";
-+			wakeup-source;
-+		};
-+
-+		key-2 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <2 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_2>;
-+			label = "SW2";
-+			wakeup-source;
-+		};
-+
-+		key-3 {
-+			interrupt-parent = <&irqc>;
-+			interrupts = <5 IRQ_TYPE_EDGE_BOTH>;
-+			linux,code = <KEY_3>;
-+			label = "SW3";
-+			wakeup-source;
-+		};
-+	};
-+
- 	lbsc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -101,6 +133,12 @@
- 			 <RZA1_PINMUX(1, 7, 1)>;	/* RIIC3SDA */
- 	};
- 
-+	keyboard_pins: keyboard {
-+		pinmux = <RZA1_PINMUX(1, 9, 3)>,	/* IRQ3 */
-+			 <RZA1_PINMUX(1, 8, 3)>,	/* IRQ2 */
-+			 <RZA1_PINMUX(1, 11, 3)>;	/* IRQ5 */
-+	};
-+
- 	/* Serial Console */
- 	scif2_pins: serial2 {
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
--- 
-2.17.1
+linux/kernel.h defines DIV_ROUND_UP(). Maybe add DIV_ROUND_DOWN()?
 
+> +
+> +/* Round x divided by y to nearest higher integer. x and y are integers */
+> +#define MSCC_DIV_ROUND_UP(x, y) (((x) + (y) - 1) / (y))
+
+DIV_ROUND_UP() ?
+
+> +	/* Limit to maximum values */
+> +	pir = min_t(u32, GENMASK(15, 0), pir);
+> +	cir = min_t(u32, GENMASK(15, 0), cir);
+> +	pbs = min_t(u32, pbs_max, pbs);
+> +	cbs = min_t(u32, cbs_max, cbs);
+
+If it does need to limit, maybe return -EOPNOTSUPP?
+
+> +int ocelot_port_policer_add(struct ocelot_port *port,
+> +			    struct tcf_police *p)
+> +{
+> +	struct ocelot *ocelot = port->ocelot;
+> +	struct qos_policer_conf pp;
+> +
+> +	if (!p)
+> +		return -EINVAL;
+> +
+> +	netdev_dbg(port->dev,
+> +		   "result %d ewma_rate %u burst %lld mtu %u mtu_pktoks %lld\n",
+> +		   p->params->tcfp_result,
+> +		   p->params->tcfp_ewma_rate,
+> +		   p->params->tcfp_burst,
+> +		   p->params->tcfp_mtu,
+> +		   p->params->tcfp_mtu_ptoks);
+> +
+> +	if (p->params->rate_present)
+> +		netdev_dbg(port->dev,
+> +			   "rate: rate %llu mult %u over %u link %u shift %u\n",
+> +			   p->params->rate.rate_bytes_ps,
+> +			   p->params->rate.mult,
+> +			   p->params->rate.overhead,
+> +			   p->params->rate.linklayer,
+> +			   p->params->rate.shift);
+> +
+> +	if (p->params->peak_present)
+> +		netdev_dbg(port->dev,
+> +			   "peak: rate %llu mult %u over %u link %u shift %u\n",
+> +			   p->params->peak.rate_bytes_ps,
+> +			   p->params->peak.mult,
+> +			   p->params->peak.overhead,
+> +			   p->params->peak.linklayer,
+> +			   p->params->peak.shift);
+> +
+> +	memset(&pp, 0, sizeof(pp));
+
+Rather than memset, you can do:
+
+	struct qos_policer_conf pp = { 0 };
+
+	Andrew
