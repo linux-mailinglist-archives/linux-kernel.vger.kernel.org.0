@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C962B11D74
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9C311CAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbfEBPaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        id S1727083AbfEBPXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:23:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728758AbfEBPad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:30:33 -0400
+        id S1726424AbfEBPXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:23:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 780C02081C;
-        Thu,  2 May 2019 15:30:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E31520675;
+        Thu,  2 May 2019 15:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811033;
-        bh=e3eVxnadCoGxRSoPfyWsk0nMuC6MS0NgJ5rOnYWkLRI=;
+        s=default; t=1556810615;
+        bh=O87/0IOCg2T68RXQ7Q9qNHPKY4itb7sXCZh6d9fq3II=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1sSlLiFz35kYcZyymwAEe275DD5H63bKUD3utGAdrYj7ST7AW4+0i1DP2wkYnNPk
-         ZyNSkJ+tTqS0SzVYTtNCKFg+O49agFw+3RVSnzjI2bnUgdwmfHiaq9G7zg3ZZYbh7F
-         UD76WSJJw6jo764ygNeufvaBc3IdkWWa28lFDMYo=
+        b=0YMIh4hqTRR6K6EuDj1xIG48tVxamna6pF5F/kLgFsQpu3i7PomRjfpvjZBnjlaWI
+         IHpA0e1VpH3cXIbLx7YbJ2wYnMWPp4KPA/WMPIGUJxgUjgddz0h353+eCoz/fq/oS1
+         Ehl/hBPjTUIcNfBGYY0oHzm42jOzmiqFVZKa4ncA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 048/101] staging: rtl8712: uninitialized memory in read_bbreg_hdl()
-Date:   Thu,  2 May 2019 17:20:50 +0200
-Message-Id: <20190502143342.907776006@linuxfoundation.org>
+Subject: [PATCH 4.14 14/49] sc16is7xx: missing unregister/delete driver on error in sc16is7xx_init()
+Date:   Thu,  2 May 2019 17:20:51 +0200
+Message-Id: <20190502143325.816340900@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22c971db7dd4b0ad8dd88e99c407f7a1f4231a2e ]
+[ Upstream commit ac0cdb3d990108df795b676cd0d0e65ac34b2273 ]
 
-Colin King reported a bug in read_bbreg_hdl():
+Add the missing uart_unregister_driver() and i2c_del_driver() before return
+from sc16is7xx_init() in the error handling case.
 
-	memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
-
-The problem is that "val" is uninitialized.
-
-This code is obviously not useful, but so far as I can tell
-"pcmd->cmdcode" is never GEN_CMD_CODE(_Read_BBREG) so it's not harmful
-either.  For now the easiest fix is to just call r8712_free_cmd_obj()
-and return.
-
-Fixes: 2865d42c78a9 ("staging: r8712u: Add the new driver to the mainline kernel")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/staging/rtl8712/rtl8712_cmd.c | 10 +---------
- drivers/staging/rtl8712/rtl8712_cmd.h |  2 +-
- 2 files changed, 2 insertions(+), 10 deletions(-)
+ drivers/tty/serial/sc16is7xx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.c b/drivers/staging/rtl8712/rtl8712_cmd.c
-index 1920d02f7c9f..8c36acedf507 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.c
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.c
-@@ -147,17 +147,9 @@ static u8 write_macreg_hdl(struct _adapter *padapter, u8 *pbuf)
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index a79f18edf2bd..e48523da47ac 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1483,7 +1483,7 @@ static int __init sc16is7xx_init(void)
+ 	ret = i2c_add_driver(&sc16is7xx_i2c_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx i2c --> %d\n", ret);
+-		return ret;
++		goto err_i2c;
+ 	}
+ #endif
  
- static u8 read_bbreg_hdl(struct _adapter *padapter, u8 *pbuf)
- {
--	u32 val;
--	void (*pcmd_callback)(struct _adapter *dev, struct cmd_obj	*pcmd);
- 	struct cmd_obj *pcmd  = (struct cmd_obj *)pbuf;
- 
--	if (pcmd->rsp && pcmd->rspsz > 0)
--		memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
--	pcmd_callback = cmd_callback[pcmd->cmdcode].callback;
--	if (!pcmd_callback)
--		r8712_free_cmd_obj(pcmd);
--	else
--		pcmd_callback(padapter, pcmd);
-+	r8712_free_cmd_obj(pcmd);
- 	return H2C_SUCCESS;
+@@ -1491,10 +1491,18 @@ static int __init sc16is7xx_init(void)
+ 	ret = spi_register_driver(&sc16is7xx_spi_uart_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to init sc16is7xx spi --> %d\n", ret);
+-		return ret;
++		goto err_spi;
+ 	}
+ #endif
+ 	return ret;
++
++err_spi:
++#ifdef CONFIG_SERIAL_SC16IS7XX_I2C
++	i2c_del_driver(&sc16is7xx_i2c_uart_driver);
++#endif
++err_i2c:
++	uart_unregister_driver(&sc16is7xx_uart);
++	return ret;
  }
+ module_init(sc16is7xx_init);
  
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.h b/drivers/staging/rtl8712/rtl8712_cmd.h
-index 92fb77666d44..1ef86b8c592f 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.h
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.h
-@@ -140,7 +140,7 @@ enum rtl8712_h2c_cmd {
- static struct _cmd_callback	cmd_callback[] = {
- 	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
- 	{GEN_CMD_CODE(_Write_MACREG), NULL},
--	{GEN_CMD_CODE(_Read_BBREG), &r8712_getbbrfreg_cmdrsp_callback},
-+	{GEN_CMD_CODE(_Read_BBREG), NULL},
- 	{GEN_CMD_CODE(_Write_BBREG), NULL},
- 	{GEN_CMD_CODE(_Read_RFREG), &r8712_getbbrfreg_cmdrsp_callback},
- 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
 -- 
 2.19.1
 
