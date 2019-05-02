@@ -2,55 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2F6112CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 07:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF48112CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 07:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfEBF6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 01:58:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfEBF6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 01:58:22 -0400
-Received: from localhost (unknown [171.76.113.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940062081C;
-        Thu,  2 May 2019 05:58:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556776701;
-        bh=VVm1IT8lHYMG8BSjGXWoh+S3MS5Pme6RzDKRC1QF4oI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G+GHLooM/7U0+4+BYVcIrg/iHD0dyRhMeGbsrKlw6pPL9J+QrCmvb5Ugs8aXB2x/5
-         awBmo6gka8d4mBFIBk3ZCiRWiNUyqVVBVxMxhNzjkE66f60oSN6N+YIZpONOkVLYF3
-         Jq4AhjcL5a4NnaJJwGtxyKkR07dvL+9EOy88+ZmE=
-Date:   Thu, 2 May 2019 11:28:12 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
-        srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v4 00/22] soundwire: code cleanup
-Message-ID: <20190502055812.GG3845@vkoul-mobl.Dlink>
-References: <20190501155745.21806-1-pierre-louis.bossart@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501155745.21806-1-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726321AbfEBF7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 01:59:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41635 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfEBF7C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 01:59:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f6so563617pgs.8;
+        Wed, 01 May 2019 22:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Fjf9nhJBcqZ8B6mrMqqWtSz1KEpRRLO4OhmQLK8r9Fo=;
+        b=VVS9OT9Gl168GooO8G1YV2yDDDU69i1DGvnmnppBWf6kT/QTiB7Q9k7IiM9h1HfY97
+         3GKOHmq0Vo1N5SnIWjIWpYqXUl4owsjacAtxwrEm54jyK5Y9cQ1UtQAyLlrAaBye02Wo
+         9echQTYPvWEampTNh+Y131M3p9kxIkDlcysI72zFQxiv0EyeZwL1rjnOMO6bZZkdkgt7
+         5fwXUyvBjPRp3eRLYWQbBI5WocbjNT70hNKq7l5zHsEcUNIMsvxn5lsezsi+fvMrf9dY
+         asvT1nPHdK6syQ1sLaByCc+jQiNel6d6y/CYh6wWriSq1m/r2VCUILC4pBRWxQS9s6fX
+         G25g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Fjf9nhJBcqZ8B6mrMqqWtSz1KEpRRLO4OhmQLK8r9Fo=;
+        b=jc+Suyob/I3+j9IFXG5dmxeUNh6OUXuUCiiVwBFHKk3pXV0o81+SUMheJ6xQbRUzyn
+         22//95QGS/T57lXyLk/qclFJjfVAtkMU8UIZmAnu1SgW7vg0Yjkfm74QCIeLIoE+WayJ
+         NqTEhQ08cY1jl5/3knNzOgLUCB5Hyzmlpa1LA3eqiDj+q2y5XhYJWEl2G2/8LMOur1Co
+         gOgV8dDQQQJGIZ0Njjfy0fO736ZIxxc4NN2TT4wVx2WXflTjc1tO2ohm/2RtwHtBLyzQ
+         9tRl3UdGO2+cth5psGjRcEGE1ZT4VAhnwx4WfVFodMGnov4wXckmbNlAYHhgqVvKWytl
+         JufQ==
+X-Gm-Message-State: APjAAAXvr8TJm+EhlY+zzFSTdoB7hlFLIsCDWDja1JCYRisqRWOPCwtZ
+        qBRiDsi1UnXWqhdEK/eR8IpkoHoaVP0=
+X-Google-Smtp-Source: APXvYqy5OdcpcbxQM43mzzrncDvr4V2dVIfeC5lvfoIpjxeJqBOw1VO9Tby/Ce5hNoQRr/n+ScDP9A==
+X-Received: by 2002:a63:6196:: with SMTP id v144mr2101927pgb.235.1556776741486;
+        Wed, 01 May 2019 22:59:01 -0700 (PDT)
+Received: from localhost.localdomain ([203.192.210.144])
+        by smtp.gmail.com with ESMTPSA id g32sm7851013pgl.16.2019.05.01.22.58.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 01 May 2019 22:59:00 -0700 (PDT)
+From:   Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+To:     Oleksij Rempel <linux@rempel-privat.de>,
+        Lukas Wunner <lukas@wunner.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kamlesh.gurudasani@gmail.com
+Subject: [PATCH] mmc: alcor: Drop pointer to mmc_host from alcor_sdmmc_host
+Date:   Thu,  2 May 2019 11:28:16 +0530
+Message-Id: <1556776696-19300-1-git-send-email-kamlesh.gurudasani@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01-05-19, 10:57, Pierre-Louis Bossart wrote:
-> SoundWire support will be provided in Linux with the Sound Open
-> Firmware (SOF) on Intel platforms. Before we start adding the missing
-> pieces, there are a number of warnings and style issues reported by
-> checkpatch, cppcheck and Coccinelle that need to be cleaned-up.
+The driver for Alcor Micro AU6601 and AU6621 controllers uses a pointer to
+get from the private alcor_sdmmc_host structure to the generic mmc_host
+structure. However the latter is always immediately preceding the former in
+memory, so compute its address with a subtraction (which is cheaper than a
+dereference) and drop the superfluous pointer.
 
-Applied all expect 2, 3, 6 and 22
+No functional change intended.
 
-Thanks
+Signed-off-by: Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+---
+ drivers/mmc/host/alcor.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mmc/host/alcor.c b/drivers/mmc/host/alcor.c
+index 7c8f203..5bba6ee 100644
+--- a/drivers/mmc/host/alcor.c
++++ b/drivers/mmc/host/alcor.c
+@@ -43,7 +43,6 @@ struct alcor_sdmmc_host {
+ 	struct  device *dev;
+ 	struct alcor_pci_priv *alcor_pci;
+ 
+-	struct mmc_host *mmc;
+ 	struct mmc_request *mrq;
+ 	struct mmc_command *cmd;
+ 	struct mmc_data *data;
+@@ -276,7 +275,7 @@ static void alcor_send_cmd(struct alcor_sdmmc_host *host,
+ 		break;
+ 	default:
+ 		dev_err(host->dev, "%s: cmd->flag (0x%02x) is not valid\n",
+-			mmc_hostname(host->mmc), mmc_resp_type(cmd));
++			mmc_hostname(mmc_from_priv(host)), mmc_resp_type(cmd));
+ 		break;
+ 	}
+ 
+@@ -317,7 +316,7 @@ static void alcor_request_complete(struct alcor_sdmmc_host *host,
+ 	host->data = NULL;
+ 	host->dma_on = 0;
+ 
+-	mmc_request_done(host->mmc, mrq);
++	mmc_request_done(mmc_from_priv(host), mrq);
+ }
+ 
+ static void alcor_finish_data(struct alcor_sdmmc_host *host)
+@@ -547,7 +546,7 @@ static void alcor_cd_irq(struct alcor_sdmmc_host *host, u32 intmask)
+ 		alcor_request_complete(host, 1);
+ 	}
+ 
+-	mmc_detect_change(host->mmc, msecs_to_jiffies(1));
++	mmc_detect_change(mmc_from_priv(host), msecs_to_jiffies(1));
+ }
+ 
+ static irqreturn_t alcor_irq_thread(int irq, void *d)
+@@ -1025,7 +1024,7 @@ static void alcor_hw_uninit(struct alcor_sdmmc_host *host)
+ 
+ static void alcor_init_mmc(struct alcor_sdmmc_host *host)
+ {
+-	struct mmc_host *mmc = host->mmc;
++	struct mmc_host *mmc = mmc_from_priv(host);
+ 
+ 	mmc->f_min = AU6601_MIN_CLOCK;
+ 	mmc->f_max = AU6601_MAX_CLOCK;
+@@ -1073,7 +1072,6 @@ static int alcor_pci_sdmmc_drv_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	host = mmc_priv(mmc);
+-	host->mmc = mmc;
+ 	host->dev = &pdev->dev;
+ 	host->cur_power_mode = MMC_POWER_UNDEFINED;
+ 	host->alcor_pci = priv;
+@@ -1105,13 +1103,14 @@ static int alcor_pci_sdmmc_drv_probe(struct platform_device *pdev)
+ static int alcor_pci_sdmmc_drv_remove(struct platform_device *pdev)
+ {
+ 	struct alcor_sdmmc_host *host = dev_get_drvdata(&pdev->dev);
++	struct mmc_host *mmc = mmc_from_priv(host);
+ 
+ 	if (cancel_delayed_work_sync(&host->timeout_work))
+ 		alcor_request_complete(host, 0);
+ 
+ 	alcor_hw_uninit(host);
+-	mmc_remove_host(host->mmc);
+-	mmc_free_host(host->mmc);
++	mmc_remove_host(mmc);
++	mmc_free_host(mmc);
+ 
+ 	return 0;
+ }
 -- 
-~Vinod
+2.7.4
+
