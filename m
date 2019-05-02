@@ -2,79 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B7D11448
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C06A1144F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfEBHiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 03:38:17 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38032 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfEBHiQ (ORCPT
+        id S1726399AbfEBHjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 03:39:08 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:45815 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfEBHjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 03:38:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e18so1265428lja.5;
-        Thu, 02 May 2019 00:38:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BBJ1hjxqa+5BnXyt7pCtMPz5hZf7jhfxyIk6LZ9P3rM=;
-        b=fZLai2Hgs7iH0UDuaGecGdq++MJ55RYWa2BuhClRowkPQw+hXnURfJH9Pplu3ziXxc
-         p0mhyARMSDDjHFcbfGEEXcFQsLbqpogawacIXVDQbhJMhrYkfQBmp9/jmu0WpgMT/zyo
-         BjuDkIK4On9GSuaz5Vn5xXGcyVfnR52GIzjmmt8tGXixF9FZErMSCZkM/WqLleIMYohz
-         LDou1w29UXbxF+eSJQnMcQ6tetr94fLYzvRrNkLnV/hOpdsTaZYf25JLOoqN6VI/eZFL
-         DGmDfCA5qeS6mpda7fDomJrI61aj95W46vsd5rOpdaP/NusKjMOZWPeKjkoeXZAPwd85
-         MbuA==
-X-Gm-Message-State: APjAAAWIHOq9TfCLzYo6hrjSnVjLR+md+IyTU+6XcQJdiThJpa0yGSBx
-        KudNG5gOYnUSrVc7bBNKrQ0=
-X-Google-Smtp-Source: APXvYqxgXmiMGnAj6ZI51kaf+UJVBTXjjhDiMew5xLleR1sKi+TvBdIjVm6aUGEkdhnkPuFrsHDr3A==
-X-Received: by 2002:a2e:880b:: with SMTP id x11mr640795ljh.4.1556782694716;
-        Thu, 02 May 2019 00:38:14 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id y20sm9328553lfe.8.2019.05.02.00.38.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 00:38:13 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1hM6IR-0006zW-Bf; Thu, 02 May 2019 09:38:23 +0200
-Date:   Thu, 2 May 2019 09:38:23 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/5] kobject: Fix kernel-doc comment first line
-Message-ID: <20190502073823.GQ26546@localhost>
-References: <20190502023142.20139-1-tobin@kernel.org>
- <20190502023142.20139-4-tobin@kernel.org>
+        Thu, 2 May 2019 03:39:08 -0400
+Received: from localhost (aaubervilliers-681-1-29-145.w90-88.abo.wanadoo.fr [90.88.149.145])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 0FF03100019;
+        Thu,  2 May 2019 07:39:04 +0000 (UTC)
+Date:   Thu, 2 May 2019 09:39:04 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Pablo Greco <pgreco@centosproject.org>
+Cc:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/7] ARM: dts: sun8i: v40: bananapi-m2-berry: Enable
+ GMAC ethernet controller
+Message-ID: <20190502073904.yng5dz5kwgulw6ha@flea>
+References: <1556040365-10913-1-git-send-email-pgreco@centosproject.org>
+ <1556040365-10913-4-git-send-email-pgreco@centosproject.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d2v4zsdy3ohit6tk"
 Content-Disposition: inline
-In-Reply-To: <20190502023142.20139-4-tobin@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <1556040365-10913-4-git-send-email-pgreco@centosproject.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 12:31:40PM +1000, Tobin C. Harding wrote:
-> kernel-doc comments have a prescribed format.  This includes parenthesis
-> on the function name.  To be _particularly_ correct we should also
-> capitalise the brief description and terminate it with a period.
 
-Why do think capitalisation and full stop is required for the function
-description?
+--d2v4zsdy3ohit6tk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sure, the example in the current doc happen to use that, but I'm not
-sure that's intended as a prescription.
+On Tue, Apr 23, 2019 at 02:26:00PM -0300, Pablo Greco wrote:
+> Just like the Bananapi M2 Ultra, the Bananapi M2 Berry has a Realtek
+> RTL8211E RGMII PHY tied to the GMAC.
+> The PMIC's DC1SW output provides power for the PHY, while the ALDO2
+> output provides I/O voltages on both sides.
+>
+> Signed-off-by: Pablo Greco <pgreco@centosproject.org>
+> ---
+>  arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts | 29 +++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+> index 2cb2ce0..561319b 100644
+> --- a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+> +++ b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+> @@ -50,6 +50,7 @@
+>  	compatible = "sinovoip,bpi-m2-berry", "allwinner,sun8i-r40";
+>
+>  	aliases {
+> +		ethernet0 = &gmac;
+>  		serial0 = &uart0;
+>  	};
+>
+> @@ -92,6 +93,22 @@
+>  	status = "okay";
+>  };
+>
+> +&gmac {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&gmac_rgmii_pins>;
+> +	phy-handle = <&phy1>;
+> +	phy-mode = "rgmii";
+> +	phy-supply = <&reg_dc1sw>;
+> +	status = "okay";
+> +};
+> +
+> +&gmac_mdio {
+> +	phy1: ethernet-phy@1 {
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		reg = <1>;
+> +	};
+> +};
+> +
+>  &i2c0 {
+>  	status = "okay";
+>
+> @@ -133,6 +150,12 @@
+>  	vcc-pg-supply = <&reg_dldo1>;
+>  };
+>
+> +&reg_aldo2 {
+> +	regulator-min-microvolt = <2500000>;
+> +	regulator-max-microvolt = <2500000>;
+> +	regulator-name = "vcc-pa";
+> +};
+> +
 
-The old kernel-doc nano-HOWTO specifically did not use this:
+Shouldn't this one be added to the patch 2?
 
-	https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+Thanks
+Maxime
 
-Johan
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--d2v4zsdy3ohit6tk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXMqemAAKCRDj7w1vZxhR
+xWdzAQC0mZNlKnsyMWKmAzQSzgvolqPbKRG2zRXlpGrUZP2jHgD9HRhKdaeZ7Bxj
+Qwd2WYC/jYyLYVYxMKb8LMUjXnhUIQM=
+=Kqmg
+-----END PGP SIGNATURE-----
+
+--d2v4zsdy3ohit6tk--
