@@ -2,47 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B6D1111F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B48411111C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfEBCSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:18:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54866 "EHLO
+        id S1726266AbfEBCSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:18:17 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54792 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfEBCST (ORCPT
+        with ESMTP id S1726152AbfEBCSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:18:19 -0400
+        Wed, 1 May 2019 22:18:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tSRP9AREY1phAztSLdhpxjCCxjAVr/6vVxlS8p739D8=; b=ulRALQv+WaEZ
-        dWAzFCLY+CxW6k6PgY3Y8PFjrGSd3H7DCO491Tl3E05IMZiuViUgwAlR4nmwo6GZgtZqKiPUxLFxl
-        uxoNGF6k89EDqMqzlE+I96cwLemX7HXY6YehuuhQdwAKu6kauZrd3N6VoGnzGwnKyhG9dze4qa13Y
-        5CEiU=;
+        List-Archive; bh=sDWuThU3xsEo4SgQTOzat0wz9Zc/a+PRsiFsYfLhmUE=; b=WYv+9b1SJiKI
+        GYh1I3M03W+FsWQOrm2gPdMUKmBTls8GQ63brUZ2buaglD6KEQgSaQumt3AFfjiGQOzZmT30wbbM/
+        iczEDCOJ6EUACi38bRmcMtm1uSmo50YHzxP43Rp9Tc1yCxxoRC+NxS9SWHYrHVP/xkOxdbmAW8px2
+        yNkGE=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1IV-0005ps-20; Thu, 02 May 2019 02:18:07 +0000
+        id 1hM1IV-0005pt-75; Thu, 02 May 2019 02:18:07 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 0F5F9441D41; Thu,  2 May 2019 03:18:03 +0100 (BST)
+        id 9926D441D56; Thu,  2 May 2019 03:18:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     alsa-devel@alsa-project.org, Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: sprd: Fix return value check in sprd_mcdt_probe()" to the asoc tree
-In-Reply-To: <20190429122512.59242-1-weiyongjun1@huawei.com>
+To:     Logesh <logesh.kolandavel@timesys.com>
+Cc:     Adam.Thomson.Opensource@diasemi.com, alsa-devel@alsa-project.org,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, logesh.kolandavel@timesys.com,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        support.opensource@diasemi.com, tiwai@suse.com
+Subject: Applied "ASoC: da7213: fix DAI_CLK_EN register bit overwrite" to the asoc tree
+In-Reply-To: <20190501090424.28861-1-logesh.kolandavel@timesys.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021803.0F5F9441D41@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:02 +0100 (BST)
+Message-Id: <20190502021803.9926D441D56@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,11 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sprd: Fix return value check in sprd_mcdt_probe()
+   ASoC: da7213: fix DAI_CLK_EN register bit overwrite
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -75,38 +73,54 @@ to this mail.
 Thanks,
 Mark
 
-From 7c88b92816dfe5eab224b96577b50ac00b4be68a Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 29 Apr 2019 12:25:12 +0000
-Subject: [PATCH] ASoC: sprd: Fix return value check in sprd_mcdt_probe()
+From 414a7321d60bc0abced4a760e22b8187e2b4aecf Mon Sep 17 00:00:00 2001
+From: Logesh <logesh.kolandavel@timesys.com>
+Date: Wed, 1 May 2019 14:34:24 +0530
+Subject: [PATCH] ASoC: da7213: fix DAI_CLK_EN register bit overwrite
 
-In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+If the da7213 codec is configured as Master with the DAPM power down
+delay time set, 'snd_soc_component_write' function overwrites the
+DAI_CLK_EN bit of DAI_CLK_MODE register which leads to audio play
+only once until it re-initialize after codec power up.
 
-Fixes: d7bff893e04f ("ASoC: sprd: Add Spreadtrum multi-channel data transfer support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Logesh <logesh.kolandavel@timesys.com>
+Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sprd/sprd-mcdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/da7213.c | 5 ++++-
+ sound/soc/codecs/da7213.h | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
-index 28f5e649733d..e9318d7a4810 100644
---- a/sound/soc/sprd/sprd-mcdt.c
-+++ b/sound/soc/sprd/sprd-mcdt.c
-@@ -951,8 +951,8 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index 92d006a5283e..425c11d63e49 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1305,7 +1305,10 @@ static int da7213_set_dai_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
+ 	/* By default only 64 BCLK per WCLK is supported */
+ 	dai_clk_mode |= DA7213_DAI_BCLKS_PER_WCLK_64;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mcdt->base = devm_ioremap_resource(&pdev->dev, res);
--	if (!mcdt->base)
--		return -ENOMEM;
-+	if (IS_ERR(mcdt->base))
-+		return PTR_ERR(mcdt->base);
+-	snd_soc_component_write(component, DA7213_DAI_CLK_MODE, dai_clk_mode);
++	snd_soc_component_update_bits(component, DA7213_DAI_CLK_MODE,
++			    DA7213_DAI_BCLKS_PER_WCLK_MASK |
++			    DA7213_DAI_CLK_POL_MASK | DA7213_DAI_WCLK_POL_MASK,
++			    dai_clk_mode);
+ 	snd_soc_component_update_bits(component, DA7213_DAI_CTRL, DA7213_DAI_FORMAT_MASK,
+ 			    dai_ctrl);
+ 	snd_soc_component_write(component, DA7213_DAI_OFFSET, dai_offset);
+diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
+index 5a78dba1dcb5..9d31efc3cfe5 100644
+--- a/sound/soc/codecs/da7213.h
++++ b/sound/soc/codecs/da7213.h
+@@ -181,7 +181,9 @@
+ #define DA7213_DAI_BCLKS_PER_WCLK_256				(0x3 << 0)
+ #define DA7213_DAI_BCLKS_PER_WCLK_MASK				(0x3 << 0)
+ #define DA7213_DAI_CLK_POL_INV					(0x1 << 2)
++#define DA7213_DAI_CLK_POL_MASK					(0x1 << 2)
+ #define DA7213_DAI_WCLK_POL_INV					(0x1 << 3)
++#define DA7213_DAI_WCLK_POL_MASK				(0x1 << 3)
+ #define DA7213_DAI_CLK_EN_MASK					(0x1 << 7)
  
- 	mcdt->dev = &pdev->dev;
- 	spin_lock_init(&mcdt->lock);
+ /* DA7213_DAI_CTRL = 0x29 */
 -- 
 2.20.1
 
