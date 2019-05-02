@@ -2,79 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE9E11835
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC5F1189E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:01:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfEBLdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 07:33:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44063 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEBLdx (ORCPT
+        id S1726442AbfEBMBH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 May 2019 08:01:07 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:56631
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726189AbfEBMBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 07:33:53 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hM9y8-0005q6-Uv; Thu, 02 May 2019 11:33:41 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: SOF: remove redundant null checks of dai
-Date:   Thu,  2 May 2019 12:33:40 +0100
-Message-Id: <20190502113340.8688-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 2 May 2019 08:01:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 9CBA0B492EE;
+        Thu,  2 May 2019 11:34:49 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3dtdZOa3rvvm; Thu,  2 May 2019 11:34:49 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 02B91B49268;
+        Thu,  2 May 2019 11:34:49 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id sylW9J7Ien_E; Thu,  2 May 2019 11:34:48 +0000 (UTC)
+Received: from [100.73.113.231] (unknown [223.237.215.67])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 856B8B49301;
+        Thu,  2 May 2019 11:34:41 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Verifica tu cuenta
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador web <exportaciones@minpal.gob.ve>
+Date:   Thu, 02 May 2019 17:04:33 +0530
+Message-Id: <20190502113441.856B8B49301@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Aviso de seguridad:
 
-Currently there are two null checks of pointer dai in function
-sof_connect_dai_widget and yet there is no null check of dai
-at the end of the function when checking !dai->name.  The latter
-would be a null pointer deference if dai is null (as picked up
-by static analysis), however the function is only ever called
-when dai is successfully allocated, so the null checks are
-redundant. Clean up the code by removing the null checks.
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
-Addresses-Coverity: ("Dereference after null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/sof/topology.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 2b9de1b97447..1f71857298a9 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
- 		switch (w->id) {
- 		case snd_soc_dapm_dai_out:
- 			rtd->cpu_dai->capture_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
- 		case snd_soc_dapm_dai_in:
- 			rtd->cpu_dai->playback_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
--- 
-2.20.1
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
