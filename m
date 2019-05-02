@@ -2,137 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED3181220A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7593912201
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 20:37:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbfEBSmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 14:42:52 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:45235 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBSmv (ORCPT
+        id S1726289AbfEBShk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 14:37:40 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39620 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbfEBShk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 14:42:51 -0400
-Received: by mail-vk1-f195.google.com with SMTP id h127so769608vkd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:42:51 -0700 (PDT)
+        Thu, 2 May 2019 14:37:40 -0400
+Received: by mail-it1-f193.google.com with SMTP id t200so5158303itf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:37:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rep+RFn3BdJQf0oo+RGjYfMB+zeAYnLgZKuY9nUKCQA=;
-        b=k4niFnqgC6uT+WkOQ6wgsJcYaNgMLnTL7lVhPfpNfF/fWu3Z/FxIjhBpaj3wtHigDP
-         oknx0uZtfuzo6ralUpJB0Vr5FJRCJ1w1O59dD+RG6do4ZDLCDZyWqsCtlvlAScWcCJFJ
-         NlsBZybNdO639hEBLlKY4YqWfytlkksQKfBpM=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3bTGTbTE8gGlzRl/POqzvQikyqE1rXFDWwJSoA19kt4=;
+        b=NqZvTaSOo7uS4QqtoXCyXNDR4MTzOFCymDIYrBV/xH3OHScHgrHDqiUHPGj/nSPzFd
+         K4GHaokfN+BPVUf6IYjKFwjoEPbEyrWttzYY1ZvjO/kzzZDRCyUuDmzE0n4HgIvBWSv7
+         GoFdgyAfNXliayepT0vgzm0HOpo9mTF87vHTZjfwe7LGne07W+kOrWJ9XnuLTO2fOEdb
+         pNEpBljheyiqrUPD8qVWDu4WgXDL/2GhJm3/ZZA8JmiS8L1zHsggNGt6S8HgP2y03KA3
+         /mNcgAyQgwjtPf/tPRRcbV3RTztVYzExIX9xPZVn77ds5goQt+FUq6azcpDZYNOk2vKg
+         ycvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rep+RFn3BdJQf0oo+RGjYfMB+zeAYnLgZKuY9nUKCQA=;
-        b=a+3Gx+hN/pIRmVpeW7vesVAQNA+Y3q+tsRLnAfCicq1rcM73OJ0fTHj1F6ZKiLqN7E
-         1rxruI55HsziDTiv0Yh1wcSKbnjVPOvPvczeJzDqRKafTESBnbGhpnM+31m1I+ZAPyif
-         WCRnCv6jFwFdohn/ujwjHMs9w7YfjmK86RP+BHeP6aaBrYMEqGD2CG1RhIpLlsbp3BJT
-         v3ik2Jo3+R+sLgWQDtwJrNks+7ZdnY7IEwztReCzEeBNsFEWxm0mH+sLLH5lA36zXcGO
-         xm6tpP0iK0lns5O0ecixibWKY2bh5KWu7tMBuQkIoF6uctS/IMrXwrs6uXxU9s99WVLi
-         3oGg==
-X-Gm-Message-State: APjAAAVQhK0F5j40Tx9x9fU3hWaXxqIoH+eYmw2YZKPsfRgkjnLKNBp6
-        U4lrXBIVHI918vX2yN0sTAZOOM9FHpA=
-X-Google-Smtp-Source: APXvYqzL5tVCENHyIoP6ciB6etI0JDtSIPKmvj0GuQCkq6Ygw4g7PrFa7sZ1a3I2cFmoMOh/cR8IvA==
-X-Received: by 2002:a1f:e185:: with SMTP id y127mr2924235vkg.20.1556822570638;
-        Thu, 02 May 2019 11:42:50 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id n202sm12259717vke.5.2019.05.02.11.42.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 11:42:50 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id j184so1988550vsd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:42:50 -0700 (PDT)
-X-Received: by 2002:a67:7cd1:: with SMTP id x200mr3103185vsc.144.1556822175074;
- Thu, 02 May 2019 11:36:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190418001356.124334-1-dianders@chromium.org>
- <20190418001356.124334-4-dianders@chromium.org> <87pnpas1fx.fsf@linux.intel.com>
-In-Reply-To: <87pnpas1fx.fsf@linux.intel.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 2 May 2019 11:36:01 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XTBgKnnswhfoQH3qWjpbp831e1L1+j+QCjxx2h=aQoog@mail.gmail.com>
-Message-ID: <CAD=FV=XTBgKnnswhfoQH3qWjpbp831e1L1+j+QCjxx2h=aQoog@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] Documentation: dt-bindings: Add
- snps,need-phy-for-wake for dwc2 USB
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Artur Petrosyan <Arthur.Petrosyan@synopsys.com>,
-        Alexandru M Stan <amstan@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        William Wu <william.wu@rock-chips.com>,
-        linux-usb@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Randy Li <ayaka@soulik.info>, Chris <zyw@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Julius Werner <jwerner@chromium.org>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3bTGTbTE8gGlzRl/POqzvQikyqE1rXFDWwJSoA19kt4=;
+        b=WR+vEDgoCdCkotHVxtNw/sSmSYqIxA+AIEyqi9MjwcVirHkmIYXB8D4qBlrEoQo6Oq
+         vD/NFRey8CEEA3QAPErqwE3nxbCLDuJgylBv8KVp9p+I7DvVaeCkLM2edK/rejO/Xsv+
+         5dpBurR47l84zFoHTYVLAreKuZp5VprATAGAewEuV5+S+P6rpwMeYZL14eN1AEcRhlaT
+         Em8sNUKPXtMB1uuYVTXYa91uiykCVKRMxIJCuB9Ozg67Y+nrycm+tlA5wF1MUoxB9DvJ
+         sSFz6cfVZ6rA/ROOxcFgaeDDgUKAFjdbum/zd2/jdJZr/3FHSAvNoiKH9Dq5D542tiQi
+         UFKA==
+X-Gm-Message-State: APjAAAXpUncf8qsvFUooA+HAmj6WcizrdLTQfhWNch3XYT033qwjGQXv
+        pta5YSzod3GSHFUe20Kit+a/t59WEQ==
+X-Google-Smtp-Source: APXvYqwXZ9iW3ueXbFsrht124bBnKI982DqtgkNeLPEMOcNcbdz9Iaqu3cxF0+jajH0mXndUhFO+uw==
+X-Received: by 2002:a24:4614:: with SMTP id j20mr3344210itb.72.1556822259065;
+        Thu, 02 May 2019 11:37:39 -0700 (PDT)
+Received: from localhost.localdomain ([92.117.168.44])
+        by smtp.gmail.com with ESMTPSA id y62sm4213ita.15.2019.05.02.11.37.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 11:37:38 -0700 (PDT)
+From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Viktor Rosendahl <viktor.rosendahl@gmail.com>
+Subject: Re: [PATCH v2 4/4] ftrace: Add an option for tracing console latencies
+Date:   Thu,  2 May 2019 20:37:31 +0200
+Message-Id: <20190502183731.9571-1-viktor.rosendahl@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190501213857.157e3741@oasis.local.home>
+References: <20190501213857.157e3741@oasis.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> Instead of this being turned into a nop, don't have a kconfig option
+> but instead have this call into the trace_irqsoff.c code, and depending
+> on what the options are, it should stop it. Of course, this would need
+> to be smart enough to pair it. Perhaps return the result of
+> console_stop_critical_timings() and have that passed to
+> console_start_critical_timings(), and only have start do something if
+> stop did something. This way the option only needs to disable the stop
+> part.
 
-On Thu, Apr 25, 2019 at 5:40 AM Felipe Balbi
-<felipe.balbi@linux.intel.com> wrote:
->
-> Douglas Anderson <dianders@chromium.org> writes:
->
-> > Some SoCs with a dwc2 USB controller may need to keep the PHY on to
-> > support remote wakeup.  Allow specifying this as a device tree
-> > property.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > For relevant prior discussion on this patch, see:
-> >
-> > https://lkml.kernel.org/r/1435017144-2971-3-git-send-email-dianders@chromium.org
-> >
-> > I didn't make any changes from the prior version since I never found
-> > out what Rob thought of my previous arguments.  If folks want a
-> > change, perhaps they could choose from these options:
-> >
-> > 1. Assume that all dwc2 hosts would like to keep their PHY on for
-> >    suspend if there's a USB wakeup enabled, thus we totally drop this
-> >    binding.  This doesn't seem super great to me since I'd bet that
-> >    many devices that use dwc2 weren't designed for USB wakeup (they
-> >    may not keep enough clocks or rails on) so we might be wasting
-> >    power for nothing.
-> > 2. Rename this property to "snps,wakeup-from-suspend-with-phy" to make
-> >    it more obvious that this property is intended both to document
-> >    that wakeup from suspend is possible and that we need the PHY for
-> >    said wakeup.
-> > 3. Rename this property to "snps,can-wakeup-from-suspend" and assume
-> >    it's implicit that if we can wakeup from suspend that we need to
-> >    keep the PHY on.  If/when someone shows that a device exists using
-> >    dwc2 where we can wakeup from suspend without the PHY they can add
-> >    a new property.
-> >
-> > Changes in v2: None
-> >
-> >  Documentation/devicetree/bindings/usb/dwc2.txt | 3 +++
-> >  1 file changed, 3 insertions(+)
->
-> checking file Documentation/devicetree/bindings/usb/dwc2.txt
-> Hunk #1 FAILED at 37.
-> Hunk #2 succeeded at 52 (offset -1 lines).
-> 1 out of 2 hunks FAILED
+Something like this?
 
-Can you try applying this and the next two patches again?  ...or let
-me know that you'd like me to repost?
+I have only compile tested it so far.
 
-Thanks!
+best regards,
 
--Doug
+Viktor
+---
+ include/linux/irqflags.h     | 17 +++++++++++++++++
+ kernel/printk/printk.c       |  6 ++++--
+ kernel/trace/trace.h         |  1 +
+ kernel/trace/trace_irqsoff.c | 13 +++++++++++++
+ 4 files changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
+index 21619c92c377..e4f7ebc67a53 100644
+--- a/include/linux/irqflags.h
++++ b/include/linux/irqflags.h
+@@ -68,9 +68,26 @@ do {						\
+ 	defined(CONFIG_PREEMPT_TRACER)
+  extern void stop_critical_timings(void);
+  extern void start_critical_timings(void);
++ extern bool console_tracing_disabled(void);
++
++#define console_stop_critical_timings(FLAG)		\
++	do {						\
++		FLAG = console_tracing_disabled();	\
++		if (FLAG)				\
++			stop_critical_timings();	\
++	} while(0)
++
++#define console_start_critical_timings(FLAG)		 \
++	do {						 \
++		if (FLAG)				 \
++			start_critical_timings();	 \
++	} while(0)
++
+ #else
+ # define stop_critical_timings() do { } while (0)
+ # define start_critical_timings() do { } while (0)
++# define console_stop_critical_timings(FLAG) do { } while (0)
++# define console_start_critical_timings(FLAG) do { } while (0)
+ #endif
+ 
+ /*
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 02ca827b8fac..3a18b7208399 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2348,6 +2348,7 @@ void console_unlock(void)
+ 	static char ext_text[CONSOLE_EXT_LOG_MAX];
+ 	static char text[LOG_LINE_MAX + PREFIX_MAX];
+ 	unsigned long flags;
++	bool cflag;
+ 	bool do_cond_resched, retry;
+ 
+ 	if (console_suspended) {
+@@ -2448,9 +2449,10 @@ void console_unlock(void)
+ 		 */
+ 		console_lock_spinning_enable();
+ 
+-		stop_critical_timings();	/* don't trace print latency */
++		/* don't trace print latency if it's disabled */
++		console_stop_critical_timings(cflag);
+ 		call_console_drivers(ext_text, ext_len, text, len);
+-		start_critical_timings();
++		console_start_critical_timings(cflag);
+ 
+ 		if (console_lock_spinning_disable_and_check()) {
+ 			printk_safe_exit_irqrestore(flags);
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 59dc01ac52fd..3eed4756dba3 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1253,6 +1253,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		C(PRINTK_MSGONLY,	"printk-msg-only"),	\
+ 		C(CONTEXT_INFO,		"context-info"),   /* Print pid/cpu/time */ \
+ 		C(LATENCY_FMT,		"latency-format"),	\
++		C(CONSOLE_LATENCY,	"console-latency"),	\
+ 		C(RECORD_CMD,		"record-cmd"),		\
+ 		C(RECORD_TGID,		"record-tgid"),		\
+ 		C(OVERWRITE,		"overwrite"),		\
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 07a391e845de..659a82209c1e 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -490,6 +490,19 @@ void stop_critical_timings(void)
+ EXPORT_SYMBOL_GPL(stop_critical_timings);
+ NOKPROBE_SYMBOL(stop_critical_timings);
+ 
++bool console_tracing_disabled(void)
++{
++	struct trace_array *tr = irqsoff_trace;
++	int pc = preempt_count();
++
++	if (!preempt_trace(pc) && !irq_trace())
++		return false;
++
++	return !(tr->trace_flags & CONSOLE_LATENCY);
++}
++
++EXPORT_SYMBOL_GPL(console_tracing_disabled);
++
+ #ifdef CONFIG_FUNCTION_TRACER
+ static bool function_enabled;
+ 
+-- 
+2.17.1
+
