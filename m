@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA9011E4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6CAA11DA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfEBP2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:28:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45120 "EHLO mail.kernel.org"
+        id S1729149AbfEBPcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728124AbfEBP2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:28:03 -0400
+        id S1729137AbfEBPcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:32:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8884F217F9;
-        Thu,  2 May 2019 15:28:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E04C920C01;
+        Thu,  2 May 2019 15:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810883;
-        bh=g5WyNPA/QqcB+9T8YAbD78uEc7IjUwCwmyAd3x5SmyY=;
+        s=default; t=1556811134;
+        bh=OZ4c7QAWh0rxTtJ8GAIod4UGAirImXI2H1437/bD2Po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0WUsHqUsTjIbpyRzenGJIPGeazlPJPu2XEYrDiHefJ8Nm3oUHeZnbAfpz5QHX4e5O
-         5m/0kJRypjfkFkq5qfFZ++mc1RKtNusbT3SIcfpUvd2itIXbjfMHh2+cTAiaRzDM7W
-         QNTBfnkzNak/AZyRODJsBPEcgUTOD4/twKaKEJ94=
+        b=lo0jKOmKDmibCJMS/xxeTSL1maA+bHbCMGASsqMRpaxTpn8lQerkpArKfLwj2nfSS
+         2K9LEMriG4VeI3m0fSTa29QC6eudac80cHxwRJDOK+PoEV5AD7bOb8H3EOq3oDp72s
+         0sYIOqkbKYkTYYyLXwmPKZiIWqhv9oLMBGWxOIKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin George <marting@netapp.com>,
-        Gargi Srinivas <sring@netapp.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 66/72] nvme-multipath: relax ANA state check
-Date:   Thu,  2 May 2019 17:21:28 +0200
-Message-Id: <20190502143338.545674853@linuxfoundation.org>
+Subject: [PATCH 5.0 087/101] KVM: selftests: explicitly disable PIE for tests
+Date:   Thu,  2 May 2019 17:21:29 +0200
+Message-Id: <20190502143345.682698592@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cc2278c413c3a06a93c23ee8722e4dd3d621de12 ]
+[ Upstream commit 0a3f29b5a77d6c27796d7a7adabafd199dc066d5 ]
 
-When undergoing state transitions I/O might be requeued, hence
-we should always call nvme_mpath_set_live() to schedule requeue_work
-whenever the nvme device is live, independent on whether the
-old state was live or not.
+KVM selftests embed the guest "image" as a function in the test itself
+and extract the guest code at runtime by manually parsing the elf
+headers.  The parsing is very simple and doesn't supporting fancy things
+like position independent executables.  Recent versions of gcc enable
+pie by default, which results in triple fault shutdowns in the guest due
+to the virtual address in the headers not matching up with the virtual
+address retrieved from the function pointer.
 
-Signed-off-by: Martin George <marting@netapp.com>
-Signed-off-by: Gargi Srinivas <sring@netapp.com>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ tools/testing/selftests/kvm/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index da8f5ad30c71..260248fbb8fe 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -349,15 +349,12 @@ static inline bool nvme_state_is_live(enum nvme_ana_state state)
- static void nvme_update_ns_ana_state(struct nvme_ana_group_desc *desc,
- 		struct nvme_ns *ns)
- {
--	enum nvme_ana_state old;
--
- 	mutex_lock(&ns->head->lock);
--	old = ns->ana_state;
- 	ns->ana_grpid = le32_to_cpu(desc->grpid);
- 	ns->ana_state = desc->state;
- 	clear_bit(NVME_NS_ANA_PENDING, &ns->flags);
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index f9a0e9938480..212b8f0032ae 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -28,7 +28,7 @@ LIBKVM += $(LIBKVM_$(UNAME_M))
+ INSTALL_HDR_PATH = $(top_srcdir)/usr
+ LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
+ LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
+-CFLAGS += -O2 -g -std=gnu99 -I$(LINUX_TOOL_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(UNAME_M) -I..
++CFLAGS += -O2 -g -std=gnu99 -no-pie -I$(LINUX_TOOL_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(UNAME_M) -I..
+ LDFLAGS += -pthread
  
--	if (nvme_state_is_live(ns->ana_state) && !nvme_state_is_live(old))
-+	if (nvme_state_is_live(ns->ana_state))
- 		nvme_mpath_set_live(ns);
- 	mutex_unlock(&ns->head->lock);
- }
+ # After inclusion, $(OUTPUT) is defined and
 -- 
 2.19.1
 
