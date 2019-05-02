@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AEC11F75
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF32A11CF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfEBPre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:47:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39976 "EHLO mail.kernel.org"
+        id S1727901AbfEBP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:27:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726611AbfEBPYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:24:10 -0400
+        id S1726497AbfEBP1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:27:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E92ED208C4;
-        Thu,  2 May 2019 15:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F7422081C;
+        Thu,  2 May 2019 15:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810649;
-        bh=5GKA2ndTMnBO9OGe+bY2RSGvKe0hCCrXFPdVQ/SPbLg=;
+        s=default; t=1556810825;
+        bh=5IKcHb/BiqpQ9jsv0SapryPbCO4oCW5m2Nfmbwo9D9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=flwfVSUVx3EffgBh/QnFfoAbQKcbodQDXzv7+FDEDuZAteUZIu515RRNuzJsbySdS
-         HlTxbJHokKN5PdNH1IgYMgeoPYcaoQF6jKAifldCnWPEH00xI2MBA03YbrEyogJWd7
-         1rSGv9Y4iOX5yQvUd28PcdLKbTg+y3F8YGNI86G0=
+        b=znShkYjH2jAwJtjo0NQkCYYmiR2e82UTrfjN1tJ/xKVvrlq+/TMFvDLS5Rgwttxag
+         JVSzHw3/LyMqsDlSsEntq6av76S+na7yIPVThpiiC1CE1pjKt0ax1AJ35iiaFN+B7E
+         JcAeHzebr1scGCrP5aV9JJfS8lALuiO6iePSwQWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Mukesh Ojha <mojha@codeaurora.org>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 26/49] staging: rtlwifi: rtl8822b: fix to avoid potential NULL pointer dereference
-Date:   Thu,  2 May 2019 17:21:03 +0200
-Message-Id: <20190502143327.196651698@linuxfoundation.org>
+Subject: [PATCH 4.19 42/72] net/sched: dont dereference a->goto_chain to read the chain index
+Date:   Thu,  2 May 2019 17:21:04 +0200
+Message-Id: <20190502143336.829714760@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d70d70aec9632679dd00dcc1b1e8b2517e2c7da0 ]
+[ Upstream commit fe384e2fa36ca084a456fd30558cccc75b4b3fbd ]
 
-skb allocated via dev_alloc_skb can fail and return a NULL pointer.
-This patch avoids such a scenario and returns, consistent with other
-invocations.
+callers of tcf_gact_goto_chain_index() can potentially read an old value
+of the chain index, or even dereference a NULL 'goto_chain' pointer,
+because 'goto_chain' and 'tcfa_action' are read in the traffic path
+without caring of concurrent write in the control path. The most recent
+value of chain index can be read also from a->tcfa_action (it's encoded
+there together with TC_ACT_GOTO_CHAIN bits), so we don't really need to
+dereference 'goto_chain': just read the chain id from the control action.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: e457d86ada27 ("net: sched: add couple of goto_chain helpers")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/staging/rtlwifi/rtl8822be/fw.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/net/tc_act/tc_gact.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
-index acabb2470d55..02ca3157c5a5 100644
---- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-@@ -752,6 +752,8 @@ void rtl8822be_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
- 		      u1_rsvd_page_loc, 3);
+diff --git a/include/net/tc_act/tc_gact.h b/include/net/tc_act/tc_gact.h
+index ef8dd0db70ce..56935bf027a7 100644
+--- a/include/net/tc_act/tc_gact.h
++++ b/include/net/tc_act/tc_gact.h
+@@ -56,7 +56,7 @@ static inline bool is_tcf_gact_goto_chain(const struct tc_action *a)
  
- 	skb = dev_alloc_skb(totalpacketlen);
-+	if (!skb)
-+		return;
- 	memcpy((u8 *)skb_put(skb, totalpacketlen), &reserved_page_packet,
- 	       totalpacketlen);
+ static inline u32 tcf_gact_goto_chain_index(const struct tc_action *a)
+ {
+-	return a->goto_chain->index;
++	return READ_ONCE(a->tcfa_action) & TC_ACT_EXT_VAL_MASK;
+ }
  
+ #endif /* __NET_TC_GACT_H */
 -- 
 2.19.1
 
