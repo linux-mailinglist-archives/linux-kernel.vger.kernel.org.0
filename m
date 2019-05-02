@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F07811C9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3843611D7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfEBPXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38598 "EHLO mail.kernel.org"
+        id S1728921AbfEBPbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfEBPXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:03 -0400
+        id S1728901AbfEBPbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:31:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B55320449;
-        Thu,  2 May 2019 15:23:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 743A820B7C;
+        Thu,  2 May 2019 15:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810582;
-        bh=1BIVo3pVY2ZtWEenmS3Wmcbt8cA5RI3kvqpgpyigA0M=;
+        s=default; t=1556811061;
+        bh=H4BmzPu75TbcvgMnOx08EDQr38HeGXYDIua4wtQW1U4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OWo/8zknsH7hD8Pillo7OUPqsqvR/2mCrK1lXjkQ/rkpcxjnzifNC5OFXpfxoldxx
-         ppY8A9TjtNDzP6hgWVF5ERu4PCLvRWcZvlJMuvoxCc7OKRTsZRhH8PFfATmFU8SNJi
-         1NO92iDMkJNrDrngRNJUA0UpMGeAQKsNSIFIByPg=
+        b=J0vfiolCHnpUrzSqPJaeblTuMHax0UQrUPTTgAlhSu4lX2W07y+/RjNbGcRpPh5YQ
+         Sa0sbppFhIvbY/WDsKY7kpcoCyGzA98W7Ov4oTbSCTOyrehhmKVqFcaSI3Mfq6yuai
+         YFPUN8bBUka/lLeZW5EU6Ibo6WIePYYV+d0ZC/kw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Christ <s.christ@phytec.de>,
-        Christian Hemp <c.hemp@phytec.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Wingman Kwok <w-kwok2@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 14/32] ARM: dts: pfla02: increase phy reset duration
+Subject: [PATCH 5.0 058/101] net: ethernet: ti: fix possible object reference leak
 Date:   Thu,  2 May 2019 17:21:00 +0200
-Message-Id: <20190502143319.301837113@linuxfoundation.org>
+Message-Id: <20190502143343.551515987@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 032f85c9360fb1a08385c584c2c4ed114b33c260 ]
+[ Upstream commit 75eac7b5f68b0a0671e795ac636457ee27cc11d8 ]
 
-Increase the reset duration to ensure correct phy functionality. The
-reset duration is taken from barebox commit 52fdd510de ("ARM: dts:
-pfla02: use long enough reset for ethernet phy"):
+The call to of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-  Use a longer reset time for ethernet phy Micrel KSZ9031RNX. Otherwise a
-  small percentage of modules have 'transmission timeouts' errors like
+Detected by coccinelle with the following warnings:
+./drivers/net/ethernet/ti/netcp_ethss.c:3661:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3654, but without a corresponding object release within this function.
+./drivers/net/ethernet/ti/netcp_ethss.c:3665:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3654, but without a corresponding object release within this function.
 
-  barebox@Phytec phyFLEX-i.MX6 Quad Carrier-Board:/ ifup eth0
-  warning: No MAC address set. Using random address 7e:94:4d:02:f8:f3
-  eth0: 1000Mbps full duplex link detected
-  eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-  T eth0: transmission timeout
-
-Cc: Stefan Christ <s.christ@phytec.de>
-Cc: Christian Hemp <c.hemp@phytec.de>
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Fixes: 3180f956668e ("ARM: dts: Phytec imx6q pfla02 and pbab01 support")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Wingman Kwok <w-kwok2@ti.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/ti/netcp_ethss.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-index e0280cac2484..fed72a5f3ffa 100644
---- a/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-phytec-pfla02.dtsi
-@@ -90,6 +90,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
- 	phy-mode = "rgmii";
-+	phy-reset-duration = <10>; /* in msecs */
- 	phy-reset-gpios = <&gpio3 23 GPIO_ACTIVE_LOW>;
- 	phy-supply = <&vdd_eth_io_reg>;
- 	status = "disabled";
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 5174d318901e..0a920c5936b2 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -3657,12 +3657,16 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 
+ 	ret = netcp_txpipe_init(&gbe_dev->tx_pipe, netcp_device,
+ 				gbe_dev->dma_chan_name, gbe_dev->tx_queue_id);
+-	if (ret)
++	if (ret) {
++		of_node_put(interfaces);
+ 		return ret;
++	}
+ 
+ 	ret = netcp_txpipe_open(&gbe_dev->tx_pipe);
+-	if (ret)
++	if (ret) {
++		of_node_put(interfaces);
+ 		return ret;
++	}
+ 
+ 	/* Create network interfaces */
+ 	INIT_LIST_HEAD(&gbe_dev->gbe_intf_head);
 -- 
 2.19.1
 
