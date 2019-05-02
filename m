@@ -2,142 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 622A0115D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4501D115D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfEBIxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 04:53:45 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38515 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbfEBIxo (ORCPT
+        id S1726439AbfEBIyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 04:54:11 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:50898 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfEBIyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 04:53:44 -0400
-Received: by mail-it1-f194.google.com with SMTP id q19so2064770itk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 01:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1X9ipyrjBCgysbixO7mllniKFp0zrqAX+YLVm+Qy1S0=;
-        b=yWsXoM80YUTgdMB6oO2DDbeU8DPDbcmA+PC+5sSaToOqaTpIKARGyOV/boF39l6Q1e
-         0aVuAgi17sn11G4czZdsXIIJkkaqL5RwBNxp2WmHWGQ0do7X2cYx5WD9ZEZgo4pNA4eM
-         jQeldBHxndo5h2SYoCG+q9P+M52Zgdto9W0VS1nmNRxaq9lQxMuYeHsQMqJOD1PiJBJL
-         ZbHxxKVWhhaxPoCfu7IaDYqyN9xb9KuFVUCbvvm5JUBTMgU9qJ+Cy7s2nVCb+dPkiDWV
-         FNdrFBiSFR1EnoD5PIjaMUH7Ka1MQhnuK2F3cSwxw0wBXszsZbDKh7ybJR69Ihjcb57D
-         zysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1X9ipyrjBCgysbixO7mllniKFp0zrqAX+YLVm+Qy1S0=;
-        b=THlZ50L+mHFV1bN/Xntfw6nhuzE4xheuQxmUEv/7lHU4yR1zbJLqc8hkdgAr0eqBhc
-         J1rIEYGbvs1Cnos5qry6G3mxF0+yv3+ERnyY1DtyWGWtFO5PhefLmA2sNSxJDEu1beRN
-         YHLHFLm7Cm0OJgYh0eamo0dvKBfh1XzkNZ+5/V2EeQBNWIQBpPQqtHaQY54dL8egFQs7
-         5SPgIdNEKzom+PEd81SRbRpCE3zC56smYR5Mc7zic3cmKJfomX+9Qj99geKg3fO6IQzo
-         kqrOqOSeSdewWtfnSlwfvn2/cHvkigzuIX9yMf/sA/b/GQKscNUlqmbFk3uEsySrJMfs
-         quDQ==
-X-Gm-Message-State: APjAAAXMrZI6ENXSL5fjMJHXYQiVBbuv10bZGnzcxq94m9+6HQcyCJo8
-        YoJCQ93crkCLuin+3X64tP4w33imSGUUt8ZQaw25XQ==
-X-Google-Smtp-Source: APXvYqx/xmKUay1hTDkSxXbGcJPVRadVdpD5CE7BMBOOohtgLIELm0otn+yCvfcjJqOQCM5tLVNFRPp2zEAvFndl3JM=
-X-Received: by 2002:a24:b342:: with SMTP id z2mr1327414iti.121.1556787223814;
- Thu, 02 May 2019 01:53:43 -0700 (PDT)
+        Thu, 2 May 2019 04:54:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 68A47608F44D;
+        Thu,  2 May 2019 10:54:08 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id tCZgGT9srGJB; Thu,  2 May 2019 10:54:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id E47066083114;
+        Thu,  2 May 2019 10:54:07 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id DSTtttNaDo7h; Thu,  2 May 2019 10:54:07 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2DB38608F44D;
+        Thu,  2 May 2019 10:54:06 +0200 (CEST)
+Date:   Thu, 2 May 2019 10:54:06 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     torvalds@linux-foundation.org
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <1906022472.41848.1556787246765.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] MTD fixes for 5.1 final
 MIME-Version: 1.0
-References: <20190502040441.30372-1-jlee@suse.com>
-In-Reply-To: <20190502040441.30372-1-jlee@suse.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 2 May 2019 10:53:31 +0200
-Message-ID: <CAKv+Gu9mjtNEWN-w4ix7VJMZ_kk-Qf6FfYFRu2mCosaAjMA4Vg@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] efi: add a function to convert the status value to string
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
+Thread-Index: DfL9m5ltWhnTV5AkF4L36VKfZfOrxA==
+Thread-Topic: MTD fixes for 5.1 final
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 May 2019 at 06:04, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
->
-> This function can be used to convert EFI status value to string
-> for printing out debug message. Using this function can improve
-> the readability of log.
->
-> v2.
+Linus,
 
-Please move the changelog out of the commit log (move it below the ---
-further down)
+The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
 
-> - Changed the wording in subject and description.
-> - Moved the marco immediately after the status value definitions.
-> - Turned into a proper function instead of inline.
->
+  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
 
-You missed my point here. A proper function means the function in a .c
-file, and only the declaration in a .h file. This way, you are still
-duplicating the literal strings into every object file that references
-this function.
+are available in the Git repository at:
 
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Anton Vorontsov <anton@enomsg.org>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  include/linux/efi.h | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 54357a258b35..6f3f89a32eef 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -42,6 +42,34 @@
->  #define EFI_ABORTED            (21 | (1UL << (BITS_PER_LONG-1)))
->  #define EFI_SECURITY_VIOLATION (26 | (1UL << (BITS_PER_LONG-1)))
->
-> +#define EFI_STATUS_STR(_status) \
-> +case EFI_##_status: \
-> +       return "EFI_" __stringify(_status);
-> +
-> +static __attribute__((unused)) char *
-> +efi_status_to_str(unsigned long status)
-> +{
-> +       switch (status) {
-> +       EFI_STATUS_STR(SUCCESS)
-> +       EFI_STATUS_STR(LOAD_ERROR)
-> +       EFI_STATUS_STR(INVALID_PARAMETER)
-> +       EFI_STATUS_STR(UNSUPPORTED)
-> +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
-> +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
-> +       EFI_STATUS_STR(NOT_READY)
-> +       EFI_STATUS_STR(DEVICE_ERROR)
-> +       EFI_STATUS_STR(WRITE_PROTECTED)
-> +       EFI_STATUS_STR(OUT_OF_RESOURCES)
-> +       EFI_STATUS_STR(NOT_FOUND)
-> +       EFI_STATUS_STR(ABORTED)
-> +       EFI_STATUS_STR(SECURITY_VIOLATION)
-> +       default:
-> +               pr_warn("Unknown efi status: 0x%lx", status);
-> +       }
-> +
-> +       return "Unknown efi status";
-> +}
-> +
->  typedef unsigned long efi_status_t;
->  typedef u8 efi_bool_t;
->  typedef u16 efi_char16_t;              /* UNICODE character */
-> --
-> 2.16.4
->
+  git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git tags/mtd/fixes-for-5.1-rc6
+
+for you to fetch changes up to 9a8f612ca0d6a436e6471c9bed516d34a2cc626f:
+
+  mtd: rawnand: marvell: Clean the controller state before each operation (2019-04-25 23:21:51 +0200)
+
+----------------------------------------------------------------
+This pull request contains a single fix for MTD:
+
+- Regression fix for the marvell nand driver.
+
+----------------------------------------------------------------
+Miquel Raynal (1):
+      mtd: rawnand: marvell: Clean the controller state before each operation
+
+ drivers/mtd/nand/raw/marvell_nand.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
