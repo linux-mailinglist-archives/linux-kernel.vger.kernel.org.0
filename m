@@ -2,112 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B4112280
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E8D12281
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:16:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbfEBTOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 15:14:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41230 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBTOl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 15:14:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f6so1485668pgs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 12:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T87TJAQEItZ/8IKuRT/VOsqnktTnyrxp/uVvFEniYMA=;
-        b=vBv6PoK0WcmYtiIfYiYRttaKU6sySuqlp2bz5MAKrEwpGt1gue3gzyHG11PiGfzpcw
-         3MNNE7KR0yeU4+4xNbx9fp+4t1kJJWsSD3Bd3y2xlf2o948io5GNWybzWlXv1qF6rMqO
-         W1SENeUpDnopBUPQi4IYCnMgIeGn5O8Gv2YK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T87TJAQEItZ/8IKuRT/VOsqnktTnyrxp/uVvFEniYMA=;
-        b=JO5SXwt96IyGtgwBCiPYvvZc9Gw0Wmzs1nraL0XCR+oGpnd5mISonz5TFvH2cR2m6i
-         zL4Z2ovfsbGrZLRje8c0w38+sb0HP79Z5m7v9M6sFsLz/Pa5NP2kCzE9vz+c+5BaRqWP
-         Y+cguHW9oF6w88B6g609R0GD5FSEf2xsT1DGgYLabXcCJwqyiA0g3oESwblSRCJ54joL
-         qSwHVA+3WKT7JxUwfRXwrKGLZXy5TwXBav9tXCKLnbOQlFqaCAFl2Pxm7Qryg3Pq1Wsr
-         /NwkR+DevZR8nH3hFKUhCjTOhGvXDQ5TeYSLxq8wUhTW4Hv2ALTR4ApLvNWbaKqj9ZmK
-         RmrA==
-X-Gm-Message-State: APjAAAVAyoIpEzPg71u+90XYHfJns1N7ggtwnTWUs15HpMOO6M+Q9R/P
-        dHT6ABGerlS6alokkQGZ1HSslw==
-X-Google-Smtp-Source: APXvYqzA5/HIyej28h0lLtHCsm2clDFlAORBWM0decWBelSise8oK0pTjZR+reURwiFiGKrXF2W/2w==
-X-Received: by 2002:a63:fa46:: with SMTP id g6mr5766362pgk.382.1556824480553;
-        Thu, 02 May 2019 12:14:40 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id z124sm48008758pfz.116.2019.05.02.12.14.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 12:14:39 -0700 (PDT)
-Date:   Thu, 2 May 2019 15:14:37 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
+        id S1726418AbfEBTQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 15:16:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725962AbfEBTQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 15:16:02 -0400
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7FC72081C;
+        Thu,  2 May 2019 19:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556824561;
+        bh=zy/1znpb3qH9WbV7S/PVCYknNXVm9bYSk7gKgBnxCmQ=;
+        h=From:To:Subject:Date:From;
+        b=cNAzpwKjrX2RNH/V9waM1B2GSTZqxh6ZE3Mmh9l24o49izD1uTEcsu6OX99GSxI9B
+         kzOcbzD3vqY+UeDQbXHgYZznfithLXSaAIdETQH7L3MltTMSxqVVF0I6d02I7oLWO+
+         PvK+nvKlQ7bP5F8FZkjnQo+sYuKyjSyTiaVvgZvo=
+From:   zanussi@kernel.org
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Colascione <dancol@google.com>,
-        Jann Horn <jannh@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Jonathan Kowalski <bl0pbl33p@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>, kernel-team@android.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>,
-        linux-kselftest@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Nadav Amit <namit@vmware.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Serge Hallyn <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: Re: [PATCH v2 1/2] Add polling support to pidfd
-Message-ID: <20190502191437.GA103213@google.com>
-References: <20190430162154.61314-1-joel@joelfernandes.org>
- <20190501151312.GA30235@redhat.com>
- <20190502151320.cvc6uc3b4bmww23k@brauner.io>
- <20190502160247.GD7323@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502160247.GD7323@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>
+Subject: [PATCH RT 0/4] Linux v3.18.138-rt116-rc1
+Date:   Thu,  2 May 2019 14:15:35 -0500
+Message-Id: <cover.1556824516.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 06:02:48PM +0200, Oleg Nesterov wrote:
-> On 05/02, Christian Brauner wrote:
-> >
-> > On Wed, May 01, 2019 at 05:13:12PM +0200, Oleg Nesterov wrote:
-> > >
-> > > Otherwise I see no problems.
-> >
-> > I'll remove the WARN_ON() check when applying this. Can I get your
-> > Acked/Review, Oleg?
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Oh, ok. Good point about the de_thread race. Agreed with you.
+Dear RT Folks,
 
-> Yes, feel free to add
-> 
-> 	Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> 
-> Hmm. Somehow I didn't read the changelog before, I just noticed
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Please remove ;) Thanks Joel, I appreciate it, but it is not my idea.
+This is the RT stable review cycle of patch 3.18.138-rt116-rc1.
 
-Ok no problem. You have been very helpful so thank you for that!
+Please scream at me if I messed something up. Please test the patches
+too.
 
-Also thanks Christian for removing the warning and adding Oleg's Reviewed-by.
+The -rc release will be uploaded to kernel.org and will be deleted
+when the final release is out. This is just a review release (or
+release candidate).
 
- - Joel
+The pre-releases will not be pushed to the git repository, only the
+final release is.
+
+If all goes well, this patch will be converted to the next main
+release on 2019-05-09.
+
+To build 3.18.138-rt116-rc1 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.138.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.138-rt116-rc1.patch.xz
+
+You can also build from 3.18.138-rt115 by applying the incremental patch:
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/3.18/incr/patch-3.18.138-rt115-rt116-rc1.patch.xz
+
+
+Enjoy,
+
+-- Tom
+
+
+Julien Grall (1):
+  tty/sysrq: Convert show_lock to raw_spinlock_t
+
+Sebastian Andrzej Siewior (2):
+  softirq: Avoid "local_softirq_pending" messages if ksoftirqd is
+    blocked
+  powerpc/pseries/iommu: Use a locallock instead local_irq_save()
+
+Tom Zanussi (1):
+  Linux 3.18.138-rt116-rc1
+
+ arch/powerpc/platforms/pseries/iommu.c | 16 ++++++----
+ drivers/tty/sysrq.c                    |  6 ++--
+ kernel/softirq.c                       | 57 ++++++++++++++++++++++++----------
+ localversion-rt                        |  2 +-
+ 4 files changed, 55 insertions(+), 26 deletions(-)
+
+-- 
+2.14.1
 
