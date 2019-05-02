@@ -2,50 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D3C1195D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3021A11962
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfEBMwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:52:15 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:55524 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfEBMwP (ORCPT
+        id S1726596AbfEBMwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:52:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50618 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfEBMwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:52:15 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1hMBC8-0000wr-C6; Thu, 02 May 2019 14:52:12 +0200
-Message-ID: <e861784bf2bd177494396de0f404f3d8472dc37a.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next 2/3] netlink: set bad attribute also on maxtype
- check
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 02 May 2019 14:52:10 +0200
-In-Reply-To: <e7a5efb0d4acbd473286a9e5923d1a97c68fcb09.1556798793.git.mkubecek@suse.cz>
-References: <cover.1556798793.git.mkubecek@suse.cz>
-         <e7a5efb0d4acbd473286a9e5923d1a97c68fcb09.1556798793.git.mkubecek@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 2 May 2019 08:52:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id p21so2670247wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 05:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MMGpjKoOQxaFbczjnBaLl3GvrIXhaf+yLzIld7oDBt0=;
+        b=M1oS+CDKfQgLLQocLNzgUE1Zg2K8e/Ek7MgsPvB0Kc4XYlkLOBvlBeZLfuxyHptSIq
+         LlfTUfXVVSwmHaYiU0vSV6Efn/FU4zgftkV6OlFe0aSNRyf9YN+7ZZAA17k0yFfNpZJS
+         klU+wGnYXfnPyYXSoJV2XzarEMM9SR59dFV+vUyD+Y50TLG5kdyD4D1HNpnW5nDOkOtq
+         luxDfotBmKROJmWNemZ10s3mo++a/pDDeWSuLPWcmfsiBkD7F26E1/jD6DhsUqoZtyI0
+         KInEOEfrRTu/Gzj8wJ3tBZxS999UKvN0jF+X2DkhPTjt5PSHddAu2qQG06xsXVY31ayp
+         Omlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MMGpjKoOQxaFbczjnBaLl3GvrIXhaf+yLzIld7oDBt0=;
+        b=LRtwRmTOBmgOXhdnV6lKhB2DGksHtATQeMfVo06EEcf80qIl6R0ojOhkgo4dxyprmg
+         uj/5X4acooC0UtxtmrZ48BLr1kfV4agJE1ZX/SxMenTe6BseDHLcg00DzJqRIwnYb9bx
+         cRF66KFJbP6BHaaBSxSy9Xz0HRQGyDFhV730XfwDoTc0KraieN57H743h+3oos7zDl3s
+         CzjP+3aRnH0C6jp37UXUYPgrZZxFTl8DRHTmws1epXdYcyacpzYvHAa68lVAOWZrSCxP
+         TzQxe1KhWC6M9HPVpqrQjanjE+4FGoyA1BA56B4wViDk5HMzJZa4rjSeN6VVrB9jP8RI
+         wyrA==
+X-Gm-Message-State: APjAAAW66qyueEO487HXWBywzoQihyTcuMTw5gKLlrdBmOlApsf77+4y
+        37lVK7mGFoEPXaL6y+5RDA0iLb3f
+X-Google-Smtp-Source: APXvYqzRZvyN95eCmIrb3qxGaMoDD3Kx0H/RfMTB5FrLmSSxB+9+oxy0i2ua9BXxsbgPuAJfWes4VQ==
+X-Received: by 2002:a7b:c218:: with SMTP id x24mr2215464wmi.57.1556801573127;
+        Thu, 02 May 2019 05:52:53 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id r2sm9473342wmh.31.2019.05.02.05.52.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 05:52:52 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, Tomer Tayar <ttayar@habana.ai>
+Subject: [PATCH] habanalabs: Update CPU DMA pool label name
+Date:   Thu,  2 May 2019 15:52:49 +0300
+Message-Id: <20190502125249.11036-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-05-02 at 12:48 +0000, Michal Kubecek wrote:
-> The check that attribute type is within 0...maxtype range in
-> __nla_validate_parse() sets only error message but not bad_attr in extack.
-> Set also bad_attr to tell userspace which attribute failed validation.
+From: Tomer Tayar <ttayar@habana.ai>
 
-Good catch, we actually do have an attribute in this case.
+The CPU accessible DMA pool is general and not used only for PQ.
+Accordingly, this patch rename the "free_cpu_pq_pool" label with
+"free_cpu_accessible_dma_pool".
 
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Tomer Tayar <ttayar@habana.ai>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/goya/goya.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-johannes
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index 9bf572a2d292..0fa0bdd7c852 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -670,14 +670,14 @@ static int goya_sw_init(struct hl_device *hdev)
+ 		dev_err(hdev->dev,
+ 			"Failed to add memory to CPU accessible DMA pool\n");
+ 		rc = -EFAULT;
+-		goto free_cpu_pq_pool;
++		goto free_cpu_accessible_dma_pool;
+ 	}
+ 
+ 	spin_lock_init(&goya->hw_queues_lock);
+ 
+ 	return 0;
+ 
+-free_cpu_pq_pool:
++free_cpu_accessible_dma_pool:
+ 	gen_pool_destroy(hdev->cpu_accessible_dma_pool);
+ free_cpu_pq_dma_mem:
+ 	hdev->asic_funcs->asic_dma_free_coherent(hdev,
+-- 
+2.17.1
 
