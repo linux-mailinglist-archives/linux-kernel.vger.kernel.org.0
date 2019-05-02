@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C28611CBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE10A11D69
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfEBPY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:24:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40250 "EHLO mail.kernel.org"
+        id S1728672AbfEBPaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:30:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727273AbfEBPYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:24:23 -0400
+        id S1728659AbfEBPaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:30:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F073020B7C;
-        Thu,  2 May 2019 15:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E4EC20B7C;
+        Thu,  2 May 2019 15:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810662;
-        bh=LmuzgzsK29FiEFdBTUOSiAOaeUrj2ZutR/Tsns6qF1I=;
+        s=default; t=1556811010;
+        bh=7Iyaf6jf1Bvb6rz700mdG28gfVARJsxhyzrN5GnKVUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UD4f3WtR6h2K1xGI/cjmF3Enftx4z6dnHnOGYsZtxAHWJPX7MWVAVIOHEY1nVFpb2
-         G9Wn4/F9AFTQjKzXGx/rv/lTsf+ICQ0UpCGzntv0v35OvbqrG+tOcosUqLaggOlbsQ
-         UvKogFhd0xcewrai6As8EGZb/qf7Qoy5xg/mMBNw=
+        b=NJ9k0FMuZ1FsuVzciUxxxGLMbT8XrRpaM6CRmCo+Js6K2RJ8N0uY9JAJQ60Xq0MeD
+         h/6H5ll7RnQCxEtEayWbBluuY5IsCYNWyUjH1TJ9vD5PQuPP/prf2IS+4l+hpt/S8m
+         4kvsa0wXVWqKucrXvnHcQNinXPoMhZFUwKgbO7Pw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Matthew Wilcox <willy@infradead.org>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 06/49] mm: prevent get_user_pages() from overflowing page refcount
+        stable@vger.kernel.org, Zheng Xiang <zhengxiang9@huawei.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 5.0 041/101] KVM: arm/arm64: Fix handling of stage2 huge mappings
 Date:   Thu,  2 May 2019 17:20:43 +0200
-Message-Id: <20190502143324.847288707@linuxfoundation.org>
+Message-Id: <20190502143342.432628466@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,153 +47,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+[ Upstream commit 3c3736cd32bf5197aed1410ae826d2d254a5b277 ]
 
-commit 8fde12ca79aff9b5ba951fce1a2641901b8d8e64 upstream.
+We rely on the mmu_notifier call backs to handle the split/merge
+of huge pages and thus we are guaranteed that, while creating a
+block mapping, either the entire block is unmapped at stage2 or it
+is missing permission.
 
-If the page refcount wraps around past zero, it will be freed while
-there are still four billion references to it.  One of the possible
-avenues for an attacker to try to make this happen is by doing direct IO
-on a page multiple times.  This patch makes get_user_pages() refuse to
-take a new page reference if there are already more than two billion
-references to the page.
+However, we miss a case where the block mapping is split for dirty
+logging case and then could later be made block mapping, if we cancel the
+dirty logging. This not only creates inconsistent TLB entries for
+the pages in the the block, but also leakes the table pages for
+PMD level.
 
-Reported-by: Jann Horn <jannh@google.com>
-Acked-by: Matthew Wilcox <willy@infradead.org>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Handle this corner case for the huge mappings at stage2 by
+unmapping the non-huge mapping for the block. This could potentially
+release the upper level table. So we need to restart the table walk
+once we unmap the range.
 
+Fixes : ad361f093c1e31d ("KVM: ARM: Support hugetlbfs backed huge pages")
+Reported-by: Zheng Xiang <zhengxiang9@huawei.com>
+Cc: Zheng Xiang <zhengxiang9@huawei.com>
+Cc: Zenghui Yu <yuzenghui@huawei.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- mm/gup.c     |   45 ++++++++++++++++++++++++++++++++++-----------
- mm/hugetlb.c |   13 +++++++++++++
- 2 files changed, 47 insertions(+), 11 deletions(-)
+ arch/arm/include/asm/stage2_pgtable.h |  2 +
+ virt/kvm/arm/mmu.c                    | 59 +++++++++++++++++++--------
+ 2 files changed, 45 insertions(+), 16 deletions(-)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -153,7 +153,10 @@ retry:
- 	}
+diff --git a/arch/arm/include/asm/stage2_pgtable.h b/arch/arm/include/asm/stage2_pgtable.h
+index de2089501b8b..9e11dce55e06 100644
+--- a/arch/arm/include/asm/stage2_pgtable.h
++++ b/arch/arm/include/asm/stage2_pgtable.h
+@@ -75,6 +75,8 @@ static inline bool kvm_stage2_has_pud(struct kvm *kvm)
  
- 	if (flags & FOLL_GET) {
--		get_page(page);
-+		if (unlikely(!try_get_page(page))) {
-+			page = ERR_PTR(-ENOMEM);
-+			goto out;
+ #define S2_PMD_MASK				PMD_MASK
+ #define S2_PMD_SIZE				PMD_SIZE
++#define S2_PUD_MASK				PUD_MASK
++#define S2_PUD_SIZE				PUD_SIZE
+ 
+ static inline bool kvm_stage2_has_pmd(struct kvm *kvm)
+ {
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 5cc22cdaa5ba..31e22b615d99 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1060,25 +1060,43 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+ {
+ 	pmd_t *pmd, old_pmd;
+ 
++retry:
+ 	pmd = stage2_get_pmd(kvm, cache, addr);
+ 	VM_BUG_ON(!pmd);
+ 
+ 	old_pmd = *pmd;
++	/*
++	 * Multiple vcpus faulting on the same PMD entry, can
++	 * lead to them sequentially updating the PMD with the
++	 * same value. Following the break-before-make
++	 * (pmd_clear() followed by tlb_flush()) process can
++	 * hinder forward progress due to refaults generated
++	 * on missing translations.
++	 *
++	 * Skip updating the page table if the entry is
++	 * unchanged.
++	 */
++	if (pmd_val(old_pmd) == pmd_val(*new_pmd))
++		return 0;
++
+ 	if (pmd_present(old_pmd)) {
+ 		/*
+-		 * Multiple vcpus faulting on the same PMD entry, can
+-		 * lead to them sequentially updating the PMD with the
+-		 * same value. Following the break-before-make
+-		 * (pmd_clear() followed by tlb_flush()) process can
+-		 * hinder forward progress due to refaults generated
+-		 * on missing translations.
++		 * If we already have PTE level mapping for this block,
++		 * we must unmap it to avoid inconsistent TLB state and
++		 * leaking the table page. We could end up in this situation
++		 * if the memory slot was marked for dirty logging and was
++		 * reverted, leaving PTE level mappings for the pages accessed
++		 * during the period. So, unmap the PTE level mapping for this
++		 * block and retry, as we could have released the upper level
++		 * table in the process.
+ 		 *
+-		 * Skip updating the page table if the entry is
+-		 * unchanged.
++		 * Normal THP split/merge follows mmu_notifier callbacks and do
++		 * get handled accordingly.
+ 		 */
+-		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
+-			return 0;
+-
++		if (!pmd_thp_or_huge(old_pmd)) {
++			unmap_stage2_range(kvm, addr & S2_PMD_MASK, S2_PMD_SIZE);
++			goto retry;
 +		}
+ 		/*
+ 		 * Mapping in huge pages should only happen through a
+ 		 * fault.  If a page is merged into a transparent huge
+@@ -1090,8 +1108,7 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+ 		 * should become splitting first, unmapped, merged,
+ 		 * and mapped back in on-demand.
+ 		 */
+-		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
+-
++		WARN_ON_ONCE(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
+ 		pmd_clear(pmd);
+ 		kvm_tlb_flush_vmid_ipa(kvm, addr);
+ 	} else {
+@@ -1107,6 +1124,7 @@ static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cac
+ {
+ 	pud_t *pudp, old_pud;
  
- 		/* drop the pgmap reference now that we hold the page */
- 		if (pgmap) {
-@@ -280,7 +283,10 @@ retry_locked:
- 			if (pmd_trans_unstable(pmd))
- 				ret = -EBUSY;
- 		} else {
--			get_page(page);
-+			if (unlikely(!try_get_page(page))) {
-+				spin_unlock(ptl);
-+				return ERR_PTR(-ENOMEM);
-+			}
- 			spin_unlock(ptl);
- 			lock_page(page);
- 			ret = split_huge_page(page);
-@@ -464,7 +470,10 @@ static int get_gate_page(struct mm_struc
- 		if (is_device_public_page(*page))
- 			goto unmap;
- 	}
--	get_page(*page);
-+	if (unlikely(!try_get_page(*page))) {
-+		ret = -ENOMEM;
-+		goto unmap;
-+	}
- out:
- 	ret = 0;
- unmap:
-@@ -1365,6 +1374,20 @@ static void undo_dev_pagemap(int *nr, in
- 	}
- }
++retry:
+ 	pudp = stage2_get_pud(kvm, cache, addr);
+ 	VM_BUG_ON(!pudp);
  
-+/*
-+ * Return the compund head page with ref appropriately incremented,
-+ * or NULL if that failed.
-+ */
-+static inline struct page *try_get_compound_head(struct page *page, int refs)
-+{
-+	struct page *head = compound_head(page);
-+	if (WARN_ON_ONCE(page_ref_count(head) < 0))
-+		return NULL;
-+	if (unlikely(!page_cache_add_speculative(head, refs)))
-+		return NULL;
-+	return head;
-+}
-+
- #ifdef __HAVE_ARCH_PTE_SPECIAL
- static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 			 int write, struct page **pages, int *nr)
-@@ -1399,9 +1422,9 @@ static int gup_pte_range(pmd_t pmd, unsi
+@@ -1114,14 +1132,23 @@ static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cac
  
- 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
- 		page = pte_page(pte);
--		head = compound_head(page);
- 
--		if (!page_cache_get_speculative(head))
-+		head = try_get_compound_head(page, 1);
-+		if (!head)
- 			goto pte_unmap;
- 
- 		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
-@@ -1537,8 +1560,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_
- 		refs++;
- 	} while (addr += PAGE_SIZE, addr != end);
- 
--	head = compound_head(pmd_page(orig));
--	if (!page_cache_add_speculative(head, refs)) {
-+	head = try_get_compound_head(pmd_page(orig), refs);
-+	if (!head) {
- 		*nr -= refs;
+ 	/*
+ 	 * A large number of vcpus faulting on the same stage 2 entry,
+-	 * can lead to a refault due to the
+-	 * stage2_pud_clear()/tlb_flush(). Skip updating the page
+-	 * tables if there is no change.
++	 * can lead to a refault due to the stage2_pud_clear()/tlb_flush().
++	 * Skip updating the page tables if there is no change.
+ 	 */
+ 	if (pud_val(old_pud) == pud_val(*new_pudp))
  		return 0;
- 	}
-@@ -1575,8 +1598,8 @@ static int gup_huge_pud(pud_t orig, pud_
- 		refs++;
- 	} while (addr += PAGE_SIZE, addr != end);
  
--	head = compound_head(pud_page(orig));
--	if (!page_cache_add_speculative(head, refs)) {
-+	head = try_get_compound_head(pud_page(orig), refs);
-+	if (!head) {
- 		*nr -= refs;
- 		return 0;
- 	}
-@@ -1612,8 +1635,8 @@ static int gup_huge_pgd(pgd_t orig, pgd_
- 		refs++;
- 	} while (addr += PAGE_SIZE, addr != end);
- 
--	head = compound_head(pgd_page(orig));
--	if (!page_cache_add_speculative(head, refs)) {
-+	head = try_get_compound_head(pgd_page(orig), refs);
-+	if (!head) {
- 		*nr -= refs;
- 		return 0;
- 	}
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4255,6 +4255,19 @@ long follow_hugetlb_page(struct mm_struc
- 
- 		pfn_offset = (vaddr & ~huge_page_mask(h)) >> PAGE_SHIFT;
- 		page = pte_page(huge_ptep_get(pte));
-+
+ 	if (stage2_pud_present(kvm, old_pud)) {
 +		/*
-+		 * Instead of doing 'try_get_page()' below in the same_page
-+		 * loop, just check the count once here.
++		 * If we already have table level mapping for this block, unmap
++		 * the range for this block and retry.
 +		 */
-+		if (unlikely(page_count(page) <= 0)) {
-+			if (pages) {
-+				spin_unlock(ptl);
-+				remainder = 0;
-+				err = -ENOMEM;
-+				break;
-+			}
++		if (!stage2_pud_huge(kvm, old_pud)) {
++			unmap_stage2_range(kvm, addr & S2_PUD_MASK, S2_PUD_SIZE);
++			goto retry;
 +		}
- same_page:
- 		if (pages) {
- 			pages[i] = mem_map_offset(page, pfn_offset);
++
++		WARN_ON_ONCE(kvm_pud_pfn(old_pud) != kvm_pud_pfn(*new_pudp));
+ 		stage2_pud_clear(kvm, pudp);
+ 		kvm_tlb_flush_vmid_ipa(kvm, addr);
+ 	} else {
+-- 
+2.19.1
+
 
 
