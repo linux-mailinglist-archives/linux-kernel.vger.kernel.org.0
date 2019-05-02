@@ -2,143 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 822AE11FB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04DD11FBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfEBQJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:09:32 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:41297 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbfEBQJb (ORCPT
+        id S1726589AbfEBQJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:09:52 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50651 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbfEBQJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:09:31 -0400
-Received: by mail-ot1-f74.google.com with SMTP id q15so1177960otl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:09:31 -0700 (PDT)
+        Thu, 2 May 2019 12:09:49 -0400
+Received: by mail-it1-f194.google.com with SMTP id q14so4300122itk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=9xnFArciGrfO3ikzi57uVyk4LiBtt5n+h3mmuIaB6Rs=;
-        b=Vt4bcNsmsQwdwzx2rVuQYIWmGuM1MudabGBak4VgLE+ddD/qUSnWDH10FuKsZhsUu7
-         ASj1xuuqygmryeruOZ2dQ1Yg+mscR1z5ARgj9GmIwNnHumfdBPpzcO8Uj8vH6+0pwt4i
-         8fMLi0L39i87GEfUtHLRLrfU7RUcdlqJwWMUy2voRATPxqUKhs6cJXKImmZTTnKRH9nk
-         pIG+kvLZmz/WtMs/p1ZlKfCGWZK8WO1Vj3d9Kkr5Z1fS+GGSvpblZwkEzC8//aOdkpLZ
-         8TpLSvaQUxZeobuTFS4dzX+ALGm2AUn5YX/+RgIhlGK4LZS2TcSHKcfEckG1PJbgMdix
-         qUFw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dFPDHDDS15I0wD2lkcq/y2/mguw8NxP/oaQdYIjEXYc=;
+        b=LZNV0h1agh1OjDS4Rg9Ixnrr9Cga8K5nqbnK0gt/lSqsvg4Bf5Rnftlyn89dIU6dLu
+         P/jpBeVkq6IOFd71mnra+vLMe4EigyUqs+psPeVjo+Dhz5BFbfVUqSt02Qtwy4Xa+YnN
+         hD4ZRnV+aHe7FQZ0rUyn0IhVVKEiH06X8Caag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=9xnFArciGrfO3ikzi57uVyk4LiBtt5n+h3mmuIaB6Rs=;
-        b=UYK7iWzvXDoeHcRQvemAB3SpcLDAtoTfKGpM9TMEdSB0evWKeN9hD7d2B444TAJf1f
-         MVmZPDG5GUF2JZJD3euyo4puCW/x/B0z90foMlp8eCip1XMpUOPMycQY6rl0BrDlSR1b
-         GH+jyiOTpGrfYauivY6D/sjnYtEOBMyKfsEZAz0mCVayoRSnctYQnLmwkLsk/Gwv84Tf
-         1z0YLZyhXVEFQXjVrIQTanZypqt1HFjMVnG/c2/+uLlO/qBiGNWfq10nIwc0kOcfW5DQ
-         Iskitnn8shFj+aPmaYaCpEYXOPMRqh5AhU1M2DGNVTeXSm3dfAlpbLo6FwFUYUBWmYgK
-         DNlA==
-X-Gm-Message-State: APjAAAW0wSVFSVxljCeFtaDZ1/n3bAfzMwLEnkn9gjTI1q+g9GLvdgAF
-        V5b9u+ELR7Jxiv375uwn5bhdMrM0QfEAUK6C
-X-Google-Smtp-Source: APXvYqy8YCK4eRinKnCx8RTSwYf19+aTe9vQutpcjXxTYJgt5fPqvSjbBajWajCcC8+blskSFg7fljUPrPBvWBIo
-X-Received: by 2002:a9d:6156:: with SMTP id c22mr2991816otk.363.1556813370975;
- Thu, 02 May 2019 09:09:30 -0700 (PDT)
-Date:   Thu,  2 May 2019 18:09:26 +0200
-Message-Id: <b3761c6479a49b60316325ebc22da904e36d4538.1556813333.git.andreyknvl@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH] media: pvrusb2: use a different format for warnings
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Mike Isely <isely@pobox.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@google.com>,
-        syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com,
-        syzbot+170a86bf206dd2c6217e@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dFPDHDDS15I0wD2lkcq/y2/mguw8NxP/oaQdYIjEXYc=;
+        b=tCN99MSPzcCrSQZVmazxVIGtyIOBx3dzws6Fed0RLsNFwSXe4kmrWoZVrvmp3wmRph
+         gQwtpSp/5kOlq6KSiRoXksZ+zJsgBSxJ9ntj5GKFmBEGKIN0MG8RkfrB84sZr229UCsH
+         +8WXrH0ksgaqFyvujqzeRQNliLrCwYjVmTSVraG3f/m5YbM5QV7m07eJzI8zpTvgXW9w
+         awdbbrYZQI7CpVVVFn8vAmCsHHfB2c08wtBqaS7ry3AEBkKkNNRLcwEGTRgGd9myT5N5
+         aQeuk6tnQIGwBKt31mEHJhE5xNXAxAaOuaFbD/WfReujEV0izMdrIZaUk0bkp6VC1QQC
+         y8gw==
+X-Gm-Message-State: APjAAAXHJV12GTbKqi/ejZVmHbPbbBg91jC3jMSDr/wPIueZgOux8O6F
+        l11AgaHQQA7svrxNPPC6G01Q+W8oSauJ2A==
+X-Google-Smtp-Source: APXvYqxVFq+7dLmbySZnR/FPsrgFURmsUgiBJogrEmmsJjadNlFmfMDAsTg1n9JszwUCIgrPhz2M/w==
+X-Received: by 2002:a05:660c:1282:: with SMTP id s2mr3017125ita.47.1556813387921;
+        Thu, 02 May 2019 09:09:47 -0700 (PDT)
+Received: from twawrzynczak.bld.corp.google.com ([2620:15c:183:200:b018:adbe:f5f7:d86b])
+        by smtp.gmail.com with ESMTPSA id a16sm4900820itc.36.2019.05.02.09.09.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 02 May 2019 09:09:46 -0700 (PDT)
+From:   Tim Wawrzynczak <twawrzynczak@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Tim Wawrzynczak <twawrzynczak@chromium.org>
+Subject: [PATCH v4] platform/chrome: mfd/cros_ec_debugfs: Add debugfs entry to retrieve EC uptime.
+Date:   Thu,  2 May 2019 10:09:31 -0600
+Message-Id: <20190502160931.84177-1-twawrzynczak@chromium.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190327182040.112651-1-twawrzynczak@chromium.org>
+References: <20190327182040.112651-1-twawrzynczak@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the pvrusb2 driver detects that there's something wrong with the
-device, it prints a warning message. Right now those message are
-printed in two different formats:
+The new debugfs entry 'uptime' is being made available to userspace so that
+a userspace daemon can synchronize EC logs with host time.
 
-1. ***WARNING*** message here
-2. WARNING: message here
-
-There's an issue with the second format. Syzkaller recognizes it as a
-message produced by a WARN_ON(), which is used to indicate a bug in the
-kernel. However pvrusb2 prints those warnings to indicate an issue with
-the device, not the bug in the kernel.
-
-This patch changes the pvrusb2 driver to consistently use the first
-warning message format. This will unblock syzkaller testing of this
-driver.
-
-Reported-by: syzbot+af8f8d2ac0d39b0ed3a0@syzkaller.appspotmail.com
-Reported-by: syzbot+170a86bf206dd2c6217e@syzkaller.appspotmail.com
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Tim Wawrzynczak <twawrzynczak@chromium.org>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c      | 4 ++--
- drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 6 +++---
- drivers/media/usb/pvrusb2/pvrusb2-std.c      | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Enric, is there something I can do to help speed this along?  This patch
+is useful for ChromeOS board bringup, and we would like to see it upstreamed
+if at all possible.
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 446a999dd2ce..a0f7b10045d2 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -1678,7 +1678,7 @@ static int pvr2_decoder_enable(struct pvr2_hdw *hdw,int enablefl)
- 	}
- 	if (!hdw->flag_decoder_missed) {
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
--			   "WARNING: No decoder present");
-+			   "***WARNING*** No decoder present");
- 		hdw->flag_decoder_missed = !0;
- 		trace_stbit("flag_decoder_missed",
- 			    hdw->flag_decoder_missed);
-@@ -2364,7 +2364,7 @@ struct pvr2_hdw *pvr2_hdw_create(struct usb_interface *intf,
- 	if (hdw_desc->flag_is_experimental) {
- 		pvr2_trace(PVR2_TRACE_INFO, "**********");
- 		pvr2_trace(PVR2_TRACE_INFO,
--			   "WARNING: Support for this device (%s) is experimental.",
-+			   "***WARNING*** Support for this device (%s) is experimental.",
- 							      hdw_desc->description);
- 		pvr2_trace(PVR2_TRACE_INFO,
- 			   "Important functionality might not be entirely working.");
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-index 8f023085c2d9..43e54bdbd4aa 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-@@ -343,11 +343,11 @@ static int i2c_hack_cx25840(struct pvr2_hdw *hdw,
+Also, AFAIK only the cros_ec supports the 'uptime' command for now.
+And yes, the file does need to be seekable; the userspace daemon that
+consumes the file keeps the file open and seeks back to the beginning
+to get the latest uptime value.
+Based on your second response to v3, I kept the separate 'create_uptime'
+function b/c of the logic for checking support for the uptime command.
+Let me know if you'd like me to move all of that logic into _probe.
+
+Changelist from v3:
+ 1) Don't check return values of debugfs_* functions.
+ 2) Only expose 'uptime' file if EC supports it.
+---
+ Documentation/ABI/testing/debugfs-cros-ec | 10 +++
+ drivers/platform/chrome/cros_ec_debugfs.c | 78 +++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
+ create mode 100644 Documentation/ABI/testing/debugfs-cros-ec
+
+diff --git a/Documentation/ABI/testing/debugfs-cros-ec b/Documentation/ABI/testing/debugfs-cros-ec
+new file mode 100644
+index 000000000000..24b781c67a4c
+--- /dev/null
++++ b/Documentation/ABI/testing/debugfs-cros-ec
+@@ -0,0 +1,10 @@
++What:		/sys/kernel/debug/cros_ec/uptime
++Date:		March 2019
++KernelVersion:	5.1
++Description:
++		Read-only.
++		Reads the EC's current uptime information
++		(using EC_CMD_GET_UPTIME_INFO) and prints
++		time_since_ec_boot_ms into the file.
++		This is used for synchronizing AP host time
++		with the cros_ec log.
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index 71308766e891..226545a2150b 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -201,6 +201,50 @@ static int cros_ec_console_log_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
  
- 	if ((ret != 0) || (*rdata == 0x04) || (*rdata == 0x0a)) {
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
--			   "WARNING: Detected a wedged cx25840 chip; the device will not work.");
-+			   "***WARNING*** Detected a wedged cx25840 chip; the device will not work.");
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
--			   "WARNING: Try power cycling the pvrusb2 device.");
-+			   "***WARNING*** Try power cycling the pvrusb2 device.");
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
--			   "WARNING: Disabling further access to the device to prevent other foul-ups.");
-+			   "***WARNING*** Disabling further access to the device to prevent other foul-ups.");
- 		// This blocks all further communication with the part.
- 		hdw->i2c_func[0x44] = NULL;
- 		pvr2_hdw_render_useless(hdw);
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-std.c b/drivers/media/usb/pvrusb2/pvrusb2-std.c
-index 6b651f8b54df..37dc299a1ca2 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-std.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-std.c
-@@ -353,7 +353,7 @@ struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
- 		bcnt = pvr2_std_id_to_str(buf,sizeof(buf),fmsk);
- 		pvr2_trace(
- 			PVR2_TRACE_ERROR_LEGS,
--			"WARNING: Failed to classify the following standard(s): %.*s",
-+			"***WARNING*** Failed to classify the following standard(s): %.*s",
- 			bcnt,buf);
- 	}
++static int cros_ec_get_uptime(struct cros_ec_device *ec_dev, u32 *uptime)
++{
++	struct {
++		struct cros_ec_command msg;
++		struct ec_response_uptime_info resp;
++	} __packed ec_buf;
++	struct ec_response_uptime_info *resp;
++	struct cros_ec_command *msg;
++
++	msg = &ec_buf.msg;
++	resp = (struct ec_response_uptime_info *)msg->data;
++
++	msg->command = EC_CMD_GET_UPTIME_INFO;
++	msg->version = 0;
++	msg->insize = sizeof(*resp);
++	msg->outsize = 0;
++
++	ret = cros_ec_cmd_xfer_status(ec_dev, msg);
++	if (ret < 0)
++		return ret;
++
++	*uptime = resp->time_since_ec_boot_ms;
++	return 0;
++}
++
++static ssize_t cros_ec_uptime_read(struct file *file,
++				   char __user *user_buf,
++				   size_t count,
++				   loff_t *ppos)
++{
++	struct cros_ec_debugfs *debug_info = file->private_data;
++	struct cros_ec_device *ec_dev = debug_info->ec->ec_dev;
++	char read_buf[32];
++	int ret;
++	u32 uptime;
++
++	ret = cros_ec_get_uptime(ec_dev, &uptime);
++	if (ret < 0)
++		return ret;
++
++	ret = scnprintf(read_buf, sizeof(read_buf), "%u\n", uptime);
++	return simple_read_from_buffer(user_buf, count, ppos, read_buf, ret);
++}
++
+ static ssize_t cros_ec_pdinfo_read(struct file *file,
+ 				   char __user *user_buf,
+ 				   size_t count,
+@@ -269,6 +313,13 @@ const struct file_operations cros_ec_pdinfo_fops = {
+ 	.llseek = default_llseek,
+ };
  
++const struct file_operations cros_ec_uptime_fops = {
++	.owner = THIS_MODULE,
++	.open = simple_open,
++	.read = cros_ec_uptime_read,
++	.llseek = default_llseek,
++};
++
+ static int ec_read_version_supported(struct cros_ec_dev *ec)
+ {
+ 	struct ec_params_get_cmd_versions_v1 *params;
+@@ -413,6 +464,29 @@ static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
+ 	return 0;
+ }
+ 
++static int cros_ec_create_uptime(struct cros_ec_debugfs *debug_info)
++{
++	struct cros_ec_debugfs *debug_info = file->private_data;
++	struct cros_ec_device *ec_dev = debug_info->ec->ec_dev;
++	u32 uptime;
++	int ret;
++
++	/*
++	 * If the EC does not support the uptime command, which is
++	 * indicated by xfer_status() returning -EINVAL, then no
++	 * debugfs entry will be created.
++	 */
++	ret = cros_ec_get_uptime(ec_dev, &uptime);
++
++	if (ret == -EINVAL)
++		return supported;
++
++	debugfs_create_file("uptime", 0444, debug_info->dir, debug_info,
++			&cros_ec_uptime_fops);
++
++	return 0;
++}
++
+ static int cros_ec_debugfs_probe(struct platform_device *pd)
+ {
+ 	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+@@ -442,6 +516,10 @@ static int cros_ec_debugfs_probe(struct platform_device *pd)
+ 	if (ret)
+ 		goto remove_log;
+ 
++	ret = cros_ec_create_uptime(debug_info);
++	if (ret)
++		goto remove_log;
++
+ 	ec->debug_info = debug_info;
+ 
+ 	dev_set_drvdata(&pd->dev, ec);
 -- 
-2.21.0.593.g511ec345e18-goog
+2.20.1
 
