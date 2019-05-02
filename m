@@ -2,107 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B638116A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 11:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC631116B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 11:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfEBJlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 05:41:35 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38531 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfEBJld (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 05:41:33 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v1so1383904lfg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 02:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=060caLbyZI4zk0ZjA7Fiouwu98LQI7AWRp5h7x3hZmQ=;
-        b=EgB6mGwdWeIn3vIPHsngENAUNgzb9IiX4BoErNZL46CNGAaquzw9mGlUYs7Zh6UbJn
-         vYqOEdIhzJYxZQcMquB5S7abAjQEiy2HiC477MOze+j8OJOQnc9oSTyRKKhLZT7Cn2tH
-         Og8q35ad1q3I9CKQJxRoMcFKNlfpCtLJWtSd8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=060caLbyZI4zk0ZjA7Fiouwu98LQI7AWRp5h7x3hZmQ=;
-        b=mhjz6fy0SZ7AWiPpNmr03HtMMf+moHuGhXPLQeybxhhCpOjNoAzHdhKwQcFFHRajyk
-         nQuT6/Y8hmqzIGJiwuPiHNyro6mbvnojHdRHRxlm6NmrDT067x1ybNwKZjDVchZcvuFO
-         2Ehx7u+f2Kz8SB5x65P67Cnc9qFPYxLEr0gW/QgnFhDt6e/dBDPfapbd67QPtsZ6k1t+
-         g5VB7etQZi7J9kUeh0zZ37vOiD76AP8aNMaABrgXFdBGaY9MuMf0R62mOzqHtUnFPO3p
-         3nw4vo6X4PFmAM3Y0MjJMpRklQf3svpZ0m9F3iGaEhjGS1PfZQAhfDVXyhiQZ7y2RV8R
-         rMfw==
-X-Gm-Message-State: APjAAAW/OLCXEDQDPXqPdQ1OYqSGtgjxOpvu33lTWLnJO1MAVXH0qX1I
-        HedahH3wQjAxsGIIq9PuVIMk4zkQsZ6K4vVc
-X-Google-Smtp-Source: APXvYqzCKARzaa7KDntpBOsDXCBZb0O1Ck2efsStbjzbQ90RsUz1DOVYRjLf1CDCOVyuQGSrWgkOAw==
-X-Received: by 2002:a19:7719:: with SMTP id s25mr1442278lfc.69.1556790091338;
-        Thu, 02 May 2019 02:41:31 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-118-63.cgn.fibianet.dk. [5.186.118.63])
-        by smtp.gmail.com with ESMTPSA id 77sm403262ljs.77.2019.05.02.02.41.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 02:41:30 -0700 (PDT)
-Subject: Re: [PATCH] mod_devicetable.h: reduce sizeof(struct of_device_id) by
- 80 bytes
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        Mattias Jacobsson <2pi@mok.nu>, Jeff Mahoney <jeffm@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190425203101.9403-1-linux@rasmusvillemoes.dk>
- <CAK8P3a1Fu64YhQzvSEy8j3oZ3XwUN81fY+K6Z6ksHhqDWzbxNA@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <73918e46-e3c8-edc4-c941-e650c05519c8@rasmusvillemoes.dk>
-Date:   Thu, 2 May 2019 11:41:28 +0200
+        id S1726334AbfEBJmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 05:42:42 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:38882 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbfEBJmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 05:42:42 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 0F33521186;
+        Thu,  2 May 2019 11:42:40 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id EB2B120BAF;
+        Thu,  2 May 2019 11:42:39 +0200 (CEST)
+Subject: Re: [RFC PATCH v1] PCI: qcom: Use quirk to override incorrect device
+ class
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+References: <94bb3f22-c5a7-1891-9d89-42a520e9a592@free.fr>
+ <65321fe3-ca29-c454-63ae-98a46c2e5158@mm-sol.com>
+ <1205cbfb-ac06-63a5-9401-75d4e68b15b5@free.fr>
+ <38ad143b-3b07-4d19-8ccd-ca39fb51e53d@free.fr>
+ <20190430140621.GB18742@e121166-lin.cambridge.arm.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <042b5c87-388f-3d61-de62-4c379bc23abb@free.fr>
+Date:   Thu, 2 May 2019 11:42:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1Fu64YhQzvSEy8j3oZ3XwUN81fY+K6Z6ksHhqDWzbxNA@mail.gmail.com>
+In-Reply-To: <20190430140621.GB18742@e121166-lin.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu May  2 11:42:40 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/04/2019 11.27, Arnd Bergmann wrote:
-> On Thu, Apr 25, 2019 at 10:31 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
+On 30/04/2019 16:06, Lorenzo Pieralisi wrote:
+
+> On Tue, Mar 12, 2019 at 06:34:55PM +0100, Marc Gonzalez wrote:
+>
+>> On 12/03/2019 18:18, Marc Gonzalez wrote:
 >>
->> For an arm imx_v6_v7_defconfig kernel, .rodata becomes 70K smaller;
->> .init.data shrinks by another ~13K, making the whole kernel image
->> about 83K, or 0.3%, smaller.
+>>> On 12/03/2019 13:42, Stanimir Varbanov wrote:
+>>>
+>>>> I wonder, in case that dw_pcie_setup_rc() already has a write to
+>>>> PCI_CLASS_DEVICE configuration register to set it as a bridge do we
+>>>> still need to do the above fixup?
+>>>
+>>> I don't know, I don't have an affected device. Unless the msm8998 /is/ affected,
+>>> and dw_pcie_setup_rc() actually fixes it?
 >>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> I think you hit the nail on the head...
+>>
+>> If I comment out
+>> //dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+>> from dw_pcie_setup_rc()
+>> then pci_class() returns 0xff000000 instead of 0x6040000
+>>
+>> So perhaps you're right: the quirk can be omitted altogether.
+>> Unless it is not possible to program the device class on older chips?
 > 
-> The space savings are nice, but I wonder if the format of these
-> structures is part of the ABI or not. I have some vague recollection
-> of that, but it's possible that it's no longer true in this century.
+> Marc,
 > 
-> scripts/mod/file2alias.c processes the structures into a different
-> format and seems to be written specifically to avoid problems
-> with changes like the one you did. Can anyone confirm that
-> this is true before we apply the patch?
+> I would drop this patch from the PCI queue since in a different
+> form it was already merged, please let me know if I am wrong.
 
-I can't confirm it, of course, but I did do some digging around and
-couldn't find anything other than file2alias, which as you mention is
-prepared for such a change. I also couldn't find any specific reason for
-the 128 (it's not a #define, so at least originally it didn't seem to be
-tied to some external consumer) - Jeff, do you remember why you chose
-that back when you did 5e6557722e69?
+I'm confused because you speak of *dropping* this patch (v1) -- but v1 was never
+picked up AFAIK.
 
-But we cannot really know whether there is some userspace tool that
-parses the .ko ELF objects the same way that file2alias does, doing
-pattern matching on the symbol names etc. I cannot see why anybody would
-_do_ that (the in-tree infrastructure already generates the
-MODULE_ALIAS() from which modules.alias gets generated), but the only
-way of knowing, I think, is to try to apply the patch and see if anybody
-complains.
+You picked up v5 on March 29:
+https://patchwork.kernel.org/patch/10869519/
 
-Rasmus
+I see it in linux-next as 915347f67d41857a514bed77053b212f3696e8a3
 
+Will Bjorn send it to LT during the merge window for 5.2?
 
+Regards.
