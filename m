@@ -2,117 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD3711761
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 12:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E26111767
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 12:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfEBKix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 06:38:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42374 "EHLO mail.kernel.org"
+        id S1726363AbfEBKmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 06:42:42 -0400
+Received: from onstation.org ([52.200.56.107]:36154 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbfEBKix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 06:38:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726242AbfEBKml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 06:42:41 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC922075E;
-        Thu,  2 May 2019 10:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556793531;
-        bh=ORS7MqKgv0S4c66duHHzTYFC3hek0qJa0hLcabmXALQ=;
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 301433E87D;
+        Thu,  2 May 2019 10:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1556793760;
+        bh=K7Cjww+vVyauxok0wNSyRl6X27bdPZhoR2t4aaeUtFg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xxVV4J+M4k5Ushl/VdQC1Foc6e9iXq2TCyCJ7kS1vv7wx5fLcyfjdBIV4HIod41qj
-         WkKz1Evhhg4eMqjjQ08komjHr95SSoKsfEzkKAT/0tsToD5NugJ95ccvzDoITQRWC/
-         i0HvmBTfpYGVnTQt0FfWSp8NsbbNz1zinX81zZbM=
-Date:   Thu, 2 May 2019 12:38:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org
-Subject: Re: [PATCH] clk: actions: Use the correct style for SPDX License
- Identifier
-Message-ID: <20190502103848.GA17256@kroah.com>
-References: <20190501070707.GA5619@nishad>
- <057d9b37-7475-1902-bce7-6d519c2e0fdf@suse.de>
- <20190502070746.GA16247@kroah.com>
- <315de620-b638-aea4-d8d2-e00f5a493625@suse.de>
+        b=gwemzpUmSI4+iFJdNxQg3pyjOTHNRBRpJhAlncFwY3ayBp3GC3/QwUqpRWrpZb96J
+         IWcs+C0KmsxbBrVg+JloYyBigrtfKgO41vsl7cskSvCg5L4TPmE+t+PSts2jiXEAb1
+         WN59mnMTceerjAjqJ4GO0FSs0ZrvXTiVDnWjiin0=
+Date:   Thu, 2 May 2019 06:42:39 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dmurphy@ti.com, jonathan@marek.ca,
+        Daniel Thompson <daniel@redfelineninja.org.uk>
+Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
+ update_status functions
+Message-ID: <20190502104239.GA24563@basecamp>
+References: <20190424092505.6578-1-masneyb@onstation.org>
+ <20190424092505.6578-2-masneyb@onstation.org>
+ <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <315de620-b638-aea4-d8d2-e00f5a493625@suse.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 12:25:36PM +0200, Andreas Färber wrote:
-> Am 02.05.19 um 09:07 schrieb Greg Kroah-Hartman:
-> > On Wed, May 01, 2019 at 10:20:44PM +0200, Andreas Färber wrote:
-> >> + linux-actions
-> >>
-> >> Am 01.05.19 um 09:07 schrieb Nishad Kamdar:
-> >>> This patch corrects the SPDX License Identifier style
-> >>> in header files related to Clock Drivers for Actions Semi Socs.
-> >>> For C header files Documentation/process/license-rules.rst
-> >>> mandates C-like comments (opposed to C source files where
-> >>> C++ style should be used)
-> >> [...]
-> >>>  drivers/clk/actions/owl-common.h       | 2 +-
-> >>>  drivers/clk/actions/owl-composite.h    | 2 +-
-> >>>  drivers/clk/actions/owl-divider.h      | 2 +-
-> >>>  drivers/clk/actions/owl-factor.h       | 2 +-
-> >>>  drivers/clk/actions/owl-fixed-factor.h | 2 +-
-> >>>  drivers/clk/actions/owl-gate.h         | 2 +-
-> >>>  drivers/clk/actions/owl-mux.h          | 2 +-
-> >>>  drivers/clk/actions/owl-pll.h          | 2 +-
-> >>>  drivers/clk/actions/owl-reset.h        | 2 +-
-> >>>  9 files changed, 9 insertions(+), 9 deletions(-)
-> >>
-> >> Where's the practical benefit of this patch? These are all private
-> >> headers used from C files, so they can handle C++ comments just fine,
-> >> otherwise we would've seen build failures.
+On Thu, May 02, 2019 at 11:07:51AM +0100, Daniel Thompson wrote:
+> On 24/04/2019 10:25, Brian Masney wrote:
+> > lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
+> > both return the brightness value if the brightness was successfully
+> > updated. Writing to these attributes via sysfs would cause a 'Bad
+> > address' error to be returned. These functions should return 0 on
+> > success, so let's change it to correct that error.
 > > 
-> > Please read Documentation/process/license-rules.rst, the section
-> > entitled "Style", for what the documented formats are for SPDX lines,
-> > depending on the file type.
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
 > 
-> That does in no way answer my question! You conveniently dropped my
-> paragraph indicating that I understand why we would do that for public
-> headers in include/, but none of these private headers here are included
-> in .lds files. So there really seems to be no benefit of switching from
-> one style to another for in-tree code.
-
-It should answer the question, it was "decreed" that all header files
-use /* */, and all C files use // for their SPDX lines, so we documented
-it that way.
-
-Yes, maybe it doesn't make "sense" in that this really is only needed
-for headers that get included into asm files, which is why we had to do
-it this way, but it's better to be consistant than to have random
-breakages at times.
-
-It's not an issue of public headers at all, sorry.
-
-Consistency is good, as we can have automatic tools check these types of
-things, which is the only way to reliably handle the format of something
-that needs to be in every file in a project with 63,100+ different
-files.
-
-thanks,
-
-greg k-h
+> Hi Brian, sorry for the delay. For some reason your mails are being dumped
+> before they reach me so I only discovered these patches when I paid proper
+> attention to the replies and fetched them from patchwork.
 > 
-> Regards,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> HRB 21284 (AG Nürnberg)
+> Hi Lee, is the same thing happening for you? ;-)
+
+Huh, that's odd. I haven't ran into that issue when working with people
+from Linaro in other subsystems.
+
+As a sanity check, I used 'git send-email' to send this patch to
+check-auth@verifier.port25.com and it verified that I still have SPF,
+DKIM, reverse DNS, etc. all setup properly on this domain.
+
+hotmail.com addresses are the only ones I've had issues with in the
+past, but I doubt you're forwarding your email there. :)
+
+Brian
