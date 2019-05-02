@@ -2,88 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5FC111200
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 06:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7F81120A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 06:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbfEBEBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 00:01:55 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40348 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfEBEBz (ORCPT
+        id S1726191AbfEBEEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 00:04:52 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42450 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfEBEEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 00:01:55 -0400
-Received: by mail-lf1-f67.google.com with SMTP id o16so793755lfl.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 21:01:54 -0700 (PDT)
+        Thu, 2 May 2019 00:04:52 -0400
+Received: by mail-pl1-f193.google.com with SMTP id x15so397958pln.9;
+        Wed, 01 May 2019 21:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wFt7883PSp3sr8375jT8hC/v5fI/cu96gfKmIMdklMc=;
-        b=NL31EuKphJharQ7ownjb9GhREqWgylPR8oRdfySKPZMDjNrY2iEQE+rRHxT4ngNhdt
-         S3dsJVBIj5WOjo2zeN5xhW4Q0JGirUI/rk/HumUBXGZPyY6c/J1IBbu6PR9T1NV5Y0wo
-         oq3rJA7JQDfBlz0eBBDCFI0gPZ23MuCxEtssLK3CzJPda4c/lvmt5xJUeEVYEz/6IAfQ
-         OOx1LWqEaZ/C69l5OxSAB7ViB3GfHPgoJiLsWv49NTYer+IitWd4Skkxi65dDWAJtav6
-         B/w2l2m0I9Wxe+wHEDFd2VXNqAkEstJoKby3kTKWhlMthCaJHtP8Y62rrHurhz+U9nD4
-         F9Zg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rM4F3y1QRq9xFsJANLJ2PQUCgusKq4bJmMsIhz12PE0=;
+        b=Ts+TRyYTEECnYuiapH/JiLE3aOdUcKZNWtildqgDgHamRd1VdgzSGCAWO44xInhGdj
+         +mSemGh+TE4HS0enaJJsBrtkBbEcqWjz1lpnryVQHRWMubhUVwQSTmS9EEIDPhXvjgjU
+         6g+o0scjwM2Wa4GBwJx9KfNyLLX34ZxZRDRKa2cvK6CWUZXFH0y6AEjV9qy3spZmahNA
+         b+SQITUSMYLUc8ch/bNzxbVNjMDumR6A+WyTsRmnX8GEt5nMTj+WfPGejfq+coffthgc
+         ++DUO+WcK0FirgVSRFVswobYbN0c12GGZ64G5JL7y1dbW1ZfpZpkx9vTuLSTED8o15Aa
+         1gWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wFt7883PSp3sr8375jT8hC/v5fI/cu96gfKmIMdklMc=;
-        b=MpQCNxqlXfY9upuwtLBX0xc1o6OUKHvB/Q0DsK+U0cmlChJRtJWiciko80+EyMuF+n
-         Trq7p6Y/U/fCo3soKac/wcv5QeygBaWKw+N/+TCFvSoV27afrS3m4bPOWsm1GocYhRKj
-         XZMYZrfsQWjlC3iKKu7COXKdI/dm/t0fUYhw6TIQw+nwPjgyvDEvjIH76V2avvLpgV/s
-         9X8hOMBdVTCWqpUiSySysYnyt8S0ffVYn62IZYADektraTtlW1KHnZceu200HUfWhj1R
-         +xJQV1a8lW8Dlbpa/QYB+KLpeQ8sOphzMr8vpHqStZDc8YO9Lyr44uSEYt39MXG9wkh2
-         u68A==
-X-Gm-Message-State: APjAAAUyM/jGHyKjoiA1S9mf8AFzkzvlEDXFgWhYWwTnroVeI3ZFcV9H
-        lFlxoOz1AsAHThkowCU6fAS7wbV9CV1Zrm/VogxzRw==
-X-Google-Smtp-Source: APXvYqxzdvzK/rjINuA4zAT9PeOdoZuUwGQBTyS9ONY/hM54JNu3Te4R4w/vTFUvuR1Nv624R8L3skIAT6evE9QmbPY=
-X-Received: by 2002:a19:81d4:: with SMTP id c203mr672545lfd.160.1556769713184;
- Wed, 01 May 2019 21:01:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <1553508779-9685-1-git-send-email-yash.shah@sifive.com>
- <mvmbm1zueya.fsf@suse.de> <mvmpnqcsn6u.fsf@suse.de>
-In-Reply-To: <mvmpnqcsn6u.fsf@suse.de>
-From:   Yash Shah <yash.shah@sifive.com>
-Date:   Thu, 2 May 2019 09:31:16 +0530
-Message-ID: <CAJ2_jOFu-yCZV_A4B48_fLq7h7UA6LUWhgpxr0uuh7vhW9Q8pA@mail.gmail.com>
-Subject: Re: [PATCH v11 0/2] PWM support for HiFive Unleashed
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rM4F3y1QRq9xFsJANLJ2PQUCgusKq4bJmMsIhz12PE0=;
+        b=PIQfgCDkuK6JeaM8WapizqgQYIoEHVzR4evwt9U4hEUUPDxqCNDlSguhadEdALMLh1
+         a2AQEtCa6FgXBLYjkUbo6JtMUoSf+NKSeYyODoeWeZq1F2UL1ChnjgyhTSKrCABE3PiB
+         ahrglisHc/uQp0lJ321PI0qoKfi+ttaSiBSvznCX2PlZJaK3AZrUHbfpRuRpT3my1lg2
+         IwW1rVUW3gofKfZ9J12BsogSYPK0P6Fk4OioyRRd30B49wpqj4hB+Rhci4mcLqPtangr
+         6kuXjFbt2wZB0RQYAQ5QASeALElXZpDSBl1wlLR3efH6M5yxoLzjowDufz4iO9QMZjy0
+         iNzg==
+X-Gm-Message-State: APjAAAUhdwqVlMuycEHwAssfkVJPYJEbEz22/zHr4S752TayfVZcK/3G
+        QUiBNFaZLmeFJi9PmEhatfc=
+X-Google-Smtp-Source: APXvYqwIlSDxRSKdkfXgyWtEN1++MlQ6biUp+2bnooCkGaXvtPFj1C9E0K1kp+y/Rsm678WOZw1y7g==
+X-Received: by 2002:a17:902:b28:: with SMTP id 37mr1260911plq.322.1556769891072;
+        Wed, 01 May 2019 21:04:51 -0700 (PDT)
+Received: from linux-l9pv.suse ([202.47.205.198])
+        by smtp.gmail.com with ESMTPSA id k4sm1107687pgh.27.2019.05.01.21.04.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 01 May 2019 21:04:50 -0700 (PDT)
+From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH 1/2 v2] efi: add a function to convert the status value to string
+Date:   Thu,  2 May 2019 12:04:39 +0800
+Message-Id: <20190502040441.30372-1-jlee@suse.com>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+This function can be used to convert EFI status value to string
+for printing out debug message. Using this function can improve
+the readability of log.
 
-On Wed, Mar 27, 2019 at 2:34 PM Andreas Schwab <schwab@suse.de> wrote:
->
-> I have now found out that the ledtrig modules don't load automatically.
-> I would have expected that the linux,default-trigger entries would cause
-> the load of the corresponding ledtrig modules.
->
-> But there is another problem, that the leds are on by default.
-> Shouldn't they be off by default?
+v2.
+- Changed the wording in subject and description.
+- Moved the marco immediately after the status value definitions.
+- Turned into a proper function instead of inline.
 
-The PWM default output state is high (When duty cycle is 0), So I
-guess leds will remain on by default.
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>
+Cc: Colin Cross <ccross@android.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+---
+ include/linux/efi.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Are you able to test the PWM driver at your end? or you still facing
-some issues?
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 54357a258b35..6f3f89a32eef 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -42,6 +42,34 @@
+ #define EFI_ABORTED		(21 | (1UL << (BITS_PER_LONG-1)))
+ #define EFI_SECURITY_VIOLATION	(26 | (1UL << (BITS_PER_LONG-1)))
+ 
++#define EFI_STATUS_STR(_status) \
++case EFI_##_status: \
++	return "EFI_" __stringify(_status);
++
++static __attribute__((unused)) char *
++efi_status_to_str(unsigned long status)
++{
++	switch (status) {
++	EFI_STATUS_STR(SUCCESS)
++	EFI_STATUS_STR(LOAD_ERROR)
++	EFI_STATUS_STR(INVALID_PARAMETER)
++	EFI_STATUS_STR(UNSUPPORTED)
++	EFI_STATUS_STR(BAD_BUFFER_SIZE)
++	EFI_STATUS_STR(BUFFER_TOO_SMALL)
++	EFI_STATUS_STR(NOT_READY)
++	EFI_STATUS_STR(DEVICE_ERROR)
++	EFI_STATUS_STR(WRITE_PROTECTED)
++	EFI_STATUS_STR(OUT_OF_RESOURCES)
++	EFI_STATUS_STR(NOT_FOUND)
++	EFI_STATUS_STR(ABORTED)
++	EFI_STATUS_STR(SECURITY_VIOLATION)
++	default:
++		pr_warn("Unknown efi status: 0x%lx", status);
++	}
++
++	return "Unknown efi status";
++}
++
+ typedef unsigned long efi_status_t;
+ typedef u8 efi_bool_t;
+ typedef u16 efi_char16_t;		/* UNICODE character */
+-- 
+2.16.4
 
->
-> Andreas.
->
-> --
-> Andreas Schwab, SUSE Labs, schwab@suse.de
-> GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-> "And now for something completely different."
