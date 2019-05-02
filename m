@@ -2,20 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 059BA112D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 07:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF8E6112DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 08:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfEBF7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 01:59:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60998 "EHLO mx1.suse.de"
+        id S1726394AbfEBGAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 02:00:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32932 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725763AbfEBF7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 01:59:51 -0400
+        id S1725763AbfEBGAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 02:00:14 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 439FAABE1;
-        Thu,  2 May 2019 05:59:50 +0000 (UTC)
-Subject: Re: [PATCH 04/24] scsi_transport.h: switch to SPDX tags
+        by mx1.suse.de (Postfix) with ESMTP id D0AD8AEDB;
+        Thu,  2 May 2019 06:00:12 +0000 (UTC)
+Subject: Re: [PATCH 05/24] scsi_transport_fc: remove duplicate GPL boilerplate
+ text
 To:     Christoph Hellwig <hch@lst.de>,
         "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
@@ -27,14 +28,14 @@ Cc:     Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
         linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
         osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
 References: <20190501161417.32592-1-hch@lst.de>
- <20190501161417.32592-5-hch@lst.de>
+ <20190501161417.32592-6-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <90aa5954-1f69-5fd1-1884-a781ff23fcc6@suse.de>
-Date:   Thu, 2 May 2019 07:59:49 +0200
+Message-ID: <0d16d8ef-7236-6d42-769e-b8a53605e198@suse.de>
+Date:   Thu, 2 May 2019 08:00:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190501161417.32592-5-hch@lst.de>
+In-Reply-To: <20190501161417.32592-6-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -44,12 +45,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 5/1/19 6:13 PM, Christoph Hellwig wrote:
-> Use the the GPLv2+ SPDX tag instead of verbose boilerplate text.
+> The FC transport class uapi headers already have proper SPDX tags,
+> remove the duplicate boilerplate text.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   include/scsi/scsi_transport.h | 15 +--------------
->   1 file changed, 1 insertion(+), 14 deletions(-)
+>   include/uapi/scsi/scsi_bsg_fc.h     | 15 ---------------
+>   include/uapi/scsi/scsi_netlink_fc.h | 15 ---------------
+>   2 files changed, 30 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
