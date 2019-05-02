@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D141150F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCE41151E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfEBIKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 04:10:43 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:4616 "EHLO
+        id S1726669AbfEBILJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 04:11:09 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46838 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726501AbfEBIKl (ORCPT
+        by vger.kernel.org with ESMTP id S1726512AbfEBIKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 2 May 2019 04:10:41 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42828ov023662;
-        Thu, 2 May 2019 10:10:22 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42860se006127;
+        Thu, 2 May 2019 10:10:23 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=h21dwqOXVMhoA8LO1eNpVhDbxE/SLRFLO7Ap3IdDFeI=;
- b=F0bY/5bEgMKwbETyNiz52ySJG6Msq9Vx2TPPaizePgPtl4tpTPLAFp9sqtu5f9lyyTFD
- nny2PEcAorwP0206961BnQzqBjMkV/ShE+Qn0yCsbOfN5FhtnaMG1sYxW9YBr58Naarh
- iK1HrQ9zDo9eNj2+t4UPAyM1n1mesUF1XQWPiuI4QxuWIHtFdTLzk029cDzvYIRprAcJ
- t8+d0SIHIyKCM5vhEe8stqtrYkKZw51qe4Sm72bPwFVfJ/klJL0USepFC8hq/dFtbpJk
- alHpnpjJ6xQMqbwGBZodX5mac1dU2eQnj9lFsIrDmiIjhMDKr4dPGTUJRSt7FeiOhBZs rA== 
+ bh=d6E9IXGLFgoY3c/GRqylXXvGDNAabRYzqsWi4VZvanE=;
+ b=jcTkc4IqNIr0RJVyrs1tMoLu24HNwWmjmblF3YXBu2xFxEQQ2WRQLyuO0bNzr9gBuH8O
+ wqoNYdf6YLKy7WPE1Q3ILDOyL/LMKvGNuCyMk0nfvKIRS/cLZ0xcYZiwGIf4g4YLYGBR
+ 49LLvZgfdr3aCjHgIbe7X0o6GbWIlCzCK7IVDqTD/Tv2TIbelbQVLxvcB/kwiv+eJijc
+ Z6gi/lFLtzC41rwubmpWbtkJ5zl+2wqgKzUS3TgO+rd+1EnPzJR0Wwzby+6l7BEY+Rxt
+ dJfv0U0YxX3E/aBwdKdRK8RaqxNqPG/8rK3QfDiw8+AngooBLWeUvsCNrzccq/vrYuYc bQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2s6xhbf3r3-1
+        by mx08-00178001.pphosted.com with ESMTP id 2s6xgcq4a8-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 02 May 2019 10:10:22 +0200
+        Thu, 02 May 2019 10:10:23 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F3A2E38;
-        Thu,  2 May 2019 08:10:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB9E1EDE;
-        Thu,  2 May 2019 08:10:21 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 2 May 2019
- 10:10:21 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1F60538;
+        Thu,  2 May 2019 08:10:23 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id ECAE3EDE;
+        Thu,  2 May 2019 08:10:22 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019
+ 10:10:22 +0200
 Received: from localhost (10.129.4.86) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019 10:10:21 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019 10:10:22 +0200
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -55,9 +55,9 @@ CC:     Fabien Dessenne <fabien.dessenne@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         "Ludovic Barre" <ludovic.barre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3 4/8] ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
-Date:   Thu, 2 May 2019 10:10:02 +0200
-Message-ID: <1556784606-3016-5-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH v3 5/8] ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+Date:   Thu, 2 May 2019 10:10:03 +0200
+Message-ID: <1556784606-3016-6-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
@@ -71,42 +71,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Declare the M4 remote processor in a sub-node of the mlahb simple bus.
+Declare reserved memories shared by the processors for STM32MP157c-ed1
+board.
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index c664b55..e8d3b00 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -1242,4 +1242,24 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index 626ceb3..acfc5cd 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -21,6 +21,48 @@
+ 		reg = <0xC0000000 0x40000000>;
  	};
-+
-+	mlahb {
-+		compatible = "simple-bus";
+ 
++	reserved-memory {
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		dma-ranges = <0x00000000 0x38000000 0x10000>,
-+			     <0x10000000 0x10000000 0x60000>,
-+			     <0x30000000 0x30000000 0x60000>;
++		ranges;
 +
-+		m4_rproc: m4@38000000 {
-+			compatible = "st,stm32mp1-m4";
-+			reg = <0x00000000 0x10000>,
-+			      <0x10000000 0x40000>,
-+			      <0x30000000 0x40000>;
-+			resets = <&rcc MCU_R>;
-+			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
-+			st,syscfg-tz = <&rcc 0x000 0x1>;
-+			status = "disabled";
++		mcuram2: mcuram2@10000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10000000 0x40000>;
++			no-map;
++		};
++
++		vdev0vring0: vdev0vring0@10040000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10040000 0x1000>;
++			no-map;
++		};
++
++		vdev0vring1: vdev0vring1@10041000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10041000 0x1000>;
++			no-map;
++		};
++
++		vdev0buffer: vdev0buffer@10042000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10042000 0x4000>;
++			no-map;
++		};
++
++		mcuram: mcuram@30000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x30000000 0x40000>;
++			no-map;
++		};
++
++		retram: retram@38000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x38000000 0x10000>;
++			no-map;
 +		};
 +	};
- };
++
+ 	aliases {
+ 		serial0 = &uart4;
+ 	};
 -- 
 2.7.4
 
