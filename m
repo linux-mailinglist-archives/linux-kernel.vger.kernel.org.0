@@ -2,269 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B2E11323
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 08:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C9611347
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 08:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfEBGIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 02:08:50 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41590 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfEBGIs (ORCPT
+        id S1726336AbfEBGTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 02:19:39 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:8295 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726202AbfEBGTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 02:08:48 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 188so609382pfd.8;
-        Wed, 01 May 2019 23:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WmtQTHpqD8h10ZK1NxAw5cdZrq5WyjBaKApCo1yE804=;
-        b=Y7I8E/jv4MaKIw9Q6kOe0VW6Gp7vDzRRr6sx99FX6ovTaDd5JN+REGH6mPpGJgIjWr
-         RBAknQmh57VGzd7bMlRxoLAWteR7LFQnzHT3vfAjGUtqJmR4O+b7nBpbUWDcsL9Qzt1d
-         O9txtvOcBMih0U+oT6EVA/YqCKqw3z7/lFfwxrV+tD7HYRxBSthh5XZlJodfAvnV7W+A
-         XXy88/9OEs3IkIME9wya2tzZFWk9JcNnpljG0FR3Je2ny1As2g40H4xFEq3AU5V70vEO
-         eFDlmvEpZKWZBWHWfYirgypq/ShC0Zu6DSFSsX1gmjCE/0oRKwL8bs9onvC3HP2aSk5X
-         KAJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WmtQTHpqD8h10ZK1NxAw5cdZrq5WyjBaKApCo1yE804=;
-        b=UHr3neN4SS6DMdT5jToBeDdyUQRr0bDQ9XpCEXP98QAXMBQie1Vu8r1HNkjzqYxDVT
-         YKR+NL9A8IHuLs0omoHFTjcycCUj2DXt+CB/dH1TpeMEiUVkP9B/x/DyeURSAK7Equd8
-         EfpGAaBp8CGJ1FqZatc+SVJWF/cslrQpD0zOdEqPRGlMJnJ01YCrzB8x0NqkZG2b91Ni
-         ltTml1Pownn1VLHaXEHPM68XrbTRdoeqDFu0oPmuB14MDovYpP0dFJZP4srP2U1WXDpm
-         iOhicSIwEzzGeanjN5ehW5oBcHtZ8Kk85QUgN/nq9bYZzhUeOVdTjsi0cvBBZL+eMeQ1
-         PXHw==
-X-Gm-Message-State: APjAAAX9d2ll/ufPsvALhmEe57QljCB3bXjTow0AmQSVJJpv91AyPm1a
-        JkCy+Se4E1QHOSQGyJHa6Zs=
-X-Google-Smtp-Source: APXvYqyUqeL06JvMAGAtVCQXjFCn944o7wjsR+9BvTufEe9daCN/GlLCYU5ekfZ4t2FaoCUhwJP3iQ==
-X-Received: by 2002:a63:2c06:: with SMTP id s6mr2162000pgs.245.1556777326331;
-        Wed, 01 May 2019 23:08:46 -0700 (PDT)
-Received: from gmail.com (c-73-140-212-29.hsd1.wa.comcast.net. [73.140.212.29])
-        by smtp.gmail.com with ESMTPSA id k9sm50059546pga.22.2019.05.01.23.08.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 23:08:45 -0700 (PDT)
-Date:   Wed, 1 May 2019 23:08:43 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Dmitry Safonov <dima@arista.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCHv3 19/27] timens/fs/proc: Introduce
- /proc/pid/timens_offsets
-Message-ID: <20190502060842.GA4608@gmail.com>
-References: <20190425161416.26600-1-dima@arista.com>
- <20190425161416.26600-20-dima@arista.com>
- <CAG48ez1ws9qXyNHfScY1RoajG=pquFe4y9QpM1c_xtPSeC2SNA@mail.gmail.com>
+        Thu, 2 May 2019 02:19:39 -0400
+X-UUID: 7e95605b17544ffc80cac70bcfe2c597-20190502
+X-UUID: 7e95605b17544ffc80cac70bcfe2c597-20190502
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <roger.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 759783719; Thu, 02 May 2019 14:19:33 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 May 2019 14:19:31 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 2 May 2019 14:19:31 +0800
+Message-ID: <1556777971.12123.35.camel@mtksdaap41>
+Subject: Re: [RFC v1 1/3] dt-bindings: soc: add mtk svs dt-bindings
+From:   Roger Lu <roger.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, "Kevin Hilman" <khilman@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <Angus.Lin@mediatek.com>,
+        <Andy-YT.Liu@mediatek.com>
+Date:   Thu, 2 May 2019 14:19:31 +0800
+In-Reply-To: <155665629219.168659.8221738507474891604@swboyd.mtv.corp.google.com>
+References: <20190430112012.4514-1-roger.lu@mediatek.com>
+         <20190430112012.4514-2-roger.lu@mediatek.com>
+         <155665629219.168659.8221738507474891604@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1ws9qXyNHfScY1RoajG=pquFe4y9QpM1c_xtPSeC2SNA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 2E2F08777EB39D1A247C11B19DDF97D305EB6283DD65100F47975443F62BB5352000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jann,
+Dear Stephen,
 
-Thank you for the review. Here are a few comments inline.
+Thanks for the review.
 
-On Thu, Apr 25, 2019 at 08:16:41PM +0200, Jann Horn wrote:
-> On Thu, Apr 25, 2019 at 6:15 PM Dmitry Safonov <dima@arista.com> wrote:
-> > API to set time namespace offsets for children processes, i.e.:
-> > echo "clockid off_ses off_nsec" > /proc/self/timens_offsets
-> [...]
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 6a803a0b75df..76d58e9b5178 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> [...]
-> > @@ -1521,6 +1522,103 @@ static const struct file_operations proc_pid_sched_autogroup_operations = {
-> >
-> >  #endif /* CONFIG_SCHED_AUTOGROUP */
-> >
-> > +#ifdef CONFIG_TIME_NS
-> > +static int timens_offsets_show(struct seq_file *m, void *v)
-> > +{
-> > +       struct inode *inode = m->private;
-> > +       struct task_struct *p;
+On Tue, 2019-04-30 at 13:31 -0700, Stephen Boyd wrote:
+> Quoting Roger Lu (2019-04-30 04:20:10)
+> > Document the binding for enabling mtk svs on MediaTek SoC.
+> > 
+> > Signed-off-by: Roger Lu <roger.lu@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/power/mtk-svs.txt     | 70 +++++++++++++++++++
+> >  1 file changed, 70 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/power/mtk-svs.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/power/mtk-svs.txt b/Documentation/devicetree/bindings/power/mtk-svs.txt
+> > new file mode 100644
+> > index 000000000000..355329db74ba
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/mtk-svs.txt
+> > @@ -0,0 +1,70 @@
+> > +* Mediatek Smart Voltage Scaling (MTK SVS)
 > > +
-> > +       p = get_proc_task(inode);
+> > +This describes the device tree binding for the MTK SVS controller
+> > +which helps provide the optimized CPU/GPU/CCI voltages. This device also
+> > +needs thermal data to calculate thermal slope for accurately compensate
+> > +the voltages when temperature change.
+> > +
+> > +Required properties:
+> > +- compatible:
+> > +  - "mediatek,mt8183-svs" : For MT8183 family of SoCs
+> > +- reg: Address range of the MTK SVS controller.
+> > +- interrupts: IRQ for the MTK SVS controller.
+> > +- clocks, clock-names: Clocks needed for the svs controller. required
+> > +                       clocks are:
+> > +                      "main_clk": Main clock needed for register access
+> > +- nvmem-cells: Phandle to the calibration data provided by a nvmem device.
+> > +- nvmem-cell-names: Should be "svs-calibration-data" and "calibration-data"
+> > +- svs_xxx: Phandle of svs_bank device for controlling corresponding opp
 > 
-> (FYI, this could also be "p = get_proc_task(file_inode(m->file));".
-> But this works, too.)
-> 
-> > +       if (!p)
-> > +               return -ESRCH;
-> > +       proc_timens_show_offsets(p, m);
-> > +
-> > +       put_task_struct(p);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static ssize_t
-> > +timens_offsets_write(struct file *file, const char __user *buf,
-> > +           size_t count, loff_t *ppos)
-> > +{
-> > +       struct inode *inode = file_inode(file);
-> > +       struct proc_timens_offset offsets[2];
-> > +       char *kbuf = NULL, *pos, *next_line;
-> > +       struct task_struct *p;
-> > +       int ret, noffsets;
-> > +
-> > +       /* Only allow < page size writes at the beginning of the file */
-> > +       if ((*ppos != 0) || (count >= PAGE_SIZE))
-> > +               return -EINVAL;
-> > +
-> > +       /* Slurp in the user data */
-> > +       kbuf = memdup_user_nul(buf, count);
-> > +       if (IS_ERR(kbuf))
-> > +               return PTR_ERR(kbuf);
-> > +
-> > +       /* Parse the user data */
-> > +       ret = -EINVAL;
-> > +       noffsets = 0;
-> > +       pos = kbuf;
-> > +       for (; pos; pos = next_line) {
-> > +               struct proc_timens_offset *off = &offsets[noffsets];
-> > +               int err;
-> > +
-> > +               /* Find the end of line and ensure I don't look past it */
-> > +               next_line = strchr(pos, '\n');
-> > +               if (next_line) {
-> > +                       *next_line = '\0';
-> > +                       next_line++;
-> > +                       if (*next_line == '\0')
-> > +                               next_line = NULL;
-> > +               }
-> > +
-> > +               err = sscanf(pos, "%u %lld %lu", &off->clockid,
-> > +                               &off->val.tv_sec, &off->val.tv_nsec);
-> > +               if (err != 3 || off->val.tv_nsec >= NSEC_PER_SEC)
-> > +                       goto out;
-> > +               if (noffsets++ == ARRAY_SIZE(offsets))
-> > +                       break;
-> 
-> This is equivalent to:
-> 
-> if (noffsets == ARRAY_SIZE(offsets)) {
-	  noffsets++;
->         break;
-  }
-> noffsets++;
-> 
-> So we can reach the start of the loop with
-> noffsets==ARRAY_SIZE(offsets), right? Which means that an
-> out-of-bounds write can happen?
-
-good catch. I will add a test for this case.
+> Properties shouldn't have underscores in them. Use dashes?
+Ok. I'll use dashes.
 
 > 
-> I think that for code like this, it makes sense to write the increment
-> and the check out separately so that it's easier to spot problems;
-> e.g. like this:
+> > +           table and power-domains.
+> > +- vxxx-supply: Phandle to each regulator. vxxx can be "vcpu_little",
+> > +              "vcpu_big", "vcci" and "vgpu".
+> > +
+> > +Example:
+> > +
+> > +       svs: svs@1100b000 {
+> > +               compatible = "mediatek,mt8183-svs";
+> > +               reg = <0 0x1100b000 0 0x1000>;
+> > +               interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW 0>;
+> > +               clocks = <&infracfg CLK_INFRA_THERM>;
+> > +               clock-names = "main_clk";
+> > +               nvmem-cells = <&svs_calibration>, <&thermal_calibration>;
+> > +               nvmem-cell-names = "svs-calibration-data", "calibration-data";
+> > +
+> > +               svs_cpu_little: svs_cpu_little {
+> > +                       compatible = "mediatek,mt8183-svs-cpu-little";
+> > +                       operating-points-v2 = <&cluster0_opp>;
+> > +               };
+> > +
+> > +               svs_cpu_big: svs_cpu_big {
+> > +                       compatible = "mediatek,mt8183-svs-cpu-big";
+> > +                       operating-points-v2 = <&cluster1_opp>;
+> > +               };
+> > +
+> > +               svs_cci: svs_cci {
+> > +                       compatible = "mediatek,mt8183-svs-cci";
+> > +                       operating-points-v2 = <&cluster2_opp>;
+> > +               };
+> > +
+> > +               svs_gpu: svs_gpu {
+> > +                       compatible = "mediatek,mt8183-svs-gpu";
+> > +                       power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_2D>;
+> > +                       operating-points-v2 = <&gpu_opp_table>;
+> > +               };
 > 
-> noffsets++;
-> if (noffsets == ARRAY_SIZE(offsets))
->         break;
+> It looks like you need multiple OPPs for a single device, because it has
+> different independent power supplies it wants to associate the OPP
+> tables with?
+Yes. SVS has different controllers inside the hardware in order to
+calculate and optimize different OPP table voltage part.
 
-will rewrite this way. Thanks!
+> Why can't these OPP tables be attached to the devices that
+> use them, i.e. CPU, GPU, CCI, etc.? Seems odd that those devices don't
+> have OPP tables that this hardware block can look up somehow.
+Those OPP tables are attached by our DVFS node (please refers below
+patch). SVS just shares with their OPP table and help optimize these OPP
+tables' voltage part.
+
+Add cpufreq DTS node to the mt8183 and mt8183-evb
+https://patchwork.kernel.org/patch/10921675/
+
+
+> Similarly,
+> the power domains should probably be part of the devices that are using
+> them and not these sub-nodes that are mirroring the other hardware
+> blocks in the system?
+Oh. There is a svs controller in GPU power-domain. We need to turn on
+GPU power so that svs controller can work functionally. Therefore, we
+add GPU power-domains in our svs_gpu sub-node.
+
 
 > 
-> > +       }
+> > +       };
 > > +
-> > +       ret = -ESRCH;
-> > +       p = get_proc_task(inode);
-> > +       if (!p)
-> > +               goto out;
-> > +       ret = proc_timens_set_offset(p, offsets, noffsets);
-> > +       put_task_struct(p);
-> > +       if (ret)
-> > +               goto out;
-> > +
-> > +       ret = count;
-> > +out:
-> > +       kfree(kbuf);
-> > +       return ret;
-> > +}
-> > +
-> > +static int timens_offsets_open(struct inode *inode, struct file *filp)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = single_open(filp, timens_offsets_show, NULL);
-> > +       if (!ret) {
-> > +               struct seq_file *m = filp->private_data;
-> > +
-> > +               m->private = inode;
-> > +       }
-> > +       return ret;
-> > +}
+> > +       &svs_cpu_little {
 > 
-> Why did you write it like this? Wouldn't the following be equivalent?
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
-Probably I looked at sched_autogroup_open
 
-> 
-> static int timens_offsets_open(struct inode *inode, struct file *file)
-> {
->         return single_open(file, timens_offsets_show, inode);
-> }
-> 
-> (But also, you can reach the inode of a seq_file as file_inode(m->file).)
-> 
-> [...]
-> > diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
-> > index e806accc4eaf..9ad4b63c4ed2 100644
-> > --- a/kernel/time_namespace.c
-> > +++ b/kernel/time_namespace.c
-> [...]
-> > +
-> > +int proc_timens_set_offset(struct task_struct *p,
-> > +                          struct proc_timens_offset *offsets, int noffsets)
-> > +{
-> > +       struct ns_common *ns;
-> > +       struct time_namespace *time_ns;
-> > +       struct timens_offsets *ns_offsets;
-> > +       struct timespec64 *offset;
-> > +       struct timespec64 tp;
-> > +       int i, err;
-> > +
-> > +       ns = timens_for_children_get(p);
-> > +       if (!ns)
-> > +               return -ESRCH;
-> > +       time_ns = to_time_ns(ns);
-> > +
-> > +       if (!time_ns->offsets || time_ns->initialized ||
-> > +           !ns_capable(time_ns->user_ns, CAP_SYS_TIME)) {
-> 
-> Capability checks in VFS read/write handlers are bad. Please pass
-> through the file pointer to this function and replace the call with
-> "file_ns_capable(file, time_ns->user_ns, CAP_SYS_TIME)".
-
-Will fix. Thanks!
-> 
-> > +               put_time_ns(time_ns);
-> > +               return -EPERM;
-> > +       }
-> [...]
-> > +}
