@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2166911CD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 937AC11C99
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfEBPZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:25:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
+        id S1726803AbfEBPWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727040AbfEBPZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:25:23 -0400
+        id S1726711AbfEBPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:22:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC2CE2081C;
-        Thu,  2 May 2019 15:25:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2B0E214DA;
+        Thu,  2 May 2019 15:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810722;
-        bh=u5BK6ImEGbM0YWKuKATM4tD/cWtn4clQb4UjM9HLQFA=;
+        s=default; t=1556810561;
+        bh=wn9NK9BonpFtix8c3B2GMJjIcTZDq56qxvXJhz5UG1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TrFI1T1PHbi37HFqdl3kVLlwujQIoyY2aCDWg6tCuDAkBEN9szp28BVOoq297Hp/z
-         +in1Noq/fyNeRYch/RtpI3yDs7kWsSaVtvCLwkF3IA0r1LZLZqIDcT3KA73f1yoj8w
-         HKzDVOsj31Z7KruUYiJXOkG9ukLeWzfxXY2RcfWc=
+        b=oKwDDiSTgmkq0Dj7QASfpPReynxM6UgBcS04WVWsLSZ0+nmsTonFyMVVCoAl8RZXM
+         ocPgUyQq4gSqZE7XA+UqmxCR/jLeENvOyqRw/LTG9qZWjKeweDOTGh2Jcf/F2qv6O4
+         cdHM15voO+FF1mifYKHQuaZuabPPg2N8cZU7F4cw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Wingman Kwok <w-kwok2@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.14 35/49] net: ethernet: ti: fix possible object reference leak
-Date:   Thu,  2 May 2019 17:21:12 +0200
-Message-Id: <20190502143328.292206371@linuxfoundation.org>
+Subject: [PATCH 4.9 27/32] scsi: zfcp: reduce flood of fcrscn1 trace records on multi-element RSCN
+Date:   Thu,  2 May 2019 17:21:13 +0200
+Message-Id: <20190502143322.130184791@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
-References: <20190502143323.397051088@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 75eac7b5f68b0a0671e795ac636457ee27cc11d8 ]
+[ Upstream commit c8206579175c34a2546de8a74262456278a7795a ]
 
-The call to of_get_child_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+If an incoming ELS of type RSCN contains more than one element, zfcp
+suboptimally causes repeated erp trigger NOP trace records for each
+previously failed port. These could be ports that went away.  It loops over
+each RSCN element, and for each of those in an inner loop over all
+zfcp_ports.
 
-Detected by coccinelle with the following warnings:
-./drivers/net/ethernet/ti/netcp_ethss.c:3661:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3654, but without a corresponding object release within this function.
-./drivers/net/ethernet/ti/netcp_ethss.c:3665:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3654, but without a corresponding object release within this function.
+The trigger to recover failed ports should be just the reception of some
+RSCN, no matter how many elements it has. So we can loop over failed ports
+separately, and only then loop over each RSCN element to handle the
+non-failed ports.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Wingman Kwok <w-kwok2@ti.com>
-Cc: Murali Karicheri <m-karicheri2@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The call chain was:
+
+  zfcp_fc_incoming_rscn
+    for (i = 1; i < no_entries; i++)
+      _zfcp_fc_incoming_rscn
+        list_for_each_entry(port, &adapter->port_list, list)
+          if (masked port->d_id match) zfcp_fc_test_link
+          if (!port->d_id) zfcp_erp_port_reopen "fcrscn1"   <===
+
+In order the reduce the "flooding" of the REC trace area in such cases, we
+factor out handling the failed ports to be outside of the entries loop:
+
+  zfcp_fc_incoming_rscn
+    if (no_entries > 1)                                     <===
+      list_for_each_entry(port, &adapter->port_list, list)  <===
+        if (!port->d_id) zfcp_erp_port_reopen "fcrscn1"     <===
+    for (i = 1; i < no_entries; i++)
+      _zfcp_fc_incoming_rscn
+        list_for_each_entry(port, &adapter->port_list, list)
+          if (masked port->d_id match) zfcp_fc_test_link
+
+Abbreviated example trace records before this code change:
+
+Tag            : fcrscn1
+WWPN           : 0x500507630310d327
+ERP want       : 0x02
+ERP need       : 0x02
+
+Tag            : fcrscn1
+WWPN           : 0x500507630310d327
+ERP want       : 0x02
+ERP need       : 0x00                 NOP => superfluous trace record
+
+The last trace entry repeats if there are more than 2 RSCN elements.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/ti/netcp_ethss.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/s390/scsi/zfcp_fc.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 28cb38af1a34..ff7a71ca0b13 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -3538,12 +3538,16 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+diff --git a/drivers/s390/scsi/zfcp_fc.c b/drivers/s390/scsi/zfcp_fc.c
+index 237688af179b..f7630cf581cd 100644
+--- a/drivers/s390/scsi/zfcp_fc.c
++++ b/drivers/s390/scsi/zfcp_fc.c
+@@ -238,10 +238,6 @@ static void _zfcp_fc_incoming_rscn(struct zfcp_fsf_req *fsf_req, u32 range,
+ 	list_for_each_entry(port, &adapter->port_list, list) {
+ 		if ((port->d_id & range) == (ntoh24(page->rscn_fid) & range))
+ 			zfcp_fc_test_link(port);
+-		if (!port->d_id)
+-			zfcp_erp_port_reopen(port,
+-					     ZFCP_STATUS_COMMON_ERP_FAILED,
+-					     "fcrscn1");
+ 	}
+ 	read_unlock_irqrestore(&adapter->port_list_lock, flags);
+ }
+@@ -249,6 +245,7 @@ static void _zfcp_fc_incoming_rscn(struct zfcp_fsf_req *fsf_req, u32 range,
+ static void zfcp_fc_incoming_rscn(struct zfcp_fsf_req *fsf_req)
+ {
+ 	struct fsf_status_read_buffer *status_buffer = (void *)fsf_req->data;
++	struct zfcp_adapter *adapter = fsf_req->adapter;
+ 	struct fc_els_rscn *head;
+ 	struct fc_els_rscn_page *page;
+ 	u16 i;
+@@ -261,6 +258,22 @@ static void zfcp_fc_incoming_rscn(struct zfcp_fsf_req *fsf_req)
+ 	/* see FC-FS */
+ 	no_entries = head->rscn_plen / sizeof(struct fc_els_rscn_page);
  
- 	ret = netcp_txpipe_init(&gbe_dev->tx_pipe, netcp_device,
- 				gbe_dev->dma_chan_name, gbe_dev->tx_queue_id);
--	if (ret)
-+	if (ret) {
-+		of_node_put(interfaces);
- 		return ret;
++	if (no_entries > 1) {
++		/* handle failed ports */
++		unsigned long flags;
++		struct zfcp_port *port;
++
++		read_lock_irqsave(&adapter->port_list_lock, flags);
++		list_for_each_entry(port, &adapter->port_list, list) {
++			if (port->d_id)
++				continue;
++			zfcp_erp_port_reopen(port,
++					     ZFCP_STATUS_COMMON_ERP_FAILED,
++					     "fcrscn1");
++		}
++		read_unlock_irqrestore(&adapter->port_list_lock, flags);
 +	}
- 
- 	ret = netcp_txpipe_open(&gbe_dev->tx_pipe);
--	if (ret)
-+	if (ret) {
-+		of_node_put(interfaces);
- 		return ret;
-+	}
- 
- 	/* Create network interfaces */
- 	INIT_LIST_HEAD(&gbe_dev->gbe_intf_head);
++
+ 	for (i = 1; i < no_entries; i++) {
+ 		/* skip head and start with 1st element */
+ 		page++;
 -- 
 2.19.1
 
