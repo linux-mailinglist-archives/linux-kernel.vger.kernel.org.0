@@ -2,128 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F7E11F91
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81C2411F7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfEBPyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:54:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:43578 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEBPyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:54:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 08:54:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,422,1549958400"; 
-   d="scan'208";a="320874382"
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga005.jf.intel.com with ESMTP; 02 May 2019 08:54:33 -0700
-Message-ID: <5b2c6cee345e00182e97842ae90c02cdcd830135.camel@intel.com>
-Subject: Re: [PATCH] binfmt_elf: Extract .note.gnu.property from an ELF file
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org
-Date:   Thu, 02 May 2019 08:47:06 -0700
-In-Reply-To: <20190502111003.GO3567@e103592.cambridge.arm.com>
-References: <20190501211217.5039-1-yu-cheng.yu@intel.com>
-         <20190502111003.GO3567@e103592.cambridge.arm.com>
+        id S1727380AbfEBPsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:48:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726958AbfEBPsl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:48:41 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42Fl4El006839
+        for <linux-kernel@vger.kernel.org>; Thu, 2 May 2019 11:48:40 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2s81j3x4xp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 11:48:39 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 2 May 2019 16:48:38 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 2 May 2019 16:48:34 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x42FmX7O47448276
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 May 2019 15:48:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2EC26A404D;
+        Thu,  2 May 2019 15:48:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E117A4051;
+        Thu,  2 May 2019 15:48:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.175])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  2 May 2019 15:48:31 +0000 (GMT)
+Subject: Re: [PATCH] kexec_buffer measure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     prakhar srivastava <prsriva02@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>
+Date:   Thu, 02 May 2019 11:48:21 -0400
+In-Reply-To: <1555978681.4914.305.camel@linux.ibm.com>
+References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+         <1555978681.4914.305.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050215-0012-0000-0000-000003179DCD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050215-0013-0000-0000-000021500DB5
+Message-Id: <1556812101.4134.28.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=975 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905020105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-05-02 at 12:10 +0100, Dave Martin wrote:
-> On Wed, May 01, 2019 at 02:12:17PM -0700, Yu-cheng Yu wrote:
-> > An ELF file's .note.gnu.property indicates features the executable file
-> > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
-> > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
-> > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
+[Cc'ing Paul, John, Casey]
 
-[...]
-> A couple of questions before I look in more detail:
+On Mon, 2019-04-22 at 20:18 -0400, Mimi Zohar wrote:
+> [Cc'ing LSM mailing list]
 > 
-> 1) Can we rely on PT_GNU_PROPERTY being present in the phdrs to describe
-> the NT_GNU_PROPERTY_TYPE_0 note?  If so, we can avoid trying to parse
-> irrelevant PT_NOTE segments.
+> On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
+> 
+> > 2) Adding a LSM hook
+> > We are doing both the command line and kernel version measurement in IMA.
+> > Can you please elaborate on how this can be used outside of the scenario?
+> > That will help me come back with a better design and code. I am
+> > neutral about this.
+> 
+> As I said previously, initially you might want to only measure the
+> kexec boot command line, but will you ever want to verify or audit log
+> the boot command line hash?  Perhaps LSMs would be interested in the
+> boot command line.  Should this be an LSM hook?
 
-Some older linkers can create multiples of NT_GNU_PROPERTY_TYPE_0.  The code
-scans all PT_NOTE segments to ensure there is only one NT_GNU_PROPERTY_TYPE_0. 
-If there are multiples, then all are considered invalid.
+From an LSM perspective, is there any interest in the boot command line?
 
-> 
-> 
-> 2) Are there standard types for things like the program property header?
-> If not, can we add something in elf.h?  We should try to coordinate with
-> libc on that.  Something like
-> 
-> typedef __u32 Elf_Word;
-> 
-> typedef struct {
-> 	Elf_Word pr_type;
-> 	Elf_Word pr_datasz;
-> } Elf_Gnu_Prophdr;
-> 
-> (i.e., just the header part from [1], with a more specific name -- which
-> I just made up).
-
-Yes, I will fix that.
-
-[...]
-> 3) It looks like we have to go and re-parse all the notes for every
-> property requested by the arch code.
-
-As explained above, it is necessary to scan all PT_NOTE segments.  But there
-should be only one NT_GNU_PROPERTY_TYPE_0 in an ELF file.  Once that is found,
-perhaps we can store it somewhere, or call into the arch code as you mentioned
-below.  I will look into that.
-
-> 
-> For now there is only one property requested anyway, so this is probably
-> not too bad.  But could we flip things around so that we have some
-> CONFIG_ARCH_WANTS_ELF_GNU_PROPERTY (say), and have the ELF core code
-> call into the arch backend for each property found?
-> 
-> The arch could provide some hook
-> 
-> 	int arch_elf_has_gnu_property(const Elf_Gnu_Prophdr *prop,
-> 					const void *data);
-> 
-> to consume the properties as they are found.
-> 
-> This would effectively replace the arch_setup_property() hook you
-> currently have.
-> 
-> Cheers
-> ---Dave
-> 
-> [1] https://github.com/hjl-tools/linux-abi/wiki/Linux-Extensions-to-gABI
+Mimi
 
