@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C0C11D7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E85811E2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbfEBPaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:30:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49704 "EHLO mail.kernel.org"
+        id S1727847AbfEBP0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:26:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbfEBPay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:30:54 -0400
+        id S1727833AbfEBP0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:26:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E06492081C;
-        Thu,  2 May 2019 15:30:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1654920449;
+        Thu,  2 May 2019 15:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811053;
-        bh=IdYfBAf9kVErGJENq0rn63Vkl12PCHwRv+6MEgLtK6I=;
+        s=default; t=1556810810;
+        bh=ZXWQolyZBCzpMAOOBxkzSyS8XoCRuncSuRNee1yozXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E1kxO5XtmGZm3qvYxF/8cRw3PMBZ+KknzWjVulbbG6jRXGmyEBo55Fy0Ps6iqRXPH
-         Azhv+SxFMP5/IupwnNj51uwcRKZz8rT6JwZnMCg3DpeI31Bz9BYnYT8oUXH/Uwfrok
-         7q29pBObkpVNLe+TaSAbP3rr9qdr7Fzl3WRnkx0Q=
+        b=m1SS/xfUhppew0tDvqlfQixNHJ5hVqVynnPRondIXNX860ebITmYdUAE1vkggAKo+
+         H5/TeXrFlUNC24ajJZAaGRNnmpCuX2Zs/TYHRCnzprs1q9w/oX1zamKVo1fwhctQ1A
+         x8xMskdDN/M7a06aHdvrtK4qRJ98wauqKYHRiI+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Anirudha Sarangi <anirudh@xilinx.com>,
-        John Linn <John.Linn@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Hans de Goede <hdegoede@redhat.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 056/101] net: xilinx: fix possible object reference leak
-Date:   Thu,  2 May 2019 17:20:58 +0200
-Message-Id: <20190502143343.413795985@linuxfoundation.org>
+Subject: [PATCH 4.19 37/72] staging: rtl8188eu: Fix potential NULL pointer dereference of kcalloc
+Date:   Thu,  2 May 2019 17:20:59 +0200
+Message-Id: <20190502143336.472991277@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,48 +45,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fa3a419d2f674b431d38748cb58fb7da17ee8949 ]
+[ Upstream commit 7671ce0d92933762f469266daf43bd34d422d58c ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+hwxmits is allocated via kcalloc and not checked for failure before its
+dereference. The patch fixes this problem by returning error upstream
+in rtl8723bs, rtl8188eu.
 
-Detected by coccinelle with the following warnings:
-./drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1624:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1569, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Anirudha Sarangi <anirudh@xilinx.com>
-Cc: John Linn <John.Linn@xilinx.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Acked-by: Mukesh Ojha <mojha@codeaurora.org>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/rtl8188eu/core/rtw_xmit.c    |  9 +++++++--
+ drivers/staging/rtl8188eu/include/rtw_xmit.h |  2 +-
+ drivers/staging/rtl8723bs/core/rtw_xmit.c    | 14 +++++++-------
+ drivers/staging/rtl8723bs/include/rtw_xmit.h |  2 +-
+ 4 files changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 0789d8af7d72..1ef56edb3918 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1575,12 +1575,14 @@ static int axienet_probe(struct platform_device *pdev)
- 	ret = of_address_to_resource(np, 0, &dmares);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to get DMA resource\n");
-+		of_node_put(np);
- 		goto free_netdev;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 2130d78e0d9f..dd9b02d316f3 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -178,7 +178,9 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
+ 
+ 	pxmitpriv->free_xmit_extbuf_cnt = num_xmit_extbuf;
+ 
+-	rtw_alloc_hwxmits(padapter);
++	res = rtw_alloc_hwxmits(padapter);
++	if (res == _FAIL)
++		goto exit;
+ 	rtw_init_hwxmits(pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
+ 
+ 	for (i = 0; i < 4; i++)
+@@ -1502,7 +1504,7 @@ s32 rtw_xmit_classifier(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ 	return res;
+ }
+ 
+-void rtw_alloc_hwxmits(struct adapter *padapter)
++s32 rtw_alloc_hwxmits(struct adapter *padapter)
+ {
+ 	struct hw_xmit *hwxmits;
+ 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+@@ -1511,6 +1513,8 @@ void rtw_alloc_hwxmits(struct adapter *padapter)
+ 
+ 	pxmitpriv->hwxmits = kcalloc(pxmitpriv->hwxmit_entry,
+ 				     sizeof(struct hw_xmit), GFP_KERNEL);
++	if (!pxmitpriv->hwxmits)
++		return _FAIL;
+ 
+ 	hwxmits = pxmitpriv->hwxmits;
+ 
+@@ -1518,6 +1522,7 @@ void rtw_alloc_hwxmits(struct adapter *padapter)
+ 	hwxmits[1] .sta_queue = &pxmitpriv->vi_pending;
+ 	hwxmits[2] .sta_queue = &pxmitpriv->be_pending;
+ 	hwxmits[3] .sta_queue = &pxmitpriv->bk_pending;
++	return _SUCCESS;
+ }
+ 
+ void rtw_free_hwxmits(struct adapter *padapter)
+diff --git a/drivers/staging/rtl8188eu/include/rtw_xmit.h b/drivers/staging/rtl8188eu/include/rtw_xmit.h
+index 788f59c74ea1..ba7e15fbde72 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_xmit.h
++++ b/drivers/staging/rtl8188eu/include/rtw_xmit.h
+@@ -336,7 +336,7 @@ s32 rtw_txframes_sta_ac_pending(struct adapter *padapter,
+ void rtw_init_hwxmits(struct hw_xmit *phwxmit, int entry);
+ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter);
+ void _rtw_free_xmit_priv(struct xmit_priv *pxmitpriv);
+-void rtw_alloc_hwxmits(struct adapter *padapter);
++s32 rtw_alloc_hwxmits(struct adapter *padapter);
+ void rtw_free_hwxmits(struct adapter *padapter);
+ s32 rtw_xmit(struct adapter *padapter, struct sk_buff **pkt);
+ 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index edb678190b4b..16291de5c0d9 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -260,7 +260,9 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
+ 		}
  	}
- 	lp->dma_regs = devm_ioremap_resource(&pdev->dev, &dmares);
- 	if (IS_ERR(lp->dma_regs)) {
- 		dev_err(&pdev->dev, "could not map DMA regs\n");
- 		ret = PTR_ERR(lp->dma_regs);
-+		of_node_put(np);
- 		goto free_netdev;
+ 
+-	rtw_alloc_hwxmits(padapter);
++	res = rtw_alloc_hwxmits(padapter);
++	if (res == _FAIL)
++		goto exit;
+ 	rtw_init_hwxmits(pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
+ 
+ 	for (i = 0; i < 4; i++) {
+@@ -2144,7 +2146,7 @@ s32 rtw_xmit_classifier(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ 	return res;
+ }
+ 
+-void rtw_alloc_hwxmits(struct adapter *padapter)
++s32 rtw_alloc_hwxmits(struct adapter *padapter)
+ {
+ 	struct hw_xmit *hwxmits;
+ 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+@@ -2155,10 +2157,8 @@ void rtw_alloc_hwxmits(struct adapter *padapter)
+ 
+ 	pxmitpriv->hwxmits = rtw_zmalloc(sizeof(struct hw_xmit) * pxmitpriv->hwxmit_entry);
+ 
+-	if (pxmitpriv->hwxmits == NULL) {
+-		DBG_871X("alloc hwxmits fail!...\n");
+-		return;
+-	}
++	if (!pxmitpriv->hwxmits)
++		return _FAIL;
+ 
+ 	hwxmits = pxmitpriv->hwxmits;
+ 
+@@ -2204,7 +2204,7 @@ void rtw_alloc_hwxmits(struct adapter *padapter)
+ 
  	}
- 	lp->rx_irq = irq_of_parse_and_map(np, 1);
+ 
+-
++	return _SUCCESS;
+ }
+ 
+ void rtw_free_hwxmits(struct adapter *padapter)
+diff --git a/drivers/staging/rtl8723bs/include/rtw_xmit.h b/drivers/staging/rtl8723bs/include/rtw_xmit.h
+index a75b668d09a6..021c72361fbb 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_xmit.h
++++ b/drivers/staging/rtl8723bs/include/rtw_xmit.h
+@@ -486,7 +486,7 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter);
+ void _rtw_free_xmit_priv (struct xmit_priv *pxmitpriv);
+ 
+ 
+-void rtw_alloc_hwxmits(struct adapter *padapter);
++s32 rtw_alloc_hwxmits(struct adapter *padapter);
+ void rtw_free_hwxmits(struct adapter *padapter);
+ 
+ 
 -- 
 2.19.1
 
