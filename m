@@ -2,99 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728E811907
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A32D1190E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfEBMaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:30:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726267AbfEBMaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:30:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7D4BCAD45;
-        Thu,  2 May 2019 12:30:02 +0000 (UTC)
-Subject: Re: [PATCH] mod_devicetable.h: reduce sizeof(struct of_device_id) by
- 80 bytes
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        Mattias Jacobsson <2pi@mok.nu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190425203101.9403-1-linux@rasmusvillemoes.dk>
- <CAK8P3a1Fu64YhQzvSEy8j3oZ3XwUN81fY+K6Z6ksHhqDWzbxNA@mail.gmail.com>
- <73918e46-e3c8-edc4-c941-e650c05519c8@rasmusvillemoes.dk>
-From:   Jeff Mahoney <jeffm@suse.com>
-Message-ID: <67f54ca8-f4bd-5388-1067-35cd192cf37e@suse.com>
-Date:   Thu, 2 May 2019 08:29:57 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:67.0)
- Gecko/20100101 Thunderbird/67.0
+        id S1726417AbfEBMbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 08:31:14 -0400
+Received: from bout01.mta.xmission.com ([166.70.11.15]:35508 "EHLO
+        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBMbO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 08:31:14 -0400
+Received: from mx03.mta.xmission.com ([166.70.13.213])
+        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1hMArn-0001ta-0c; Thu, 02 May 2019 06:31:11 -0600
+Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
+        by mx03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1hMArm-0004cQ-EK; Thu, 02 May 2019 06:31:10 -0600
+Received: from hacktheplanet (c-68-50-23-202.hsd1.in.comcast.net [68.50.23.202])
+        by plesk14.xmission.com (Postfix) with ESMTPSA id 6F8631C4856;
+        Thu,  2 May 2019 12:31:09 +0000 (UTC)
+Date:   Thu, 2 May 2019 08:30:58 -0400
+From:   Scott Bauer <sbauer@plzdonthack.me>
+To:     David Kozub <zub@linux.fjfi.cvut.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Message-ID: <20190502123036.GA4657@hacktheplanet>
+References: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
 MIME-Version: 1.0
-In-Reply-To: <73918e46-e3c8-edc4-c941-e650c05519c8@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-XM-SPF: eid=1hMArm-0004cQ-EK;;;mid=<20190502123036.GA4657@hacktheplanet>;;;hst=mx03.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
+X-SA-Exim-Connect-IP: 166.70.198.161
+X-SA-Exim-Mail-From: sbauer@plzdonthack.me
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong,XM_UncommonTLD01 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4985]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.5 XM_UncommonTLD01 Less-common TLD
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;David Kozub <zub@linux.fjfi.cvut.cz>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 244 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 2.8 (1.1%), b_tie_ro: 1.92 (0.8%), parse: 0.92
+        (0.4%), extract_message_metadata: 3.3 (1.4%), get_uri_detail_list:
+        0.56 (0.2%), tests_pri_-1000: 3.2 (1.3%), tests_pri_-950: 1.42 (0.6%),
+        tests_pri_-900: 1.18 (0.5%), tests_pri_-90: 18 (7.6%), check_bayes: 17
+        (6.9%), b_tokenize: 5 (2.1%), b_tok_get_all: 5 (2.1%), b_comp_prob:
+        1.74 (0.7%), b_tok_touch_all: 3.0 (1.2%), b_finish: 0.64 (0.3%),
+        tests_pri_0: 202 (82.8%), check_dkim_signature: 0.59 (0.2%),
+        check_dkim_adsp: 8 (3.3%), poll_dns_idle: 1.60 (0.7%), tests_pri_10:
+        2.4 (1.0%), tests_pri_500: 6 (2.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/3] block: sed-opal: add support for shadow MBR done
+ flag and write
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on mx03.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/2/19 5:41 AM, Rasmus Villemoes wrote:
-> On 26/04/2019 11.27, Arnd Bergmann wrote:
->> On Thu, Apr 25, 2019 at 10:31 PM Rasmus Villemoes
->> <linux@rasmusvillemoes.dk> wrote:
->>>
->>> For an arm imx_v6_v7_defconfig kernel, .rodata becomes 70K smaller;
->>> .init.data shrinks by another ~13K, making the whole kernel image
->>> about 83K, or 0.3%, smaller.
->>>
->>> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->>
->> The space savings are nice, but I wonder if the format of these
->> structures is part of the ABI or not. I have some vague recollection
->> of that, but it's possible that it's no longer true in this century.
->>
->> scripts/mod/file2alias.c processes the structures into a different
->> format and seems to be written specifically to avoid problems
->> with changes like the one you did. Can anyone confirm that
->> this is true before we apply the patch?
+On Wed, May 01, 2019 at 01:20:56AM +0200, David Kozub wrote:
 > 
-> I can't confirm it, of course, but I did do some digging around and
-> couldn't find anything other than file2alias, which as you mention is
-> prepared for such a change. I also couldn't find any specific reason for
-> the 128 (it's not a #define, so at least originally it didn't seem to be
-> tied to some external consumer) - Jeff, do you remember why you chose
-> that back when you did 5e6557722e69?
+> Jonas Rabenstein (3):
+>   block: sed-opal: add ioctl for done-mark of shadow mbr
+>   block: sed-opal: ioctl for writing to shadow mbr
+>   block: sed-opal: check size of shadow mbr
+> 
+>  block/opal_proto.h            |  16 ++++
+>  block/sed-opal.c              | 160 +++++++++++++++++++++++++++++++++-
+>  include/linux/sed-opal.h      |   2 +
+>  include/uapi/linux/sed-opal.h |  20 +++++
+>  4 files changed, 196 insertions(+), 2 deletions(-)
+> 
 
-I had been wondering why I'd been included on this thread.  I completely 
-forgot that I wrote this code nearly 15 years ago. :)
+I'll review this over the weekend. Is this essentially the same thing
+we reviewed a month or two ago or are there little differences due to
+it be split across two different series?
 
-It was probably as simple as there not being a real limit for how long 
-the compatible string could be and wanting to make it flexible.  I was 
-targetting a powerpc mac notebook I had at the time -- not tight memory 
-embedded systems, so sorry for that.
 
-> But we cannot really know whether there is some userspace tool that
-> parses the .ko ELF objects the same way that file2alias does, doing
-> pattern matching on the symbol names etc. I cannot see why anybody would
-> _do_ that (the in-tree infrastructure already generates the
-> MODULE_ALIAS() from which modules.alias gets generated), but the only
-> way of knowing, I think, is to try to apply the patch and see if anybody
-> complains.
-
-The size is part of the ABI, though.  module-init-tools has a copy of 
-the same struct and uses that size to walk an array of of_device_id when 
-a module as more than one.  If you shrink it, that will certainly break.
-
-file2alias does the right things only because it's tightly coupled to 
-the kernel version it's being used with.  It still directly accesses the 
-structure definitions in the headers.
-
--Jeff
-
--- 
-Jeff Mahoney
-SUSE Labs
+> -- 
+> 2.20.1
+> 
