@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8621C124CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 00:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8381124C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 00:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfEBWyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 18:54:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34836 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfEBWy1 (ORCPT
+        id S1726359AbfEBWy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 18:54:29 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:47032 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfEBWy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 18:54:27 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w24so1719396plp.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 15:54:26 -0700 (PDT)
+        Thu, 2 May 2019 18:54:28 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bi2so1693213plb.13
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 15:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BCfT3guVZby54KoAuU06+BY6v/qUrN3VwEkT+0PJiPM=;
-        b=myoH4NG/U3H7QRfzmXh4KXBkwHqlnBXLuw+YtDbLUP16dgiGTtAys0/bk3SYGDdI70
-         6K+XsQzwdrj70SZjh8KM5efvveW/76bJR9i09nnkUlZn/ZFw1ZqUNUvi7N6yAStsPwSx
-         uiRq7YcNI6KCMxbDCNVDo5hZeJamSb50B5Czo=
+        bh=P+ZPNiv5B5kytob2vOwdU5pZyvzNXPIUr8ZUKGFUcOY=;
+        b=h0wYyVMluUVAdv1NwQOAAhlwteWpgYwW8HXhS8VG32Z7Lf9yxA4NuF5+A0czBvZzKv
+         lJVcxHPaPYIKXirJmLKL7liFbEaF4geinpGCsaSD7+tuUJ31PO4yA9oJQyZ+bTMX2yqH
+         davXBEyebjxtzyIeeIKbXwcoU9AzTCZef7yaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BCfT3guVZby54KoAuU06+BY6v/qUrN3VwEkT+0PJiPM=;
-        b=iJ98ezYikTBzP6Sm2ZtLWFFmYwjmeEDYw5nrRVC3q6cxMmGe1QAFU/8xYL9HSexwup
-         n1kCUgCNq7UC4Yf48ypXFcTdEUCFk3hnJNAMoaat7t+hDKMGIEjisUkFASu1AgiqkuCj
-         GLt0WjreuMF1n4N88+ekwNWTcqI2OjeSoYkgo63bppy9KIG9diJxe2ICtELKoSbmfN9H
-         lDaRWdGZ/GsJCbEew1dY/TgaaU/q27YSU7hnJ0aCbMwAOLVCzXqpGoksKowYRvv5wnjN
-         lUWH7KGcu2Vsip688Sr1z4HxyvSrjUi4M+7NZm4INbtznSvzyAvkD6SRG20yS+wnxCy9
-         dG1A==
-X-Gm-Message-State: APjAAAXZfvfBzH9EdQ3VDgQavVtVsf97fVB3kEZCoOXLUOY+7Guu3Z5C
-        pITK/52Rs5GrtSotc9if/zAFkg==
-X-Google-Smtp-Source: APXvYqw7cw2KkNl8Nu4qGTRrZSO9BSZbc8Jug59xzytFinnS0nDNEMXcfMRtFwgbTp5rGb5QpsTCQQ==
-X-Received: by 2002:a17:902:1602:: with SMTP id g2mr6499886plg.325.1556837666467;
-        Thu, 02 May 2019 15:54:26 -0700 (PDT)
+        bh=P+ZPNiv5B5kytob2vOwdU5pZyvzNXPIUr8ZUKGFUcOY=;
+        b=jDCw76J4sv7yeLWg60ZKjCP1CDr7Xxxw8Ed6UUU5nGzemhCiHDk/fOTVXtYeTIQN2N
+         XfpLCjGhcLISAJGup8XWVY2HAayEoiORdZ/HqtFm4BBSlb0K6r/AxZO7FQaIe0WWLfqS
+         fODr2D8tnLBEMQ9kbLIEsK6AI9Emfu0g//IPvsH8jJveWvnfMfph274YrrcILZw8sTzJ
+         DeeUElzYbUBFa4f8RkQiKFbhb9TbwmVooMHWQfoENccVHRtNee/z1H8lRYYKVPpEQNoV
+         HpqQPBPRfL5vbAuZL1MLeywLh8KUrEPe+aFkM7rhZFxOrSYevvtsbsq12yVGfUKd9LtT
+         ry9g==
+X-Gm-Message-State: APjAAAXo21UfwbyxVZOse0J2e5A8mnaLVEeQWKYctXHiJKoZY8/Ul+IE
+        h6J6P0iEa5/726nrs4Yd2Hf6Vg==
+X-Google-Smtp-Source: APXvYqzd5mafem3up8aafRaHi3Cdrlk1qdlgUPk4BmPnowawJNQiWJT3C7hEk3PNUfbliN1Sz4ERKQ==
+X-Received: by 2002:a17:902:8545:: with SMTP id d5mr6351215plo.198.1556837667556;
+        Thu, 02 May 2019 15:54:27 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id v15sm264736pff.105.2019.05.02.15.54.25
+        by smtp.gmail.com with ESMTPSA id v15sm264736pff.105.2019.05.02.15.54.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 15:54:25 -0700 (PDT)
+        Thu, 02 May 2019 15:54:27 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
@@ -54,9 +54,9 @@ Cc:     linux-rockchip@lists.infradead.org,
         Douglas Anderson <dianders@chromium.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/5] ARM: dts: rockchip: Switch to builtin HDMI DDC bus on rk3288-veyron
-Date:   Thu,  2 May 2019 15:53:34 -0700
-Message-Id: <20190502225336.206885-3-dianders@chromium.org>
+Subject: [PATCH 4/5] ARM: dts: rockchip: Add unwedge pinctrl entries for dw_hdmi on rk3288
+Date:   Thu,  2 May 2019 15:53:35 -0700
+Message-Id: <20190502225336.206885-4-dianders@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190502225336.206885-1-dianders@chromium.org>
 References: <20190502225336.206885-1-dianders@chromium.org>
@@ -67,48 +67,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Downstream Chrome OS kernels use the builtin DDC bus from dw_hdmi on
-veyron.  This is the only way to get them to negotiate HDCP.
+This adds the "unwedge" pinctrl entries introduced by a recent dw_hdmi
+change that can unwedge the dw_hdmi i2c bus in some cases.  It's
+expected that any boards using this would add:
 
-Although HDCP isn't currently all supported upstream, it still seems
-like it makes sense to use dw_hdmi's builtin I2C.  Maybe eventually we
-can get HDCP negotiation working.
+  pinctrl-names = "default", "unwedge";
+  pinctrl-0 = <&hdmi_ddc>;
+  pinctrl-1 = <&hdmi_ddc_unwedge>;
+
+Note that this isn't added by default because some boards may choose
+to mux i2c5 for their DDC bus (if that is more tested for them).
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- arch/arm/boot/dts/rk3288-veyron.dtsi | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/rk3288.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
-index 1252522392c7..e1bee663d2c5 100644
---- a/arch/arm/boot/dts/rk3288-veyron.dtsi
-+++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
-@@ -163,7 +163,8 @@
- };
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 74c9517c4f92..eebc04fa1e4d 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1545,6 +1545,15 @@
+ 				rockchip,pins = <7 RK_PC3 2 &pcfg_pull_none>,
+ 						<7 RK_PC4 2 &pcfg_pull_none>;
+ 			};
++
++			hdmi_ddc_unwedge: hdmi-ddc-unwedge {
++				rockchip,pins = <7 RK_PC3 RK_FUNC_GPIO &pcfg_output_low>,
++						<7 RK_PC4 2 &pcfg_pull_none>;
++			};
++		};
++
++		pcfg_output_low: pcfg-output-low {
++			output-low;
+ 		};
  
- &hdmi {
--	ddc-i2c-bus = <&i2c5>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_ddc>;
- 	status = "okay";
- };
- 
-@@ -334,14 +335,6 @@
- 	i2c-scl-rising-time-ns = <300>;		/* 225ns measured */
- };
- 
--&i2c5 {
--	status = "okay";
--
--	clock-frequency = <100000>;
--	i2c-scl-falling-time-ns = <300>;
--	i2c-scl-rising-time-ns = <1000>;
--};
--
- &io_domains {
- 	status = "okay";
- 
+ 		pcfg_pull_up: pcfg-pull-up {
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
