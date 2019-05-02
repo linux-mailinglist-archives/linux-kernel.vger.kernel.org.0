@@ -2,106 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D2B12352
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2EC12364
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfEBU0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 16:26:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37678 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbfEBUZ7 (ORCPT
+        id S1726371AbfEBUaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 16:30:24 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36623 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfEBUaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 16:25:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g3so1688272pfi.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 13:25:58 -0700 (PDT)
+        Thu, 2 May 2019 16:30:24 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b18so3361047otq.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 13:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Io3DgdKgd9vrTCiqn1ty9ma6MeZxtY5mWHTy1rGcWSk=;
-        b=JRGEOa2M9VSTVxV8OWvGI2jo8mrtudnNCX9J67xa+uuu9xIcscAMsy5EVezgdK890M
-         nIOgUqCwrV6zdyLl4F2fSz9D+CW4kiaSbBRDoKbiLntIdStjJcd5DOlESpoSUoT/5MPe
-         nkgyGakMQHMJ/aE61Ly6IrWMINs0h7hCM/paI2GuwAm0QlSNzFZp4f2QcoTOWt6FHlFV
-         7APR1qqnbDHZ1MUyvjs0b7fMma+WF0VCNPwXglhjSf20z8ZyumgqnfJ/GYpWGMXCJvk+
-         gAHeHAAPEI+8fZHQkKIt8fYVS1YgV+pYBIvg7H29r8/cvQOPT7yOrlVvjZUfsWgQTiSH
-         B76Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EDdiyphkogtVcXTbSVRyR+FjzQZde+G185126UMJh7I=;
+        b=gITVrJC9deQ8wHwXinOhDV5dI98+XHC/WuqFuL8GH7a8CRP7Weez43rOFpDLFNlC0p
+         SurYDhddnsqnL5Ihvys33lK/4j+PLxs8IphZcAQuHXXE7X5COStC3ZBhj/5h/Hdg9FPW
+         sQYG3mb/RBDu620PDIXl0abFAqievobMhbfvYW6GdeEoPEN8iXGYFBkxbfpJn8Y1y4f8
+         F6SjQjXGRwZVR+lGXlZDhrUGxSdzCSH/YiD/bsD5q2GkFQLqoLWuw3S9nlwb/QcTf+/G
+         D2dqk3uPHxSxGLiPz52WCid9DnN+TbYr8zJiLQQDEG4D0HgQVfXL2NqaKqq1E/1r4TBH
+         gHpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Io3DgdKgd9vrTCiqn1ty9ma6MeZxtY5mWHTy1rGcWSk=;
-        b=f+X0FVLynPxpN5yNwr6GlyCuWyVTT91EOjYKPXyHbN/LE5KgcGGl7Ty8OJ1twIE9Zx
-         5NaQuOWpiNIjNtDITLW7bmrfJX64trJIwHgXUMJZcEBxQ4yuDAFM2A8lkuEbXEb38f4K
-         oRvC+krKHmzZD2xTYGS2iTqB6I6g8h1/Lr/gyfQyPXzCOIrbKhS+X2I0VaiBa2OcnKmd
-         dwnHfRn1mmh4tCNpsCoXSdGlNZfl3bm9anAJgwpk3MGEj8s7DHvw/QfFJVKbrZtuDAUi
-         7WJL4KwOILp5oSJm1uhOo2EXZ7JuTjIMtMnoZZ+SPBUQMHCFgDYp4qC/7dqH4+uwiW+v
-         myQA==
-X-Gm-Message-State: APjAAAWPyccGriNsvjdFGMnM+zhAbNHZNZBrDzdYg0AQF4TOLQDI71Hx
-        TA74ME7cz56CZKnUhpuDVna06w==
-X-Google-Smtp-Source: APXvYqxTa+wO6NCzor7FpiJk3O2Yual5TrsL5e7AjO0IODWu6S5r6CX+1Mn1g9ZBaMeUizlwwZ+icw==
-X-Received: by 2002:a63:4714:: with SMTP id u20mr6090953pga.316.1556828758292;
-        Thu, 02 May 2019 13:25:58 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:4138:7cfc:eb31:bf4a? ([2601:646:c200:1ef2:4138:7cfc:eb31:bf4a])
-        by smtp.gmail.com with ESMTPSA id j67sm38422pfc.72.2019.05.02.13.25.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 13:25:57 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <nycvar.YFH.7.76.1905022101060.10635@cbobk.fhfr.pm>
-Date:   Thu, 2 May 2019 13:25:56 -0700
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EDdiyphkogtVcXTbSVRyR+FjzQZde+G185126UMJh7I=;
+        b=LMHbZFmDcbtUU5CY/jSRWOIT/XjrpaahRSojX5qhDnW+iAgWKAe+adTYHelLIyOuc/
+         4gU1FxmDFOnn0JxGEPIh7jvp3WzzwXQ1/tW1acSvNPmdWQiTTCD04C4vKftEuqcFlHS0
+         IdCqg8Us8HOPyk/pVPq8zC0cYfpWGZiODmJK3pXjKiAipd1uGcwK6tTdghmNjCwzPBRd
+         T/C0rt6XVl/V84HCfWHoD+8c5lUfDzsNn5LW0j2cERtPQkcVPIi/kkOCcbiBw5cjnQRx
+         EQ2+Q4Z0j19Kb4/Lctg3sIu9Gqd7rXhtP9xkl6sHE+ExYTPCaJclrnuYLAB+trgvE7la
+         9b/A==
+X-Gm-Message-State: APjAAAXal4UqoHHOifQwUuAKMsa7I0tt/nqJqgu79KXBltX0ZC5LItqV
+        xnMiLKlvcb35BONxVJkpduV5aZqEF3WrjqJVyBxRug==
+X-Google-Smtp-Source: APXvYqz43GD9Ydk/3iHIuvGx3dSX5DTZZLzaJSUOTfbGyq2mCG6ID5DjuBQ5u6fo5kf0q+kWNBtbkFi3ckrHB0dUqUs=
+X-Received: by 2002:a9d:7f19:: with SMTP id j25mr3854222otq.25.1556829023216;
+ Thu, 02 May 2019 13:30:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-8-brendanhiggins@google.com> <20190502105849.GB12416@kroah.com>
+In-Reply-To: <20190502105849.GB12416@kroah.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 2 May 2019 13:30:12 -0700
+Message-ID: <CAFd5g44os8xEMMiROkmX_KM4-9yL=+y6kw4-JApxhdzJV5pwkg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/17] kunit: test: add initial tests
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D87B1B37-C06B-4C81-BF82-994B03DE2BFF@amacapital.net>
-References: <20190501202830.347656894@goodmis.org> <20190501203152.397154664@goodmis.org> <20190501232412.1196ef18@oasis.local.home> <20190502162133.GX2623@hirez.programming.kicks-ass.net> <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com> <20190502181811.GY2623@hirez.programming.kicks-ass.net> <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com> <nycvar.YFH.7.76.1905022101060.10635@cbobk.fhfr.pm>
-To:     Jiri Kosina <jikos@kernel.org>
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 2, 2019 at 3:58 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, May 01, 2019 at 04:01:16PM -0700, Brendan Higgins wrote:
+> > Add a test for string stream along with a simpler example.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+> >  kunit/Kconfig              | 12 ++++++
+> >  kunit/Makefile             |  4 ++
+> >  kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
+> >  kunit/string-stream-test.c | 61 ++++++++++++++++++++++++++
+> >  4 files changed, 165 insertions(+)
+> >  create mode 100644 kunit/example-test.c
+> >  create mode 100644 kunit/string-stream-test.c
+> >
+> > diff --git a/kunit/Kconfig b/kunit/Kconfig
+> > index 64480092b2c24..5cb500355c873 100644
+> > --- a/kunit/Kconfig
+> > +++ b/kunit/Kconfig
+> > @@ -13,4 +13,16 @@ config KUNIT
+> >         special hardware. For more information, please see
+> >         Documentation/kunit/
+> >
+> > +config KUNIT_TEST
+> > +     bool "KUnit test for KUnit"
+> > +     depends on KUNIT
+> > +     help
+> > +       Enables KUnit test to test KUnit.
+> > +
+> > +config KUNIT_EXAMPLE_TEST
+> > +     bool "Example test for KUnit"
+> > +     depends on KUNIT
+> > +     help
+> > +       Enables example KUnit test to demo features of KUnit.
+>
+> Can't these tests be module?
 
+At this time, no. KUnit doesn't support loading tests as kernel
+modules; it is something we could add in in the future, but I would
+rather not open that can of worms right now. There are some other
+things I would like to do that would probably be easier to do before
+adding support for tests as loadable modules.
 
-> On May 2, 2019, at 12:28 PM, Jiri Kosina <jikos@kernel.org> wrote:
->=20
->> On Thu, 2 May 2019, Linus Torvalds wrote:
->>=20
->> I forget: is #BP _only_ for the "int3" instruction?=20
->=20
-> Hmm, according to 17.3.2 in vol 3 of SDM (and table 6-1 there), that=20
-> indeed seems to be the case, so we should be fine.
+>
+> Or am I mis-reading the previous logic?
+>
+> Anyway, just a question, nothing objecting to this as-is for now.
 
-I=E2=80=99m reasonably confident that the absurd MOV SS; INT3 sequence resul=
-ts in #BP from user mode and then #DB inside that (as opposed to vice versa)=
-, so this should be okay.
+Cool
 
+Cheers!
