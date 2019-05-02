@@ -2,130 +2,317 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D721206B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 104F61206F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfEBQnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:43:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38655 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfEBQnb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:43:31 -0400
-Received: by mail-wr1-f65.google.com with SMTP id k16so4305694wrn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SgRxXaRaZ7SS6NKygq+lIA0qjuJOX/iaVYfC9TFkYh4=;
-        b=iRI9fosK7/vQzOX2YILGZPZbqFlSYGLXN3m3zv10cxaT47ebsjCOg6Sbb2SLSNyeJV
-         Thntxx6lkLkECavJfhkQYJE9sSDk7Mv5qge8l+xKquEolbu1CPLaBx6TA5WLCad+4iTF
-         ARNXgEsXn273nOa5XnYl6wxc/mJKGhAdj/YG3Q6qunwMQsZm+Ud161MYLjwIlHCf+DAM
-         rYww7QiWbT31NSBK3IvGACptfEtYPz4L6cJZ+dirCa8TiQCL1+140DwGb43oQ4axnIcI
-         c46N7T9EJf6s/oFTh0NWHHnJvLlMeIYvWuLmnjc0odr6YMn9E3QpHw/B4FF41YVjG+fB
-         A7/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SgRxXaRaZ7SS6NKygq+lIA0qjuJOX/iaVYfC9TFkYh4=;
-        b=KrAYowX/c6gnMxdNPV9VJZGJG/gT14zQnMmg7hX/EVBG0g2tSC1w14nfo6QkQ54Vo2
-         C/NOW+SSBd3uhDKybpmb9EZ1/48ipGpC22gF7okaTe0Lf3EouRvz9vOXp3wI+2HRDDMP
-         pA0AJCp9KhPdQtx9r+Y1RX2gZhKySk/vFQl4kWOWLQIKd/tTKr5Bnj6cGx9DL97BysWy
-         k0tO6U3Wlx73EqzqIkPQhh/Qd2sBprH//TSzIoJoRsUtSttOUN60cA/RJ2hKRpfnEQQj
-         cdfHwdvpbWkcfrHUyBT1fjzx+XYSGFq7DxooT9wE41f16I+RH4xq1Kt2RlGmWBNcpe0/
-         /Juw==
-X-Gm-Message-State: APjAAAUvodQXlF3aFHyglpMzGvrR+S9bInGTSCri9UMP0E6nBhg02t0j
-        rAZj8Tga3n/kM1oYp9COLJY=
-X-Google-Smtp-Source: APXvYqy72lvK1lMDC+Kb5NMeslgzcW3PpNmJlPNyjcD92sTLitvZ3dS1MP6kS7O8kEtW7/Mvc+wuHg==
-X-Received: by 2002:adf:f88f:: with SMTP id u15mr3471762wrp.155.1556815409231;
-        Thu, 02 May 2019 09:43:29 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c18sm25658390wrb.16.2019.05.02.09.43.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 09:43:28 -0700 (PDT)
-Date:   Thu, 2 May 2019 18:43:25 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Message-ID: <20190502164325.GA115950@gmail.com>
-References: <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
- <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
- <303fc4ee5ac04e4fac104df1188952e8@AcuMS.aculab.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C6C2C3@IRSMSX102.ger.corp.intel.com>
- <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
- <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
- <20190502150853.GA16779@gmail.com>
- <CALCETrVBXZNAKGRXm0_txKGjqKnjx30Eb05hesye8M50D4A8Mw@mail.gmail.com>
+        id S1726723AbfEBQnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:43:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:49162 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726709AbfEBQnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 12:43:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CACFA78;
+        Thu,  2 May 2019 09:43:41 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 787543F738;
+        Thu,  2 May 2019 09:43:39 -0700 (PDT)
+Date:   Thu, 2 May 2019 17:43:33 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jianjun Wang <jianjun.wang@mediatek.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Honghui Zhang <honghui.zhang@mediatek.com>,
+        ryder.lee@mediatek.com, bhelgaas@google.com,
+        matthias.bgg@gmail.com, linux-pci@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, youlin.pei@mediatek.com
+Subject: Re: [v1] PCI: mediatek: Remove MSI inner domain
+Message-ID: <20190502164333.GA26454@e121166-lin.cambridge.arm.com>
+References: <1548149855-3225-1-git-send-email-jianjun.wang@mediatek.com>
+ <1548926367.4980.14.camel@mhfsdcap03>
+ <10e8e731-5749-f6fb-eb33-ab67aa0e2c3f@arm.com>
+ <1548938997.6292.52.camel@mhfsdcap03>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVBXZNAKGRXm0_txKGjqKnjx30Eb05hesye8M50D4A8Mw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1548938997.6292.52.camel@mhfsdcap03>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Andy Lutomirski <luto@kernel.org> wrote:
-
-> > 8 gigabits/sec sounds good throughput in principle, if there's no
-> > scalability pathologies with that.
+On Thu, Jan 31, 2019 at 08:49:57PM +0800, Jianjun Wang wrote:
+> On Thu, 2019-01-31 at 09:44 +0000, Marc Zyngier wrote:
+> > On 31/01/2019 09:19, Honghui Zhang wrote:
+> > > On Tue, 2019-01-22 at 17:37 +0800, Jianjun Wang wrote:
+> > >> There is no need to create the inner domain as a parent for MSI domian,
+> > >> some feature has been implemented by MSI framework.
+> > >>
+> > >> Remove the inner domain and its irq chip, it will be more closer to
+> > >> hardware implementation.
+> > 
+> > This is not about being closer to any HW implementation. This is about
+> > having a uniform way to deal with MSI controllers, no matter how they
+> > are implemented by the HW.
+> > 
+> > So maybe you could start by explaining what this is trying to achieve.
+> > 
+> > >>
+> > > Hi, jianjun, I'm not quite familiar with the irq_chip framework, It was
+> > > under Marc's great help with the first version of irq_chip solution
+> > > code. I would like you to add him for the review.
+> > > 
+> > > Thanks.
+> > > 
+> > >> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+> > >> ---
+> > >>  drivers/pci/controller/pcie-mediatek.c | 86 +++++++++++---------------
+> > >>  1 file changed, 37 insertions(+), 49 deletions(-)
+> > >>
+> > >> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > >> index 8d05df56158b..f996a9a6331f 100644
+> > >> --- a/drivers/pci/controller/pcie-mediatek.c
+> > >> +++ b/drivers/pci/controller/pcie-mediatek.c
+> > >> @@ -169,7 +169,6 @@ struct mtk_pcie_soc {
+> > >>   * @slot: port slot
+> > >>   * @irq: GIC irq
+> > >>   * @irq_domain: legacy INTx IRQ domain
+> > >> - * @inner_domain: inner IRQ domain
+> > >>   * @msi_domain: MSI IRQ domain
+> > >>   * @lock: protect the msi_irq_in_use bitmap
+> > >>   * @msi_irq_in_use: bit map for assigned MSI IRQ
+> > >> @@ -190,7 +189,6 @@ struct mtk_pcie_port {
+> > >>  	u32 slot;
+> > >>  	int irq;
+> > >>  	struct irq_domain *irq_domain;
+> > >> -	struct irq_domain *inner_domain;
+> > >>  	struct irq_domain *msi_domain;
+> > >>  	struct mutex lock;
+> > >>  	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
+> > >> @@ -418,22 +416,15 @@ static void mtk_msi_ack_irq(struct irq_data *data)
+> > >>  	u32 hwirq = data->hwirq;
+> > >>  
+> > >>  	writel(1 << hwirq, port->base + PCIE_IMSI_STATUS);
+> > >> +	writel(MSI_STATUS, port->base + PCIE_INT_STATUS);
+> > >>  }
+> > >>  
+> > >> -static struct irq_chip mtk_msi_bottom_irq_chip = {
+> > >> -	.name			= "MTK MSI",
+> > >> -	.irq_compose_msi_msg	= mtk_compose_msi_msg,
+> > >> -	.irq_set_affinity	= mtk_msi_set_affinity,
+> > >> -	.irq_ack		= mtk_msi_ack_irq,
+> > >> -};
+> > >> -
+> > >> -static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> > >> -				     unsigned int nr_irqs, void *args)
+> > >> +static irq_hw_number_t mtk_pcie_msi_get_hwirq(struct msi_domain_info *info,
+> > >> +					      msi_alloc_info_t *arg)
+> > >>  {
+> > >> -	struct mtk_pcie_port *port = domain->host_data;
+> > >> -	unsigned long bit;
+> > >> +	struct mtk_pcie_port *port = info->chip_data;
+> > >> +	irq_hw_number_t bit;
+> > >>  
+> > >> -	WARN_ON(nr_irqs != 1);
+> > >>  	mutex_lock(&port->lock);
+> > >>  
+> > >>  	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
+> > >> @@ -446,18 +437,14 @@ static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int vir
+> > >>  
+> > >>  	mutex_unlock(&port->lock);
+> > >>  
+> > >> -	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
+> > >> -			    domain->host_data, handle_edge_irq,
+> > >> -			    NULL, NULL);
+> > >> -
+> > >> -	return 0;
+> > >> +	return bit;
+> > 
+> > Why do you need to override the get_hwirq method? Using the generic
+> > PCI/MSI version has the advantage of giving you a universal encoding
+> > which makes debugging much easier.
 > 
-> The latency is horrible.
-
-Latency would be amortized via batching anyway, so 8 gigabits/sec 
-suggests something on the order of magnitude of 4 bits per cycle, right? 
-With 64 bits extraction at a time that would be 16 cycles per 64-bit 
-word, which isn't too bad, is it?
-
-But you are right that get_random_bytes() is probably faster, and also 
-more generic.
-
-> > It would also be nice to know whether RDRAND does buffering 
-> > *internally*,
+> Hi Marc,
 > 
-> Not in a useful way :(
-
-Too bad ...
-
-> > Any non-CPU source of randomness for system calls and plans to add 
-> > several extra function calls to every x86 system call is crazy talk I 
-> > believe...
+> In previous patch, we create a inner_domain as a parent for msi_domain,
+> when we allocate a irq for MSI, the work flow of each domain will be the
+> following:
 > 
-> I think that, in practice, the only real downside to enabling this 
-> thing will be the jitter in syscall times. Although we could decide 
-> that the benefit is a bit dubious and the whole thing isn't worth it. 
-> But it will definitely be optional.
+> inner_domain:
+> 1. Allocated a irq bit from bitmap as this domain's hwirq;
+> 2. Mapping with system virtual irq number;
+> 3. Set irq chip and irq handler;
+> 4. Send MSI message to EP.
+> 
+> msi_domain:
+> 1. Calculate a hwirq;
+> 2. Mapping with system virtual irq number;
+> 3. Set irq chip which from info->chip and irq handler if defined in
+> info.
+> 4. Send MSI message to EP or trigger parent domain to send the message.
+> 
+> The last three steps looks similar, if we override the get_hwirq method
+> and set irq chip and handler to info structure, MSI framework will do
+> the rest of thing. I think it will be more simple and easy to understand
+> the driver's work flow.
+> 
+> Further more, if we try to enhance the interrupt performance, such as
+> connect the MSI interrupt line to GIC directly in hardware, we will need
+> to set gic domain as the parent, in that case, there will be a lot of
+> work to do to replace the inner domain.
 
-Making it "optional" is not really a technical argument in any way 
-though, either distros enable it in which case it's a de-facto default 
-setting, or they don't, in which case it de-facto almost doesn't exist.
+I do not understand what you mean, I am sorry. I won't review v2 until
+we have an understanding of what this patch should achieve and we
+have a clear reason why we need it, more specifically I do not
+understand what it has to do with performance (keeping in mind what
+Marc said about the IRQ controllers representation, which has a
+reason to be there on its own).
 
 Thanks,
+Lorenzo
 
-	Ingo
+> Thanks.
+> > 
+> > >>  }
+> > >>  
+> > >> -static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+> > >> -				     unsigned int virq, unsigned int nr_irqs)
+> > >> +static void mtk_pcie_msi_free(struct irq_domain *domain,
+> > >> +			      struct msi_domain_info *info, unsigned int virq)
+> > >>  {
+> > >>  	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+> > >> -	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(d);
+> > >> +	struct mtk_pcie_port *port = info->chip_data;
+> > >>  
+> > >>  	mutex_lock(&port->lock);
+> > >>  
+> > >> @@ -468,46 +455,50 @@ static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+> > >>  		__clear_bit(d->hwirq, port->msi_irq_in_use);
+> > >>  
+> > >>  	mutex_unlock(&port->lock);
+> > >> -
+> > >> -	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
+> > >>  }
+> > >>  
+> > >> -static const struct irq_domain_ops msi_domain_ops = {
+> > >> -	.alloc	= mtk_pcie_irq_domain_alloc,
+> > >> -	.free	= mtk_pcie_irq_domain_free,
+> > >> +static struct msi_domain_ops mtk_msi_domain_ops = {
+> > >> +	.get_hwirq	= mtk_pcie_msi_get_hwirq,
+> > >> +	.msi_free	= mtk_pcie_msi_free,
+> > >>  };
+> > >>  
+> > >>  static struct irq_chip mtk_msi_irq_chip = {
+> > >> -	.name		= "MTK PCIe MSI",
+> > >> -	.irq_ack	= irq_chip_ack_parent,
+> > >> -	.irq_mask	= pci_msi_mask_irq,
+> > >> -	.irq_unmask	= pci_msi_unmask_irq,
+> > >> +	.name			= "MTK PCIe",
+> > >> +	.irq_compose_msi_msg	= mtk_compose_msi_msg,
+> > >> +	.irq_write_msi_msg	= pci_msi_domain_write_msg,
+> > >> +	.irq_set_affinity	= mtk_msi_set_affinity,
+> > >> +	.irq_ack		= mtk_msi_ack_irq,
+> > >> +	.irq_mask		= pci_msi_mask_irq,
+> > >> +	.irq_unmask		= pci_msi_unmask_irq,
+> > >>  };
+> > >>  
+> > >>  static struct msi_domain_info mtk_msi_domain_info = {
+> > >> -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> > >> -		   MSI_FLAG_PCI_MSIX),
+> > >> -	.chip	= &mtk_msi_irq_chip,
+> > >> +	.flags		= (MSI_FLAG_USE_DEF_DOM_OPS |
+> > >> +			   MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_PCI_MSIX),
+> > >> +	.ops		= &mtk_msi_domain_ops,
+> > >> +	.chip		= &mtk_msi_irq_chip,
+> > >> +	.handler	= handle_edge_irq,
+> > >> +	.handler_name	= "MSI",
+> > >>  };
+> > >>  
+> > >>  static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+> > >>  {
+> > >> -	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
+> > >> +	struct device *dev = port->pcie->dev;
+> > >> +	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+> > >> +	struct msi_domain_info *info;
+> > >>  
+> > >>  	mutex_init(&port->lock);
+> > >>  
+> > >> -	port->inner_domain = irq_domain_create_linear(fwnode, MTK_MSI_IRQS_NUM,
+> > >> -						      &msi_domain_ops, port);
+> > >> -	if (!port->inner_domain) {
+> > >> -		dev_err(port->pcie->dev, "failed to create IRQ domain\n");
+> > >> +	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
+> > >> +	if (!info)
+> > >>  		return -ENOMEM;
+> > >> -	}
+> > >>  
+> > >> -	port->msi_domain = pci_msi_create_irq_domain(fwnode, &mtk_msi_domain_info,
+> > >> -						     port->inner_domain);
+> > >> +	memcpy(info, &mtk_msi_domain_info, sizeof(*info));
+> > >> +	info->chip_data = port;
+> > >> +
+> > > 
+> > > I'm not really like this memcpy of msi_domain_info, but I do not have a
+> > > better idea to prevent the mixed of mtk_pcie_port data.
+> > 
+> > So we're basically trading an indirection for another. What's the gain?
+> 
+> There is usually more than one PCIe port in each SoC, we use
+> mtk_pcie_port data to describe it, in previous version, we pass the port
+> data as inner domain's host_data. When remove the inner domain, we also
+> need to pass the port data and should prevent to mix with another port,
+> so I thank maybe we can make a copy for each port and set port data as
+> it's chip_data.
+> > 
+> > > 
+> > >> +	port->msi_domain = pci_msi_create_irq_domain(fwnode, info, NULL);
+> > >>  	if (!port->msi_domain) {
+> > >> -		dev_err(port->pcie->dev, "failed to create MSI domain\n");
+> > >> -		irq_domain_remove(port->inner_domain);
+> > >> +		dev_err(dev, "failed to create MSI domain\n");
+> > >>  		return -ENOMEM;
+> > >>  	}
+> > >>  
+> > >> @@ -541,8 +532,6 @@ static void mtk_pcie_irq_teardown(struct mtk_pcie *pcie)
+> > >>  		if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > >>  			if (port->msi_domain)
+> > >>  				irq_domain_remove(port->msi_domain);
+> > >> -			if (port->inner_domain)
+> > >> -				irq_domain_remove(port->inner_domain);
+> > >>  		}
+> > >>  
+> > >>  		irq_dispose_mapping(port->irq);
+> > >> @@ -619,12 +608,11 @@ static void mtk_pcie_intr_handler(struct irq_desc *desc)
+> > >>  
+> > >>  			while ((imsi_status = readl(port->base + PCIE_IMSI_STATUS))) {
+> > >>  				for_each_set_bit(bit, &imsi_status, MTK_MSI_IRQS_NUM) {
+> > >> -					virq = irq_find_mapping(port->inner_domain, bit);
+> > >> +					virq = irq_find_mapping(
+> > >> +							port->msi_domain, bit);
+> > >>  					generic_handle_irq(virq);
+> > >>  				}
+> > >>  			}
+> > >> -			/* Clear MSI interrupt status */
+> > >> -			writel(MSI_STATUS, port->base + PCIE_INT_STATUS);
+> > >>  		}
+> > > 
+> > > why change this irq status clear flow?
+> > 
+> > I think this is trying move everything to the irq_ack callback. But
+> > that's a change of semantics, and I'd like it explained. It certainly
+> > feels wrong.
+> Yes, I confused with each irq's ack callback, it doesn't need to be
+> changed.
+> 
+> Thanks.
+> > 
+> > Overall, this patch as it stands (without any real explanation) doesn't
+> > feel me with confidence. It introduces significant differences in the
+> > way we build PCI/MSI domains, and I'd like to understand why.
+> > 
+> > Thanks,
+> > 
+> > 	M.
+> 
+> 
