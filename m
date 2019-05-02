@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F71011C90
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7F011D86
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfEBPW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:22:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37722 "EHLO mail.kernel.org"
+        id S1728975AbfEBPbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:31:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbfEBPW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:22:26 -0400
+        id S1728368AbfEBPbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:31:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3609220449;
-        Thu,  2 May 2019 15:22:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DF8E20C01;
+        Thu,  2 May 2019 15:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810545;
-        bh=E2poy0g6Sl804u5T0jy1Z8irUeLl7FlDnO9jlBiUKJw=;
+        s=default; t=1556811080;
+        bh=B39WFc4UtL0We2F9vDpBLkB2vEj16RsrUNBC/m+lI5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j7ost97R0OQwAWTRjziH0EUzcDvTePhfK8mHwfqp7W/QkZAjs4BZbgXk0nex6WKAN
-         Ez1zBJigE4+9s0C+VW+TO1toKkPASkKEfR+IuCgW09JeLp63PySAlAnid9U8xY+NnN
-         kNJp2WEAsiQs+E0DY9536RZLvib7D0TexgPurTys=
+        b=dby1G8w31VmmeAcLUDnJyBKP/Y4K44tMZy1pQGdukJrlYAmcshKfzRYV7v8g21xSo
+         K/vl/PdMu1VFAaUBR2w9Qv5K/ygFVcEnNQrYPARooh3lYq98jdTYDv3cUt5xTo/8NF
+         XNVG4MA63f7lIHUUcRdaRhERHgn37odgUd2fBAfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Anirudha Sarangi <anirudh@xilinx.com>,
-        John Linn <John.Linn@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 21/32] net: xilinx: fix possible object reference leak
+Subject: [PATCH 5.0 065/101] staging: vc04_services: Fix an error code in vchiq_probe()
 Date:   Thu,  2 May 2019 17:21:07 +0200
-Message-Id: <20190502143320.771687142@linuxfoundation.org>
+Message-Id: <20190502143344.215736031@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,48 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fa3a419d2f674b431d38748cb58fb7da17ee8949 ]
+[ Upstream commit 9b9c87cf51783cbe7140c51472762094033cfeab ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+We need to set "err" on this error path.
 
-Detected by coccinelle with the following warnings:
-./drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1624:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1569, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Anirudha Sarangi <anirudh@xilinx.com>
-Cc: John Linn <John.Linn@xilinx.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 187ac53e590c ("staging: vchiq_arm: rework probe and init functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index c688d68c39aa..a8afc92cbfca 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1548,12 +1548,14 @@ static int axienet_probe(struct platform_device *pdev)
- 	ret = of_address_to_resource(np, 0, &dmares);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to get DMA resource\n");
-+		of_node_put(np);
- 		goto free_netdev;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 804daf83be35..064d0db4c51e 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -3513,6 +3513,7 @@ static int vchiq_probe(struct platform_device *pdev)
+ 	struct device_node *fw_node;
+ 	const struct of_device_id *of_id;
+ 	struct vchiq_drvdata *drvdata;
++	struct device *vchiq_dev;
+ 	int err;
+ 
+ 	of_id = of_match_node(vchiq_of_match, pdev->dev.of_node);
+@@ -3547,9 +3548,12 @@ static int vchiq_probe(struct platform_device *pdev)
+ 		goto failed_platform_init;
  	}
- 	lp->dma_regs = devm_ioremap_resource(&pdev->dev, &dmares);
- 	if (IS_ERR(lp->dma_regs)) {
- 		dev_err(&pdev->dev, "could not map DMA regs\n");
- 		ret = PTR_ERR(lp->dma_regs);
-+		of_node_put(np);
- 		goto free_netdev;
- 	}
- 	lp->rx_irq = irq_of_parse_and_map(np, 1);
+ 
+-	if (IS_ERR(device_create(vchiq_class, &pdev->dev, vchiq_devid,
+-				 NULL, "vchiq")))
++	vchiq_dev = device_create(vchiq_class, &pdev->dev, vchiq_devid, NULL,
++				  "vchiq");
++	if (IS_ERR(vchiq_dev)) {
++		err = PTR_ERR(vchiq_dev);
+ 		goto failed_device_create;
++	}
+ 
+ 	vchiq_debugfs_init();
+ 
 -- 
 2.19.1
 
