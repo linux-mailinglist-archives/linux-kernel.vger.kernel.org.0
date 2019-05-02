@@ -2,154 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A4A11A42
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCF211A57
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:36:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEBNeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 09:34:13 -0400
-Received: from mail2.sp2max.com.br ([138.185.4.9]:45894 "EHLO
-        mail2.sp2max.com.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfEBNeJ (ORCPT
+        id S1726385AbfEBNgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 09:36:18 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:19016 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfEBNgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 09:34:09 -0400
-Received: from pgsop.sopnet.com.ar (unknown [179.40.38.12])
-        (Authenticated sender: pablo@fliagreco.com.ar)
-        by mail2.sp2max.com.br (Postfix) with ESMTPA id 0C86B7B3003;
-        Thu,  2 May 2019 10:34:04 -0300 (-03)
-From:   Pablo Greco <pgreco@centosproject.org>
-To:     linux-sunxi@googlegroups.com
-Cc:     Pablo Greco <pgreco@centosproject.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 5/5] ARM: dts: sun8i: v40: bananapi-m2-berry: Add Bluetooth device node
-Date:   Thu,  2 May 2019 10:33:49 -0300
-Message-Id: <1556804030-25291-6-git-send-email-pgreco@centosproject.org>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1556804030-25291-1-git-send-email-pgreco@centosproject.org>
-References: <1556804030-25291-1-git-send-email-pgreco@centosproject.org>
-X-SP2Max-MailScanner-Information: Please contact the ISP for more information
-X-SP2Max-MailScanner-ID: 0C86B7B3003.A6140
-X-SP2Max-MailScanner: Sem Virus encontrado
-X-SP2Max-MailScanner-SpamCheck: nao spam, SpamAssassin (not cached,
-        escore=-2.9, requerido 6, autolearn=not spam, ALL_TRUSTED -1.00,
-        BAYES_00 -1.90)
-X-SP2Max-MailScanner-From: pgreco@centosproject.org
-X-Spam-Status: No
+        Thu, 2 May 2019 09:36:18 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ccaf24b0000>; Thu, 02 May 2019 06:36:12 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 02 May 2019 06:36:15 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 02 May 2019 06:36:15 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 May
+ 2019 13:36:12 +0000
+Subject: Re: [PATCH 0/6] Add support for Tegra186/Tegra194 and generic fixes
+To:     Sameer Pujar <spujar@nvidia.com>, <vkoul@kernel.org>,
+        <dan.j.williams@intel.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <thierry.reding@gmail.com>, <ldewangan@nvidia.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f8486dab-f95b-a4b1-36f2-89b98086d0cb@nvidia.com>
+Date:   Thu, 2 May 2019 14:36:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1556804172; bh=zQW3UmrtuFX0g5vUoqAHKLUOOl8w+C8rfhpSmD8+zhk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pyqAnV2poqrhI/+V/m5PoRRYO9zOVdkIGqBjd7mJZpBUz5Hwq3qv3oAwA0bO+Resk
+         YXQEzi/3XX626Ghcf9jMnbCqEC4FNnphYu2UvtuOZLEbYUarQU/1JVhEKgUDVG47Nw
+         ABnf6z1ke3aaRJ6Tpt1/SMHiv7gxcS1af/K2a2QxZjZmgO8lOc3sFE8ToBH5Rnsc+h
+         ytBMnAimMS08Ulji4WreVCeyYIvn/jheqYfYiZmNyxRK+l6NKOGuDJgHanv0Q7D/ii
+         ZmZtd4ySIRI1PvCBJez2hROmoo+0qMbcnQnJ2sWgvepEYMqZ+u3WhAi8K2dreBYJTA
+         Y5hnrQ/EDE3ww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AP6212 is based on the Broadcom BCM43430 or BCM43438. The WiFi side
-identifies as BCM43430, while the Bluetooth side identifies as BCM43438.
 
-The Bluetooth side is connected to UART3 in a 4 wire configuration. Same
-as the WiFi side, due to being the same chip and package, DLDO1 and
-DLDO2 regulator outputs from the PMIC provide overall power via VBAT and
-I/O power via VDDIO. The CLK_OUT_A clock output from the SoC provides
-the LPO low power clock at 32.768 kHz.
+On 02/05/2019 13:55, Sameer Pujar wrote:
+> Audio DMA(ADMA) interface is a gateway in the AHUB for facilitating DMA
+> transfers between memory and all of its clients. Currently the driver
+> supports Tegra210 based platforms. This series adds support for Tegra186
+> and Tegra194 based platforms and fixes few functional issues.
+> 
+> Patches in the series are classified into three categories,
+>   1. Add support for Tegra186 and Tegra194
+>   2. Add DMA pause/resume feature
+>   3. Fixes common to differernt Tegra generations
+> 
+> Below change log describes the patches in detail.
+> 
+> Change log:
+> =====================================
+> v1
+> ----
+> The series can be classified into 3 categories,
+>   1. Add support for Tegra186 and Tegra194
+>      [Patch 1/6] dmaengine: tegra210-adma: prepare for supporting newer
+>      Tegra chips
+>        * The support was there only for Tegra210
+>        * This is a preparation for adding support for newer Tegra chips
+>        * chip_data is enhanced to support differences between Tegra210 and
+>          Tegra186/Tegra194
+>      [Patch 2/6] Documentation: DT: Add compatibility binding for Tegra186
+>        * New compatibility string is required for driver to work for
+>          Tegra186 and Tegra194. Hence new compatibility is introduced.
+>        * Tegra194 can use the same compatibility as Tegra186
+>      [Patch 3/6] dmaengine: tegra210-adma: add support for Tegra186/
+>      Tegra194
+>        * Populates chip specific information for Tegra186
+>        * There is a difference in the way ADMA CH_CONFIG registers are
+>          encoded for Tegra210 and Tegra186. Added helper fucntions to
+>          support different versions of burst size configuration
+> 
+>   2. Add DMA pause/resume feature
+>      [Patch 4/6] dmaengine: tegra210-adma: add pause/resume support
+>        * Adds support for ADMA pause/resume, otherwise audio loss was seen
+>          during continuous pause/resume of audio playback.
+> 
+>   3. Fixes common to differernt Tegra generations
+>      [Patch 5/6] dmaengine: tegra210-dma: free dma controller in remove()
+>        * Fixes kernel panic observed during driver reload. DMA controller
+>          needs to be freed when driver is unloaded
+>      [Patch 6/6] dmaengine: tegra210-adma: restore channel status
+>        * Fixes resume across system suspend. If the channel state is not
+>          restored, the transfers won't resume from the state from where it
+>          was left during suspend entry. In this case, audio playback did
+>          not resume properly once system exited from low power state.
+> 
+> ===============================
+> Sameer Pujar (6):
+>   dmaengine: tegra210-adma: prepare for supporting newer Tegra chips
+>   Documentation: DT: Add compatibility binding for Tegra186
+>   dmaengine: tegra210-adma: add support for Tegra186/Tegra194
+>   dmaengine: tegra210-adma: add pause/resume support
+>   dmaengine: tegra210-dma: free dma controller in remove()
+>   dmaengine: tegra210-adma: restore channel status
+> 
+>  .../bindings/dma/nvidia,tegra210-adma.txt     |   4 +-
+>  drivers/dma/tegra210-adma.c                   | 232 +++++++++++++++++----
+>  2 files changed, 193 insertions(+), 43 deletions(-)
+> 
 
-This patch enables Bluetooth on this board, and also adds the missing
-LPO clock on the WiFi side. There is also a PCM connection for
-Bluetooth, but this is not covered here.
+Thanks!
 
-The LPO clock is fed from CLK_OUT_A, which needs to be muxed on pin
-PI12. This can be represented in multiple ways. This patch puts the
-pinctrl property in the pin controller node. This is due to limitations
-in Linux, where pinmux settings, even the same one, can not be shared
-by multiple devices. Thus we cannot put it in both the WiFi and
-Bluetooth device nodes. Putting it the CCU node is another option, but
-Linux's CCU driver does not handle pinctrl. Also the pin controller is
-guaranteed to be initialized after the CCU, when clocks are available.
-And any other devices that use muxed pins are guaranteed to be
-initialized after the pin controller. Thus having the CLK_OUT_A pinmux
-reference be in the pin controller node is a good choice without having
-to deal with implementation issues.
+For the series ...
 
-Signed-off-by: Pablo Greco <pgreco@centosproject.org>
----
- arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts | 38 +++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
-index 461683c..15c22b0 100644
---- a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
-+++ b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
-@@ -96,6 +96,8 @@
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
-+		clocks = <&ccu CLK_OUTA>;
-+		clock-names = "ext_clock";
- 	};
- };
- 
-@@ -172,6 +174,8 @@
- };
- 
- &pio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&clk_out_a_pin>;
- 	vcc-pa-supply = <&reg_aldo2>;
- 	vcc-pc-supply = <&reg_dcdc1>;
- 	vcc-pd-supply = <&reg_dcdc1>;
-@@ -233,12 +237,27 @@
- 	regulator-name = "vcc-wifi-io";
- };
- 
-+/*
-+ * Our WiFi chip needs both DLDO2 and DLDO3 to be powered at the same
-+ * time, with the two being in sync, to be able to meet maximum power
-+ * consumption during transmits. Since this is not really supported
-+ * right now, just use the two as always on, and we will fix it later.
-+ */
-+
- &reg_dldo2 {
-+	regulator-always-on;
- 	regulator-min-microvolt = <3300000>;
- 	regulator-max-microvolt = <3300000>;
- 	regulator-name = "vcc-wifi";
- };
- 
-+&reg_dldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi-2";
-+};
-+
- &reg_dldo4 {
- 	regulator-min-microvolt = <2500000>;
- 	regulator-max-microvolt = <2500000>;
-@@ -261,6 +280,25 @@
- 	status = "okay";
- };
- 
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_pg_pins>, <&uart3_rts_cts_pg_pins>;
-+	uart-has-rtscts;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43438-bt";
-+		clocks = <&ccu CLK_OUTA>;
-+		clock-names = "lpo";
-+		vbat-supply = <&reg_dldo2>;
-+		vddio-supply = <&reg_dldo1>;
-+		device-wakeup-gpios = <&pio 6 11 GPIO_ACTIVE_HIGH>; /* PG11 */
-+		/* TODO host wake line connected to PMIC GPIO pins */
-+		shutdown-gpios = <&pio 7 12 GPIO_ACTIVE_HIGH>; /* PH12 */
-+		max-speed = <1500000>;
-+	};
-+};
-+
- &usbphy {
- 	usb1_vbus-supply = <&reg_vcc5v0>;
- 	status = "okay";
+Cheers
+Jon
+
 -- 
-1.8.3.1
-
+nvpublic
