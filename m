@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA4411D06
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7746511DD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfEBP2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44978 "EHLO mail.kernel.org"
+        id S1728232AbfEBPe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:34:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfEBP16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:27:58 -0400
+        id S1729109AbfEBPcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:32:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A96020449;
-        Thu,  2 May 2019 15:27:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F5F820C01;
+        Thu,  2 May 2019 15:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810877;
-        bh=oa14tgMjU4N5xaPgdT6hJvgc7xxgECrRjtP6VdmlO+c=;
+        s=default; t=1556811126;
+        bh=65ruzGAENGirINjoKdB+RVXEuqlPR6pfOjvTO9q47JE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XKTlw9JpGHcJMkOCMn/0LiTNOm22rcVr2T5g7mQHwNpcdQZnGGCqh4uQF1NMdrfqo
-         od9DVrSt/JLgMhbvzMnF5hijytixl+c4qMn9olcjHxvt8Q2hyoztBCMWv6yzV1RIUJ
-         mlBLmOSla7ALLWXx0vGqFZ2IXeU+WWPXaLuxcM40=
+        b=OBr86lxsktL/c+5BGZskf999eeQMaLUmlSDDck3wPGM4vtchMglNX9zL9g22QMDFK
+         7Yms0jrcRZ+8qhBwFeAbEkdMNUVWqqqqukd2blCtcLxeKFA3diIXbFxCIZdirGkuD9
+         S2rJYyVQJI9ooazTJAI4bNrbEt/i/PUoqUlzO4PY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, raymond pang <raymondpangxd@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 64/72] libata: fix using DMA buffers on stack
-Date:   Thu,  2 May 2019 17:21:26 +0200
-Message-Id: <20190502143338.410258932@linuxfoundation.org>
+Subject: [PATCH 5.0 085/101] x86/kvm/hyper-v: avoid spurious pending stimer on vCPU init
+Date:   Thu,  2 May 2019 17:21:27 +0200
+Message-Id: <20190502143345.557664615@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dd08a8d9a66de4b54575c294a92630299f7e0fe7 ]
+[ Upstream commit 013cc6ebbf41496ce4badedd71ea6d4a6d198c14 ]
 
-When CONFIG_VMAP_STACK=y, __pa() returns incorrect physical address for
-a stack virtual address. Stack DMA buffers must be avoided.
+When userspace initializes guest vCPUs it may want to zero all supported
+MSRs including Hyper-V related ones including HV_X64_MSR_STIMERn_CONFIG/
+HV_X64_MSR_STIMERn_COUNT. With commit f3b138c5d89a ("kvm/x86: Update SynIC
+timers on guest entry only") we began doing stimer_mark_pending()
+unconditionally on every config change.
 
-Signed-off-by: raymond pang <raymondpangxd@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The issue I'm observing manifests itself as following:
+- Qemu writes 0 to STIMERn_{CONFIG,COUNT} MSRs and marks all stimers as
+  pending in stimer_pending_bitmap, arms KVM_REQ_HV_STIMER;
+- kvm_hv_has_stimer_pending() starts returning true;
+- kvm_vcpu_has_events() starts returning true;
+- kvm_arch_vcpu_runnable() starts returning true;
+- when kvm_arch_vcpu_ioctl_run() gets into
+  (vcpu->arch.mp_state == KVM_MP_STATE_UNINITIALIZED) case:
+  - kvm_vcpu_block() gets in 'kvm_vcpu_check_block(vcpu) < 0' and returns
+    immediately, avoiding normal wait path;
+  - -EAGAIN is returned from kvm_arch_vcpu_ioctl_run() immediately forcing
+    userspace to retry.
+
+So instead of normal wait path we get a busy loop on all secondary vCPUs
+before they get INIT signal. This seems to be undesirable, especially given
+that this happens even when Hyper-V extensions are not used.
+
+Generally, it seems to be pointless to mark an stimer as pending in
+stimer_pending_bitmap and arm KVM_REQ_HV_STIMER as the only thing
+kvm_hv_process_stimers() will do is clear the corresponding bit. We may
+just not mark disabled timers as pending instead.
+
+Fixes: f3b138c5d89a ("kvm/x86: Update SynIC timers on guest entry only")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/ata/libata-zpodd.c | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
+ arch/x86/kvm/hyperv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
-index b3ed8f9953a8..173e6f2dd9af 100644
---- a/drivers/ata/libata-zpodd.c
-+++ b/drivers/ata/libata-zpodd.c
-@@ -52,38 +52,52 @@ static int eject_tray(struct ata_device *dev)
- /* Per the spec, only slot type and drawer type ODD can be supported */
- static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
- {
--	char buf[16];
-+	char *buf;
- 	unsigned int ret;
--	struct rm_feature_desc *desc = (void *)(buf + 8);
-+	struct rm_feature_desc *desc;
- 	struct ata_taskfile tf;
- 	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
- 			2,      /* only 1 feature descriptor requested */
- 			0, 3,   /* 3, removable medium feature */
- 			0, 0, 0,/* reserved */
--			0, sizeof(buf),
-+			0, 16,
- 			0, 0, 0,
- 	};
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 89d20ed1d2e8..371c669696d7 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -526,7 +526,9 @@ static int stimer_set_config(struct kvm_vcpu_hv_stimer *stimer, u64 config,
+ 		new_config.enable = 0;
+ 	stimer->config.as_uint64 = new_config.as_uint64;
  
-+	buf = kzalloc(16, GFP_KERNEL);
-+	if (!buf)
-+		return ODD_MECH_TYPE_UNSUPPORTED;
-+	desc = (void *)(buf + 8);
+-	stimer_mark_pending(stimer, false);
++	if (stimer->config.enable)
++		stimer_mark_pending(stimer, false);
 +
- 	ata_tf_init(dev, &tf);
- 	tf.flags = ATA_TFLAG_ISADDR | ATA_TFLAG_DEVICE;
- 	tf.command = ATA_CMD_PACKET;
- 	tf.protocol = ATAPI_PROT_PIO;
--	tf.lbam = sizeof(buf);
-+	tf.lbam = 16;
- 
- 	ret = ata_exec_internal(dev, &tf, cdb, DMA_FROM_DEVICE,
--				buf, sizeof(buf), 0);
--	if (ret)
-+				buf, 16, 0);
-+	if (ret) {
-+		kfree(buf);
- 		return ODD_MECH_TYPE_UNSUPPORTED;
-+	}
- 
--	if (be16_to_cpu(desc->feature_code) != 3)
-+	if (be16_to_cpu(desc->feature_code) != 3) {
-+		kfree(buf);
- 		return ODD_MECH_TYPE_UNSUPPORTED;
-+	}
- 
--	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1)
-+	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1) {
-+		kfree(buf);
- 		return ODD_MECH_TYPE_SLOT;
--	else if (desc->mech_type == 1 && desc->load == 0 && desc->eject == 1)
-+	} else if (desc->mech_type == 1 && desc->load == 0 &&
-+		   desc->eject == 1) {
-+		kfree(buf);
- 		return ODD_MECH_TYPE_DRAWER;
--	else
-+	} else {
-+		kfree(buf);
- 		return ODD_MECH_TYPE_UNSUPPORTED;
-+	}
+ 	return 0;
  }
  
- /* Test if ODD is zero power ready by sense code */
+@@ -542,7 +544,10 @@ static int stimer_set_count(struct kvm_vcpu_hv_stimer *stimer, u64 count,
+ 		stimer->config.enable = 0;
+ 	else if (stimer->config.auto_enable)
+ 		stimer->config.enable = 1;
+-	stimer_mark_pending(stimer, false);
++
++	if (stimer->config.enable)
++		stimer_mark_pending(stimer, false);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
