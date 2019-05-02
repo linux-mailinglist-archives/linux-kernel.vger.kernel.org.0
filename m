@@ -2,89 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A821232A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1F212358
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 22:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfEBUYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 16:24:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfEBUYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 16:24:33 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 027E620C01;
-        Thu,  2 May 2019 20:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556828672;
-        bh=fPysuS9QGjjgbk9tLRamHIsNsWi799oVziR6RsQ3XTc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B5FzbdvYNHyOzaACD9WnyFZMcLJAtiwUAT7VXwkycVlj1ywQdTL8YZQmE38MoGiZS
-         eJl9nziJNk5N7ip2vO/yzjxNUdRPQz4y0Mii5QzP4X0RhwXQVDrY9oxBMciQcU9kKp
-         w/z33u8QovQFpjrHmcUgbqjbLfH4vs1hkIiA4Cz4=
-Received: by mail-qt1-f177.google.com with SMTP id p20so4205810qtc.9;
-        Thu, 02 May 2019 13:24:31 -0700 (PDT)
-X-Gm-Message-State: APjAAAVyNpqnmf8M/COWusVcDQJ9AHa/OCZ1CW0mAMwLMbr+K3FjjJSa
-        KHdbRLyV8v1MFVcWO1g8TMq6Wo44q3cjFgn/0w==
-X-Google-Smtp-Source: APXvYqx6C25RjdbTQS+SWLt4/8jx2DcPpy0kcWoZHeaatbwZmHH6mbkpB3Fk9JShMpb/mxi8G6d9PZk2zE2bZTukxKg=
-X-Received: by 2002:a0c:9066:: with SMTP id o93mr4888171qvo.246.1556828671176;
- Thu, 02 May 2019 13:24:31 -0700 (PDT)
+        id S1726771AbfEBU0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 16:26:09 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35814 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726544AbfEBU0H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 16:26:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id g24so3356122otq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 13:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UjYVT5cAdmQKUfv9t8ccIVDdyBls+aL8RkatsPsXvcs=;
+        b=S/NLBkmmg3Md+sTx08gED5HrktmpwZikr8idsPoedLBx4NGY0vsICG/2JByh1OPLMl
+         SoIkyImRxqPDEOFyC2ZMo66T4y64AzxZJe60LUPIIZ+2whbKVnm1u/h2cZWzkh0Pg7xc
+         EXNw4yJNZ9fhJbGVtdrs9Sah16nUmTboVs4KkvhykHpn/i4zj9XsNumXBLK6Ynb0YPNG
+         +tpKFc1Qf+4khDJxrAPPVZg4LS8WUK6j1vznFw5a8jr0zVqX9peLg5vYA1eBwQqixHhg
+         xvPSDH5tHp5fJ/MAFS5gSf8uCUub0+kg9vZwn+lDYmBqYVC0qg8nx8pyREf5ogAUd63R
+         E26Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UjYVT5cAdmQKUfv9t8ccIVDdyBls+aL8RkatsPsXvcs=;
+        b=PRT89pVAZmdAEpNhnnd/oBl3GKyikSJ7eS8+DD4rQt33wkhl165cqaQFPDmG8ay04B
+         80O0xTvwCAd2HgIhebZ+LPOHrrLwR1WAS+CgPivH6tsMNTeZzgkfBJg0y6v7bgmcWTtR
+         4UJcXYmkWQMlsZ9Wbn4iJmPjQ+TG1/3qOZPXA6DCIp5mRpFJCd9wSLGeJKP0ptmP15IU
+         I4/yvDetuX7MFri7nX0FS7Q71b04s9xO7e+2D8vYwS4hih6xMM6Zm5X2tzQvWNo1emIb
+         oFP8Y7IKcLOZMnCHhltlB7OYxJ7br9hWKM1c+UZV+o7KPRGUTlcdwWsUGRTNjmw2hAZr
+         Ogdw==
+X-Gm-Message-State: APjAAAWYGL5YN3jQgT7e9eAoHisApXqNWEZdBu+7qQLwo+jysUNZm2Pn
+        3y30TTTvDjeIDC9Fv5CslZx6VyesxqCpH5SxX/vrVg==
+X-Google-Smtp-Source: APXvYqxyYrm8zG8OMTTxqGADAYUvr/vXQpVESafN7Cz0pZWyjDkgKl1eFOtZxYdb1jr2uV1YoMkUpLh/i+1PnNqQJjM=
+X-Received: by 2002:a05:6830:204a:: with SMTP id f10mr3731908otp.83.1556828766432;
+ Thu, 02 May 2019 13:26:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20190419134822eucas1p29c6eff0f500311749b33c4f556123cf0@eucas1p2.samsung.com>
- <1555681688-19643-4-git-send-email-l.luba@partner.samsung.com>
- <20190430223629.GA22317@bogus> <1fd44623-4a59-f014-1ae9-a7cc605ad30f@partner.samsung.com>
-In-Reply-To: <1fd44623-4a59-f014-1ae9-a7cc605ad30f@partner.samsung.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 2 May 2019 15:24:20 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJcm9Z6vYFHGyAZ+h3-kmSv6e=3NtO-fjJn3-QT0JoX+w@mail.gmail.com>
-Message-ID: <CAL_JsqJcm9Z6vYFHGyAZ+h3-kmSv6e=3NtO-fjJn3-QT0JoX+w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] Documentation: devicetree: add PPMU events description
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, willy.mh.wolff.ml@gmail.com
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-5-brendanhiggins@google.com> <20190502110008.GC12416@kroah.com>
+In-Reply-To: <20190502110008.GC12416@kroah.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 2 May 2019 13:25:54 -0700
+Message-ID: <CAFd5g47ssM7RQZxQsUJ86UigcF-Uz+Kwv2yvKN_gZK-TtW89bA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/17] kunit: test: add kunit_stream a std::stream like logger
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 3:52 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On Thu, May 2, 2019 at 4:00 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> Hi Rob,
+> On Wed, May 01, 2019 at 04:01:13PM -0700, Brendan Higgins wrote:
+> > A lot of the expectation and assertion infrastructure prints out fairly
+> > complicated test failure messages, so add a C++ style log library for
+> > for logging test results.
 >
-> On 5/1/19 12:36 AM, Rob Herring wrote:
-> > On Fri, Apr 19, 2019 at 03:48:07PM +0200, Lukasz Luba wrote:
-> >> Extend the documenation by events description with new 'event-data-type'
-> >> field. Add example how the event might be defined in DT.
-> >
-> > Why do we need event types in DT? We don't do this for other h/w such as
-> > ARM PMU.
-> In ARM PMU all the events are hard-coded into the driver code i.e. in v7
-> arch/arm/kernel/perf_event_v7.c
-> and are seen from perf. They are different type and for different
-> purpose. The Ecynos PPMU events are not seen in perf, they are
-> for internal monitoring and must not be reset by other actors like perf.
-> They are used by the 'bus drivers' to made some heuristics and tune the
-> internal settings, like frequency.
+> Ideally we would always use a standard logging format, like the
+> kselftest tests all are aiming to do.  That way the output can be easily
+> parsed by tools to see if the tests succeed/fail easily.
 >
-> Chanwoo has written PPMU driver which relies on DT definition.
-> The DT events are used by other DT devices by phandle.
+> Any chance of having this logging framework enforcing that format as
+> well?
 
-How is that done? I don't see anything in the binding for that.
-
-Rob
+I agree with your comment on the later patch that we should handle
+this at the wrapper script layer (KUnit tool).
