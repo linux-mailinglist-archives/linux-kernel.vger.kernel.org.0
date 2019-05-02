@@ -2,89 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68ECB1119A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E938A111A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfEBCjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:39:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35282 "EHLO
+        id S1726560AbfEBCkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:40:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36648 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfEBCjz (ORCPT
+        with ESMTP id S1726205AbfEBCkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:39:55 -0400
+        Wed, 1 May 2019 22:40:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AOg+ZncfoqT6OZPyimiwJ+flH8XXCIhe4A54zI2KK28=; b=Cb5V6HQQ4gnGG3LZN1YTJSqcw
-        pulWeJA0UGmo7LW4DpqAG6I4UuXXDLRLzIDRKL+XkUg3SdVIEaZ8q1FeB1/44M+YWpm/ZqUWVxrNV
-        +e/NtKkTZ8jt/JEG83MKeTPQA7Po//H3Id7lWSYCTfnhB3P1+t6BATI/zGJEh3O65Bi5U=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=cXtMjzP8cWAlpfCwO5TSBDzBd4YnAQjIOZyKXqyt03Y=; b=oIhrXmZkvNtb
+        yVF1MyjDyQlIfkSEufz4kVndt34EVQ+uj//AdfYBO5YvLsvW5nSx9NJdZunFwsIaqRf/n0LQ9qd+c
+        lF4rHkyyWFql12AGVGW3UwGtr8K1foxSldbufC7espm5jnCCijHfVtaan8gc7Vl/p+9/goj2ZBq6Q
+        K2we4=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1dU-0005zv-N8; Thu, 02 May 2019 02:39:49 +0000
+        id 1hM1eA-000604-6W; Thu, 02 May 2019 02:40:30 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 6F730441D3C; Thu,  2 May 2019 03:39:45 +0100 (BST)
-Date:   Thu, 2 May 2019 11:39:45 +0900
+        id 0D700441D3C; Thu,  2 May 2019 03:40:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "timur@kernel.org" <timur@kernel.org>,
-        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4] ASoC: fsl_esai: Add pm runtime function
-Message-ID: <20190502023945.GA19532@sirena.org.uk>
-References: <c4cf809a66b8c98de11e43f7e9fa2823cf3c5ba6.1556417687.git.shengjiu.wang@nxp.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <c4cf809a66b8c98de11e43f7e9fa2823cf3c5ba6.1556417687.git.shengjiu.wang@nxp.com>
-X-Cookie: Vax Vobiscum
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Akshu Agrawal <Akshu.Agrawal@amd.com>, alsa-devel@alsa-project.org,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: da7219: Use clk_round_rate to handle enabled bclk/wclk case" to the asoc tree
+In-Reply-To: <20190429105733.71FB83FBCC@swsrvapps-01.diasemi.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190502024027.0D700441D3C@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:40:26 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: da7219: Use clk_round_rate to handle enabled bclk/wclk case
 
-On Sun, Apr 28, 2019 at 02:24:54AM +0000, S.j. Wang wrote:
-> Add pm runtime support and move clock handling there.
-> Close the clocks at suspend to reduce the power consumption.
->=20
-> fsl_esai_suspend is replaced by pm_runtime_force_suspend.
-> fsl_esai_resume is replaced by pm_runtime_force_resume.
+has been applied to the asoc tree at
 
-This doesn't apply against for-5.2 again.  Sorry about this, I think
-this one is due to some messups with my scripts which caused some
-patches to be dropped for a while (and it's likely to be what happened
-the last time as well).  Can you check and resend again please?  Like I
-say sorry about this, I think it's my mistake.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzKWHAACgkQJNaLcl1U
-h9DAmAf/ZznWBwoyQXL+nQLRK1eWpBZg9ma0CiFNxH/eUHzwZYIKALZvQ/XtxTgU
-loMrwMJLbC8TRCPxVnH77AQRIKS0VJMheOaYCv9wmu+hFNjnEuuhRT0wg/30oMba
-gt6LFb/SdSap+9uDN0x6m6BEAoM44d9efhi8M2zc9F9TegdXH1Vehcg9Z+andnzx
-0zj6hZtkD22iTm7Cc866VIvc8SfOEsn3TK7mtFUtH3dwX7uJC11HFQnlBcLqyMrV
-Wxny0faTSxjZXYxrMJMd7vk7ekzyvb57Rg58Si3234fbU8yL/vOJS8xLNbWjvjYX
-4+wYCtvBSLTk76eOCZIBx+Hi2ifAGw==
-=YKw2
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---RnlQjJ0d97Da+TV1--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1cd472d2ac1654f939ae01164b29e81fc76e0a93 Mon Sep 17 00:00:00 2001
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date: Mon, 29 Apr 2019 11:57:33 +0100
+Subject: [PATCH] ASoC: da7219: Use clk_round_rate to handle enabled bclk/wclk
+ case
+
+For some platforms where DA7219 is the DAI clock master, BCLK/WCLK
+will be set and enabled prior to the codec's hw_params() function
+being called. It is possible the platform requires a different
+BCLK configuration than would be chosen by hw_params(), for
+example S16_LE format needed with a 64-bit frame to satisfy certain
+devices using the clocks.
+
+To handle those kinds of scenarios, the use of clk_round_rate() is
+now employed as part of hw_params(). If BCLK is already enabled
+then this function will just return the currently set rate, if it
+is valid for the desired frame size, so the subsequent call to
+clk_set_rate() will succeed and nothing changes with regards to
+clocking. In addition the specific BCLK & WCLK recalc_rate()
+implementations needed updating to always give back a real value,
+as those functions are called as part of the clk init code and a
+real value is needed for the clk_round_rate() call to work as
+expected.
+
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/da7219.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index 5f5fa3416af3..206d01c6eb7e 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -1621,6 +1621,21 @@ static int da7219_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		if (bclk) {
+ 			bclk_rate = frame_size * sr;
++			/*
++			 * Rounding the rate here avoids failure trying to set a
++			 * new rate on an already enabled bclk. In that
++			 * instance this will just set the same rate as is
++			 * currently in use, and so should continue without
++			 * problem, as long as the BCLK rate is suitable for the
++			 * desired frame size.
++			 */
++			bclk_rate = clk_round_rate(bclk, bclk_rate);
++			if ((bclk_rate / sr) < frame_size) {
++				dev_err(component->dev,
++					"BCLK rate mismatch against frame size");
++				return -EINVAL;
++			}
++
+ 			ret = clk_set_rate(bclk, bclk_rate);
+ 			if (ret) {
+ 				dev_err(component->dev,
+@@ -1927,9 +1942,6 @@ static unsigned long da7219_wclk_recalc_rate(struct clk_hw *hw,
+ 	struct snd_soc_component *component = da7219->component;
+ 	u8 fs = snd_soc_component_read32(component, DA7219_SR);
+ 
+-	if (!da7219->master)
+-		return 0;
+-
+ 	switch (fs & DA7219_SR_MASK) {
+ 	case DA7219_SR_8000:
+ 		return 8000;
+@@ -2016,9 +2028,6 @@ static unsigned long da7219_bclk_recalc_rate(struct clk_hw *hw,
+ 	u8 bclks_per_wclk = snd_soc_component_read32(component,
+ 						     DA7219_DAI_CLK_MODE);
+ 
+-	if (!da7219->master)
+-		return 0;
+-
+ 	switch (bclks_per_wclk & DA7219_DAI_BCLKS_PER_WCLK_MASK) {
+ 	case DA7219_DAI_BCLKS_PER_WCLK_32:
+ 		return parent_rate * 32;
+-- 
+2.20.1
+
