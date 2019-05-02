@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC1D11EF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0090711E53
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbfEBPol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:44:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37134 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfEBP0W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AwMJZ8ssvSb+PhQSXkJQRhxuz5BEqoiX+7/r7FSySMg=; b=pqIE67AhKiWZT5LnLp47MLRyi3
-        6tm0nXw7CUFDgV/hsmg33I4MNGizQH3Xn6ph9FYylEJADNj+jGa+2Nty6YS3M93QBQ113yv9oFrAy
-        CFlA9qCuM/pt2tr8PJsZ8wCpGPeKpmCgosCHs5Lxff11r7spoh3v7KLNJDtu+tGSYLnhN0cxfCnMz
-        sYOi4UOrXMND0OQfqrCPn4t2VMXzyYeKogZTIuofgZvl5IRpd5Bz35ynm7QpbYP31WEYCG7U91zd8
-        1MS6QPdFPMQTHmhArNfnvAL+ui9VVwTdl6DedI1R0lOQYV+6dXuG2ufJuv2R2uu+M1AhG80fVhB6j
-        cANyYvbw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMDbJ-00019f-83; Thu, 02 May 2019 15:26:21 +0000
-Date:   Thu, 2 May 2019 08:26:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Alloc refcount increments to fail
-Message-ID: <20190502152621.GB18948@bombadil.infradead.org>
+        id S1728213AbfEBP23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:28:29 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:44828 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbfEBP20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:28:26 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 31A8320423D;
+        Thu,  2 May 2019 17:28:24 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fB7tSKAzudgu; Thu,  2 May 2019 17:28:24 +0200 (CEST)
+Received: from [82.134.31.185] (unknown [82.134.31.185])
+        by smtp.infotech.no (Postfix) with ESMTPA id 05EAC204154;
+        Thu,  2 May 2019 17:28:23 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH 21/24] sg: switch to SPDX tags
+To:     Christoph Hellwig <hch@lst.de>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Hannes Reinecke <hare@suse.de>, Lee Duncan <lduncan@suse.com>,
+        Chris Leech <cleech@redhat.com>, Willem Riede <osst@riede.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        =?UTF-8?Q?Kai_M=c3=a4kisara?= <Kai.Makisara@kolumbus.fi>,
+        linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
+        osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20190501161417.32592-1-hch@lst.de>
+ <20190501161417.32592-22-hch@lst.de>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <c69c06d1-7bdf-b130-ee3e-3b3e4879f832@interlog.com>
+Date:   Thu, 2 May 2019 17:28:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190501161417.32592-22-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-05-01 6:14 p.m., Christoph Hellwig wrote:
+> Use the the GPLv2+ SPDX tag instead of verbose boilerplate text.
 
-In the comments section of a recent LWN article [1], Neil asked if we
-could have a way for refcount users to avoid getting to the saturated
-state if they have a way of handling fallback gracefully.  Here's an
-attempt to provide that functionality.  I'm not sure it's compatible
-with Kees' "x86/asm: Implement fast refcount overflow protection", but
-I thought I'd send it out anyway so people who have thought about this
-more deeply than I have can tell me if it's an idea worth pursuing or not.
+IOWs replace 3.5 lines with 1.
 
-[1] https://lwn.net/Articles/786044/
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/include/linux/refcount.h b/include/linux/refcount.h
-index e28cce21bad6..c4b15b5ec084 100644
---- a/include/linux/refcount.h
-+++ b/include/linux/refcount.h
-@@ -108,6 +108,21 @@ static inline void refcount_dec(refcount_t *r)
- # endif /* !CONFIG_ARCH_HAS_REFCOUNT */
- #endif /* CONFIG_REFCOUNT_FULL */
- 
-+/**
-+ * refcount_try_inc - Increment a refcount if it's below INT_MAX
-+ * @r: the refcount to increment
-+ *
-+ * Avoid the counter saturating by declining to increment the counter
-+ * if it is more than halfway to saturation.
-+ */
-+static inline __must_check bool refcount_try_inc(refcount_t *r)
-+{
-+	if (refcount_read(r) < 0)
-+		return false;
-+	refcount_inc(r);
-+	return true;
-+}
-+
- extern __must_check bool refcount_dec_if_one(refcount_t *r);
- extern __must_check bool refcount_dec_not_one(refcount_t *r);
- extern __must_check bool refcount_dec_and_mutex_lock(refcount_t *r, struct mutex *lock);
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+
+> ---
+>   drivers/scsi/sg.c | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+> index d3f15319b9b3..bcdc28e5ede7 100644
+> --- a/drivers/scsi/sg.c
+> +++ b/drivers/scsi/sg.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>   /*
+>    *  History:
+>    *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com),
+> @@ -8,12 +9,6 @@
+>    *        Copyright (C) 1992 Lawrence Foard
+>    * Version 2 and 3 extensions to driver:
+>    *        Copyright (C) 1998 - 2014 Douglas Gilbert
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2, or (at your option)
+> - * any later version.
+> - *
+>    */
+>   
+>   static int sg_version_num = 30536;	/* 2 digits for each component */
+> 
+
