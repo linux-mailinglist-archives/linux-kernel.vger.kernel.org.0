@@ -2,84 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E981202C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A23A01203C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:31:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfEBQaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:30:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50860 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfEBQaH (ORCPT
+        id S1726604AbfEBQbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:31:42 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39919 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbfEBQbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:30:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d/mogJNEljMgTR4EF767wY8IUbjJwC9Mjt7j8iKP5Ss=; b=uhbId7piLVXP4Ru9l8Ti/O27c
-        ZcWp8dbZDP2EGhcZiHtQyJwDR6ECvulcXyh31Bfw9jLNVY1wXFCNjhVqGmcwuLgv01ylniHTj656j
-        BGjYd13Oj/Ed3fuRuLCD1SxAwYtPwBz8Q49QPzObe1qDRW8l/SqWMBPgNlqfPdWjgH3b3AWeRHnDe
-        93gJa2g8w6lRp/RFbg1zNtxJD6Ud/S6mw0Sxn0Xuh2i5+kAvE84A1khjbYt4X/s3H1Eay6Y9ShL+X
-        abYQVze9WZPb32yxMlSmduNDCFkN5+jsfIUUUasO4/VxybjcYcJulmOXwn0m8y56SWoZ+H63RXMeU
-        phN+LLNwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMEaX-00016L-GN; Thu, 02 May 2019 16:29:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BCCE22066BB89; Thu,  2 May 2019 18:29:35 +0200 (CEST)
-Date:   Thu, 2 May 2019 18:29:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
+        Thu, 2 May 2019 12:31:41 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e24so2671944edq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 09:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7Oy1RG3BUKEsx4VUlFgLOKgTT7HGDm6BmTdCPYEVHzI=;
+        b=qw6j5mpwSwKYxN/oL4IAsK/zH1v/EkIn+dDLKuZam7yyhsQTM8KB9cL677/5Oz7MVy
+         IexCjBqxB23TohGwbBNWIteLggib7PQ3HCSGF844ugqO8ODk5dxWwnXEZg9sKL1DIzyR
+         J/+ASLTaOgJswbMKQq8KaHH3d5PttebWx1MBEpVqQ93t2Os4ETMG7fcecg0n18fINZuk
+         fWyvoeQsc12VsByCTBs3lt6WG9FvJ9kaNvf+e8CIKjw4G35upmxBIcv//uweMZ6jFNL8
+         D79gY0owa3HXwk0qwp26NVPUdg9mRp/hYXIhEdDJ1ZNlad7IQv9ewy6AszUJc2gWsEip
+         EYWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7Oy1RG3BUKEsx4VUlFgLOKgTT7HGDm6BmTdCPYEVHzI=;
+        b=MmKlwzpW32bSSfIKQn8e07ShcxKgCk1Twbw/gIK6FCaFSQNQwtSF3sp3DAFHIs3IfK
+         OBk7zFRcdyVRM/7sV2tU7oJcbPSRxABG59QRRzr2SMo/uKRpdnMApgAnrxFBsj9hIpqC
+         30cAREs5HB8tGTQoUfTb4XiQmqoRjEwP8knZbgD8NtTyyV0J/POCpJH/oj+YlTCNJR5c
+         XCmURCye6LIFioZ8MILwnNlYdZ6/QQ3vmB18Fj4lf1o8jRYh281BuODoLFjP96RmyJoL
+         AMAa7Wintw11fx2h4tPp3hUK8vOos8Q/d6ekD0m2NLjRiwrwUQgcSsD0b49IBdJjkvfO
+         AxGQ==
+X-Gm-Message-State: APjAAAUbGtWcLeyJPWh9SWloDtKO7JkxJmDlkutUesd6B8RIhUnpac3E
+        z8L2zkyGnprgQwETugytzOQ=
+X-Google-Smtp-Source: APXvYqz4jS4aZzqlMk96rIVkIK1ahQvD2cBXh7geHSHkh6Ve3klRmskSiNbCIGL6V2kmJmVabxVeIg==
+X-Received: by 2002:a17:906:5fd7:: with SMTP id k23mr2318906ejv.201.1556814699691;
+        Thu, 02 May 2019 09:31:39 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b84::2])
+        by smtp.gmail.com with ESMTPSA id oq25sm7460093ejb.46.2019.05.02.09.31.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 09:31:38 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-Message-ID: <20190502162935.GC2650@hirez.programming.kicks-ass.net>
-References: <20190501202830.347656894@goodmis.org>
- <20190501203152.397154664@goodmis.org>
- <20190501232412.1196ef18@oasis.local.home>
- <20190502162133.GX2623@hirez.programming.kicks-ass.net>
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] kasan: Initialize tag to 0xff in __kasan_kmalloc
+Date:   Thu,  2 May 2019 09:30:58 -0700
+Message-Id: <20190502163057.6603-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190502153538.2326-1-natechancellor@gmail.com>
+References: <20190502153538.2326-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502162133.GX2623@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 06:21:33PM +0200, Peter Zijlstra wrote:
-> Much thanks to Joerg Roedel for talking entry_32.S with me.
-> 
-> TL;DR, on x86_32 kernel->kernel IRET frames are only 3 entries and do
-> not include ESP/SS, so not only wasn't regs->sp setup, if you changed it
-> it wouldn't be effective and corrupt random stack state.
+When building with -Wuninitialized and CONFIG_KASAN_SW_TAGS unset, Clang
+warns:
 
-Also, i386 is bloody insane...
+mm/kasan/common.c:484:40: warning: variable 'tag' is uninitialized when
+used here [-Wuninitialized]
+        kasan_unpoison_shadow(set_tag(object, tag), size);
+                                              ^~~
+
+set_tag ignores tag in this configuration but clang doesn't realize it
+at this point in its pipeline, as it points to arch_kasan_set_tag as
+being the point where it is used, which will later be expanded to
+(void *)(object) without a use of tag. Initialize tag to 0xff, as it
+removes this warning and doesn't change the meaning of the code.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/465
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+v1 -> v2:
+
+* Initialize tag to 0xff at Andrey's request
+
+ mm/kasan/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 36afcf64e016..242fdc01aaa9 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -464,7 +464,7 @@ static void *__kasan_kmalloc(struct kmem_cache *cache, const void *object,
+ {
+ 	unsigned long redzone_start;
+ 	unsigned long redzone_end;
+-	u8 tag;
++	u8 tag = 0xff;
+ 
+ 	if (gfpflags_allow_blocking(flags))
+ 		quarantine_reduce();
+-- 
+2.21.0
+
