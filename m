@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0BB11E32
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C7511CB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfEBP1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:27:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43642 "EHLO mail.kernel.org"
+        id S1727215AbfEBPYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:24:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727853AbfEBP04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:56 -0400
+        id S1727189AbfEBPYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:24:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3342920675;
-        Thu,  2 May 2019 15:26:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9E0D2085A;
+        Thu,  2 May 2019 15:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810815;
-        bh=pHbvQtuiIa1/SxLZDMZIIYi6w9fDBefFdWpM3Fmaiy4=;
+        s=default; t=1556810644;
+        bh=i54gu8M1Gac1Abp/1+h0ZD6qWrpfaSAE41vGpfFq4/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YKUJoj4oR+73eRcfl//Rt8d77xwWlvAyT0+vp4Cz0acl/NkvUxtkcvpLomyqS1GaW
-         zeGGpcsS0+fCrl+wbQOu4LCPpqzI3mN3vzmDZZikT+MPK8IyUgbb1lYZt/UJ1ISyO7
-         JUuu66CIIZzs+wD9SY7ffUCBh1c96vUrnGdxIHQo=
+        b=AYb8MR8ZkfdLhwwyLNyMecFENxKIFi5hM4+F7sX7YE/LNLjpkIs9MbwIf3XJcgiTm
+         jzqbO0NvT6nsz/RYSC5brb5gawoC6gq7tInpQ9tJ/Xgkw4kC4QVFmNx6Fx6jIcUkj9
+         DQDOL+bwpif9sao+fe7fWdigabMfkKlRu9TYhHSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 39/72] staging: rtl8712: uninitialized memory in read_bbreg_hdl()
+Subject: [PATCH 4.14 24/49] net: ks8851: Set initial carrier state to down
 Date:   Thu,  2 May 2019 17:21:01 +0200
-Message-Id: <20190502143336.631162263@linuxfoundation.org>
+Message-Id: <20190502143326.953300590@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22c971db7dd4b0ad8dd88e99c407f7a1f4231a2e ]
+[ Upstream commit 9624bafa5f6418b9ca5b3f66d1f6a6a2e8bf6d4c ]
 
-Colin King reported a bug in read_bbreg_hdl():
+The ks8851 chip's initial carrier state is down. A Link Change Interrupt
+is signaled once interrupts are enabled if the carrier is up.
 
-	memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
+The ks8851 driver has it backwards by assuming that the initial carrier
+state is up. The state is therefore misrepresented if the interface is
+opened with no cable attached. Fix it.
 
-The problem is that "val" is uninitialized.
+The Link Change interrupt is sometimes not signaled unless the P1MBSR
+register (which contains the Link Status bit) is read on ->ndo_open().
+This might be a hardware erratum. Read the register by calling
+mii_check_link(), which has the desirable side effect of setting the
+carrier state to down if the cable was detached while the interface was
+closed.
 
-This code is obviously not useful, but so far as I can tell
-"pcmd->cmdcode" is never GEN_CMD_CODE(_Read_BBREG) so it's not harmful
-either.  For now the easiest fix is to just call r8712_free_cmd_obj()
-and return.
-
-Fixes: 2865d42c78a9 ("staging: r8712u: Add the new driver to the mainline kernel")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Tristram Ha <Tristram.Ha@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/staging/rtl8712/rtl8712_cmd.c | 10 +---------
- drivers/staging/rtl8712/rtl8712_cmd.h |  2 +-
- 2 files changed, 2 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/micrel/ks8851.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.c b/drivers/staging/rtl8712/rtl8712_cmd.c
-index b1dfe9f46619..63bc811681d9 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.c
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.c
-@@ -159,17 +159,9 @@ static u8 write_macreg_hdl(struct _adapter *padapter, u8 *pbuf)
+diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
+index b8f20aa2b7ad..7ddaa7d88f1d 100644
+--- a/drivers/net/ethernet/micrel/ks8851.c
++++ b/drivers/net/ethernet/micrel/ks8851.c
+@@ -849,6 +849,7 @@ static int ks8851_net_open(struct net_device *dev)
+ 	netif_dbg(ks, ifup, ks->netdev, "network device up\n");
  
- static u8 read_bbreg_hdl(struct _adapter *padapter, u8 *pbuf)
- {
--	u32 val;
--	void (*pcmd_callback)(struct _adapter *dev, struct cmd_obj	*pcmd);
- 	struct cmd_obj *pcmd  = (struct cmd_obj *)pbuf;
- 
--	if (pcmd->rsp && pcmd->rspsz > 0)
--		memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
--	pcmd_callback = cmd_callback[pcmd->cmdcode].callback;
--	if (!pcmd_callback)
--		r8712_free_cmd_obj(pcmd);
--	else
--		pcmd_callback(padapter, pcmd);
-+	r8712_free_cmd_obj(pcmd);
- 	return H2C_SUCCESS;
+ 	mutex_unlock(&ks->lock);
++	mii_check_link(&ks->mii);
+ 	return 0;
  }
  
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.h b/drivers/staging/rtl8712/rtl8712_cmd.h
-index 9181bb6b04c3..a101a0a50955 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.h
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.h
-@@ -152,7 +152,7 @@ enum rtl8712_h2c_cmd {
- static struct _cmd_callback	cmd_callback[] = {
- 	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
- 	{GEN_CMD_CODE(_Write_MACREG), NULL},
--	{GEN_CMD_CODE(_Read_BBREG), &r8712_getbbrfreg_cmdrsp_callback},
-+	{GEN_CMD_CODE(_Read_BBREG), NULL},
- 	{GEN_CMD_CODE(_Write_BBREG), NULL},
- 	{GEN_CMD_CODE(_Read_RFREG), &r8712_getbbrfreg_cmdrsp_callback},
- 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
+@@ -1510,6 +1511,7 @@ static int ks8851_probe(struct spi_device *spi)
+ 
+ 	spi_set_drvdata(spi, ks);
+ 
++	netif_carrier_off(ks->netdev);
+ 	ndev->if_port = IF_PORT_100BASET;
+ 	ndev->netdev_ops = &ks8851_netdev_ops;
+ 	ndev->irq = spi->irq;
 -- 
 2.19.1
 
