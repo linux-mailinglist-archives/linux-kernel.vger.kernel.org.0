@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 889BE11162
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F207B11139
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfEBCUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:20:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56636 "EHLO
+        id S1726721AbfEBCTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:19:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57114 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbfEBCTG (ORCPT
+        with ESMTP id S1726681AbfEBCTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:06 -0400
+        Wed, 1 May 2019 22:19:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=xrGF478Opil57Whl1eQHJAw/ZeOQ1NM8Qj6NusvyTHs=; b=u36bTq++TXGI
-        LqMDoX2k+HyKVz2ff3I5a76amG9nFhdNvRBUZu8QOw/MyisoYn42rY33xOXcYcBWy8hLFiFMKovZL
-        bdIOZNnryYulWAqecpj8D67ULNh2waPo/FW4d+w9cMXMrfJjDI8TNeKtTeMxATl7CNfWFWsOK9jgn
-        6I6go=;
+        List-Archive; bh=C9XRTvvku7YohEoOselFNompaVQM73w7LtDDtIUkluY=; b=wJ3NgXseGvrx
+        iT+1+Lz86m37j/B8N7zsETj6gF1yNMJPOnMGLyfYsa0eyGk26tu1pgcPCFFkSOYQ6bg0RoKSwh6SK
+        5lF7hwsuu7fMpSqi3tl1Ro6DiXr4bqSkQfPXdxeD8wMuGFxIf4w+mRPBeoDAXNsDnqF9CGu5cPCI5
+        GJ2RE=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1JO-0005vM-K7; Thu, 02 May 2019 02:19:02 +0000
+        id 1hM1JQ-0005vW-3J; Thu, 02 May 2019 02:19:04 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 40504441D3E; Thu,  2 May 2019 03:18:59 +0100 (BST)
+        id EAF91441D41; Thu,  2 May 2019 03:19:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Serge Semin <Sergey.Semin@t-platforms.ru>
-Subject: Applied "spi: Clear SPI_CS_HIGH flag from bad_bits for GPIO chip-select" to the spi tree
-In-Reply-To: <20190426103007.29612-1-fancer.lancer@gmail.com>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org, dwmw2@infradead.org,
+        kbuild test robot <lkp@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        Mark Brown <broonie@kernel.org>, michals@xilinx.com,
+        nagasuresh12@gmail.com, richard@nod.at, vigneshr@ti.com
+Subject: Applied "spi: spi-mem: zynq-qspi: Fix build error on architectures missing readsl/writesl" to the spi tree
+In-Reply-To: <1555918009-13172-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021859.40504441D3E@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:59 +0100 (BST)
+Message-Id: <20190502021900.EAF91441D41@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:19:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: Clear SPI_CS_HIGH flag from bad_bits for GPIO chip-select
+   spi: spi-mem: zynq-qspi: Fix build error on architectures missing readsl/writesl
 
 has been applied to the spi tree at
 
@@ -71,51 +74,49 @@ to this mail.
 Thanks,
 Mark
 
-From d61ad23cb3be09ff4956e9b9794134456522817f Mon Sep 17 00:00:00 2001
-From: Serge Semin <fancer.lancer@gmail.com>
-Date: Fri, 26 Apr 2019 13:30:07 +0300
-Subject: [PATCH] spi: Clear SPI_CS_HIGH flag from bad_bits for GPIO
- chip-select
+From ba3ce8cb3808cad0f9b8303fad4bd1c887834c82 Mon Sep 17 00:00:00 2001
+From: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Date: Mon, 22 Apr 2019 12:56:49 +0530
+Subject: [PATCH] spi: spi-mem: zynq-qspi: Fix build error on architectures
+ missing readsl/writesl
 
-When GPIO chip-select is used nothing prevents any available SPI
-controllers to work with both CS-high and traditional CS-low modes.
-In fact the SPI bus core code already does it, so we don't need to
-introduce any modification there. But spi_setup() still fails to
-switch the interface settings if CS-high flag is set for the case
-of GPIO-driven slave chip-select when the SPI controller doesn't
-support the hardwired CS-inversion. Lets fix it by clearing the
-SPI_CS_HIGH flag out from bad_bits (unsupported by controller) when
-client chip is selected by GPIO.
+Alpha and some of the architectures are missing readsl/writesl functions.
+so the zynq-qspi driver won't be able to build on these arches. hence use
+ioread32_rep()/iowrite32_rep() instead of readsl()/writesl().
 
-This feature is useful for slave devices, which in accordance with
-communication protocol can work with both active-high and active-low
-chip-selects. I am aware of one such device. It is MMC-SPI interface,
-when at init sequence the driver needs to perform a read operation with
-low and high chip-select sequentially (requirement of 74 clock cycles
-with both chipselect, see the mmc_spi driver for details).
-
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/spi/spi-zynq-qspi.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 2195fa265aef..5e75944ad5d1 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2945,6 +2945,11 @@ int spi_setup(struct spi_device *spi)
- 	 * so it is ignored here.
- 	 */
- 	bad_bits = spi->mode & ~(spi->controller->mode_bits | SPI_CS_WORD);
-+	/* nothing prevents from working with active-high CS in case if it
-+	 * is driven by GPIO.
-+	 */
-+	if (gpio_is_valid(spi->cs_gpio))
-+		bad_bits &= ~SPI_CS_HIGH;
- 	ugly_bits = bad_bits &
- 		    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_TX_OCTAL |
- 		     SPI_RX_DUAL | SPI_RX_QUAD | SPI_RX_OCTAL);
+diff --git a/drivers/spi/spi-zynq-qspi.c b/drivers/spi/spi-zynq-qspi.c
+index 8079d0062d03..c6bee67decb5 100644
+--- a/drivers/spi/spi-zynq-qspi.c
++++ b/drivers/spi/spi-zynq-qspi.c
+@@ -407,8 +407,8 @@ static void zynq_qspi_write_op(struct zynq_qspi *xqspi, int txcount,
+ 		count = txcount;
+ 
+ 	if (xqspi->txbuf) {
+-		writesl(xqspi->regs + ZYNQ_QSPI_TXD_00_00_OFFSET,
+-			xqspi->txbuf, count);
++		iowrite32_rep(xqspi->regs + ZYNQ_QSPI_TXD_00_00_OFFSET,
++			      xqspi->txbuf, count);
+ 		xqspi->txbuf += count * 4;
+ 	} else {
+ 		for (k = 0; k < count; k++)
+@@ -433,8 +433,8 @@ static void zynq_qspi_read_op(struct zynq_qspi *xqspi, int rxcount)
+ 	if (count > rxcount)
+ 		count = rxcount;
+ 	if (xqspi->rxbuf) {
+-		readsl(xqspi->regs + ZYNQ_QSPI_RXD_OFFSET,
+-		       xqspi->rxbuf, count);
++		ioread32_rep(xqspi->regs + ZYNQ_QSPI_RXD_OFFSET,
++			     xqspi->rxbuf, count);
+ 		xqspi->rxbuf += count * 4;
+ 	} else {
+ 		for (k = 0; k < count; k++)
 -- 
 2.20.1
 
