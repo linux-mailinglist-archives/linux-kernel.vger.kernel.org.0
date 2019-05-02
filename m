@@ -2,62 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782C511156
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2A911125
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfEBCTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:19:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56602 "EHLO
+        id S1726428AbfEBCSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:18:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55466 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbfEBCTG (ORCPT
+        with ESMTP id S1726152AbfEBCSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:06 -0400
+        Wed, 1 May 2019 22:18:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JSlPcUnFqX1tN5EF+WG+3VLibdvupztBzoEMjhd4pBY=; b=g7HBSZHxEi41
-        FbJOFo6XXTQJJ4jd7ljgytbHAlajKmV+/HndsXkAQtOvo+vHj106e0vJhsG1vuijAWw29aiNl3EzG
-        l/oQinOz18TveSp+rV+4A6u9ko4jCwW9hCw7RotfC5h/NLZMi2ntyWQSGKNgQlD9a849ZiCNpPHal
-        mCKTk=;
+        List-Archive; bh=QjCPGci74UmifJtpBqzOP72e1ynNhraaHvIcf4rf0co=; b=W8AbRtvWtJpZ
+        R6IG8s4CIHH0C2oDH5Vs/J5a39kA7O7QUSS9QdngbpqgtsvdLmHWlDXKg29TBcub/TLRLOJ5Ersex
+        UhP4nTrRYqbQKcNezLxpAXyUHSFEWZrapbY+dDE3TspbbfdAmHxUsEHVaPDR9e1/ccWElkYH26VUL
+        FKGew=;
 Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1IX-0005qB-G5; Thu, 02 May 2019 02:18:09 +0000
+        id 1hM1Il-0005re-MR; Thu, 02 May 2019 02:18:24 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 39C17441D3C; Thu,  2 May 2019 03:18:06 +0100 (BST)
+        id 053F2441D3C; Thu,  2 May 2019 03:18:19 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
+To:     Kangjie Lu <kjlu@umn.edu>
 Cc:     alsa-devel@alsa-project.org,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Brian Austin <brian.austin@cirrus.com>, kjlu@umn.edu,
         Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Timur Tabi <timur@kernel.org>,
-        Viorel Suman <viorel.suman@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>
-Subject: Applied "ASoC: fsl_audmix: cache pdev->dev pointer" to the asoc tree
-In-Reply-To:  <1554894380-25153-5-git-send-email-viorel.suman@nxp.com>
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        pakki001@umn.edu, Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: cs43130: fix a NULL pointer dereference" to the asoc tree
+In-Reply-To:  <20190315035120.25913-1-kjlu@umn.edu>
 X-Patchwork-Hint: ignore
-Message-Id: <20190502021806.39C17441D3C@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:18:06 +0100 (BST)
+Message-Id: <20190502021820.053F2441D3C@finisterre.ee.mobilebroadband>
+Date:   Thu,  2 May 2019 03:18:19 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_audmix: cache pdev->dev pointer
+   ASoC: cs43130: fix a NULL pointer dereference
 
 has been applied to the asoc tree at
 
@@ -90,99 +74,33 @@ to this mail.
 Thanks,
 Mark
 
-From 62be484f7ad8443c393293a415392fbf3190c864 Mon Sep 17 00:00:00 2001
-From: Viorel Suman <viorel.suman@nxp.com>
-Date: Wed, 10 Apr 2019 11:06:39 +0000
-Subject: [PATCH] ASoC: fsl_audmix: cache pdev->dev pointer
+From a2be42f18d409213bb7e7a736e3ef6ba005115bb Mon Sep 17 00:00:00 2001
+From: Kangjie Lu <kjlu@umn.edu>
+Date: Thu, 14 Mar 2019 22:51:20 -0500
+Subject: [PATCH] ASoC: cs43130: fix a NULL pointer dereference
 
-There should be no trouble to understand dev = pdev->dev.
-This can save some space to have more print info or save
-some wrapped lines.
+In case create_singlethread_workqueue fails, the fix returns
+-ENOMEM to avoid potential NULL pointer dereference.
 
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-Suggested-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_audmix.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ sound/soc/codecs/cs43130.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
-index dc802d5c4ccd..3897a54a11fe 100644
---- a/sound/soc/fsl/fsl_audmix.c
-+++ b/sound/soc/fsl/fsl_audmix.c
-@@ -456,6 +456,7 @@ MODULE_DEVICE_TABLE(of, fsl_audmix_ids);
+diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
+index 3f7b255587e6..80d672710eae 100644
+--- a/sound/soc/codecs/cs43130.c
++++ b/sound/soc/codecs/cs43130.c
+@@ -2322,6 +2322,8 @@ static int cs43130_probe(struct snd_soc_component *component)
+ 			return ret;
  
- static int fsl_audmix_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct fsl_audmix *priv;
- 	struct resource *res;
- 	const char *mdrv;
-@@ -463,52 +464,50 @@ static int fsl_audmix_probe(struct platform_device *pdev)
- 	void __iomem *regs;
- 	int ret;
- 
--	of_id = of_match_device(fsl_audmix_ids, &pdev->dev);
-+	of_id = of_match_device(fsl_audmix_ids, dev);
- 	if (!of_id || !of_id->data)
- 		return -EINVAL;
- 
- 	mdrv = of_id->data;
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
- 	/* Get the addresses */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(&pdev->dev, res);
-+	regs = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 
--	priv->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "ipg", regs,
-+	priv->regmap = devm_regmap_init_mmio_clk(dev, "ipg", regs,
- 						 &fsl_audmix_regmap_config);
- 	if (IS_ERR(priv->regmap)) {
--		dev_err(&pdev->dev, "failed to init regmap\n");
-+		dev_err(dev, "failed to init regmap\n");
- 		return PTR_ERR(priv->regmap);
+ 		cs43130->wq = create_singlethread_workqueue("cs43130_hp");
++		if (!cs43130->wq)
++			return -ENOMEM;
+ 		INIT_WORK(&cs43130->work, cs43130_imp_meas);
  	}
  
--	priv->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
-+	priv->ipg_clk = devm_clk_get(dev, "ipg");
- 	if (IS_ERR(priv->ipg_clk)) {
--		dev_err(&pdev->dev, "failed to get ipg clock\n");
-+		dev_err(dev, "failed to get ipg clock\n");
- 		return PTR_ERR(priv->ipg_clk);
- 	}
- 
- 	platform_set_drvdata(pdev, priv);
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_enable(dev);
- 
--	ret = devm_snd_soc_register_component(&pdev->dev, &fsl_audmix_component,
-+	ret = devm_snd_soc_register_component(dev, &fsl_audmix_component,
- 					      fsl_audmix_dai,
- 					      ARRAY_SIZE(fsl_audmix_dai));
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to register ASoC DAI\n");
-+		dev_err(dev, "failed to register ASoC DAI\n");
- 		return ret;
- 	}
- 
--	priv->pdev = platform_device_register_data(&pdev->dev, mdrv, 0, NULL,
--						   0);
-+	priv->pdev = platform_device_register_data(dev, mdrv, 0, NULL, 0);
- 	if (IS_ERR(priv->pdev)) {
- 		ret = PTR_ERR(priv->pdev);
--		dev_err(&pdev->dev, "failed to register platform %s: %d\n",
--			mdrv, ret);
-+		dev_err(dev, "failed to register platform %s: %d\n", mdrv, ret);
- 	}
- 
- 	return ret;
 -- 
 2.20.1
 
