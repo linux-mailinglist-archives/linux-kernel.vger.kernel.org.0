@@ -2,116 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E63C11E5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F44F11ED3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfEBP26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:28:58 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40161 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728305AbfEBP2y (ORCPT
+        id S1728750AbfEBPkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:40:47 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:59304 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728322AbfEBP3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:28:54 -0400
-Received: by mail-lf1-f68.google.com with SMTP id o16so2194143lfl.7;
-        Thu, 02 May 2019 08:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=prm1fyhXs0jWTAHPn6CLV/HtaSlxTqydNTX71G2xSCs=;
-        b=r0Ah6TDQTHwK7cH76U0v6wgZe6avx5iEHW7ZyZtQeMWJ0BM96xdA5Cl0z7TybVCWq2
-         GdJs4hBIjaMk2+bN1HDaTf6zOqe5hO2sgp6ZtwfTS5/fgwSJDtrNJWjCDsbNjpl3/Sa4
-         pymiyFG6nYLpfuMR0Z6lMg2u0eUJ4y2Q7N2OfhBsIvVvaOFxPAvTamFXL7Nc7D/v6Wfu
-         IAjQPZdRp88rdrNlYeCMsQUlqoccabRM797x4zAWUFICHLLBwyerZdw7uU9+/LxV2+Cf
-         JPDpJOTOT9fun6uCI1IgogwQHc91rbibBlm3/21cJycV86XiKrFcKaWknQV1nMlUbn7F
-         S9lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=prm1fyhXs0jWTAHPn6CLV/HtaSlxTqydNTX71G2xSCs=;
-        b=da7XReLoTdCycnQ2Jbl/0iF4haiP5uF7YMWetEv/mlynALo1sON1DqkLzlp+KpL35p
-         NbSN1tZ781FacuMU9QCa5SgC8Vy2GqEKzpqbi+zwO6d6CNVm6PmsIAbnRZmVHgAEuueB
-         0Z4Y2/6LiwEk02FiwwTQn2UcQyZctJRle/lDIdteQSUGg/awodmE0rX42xNPxBXxYAA2
-         0EHI2nB+Q31dmngcLqvT348X3mfBUJZSiv+JRxUiQCeY8v1sChSHWqDG8dWP3fzYY37V
-         qkgSeC8x0YikSVxT43/ddoaajmkXJl7BH1VLtxXotFw18+7e5Ve7cIqt36S2vlJ3P7EE
-         gLkQ==
-X-Gm-Message-State: APjAAAXfHWs61zcOWrSXzrVx6WgavmHMaGmrAZXaXtilHl242T/6sCRw
-        ojA4g93aLpQE0PHiIJcBbVdbr729ATcqKuXD+9s=
-X-Google-Smtp-Source: APXvYqzMcVGIejleD+/wKh8TcnzqGnJxMNAmrH86SrHVOreuURuClXNb7c4WEX+3sFRf5peisBBVvSR/1IhjXSA4LuM=
-X-Received: by 2002:a19:f001:: with SMTP id p1mr2498539lfc.27.1556810932481;
- Thu, 02 May 2019 08:28:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190430074730.8236-1-sebastien.szymanski@armadeus.com>
-In-Reply-To: <20190430074730.8236-1-sebastien.szymanski@armadeus.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 2 May 2019 12:28:46 -0300
-Message-ID: <CAOMZO5D=BHWgOieLfz4bxL8v4bDmNOutUUnYSzW89KNtYn=Z9g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: imx6ul: Add csi node
-To:     =?UTF-8?Q?S=C3=A9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>,
-        Rui Miguel Silva <rui.silva@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
+        Thu, 2 May 2019 11:29:04 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hMDdr-0006zB-2J; Thu, 02 May 2019 17:28:59 +0200
+Message-ID: <d0cfa4c1a17c336f1ad48a31897787469c302092.camel@sipsolutions.net>
+Subject: Re: [PATCH net-next 1/3] genetlink: do not validate dump requests
+ if there is no policy
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     David Ahern <dsahern@gmail.com>, Michal Kubecek <mkubecek@suse.cz>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 02 May 2019 17:28:57 +0200
+In-Reply-To: <fd3b0c89-2475-166d-e2b8-1479af7b79bc@gmail.com> (sfid-20190502_153641_028378_FAA2A3FF)
+References: <cover.1556798793.git.mkubecek@suse.cz>
+         <0a54a4db49c20e76a998ea3e4548b22637fbad34.1556798793.git.mkubecek@suse.cz>
+         <031933f3fc4b26e284912771b480c87483574bea.camel@sipsolutions.net>
+         <20190502131023.GD21672@unicorn.suse.cz>
+         <ab9b48a0e21d0a9e5069045c23db36f43e4356e3.camel@sipsolutions.net>
+         <20190502133231.GF21672@unicorn.suse.cz>
+         <fd3b0c89-2475-166d-e2b8-1479af7b79bc@gmail.com>
+         (sfid-20190502_153641_028378_FAA2A3FF)
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Adding Rui]
+On Thu, 2019-05-02 at 07:36 -0600, David Ahern wrote:
+> On 5/2/19 7:32 AM, Michal Kubecek wrote:
+> > Wouldn't it mean effecitvely ending up with only one command (in
+> > genetlink sense) and having to distinguish actual commands with
+> > atributes? Even if I wanted to have just "get" and "set" command, common
+> > policy wouldn't allow me to say which attributes are allowed for each of
+> > them.
+> 
+> yes, I have been stuck on that as well.
+> 
+> There are a number of RTA attributes that are only valid for GET
+> requests or only used in the response or only valid in NEW requests.
+> Right now there is no discriminator when validating policies and the
+> patch set to expose the policies to userspace
 
-On Tue, Apr 30, 2019 at 4:47 AM S=C3=A9bastien Szymanski
-<sebastien.szymanski@armadeus.com> wrote:
->
-> Add csi node for i.MX6UL SoC.
->
-> Signed-off-by: S=C3=A9bastien Szymanski <sebastien.szymanski@armadeus.com=
->
-> ---
->  arch/arm/boot/dts/imx6ul.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dts=
-i
-> index 62ed30c781ed..af322bc58333 100644
-> --- a/arch/arm/boot/dts/imx6ul.dtsi
-> +++ b/arch/arm/boot/dts/imx6ul.dtsi
-> @@ -951,6 +951,17 @@
->                                 };
->                         };
->
-> +                       csi: csi@21c4000 {
-> +                               compatible =3D "fsl,imx6ul-csi", "fsl,imx=
-7-csi";
-> +                               reg =3D <0x021c4000 0x4000>;
-> +                               interrupts =3D <GIC_SPI 7 IRQ_TYPE_LEVEL_=
-HIGH>;
-> +                               clocks =3D <&clks IMX6UL_CLK_DUMMY>,
-> +                                        <&clks IMX6UL_CLK_CSI>,
-> +                                        <&clks IMX6UL_CLK_DUMMY>;
-> +                               clock-names =3D "axi", "mclk", "dcic";
+Yeah. As I've been discussing with Pablo in various threads recently,
+this is definitely something we're missing.
 
-Also, I understand you followed
-Documentation/devicetree/bindings/media/imx7-csi.txt and passed these
-three clocks, but looking at the i.MX7D and i.MX6UL/ULL Reference
-Manuals, I don't find the  the descriptions for the "axi" and "dcic"
-CSI clocks.
+As I said there though, I think it's something we should treat as
+orthogonal to the policies.
 
-It looks like that only "mclk" is what we really need here.
+I haven't looked at your ethtool patches really now (if you have a git
+tree that'd be nice), but I saw e.g.
 
-Should we change the bindings and the imx7-csi driver to not request
-"axi" and "dcic" clocks?
++When appropriate, network device is identified by a nested attribute named
++ETHA_*_DEV. This attribute can contain
++
++    ETHA_DEV_INDEX	(u32)		device ifindex
++    ETHA_DEV_NAME	(string)	device name
 
-Rui, what do you think? If you agree I can send a fix for this.
+Presumably, this is valid for each and every command, right?
 
-Thanks
+I'm not sure I understand the "ETHA_*_DEV" part, but splitting the
+policy per command means that things like this that are available/valid
+for each command need to be stated over and over again. This opens up
+the very easy possibility that you have one command that takes an
+ETHA_DEV_INDEX as u32, and another that - for some reason - takes a u64
+for example, or similar confusion between the same attribute stated in
+different policies.
+
+This is why I believe that when we have a flat namespace for attributes,
+like ETHA_*, we should also have a flat policy for those attributes, and
+that's why I made the genetlink to have a single policy.
+
+At the same time, I do realize that this is not ideal. So far I've sort
+of pushed this to be something that we should treat orthogonally to the
+validation for the above reasons, i.e. *not* state this specifically in
+the policy.
+
+If we were able to express this in C, I'd probably say we should have
+something like
+
+static const struct genl_ops ops[] = {
+        {
+                .cmd = MY_CMD,
+                .doit = my_cmd_doit,
+		.valid_attrs = { MY_ATTR_A, MY_ATTR_B },
+        },
+
+	...
+};
+
+However, there's no way to express this in C code, except for
+
+static const u16 my_cmd_valid_attrs[] = { MY_ATTR_A, MY_ATTR_B, 0 };
+
+static const struct genl_ops ops[] = {
+        {
+                .cmd = MY_CMD,
+                .doit = my_cmd_doit,
+		.valid_attrs = my_cmd_valid_attrs,
+        },
+
+	...
+};
+
+which is clearly ugly to write. We could generate this code from a
+domain-specific language like Pablo suggested, but I'm not really sure
+that's ideal either.
+
+
+Regardless, I think we should solve this problem orthogonally from the
+policy, given that otherwise we can end up with the same attribute
+meaning different things in different commands.
+
+johannes
+
