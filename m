@@ -2,127 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D69E113A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5717113AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 09:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfEBHG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 03:06:56 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16162 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfEBHGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 03:06:55 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cca970b0000>; Thu, 02 May 2019 00:06:51 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 02 May 2019 00:06:54 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 02 May 2019 00:06:54 -0700
-Received: from [10.24.47.93] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 May
- 2019 07:06:51 +0000
-Subject: Re: [PATCH V3 1/2] PCI: dwc: Add API support to de-initialize host
-To:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <Jisheng.Zhang@synaptics.com>, <thierry.reding@gmail.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190423044920.19663-1-vidyas@nvidia.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <c9084c70-b580-c57f-3f66-f177c819b5fe@nvidia.com>
-Date:   Thu, 2 May 2019 12:36:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726447AbfEBHHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 03:07:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfEBHHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 03:07:49 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9159208C4;
+        Thu,  2 May 2019 07:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556780868;
+        bh=R58soqJU4/GFbmzVt6nBZnewIAmHT909NOZ409AkhRM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BO285Ep1LVasDMxvVq5Od9DRgRNO6bDWc1jYgn8yTtbgsFfHfewSjEVStJsT8NoOX
+         JE3DiwPqAY24RWeqhUvVu5iPxDvrgLOBCG2FKR+EKtD88UumZ50usRkb0kDkqcvlR3
+         fDbgLrJVG5TsOSfcOW6M3RP1qdznJtq2VvCZYhO4=
+Date:   Thu, 2 May 2019 09:07:46 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     Nishad Kamdar <nishadkamdar@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org
+Subject: Re: [PATCH] clk: actions: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20190502070746.GA16247@kroah.com>
+References: <20190501070707.GA5619@nishad>
+ <057d9b37-7475-1902-bce7-6d519c2e0fdf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20190423044920.19663-1-vidyas@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1556780811; bh=Y4uh7oT7MGNrJWRfdMXdHKz9a+ZKr/tTqay8PTJ3L5Y=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=kMYW9NwpaE0lz79Ugz/dKDLEmutK+jjh5For9f7Ns/CJ+D5bufn8yGnWf19Bej9Mx
-         Hg3p56ZrDAHWJeHVRCQy3m1F9CvRLtLY++1RBYqwzfEf1K8yZhWaMs72JK3a924dT5
-         QRoSWaNKKCeataHhz2Ddr2qV9NH8bs6X/ilHfCygmv7ywvgUMfeqWR82tZb2odM2o7
-         o3+2LThDJea+mn5QeRxL/pJ2hi92jDBqgI4DAdjW9BRk6hGU3Ws8TbGnBlcXaez2TD
-         NqEDBhAFWzVGf6Cvu0r2T+OvLWp0CczV4FqErLDZXPjSWM8aB0Dyt1mhEhMjqVfT/M
-         BNexZUFqHLYrw==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <057d9b37-7475-1902-bce7-6d519c2e0fdf@suse.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/23/2019 10:19 AM, Vidya Sagar wrote:
-> Add an API to group all the tasks to be done to de-initialize host which
-> can then be called by any DesignWare core based driver implementations
-> while adding .remove() support in their respective drivers.
+On Wed, May 01, 2019 at 10:20:44PM +0200, Andreas Färber wrote:
+> + linux-actions
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> v3:
-> * Rebased on top of linux-next top of the tree branch
+> Am 01.05.19 um 09:07 schrieb Nishad Kamdar:
+> > This patch corrects the SPDX License Identifier style
+> > in header files related to Clock Drivers for Actions Semi Socs.
+> > For C header files Documentation/process/license-rules.rst
+> > mandates C-like comments (opposed to C source files where
+> > C++ style should be used)
+> [...]
+> >  drivers/clk/actions/owl-common.h       | 2 +-
+> >  drivers/clk/actions/owl-composite.h    | 2 +-
+> >  drivers/clk/actions/owl-divider.h      | 2 +-
+> >  drivers/clk/actions/owl-factor.h       | 2 +-
+> >  drivers/clk/actions/owl-fixed-factor.h | 2 +-
+> >  drivers/clk/actions/owl-gate.h         | 2 +-
+> >  drivers/clk/actions/owl-mux.h          | 2 +-
+> >  drivers/clk/actions/owl-pll.h          | 2 +-
+> >  drivers/clk/actions/owl-reset.h        | 2 +-
+> >  9 files changed, 9 insertions(+), 9 deletions(-)
 > 
-> v2:
-> * s/Designware/DesignWare
-> 
->   drivers/pci/controller/dwc/pcie-designware-host.c | 7 +++++++
->   drivers/pci/controller/dwc/pcie-designware.h      | 5 +++++
->   2 files changed, 12 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 77db32529319..f87c9542eb09 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -496,6 +496,13 @@ int dw_pcie_host_init(struct pcie_port *pp)
->   	return ret;
->   }
->   
-> +void dw_pcie_host_deinit(struct pcie_port *pp)
-> +{
-> +	pci_stop_root_bus(pp->root_bus);
-> +	pci_remove_root_bus(pp->root_bus);
-> +	dw_pcie_free_msi(pp);
-> +}
-> +
->   static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->   				     u32 devfn, int where, int size, u32 *val,
->   				     bool write)
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index deab426affd3..4f48ec78c7b9 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
->   void dw_pcie_free_msi(struct pcie_port *pp);
->   void dw_pcie_setup_rc(struct pcie_port *pp);
->   int dw_pcie_host_init(struct pcie_port *pp);
-> +void dw_pcie_host_deinit(struct pcie_port *pp);
->   int dw_pcie_allocate_domains(struct pcie_port *pp);
->   #else
->   static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
-> @@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
->   	return 0;
->   }
->   
-> +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
-> +{
-> +}
-> +
->   static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
->   {
->   	return 0;
-> 
+> Where's the practical benefit of this patch? These are all private
+> headers used from C files, so they can handle C++ comments just fine,
+> otherwise we would've seen build failures.
 
-Hi Lorenzo,
-Can you please review this patch series?
+Please read Documentation/process/license-rules.rst, the section
+entitled "Style", for what the documented formats are for SPDX lines,
+depending on the file type.
 
-Thanks,
-Vidya Sagar
+thanks,
+
+greg k-h
