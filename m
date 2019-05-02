@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 323F711CA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D92511F12
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfEBPXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:23:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38898 "EHLO mail.kernel.org"
+        id S1727601AbfEBPps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:45:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbfEBPXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:23:16 -0400
+        id S1727558AbfEBPZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:25:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DBA320675;
-        Thu,  2 May 2019 15:23:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEEE920B7C;
+        Thu,  2 May 2019 15:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810595;
-        bh=7txGcVyoUCHAkF+h3UiYC9pjFD6QBIsiwjOWqny7tVU=;
+        s=default; t=1556810730;
+        bh=b1UvfmrvpCR8JsMQMbD1yux55WKT5xNT1ZAn3vdREG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=woPseF32U/30lDG+lETlmOz26/dFi5o1dVCLMbAHpGpxzyp6S9jjDOTe5yhl7hTNs
-         FVGwyyB9jd/VnqVm/ELOxXoQALhqRAUV1/NhGNVTV9G9X+XIItKR6nZU8lVBDWXtQb
-         MR7n/ThCYzs9JPrxmS3t4LG5GTD6DByf6T4vv7wU=
+        b=yQ56z+v6DGbW3o54jbG0BzKSV8fxkc5mTiAvZ6EXy40cNEL2vLB8OYx478umbza6K
+         mgcTWOkR5om3Nb7CtvnXzaMm9K1f3Vtc0VpEWYAW2swmd0s3bsu+KEe4pvNNTCb3dB
+         xR/X8At3uPf3Lq8V1tCrZj0OSLSoa/9VGrPpAmdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Mukesh Ojha <mojha@codeaurora.org>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 19/32] staging: rtl8712: uninitialized memory in read_bbreg_hdl()
+Subject: [PATCH 4.14 28/49] staging: rtlwifi: Fix potential NULL pointer dereference of kzalloc
 Date:   Thu,  2 May 2019 17:21:05 +0200
-Message-Id: <20190502143320.447183085@linuxfoundation.org>
+Message-Id: <20190502143327.408000450@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143323.397051088@linuxfoundation.org>
+References: <20190502143323.397051088@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22c971db7dd4b0ad8dd88e99c407f7a1f4231a2e ]
+[ Upstream commit 6a8ca24590a2136921439b376c926c11a6effc0e ]
 
-Colin King reported a bug in read_bbreg_hdl():
+phydm.internal is allocated using kzalloc which is used multiple
+times without a check for NULL pointer. This patch avoids such a
+scenario by returning 0, consistent with the failure case.
 
-	memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
-
-The problem is that "val" is uninitialized.
-
-This code is obviously not useful, but so far as I can tell
-"pcmd->cmdcode" is never GEN_CMD_CODE(_Read_BBREG) so it's not harmful
-either.  For now the easiest fix is to just call r8712_free_cmd_obj()
-and return.
-
-Fixes: 2865d42c78a9 ("staging: r8712u: Add the new driver to the mainline kernel")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/staging/rtl8712/rtl8712_cmd.c | 10 +---------
- drivers/staging/rtl8712/rtl8712_cmd.h |  2 +-
- 2 files changed, 2 insertions(+), 10 deletions(-)
+ drivers/staging/rtlwifi/phydm/rtl_phydm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.c b/drivers/staging/rtl8712/rtl8712_cmd.c
-index 9f61583af150..41b667c8385c 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.c
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.c
-@@ -158,17 +158,9 @@ static u8 write_macreg_hdl(struct _adapter *padapter, u8 *pbuf)
+diff --git a/drivers/staging/rtlwifi/phydm/rtl_phydm.c b/drivers/staging/rtlwifi/phydm/rtl_phydm.c
+index 85e490d3601f..cab563fefc34 100644
+--- a/drivers/staging/rtlwifi/phydm/rtl_phydm.c
++++ b/drivers/staging/rtlwifi/phydm/rtl_phydm.c
+@@ -191,6 +191,8 @@ static int rtl_phydm_init_priv(struct rtl_priv *rtlpriv,
  
- static u8 read_bbreg_hdl(struct _adapter *padapter, u8 *pbuf)
- {
--	u32 val;
--	void (*pcmd_callback)(struct _adapter *dev, struct cmd_obj	*pcmd);
- 	struct cmd_obj *pcmd  = (struct cmd_obj *)pbuf;
+ 	rtlpriv->phydm.internal =
+ 		kzalloc(sizeof(struct phy_dm_struct), GFP_KERNEL);
++	if (!rtlpriv->phydm.internal)
++		return 0;
  
--	if (pcmd->rsp && pcmd->rspsz > 0)
--		memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
--	pcmd_callback = cmd_callback[pcmd->cmdcode].callback;
--	if (!pcmd_callback)
--		r8712_free_cmd_obj(pcmd);
--	else
--		pcmd_callback(padapter, pcmd);
-+	r8712_free_cmd_obj(pcmd);
- 	return H2C_SUCCESS;
- }
+ 	_rtl_phydm_init_com_info(rtlpriv, ic, params);
  
-diff --git a/drivers/staging/rtl8712/rtl8712_cmd.h b/drivers/staging/rtl8712/rtl8712_cmd.h
-index 67e9e910aef9..d10a59d4a550 100644
---- a/drivers/staging/rtl8712/rtl8712_cmd.h
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.h
-@@ -152,7 +152,7 @@ enum rtl8712_h2c_cmd {
- static struct _cmd_callback	cmd_callback[] = {
- 	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
- 	{GEN_CMD_CODE(_Write_MACREG), NULL},
--	{GEN_CMD_CODE(_Read_BBREG), &r8712_getbbrfreg_cmdrsp_callback},
-+	{GEN_CMD_CODE(_Read_BBREG), NULL},
- 	{GEN_CMD_CODE(_Write_BBREG), NULL},
- 	{GEN_CMD_CODE(_Read_RFREG), &r8712_getbbrfreg_cmdrsp_callback},
- 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
 -- 
 2.19.1
 
