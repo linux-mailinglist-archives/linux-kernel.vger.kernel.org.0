@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33086112F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 08:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9966112F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 08:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfEBGCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 02:02:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33816 "EHLO mx1.suse.de"
+        id S1726362AbfEBGDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 02:03:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33986 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726191AbfEBGCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 02:02:37 -0400
+        id S1725795AbfEBGDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 02:03:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 59753AEDB;
-        Thu,  2 May 2019 06:02:36 +0000 (UTC)
-Subject: Re: [PATCH 11/24] libfc: remove duplicate GPL boilerplate text
+        by mx1.suse.de (Postfix) with ESMTP id 46E1EAEF4;
+        Thu,  2 May 2019 06:03:02 +0000 (UTC)
+Subject: Re: [PATCH 12/24] libfc: switch to SPDX tags
 To:     Christoph Hellwig <hch@lst.de>,
         "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
@@ -27,14 +27,14 @@ Cc:     Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
         linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
         osst-users@lists.sourceforge.net, linux-kernel@vger.kernel.org
 References: <20190501161417.32592-1-hch@lst.de>
- <20190501161417.32592-12-hch@lst.de>
+ <20190501161417.32592-13-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <453a0b4d-d152-d2fc-4a2c-51c27ce83c71@suse.de>
-Date:   Thu, 2 May 2019 08:02:36 +0200
+Message-ID: <3ae164d9-f1b0-c1b9-e867-f592b0fef4c2@suse.de>
+Date:   Thu, 2 May 2019 08:03:01 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190501161417.32592-12-hch@lst.de>
+In-Reply-To: <20190501161417.32592-13-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -44,16 +44,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 5/1/19 6:14 PM, Christoph Hellwig wrote:
-> The libfc uapi headers already have proper SPDX tags, remove the
-> duplicate boilerplate text.
+> Use the the GPLv2 SPDX tag instead of verbose boilerplate text.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   include/uapi/scsi/fc/fc_els.h | 13 -------------
->   include/uapi/scsi/fc/fc_fs.h  | 13 -------------
->   include/uapi/scsi/fc/fc_gs.h  | 13 -------------
->   include/uapi/scsi/fc/fc_ns.h  | 13 -------------
->   4 files changed, 52 deletions(-)
+>   drivers/scsi/libfc/fc_disc.c  | 14 +-------------
+>   drivers/scsi/libfc/fc_elsct.c | 14 +-------------
+>   drivers/scsi/libfc/fc_exch.c  | 14 +-------------
+>   drivers/scsi/libfc/fc_fcp.c   | 14 +-------------
+>   drivers/scsi/libfc/fc_frame.c | 14 +-------------
+>   drivers/scsi/libfc/fc_libfc.c | 14 +-------------
+>   drivers/scsi/libfc/fc_libfc.h | 14 +-------------
+>   drivers/scsi/libfc/fc_lport.c | 14 +-------------
+>   drivers/scsi/libfc/fc_npiv.c  | 14 +-------------
+>   drivers/scsi/libfc/fc_rport.c | 14 +-------------
+>   include/scsi/fc/fc_encaps.h   | 14 +-------------
+>   include/scsi/fc/fc_fc2.h      | 14 +-------------
+>   include/scsi/fc/fc_fcoe.h     | 14 +-------------
+>   include/scsi/fc/fc_fcp.h      | 14 +-------------
+>   include/scsi/fc/fc_fip.h      | 14 +-------------
+>   include/scsi/fc/fc_ms.h       | 17 +++--------------
+>   include/scsi/libfc.h          | 14 +-------------
+>   17 files changed, 19 insertions(+), 222 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
