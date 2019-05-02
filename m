@@ -2,63 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C869F11B3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F43811B3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfEBOTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 10:19:47 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39513 "EHLO ozlabs.org"
+        id S1726416AbfEBOUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 10:20:21 -0400
+Received: from muru.com ([72.249.23.125]:47948 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfEBOTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 10:19:47 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 44vy803DdJz9sBr; Fri,  3 May 2019 00:19:44 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     linux-edac@vger.kernel.org
-Cc:     morbidrsa@gmail.com, bp@alien8.de, mchehab@kernel.org,
-        james.morse@arm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@ozlabs.org
-Subject: [PATCH] EDAC, mpc85xx: Prevent building as a module
-Date:   Fri,  3 May 2019 00:19:41 +1000
-Message-Id: <20190502141941.12927-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.20.1
+        id S1726203AbfEBOUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 10:20:20 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 213E9809B;
+        Thu,  2 May 2019 14:20:37 +0000 (UTC)
+Date:   Thu, 2 May 2019 07:20:16 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, bcousson@baylibre.com, ulf.hansson@linaro.org,
+        adrian.hunter@intel.com
+Subject: Re: [PATCH] ARM: dts: am57xx-idk: Remove support for voltage
+ switching for SD card
+Message-ID: <20190502142016.GO8007@atomide.com>
+References: <20190502084748.22518-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190502084748.22518-1-faiz_abbas@ti.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mpc85xx EDAC code can be configured as a module but then fails to
-build because it uses two unexported symbols:
+* Faiz Abbas <faiz_abbas@ti.com> [190502 01:48]:
+> If UHS speed modes are enabled, a compatible SD card switches down to
+> 1.8V during enumeration. If after this a software reboot/crash takes
+> place and on-chip ROM tries to enumerate the SD card, the difference in
+> IO voltages (host @ 3.3V and card @ 1.8V) may end up damaging the card.
+> 
+> The fix for this is to have support for power cycling the card in
+> hardware (with a PORz/soft-reset line causing a power cycle of the
+> card). Since am571x-, am572x- and am574x-idk don't have this
+> capability, disable voltage switching for these boards.
+> 
+> The major effect of this is that the maximum supported speed
+> mode is now high speed(50 MHz) down from SDR104(200 MHz).
 
-  ERROR: ".pci_find_hose_for_OF_device" [drivers/edac/mpc85xx_edac_mod.ko] undefined!
-  ERROR: ".early_find_capability" [drivers/edac/mpc85xx_edac_mod.ko] undefined!
+This sounds a bit urgent, does it also need a stable tag or is
+it safe to apply against any earlier kernels?
 
-We don't want to export those symbols just for this driver, so make
-the driver only configurable as a built-in.
+Regards,
 
-This seems to have been broken since at least commit c92132f59806
-("edac/85xx: Add PCIe error interrupt edac support") (Nov 2013).
+Tony
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- drivers/edac/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 47eb4d13ed5f..6317519f9d88 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -263,7 +263,7 @@ config EDAC_PND2
- 	  micro-server but may appear on others in the future.
- 
- config EDAC_MPC85XX
--	tristate "Freescale MPC83xx / MPC85xx"
-+	bool "Freescale MPC83xx / MPC85xx"
- 	depends on FSL_SOC
- 	help
- 	  Support for error detection and correction on the Freescale
--- 
-2.20.1
-
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  arch/arm/boot/dts/am57xx-idk-common.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+> index f7bd26458915..42e433da79ec 100644
+> --- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
+> +++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+> @@ -420,6 +420,7 @@
+>  	vqmmc-supply = <&ldo1_reg>;
+>  	bus-width = <4>;
+>  	cd-gpios = <&gpio6 27 GPIO_ACTIVE_LOW>; /* gpio 219 */
+> +	no-1-8-v;
+>  };
+>  
+>  &mmc2 {
+> -- 
+> 2.19.2
+> 
