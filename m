@@ -2,86 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 643D0117C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36272117D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfEBLCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 07:02:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbfEBLCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 07:02:23 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5A6B20656;
-        Thu,  2 May 2019 11:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556794942;
-        bh=nOdygw9Kk1rPOSBt7SYd7W2YRVezyBvv7bv92jfZhHM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QVhLNVl+kFCGa4qKMxbE3iXUhUTDNoqNjOrwG/PTklDuyc/zZitjl4iGVIUEcK9mq
-         ZjtTSTPd/IYzKKg9UaCBiZ1iUe+zjqgu6eX3MtWFfMyatUxvweOtiAQ0LBZimoeXJA
-         oWjvyASNbWkhMa6vm3fnEL/GbAHDE6uY2kQH7jq4=
-Date:   Thu, 2 May 2019 13:02:20 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
-Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
- KUnit tests
-Message-ID: <20190502110220.GD12416@kroah.com>
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-13-brendanhiggins@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501230126.229218-13-brendanhiggins@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1726472AbfEBLDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 07:03:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46890 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfEBLDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 07:03:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j11so917497pff.13
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 04:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=yOyR8oq8IHtcYKwMKo5EmKseTdIOzma0iWv4YEXZ/yU=;
+        b=G+u2/xbqv6XKQ3fv5UFhAhQ2alxc+A4E//ftmby4grYjd6VJc/kaLWBhvcS4uHCgx6
+         eJqbuhHu2WHoKmVbxyReWdZeyqDVPFQNceYC8OuPq5mCh02u3iDyyyMQT9wAqJRX+NhX
+         qHt4NFJbJ5NCXR/uOXqA0SLEmNtH0PklLxk0fS76ZrZShSLPl7/bJZ9aO0iiyGHCplov
+         TfFYz9uw75S9dQvk0Dwqc8iaZqnOe4lEyGtDLBannLR1V5EXH55KTWrlzTBWS201axA3
+         e+fpO/R7a6rdSFQ4dN3kaeIQ5BeaTfxJdAjfhhtZB9qajt5mRBM8LPeQmCKJX+F6ATQX
+         W6lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yOyR8oq8IHtcYKwMKo5EmKseTdIOzma0iWv4YEXZ/yU=;
+        b=LBlwghY6CX7ZdN/3CA/5CJ/T3WSkUw4bT2JswFgxqVVwQ9NX2tVEyEzltpq+3bsF1B
+         LVJGfpw90nxVaDzFnml5Rod2un6kSCG+iSNeyzezCVf7R8JinhF2ub2JueOH3C8lmAt9
+         gIGZ0gjpNa5XAgv3Wfg13XycCELwdtSdU87HnFKLn92xFkAtiSkir0Uo52HbJ16Ybp+e
+         02tKkO9CaYp+r+KDyzxjal6hpwkf4cNIQTC0vrtlLfwQUHlmMAoDgXFeesTC52zSajFY
+         mPIVGr2GQjV+DdrSCX5jUDeA9H8xIQBcw5TghlCFDQay5r+4cMAXp0zEnlyfxtaX0k5T
+         nE6A==
+X-Gm-Message-State: APjAAAV7rVsHJSO1xEQRZgL5bhSKt03/WIUXVE/u5t3I+9/OWsLcxQen
+        Do8+XNtNqucEmsNddEGbjNOrLHkJtQ==
+X-Google-Smtp-Source: APXvYqy0UGf59Nz+0AnUFACQfMkiY8Zj96iYY+0Sr6qQKLX6BawDpJ4WJhU0prn9RT1py936s+POrQ==
+X-Received: by 2002:a63:f115:: with SMTP id f21mr3291821pgi.65.1556794985829;
+        Thu, 02 May 2019 04:03:05 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:6284:a261:31df:f367:f70b:ed86])
+        by smtp.gmail.com with ESMTPSA id s79sm111595271pfa.31.2019.05.02.04.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 04:03:04 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     linux@armlinux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, amit.kucheria@linaro.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] ARM: multi_v7_defconfig: Enable panic and disk LED triggers
+Date:   Thu,  2 May 2019 16:32:47 +0530
+Message-Id: <20190502110247.681-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 04:01:21PM -0700, Brendan Higgins wrote:
-> From: Felix Guo <felixguoxiuping@gmail.com>
-> 
-> The ultimate goal is to create minimal isolated test binaries; in the
-> meantime we are using UML to provide the infrastructure to run tests, so
-> define an abstract way to configure and run tests that allow us to
-> change the context in which tests are built without affecting the user.
-> This also makes pretty and dynamic error reporting, and a lot of other
-> nice features easier.
-> 
-> kunit_config.py:
->   - parse .config and Kconfig files.
-> 
-> kunit_kernel.py: provides helper functions to:
->   - configure the kernel using kunitconfig.
->   - build the kernel with the appropriate configuration.
->   - provide function to invoke the kernel and stream the output back.
-> 
-> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Most development boards and devices have one or more LEDs. It is
+useful during debugging if they can be wired to show different
+behaviours such as disk or cpu activity or a load-average dependent
+heartbeat. Enable panic and disk activity triggers so they can be tied
+to LED activity during debugging as well.
 
-Ah, here's probably my answer to my previous logging format question,
-right?  What's the chance that these wrappers output stuff in a standard
-format that test-framework-tools can already parse?  :)
+There was a similar patch which added these triggers for ARM64 as well:
+https://patchwork.kernel.org/patch/10042681/
 
-thanks,
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-greg k-h
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 2e9fa5312616..466ccc305a05 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -821,6 +821,8 @@ CONFIG_LEDS_TRIGGER_GPIO=y
+ CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+ CONFIG_LEDS_TRIGGER_TRANSIENT=y
+ CONFIG_LEDS_TRIGGER_CAMERA=y
++CONFIG_LEDS_TRIGGER_PANIC=y
++CONFIG_LEDS_TRIGGER_DISK=y
+ CONFIG_EDAC=y
+ CONFIG_EDAC_HIGHBANK_MC=y
+ CONFIG_EDAC_HIGHBANK_L2=y
+-- 
+2.17.1
+
