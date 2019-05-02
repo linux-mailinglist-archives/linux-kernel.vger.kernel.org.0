@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19B1711C9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5A411E56
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfEBPW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
+        id S1728252AbfEBP2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:28:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbfEBPWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:22:55 -0400
+        id S1728210AbfEBP2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:28:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D71B216FD;
-        Thu,  2 May 2019 15:22:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C527320B7C;
+        Thu,  2 May 2019 15:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810574;
-        bh=071qU4FYFqP+jfSHj3u5DwRgRM6TOMGyikw3DM6siUg=;
+        s=default; t=1556810911;
+        bh=PhrG9eSpq1B9PvMa8gXlmh5VE6MDDYtt1Eb7YksLNiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HCd6WvCvdRYOamEhYfTjr/DP66D6Vx6u133mPm9f8vsEd02CbitP6IzISLedFM5Jt
-         0JD7AMQHHt6KCGZi325JZTsuSyNY3eJ85ygpsqVkHshYDHgqpCg0krtcum5vjWsk26
-         sxABfYpZvND2QY80kJB5f71BsND3bup6WV/T192U=
+        b=H8x4TUnIcjdl8WEM8xDrfDhP+6Fxe77ygydTIvKNPHMJBcaJ0lRDqW8ZMcw1Fahxs
+         B1b8/uFjPGJGaSG2ujc4ExfEt/FymXseVDBU8iMt98YOM+rowhinjb0uup/dhNbxrG
+         f6wXGKuqya1zJq5n6udP4vkFu5S38+ll/eL9TFYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        stable@vger.kernel.org, Dave Carroll <david.carroll@microsemi.com>,
+        Sagar Biradar <sagar.biradar@microchip.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.9 31/32] leds: pca9532: fix a potential NULL pointer dereference
+Subject: [PATCH 4.19 55/72] scsi: aacraid: Insure we dont access PCIe space during AER/EEH
 Date:   Thu,  2 May 2019 17:21:17 +0200
-Message-Id: <20190502143323.337421780@linuxfoundation.org>
+Message-Id: <20190502143337.739899457@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
-References: <20190502143314.649935114@linuxfoundation.org>
+In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
+References: <20190502143333.437607839@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0aab8e4df4702b31314a27ec4b0631dfad0fae0a ]
+[ Upstream commit b6554cfe09e1f610aed7d57164ab7760be57acd9 ]
 
-In case of_match_device cannot find a match, return -EINVAL to avoid
-NULL pointer dereference.
+There are a few windows during AER/EEH when we can access PCIe I/O mapped
+registers. This will harden the access to insure we do not allow PCIe
+access during errors
 
-Fixes: fa4191a609f2 ("leds: pca9532: Add device tree support")
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Sagar Biradar <sagar.biradar@microchip.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/leds/leds-pca9532.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/aacraid/aacraid.h | 7 ++++++-
+ drivers/scsi/aacraid/commsup.c | 4 ++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 09a7cffbc46f..896b38f6f9c0 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -488,6 +488,7 @@ static int pca9532_probe(struct i2c_client *client,
- 	const struct i2c_device_id *id)
+diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
+index 39eb415987fc..074760f21014 100644
+--- a/drivers/scsi/aacraid/aacraid.h
++++ b/drivers/scsi/aacraid/aacraid.h
+@@ -2639,9 +2639,14 @@ static inline unsigned int cap_to_cyls(sector_t capacity, unsigned divisor)
+ 	return capacity;
+ }
+ 
++static inline int aac_pci_offline(struct aac_dev *dev)
++{
++	return pci_channel_offline(dev->pdev) || dev->handle_pci_error;
++}
++
+ static inline int aac_adapter_check_health(struct aac_dev *dev)
  {
- 	int devid;
-+	const struct of_device_id *of_id;
- 	struct pca9532_data *data = i2c_get_clientdata(client);
- 	struct pca9532_platform_data *pca9532_pdata =
- 			dev_get_platdata(&client->dev);
-@@ -503,8 +504,11 @@ static int pca9532_probe(struct i2c_client *client,
- 			dev_err(&client->dev, "no platform data\n");
- 			return -EINVAL;
- 		}
--		devid = (int)(uintptr_t)of_match_device(
--			of_pca9532_leds_match, &client->dev)->data;
-+		of_id = of_match_device(of_pca9532_leds_match,
-+				&client->dev);
-+		if (unlikely(!of_id))
-+			return -EINVAL;
-+		devid = (int)(uintptr_t) of_id->data;
- 	} else {
- 		devid = id->driver_data;
- 	}
+-	if (unlikely(pci_channel_offline(dev->pdev)))
++	if (unlikely(aac_pci_offline(dev)))
+ 		return -1;
+ 
+ 	return (dev)->a_ops.adapter_check_health(dev);
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index 3236240a4edd..b7588de4484e 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -673,7 +673,7 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
+ 					return -ETIMEDOUT;
+ 				}
+ 
+-				if (unlikely(pci_channel_offline(dev->pdev)))
++				if (unlikely(aac_pci_offline(dev)))
+ 					return -EFAULT;
+ 
+ 				if ((blink = aac_adapter_check_health(dev)) > 0) {
+@@ -773,7 +773,7 @@ int aac_hba_send(u8 command, struct fib *fibptr, fib_callback callback,
+ 
+ 		spin_unlock_irqrestore(&fibptr->event_lock, flags);
+ 
+-		if (unlikely(pci_channel_offline(dev->pdev)))
++		if (unlikely(aac_pci_offline(dev)))
+ 			return -EFAULT;
+ 
+ 		fibptr->flags |= FIB_CONTEXT_FLAG_WAIT;
 -- 
 2.19.1
 
