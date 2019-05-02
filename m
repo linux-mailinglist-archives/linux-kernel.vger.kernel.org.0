@@ -2,68 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8371183C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6C81181D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 13:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfEBLgN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 May 2019 07:36:13 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:43474
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726268AbfEBLgN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 07:36:13 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id C105BB48822;
-        Thu,  2 May 2019 11:25:57 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 97AI4_BOr8Dk; Thu,  2 May 2019 11:25:57 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 278C7B4888B;
-        Thu,  2 May 2019 11:25:57 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 08_RXkuKtLWK; Thu,  2 May 2019 11:25:57 +0000 (UTC)
-Received: from [100.73.113.231] (unknown [223.237.215.67])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 77F7CB48811;
-        Thu,  2 May 2019 11:25:49 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726310AbfEBL1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 07:27:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:44252 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbfEBL1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 07:27:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 074E5A78;
+        Thu,  2 May 2019 04:27:06 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2340C3F719;
+        Thu,  2 May 2019 04:27:03 -0700 (PDT)
+Subject: Re: [PATCH v5 2/3] iommu/dma: Reserve IOVA for PCIe inaccessible DMA
+ address
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, poza@codeaurora.org,
+        Ray Jui <rjui@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <1556732186-21630-1-git-send-email-srinath.mannam@broadcom.com>
+ <1556732186-21630-3-git-send-email-srinath.mannam@broadcom.com>
+ <20190502110152.GA7313@e121166-lin.cambridge.arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2f4b9492-0caf-d6e3-e727-e3c869eefb58@arm.com>
+Date:   Thu, 2 May 2019 12:27:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Verifica tu cuenta
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador web <exportaciones@minpal.gob.ve>
-Date:   Thu, 02 May 2019 16:55:41 +0530
-Message-Id: <20190502112549.77F7CB48811@smspyt.cancun.gob.mx>
+In-Reply-To: <20190502110152.GA7313@e121166-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
+Hi Lorenzo,
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+On 02/05/2019 12:01, Lorenzo Pieralisi wrote:
+> On Wed, May 01, 2019 at 11:06:25PM +0530, Srinath Mannam wrote:
+>> dma_ranges field of PCI host bridge structure has resource entries in
+>> sorted order of address range given through dma-ranges DT property. This
+>> list is the accessible DMA address range. So that this resource list will
+>> be processed and reserve IOVA address to the inaccessible address holes in
+>> the list.
+>>
+>> This method is similar to PCI IO resources address ranges reserving in
+>> IOMMU for each EP connected to host bridge.
+>>
+>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>> Based-on-patch-by: Oza Pawandeep <oza.oza@broadcom.com>
+>> Reviewed-by: Oza Pawandeep <poza@codeaurora.org>
+>> Acked-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>   drivers/iommu/dma-iommu.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index 77aabe6..da94844 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -212,6 +212,7 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
+>>   	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+>>   	struct resource_entry *window;
+>>   	unsigned long lo, hi;
+>> +	phys_addr_t start = 0, end;
+>>   
+>>   	resource_list_for_each_entry(window, &bridge->windows) {
+>>   		if (resource_type(window->res) != IORESOURCE_MEM)
+>> @@ -221,6 +222,24 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
+>>   		hi = iova_pfn(iovad, window->res->end - window->offset);
+>>   		reserve_iova(iovad, lo, hi);
+>>   	}
+>> +
+>> +	/* Get reserved DMA windows from host bridge */
+>> +	resource_list_for_each_entry(window, &bridge->dma_ranges) {
+> 
+> If this list is not sorted it seems to me the logic in this loop is
+> broken and you can't rely on callers to sort it because it is not a
+> written requirement and it is not enforced (you know because you
+> wrote the code but any other developer is not supposed to guess
+> it).
+> 
+> Can't we rewrite this loop so that it does not rely on list
+> entries order ?
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+The original idea was that callers should be required to provide a 
+sorted list, since it keeps things nice and simple...
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+> I won't merge this series unless you sort it, no pun intended.
+> 
+> Lorenzo
+> 
+>> +		end = window->res->start - window->offset;
 
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+...so would you consider it sufficient to add
 
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
+		if (end < start)
+			dev_err(...);
 
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+here, plus commenting the definition of pci_host_bridge::dma_ranges that 
+it must be sorted in ascending order?
 
-Gracias por usar nuestro webmail.
+[ I guess it might even make sense to factor out the parsing and list 
+construction from patch #3 into an of_pci core helper from the 
+beginning, so that there's even less chance of another driver 
+reimplementing it incorrectly in future. ]
 
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
+Failing that, although I do prefer the "simple by construction" 
+approach, I'd have no objection to just sticking a list_sort() call in 
+here instead, if you'd rather it be entirely bulletproof.
 
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
+Robin.
+
+>> +resv_iova:
+>> +		if (end - start) {
+>> +			lo = iova_pfn(iovad, start);
+>> +			hi = iova_pfn(iovad, end);
+>> +			reserve_iova(iovad, lo, hi);
+>> +		}
+>> +		start = window->res->end - window->offset + 1;
+>> +		/* If window is last entry */
+>> +		if (window->node.next == &bridge->dma_ranges &&
+>> +		    end != ~(dma_addr_t)0) {
+>> +			end = ~(dma_addr_t)0;
+>> +			goto resv_iova;
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   static int iova_reserve_iommu_regions(struct device *dev,
+>> -- 
+>> 2.7.4
+>>
