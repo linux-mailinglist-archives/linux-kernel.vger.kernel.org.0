@@ -2,314 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE2C1174A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 12:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 432EE1175A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 12:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfEBKf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 06:35:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33985 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbfEBKfY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 06:35:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c13so872157pgt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 03:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gla8W0VcIaKCNYDoMpCJ/dAJtzrxBYSm4bxzw12y5b0=;
-        b=LWGFPhb3eIYp32ggoe32vmRuIcrsJaaQV6P48HNlsOEpHzEOKbvqe14GdnfxIggF20
-         1n0SlrH02nrcZK8thEs1NjNjTBnDRuN5MY8eS6WhwvK31FG7tHaGROfPeWTcTrUvHRUT
-         7rwN9D00eB5EU5keAJKHsxaY07zaOf74Z57jfdTTfvOPuAhGx6I8aTUSIJRYMDwNaI8G
-         c7PggqvB7kkSXrD4Nm8vKDl2n5mGGTNvn4jvApjrjmzASi/wUzJiUSfWorOd2tcN8KkR
-         ma/8mHu4Ky/BKPjVBBLq85qNR+w1GHkEru3yNg+rzyc3SyMlzOQbWtxJVUb3il02NvgZ
-         gcNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gla8W0VcIaKCNYDoMpCJ/dAJtzrxBYSm4bxzw12y5b0=;
-        b=HUrVcPFPlAlmq1Mo9clTZPhwFWkguzf50pviL1DxVt3j/uPoi/R6sUCnyOpuKGRuhH
-         LAyaKCIZDUZF8A8Ehn1lPuRSE5ppVxW4WT4L2qct2skU02E2VYs2zu4sSV/zka/wLOcy
-         cCRHHGUvwi46SrpK1jlayED3GT9Aat+1PS2yqrOjDWFIFn3GupZ5kMsBPZYtdMjQJvUT
-         RrgyrHt7ejwV1nL6E+Vlk5pzxORBVVhraESCzRcW9ySC2YM0aTdfzNCk0LJc8RlZiCzR
-         2x2nORfOBIRiP2CLVqMMbbITXQA08nk4uVCzeaGH5sGvSv9cODTMfW0/aPYslOiVc3uk
-         2QOQ==
-X-Gm-Message-State: APjAAAVfs41ZtjAdVjPzYMBU4yBBFDlNvCwWD/MW9L5Xe6XunK2kuzfs
-        iJ2ouXX7r4vM7z4TUDD47XD8+Q==
-X-Google-Smtp-Source: APXvYqzqNYTmQyuQDYqxh0FSZvVztNfPbJzy0gr2jgxi1o61S2zACE5TdFO4V9cHB3kAjge2uTaeOg==
-X-Received: by 2002:aa7:8a8d:: with SMTP id a13mr3459163pfc.2.1556793323456;
-        Thu, 02 May 2019 03:35:23 -0700 (PDT)
-Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id h187sm69141133pfc.52.2019.05.02.03.35.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 02 May 2019 03:35:22 -0700 (PDT)
-From:   Yash Shah <yash.shah@sifive.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        palmer@sifive.com
-Cc:     paul.walmsley@sifive.com, linux-kernel@vger.kernel.org,
-        aou@eecs.berkeley.edu, mark.rutland@arm.com, robh+dt@kernel.org,
-        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH v2 2/2] RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs
-Date:   Thu,  2 May 2019 16:04:53 +0530
-Message-Id: <1556793293-21019-3-git-send-email-yash.shah@sifive.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1556793293-21019-1-git-send-email-yash.shah@sifive.com>
-References: <1556793293-21019-1-git-send-email-yash.shah@sifive.com>
+        id S1726608AbfEBKgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 06:36:33 -0400
+Received: from mail-eopbgr820081.outbound.protection.outlook.com ([40.107.82.81]:64640
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726231AbfEBKgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 06:36:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L40Qc+zMat3uNEKq4ePQ2mqCdXjJ4Y1Njlshcn/ZTio=;
+ b=KQrnPe55g3nyuZud6KqHH6HsuPH1Nq9qAgZ4Q9u8XWo6zmhr48869C+2aBuyTFtekiRYeFNJh/x+zdUTQDaRUO4ZSiaHkjc+1Mkezqu3AaX0QgX6wBgwrcIUKbLV1fovz6sA4tsO9IuhhH6s6gFPvjWXX2rqjVulHH91NMz0aDo=
+Received: from BN8PR10MB3540.namprd10.prod.outlook.com (20.179.78.205) by
+ BN8PR10MB3314.namprd10.prod.outlook.com (20.179.139.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Thu, 2 May 2019 10:36:30 +0000
+Received: from BN8PR10MB3540.namprd10.prod.outlook.com
+ ([fe80::24c5:ea68:cff3:4a16]) by BN8PR10MB3540.namprd10.prod.outlook.com
+ ([fe80::24c5:ea68:cff3:4a16%7]) with mapi id 15.20.1856.008; Thu, 2 May 2019
+ 10:36:30 +0000
+From:   Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "madalin.bucur@nxp.com" <madalin.bucur@nxp.com>,
+        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
+        "laurentiu.tudor@nxp.com" <laurentiu.tudor@nxp.com>,
+        "roy.pledge@nxp.com" <roy.pledge@nxp.com>,
+        "camelia.groza@nxp.com" <camelia.groza@nxp.com>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [PATCH v2 9/9] dpaa_eth: fix SG frame cleanup
+Thread-Topic: [PATCH v2 9/9] dpaa_eth: fix SG frame cleanup
+Thread-Index: AQHU/MpTw42IuR0fykCaI1+07jqDiqZQPr+AgAdUG4CAABlegA==
+Date:   Thu, 2 May 2019 10:36:30 +0000
+Message-ID: <728fe477849debcc14bb1af01e35bc7b184a0a03.camel@infinera.com>
+References: <20190427071031.6563-1-laurentiu.tudor@nxp.com>
+         <20190427071031.6563-10-laurentiu.tudor@nxp.com>
+         <2c6f5d170edab346e0a87b1dfeb12e2f65801685.camel@infinera.com>
+         <VI1PR04MB5134C0D6707E78D674B96898EC340@VI1PR04MB5134.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB5134C0D6707E78D674B96898EC340@VI1PR04MB5134.eurprd04.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Joakim.Tjernlund@infinera.com; 
+x-originating-ip: [88.131.87.201]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 59f6c7b0-0605-4284-c375-08d6ceea0a1b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BN8PR10MB3314;
+x-ms-traffictypediagnostic: BN8PR10MB3314:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <BN8PR10MB3314BDAF20A30D8A5603C850F4340@BN8PR10MB3314.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0025434D2D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(346002)(376002)(189003)(199004)(13464003)(316002)(118296001)(186003)(6246003)(11346002)(305945005)(66476007)(73956011)(2616005)(64756008)(66446008)(66946007)(66556008)(53936002)(91956017)(76116006)(446003)(476003)(486006)(66066001)(3846002)(6486002)(71190400001)(71200400001)(86362001)(6436002)(6116002)(5660300002)(2201001)(229853002)(966005)(14444005)(8676002)(6306002)(256004)(68736007)(54906003)(110136005)(8936002)(81166006)(81156014)(7736002)(6512007)(7416002)(4326008)(36756003)(25786009)(102836004)(6506007)(76176011)(72206003)(2501003)(2906002)(14454004)(478600001)(99286004)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR10MB3314;H:BN8PR10MB3540.namprd10.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: infinera.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: z1YXU6qwY4gFgNMUgdv6tNcgJcx0akvl9NOnrooCO3wJkEL7lQLeI1wnPht93EPWP+t9WGumHzcxkq2D+4fIhxol5Dbgnql+M/m4y99DaKVSRDuuxMwzdMomXay/IIumcWZtmioQoZTP8rvtcjGgGmBNBsY44L4si3ob6rp+30XdbWjpEqRP72UYTOAkMPmh1I/aGLTHs2kgpD7JWWynf3zXQyXfKshyUn2Ki09g6LCDvlMIyCj2jy2A08ThRHYyfc9Mb4YKvTjMEGrbm2/Pk+PCsEyv9Fm1Oh9KARKFPgJlp5AR7cJUPoIasqudgADddZWTBCd3BBsI/PH40QugrjH+asTGdGXS3cOqzr42unqcD3DreaOrx3Fo9jPyBnoo5DDbaj4Wa3BqGdCf6Om+TLuzmsqx0/zwODN6xP1DLpc=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1F9602CDEA854A469D9C83B5DEC64BBA@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: infinera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59f6c7b0-0605-4284-c375-08d6ceea0a1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 10:36:30.5005
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR10MB3314
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver currently supports only SiFive FU540-C000 platform.
-
-The initial version of L2 cache controller driver includes:
-- Initial configuration reporting at boot up.
-- Support for ECC related functionality.
-
-Signed-off-by: Yash Shah <yash.shah@sifive.com>
----
- arch/riscv/mm/Makefile          |   1 +
- arch/riscv/mm/sifive_l2_cache.c | 221 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 222 insertions(+)
- create mode 100644 arch/riscv/mm/sifive_l2_cache.c
-
-diff --git a/arch/riscv/mm/Makefile b/arch/riscv/mm/Makefile
-index eb22ab4..1523ee5 100644
---- a/arch/riscv/mm/Makefile
-+++ b/arch/riscv/mm/Makefile
-@@ -3,3 +3,4 @@ obj-y += fault.o
- obj-y += extable.o
- obj-y += ioremap.o
- obj-y += cacheflush.o
-+obj-y += sifive_l2_cache.o
-diff --git a/arch/riscv/mm/sifive_l2_cache.c b/arch/riscv/mm/sifive_l2_cache.c
-new file mode 100644
-index 0000000..923ab34
---- /dev/null
-+++ b/arch/riscv/mm/sifive_l2_cache.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SiFive L2 cache controller Driver
-+ *
-+ * Copyright (C) 2018-2019 SiFive, Inc.
-+ *
-+ */
-+#include <linux/debugfs.h>
-+#include <linux/interrupt.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_address.h>
-+
-+#define SIFIVE_L2_DIRECCFIX_LOW 0x100
-+#define SIFIVE_L2_DIRECCFIX_HIGH 0x104
-+#define SIFIVE_L2_DIRECCFIX_COUNT 0x108
-+
-+#define SIFIVE_L2_DATECCFIX_LOW 0x140
-+#define SIFIVE_L2_DATECCFIX_HIGH 0x144
-+#define SIFIVE_L2_DATECCFIX_COUNT 0x148
-+
-+#define SIFIVE_L2_DATECCFAIL_LOW 0x160
-+#define SIFIVE_L2_DATECCFAIL_HIGH 0x164
-+#define SIFIVE_L2_DATECCFAIL_COUNT 0x168
-+
-+#define SIFIVE_L2_CONFIG 0x00
-+#define SIFIVE_L2_WAYENABLE 0x08
-+#define SIFIVE_L2_ECCINJECTERR 0x40
-+
-+#define SIFIVE_L2_ERR_TYPE_CE 0
-+#define SIFIVE_L2_ERR_TYPE_UE 1
-+#define SIFIVE_L2_MAX_ECCINTR 3
-+
-+static void __iomem *l2_base;
-+static int g_irq[SIFIVE_L2_MAX_ECCINTR];
-+
-+enum {
-+	DIR_CORR = 0,
-+	DATA_CORR,
-+	DATA_UNCORR,
-+};
-+
-+static unsigned int l2_dirfix_addr_high(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DIRECCFIX_HIGH);
-+}
-+
-+static unsigned int l2_dirfix_addr_low(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DIRECCFIX_LOW);
-+}
-+
-+static unsigned int l2_dirfix_count(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DIRECCFIX_COUNT);
-+}
-+
-+static unsigned int l2_datfix_addr_high(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFIX_HIGH);
-+}
-+
-+static unsigned int l2_datfix_addr_low(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFIX_LOW);
-+}
-+
-+static unsigned int l2_datfix_count(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFIX_COUNT);
-+}
-+
-+static unsigned int l2_datfail_addr_high(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFAIL_HIGH);
-+}
-+
-+static unsigned int l2_datfail_addr_low(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFAIL_LOW);
-+}
-+
-+static unsigned int l2_datfail_count(void)
-+{
-+	return readl(l2_base + SIFIVE_L2_DATECCFAIL_COUNT);
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static struct dentry *sifive_test;
-+
-+static ssize_t l2_write(struct file *file, const char __user *data,
-+			size_t count, loff_t *ppos)
-+{
-+	unsigned int val;
-+
-+	if (kstrtouint_from_user(data, count, 0, &val))
-+		return -EINVAL;
-+	if ((val >= 0 && val < 0xFF) || (val >= 0x10000 && val < 0x100FF))
-+		writel(val, l2_base + SIFIVE_L2_ECCINJECTERR);
-+	else
-+		return -EINVAL;
-+	return count;
-+}
-+
-+static const struct file_operations l2_fops = {
-+	.owner = THIS_MODULE,
-+	.open = simple_open,
-+	.write = l2_write
-+};
-+
-+static void setup_sifive_debug(void)
-+{
-+	sifive_test = debugfs_create_dir("sifive_l2_cache", NULL);
-+
-+	debugfs_create_file("sifive_debug_inject_error", 0200,
-+			    sifive_test, NULL, &l2_fops);
-+}
-+#endif
-+
-+static void l2_config_read(void)
-+{
-+	u32 regval, val;
-+
-+	regval = readl(l2_base + SIFIVE_L2_CONFIG);
-+	val = regval & 0xFF;
-+	pr_info("L2CACHE: No. of Banks in the cache: %d\n", val);
-+	val = (regval & 0xFF00) >> 8;
-+	pr_info("L2CACHE: No. of ways per bank: %d\n", val);
-+	val = (regval & 0xFF0000) >> 16;
-+	pr_info("L2CACHE: Sets per bank: %llu\n", (uint64_t)1 << val);
-+	val = (regval & 0xFF000000) >> 24;
-+	pr_info("L2CACHE: Bytes per cache block: %llu\n", (uint64_t)1 << val);
-+
-+	regval = readl(l2_base + SIFIVE_L2_WAYENABLE);
-+	pr_info("L2CACHE: Index of the largest way enabled: %d\n", regval);
-+}
-+
-+static const struct of_device_id sifive_l2_ids[] = {
-+	{ .compatible = "sifive,fu540-c000-ccache" },
-+	{ /* end of table */ },
-+};
-+
-+static ATOMIC_NOTIFIER_HEAD(l2_err_chain);
-+
-+int register_sifive_l2_error_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_register(&l2_err_chain, nb);
-+}
-+EXPORT_SYMBOL_GPL(register_sifive_l2_error_notifier);
-+
-+int unregister_sifive_l2_error_notifier(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_unregister(&l2_err_chain, nb);
-+}
-+EXPORT_SYMBOL_GPL(unregister_sifive_l2_error_notifier);
-+
-+static irqreturn_t l2_int_handler(int irq, void *device)
-+{
-+	unsigned int regval, add_h, add_l;
-+
-+	if (irq == g_irq[DIR_CORR]) {
-+		add_h = l2_dirfix_addr_high();
-+		add_l = l2_dirfix_addr_low();
-+		pr_err("L2CACHE: DirError @ 0x%08X.%08X\n", add_h, add_l);
-+		regval = l2_dirfix_count();
-+		atomic_notifier_call_chain(&l2_err_chain, SIFIVE_L2_ERR_TYPE_CE,
-+					   "DirECCFix");
-+	}
-+	if (irq == g_irq[DATA_CORR]) {
-+		add_h = l2_datfix_addr_high();
-+		add_l = l2_datfix_addr_low();
-+		pr_err("L2CACHE: DataError @ 0x%08X.%08X\n", add_h, add_l);
-+		regval = l2_datfix_count();
-+		atomic_notifier_call_chain(&l2_err_chain, SIFIVE_L2_ERR_TYPE_CE,
-+					   "DatECCFix");
-+	}
-+	if (irq == g_irq[DATA_UNCORR]) {
-+		add_h = l2_datfail_addr_high();
-+		add_l = l2_datfail_addr_low();
-+		pr_err("L2CACHE: DataFail @ 0x%08X.%08X\n", add_h, add_l);
-+		regval = l2_datfail_count();
-+		atomic_notifier_call_chain(&l2_err_chain, SIFIVE_L2_ERR_TYPE_UE,
-+					   "DatECCFail");
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+int __init sifive_l2_init(void)
-+{
-+	struct device_node *np;
-+	struct resource res;
-+	int i, rc;
-+
-+	np = of_find_matching_node(NULL, sifive_l2_ids);
-+	if (!np)
-+		return -ENODEV;
-+
-+	if (of_address_to_resource(np, 0, &res))
-+		return -ENODEV;
-+
-+	l2_base = ioremap(res.start, resource_size(&res));
-+	if (!l2_base)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < SIFIVE_L2_MAX_ECCINTR; i++) {
-+		g_irq[i] = irq_of_parse_and_map(np, i);
-+		rc = request_irq(g_irq[i], l2_int_handler, 0, "l2_ecc", NULL);
-+		if (rc) {
-+			pr_err("L2CACHE: Could not request IRQ %d\n", g_irq[i]);
-+			return rc;
-+		}
-+	}
-+
-+	l2_config_read();
-+
-+#ifdef CONFIG_DEBUG_FS
-+	setup_sifive_debug();
-+#endif
-+	return 0;
-+}
-+device_initcall(sifive_l2_init);
--- 
-1.9.1
-
+T24gVGh1LCAyMDE5LTA1LTAyIGF0IDA5OjA1ICswMDAwLCBMYXVyZW50aXUgVHVkb3Igd3JvdGU6
+DQo+IEhpIEpvYWtpbSwNCj4gDQo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBG
+cm9tOiBKb2FraW0gVGplcm5sdW5kIDxKb2FraW0uVGplcm5sdW5kQGluZmluZXJhLmNvbT4NCj4g
+PiBTZW50OiBTYXR1cmRheSwgQXByaWwgMjcsIDIwMTkgODoxMSBQTQ0KPiA+IA0KPiA+IE9uIFNh
+dCwgMjAxOS0wNC0yNyBhdCAxMDoxMCArMDMwMCwgbGF1cmVudGl1LnR1ZG9yQG54cC5jb20gd3Jv
+dGU6DQo+ID4gPiBGcm9tOiBMYXVyZW50aXUgVHVkb3IgPGxhdXJlbnRpdS50dWRvckBueHAuY29t
+Pg0KPiA+ID4gDQo+ID4gPiBGaXggaXNzdWUgd2l0aCB0aGUgZW50cnkgaW5kZXhpbmcgaW4gdGhl
+IHNnIGZyYW1lIGNsZWFudXAgY29kZSBiZWluZw0KPiA+ID4gb2ZmLWJ5LTEuIFRoaXMgcHJvYmxl
+bSBzaG93ZWQgdXAgd2hlbiBkb2luZyBzb21lIGJhc2ljIGlwZXJmIHRlc3RzIGFuZA0KPiA+ID4g
+bWFuaWZlc3RlZCBpbiB0cmFmZmljIGNvbWluZyB0byBhIGhhbHQuDQo+ID4gPiANCj4gPiA+IFNp
+Z25lZC1vZmYtYnk6IExhdXJlbnRpdSBUdWRvciA8bGF1cmVudGl1LnR1ZG9yQG54cC5jb20+DQo+
+ID4gPiBBY2tlZC1ieTogTWFkYWxpbiBCdWN1ciA8bWFkYWxpbi5idWN1ckBueHAuY29tPg0KPiA+
+IA0KPiA+IFdhc24ndCB0aGlzIGEgc3RhYmxlIGNhbmRpZGF0ZSB0b28/DQo+IA0KPiBZZXMsIGl0
+IGlzLiBJIGZvcmdvdCB0byBhZGQgdGhlIGNjOnN0YWJsZSB0YWcsIHNvcnJ5IGFib3V0IHRoYXQu
+DQoNClRoZW4gdGhpcyBpcyBhIGJ1ZyBmaXggdGhhdCBzaG91bGQgZ28gZGlyZWN0bHkgdG8gbGlu
+dXMvc3RhYmxlLg0KDQpJIG5vdGUgdGhhdCBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
+bGludXgva2VybmVsL2dpdC9zdGFibGUvbGludXguZ2l0L2xvZy9kcml2ZXJzL25ldC9ldGhlcm5l
+dC9mcmVlc2NhbGUvZHBhYT9oPWxpbnV4LTQuMTkueQ0KaXMgaW4gNC4xOSBidXQgbm90IGluIDQu
+MTQgLCBpcyBpdCBub3QgYXBwcm9wcmlhdGUgZm9yIDQuMTQ/DQoNCiBKb2NrZQ0KDQo+IA0KPiAt
+LS0NCj4gQmVzdCBSZWdhcmRzLCBMYXVyZW50aXUNCj4gDQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2
+ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZHBhYS9kcGFhX2V0aC5jIHwgMiArLQ0KPiA+ID4g
+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4gDQo+
+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2RwYWEvZHBh
+YV9ldGguYw0KPiA+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2RwYWEvZHBhYV9l
+dGguYw0KPiA+ID4gaW5kZXggZGFlZGU3MjcyNzY4Li40MDQyMGVkYzljZTYgMTAwNjQ0DQo+ID4g
+PiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZHBhYS9kcGFhX2V0aC5jDQo+
+ID4gPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZHBhYS9kcGFhX2V0aC5j
+DQo+ID4gPiBAQCAtMTY2Myw3ICsxNjYzLDcgQEAgc3RhdGljIHN0cnVjdCBza19idWZmICpkcGFh
+X2NsZWFudXBfdHhfZmQoY29uc3QNCj4gPiBzdHJ1Y3QgZHBhYV9wcml2ICpwcml2LA0KPiA+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcW1fc2dfZW50cnlfZ2V0X2xlbigmc2d0
+WzBdKSwgZG1hX2Rpcik7DQo+ID4gPiANCj4gPiA+ICAgICAgICAgICAgICAgICAvKiByZW1haW5p
+bmcgcGFnZXMgd2VyZSBtYXBwZWQgd2l0aCBza2JfZnJhZ19kbWFfbWFwKCkNCj4gPiAqLw0KPiA+
+ID4gLSAgICAgICAgICAgICAgIGZvciAoaSA9IDE7IGkgPCBucl9mcmFnczsgaSsrKSB7DQo+ID4g
+PiArICAgICAgICAgICAgICAgZm9yIChpID0gMTsgaSA8PSBucl9mcmFnczsgaSsrKSB7DQo+ID4g
+PiAgICAgICAgICAgICAgICAgICAgICAgICBXQVJOX09OKHFtX3NnX2VudHJ5X2lzX2V4dCgmc2d0
+W2ldKSk7DQo+ID4gPiANCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGRtYV91bm1hcF9w
+YWdlKGRldiwgcW1fc2dfYWRkcigmc2d0W2ldKSwNCj4gPiA+IC0tDQo+ID4gPiAyLjE3LjENCj4g
+PiA+IA0K
