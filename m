@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5689D11D71
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A0311C86
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfEBPa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:30:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48782 "EHLO mail.kernel.org"
+        id S1726415AbfEBPWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:22:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727851AbfEBPaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:30:22 -0400
+        id S1726197AbfEBPV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:21:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BE5120B7C;
-        Thu,  2 May 2019 15:30:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 829CF2133F;
+        Thu,  2 May 2019 15:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556811021;
-        bh=gekNsEzgSHkYP5jSNIiRS2kgZaj324muWZGEBXZoKps=;
+        s=default; t=1556810517;
+        bh=OYTIbF2jgOSmXqzbTcTHi5tWBXlnP5dmRSJdcUoc7M8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mhbu2DJDTp8ankjfZ9EavM/zjEmusHgA4AKBeRfcoVBnZcDkTukvvyfZMdjnEYrrj
-         vrxVhyBIcJmjPf+SZk1D2JrO+daNewHMEzt6iEhkt5blkQKdQbUq1M0H4JlvgqD65E
-         TmhjFGQUksn2EQM7KnsONcI9mhjXPt9tlpXbXa5E=
+        b=kyJqrUXbfjw2owVbF1r4s+BiQK9PaLMpDvZCpoboku4rlm5KjAgbnO+glSSADtlAV
+         dNKQkrKK+6p0MoqJyl8iOXU1Jqwu4ZyQVn3uJCZGK2L/AAtJh2Y3Q2tNqt46HODgd+
+         WAUdSP5rSurByNNeBDTcnO/Wjq2va6EjYTi/SnW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
         "David S. Miller" <davem@davemloft.net>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 045/101] net: ks8851: Set initial carrier state to down
-Date:   Thu,  2 May 2019 17:20:47 +0200
-Message-Id: <20190502143342.714381920@linuxfoundation.org>
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 02/32] usbnet: ipheth: fix potential null pointer dereference in ipheth_carrier_set
+Date:   Thu,  2 May 2019 17:20:48 +0200
+Message-Id: <20190502143315.648326898@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+In-Reply-To: <20190502143314.649935114@linuxfoundation.org>
+References: <20190502143314.649935114@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,54 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9624bafa5f6418b9ca5b3f66d1f6a6a2e8bf6d4c ]
+From: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-The ks8851 chip's initial carrier state is down. A Link Change Interrupt
-is signaled once interrupts are enabled if the carrier is up.
+commit 61c59355e0154a938b28710dfa6c1d8be2ddcefa upstream.
 
-The ks8851 driver has it backwards by assuming that the initial carrier
-state is up. The state is therefore misrepresented if the interface is
-opened with no cable attached. Fix it.
+_dev_ is being dereferenced before it is null checked, hence there
+is a potential null pointer dereference.
 
-The Link Change interrupt is sometimes not signaled unless the P1MBSR
-register (which contains the Link Status bit) is read on ->ndo_open().
-This might be a hardware erratum. Read the register by calling
-mii_check_link(), which has the desirable side effect of setting the
-carrier state to down if the cable was detached while the interface was
-closed.
+Fix this by moving the pointer dereference after _dev_ has been null
+checked.
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Tristram Ha <Tristram.Ha@microchip.com>
+Addresses-Coverity-ID: 1462020
+Fixes: bb1b40c7cb86 ("usbnet: ipheth: prevent TX queue timeouts when device not ready")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/micrel/ks8851.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/usb/ipheth.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
-index c9faec4c5b25..b83b070a9eec 100644
---- a/drivers/net/ethernet/micrel/ks8851.c
-+++ b/drivers/net/ethernet/micrel/ks8851.c
-@@ -858,6 +858,7 @@ static int ks8851_net_open(struct net_device *dev)
- 	netif_dbg(ks, ifup, ks->netdev, "network device up\n");
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -290,12 +290,15 @@ static void ipheth_sndbulk_callback(stru
  
- 	mutex_unlock(&ks->lock);
-+	mii_check_link(&ks->mii);
- 	return 0;
- }
- 
-@@ -1519,6 +1520,7 @@ static int ks8851_probe(struct spi_device *spi)
- 
- 	spi_set_drvdata(spi, ks);
- 
-+	netif_carrier_off(ks->netdev);
- 	ndev->if_port = IF_PORT_100BASET;
- 	ndev->netdev_ops = &ks8851_netdev_ops;
- 	ndev->irq = spi->irq;
--- 
-2.19.1
-
+ static int ipheth_carrier_set(struct ipheth_device *dev)
+ {
+-	struct usb_device *udev = dev->udev;
++	struct usb_device *udev;
+ 	int retval;
++
+ 	if (!dev)
+ 		return 0;
+ 	if (!dev->confirmed_pairing)
+ 		return 0;
++
++	udev = dev->udev;
+ 	retval = usb_control_msg(udev,
+ 			usb_rcvctrlpipe(udev, IPHETH_CTRL_ENDP),
+ 			IPHETH_CMD_CARRIER_CHECK, /* request */
 
 
