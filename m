@@ -2,127 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAFDA11986
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 14:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B328A119A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 15:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfEBM4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 08:56:04 -0400
-Received: from casper.infradead.org ([85.118.1.10]:33114 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfEBM4B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 08:56:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tcHL2blm9ynOYpWqMzfbIx2YVy5kv7jk6z9Ht/ZJGMo=; b=Ye2vyuEt1720XjqEirU81HuFcI
-        sSatA2vLMSPIIZup8V0sLaHawpOaLhfeUuezk0LsH2nPXTDYiPFgoeck9CEExOmXEtcfBQZHrjV24
-        NygfavLsmfQ3SYElZrQorV70Ey/J60KyTyqxmrZDXM09XmAsfINtJd9+GeWImefjp51LjxTITAEaQ
-        cuUFbthCdvLHLf28W6iZ2lSWidExHke/CyPXOs/jVP7hZ9rrI4T1oBa8+K6GcOJGC9iAPzoxkXSMD
-        23FxlWVbNsDAxUtJU+J7YAtC07LBtejiIDs8L83Dl0qMuUij6/lNp40HiGgA4VtBQyGxFLOXgeLl6
-        d3mt788g==;
-Received: from [177.159.247.19] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMBFl-0002uH-Oa; Thu, 02 May 2019 12:55:58 +0000
-Date:   Thu, 2 May 2019 09:55:50 -0300
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media/doc: Allow sizeimage to be set by v4l clients
-Message-ID: <20190502095550.31282c0d@coco.lan>
-In-Reply-To: <20190412155915.16849-1-stanimir.varbanov@linaro.org>
-References: <20190412155915.16849-1-stanimir.varbanov@linaro.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1726424AbfEBNDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 09:03:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:32995 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbfEBNDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 09:03:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 06:03:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,421,1549958400"; 
+   d="scan'208";a="147550129"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga003.jf.intel.com with ESMTP; 02 May 2019 06:03:07 -0700
+Date:   Thu, 2 May 2019 06:57:23 -0600
+From:   Keith Busch <keith.busch@intel.com>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Subject: Re: [PATCH 0/4] nvme-pci: support device coredump
+Message-ID: <20190502125722.GA28470@localhost.localdomain>
+References: <1556787561-5113-1-git-send-email-akinobu.mita@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556787561-5113-1-git-send-email-akinobu.mita@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 12 Apr 2019 18:59:15 +0300
-Stanimir Varbanov <stanimir.varbanov@linaro.org> escreveu:
-
-> This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
-> field description to allow v4l clients to set bigger image size
-> in case of variable length compressed data.
+On Thu, May 02, 2019 at 05:59:17PM +0900, Akinobu Mita wrote:
+> This enables to capture snapshot of controller information via device
+> coredump machanism, and it helps diagnose and debug issues.
 > 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst | 13 ++++++++++++-
->  Documentation/media/uapi/v4l/pixfmt-v4l2.rst        | 11 ++++++++++-
->  2 files changed, 22 insertions(+), 2 deletions(-)
+> The nvme device coredump is triggered before resetting the controller
+> caused by I/O timeout, and creates the following coredump files.
 > 
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
-> index 5688c816e334..005428a8121e 100644
-> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
-> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
-> @@ -31,7 +31,18 @@ describing all planes of that format.
->  
->      * - __u32
->        - ``sizeimage``
-> -      - Maximum size in bytes required for image data in this plane.
-> +      - Maximum size in bytes required for image data in this plane,
-> +	set by the driver. When the image consists of variable length
-> +	compressed data this is the number of bytes required by the
-> +	codec to support the worst-case compression scenario.
-> +
-> +	For uncompressed images the driver will set the value. For
-> +	variable length compressed data clients are allowed to set
-> +	the sizeimage field, but the driver may ignore it and set the
-> +	value itself, or it may modify the provided value based on
-> +	alignment requirements or minimum/maximum size requirements.
-> +	If the client wants to leave this to the driver, then it should
-> +	set sizeimage to 0.
->      * - __u32
->        - ``bytesperline``
->        - Distance in bytes between the leftmost pixels in two adjacent
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-> index 71eebfc6d853..0f7771151db9 100644
-> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-> @@ -89,7 +89,16 @@ Single-planar format structure
->        - Size in bytes of the buffer to hold a complete image, set by the
->  	driver. Usually this is ``bytesperline`` times ``height``. When
->  	the image consists of variable length compressed data this is the
-> -	maximum number of bytes required to hold an image.
-> +	number of bytes required by the codec to support the worst-case
-> +	compression scenario.
-> +
-> +	For uncompressed images the driver will set the value. For
-> +	variable length compressed data clients are allowed to set
-> +	the sizeimage field, but the driver may ignore it and set the
-> +	value itself, or it may modify the provided value based on
-> +	alignment requirements or minimum/maximum size requirements.
-> +	If the client wants to leave this to the driver, then it should
-> +	set sizeimage to 0.
+> - regs: NVMe controller registers, including each I/O queue doorbell
+>         registers, in nvme-show-regs style text format.
 
-It is very confusing to understand what you meant by the above paragraph,
-as you inverted the sentence order and forgot a comma.
+You're supposed to treat queue doorbells as write-only. Spec says:
 
-I would, instead, write the phrases using the direct order, and break
-into two paragraphs, e. g., changing the above to:
-
-	"The driver will set the value for uncompressed images.
-
-	Clients are allowed to set the sizeimage field for variable length
-	compressed data, but the driver may ignore it and set the
-	value itself, or it may modify the provided value based on
-	alignment requirements or minimum/maximum size requirements.
-	If the client wants to leave this to the driver, then it should
-	set sizeimage to 0."
-
-That makes it a lot easier to read, hopefully preventing mistakes from
-app and driver developers when reading about sizeimage.
-
-Yet, I'm not too comfortable on letting this too generic. I mean,
-how an app writer would know what formats are "variable length
-compressed data", specially since libv4l may actually change that.
-
-Thanks,
-Mauro
+  The host should not read the doorbell registers. If a doorbell register
+  is read, the value returned is vendor specific.
