@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554B311EFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A57011E8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 17:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfEBP0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 11:26:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42592 "EHLO mail.kernel.org"
+        id S1728961AbfEBPiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 11:38:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727663AbfEBP0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 11:26:03 -0400
+        id S1728647AbfEBPaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 11:30:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D393C2081C;
-        Thu,  2 May 2019 15:26:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB462214DA;
+        Thu,  2 May 2019 15:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556810762;
-        bh=kw0SEU1fYOOVed2EWjsU4W6r8umOhNzjGb+OOAZ2sms=;
+        s=default; t=1556811007;
+        bh=kZs4w61Wm8GmupGl4Zl/dizDqciv2pjqxJ5g7Jr4eVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QYwzPkZq+uIXEgqqO6ET2IyXOw/AKF2rIDFJRR5ppK8ix1FgeOKpWOEDAtL8+Hfcs
-         KWHwT5CcjyN94IXiJPQkC1kkIKEAM+qZQ6ApGFXgakGJY1Ih5P+GuEVCEFpeinTkcC
-         RAmRpzrO7IwVFpsizh+Jm2rXW3yoNT94E9daAGKk=
+        b=MFczbivE7hIHqC0tW7KAP9u9P/YG7CyC+GF0iiAAc9pkNM/EdJAZ7IPYuEjxyB9C8
+         SoPlSBaT2uacH6ebB5t0KbYEYaDxb0ZY2VBtJWia4Jh4kYifSeqtAYP8pLkg/ISMJi
+         YJexW5O7GiIDd4z35HSSf0e94DauRO3d3icFC30k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 4.19 20/72] s390/qeth: fix race when initializing the IP address table
+Subject: [PATCH 5.0 040/101] i2c: i801: Add support for Intel Comet Lake
 Date:   Thu,  2 May 2019 17:20:42 +0200
-Message-Id: <20190502143334.955647649@linuxfoundation.org>
+Message-Id: <20190502143342.378307833@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190502143333.437607839@linuxfoundation.org>
-References: <20190502143333.437607839@linuxfoundation.org>
+In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+References: <20190502143339.434882399@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7221b727f0079a32aca91f657141e1de564d4b97 ]
+[ Upstream commit 5cd1c56c42beb6d228cc8d4373fdc5f5ec78a5ad ]
 
-The ucast IP table is utilized by some of the L3-specific sysfs attributes
-that qeth_l3_create_device_attributes() provides. So initialize the table
-_before_ registering the attributes.
+Add PCI ID for Intel Comet Lake PCH.
 
-Fixes: ebccc7397e4a ("s390/qeth: add missing hash table initializations")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_l3_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/i2c/busses/i2c-i801 | 1 +
+ drivers/i2c/busses/Kconfig        | 1 +
+ drivers/i2c/busses/i2c-i801.c     | 4 ++++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index 7f71ca0d08e7..9c5e801b3f6c 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -2586,12 +2586,14 @@ static int qeth_l3_probe_device(struct ccwgroup_device *gdev)
- 	struct qeth_card *card = dev_get_drvdata(&gdev->dev);
- 	int rc;
+diff --git a/Documentation/i2c/busses/i2c-i801 b/Documentation/i2c/busses/i2c-i801
+index d1ee484a787d..ee9984f35868 100644
+--- a/Documentation/i2c/busses/i2c-i801
++++ b/Documentation/i2c/busses/i2c-i801
+@@ -36,6 +36,7 @@ Supported adapters:
+   * Intel Cannon Lake (PCH)
+   * Intel Cedar Fork (PCH)
+   * Intel Ice Lake (PCH)
++  * Intel Comet Lake (PCH)
+    Datasheets: Publicly available at the Intel website
  
-+	hash_init(card->ip_htable);
-+
- 	if (gdev->dev.type == &qeth_generic_devtype) {
- 		rc = qeth_l3_create_device_attributes(&gdev->dev);
- 		if (rc)
- 			return rc;
- 	}
--	hash_init(card->ip_htable);
-+
- 	hash_init(card->ip_mc_htable);
- 	card->options.layer2 = 0;
- 	card->info.hwtrap = 0;
+ On Intel Patsburg and later chipsets, both the normal host SMBus controller
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index f2c681971201..f8979abb9a19 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -131,6 +131,7 @@ config I2C_I801
+ 	    Cannon Lake (PCH)
+ 	    Cedar Fork (PCH)
+ 	    Ice Lake (PCH)
++	    Comet Lake (PCH)
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-i801.
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index c91e145ef5a5..679c6c41f64b 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -71,6 +71,7 @@
+  * Cannon Lake-LP (PCH)		0x9da3	32	hard	yes	yes	yes
+  * Cedar Fork (PCH)		0x18df	32	hard	yes	yes	yes
+  * Ice Lake-LP (PCH)		0x34a3	32	hard	yes	yes	yes
++ * Comet Lake (PCH)		0x02a3	32	hard	yes	yes	yes
+  *
+  * Features supported by this driver:
+  * Software PEC				no
+@@ -240,6 +241,7 @@
+ #define PCI_DEVICE_ID_INTEL_LEWISBURG_SSKU_SMBUS	0xa223
+ #define PCI_DEVICE_ID_INTEL_KABYLAKE_PCH_H_SMBUS	0xa2a3
+ #define PCI_DEVICE_ID_INTEL_CANNONLAKE_H_SMBUS		0xa323
++#define PCI_DEVICE_ID_INTEL_COMETLAKE_SMBUS		0x02a3
+ 
+ struct i801_mux_config {
+ 	char *gpio_chip;
+@@ -1038,6 +1040,7 @@ static const struct pci_device_id i801_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CANNONLAKE_H_SMBUS) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CANNONLAKE_LP_SMBUS) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICELAKE_LP_SMBUS) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_COMETLAKE_SMBUS) },
+ 	{ 0, }
+ };
+ 
+@@ -1534,6 +1537,7 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	case PCI_DEVICE_ID_INTEL_DNV_SMBUS:
+ 	case PCI_DEVICE_ID_INTEL_KABYLAKE_PCH_H_SMBUS:
+ 	case PCI_DEVICE_ID_INTEL_ICELAKE_LP_SMBUS:
++	case PCI_DEVICE_ID_INTEL_COMETLAKE_SMBUS:
+ 		priv->features |= FEATURE_I2C_BLOCK_READ;
+ 		priv->features |= FEATURE_IRQ;
+ 		priv->features |= FEATURE_SMBUS_PEC;
 -- 
 2.19.1
 
