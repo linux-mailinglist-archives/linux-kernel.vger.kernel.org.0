@@ -2,26 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D9911B17
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD7F11B12
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 16:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfEBOPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 10:15:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51402 "EHLO mx1.suse.de"
+        id S1726505AbfEBOPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 10:15:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51418 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726327AbfEBOPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726385AbfEBOPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 2 May 2019 10:15:12 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 82947AD9F;
+        by mx1.suse.de (Postfix) with ESMTP id A6FF9AE47;
         Thu,  2 May 2019 14:15:11 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id CF641E0156; Thu,  2 May 2019 16:15:10 +0200 (CEST)
-Message-Id: <b10cbb009c6ea4acf02df7cac4972870b1c89eb8.1556806084.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1556806084.git.mkubecek@suse.cz>
-References: <cover.1556806084.git.mkubecek@suse.cz>
+        id CA511E0117; Thu,  2 May 2019 16:15:10 +0200 (CEST)
+Message-Id: <cover.1556806084.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next v2 2/3] netlink: set bad attribute also on maxtype check
+Subject: [PATCH net-next v2 0/3] netlink: strict attribute checking follow-up
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     netdev@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>,
         David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
@@ -31,31 +29,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The check that attribute type is within 0...maxtype range in
-__nla_validate_parse() sets only error message but not bad_attr in extack.
-Set also bad_attr to tell userspace which attribute failed validation.
+Three follow-up patches for recent strict netlink validation series.
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-Reviewed-by: David Ahern <dsahern@gmail.com>
----
- lib/nlattr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Patch 1 fixes dump handling for genetlink families which validate and parse
+messages themselves (e.g. because they need different policies for diferent
+commands).
 
-diff --git a/lib/nlattr.c b/lib/nlattr.c
-index 29f6336e2422..adc919b32bf9 100644
---- a/lib/nlattr.c
-+++ b/lib/nlattr.c
-@@ -356,7 +356,8 @@ static int __nla_validate_parse(const struct nlattr *head, int len, int maxtype,
- 
- 		if (type == 0 || type > maxtype) {
- 			if (validate & NL_VALIDATE_MAXTYPE) {
--				NL_SET_ERR_MSG(extack, "Unknown attribute type");
-+				NL_SET_ERR_MSG_ATTR(extack, nla,
-+						    "Unknown attribute type");
- 				return -EINVAL;
- 			}
- 			continue;
+Patch 2 sets bad_attr in extack in one place where this was omitted.
+
+Patch 3 adds new NL_VALIDATE_NESTED flags for strict validation to enable
+checking that NLA_F_NESTED value in received messages matches expectations
+and includes this flag in NL_VALIDATE_STRICT. This would change userspace
+visible behavior but the previous switching to NL_VALIDATE_STRICT for new
+code is still only in net-next at the moment.
+
+v2: change error messages to mention NLA_F_NESTED explicitly
+
+Michal Kubecek (3):
+  genetlink: do not validate dump requests if there is no policy
+  netlink: set bad attribute also on maxtype check
+  netlink: add validation of NLA_F_NESTED flag
+
+ include/net/netlink.h   | 11 ++++++++++-
+ lib/nlattr.c            | 18 +++++++++++++++++-
+ net/netlink/genetlink.c | 24 ++++++++++++++----------
+ 3 files changed, 41 insertions(+), 12 deletions(-)
+
 -- 
 2.21.0
 
