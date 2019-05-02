@@ -2,105 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9771A122BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AFF5122D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 21:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfEBTtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 15:49:08 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40512 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbfEBTtI (ORCPT
+        id S1726524AbfEBTuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 15:50:16 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41518 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfEBTuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 15:49:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id w6so3238598otl.7;
-        Thu, 02 May 2019 12:49:07 -0700 (PDT)
+        Thu, 2 May 2019 15:50:16 -0400
+Received: by mail-qt1-f196.google.com with SMTP id c13so4062531qtn.8
+        for <linux-kernel@vger.kernel.org>; Thu, 02 May 2019 12:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5/u+2wMWD5qgsv9mU8zFBG54a7HxlNWxbgZL8h1Zsk8=;
+        b=D8noIPyBltKrHNdSLQv7QwB5qTJfo2xDPFC/KvHjHwbbZxsQRAFHWU7b3vXAAvEHvZ
+         5TxYtvys+v824zV3i33ByAa95amPXEwvI44S9nyP641VX+lI/6Gh6giAK8RbwU+Ejmf6
+         xbvbJxTBP4hP0xmhATwTHiBjqIZsarK+ZCZ2dVacQkWL3cH1uYl0xZw6uRVomJRKi3Qx
+         RbtPVEwYHf5RwppKGHDksQvLa67KHuYniPsdjCGJhHXba+A+zrib10fimTk+oIZPaw5P
+         GN3rVEAXdwlllHeoyq1qbeH2zHFV8CPmDb8uBlYCJi2xebkFwSVSaO7DdT96FLM/a8WF
+         /3XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FGfxNsDw3M/Z12wiu2wAdnzAwwHu4M4I58DLCLbAH48=;
-        b=QQwHmsK8omy42O3otCY1DyojaqYe7wwKILP4sIpJpkug6TsiKo41S9vkcxVuMx3DNp
-         pU/7YjlwEUm15wLams8mSotUrYv8GT6MMhctiGx+qGOsFxbRaCbCZptmYmKDO5EwT8sW
-         qHiocKoAh7ejM9fYnAze+pslc3ne4tNElDfE7Ut0Pbwd9RgwbHKuYQYnIk04nxKW9yRr
-         fQxW5xFiPhXKYSMmnbDAY5XtCr+N7IAHEBRt/0rPnLM8FPNIMBR0kKDkKsACVufC3782
-         iAX1E5uXxyb+P8ooEGmOlNUybjfwxofWbYJWkdVUvatqX0i6MH4gYZWeNVaCgLH0vhZf
-         s/KA==
-X-Gm-Message-State: APjAAAUf3K+vUIO8dtx/wt5q6GVxI9wzUmMf/ugMtIn0Lioi3zBMcupL
-        5vRF01JBBNMS+Y4xSlhfFw==
-X-Google-Smtp-Source: APXvYqzYJ9AupEd9Umw0x6xgTlB7dtQUdfi0f3hYSCZGFwwsr29XCXUyJ7qIx36e0LDiOwYhqSkwBQ==
-X-Received: by 2002:a9d:73d9:: with SMTP id m25mr3984524otk.356.1556826546929;
-        Thu, 02 May 2019 12:49:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 189sm89076oid.35.2019.05.02.12.49.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 May 2019 12:49:05 -0700 (PDT)
-Date:   Thu, 2 May 2019 14:49:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Min Guo <min.guo@mediatek.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [PATCH] dt-binding: usb: add usb-role-switch property
-Message-ID: <20190502194905.GA22144@bogus>
-References: <5756e05930f5e6a3940ad9d019399c8e63d24f18.1556454324.git.chunfeng.yun@mediatek.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5/u+2wMWD5qgsv9mU8zFBG54a7HxlNWxbgZL8h1Zsk8=;
+        b=du1RU4gegPbLYYL012BGg0Eq07Jg6S5JABbW8+u+L2ka8ezfGTaFrOUi2AlqYZwVv4
+         tR8RfCdS1TRZQpRje5+hVsWfMiUJ1nLwyZciXimIsJROyVwvf9AvlKrDKhsTSolh7wJ1
+         kwKeGH4Y98txFnf0kwUjdC+juejb7yNHKMn4h1Ju3FBjzZf1KuMBGXPkLWsMTffgXwdg
+         sNMCg7DNwh1zARsTEeo++VmD3LpFp5xtUret0/+UgpnwOe536bijT7MxGaE7Gw/dJOKM
+         L9mRfXLQIjIEKZawOTnRfMjzFUYq8lBktPwTDv9Ep5DAb3p+CLAWw9cVYCM63iUjdAVF
+         Fk1Q==
+X-Gm-Message-State: APjAAAVjNfBss5TTeD2ig6h8fSNwFp80chJ8mJwgi74TXuSGhx3s7Gb6
+        dUWBDNw0z/TjK6Av8aiceFfl4FOmpJo=
+X-Google-Smtp-Source: APXvYqxIvmYWNDjFSgSitmtaXaEYuycKYhYf5LPkJShiYp2oXu8Cmuhjsdd+iZmhigaosQYCQoLaJg==
+X-Received: by 2002:aed:2188:: with SMTP id l8mr4937051qtc.332.1556826614723;
+        Thu, 02 May 2019 12:50:14 -0700 (PDT)
+Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id k36sm34366qtc.52.2019.05.02.12.50.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 12:50:14 -0700 (PDT)
+From:   Sean Paul <sean@poorly.run>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/10] drm: Add atomic variants of enable/disable to encoder helper funcs
+Date:   Thu,  2 May 2019 15:49:43 -0400
+Message-Id: <20190502194956.218441-2-sean@poorly.run>
+X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
+In-Reply-To: <20190502194956.218441-1-sean@poorly.run>
+References: <20190502194956.218441-1-sean@poorly.run>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5756e05930f5e6a3940ad9d019399c8e63d24f18.1556454324.git.chunfeng.yun@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 28, 2019 at 08:27:46PM +0800, Chunfeng Yun wrote:
-> Add a property usb-role-switch to tell Dual-Role controller driver
-> that use USB Role Switch framework to handle the role switch between
-> host mode and device mode, it's useful when the driver has already
-> supported other ways, such as extcon framework etc.
-> 
-> Cc: Biju Das <biju.das@bp.renesas.com>
-> Cc: Yu Chen <chenyu56@huawei.com>
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
-> v1:
-> the property is discussed in:
-> [v2,2/7] dt-bindings: usb: renesas_usb3: add usb-role-switch property
-> https://patchwork.kernel.org/patch/10852497/
-> 
-> Mediatek and Hisilicon also try to use it:
-> [v4,3/6] dt-bindings: usb: mtu3: add properties about USB Role Switch
-> https://patchwork.kernel.org/patch/10918385/
-> [v4,6/6] usb: mtu3: register a USB Role Switch for dual role mode
-> https://patchwork.kernel.org/patch/10918367/
-> 
-> [v6,10/13] usb: dwc3: Registering a role switch in the DRD code
-> https://patchwork.kernel.org/patch/10909981/
-> ---
->  Documentation/devicetree/bindings/usb/generic.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
-> index 0a74ab8dfdc2..c73950b72513 100644
-> --- a/Documentation/devicetree/bindings/usb/generic.txt
-> +++ b/Documentation/devicetree/bindings/usb/generic.txt
-> @@ -30,6 +30,9 @@ Optional properties:
->  			optional for OTG device.
->   - adp-disable: tells OTG controllers we want to disable OTG ADP, ADP is
->  			optional for OTG device.
-> + - usb-role-switch: tells Dual-Role USB controller driver that we want to use
-> +			USB Role Switch framework to handle the role switch
-> +			between host mode and device mode.
+From: Sean Paul <seanpaul@chromium.org>
 
-Please describe this in terms of h/w functionality, not drivers and 
-Linux things.
+This patch adds atomic_enable and atomic_disable callbacks to the
+encoder helpers. This will allow encoders to make informed decisions in
+their start-up/shutdown based on the committed state.
 
-Rob
+Aside from the new hooks, this patch also introduces the new signature
+for .atomic_* functions going forward. Instead of passing object state
+(well, encoders don't have atomic state, but let's ignore that), we pass
+the entire atomic state so the driver can inspect more than what's
+happening locally.
+
+This is particularly important for the upcoming self refresh helpers.
+
+Changes in v3:
+- Added patch to the set
+
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+---
+ drivers/gpu/drm/drm_atomic_helper.c      |  6 +++-
+ include/drm/drm_modeset_helper_vtables.h | 45 ++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 553415fe8ede..71cc7d6b0644 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1001,6 +1001,8 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		if (funcs) {
+ 			if (new_conn_state->crtc && funcs->prepare)
+ 				funcs->prepare(encoder);
++			else if (funcs->atomic_disable)
++				funcs->atomic_disable(encoder, old_state);
+ 			else if (funcs->disable)
+ 				funcs->disable(encoder);
+ 			else if (funcs->dpms)
+@@ -1309,7 +1311,9 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+ 		drm_bridge_pre_enable(encoder->bridge);
+ 
+ 		if (funcs) {
+-			if (funcs->enable)
++			if (funcs->atomic_enable)
++				funcs->atomic_enable(encoder, old_state);
++			else if (funcs->enable)
+ 				funcs->enable(encoder);
+ 			else if (funcs->commit)
+ 				funcs->commit(encoder);
+diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+index 8f3602811eb5..de57fb40cb6e 100644
+--- a/include/drm/drm_modeset_helper_vtables.h
++++ b/include/drm/drm_modeset_helper_vtables.h
+@@ -675,6 +675,51 @@ struct drm_encoder_helper_funcs {
+ 	enum drm_connector_status (*detect)(struct drm_encoder *encoder,
+ 					    struct drm_connector *connector);
+ 
++	/**
++	 * @atomic_disable:
++	 *
++	 * This callback should be used to disable the encoder. With the atomic
++	 * drivers it is called before this encoder's CRTC has been shut off
++	 * using their own &drm_crtc_helper_funcs.atomic_disable hook. If that
++	 * sequence is too simple drivers can just add their own driver private
++	 * encoder hooks and call them from CRTC's callback by looping over all
++	 * encoders connected to it using for_each_encoder_on_crtc().
++	 *
++	 * This callback is a variant of @disable that provides the atomic state
++	 * to the driver. It takes priority over @disable during atomic commits.
++	 *
++	 * This hook is used only by atomic helpers. Atomic drivers don't need
++	 * to implement it if there's no need to disable anything at the encoder
++	 * level. To ensure that runtime PM handling (using either DPMS or the
++	 * new "ACTIVE" property) works @atomic_disable must be the inverse of
++	 * @atomic_enable.
++	 */
++	void (*atomic_disable)(struct drm_encoder *encoder,
++			       struct drm_atomic_state *state);
++
++	/**
++	 * @atomic_enable:
++	 *
++	 * This callback should be used to enable the encoder. It is called
++	 * after this encoder's CRTC has been enabled using their own
++	 * &drm_crtc_helper_funcs.atomic_enable hook. If that sequence is
++	 * too simple drivers can just add their own driver private encoder
++	 * hooks and call them from CRTC's callback by looping over all encoders
++	 * connected to it using for_each_encoder_on_crtc().
++	 *
++	 * This callback is a variant of @enable that provides the atomic state
++	 * to the driver. It is called in place of @enable during atomic
++	 * commits.
++	 *
++	 * This hook is used only by atomic helpers, for symmetry with @disable.
++	 * Atomic drivers don't need to implement it if there's no need to
++	 * enable anything at the encoder level. To ensure that runtime PM
++	 * handling (using either DPMS or the new "ACTIVE" property) works
++	 * @enable must be the inverse of @disable for atomic drivers.
++	 */
++	void (*atomic_enable)(struct drm_encoder *encoder,
++			      struct drm_atomic_state *state);
++
+ 	/**
+ 	 * @disable:
+ 	 *
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
+
