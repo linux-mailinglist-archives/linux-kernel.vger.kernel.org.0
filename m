@@ -2,129 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2A1114C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46FB1114FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 10:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfEBIHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 04:07:30 -0400
-Received: from mga05.intel.com ([192.55.52.43]:14687 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbfEBIH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 04:07:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 01:07:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,421,1549958400"; 
-   d="scan'208";a="169842576"
-Received: from irsmsx154.ger.corp.intel.com ([163.33.192.96])
-  by fmsmga001.fm.intel.com with ESMTP; 02 May 2019 01:07:24 -0700
-Received: from irsmsx155.ger.corp.intel.com (163.33.192.3) by
- IRSMSX154.ger.corp.intel.com (163.33.192.96) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 2 May 2019 09:07:24 +0100
-Received: from irsmsx102.ger.corp.intel.com ([169.254.2.21]) by
- irsmsx155.ger.corp.intel.com ([169.254.14.186]) with mapi id 14.03.0415.000;
- Thu, 2 May 2019 09:07:23 +0100
-From:   "Reshetova, Elena" <elena.reshetova@intel.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Andy Lutomirski <luto@amacapital.net>
-CC:     Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Subject: RE: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Thread-Topic: [PATCH] x86/entry/64: randomize kernel stack offset upon
- syscall
-Thread-Index: AQHU81HQwzT9MH4dM0y/JZXnSwiYT6Y8wW2AgAAdM1CAAXexAIAANZ3ggAAW1gCAAApRgIAAMeKAgAAd+PCAAQuGgIAAYQuAgAAKhwCACsPi4IADJTwAgAAcagCAAExngIAEBbGAgACIbACAAbyQ8IAA5l+AgAGeIOA=
-Date:   Thu, 2 May 2019 08:07:22 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4C6C229@IRSMSX102.ger.corp.intel.com>
-References: <2236FBA76BA1254E88B949DDB74E612BA4C51962@IRSMSX102.ger.corp.intel.com>
- <20190416120822.GV11158@hirez.programming.kicks-ass.net>
- <01914abbfc1a4053897d8d87a63e3411@AcuMS.aculab.com>
- <20190416154348.GB3004@mit.edu>
- <2236FBA76BA1254E88B949DDB74E612BA4C52338@IRSMSX102.ger.corp.intel.com>
- <9cf586757eb44f2c8f167abf078da921@AcuMS.aculab.com>
- <20190417151555.GG4686@mit.edu>
- <99e045427125403ba2b90c2707d74e02@AcuMS.aculab.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C5E473@IRSMSX102.ger.corp.intel.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
- <20190426140102.GA4922@mit.edu>
- <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
- <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
- <737d5027067b405298167a8d463a3f0b@AcuMS.aculab.com>
-In-Reply-To: <737d5027067b405298167a8d463a3f0b@AcuMS.aculab.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiN2QxM2VjZjUtYmVhYi00YjgwLTkwMDEtMGRmYTI0ZDIzNjNkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidmdsYU9EZUdpUFJnQUhSME5PRFBBcDhwYjUrS3hNbHlKRU1XeTJZQUZBRFBHcllvbHRCdUczdEo3WVd0Z3YrXC8ifQ==
-x-originating-ip: [163.33.239.182]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726524AbfEBIKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 04:10:39 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46796 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725951AbfEBIKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 04:10:36 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42862RU006167;
+        Thu, 2 May 2019 10:10:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=R4ti5gteNcBki+KcCZxNtPlE39G37YfOCdhQ1hFnO/4=;
+ b=eNxlwstRAn08phkcWqAvf2F8iKl3xDJ4Y6ZI1feZB7HPwNdaDWwHjMAEl8yeTeYUpd8F
+ CGa44tuNVPHxgZ+znx0PIhUe5Qd3dVAxFnnqhTuFiApyCkjCY6RB7oc3H+dpovlyINFp
+ Wzx3KkaRmwFg1LrewL98IKgwSWd6ABVRygSeZ50VA68/g/Yiu9hdRXorkcACQ0x7qa3D
+ Ew2FNDonBa/kSg9tP+eLzYF1Yiz9GfFvjsj+NGmY1TCfm2yzKo8W38Zg0mMf3CvkiT0Y
+ 4dIBwsnezr0oZTy2M9PLgfWxqTTbIGWztwOmxJKTxbbEJcl6i+8vITrbAAvSwengrrV+ Hg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2s6xgcq48t-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 02 May 2019 10:10:16 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 216373F;
+        Thu,  2 May 2019 08:10:14 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C3FCA12E0;
+        Thu,  2 May 2019 08:10:13 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 2 May 2019
+ 10:10:13 +0200
+Received: from localhost (10.129.4.86) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 May 2019 10:10:13 +0200
+From:   Fabien Dessenne <fabien.dessenne@st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        "Ludovic Barre" <ludovic.barre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v3 0/8] stm32 m4 remoteproc on STM32MP157c
+Date:   Thu, 2 May 2019 10:09:58 +0200
+Message-ID: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.129.4.86]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBSZXNoZXRvdmEsIEVsZW5hDQo+ID4gU2VudDogMzAgQXByaWwgMjAxOSAxODo1MQ0K
-PiAuLi4NCj4gPiBJIGd1ZXNzIHRoaXMgaXMgdHJ1ZSwgc28gSSBkaWQgYSBxdWljayBpbXBsZW1l
-bnRhdGlvbiBub3cgdG8gZXN0aW1hdGUgdGhlDQo+ID4gcGVyZm9ybWFuY2UgaGl0cy4NCj4gPiBI
-ZXJlIGFyZSB0aGUgcHJlbGltaW5hcnkgbnVtYmVycyAocHJvcGVyIG9uZXMgd2lsbCB0YWtlIGEg
-Yml0IG1vcmUgdGltZSk6DQo+ID4NCj4gPiBiYXNlOiBTaW1wbGUgc3lzY2FsbDogMC4xNzYxIG1p
-Y3Jvc2Vjb25kcw0KPiA+IGdldF9yYW5kb21fYnl0ZXMgKDQwOTYgYnl0ZXMgcGVyLWNwdSBidWZm
-ZXIpOiAwLjE3OTMgbWljcm9zZWNvbnMNCj4gPiBnZXRfcmFuZG9tX2J5dGVzICg2NCBieXRlcyBw
-ZXItY3B1IGJ1ZmZlcik6IDAuMTg2NiBtaWNyb3NlY29ucw0KPiA+DQo+ID4gSXQgZG9lcyBub3Qg
-bWFrZSBzZW5zZSB0byBnbyBsZXNzIHRoYW4gNjQgYnl0ZXMgc2luY2UgdGhpcyBzZWVtcyB0byBi
-ZQ0KPiA+IENoYWNoYTIwIGJsb2NrIHNpemUsIHNvIGlmIHdlIGdvIGxvd2VyLCB3ZSB3aWxsIHRy
-YXNoIHVzZWZ1bCBiaXRzLg0KPiA+IFlvdSBjYW4gZ28gZXZlbiBoaWdoZXIgdGhhbiA0MDk2IGJ5
-dGVzLCBidXQgZXZlbiB0aGlzIGxvb2tzIGxpa2UNCj4gPiBva2lzaCBwZXJmb3JtYW5jZSB0byBt
-ZS4NCj4gPg0KPiA+IEJlbG93IGlzIGEgc25pcCBvZiB3aGF0IEkgcXVpY2tseSBkaWQgKHJlbGV2
-YW50IHBhcnRzKSB0byBnZXQgdGhlc2UgbnVtYmVycy4NCj4gPiBJIGRvIGluaXRpYWwgcG9wdWxh
-dGlvbiBvZiBwZXItY3B1IGJ1ZmZlcnMgaW4gbGF0ZV9pbml0Y2FsbCwgYnV0DQo+ID4gcHJhY3Rp
-Y2Ugc2hvd3MgdGhhdCBybmcgbWlnaHQgbm90IGFsd2F5cyBiZSBpbiBnb29kIHN0YXRlIGJ5IHRo
-ZW4uDQo+ID4gU28sIHdlIG1pZ2h0IG5vdCBoYXZlIHJlYWxseSBnb29kIHJhbmRvbW5lc3MgdGhl
-biwgYnV0IEkgYW0gbm90IHN1cmUNCj4gPiBpZiB0aGlzIGlzIGEgcHJhY3RpY2FsIHByb2JsZW0g
-c2luY2UgaXQgb25seSBhcHBsaWVzIHRvIHN5c3RlbSBib290IGFuZCBieQ0KPiA+IHRoZSB0aW1l
-IGl0IGJvb3RlZCwgaXQgYWxyZWFkeSBpc3N1ZWQgZW5vdWdoIHN5c2NhbGxzIHRoYXQgYnVmZmVy
-IGdldHMgcmVmaWxsZWQNCj4gPiB3aXRoIHJlYWxseSBnb29kIG51bWJlcnMuDQo+ID4gQWx0ZXJu
-YXRpdmVseSB3ZSBjYW4gYWxzbyBkbyBpdCBvbiB0aGUgZmlyc3Qgc3lzY2FsbCB0aGF0IGVhY2gg
-Y3B1IGdldHMsIGJ1dCBJDQo+ID4gYW0gbm90IHN1cmUgaWYgdGhhdCBpcyBhbHdheXMgZ3VhcmFu
-dGVlZCB0byBoYXZlIGEgZ29vZCByYW5kb21uZXNzLg0KPiAuLi4NCj4gPiArdW5zaWduZWQgY2hh
-ciByYW5kb21fZ2V0X2J5dGUodm9pZCkNCj4gPiArew0KPiA+ICsgICAgc3RydWN0IHJuZF9idWZm
-ZXIgKmJ1ZmZlciA9ICZnZXRfY3B1X3ZhcihzdGFja19yYW5kX29mZnNldCk7DQo+ID4gKyAgICB1
-bnNpZ25lZCBjaGFyIHJlczsNCj4gPiArDQo+ID4gKyAgICBpZiAoYnVmZmVyLT5ieXRlX2NvdW50
-ZXIgPj0gUkFORE9NX0JVRkZFUl9TSVpFKSB7DQo+ID4gKyAgICAgICAgZ2V0X3JhbmRvbV9ieXRl
-cygmKGJ1ZmZlci0+YnVmZmVyKSwgc2l6ZW9mKGJ1ZmZlci0+YnVmZmVyKSk7DQo+ID4gKyAgICAg
-ICAgYnVmZmVyLT5ieXRlX2NvdW50ZXIgPSAwOw0KPiA+ICsgICAgfQ0KPiA+ICsNCj4gPiArICAg
-IHJlcyA9IGJ1ZmZlci0+YnVmZmVyW2J1ZmZlci0+Ynl0ZV9jb3VudGVyXTsNCj4gPiArICAgIGJ1
-ZmZlci0+YnVmZmVyW2J1ZmZlci0+Ynl0ZV9jb3VudGVyXSA9IDA7DQo+ID4gKyAgICBidWZmZXIt
-PmJ5dGVfY291bnRlciArKzsNCj4gPiArICAgICBwdXRfY3B1X3ZhcihzdGFja19yYW5kX29mZnNl
-dCk7DQo+ID4gKyAgICByZXR1cm4gcmVzOw0KPiA+ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0wocmFu
-ZG9tX2dldF9ieXRlKTsNCj4gDQo+IFlvdSdsbCBhbG1vc3QgY2VydGFpbmx5IGdldCBiZXR0ZXIg
-Y29kZSBpZiB5b3UgY29weSBidWZmZXItPmJ5dGVfY291bnRlcg0KPiB0byBhIGxvY2FsICd1bnNp
-Z25lZCBsb25nJyB2YXJpYWJsZS4NCj4gDQoNCk5vdGVkLCB3aWxsIGZpeCwgdGhhbmsgeW91IGZv
-ciB0aGUgc3VnZ2VzdGlvbiENCg0KSSBoYXZlbid0IHlldCB3b3JrZWQgb24gdGhpcyBjb2RlIGZv
-ciBhICJwcm9wZXIgdmVyc2lvbiIsIHNvIEkgdGhpbmsgbWFueQ0KdGhpbmdzIHdvdWxkIG5lZWQg
-cG9saXNoaW5nIGZvciBib3RoIHNwZWVkIGFuZCBjb2RlIHNpemUuIA0KDQpCZXN0IFJlZ2FyZHMs
-DQpFbGVuYS4NCg==
+STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
+Cortex-M4.
+This patchset adds the support of the stm32_rproc driver allowing to control
+the M4 remote processor.
+
+Changes since v2:
+- Clarified "reg" description
+- Change m4 unit adress to 38000000
+- Renamed "auto_boot" in "st,auto-boot"
+Changes since v1:
+- Gave details about the memory mapping (in bindings).
+- Used 'dma-ranges' instead of 'ranges'.
+- Updated the 'compatible' property.
+- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
+- Clarified why / when mailboxes are optional.
+
+Fabien Dessenne (8):
+  dt-bindings: stm32: add bindings for ML-AHB interconnect
+  dt-bindings: remoteproc: add bindings for stm32 remote processor
+    driver
+  remoteproc: stm32: add an ST stm32_rproc driver
+  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+
+ .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
+ drivers/remoteproc/Kconfig                         |  15 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+ 8 files changed, 868 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
+
+-- 
+2.7.4
+
