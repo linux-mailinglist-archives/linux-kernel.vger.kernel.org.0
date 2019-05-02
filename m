@@ -2,62 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6E3120A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0EB120AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 18:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfEBQzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 12:55:36 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:52471 "EHLO vps0.lunn.ch"
+        id S1726846AbfEBQ4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 12:56:13 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:38953 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfEBQzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 12:55:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=xMqzWPWYIN6jeOd3YVkBiCmwBqYgASR2+g0UEvKZ2P4=; b=QQ7tllZlxmWjEuXWSr4a2ioKAC
-        vpAwCvBriqVDIYwJdYna1C6EGvz4pzbJpnFWZ3euQ9D/PMIOPMtu0y9iyoLmkpJHHO2aYo5ohas3b
-        Ju/w4dGj0jXgCzVUXMI13hFoeHCoSasBeRLiLWU/0uepkuK1W5wxWqOmOti2+gfmWlaI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hMEza-0001Tk-BB; Thu, 02 May 2019 18:55:30 +0200
-Date:   Thu, 2 May 2019 18:55:30 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        vivien.didelot@gmail.com, netdev <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 net-next 00/12] NXP SJA1105 DSA driver
-Message-ID: <20190502165530.GJ19809@lunn.ch>
-References: <20190429001706.7449-1-olteanv@gmail.com>
- <20190430.234425.732219702361005278.davem@davemloft.net>
- <CA+h21hrmXaAAepTrY-HfbrmZPVRf3Qg1-fA8EW4prwSkrGYogQ@mail.gmail.com>
+        id S1726472AbfEBQ4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 12:56:12 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44w1cS5Fwsz9v0Sx;
+        Thu,  2 May 2019 18:56:08 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=b8I7W1X+; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 4wFI9OSqYAkB; Thu,  2 May 2019 18:56:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44w1cS3z29z9v0Sy;
+        Thu,  2 May 2019 18:56:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1556816168; bh=Q15LZ3d9bdq9dEoD9BccUn9mlT4iR41PhF1gwPGTDdo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=b8I7W1X+eD9E6f4QICHVyiGb2O+HBaJpc4Gwg6pUFtlpNKygpjn8VED8m8xg+JkOB
+         IY+qSAZGLB4WFz+ZuAhNE6IOZlIPudaswik9x6vnbwMIKU3+fxYh/fSD0okZc5lnaA
+         cdvwJC11zLQtHCiz8Kggoo4ZlThkHqB1Sg9CxUag=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3A25B8B8FE;
+        Thu,  2 May 2019 18:56:10 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id RamEpSyy5iYB; Thu,  2 May 2019 18:56:10 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CE4878B899;
+        Thu,  2 May 2019 18:56:08 +0200 (CEST)
+Subject: Re: [PATCH 12/15] powerpc/nohash/64: switch to generic version of pte
+ allocation
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-mips@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>, linux-hexagon@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        Helge Deller <deller@gmx.de>, x86@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Sam Creasey <sammy@sammy.net>, Arnd Bergmann <arnd@arndb.de>,
+        linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-m68k@lists.linux-m68k.org, Greentime Hu <green.hu@gmail.com>,
+        nios2-dev@lists.rocketboards.org, Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-alpha@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <1556810922-20248-1-git-send-email-rppt@linux.ibm.com>
+ <1556810922-20248-13-git-send-email-rppt@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <adcb6ae6-48d9-5ba9-2732-a0ab1d96667c@c-s.fr>
+Date:   Thu, 2 May 2019 18:56:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+h21hrmXaAAepTrY-HfbrmZPVRf3Qg1-fA8EW4prwSkrGYogQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1556810922-20248-13-git-send-email-rppt@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Wow I am sorry, Gmail apparently moved your reply to spam and I only
-> got it when I posted my message just now.
-> Do you know what causes these whitespace errors, so I can avoid them
-> next time? I think I'm generating my patches rather normally, with
-> $(git format-patch -12 --subject-prefix="PATCH v4 net-next"
-> --cover-letter).
 
-What happens when you run checkpatch on the patches? Does it report
-white space problems.
 
-Another possibility is your email system has mangled the patches.
-First try applying the patches you generated from format-patch to a
-clean tree. If you don't get any warnings, email the patches to
-yourself, and then apply them.
+Le 02/05/2019 à 17:28, Mike Rapoport a écrit :
+> The 64-bit book-E powerpc implements pte_alloc_one(),
+> pte_alloc_one_kernel(), pte_free_kernel() and pte_free() the same way as
+> the generic version.
 
-     Andrew
+Will soon be converted to the same as the 3 other PPC subarches, see
+https://patchwork.ozlabs.org/patch/1091590/
+
+Christophe
+
+> 
+> Switch it to the generic version that does exactly the same thing.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>   arch/powerpc/include/asm/nohash/64/pgalloc.h | 35 ++--------------------------
+>   1 file changed, 2 insertions(+), 33 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> index 66d086f..bfb53a0 100644
+> --- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> +++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> @@ -11,6 +11,8 @@
+>   #include <linux/cpumask.h>
+>   #include <linux/percpu.h>
+>   
+> +#include <asm-generic/pgalloc.h>	/* for pte_{alloc,free}_one */
+> +
+>   struct vmemmap_backing {
+>   	struct vmemmap_backing *list;
+>   	unsigned long phys;
+> @@ -92,39 +94,6 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+>   	kmem_cache_free(PGT_CACHE(PMD_CACHE_INDEX), pmd);
+>   }
+>   
+> -
+> -static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> -{
+> -	return (pte_t *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
+> -}
+> -
+> -static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
+> -{
+> -	struct page *page;
+> -	pte_t *pte;
+> -
+> -	pte = (pte_t *)__get_free_page(GFP_KERNEL | __GFP_ZERO | __GFP_ACCOUNT);
+> -	if (!pte)
+> -		return NULL;
+> -	page = virt_to_page(pte);
+> -	if (!pgtable_page_ctor(page)) {
+> -		__free_page(page);
+> -		return NULL;
+> -	}
+> -	return page;
+> -}
+> -
+> -static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+> -{
+> -	free_page((unsigned long)pte);
+> -}
+> -
+> -static inline void pte_free(struct mm_struct *mm, pgtable_t ptepage)
+> -{
+> -	pgtable_page_dtor(ptepage);
+> -	__free_page(ptepage);
+> -}
+> -
+>   static inline void pgtable_free(void *table, int shift)
+>   {
+>   	if (!shift) {
+> 
