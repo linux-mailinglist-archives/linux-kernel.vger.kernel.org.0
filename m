@@ -2,132 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4EF811144
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 610BC1117B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 May 2019 04:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfEBCTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 May 2019 22:19:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57666 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfEBCTi (ORCPT
+        id S1726333AbfEBC3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 May 2019 22:29:44 -0400
+Received: from mail-yw1-f45.google.com ([209.85.161.45]:37322 "EHLO
+        mail-yw1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfEBC3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 May 2019 22:19:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=1grwRNg1rL6fWWwwY9b01aFhIjRlWDX1p/iSHRpIX2M=; b=Yr9ISyKB5G54
-        mnCOy3hKifVuQiBTblOnEWujwqpIv0cwGsxLW8c3mTOU1uSoWSpwj2HwSm+PnKiU/YfiVSd5ocKyh
-        wKr4tMLmvJemYOQXwPqOj7urdyez9DlIWmKT8kMc/XyTVxCvbxnyNf21OjjZiy7KrtZNRh/B2+FVe
-        ulKbg=;
-Received: from [211.55.52.15] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hM1Jv-0005xk-8k; Thu, 02 May 2019 02:19:35 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id E2A78441D3C; Thu,  2 May 2019 03:19:26 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     broonie@kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        naga.sureshkumar.relli@xilinx.com
-Subject: Applied "spi: spi-mem: Fix build error without CONFIG_SPI_MEM" to the spi tree
-In-Reply-To:  <20190408143949.10688-1-yuehaibing@huawei.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190502021926.E2A78441D3C@finisterre.ee.mobilebroadband>
-Date:   Thu,  2 May 2019 03:19:26 +0100 (BST)
+        Wed, 1 May 2019 22:29:44 -0400
+Received: by mail-yw1-f45.google.com with SMTP id a62so493377ywa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 May 2019 19:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H1U2mJXBbnkWOnvmjM7JApU8kCjuCk0GAzDiJe0SSQ8=;
+        b=HhyNhPER21cKXrmuPmPHmnjvXbBpYYCdGpMAWXbBnuVSKm35ii3+zr47c07qUIxCtE
+         kpxIKagdzxPIIgRSrfKgEd7BwxlESTY+lWAn8RzsWw/E5ZP3yQHRL57GtD5cUsViV5Ot
+         16t1lQ///dE+3A/FI39hvUZadgfIhWD+VnHI3SP5Ic6H3azruGl+VZUqFPILyyadS6GG
+         lbI30N99yOtU5qE+sWz7oKl0fK3kaT7ATJxWt4D+HG+tch1RA93Yegpx2wuD41x0ktMP
+         mETEUEtXJHfn0qPrOI6JGR0o9Z0gRRWQzUZryzc1ph6iwNmK8KVCUivX9qKk/5mEwU33
+         gdyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H1U2mJXBbnkWOnvmjM7JApU8kCjuCk0GAzDiJe0SSQ8=;
+        b=X5g+AjFiZO3EzLEj9EWrIZO9EgW0E1LBKTtlRTE+Ew0/MT4VDVplDM2oRnpDv2DeLK
+         t+TKKuy/ZKyMFv3G2MSUTQgNpOULJ8gOU9HwDZ1WrCK5GMucmvl2ywiByI5fUYs+JMVr
+         oyDByDkOUtoiyWW08WGqHoucLN6slwnnqPK3A7b/QZI8WxFSLbgozip4XkvZE7kaP2mN
+         eKwqlDrbrBDaCbpooar9C9YZ1/Vs5WBTq9FUCdqHbyrte16Xywm+Ww025+yyAu4gNO7Q
+         3GVwpIELAfTAASXUYEKb6HhATWl60/Ivohh1aK4Qw63R9sgn2UNbmLiGhsgfVK8vO97C
+         ptFw==
+X-Gm-Message-State: APjAAAVnr1c/eaKrVt8VhxCJxf8v3QF2mV+tQ5P/AudylZB0pQSmYuDn
+        dyLiMD/qBcgHHheR0E43o2Q=
+X-Google-Smtp-Source: APXvYqwiqBdAZ2Op0tTtlyQx/W77Z7fZU/x3DkLyj8DO/TL4D0NenRU2IltJnGLYqvLRkaPf6n34xA==
+X-Received: by 2002:a81:9203:: with SMTP id j3mr933715ywg.511.1556764183630;
+        Wed, 01 May 2019 19:29:43 -0700 (PDT)
+Received: from [10.230.25.168] ([192.19.224.250])
+        by smtp.gmail.com with ESMTPSA id h3sm7436807ywb.87.2019.05.01.19.29.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 19:29:42 -0700 (PDT)
+Subject: Re: [PATCH v2] mtd: rawnand: brcmnand: fix bch ecc layout for large
+ page nand
+To:     Kamal Dasu <kdasu.kdev@gmail.com>, linux-mtd@lists.infradead.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+References: <1556738544-29857-1-git-send-email-kdasu.kdev@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <baffcda4-84f8-cd5f-8872-a2e2572024ff@gmail.com>
+Date:   Wed, 1 May 2019 19:29:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1556738544-29857-1-git-send-email-kdasu.kdev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   spi: spi-mem: Fix build error without CONFIG_SPI_MEM
 
-has been applied to the spi tree at
+On 5/1/2019 12:22 PM, Kamal Dasu wrote:
+> The oobregion->offset for large page nand parts was wrong, change
+> fixes this error in calculation.
+> 
+> Fixes: ef5eeea6e911 ("mtd: nand: brcm: switch to mtd_ooblayout_ops")
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 72e6841608b9ce7e04515ed43693b2878936c93a Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 8 Apr 2019 22:39:49 +0800
-Subject: [PATCH] spi: spi-mem: Fix build error without CONFIG_SPI_MEM
-
-When building with CONFIG_SPI_MEM is not set
-gc warns this:
-
-drivers/spi/spi-zynq-qspi.o: In function `zynq_qspi_supports_op':
-spi-zynq-qspi.c:(.text+0x1da): undefined reference to `spi_mem_default_supports_op'
-
-Fixes: 67dca5e580f1 ("spi: spi-mem: Add support for Zynq QSPI controller")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/linux/spi/spi-mem.h | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-index c845cd6e22ba..1941b845aa15 100644
---- a/include/linux/spi/spi-mem.h
-+++ b/include/linux/spi/spi-mem.h
-@@ -295,6 +295,10 @@ int spi_controller_dma_map_mem_op_data(struct spi_controller *ctlr,
- void spi_controller_dma_unmap_mem_op_data(struct spi_controller *ctlr,
- 					  const struct spi_mem_op *op,
- 					  struct sg_table *sg);
-+
-+bool spi_mem_default_supports_op(struct spi_mem *mem,
-+				 const struct spi_mem_op *op);
-+
- #else
- static inline int
- spi_controller_dma_map_mem_op_data(struct spi_controller *ctlr,
-@@ -310,6 +314,13 @@ spi_controller_dma_unmap_mem_op_data(struct spi_controller *ctlr,
- 				     struct sg_table *sg)
- {
- }
-+
-+bool spi_mem_default_supports_op(struct spi_mem *mem,
-+				 const struct spi_mem_op *op)
-+{
-+	return false;
-+}
-+
- #endif /* CONFIG_SPI_MEM */
- 
- int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op);
-@@ -341,9 +352,6 @@ int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
- 
- void spi_mem_driver_unregister(struct spi_mem_driver *drv);
- 
--bool spi_mem_default_supports_op(struct spi_mem *mem,
--				 const struct spi_mem_op *op);
--
- #define spi_mem_driver_register(__drv)                                  \
- 	spi_mem_driver_register_with_owner(__drv, THIS_MODULE)
- 
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.20.1
-
+Florian
