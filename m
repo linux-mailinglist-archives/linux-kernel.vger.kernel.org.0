@@ -2,202 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 965E612DB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBED512DC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfECMfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 08:35:20 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:40904 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfECMfU (ORCPT
+        id S1727873AbfECMiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:38:21 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:35957 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfECMiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:35:20 -0400
-Received: by mail-yw1-f68.google.com with SMTP id t79so4137680ywc.7;
-        Fri, 03 May 2019 05:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tlIRPAVzjtKVstMciUPdYuhb+CAhhzJIEx3zMqLSb2w=;
-        b=qLuMf3QHje1Tv8qze5K+fgkTfrbM8FyuB3H2lsFak2DNgaYDl8fsiA13L8gwVnvMqK
-         uFQJMEl3UnCaziVprgLIFg8Wakj3cGMdqONEet4IwEB5wF8Ft+xsuvCkzgxjzQAld9Oj
-         OPtYZ3/zsQeJurYP/5QRDBS4p/TZ26SFmUbwPqYrYoTFq0Cn9LXn4N8cet1qP+5dWUGk
-         UXYTrgbgud7/m0BNxqSUN32dEKlFtRyTRfY3hUMxG2RHxjuSkPdYjg0V7/mCtGUh6pog
-         9r9Cys2VJlGiRaRZEPJuU+EN+ztQQ4BdaRbfH3m4m+B/KDwkA1xwFijqHnXYhCbQDcui
-         Q3Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tlIRPAVzjtKVstMciUPdYuhb+CAhhzJIEx3zMqLSb2w=;
-        b=aFZcyoRbhkoOkmWTOfs0bk6FiiiacuiZrg4/vOz3d/TC5+wck1vyu5NXCY4dJd1N/i
-         Q36EFFmYpSbnOaRm4Dy90Q25K9zn/pfu1tOTJ/2spLVQb5KGajvaDPRaRxeH+RShxbOx
-         SxfY7uvuBXLBPK7XZlLdxBWxh2PHGOjUKsBrRRQ/xpnNmpY7fTZr2rqRD4ubrD71NSc4
-         eFmOvD7229eUS/InkwF382P/DwOAFmzI+9tSrs01WSbmZL0m8JNGY44y/rGP6lMqACkD
-         DQIwnHYmEMTFao1rtdFCoxJVpcWsVEzbq9eIjtQ2wizZ85o7Vs1eTHq4AyzL7y9oHNqO
-         K3oQ==
-X-Gm-Message-State: APjAAAU2/PQ8HbJEuOr4YsrO8zlkcSkmegWI/qjPyRG+p0GFY8eHEv1C
-        knn22uYHZWCXVJc0m5/TfFjmDDGqS3Nou1JECaERk9fiuVc=
-X-Google-Smtp-Source: APXvYqxVXVgQtxCvUVcXpIaCx96AHsKpVPAsDmqMtcqJv4c5K0fGnBjNL6/sbpCalpKQeVhC4cH1lsX4Kx/QJoEDz8Q=
-X-Received: by 2002:a81:5294:: with SMTP id g142mr7217061ywb.211.1556886918610;
- Fri, 03 May 2019 05:35:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190503191033.6c56e4c0@canb.auug.org.au>
-In-Reply-To: <20190503191033.6c56e4c0@canb.auug.org.au>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 3 May 2019 08:35:06 -0400
-Message-ID: <CAOQ4uxikyWj5DMcCLt6kVzLeQt8dg=wMvaXE5vOfbDLaNiqJnw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the block tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 May 2019 08:38:21 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x43CbuW9020722;
+        Fri, 3 May 2019 21:37:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x43CbuW9020722
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1556887077;
+        bh=N7oCkXQfepu6l+UAHVtt5vfxPNB5K7tbRYmyelOMNYM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=utdjWpxmGnVSZlPDbdmUSctuhbvdk/+xastR2qAA9SFYQC9pF8dDKTe07nQv3bnSK
+         n1IsL8kt+BBPcpKV/aAJcexyRpu0CLMhflaktEF8LVR2EvMfCV5VwBPILgeeNlOpPB
+         FoAtf3f1tLGfqy1tjdIohPQfR6JbVfEENM6gAUrmEBCwvP0dbte8eJGU+BfTIcCuzz
+         397zHtom+oyAWBXgbje71WSOWgaEm9YDrt/wQU9eShTtElu32YlQ1BvkXDd+98ik0f
+         gnBEede0sb/LLcyjg6eMdWYMh0IgHCv+GYNZjq/vS0LKZBRUG1mXHPeJ9bSxKA7mV6
+         b6qQX/b1d8ERA==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     x86@kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] x86,sh: use __builtin_constant_p() directly instead of IS_IMMEDIATE()
+Date:   Fri,  3 May 2019 21:37:44 +0900
+Message-Id: <1556887064-12882-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 5:10 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
->
->   fs/sync.c
->
-> between commit:
->
->   22f96b3808c1 ("fs: add sync_file_range() helper")
->
-> from the block tree and commit:
->
->   9a8d18789a18 ("fs/sync.c: sync_file_range(2) may use WB_SYNC_ALL writeback")
->
-> from the akpm-current tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
+__builtin_constant_p(nr) is used everywhere now. It does not make
+much sense to define IS_IMMEDIATE() as its alias.
 
-Fix looks technically correct, but it would have been better if the fat
-comment moved to the fat helper and then replace
-s/sys_sync_file_range/ksys_sync_file_range with
-s/sys_sync_file_range/sync_file_range
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-It is probably best if either maintainer took both patches through his tree
-and if move and update the comment from "sys_sync_file_range" be done
-as part of the helper function patch.
+ arch/sh/include/asm/bitops-op32.h | 8 +++-----
+ arch/x86/include/asm/bitops.h     | 7 +++----
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-Thanks,
-Amir.
+diff --git a/arch/sh/include/asm/bitops-op32.h b/arch/sh/include/asm/bitops-op32.h
+index 4668803..cfe5465 100644
+--- a/arch/sh/include/asm/bitops-op32.h
++++ b/arch/sh/include/asm/bitops-op32.h
+@@ -16,11 +16,9 @@
+ #define BYTE_OFFSET(nr)		((nr) % BITS_PER_BYTE)
+ #endif
+ 
+-#define IS_IMMEDIATE(nr)	(__builtin_constant_p(nr))
+-
+ static inline void __set_bit(int nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		__asm__ __volatile__ (
+ 			"bset.b %1, @(%O2,%0)		! __set_bit\n\t"
+ 			: "+r" (addr)
+@@ -37,7 +35,7 @@ static inline void __set_bit(int nr, volatile unsigned long *addr)
+ 
+ static inline void __clear_bit(int nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		__asm__ __volatile__ (
+ 			"bclr.b %1, @(%O2,%0)		! __clear_bit\n\t"
+ 			: "+r" (addr)
+@@ -64,7 +62,7 @@ static inline void __clear_bit(int nr, volatile unsigned long *addr)
+  */
+ static inline void __change_bit(int nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		__asm__ __volatile__ (
+ 			"bxor.b %1, @(%O2,%0)		! __change_bit\n\t"
+ 			: "+r" (addr)
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index 8e790ec..2621438 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -45,7 +45,6 @@
+  * We do the locked ops that don't return the old value as
+  * a mask operation on a byte.
+  */
+-#define IS_IMMEDIATE(nr)		(__builtin_constant_p(nr))
+ #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+ #define CONST_MASK(nr)			(1 << ((nr) & 7))
+ 
+@@ -67,7 +66,7 @@
+ static __always_inline void
+ set_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "orb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)CONST_MASK(nr))
+@@ -105,7 +104,7 @@ static __always_inline void __set_bit(long nr, volatile unsigned long *addr)
+ static __always_inline void
+ clear_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "andb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)~CONST_MASK(nr)));
+@@ -186,7 +185,7 @@ static __always_inline void __change_bit(long nr, volatile unsigned long *addr)
+  */
+ static __always_inline void change_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "xorb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)CONST_MASK(nr)));
+-- 
+2.7.4
 
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc fs/sync.c
-> index 01e82170545a,9e8cd90e890f..000000000000
-> --- a/fs/sync.c
-> +++ b/fs/sync.c
-> @@@ -292,10 -348,16 +292,16 @@@ int sync_file_range(struct file *file,
->         }
->
->         if (flags & SYNC_FILE_RANGE_WRITE) {
-> +               int sync_mode = WB_SYNC_NONE;
-> +
-> +               if ((flags & SYNC_FILE_RANGE_WRITE_AND_WAIT) ==
-> +                            SYNC_FILE_RANGE_WRITE_AND_WAIT)
-> +                       sync_mode = WB_SYNC_ALL;
-> +
->                 ret = __filemap_fdatawrite_range(mapping, offset, endbyte,
-> -                                                WB_SYNC_NONE);
-> +                                                sync_mode);
->                 if (ret < 0)
->  -                      goto out_put;
->  +                      goto out;
->         }
->
->         if (flags & SYNC_FILE_RANGE_WAIT_AFTER)
-> @@@ -305,68 -369,6 +311,71 @@@ out
->         return ret;
->   }
->
->  +/*
-> -  * sys_sync_file_range() permits finely controlled syncing over a segment of
-> ++ * ksys_sync_file_range() permits finely controlled syncing over a segment of
->  + * a file in the range offset .. (offset+nbytes-1) inclusive.  If nbytes is
-> -  * zero then sys_sync_file_range() will operate from offset out to EOF.
-> ++ * zero then ksys_sync_file_range() will operate from offset out to EOF.
->  + *
->  + * The flag bits are:
->  + *
->  + * SYNC_FILE_RANGE_WAIT_BEFORE: wait upon writeout of all pages in the range
->  + * before performing the write.
->  + *
->  + * SYNC_FILE_RANGE_WRITE: initiate writeout of all those dirty pages in the
->  + * range which are not presently under writeback. Note that this may block for
->  + * significant periods due to exhaustion of disk request structures.
->  + *
->  + * SYNC_FILE_RANGE_WAIT_AFTER: wait upon writeout of all pages in the range
->  + * after performing the write.
->  + *
->  + * Useful combinations of the flag bits are:
->  + *
->  + * SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE: ensures that all pages
-> -  * in the range which were dirty on entry to sys_sync_file_range() are placed
-> ++ * in the range which were dirty on entry to ksys_sync_file_range() are placed
->  + * under writeout.  This is a start-write-for-data-integrity operation.
->  + *
->  + * SYNC_FILE_RANGE_WRITE: start writeout of all dirty pages in the range which
->  + * are not presently under writeout.  This is an asynchronous flush-to-disk
->  + * operation.  Not suitable for data integrity operations.
->  + *
->  + * SYNC_FILE_RANGE_WAIT_BEFORE (or SYNC_FILE_RANGE_WAIT_AFTER): wait for
->  + * completion of writeout of all pages in the range.  This will be used after an
->  + * earlier SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE operation to wait
->  + * for that operation to complete and to return the result.
->  + *
-> -  * SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE|SYNC_FILE_RANGE_WAIT_AFTER:
-> ++ * SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE|SYNC_FILE_RANGE_WAIT_AFTER
-> ++ * (a.k.a. SYNC_FILE_RANGE_WRITE_AND_WAIT):
->  + * a traditional sync() operation.  This is a write-for-data-integrity operation
->  + * which will ensure that all pages in the range which were dirty on entry to
-> -  * sys_sync_file_range() are committed to disk.
-> ++ * ksys_sync_file_range() are committed to disk.  It should be noted that disk
-> ++ * caches are not flushed by this call, so there are no guarantees here that the
-> ++ * data will be available on disk after a crash.
->  + *
->  + *
->  + * SYNC_FILE_RANGE_WAIT_BEFORE and SYNC_FILE_RANGE_WAIT_AFTER will detect any
->  + * I/O errors or ENOSPC conditions and will return those to the caller, after
->  + * clearing the EIO and ENOSPC flags in the address_space.
->  + *
->  + * It should be noted that none of these operations write out the file's
->  + * metadata.  So unless the application is strictly performing overwrites of
->  + * already-instantiated disk blocks, there are no guarantees here that the data
->  + * will be available after a crash.
->  + */
->  +int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
->  +                       unsigned int flags)
->  +{
->  +      int ret;
->  +      struct fd f;
->  +
->  +      ret = -EBADF;
->  +      f = fdget(fd);
->  +      if (f.file)
->  +              ret = sync_file_range(f.file, offset, nbytes, flags);
->  +
->  +      fdput(f);
->  +      return ret;
->  +}
->  +
->   SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
->                                 unsigned int, flags)
->   {
