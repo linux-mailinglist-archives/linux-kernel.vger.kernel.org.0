@@ -2,97 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8A313053
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 16:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2768813034
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 16:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbfECOfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 10:35:08 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46602 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfECOfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 10:35:08 -0400
-Received: by mail-pl1-f193.google.com with SMTP id bi2so2778848plb.13;
-        Fri, 03 May 2019 07:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kMGLnhggc8cifwRrjEK9HALOorMf0mLsznAzU3ByQJ4=;
-        b=shNY8wGsdG7K1gn0sScFEu/UG87+cKxU8rBCXtb8tyo+rAKekJK+7uISp4XTWWgBA4
-         mMR6f1lRqLExLgSCD47O08vLxUrzx+Aa7MtEwDM1fYTizYyGG991dxO+1rGubS8CeqGL
-         fuH0M46aEiOtlQIEybjoTs34L1vO9NcvFKaJCb2f7xoKFeK2vROY6owPj1Y4VdRET597
-         yXFSgXFQfIIaA0gouVJTOTy0z/eoMMxy5g+gNiK7bm0B/v3ylUmrwBMUtJZGJKxh2owY
-         9r45sdCvSgKdqpkckoiMVZ/5UPCn26BqC/8kYXBAKiZXhrY+0dj4HX8W3Z4OJFLiRSYl
-         +Mqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kMGLnhggc8cifwRrjEK9HALOorMf0mLsznAzU3ByQJ4=;
-        b=THODU3yHnS6lIzCyLc7fLHCvaSx4wHo7PvB6T49dntdaiNT7/fKDjxF/LkLbg/R5WE
-         tdpok1VV5QXs+ICr18LB47m/jbDrY4a4qdibk2LYh4XEmM+wo1/lKABrLJQZ6lHIhPgM
-         TVJGbbjhiQ29eCd/ouM4ab6aveRpC9T02Zm19mO8T4A2QSktLtGn/Oi5xBsE8bkNFdnD
-         AZdwiO4lsYR62g4XxpZ6aKV+78WwSwBdUQ4NESKYE9Ksy+aP9mFEDkCtVZtDosUYhBjW
-         dO3sC5L2g/nc95lyMIINgPuWpVfyZwG4HYH3qMMIQYxgVz7huQnkgv7oj2+eIGBOGdx7
-         xi+g==
-X-Gm-Message-State: APjAAAXVnd5TddQHcRq7xplxLVZaFw7QoXDTAaHANQv/HkfOe7P0z01v
-        btCgJ/I0+thB1GsUriWQG2g=
-X-Google-Smtp-Source: APXvYqzLw5RFP+moTLdaj7O6UqQIbnzuJQcywkHNCxDgZyn604CU0+GbY7CVtCWF8KqN+EQLh/fuSQ==
-X-Received: by 2002:a17:902:8c81:: with SMTP id t1mr2372272plo.333.1556893714461;
-        Fri, 03 May 2019 07:28:34 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id s19sm2789351pgj.62.2019.05.03.07.28.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 07:28:33 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     jeffrey.t.kirsher@intel.com, davem@davemloft.net
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: e1000: Fix some bugs in error handling code of e1000_probe()
-Date:   Fri,  3 May 2019 22:28:23 +0800
-Message-Id: <20190503142823.15319-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1727939AbfECO3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 10:29:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37518 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbfECO3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 10:29:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5063258599;
+        Fri,  3 May 2019 14:29:04 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 80E697BA09;
+        Fri,  3 May 2019 14:29:02 +0000 (UTC)
+Date:   Fri, 3 May 2019 10:29:00 -0400
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Joao Moreira <jmoreira@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Matz <matz@suse.de>, Nicolai Stange <nstange@suse.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+Subject: Re: [PATCH v3 0/9] klp-convert livepatch build tooling
+Message-ID: <20190503142900.GB24094@redhat.com>
+References: <20190412212654.GA21627@redhat.com>
+ <alpine.LSU.2.21.1904161323230.17836@pobox.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1904161323230.17836@pobox.suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 03 May 2019 14:29:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When "hw->ce4100_gbe_mdio_base_virt = ioremap(...)" fails, the driver
-does not free the memory allocated in e1000_sw_init(), and also calls
-"iounmap(hw->ce4100_gbe_mido_base_virt)" that is unnecessary.
+On Tue, Apr 16, 2019 at 01:37:13PM +0200, Miroslav Benes wrote:
+>
+> [ ... snip ... ]
+>
+> Quick look, but it seems quite similar to the problem we had with
+> apply_alternatives(). See arch/x86/kernel/livepatch.c and the commit which
+> introduced it.
 
-Besides, when e1000_sw_init() fails, the driver also calls 
-"iounmap(hw->ce4100_gbe_mido_base_virt)" but 
-hw->ce4100_gbe_mido_base_virt has not been assigned.
+That was an interesting diversion :)  I think I grok the idea as:
 
-These bugs are found by a runtime fuzzing tool named FIZZER written by us.
+The kernel supports a few different code-patching methods:
 
-To fix these bugs, the error handling code of e1000_probe() is adjusted.
+  - SMP locks
+  - alternatives
+  - paravirt
+  - jump labels
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+and we need to ensure that they do not prematurely operate on unresolved
+klp-relocations.  The solution that led to arch/x86/kernel/livepatch.c
+introduces "klp.arch" sections that rename such klp-relocations *and*
+their associated special section data structures.  Processing is then
+deferred until after a relevant klp_object is loaded.
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index 8fe9af0e2ab7..7743c4d9723f 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -1227,12 +1227,12 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	if (hw->flash_address)
- 		iounmap(hw->flash_address);
-+	iounmap(hw->ce4100_gbe_mdio_base_virt);
-+err_mdio_ioremap:
- 	kfree(adapter->tx_ring);
- 	kfree(adapter->rx_ring);
--err_dma:
- err_sw_init:
--err_mdio_ioremap:
--	iounmap(hw->ce4100_gbe_mdio_base_virt);
-+err_dma:
- 	iounmap(hw->hw_addr);
- err_ioremap:
- 	disable_dev = !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
--- 
-2.17.0
+> I think, we should do the same for jump labels. Add
+> jump_label_apply_nops() from module_finalize() to
+> arch_klp_init_object_loaded() and convert jump_table ELF section so its
+> processing is delayed.
 
+Nod.  Tthat sounds about right.  There may be some more work yet in the
+static keys API as well, but I'm not 100%.
+
+> Which leads me another TODO... klp-convert does not convert even
+> .altinstructions and .parainstructions sections, so it has that problem as
+> well. If I remember, it was on Josh's TODO list when he first introduced
+> klp-convert. See cover.1477578530.git.jpoimboe@redhat.com.
+
+In the RFC, Josh highlights a somewhat difficult problem regarding these
+special sections -- how to associate these special section data
+structures and their relocations to a specific klp_object.
+
+If I understand his suggestion, he proposed annotating livepatch module
+replacement functions as to stuff them into specially named ELF sections
+(which would include the klp_object name) and then bypass the existing
+livepatch registration API.  No minor change.
+
+With that in mind, I'm starting to think of a game plan for klp-convert
+like:
+
+  - phase 1: detect /abort unsupported sections
+
+  - phase 2: manual annotations in livepatch modules (like
+             KLP_MODULE_RELOC / SYMPOS, but for special sections) so
+             that klp-convert can start building "klp.arch" sections
+
+  - phase 3: livepatch API change above to support somewhat more
+             automatic generation of phase 2 annotations
+
+> The selftest for the alternatives would be appreciated too. One day.
+
+In the course of understanding the background behind
+arch/x86/kernel/livepatch.c, I wrote a bunch of livepatch selftests that
+try out simple examples of those special sections.
+
+For alternatives, I did something like:
+
+  /* TODO: find reliably true/false features */
+  #define TRUE_FEATURE	(X86_FEATURE_FPU)
+  #define FALSE_FEATURE	(X86_FEATURE_VME)
+
+  ...
+
+  klp_function1()
+  klp_function2()
+  klp_new_function()
+
+  	asm (ALTERNATIVE("call klp_function1", "call klp_function2", TRUE_FEATURE));
+  	asm (ALTERNATIVE("call klp_function1", "call klp_function2", FALSE_FEATURE));
+
+  	asm (ALTERNATIVE("call mod_function1", "call mod_function2", TRUE_FEATURE));
+  	asm (ALTERNATIVE("call mod_function1", "call mod_function2", FALSE_FEATURE));
+  	asm (ALTERNATIVE("call mod_function2", "call mod_function1", TRUE_FEATURE));
+  	asm (ALTERNATIVE("call mod_function2", "call mod_function1", FALSE_FEATURE));
+
+so that I could see what kind of relocations were generated for default
+and non-default instructions as well as module-local and then
+unexported-extern functions.
+
+Once we have klp-convert supporting these conversions, I think something
+like that would suffice.  In the meantime, I'm not sure how to create
+"klp.arch" sectioned ELFs without something like kpatch-build.
+
+> And of course we should look at the other supported architectures and
+> their module_finalize() functions. I have it on my TODO list somewhere,
+> but you know how it works with those :/. I am sure there are more hidden
+> surprises there.
+
+Hmm, well powerpc and s390 do appear to have processing for special
+sections as well ... but for the moment, I'm going to focus on x86 as
+that seems like enough work for now :)
+
+> > Detection
+> > ---------
+> >
+> > I can post ("livepatch/klp-convert: abort on static key conversion")
+> > here as a follow commit if it looks reasonable and folks wish to review
+> > it... or we can try and tackle static keys before merging klp-convert.
+>
+> Good idea. I'd rather fix it, but I think it could be a lot of work, so
+> something like this patch seems to be a good idea.
+
+I'm thinking of adding this in a commit so klp-convert can intercept
+these sections:
+
+  static bool is_section_supported(char *sname)
+  {
+          if (strcmp(sname, ".rela.altinstructions") == 0)
+                  return false;
+          if (strcmp(sname, ".rela.parainstructions") == 0)
+                  return false;
+          if (strcmp(sname, ".rela__jump_table") == 0)
+                  return false;
+          return true;
+  }
+
+Right now my v4 collection has a bunch of small fixups and nitpick
+corrections.  It feels like a good resting place for now before
+embarking on special section support, what do you think?
+
+-- Joe
