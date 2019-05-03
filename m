@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89DE6129CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15418129BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfECITv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 04:19:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40832 "EHLO mx1.redhat.com"
+        id S1727117AbfECITE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 04:19:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57404 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbfECIS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 04:18:59 -0400
+        id S1726377AbfECITB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 04:19:01 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82C253092649;
-        Fri,  3 May 2019 08:18:58 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1D31C044CDB;
+        Fri,  3 May 2019 08:19:00 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 61F26F6E6;
-        Fri,  3 May 2019 08:18:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE2C926325;
+        Fri,  3 May 2019 08:18:58 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -30,110 +30,103 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Song Liu <songliubraving@fb.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 04/12] perf tools: Add bpf dso read and size hooks
-Date:   Fri,  3 May 2019 10:18:33 +0200
-Message-Id: <20190503081841.1908-5-jolsa@kernel.org>
+Subject: [PATCH 05/12] perf tools: Read also the end of the kernel
+Date:   Fri,  3 May 2019 10:18:34 +0200
+Message-Id: <20190503081841.1908-6-jolsa@kernel.org>
 In-Reply-To: <20190503081841.1908-1-jolsa@kernel.org>
 References: <20190503081841.1908-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 03 May 2019 08:18:58 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 03 May 2019 08:19:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding bpf related code into dso reading paths to return
-size (bpf_size) and read the bpf code (bpf_read).
+We mark the end of kernel based on the first module,
+but that could cover some bpf program maps. Reading
+_etext symbol if it's present to get precise kernel
+map end.
 
-Link: http://lkml.kernel.org/n/tip-ql6jpegvv5823yc87u0hlzfa@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-ynut991ttyyhvo1sbhlm4c42@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/dso.c | 49 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
+ tools/perf/util/machine.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index 1e6a045adb8c..2c9289621efd 100644
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -9,6 +9,8 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <libgen.h>
-+#include <bpf/libbpf.h>
-+#include "bpf-event.h"
- #include "compress.h"
- #include "namespaces.h"
- #include "path.h"
-@@ -706,6 +708,44 @@ bool dso__data_status_seen(struct dso *dso, enum dso_data_status_seen by)
- 	return false;
- }
- 
-+static ssize_t bpf_read(struct dso *dso, u64 offset, char *data)
-+{
-+	struct bpf_prog_info_node *node;
-+	ssize_t size = DSO__DATA_CACHE_SIZE;
-+	u64 len;
-+	u8 *buf;
-+
-+	node = perf_env__find_bpf_prog_info(dso->bpf_prog.env, dso->bpf_prog.id);
-+	if (!node || !node->info_linear) {
-+		dso->data.status = DSO_DATA_STATUS_ERROR;
-+		return -1;
-+	}
-+
-+	len = node->info_linear->info.jited_prog_len;
-+	buf = (u8 *) node->info_linear->info.jited_prog_insns;
-+
-+	if (offset >= len)
-+		return -1;
-+
-+	size = (ssize_t) min(len - offset, (u64) size);
-+	memcpy(data, buf + offset, size);
-+	return size;
-+}
-+
-+static int bpf_size(struct dso *dso)
-+{
-+	struct bpf_prog_info_node *node;
-+
-+	node = perf_env__find_bpf_prog_info(dso->bpf_prog.env, dso->bpf_prog.id);
-+	if (!node || !node->info_linear) {
-+		dso->data.status = DSO_DATA_STATUS_ERROR;
-+		return -1;
-+	}
-+
-+	dso->data.file_size = node->info_linear->info.jited_prog_len;
-+	return 0;
-+}
-+
- static void
- dso_cache__free(struct dso *dso)
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 3c520baa198c..ad0205fbb506 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -924,7 +924,8 @@ const char *ref_reloc_sym_names[] = {"_text", "_stext", NULL};
+  * symbol_name if it's not that important.
+  */
+ static int machine__get_running_kernel_start(struct machine *machine,
+-					     const char **symbol_name, u64 *start)
++					     const char **symbol_name,
++					     u64 *start, u64 *end)
  {
-@@ -832,7 +872,11 @@ dso_cache__read(struct dso *dso, struct machine *machine,
- 	if (!cache)
- 		return -ENOMEM;
+ 	char filename[PATH_MAX];
+ 	int i, err = -1;
+@@ -949,6 +950,11 @@ static int machine__get_running_kernel_start(struct machine *machine,
+ 		*symbol_name = name;
  
--	ret = file_read(dso, machine, cache_offset, cache->data);
-+	if (dso->binary_type == DSO_BINARY_TYPE__BPF_PROG_INFO)
-+		ret = bpf_read(dso, cache_offset, cache->data);
-+	else
-+		ret = file_read(dso, machine, cache_offset, cache->data);
+ 	*start = addr;
 +
- 	if (ret > 0) {
- 		cache->offset = cache_offset;
- 		cache->size   = ret;
-@@ -941,6 +985,9 @@ int dso__data_file_size(struct dso *dso, struct machine *machine)
- 	if (dso->data.status == DSO_DATA_STATUS_ERROR)
- 		return -1;
- 
-+	if (dso->binary_type == DSO_BINARY_TYPE__BPF_PROG_INFO)
-+		return bpf_size(dso);
++	err = kallsyms__get_function_start(filename, "_etext", &addr);
++	if (!err)
++		*end = addr;
 +
- 	return file_size(dso, machine);
+ 	return 0;
  }
  
+@@ -1440,7 +1446,7 @@ int machine__create_kernel_maps(struct machine *machine)
+ 	struct dso *kernel = machine__get_kernel(machine);
+ 	const char *name = NULL;
+ 	struct map *map;
+-	u64 addr = 0;
++	u64 start = 0, end = ~0ULL;
+ 	int ret;
+ 
+ 	if (kernel == NULL)
+@@ -1459,9 +1465,9 @@ int machine__create_kernel_maps(struct machine *machine)
+ 				 "continuing anyway...\n", machine->pid);
+ 	}
+ 
+-	if (!machine__get_running_kernel_start(machine, &name, &addr)) {
++	if (!machine__get_running_kernel_start(machine, &name, &start, &end)) {
+ 		if (name &&
+-		    map__set_kallsyms_ref_reloc_sym(machine->vmlinux_map, name, addr)) {
++		    map__set_kallsyms_ref_reloc_sym(machine->vmlinux_map, name, start)) {
+ 			machine__destroy_kernel_maps(machine);
+ 			ret = -1;
+ 			goto out_put;
+@@ -1471,16 +1477,19 @@ int machine__create_kernel_maps(struct machine *machine)
+ 		 * we have a real start address now, so re-order the kmaps
+ 		 * assume it's the last in the kmaps
+ 		 */
+-		machine__update_kernel_mmap(machine, addr, ~0ULL);
++		machine__update_kernel_mmap(machine, start, end);
+ 	}
+ 
+ 	if (machine__create_extra_kernel_maps(machine, kernel))
+ 		pr_debug("Problems creating extra kernel maps, continuing anyway...\n");
+ 
+-	/* update end address of the kernel map using adjacent module address */
+-	map = map__next(machine__kernel_map(machine));
+-	if (map)
+-		machine__set_kernel_mmap(machine, addr, map->start);
++	if (end == ~0ULL) {
++		/* update end address of the kernel map using adjacent module address */
++		map = map__next(machine__kernel_map(machine));
++		if (map)
++			machine__set_kernel_mmap(machine, start, map->start);
++	}
++
+ out_put:
+ 	dso__put(kernel);
+ 	return ret;
 -- 
 2.20.1
 
