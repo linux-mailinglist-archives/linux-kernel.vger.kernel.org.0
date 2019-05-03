@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7894C127AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA34127A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfECGXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:23:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60586 "EHLO
+        id S1726790AbfECGXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:23:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60122 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfECGXO (ORCPT
+        with ESMTP id S1726537AbfECGXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:14 -0400
+        Fri, 3 May 2019 02:23:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=uJRhtLsdNNAJveJ+s2NSgBPxfvfgbqKbRQ8fG+F4ZtQ=; b=bd0npqzHFNlA
-        /pfoYdMU6IHZEemkgBi3zA4O7ZUc/J0QDAeX7nRyg7Q80rkXHg9YVBV+WqC/x0C7NlZ49nj9owiPp
-        Y/q6xcKh5XTqngpwy81XAwMU95TaBl9MHsTu/2/5c+MrNyVA+HWWj4FEhxUsxnNtdabc0j00xylWx
-        PpqrI=;
+        List-Archive; bh=JMqAUqFDCfWR43uVUQqmT3XaGk1njZ/YvJJAmJYVw94=; b=CQm2DWjEwh+W
+        NK2afnXfxZTgMEOuWPVMRERUL0UO985M8NzXNkdsN1dJMABY2ukGsCd2aKaxXaFuVDDZ6zJS/UxGb
+        Wf9fES2vuJTlqtSzEDBNZEb7nr+A17bhkpKkTf63Zdxn/lVi6V0hQ+VMCVpjbsVDZe2+moV8V1Q8S
+        Axlh8=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbC-0000d3-Je; Fri, 03 May 2019 06:23:11 +0000
+        id 1hMRb3-0000b0-9A; Fri, 03 May 2019 06:23:02 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 72990441D72; Fri,  3 May 2019 07:21:36 +0100 (BST)
+        id 12B78441D73; Fri,  3 May 2019 07:21:37 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: ab3100: Constify regulator_ops and ab3100_regulator_desc" to the regulator tree
-In-Reply-To: <20190502142233.24730-1-axel.lin@ingics.com>
+Cc:     James Ban <James.Ban.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>
+Subject: Applied "regulator: pv880x0: Switch to SPDX identifier" to the regulator tree
+In-Reply-To: <20190503053637.25911-1-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062136.72990441D72@finisterre.ee.mobilebroadband>
+Message-Id: <20190503062137.12B78441D73@finisterre.ee.mobilebroadband>
 Date:   Fri,  3 May 2019 07:21:36 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: ab3100: Constify regulator_ops and ab3100_regulator_desc
+   regulator: pv880x0: Switch to SPDX identifier
 
 has been applied to the regulator tree at
 
@@ -71,86 +72,169 @@ to this mail.
 Thanks,
 Mark
 
-From 95602d7d77f502d656e648ab38f8e0586364e7dc Mon Sep 17 00:00:00 2001
+From 0ae3b061df3037e887ee6085b0bedea7f8809441 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 2 May 2019 22:22:32 +0800
-Subject: [PATCH] regulator: ab3100: Constify regulator_ops and
- ab3100_regulator_desc
+Date: Fri, 3 May 2019 13:36:36 +0800
+Subject: [PATCH] regulator: pv880x0: Switch to SPDX identifier
 
-These regulator_ops variables and ab3100_regulator_desc array never need
-to be modified, make them const so compiler can put them to .rodata.
+Convert Powerventure Semiconductor PV88060/PV88080/PV88090 regulator
+drivers to SPDX identifier.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/ab3100.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/regulator/pv88060-regulator.c | 18 ++++--------------
+ drivers/regulator/pv88060-regulator.h | 11 +----------
+ drivers/regulator/pv88080-regulator.c | 18 ++++--------------
+ drivers/regulator/pv88080-regulator.h | 11 +----------
+ drivers/regulator/pv88090-regulator.c | 18 ++++--------------
+ drivers/regulator/pv88090-regulator.h | 11 +----------
+ 6 files changed, 15 insertions(+), 72 deletions(-)
 
-diff --git a/drivers/regulator/ab3100.c b/drivers/regulator/ab3100.c
-index c92966a79a7e..edde907a7062 100644
---- a/drivers/regulator/ab3100.c
-+++ b/drivers/regulator/ab3100.c
-@@ -353,14 +353,14 @@ static int ab3100_get_voltage_regulator_external(struct regulator_dev *reg)
- 		return 0;
- }
+diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
+index 810816e9df5d..3d3415839ba2 100644
+--- a/drivers/regulator/pv88060-regulator.c
++++ b/drivers/regulator/pv88060-regulator.c
+@@ -1,17 +1,7 @@
+-/*
+- * pv88060-regulator.c - Regulator device driver for PV88060
+- * Copyright (C) 2015  Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// pv88060-regulator.c - Regulator device driver for PV88060
++// Copyright (C) 2015  Powerventure Semiconductor Ltd.
  
--static struct regulator_ops regulator_ops_fixed = {
-+static const struct regulator_ops regulator_ops_fixed = {
- 	.list_voltage = regulator_list_voltage_linear,
- 	.enable      = ab3100_enable_regulator,
- 	.disable     = ab3100_disable_regulator,
- 	.is_enabled  = ab3100_is_enabled_regulator,
- };
- 
--static struct regulator_ops regulator_ops_variable = {
-+static const struct regulator_ops regulator_ops_variable = {
- 	.enable      = ab3100_enable_regulator,
- 	.disable     = ab3100_disable_regulator,
- 	.is_enabled  = ab3100_is_enabled_regulator,
-@@ -369,7 +369,7 @@ static struct regulator_ops regulator_ops_variable = {
- 	.list_voltage = regulator_list_voltage_table,
- };
- 
--static struct regulator_ops regulator_ops_variable_sleepable = {
-+static const struct regulator_ops regulator_ops_variable_sleepable = {
- 	.enable      = ab3100_enable_regulator,
- 	.disable     = ab3100_disable_regulator,
- 	.is_enabled  = ab3100_is_enabled_regulator,
-@@ -385,14 +385,14 @@ static struct regulator_ops regulator_ops_variable_sleepable = {
-  * is an on/off switch plain an simple. The external
-  * voltage is defined in the board set-up if any.
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+diff --git a/drivers/regulator/pv88060-regulator.h b/drivers/regulator/pv88060-regulator.h
+index 02ca9203a172..d333dbf3be94 100644
+--- a/drivers/regulator/pv88060-regulator.h
++++ b/drivers/regulator/pv88060-regulator.h
+@@ -1,16 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * pv88060-regulator.h - Regulator definitions for PV88060
+  * Copyright (C) 2015 Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
   */
--static struct regulator_ops regulator_ops_external = {
-+static const struct regulator_ops regulator_ops_external = {
- 	.enable      = ab3100_enable_regulator,
- 	.disable     = ab3100_disable_regulator,
- 	.is_enabled  = ab3100_is_enabled_regulator,
- 	.get_voltage = ab3100_get_voltage_regulator_external,
- };
  
--static struct regulator_desc
-+static const struct regulator_desc
- ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
- 	{
- 		.name = "LDO_A",
-@@ -499,7 +499,7 @@ static int ab3100_regulator_register(struct platform_device *pdev,
- 				     struct device_node *np,
- 				     unsigned long id)
- {
--	struct regulator_desc *desc;
-+	const struct regulator_desc *desc;
- 	struct ab3100_regulator *reg;
- 	struct regulator_dev *rdev;
- 	struct regulator_config config = { };
-@@ -688,7 +688,7 @@ static int ab3100_regulators_probe(struct platform_device *pdev)
+ #ifndef __PV88060_REGISTERS_H__
+diff --git a/drivers/regulator/pv88080-regulator.c b/drivers/regulator/pv88080-regulator.c
+index 6279216fb254..a444f68af1a8 100644
+--- a/drivers/regulator/pv88080-regulator.c
++++ b/drivers/regulator/pv88080-regulator.c
+@@ -1,17 +1,7 @@
+-/*
+- * pv88080-regulator.c - Regulator device driver for PV88080
+- * Copyright (C) 2016  Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// pv88080-regulator.c - Regulator device driver for PV88080
++// Copyright (C) 2016  Powerventure Semiconductor Ltd.
  
- 	/* Register the regulators */
- 	for (i = 0; i < AB3100_NUM_REGULATORS; i++) {
--		struct regulator_desc *desc = &ab3100_regulator_desc[i];
-+		const struct regulator_desc *desc = &ab3100_regulator_desc[i];
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+diff --git a/drivers/regulator/pv88080-regulator.h b/drivers/regulator/pv88080-regulator.h
+index ae25ff360e3d..7d7f8f11a75a 100644
+--- a/drivers/regulator/pv88080-regulator.h
++++ b/drivers/regulator/pv88080-regulator.h
+@@ -1,16 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * pv88080-regulator.h - Regulator definitions for PV88080
+  * Copyright (C) 2016 Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
- 		err = ab3100_regulator_register(pdev, plfdata, NULL, NULL,
- 						desc->id);
+ #ifndef __PV88080_REGISTERS_H__
+diff --git a/drivers/regulator/pv88090-regulator.c b/drivers/regulator/pv88090-regulator.c
+index 90f4f907fb3f..b1d0d97ae935 100644
+--- a/drivers/regulator/pv88090-regulator.c
++++ b/drivers/regulator/pv88090-regulator.c
+@@ -1,17 +1,7 @@
+-/*
+- * pv88090-regulator.c - Regulator device driver for PV88090
+- * Copyright (C) 2015  Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// pv88090-regulator.c - Regulator device driver for PV88090
++// Copyright (C) 2015  Powerventure Semiconductor Ltd.
+ 
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+diff --git a/drivers/regulator/pv88090-regulator.h b/drivers/regulator/pv88090-regulator.h
+index 62d9029277f4..f814ee52cff3 100644
+--- a/drivers/regulator/pv88090-regulator.h
++++ b/drivers/regulator/pv88090-regulator.h
+@@ -1,16 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * pv88090-regulator.h - Regulator definitions for PV88090
+  * Copyright (C) 2015 Powerventure Semiconductor Ltd.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef __PV88090_REGISTERS_H__
 -- 
 2.20.1
 
