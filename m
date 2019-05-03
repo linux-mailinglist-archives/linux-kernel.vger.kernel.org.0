@@ -2,212 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC96C1291A
+	by mail.lfdr.de (Postfix) with ESMTP id 345F212919
 	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfECHvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 03:51:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45707 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfECHvf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726969AbfECHvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 3 May 2019 03:51:35 -0400
-Received: by mail-ed1-f65.google.com with SMTP id g57so4927763edc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 00:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=n7t/Kebxq6iBR4ADzVR7dHWOyJxGteqIN/GCSVQp2YY=;
-        b=SeLvo/40fwEhRzzHx49prbQNpakn3iTVRxLWh1rs4eNJAqSdZBoQntnqIZ8/ftwGrf
-         gv8EUYBDfj6xn1Mz58eSolh9VqKaxLjyVTy00ZndhmXLfJQMt4YPbygbDCvZVF4YrO01
-         wUBF+9FVGMAfYAntwRD+2GoXmprjU9+kQGka0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=n7t/Kebxq6iBR4ADzVR7dHWOyJxGteqIN/GCSVQp2YY=;
-        b=Fo1giUB+TaGqXa7+WPoomyDDDTJLtPWIpwcFi5UmDLF/3N1RUX8lnUX4x1k+IYewvf
-         Jj7RSF4kYfHUb0Bo0GlcZNa2vhbGwJulMuwlma8VP4FFAtjYW+kNfkEAm0W4+qo7z94D
-         LouQD6GVRYJWlFQfqhMpIORQdOn5o+QfQmBB2jhhUhGKREHw9VDQiTvWPabBVTSpWMPO
-         EmQmSnarLlVoC/saGkZLvIndh9gGs4SiyR6NKtsoi4y7uKQ4OIRY3cxXRWrCZMOJ9/K7
-         TyC9Mzh+MmlTBBfnZIfllQ8gaxPH4v8cka0UD166/JhlA9B7rsjr3l0eG3wcrEhpapyD
-         Zh9Q==
-X-Gm-Message-State: APjAAAVYR5z95eGOxVQ4Sna9LIV8a+E4CGqOKy7NePb4YIgQNTufrzJE
-        tOchg4WB6WK4GFy5SM/Q2TL/xQ==
-X-Google-Smtp-Source: APXvYqyTj17drs0o5htlkIel+wQvYQSusWSUXFYSO1d9G3a9EfThp39v1jl9vbA+s2pLrZQueKR0Sw==
-X-Received: by 2002:a17:906:5c7:: with SMTP id t7mr4794756ejt.129.1556869893721;
-        Fri, 03 May 2019 00:51:33 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id y19sm388395edq.53.2019.05.03.00.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 May 2019 00:51:32 -0700 (PDT)
-Date:   Fri, 3 May 2019 09:51:30 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sean Paul <sean@poorly.run>
-Cc:     dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] drm: Add atomic variants of enable/disable to
- encoder helper funcs
-Message-ID: <20190503075130.GH3271@phenom.ffwll.local>
-Mail-Followup-To: Sean Paul <sean@poorly.run>,
-        dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-References: <20190502194956.218441-1-sean@poorly.run>
- <20190502194956.218441-2-sean@poorly.run>
+Received: from mail.kernel.org ([198.145.29.99]:56158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725813AbfECHvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 03:51:35 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6916E205F4;
+        Fri,  3 May 2019 07:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556869894;
+        bh=sODAXR90bmNzUtNhBl2o3bkfs0Tpl/J2+I8eRtN37CM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zafgWLi96DaS3JjLCtYbmCWBcwJb84jp8uchpms88BF5SGicL6HAWj9wREngYyknu
+         WtemRsZgQoqHkeWEUtfuOMIqwCPzo9sbwJ4OcQS7w5SQHGAy3v/+hzPagN5VTACPOJ
+         A4gjc+CPEvigrejso/x1ylrVFBBxa5VRuSWH4DkA=
+Date:   Fri, 3 May 2019 09:51:31 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [git pull] habanalabs next second pull for 5.2
+Message-ID: <20190503075131.GA9785@kroah.com>
+References: <20190503073621.GA6992@ogabbay-VM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190502194956.218441-2-sean@poorly.run>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190503073621.GA6992@ogabbay-VM>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 03:49:43PM -0400, Sean Paul wrote:
-> From: Sean Paul <seanpaul@chromium.org>
+On Fri, May 03, 2019 at 10:36:21AM +0300, Oded Gabbay wrote:
+> Hi Greg,
 > 
-> This patch adds atomic_enable and atomic_disable callbacks to the
-> encoder helpers. This will allow encoders to make informed decisions in
-> their start-up/shutdown based on the committed state.
+> This is the second pull request of habanalabs driver for kernel 5.2.
 > 
-> Aside from the new hooks, this patch also introduces the new signature
-> for .atomic_* functions going forward. Instead of passing object state
-> (well, encoders don't have atomic state, but let's ignore that), we pass
-> the entire atomic state so the driver can inspect more than what's
-> happening locally.
+> As the tag describes, all of the changes are either bug fixes or simple
+> re-factoring of existing code, so they should all be relatively low-risk.
 > 
-> This is particularly important for the upcoming self refresh helpers.
+> Thanks,
+> Oded
 > 
-> Changes in v3:
-> - Added patch to the set
+> The following changes since commit 78e6427b4e7b017951785982f7f97cf64e2d624b:
 > 
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c      |  6 +++-
->  include/drm/drm_modeset_helper_vtables.h | 45 ++++++++++++++++++++++++
->  2 files changed, 50 insertions(+), 1 deletion(-)
+>   coresight: funnel: Support static funnel (2019-05-02 19:12:21 +0200)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 553415fe8ede..71cc7d6b0644 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1001,6 +1001,8 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
->  		if (funcs) {
->  			if (new_conn_state->crtc && funcs->prepare)
->  				funcs->prepare(encoder);
-> +			else if (funcs->atomic_disable)
-> +				funcs->atomic_disable(encoder, old_state);
-
-I'd put the atomic one first. The reason why ->disable here is later is
-that ->disable has some really funky meaning in the old legacy crtc
-helpers, and hence ->prepare was preferrable: Legacy ->disable also was
-supposed to release resources (something we now do in
-->atomic_destroy_state). See the huge NOTE: in the @disable kerneldoc.
-
-
->  			else if (funcs->disable)
->  				funcs->disable(encoder);
->  			else if (funcs->dpms)
-> @@ -1309,7 +1311,9 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
->  		drm_bridge_pre_enable(encoder->bridge);
->  
->  		if (funcs) {
-> -			if (funcs->enable)
-> +			if (funcs->atomic_enable)
-> +				funcs->atomic_enable(encoder, old_state);
-> +			else if (funcs->enable)
->  				funcs->enable(encoder);
->  			else if (funcs->commit)
->  				funcs->commit(encoder);
-> diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-> index 8f3602811eb5..de57fb40cb6e 100644
-> --- a/include/drm/drm_modeset_helper_vtables.h
-> +++ b/include/drm/drm_modeset_helper_vtables.h
-> @@ -675,6 +675,51 @@ struct drm_encoder_helper_funcs {
->  	enum drm_connector_status (*detect)(struct drm_encoder *encoder,
->  					    struct drm_connector *connector);
->  
-> +	/**
-> +	 * @atomic_disable:
-> +	 *
-> +	 * This callback should be used to disable the encoder. With the atomic
-> +	 * drivers it is called before this encoder's CRTC has been shut off
-> +	 * using their own &drm_crtc_helper_funcs.atomic_disable hook. If that
-> +	 * sequence is too simple drivers can just add their own driver private
-> +	 * encoder hooks and call them from CRTC's callback by looping over all
-> +	 * encoders connected to it using for_each_encoder_on_crtc().
-> +	 *
-> +	 * This callback is a variant of @disable that provides the atomic state
-> +	 * to the driver. It takes priority over @disable during atomic commits.
-> +	 *
-> +	 * This hook is used only by atomic helpers. Atomic drivers don't need
-> +	 * to implement it if there's no need to disable anything at the encoder
-> +	 * level. To ensure that runtime PM handling (using either DPMS or the
-> +	 * new "ACTIVE" property) works @atomic_disable must be the inverse of
-> +	 * @atomic_enable.
-> +	 */
-
-I'd add something like "For atomic drivers also consider @atomic_disable"
-to the kerneldoc of @disable (before the NOTE: which is only relevant for
-pre-atomic). Same for the enable side.
-
-> +	void (*atomic_disable)(struct drm_encoder *encoder,
-> +			       struct drm_atomic_state *state);
-> +
-> +	/**
-> +	 * @atomic_enable:
-> +	 *
-> +	 * This callback should be used to enable the encoder. It is called
-> +	 * after this encoder's CRTC has been enabled using their own
-> +	 * &drm_crtc_helper_funcs.atomic_enable hook. If that sequence is
-> +	 * too simple drivers can just add their own driver private encoder
-> +	 * hooks and call them from CRTC's callback by looping over all encoders
-> +	 * connected to it using for_each_encoder_on_crtc().
-> +	 *
-> +	 * This callback is a variant of @enable that provides the atomic state
-> +	 * to the driver. It is called in place of @enable during atomic
-> +	 * commits.
-
-needs to be adjusted here for "takes priority".
-> +	 *
-> +	 * This hook is used only by atomic helpers, for symmetry with @disable.
-> +	 * Atomic drivers don't need to implement it if there's no need to
-> +	 * enable anything at the encoder level. To ensure that runtime PM
-> +	 * handling (using either DPMS or the new "ACTIVE" property) works
-> +	 * @enable must be the inverse of @disable for atomic drivers.
-> +	 */
-> +	void (*atomic_enable)(struct drm_encoder *encoder,
-> +			      struct drm_atomic_state *state);
-> +
-
-With the nits:
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
->  	/**
->  	 * @disable:
->  	 *
-> -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
+> are available in the Git repository at:
 > 
+>   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-05-03
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Pulled and pushed out, thanks.  My tree is now closed for 5.2-rc1 stuff,
+but feel free to queue up bugfixes for me if you want.
+
+thanks,
+
+greg k-h
