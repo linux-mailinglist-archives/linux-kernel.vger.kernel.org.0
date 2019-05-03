@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1776F1358B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBCA1358A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfECW3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 18:29:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7007 "EHLO mga02.intel.com"
+        id S1726953AbfECW3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 18:29:40 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7006 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbfECW3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726788AbfECW3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 3 May 2019 18:29:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -33,9 +33,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         "Lu Baolu" <baolu.lu@linux.intel.com>,
         Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v3 08/16] iommu/vt-d: Replace Intel specific PASID allocator with IOASID
-Date:   Fri,  3 May 2019 15:32:09 -0700
-Message-Id: <1556922737-76313-9-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v3 09/16] iommu: Introduce guest PASID bind function
+Date:   Fri,  3 May 2019 15:32:10 -0700
+Message-Id: <1556922737-76313-10-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -44,205 +44,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of generic IOASID code to manage PASID allocation,
-free, and lookup. Replace Intel specific code.
+Guest shared virtual address (SVA) may require host to shadow guest
+PASID tables. Guest PASID can also be allocated from the host via
+enlightened interfaces. In this case, guest needs to bind the guest
+mm, i.e. cr3 in guest physical address to the actual PASID table in
+the host IOMMU. Nesting will be turned on such that guest virtual
+address can go through a two level translation:
+- 1st level translates GVA to GPA
+- 2nd level translates GPA to HPA
+This patch introduces APIs to bind guest PASID data to the assigned
+device entry in the physical IOMMU. See the diagram below for usage
+explaination.
+
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process mm, FL only |
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |
+    '-------------'
+Guest
+------| Shadow |--------------------------|------------
+      v        v                          v
+Host
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.---------------------.
+    |             |   |Set SL to GPA-HPA    |
+    |             |   '---------------------'
+    '-------------'
+
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 11 +++++------
- drivers/iommu/intel-pasid.c | 36 ------------------------------------
- drivers/iommu/intel-svm.c   | 37 +++++++++++++++++++++----------------
- 3 files changed, 26 insertions(+), 58 deletions(-)
+ drivers/iommu/iommu.c      | 20 ++++++++++++++++++++
+ include/linux/iommu.h      | 10 ++++++++++
+ include/uapi/linux/iommu.h | 15 ++++++++++++++-
+ 3 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index fcc694a..64af526 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5155,7 +5155,7 @@ static void auxiliary_unlink_device(struct dmar_domain *domain,
- 	domain->auxd_refcnt--;
- 
- 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
--		intel_pasid_free_id(domain->default_pasid);
-+		ioasid_free(domain->default_pasid);
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index a2f6f3e..f8572d2 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1659,6 +1659,26 @@ int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
  }
+ EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
  
- static int aux_domain_add_dev(struct dmar_domain *domain,
-@@ -5173,10 +5173,9 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
- 	if (domain->default_pasid <= 0) {
- 		int pasid;
- 
--		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
--					     pci_max_pasids(to_pci_dev(dev)),
--					     GFP_KERNEL);
--		if (pasid <= 0) {
-+		pasid = ioasid_alloc(NULL, PASID_MIN, pci_max_pasids(to_pci_dev(dev)) - 1,
-+				domain);
-+		if (pasid == INVALID_IOASID) {
- 			pr_err("Can't allocate default pasid\n");
- 			return -ENODEV;
- 		}
-@@ -5212,7 +5211,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
- 	spin_unlock(&iommu->lock);
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
--		intel_pasid_free_id(domain->default_pasid);
-+		ioasid_free(domain->default_pasid);
- 
- 	return ret;
- }
-diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-index 95f8f0c..2ce6ac2 100644
---- a/drivers/iommu/intel-pasid.c
-+++ b/drivers/iommu/intel-pasid.c
-@@ -26,42 +26,6 @@
-  */
- static DEFINE_SPINLOCK(pasid_lock);
- u32 intel_pasid_max_id = PASID_MAX;
--static DEFINE_IDR(pasid_idr);
--
--int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
--{
--	int ret, min, max;
--
--	min = max_t(int, start, PASID_MIN);
--	max = min_t(int, end, intel_pasid_max_id);
--
--	WARN_ON(in_interrupt());
--	idr_preload(gfp);
--	spin_lock(&pasid_lock);
--	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
--	spin_unlock(&pasid_lock);
--	idr_preload_end();
--
--	return ret;
--}
--
--void intel_pasid_free_id(int pasid)
--{
--	spin_lock(&pasid_lock);
--	idr_remove(&pasid_idr, pasid);
--	spin_unlock(&pasid_lock);
--}
--
--void *intel_pasid_lookup_id(int pasid)
--{
--	void *p;
--
--	spin_lock(&pasid_lock);
--	p = idr_find(&pasid_idr, pasid);
--	spin_unlock(&pasid_lock);
--
--	return p;
--}
- 
- int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
- {
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index f5d1e1e..8fff212 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -25,6 +25,7 @@
- #include <linux/dmar.h>
- #include <linux/interrupt.h>
- #include <linux/mm_types.h>
-+#include <linux/ioasid.h>
- #include <asm/page.h>
- 
- #include "intel-pasid.h"
-@@ -334,16 +335,15 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (pasid_max > intel_pasid_max_id)
- 			pasid_max = intel_pasid_max_id;
- 
--		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
--		ret = intel_pasid_alloc_id(svm,
--					   !!cap_caching_mode(iommu->cap),
--					   pasid_max - 1, GFP_KERNEL);
--		if (ret < 0) {
-+		/* Do not use PASID 0, reserved for RID to PASID */
-+		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
-+					pasid_max - 1, svm);
-+		if (svm->pasid == INVALID_IOASID) {
- 			kfree(svm);
- 			kfree(sdev);
-+			ret = ENOSPC;
- 			goto out;
- 		}
--		svm->pasid = ret;
- 		svm->notifier.ops = &intel_mmuops;
- 		svm->mm = mm;
- 		svm->flags = flags;
-@@ -353,7 +353,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (mm) {
- 			ret = mmu_notifier_register(&svm->notifier, mm);
- 			if (ret) {
--				intel_pasid_free_id(svm->pasid);
-+				ioasid_free(svm->pasid);
- 				kfree(svm);
- 				kfree(sdev);
- 				goto out;
-@@ -369,7 +369,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (ret) {
- 			if (mm)
- 				mmu_notifier_unregister(&svm->notifier, mm);
--			intel_pasid_free_id(svm->pasid);
-+			ioasid_free(svm->pasid);
- 			kfree(svm);
- 			kfree(sdev);
- 			goto out;
-@@ -402,7 +402,12 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 	if (!iommu)
- 		goto out;
- 
--	svm = intel_pasid_lookup_id(pasid);
-+	svm = ioasid_find(NULL, pasid, NULL);
-+	if (IS_ERR(svm)) {
-+		ret = PTR_ERR(svm);
-+		goto out;
-+	}
++int iommu_sva_bind_gpasid(struct iommu_domain *domain,
++			struct device *dev, struct gpasid_bind_data *data)
++{
++	if (unlikely(!domain->ops->sva_bind_gpasid))
++		return -ENODEV;
 +
- 	if (!svm)
- 		goto out;
++	return domain->ops->sva_bind_gpasid(domain, dev, data);
++}
++EXPORT_SYMBOL_GPL(iommu_sva_bind_gpasid);
++
++int iommu_sva_unbind_gpasid(struct iommu_domain *domain, struct device *dev,
++			int pasid)
++{
++	if (unlikely(!domain->ops->sva_unbind_gpasid))
++		return -ENODEV;
++
++	return domain->ops->sva_unbind_gpasid(dev, pasid);
++}
++EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
++
+ static void __iommu_detach_device(struct iommu_domain *domain,
+ 				  struct device *dev)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index d182525..9a69b59 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -268,6 +268,8 @@ struct page_response_msg {
+  * @detach_pasid_table: detach the pasid table
+  * @cache_invalidate: invalidate translation caches
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
++ * @sva_bind_gpasid: bind guest pasid and mm
++ * @sva_unbind_gpasid: unbind guest pasid and mm
+  */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -332,6 +334,10 @@ struct iommu_ops {
+ 	int (*page_response)(struct device *dev, struct page_response_msg *msg);
+ 	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
+ 				struct iommu_cache_invalidate_info *inv_info);
++	int (*sva_bind_gpasid)(struct iommu_domain *domain,
++			struct device *dev, struct gpasid_bind_data *data);
++
++	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
  
-@@ -424,7 +429,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 				kfree_rcu(sdev, rcu);
- 
- 				if (list_empty(&svm->devs)) {
--					intel_pasid_free_id(svm->pasid);
-+					ioasid_free(svm->pasid);
- 					if (svm->mm)
- 						mmu_notifier_unregister(&svm->notifier, svm->mm);
- 
-@@ -459,10 +464,11 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
- 	if (!iommu)
- 		goto out;
- 
--	svm = intel_pasid_lookup_id(pasid);
--	if (!svm)
-+	svm = ioasid_find(NULL, pasid, NULL);
-+	if (IS_ERR(svm)) {
-+		ret = PTR_ERR(svm);
- 		goto out;
+ 	unsigned long pgsize_bitmap;
+ };
+@@ -447,6 +453,10 @@ extern void iommu_detach_pasid_table(struct iommu_domain *domain);
+ extern int iommu_cache_invalidate(struct iommu_domain *domain,
+ 				  struct device *dev,
+ 				  struct iommu_cache_invalidate_info *inv_info);
++extern int iommu_sva_bind_gpasid(struct iommu_domain *domain,
++		struct device *dev, struct gpasid_bind_data *data);
++extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
++				struct device *dev, int pasid);
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index fa96ecb..3a781df 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -240,6 +240,19 @@ struct iommu_cache_invalidate_info {
+ 		struct iommu_inv_addr_info addr_info;
+ 	};
+ };
 -
-+	}
- 	/* init_mm is used in this case */
- 	if (!svm->mm)
- 		ret = 1;
-@@ -569,13 +575,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
++/**
++ * struct gpasid_bind_data - Information about device and guest PASID binding
++ * @gcr3:	Guest CR3 value from guest mm
++ * @pasid:	Process address space ID used for the guest mm
++ * @addr_width:	Guest address width. Paging mode can also be derived.
++ */
++struct gpasid_bind_data {
++	__u64 gcr3;
++	__u32 pasid;
++	__u32 addr_width;
++	__u32 flags;
++#define	IOMMU_SVA_GPASID_SRE	BIT(0) /* supervisor request */
++	__u8 padding[4];
++};
  
- 		if (!svm || svm->pasid != req->pasid) {
- 			rcu_read_lock();
--			svm = intel_pasid_lookup_id(req->pasid);
-+			svm = ioasid_find(NULL, req->pasid, NULL);
- 			/* It *can't* go away, because the driver is not permitted
- 			 * to unbind the mm while any page faults are outstanding.
- 			 * So we only need RCU to protect the internal idr code. */
- 			rcu_read_unlock();
--
--			if (!svm) {
-+			if (IS_ERR(svm) || !svm) {
- 				pr_err("%s: Page request for invalid PASID %d: %08llx %08llx\n",
- 				       iommu->name, req->pasid, ((unsigned long long *)req)[0],
- 				       ((unsigned long long *)req)[1]);
+ #endif /* _UAPI_IOMMU_H */
 -- 
 2.7.4
 
