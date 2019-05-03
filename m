@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20329127B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 647E6127C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfECGXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:23:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33600 "EHLO
+        id S1727166AbfECGYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:24:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33454 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfECGXp (ORCPT
+        with ESMTP id S1726789AbfECGXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:45 -0400
+        Fri, 3 May 2019 02:23:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=v0HC/nVs3Jb9s28ZkKENRWvTIY8Iq2+d1nHoiE8oPto=; b=B+ZVoTAHXYUZ
-        PTzwiVvVIoH1B8TY5zDj3oGFBuEaD2MZNUpApuzFE33hBuUW+YteeCKSzQpep2xYLOh8HDAM7jZ0O
-        D0bhCjuA0L2nUdOpI/tzccbzbpsZvKeJio5s0oDxEvGxpwV/0OkZ5stsWMWqluogYp+eS6K9drX0p
-        S9x/A=;
+        List-Archive; bh=Fg9QrCpRCad16f0H55V9run4nG3IvYsKIRymL8V7ppI=; b=xSf0HZa2IIvm
+        qZkVs49z+hJ+W1y3YsuqBhQ8WOmqcptdLyL30vnc/pIhoey6cM4NT7b6ypLWCwC36Gm9Tb+lCdnDY
+        vC/BttHUC2ehigauUp/RqVGyic+OeT9WbTYBD8bF4aUjMP3V1zhIQb72lObEGEqJibAgw3TZvGwmg
+        6HGf4=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbc-0000jm-GH; Fri, 03 May 2019 06:23:36 +0000
+        id 1hMRbe-0000k8-0W; Fri, 03 May 2019 06:23:38 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id C43F4441D58; Fri,  3 May 2019 07:23:32 +0100 (BST)
+        id 095A2441D5B; Fri,  3 May 2019 07:23:34 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         patchwork-bot+notify@kernel.org
-Subject: Applied "ASoC: hdmi-codec: stream is already locked in hw_params" to the asoc tree
-In-Reply-To: <20190429132943.16269-4-jbrunet@baylibre.com>
+Subject: Applied "ASoC: skip hw_free on codec dai for which the stream is invalid" to the asoc tree
+In-Reply-To: <20190429094750.1857-3-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062332.C43F4441D58@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:23:32 +0100 (BST)
+Message-Id: <20190503062334.095A2441D5B@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:23:33 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: hdmi-codec: stream is already locked in hw_params
+   ASoC: skip hw_free on codec dai for which the stream is invalid
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -71,37 +71,46 @@ to this mail.
 Thanks,
 Mark
 
-From 726fc60babe4a46e946e69a9dbd3e21aaec4d58e Mon Sep 17 00:00:00 2001
+From f47b9ad927c6370b80922af434dda98764a43804 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 29 Apr 2019 15:29:40 +0200
-Subject: [PATCH] ASoC: hdmi-codec: stream is already locked in hw_params
+Date: Mon, 29 Apr 2019 11:47:50 +0200
+Subject: [PATCH] ASoC: skip hw_free on codec dai for which the stream is
+ invalid
 
-startup() should have run before hw_params() is called, so the
-current_substream pointer should already be properly set. There
-is no reason to call hdmi_codec_new_stream() again in the
-hw_params() callback
+Like for hw_params, hw_free should not be called on codec dai for
+which the current stream is invalid.
 
+Fixes: cde79035c6cf ("ASoC: Handle multiple codecs with split playback / capture")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/hdmi-codec.c | 4 ----
- 1 file changed, 4 deletions(-)
+ sound/soc/soc-pcm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index b9d9dde9fbaf..ef6d6959ecc5 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -492,10 +492,6 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
- 		return ret;
- 	}
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 57088bd69e5d..a810f6eeffee 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1031,6 +1031,9 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
  
--	ret = hdmi_codec_new_stream(substream, dai);
--	if (ret)
--		return ret;
--
- 	hdmi_audio_infoframe_init(&hp.cea);
- 	hp.cea.channels = params_channels(params);
- 	hp.cea.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
+ codec_err:
+ 	for_each_rtd_codec_dai_rollback(rtd, i, codec_dai) {
++		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
++			continue;
++
+ 		if (codec_dai->driver->ops->hw_free)
+ 			codec_dai->driver->ops->hw_free(substream, codec_dai);
+ 		codec_dai->rate = 0;
+@@ -1088,6 +1091,9 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+ 
+ 	/* now free hw params for the DAIs  */
+ 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
++			continue;
++
+ 		if (codec_dai->driver->ops->hw_free)
+ 			codec_dai->driver->ops->hw_free(substream, codec_dai);
+ 	}
 -- 
 2.20.1
 
