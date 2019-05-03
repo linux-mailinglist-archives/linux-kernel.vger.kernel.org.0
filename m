@@ -2,133 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC7D712D06
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 13:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F4112D0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 13:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfECL7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 07:59:05 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36864 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfECL7F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 07:59:05 -0400
-Received: by mail-it1-f194.google.com with SMTP id r85so8588545itc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 04:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vDgYOPNAs5a7jn6rrh+mqlUAcW/QL6gqLTt3pqvnNY8=;
-        b=Y6srGshKU+8ofVAzr5oXPRlANIBEkdOrCHKBPiE3tUswNgNowbNADcWMckRUE5gkSL
-         9ukukehth9mBJJ/QJCpdkUMMW2+iAg10JbBAKpi7BjWy2OQ+HfalsNh4xdNDSsHWnKVY
-         6bANvGQZzE11Hw3Y7RiWx/Sk3RaGiUf3o+mJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vDgYOPNAs5a7jn6rrh+mqlUAcW/QL6gqLTt3pqvnNY8=;
-        b=YLSDOIcbPQ1+VGrrcBiz0nyNrdsHRrJPpqh/GIPksLfUMS722oCVkklzwy0vOQ/ahf
-         VGPln1A6mWapnIw7cT5v7JDLh0UXn7zUpy93Kq3xghqvo7eCErNWyjDLCr9p0+OE1Prt
-         eVsrV8B768aa+9p8sN01WLP/UBzIWCNEMwQ7A3EJ+W2s9/gvqLJ8idMc8hpuCheRLaeH
-         i+8Ym4thsNVw2aZw/nreeACNtCw3xl5MLyD+m8N0dcp4eIXb9rzw9+Em2kVnMvZ7x1se
-         8GEGdoSjpqsVew7TlhAx+f7g7kNheo+W3dW1hNoCVR38upSp8BNxl/eWMLm2kFqExNHZ
-         kv3w==
-X-Gm-Message-State: APjAAAUD5ktpNG8qszDAt2czMgyKHWeeRaMIBrAz+TUHtbH1FE7nLRAw
-        h9KUf9wqSf01bBQsMwKnyT7zehmUcEbhMgHoCv1Ung==
-X-Google-Smtp-Source: APXvYqxogbylovsed3LC9Wji6QY3Bj1N0GsCs2SPDNY1RvVGOuqXHQj+rfQkbvVmWscSed3alM3kokBhRmxHN3Y8JlY=
-X-Received: by 2002:a24:70d5:: with SMTP id f204mr6307014itc.32.1556884744596;
- Fri, 03 May 2019 04:59:04 -0700 (PDT)
+        id S1727771AbfECL7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 07:59:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:37221 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727565AbfECL7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 07:59:36 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 0F59368AFE; Fri,  3 May 2019 13:59:19 +0200 (CEST)
+Date:   Fri, 3 May 2019 13:59:18 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: implement generic dma_map_ops for IOMMUs v4
+Message-ID: <20190503115918.GA19657@lst.de>
+References: <20190430105214.24628-1-hch@lst.de> <20190502132208.GA3069@lst.de> <20190503114731.GH55449@arrakis.emea.arm.com>
 MIME-Version: 1.0
-References: <20190413165418.27880-1-megous@megous.com> <20190413165418.27880-6-megous@megous.com>
-In-Reply-To: <20190413165418.27880-6-megous@megous.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 3 May 2019 17:28:53 +0530
-Message-ID: <CAMty3ZDx6NXyYhQehYT9geeGwAk2PZidiVMwVw1nnZJa3zwyOg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 5/9] arm64: dts: allwinner: orange-pi-3:
- Enable ethernet
-To:     megous@megous.com
-Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503114731.GH55449@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 13, 2019 at 10:24 PM megous via linux-sunxi
-<linux-sunxi@googlegroups.com> wrote:
->
-> From: Ondrej Jirman <megous@megous.com>
->
-> Orange Pi 3 has two regulators that power the Realtek RTL8211E. According
-> to the phy datasheet, both regulators need to be enabled at the same time,
-> but we can only specify a single phy-supply in the DT.
->
-> This can be achieved by making one regulator depedning on the other via
-> vin-supply. While it's not a technically correct description of the
-> hardware, it achieves the purpose.
->
-> All values of RX/TX delay were tested exhaustively and a middle one of the
-> working values was chosen.
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> ---
->  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> index 17d496990108..6d6b1f66796d 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> @@ -15,6 +15,7 @@
->
->         aliases {
->                 serial0 = &uart0;
-> +               ethernet0 = &emac;
->         };
->
->         chosen {
-> @@ -44,6 +45,27 @@
->                 regulator-max-microvolt = <5000000>;
->                 regulator-always-on;
->         };
-> +
-> +       /*
-> +        * The board uses 2.5V RGMII signalling. Power sequence to enable
-> +        * the phy is to enable GMAC-2V5 and GMAC-3V3 (aldo2) power rails
-> +        * at the same time and to wait 100ms.
-> +        */
-> +       reg_gmac_2v5: gmac-2v5 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "gmac-2v5";
-> +               regulator-min-microvolt = <2500000>;
-> +               regulator-max-microvolt = <2500000>;
-> +               startup-delay-us = <100000>;
-> +               enable-active-high;
-> +               gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
-> +
-> +               /* The real parent of gmac-2v5 is reg_vcc5v, but we need to
-> +                * enable two regulators to power the phy. This is one way
-> +                * to achieve that.
-> +                */
-> +               vin-supply = <&reg_aldo2>; /* GMAC-3V3 */
+On Fri, May 03, 2019 at 12:47:31PM +0100, Catalin Marinas wrote:
+> On Thu, May 02, 2019 at 03:22:08PM +0200, Christoph Hellwig wrote:
+> > can you quickly look over the arm64 parts?  I'd really like to still
+> > get this series in for this merge window as it would conflict with
+> > a lot of dma-mapping work for next merge window, and we also have
+> > the amd and possibly intel iommu conversions to use it waiting.
+> 
+> Done. They look fine to me.
 
-The actual output supply pin name is GMAC-3V which has an input of
-VCC3V3-MAC (ie aldo2), if we compatible to schematics better to use
-the same, IMHO.
+Ok, great.  Although I have to admit I feel about uneasy about
+merging them for 5.2 unless Linus ends up doing an rc8.  I plan to
+pull the prep_coherent patch into the dma-mapping tree as we'll
+need it as a prepation for other things as well, and then we can
+just have an immutable tree with the dma-iommu changes, so that
+it doesn't block other DMA mapping changes that will touch this
+code as well.
+
+> 
+> -- 
+> Catalin
+---end quoted text---
