@@ -2,137 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7453C13420
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 21:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF09713426
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 21:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfECTpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 15:45:52 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44345 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfECTpv (ORCPT
+        id S1726721AbfECTva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 15:51:30 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39319 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfECTva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 15:45:51 -0400
-Received: by mail-io1-f65.google.com with SMTP id v9so2288859ion.11
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 12:45:51 -0700 (PDT)
+        Fri, 3 May 2019 15:51:30 -0400
+Received: by mail-pl1-f193.google.com with SMTP id e92so3171245plb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 12:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aq2s3BnJgyxTeXCjYfqYbnyB07LuUnvkG9UrQRt2rnU=;
-        b=iXAwz7Uf0odYcDlw8VydAoGs5uvncr1Fi5u8a46qCPcMqVkH2NdJwkSGgYPHJjJ+K+
-         X9ezDz2GYUsNQ9xFNaXLGfRkIcFKpX3RHNBG8SZrZOzQTMk5mGGBSi3U6kdXQJxeGLQj
-         cLCDrEbKt7i2uFLalnL6R5hExNEOlBZu+Tdew=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oURhlb5Aq9SaUVoif2dSxrv9s2KPP5nkbzDOYxcW5t4=;
+        b=GljJZ9N7mNb0c6pode6JDkzgqypvgh7E2eWq7t+RiAmxBkikwIJwsGSF6C8yvK59qr
+         DE8eoootNALUUCkGC+eQU11sUUgoNBlDOJmLJsncOhpaDDAJBTQofjbIirbBw4VDm1SQ
+         gb2R+LGDzDqfmdq5i1TDW3KzL9JgGonAinjXqG+3VYmeHODFNxExO/c5WREVeCD3eFFj
+         3HMo8xnKvV1owAymU15EzY4XLBsVPQJ3xVMkBOtBxZ8P6VdhQ7zei1RNFikwY2GcpuWU
+         tIQHXIhSvwTgQXOr9dFSYMrSsQ3FVUM7yNHVvwKp65DdpHLNHaGT/WhnGGWmoRNnb7gP
+         QJ9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aq2s3BnJgyxTeXCjYfqYbnyB07LuUnvkG9UrQRt2rnU=;
-        b=DY9huvazcs2cs8qQCq9RyeVelfPy2kVC/E0/qWCstQ9iUmzn61X2bhlQ1C32PjTGvm
-         6Z2XpjSePV6qrjY9f2u4+mgZyH/TIdJGuavFNp7ce2FpdsW1H8x00Ko/EHCOJFmwOQlW
-         ox4UMGn2MPgb7wWy/ffvucuNncwmcL8bxTA0zV/xrUDsUJhlHjVcF8SNxblKMivFX4b8
-         4FgPvoOGvKmQdvXdqMZnlLrhO3E8PbN8tufK75B2MI3qWmqEl/6lcn4iEdhKWDSVYva1
-         THzMSMxktieMO6+3scKRDMF9gajJLjMEHUSEO1UjUAdYbGRAzuGGwAbiGesaTC40POva
-         ca5A==
-X-Gm-Message-State: APjAAAUzVfhcIhKh67toRDbSLfTjQC6dno1EuUYRVykvpQ8azKRqE8qj
-        jDiuU50HnYZQgDpKEhk2w1gUxA==
-X-Google-Smtp-Source: APXvYqx/c9CPkqgGv7GR57M5SbQdUCUtT77i9nI+z4D/o1f4q7bwVxYuDTtpqUfJNKEKDBQ66kDAWw==
-X-Received: by 2002:a6b:e616:: with SMTP id g22mr482428ioh.231.1556912750752;
-        Fri, 03 May 2019 12:45:50 -0700 (PDT)
-Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
-        by smtp.gmail.com with ESMTPSA id 81sm1347273itd.41.2019.05.03.12.45.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oURhlb5Aq9SaUVoif2dSxrv9s2KPP5nkbzDOYxcW5t4=;
+        b=V5bQZZqTlUu9OEVLtnSd8dl93Sgk+LUVjePyNI7g7xcJAYExp1c84B4IOEei2wQM4Q
+         a2+OgGRU5DYrxBQ06Xw205ZtXeVPjb3ytQbcVonsPL84VkLAVyp0vNznM+7FbeqVVtLD
+         biVMpP1e+WApIVM+otdgRWvILg69OtwzV1AddZlWlpXDQaOqeBdFPqCfWp68zFZ1juhf
+         NUNMp5bqRcIoHgP9/BVnJ5LJCP9ByKuR+3fh8p+T0OOwWomcAKCCFEPb4bhuqN2OQTeF
+         52EZzgyjfyc1Ma9LiYNNvNg0zGRuScVN+cmRx2NBMoON80hEJ/2osnIIUhTUj4bhMaKh
+         +Icg==
+X-Gm-Message-State: APjAAAX9RwlvFEQ2fczMWEwWj4iG1knAbG7c8LBQ6njQVOt4XN4r/ptx
+        FNFDkodKHSgXqQi1VIR0LQQ=
+X-Google-Smtp-Source: APXvYqwBxUSMKP2ysln1UGkYugPUj1P2Ive1cWLW6Xlf/e/kJ7WE0YBP+jPmBn4UBUEgjvAVosqoHQ==
+X-Received: by 2002:a17:902:bf44:: with SMTP id u4mr12895446pls.171.1556913089078;
+        Fri, 03 May 2019 12:51:29 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id g24sm4911590pfi.126.2019.05.03.12.51.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 12:45:49 -0700 (PDT)
-From:   Ross Zwisler <zwisler@chromium.org>
-X-Google-Original-From: Ross Zwisler <zwisler@google.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [linux-4.4.y PATCH] ASoC: Intel: avoid Oops if DMA setup fails
-Date:   Fri,  3 May 2019 13:45:03 -0600
-Message-Id: <20190503194503.77923-1-zwisler@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-In-Reply-To: <20190429182710.GA209252@google.com>
-References: 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 03 May 2019 12:51:28 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     broonie@kernel.org, shengjiu.wang@nxp.com
+Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5] ASoC: fsl_esai: Add pm runtime function
+Date:   Fri,  3 May 2019 12:49:44 -0700
+Message-Id: <20190503194944.30167-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Zwisler <zwisler@chromium.org>
+From: "S.j. Wang" <shengjiu.wang@nxp.com>
 
-commit 0efa3334d65b7f421ba12382dfa58f6ff5bf83c4 upstream.
+Add pm runtime support and move clock handling there.
+Close the clocks at suspend to reduce the power consumption.
 
-Currently in sst_dsp_new() if we get an error return from sst_dma_new()
-we just print an error message and then still complete the function
-successfully.  This means that we are trying to run without sst->dma
-properly set up, which will result in NULL pointer dereference when
-sst->dma is later used.  This was happening for me in
-sst_dsp_dma_get_channel():
+fsl_esai_suspend is replaced by pm_runtime_force_suspend.
+fsl_esai_resume is replaced by pm_runtime_force_resume.
 
-        struct sst_dma *dma = dsp->dma;
-	...
-        dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
-
-This resulted in:
-
-   BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-   IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
-
-Fix this by adding proper error handling for the case where we fail to
-set up DMA.
-
-This change only affects Haswell and Broadwell systems.  Baytrail
-systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
-being set to -1.
-
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Cc: stable@vger.kernel.org
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
+Changes in v5
+-Replaced my Acked-by with Signed-off-by as a resend.
 
-The upstream patch applied cleanly to all stable trees except
-linux-4.4.y and linux-3.18.y.  This is the backport for linux-4.4.y, and
-the code I'm fixing was introduced in v4.0 so there is no need for a
-linux-3.18.y backport.
+Changes in v4
+-resend base on for-5.2
 
-The upstream patch is currently in Mark Brown's tree:
+Changes in v3
+-refine the commit comments.
+-add acked-by
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/log/?h=for-next
+Changes in v2
+-refine the commit comments.
+-move regcache_mark_dirty to runtime suspend.
 
-Is that good enough, or should I resend after it's been merged in the
-v5.2 merge window?
+ sound/soc/fsl/fsl_esai.c | 141 +++++++++++++++++++++------------------
+ 1 file changed, 77 insertions(+), 64 deletions(-)
 
----
- sound/soc/intel/common/sst-dsp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/common/sst-dsp.c b/sound/soc/intel/common/sst-dsp.c
-index c9452e02e0dda..c0a50ecb6dbda 100644
---- a/sound/soc/intel/common/sst-dsp.c
-+++ b/sound/soc/intel/common/sst-dsp.c
-@@ -463,11 +463,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
- 		goto irq_err;
+diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
+index c7410bbfd2af..022368c8a074 100644
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
++#include <linux/pm_runtime.h>
+ #include <sound/dmaengine_pcm.h>
+ #include <sound/pcm_params.h>
  
- 	err = sst_dma_new(sst);
--	if (err)
--		dev_warn(dev, "sst_dma_new failed %d\n", err);
-+	if (err)  {
-+		dev_err(dev, "sst_dma_new failed %d\n", err);
-+		goto dma_err;
+@@ -466,30 +467,6 @@ static int fsl_esai_startup(struct snd_pcm_substream *substream,
+ 			    struct snd_soc_dai *dai)
+ {
+ 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
+-	int ret;
+-
+-	/*
+-	 * Some platforms might use the same bit to gate all three or two of
+-	 * clocks, so keep all clocks open/close at the same time for safety
+-	 */
+-	ret = clk_prepare_enable(esai_priv->coreclk);
+-	if (ret)
+-		return ret;
+-	if (!IS_ERR(esai_priv->spbaclk)) {
+-		ret = clk_prepare_enable(esai_priv->spbaclk);
+-		if (ret)
+-			goto err_spbaclk;
+-	}
+-	if (!IS_ERR(esai_priv->extalclk)) {
+-		ret = clk_prepare_enable(esai_priv->extalclk);
+-		if (ret)
+-			goto err_extalck;
+-	}
+-	if (!IS_ERR(esai_priv->fsysclk)) {
+-		ret = clk_prepare_enable(esai_priv->fsysclk);
+-		if (ret)
+-			goto err_fsysclk;
+-	}
+ 
+ 	if (!dai->active) {
+ 		/* Set synchronous mode */
+@@ -506,16 +483,6 @@ static int fsl_esai_startup(struct snd_pcm_substream *substream,
+ 
+ 	return 0;
+ 
+-err_fsysclk:
+-	if (!IS_ERR(esai_priv->extalclk))
+-		clk_disable_unprepare(esai_priv->extalclk);
+-err_extalck:
+-	if (!IS_ERR(esai_priv->spbaclk))
+-		clk_disable_unprepare(esai_priv->spbaclk);
+-err_spbaclk:
+-	clk_disable_unprepare(esai_priv->coreclk);
+-
+-	return ret;
+ }
+ 
+ static int fsl_esai_hw_params(struct snd_pcm_substream *substream,
+@@ -576,20 +543,6 @@ static int fsl_esai_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static void fsl_esai_shutdown(struct snd_pcm_substream *substream,
+-			      struct snd_soc_dai *dai)
+-{
+-	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
+-
+-	if (!IS_ERR(esai_priv->fsysclk))
+-		clk_disable_unprepare(esai_priv->fsysclk);
+-	if (!IS_ERR(esai_priv->extalclk))
+-		clk_disable_unprepare(esai_priv->extalclk);
+-	if (!IS_ERR(esai_priv->spbaclk))
+-		clk_disable_unprepare(esai_priv->spbaclk);
+-	clk_disable_unprepare(esai_priv->coreclk);
+-}
+-
+ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 			    struct snd_soc_dai *dai)
+ {
+@@ -658,7 +611,6 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 
+ static const struct snd_soc_dai_ops fsl_esai_dai_ops = {
+ 	.startup = fsl_esai_startup,
+-	.shutdown = fsl_esai_shutdown,
+ 	.trigger = fsl_esai_trigger,
+ 	.hw_params = fsl_esai_hw_params,
+ 	.set_sysclk = fsl_esai_set_dai_sysclk,
+@@ -947,6 +899,10 @@ static int fsl_esai_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	pm_runtime_enable(&pdev->dev);
++
++	regcache_cache_only(esai_priv->regmap, true);
++
+ 	ret = imx_pcm_dma_init(pdev, IMX_ESAI_DMABUF_SIZE);
+ 	if (ret)
+ 		dev_err(&pdev->dev, "failed to init imx pcm dma: %d\n", ret);
+@@ -954,6 +910,13 @@ static int fsl_esai_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int fsl_esai_remove(struct platform_device *pdev)
++{
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
+ static const struct of_device_id fsl_esai_dt_ids[] = {
+ 	{ .compatible = "fsl,imx35-esai", },
+ 	{ .compatible = "fsl,vf610-esai", },
+@@ -961,22 +924,35 @@ static const struct of_device_id fsl_esai_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, fsl_esai_dt_ids);
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int fsl_esai_suspend(struct device *dev)
+-{
+-	struct fsl_esai *esai = dev_get_drvdata(dev);
+-
+-	regcache_cache_only(esai->regmap, true);
+-	regcache_mark_dirty(esai->regmap);
+-
+-	return 0;
+-}
+-
+-static int fsl_esai_resume(struct device *dev)
++#ifdef CONFIG_PM
++static int fsl_esai_runtime_resume(struct device *dev)
+ {
+ 	struct fsl_esai *esai = dev_get_drvdata(dev);
+ 	int ret;
+ 
++	/*
++	 * Some platforms might use the same bit to gate all three or two of
++	 * clocks, so keep all clocks open/close at the same time for safety
++	 */
++	ret = clk_prepare_enable(esai->coreclk);
++	if (ret)
++		return ret;
++	if (!IS_ERR(esai->spbaclk)) {
++		ret = clk_prepare_enable(esai->spbaclk);
++		if (ret)
++			goto err_spbaclk;
 +	}
++	if (!IS_ERR(esai->extalclk)) {
++		ret = clk_prepare_enable(esai->extalclk);
++		if (ret)
++			goto err_extalclk;
++	}
++	if (!IS_ERR(esai->fsysclk)) {
++		ret = clk_prepare_enable(esai->fsysclk);
++		if (ret)
++			goto err_fsysclk;
++	}
++
+ 	regcache_cache_only(esai->regmap, false);
  
- 	return sst;
+ 	/* FIFO reset for safety */
+@@ -987,22 +963,59 @@ static int fsl_esai_resume(struct device *dev)
  
-+dma_err:
-+	free_irq(sst->irq, sst);
- irq_err:
- 	if (sst->ops->free)
- 		sst->ops->free(sst);
+ 	ret = regcache_sync(esai->regmap);
+ 	if (ret)
+-		return ret;
++		goto err_regcache_sync;
+ 
+ 	/* FIFO reset done */
+ 	regmap_update_bits(esai->regmap, REG_ESAI_TFCR, ESAI_xFCR_xFR, 0);
+ 	regmap_update_bits(esai->regmap, REG_ESAI_RFCR, ESAI_xFCR_xFR, 0);
+ 
++	return 0;
++
++err_regcache_sync:
++	if (!IS_ERR(esai->fsysclk))
++		clk_disable_unprepare(esai->fsysclk);
++err_fsysclk:
++	if (!IS_ERR(esai->extalclk))
++		clk_disable_unprepare(esai->extalclk);
++err_extalclk:
++	if (!IS_ERR(esai->spbaclk))
++		clk_disable_unprepare(esai->spbaclk);
++err_spbaclk:
++	clk_disable_unprepare(esai->coreclk);
++
++	return ret;
++}
++
++static int fsl_esai_runtime_suspend(struct device *dev)
++{
++	struct fsl_esai *esai = dev_get_drvdata(dev);
++
++	regcache_cache_only(esai->regmap, true);
++	regcache_mark_dirty(esai->regmap);
++
++	if (!IS_ERR(esai->fsysclk))
++		clk_disable_unprepare(esai->fsysclk);
++	if (!IS_ERR(esai->extalclk))
++		clk_disable_unprepare(esai->extalclk);
++	if (!IS_ERR(esai->spbaclk))
++		clk_disable_unprepare(esai->spbaclk);
++	clk_disable_unprepare(esai->coreclk);
++
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_SLEEP */
++#endif /* CONFIG_PM */
+ 
+ static const struct dev_pm_ops fsl_esai_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(fsl_esai_suspend, fsl_esai_resume)
++	SET_RUNTIME_PM_OPS(fsl_esai_runtime_suspend,
++			   fsl_esai_runtime_resume,
++			   NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
+ };
+ 
+ static struct platform_driver fsl_esai_driver = {
+ 	.probe = fsl_esai_probe,
++	.remove = fsl_esai_remove,
+ 	.driver = {
+ 		.name = "fsl-esai-dai",
+ 		.pm = &fsl_esai_pm_ops,
 -- 
-2.21.0.1020.gf2820cf01a-goog
+2.17.1
 
