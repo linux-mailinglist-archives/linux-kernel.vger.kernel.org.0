@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E16AA127A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B830B1279C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfECGTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:19:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53150 "EHLO
+        id S1726902AbfECGTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:19:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53224 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfECGS7 (ORCPT
+        with ESMTP id S1726826AbfECGTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:18:59 -0400
+        Fri, 3 May 2019 02:19:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=RUsRVfQr6MguLInMJKL39V77To+2NWYQGfs+Cy74AZc=; b=HUfBrwsys3c9
-        9Dt1PQxIotdyW3CYO8aiuYRs1N/l2NZ+uP28FmjaJ0M1mZU5L73PNJ74utkuLQF20c0583X4a3aHl
-        M4JGTFpWoJAU+nbanufqoumNNbHPcE3wjSNLF7KHwME2v26POHeLR3DY+Csd5QptBtCbFjtnCkuy3
-        9ZY/Y=;
+        List-Archive; bh=uJRhtLsdNNAJveJ+s2NSgBPxfvfgbqKbRQ8fG+F4ZtQ=; b=EpiYeFc2gBU5
+        WCworeBojym7JVod3w8cpM7Bv7QsF9f8ZBSSwpRgjJofdctwIJFRH6FioRGkKM76VngiOy4gsDG7h
+        zcW+GBomTWex2MpWPhHplD1b2UfCklyslMqvfDrpp7QqcR5mEmPsoFuyayzXeUmrA73SLnLf1A80i
+        ZhYug=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRX4-0000Yb-J8; Fri, 03 May 2019 06:18:55 +0000
+        id 1hMRX6-0000Yg-Ac; Fri, 03 May 2019 06:18:57 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id D75A2441D57; Fri,  3 May 2019 07:18:48 +0100 (BST)
+        id 659BD441D3C; Fri,  3 May 2019 07:18:49 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: ab3100: Set fixed_uV instead of min_uV for fixed regulators" to the regulator tree
-In-Reply-To: <20190502142233.24730-2-axel.lin@ingics.com>
+Subject: Applied "regulator: ab3100: Constify regulator_ops and ab3100_regulator_desc" to the regulator tree
+In-Reply-To: <20190502142233.24730-1-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503061848.D75A2441D57@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:18:48 +0100 (BST)
+Message-Id: <20190503061849.659BD441D3C@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:18:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: ab3100: Set fixed_uV instead of min_uV for fixed regulators
+   regulator: ab3100: Constify regulator_ops and ab3100_regulator_desc
 
 has been applied to the regulator tree at
 
@@ -71,59 +71,86 @@ to this mail.
 Thanks,
 Mark
 
-From e219c2b3dc773a5a78f88ada9e07e281a9dad06b Mon Sep 17 00:00:00 2001
+From 95602d7d77f502d656e648ab38f8e0586364e7dc Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 2 May 2019 22:22:33 +0800
-Subject: [PATCH] regulator: ab3100: Set fixed_uV instead of min_uV for fixed
- regulators
+Date: Thu, 2 May 2019 22:22:32 +0800
+Subject: [PATCH] regulator: ab3100: Constify regulator_ops and
+ ab3100_regulator_desc
 
-Slightly better readability by setting fixed_uV instead of min_uV.
+These regulator_ops variables and ab3100_regulator_desc array never need
+to be modified, make them const so compiler can put them to .rodata.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/ab3100.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/regulator/ab3100.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/regulator/ab3100.c b/drivers/regulator/ab3100.c
-index edde907a7062..438509f55f05 100644
+index c92966a79a7e..edde907a7062 100644
 --- a/drivers/regulator/ab3100.c
 +++ b/drivers/regulator/ab3100.c
-@@ -354,7 +354,6 @@ static int ab3100_get_voltage_regulator_external(struct regulator_dev *reg)
+@@ -353,14 +353,14 @@ static int ab3100_get_voltage_regulator_external(struct regulator_dev *reg)
+ 		return 0;
  }
  
- static const struct regulator_ops regulator_ops_fixed = {
--	.list_voltage = regulator_list_voltage_linear,
+-static struct regulator_ops regulator_ops_fixed = {
++static const struct regulator_ops regulator_ops_fixed = {
+ 	.list_voltage = regulator_list_voltage_linear,
  	.enable      = ab3100_enable_regulator,
  	.disable     = ab3100_disable_regulator,
  	.is_enabled  = ab3100_is_enabled_regulator,
-@@ -401,7 +400,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
- 		.n_voltages = 1,
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
--		.min_uV = LDO_A_VOLTAGE,
-+		.fixed_uV = LDO_A_VOLTAGE,
- 		.enable_time = 200,
- 	},
+ };
+ 
+-static struct regulator_ops regulator_ops_variable = {
++static const struct regulator_ops regulator_ops_variable = {
+ 	.enable      = ab3100_enable_regulator,
+ 	.disable     = ab3100_disable_regulator,
+ 	.is_enabled  = ab3100_is_enabled_regulator,
+@@ -369,7 +369,7 @@ static struct regulator_ops regulator_ops_variable = {
+ 	.list_voltage = regulator_list_voltage_table,
+ };
+ 
+-static struct regulator_ops regulator_ops_variable_sleepable = {
++static const struct regulator_ops regulator_ops_variable_sleepable = {
+ 	.enable      = ab3100_enable_regulator,
+ 	.disable     = ab3100_disable_regulator,
+ 	.is_enabled  = ab3100_is_enabled_regulator,
+@@ -385,14 +385,14 @@ static struct regulator_ops regulator_ops_variable_sleepable = {
+  * is an on/off switch plain an simple. The external
+  * voltage is defined in the board set-up if any.
+  */
+-static struct regulator_ops regulator_ops_external = {
++static const struct regulator_ops regulator_ops_external = {
+ 	.enable      = ab3100_enable_regulator,
+ 	.disable     = ab3100_disable_regulator,
+ 	.is_enabled  = ab3100_is_enabled_regulator,
+ 	.get_voltage = ab3100_get_voltage_regulator_external,
+ };
+ 
+-static struct regulator_desc
++static const struct regulator_desc
+ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
  	{
-@@ -411,7 +410,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
- 		.n_voltages = 1,
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
--		.min_uV = LDO_C_VOLTAGE,
-+		.fixed_uV = LDO_C_VOLTAGE,
- 		.enable_time = 200,
- 	},
- 	{
-@@ -421,7 +420,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
- 		.n_voltages = 1,
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
--		.min_uV = LDO_D_VOLTAGE,
-+		.fixed_uV = LDO_D_VOLTAGE,
- 		.enable_time = 200,
- 	},
- 	{
+ 		.name = "LDO_A",
+@@ -499,7 +499,7 @@ static int ab3100_regulator_register(struct platform_device *pdev,
+ 				     struct device_node *np,
+ 				     unsigned long id)
+ {
+-	struct regulator_desc *desc;
++	const struct regulator_desc *desc;
+ 	struct ab3100_regulator *reg;
+ 	struct regulator_dev *rdev;
+ 	struct regulator_config config = { };
+@@ -688,7 +688,7 @@ static int ab3100_regulators_probe(struct platform_device *pdev)
+ 
+ 	/* Register the regulators */
+ 	for (i = 0; i < AB3100_NUM_REGULATORS; i++) {
+-		struct regulator_desc *desc = &ab3100_regulator_desc[i];
++		const struct regulator_desc *desc = &ab3100_regulator_desc[i];
+ 
+ 		err = ab3100_regulator_register(pdev, plfdata, NULL, NULL,
+ 						desc->id);
 -- 
 2.20.1
 
