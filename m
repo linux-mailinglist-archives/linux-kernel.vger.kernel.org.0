@@ -2,104 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D1612B96
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C3112B9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfECKhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 06:37:20 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44000 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbfECKhS (ORCPT
+        id S1727632AbfECKiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 06:38:11 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:65306 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfECKiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 06:37:18 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u27so3803589lfg.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 03:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y49iuZlGEFRKXGMhL/FW153snu1fMi8v/es25880oE8=;
-        b=loJhy4XJ97xuNf+RrpSA+jCJMImzpJ6++PjvZ3i+MfQK3dS1nWqOJbjKYB4QcVeQHU
-         18pp/eByTT443pvkHn8G3n8oY/EpCXnMMlJjlVjJSKM34iB8HzqJ74dogtIAyYQx5wwi
-         SDDuxo4bNGGgSoNkV6ngd2ulv2Lg1eveOEwULJvBt2juAmdWqOkMr4c7zcC1VqIChbNt
-         yk+HgI4/yiG/SlUDJj8aDQdNTdAwUN1L+dhvQZGkQImNLMC+deS5j3/304qUhcQyNB7r
-         LsUARKemMOAfqft34Qg6d3Epi1ObP6uDY3/xsEy08J8YFfp1qBEgGjayFLOCLOISgr6O
-         d2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y49iuZlGEFRKXGMhL/FW153snu1fMi8v/es25880oE8=;
-        b=SqQU9hLIcGmcXcatXYcR65Gy4ZW29TDQ3ZguTE3GXZ/X9bSWCXzW/kntm257vONw0s
-         5yBf/TMzmVd/q51t+K+abj8ApPyWX4+l/gCWZQuBbqtLomM6zWTiakCLUghbhE9aO5TJ
-         04N+RH8DwxPehgb9mxz09cC+qb55DIq6TzDiU+hbBHBRpsndTOjShPy8B9QhdEI/Y6Aj
-         Q6B56efic5Ps20VROKjEf6KjYzzOVSg22ug3SOdjbNUvK06bCc7zasKqqOiFQdF2ak8a
-         CiCPljy9l97a5Ki1HJ7yffVxYVI0HDS16jxiL3nd/olQm1pP1NRTNZ3kV//WbJY3Y+iL
-         JZyA==
-X-Gm-Message-State: APjAAAWEewW2YdhzagN0q/4UqQ4Oa25ZXALMTgrKLhENq3VW0l7bD/YG
-        IGfgf27C5q/V8itLYAS8KczQV5u7cdq7NwSRGQ4=
-X-Google-Smtp-Source: APXvYqxU+UuYktvsztEvJ9/ariHXzb6Ot8TO3Mjaxpfia5I1sJ6/SrkkV2s5OAkU7J7gMftr/G2qyyQxowiQWzM4eiA=
-X-Received: by 2002:a19:ec12:: with SMTP id b18mr4411872lfa.149.1556879836632;
- Fri, 03 May 2019 03:37:16 -0700 (PDT)
+        Fri, 3 May 2019 06:38:10 -0400
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x43Ac1Qc000661;
+        Fri, 3 May 2019 19:38:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x43Ac1Qc000661
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1556879882;
+        bh=z7qWPYt54zXPnY1EHO1cINwnW/JOhWqqFZK66vlin2o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qTiSEkhrKRNzxyDZ6OyGXLFW0WKpoTZOlYF/wcAHv3aXafw5Mpgq+L+pAMkc/78rJ
+         3BWurpHpT7b2FBoPBK+jkg3r1Zyv5DLJNrMu9g6tWKFOekKnq+QVWbllf23r/qXAAy
+         ZADcg9mJ6Qc5Zhegs/CLMoukkNVea4QdNJYWjcx2XDZT6AYqnK43kumeu5QTdEK/eL
+         QcEVWn6fl8qDBN8TTLlr3SXLWjHbTF74gK9cqKTeQxeq9rk3pnVzH7zyIBNPF37txb
+         Zmo35si3C4VJfkM+Af/HZk+PxGMavoY3O8JPq6+PbUHe4fcmAdOrDGpVQElCvrsZ1G
+         zcSW6UxT3GBkg==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id p13so1817057uaa.11;
+        Fri, 03 May 2019 03:38:02 -0700 (PDT)
+X-Gm-Message-State: APjAAAX6gEXlYaEXGgprzFxLP96IYFOAyk6R9RiAHghPFWr5OWmQeFcg
+        Z2iM/mEo5E+iOiLku9a6RLOfgsZ7fyBykHyruMw=
+X-Google-Smtp-Source: APXvYqzCdsz3KhcSYohvrcVFpo5/mdG5kB41e90KjS/S/j/YeN38wNo4yGewST3tmzRw0ZSncJyz61Uqws6KXQbsQzI=
+X-Received: by 2002:ab0:3058:: with SMTP id x24mr4656573ual.95.1556879881034;
+ Fri, 03 May 2019 03:38:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190503085327.5180-1-simon.k.r.goldschmidt@gmail.com> <8161008c-fafd-a89f-d2d8-413224844cd2@gmail.com>
-In-Reply-To: <8161008c-fafd-a89f-d2d8-413224844cd2@gmail.com>
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Date:   Fri, 3 May 2019 12:37:05 +0200
-Message-ID: <CAAh8qsyBHCD9o_wyk6cHxyxagpQvX0dtXxy_P4KqZgoeU8VrEg@mail.gmail.com>
-Subject: Re: [PATCH] mtd: spi-nor: enable 4B opcodes for n25q256a
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-mtd@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
+References: <20190502074207.01ae28ba@canb.auug.org.au>
+In-Reply-To: <20190502074207.01ae28ba@canb.auug.org.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 3 May 2019 19:37:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATR7X0zTjp6ny_qdfxeJg0nBtixpPawW-3MUwjipCzz-w@mail.gmail.com>
+Message-ID: <CAK7LNATR7X0zTjp6ny_qdfxeJg0nBtixpPawW-3MUwjipCzz-w@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the kbuild tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 12:00 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->
-> On 5/3/19 10:53 AM, Simon Goldschmidt wrote:
-> > Tested on socfpga cyclone5 where this is required to ensure that the
-> > boot rom can access this flash after warm reboot.
->
-> Are you sure _all_ variants of the N25Q256 support 4NB opcodes ?
-> I think there were some which didn't, but I might be wrong.
+Hi Stephen,
 
-Oh, damn, you're right. The documentation [1] statest that 4-byte erase and
-program opcodes are only supported for part numbers N25Q256A83ESF40x,
-N25Q256A83E1240x and N25QA83ESFA0F.
 
-Any idea of how I can still enable 4-byte opcodes for my chip?
+On Thu, May 2, 2019 at 6:43 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Masahiro,
+>
+> Commit
+>
+>   7b6954a982e7 ("scripts: override locale from environment when running recordmcount.pl")
+>
+> is missing a Signed-off-by from its committer.
 
-Regards,
-Simon
+Fixed it now.
+Thanks.
 
->
-> > Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-> > ---
-> >
-> >  drivers/mtd/spi-nor/spi-nor.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> > index fae147452..4cdec2cc2 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -1874,7 +1874,7 @@ static const struct flash_info spi_nor_ids[] = {
-> >       { "n25q064a",    INFO(0x20bb17, 0, 64 * 1024,  128, SECT_4K | SPI_NOR_QUAD_READ) },
-> >       { "n25q128a11",  INFO(0x20bb18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
-> >       { "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
-> > -     { "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-> > +     { "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
-> >       { "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
-> >       { "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
-> >       { "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
-> >
->
->
+
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
