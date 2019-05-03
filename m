@@ -2,80 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8F112B50
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 401D012B58
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfECKL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 06:11:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:57874 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727065AbfECKL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 06:11:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9197180D;
-        Fri,  3 May 2019 03:11:57 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26CBF3F557;
-        Fri,  3 May 2019 03:11:56 -0700 (PDT)
-Date:   Fri, 3 May 2019 11:11:53 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: fix syscall_fn_t type
-Message-ID: <20190503101153.GC47811@lakrids.cambridge.arm.com>
-References: <20190501200451.255615-1-samitolvanen@google.com>
- <20190501200451.255615-2-samitolvanen@google.com>
+        id S1727328AbfECKQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 06:16:06 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35341 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726376AbfECKQG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 06:16:06 -0400
+Received: by mail-io1-f71.google.com with SMTP id h10so4118298iob.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 03:16:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ksZiUycHQUU5gaMM+swJiiJAczcg7RX7RdnQSdhRCek=;
+        b=j9D5+oOk4RlYpk0T4TsE2KH8aOO4IoMtLLwfdaZmmRT3M65NAsvyClBybcFtxLWeds
+         Re8Cbx6oSeubjpCdxemz29LSPxyXJoK79JHUF0+9DvugqCs4vZIPOGPCG+e2hHJryCP+
+         WlzErpELzvm+7DYrLg9jenVDI54R4SFWibwmFsWC9qMSeA/UnjZ8fSdgNCRdDyChSC44
+         DWIBcpccGanXs8KRArnMZ5RF6DGL5TftWZJVHiK7ms9n0RM0NmtKZgl04S1P9qC7QYHv
+         6mHnU+s3gwybRBVkMb0VWN/bU+3sRQPQ4rVL6jBHJW8jQMwLC3LLPgBy7mgyBCtHk2GN
+         Nsfw==
+X-Gm-Message-State: APjAAAVlE25DmBedbHI9VOaUgtgTU3je43m+bY8RL5MCsYybrTIEYXHa
+        NuNVw4l32xcsW4nbLZDB8sweIR2elahYFBy21Rud1aoovi92
+X-Google-Smtp-Source: APXvYqy4HCDetetZ/MKz0/4sqoObInvZQcLO6v7qu4qICZHOauUnCv5FVa1RLnzhrK6Gc6y3A1FXGqK6CQ75w+SjuILMJV2PZ0AW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501200451.255615-2-samitolvanen@google.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+X-Received: by 2002:a02:a402:: with SMTP id c2mr6320642jal.13.1556878565206;
+ Fri, 03 May 2019 03:16:05 -0700 (PDT)
+Date:   Fri, 03 May 2019 03:16:05 -0700
+In-Reply-To: <00000000000014285d05765bf72a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d6796c0587f9097c@google.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+From:   syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabin.rapan@gmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 01:04:50PM -0700, Sami Tolvanen wrote:
-> Use const struct pt_regs * instead of struct pt_regs * as
-> the argument type to fix indirect call type mismatches with
-> Control-Flow Integrity checking.
-
-It's probably worth noting that in <asm/syscall_wrapper.h> all syscall
-wrappers take a const struct pt_regs *, which is where the mismatch
-comes from.
-
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  arch/arm64/include/asm/syscall.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/syscall.h b/arch/arm64/include/asm/syscall.h
-> index a179df3674a1a..6206ab9bfcfc5 100644
-> --- a/arch/arm64/include/asm/syscall.h
-> +++ b/arch/arm64/include/asm/syscall.h
-> @@ -20,7 +20,7 @@
->  #include <linux/compat.h>
->  #include <linux/err.h>
->  
-> -typedef long (*syscall_fn_t)(struct pt_regs *regs);
-> +typedef long (*syscall_fn_t)(const struct pt_regs *regs);
-
-For a second I was worried that we modify the regs to assign the return
-value, but I see we do that in the syscall.c wrapper, where the pt_regs
-argument isn't const.
-
-We certainly chouldn't need to modify the regs when acquiring the
-arguments, and as above this matches <asm/syscall_wrapper.h>, so this
-looks sound to me.
-
-FWIW:
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
+This bug is marked as fixed by commit:
+vfs: namespace: error pointer dereference in do_remount()
+But I can't find it in any tested tree for more than 90 days.
+Is it a correct commit? Please update it by replying:
+#syz fix: exact-commit-title
+Until then the bug is still considered open and
+new crashes with the same signature are ignored.
