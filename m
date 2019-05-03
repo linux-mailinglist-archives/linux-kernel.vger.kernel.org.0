@@ -2,88 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DC61350B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 23:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9165413533
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:04:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfECV5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 17:57:35 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39326 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbfECV5f (ORCPT
+        id S1726993AbfECWE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 18:04:29 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43084 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfECWE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 17:57:35 -0400
-Received: by mail-qk1-f196.google.com with SMTP id z128so2024858qkb.6;
-        Fri, 03 May 2019 14:57:34 -0700 (PDT)
+        Fri, 3 May 2019 18:04:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t22so3333870pgi.10
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 15:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:message-id:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=Cw/GYpeRQBGmwY7J4O04tUGhUSupj1uW+IECpewsoeA=;
-        b=H15d7ajFdDczdCq3vtOQpsIjx5z5a+D6di/Y3bqHknOq2zRHxG/UG+DkJNxkVfnmSm
-         8aFs7wIBkTG/jVDC9UoBBU7B2C+UXild8LubHVqj8/DbTdRy7nBF5d96Wk2oiQPSq5uL
-         5X1DJVgwkqHoRpEIHpGLau4QrUQ/A5xYD8sxtL8Op5VdXNdj+89cDYGHgsddEkoxcuvi
-         K7mfZk5GHspyleq3+hevQA3r7+V/SFLnFicqMBx1n1AJJ1usDdJu+kbwWQ+gzO5EjsRQ
-         AmVvccCP9lyKNDGTH91mWrGDZEKKlfIR/ar79ilDqzL+C5RLOuwZBKoSkhMGs5M5ajO7
-         C2wg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=RHqjWmIkEHkJIYN5J/tVVIuTNo00OY/OtIEp+UgaBMs=;
+        b=vs1Wwtdj12+4iyb5/FTiwoquXxOvfotLHiVZQBM0eVs35LqbzeLBSZ21Cbuv9Jzj6k
+         +l3Gkzfrp5skcy8xbupOg1WR2hrh8rTeKUrNindpPWulnAX23kBMZX7/1FioAqXcRahi
+         jKQ30nPtK6HRUtUC7TJ1oWfG3OiVR/GAwuGK/W8wsHt4SlcLPDnc5dHM4SNZuNWoQDg5
+         CBIdoOGjfFOOGHPJPR9Rs1LVS0zwX5TIpnFpIPEEaOMlvmL0s/FrrD9jlnnUwomNHh6t
+         xcl6m991Fwkj4cDdGMdWNtTKS66pd5YBnLACLiBRdj1M5xru8xXNs8OPgSdTUA0pDFhU
+         antQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:message-id:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=Cw/GYpeRQBGmwY7J4O04tUGhUSupj1uW+IECpewsoeA=;
-        b=pCHExl/6rw026bIejVWLYbumzoPBOj+yxFW1rJuxyZ+AknAL0iYEncG0cKfDYgUeDL
-         n4fbnWdd/h3qKp82biVG6ZPlH6y530zGCord3+bgDptuhnjA236tvENd8DcoC1CcPoHP
-         F5rONiIN8WnBS4ZGRkma0T73ALOCPmcwFG2wW4Hg/X46BeZWnBjHgcjVHwYcAAovFTMk
-         5OsRj8J9rJoivIsjmmhkzqSkjh6vDw1W0zzpCoffP3u20Y1w35J83b3aliPoI5fLVbBS
-         /jb1oZ1tElCBYyYT9vPy4mhnOe4j55I/1mC7P+iSkTy1Y7Xx3OTWJ1/d3ILhiJ7uTUpB
-         RjSQ==
-X-Gm-Message-State: APjAAAVay/ZQYNjeycdt4A8yn1ii2TY20XwiBJZL2EP90fr8gJZFzM+l
-        xjw+w2ffVCs9lKwhQKPzMaY=
-X-Google-Smtp-Source: APXvYqzFfUxkp5d2tA1hgRQ4AYz5bZTG3zai7IbO3gF5GQw1v2/01DqZM9C9XtcHLcObTauCAn4qag==
-X-Received: by 2002:a05:620a:482:: with SMTP id 2mr10046467qkr.323.1556920654063;
-        Fri, 03 May 2019 14:57:34 -0700 (PDT)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id r49sm68077qta.6.2019.05.03.14.57.33
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=RHqjWmIkEHkJIYN5J/tVVIuTNo00OY/OtIEp+UgaBMs=;
+        b=ao3gXPd6MvohZumxT7kINcEgN38lqIjv2QxFtjOylM9YpVSCba0K88Gt4OaH8I5qzv
+         CGpoBb4r3rnHj2PDhAaKttcdQtc9uDaNTf5jZ/kvrvsxaavyYmFhmIaNoToL46jMtu8K
+         A54xY+QpKIdrDfui2e4PEJCxfhrxkHZA6aGa2LsGDtsT5UAfyW04/tD8j5ohChVMiOFv
+         bShXXjlOPfuGgCpCDIdN9u90T2BZ8jsXSPfalyuFEsbZj8h6mT+fhGi0CiCPOKXed/Bb
+         QiACfVoEId8iNtL7sDOmbvDN8rbuCjqWGl2LW/pJ4cRGniQFYTz6Ff1cMD5o9BTRAZ3f
+         Ao6w==
+X-Gm-Message-State: APjAAAWeDbDZnKzWO6qzBL+ScjEIPDsHB6KdDohn5BAHznQrT3JoYJXI
+        6jYw5M3qTacv2rKylvoPxOAkXQ==
+X-Google-Smtp-Source: APXvYqzyU+wMWrFoRA1gvmfadd4aYpSMdzHEAgB0uTziUcb1/nwfYiSc4SEq8pdkNU7ww0+yBusrfQ==
+X-Received: by 2002:a63:3746:: with SMTP id g6mr13796813pgn.422.1556921068758;
+        Fri, 03 May 2019 15:04:28 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:84dd:d87f:858b:45f])
+        by smtp.googlemail.com with ESMTPSA id s32sm4512668pgm.19.2019.05.03.15.04.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 May 2019 14:57:33 -0700 (PDT)
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-X-Google-Original-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Date:   Fri, 3 May 2019 17:57:32 -0400
-Message-ID: <20190503175732.GB4060@t480s.localdomain>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>
-Subject: Re: [RFC PATCH 2/5] net: dsa: mv88e6xxx: rename smi read/write
- functions
-In-Reply-To: <20190501193126.19196-3-rasmus.villemoes@prevas.dk>
-References: <20190501193126.19196-1-rasmus.villemoes@prevas.dk>
- <20190501193126.19196-3-rasmus.villemoes@prevas.dk>
+        Fri, 03 May 2019 15:04:27 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        patchwork-bot+notify@kernel.org
+Subject: Re: [PATCH 0/6] arm64: dts: meson: mmc clean-up
+In-Reply-To: <20190418122714.30805-1-jbrunet@baylibre.com>
+References: <20190418122714.30805-1-jbrunet@baylibre.com>
+Date:   Fri, 03 May 2019 15:04:27 -0700
+Message-ID: <7hh8abkxec.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-On Wed, 1 May 2019 19:32:11 +0000, Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
+> The patchset is bunch of clean-up found while debugging meson mmc.
+>
+> * The first 2 patches address the libretech-cc which actually uses 1.8v
+>   eMMC modules.
+> * Patch 3 is a pin bias fixup depending on mmc pins.
+> * Patch 4 lower the mmc max frequencies on gx chips. It was not easy
+>   to spot but, according to the datasheet, the maximum UHS rate
+>   supported by these chips is 100MHz (SDR50). This explains why we
+>   never really managed to get a stable SDR104. SDIO is limited to HS.
+> * Patch 5 adds missing pinctrl definition on the vim2
+> * Patch 6 remove hs400 from the supported modes of the vim2. This mode is
+>   mode reliable enough with HW/SW ATM.
 
-> -static int mv88e6xxx_smi_single_chip_read(struct mv88e6xxx_chip *chip,
-> -					  int addr, int reg, u16 *val)
-> +static int mv88e6xxx_smi_direct_read(struct mv88e6xxx_chip *chip,
-> +				     int addr, int reg, u16 *val)
+Queued for v5.3 (branch: v5.3/dt64)
 
-I have a preparatory patch which does almost exactly that. I'm sending it
-to simplify this patchset.
-
-Also please use my Gmail address as described by get_maintainer.pl please.
-
-Thank you,
-Vivien
+Kevin
