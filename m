@@ -2,97 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1675D13093
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 16:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 686C313095
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 16:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfECOjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 10:39:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57900 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726377AbfECOjt (ORCPT
+        id S1727858AbfECOkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 10:40:17 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:52107 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfECOkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 10:39:49 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43EcAbv031054
-        for <linux-kernel@vger.kernel.org>; Fri, 3 May 2019 10:39:48 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s8p4rm8fe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 10:39:47 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Fri, 3 May 2019 15:39:45 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 3 May 2019 15:39:43 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x43Edf8a54919214
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 May 2019 14:39:41 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0007A404D;
-        Fri,  3 May 2019 14:39:41 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C40DA405D;
-        Fri,  3 May 2019 14:39:41 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.21])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  3 May 2019 14:39:41 +0000 (GMT)
-Date:   Fri, 3 May 2019 16:39:40 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] s390: vdso: drop unnecessary cc-ldoption
-References: <20190423210058.249510-1-ndesaulniers@google.com>
- <CAKwvOd=aR_GsJkaMTtV83UAAyqkZGuToD+3Zbq5sv=U_bogXmg@mail.gmail.com>
+        Fri, 3 May 2019 10:40:16 -0400
+X-Originating-IP: 90.88.149.145
+Received: from localhost (aaubervilliers-681-1-29-145.w90-88.abo.wanadoo.fr [90.88.149.145])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id A05781C0018;
+        Fri,  3 May 2019 14:40:12 +0000 (UTC)
+Date:   Fri, 3 May 2019 16:40:12 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 3/3] arm64: dts: allwinner: a64-oceanic-5205-5inmfd:
+ Enable GT911 CTP
+Message-ID: <20190503144012.hvbm54xjldyqysk4@flea>
+References: <20190503104753.27562-1-jagan@amarulasolutions.com>
+ <20190503104753.27562-3-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gxwv7dhu5oerttl5"
 Content-Disposition: inline
-In-Reply-To: <CAKwvOd=aR_GsJkaMTtV83UAAyqkZGuToD+3Zbq5sv=U_bogXmg@mail.gmail.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19050314-0020-0000-0000-00000338F262
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050314-0021-0000-0000-0000218B7FA3
-Message-Id: <20190503143940.GH5602@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=948 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905030093
+In-Reply-To: <20190503104753.27562-3-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 01:25:09PM -0700, Nick Desaulniers wrote:
-> On Tue, Apr 23, 2019 at 2:01 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > Towards the goal of removing cc-ldoption, it seems that --hash-style=
-> > was added to binutils 2.17.50.0.2 in 2006. The minimal required version
-> > of binutils for the kernel according to
-> > Documentation/process/changes.rst is 2.20.
-> >
-> > Link: https://gcc.gnu.org/ml/gcc/2007-01/msg01141.html
-> > Cc: clang-built-linux@googlegroups.com
-> > Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> >  arch/s390/kernel/vdso32/Makefile | 2 +-
-> >  arch/s390/kernel/vdso64/Makefile | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-...
-> bumping for review
 
-Sorry for the delay! Applied now, thanks.
+--gxwv7dhu5oerttl5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, May 03, 2019 at 04:17:53PM +0530, Jagan Teki wrote:
+> Goodix GT911 CTP is bound with Oceanic 5205 5inMFD board.
+>
+> The CTP connected to board with,
+> - SDA, SCK from i2c0
+> - GPIO-LD0 as AVDD28 supply
+> - PH4 gpio as interrupt pin
+> - PH11 gpio as reset pin
+> - X axis is inverted
+> - Y axis is inverted
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+
+Applied all three for 5.3, thanks
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--gxwv7dhu5oerttl5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXMxSzAAKCRDj7w1vZxhR
+xYW7AP0dBgkeuoEAunfGpwjVDN2vcJEOdH+H8sPkHTrGOqStsQEA3CpzynjQPQOR
+Wq/vO9MjeqFw6SmSCcX+zlG6SurG9Ac=
+=s4aJ
+-----END PGP SIGNATURE-----
+
+--gxwv7dhu5oerttl5--
