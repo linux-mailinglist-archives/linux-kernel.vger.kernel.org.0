@@ -2,208 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3201512A0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCAD129FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfECIqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 04:46:06 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5548 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbfECIpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 04:45:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 01:45:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="147811615"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 03 May 2019 01:45:52 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 21/22] intel_th: msu-sink: An example msu buffer driver
-Date:   Fri,  3 May 2019 11:44:54 +0300
-Message-Id: <20190503084455.23436-22-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190503084455.23436-1-alexander.shishkin@linux.intel.com>
-References: <20190503084455.23436-1-alexander.shishkin@linux.intel.com>
+        id S1726790AbfECIpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 04:45:08 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42271 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfECIpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 04:45:08 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w23so3852947lfc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 01:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0zaRsn/g4+Scrvd9QffeeQZcCaOKO0r6yp/twndpRhM=;
+        b=J29qlBrRDMBWZUJdNN5p12YGrIys/NsojzcLa1n1TYLAUB518riMbaBuJQO5+mDEJK
+         L2htaevZM1u1JKo0IzFcQJ+sA6EHz2fcvoFO0my6fdQIeXl5cvKpH7uhuXu4dBjCrTgA
+         /u60oBNQ1uLuPDvz87mMX77P2G1fJeSt/AUabcTFhCz0X+kP8pY5GBhuL7rJxYI7D7ei
+         0/IHjmhgyReOcnaGEXru+yo4GVYidglu2WIpgkc2KFXGjF8/z98fqMnmKjxH1xu9RGKy
+         Xv/9z2Ag934kKZPwMfNdaHOELa35GigKKUAC/0JRFbIS9l6Mklp8/6nH8ZzboTicnxiV
+         75qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0zaRsn/g4+Scrvd9QffeeQZcCaOKO0r6yp/twndpRhM=;
+        b=FqxcBxpije7AZ7jyByP7dPldzuZ6lKKxsmySRheCx4exrSj0ff0/nvJy+6yzhexFgg
+         suPTOibF7drH+2pUgNP/LIJs6bALyEEJjvmM5xT1waUT1vMrY0/OSdb2d9eSlkiGTmsM
+         O4dRsGWly9JTHHkM2zbNDRiVyUK08Awyg++JSkQXx8aieQqTJcxAs9kYRKiqbhBZYBfh
+         VZ0KqpdCd5Zi/GYous7lHu1sxWc/u82GGp6bXjd83GV+8jYfnnrvoW721XF0+ITscihc
+         UuS32SiMvOYhPsBIVToVH5JVq/HwzlaS1uziu5Kxhgh0wceMBteIhREneEnfyLwVVlzj
+         mN7g==
+X-Gm-Message-State: APjAAAXucztEHImdAqT9h2IFMLj15bheHT3CnJzuDm4/FHYa5ZxOVa/e
+        ZpIKqaDUazfATyvaTeh6h+8itnJqYaQ=
+X-Google-Smtp-Source: APXvYqyqfYigHLJVXnG7jnnuj50dTMyohCgOVYg1Pu5wNkO5Y4cooG5oT/xf8nz76WLGS04Xse2DPA==
+X-Received: by 2002:ac2:4ac2:: with SMTP id m2mr4490084lfp.154.1556873106562;
+        Fri, 03 May 2019 01:45:06 -0700 (PDT)
+Received: from [10.114.8.178] ([5.182.27.10])
+        by smtp.gmail.com with ESMTPSA id g21sm274007ljj.2.2019.05.03.01.45.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 May 2019 01:45:05 -0700 (PDT)
+Subject: Re: [PATCH v3 01/10] of_net: add NVMEM support to of_get_mac_address
+To:     =?UTF-8?Q?Petr_=c5=a0tetiar?= <ynezz@true.cz>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alban Bedel <albeu@free.fr>, Felix Fietkau <nbd@nbd.name>,
+        John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org
+References: <1556870168-26864-1-git-send-email-ynezz@true.cz>
+ <1556870168-26864-2-git-send-email-ynezz@true.cz>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <2a5fcdec-c661-6dc5-6741-7d6675457b9b@cogentembedded.com>
+Date:   Fri, 3 May 2019 11:44:54 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <1556870168-26864-2-git-send-email-ynezz@true.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds an example "sink" MSU buffer driver, which consumes trace
-data from MSC buffers.
+Hello!
 
-Functionally, it acts similarly to "multi" mode with automatic window
-switching.
+On 03.05.2019 10:55, Petr Štetiar wrote:
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- drivers/hwtracing/intel_th/Makefile   |   3 +
- drivers/hwtracing/intel_th/msu-sink.c | 137 ++++++++++++++++++++++++++
- 2 files changed, 140 insertions(+)
- create mode 100644 drivers/hwtracing/intel_th/msu-sink.c
+> Many embedded devices have information such as MAC addresses stored
+> inside NVMEMs like EEPROMs and so on. Currently there are only two
+> drivers in the tree which benefit from NVMEM bindings.
+> 
+> Adding support for NVMEM into every other driver would mean adding a lot
+> of repetitive code. This patch allows us to configure MAC addresses in
+> various devices like ethernet and wireless adapters directly from
+> of_get_mac_address, which is already used by almost every driver in the
+> tree.
+> 
+> Predecessor of this patch which used directly MTD layer has originated
+> in OpenWrt some time ago and supports already about 497 use cases in 357
+> device tree files.
+> 
+> Cc: Alban Bedel <albeu@free.fr>
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> Signed-off-by: John Crispin <john@phrozen.org>
+> Signed-off-by: Petr Štetiar <ynezz@true.cz>
+> ---
+> 
+>   Changes since v1:
+> 
+>    * moved handling of nvmem after mac-address and local-mac-address properties
+> 
+>   Changes since v2:
+> 
+>    * moved of_get_mac_addr_nvmem after of_get_mac_addr(np, "address") call
+>    * replaced kzalloc, kmemdup and kfree with it's devm variants
+>    * introduced of_has_nvmem_mac_addr helper which checks if DT node has nvmem
+>      cell with `mac-address`
+>    * of_get_mac_address now returns ERR_PTR encoded error value
+> 
+>   drivers/of/of_net.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 62 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+> index d820f3e..258ceb8 100644
+> --- a/drivers/of/of_net.c
+> +++ b/drivers/of/of_net.c
+[...]
+> @@ -64,6 +113,9 @@ static const void *of_get_mac_addr(struct device_node *np, const char *name)
+>    * addresses.  Some older U-Boots only initialized 'local-mac-address'.  In
+>    * this case, the real MAC is in 'local-mac-address', and 'mac-address' exists
+>    * but is all zeros.
+> + *
+> + * Return: Will be a valid pointer on success, NULL in case there wasn't
+> + *         'mac-address' nvmem cell node found, and ERR_PTR in case of error.
 
-diff --git a/drivers/hwtracing/intel_th/Makefile b/drivers/hwtracing/intel_th/Makefile
-index d9252fa8d9ca..b63eb8f309ad 100644
---- a/drivers/hwtracing/intel_th/Makefile
-+++ b/drivers/hwtracing/intel_th/Makefile
-@@ -20,3 +20,6 @@ intel_th_msu-y			:= msu.o
- 
- obj-$(CONFIG_INTEL_TH_PTI)	+= intel_th_pti.o
- intel_th_pti-y			:= pti.o
-+
-+obj-$(CONFIG_INTEL_TH_MSU)	+= intel_th_msu_sink.o
-+intel_th_msu_sink-y		:= msu-sink.o
-diff --git a/drivers/hwtracing/intel_th/msu-sink.c b/drivers/hwtracing/intel_th/msu-sink.c
-new file mode 100644
-index 000000000000..1a7949a282c3
---- /dev/null
-+++ b/drivers/hwtracing/intel_th/msu-sink.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * An example software sink buffer driver for Intel TH MSU.
-+ *
-+ * Copyright (C) 2019 Intel Corporation.
-+ */
-+
-+#include <linux/intel_th.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/device.h>
-+#include <linux/dma-mapping.h>
-+
-+static unsigned int block_order;
-+
-+module_param(block_order, int, 0600);
-+
-+#define MAX_SGTS 16
-+
-+struct msu_sink_private {
-+	struct device	*dev;
-+	struct sg_table **sgts;
-+	unsigned int	nr_sgts;
-+	unsigned int	block_order;
-+};
-+
-+static void *msu_sink_assign(struct device *dev, int *mode)
-+{
-+	struct msu_sink_private *priv;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return NULL;
-+
-+	priv->sgts = kzalloc(sizeof(void *) * MAX_SGTS, GFP_KERNEL);
-+	if (!priv->sgts) {
-+		kfree(priv);
-+		return NULL;
-+	}
-+
-+	priv->dev = dev;
-+	priv->block_order = block_order;
-+	*mode = MSC_MODE_MULTI;
-+
-+	return priv;
-+}
-+
-+static void msu_sink_unassign(void *data)
-+{
-+	struct msu_sink_private *priv = data;
-+
-+	kfree(priv->sgts);
-+	kfree(priv);
-+}
-+
-+/* See also: msc.c: __msc_buffer_win_alloc() */
-+static int msu_sink_alloc_window(void *data, struct sg_table **sgt, size_t size)
-+{
-+	struct msu_sink_private *priv = data;
-+	unsigned int nents;
-+	struct scatterlist *sg_ptr;
-+	void *block;
-+	int ret, i;
-+
-+	if (priv->nr_sgts == MAX_SGTS)
-+		return -ENOMEM;
-+
-+	nents = DIV_ROUND_UP(size, PAGE_SIZE << priv->block_order);
-+
-+	ret = sg_alloc_table(*sgt, nents, GFP_KERNEL);
-+	if (ret)
-+		return -ENOMEM;
-+
-+	priv->sgts[priv->nr_sgts++] = *sgt;
-+
-+	for_each_sg((*sgt)->sgl, sg_ptr, nents, i) {
-+		block = dma_alloc_coherent(priv->dev->parent->parent,
-+					   PAGE_SIZE << priv->block_order,
-+					   &sg_dma_address(sg_ptr),
-+					   GFP_KERNEL);
-+		sg_set_buf(sg_ptr, block, PAGE_SIZE << priv->block_order);
-+		if (priv->block_order)
-+			split_page(virt_to_page(block), priv->block_order);
-+	}
-+
-+	return nents;
-+}
-+
-+/* See also: msc.c: __msc_buffer_win_free() */
-+static void msu_sink_free_window(void *data, struct sg_table *sgt)
-+{
-+	struct msu_sink_private *priv = data;
-+	struct scatterlist *sg_ptr;
-+	int i;
-+
-+	for_each_sg(sgt->sgl, sg_ptr, sgt->nents, i) {
-+		dma_free_coherent(priv->dev->parent->parent,
-+				  PAGE_SIZE << priv->block_order,
-+				  sg_virt(sg_ptr), sg_dma_address(sg_ptr));
-+	}
-+
-+	sg_free_table(sgt);
-+	priv->nr_sgts--;
-+}
-+
-+static int msu_sink_ready(void *data, struct sg_table *sgt, size_t bytes)
-+{
-+	struct msu_sink_private *priv = data;
-+
-+	intel_th_msc_window_unlock(priv->dev, sgt);
-+
-+	return 0;
-+}
-+
-+static const struct msu_buffer_driver sink_bdrv = {
-+	.name		= "sink",
-+	.owner		= THIS_MODULE,
-+	.assign		= msu_sink_assign,
-+	.unassign	= msu_sink_unassign,
-+	.alloc_window	= msu_sink_alloc_window,
-+	.free_window	= msu_sink_free_window,
-+	.ready		= msu_sink_ready,
-+};
-+
-+static int msu_sink_init(void)
-+{
-+	return intel_th_msu_buffer_register(&sink_bdrv);
-+}
-+module_init(msu_sink_init);
-+
-+static void msu_sink_exit(void)
-+{
-+	intel_th_msu_buffer_unregister(&sink_bdrv);
-+}
-+module_exit(msu_sink_exit);
-+
-+MODULE_LICENSE("GPL v2");
--- 
-2.20.1
+    Returning both NULL and error codes on failure is usually a sign of a 
+misdesigned API. Why not always return an error code?
 
+[...]
+
+MBR, Sergei
