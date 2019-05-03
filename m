@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6834212799
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F207212798
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfECGS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:18:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53074 "EHLO
+        id S1726792AbfECGS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:18:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53064 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbfECGS5 (ORCPT
+        with ESMTP id S1725794AbfECGS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 3 May 2019 02:18:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,31 +18,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZQwUU+J/MQcrEGIy0MJ+HGRMeveOuqWSbA/IkAltfgs=; b=dBcYRvUe1aCP
-        YZGZsViJliQgDvfMwTe4+d113vEp7lkGUS7j9+9b0hacgeOKj4nV6j9rfXymYydE48ER93PKLjne8
-        5qNi67Fq6TvXnRW3RgKVYGbLeTHwwcLOrvQLTtKF6W3JccRjWJHGdmelTC9HnbavV/QJf5lKY4KJE
-        icsyw=;
+        List-Archive; bh=tdXXDwJac7tPdkzlB2OnCMedUY3PiqwtJOnXJSCSNbo=; b=lzQrX6vpmbji
+        a58pXb696U7gIuoxAE2zhCXM3KTU3qqPK3cnlnaUE3STGb6Xc9tEFuoRClw1vySwBXtVg8qa+hgsi
+        ljuuS0ug53TW51Qqgk8GHssmVvWF9pQ8m18sQbYf/JTVP3z8Tx+suEo+QH2yYHUQwRfmTm4xCB++J
+        JyFio=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRWw-0000Wg-Oi; Fri, 03 May 2019 06:18:47 +0000
+        id 1hMRWz-0000Ww-5Y; Fri, 03 May 2019 06:18:49 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 6D839441D58; Fri,  3 May 2019 07:18:42 +0100 (BST)
+        id B209D441D3D; Fri,  3 May 2019 07:18:43 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ross Zwisler <zwisler@chromium.org>
+To:     Colin Ian King <colin.king@canonical.com>
 Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Ross Zwisler <zwisler@google.com>, stable@vger.kernel.org,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: Intel: avoid Oops if DMA setup fails" to the asoc tree
-In-Reply-To: <20190429182517.210909-1-zwisler@google.com>
+Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
+In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503061842.6D839441D58@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:18:42 +0100 (BST)
+Message-Id: <20190503061843.B209D441D3D@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:18:43 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: avoid Oops if DMA setup fails
+   ASoC: SOF: remove redundant null checks of dai
 
 has been applied to the asoc tree at
 
@@ -75,64 +74,48 @@ to this mail.
 Thanks,
 Mark
 
-From 0efa3334d65b7f421ba12382dfa58f6ff5bf83c4 Mon Sep 17 00:00:00 2001
-From: Ross Zwisler <zwisler@chromium.org>
-Date: Mon, 29 Apr 2019 12:25:17 -0600
-Subject: [PATCH] ASoC: Intel: avoid Oops if DMA setup fails
+From c437ba0300cec1ca8758fdd71a3b2f8cd02c6e2a Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 2 May 2019 12:33:40 +0100
+Subject: [PATCH] ASoC: SOF: remove redundant null checks of dai
 
-Currently in sst_dsp_new() if we get an error return from sst_dma_new()
-we just print an error message and then still complete the function
-successfully.  This means that we are trying to run without sst->dma
-properly set up, which will result in NULL pointer dereference when
-sst->dma is later used.  This was happening for me in
-sst_dsp_dma_get_channel():
+Currently there are two null checks of pointer dai in function
+sof_connect_dai_widget and yet there is no null check of dai
+at the end of the function when checking !dai->name.  The latter
+would be a null pointer deference if dai is null (as picked up
+by static analysis), however the function is only ever called
+when dai is successfully allocated, so the null checks are
+redundant. Clean up the code by removing the null checks.
 
-        struct sst_dma *dma = dsp->dma;
-	...
-        dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
-
-This resulted in:
-
-   BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-   IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
-
-Fix this by adding proper error handling for the case where we fail to
-set up DMA.
-
-This change only affects Haswell and Broadwell systems.  Baytrail
-systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
-being set to -1.
-
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Cc: stable@vger.kernel.org
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Addresses-Coverity: ("Dereference after null check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/common/sst-firmware.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/sof/topology.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-index 1e067504b604..f830e59f93ea 100644
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
- 		goto irq_err;
- 
- 	err = sst_dma_new(sst);
--	if (err)
--		dev_warn(dev, "sst_dma_new failed %d\n", err);
-+	if (err)  {
-+		dev_err(dev, "sst_dma_new failed %d\n", err);
-+		goto dma_err;
-+	}
- 
- 	return sst;
- 
-+dma_err:
-+	free_irq(sst->irq, sst);
- irq_err:
- 	if (sst->ops->free)
- 		sst->ops->free(sst);
+diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
+index 2b9de1b97447..1f71857298a9 100644
+--- a/sound/soc/sof/topology.c
++++ b/sound/soc/sof/topology.c
+@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
+ 		switch (w->id) {
+ 		case snd_soc_dapm_dai_out:
+ 			rtd->cpu_dai->capture_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
+ 		case snd_soc_dapm_dai_in:
+ 			rtd->cpu_dai->playback_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
 -- 
 2.20.1
 
