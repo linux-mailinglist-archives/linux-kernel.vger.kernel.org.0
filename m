@@ -2,158 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 939D81310E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 17:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C164D130EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 17:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfECPTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 11:19:00 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:43279 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbfECPS7 (ORCPT
+        id S1728197AbfECPJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 11:09:34 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45971 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfECPJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 11:18:59 -0400
-Received: by mail-vs1-f68.google.com with SMTP id y196so3810373vsc.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 08:18:58 -0700 (PDT)
+        Fri, 3 May 2019 11:09:34 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i21so2848327pgi.12
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 08:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/7DMlLhZpYsWuofw8OIODIFO7gaAmV2hSfavk1PWNjw=;
-        b=XUmZiwqwzLoqpAUVe8w0tkVHbFRykUE91OYgujzpgaBCx48baPDuGmg0M6jQyV4YII
-         OWTb+7Zdpdig3RsJGJk/hfTgq68bJikh98t4m/Hra5MvlqkXrXqojZor8kcLrun7IcVq
-         NOfXaNbyYGwDM79mwwB5iVPjXFMqHWmAq2c4c=
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kNTkQVNOA2OoGY05E27L56yuHsdvzUwDV9bMvSlE76A=;
+        b=MFvmRDDkIMtc9BaQDjrWPOSUDO9Jo1/wdFL+oMmuaFtd8BrX+9VVatnVk8YjQSnsoW
+         BsziOIyoxXHvWBYgvME24AJwRTKzg1v5hpxTEyKu2vSeYGAOa5tUX3uW7FhbKDdETQyb
+         5v+yKc70MV3v8Y806ihEUUkgJzSgITzNo64UQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/7DMlLhZpYsWuofw8OIODIFO7gaAmV2hSfavk1PWNjw=;
-        b=gOc69FRrkCxJf84Tl8BVwSQ9IVCuQ74X6QCsdmDjIW/SwvaoUxmW6tXgVNWcJvhcY+
-         Vwz3ABSspRog2qsCNO7xUKTZprKKL/PMwWiYyhHGl0cfZVHkKTtm26CNXuOSGff9xf07
-         XxmhnC7JDBhilAuR/IfAQIan1NWcdJbnYkFpzqC68qUBnEnPJ9qpzBu54qnYt1tRGroG
-         fTSdfgdWg3F/dXqIwfpufelvqhakdO/2z6knQvf/7GbXBcMFCdzunVsN1Idnm/V9gdAE
-         2HiS1RF0vT5N9FAa5CjAaoO0tfTt1ZawTxhkjs4q4yTKKzFs0DFniZcLLu94Cdw1hToO
-         tmhA==
-X-Gm-Message-State: APjAAAXm1wNqLBKBbGfEJiY53AABucO7m3COdhy36i6cYhAX30VhT/fN
-        UeZY2i/vZGEAEtplyJmnOBLqO0K5RPc=
-X-Google-Smtp-Source: APXvYqyfw7C5LAAV1waqmLQprx81yvba4jp7TMU3b+wT9NUqR01YwjcJsOwhjlqqUrxd6+3VC7kjsg==
-X-Received: by 2002:a67:7b56:: with SMTP id w83mr5928207vsc.79.1556896066748;
-        Fri, 03 May 2019 08:07:46 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id l200sm1339230vkl.25.2019.05.03.08.07.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 08:07:45 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id z17so2128906uar.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 08:07:44 -0700 (PDT)
-X-Received: by 2002:ab0:2709:: with SMTP id s9mr4499637uao.21.1556896064408;
- Fri, 03 May 2019 08:07:44 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kNTkQVNOA2OoGY05E27L56yuHsdvzUwDV9bMvSlE76A=;
+        b=lykfrK9B4l+VNEXofHayr/fyvvDNlfywAuhLwrf0svRqanPKV12NGpB6HfiAM+o9E9
+         5CR7KuMTd+OqTzdYShvfVNe07RkQPiG6FrUAcTLj3E/3WhR8r/EFQ9a7xn9CrlwspVMa
+         gZBWTpzYGgOR9QZ7zm9oEbdVerxyM8t50Y0MlxuxfyL8zPWPiTDQyXxB/qovmymVqaDT
+         tqnoFhVcdjGdaCMI2QAqeOl6qhiYqWiex7OFRU4oHyXAYduB+Z3DhJ1DhnmHH2J0ZlcA
+         w8mqV3nlJet1AQsDMc5zZ7CsrEQG2O7FpHrqWbovTTCDfscnQosO+Z9fGzWlJIrxcMcK
+         eAZg==
+X-Gm-Message-State: APjAAAWo5aHB7jLm9N5k8uBlK3zzR8ya+e95UtfSDhxAPq5rumNazUQI
+        8gcfDzgusdXBvM21uPh6BtUTpQ==
+X-Google-Smtp-Source: APXvYqw24XwNGkccqq09Ydr+Lfzc0vUPYmCja1k9q/7RdUIA3TyzF/y1fhaSR7qOXsBcDbXc//83LQ==
+X-Received: by 2002:a65:5c82:: with SMTP id a2mr11014324pgt.378.1556896108024;
+        Fri, 03 May 2019 08:08:28 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id d3sm3262715pfn.113.2019.05.03.08.08.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 May 2019 08:08:27 -0700 (PDT)
+Date:   Fri, 3 May 2019 11:08:25 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        atish patra <atishp04@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v7 resend 1/2] Provide in-kernel headers to make
+ extending kernel easier
+Message-ID: <20190503150825.GC253329@google.com>
+References: <20190426190430.172543-1-joel@joelfernandes.org>
+ <20190427133844.GA29366@kroah.com>
+ <20190429132602.GA165075@google.com>
+ <20190429135455.GA2412@kroah.com>
+ <CAK7LNARkGLQ_P4LSuC69QN8XPN47W5ujkDE3EauLrwnBgygsSA@mail.gmail.com>
+ <20190429142425.GB29007@kroah.com>
+ <20190503103315.0149ca71@gandalf.local.home>
 MIME-Version: 1.0
-References: <20190418001356.124334-1-dianders@chromium.org>
- <20190418001356.124334-2-dianders@chromium.org> <CAD=FV=UGjQz9Di=NL_r_g1Hofqv-FWBywfSm9Vu6gGr22wzPrA@mail.gmail.com>
- <SN1PR12MB243136608514210F3E3E536EA7350@SN1PR12MB2431.namprd12.prod.outlook.com>
-In-Reply-To: <SN1PR12MB243136608514210F3E3E536EA7350@SN1PR12MB2431.namprd12.prod.outlook.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 3 May 2019 08:07:32 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V97+_cQ1aD=w_a3SifGOG3M5DPvcnvxYVUJMkX_WLTFg@mail.gmail.com>
-Message-ID: <CAD=FV=V97+_cQ1aD=w_a3SifGOG3M5DPvcnvxYVUJMkX_WLTFg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] usb: dwc2: bus suspend/resume for hosts with DWC2_POWER_DOWN_PARAM_NONE
-To:     Artur Petrosyan <Arthur.Petrosyan@synopsys.com>
-Cc:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexandru M Stan <amstan@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        William Wu <william.wu@rock-chips.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Randy Li <ayaka@soulik.info>, Chris <zyw@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Julius Werner <jwerner@chromium.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503103315.0149ca71@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, May 03, 2019 at 10:33:15AM -0400, Steven Rostedt wrote:
+> On Mon, 29 Apr 2019 16:24:25 +0200
+> Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > Hah, ok, I'll be glad to queue this up in my tree.  I'll take it now,
+> > and if people who really object to this being in /proc/ and want it in
+> > /sys/, we can add a follow-on patch before 5.2-final is out to move the
+> > file to that location.
+> 
+> I really don't think putting it in /proc now is a good idea. Let's put
+> it in /sys now. If we don't do it now and it gets into a main release,
+> then that will become the permanent location for it.
 
-On Fri, May 3, 2019 at 1:25 AM Artur Petrosyan
-<Arthur.Petrosyan@synopsys.com> wrote:
->
-> On 5/2/2019 03:58, Doug Anderson wrote:
-> > Hi,
-> >
-> >
-> > On Wed, Apr 17, 2019 at 5:15 PM Douglas Anderson <dianders@chromium.org=
-> wrote:
-> >>
-> >> This is an attempt to rehash commit 0cf884e819e0 ("usb: dwc2: add bus
-> >> suspend/resume for dwc2") on ToT.  That commit was reverted in commit
-> >> b0bb9bb6ce01 ("Revert "usb: dwc2: add bus suspend/resume for dwc2"")
-> >> because apparently it broke the Altera SOCFPGA.
-> >>
-> >> With all the changes that have happened to dwc2 in the meantime, it's
-> >> possible that the Altera SOCFPGA will just magically work with this
-> >> change now.  ...and it would be good to get bus suspend/resume
-> >> implemented.
-> >>
-> >> This change is a forward port of one that's been living in the Chrome
-> >> OS 3.14 kernel tree.
-> >>
-> >> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> >> ---
-> >> This patch was last posted at:
-> >>
-> >> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.kernel.org=
-_r_1446237173-2D15263-2D1-2Dgit-2Dsend-2Demail-2Ddianders-40chromium.org&d=
-=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqr=
-C_D7niMJI&m=3D7rxT8EFX9mqUDtTL4P7iuzYNsYROe9rxHGCresSKPTg&s=3DlTaNUA2XIYPat=
-417fkd1A4Zpvb5eyYtTc1H_NIfW8Vw&e=3D
-> >>
-> >> ...and appears to have died the death of silence.  Maybe it could get
-> >> some bake time in linuxnext if we can't find any proactive testing?
-> >>
-> >> I will also freely admit that I don't know tons about the theory
-> >> behind this patch.  I'm mostly just re-hashing the original commit
-> >> from Kever that was reverted since:
-> >> * Turning on partial power down on rk3288 doesn't "just work".  I
-> >>    don't get hotplug events.  This is despite dwc2 auto-detecting that
-> >>    we are power optimized.
-> >> * If we don't do something like this commit we don't get into as low
-> >>    of a power mode.
-> >
-> > OK, I spent the day digging more into this patch to confirm that it's
-> > really the right thing to do.  ...and it still seems to be.
-> >
-> > First off: I'm pretty sure the above sentence "If we don't do
-> > something like this commit we don't get into as low of a power mode."
-> > is totally wrong.  Luckily it's "after the cut" and not part of the
-> > commit message.  Specifically I did a bunch of power testing and I
-> > couldn't find any instance saving power after this patch.
-> >
-> > ...but, then I looked more carefully at all the history of this
-> > commit.  I ended up at:
-> >
-> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__chromium-2Drevie=
-w.googlesource.com_c_chromiumos_third-5Fparty_kernel_-2B_306265_&d=3DDwIBaQ=
-&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI=
-&m=3D7rxT8EFX9mqUDtTL4P7iuzYNsYROe9rxHGCresSKPTg&s=3DLiyyIyaCPmr88nJeI7TCGt=
-oJBFLRWir_reikYtAHHDw&e=3D
-> Looking at this code review I see that this patch fixes whatever issues
-> you have on Chrome OS 3.14. But your patch has landed on the top of
-> latest Kernel version. With the latest version I think you would not
-> have the regression issue.
-> So you are fixing Chrome OS 3.14.
+I will send a patch to move it into /sys/kernel on top of this. Hope everyone
+else is also Ok with that as the location.
 
-I'm confused why you ignored the rest of my email where I said I also
-ported it to 4.19 (which, from a dwc2 host point of view, is pretty
-much mainline) and saw that the patch was still needed.
+thanks,
 
--Doug
+ - Joel
+
