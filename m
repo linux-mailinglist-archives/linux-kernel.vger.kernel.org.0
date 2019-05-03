@@ -2,124 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7CC132AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 19:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CD2132C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 19:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbfECRBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 13:01:19 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45518 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbfECRBS (ORCPT
+        id S1728721AbfECRCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 13:02:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46900 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbfECRCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 13:01:18 -0400
-Received: by mail-io1-f68.google.com with SMTP id b3so60849iob.12;
-        Fri, 03 May 2019 10:01:18 -0700 (PDT)
+        Fri, 3 May 2019 13:02:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j11so3154072pff.13
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 10:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=izUOytrD/6vCLXtnYXrSOEU0tJ3aaxN2wrj4VtrzroE=;
-        b=Q+EROpgHt2pkaaJDcfZW92rZgLkKosuKl1kSjcKZtjYk7lESQhpz/EQzKNPC/Sx0hd
-         TFoiX95eQhUof0vZe9VjCygm6JyBxBdu8Ox3aeT65/YcQikO0I85ad8cKKwMzjafNjGQ
-         kvFx7Oi062cPWGSfeNJTVL6tNFbWN8aqqW85BTKurCQ6B3zQA/q4ZzRv/HpqzmqHTuTW
-         vr/X8GUBtGJdZU/6bD3waed0WbjB2TPgPOgk5nzCIw6F11S3Cdaedx5hUlcGleb3k7wm
-         9G3MTfAH3GUnZNenmSBLF11e9rES0Vm0ScW9JiNVsD+wf5UuX4o1qnCfItvUmq6qMSKm
-         HYbQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e71LeW3j52z02CfoTglw12Lmjisq73YxcosFVCbh53o=;
+        b=hrUWYPl6ix6lmEUT+7gmZcFzhb63MdRST9wYPDOIVDmC/LzaxdIO5YqMR9VHPo0Bm0
+         82stpci7nJLYQd5BJl4soh4Z123TLPBWd09ZiRFMLpvEXvCMb061QG9scqw6rKtpjh1E
+         kkX/N5wtLrWsHL4J8i87lISK1gdR2s5yYRrwWyERLEcyPvXTU/sq2szATYe2giWY1Voi
+         xegRCJX/tNYrsRrlMBUOoE/lSVvaj9xedR/ofO78sPnsVcn8prsnDB5Yr6LyCqUE5WTv
+         mbWGCLv9qzSIZdmyGpriTFfAh+bRHrqHP2qnfunh3CTdkyZihHHjTUToVuOGOkc6JjZe
+         6jDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=izUOytrD/6vCLXtnYXrSOEU0tJ3aaxN2wrj4VtrzroE=;
-        b=P6Sxtv04s15/NGfrzmNjqdZO/yFZFHj9V9V9HoYpUYAJno8lmUJtoKWOVJu8GffcXk
-         CZtz2f5f01C+CwoQ9oZoAf6GzExDMtuK1xSQ4YfbjokWPVd7yQSkWVO5iyS++KqVekYJ
-         SS5J4ntX6d0J98MnZ1eqJuCBcVYRhUBEClR1l0ApOtGbXWBZPYNBbTkejS/DwV+xp7qn
-         sl0CXRkaqZZ/yP47aF9BIRsDHF7Q9iQz00ZE+DOYONejHNCdOgCDPETCcIbMVsX/fWOd
-         KRAI/xnqpgOCz2FHLg7+624M+ICvv1RT6RLLbQ8/5CB2VA2D6C/1kLJlGdSQZQNbHBCS
-         QyDQ==
-X-Gm-Message-State: APjAAAXGgcQwYVPNS4IS36FhBvzovzPIoGYrzN7unjUSo91BFy2owZ4o
-        uVob082cvT6DPA/Noob2ffnCxTKb
-X-Google-Smtp-Source: APXvYqyplCXcR0zpaUlaB1SJRHyFngk+mBqcYrBr90Wy2Ds/+0r5cgUEIMQV9ZyMabcqChC2vQxcag==
-X-Received: by 2002:a05:6602:20c3:: with SMTP id 3mr8207645ioz.111.1556902877655;
-        Fri, 03 May 2019 10:01:17 -0700 (PDT)
-Received: from localhost.localdomain (182-254-181-166.mobile.uscc.com. [166.181.254.182])
-        by smtp.gmail.com with ESMTPSA id n184sm1342588itc.28.2019.05.03.10.01.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 May 2019 10:01:16 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Enric Balletbo Serra <enric.balletbo@collabora.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/3] dt-bindings: power: supply: Add bindings for Microchip UCS1002
-Date:   Fri,  3 May 2019 10:00:42 -0700
-Message-Id: <20190503170042.19334-4-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190503170042.19334-1-andrew.smirnov@gmail.com>
-References: <20190503170042.19334-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e71LeW3j52z02CfoTglw12Lmjisq73YxcosFVCbh53o=;
+        b=DEfy5oIsk0Tv2YYShWMafHDOA8bedjXSv/6UvNqdxvZZUvC/xRiVZdY04CeEc1WKBO
+         V4iJO/SmtHNJulqEKRgb8k5RqrjjFwrcD5gcrwA2DEqX4a6hO7ti6rjKNVoj/nmJAhMi
+         b40gYf8LVWeocqNYWGrdIDy89h1SOVpHpnWQoa727nd/aJUUPJusRzya1Vs5w67WtY7G
+         UY70LTb7nZydq6/L8gKFNLqCjmMLMagoflujBQNx/syOfbPy/HSsMJ0usJNkK9qih8aE
+         z93NgnXXbVX7O1c1V7X68Imv5iMto3etfU1z/TcNBWBd823IQphgov5mQtdBD+0NMtzI
+         /8sA==
+X-Gm-Message-State: APjAAAVExfsPmPaB3y4CAzOnEs97lPBg2ofAryxdYSqxpo81Gw9uSP/3
+        cNFgD4j6vn0gejXeitlZ0A9jDA==
+X-Google-Smtp-Source: APXvYqyTK6cg0M1/C2OXTAJ465eNh4Ogi4rZP6tl1I9CMzK8OhQ3QscAC72wbWMwk3C+thhafvr1Sg==
+X-Received: by 2002:a62:5fc7:: with SMTP id t190mr12168728pfb.191.1556902968531;
+        Fri, 03 May 2019 10:02:48 -0700 (PDT)
+Received: from google.com ([2620:15c:201:2:ce90:ab18:83b0:619])
+        by smtp.gmail.com with ESMTPSA id j7sm3380683pfh.62.2019.05.03.10.02.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 03 May 2019 10:02:47 -0700 (PDT)
+Date:   Fri, 3 May 2019 10:02:42 -0700
+From:   Sami Tolvanen <samitolvanen@google.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: use the correct function type in
+ SYSCALL_DEFINE0
+Message-ID: <20190503170242.GA211922@google.com>
+References: <20190501200451.255615-1-samitolvanen@google.com>
+ <20190501200451.255615-3-samitolvanen@google.com>
+ <20190503102128.GD47811@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503102128.GD47811@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microchip UCS1002 Programmable USB Port Power
-Controller with Charger Emulation.
+Hi Mark,
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Rob Herring <robh+dt@kernel.org>
-Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- .../power/supply/microchip,ucs1002.txt        | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
+On Fri, May 03, 2019 at 11:21:28AM +0100, Mark Rutland wrote:
+> Generally, this makes sense, but I'm not sure that this is complete.
+> 
+> IIUC this introduces a new type mismatch with sys_ni_syscall() in some
+> cases.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-new file mode 100644
-index 000000000000..1d284ad816bf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/microchip,ucs1002.txt
-@@ -0,0 +1,27 @@
-+Microchip UCS1002 USB Port Power Controller
-+
-+Required properties:
-+- compatible		: Should be "microchip,ucs1002";
-+- reg			: I2C slave address
-+
-+Optional properties:
-+- interrupts		: A list of interrupts lines present (could be either
-+			  corresponding to A_DET# pin, ALERT# pin, or both)
-+- interrupt-names	: A list of interrupt names. Should contain (if
-+			  present):
-+			  - "a_det" for line connected to A_DET# pin
-+			  - "alert" for line connected to ALERT# pin
-+			  Both are expected to be IRQ_TYPE_EDGE_BOTH
-+Example:
-+
-+&i2c3 {
-+	charger@32 {
-+		compatible = "microchip,ucs1002";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ucs1002_pins>;
-+		reg = <0x32>;
-+		interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
-+				      <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
-+		interrupt-names = "a_det", "alert";
-+	};
-+};
--- 
-2.21.0
+Thanks for the review. You're correct, sys_ni_syscall needs to be fixed
+too. I'll include this in v2.
 
+> We probably need that to use SYSCALL_DEFINE0(), and maybe have a
+> ksys_ni_syscall() for in-kernel wrappers.
+
+Why would we need ksys_ni_syscall? It seems something like this should
+be sufficient:
+
+  asmlinkage long sys_ni_syscall(void);
+
+  SYSCALL_DEFINE0(ni_syscall)
+  {
+          return sys_ni_syscall();
+  }
+
+Sami
