@@ -2,81 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6C4D131BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 18:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D5D131CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 18:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfECQEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 12:04:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39286 "EHLO mail.kernel.org"
+        id S1728423AbfECQEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 12:04:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:36362 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbfECQEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 12:04:00 -0400
-Received: from localhost (unknown [104.132.0.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EBE32087F;
-        Fri,  3 May 2019 16:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556899440;
-        bh=u8nMHEbZWJcIno8b2VP0zq26Pj+DlJZJ6b1N7AkLZGs=;
-        h=In-Reply-To:References:To:Cc:From:Subject:Date:From;
-        b=TD5d3cqye9lABfgNnSbABLKv5dC1suwdjX/scpb6aAPmD8sQ4qpHuYG/hdBsDeru7
-         BWClVjMxXIJhOIA6VGsgOr+AZy2t3xgbd9ClZ8eRiulq6SFD3llwWT2Ncg+ulC4Bmy
-         SRdIpHHDC2g2g5HIypFN9DW97CkTgy1i2hqmoVK8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190430143206.GA4035@embeddedor>
-References: <20190430143206.GA4035@embeddedor>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: imx: clk-pllv3: mark expected switch fall-throughs
-Message-ID: <155689943924.200842.14239421795559565409@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Date:   Fri, 03 May 2019 09:03:59 -0700
+        id S1725809AbfECQEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 12:04:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5619B374;
+        Fri,  3 May 2019 09:04:35 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3AB533F557;
+        Fri,  3 May 2019 09:04:34 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+        mathieu.poirier@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 1/2] coresight: Do not call smp_processor_id() from preemptible
+Date:   Fri,  3 May 2019 17:04:18 +0100
+Message-Id: <1556899459-27785-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Gustavo A. R. Silva (2019-04-30 07:32:06)
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
->=20
-> This patch fixes the following warnings:
->=20
-> drivers/clk/imx/clk-pllv3.c: In function =E2=80=98imx_clk_pllv3=E2=80=99:
-> drivers/clk/imx/clk-pllv3.c:446:18: warning: this statement may fall thro=
-ugh [-Wimplicit-fallthrough=3D]
->    pll->div_shift =3D 1;
->    ~~~~~~~~~~~~~~~^~~
-> drivers/clk/imx/clk-pllv3.c:447:2: note: here
->   case IMX_PLLV3_USB:
->   ^~~~
-> drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall thro=
-ugh [-Wimplicit-fallthrough=3D]
->    pll->denom_offset =3D PLL_IMX7_DENOM_OFFSET;
->                      ^
-> drivers/clk/imx/clk-pllv3.c:454:2: note: here
->   case IMX_PLLV3_AV:
->   ^~~~
->=20
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->=20
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+Instead of using smp_processor_id() to figure out the node,
+use the numa_node_id() for the current CPU node to avoid
+splats like :
 
-Applied to clk-next
+ BUG: using smp_processor_id() in preemptible [00000000] code: perf/1743
+ caller is alloc_etr_buf.isra.6+0x80/0xa0
+ CPU: 1 PID: 1743 Comm: perf Not tainted 5.1.0-rc6-147786-g116841e #344
+ Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb  1 2019
+  Call trace:
+   dump_backtrace+0x0/0x150
+   show_stack+0x14/0x20
+   dump_stack+0x9c/0xc4
+   debug_smp_processor_id+0x10c/0x110
+   alloc_etr_buf.isra.6+0x80/0xa0
+   tmc_alloc_etr_buffer+0x12c/0x1f0
+   etm_setup_aux+0x1c4/0x230
+   rb_alloc_aux+0x1b8/0x2b8
+   perf_mmap+0x35c/0x478
+   mmap_region+0x34c/0x4f0
+   do_mmap+0x2d8/0x418
+   vm_mmap_pgoff+0xd0/0xf8
+   ksys_mmap_pgoff+0x88/0xf8
+   __arm64_sys_mmap+0x28/0x38
+   el0_svc_handler+0xd8/0x138
+   el0_svc+0x8/0xc
+
+Fixes: 855ab61c16bf70b646 ("coresight: tmc-etr: Refactor function tmc_etr_setup_perf_buf()")
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 793639f..74578bd 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -1323,13 +1323,11 @@ static struct etr_perf_buffer *
+ tmc_etr_setup_perf_buf(struct tmc_drvdata *drvdata, struct perf_event *event,
+ 		       int nr_pages, void **pages, bool snapshot)
+ {
+-	int node, cpu = event->cpu;
++	int node;
+ 	struct etr_buf *etr_buf;
+ 	struct etr_perf_buffer *etr_perf;
+ 
+-	if (cpu == -1)
+-		cpu = smp_processor_id();
+-	node = cpu_to_node(cpu);
++	node = (event->cpu == -1)? numa_node_id() : cpu_to_node(event->cpu);
+ 
+ 	etr_perf = kzalloc_node(sizeof(*etr_perf), GFP_KERNEL, node);
+ 	if (!etr_perf)
+-- 
+2.7.4
 
