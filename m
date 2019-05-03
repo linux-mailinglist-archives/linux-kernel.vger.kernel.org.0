@@ -2,239 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AA6127B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8578D127C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfECGXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:23:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33692 "EHLO
+        id S1726769AbfECG0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:26:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38698 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfECGXt (ORCPT
+        with ESMTP id S1725775AbfECG0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:49 -0400
+        Fri, 3 May 2019 02:26:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JMqAUqFDCfWR43uVUQqmT3XaGk1njZ/YvJJAmJYVw94=; b=mLHf4qrLqV08
-        2uNl37Uim6LlboiQr5DdCtj4NVDdKcgSA/X48Ujv3rG2DDUuKNvlGvtVvYCIxL8bIc82A7XLw7AFM
-        5RoAjME0GLpUFWix6Blcm04gedHlKexIJ+woAjZsecDOSkNTRixYExyBcWlOfLyA+yPfvDa12iY8E
-        z/q9s=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4zAV5FNZ7iSvw6XP0dpEY1QjT1Lu6JpO/I5zpIga3/M=; b=TxH1Zfhw/7v5Er9Lx6Kc5hn7A
+        mU9sO3BvY4h+O+NsPqPba3lODFPXEQMHkuH1/dssDMcGYntLx2o7cefmO3s/XPsibcKQgfmNEssTO
+        UH39HM1pCLtytOrnEb8RMlB99qafmtIOCYzb+B6AJraqCNt4ll8eitDFK5wcUDjyY/TV8=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbj-0000mB-Cg; Fri, 03 May 2019 06:23:44 +0000
+        id 1hMReR-0000qf-KN; Fri, 03 May 2019 06:26:32 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 8F88D441D59; Fri,  3 May 2019 07:23:39 +0100 (BST)
+        id D019C441D3C; Fri,  3 May 2019 07:26:26 +0100 (BST)
+Date:   Fri, 3 May 2019 15:26:26 +0900
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     James Ban <James.Ban.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>
-Subject: Applied "regulator: pv880x0: Switch to SPDX identifier" to the regulator tree
-In-Reply-To: <20190503053637.25911-1-axel.lin@ingics.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190503062339.8F88D441D59@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:23:39 +0100 (BST)
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        bjorn.andersson@linaro.org, vinod.koul@linaro.org,
+        niklas.cassel@linaro.org, khasim.mohammed@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/3] drivers: regulator: qcom: add PMS405 SPMI regulator
+Message-ID: <20190503062626.GE14916@sirena.org.uk>
+References: <a3c281d5-d30e-294f-71ab-957decde2ba0@linaro.org>
+ <20190502023316.GS14916@sirena.org.uk>
+ <dd15d784-f2a1-78c6-3543-69bbcc1143c4@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3rxX7Uty8SZY8iU1"
+Content-Disposition: inline
+In-Reply-To: <dd15d784-f2a1-78c6-3543-69bbcc1143c4@linaro.org>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: pv880x0: Switch to SPDX identifier
+--3rxX7Uty8SZY8iU1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the regulator tree at
+On Thu, May 02, 2019 at 01:30:48PM +0200, Jorge Ramirez wrote:
+> On 5/2/19 04:33, Mark Brown wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.2
+> > I'm not sure I follow here, sorry - I can see that the driver needs a
+> > custom get/set selector operation but shouldn't it be able to use the
+> > standard list and map operations for linear ranges?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> I agree it should, but unfortunately that is not the case; when I first
+> posted the patch I was concerned that for a regulator to be supported by
+> this driver it should obey to the driver's internals (ie: comply with
+> all of the spmi_common_regulator_registers definitions).
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+That's not a requirement that I'd particularly expect - it's not unusual
+for devices to have multiple different styles of regulators in a single
+chip (eg, DCDCs often have quite different register maps to LDOs).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> However, since there was just a single range to support, the
+> modifications I had to do to support this SPMI regulator were minimal -
+> hence why I opted for the changes under discussion instead of writing a
+> new driver (which IMO it is an overkill).
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> what do you think?
 
-Thanks,
-Mark
+It seems a bit of a jump to add a new driver - it's just another
+descriptor and ops structure isn't it?  Though as ever with the Qualcomm
+stuff this driver is pretty baroque which doesn't entirely help though I
+think it's just another regulator type which there's already some
+handling for.
 
-From 0ae3b061df3037e887ee6085b0bedea7f8809441 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Fri, 3 May 2019 13:36:36 +0800
-Subject: [PATCH] regulator: pv880x0: Switch to SPDX identifier
+--3rxX7Uty8SZY8iU1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Convert Powerventure Semiconductor PV88060/PV88080/PV88090 regulator
-drivers to SPDX identifier.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/pv88060-regulator.c | 18 ++++--------------
- drivers/regulator/pv88060-regulator.h | 11 +----------
- drivers/regulator/pv88080-regulator.c | 18 ++++--------------
- drivers/regulator/pv88080-regulator.h | 11 +----------
- drivers/regulator/pv88090-regulator.c | 18 ++++--------------
- drivers/regulator/pv88090-regulator.h | 11 +----------
- 6 files changed, 15 insertions(+), 72 deletions(-)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzL3xIACgkQJNaLcl1U
+h9CKXQf/Qvobc1RebHM+jpqmN1w+403J3a8AYm+cJYEEi5WdT9/tMTuFx1gdj6XZ
+K9nnzqV9352C2R/rWD3otwlV3u+HHMTQVZA5nx021V52khQJs9mNQQKxBcAO1bUp
+kou03On7TG8RlPQrCmiHr1YLb63L3WiN/m4ekWUzFwYMbe8IlqV9gNzajRg34IO2
+mh9MwIIevGkndKkrk5JTA7oJw7DGWS8lAIc/nS6m85L7K3z9QdRQKyL6gR5kTYMG
+uczLsAwmPcdyV5faFjd9Q+hFycqeE+SU5iU9yND7diDPq6p2C4NKyKDl2IFElVgA
+xfiLvU4z9kaJrlzB/K+/GBc2IB0wsQ==
+=jNk7
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
-index 810816e9df5d..3d3415839ba2 100644
---- a/drivers/regulator/pv88060-regulator.c
-+++ b/drivers/regulator/pv88060-regulator.c
-@@ -1,17 +1,7 @@
--/*
-- * pv88060-regulator.c - Regulator device driver for PV88060
-- * Copyright (C) 2015  Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// pv88060-regulator.c - Regulator device driver for PV88060
-+// Copyright (C) 2015  Powerventure Semiconductor Ltd.
- 
- #include <linux/err.h>
- #include <linux/i2c.h>
-diff --git a/drivers/regulator/pv88060-regulator.h b/drivers/regulator/pv88060-regulator.h
-index 02ca9203a172..d333dbf3be94 100644
---- a/drivers/regulator/pv88060-regulator.h
-+++ b/drivers/regulator/pv88060-regulator.h
-@@ -1,16 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * pv88060-regulator.h - Regulator definitions for PV88060
-  * Copyright (C) 2015 Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifndef __PV88060_REGISTERS_H__
-diff --git a/drivers/regulator/pv88080-regulator.c b/drivers/regulator/pv88080-regulator.c
-index 6279216fb254..a444f68af1a8 100644
---- a/drivers/regulator/pv88080-regulator.c
-+++ b/drivers/regulator/pv88080-regulator.c
-@@ -1,17 +1,7 @@
--/*
-- * pv88080-regulator.c - Regulator device driver for PV88080
-- * Copyright (C) 2016  Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// pv88080-regulator.c - Regulator device driver for PV88080
-+// Copyright (C) 2016  Powerventure Semiconductor Ltd.
- 
- #include <linux/err.h>
- #include <linux/i2c.h>
-diff --git a/drivers/regulator/pv88080-regulator.h b/drivers/regulator/pv88080-regulator.h
-index ae25ff360e3d..7d7f8f11a75a 100644
---- a/drivers/regulator/pv88080-regulator.h
-+++ b/drivers/regulator/pv88080-regulator.h
-@@ -1,16 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * pv88080-regulator.h - Regulator definitions for PV88080
-  * Copyright (C) 2016 Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifndef __PV88080_REGISTERS_H__
-diff --git a/drivers/regulator/pv88090-regulator.c b/drivers/regulator/pv88090-regulator.c
-index 90f4f907fb3f..b1d0d97ae935 100644
---- a/drivers/regulator/pv88090-regulator.c
-+++ b/drivers/regulator/pv88090-regulator.c
-@@ -1,17 +1,7 @@
--/*
-- * pv88090-regulator.c - Regulator device driver for PV88090
-- * Copyright (C) 2015  Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// pv88090-regulator.c - Regulator device driver for PV88090
-+// Copyright (C) 2015  Powerventure Semiconductor Ltd.
- 
- #include <linux/err.h>
- #include <linux/i2c.h>
-diff --git a/drivers/regulator/pv88090-regulator.h b/drivers/regulator/pv88090-regulator.h
-index 62d9029277f4..f814ee52cff3 100644
---- a/drivers/regulator/pv88090-regulator.h
-+++ b/drivers/regulator/pv88090-regulator.h
-@@ -1,16 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * pv88090-regulator.h - Regulator definitions for PV88090
-  * Copyright (C) 2015 Powerventure Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifndef __PV88090_REGISTERS_H__
--- 
-2.20.1
-
+--3rxX7Uty8SZY8iU1--
