@@ -2,82 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D67812C21
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 13:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D751F12C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 13:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbfECLPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 07:15:32 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41590 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbfECLPc (ORCPT
+        id S1727612AbfECLSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 07:18:16 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35942 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfECLSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 07:15:32 -0400
-Received: by mail-qt1-f196.google.com with SMTP id c13so6155094qtn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 04:15:31 -0700 (PDT)
+        Fri, 3 May 2019 07:18:15 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y8so4681359ljd.3;
+        Fri, 03 May 2019 04:18:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=6uSf8tT0DZd4q2CmpO4xcjrU5ZaylD6znzPnN5B+/gY=;
-        b=Netv6M0s+N151hFuFI+M5mm29Ubiz2CQMPNt0CQzHKWLKN3E+Vm3SJZ6JBnMFZNQZ8
-         ykLS/GztfeUXZo0uZcMxGEe/rKbFBkO2nMfqirLnKrZmzPSlWgmFVzW7oZ8b8K/SZQmc
-         zrWxqSkzVeaLLsuZ7ZUQ+x88KO6U2yXu19IQj+7wYk/UfNz7WnYyliM0I3VQsUhBP8/6
-         I1zufMu4TqogmFNSl41xXrsDUvho1p2XuAhQaeQWYqsEXZ85UYrTUme7wHzRu6KFtyP0
-         EZHUl+XvluWjNYL6tKf+g5tQRYk2yQmdJo+RUijT8ACq2ogjGapFdIJumbgnRlVCGgSd
-         U1KQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=eJXURNNvLCpeFBpRtJCIRPKpBboCkLnQxDdwM/tNb1U=;
+        b=KVpLdx+c0FazhIk9DysPEnyHpZz7UKLQjnFBYMUL3hpnH3EPaWzEAKirN/hvLCClVn
+         e4UaHC76lOeTmW7N+q5XgtjXchPKIU/zBJSpdzrDYHI7YfMFWs5kbTjoz1Wjl0+jamjk
+         Qga8yOqa3G/nIkLSAXu4t02rUsoyQHigekUIQfaCCy5sMhDOfAtP2h5/HNbiToW3aafw
+         QUGFht57y/Il9IW3807teHhXNZtD1l2oQUphIiGs1jVeJQ9JqylHFg6X4tBiQO5xKT7X
+         v4Zzue0kZfges4yO7xyzWYwJOk95Acv/CRvE++YZorIa4ociSuktQrODA0hR2YsrXt50
+         S6dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=6uSf8tT0DZd4q2CmpO4xcjrU5ZaylD6znzPnN5B+/gY=;
-        b=iy5p70kI3wq0YRTwp1l280d8vzP3izCfQZwOpdlvplh79Uvk2SKKXbxhQGL+jF8Gfi
-         eaWvPjbZtapnQMAfWwHVFMRwE8+rLEfO+tpAbTwiQkoJkOZHGACQEtBgl5ppoVW5/N6f
-         UhGh4O+1Ru9BNb6sQi4h+CIqy4vRCJR+4HH0Mb+vt6ozIxez0cYaF+sTeHNvCHxUdLI9
-         T9PSxyL+N20mnSJ8iUQ4bxE8AjkgqFVRBuwioqh2BXpYOJY6voOPff/fW16D+jidl8Vo
-         Emz1SrJXgeUFjJqPRYxfnTbwO9HLPGc2haio77PgIlVMmFpbFGvtHKN7EUd7c+OtPeTO
-         /DqA==
-X-Gm-Message-State: APjAAAX+CsGo3ZhTtrMCQSZMsc2wtqxBtzZrIcxwyoqzJ7NzhD8CyZhP
-        K8BJ1CaqHZIY+T0tRK2B7BdvVg+s2UtvMb2nQ2c=
-X-Google-Smtp-Source: APXvYqzz5evIAmJxmoVHFwE7OT4924+XhVKqeo0nQSZkL6zqt7ZZSUJZPA6PnOPTJSVsWoW0VM3AJA2a2vERNKjGdlU=
-X-Received: by 2002:ac8:2a0b:: with SMTP id k11mr8085552qtk.29.1556882131323;
- Fri, 03 May 2019 04:15:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:aed:22db:0:0:0:0:0 with HTTP; Fri, 3 May 2019 04:15:30 -0700 (PDT)
-Reply-To: mr.mohammedabdulah1@gmail.com
-From:   "Mr. Mohamed Abdullah" <dr.collinsbaron2@gmail.com>
-Date:   Fri, 3 May 2019 11:15:30 +0000
-Message-ID: <CAGJWiZ1uiZM1axg2EyaPavX41iyqJSj-JK_258ag6u_N6_TkBQ@mail.gmail.com>
-Subject: Investment Synergy
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eJXURNNvLCpeFBpRtJCIRPKpBboCkLnQxDdwM/tNb1U=;
+        b=ZWsrZ89yBM86UseIoHiYB3JtZrRio7l6VUvByStmMOVYhp26GsphCPkankQ4RL1fJn
+         BuHHKpRBsvLS80zo98QixV3mnvumMI52tUUGDRvDp0l5/jXaVdrutxRPZ2HfRAgD27OM
+         HUbe401+wTI88HIis+MTLRo14upOMXla8lSlYRNoiKe4fj0v8/8LHaRnSueWDadP+wFY
+         RwlGBEcvn0C9hTBfhk1FhftjboeEcDT7ruRUtxIyqNzc+Kab/a6Zv1Kv01Mdv1+C1Fcn
+         zAaqk7wAR6XV0ZMvHcFeZIms2hLPe7IywdJjDNFL2W/Z/Iqwxr1CPkDWPdlSkLzcUXPR
+         /UBg==
+X-Gm-Message-State: APjAAAXLhB1BPTGMMDz2Iwfc3aM42SMzuWx0N2uwzT3y/BcEFghfxdQt
+        p1VXoISLvVGkzIE77HLZXhFw1qBRb+A=
+X-Google-Smtp-Source: APXvYqy0gS0PHe0iNMbFopADZzUG2RCrLQDmjIP6ZigtXC4HXB/4Stinp4Bt4AXyhGYTPAXaPNpB9Q==
+X-Received: by 2002:a2e:8794:: with SMTP id n20mr5097631lji.76.1556882293173;
+        Fri, 03 May 2019 04:18:13 -0700 (PDT)
+Received: from otyshchenko.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id p19sm370795lfc.48.2019.05.03.04.18.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 03 May 2019 04:18:12 -0700 (PDT)
+From:   Oleksandr Tyshchenko <olekstysh@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     julien.grall@arm.com, horms@verge.net.au, magnus.damm@gmail.com,
+        linux@armlinux.org.uk, biju.das@bp.renesas.com,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Subject: [PATCH V2] ARM: mach-shmobile: Don't init CNTVOFF if PSCI is available
+Date:   Fri,  3 May 2019 14:17:48 +0300
+Message-Id: <1556882268-27451-1-git-send-email-olekstysh@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For your kind Attention Sir,
+From: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
 
-I am looking to work with a reputable individual/firm to engage in a
-profit oriented ventures in your country and perhaps with your
-assistance, we could get low tax rates. I have the directive of H.E
-Mohamed Abdullah former Petroleum Minister from Libya to source for
-partner abroad who can accommodate and manage $320 Million USD. The
-sums are derived from an executed project deal with Yukos Oil Company
-before the company was merged into Rosneft Oil Corporation.
+If PSCI is available then most likely we are running on PSCI-enabled
+U-Boot which, we assume, has already taken care of resetting CNTVOFF
+before switching to non-secure mode and we don't need to.
 
-If you are taking the fund directly as a company and supervise the
-total investment over there and proceeds will be shared 50/50.
-We need to maintain absolute confidentiality in the transaction as the
-fund provider want to remain silent and Hard copy of (MOU) AGREEMENT
-will be sign on our meeting.
+Also, don't init CNTVOFF if we are running on top of Xen hypervisor,
+as CNTVOFF is controlled by hypervisor itself and shouldn't be touched
+by Dom0 in such case.
 
-We shall apply for the necessary paper work required to re-profile
-your name as the recipient and also ensure payment is made via T.T
-Telegraphic Transfer to your bank account in your name. I guaranty we
-would execute this business under a legitimate arrangement without
-breach of the law.
+Signed-off-by: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+CC: Julien Grall <julien.grall@arm.com>
 
-Note: Contact me on my private EMAIL:  mr.mohammedabdulah1@gmail.com
- For further details.
+---
+   You can find previous discussion here:
+   https://lkml.org/lkml/2019/4/17/810
 
-Best Regards
-Mr M. Abdullah.
+   Changes in v2:
+      - Clarify patch subject/description
+      - Don't use CONFIG_ARM_PSCI option, check whether the PSCI is available,
+        by using psci_smp_available()
+      - Check whether we are running on top of Xen, by using xen_domain()
+---
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index eea60b2..bc8537b 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -17,7 +17,9 @@
+ #include <linux/of.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
++#include <xen/xen.h>
+ #include <asm/mach/arch.h>
++#include <asm/psci.h>
+ #include <asm/secure_cntvoff.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
+@@ -63,7 +65,16 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
+ 
+-	secure_cntvoff_init();
++	/*
++	 * If PSCI is available then most likely we are running on PSCI-enabled
++	 * U-Boot which, we assume, has already taken care of resetting CNTVOFF
++	 * before switching to non-secure mode and we don't need to.
++	 * Another check is to be sure that we are not running on top of Xen
++	 * hypervisor, as CNTVOFF is controlled by hypervisor itself and
++	 * shouldn't be touched by Dom0 in such case.
++	 */
++	if (!psci_smp_available() && !xen_domain())
++		secure_cntvoff_init();
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
+ 	    of_machine_is_compatible("renesas,r8a77470") ||
+-- 
+2.7.4
+
