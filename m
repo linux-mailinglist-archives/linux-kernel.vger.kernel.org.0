@@ -2,143 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AE512F92
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD6C12F9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfECNtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 09:49:43 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42487 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbfECNtj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 09:49:39 -0400
-Received: by mail-pl1-f193.google.com with SMTP id x15so2738278pln.9
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 06:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YbV5zA2MeNWo1HH53CUwXHZxLjGUUubpf5kENAQ1Fww=;
-        b=H5yn1xC39sPwBsUQ5J0XTmkSV9bjL93S9mGPkFTB/vh0detwjvTV64fXThu4RUOqC0
-         HhZAG5qZEtWdCBJJ50pexgIWqFvy7pyo1qlpyaSLNMvkf4gCRSX4BcpyVytSD/im5iZ1
-         eCQk23OM+5y5ILdVE+GKyBh0UgOSqK60kQZh8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YbV5zA2MeNWo1HH53CUwXHZxLjGUUubpf5kENAQ1Fww=;
-        b=GqDiIOt7/GhKPaEp0J19GIn0uqze0tme80KNFPASk5xZVemYPPjlis+gse95+e0uaV
-         tlqT1U6jK7cUZWFzIv157fnedegBh+CWDb2DXqh6c6xd+lzS2KTzvGwEEB6aClxgbJcS
-         ERFcLr0cvirQyfXmMcHVdtrfhsULQZbAsAxyj145QBDMUY5dOtxiU0+KMXOuwB1RLKJe
-         HPO+JQLF5edqvDjFsPnRdAzynnyETkSMIzDrL47DWSkUoE+BoZhEEPu9+uDVWJdmGqx4
-         IIIRbgAkksqg+SCnZhXJ8H0eZjRi5or7++Z66rigZDPI8Glwbdt+EjbrutXgJkS1S9MH
-         BsTg==
-X-Gm-Message-State: APjAAAU8eq3vzwYGyv+WDYF1+cIJQMZbTaVfuXIbrmOhXBVlYnb/nikv
-        6L2Pg9Ygky04ceY/i2M48OeQRQ==
-X-Google-Smtp-Source: APXvYqxQsBZWi9tsT/JvmLNRNM33IIB1VC3PH1gufecOj+UUiec8QQGJW1P3EWJqeqotfRxBUidUUA==
-X-Received: by 2002:a17:902:784d:: with SMTP id e13mr10589818pln.152.1556891378169;
-        Fri, 03 May 2019 06:49:38 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id z9sm2717911pga.92.2019.05.03.06.49.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 May 2019 06:49:37 -0700 (PDT)
-Date:   Fri, 3 May 2019 09:49:35 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michal Gregorczyk <michalgr@live.com>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>,
-        Mohammad Husain <russoue@gmail.com>,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        duyuchao <yuchao.du@unisoc.com>,
-        Manjo Raja Rao <linux@manojrajarao.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Tamir Carmeli <carmeli.tamir@gmail.com>,
-        Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Ziljstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC] bpf: Add support for reading user pointers
-Message-ID: <20190503134935.GA253329@google.com>
-References: <20190502204958.7868-1-joel@joelfernandes.org>
- <20190503121234.6don256zuvfjtdg6@e107158-lin.cambridge.arm.com>
+        id S1727724AbfECNxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 09:53:18 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:43502 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbfECNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 09:53:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 8FDABFB03;
+        Fri,  3 May 2019 15:53:14 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ooGTtBqEb89p; Fri,  3 May 2019 15:53:13 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id A480547CED; Fri,  3 May 2019 15:53:12 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: imx: Get iMX8MQ revision for B0 from ATF
+Date:   Fri,  3 May 2019 15:53:12 +0200
+Message-Id: <d85c6cfe79f9fc1e7761c952e29dfb2f71cff2c1.1556891520.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190503121234.6don256zuvfjtdg6@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 01:12:34PM +0100, Qais Yousef wrote:
-> Hi Joel
-> 
-> On 05/02/19 16:49, Joel Fernandes (Google) wrote:
-> > The eBPF based opensnoop tool fails to read the file path string passed
-> > to the do_sys_open function. This is because it is a pointer to
-> > userspace address and causes an -EFAULT when read with
-> > probe_kernel_read. This is not an issue when running the tool on x86 but
-> > is an issue on arm64. This patch adds a new bpf function call based
-> 
-> I just did an experiment and if I use Android 4.9 kernel I indeed fail to see
-> PATH info when running opensnoop. But if I run on 5.1-rc7 opensnoop behaves
-> correctly on arm64.
-> 
-> My guess either a limitation that was fixed on later kernel versions or Android
-> kernel has some strict option/modifications that make this fail?
+This is similar to what the BSP does and needed to e.g. determine
+necessary quirks for MIPI DSI.
 
-Thanks a lot for checking, yes I was testing 4.9 kernel with this patch (pixel 3).
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
 
-I am not sure what has changed since then, but I still think it is a good
-idea to make the code more robust against such future issues anyway. In
-particular, we learnt with extensive discussions that user/kernel pointers
-are not necessarily distinguishable purely based on their address.
+---
+From the list discussion and changelog it's not clear to me why a
+different method was chosen for the B1 silicon so I left that in place
+as is and only trigger on the B0 silicon I have here.
+---
+ drivers/soc/imx/soc-imx8.c | 49 ++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 12 deletions(-)
 
-I hope agree this is an issue we need to fix.
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index fc6429f9170a..363acd1151ee 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -3,6 +3,7 @@
+  * Copyright 2019 NXP.
+  */
+ 
++#include <linux/arm-smccc.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/of_address.h>
+@@ -11,16 +12,37 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ 
++#define REV_B0				0x20
+ #define REV_B1				0x21
+ 
++#define IMX8MQ_ATF_GET_SOC_INFO		0xc2000006
+ #define IMX8MQ_SW_INFO_B1		0x40
+ #define IMX8MQ_SW_MAGIC_B1		0xff0055aa
+ 
++
+ struct imx8_soc_data {
+ 	char *name;
+ 	u32 (*soc_revision)(void);
+ };
+ 
++
++static u32 __init imx8mq_soc_revision_from_atf(void)
++{
++	struct arm_smccc_res res;
++	u32 digprog;
++
++	arm_smccc_smc(IMX8MQ_ATF_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
++	digprog = res.a0;
++	/*
++	 * Bit [23:16] is the silicon ID
++	 * Bit[7:4] is the base layer revision,
++	 * Bit[3:0] is the metal layer revision
++	 * e.g. 0x10 stands for Tapeout 1.0
++	 */
++	return digprog & 0xff;
++}
++
++
+ static u32 __init imx8mq_soc_revision(void)
+ {
+ 	struct device_node *np;
+@@ -29,20 +51,23 @@ static u32 __init imx8mq_soc_revision(void)
+ 	u32 rev = 0;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
+-	if (!np)
+-		goto out;
+-
+-	ocotp_base = of_iomap(np, 0);
+-	WARN_ON(!ocotp_base);
+-
+-	magic = readl_relaxed(ocotp_base + IMX8MQ_SW_INFO_B1);
+-	if (magic == IMX8MQ_SW_MAGIC_B1)
+-		rev = REV_B1;
+-
+-	iounmap(ocotp_base);
++	if (np) {
++		ocotp_base = of_iomap(np, 0);
++		WARN_ON(!ocotp_base);
++
++		magic = readl_relaxed(ocotp_base + IMX8MQ_SW_INFO_B1);
++		iounmap(ocotp_base);
++		of_node_put(np);
++		if (magic == IMX8MQ_SW_MAGIC_B1)
++			rev = REV_B1;
++	}
+ 
++	if (!rev) {
++		magic = imx8mq_soc_revision_from_atf();
++		if (magic == REV_B0)
++			rev = REV_B0;
++	}
+ out:
+-	of_node_put(np);
+ 	return rev;
+ }
+ 
+-- 
+2.20.1
 
-See these discussions:
-
-https://lkml.kernel.org/r/20190220171019.5e81a4946b56982f324f7c45@kernel.org
-https://lore.kernel.org/lkml/20190220171019.5e81a4946b56982f324f7c45@kernel.org/T/#mf81816dbfe25ac5d0e96fbab029050e892f73af2
-
-thanks,
-
- - Joel
-
-> root@buildroot:/# uname -a
-> Linux buildroot 5.1.0-rc7-00164-ga00214620959-dirty #41 SMP PREEMPT Thu May 2 16:33:00 BST 2019 aarch64 GNU/Linux
-> root@buildroot:/# opensnoop
-> PID    COMM               FD ERR PATH
-> 5180   default.script     -1   2 /etc/ld.so.cache
-> 5180   default.script     -1   2 /lib/tls/v8l/neon/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/v8l/neon/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/v8l/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/v8l/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/neon/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/neon/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/tls/libresolv.so.2
-> 5180   default.script     -1   2 /lib/v8l/neon/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/v8l/neon/libresolv.so.2
-> 5180   default.script     -1   2 /lib/v8l/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/v8l/libresolv.so.2
-> 5180   default.script     -1   2 /lib/neon/vfp/libresolv.so.2
-> 5180   default.script     -1   2 /lib/neon/libresolv.so.2
-> 5180   default.script     -1   2 /lib/vfp/libresolv.so.2
-> 5180   default.script      3   0 /lib/libresolv.so.2
-> 5180   default.script      3   0 /lib/libc.so.6
-> 5180   default.script      3   0 /usr/share/udhcpc/default.script
-> 5180   default.script      3   0 /usr/share/udhcpc/default.script.d/
-> 
-> 
-> 
-> 
-> --
-> Qais Yousef
