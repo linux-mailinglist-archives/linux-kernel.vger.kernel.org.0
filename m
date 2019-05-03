@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F7F127B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D5F127BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfECGXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:23:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33542 "EHLO
+        id S1727119AbfECGYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:24:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33808 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfECGXp (ORCPT
+        with ESMTP id S1727042AbfECGXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:45 -0400
+        Fri, 3 May 2019 02:23:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=dr8iiJcg2+vpOn+Dy6n/2x3VLOxcn420oALuCMcHAYQ=; b=oo7cmxh/aAbY
-        yFTodeg2dACxq6SzaOR7x8TSv9dNbo8qaZ4Zx18EwuSjbM/rxsKJzP44h0A2cQzlxm7L+qrgurwMs
-        XpyeF1OksuLD69JJACWUlFBwLuGH0P7uXG7lG+lOHU90O1mVF3kmzu4d9LB2+dU4p3PoHBSAFq7Gw
-        m+TdM=;
+        List-Archive; bh=Gkp2AltP4W1gkJLI9fh3u2b0qzsdnHwlasfeXfRpDcw=; b=jYjeS82pd8Mp
+        F5A9px8eGs40NFiTwq0OmPffyo1Sr2ddjiGy4xleOeHZClwIyP7RSgSELlqcjojAeSvMOiXehqtA6
+        gGvLvSQzjx79aHUMK83zxk6l3GOspmHjD3hlpe+xIq0RacRZICZxat+7u2hgZwYUYSAAzsoLjjMwm
+        oXhHQ=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbg-0000l4-Fc; Fri, 03 May 2019 06:23:41 +0000
+        id 1hMRbh-0000lU-Iv; Fri, 03 May 2019 06:23:41 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id B373E441D3E; Fri,  3 May 2019 07:23:36 +0100 (BST)
+        id D06EA441D56; Fri,  3 May 2019 07:23:37 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     James Ban <James.Ban.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>
-Subject: Applied "regulator: da9xxx: Switch to SPDX identifier" to the regulator tree
-In-Reply-To: <20190503053637.25911-2-axel.lin@ingics.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Pascal Paillet <p.paillet@st.com>
+Subject: Applied "regulator: stm32-pwr: Remove unneeded *desc from struct stm32_pwr_reg" to the regulator tree
+In-Reply-To: <20190430111346.23427-1-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062336.B373E441D3E@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:23:36 +0100 (BST)
+Message-Id: <20190503062337.D06EA441D56@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:23:37 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: da9xxx: Switch to SPDX identifier
+   regulator: stm32-pwr: Remove unneeded *desc from struct stm32_pwr_reg
 
 has been applied to the regulator tree at
 
@@ -72,243 +71,67 @@ to this mail.
 Thanks,
 Mark
 
-From fd2f02f9724c416221b42af95e1a7a57fa42d681 Mon Sep 17 00:00:00 2001
+From 7bcbdbe01fa82712f8fece2a07ea30758b76403d Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Fri, 3 May 2019 13:36:37 +0800
-Subject: [PATCH] regulator: da9xxx: Switch to SPDX identifier
+Date: Tue, 30 Apr 2019 19:13:45 +0800
+Subject: [PATCH] regulator: stm32-pwr: Remove unneeded *desc from struct
+ stm32_pwr_reg
 
-Convert Dialog Semiconductor DA9xxx regulator drivers to SPDX identifier.
+Just use rdev->desc instead.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/da903x.c           | 16 ++++++----------
- drivers/regulator/da9052-regulator.c | 20 +++++++-------------
- drivers/regulator/da9055-regulator.c | 20 +++++++-------------
- drivers/regulator/da9062-regulator.c | 19 +++++--------------
- drivers/regulator/da9210-regulator.c | 23 ++++-------------------
- drivers/regulator/da9210-regulator.h | 17 +----------------
- drivers/regulator/da9211-regulator.c | 20 +++++---------------
- drivers/regulator/da9211-regulator.h | 11 +----------
- 8 files changed, 36 insertions(+), 110 deletions(-)
+ drivers/regulator/stm32-pwr.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/da903x.c b/drivers/regulator/da903x.c
-index 33e8f3b8d2bd..5493c3a86426 100644
---- a/drivers/regulator/da903x.c
-+++ b/drivers/regulator/da903x.c
-@@ -1,13 +1,9 @@
--/*
-- * Regulators driver for Dialog Semiconductor DA903x
-- *
-- * Copyright (C) 2006-2008 Marvell International Ltd.
-- * Copyright (C) 2008 Compulab Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Regulators driver for Dialog Semiconductor DA903x
-+//
-+// Copyright (C) 2006-2008 Marvell International Ltd.
-+// Copyright (C) 2008 Compulab Ltd.
+diff --git a/drivers/regulator/stm32-pwr.c b/drivers/regulator/stm32-pwr.c
+index 7b39a41530d4..8bd15e4d2cea 100644
+--- a/drivers/regulator/stm32-pwr.c
++++ b/drivers/regulator/stm32-pwr.c
+@@ -40,7 +40,6 @@ static u32 ready_mask_table[STM32PWR_REG_NUM_REGS] = {
  
- #include <linux/kernel.h>
- #include <linux/init.h>
-diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9052-regulator.c
-index b90a7ac3f3de..e18d291c7f21 100644
---- a/drivers/regulator/da9052-regulator.c
-+++ b/drivers/regulator/da9052-regulator.c
-@@ -1,16 +1,10 @@
--/*
--* da9052-regulator.c: Regulator driver for DA9052
--*
--* Copyright(c) 2011 Dialog Semiconductor Ltd.
--*
--* Author: David Dajun Chen <dchen@diasemi.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License as published by
--* the Free Software Foundation; either version 2 of the License, or
--* (at your option) any later version.
--*
--*/
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// da9052-regulator.c: Regulator driver for DA9052
-+//
-+// Copyright(c) 2011 Dialog Semiconductor Ltd.
-+//
-+// Author: David Dajun Chen <dchen@diasemi.com>
+ struct stm32_pwr_reg {
+ 	void __iomem *base;
+-	const struct regulator_desc *desc;
+ 	u32 ready_mask;
+ };
  
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
-index bcbc2fbd7fea..c025ccb1a30a 100644
---- a/drivers/regulator/da9055-regulator.c
-+++ b/drivers/regulator/da9055-regulator.c
-@@ -1,16 +1,10 @@
--/*
--* Regulator driver for DA9055 PMIC
--*
--* Copyright(c) 2012 Dialog Semiconductor Ltd.
--*
--* Author: David Dajun Chen <dchen@diasemi.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License as published by
--* the Free Software Foundation; either version 2 of the License, or
--* (at your option) any later version.
--*
--*/
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Regulator driver for DA9055 PMIC
-+//
-+// Copyright(c) 2012 Dialog Semiconductor Ltd.
-+//
-+// Author: David Dajun Chen <dchen@diasemi.com>
+@@ -61,7 +60,7 @@ static int stm32_pwr_reg_is_enabled(struct regulator_dev *rdev)
  
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
-index a7d929b7776a..a02e0488410f 100644
---- a/drivers/regulator/da9062-regulator.c
-+++ b/drivers/regulator/da9062-regulator.c
-@@ -1,17 +1,8 @@
--/*
-- * Regulator device driver for DA9061 and DA9062.
-- * Copyright (C) 2015-2017  Dialog Semiconductor
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Regulator device driver for DA9061 and DA9062.
-+// Copyright (C) 2015-2017  Dialog Semiconductor
-+
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/drivers/regulator/da9210-regulator.c b/drivers/regulator/da9210-regulator.c
-index 528303771723..f9448ed50e05 100644
---- a/drivers/regulator/da9210-regulator.c
-+++ b/drivers/regulator/da9210-regulator.c
-@@ -1,22 +1,7 @@
--/*
-- * da9210-regulator.c - Regulator device driver for DA9210
-- * Copyright (C) 2013  Dialog Semiconductor Ltd.
-- *
-- * This library is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Library General Public
-- * License as published by the Free Software Foundation; either
-- * version 2 of the License, or (at your option) any later version.
-- *
-- * This library is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * Library General Public License for more details.
-- *
-- * You should have received a copy of the GNU Library General Public
-- * License along with this library; if not, write to the
-- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
-- * Boston, MA  02110-1301, USA.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// da9210-regulator.c - Regulator device driver for DA9210
-+// Copyright (C) 2013  Dialog Semiconductor Ltd.
+ 	val = readl_relaxed(priv->base + REG_PWR_CR3);
  
- #include <linux/err.h>
- #include <linux/i2c.h>
-diff --git a/drivers/regulator/da9210-regulator.h b/drivers/regulator/da9210-regulator.h
-index 749c550808b6..b1f1a607c208 100644
---- a/drivers/regulator/da9210-regulator.h
-+++ b/drivers/regulator/da9210-regulator.h
-@@ -1,22 +1,7 @@
--
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * da9210-regulator.h - Regulator definitions for DA9210
-  * Copyright (C) 2013  Dialog Semiconductor Ltd.
-- *
-- * This library is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Library General Public
-- * License as published by the Free Software Foundation; either
-- * version 2 of the License, or (at your option) any later version.
-- *
-- * This library is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * Library General Public License for more details.
-- *
-- * You should have received a copy of the GNU Library General Public
-- * License along with this library; if not, write to the
-- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
-- * Boston, MA  02110-1301, USA.
-  */
+-	return (val & priv->desc->enable_mask);
++	return (val & rdev->desc->enable_mask);
+ }
  
- #ifndef __DA9210_REGISTERS_H__
-diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
-index 4d7fe4819c1c..da37b4ccd834 100644
---- a/drivers/regulator/da9211-regulator.c
-+++ b/drivers/regulator/da9211-regulator.c
-@@ -1,18 +1,8 @@
--/*
-- * da9211-regulator.c - Regulator device driver for DA9211/DA9212
-- * /DA9213/DA9223/DA9214/DA9224/DA9215/DA9225
-- * Copyright (C) 2015  Dialog Semiconductor Ltd.
-- *
-- * This library is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Library General Public
-- * License as published by the Free Software Foundation; either
-- * version 2 of the License, or (at your option) any later version.
-- *
-- * This library is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * Library General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// da9211-regulator.c - Regulator device driver for DA9211/DA9212
-+// /DA9213/DA9223/DA9214/DA9224/DA9215/DA9225
-+// Copyright (C) 2015  Dialog Semiconductor Ltd.
+ static int stm32_pwr_reg_enable(struct regulator_dev *rdev)
+@@ -71,7 +70,7 @@ static int stm32_pwr_reg_enable(struct regulator_dev *rdev)
+ 	u32 val;
  
- #include <linux/err.h>
- #include <linux/i2c.h>
-diff --git a/drivers/regulator/da9211-regulator.h b/drivers/regulator/da9211-regulator.h
-index 2cb32aab4f82..1201e7cc056c 100644
---- a/drivers/regulator/da9211-regulator.h
-+++ b/drivers/regulator/da9211-regulator.h
-@@ -1,17 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * da9211-regulator.h - Regulator definitions for DA9211/DA9212
-  * /DA9213/DA9223/DA9214/DA9224/DA9215/DA9225
-  * Copyright (C) 2015  Dialog Semiconductor Ltd.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
+ 	val = readl_relaxed(priv->base + REG_PWR_CR3);
+-	val |= priv->desc->enable_mask;
++	val |= rdev->desc->enable_mask;
+ 	writel_relaxed(val, priv->base + REG_PWR_CR3);
  
- #ifndef __DA9211_REGISTERS_H__
+ 	/* use an arbitrary timeout of 20ms */
+@@ -90,7 +89,7 @@ static int stm32_pwr_reg_disable(struct regulator_dev *rdev)
+ 	u32 val;
+ 
+ 	val = readl_relaxed(priv->base + REG_PWR_CR3);
+-	val &= ~priv->desc->enable_mask;
++	val &= ~rdev->desc->enable_mask;
+ 	writel_relaxed(val, priv->base + REG_PWR_CR3);
+ 
+ 	/* use an arbitrary timeout of 20ms */
+@@ -153,7 +152,6 @@ static int stm32_pwr_regulator_probe(struct platform_device *pdev)
+ 		if (!priv)
+ 			return -ENOMEM;
+ 		priv->base = base;
+-		priv->desc = &stm32_pwr_desc[i];
+ 		priv->ready_mask = ready_mask_table[i];
+ 		config.driver_data = priv;
+ 
 -- 
 2.20.1
 
