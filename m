@@ -2,141 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA3AF13505
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 23:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343BC134FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 23:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfECVvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 17:51:39 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43880 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfECVvj (ORCPT
+        id S1726573AbfECVqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 17:46:18 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36037 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfECVqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 17:51:39 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u27so5118633lfg.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 14:51:38 -0700 (PDT)
+        Fri, 3 May 2019 17:46:18 -0400
+Received: by mail-oi1-f195.google.com with SMTP id l203so5576959oia.3;
+        Fri, 03 May 2019 14:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OHPmorpbDxR0+1cD6Wtpm6wssS7c1TjAnKQ3VKbd0q0=;
-        b=GaGzUULhqjMmt9UB2McFPzy2KoE/vIFjOEPyZeAs9LRhzauYSNsf4aU/gnQ5NxPU7J
-         78zVHJUH87faGstKDBEUoXudrE+Qtbp+EbYiXzb8OH5UHhhrvTdjAblZfz0SoEfmZTLA
-         matHI53RRosv8whVcU1MDV9SaOQjdTK4xIaJU=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bo6sBLi3JhZAeEGfciYpjSPPKO3J0vi9Fr74oujyIxM=;
+        b=dXmPRn8cGAUoI3psj7jsrfYRmNyQlr9nugok5pw67O96fswh4EZKHlSCd5l2t3mxDW
+         GIIx+NsacBXQIHSvOv6nxChU2gnE/1xuLI9a4I031+0/oRmeeKVHDBuCG1kfa+7ll8/i
+         1fMYG1RnaJ64ONwWeSYfIzWW3W7q6ld6WIAtpwp01wiu9T+UDLOyrEBr53EE1ZEUhVS4
+         Pp70k443jj/lsuDKVWoIrakwT9QDzsBYZZpg0HQulVUPNrajWD/iv2ES7027bn2wTG/B
+         lQub0R0n7U/z7jtsUnq//ie8qptebqLLlF3mL6PDNVPSWiAiHTagNulxB7bIEPnI71Ga
+         ah2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OHPmorpbDxR0+1cD6Wtpm6wssS7c1TjAnKQ3VKbd0q0=;
-        b=Y/ddUWq/fRC0TSpq9RP9DOeL59BxPWpKy5qDheU8qDeiS2MioBiY9wIDSkyZCuSgOn
-         RiYeI6grza19IJb60XVHDB468AO4LjUQr6qpjvL5T85Jg8QzY5D521K9TyBe9pZT1PKP
-         sf2Nd7KjnEK5lg+ROloBtSn5A/nqK87xuraEhmnh5qQeeJd2MXiplLAO54wDoXPk9/fp
-         yygsgmd2ATLmM15/7WBJOYy3Be/PPtdmMZos5ajNX9ZKLCwkIXVHBpnc4rYivOhhMyqt
-         okblbsWXGjQA5j8JP4GynrYdLV+z7nBDqyKsLUe76aEomv6geBE5V8ff/68HiQLlIo1e
-         p7zA==
-X-Gm-Message-State: APjAAAVUF7xTnnUYyKntf5OSuYh5mysjjAoG2E3fycYUoLcRCNrpuCQW
-        2EXW5oPAtKzIL73XvmL2qiKvzN++hTU=
-X-Google-Smtp-Source: APXvYqxb4yd7t8urzNEMNOzTgL8h9fB8PWCgCTFX3zSt59lmdZpMc1iyN85E/gYc3Y/nk3XHBdSvqA==
-X-Received: by 2002:ac2:5501:: with SMTP id j1mr6202061lfk.89.1556920296907;
-        Fri, 03 May 2019 14:51:36 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id u11sm95702lfb.60.2019.05.03.14.51.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 14:51:36 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id h126so5391604lfh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 14:51:36 -0700 (PDT)
-X-Received: by 2002:a19:ca02:: with SMTP id a2mr6303975lfg.88.1556919987963;
- Fri, 03 May 2019 14:46:27 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Bo6sBLi3JhZAeEGfciYpjSPPKO3J0vi9Fr74oujyIxM=;
+        b=a+TAy9TwEqQOTKbo4JYoNcSp7OVuRf/Is3tjrbj8uDoobFNJrBiGuMCfCE/mS8DnbR
+         h0jFiHGj2rrpRk6VaWOVDSYDikeO7vrngBDQlAcWknTdi7zEx/0GDbyJCZ9V+eMsF3WZ
+         WNX1OxoFVtOdfDnRaSi4RWivdVGDxPCUNsCSUCbE86woQeKDGB6mfTKbdzEHnuuCLwO8
+         xEbBBlJz9cc3Y/Hjc/p19GH/JXS7CXjAegxIiXunZ1FW1Cbva+VR/R4HTGAR6fm4DxBH
+         JIUEF3Q4PKGaN1IfHTbt7YKpiFSPp8EYJ4FA/eC4Ge9AGOl3h1SQsaEvFN0vohELtbOF
+         WoKg==
+X-Gm-Message-State: APjAAAVHT9gQBGhI8eujUEvOCdbcxP3Zr0XhrcsMGEIy0OXs1HW84g3y
+        mu2pobXxlkxqPw+HK2TYHLc=
+X-Google-Smtp-Source: APXvYqzovcMs75Fs3FQhGnu/IWyqyV5NiI8nTjwqxe3xd3H8UcGq6HBR7Ex64AkJiwwIBnIG4cdwzg==
+X-Received: by 2002:aca:5046:: with SMTP id e67mr600074oib.115.1556919976896;
+        Fri, 03 May 2019 14:46:16 -0700 (PDT)
+Received: from localhost.localdomain ([23.92.204.198])
+        by smtp.gmail.com with ESMTPSA id h129sm1388633oia.12.2019.05.03.14.46.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 May 2019 14:46:16 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@kernel.org,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for 5.1-rc8 or final
+Date:   Fri,  3 May 2019 15:46:14 -0600
+Message-Id: <20190503214614.21250-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190501202830.347656894@goodmis.org> <20190501203152.397154664@goodmis.org>
- <20190501232412.1196ef18@oasis.local.home> <20190502162133.GX2623@hirez.programming.kicks-ass.net>
- <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
- <20190502181811.GY2623@hirez.programming.kicks-ass.net> <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
- <20190502202146.GZ2623@hirez.programming.kicks-ass.net> <CAHk-=wh8bi5c_GkyjPtDAiaXaZRqtmhWs30usUvs4qK_F+c9tg@mail.gmail.com>
- <20190503152405.2d741af8@gandalf.local.home>
-In-Reply-To: <20190503152405.2d741af8@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 May 2019 14:46:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiA-WbrFrDs-kOfJZMXy4zMo9-SZfk=7B-GfmBJ866naw@mail.gmail.com>
-Message-ID: <CAHk-=wiA-WbrFrDs-kOfJZMXy4zMo9-SZfk=7B-GfmBJ866naw@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 12:24 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> The problem with this approach is that it would require doing the same
-> for x86_64, as the int3 C code is the same for both. And that may be a
-> bit more difficult on the x86_64 side because it's all done with a
-> simple flag in the idtentry macro to add the gap.
+Linus,
 
-That argument is weakened by the fact that we have to do _other_
-things differently on 32-bit and 64-bit anyway.
+The following changes since commit 7a223e06b1a411cef6c4cd7a9b9a33c8d225b10e:
 
-So we might as well have a "on 32-bit, the call emulation needs to
-move the pt_regs to make space" special case in the call emulation
-code. It's very easy to explain why.
+  KVM: x86: avoid misreporting level-triggered irqs as edge-triggered in tracing (2019-04-16 15:38:08 +0200)
 
-And then we'd limit the special case to where it matters (with a big
-comment about what's going on), rather than adding random special case
-handling to random _other_ places.
+are available in the Git repository at:
 
-Having to add s magic special case to "kernel_stack_pointer() is
-certainly not obvious. Neither is adding magic special cases to system
-call exit paths etc.
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-This has been why I've been arguing against the entry code changes.
-Exactly because they tend to have these kind of odd cascading effects.
-The entry code is fragile not just because it's a complex hardware
-interface, but also because we know about those complex hardware
-interfaces in random other places.
+for you to fetch changes up to e8ab8d24b488632d07ce5ddb261f1d454114415b:
 
-I'd much rather have the code that does special things be in one
-place, and be the place that *needs* to do the special thing. If we
-copy the pt_regs around when we do the "call" emulation, it's *really*
-easy to explain *exactly* what we're doing and why in *exactly* that
-one context where we are doing it. And it won't affect anything else,
-and our existing code that looks at pt_regs will work both before and
-after.
+  KVM: nVMX: Fix size checks in vmx_set_nested_state (2019-05-01 00:43:44 +0200)
 
-Would it need a #ifdef CONFIG_X86_32 around it because it's not needed
-on x86-64? Sure. But that #ifdef would be right there, and the comment
-that explains why the pt_regs need to be moved would also make it very
-obvious why it is only needed for x86-32.
+----------------------------------------------------------------
+* PPC and ARM bugfixes from submaintainers
+* Fix old Windows versions on AMD (recent regression)
+* Fix old Linux versions on processors without EPT
+* Fixes for LAPIC timer optimizations
 
-There's a lot of advantages to keeping your problems localized,
-instead of letting your random hacks escape and become problems for
-other, entirely unrelated, code.
+----------------------------------------------------------------
+Alexey Kardashevskiy (1):
+      KVM: PPC: Book3S: Protect memslots while validating user address
 
-                Linus
+Andrew Jones (2):
+      KVM: arm/arm64: Ensure vcpu target is unset on reset failure
+      Documentation: kvm: fix dirty log ioctl arch lists
+
+Christoffer Dall (1):
+      KVM: arm/arm64: Don't emulate virtual timers on userspace ioctls
+
+Jim Mattson (1):
+      KVM: nVMX: Fix size checks in vmx_set_nested_state
+
+Liran Alon (1):
+      KVM: x86: Consider LAPIC TSC-Deadline timer expired if deadline too short
+
+Marc Zyngier (1):
+      KVM: arm/arm64: vgic-v3: Retire pending interrupts on disabling LPIs
+
+Paolo Bonzini (3):
+      Merge tag 'kvm-ppc-fixes-5.1-1' of git://git.kernel.org/.../paulus/powerpc into HEAD
+      KVM: fix KVM_CLEAR_DIRTY_LOG for memory slots of unaligned size
+      Merge tag 'kvmarm-fixes-for-5.1-2' of git://git.kernel.org/.../kvmarm/kvmarm into kvm-master
+
+Rick Edgecombe (1):
+      KVM: VMX: Move RSB stuffing to before the first RET after VM-Exit
+
+Sean Christopherson (6):
+      KVM: lapic: Disable timer advancement if adaptive tuning goes haywire
+      KVM: lapic: Track lapic timer advance per vCPU
+      KVM: lapic: Allow user to disable adaptive tuning of timer advancement
+      KVM: lapic: Convert guest TSC to host time domain if necessary
+      KVM: x86: Whitelist port 0x7e for pre-incrementing %rip
+      KVM: lapic: Check for in-kernel LAPIC before deferencing apic pointer
+
+Suraj Jitindar Singh (1):
+      KVM: PPC: Book3S HV: Perserve PSSCR FAKE_SUSPEND bit on guest exit
+
+Suzuki K Poulose (1):
+      kvm: arm: Skip stage2 huge mappings for unaligned ipa backed by THP
+
+Vitaly Kuznetsov (3):
+      x86: kvm: hyper-v: deal with buggy TLB flush requests from WS2012
+      x86/kvm/mmu: reset MMU context when 32-bit guest switches PAE
+      KVM: selftests: make hyperv_cpuid test pass on AMD
+
+Wei Huang (1):
+      KVM: arm/arm64: arch_timer: Fix CNTP_TVAL calculation
+
+ Documentation/virtual/kvm/api.txt                 | 11 ++--
+ arch/powerpc/kvm/book3s_64_vio.c                  |  6 +-
+ arch/powerpc/kvm/book3s_hv.c                      |  4 +-
+ arch/x86/include/asm/kvm_host.h                   |  1 +
+ arch/x86/include/uapi/asm/kvm.h                   |  1 +
+ arch/x86/kvm/hyperv.c                             | 11 +++-
+ arch/x86/kvm/lapic.c                              | 73 ++++++++++++++++-------
+ arch/x86/kvm/lapic.h                              |  4 +-
+ arch/x86/kvm/mmu.c                                |  1 +
+ arch/x86/kvm/vmx/nested.c                         |  4 +-
+ arch/x86/kvm/vmx/vmenter.S                        | 12 ++++
+ arch/x86/kvm/vmx/vmx.c                            |  7 +--
+ arch/x86/kvm/x86.c                                | 36 ++++++++---
+ arch/x86/kvm/x86.h                                |  2 -
+ tools/testing/selftests/kvm/dirty_log_test.c      |  9 ++-
+ tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c |  9 ++-
+ virt/kvm/arm/arch_timer.c                         | 17 +++---
+ virt/kvm/arm/arm.c                                | 11 +++-
+ virt/kvm/arm/mmu.c                                |  6 +-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  |  3 +
+ virt/kvm/arm/vgic/vgic.c                          | 21 +++++++
+ virt/kvm/arm/vgic/vgic.h                          |  1 +
+ virt/kvm/kvm_main.c                               |  7 ++-
+ 23 files changed, 192 insertions(+), 65 deletions(-)
