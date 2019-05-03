@@ -2,145 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE719135C1
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC3F9135D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfECWn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 18:43:59 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39435 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfECWnu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 18:43:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e92so3355290plb.6;
-        Fri, 03 May 2019 15:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HM8iB4CzObwG2SEPGqDToLb7gQBrHKKFyiCMsrsHU3Y=;
-        b=mm7sdVx6f2OEyOlk42Jw8HFX6fxKqEPe3irB1UsEQqPzp89d3+kSzdDq0fWSWwBHyf
-         duXJdPyZEtNdgrPv+ip2oSYATqkxMXonj3AAcXPMQhLlqrhtdYoniWGsdxc7MhZfxMut
-         gNmpGrwtDJaqEYrc3MB7yjckdLdkHSDdabxra8tlNP5hbeL8Hx7BxBuVZCVibXlKdQdE
-         HA/Y6kVC9sh4/Miq+EYQvT/ltxs5hMm58GwVVL361XmOaquZtiz3Ens5Zy8VieGaK/z8
-         mnK5WcVN0tjmj+0AKTLtGlh7nDy1VluqQVWgy/zjFncgIhbTjrbRJSFazUebMPUkfvSq
-         9WVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HM8iB4CzObwG2SEPGqDToLb7gQBrHKKFyiCMsrsHU3Y=;
-        b=rignVnVDv+CvSZLzDnB2Z4heiYaKCC3X53722yiyG7oFtX0rhR0P7iW+j9Qv5GGJF8
-         vTguiuycIMXCtp9URBi6U8UBfZbKe5gxvrGs9T9rCibHQ45yEjPUq44egVaQFxRKvNVJ
-         yhKiRBdu9l9FoLE4ZZyKrsTwwbeu+IYdRdigbJbBnV6dtCGUkYg8oskY+eq3UF344XnQ
-         2l9mHnGi7MH/+/o3O52i3KTcjRKPE1hmnyk4DwLsZNFJBGagr2+vIyYbfJhi3JGBdms1
-         cHnA4Bu2Mw+LubN5oGkqsUNWdvqbJQK3h4DmWHsUP4nTvBvPkpwnfwabzGfsA9kbY5QM
-         AGKw==
-X-Gm-Message-State: APjAAAX2CTYymk3VvuWme/m8Y+pNax+v+F4EWcvSqKrxQw9xqNZfsV50
-        sbuX4jH6kq1sfoKN8a5kEGDMEPdc
-X-Google-Smtp-Source: APXvYqwLjaVOhyMKWnhVjw4/hXIu+HbUJy3eNp9/wbSTaU7dfZGxnJdwBqHfrpl5viIUsQ79HxXQlw==
-X-Received: by 2002:a17:902:1e2:: with SMTP id b89mr13646101plb.278.1556923428992;
-        Fri, 03 May 2019 15:43:48 -0700 (PDT)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id e62sm4793871pfa.50.2019.05.03.15.43.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 15:43:48 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 8/8] media: staging/imx: Don't set driver data for v4l2_dev
-Date:   Fri,  3 May 2019 15:43:26 -0700
-Message-Id: <20190503224326.21039-9-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190503224326.21039-1-slongerbeam@gmail.com>
-References: <20190503224326.21039-1-slongerbeam@gmail.com>
+        id S1726444AbfECWtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 18:49:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726041AbfECWtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 18:49:24 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94391206DF;
+        Fri,  3 May 2019 22:49:20 +0000 (UTC)
+Date:   Fri, 3 May 2019 18:49:19 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call
+ functions
+Message-ID: <20190503184919.2b7ef242@gandalf.local.home>
+In-Reply-To: <CAHk-=wiA-WbrFrDs-kOfJZMXy4zMo9-SZfk=7B-GfmBJ866naw@mail.gmail.com>
+References: <20190501202830.347656894@goodmis.org>
+        <20190501203152.397154664@goodmis.org>
+        <20190501232412.1196ef18@oasis.local.home>
+        <20190502162133.GX2623@hirez.programming.kicks-ass.net>
+        <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
+        <20190502181811.GY2623@hirez.programming.kicks-ass.net>
+        <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
+        <20190502202146.GZ2623@hirez.programming.kicks-ass.net>
+        <CAHk-=wh8bi5c_GkyjPtDAiaXaZRqtmhWs30usUvs4qK_F+c9tg@mail.gmail.com>
+        <20190503152405.2d741af8@gandalf.local.home>
+        <CAHk-=wiA-WbrFrDs-kOfJZMXy4zMo9-SZfk=7B-GfmBJ866naw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The media device is already available via multiple methods, there is no
-need to set driver data for v4l2_dev to the media device.
+On Fri, 3 May 2019 14:46:11 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-In imx_media_link_notify(), get media device from link->graph_obj.mdev.
+> On Fri, May 3, 2019 at 12:24 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > The problem with this approach is that it would require doing the same
+> > for x86_64, as the int3 C code is the same for both. And that may be a
+> > bit more difficult on the x86_64 side because it's all done with a
+> > simple flag in the idtentry macro to add the gap.  
+> 
+> That argument is weakened by the fact that we have to do _other_
+> things differently on 32-bit and 64-bit anyway.
+> 
+> So we might as well have a "on 32-bit, the call emulation needs to
+> move the pt_regs to make space" special case in the call emulation
+> code. It's very easy to explain why.
 
-In imx_media_capture_device_register(), get media device from
-v4l2_dev->mdev.
+So if I understand correctly what you are implying, is to have the int3
+code be different for 32 bit and 64 bit? This would require handling
+text_poke, ftrace and kprobes differently for the two. Or perhaps we
+can build hacks on top.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
----
- drivers/staging/media/imx/imx-media-capture.c    | 5 +++--
- drivers/staging/media/imx/imx-media-dev-common.c | 7 ++-----
- 2 files changed, 5 insertions(+), 7 deletions(-)
+> 
+> And then we'd limit the special case to where it matters (with a big
+> comment about what's going on), rather than adding random special case
+> handling to random _other_ places.
+> 
+> Having to add s magic special case to "kernel_stack_pointer() is
+> certainly not obvious. Neither is adding magic special cases to system
+> call exit paths etc.
 
-diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-index 8a908c3e5e60..ea7f2decfc16 100644
---- a/drivers/staging/media/imx/imx-media-capture.c
-+++ b/drivers/staging/media/imx/imx-media-capture.c
-@@ -735,15 +735,16 @@ int imx_media_capture_device_register(struct imx_media_video_dev *vdev)
- {
- 	struct capture_priv *priv = to_capture_priv(vdev);
- 	struct v4l2_subdev *sd = priv->src_sd;
-+	struct v4l2_device *v4l2_dev = sd->v4l2_dev;
- 	struct video_device *vfd = vdev->vfd;
- 	struct vb2_queue *vq = &priv->q;
- 	struct v4l2_subdev_format fmt_src;
- 	int ret;
- 
- 	/* get media device */
--	priv->md = dev_get_drvdata(sd->v4l2_dev->dev);
-+	priv->md = container_of(v4l2_dev->mdev, struct imx_media_dev, md);
- 
--	vfd->v4l2_dev = sd->v4l2_dev;
-+	vfd->v4l2_dev = v4l2_dev;
- 
- 	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
-diff --git a/drivers/staging/media/imx/imx-media-dev-common.c b/drivers/staging/media/imx/imx-media-dev-common.c
-index 89dc4ec8dadb..66b505f7e8df 100644
---- a/drivers/staging/media/imx/imx-media-dev-common.c
-+++ b/drivers/staging/media/imx/imx-media-dev-common.c
-@@ -260,10 +260,11 @@ static int imx_media_inherit_controls(struct imx_media_dev *imxmd,
- static int imx_media_link_notify(struct media_link *link, u32 flags,
- 				 unsigned int notification)
- {
-+	struct imx_media_dev *imxmd = container_of(link->graph_obj.mdev,
-+						   struct imx_media_dev, md);
- 	struct media_entity *source = link->source->entity;
- 	struct imx_media_pad_vdev *pad_vdev;
- 	struct list_head *pad_vdev_list;
--	struct imx_media_dev *imxmd;
- 	struct video_device *vfd;
- 	struct v4l2_subdev *sd;
- 	int pad_idx, ret;
-@@ -279,8 +280,6 @@ static int imx_media_link_notify(struct media_link *link, u32 flags,
- 	sd = media_entity_to_v4l2_subdev(source);
- 	pad_idx = link->source->index;
- 
--	imxmd = dev_get_drvdata(sd->v4l2_dev->dev);
--
- 	pad_vdev_list = to_pad_vdev_list(sd, pad_idx);
- 	if (!pad_vdev_list) {
- 		/* nothing to do if source sd has no pad vdev list */
-@@ -384,8 +383,6 @@ struct imx_media_dev *imx_media_dev_init(struct device *dev,
- 		goto cleanup;
- 	}
- 
--	dev_set_drvdata(imxmd->v4l2_dev.dev, imxmd);
--
- 	INIT_LIST_HEAD(&imxmd->vdev_list);
- 
- 	v4l2_async_notifier_init(&imxmd->notifier);
--- 
-2.17.1
+Honestly, this sounds more of an argument for doing the buffered space
+for all exceptions on 32 bit, because it removes one of the special
+cases. If we were to move the frame and give it a full frame like
+x86_64, then we can remove kernel_stack_pointer() altogether. I've hated
+that function for some time, as I tripped over it in the past too, and
+it keeps coming up. It's sad that regs->sp is unreliable as is.
 
+> 
+> This has been why I've been arguing against the entry code changes.
+> Exactly because they tend to have these kind of odd cascading effects.
+> The entry code is fragile not just because it's a complex hardware
+> interface, but also because we know about those complex hardware
+> interfaces in random other places.
+
+IMO, getting rid of the kernel_stack_pointer() function is a positive
+side effect of these changes.
+
+> 
+> I'd much rather have the code that does special things be in one
+> place, and be the place that *needs* to do the special thing. If we
+> copy the pt_regs around when we do the "call" emulation, it's *really*
+> easy to explain *exactly* what we're doing and why in *exactly* that
+> one context where we are doing it. And it won't affect anything else,
+> and our existing code that looks at pt_regs will work both before and
+> after.
+> 
+> Would it need a #ifdef CONFIG_X86_32 around it because it's not needed
+> on x86-64? Sure. But that #ifdef would be right there, and the comment
+> that explains why the pt_regs need to be moved would also make it very
+> obvious why it is only needed for x86-32.
+> 
+> There's a lot of advantages to keeping your problems localized,
+> instead of letting your random hacks escape and become problems for
+> other, entirely unrelated, code.
+
+But is it localize? It would definitely affect do_int3().
+
+You are saying that we have a do_int3() for user space int3, and
+do_kernel_int3() for kernel space. That would need to be done in asm
+for both, because having x86_64 call do_int3() for kernel and
+user would be interesting. Looking at the do_int3() code, I'm not sure
+how to safely separate kernel and user int3 handlers if 64bit doesn't
+call do_kernel_int3() directly. It may end up looking something like
+this:
+
+dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+{
+#ifdef CONFIG_X86_64
+	do_kernel_int3(&regs);
+#endif
+	/*
+	 * Use ist_enter despite the fact that we don't use an IST stack.
+	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
+	 * mode or even during context tracking state changes.
+	 *
+	 * This means that we can't schedule.  That's okay.
+	 */
+	ist_enter(regs);
+	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+
+#ifdef CONFIG_X86_64
+#ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+	if (kgdb_ll_trap(DIE_INT3, "int3", regs, error_code, X86_TRAP_BP,
+				SIGTRAP) == NOTIFY_STOP)
+		goto exit;
+#endif /* CONFIG_KGDB_LOW_LEVEL_TRAP */
+
+#ifdef CONFIG_KPROBES
+	if (kprobe_int3_handler(&regs))
+		goto exit;
+#endif
+#endif
+
+	if (notify_die(DIE_INT3, "int3", regs, error_code, X86_TRAP_BP,
+			SIGTRAP) == NOTIFY_STOP)
+		goto exit;
+
+	cond_local_irq_enable(regs);
+	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, 0, NULL);
+	cond_local_irq_disable(regs);
+
+exit:
+	ist_exit(regs);
+}
+
+dotraplinkage void notrace do_kernel_int3(struct pt_regs **regs)
+{
+#ifdef CONFIG_DYNAMIC_FTRACE
+	/*
+	 * ftrace must be first, everything else may cause a recursive crash.
+	 * See note by declaration of modifying_ftrace_code in ftrace.c
+	 */
+	if (unlikely(atomic_read(&modifying_ftrace_code)) &&
+	    ftrace_int3_handler(regs))
+		return;
+#endif
+	if (poke_int3_handler(regs))
+		return;
+
+#ifdef CONFIG_X86_64
+	return;
+#endif
+
+	/*
+	 * Use ist_enter despite the fact that we don't use an IST stack.
+	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
+	 * mode or even during context tracking state changes.
+	 *
+	 * This means that we can't schedule.  That's okay.
+	 */
+	ist_enter(*regs);
+	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+
+#ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+	if (kgdb_ll_trap(DIE_INT3, "int3", *regs, error_code, X86_TRAP_BP,
+				SIGTRAP) == NOTIFY_STOP)
+		goto exit;
+#endif /* CONFIG_KGDB_LOW_LEVEL_TRAP */
+
+#ifdef CONFIG_KPROBES
+	if (kprobe_int3_handler(regs))
+		goto exit;
+#endif
+
+	notify_die(DIE_INT3, "int3", *regs, error_code, X86_TRAP_BP,
+			SIGTRAP);
+	ist_exit(*regs);
+}
+
+Or maybe I misunderstood what you envision :-/
+
+-- Steve
