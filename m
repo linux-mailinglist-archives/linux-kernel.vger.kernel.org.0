@@ -2,50 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC0612853
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBB91284C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:00:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfECHAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 03:00:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:36331 "EHLO ozlabs.org"
+        id S1726755AbfECG7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:59:14 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57731 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726445AbfECG7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:59:12 -0400
+        id S1726579AbfECG7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 02:59:13 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 44wNKB4Ngbz9sNq; Fri,  3 May 2019 16:59:10 +1000 (AEST)
+        id 44wNKC6W6qz9sNy; Fri,  3 May 2019 16:59:11 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9c4ae0645682b97437072693f0edbee17214225b
+X-powerpc-patch-commit: a1ac2a9c4f98482e49305ab5551b7b32f9cac39b
 X-Patchwork-Hint: ignore
-In-Reply-To: <20190325053456.14599-2-alastair@au1.ibm.com>
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+In-Reply-To: <92e8f0bcec682e878796758e1efb88c172c7ffe4.1553778054.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Kurz <groug@kaod.org>, linux-kernel@vger.kernel.org,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 1/4] ocxl: Rename struct link to ocxl_link
-Message-Id: <44wNKB4Ngbz9sNq@ozlabs.org>
-Date:   Fri,  3 May 2019 16:59:10 +1000 (AEST)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/book3e: drop BUG_ON() in map_kernel_page()
+Message-Id: <44wNKC6W6qz9sNy@ozlabs.org>
+Date:   Fri,  3 May 2019 16:59:11 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-03-25 at 05:34:52 UTC, "Alastair D'Silva" wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
+On Thu, 2019-03-28 at 13:03:45 UTC, Christophe Leroy wrote:
+> early_alloc_pgtable() never returns NULL as it panics on failure.
 > 
-> The term 'link' is ambiguous (especially when the struct is used for a
-> list), so rename it for clarity.
+> This patch drops the three BUG_ON() which check the non nullity
+> of early_alloc_pgtable() returned value.
 > 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> Reviewed-by: Greg Kurz <groug@kaod.org>
-> Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-> Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/9c4ae0645682b97437072693f0edbee1
+https://git.kernel.org/powerpc/c/a1ac2a9c4f98482e49305ab5551b7b32
 
 cheers
