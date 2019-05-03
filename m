@@ -2,172 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E351C12A90
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 11:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3FC12AC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 11:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbfECJdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 05:33:08 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:24171 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727474AbfECJdB (ORCPT
+        id S1727122AbfECJgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 05:36:35 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39093 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfECJge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 05:33:01 -0400
-X-UUID: 1f96bc06db644d2c84d2a755c9dc402a-20190503
-X-UUID: 1f96bc06db644d2c84d2a755c9dc402a-20190503
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <hsin-hsiung.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1390216758; Fri, 03 May 2019 17:32:50 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 3 May 2019 17:32:41 +0800
-Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 3 May 2019 17:32:41 +0800
-From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Ran Bi <ran.bi@mediatek.com>
-Subject: [PATCH v3 10/10] rtc: Add support for the MediaTek MT6358 RTC
-Date:   Fri, 3 May 2019 17:31:17 +0800
-Message-ID: <20190503093117.54830-11-hsin-hsiung.wang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
-References: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
+        Fri, 3 May 2019 05:36:34 -0400
+X-Originating-IP: 90.88.149.145
+Received: from localhost (aaubervilliers-681-1-29-145.w90-88.abo.wanadoo.fr [90.88.149.145])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id F328A6001C;
+        Fri,  3 May 2019 09:36:29 +0000 (UTC)
+Date:   Fri, 3 May 2019 11:36:29 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alban Bedel <albeu@free.fr>, Felix Fietkau <nbd@nbd.name>,
+        John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] of_net: add NVMEM support to of_get_mac_address
+Message-ID: <20190503093629.2cby4jwtgkzqaru6@flea>
+References: <1556870168-26864-1-git-send-email-ynezz@true.cz>
+ <1556870168-26864-2-git-send-email-ynezz@true.cz>
+ <2a5fcdec-c661-6dc5-6741-7d6675457b9b@cogentembedded.com>
+ <20190503091542.GE346@meh.true.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mpgi7qhqzk4k2o4s"
+Content-Disposition: inline
+In-Reply-To: <20190503091542.GE346@meh.true.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ran Bi <ran.bi@mediatek.com>
 
-This add support for the MediaTek MT6358 RTC. Driver using
-compatible data to store different RTC_WRTGR address offset.
+--mpgi7qhqzk4k2o4s
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ran Bi <ran.bi@mediatek.com>
----
- drivers/rtc/rtc-mt6397.c | 43 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 8 deletions(-)
+On Fri, May 03, 2019 at 11:15:42AM +0200, Petr =C5=A0tetiar wrote:
+> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> [2019-05-03 11:44:54=
+]:
+>
+> Hi Sergei,
+>
+> > > diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+> > > index d820f3e..258ceb8 100644
+> > > --- a/drivers/of/of_net.c
+> > > +++ b/drivers/of/of_net.c
+> > [...]
+> > > @@ -64,6 +113,9 @@ static const void *of_get_mac_addr(struct device_n=
+ode *np, const char *name)
+> > >    * addresses.  Some older U-Boots only initialized 'local-mac-addre=
+ss'.  In
+> > >    * this case, the real MAC is in 'local-mac-address', and 'mac-addr=
+ess' exists
+> > >    * but is all zeros.
+> > > + *
+> > > + * Return: Will be a valid pointer on success, NULL in case there wa=
+sn't
+> > > + *         'mac-address' nvmem cell node found, and ERR_PTR in case =
+of error.
+> >
+> >    Returning both NULL and error codes on failure is usually a sign of a
+> > misdesigned API.
+>
+> well, then there's a lot of misdesigned APIs in the tree already, as I've=
+ just
+> grepped for IS_ERR_OR_NULL usage and found this pointer/NULL/ERR_PTR usage
+> pretty legit.
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index f85f1fc29e32..3476e29db87c 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -20,6 +20,7 @@
- #include <linux/irqdomain.h>
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/io.h>
- #include <linux/mfd/mt6397/core.h>
-@@ -27,7 +28,8 @@
- #define RTC_BBPU		0x0000
- #define RTC_BBPU_CBUSY		BIT(6)
- 
--#define RTC_WRTGR		0x003c
-+#define RTC_WRTGR_MT6358	0x3a
-+#define RTC_WRTGR_MT6397	0x3c
- 
- #define RTC_IRQ_STA		0x0002
- #define RTC_IRQ_STA_AL		BIT(0)
-@@ -71,6 +73,10 @@
- #define RTC_NUM_YEARS		128
- #define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
- 
-+struct mtk_rtc_compatible {
-+	u32			wrtgr_addr;
-+};
-+
- struct mt6397_rtc {
- 	struct device		*dev;
- 	struct rtc_device	*rtc_dev;
-@@ -78,7 +84,25 @@ struct mt6397_rtc {
- 	struct regmap		*regmap;
- 	int			irq;
- 	u32			addr_base;
-+	const struct mtk_rtc_compatible *dev_comp;
-+};
-+
-+static const struct mtk_rtc_compatible mt6358_rtc_compat = {
-+	.wrtgr_addr = RTC_WRTGR_MT6358,
-+};
-+
-+static const struct mtk_rtc_compatible mt6397_rtc_compat = {
-+	.wrtgr_addr = RTC_WRTGR_MT6397,
-+};
-+
-+static const struct of_device_id mt6397_rtc_of_match[] = {
-+	{ .compatible = "mediatek,mt6358-rtc",
-+		.data = (void *)&mt6358_rtc_compat, },
-+	{ .compatible = "mediatek,mt6397-rtc",
-+		.data = (void *)&mt6397_rtc_compat, },
-+	{}
- };
-+MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
- 
- static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
- {
-@@ -86,7 +110,8 @@ static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
- 	int ret;
- 	u32 data;
- 
--	ret = regmap_write(rtc->regmap, rtc->addr_base + RTC_WRTGR, 1);
-+	ret = regmap_write(rtc->regmap,
-+			   rtc->addr_base + rtc->dev_comp->wrtgr_addr, 1);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -332,6 +357,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
- 	struct mt6397_rtc *rtc;
-+	const struct of_device_id *of_id;
- 	int ret;
- 
- 	rtc = devm_kzalloc(&pdev->dev, sizeof(struct mt6397_rtc), GFP_KERNEL);
-@@ -341,6 +367,13 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	rtc->addr_base = res->start;
- 
-+	of_id = of_match_device(mt6397_rtc_of_match, &pdev->dev);
-+	if (!of_id) {
-+		dev_err(&pdev->dev, "Failed to probe of_node\n");
-+		return -EINVAL;
-+	}
-+	rtc->dev_comp = of_id->data;
-+
- 	rtc->irq = platform_get_irq(pdev, 0);
- 	if (rtc->irq < 0)
- 		return rtc->irq;
-@@ -419,12 +452,6 @@ static int mt6397_rtc_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_rtc_suspend,
- 			mt6397_rtc_resume);
- 
--static const struct of_device_id mt6397_rtc_of_match[] = {
--	{ .compatible = "mediatek,mt6397-rtc", },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
--
- static struct platform_driver mtk_rtc_driver = {
- 	.driver = {
- 		.name = "mt6397-rtc",
--- 
-2.18.0
+That's not really an argument though.
 
+> > Why not always return an error code?
+>
+> I've received following comment[1] from Andrew:
+>
+>  "What you have to be careful of, is the return value from your new code
+>   looking in NVMEM. It should only return EPROBE_DEFER, or another error
+>   if there really is expected to be a value in NVMEM, or getting it from
+>   NVMEM resulted in an error."
+>
+> So in order to fullfil this remark, I can't simply use ENOENT instead of
+> current NULL, as the caller couldn't distinguish between ENOENT from
+> of_get_mac_address or ENOENT from NVMEM subsystem.
+
+Does it matter? You're trying to put some specific code (nvmem lookup)
+behind a generic API, so the fact that you get some nvmem related
+errors is more an abstraction leakage than anything else.
+
+And if you don't really like ENOENT, ENODEV is an option as well.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--mpgi7qhqzk4k2o4s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXMwLnQAKCRDj7w1vZxhR
+xT6VAP9s+GxHUrM6F1opgMN4GKjh/BP6CeLbrmGG91Abs5aSXQD/YMjXI02Y9wya
+AOBd47qHZ1racfuQoREiBnGiypcbvg8=
+=8Fuo
+-----END PGP SIGNATURE-----
+
+--mpgi7qhqzk4k2o4s--
