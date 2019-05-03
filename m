@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C4512796
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDC41279E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfECGSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:18:54 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52868 "EHLO
+        id S1726934AbfECGTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:19:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53356 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfECGSw (ORCPT
+        with ESMTP id S1726871AbfECGTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:18:52 -0400
+        Fri, 3 May 2019 02:19:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Fg9QrCpRCad16f0H55V9run4nG3IvYsKIRymL8V7ppI=; b=b/fH/uWGlaos
-        7ziuJhy36LnX7aveB2dvBCMFlTudHaKoP9ln7RK847Eu7WUYlNkGl8sZTZayVbAGrDh4MkkzAiYbj
-        /bnO/0RFVBs918ZKaM47N39qKOW94sQis1C9vrb84RBuT4yTGvFn835pMiRXZv62tc/1bUXz1VkOz
-        hIuH8=;
+        List-Archive; bh=rZq5sizDQmDuNZ2W+O82havtkELQLuBDvFjiM74WSfM=; b=LHUGN9cu/Z+w
+        ow+WqRJufNEhsyw0YEAIRlnw75HD4AZy1hfwuAvrxZcAXVTenqw3N/OiBevOSL4A+/CjAF+DCyCox
+        BS5i3QwUpRQpP7cEe07YHZguoBpdCG3YhioMGQ5BlS2hWpj/zPSmCStBG16KIhsuhk1L4VzNKCjAG
+        sKO2o=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRWy-0000X2-5J; Fri, 03 May 2019 06:18:48 +0000
+        id 1hMRXB-0000XH-22; Fri, 03 May 2019 06:19:02 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 5E073441D3C; Fri,  3 May 2019 07:18:44 +0100 (BST)
+        id ECD7A441D59; Fri,  3 May 2019 07:18:44 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         patchwork-bot+notify@kernel.org
-Subject: Applied "ASoC: skip hw_free on codec dai for which the stream is invalid" to the asoc tree
-In-Reply-To: <20190429094750.1857-3-jbrunet@baylibre.com>
+Subject: Applied "ASoC: fix valid stream condition" to the asoc tree
+In-Reply-To: <20190429094750.1857-2-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503061844.5E073441D3C@finisterre.ee.mobilebroadband>
+Message-Id: <20190503061844.ECD7A441D59@finisterre.ee.mobilebroadband>
 Date:   Fri,  3 May 2019 07:18:44 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: skip hw_free on codec dai for which the stream is invalid
+   ASoC: fix valid stream condition
 
 has been applied to the asoc tree at
 
@@ -71,46 +71,38 @@ to this mail.
 Thanks,
 Mark
 
-From f47b9ad927c6370b80922af434dda98764a43804 Mon Sep 17 00:00:00 2001
+From 6a7c59c6d9f3b280e81d7a04bbe4e55e90152dce Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 29 Apr 2019 11:47:50 +0200
-Subject: [PATCH] ASoC: skip hw_free on codec dai for which the stream is
- invalid
+Date: Mon, 29 Apr 2019 11:47:49 +0200
+Subject: [PATCH] ASoC: fix valid stream condition
 
-Like for hw_params, hw_free should not be called on codec dai for
-which the current stream is invalid.
+A stream may specify a rate range using 'rate_min' and 'rate_max', so a
+stream may be valid and not specify any rates. However, as stream cannot
+be valid and not have any channel. Let's use this condition instead to
+determine if a stream is valid or not.
 
 Fixes: cde79035c6cf ("ASoC: Handle multiple codecs with split playback / capture")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-pcm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/soc-pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 57088bd69e5d..a810f6eeffee 100644
+index d21247546f7f..57088bd69e5d 100644
 --- a/sound/soc/soc-pcm.c
 +++ b/sound/soc/soc-pcm.c
-@@ -1031,6 +1031,9 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+@@ -43,8 +43,8 @@ static bool snd_soc_dai_stream_valid(struct snd_soc_dai *dai, int stream)
+ 	else
+ 		codec_stream = &dai->driver->capture;
  
- codec_err:
- 	for_each_rtd_codec_dai_rollback(rtd, i, codec_dai) {
-+		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
-+			continue;
-+
- 		if (codec_dai->driver->ops->hw_free)
- 			codec_dai->driver->ops->hw_free(substream, codec_dai);
- 		codec_dai->rate = 0;
-@@ -1088,6 +1091,9 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+-	/* If the codec specifies any rate at all, it supports the stream. */
+-	return codec_stream->rates;
++	/* If the codec specifies any channels at all, it supports the stream */
++	return codec_stream->channels_min;
+ }
  
- 	/* now free hw params for the DAIs  */
- 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
-+		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
-+			continue;
-+
- 		if (codec_dai->driver->ops->hw_free)
- 			codec_dai->driver->ops->hw_free(substream, codec_dai);
- 	}
+ /**
 -- 
 2.20.1
 
