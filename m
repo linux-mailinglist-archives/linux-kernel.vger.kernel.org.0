@@ -2,71 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFE6712D58
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B499A12D44
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfECMSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 08:18:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42015 "EHLO mga04.intel.com"
+        id S1727491AbfECMMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:12:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:59566 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfECMSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:18:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 05:18:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="167227563"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga002.fm.intel.com with ESMTP; 03 May 2019 05:18:14 -0700
-Date:   Fri, 3 May 2019 06:12:32 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        linux-nvme@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 0/4] nvme-pci: support device coredump
-Message-ID: <20190503121232.GB30013@localhost.localdomain>
-References: <1556787561-5113-1-git-send-email-akinobu.mita@gmail.com>
- <20190502125722.GA28470@localhost.localdomain>
- <CAC5umygdADGrYeJy=F53Mm4bNPHmo+WY4SD3HFSRqi_cLrz9jw@mail.gmail.com>
+        id S1726289AbfECMMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 08:12:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55BFA374;
+        Fri,  3 May 2019 05:12:41 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C486C3F220;
+        Fri,  3 May 2019 05:12:37 -0700 (PDT)
+Date:   Fri, 3 May 2019 13:12:34 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Michal Gregorczyk <michalgr@live.com>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Mohammad Husain <russoue@gmail.com>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        duyuchao <yuchao.du@unisoc.com>,
+        Manjo Raja Rao <linux@manojrajarao.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Tamir Carmeli <carmeli.tamir@gmail.com>,
+        Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Ziljstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC] bpf: Add support for reading user pointers
+Message-ID: <20190503121234.6don256zuvfjtdg6@e107158-lin.cambridge.arm.com>
+References: <20190502204958.7868-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC5umygdADGrYeJy=F53Mm4bNPHmo+WY4SD3HFSRqi_cLrz9jw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190502204958.7868-1-joel@joelfernandes.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 12:38:08PM +0900, Akinobu Mita wrote:
-> 2019年5月2日(木) 22:03 Keith Busch <keith.busch@intel.com>:
-> > On Thu, May 02, 2019 at 05:59:17PM +0900, Akinobu Mita wrote:
-> > > This enables to capture snapshot of controller information via device
-> > > coredump machanism, and it helps diagnose and debug issues.
-> > >
-> > > The nvme device coredump is triggered before resetting the controller
-> > > caused by I/O timeout, and creates the following coredump files.
-> > >
-> > > - regs: NVMe controller registers, including each I/O queue doorbell
-> > >         registers, in nvme-show-regs style text format.
-> >
-> > You're supposed to treat queue doorbells as write-only. Spec says:
-> >
-> >   The host should not read the doorbell registers. If a doorbell register
-> >   is read, the value returned is vendor specific.
-> 
-> OK.  I'll exclude the doorbell registers from register dump.  It will work
-> out without the information if we have snapshot of the queues.
+Hi Joel
 
-Could you actually explain how the rest is useful? I personally have
-never encountered an issue where knowing these values would have helped:
-every device timeout always needed device specific internal firmware
-logs in my experience.
+On 05/02/19 16:49, Joel Fernandes (Google) wrote:
+> The eBPF based opensnoop tool fails to read the file path string passed
+> to the do_sys_open function. This is because it is a pointer to
+> userspace address and causes an -EFAULT when read with
+> probe_kernel_read. This is not an issue when running the tool on x86 but
+> is an issue on arm64. This patch adds a new bpf function call based
+
+I just did an experiment and if I use Android 4.9 kernel I indeed fail to see
+PATH info when running opensnoop. But if I run on 5.1-rc7 opensnoop behaves
+correctly on arm64.
+
+My guess either a limitation that was fixed on later kernel versions or Android
+kernel has some strict option/modifications that make this fail?
+
+
+
+
+root@buildroot:/# uname -a
+Linux buildroot 5.1.0-rc7-00164-ga00214620959-dirty #41 SMP PREEMPT Thu May 2 16:33:00 BST 2019 aarch64 GNU/Linux
+root@buildroot:/# opensnoop
+PID    COMM               FD ERR PATH
+5180   default.script     -1   2 /etc/ld.so.cache
+5180   default.script     -1   2 /lib/tls/v8l/neon/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/v8l/neon/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/v8l/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/v8l/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/neon/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/neon/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/tls/libresolv.so.2
+5180   default.script     -1   2 /lib/v8l/neon/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/v8l/neon/libresolv.so.2
+5180   default.script     -1   2 /lib/v8l/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/v8l/libresolv.so.2
+5180   default.script     -1   2 /lib/neon/vfp/libresolv.so.2
+5180   default.script     -1   2 /lib/neon/libresolv.so.2
+5180   default.script     -1   2 /lib/vfp/libresolv.so.2
+5180   default.script      3   0 /lib/libresolv.so.2
+5180   default.script      3   0 /lib/libc.so.6
+5180   default.script      3   0 /usr/share/udhcpc/default.script
+5180   default.script      3   0 /usr/share/udhcpc/default.script.d/
+
+
+
+
+--
+Qais Yousef
