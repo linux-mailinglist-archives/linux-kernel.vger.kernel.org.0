@@ -2,122 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B0E129C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EED1129BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfECIT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 04:19:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35824 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727220AbfECITS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 04:19:18 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43042307EA8F;
-        Fri,  3 May 2019 08:19:18 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 228E2F6E6;
-        Fri,  3 May 2019 08:19:15 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 12/12] perf script: Add --show-all-events option
-Date:   Fri,  3 May 2019 10:18:41 +0200
-Message-Id: <20190503081841.1908-13-jolsa@kernel.org>
-In-Reply-To: <20190503081841.1908-1-jolsa@kernel.org>
-References: <20190503081841.1908-1-jolsa@kernel.org>
+        id S1727083AbfECITB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 04:19:01 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43402 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfECIS5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 04:18:57 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w33so2701690edb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 01:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=R0+JfpJIFDJoK7q8MyEWZs45kp5rl+GEbJbaeCY9Jk4=;
+        b=d278b2tgce8L6AmBDrXXQbyOz7NH9zcUuZmgJW72lepCzwaXEPrUGz0VzoYOhIW80t
+         ZXLcbPx4lBbEzJnn4H893zfmAUky2VWcVCfQChL5xLp8mHpc97aiHmIXV23ElNi5zLD0
+         4XSEkGLpSy95WOTFZKLMKYjSqzzZvblSu0grs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=R0+JfpJIFDJoK7q8MyEWZs45kp5rl+GEbJbaeCY9Jk4=;
+        b=bfEvmYaFGXA4AJ+srlGm7DRAdEh5ahJ1jmLEPix2Y1VVXITcCLQltZ74esN6m+cXVw
+         9AvF0MASCZLYTxWYHZUkAbxJAHXzS84eoXTo3qvq6M8Nfa4WB7hiI9mxHsR1RVZ3BlDc
+         wPB29mg1MbSXX11iKkvyotqTKsfQrgNepOQzAKSwoz4SMg//U+xFs4m5c/3HW3KO/3kW
+         3OfEkERG8+Pd49oPOm5I5Aub8hKtrsk6LB9Fng5DWGKvs3FOFQZ/tGGcN8vdp6xEzxUm
+         CTVZnNJEGJXBygNUvcnIPtoxlrjFOYLzYfSjWGtzm7Um4SYXXsP26aIxnycmw51son/4
+         h5aQ==
+X-Gm-Message-State: APjAAAUnVXUkaxkiAJJRfZBkbvszAr+Oazaub+a0RUVWvWSZLcUn1xAv
+        wajjH4iSvfwvYMO2orH5lnhYrg==
+X-Google-Smtp-Source: APXvYqxammCQ85husBJstrEtMRKH7oq/ph3T7E4bGTdxIg5HqIRtdROEI72b/Rf96lV7J3krg4eSQw==
+X-Received: by 2002:a50:8e8f:: with SMTP id w15mr6887989edw.218.1556871534457;
+        Fri, 03 May 2019 01:18:54 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id m4sm417678ede.0.2019.05.03.01.18.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 May 2019 01:18:53 -0700 (PDT)
+Date:   Fri, 3 May 2019 10:18:51 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Sean Paul <sean@poorly.run>
+Cc:     dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] drm: Add drm_atomic_crtc_state_for_encoder
+ helper
+Message-ID: <20190503081851.GI3271@phenom.ffwll.local>
+Mail-Followup-To: Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+References: <20190502194956.218441-1-sean@poorly.run>
+ <20190502194956.218441-3-sean@poorly.run>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 03 May 2019 08:19:18 +0000 (UTC)
+In-Reply-To: <20190502194956.218441-3-sean@poorly.run>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding --show-all-events option to show all
-side-bad events with single option, like:
+On Thu, May 02, 2019 at 03:49:44PM -0400, Sean Paul wrote:
+> From: Sean Paul <seanpaul@chromium.org>
+> 
+> This patch adds a helper to tease out the currently connected crtc for
+> an encoder, along with its state. This follows the same pattern as the
+> drm_atomic_crtc_*_for_* macros in the atomic helpers. Since the
+> relationship of crtc:encoder is 1:n, we don't need a loop since there is
+> only one crtc per encoder.
 
-  $ perf script --show-all-events
-  swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffa6000000(0xc00e41) @ 0xffffffffa6000000]: x [kernel.kallsyms]_text
-  ...
-  swapper     0 [000]     0.000000: PERF_RECORD_KSYMBOL addr ffffffffc01bc362 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-  swapper     0 [000]     0.000000: PERF_RECORD_BPF_EVENT type 1, flags 0, id 29
-  ...
-  swapper     0 [000]     0.000000: PERF_RECORD_FORK(1:1):(0:0)
-  systemd     0 [000]     0.000000: PERF_RECORD_COMM: systemd:1/1
-  ...
-  swapper     0 [000] 63587.039518:          1 cycles:  ffffffffa60698b4 [unknown] ([kernel.kallsyms])
-  swapper     0 [000] 63587.039522:          1 cycles:  ffffffffa60698b4 [unknown] ([kernel.kallsyms])
+No idea which macros you mean, couldn't find them.
+> 
+> Instead of splitting this into 3 functions which all do the same thing,
+> this is presented as one function. Perhaps that's too ugly and it should
+> be split to:
+> struct drm_crtc *drm_atomic_crtc_for_encoder(state, encoder);
+> struct drm_crtc_state *drm_atomic_new_crtc_state_for_encoder(state, encoder);
+> struct drm_crtc_state *drm_atomic_old_crtc_state_for_encoder(state, encoder);
+> 
+> Suggestions welcome.
+> 
+> Changes in v3:
+> - Added to the set
+> 
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 48 +++++++++++++++++++++++++++++
+>  include/drm/drm_atomic_helper.h     |  6 ++++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 71cc7d6b0644..1f81ca8daad7 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3591,3 +3591,51 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(drm_atomic_helper_legacy_gamma_set);
+> +
+> +/**
+> + * drm_atomic_crtc_state_for_encoder - Get crtc and new/old state for an encoder
+> + * @state: Atomic state
+> + * @encoder: The encoder to fetch the crtc information for
+> + * @crtc: If not NULL, receives the currently connected crtc
+> + * @old_crtc_state: If not NULL, receives the crtc's old state
+> + * @new_crtc_state: If not NULL, receives the crtc's new state
+> + *
+> + * This function finds the crtc which is currently connected to @encoder and
+> + * returns it as well as its old and new state. If there is no crtc currently
+> + * connected, the function will clear @crtc, @old_crtc_state, @new_crtc_state.
+> + *
+> + * All of @crtc, @old_crtc_state, and @new_crtc_state are optional.
+> + */
+> +void drm_atomic_crtc_state_for_encoder(struct drm_atomic_state *state,
+> +				       struct drm_encoder *encoder,
+> +				       struct drm_crtc **crtc,
+> +				       struct drm_crtc_state **old_crtc_state,
+> +				       struct drm_crtc_state **new_crtc_state)
+> +{
+> +	struct drm_crtc *tmp_crtc;
+> +	struct drm_crtc_state *tmp_new_crtc_state, *tmp_old_crtc_state;
+> +	u32 enc_mask = drm_encoder_mask(encoder);
+> +	int i;
+> +
+> +	for_each_oldnew_crtc_in_state(state, tmp_crtc, tmp_old_crtc_state,
+> +				      tmp_new_crtc_state, i) {
 
-Link: http://lkml.kernel.org/n/tip-g7vmuwn6i7pa8cdpnxl9vsur@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 +++
- tools/perf/builtin-script.c              | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
+So there's two ways to do this:
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index af8282782911..ddcd08bf0172 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -316,6 +316,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-all-events
-+	Display all side-band events i.e. enable all --show-*-events options.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 3a48a2627670..e7462dcab2c6 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1607,6 +1607,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_all_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct cpu_map		*cpus;
-@@ -2436,6 +2437,16 @@ static int __cmd_script(struct perf_script *script)
- 
- 	perf_stat__init_shadow_stats();
- 
-+	if (script->show_all_events) {
-+		script->show_task_events	= true;
-+		script->show_mmap_events	= true;
-+		script->show_switch_events	= true;
-+		script->show_namespace_events	= true;
-+		script->show_lost_events	= true;
-+		script->show_round_events	= true;
-+		script->show_bpf_events		= true;
-+	}
-+
- 	/* override event processing functions */
- 	if (script->show_task_events) {
- 		script->tool.comm = process_comm_event;
-@@ -3481,6 +3492,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show round events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-bpf-events", &script.show_bpf_events,
- 		    "Show bpf related events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-all-events", &script.show_all_events,
-+		    "Show all side-band events (if recorded)"),
- 	OPT_BOOLEAN('\0', "per-event-dump", &script.per_event_dump,
- 		    "Dump trace output to files named by the monitored events"),
- 	OPT_BOOLEAN('f', "force", &symbol_conf.force, "don't complain, do it"),
+- Using encoder_mask, which is a helper thing. In that case I'd rename
+  this to drm_atomic_helper_crtc_for_encoder.
+
+- By looping over the connectors, and looking at ->best_encoder and
+  ->crtc, see drm_encoder_get_crtc in drm_encoder.c. That's the core way
+  of doing things. In that case call it drm_atomic_crtc_for_encoder, and
+  put it into drm_atomic.c.
+
+There's two ways of doing the 2nd one: looping over connectors in a
+drm_atomic_state, or the connector list overall. First requires that the
+encoder is already in drm_atomic_state (which I think makes sense).
+
+Even more complications on old/new_crtc_state: Is that the old state for
+the old crtc, or the old state for the new crtc (that can switch too).
+Same for the new crtc state ...
+
+tldr; I'd create 2 functions:
+
+drm_crtc *drm_atomic_encoder_get_new_crtc(drm_atomic_state *state, encoder)
+drm_crtc *drm_atomic_encoder_get_old_crtc(drm_atomic_state *state, encoder)
+
+With the requirement that they'll return NULL if the encder isn't in in
+@state, and implemented using looping over connectors in @state.
+
+tldr; this is a lot more tricky than it looks like ...
+-Daniel
+
+
+> +		if (!(tmp_new_crtc_state->encoder_mask & enc_mask))
+> +			continue;
+> +
+> +		if (new_crtc_state)
+> +			*new_crtc_state = tmp_new_crtc_state;
+> +		if (old_crtc_state)
+> +			*old_crtc_state = tmp_old_crtc_state;
+> +		if (crtc)
+> +			*crtc = tmp_crtc;
+> +		return;
+> +	}
+> +
+> +	if (new_crtc_state)
+> +		*new_crtc_state = NULL;
+> +	if (old_crtc_state)
+> +		*old_crtc_state = NULL;
+> +	if (crtc)
+> +		*crtc = NULL;
+> +}
+> +EXPORT_SYMBOL(drm_atomic_crtc_state_for_encoder);
+> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+> index 58214be3bf3d..2383550a0cc8 100644
+> --- a/include/drm/drm_atomic_helper.h
+> +++ b/include/drm/drm_atomic_helper.h
+> @@ -153,6 +153,12 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_crtc *crtc,
+>  				       uint32_t size,
+>  				       struct drm_modeset_acquire_ctx *ctx);
+>  
+> +void drm_atomic_crtc_state_for_encoder(struct drm_atomic_state *state,
+> +				       struct drm_encoder *encoder,
+> +				       struct drm_crtc **crtc,
+> +				       struct drm_crtc_state **old_crtc_state,
+> +				       struct drm_crtc_state **new_crtc_state);
+> +
+>  /**
+>   * drm_atomic_crtc_for_each_plane - iterate over planes currently attached to CRTC
+>   * @plane: the loop cursor
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
+> 
+
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
