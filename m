@@ -2,88 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49E8A12920
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31F91292B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfECHxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 03:53:53 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:43883 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfECHxx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 03:53:53 -0400
-Received: by mail-vs1-f67.google.com with SMTP id y196so3025886vsc.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 00:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tMWUAnDnMENxsx3gkXYG0QVHOF2jolpUUYMA2aKF3DY=;
-        b=tgRJrvBIcCBM848M4tf26Grza5PkK+KUyoofRPrKoiF24dE9BG8znZQ4f8htsKCDaA
-         2bhmbeIfrhXxDo7cGUKZ4w9A4ymnrY4xnEcKjaDe9JNkKCoXIRxstOnhm0bjS2Ux5a8w
-         vSUZk6q1b+h0jp/J9cgYA6uqe/jswUjzULn3AdoAzJzm5a1k8GATJVN+TIehps6hX+Cu
-         NpnAQYiYvA5bincxglyzx2I/1dSGYyQqJQcV3/BprVKqIt2MXXM6kZmIDzPffW9NXKVc
-         UU1jaXbn5N9dEN53txM0DEHO/BGSkC388PDYMkvJT3zhQ4DuJ+XXYT0LQm8eJI+KCf1U
-         s3Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tMWUAnDnMENxsx3gkXYG0QVHOF2jolpUUYMA2aKF3DY=;
-        b=Ya6mh99gk0bCL+nJTtXf2Nw+dX0IZ9Oynxkmilp8b1bPqnNdXPs9viC43iz5rH0B/b
-         8zXPkfjO/d7FaTqy9Qp/W+siayibZI1WkpdIbNPxOPCMxGzLCrk2gnbgVTuo6hdHkE0k
-         5B4XwxG4FbbDBntp+pJ+bsgWMjeIh0EsBaUzY4ipK/aLslUaZM330QG7kjB/PDgnflWz
-         p3gYPSNvbTw1UD42YNEZ37QDI+iWeD89n1efF7LkQWvwFcORFSnrYBLiPZ1kz/khoWJE
-         NCFtcsJOocz7rCSXPC531kwBrgRG5nK33Lci4JVBuesBHhb1ZjofhQhP3/TajlBwaL+I
-         iEPw==
-X-Gm-Message-State: APjAAAXp1QW5xlW6RwWZ57iLJx5YSbxuDJizar9kQs8O7K5rCqecIeVE
-        EosiMCV+UbxkoePB1dWKkHFTmgE5qqAcEwiGTlJs//nV
-X-Google-Smtp-Source: APXvYqyGpSCJKDzombzhVFE/FHSSj7O7C565rxaZTc/oGaNFNATCUmhcpMaHHi1q1LyViI2TpLsk8/wkO46VSoGct5M=
-X-Received: by 2002:a67:de83:: with SMTP id r3mr4427838vsk.236.1556870032231;
- Fri, 03 May 2019 00:53:52 -0700 (PDT)
+        id S1727170AbfECH4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 03:56:38 -0400
+Received: from smtp-out.xnet.cz ([178.217.244.18]:44222 "EHLO smtp-out.xnet.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725777AbfECH4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 03:56:34 -0400
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id D7AEE357A;
+        Fri,  3 May 2019 09:56:31 +0200 (CEST)
+Received: by meh.true.cz (OpenSMTPD) with ESMTP id f3cd58c2;
+        Fri, 3 May 2019 09:56:30 +0200 (CEST)
+From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+To:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        Alban Bedel <albeu@free.fr>, Felix Fietkau <nbd@nbd.name>,
+        John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/10] of_net: add NVMEM support to of_get_mac_address
+Date:   Fri,  3 May 2019 09:55:58 +0200
+Message-Id: <1556870168-26864-2-git-send-email-ynezz@true.cz>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1556870168-26864-1-git-send-email-ynezz@true.cz>
+References: <1556870168-26864-1-git-send-email-ynezz@true.cz>
 MIME-Version: 1.0
-References: <20190503073621.GA6992@ogabbay-VM> <20190503075131.GA9785@kroah.com>
-In-Reply-To: <20190503075131.GA9785@kroah.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 3 May 2019 10:53:27 +0300
-Message-ID: <CAFCwf11=Xaehej8TM_5BNetNn58Cfeb9Tr-ktt_EKAmwHaQx7w@mail.gmail.com>
-Subject: Re: [git pull] habanalabs next second pull for 5.2
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 10:51 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Fri, May 03, 2019 at 10:36:21AM +0300, Oded Gabbay wrote:
-> > Hi Greg,
-> >
-> > This is the second pull request of habanalabs driver for kernel 5.2.
-> >
-> > As the tag describes, all of the changes are either bug fixes or simple
-> > re-factoring of existing code, so they should all be relatively low-risk.
-> >
-> > Thanks,
-> > Oded
-> >
-> > The following changes since commit 78e6427b4e7b017951785982f7f97cf64e2d624b:
-> >
-> >   coresight: funnel: Support static funnel (2019-05-02 19:12:21 +0200)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-05-03
->
-> Pulled and pushed out, thanks.  My tree is now closed for 5.2-rc1 stuff,
-> but feel free to queue up bugfixes for me if you want.
->
-> thanks,
->
-> greg k-h
-Sure, np.
-Thanks for the fast handling.
+Many embedded devices have information such as MAC addresses stored
+inside NVMEMs like EEPROMs and so on. Currently there are only two
+drivers in the tree which benefit from NVMEM bindings.
 
-Oded
+Adding support for NVMEM into every other driver would mean adding a lot
+of repetitive code. This patch allows us to configure MAC addresses in
+various devices like ethernet and wireless adapters directly from
+of_get_mac_address, which is already used by almost every driver in the
+tree.
+
+Predecessor of this patch which used directly MTD layer has originated
+in OpenWrt some time ago and supports already about 497 use cases in 357
+device tree files.
+
+Cc: Alban Bedel <albeu@free.fr>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+---
+
+ Changes since v1:
+
+  * moved handling of nvmem after mac-address and local-mac-address properties
+
+ Changes since v2:
+
+  * moved of_get_mac_addr_nvmem after of_get_mac_addr(np, "address") call
+  * replaced kzalloc, kmemdup and kfree with it's devm variants
+  * introduced of_has_nvmem_mac_addr helper which checks if DT node has nvmem
+    cell with `mac-address`
+  * of_get_mac_address now returns ERR_PTR encoded error value
+
+ drivers/of/of_net.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 62 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+index d820f3e..258ceb8 100644
+--- a/drivers/of/of_net.c
++++ b/drivers/of/of_net.c
+@@ -8,8 +8,10 @@
+ #include <linux/etherdevice.h>
+ #include <linux/kernel.h>
+ #include <linux/of_net.h>
++#include <linux/of_platform.h>
+ #include <linux/phy.h>
+ #include <linux/export.h>
++#include <linux/device.h>
+ 
+ /**
+  * of_get_phy_mode - Get phy mode for given device_node
+@@ -47,12 +49,59 @@ static const void *of_get_mac_addr(struct device_node *np, const char *name)
+ 	return NULL;
+ }
+ 
++static const void *of_get_mac_addr_nvmem(struct device_node *np)
++{
++	int ret;
++	u8 mac[ETH_ALEN];
++	struct property *pp;
++	struct platform_device *pdev = of_find_device_by_node(np);
++
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
++
++	ret = nvmem_get_mac_address(&pdev->dev, &mac);
++	if (ret)
++		return ERR_PTR(ret);
++
++	pp = devm_kzalloc(&pdev->dev, sizeof(*pp), GFP_KERNEL);
++	if (!pp)
++		return ERR_PTR(-ENOMEM);
++
++	pp->name = "nvmem-mac-address";
++	pp->length = ETH_ALEN;
++	pp->value = devm_kmemdup(&pdev->dev, mac, ETH_ALEN, GFP_KERNEL);
++	if (!pp->value) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	ret = of_add_property(np, pp);
++	if (ret)
++		goto free;
++
++	return pp->value;
++free:
++	devm_kfree(&pdev->dev, pp->value);
++	devm_kfree(&pdev->dev, pp);
++
++	return ERR_PTR(ret);
++}
++
++static inline bool of_has_nvmem_mac_addr(struct device_node *np)
++{
++	int index = of_property_match_string(np, "nvmem-cell-names",
++					     "mac-address");
++	return of_parse_phandle(np, "nvmem-cells", index) != NULL;
++}
++
+ /**
+  * Search the device tree for the best MAC address to use.  'mac-address' is
+  * checked first, because that is supposed to contain to "most recent" MAC
+  * address. If that isn't set, then 'local-mac-address' is checked next,
+- * because that is the default address.  If that isn't set, then the obsolete
+- * 'address' is checked, just in case we're using an old device tree.
++ * because that is the default address. If that isn't set, then the obsolete
++ * 'address' is checked, just in case we're using an old device tree. If any
++ * of the above isn't set, then try to get MAC address from nvmem cell named
++ * 'mac-address'.
+  *
+  * Note that the 'address' property is supposed to contain a virtual address of
+  * the register set, but some DTS files have redefined that property to be the
+@@ -64,6 +113,9 @@ static const void *of_get_mac_addr(struct device_node *np, const char *name)
+  * addresses.  Some older U-Boots only initialized 'local-mac-address'.  In
+  * this case, the real MAC is in 'local-mac-address', and 'mac-address' exists
+  * but is all zeros.
++ *
++ * Return: Will be a valid pointer on success, NULL in case there wasn't
++ *         'mac-address' nvmem cell node found, and ERR_PTR in case of error.
+ */
+ const void *of_get_mac_address(struct device_node *np)
+ {
+@@ -77,6 +129,13 @@ const void *of_get_mac_address(struct device_node *np)
+ 	if (addr)
+ 		return addr;
+ 
+-	return of_get_mac_addr(np, "address");
++	addr = of_get_mac_addr(np, "address");
++	if (addr)
++		return addr;
++
++	if (!of_has_nvmem_mac_addr(np))
++		return NULL;
++
++	return of_get_mac_addr_nvmem(np);
+ }
+ EXPORT_SYMBOL(of_get_mac_address);
+-- 
+1.9.1
+
