@@ -2,254 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72ED312B7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 596FD12B9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfECKay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 06:30:54 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40392 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfECKax (ORCPT
+        id S1727622AbfECKht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 06:37:49 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:35240 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfECKhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 06:30:53 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h4so7198593wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 03:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5Zb69raiwquVqA7b+h9rr/HvkOLhohvYFruSLqccMD8=;
-        b=GmbDZQnYssCy1L9J0iPQreRaTHGcKtf4LGocIOgmlXEo/w7uu4IzDpZRXCmNNj0/11
-         PdadyQi9oZaNnj6njMBY7VSnuqZyACsqO80wgBmUcUiAccb5SQxcLVmt/mu1vlfQXSPr
-         pS1DZUt6hN3SH5LIXjZGWsKz+s/2Z9DwoPpFo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5Zb69raiwquVqA7b+h9rr/HvkOLhohvYFruSLqccMD8=;
-        b=BZp6IMMhY47/sldbnMD3axGNPKgYIxGhdWP8PhbwEX8eUpv1R5RCsEDTA4YOUDbCNv
-         W8Z0sD/DZWOdzMzP3jAYREHI9DFiBu0Nqw/65M0RKCJph39E9BOucIRiYs7En5Iwcyun
-         oi9I2ObUBJwo0ndJafMacwbFB8YaOuwlBUmH79z89/98wsTlQEH1j17czRlcm5zUxtdS
-         rd8A65tA5sY/DKBbSnYPIVYkCoNFfGj2gs9THlGjDLChMGAn7O6YwDa3KluWm/9dg9q8
-         PRIK3e6RCt0wmsQBcEYAa1U/W/ILN/IV6WpxZ0BOQuxuzjodMF3TQfFTPa/vxvPzT/2k
-         NFjA==
-X-Gm-Message-State: APjAAAUDzixTG+MZJY91/mZpmFmPAvYj9GDzLHAWl/rgGLNGXagMpJmM
-        Zo6HqtgrtrL+0m+/yY2bZyTkYq/ncgOJsjeuFE5nyg==
-X-Google-Smtp-Source: APXvYqzAjs6RzDesBMoQ0b7QqkjHoszjU4WMwET3QD93wCh8P0ek/i1piGMUVKhkfMKR3MTBJVuXLarBWRLaO5gzFUI=
-X-Received: by 2002:a5d:5092:: with SMTP id a18mr6832736wrt.112.1556879451254;
- Fri, 03 May 2019 03:30:51 -0700 (PDT)
+        Fri, 3 May 2019 06:37:48 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43AXxGJ011376;
+        Fri, 3 May 2019 10:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=kNlNIR9Fo8ESlQnZzVfciYR2PSzGbl848JM9YPcBKYo=;
+ b=SNWtejo0Pn5WyY8kfzS5pBy0rXnkeaePknhO5TudvQjauk3QuFK79+iawq49XVppmJmF
+ V9pPPx4oabYneoc/h9ZFYqxQqj2kgpMXJaFPZUeFSQqW7pg/3w7deTYhjhL7K0GMPIfi
+ xGCnFsiOhWSbwtNawnamBh628dYflZsP7q7CYZI9cy7NvoZud4lvNSAZ2g2AtcnDKFBO
+ mY+VkeronehCITjGqFoPBiiw+qH9656hGKKcEmeklLaZ0yUd4pp0V4BfMQiTP7wQ+ueQ
+ gcqD+0snD0LZD2zX1TNSvC1dQtIWwDhk4m1NHHJPUrNZbab50vBrSH2XaudOzaLGy8qq vg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 2s6xhynw4b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 May 2019 10:37:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43AXhUc024411;
+        Fri, 3 May 2019 10:35:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2s7p8a8va6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 May 2019 10:35:19 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x43AZ9n3014091;
+        Fri, 3 May 2019 10:35:10 GMT
+Received: from kadam (/196.104.111.181)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 03 May 2019 03:35:09 -0700
+Date:   Fri, 3 May 2019 13:34:56 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v3 08/10] staging: octeon-ethernet: support
+ of_get_mac_address new ERR_PTR error
+Message-ID: <20190503103456.GF2269@kadam>
+References: <1556870168-26864-1-git-send-email-ynezz@true.cz>
+ <1556870168-26864-9-git-send-email-ynezz@true.cz>
 MIME-Version: 1.0
-References: <1556732186-21630-1-git-send-email-srinath.mannam@broadcom.com>
- <1556732186-21630-3-git-send-email-srinath.mannam@broadcom.com>
- <20190502110152.GA7313@e121166-lin.cambridge.arm.com> <2f4b9492-0caf-d6e3-e727-e3c869eefb58@arm.com>
- <20190502130624.GA10470@e121166-lin.cambridge.arm.com> <b4420901-60d4-69ab-6ed0-5d2fa9449595@arm.com>
- <CABe79T7CgtLG=DZTFy8efVocPMLi-MDtyUT5rToy7xj8GHkBSA@mail.gmail.com> <0b58c031-28c4-b577-ef0f-dbb111cc991b@arm.com>
-In-Reply-To: <0b58c031-28c4-b577-ef0f-dbb111cc991b@arm.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Fri, 3 May 2019 16:00:39 +0530
-Message-ID: <CABe79T7hrv+MXJq+0hpEBXqbm4XBajOLTa4q0h-o9Tw0aXOg1w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] iommu/dma: Reserve IOVA for PCIe inaccessible DMA address
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, poza@codeaurora.org,
-        Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1556870168-26864-9-git-send-email-ynezz@true.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=933
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905030067
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=955 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905030067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Fri, May 03, 2019 at 09:56:05AM +0200, Petr Štetiar wrote:
+> There was NVMEM support added to of_get_mac_address, so it could now
+> return NULL and ERR_PTR encoded error values, so we need to adjust all
+> current users of of_get_mac_address to this new fact.
 
+Which commit added NVMEM support?  It hasn't hit net-next or linux-next
+yet...  Very strange.
 
-On Fri, May 3, 2019 at 3:58 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 03/05/2019 06:23, Srinath Mannam wrote:
-> > Hi Robin, Lorenzo,
-> >
-> > Thanks for review and guidance.
-> > AFAIU, conclusion of discussion is, to return error if dma-ranges list
-> > is not sorted.
-> >
-> > So that, Can I send a new patch with below change to return error if
-> > dma-ranges list is not sorted?
-> >
-> > -static void iova_reserve_pci_windows(struct pci_dev *dev,
-> > +static int iova_reserve_pci_windows(struct pci_dev *dev,
-> >                  struct iova_domain *iovad)
-> >   {
-> >          struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> > @@ -227,11 +227,15 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
-> >          resource_list_for_each_entry(window, &bridge->dma_ranges) {
-> >                  end = window->res->start - window->offset;
-> >   resv_iova:
-> > -               if (end - start) {
-> > +               if (end > start) {
-> >                          lo = iova_pfn(iovad, start);
-> >                          hi = iova_pfn(iovad, end);
-> >                          reserve_iova(iovad, lo, hi);
-> > +               } else {
-> > +                       dev_err(&dev->dev, "Unsorted dma_ranges list\n");
-> > +                       return -EINVAL;
-> >                  }
-> > +
-> >
-> > Please provide your inputs if any more changes required. Thank you,
->
-> You also need to handle and return this error where
-> iova_reserve_pci_windows() is called from iova_reserve_iommu_regions().
-Thank you. I am doing this.
+Why would of_get_mac_address() return a mix of NULL and error pointers?
+In that situation, then NULL is a special kind of success like when you
+request feature and the feature works but it's disabled by the user.  We
+don't want to treat it as an error but we still can't return a pointer
+to a feature we don't have...  It's hard for me to imagine how that
+makes sense for getting a mac address.
 
-Regards,
-Srinath.
->
-> Robin.
->
-> > Regards,
-> > Srinath.
-> >
-> > On Thu, May 2, 2019 at 7:45 PM Robin Murphy <robin.murphy@arm.com> wrote:
-> >>
-> >> On 02/05/2019 14:06, Lorenzo Pieralisi wrote:
-> >>> On Thu, May 02, 2019 at 12:27:02PM +0100, Robin Murphy wrote:
-> >>>> Hi Lorenzo,
-> >>>>
-> >>>> On 02/05/2019 12:01, Lorenzo Pieralisi wrote:
-> >>>>> On Wed, May 01, 2019 at 11:06:25PM +0530, Srinath Mannam wrote:
-> >>>>>> dma_ranges field of PCI host bridge structure has resource entries in
-> >>>>>> sorted order of address range given through dma-ranges DT property. This
-> >>>>>> list is the accessible DMA address range. So that this resource list will
-> >>>>>> be processed and reserve IOVA address to the inaccessible address holes in
-> >>>>>> the list.
-> >>>>>>
-> >>>>>> This method is similar to PCI IO resources address ranges reserving in
-> >>>>>> IOMMU for each EP connected to host bridge.
-> >>>>>>
-> >>>>>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> >>>>>> Based-on-patch-by: Oza Pawandeep <oza.oza@broadcom.com>
-> >>>>>> Reviewed-by: Oza Pawandeep <poza@codeaurora.org>
-> >>>>>> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> >>>>>> ---
-> >>>>>>     drivers/iommu/dma-iommu.c | 19 +++++++++++++++++++
-> >>>>>>     1 file changed, 19 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> >>>>>> index 77aabe6..da94844 100644
-> >>>>>> --- a/drivers/iommu/dma-iommu.c
-> >>>>>> +++ b/drivers/iommu/dma-iommu.c
-> >>>>>> @@ -212,6 +212,7 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
-> >>>>>>             struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> >>>>>>             struct resource_entry *window;
-> >>>>>>             unsigned long lo, hi;
-> >>>>>> +  phys_addr_t start = 0, end;
-> >>>>>>             resource_list_for_each_entry(window, &bridge->windows) {
-> >>>>>>                     if (resource_type(window->res) != IORESOURCE_MEM)
-> >>>>>> @@ -221,6 +222,24 @@ static void iova_reserve_pci_windows(struct pci_dev *dev,
-> >>>>>>                     hi = iova_pfn(iovad, window->res->end - window->offset);
-> >>>>>>                     reserve_iova(iovad, lo, hi);
-> >>>>>>             }
-> >>>>>> +
-> >>>>>> +  /* Get reserved DMA windows from host bridge */
-> >>>>>> +  resource_list_for_each_entry(window, &bridge->dma_ranges) {
-> >>>>>
-> >>>>> If this list is not sorted it seems to me the logic in this loop is
-> >>>>> broken and you can't rely on callers to sort it because it is not a
-> >>>>> written requirement and it is not enforced (you know because you
-> >>>>> wrote the code but any other developer is not supposed to guess
-> >>>>> it).
-> >>>>>
-> >>>>> Can't we rewrite this loop so that it does not rely on list
-> >>>>> entries order ?
-> >>>>
-> >>>> The original idea was that callers should be required to provide a sorted
-> >>>> list, since it keeps things nice and simple...
-> >>>
-> >>> I understand, if it was self-contained in driver code that would be fine
-> >>> but in core code with possible multiple consumers this must be
-> >>> documented/enforced, somehow.
-> >>>
-> >>>>> I won't merge this series unless you sort it, no pun intended.
-> >>>>>
-> >>>>> Lorenzo
-> >>>>>
-> >>>>>> +          end = window->res->start - window->offset;
-> >>>>
-> >>>> ...so would you consider it sufficient to add
-> >>>>
-> >>>>               if (end < start)
-> >>>>                       dev_err(...);
-> >>>
-> >>> We should also revert any IOVA reservation we did prior to this
-> >>> error, right ?
-> >>
-> >> I think it would be enough to propagate an error code back out through
-> >> iommu_dma_init_domain(), which should then end up aborting the whole
-> >> IOMMU setup - reserve_iova() isn't really designed to be undoable, but
-> >> since this is the kind of error that should only ever be hit during
-> >> driver or DT development, as long as we continue booting such that the
-> >> developer can clearly see what's gone wrong, I don't think we need
-> >> bother spending too much effort tidying up inside the unused domain.
-> >>
-> >>> Anyway, I think it is best to ensure it *is* sorted.
-> >>>
-> >>>> here, plus commenting the definition of pci_host_bridge::dma_ranges
-> >>>> that it must be sorted in ascending order?
-> >>>
-> >>> I don't think that commenting dma_ranges would help much, I am more
-> >>> keen on making it work by construction.
-> >>>
-> >>>> [ I guess it might even make sense to factor out the parsing and list
-> >>>> construction from patch #3 into an of_pci core helper from the beginning, so
-> >>>> that there's even less chance of another driver reimplementing it
-> >>>> incorrectly in future. ]
-> >>>
-> >>> This makes sense IMO and I would like to take this approach if you
-> >>> don't mind.
-> >>
-> >> Sure - at some point it would be nice to wire this up to
-> >> pci-host-generic for Juno as well (with a parallel version for ACPI
-> >> _DMA), so from that viewpoint, the more groundwork in place the better :)
-> >>
-> >> Thanks,
-> >> Robin.
-> >>
-> >>>
-> >>> Either this or we move the whole IOVA reservation and dma-ranges
-> >>> parsing into PCI IProc.
-> >>>
-> >>>> Failing that, although I do prefer the "simple by construction"
-> >>>> approach, I'd have no objection to just sticking a list_sort() call in
-> >>>> here instead, if you'd rather it be entirely bulletproof.
-> >>>
-> >>> I think what you outline above is a sensible way forward - if we
-> >>> miss the merge window so be it.
-> >>>
-> >>> Thanks,
-> >>> Lorenzo
-> >>>
-> >>>> Robin.
-> >>>>
-> >>>>>> +resv_iova:
-> >>>>>> +          if (end - start) {
-> >>>>>> +                  lo = iova_pfn(iovad, start);
-> >>>>>> +                  hi = iova_pfn(iovad, end);
-> >>>>>> +                  reserve_iova(iovad, lo, hi);
-> >>>>>> +          }
-> >>>>>> +          start = window->res->end - window->offset + 1;
-> >>>>>> +          /* If window is last entry */
-> >>>>>> +          if (window->node.next == &bridge->dma_ranges &&
-> >>>>>> +              end != ~(dma_addr_t)0) {
-> >>>>>> +                  end = ~(dma_addr_t)0;
-> >>>>>> +                  goto resv_iova;
-> >>>>>> +          }
-> >>>>>> +  }
-> >>>>>>     }
-> >>>>>>     static int iova_reserve_iommu_regions(struct device *dev,
-> >>>>>> --
-> >>>>>> 2.7.4
-> >>>>>>
+At the very least, this patch needs a Fixes tag.
+
+regards,
+dan carpenter
+
