@@ -2,65 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B74BA135EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 01:05:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D83135EF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 01:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfECXFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 19:05:36 -0400
-Received: from mail2.sp2max.com.br ([138.185.4.9]:50460 "EHLO
-        mail2.sp2max.com.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfECXFg (ORCPT
+        id S1726943AbfECXIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 19:08:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36762 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfECXIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 19:05:36 -0400
-Received: from pgsop.sopnet.com.ar (unknown [179.40.38.12])
-        (Authenticated sender: pablo@fliagreco.com.ar)
-        by mail2.sp2max.com.br (Postfix) with ESMTPA id DCD307B305F;
-        Fri,  3 May 2019 20:05:25 -0300 (-03)
-From:   Pablo Greco <pgreco@centosproject.org>
-To:     linux-sunxi@googlegroups.com
-Cc:     Pablo Greco <pgreco@centosproject.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: sun8i: r40: bananapi-m2-ultra: Remove regulator-always-on
-Date:   Fri,  3 May 2019 20:05:19 -0300
-Message-Id: <1556924720-49372-1-git-send-email-pgreco@centosproject.org>
-X-Mailer: git-send-email 1.8.3.1
-X-SP2Max-MailScanner-Information: Please contact the ISP for more information
-X-SP2Max-MailScanner-ID: DCD307B305F.A4ECF
-X-SP2Max-MailScanner: Sem Virus encontrado
-X-SP2Max-MailScanner-SpamCheck: nao spam, SpamAssassin (not cached,
-        escore=-2.9, requerido 6, autolearn=not spam, ALL_TRUSTED -1.00,
-        BAYES_00 -1.90)
-X-SP2Max-MailScanner-From: pgreco@centosproject.org
-X-Spam-Status: No
+        Fri, 3 May 2019 19:08:24 -0400
+Received: by mail-io1-f67.google.com with SMTP id d19so6578297ioc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 16:08:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vfwVmU13mIPCIYdpxEtGI/5zAfnwuEVr+axgRwt2aOs=;
+        b=OZYMgYiBy48UTf9kHTJiQosCJNjGq0fvWxH/7gnknxnJFiiXIJ5gONsdgKuPxkAVSq
+         xPreisZwcJu4rWUvqJJOTmZ5VPIKJInSKeHDuTXYSUKKjN9LJBmR4sCXvHdldSsXYPpN
+         QzRNFHl43M7h9J0OkjNTqOjt/LgXyKK/Po1UU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vfwVmU13mIPCIYdpxEtGI/5zAfnwuEVr+axgRwt2aOs=;
+        b=anCq9Pnzg9abd40wbbIBvbeQy+NmAvC8y9T5NIJYNeuSADRekUVpOFCV8eaZ5XFm5S
+         P+VvTvZAGs+a2je+amNjy/d5iO9W9F09M+SCTSjmGsDG3T8rCE+5xcV9AhV2sjLLCj4T
+         /g89azQIxQvx78GrPr4GjgCNPhWjT5c39aDSTMGWzahZJBpCRDKXmITUMkHnGOg3bttS
+         kgTRNmWipmVauwNse4DsAixRMdjcR5wJUOhZUbBn/bQwCOlvQ79n+AN4CHALVkzgjT1X
+         HERT8k5ep8OroeqCLKKW7gN+0+QAa7pleUOJKXsSTlV1v3EZrbARpA76ta2IIl1oW7Jw
+         EMsw==
+X-Gm-Message-State: APjAAAVfqVk0xU/nroX8WOTjjJDNBXeHy2LwYEdq5Lr2YR8qpJx6JkrS
+        Tqc3OcIH9HjyKkPOqp9HreWg28SWi+0=
+X-Google-Smtp-Source: APXvYqx/gKRjRgj/rjW5FvDEYCIc+405bRHLorCdRdA0W/wjK5lkgiA44Z81EaN2VdwfcRuEpx3FEQ==
+X-Received: by 2002:a5d:8cd1:: with SMTP id k17mr8580865iot.287.1556924903390;
+        Fri, 03 May 2019 16:08:23 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:33ce:f5cf:f863:d3a6])
+        by smtp.gmail.com with ESMTPSA id 19sm1651503itm.6.2019.05.03.16.08.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 May 2019 16:08:22 -0700 (PDT)
+From:   Fletcher Woodruff <fletcherw@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Fletcher Woodruff <fletcherw@chromium.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Subject: [PATCH v4 0/3] Fix jack detection for Chromebook Pixel
+Date:   Fri,  3 May 2019 17:07:48 -0600
+Message-Id: <20190503230751.168403-1-fletcherw@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the regulators are tied to the GPIO bank, we can remove the
-unneeded regulator-always-on in reg_aldo2
+Headphone/mic jack detection doesn't work on the Chromebook Pixel 2015.
 
-Signed-off-by: Pablo Greco <pgreco@centosproject.org>
----
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 1 -
- 1 file changed, 1 deletion(-)
+This patch changes the irq implementation to support polarity flipping
+and fixes the configuration code so that correct GPIO pins are read
+from ACPI.
 
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index 699579d..42d62d1 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -210,7 +210,6 @@
- };
- 
- &reg_aldo2 {
--	regulator-always-on;
- 	regulator-min-microvolt = <2500000>;
- 	regulator-max-microvolt = <2500000>;
- 	regulator-name = "vcc-pa";
+With this series, plugging and unplugging the headphone jack switches
+between headphones and speakers automatically, and headset microphones 
+are also detected.
+
+v4:
+  - Fix incorrect void* cast in rt5677_irq() 
+
+v3:
+  - Update commit message for patch 1/3 to clarify why we implement
+    our own irq_chip.
+
+v2:
+  - Split IRQ change into two patches: adding and fixing potential race
+  - Change config reading code to try both DT and ACPI style names
+
+Ben Zhang (1):
+  ASoC: rt5677: allow multiple interrupt sources
+
+Fletcher Woodruff (2):
+  ASoC: rt5677: handle concurrent interrupts
+  ASoC: rt5677: fall back to DT prop names on error
+
+ sound/soc/codecs/rt5677.c | 346 ++++++++++++++++++++++++++------------
+ sound/soc/codecs/rt5677.h |  14 +-
+ 2 files changed, 256 insertions(+), 104 deletions(-)
+
 -- 
-1.8.3.1
+2.21.0.1020.gf2820cf01a-goog
 
