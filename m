@@ -2,88 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA87E12F14
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2313C12F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfECN1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 09:27:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbfECN1p (ORCPT
+        id S1727744AbfECN3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 09:29:38 -0400
+Received: from ivanoab6.miniserver.com ([5.153.251.140]:48050 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfECN3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 09:27:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mkGg1i+EI0XU//yFAO+gJW+bQDnnQU83x/RNkUevVAw=; b=T9s51+W+nABH6PVAvlfgP+ohw
-        RCDyHolxbxOczp+Cg0V5Q3SXBf36YHMOis1fkWWpWSE0zZx6A65FVoDithh+5zNBA/L+/pInK3O58
-        PPdp9B6gb5Mj1aHlTOwgYd7feLRBi467iD6vPhfKK/abUZfZCHY1041K3TtWkrj1V0TUQ8aWIVhLI
-        +/1YzsyjItpsKuqA6JsKXlZeS7WEi7325sCVTFrE7teQKa5lOodL28eu5Nt6D+miXBGjogCaXg8yc
-        VVRuwIZrSBtfheGOujAaXemlnM9xeF/eEeaLHQrjpzSd4fVzD5UcaEhjqq1fDcHkpcop11b8UYehV
-        hXvd6JaeQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMYDu-0006ZD-4h; Fri, 03 May 2019 13:27:34 +0000
-Date:   Fri, 3 May 2019 06:27:33 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
+        Fri, 3 May 2019 09:29:36 -0400
+Received: from [192.168.17.6] (helo=jain.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1hMYFM-00074d-Bk; Fri, 03 May 2019 13:29:04 +0000
+Received: from jain.kot-begemot.co.uk ([192.168.3.3])
+        by jain.kot-begemot.co.uk with esmtp (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1hMYFF-0001a5-CV; Fri, 03 May 2019 14:29:03 +0100
+Subject: Re: [PATCH 14/15] um: switch to generic version of pte allocation
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, jglisse@redhat.com,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] mm/pgtable: Drop pgtable_t variable from pte_fn_t
- functions
-Message-ID: <20190503132733.GA5201@bombadil.infradead.org>
-References: <1556803126-26596-1-git-send-email-anshuman.khandual@arm.com>
- <20190502134623.GA18948@bombadil.infradead.org>
- <20190502161457.1c9dbd94@mschwideX1>
+        Palmer Dabbelt <palmer@sifive.com>, linux-mips@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>, linux-hexagon@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Helge Deller <deller@gmx.de>, x86@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Sam Creasey <sammy@sammy.net>, Arnd Bergmann <arnd@arndb.de>,
+        linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-m68k@lists.linux-m68k.org, Greentime Hu <green.hu@gmail.com>,
+        nios2-dev@lists.rocketboards.org, Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-alpha@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <1556810922-20248-1-git-send-email-rppt@linux.ibm.com>
+ <1556810922-20248-15-git-send-email-rppt@linux.ibm.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Message-ID: <3fddc076-1843-ee84-febb-44c8d317489f@cambridgegreys.com>
+Date:   Fri, 3 May 2019 14:28:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502161457.1c9dbd94@mschwideX1>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1556810922-20248-15-git-send-email-rppt@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0
+X-Spam-Score: -1.0
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 04:14:57PM +0200, Martin Schwidefsky wrote:
-> On Thu, 2 May 2019 06:46:23 -0700
-> Matthew Wilcox <willy@infradead.org> wrote:
+
+
+On 02/05/2019 16:28, Mike Rapoport wrote:
+> um allocates PTE pages with __get_free_page() and uses
+> GFP_KERNEL | __GFP_ZERO for the allocations.
 > 
-> > On Thu, May 02, 2019 at 06:48:46PM +0530, Anshuman Khandual wrote:
-> > > Drop the pgtable_t variable from all implementation for pte_fn_t as none of
-> > > them use it. apply_to_pte_range() should stop computing it as well. Should
-> > > help us save some cycles.  
-> > 
-> > You didn't add Martin Schwidefsky for some reason.  He introduced
-> > it originally for s390 for sub-page page tables back in 2008 (commit
-> > 2f569afd9c).  I think he should confirm that he no longer needs it.
+> Switch it to the generic version that does exactly the same thing for the
+> kernel page tables and adds __GFP_ACCOUNT for the user PTEs.
 > 
-> With its 2K pte tables s390 can not deal with a (struct page *) as a reference
-> to a page table. But if there are no user of the apply_to_page_range() API
-> left which actually make use of the token argument we can safely drop it.
+> The pte_free() and pte_free_kernel() versions are identical to the generic
+> ones and can be simply dropped.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>   arch/um/include/asm/pgalloc.h | 16 ++--------------
+>   arch/um/kernel/mem.c          | 22 ----------------------
+>   2 files changed, 2 insertions(+), 36 deletions(-)
+> 
+> diff --git a/arch/um/include/asm/pgalloc.h b/arch/um/include/asm/pgalloc.h
+> index 99eb568..d7b282e 100644
+> --- a/arch/um/include/asm/pgalloc.h
+> +++ b/arch/um/include/asm/pgalloc.h
+> @@ -10,6 +10,8 @@
+>   
+>   #include <linux/mm.h>
+>   
+> +#include <asm-generic/pgalloc.h>	/* for pte_{alloc,free}_one */
+> +
+>   #define pmd_populate_kernel(mm, pmd, pte) \
+>   	set_pmd(pmd, __pmd(_PAGE_TABLE + (unsigned long) __pa(pte)))
+>   
+> @@ -25,20 +27,6 @@
+>   extern pgd_t *pgd_alloc(struct mm_struct *);
+>   extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
+>   
+> -extern pte_t *pte_alloc_one_kernel(struct mm_struct *);
+> -extern pgtable_t pte_alloc_one(struct mm_struct *);
+> -
+> -static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+> -{
+> -	free_page((unsigned long) pte);
+> -}
+> -
+> -static inline void pte_free(struct mm_struct *mm, pgtable_t pte)
+> -{
+> -	pgtable_page_dtor(pte);
+> -	__free_page(pte);
+> -}
+> -
+>   #define __pte_free_tlb(tlb,pte, address)		\
+>   do {							\
+>   	pgtable_page_dtor(pte);				\
+> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
+> index 99aa11b..2280374 100644
+> --- a/arch/um/kernel/mem.c
+> +++ b/arch/um/kernel/mem.c
+> @@ -215,28 +215,6 @@ void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+>   	free_page((unsigned long) pgd);
+>   }
+>   
+> -pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> -{
+> -	pte_t *pte;
+> -
+> -	pte = (pte_t *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
+> -	return pte;
+> -}
+> -
+> -pgtable_t pte_alloc_one(struct mm_struct *mm)
+> -{
+> -	struct page *pte;
+> -
+> -	pte = alloc_page(GFP_KERNEL|__GFP_ZERO);
+> -	if (!pte)
+> -		return NULL;
+> -	if (!pgtable_page_ctor(pte)) {
+> -		__free_page(pte);
+> -		return NULL;
+> -	}
+> -	return pte;
+> -}
+> -
+>   #ifdef CONFIG_3_LEVEL_PGTABLES
+>   pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long address)
+>   {
+> 
 
-Interestingly, I don't think there ever was a user which used that
-argument.  Looking at your 2f56 patch, you only converted one function
-(presumably there was only one caller of apply_to_page_range() at the
-time), and it didn't u se any of the arguments.  Xen was the initial user,
-and the two other functions they added also didn't use that argument.
 
-Looking at a quick sample of users added since, none of them appear to
-have ever used that argument.  So removing it seems best.
+Reviewed-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-Acked-by: Matthew Wilcox <willy@infradead.org>
+-- 
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
+https://www.cambridgegreys.com/
