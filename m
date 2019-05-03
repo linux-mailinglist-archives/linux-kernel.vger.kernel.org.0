@@ -2,256 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7D812A13
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF2F712A24
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfECIqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 04:46:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35034 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727315AbfECIqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 04:46:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 06A8CACAE;
-        Fri,  3 May 2019 08:46:07 +0000 (UTC)
-Date:   Fri, 3 May 2019 10:46:03 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 05/12] mm/sparsemem: Convert kmalloc_section_memmap()
- to populate_section_memmap()
-Message-ID: <20190503084603.GE15740@linux>
-References: <155677652226.2336373.8700273400832001094.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155677654842.2336373.17000900051843592636.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1726495AbfECIvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 04:51:22 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43925 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfECIvV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 04:51:21 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w33so2794337edb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 01:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WtAh09ggDNk8Bg++boVrbk2pv8k5do2kf68uyPp426k=;
+        b=UuHPz4heyl9PST1AnoCUmNlIrCU3I/eX0BuK2lNEqV9TLMa+5i8HJ/b6P8DTmS9Xg4
+         kypmMouBYyFwsvJYuuCMjddDZojQ3IDeyLuuZyQ3EeOrMLwg/b5DFEaF6oMSzuovIvn4
+         sEpUULXNnExPVs+2ENkZGa2RNVk4LYVjxlRkw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=WtAh09ggDNk8Bg++boVrbk2pv8k5do2kf68uyPp426k=;
+        b=Uf+1e2bvTzTWtABqevVO1AtCk5TuR+MAYb62lBQAANIa0JfkoANxZiqvawCjCNg/cO
+         r/erulUFznTa6lLnSjA7Rd83u7cFfikVn41xFBVKWv1CgFHUuUsVOi6DMO12ecBPL0up
+         Tl3PG/4EDhAVxIuoUO9Hb+/xPKRPjhFL69BCTTvNcBCdVDnzzDpNBTo+osxaydKwVSFg
+         wZN3ZZja8r/06hBRHLz9MVfX6zEcYqY8DcieEzH9TnAlFR23Y1NoKNGUr7AwQExiutee
+         qxgRfjmQjUlfv189ZDlSiaOU6jsHM7Y5kD3xaucV7gy2zadmTQlERgRFWgi2peFhMEH0
+         dTRw==
+X-Gm-Message-State: APjAAAVjPK46kj/y9NS4u67D0SKv9ea/K/GQs9kim0dPMcHeoXJiaEU8
+        N3F9mQqIQHfyxC8/JV5D3Ct9RQ==
+X-Google-Smtp-Source: APXvYqy1wRJDhuB7iuPdZsd4cRVVrUoPRO8I33eqnmgpGcrzQHL8UvjkGgbrvWI0m2hzJnHKYa3YBQ==
+X-Received: by 2002:a17:906:a458:: with SMTP id cb24mr3128785ejb.158.1556873479738;
+        Fri, 03 May 2019 01:51:19 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x18sm254555ejd.66.2019.05.03.01.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 May 2019 01:51:18 -0700 (PDT)
+Date:   Fri, 3 May 2019 10:51:16 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Liu, Chuansheng" <chuansheng.liu@intel.com>
+Subject: Re: [PATCH] RFC: hung_task: taint kernel
+Message-ID: <20190503085116.GK3271@phenom.ffwll.local>
+Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Liu, Chuansheng" <chuansheng.liu@intel.com>
+References: <20190502194208.3535-1-daniel.vetter@ffwll.ch>
+ <20190502204648.5537-1-daniel.vetter@ffwll.ch>
+ <7e4ef8c8-2def-5af9-f80e-b276fea8696a@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155677654842.2336373.17000900051843592636.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <7e4ef8c8-2def-5af9-f80e-b276fea8696a@i-love.sakura.ne.jp>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 10:55:48PM -0700, Dan Williams wrote:
-> Allow sub-section sized ranges to be added to the memmap.
-> populate_section_memmap() takes an explict pfn range rather than
-> assuming a full section, and those parameters are plumbed all the way
-> through to vmmemap_populate(). There should be no sub-section usage in
-> current deployments. New warnings are added to clarify which memmap
-> allocation paths are sub-section capable.
+On Fri, May 03, 2019 at 09:47:03AM +0900, Tetsuo Handa wrote:
+> On 2019/05/03 5:46, Daniel Vetter wrote:
+> > There's the hung_task_panic sysctl, but that's a bit an extreme measure.
+> > As a fallback taint at least the machine.
+> > 
+> > Our CI uses this to decide when a reboot is necessary, plus to figure
+> > out whether the kernel is still happy.
 > 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  arch/x86/mm/init_64.c |    4 ++-
->  include/linux/mm.h    |    4 ++-
->  mm/sparse-vmemmap.c   |   21 +++++++++++------
->  mm/sparse.c           |   61 +++++++++++++++++++++++++++++++------------------
->  4 files changed, 57 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 20d14254b686..bb018d09d2dc 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1457,7 +1457,9 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
->  {
->  	int err;
->  
-> -	if (boot_cpu_has(X86_FEATURE_PSE))
-> +	if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-maybe just:
+> Why your CI can't watch for "blocked for more than" message instead of
+> setting the taint flag? How does your CI decide a reboot is necessary?
 
-	if (PHYS_PFN(end) - PHYS_PFN(start) < PAGES_PER_SECTION) ?
-> +		err = vmemmap_populate_basepages(start, end, node);
-> +	else if (boot_cpu_has(X86_FEATURE_PSE))
->  		err = vmemmap_populate_hugepages(start, end, node, altmap);
->  	else if (altmap) {
->  		pr_err_once("%s: no cpu support for altmap allocations\n",
+We spam an awful lot into dmesg, and at least historically had
+occasionally trouble capturing it all (we're better than that now I
+think). Plus the thing that parses dmesg isn't the thing that runs
+testcases, hence why we started to use taint flags (or procfs lockdep
+status) and similar things to check the kernel is still alive enough.
 
-Although the following looks more clear to me:
+> There is no need to set the tainted flag when some task was just blocked
+> for a while. It might be due to memory pressure, it might be due to setting
+> very short timeout (e.g. a few seconds), it might be due to busy CPUs doing
+> something else...
 
-int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-                struct vmem_altmap *altmap)
-{
-        int err;
-        bool partial_section = (PHYS_PFN(end) - PFN_PHYS(start)) < PAGES_PER_SECTION;
+Yeah I realize that this probably doesn't have much use outside of our CI,
+but maybe there's someone how likes the idea.
 
-        if (partial_section || !boot_cpu_has(X86_FEATURE_PSE))
-                err = vmemmap_populate_basepages(start, end, node);
-        else if (boot_cpu_has(X86_FEATURE_PSE))
-                err = vmemmap_populate_hugepages(start, end, node, altmap);
-        else if (altmap) {
-                pr_err_once("%s: no cpu support for altmap allocations\n",
-                                __func__);
-                err = -ENOMEM;
-        }
-
-        if (!err)
-                sync_global_pgds(start, end - 1);
-        return err;
-}
-
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0e8834ac32b7..5360a0e4051d 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2748,8 +2748,8 @@ const char * arch_vma_name(struct vm_area_struct *vma);
->  void print_vma_addr(char *prefix, unsigned long rip);
->  
->  void *sparse_buffer_alloc(unsigned long size);
-> -struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
-> -		struct vmem_altmap *altmap);
-> +struct page * __populate_section_memmap(unsigned long pfn,
-> +		unsigned long nr_pages, int nid, struct vmem_altmap *altmap);
->  pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
->  p4d_t *vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node);
->  pud_t *vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node);
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index 7fec05796796..dcb023aa23d1 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -245,19 +245,26 @@ int __meminit vmemmap_populate_basepages(unsigned long start,
->  	return 0;
->  }
->  
-> -struct page * __meminit sparse_mem_map_populate(unsigned long pnum, int nid,
-> -		struct vmem_altmap *altmap)
-> +struct page * __meminit __populate_section_memmap(unsigned long pfn,
-> +		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
->  {
->  	unsigned long start;
->  	unsigned long end;
-> -	struct page *map;
->  
-> -	map = pfn_to_page(pnum * PAGES_PER_SECTION);
-> -	start = (unsigned long)map;
-> -	end = (unsigned long)(map + PAGES_PER_SECTION);
-> +	/*
-> +	 * The minimum granularity of memmap extensions is
-> +	 * SECTION_ACTIVE_SIZE as allocations are tracked in the
-> +	 * 'map_active' bitmap of the section.
-> +	 */
-> +	end = ALIGN(pfn + nr_pages, PHYS_PFN(SECTION_ACTIVE_SIZE));
-
-I would use PAGES_PER_SUB_SECTION directly:
-
-	 end = ALIGN(pfn + nr_pages, PAGES_PER_SUB_SECTION);
-
-> +	pfn &= PHYS_PFN(SECTION_ACTIVE_MASK);
-
-	pfn &= PAGE_SUB_SECTION_MASK ?
-
-[...]
-> -static struct page *__kmalloc_section_memmap(void)
-> +struct page *populate_section_memmap(unsigned long pfn,
-> +		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
->  {
->  	struct page *page, *ret;
->  	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
->  
-> +	if ((pfn & ~PAGE_SECTION_MASK) || nr_pages != PAGES_PER_SECTION) {
-> +		WARN(1, "%s: called with section unaligned parameters\n",
-> +				__func__);
-> +		return NULL;
-> +	}
-
-Can this actually happen? We need CONFIG_SPARSEMEM_VMEMMAP in order to use nvdimm,
-right?
-
-But I guess it is fine to have a safety net just in case.
-
-> +
->  	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
->  	if (page)
->  		goto got_map_page;
-> @@ -682,15 +692,17 @@ static struct page *__kmalloc_section_memmap(void)
->  	return ret;
->  }
->  
-> -static inline struct page *kmalloc_section_memmap(unsigned long pnum, int nid,
-> +static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
->  		struct vmem_altmap *altmap)
->  {
-> -	return __kmalloc_section_memmap();
-> -}
-> +	struct page *memmap = pfn_to_page(pfn);
-> +
-> +	if ((pfn & ~PAGE_SECTION_MASK) || nr_pages != PAGES_PER_SECTION) {
-> +		WARN(1, "%s: called with section unaligned parameters\n",
-> +				__func__);
-> +		return;
-> +	}
->  
-> -static void __kfree_section_memmap(struct page *memmap,
-> -		struct vmem_altmap *altmap)
-> -{
->  	if (is_vmalloc_addr(memmap))
->  		vfree(memmap);
->  	else
-> @@ -761,12 +773,13 @@ int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
->  	if (ret < 0 && ret != -EEXIST)
->  		return ret;
->  	ret = 0;
-> -	memmap = kmalloc_section_memmap(section_nr, nid, altmap);
-> +	memmap = populate_section_memmap(start_pfn, PAGES_PER_SECTION, nid,
-> +			altmap);
->  	if (!memmap)
->  		return -ENOMEM;
->  	usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
->  	if (!usage) {
-> -		__kfree_section_memmap(memmap, altmap);
-> +		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
->  		return -ENOMEM;
->  	}
->  
-> @@ -788,7 +801,7 @@ int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
->  out:
->  	if (ret < 0) {
->  		kfree(usage);
-> -		__kfree_section_memmap(memmap, altmap);
-> +		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
->  	}
->  	return ret;
->  }
-> @@ -825,7 +838,8 @@ static inline void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
->  #endif
->  
->  static void free_section_usage(struct page *memmap,
-> -		struct mem_section_usage *usage, struct vmem_altmap *altmap)
-> +		struct mem_section_usage *usage, unsigned long pfn,
-> +		unsigned long nr_pages, struct vmem_altmap *altmap)
->  {
->  	struct page *usage_page;
->  
-> @@ -839,7 +853,7 @@ static void free_section_usage(struct page *memmap,
->  	if (PageSlab(usage_page) || PageCompound(usage_page)) {
->  		kfree(usage);
->  		if (memmap)
-> -			__kfree_section_memmap(memmap, altmap);
-> +			depopulate_section_memmap(pfn, nr_pages, altmap);
->  		return;
->  	}
->  
-> @@ -868,7 +882,8 @@ void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
->  
->  	clear_hwpoisoned_pages(memmap + map_offset,
->  			PAGES_PER_SECTION - map_offset);
-> -	free_section_usage(memmap, usage, altmap);
-> +	free_section_usage(memmap, usage, section_nr_to_pfn(__section_nr(ms)),
-> +			PAGES_PER_SECTION, altmap);
->  }
->  #endif /* CONFIG_MEMORY_HOTREMOVE */
->  #endif /* CONFIG_MEMORY_HOTPLUG */
-> 
-
+Wrt spurious taints: You can disable the hung_tasks checker outright,
+which also stops the tainting.
+-Daniel
 -- 
-Oscar Salvador
-SUSE L3
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
