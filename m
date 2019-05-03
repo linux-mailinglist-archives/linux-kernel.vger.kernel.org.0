@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F045D13599
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC7B1358D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 00:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfECWaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 18:30:20 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7006 "EHLO mga02.intel.com"
+        id S1727093AbfECW3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 18:29:46 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7005 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbfECW3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726791AbfECW3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 3 May 2019 18:29:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -33,9 +33,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         "Lu Baolu" <baolu.lu@linux.intel.com>,
         Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v3 10/16] iommu/vt-d: Move domain helper to header
-Date:   Fri,  3 May 2019 15:32:11 -0700
-Message-Id: <1556922737-76313-11-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v3 11/16] iommu/vt-d: Avoid duplicated code for PASID setup
+Date:   Fri,  3 May 2019 15:32:12 -0700
+Message-Id: <1556922737-76313-12-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -44,48 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move domainer helper to header to be used by SVA code.
+After each setup for PASID entry, related translation caches must be flushed.
+We can combine duplicated code into one function which is less error prone.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel-iommu.c | 6 ------
- include/linux/intel-iommu.h | 6 ++++++
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/iommu/intel-pasid.c | 48 +++++++++++++++++----------------------------
+ 1 file changed, 18 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 64af526..1316c96 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -427,12 +427,6 @@ static void init_translation_status(struct intel_iommu *iommu)
- 		iommu->flags |= VTD_FLAG_TRANS_PRE_ENABLED;
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index 2ce6ac2..dde05b5 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -520,6 +520,21 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
+ 		devtlb_invalidation_with_pasid(iommu, dev, pasid);
  }
  
--/* Convert generic 'struct iommu_domain to private struct dmar_domain */
--static struct dmar_domain *to_dmar_domain(struct iommu_domain *dom)
--{
--	return container_of(dom, struct dmar_domain, domain);
--}
--
- static int __init intel_iommu_setup(char *str)
- {
- 	if (!str)
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index c24c8aa..48fa164 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -597,6 +597,12 @@ static inline void __iommu_flush_cache(
- 		clflush_cache_range(addr, size);
- }
- 
-+/* Convert generic 'struct iommu_domain to private struct dmar_domain */
-+static inline struct dmar_domain *to_dmar_domain(struct iommu_domain *dom)
++static inline void pasid_flush_caches(struct intel_iommu *iommu,
++				struct pasid_entry *pte,
++				int pasid, u16 did)
 +{
-+	return container_of(dom, struct dmar_domain, domain);
++	if (!ecap_coherent(iommu->ecap))
++		clflush_cache_range(pte, sizeof(*pte));
++
++	if (cap_caching_mode(iommu->cap)) {
++		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
++		iotlb_invalidation_with_pasid(iommu, did, pasid);
++	} else
++		iommu_flush_write_buffer(iommu);
++
 +}
 +
  /*
-  * 0: readable
-  * 1: writable
+  * Set up the scalable mode pasid table entry for first only
+  * translation type.
+@@ -565,16 +580,7 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
+ 	/* Setup Present and PASID Granular Transfer Type: */
+ 	pasid_set_translation_type(pte, 1);
+ 	pasid_set_present(pte);
+-
+-	if (!ecap_coherent(iommu->ecap))
+-		clflush_cache_range(pte, sizeof(*pte));
+-
+-	if (cap_caching_mode(iommu->cap)) {
+-		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+-		iotlb_invalidation_with_pasid(iommu, did, pasid);
+-	} else {
+-		iommu_flush_write_buffer(iommu);
+-	}
++	pasid_flush_caches(iommu, pte, pasid, did);
+ 
+ 	return 0;
+ }
+@@ -638,16 +644,7 @@ int intel_pasid_setup_second_level(struct intel_iommu *iommu,
+ 	 */
+ 	pasid_set_sre(pte);
+ 	pasid_set_present(pte);
+-
+-	if (!ecap_coherent(iommu->ecap))
+-		clflush_cache_range(pte, sizeof(*pte));
+-
+-	if (cap_caching_mode(iommu->cap)) {
+-		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+-		iotlb_invalidation_with_pasid(iommu, did, pasid);
+-	} else {
+-		iommu_flush_write_buffer(iommu);
+-	}
++	pasid_flush_caches(iommu, pte, pasid, did);
+ 
+ 	return 0;
+ }
+@@ -681,16 +678,7 @@ int intel_pasid_setup_pass_through(struct intel_iommu *iommu,
+ 	 */
+ 	pasid_set_sre(pte);
+ 	pasid_set_present(pte);
+-
+-	if (!ecap_coherent(iommu->ecap))
+-		clflush_cache_range(pte, sizeof(*pte));
+-
+-	if (cap_caching_mode(iommu->cap)) {
+-		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+-		iotlb_invalidation_with_pasid(iommu, did, pasid);
+-	} else {
+-		iommu_flush_write_buffer(iommu);
+-	}
++	pasid_flush_caches(iommu, pte, pasid, did);
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
 
