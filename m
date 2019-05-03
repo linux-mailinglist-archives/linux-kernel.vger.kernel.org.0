@@ -2,47 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B85127C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E490D127C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfECGYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:24:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33632 "EHLO
+        id S1726846AbfECGXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:23:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60302 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbfECGXq (ORCPT
+        with ESMTP id S1726758AbfECGXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:46 -0400
+        Fri, 3 May 2019 02:23:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZQwUU+J/MQcrEGIy0MJ+HGRMeveOuqWSbA/IkAltfgs=; b=qWrCcM5maPcy
-        rJLp3VUSxkK7tfwySdkal5afdLPPDqqWT2HKlVJVLpiBQlSdhiBKVHamf24PUPMuivhQwwss+ZOty
-        Mx6TblpdBmUkn+5Kl/u8f0d4Vm0HLcXXFD0yuKpi/ZF8PzZK7TBGW2ty9sGgmWTnAJ3OoNRHhGmtb
-        3yZH8=;
+        List-Archive; bh=v0HC/nVs3Jb9s28ZkKENRWvTIY8Iq2+d1nHoiE8oPto=; b=pzJnETXAmL2h
+        Tc0yoPYtb2E6F4PMEfQEGQK/T1nvFVte0sJwFaSpPiJa3nvCLG5uSBGboFvksnzFyxeuT+7+QFubZ
+        0YTsIvXmiQeFTWfEE/blOmhBSm8gQylKzw3bQatysGWR83WcSwOfq2UYPzClaogZXVaaERMeFpWwb
+        0sToo=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRb8-0000bh-6o; Fri, 03 May 2019 06:23:06 +0000
+        id 1hMRb7-0000bW-Tj; Fri, 03 May 2019 06:23:06 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id EDBA1441D67; Fri,  3 May 2019 07:21:29 +0100 (BST)
+        id 85F76441D68; Fri,  3 May 2019 07:21:30 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ross Zwisler <zwisler@chromium.org>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Ross Zwisler <zwisler@google.com>, stable@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: Intel: avoid Oops if DMA setup fails" to the asoc tree
-In-Reply-To: <20190429182517.210909-1-zwisler@google.com>
+        patchwork-bot+notify@kernel.org
+Subject: Applied "ASoC: hdmi-codec: stream is already locked in hw_params" to the asoc tree
+In-Reply-To: <20190429132943.16269-4-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062129.EDBA1441D67@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:21:29 +0100 (BST)
+Message-Id: <20190503062130.85F76441D68@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:21:30 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: avoid Oops if DMA setup fails
+   ASoC: hdmi-codec: stream is already locked in hw_params
 
 has been applied to the asoc tree at
 
@@ -75,64 +71,37 @@ to this mail.
 Thanks,
 Mark
 
-From 0efa3334d65b7f421ba12382dfa58f6ff5bf83c4 Mon Sep 17 00:00:00 2001
-From: Ross Zwisler <zwisler@chromium.org>
-Date: Mon, 29 Apr 2019 12:25:17 -0600
-Subject: [PATCH] ASoC: Intel: avoid Oops if DMA setup fails
+From 726fc60babe4a46e946e69a9dbd3e21aaec4d58e Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 29 Apr 2019 15:29:40 +0200
+Subject: [PATCH] ASoC: hdmi-codec: stream is already locked in hw_params
 
-Currently in sst_dsp_new() if we get an error return from sst_dma_new()
-we just print an error message and then still complete the function
-successfully.  This means that we are trying to run without sst->dma
-properly set up, which will result in NULL pointer dereference when
-sst->dma is later used.  This was happening for me in
-sst_dsp_dma_get_channel():
+startup() should have run before hw_params() is called, so the
+current_substream pointer should already be properly set. There
+is no reason to call hdmi_codec_new_stream() again in the
+hw_params() callback
 
-        struct sst_dma *dma = dsp->dma;
-	...
-        dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
-
-This resulted in:
-
-   BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-   IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
-
-Fix this by adding proper error handling for the case where we fail to
-set up DMA.
-
-This change only affects Haswell and Broadwell systems.  Baytrail
-systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
-being set to -1.
-
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Cc: stable@vger.kernel.org
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/common/sst-firmware.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-index 1e067504b604..f830e59f93ea 100644
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct device *dev,
- 		goto irq_err;
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index b9d9dde9fbaf..ef6d6959ecc5 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -492,10 +492,6 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
  
- 	err = sst_dma_new(sst);
--	if (err)
--		dev_warn(dev, "sst_dma_new failed %d\n", err);
-+	if (err)  {
-+		dev_err(dev, "sst_dma_new failed %d\n", err);
-+		goto dma_err;
-+	}
- 
- 	return sst;
- 
-+dma_err:
-+	free_irq(sst->irq, sst);
- irq_err:
- 	if (sst->ops->free)
- 		sst->ops->free(sst);
+-	ret = hdmi_codec_new_stream(substream, dai);
+-	if (ret)
+-		return ret;
+-
+ 	hdmi_audio_infoframe_init(&hp.cea);
+ 	hp.cea.channels = params_channels(params);
+ 	hp.cea.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
 -- 
 2.20.1
 
