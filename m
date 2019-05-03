@@ -2,46 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9599D127BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 420EF127BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfECGYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:24:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34418 "EHLO
+        id S1727103AbfECGYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:24:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33878 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfECGYK (ORCPT
+        with ESMTP id S1727055AbfECGXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:24:10 -0400
+        Fri, 3 May 2019 02:23:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tdXXDwJac7tPdkzlB2OnCMedUY3PiqwtJOnXJSCSNbo=; b=MJCYK76TFQRN
-        bROxm8/b36YneilQH4Fhfp4z4vt4oZXxSUReHSf+6CpsvzJzd7w495RHlE/K2/dmZTti7GnyYAutq
-        1VnAxHGuUU5o8jbQkJvSHwO70nomI+r9Xafg7H2Q2oaXOmoBGKYsSk41MLmvxApmZ/h61ncHVb4dU
-        vHcGE=;
+        List-Archive; bh=rZq5sizDQmDuNZ2W+O82havtkELQLuBDvFjiM74WSfM=; b=UpEJLzjtujOG
+        4uY45EIku3WztyXAkwzOiPPOYOLtNM9o8zmWByZRjA3TCTIfLiu5AwBOmrgmvLHztNFf3W+S8ZprP
+        sRzz8RO64N1MBQ+r/IqbjJ/U6UWjRsJ4cHO1b/GWVXrOIyRjFA/EiBRO+ZdVqTukn3PL+bZgdFR7C
+        o8ODQ=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbd-0000k1-1r; Fri, 03 May 2019 06:23:37 +0000
+        id 1hMRbj-0000kF-6Y; Fri, 03 May 2019 06:23:43 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 68D31441D59; Fri,  3 May 2019 07:23:33 +0100 (BST)
+        id 9B15D441D41; Fri,  3 May 2019 07:23:34 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
-In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
+        patchwork-bot+notify@kernel.org
+Subject: Applied "ASoC: fix valid stream condition" to the asoc tree
+In-Reply-To: <20190429094750.1857-2-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062333.68D31441D59@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:23:33 +0100 (BST)
+Message-Id: <20190503062334.9B15D441D41@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:23:34 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: remove redundant null checks of dai
+   ASoC: fix valid stream condition
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -74,48 +71,38 @@ to this mail.
 Thanks,
 Mark
 
-From c437ba0300cec1ca8758fdd71a3b2f8cd02c6e2a Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 2 May 2019 12:33:40 +0100
-Subject: [PATCH] ASoC: SOF: remove redundant null checks of dai
+From 6a7c59c6d9f3b280e81d7a04bbe4e55e90152dce Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 29 Apr 2019 11:47:49 +0200
+Subject: [PATCH] ASoC: fix valid stream condition
 
-Currently there are two null checks of pointer dai in function
-sof_connect_dai_widget and yet there is no null check of dai
-at the end of the function when checking !dai->name.  The latter
-would be a null pointer deference if dai is null (as picked up
-by static analysis), however the function is only ever called
-when dai is successfully allocated, so the null checks are
-redundant. Clean up the code by removing the null checks.
+A stream may specify a rate range using 'rate_min' and 'rate_max', so a
+stream may be valid and not specify any rates. However, as stream cannot
+be valid and not have any channel. Let's use this condition instead to
+determine if a stream is valid or not.
 
-Addresses-Coverity: ("Dereference after null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: cde79035c6cf ("ASoC: Handle multiple codecs with split playback / capture")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/topology.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ sound/soc/soc-pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 2b9de1b97447..1f71857298a9 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
- 		switch (w->id) {
- 		case snd_soc_dapm_dai_out:
- 			rtd->cpu_dai->capture_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
- 		case snd_soc_dapm_dai_in:
- 			rtd->cpu_dai->playback_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index d21247546f7f..57088bd69e5d 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -43,8 +43,8 @@ static bool snd_soc_dai_stream_valid(struct snd_soc_dai *dai, int stream)
+ 	else
+ 		codec_stream = &dai->driver->capture;
+ 
+-	/* If the codec specifies any rate at all, it supports the stream. */
+-	return codec_stream->rates;
++	/* If the codec specifies any channels at all, it supports the stream */
++	return codec_stream->channels_min;
+ }
+ 
+ /**
 -- 
 2.20.1
 
