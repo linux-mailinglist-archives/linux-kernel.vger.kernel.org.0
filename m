@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2B9127B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3EC127AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfECGXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:23:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60504 "EHLO
+        id S1726974AbfECGXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:23:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60890 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfECGXM (ORCPT
+        with ESMTP id S1726932AbfECGXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:12 -0400
+        Fri, 3 May 2019 02:23:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Fg9QrCpRCad16f0H55V9run4nG3IvYsKIRymL8V7ppI=; b=q7TPxKnjoGNM
-        AiY2RhGbR8gmr9rSclI+8lHx+EAqSubBXI9Ep4xL77kO5zSwiflxM32uDeDy8u/xiThUVBwmk69yM
-        HxmaveBUbTps0ttktKbnEJ1nW1IKCkjRnstyd5oaX5qeozi6XAMt1S0yqZBTYPcu7lJ4u/1FO8rSS
-        dtaIE=;
+        List-Archive; bh=tdXXDwJac7tPdkzlB2OnCMedUY3PiqwtJOnXJSCSNbo=; b=Z9Yrmd3yylFP
+        jTlNRZRjB2KRv7+2x71efacVAbSQmSLM3rp4LGWfJKo1xpjDJGVwjxcgchaEPlRH3OoRgs6/PTNk7
+        cBRvt4Vifq9CpUv4jmwoxTaeFpE0Qm5/VYaWj4FyrFUxu96WaSyyxsdQ/WMA53wHHD3Ft64hoQN7E
+        5msio=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbB-0000cZ-3G; Fri, 03 May 2019 06:23:09 +0000
+        id 1hMRbB-0000co-EB; Fri, 03 May 2019 06:23:09 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id ACD87441D6A; Fri,  3 May 2019 07:21:31 +0100 (BST)
+        id 2120C441D69; Fri,  3 May 2019 07:21:31 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        patchwork-bot+notify@kernel.org
-Subject: Applied "ASoC: skip hw_free on codec dai for which the stream is invalid" to the asoc tree
-In-Reply-To: <20190429094750.1857-3-jbrunet@baylibre.com>
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
+In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062131.ACD87441D6A@finisterre.ee.mobilebroadband>
+Message-Id: <20190503062131.2120C441D69@finisterre.ee.mobilebroadband>
 Date:   Fri,  3 May 2019 07:21:31 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,11 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: skip hw_free on codec dai for which the stream is invalid
+   ASoC: SOF: remove redundant null checks of dai
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -71,46 +74,48 @@ to this mail.
 Thanks,
 Mark
 
-From f47b9ad927c6370b80922af434dda98764a43804 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 29 Apr 2019 11:47:50 +0200
-Subject: [PATCH] ASoC: skip hw_free on codec dai for which the stream is
- invalid
+From c437ba0300cec1ca8758fdd71a3b2f8cd02c6e2a Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 2 May 2019 12:33:40 +0100
+Subject: [PATCH] ASoC: SOF: remove redundant null checks of dai
 
-Like for hw_params, hw_free should not be called on codec dai for
-which the current stream is invalid.
+Currently there are two null checks of pointer dai in function
+sof_connect_dai_widget and yet there is no null check of dai
+at the end of the function when checking !dai->name.  The latter
+would be a null pointer deference if dai is null (as picked up
+by static analysis), however the function is only ever called
+when dai is successfully allocated, so the null checks are
+redundant. Clean up the code by removing the null checks.
 
-Fixes: cde79035c6cf ("ASoC: Handle multiple codecs with split playback / capture")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Addresses-Coverity: ("Dereference after null check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-pcm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/sof/topology.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 57088bd69e5d..a810f6eeffee 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1031,6 +1031,9 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
- 
- codec_err:
- 	for_each_rtd_codec_dai_rollback(rtd, i, codec_dai) {
-+		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
-+			continue;
-+
- 		if (codec_dai->driver->ops->hw_free)
- 			codec_dai->driver->ops->hw_free(substream, codec_dai);
- 		codec_dai->rate = 0;
-@@ -1088,6 +1091,9 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
- 
- 	/* now free hw params for the DAIs  */
- 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
-+		if (!snd_soc_dai_stream_valid(codec_dai, substream->stream))
-+			continue;
-+
- 		if (codec_dai->driver->ops->hw_free)
- 			codec_dai->driver->ops->hw_free(substream, codec_dai);
- 	}
+diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
+index 2b9de1b97447..1f71857298a9 100644
+--- a/sound/soc/sof/topology.c
++++ b/sound/soc/sof/topology.c
+@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
+ 		switch (w->id) {
+ 		case snd_soc_dapm_dai_out:
+ 			rtd->cpu_dai->capture_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
+ 		case snd_soc_dapm_dai_in:
+ 			rtd->cpu_dai->playback_widget = w;
+-			if (dai)
+-				dai->name = rtd->dai_link->name;
++			dai->name = rtd->dai_link->name;
+ 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
+ 				w->name, rtd->dai_link->name);
+ 			break;
 -- 
 2.20.1
 
