@@ -2,42 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E36412839
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8DA1284D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 09:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfECG7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:59:12 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57731 "EHLO ozlabs.org"
+        id S1727166AbfECG7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:59:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:34981 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfECG7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:59:11 -0400
+        id S1726528AbfECG7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 02:59:12 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 44wNK95Yvzz9sNf; Fri,  3 May 2019 16:59:09 +1000 (AEST)
+        id 44wNKC2Pt1z9sP8; Fri,  3 May 2019 16:59:10 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9c1d38b34e944cace44e0d2bea0beb5601a4d36d
+X-powerpc-patch-commit: 1ba2143606a10f1c2e7308bc7abd940a6381cffd
 X-Patchwork-Hint: ignore
-In-Reply-To: <a2ac33258063682558fe0cac8eedcbd28aa4a141.1553242059.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+In-Reply-To: <20190327053137.15173-2-alastair@au1.ibm.com>
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] powerpc/fadump: define an empty fadump_cleanup()
-Message-Id: <44wNK95Yvzz9sNf@ozlabs.org>
-Date:   Fri,  3 May 2019 16:59:09 +1000 (AEST)
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 1/7] ocxl: Split pci.c
+Message-Id: <44wNKC2Pt1z9sP8@ozlabs.org>
+Date:   Fri,  3 May 2019 16:59:10 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-03-22 at 08:08:39 UTC, Christophe Leroy wrote:
-> To avoid #ifdefs, define an static inline fadump_cleanup() function
-> when CONFIG_FADUMP is not selected
+On Wed, 2019-03-27 at 05:31:30 UTC, "Alastair D'Silva" wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> In preparation for making core code available for external drivers,
+> move the core code out of pci.c and into core.c
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+> Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
 Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/9c1d38b34e944cace44e0d2bea0beb56
+https://git.kernel.org/powerpc/c/1ba2143606a10f1c2e7308bc7abd940a
 
 cheers
