@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3629112DC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD4012DC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfECMiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 08:38:03 -0400
-Received: from ms.lwn.net ([45.79.88.28]:48010 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726897AbfECMiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:38:03 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 240847DE;
-        Fri,  3 May 2019 12:37:59 +0000 (UTC)
-Date:   Fri, 3 May 2019 06:37:56 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jon Masters <jcm@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Price <steven.price@arm.com>,
-        Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH] Documentation: Add ARM64 to kernel-parameters.rst
-Message-ID: <20190503063756.09c74f6e@lwn.net>
-In-Reply-To: <20190413035621.tohihjksatqushwf@treble>
-References: <cover.1555085500.git.jpoimboe@redhat.com>
-        <24039e1370ed57e8075730c0b88c505afd9e0ab7.1555085500.git.jpoimboe@redhat.com>
-        <25174c3c-0e39-0562-7d02-bb7d51cd2b43@infradead.org>
-        <20190413035621.tohihjksatqushwf@treble>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727884AbfECMi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:38:29 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54126 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726897AbfECMi2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 08:38:28 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43CVS2i019686;
+        Fri, 3 May 2019 14:38:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=t5B/k6DcvEiPCvE4nzBubHjNwGreSV6jE6kdibWLQUo=;
+ b=uiafQAY1KcThaMm27J4dDuyLkuUsVLptk6S6tMQ6hFqFGDMjDXFJzLMB2eY25MtOQjOt
+ AJY4SGIk36CXejwafcW2uJD7eSMdqxiuMxrVprFunZIZTE7FL8CDvCcPq8me04jZEcwB
+ WW8yj8wXuaYX6TEKr6/0MjUm97JFQyJgfQjVGcLCwjz8PHbkAUeDXTSFQdugHG6Q4YtW
+ 05vqr7XUDvZCBzAMX4VZXunUFXO8IT1ewu6bl0eGz/j7efKideweDyE+TyG6/V7eLPhH
+ KDCPYgLs3onIr2Lx6MWrBtM+QMOuiED3qYT4xKOMS18m07PeHy7l/hOZH0TSF0czHLmG Cg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2s6xgcxagj-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 03 May 2019 14:38:20 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6AD9231;
+        Fri,  3 May 2019 12:38:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4D6FB2694;
+        Fri,  3 May 2019 12:38:19 +0000 (GMT)
+Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 3 May
+ 2019 14:38:19 +0200
+Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
+ SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
+ 15.00.1347.000; Fri, 3 May 2019 14:38:19 +0200
+From:   Fabien DESSENNE <fabien.dessenne@st.com>
+To:     Jiri Kosina <jikos@kernel.org>
+CC:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] HID: rmi: fix devm_add_action_or_reset() parameter
+Thread-Topic: [PATCH] HID: rmi: fix devm_add_action_or_reset() parameter
+Thread-Index: AQHU8S7fRB6FaRWwPkiJMQUZLJpqJqZZUPiAgAAFTYA=
+Date:   Fri, 3 May 2019 12:38:18 +0000
+Message-ID: <9628edde-5270-d5a5-7db6-c9ec3f47c742@st.com>
+References: <1555073657-24386-1-git-send-email-fabien.dessenne@st.com>
+ <nycvar.YFH.7.76.1905031418510.10635@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1905031418510.10635@cbobk.fhfr.pm>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8C93354F4F1B5C4394EE04057F7F1250@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-03_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Apr 2019 22:56:21 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-
-> Add ARM64 to the legend of architectures.  It's already used in several
-> places in kernel-parameters.txt.
-> 
-> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-
-It looks like nobody has picked this up...so I've applied it.
-
-Thanks,
-
-jon
+DQpPbiAwMy8wNS8yMDE5IDI6MTkgUE0sIEppcmkgS29zaW5hIHdyb3RlOg0KPiBPbiBGcmksIDEy
+IEFwciAyMDE5LCBGYWJpZW4gRGVzc2VubmUgd3JvdGU6DQo+DQo+PiBUaGUgc2Vjb25kIHBhcmFt
+ZXRlciBvZiBkZXZtX2FkZF9hY3Rpb25fb3JfcmVzZXQoKSBzaGFsbCBiZSBhIGZ1bmN0aW9uLA0K
+Pj4gbm90IGEgZnVuY3Rpb24gYWRkcmVzcy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGYWJpZW4g
+RGVzc2VubmUgPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9o
+aWQvaGlkLXJtaS5jIHwgMiArLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9oaWQvaGlkLXJtaS5j
+IGIvZHJpdmVycy9oaWQvaGlkLXJtaS5jDQo+PiBpbmRleCA5ZTMzMTY1Li44NzQ4ZDRkIDEwMDY0
+NA0KPj4gLS0tIGEvZHJpdmVycy9oaWQvaGlkLXJtaS5jDQo+PiArKysgYi9kcml2ZXJzL2hpZC9o
+aWQtcm1pLmMNCj4+IEBAIC02MjMsNyArNjIzLDcgQEAgc3RhdGljIGludCBybWlfc2V0dXBfaXJx
+X2RvbWFpbihzdHJ1Y3QgaGlkX2RldmljZSAqaGRldikNCj4+ICAgCWlmICghaGRhdGEtPmRvbWFp
+bikNCj4+ICAgCQlyZXR1cm4gLUVOT01FTTsNCj4+ICAgDQo+PiAtCXJldCA9IGRldm1fYWRkX2Fj
+dGlvbl9vcl9yZXNldCgmaGRldi0+ZGV2LCAmcm1pX2lycV90ZWFyZG93biwgaGRhdGEpOw0KPj4g
+KwlyZXQgPSBkZXZtX2FkZF9hY3Rpb25fb3JfcmVzZXQoJmhkZXYtPmRldiwgcm1pX2lycV90ZWFy
+ZG93biwgaGRhdGEpOw0KPiBXaHkgZG8geW91IHRoaW5rIHRoaXMgaXMgd3JvbmcgQz8NCg0KDQpC
+ZWNhdXNlIEkgd2FzIG5vdCBhd2FyZSB0aGF0IGJvdGggZnVuYyBhbmQgJmZ1bmMgcmVmZXIgdG8g
+dGhlIHNhbWUgDQpmdW5jdGlvbiBwb2ludGVyLg0KDQpOb3cgSSBrbm93IDopDQoNCg0KPg==
