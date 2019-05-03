@@ -2,96 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7941E12EE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14AE212F63
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 15:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfECNRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 09:17:10 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:54828 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbfECNRK (ORCPT
+        id S1727858AbfECNld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 09:41:33 -0400
+Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:59771 "EHLO
+        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727231AbfECNlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 09:17:10 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43DEGPk139327;
-        Fri, 3 May 2019 13:17:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=vlCSxJN8BUUTjnqBqXalyKb7GIxVl2UFBGtLovvlGgA=;
- b=FrqgKEcBjOG8a0turrqKK8tO+u885/fjydv2g31iW1+b54WQ7K1XwLOeXrfclnWN7AQ9
- mcXw9mB+V3F1THJlucHga4lxZDBdxI1Dckk/eEv+6rK/tMaz3i19+ol/nYsm+4ifjESj
- WIZZcmMuFgLb+jpvD2932PGAUxzCOmhq5E7bO1SJyLZCwZmbtEfZASWKqg1hs6D0QfUS
- ++IBBX6ln5t585HLIHsae/JQo1gJCVqWsGmMwfapPEboMi7J8NiRscVOYm2KR+7NlbKO
- euhdRAOCCiMiQk8rsxh6gaVxkBoCjAIMimtADLeWUqpM6muTuf5t28e4txdiYsuMuLbO Xw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2s6xhypn95-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 03 May 2019 13:17:02 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43DGowD177600;
-        Fri, 3 May 2019 13:17:02 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2s7rtc9eu4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 03 May 2019 13:17:01 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x43DGxOO007680;
-        Fri, 3 May 2019 13:17:00 GMT
-Received: from mwanda (/196.104.111.181)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 03 May 2019 06:16:58 -0700
-Date:   Fri, 3 May 2019 16:16:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Krzysztof Halasa <khalasa@piap.pl>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] soc: ixp4xx: qmgr: Fix an NULL vs IS_ERR() check in probe
-Message-ID: <20190503131651.GC1236@mwanda>
+        Fri, 3 May 2019 09:41:32 -0400
+X-Greylist: delayed 1331 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 May 2019 09:41:29 EDT
+Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
+        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hMY5s-000ESx-UL; Fri, 03 May 2019 15:19:16 +0200
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hMY5s-000MFc-Or; Fri, 03 May 2019 15:19:16 +0200
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
+Date:   Fri,  3 May 2019 15:19:07 +0200
+Message-Id: <20190503131907.5905-1-dev@pschenker.ch>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905030083
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905030083
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The devm_ioremap_resource() function doesn't retunr NULL, it returns
-error pointers.
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-Fixes: ecc133c6da60 ("soc: ixp4xx: qmgr: Pass resources")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add the stmpe-adc DT node as found on Toradex T30 modules
+
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+
 ---
- drivers/soc/ixp4xx/ixp4xx-qmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-index 13a8a13c9b01..bb90670ec160 100644
---- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-@@ -385,8 +385,8 @@ static int ixp4xx_qmgr_probe(struct platform_device *pdev)
- 	if (!res)
- 		return -ENODEV;
- 	qmgr_regs = devm_ioremap_resource(dev, res);
--	if (!qmgr_regs)
--		return -ENOMEM;
-+	if (IS_ERR(qmgr_regs))
-+		return PTR_ERR(qmgr_regs);
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
+ 3 files changed, 42 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+index 02f8126481a2..8b7a827d604d 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+@@ -994,11 +994,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
  
- 	irq1 = platform_get_irq(pdev, 0);
- 	if (irq1 <= 0)
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -1008,17 +1014,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 7f112f192fe9..c18f6f61d764 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -976,11 +976,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -990,17 +996,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 35af03ca9e90..1f9198bb24ff 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -845,11 +845,18 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
++			/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -859,17 +866,16 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
++
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
+ 
+ 		/*
 -- 
-2.18.0
+2.21.0
 
