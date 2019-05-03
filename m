@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB77B127C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E34127B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfECGYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:24:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33602 "EHLO
+        id S1727080AbfECGXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:23:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33838 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbfECGXp (ORCPT
+        with ESMTP id S1727043AbfECGXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:23:45 -0400
+        Fri, 3 May 2019 02:23:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=cdKCKYPz4QxPklp/Dp5dG8XAK9Cs+SYYmACxxeonNLE=; b=Gc15AAEFxkux
-        Xzlsx/7itlk0ZHtoQauiLxZnKDyQ/s4O5Yt4K6XGqlRGJl82l+T+bLT42IRs3eElSHBgWOyWZjQpw
-        Ys707ng270mCcSna+u/KXmiXtQNnZpDYrzFmGnlodbOaAhYZsSN1BJXEPOyTMzHk2eFJY5S153O8h
-        Kk9lU=;
+        List-Archive; bh=RUsRVfQr6MguLInMJKL39V77To+2NWYQGfs+Cy74AZc=; b=NkGRGt58nnZO
+        IM3V8QdBSWJ8YbKkEu7yNWcvGpSfCMg76nCUyvK3qAFdNkOPCCWwyCyqwAKCGpypNA9oeanyd4+sE
+        IQTxBjYE9r4l0E1PJt91E/DMEEAJBS5mXGNPDigv8JBz50uGtv9xv3CbD5CQODsR1w7qa392X6uMI
+        M2bpM=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRbh-0000lJ-0C; Fri, 03 May 2019 06:23:41 +0000
+        id 1hMRbn-0000li-4r; Fri, 03 May 2019 06:23:47 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 4BA3D441D3F; Fri,  3 May 2019 07:23:37 +0100 (BST)
+        id 63DAA441D57; Fri,  3 May 2019 07:23:38 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Pascal Paillet <p.paillet@st.com>
-Subject: Applied "regulator: stm32-pwr: Remove unneeded .min_uV and .list_volage" to the regulator tree
-In-Reply-To: <20190430111346.23427-2-axel.lin@ingics.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: ab3100: Set fixed_uV instead of min_uV for fixed regulators" to the regulator tree
+In-Reply-To: <20190502142233.24730-2-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503062337.4BA3D441D3F@finisterre.ee.mobilebroadband>
-Date:   Fri,  3 May 2019 07:23:37 +0100 (BST)
+Message-Id: <20190503062338.63DAA441D57@finisterre.ee.mobilebroadband>
+Date:   Fri,  3 May 2019 07:23:38 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: stm32-pwr: Remove unneeded .min_uV and .list_volage
+   regulator: ab3100: Set fixed_uV instead of min_uV for fixed regulators
 
 has been applied to the regulator tree at
 
@@ -71,41 +71,59 @@ to this mail.
 Thanks,
 Mark
 
-From 311a68a51a58bfdead971080d41a34ca565b47a0 Mon Sep 17 00:00:00 2001
+From e219c2b3dc773a5a78f88ada9e07e281a9dad06b Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 30 Apr 2019 19:13:46 +0800
-Subject: [PATCH] regulator: stm32-pwr: Remove unneeded .min_uV and
- .list_volage
+Date: Thu, 2 May 2019 22:22:33 +0800
+Subject: [PATCH] regulator: ab3100: Set fixed_uV instead of min_uV for fixed
+ regulators
 
-For fixed regulator, setting .n_voltages = 1 and .fixed_uV is enough,
-no need to set .min_uV and .list_volage.
+Slightly better readability by setting fixed_uV instead of min_uV.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/stm32-pwr.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/regulator/ab3100.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/stm32-pwr.c b/drivers/regulator/stm32-pwr.c
-index 8bd15e4d2cea..e0e627b0106e 100644
---- a/drivers/regulator/stm32-pwr.c
-+++ b/drivers/regulator/stm32-pwr.c
-@@ -102,7 +102,6 @@ static int stm32_pwr_reg_disable(struct regulator_dev *rdev)
+diff --git a/drivers/regulator/ab3100.c b/drivers/regulator/ab3100.c
+index edde907a7062..438509f55f05 100644
+--- a/drivers/regulator/ab3100.c
++++ b/drivers/regulator/ab3100.c
+@@ -354,7 +354,6 @@ static int ab3100_get_voltage_regulator_external(struct regulator_dev *reg)
  }
  
- static const struct regulator_ops stm32_pwr_reg_ops = {
--	.list_voltage	= regulator_list_voltage_linear,
- 	.enable		= stm32_pwr_reg_enable,
- 	.disable	= stm32_pwr_reg_disable,
- 	.is_enabled	= stm32_pwr_reg_is_enabled,
-@@ -115,7 +114,6 @@ static const struct regulator_ops stm32_pwr_reg_ops = {
- 		.of_match = of_match_ptr(_name), \
- 		.n_voltages = 1, \
- 		.type = REGULATOR_VOLTAGE, \
--		.min_uV = _volt, \
- 		.fixed_uV = _volt, \
- 		.ops = &stm32_pwr_reg_ops, \
- 		.enable_mask = _en, \
+ static const struct regulator_ops regulator_ops_fixed = {
+-	.list_voltage = regulator_list_voltage_linear,
+ 	.enable      = ab3100_enable_regulator,
+ 	.disable     = ab3100_disable_regulator,
+ 	.is_enabled  = ab3100_is_enabled_regulator,
+@@ -401,7 +400,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
+ 		.n_voltages = 1,
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+-		.min_uV = LDO_A_VOLTAGE,
++		.fixed_uV = LDO_A_VOLTAGE,
+ 		.enable_time = 200,
+ 	},
+ 	{
+@@ -411,7 +410,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
+ 		.n_voltages = 1,
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+-		.min_uV = LDO_C_VOLTAGE,
++		.fixed_uV = LDO_C_VOLTAGE,
+ 		.enable_time = 200,
+ 	},
+ 	{
+@@ -421,7 +420,7 @@ ab3100_regulator_desc[AB3100_NUM_REGULATORS] = {
+ 		.n_voltages = 1,
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+-		.min_uV = LDO_D_VOLTAGE,
++		.fixed_uV = LDO_D_VOLTAGE,
+ 		.enable_time = 200,
+ 	},
+ 	{
 -- 
 2.20.1
 
