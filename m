@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F207212798
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C290412795
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfECGS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:18:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53064 "EHLO
+        id S1726700AbfECGSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:18:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52818 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfECGS5 (ORCPT
+        with ESMTP id S1725768AbfECGSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:18:57 -0400
+        Fri, 3 May 2019 02:18:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tdXXDwJac7tPdkzlB2OnCMedUY3PiqwtJOnXJSCSNbo=; b=lzQrX6vpmbji
-        a58pXb696U7gIuoxAE2zhCXM3KTU3qqPK3cnlnaUE3STGb6Xc9tEFuoRClw1vySwBXtVg8qa+hgsi
-        ljuuS0ug53TW51Qqgk8GHssmVvWF9pQ8m18sQbYf/JTVP3z8Tx+suEo+QH2yYHUQwRfmTm4xCB++J
-        JyFio=;
+        List-Archive; bh=v0HC/nVs3Jb9s28ZkKENRWvTIY8Iq2+d1nHoiE8oPto=; b=B2snec7OOP81
+        0u+kN+S8RQWrQ+QiZwvfIS+Kvc/Wf73WNcQn58a1f1XYjpR9sfevnx3opMeibalS4QRRHMGnggxnd
+        BtVJDqes/Z0X9NatBlXaUKF66lX2ZI4m/NhLfI9SxqQFDUynXWIfLzgRO9o0OAjjuwoe2TgTVxRPX
+        MAvnI=;
 Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRWz-0000Ww-5Y; Fri, 03 May 2019 06:18:49 +0000
+        id 1hMRWx-0000Wt-Fr; Fri, 03 May 2019 06:18:47 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id B209D441D3D; Fri,  3 May 2019 07:18:43 +0100 (BST)
+        id 20A9D441D56; Fri,  3 May 2019 07:18:43 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: SOF: remove redundant null checks of dai" to the asoc tree
-In-Reply-To: <20190502113340.8688-1-colin.king@canonical.com>
+        patchwork-bot+notify@kernel.org
+Subject: Applied "ASoC: hdmi-codec: stream is already locked in hw_params" to the asoc tree
+In-Reply-To: <20190429132943.16269-4-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190503061843.B209D441D3D@finisterre.ee.mobilebroadband>
+Message-Id: <20190503061843.20A9D441D56@finisterre.ee.mobilebroadband>
 Date:   Fri,  3 May 2019 07:18:43 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: remove redundant null checks of dai
+   ASoC: hdmi-codec: stream is already locked in hw_params
 
 has been applied to the asoc tree at
 
@@ -74,48 +71,37 @@ to this mail.
 Thanks,
 Mark
 
-From c437ba0300cec1ca8758fdd71a3b2f8cd02c6e2a Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 2 May 2019 12:33:40 +0100
-Subject: [PATCH] ASoC: SOF: remove redundant null checks of dai
+From 726fc60babe4a46e946e69a9dbd3e21aaec4d58e Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 29 Apr 2019 15:29:40 +0200
+Subject: [PATCH] ASoC: hdmi-codec: stream is already locked in hw_params
 
-Currently there are two null checks of pointer dai in function
-sof_connect_dai_widget and yet there is no null check of dai
-at the end of the function when checking !dai->name.  The latter
-would be a null pointer deference if dai is null (as picked up
-by static analysis), however the function is only ever called
-when dai is successfully allocated, so the null checks are
-redundant. Clean up the code by removing the null checks.
+startup() should have run before hw_params() is called, so the
+current_substream pointer should already be properly set. There
+is no reason to call hdmi_codec_new_stream() again in the
+hw_params() callback
 
-Addresses-Coverity: ("Dereference after null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/topology.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 2b9de1b97447..1f71857298a9 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -1127,15 +1127,13 @@ static int sof_connect_dai_widget(struct snd_soc_component *scomp,
- 		switch (w->id) {
- 		case snd_soc_dapm_dai_out:
- 			rtd->cpu_dai->capture_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
- 		case snd_soc_dapm_dai_in:
- 			rtd->cpu_dai->playback_widget = w;
--			if (dai)
--				dai->name = rtd->dai_link->name;
-+			dai->name = rtd->dai_link->name;
- 			dev_dbg(sdev->dev, "tplg: connected widget %s -> DAI link %s\n",
- 				w->name, rtd->dai_link->name);
- 			break;
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index b9d9dde9fbaf..ef6d6959ecc5 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -492,10 +492,6 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
+ 
+-	ret = hdmi_codec_new_stream(substream, dai);
+-	if (ret)
+-		return ret;
+-
+ 	hdmi_audio_infoframe_init(&hp.cea);
+ 	hp.cea.channels = params_channels(params);
+ 	hp.cea.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
 -- 
 2.20.1
 
