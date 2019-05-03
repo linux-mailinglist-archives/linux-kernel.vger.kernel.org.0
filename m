@@ -2,239 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E6C12B8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D1612B96
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfECKhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 06:37:04 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:8549 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfECKhD (ORCPT
+        id S1727608AbfECKhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 06:37:20 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44000 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbfECKhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 06:37:03 -0400
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="Nicolas.Ferre@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.60,425,1549954800"; 
-   d="scan'208";a="31493303"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 May 2019 03:37:02 -0700
-Received: from tenerife.corp.atmel.com (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 3 May 2019 03:37:02 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <michal.simek@xilinx.com>, <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH] net: macb: shrink macb_platform_data structure
-Date:   Fri, 3 May 2019 12:36:58 +0200
-Message-ID: <20190503103658.17237-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 3 May 2019 06:37:18 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u27so3803589lfg.10
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 03:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y49iuZlGEFRKXGMhL/FW153snu1fMi8v/es25880oE8=;
+        b=loJhy4XJ97xuNf+RrpSA+jCJMImzpJ6++PjvZ3i+MfQK3dS1nWqOJbjKYB4QcVeQHU
+         18pp/eByTT443pvkHn8G3n8oY/EpCXnMMlJjlVjJSKM34iB8HzqJ74dogtIAyYQx5wwi
+         SDDuxo4bNGGgSoNkV6ngd2ulv2Lg1eveOEwULJvBt2juAmdWqOkMr4c7zcC1VqIChbNt
+         yk+HgI4/yiG/SlUDJj8aDQdNTdAwUN1L+dhvQZGkQImNLMC+deS5j3/304qUhcQyNB7r
+         LsUARKemMOAfqft34Qg6d3Epi1ObP6uDY3/xsEy08J8YFfp1qBEgGjayFLOCLOISgr6O
+         d2Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y49iuZlGEFRKXGMhL/FW153snu1fMi8v/es25880oE8=;
+        b=SqQU9hLIcGmcXcatXYcR65Gy4ZW29TDQ3ZguTE3GXZ/X9bSWCXzW/kntm257vONw0s
+         5yBf/TMzmVd/q51t+K+abj8ApPyWX4+l/gCWZQuBbqtLomM6zWTiakCLUghbhE9aO5TJ
+         04N+RH8DwxPehgb9mxz09cC+qb55DIq6TzDiU+hbBHBRpsndTOjShPy8B9QhdEI/Y6Aj
+         Q6B56efic5Ps20VROKjEf6KjYzzOVSg22ug3SOdjbNUvK06bCc7zasKqqOiFQdF2ak8a
+         CiCPljy9l97a5Ki1HJ7yffVxYVI0HDS16jxiL3nd/olQm1pP1NRTNZ3kV//WbJY3Y+iL
+         JZyA==
+X-Gm-Message-State: APjAAAWEewW2YdhzagN0q/4UqQ4Oa25ZXALMTgrKLhENq3VW0l7bD/YG
+        IGfgf27C5q/V8itLYAS8KczQV5u7cdq7NwSRGQ4=
+X-Google-Smtp-Source: APXvYqxU+UuYktvsztEvJ9/ariHXzb6Ot8TO3Mjaxpfia5I1sJ6/SrkkV2s5OAkU7J7gMftr/G2qyyQxowiQWzM4eiA=
+X-Received: by 2002:a19:ec12:: with SMTP id b18mr4411872lfa.149.1556879836632;
+ Fri, 03 May 2019 03:37:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190503085327.5180-1-simon.k.r.goldschmidt@gmail.com> <8161008c-fafd-a89f-d2d8-413224844cd2@gmail.com>
+In-Reply-To: <8161008c-fafd-a89f-d2d8-413224844cd2@gmail.com>
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Date:   Fri, 3 May 2019 12:37:05 +0200
+Message-ID: <CAAh8qsyBHCD9o_wyk6cHxyxagpQvX0dtXxy_P4KqZgoeU8VrEg@mail.gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: enable 4B opcodes for n25q256a
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This structure was used intensively for machine specific values
-when DT was not used. Since the removal of AVR32 from the kernel,
-this structure is only used for passing clocks from PCI macb wrapper, all
-other fields being 0.
-All other known platforms use DT.
+On Fri, May 3, 2019 at 12:00 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>
+> On 5/3/19 10:53 AM, Simon Goldschmidt wrote:
+> > Tested on socfpga cyclone5 where this is required to ensure that the
+> > boot rom can access this flash after warm reboot.
+>
+> Are you sure _all_ variants of the N25Q256 support 4NB opcodes ?
+> I think there were some which didn't, but I might be wrong.
 
-Remove the leftovers but make sure that PCI macb still works as
-expected by using default values:
-- phydev->irq is set to PHY_POLL by mdiobus_alloc()
-- mii_bus->phy_mask is cleared while allocating it
-- bp->phy_interface is set to PHY_INTERFACE_MODE_MII if mode not found
-in DT.
+Oh, damn, you're right. The documentation [1] statest that 4-byte erase and
+program opcodes are only supported for part numbers N25Q256A83ESF40x,
+N25Q256A83E1240x and N25QA83ESFA0F.
 
-This simplifies driver probe path and particularly phy handling.
+Any idea of how I can still enable 4-byte opcodes for my chip?
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/net/ethernet/cadence/macb_main.c | 59 +++++-------------------
- include/linux/platform_data/macb.h       |  9 ----
- 2 files changed, 11 insertions(+), 57 deletions(-)
+Regards,
+Simon
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 59531adcbb42..bd6a62f4bd7d 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -285,34 +285,22 @@ static void macb_set_hwaddr(struct macb *bp)
- 
- static void macb_get_hwaddr(struct macb *bp)
- {
--	struct macb_platform_data *pdata;
- 	u32 bottom;
- 	u16 top;
- 	u8 addr[6];
- 	int i;
- 
--	pdata = dev_get_platdata(&bp->pdev->dev);
--
- 	/* Check all 4 address register for valid address */
- 	for (i = 0; i < 4; i++) {
- 		bottom = macb_or_gem_readl(bp, SA1B + i * 8);
- 		top = macb_or_gem_readl(bp, SA1T + i * 8);
- 
--		if (pdata && pdata->rev_eth_addr) {
--			addr[5] = bottom & 0xff;
--			addr[4] = (bottom >> 8) & 0xff;
--			addr[3] = (bottom >> 16) & 0xff;
--			addr[2] = (bottom >> 24) & 0xff;
--			addr[1] = top & 0xff;
--			addr[0] = (top & 0xff00) >> 8;
--		} else {
--			addr[0] = bottom & 0xff;
--			addr[1] = (bottom >> 8) & 0xff;
--			addr[2] = (bottom >> 16) & 0xff;
--			addr[3] = (bottom >> 24) & 0xff;
--			addr[4] = top & 0xff;
--			addr[5] = (top >> 8) & 0xff;
--		}
-+		addr[0] = bottom & 0xff;
-+		addr[1] = (bottom >> 8) & 0xff;
-+		addr[2] = (bottom >> 16) & 0xff;
-+		addr[3] = (bottom >> 24) & 0xff;
-+		addr[4] = top & 0xff;
-+		addr[5] = (top >> 8) & 0xff;
- 
- 		if (is_valid_ether_addr(addr)) {
- 			memcpy(bp->dev->dev_addr, addr, sizeof(addr));
-@@ -510,12 +498,10 @@ static void macb_handle_link_change(struct net_device *dev)
- static int macb_mii_probe(struct net_device *dev)
- {
- 	struct macb *bp = netdev_priv(dev);
--	struct macb_platform_data *pdata;
- 	struct phy_device *phydev;
- 	struct device_node *np;
--	int phy_irq, ret, i;
-+	int ret, i;
- 
--	pdata = dev_get_platdata(&bp->pdev->dev);
- 	np = bp->pdev->dev.of_node;
- 	ret = 0;
- 
-@@ -557,19 +543,6 @@ static int macb_mii_probe(struct net_device *dev)
- 			return -ENXIO;
- 		}
- 
--		if (pdata) {
--			if (gpio_is_valid(pdata->phy_irq_pin)) {
--				ret = devm_gpio_request(&bp->pdev->dev,
--							pdata->phy_irq_pin, "phy int");
--				if (!ret) {
--					phy_irq = gpio_to_irq(pdata->phy_irq_pin);
--					phydev->irq = (phy_irq < 0) ? PHY_POLL : phy_irq;
--				}
--			} else {
--				phydev->irq = PHY_POLL;
--			}
--		}
--
- 		/* attach the mac to the phy */
- 		ret = phy_connect_direct(dev, phydev, &macb_handle_link_change,
- 					 bp->phy_interface);
-@@ -598,7 +571,6 @@ static int macb_mii_probe(struct net_device *dev)
- 
- static int macb_mii_init(struct macb *bp)
- {
--	struct macb_platform_data *pdata;
- 	struct device_node *np;
- 	int err = -ENXIO;
- 
-@@ -618,7 +590,6 @@ static int macb_mii_init(struct macb *bp)
- 		 bp->pdev->name, bp->pdev->id);
- 	bp->mii_bus->priv = bp;
- 	bp->mii_bus->parent = &bp->pdev->dev;
--	pdata = dev_get_platdata(&bp->pdev->dev);
- 
- 	dev_set_drvdata(&bp->dev->dev, bp->mii_bus);
- 
-@@ -632,9 +603,6 @@ static int macb_mii_init(struct macb *bp)
- 
- 		err = mdiobus_register(bp->mii_bus);
- 	} else {
--		if (pdata)
--			bp->mii_bus->phy_mask = pdata->phy_mask;
--
- 		err = of_mdiobus_register(bp->mii_bus, np);
- 	}
- 
-@@ -4050,7 +4018,6 @@ static int macb_probe(struct platform_device *pdev)
- 	struct clk *pclk, *hclk = NULL, *tx_clk = NULL, *rx_clk = NULL;
- 	struct clk *tsu_clk = NULL;
- 	unsigned int queue_mask, num_queues;
--	struct macb_platform_data *pdata;
- 	bool native_io;
- 	struct phy_device *phydev;
- 	struct net_device *dev;
-@@ -4182,15 +4149,11 @@ static int macb_probe(struct platform_device *pdev)
- 	}
- 
- 	err = of_get_phy_mode(np);
--	if (err < 0) {
--		pdata = dev_get_platdata(&pdev->dev);
--		if (pdata && pdata->is_rmii)
--			bp->phy_interface = PHY_INTERFACE_MODE_RMII;
--		else
--			bp->phy_interface = PHY_INTERFACE_MODE_MII;
--	} else {
-+	if (err < 0)
-+		/* not found in DT, MII by default */
-+		bp->phy_interface = PHY_INTERFACE_MODE_MII;
-+	else
- 		bp->phy_interface = err;
--	}
- 
- 	/* IP specific init */
- 	err = init(pdev);
-diff --git a/include/linux/platform_data/macb.h b/include/linux/platform_data/macb.h
-index 7815d50c26ff..2bc51b822956 100644
---- a/include/linux/platform_data/macb.h
-+++ b/include/linux/platform_data/macb.h
-@@ -12,19 +12,10 @@
- 
- /**
-  * struct macb_platform_data - platform data for MACB Ethernet
-- * @phy_mask:		phy mask passed when register the MDIO bus
-- *			within the driver
-- * @phy_irq_pin:	PHY IRQ
-- * @is_rmii:		using RMII interface?
-- * @rev_eth_addr:	reverse Ethernet address byte order
-  * @pclk:		platform clock
-  * @hclk:		AHB clock
-  */
- struct macb_platform_data {
--	u32		phy_mask;
--	int		phy_irq_pin;
--	u8		is_rmii;
--	u8		rev_eth_addr;
- 	struct clk	*pclk;
- 	struct clk	*hclk;
- };
--- 
-2.17.1
-
+>
+> > Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+> > ---
+> >
+> >  drivers/mtd/spi-nor/spi-nor.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> > index fae147452..4cdec2cc2 100644
+> > --- a/drivers/mtd/spi-nor/spi-nor.c
+> > +++ b/drivers/mtd/spi-nor/spi-nor.c
+> > @@ -1874,7 +1874,7 @@ static const struct flash_info spi_nor_ids[] = {
+> >       { "n25q064a",    INFO(0x20bb17, 0, 64 * 1024,  128, SECT_4K | SPI_NOR_QUAD_READ) },
+> >       { "n25q128a11",  INFO(0x20bb18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+> >       { "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+> > -     { "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+> > +     { "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+> >       { "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
+> >       { "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
+> >       { "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
+> >
+>
+>
