@@ -2,96 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45BAA12B53
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 12:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9EC12B0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 11:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfECKNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 06:13:02 -0400
-Received: from cpanel4.indieserve.net ([199.212.143.9]:34004 "EHLO
-        somersetfoodbank.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfECKNC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 06:13:02 -0400
-X-Greylist: delayed 1515 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 May 2019 06:13:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=alUy8Jq4vitcVcXsUaRK97EQ2xv6e/+wFnS0LwHJgDM=; b=UPdLSejucmigWYuYGE/iKHFiAD
-        /y1lWeGuEROSJ9ownVais5uWdB1pMD+Ixp1CPg/CtsYTle2+wUBvLhP/PKTRQYUc3md86i0S4AYUz
-        YzoeBBJqaYwVVEPeWC+lAs5hIUOXziOlgLiGK43ITNZre5zJQrrqv037mnSgiClqEwEzSJV1Q5FA4
-        N7RYAmwKf8TffVHO1vz6Q1UjHa1OT05pVYAmJRx3SEfUI5ewJ2QVPs7NsI/PxRFn0RejQNj/oxHQx
-        P5RVVdvsnZiGPhUF/j/bSkKzTcXLVZUdbQtWiP6AM4qEtjJ8PyWXXgl1SEg4VWHjN5sCdCgD1EU1n
-        e/kkZWAQ==;
-Received: from [72.142.126.219] (port=58096 helo=localhost.localdomain)
-        by cpanel4.indieserve.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <rpjday@crashcourse.ca>)
-        id 1hMUn9-0001C2-5w; Fri, 03 May 2019 05:47:44 -0400
-Date:   Fri, 3 May 2019 05:47:42 -0400 (EDT)
-From:   "Robert P. J. Day" <rpjday@crashcourse.ca>
-X-X-Sender: rpjday@localhost.localdomain
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-cc:     mporter@kernel.crashing.org, alex.bou9@gmail.com
-Subject: [PATCH] MAINTAINERS: RAPIDIO: include more rapidio-related content
-Message-ID: <alpine.LFD.2.21.1905030545110.5476@localhost.localdomain>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727122AbfECJva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 05:51:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7715 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726444AbfECJv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 05:51:29 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8D7247791ACCC68459D6;
+        Fri,  3 May 2019 17:51:27 +0800 (CST)
+Received: from linux-ioko.site (10.71.200.31) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 3 May 2019 17:51:18 +0800
+From:   Peng Li <lipeng321@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
+        <salil.mehta@huawei.com>, <lipeng321@huawei.com>
+Subject: [PATCH V2 net-next 0/3] net: hns3: enhance capabilities for fibre port
+Date:   Fri, 3 May 2019 17:50:36 +0800
+Message-ID: <1556877039-1692-1-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-OutGoing-Spam-Status: No, score=-0.2
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel4.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel4.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel4.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jian Shen <shenjian15@huawei.com>
 
-Add missing RAPIDIO-related files and directories to MAINTAINERS
-entry.
+This patchset enhances more capabilities for fibre port,
+include multipe media type identification, autoneg,
+change port speed and FEC encoding.
 
-Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
+Jian Shen (3):
+  net: hns3: add support for multiple media type
+  net: hns3: add autoneg and change speed support for fibre port
+  net: hns3: add support for FEC encoding control
 
----
+Change log:
+V1->V2: fixes comments from Andrew Lunn.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5c38f21aee78..1bd2f95c0df6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13020,6 +13020,16 @@ M:	Matt Porter <mporter@kernel.crashing.org>
- M:	Alexandre Bounine <alex.bou9@gmail.com>
- S:	Maintained
- F:	drivers/rapidio/
-+F:	include/linux/rio.h
-+F:	include/linux/rio_drv.h
-+F:	include/linux/rio_ids.h
-+F:	include/linux/rio_regs.h
-+F:	include/uapi/linux/rio_cm_cdev.h
-+F:	include/uapi/linux/rio_mport_cdev.h
-+F:	Documentation/rapidio/
-+F:	Documentation/ABI/testing/sysfs-bus-rapidio
-+F:	Documentation/ABI/testing/sysfs-class-rapidio
-+F:	Documentation/driver-api/rapidio.rst
-
- RAS INFRASTRUCTURE
- M:	Tony Luck <tony.luck@intel.com>
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  34 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 180 ++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  30 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 410 ++++++++++++++++++---
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  16 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |   7 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  15 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   1 +
+ 8 files changed, 620 insertions(+), 73 deletions(-)
 
 -- 
+1.9.1
 
-========================================================================
-Robert P. J. Day                                 Ottawa, Ontario, CANADA
-                         http://crashcourse.ca
-
-Twitter:                                       http://twitter.com/rpjday
-LinkedIn:                               http://ca.linkedin.com/in/rpjday
-========================================================================
