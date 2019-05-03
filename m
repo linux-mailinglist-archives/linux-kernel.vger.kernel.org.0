@@ -2,51 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 485B21276B
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E587A12770
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 08:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfECGBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 02:01:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50798 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfECGBA (ORCPT
+        id S1726632AbfECGCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 02:02:24 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37927 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfECGCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 02:01:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b+00Xez4VVqvi11sX2TSXpfIJgpjwEvl8UnGe/5MG3c=; b=eeMhrqL1edD4BmDM+M2z7gyso
-        TcGG1Ud//m2wYJB9GDY2Zk1BXBLfwBVREENjIqVoftX5U0QtHlAMKZzCVIN/eTNMmxqIKt03OiDUs
-        zgJGJZhK5Zx2ZoVmnuJcXcMAdPm469jHejXJe7F+zmBjHaaXLUQr5LYUpjXDzrKq6wnQI=;
-Received: from [42.29.24.106] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hMRFR-0000RO-SJ; Fri, 03 May 2019 06:00:42 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 866E1441D3C; Fri,  3 May 2019 07:00:34 +0100 (BST)
-Date:   Fri, 3 May 2019 15:00:34 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Fabien Parent <fparent@baylibre.com>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        matthias.bgg@gmail.com, perex@perex.cz, tiwai@suse.com,
-        kaichieh.chuang@mediatek.com, shunli.wang@mediatek.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] ASoC: mediatek: mt8516: Add ADDA DAI driver
-Message-ID: <20190503060034.GD14916@sirena.org.uk>
-References: <20190502121041.8045-1-fparent@baylibre.com>
- <20190502121041.8045-5-fparent@baylibre.com>
+        Fri, 3 May 2019 02:02:24 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f2so284862wmj.3;
+        Thu, 02 May 2019 23:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EWtSEcRAEClnp5qoyCUoVU+zszW981359OnvYuNYOfs=;
+        b=L2+ILm3IPeNDoDv54VzYglc/Z6apZqqIdA5HG/I6kne6gOBhpfCNItAibcYkaeIRlq
+         Ap2aLXdsKMj02bBSOTh2w3DSAAru0ZGnvA88S4TBR1A+Q1KOYEm5OLZxDj7LzJxibQJu
+         ULKNrL78nR0cEVyCAD9n08LyNyvTHx66vj3gVW+Ztx9NoWvCGgxpWJllvZobzq0PC7ql
+         9jnb4zg1VAWdDGlGprAizAaA0k7l8E1cvuV1UynOeOrhQB4QITyad6dKjQOQerXRT+Vd
+         iybRWR2yzIp7fM2/4xPskqXoROzKnCanzT6pu6Lfs2C+6rp3MxGWu3vY6JLhoW7TGBlx
+         hlpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EWtSEcRAEClnp5qoyCUoVU+zszW981359OnvYuNYOfs=;
+        b=t5VI1FQ5lXEZvUpMxzEM/pKyiXFXqT4IcUo+RxLMCDV6eJIG/mcNzNauHQtD4IlkpK
+         PjB7ysFIonP9YaJEK8XmOzJBm2JY/GKcDGEJet/U09MaFHIq01E3o8petU3tIhYyqEg1
+         xJ+NCR0jyqJoKAG4SfpT8WYLQHMTV9Fy7L1JxEI4kBJI38l3IJHiyd6DDRJ/sQp5/hXd
+         7jWeX/yZ+fr2gJ0oGRo41EZq02VH07MtXBHnVbb74blpXyGpiGaBFST8aXQPzKUbLSMv
+         MG4B95jDNUl2nVZId9NtEr7EqJiWgqyXXQutyWb1CVCE9zj+Gt4ao1IemLj7CTVffeJe
+         cJNg==
+X-Gm-Message-State: APjAAAUbJLWSnIdIJST+1lgc3HK57o8BvdeNOL02PeCwVI1Pj5y+UDh2
+        IKYySrGVZ3PEfS57i19g8gU=
+X-Google-Smtp-Source: APXvYqye3M4BGNbRpm/002dbzifmSfoz6CZiHaO6lZrFk7m6+ow+ZSIovB7+7Rud5sYd2jLSts1sDA==
+X-Received: by 2002:a1c:a00f:: with SMTP id j15mr4732038wme.148.1556863341211;
+        Thu, 02 May 2019 23:02:21 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h81sm3494166wmf.33.2019.05.02.23.02.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 May 2019 23:02:20 -0700 (PDT)
+Date:   Fri, 3 May 2019 08:02:18 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>
+Subject: Re: [PATCH V5 2/4] tpm: Reserve the TPM final events table
+Message-ID: <20190503060218.GA28048@gmail.com>
+References: <20190227202658.197113-1-matthewgarrett@google.com>
+ <20190227202658.197113-3-matthewgarrett@google.com>
+ <CAJzaN5pUJoOCz5-ZDSnTb6dbVPuy0QwmFD0CeofAGK+bRQx0og@mail.gmail.com>
+ <CACdnJutpBPAX6TOGgs3Ng2v_cC5hAf-3pHThESvjQ9vbvQeVkA@mail.gmail.com>
+ <CAKv+Gu9PF4u=-7QL4e36Q3S5kC4+5Z=yLYHLT9jE+eNY7YUV7A@mail.gmail.com>
+ <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/EQiL+SffV/fXkvV"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190502121041.8045-5-fparent@baylibre.com>
-X-Cookie: -- I have seen the FUN --
+In-Reply-To: <CACdnJuvDuw0X9iwEqOu7EjM5ca1f+n7f=xqzrTPS9PyrmqKNHQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,37 +78,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---/EQiL+SffV/fXkvV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Matthew Garrett <mjg59@google.com> wrote:
 
-On Thu, May 02, 2019 at 02:10:40PM +0200, Fabien Parent wrote:
+> On Thu, May 2, 2019 at 12:15 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> >
+> > (+ Ingo)
+> >
+> > On Tue, 30 Apr 2019 at 21:52, Matthew Garrett <mjg59@google.com> wrote:
+> > >
+> > > On Tue, Apr 30, 2019 at 6:07 AM Bartosz Szczepanek <bsz@semihalf.com> wrote:
+> > > >
+> > > > I may be a little late with this comment, but I've just tested these
+> > > > patches on aarch64 platform (from the top of jjs/master) and got
+> > > > kernel panic ("Unable to handle kernel read", full log at the end of
+> > > > mail). I think there's problem with below call to
+> > > > tpm2_calc_event_log_size(), where physical address of efi.tpm_log is
+> > > > passed as (void *) and never remapped:
+> > >
+> > > Yes, it looks like this is just broken. Can you try with the attached patch?
+> >
+> > I'm a bit uncomfortable with EFI code that is obviously broken and
+> > untested being queued for the next merge window in another tree.
+> 
+> The patchset was Cc:ed to linux-efi@. Is there anything else I should
+> have done to ensure you picked it up rather than Jarkko?
 
-> +static int mt8516_afe_adda_hw_params(struct snd_pcm_substream *substream,
-> +			  struct snd_pcm_hw_params *params,
-> +			  struct snd_soc_dai *dai)
-> +{
-> +	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
-> +	unsigned int width_val = params_width(params) > 16 ?
-> +		(AFE_CONN_24BIT_O03 | AFE_CONN_24BIT_O04) : 0;
+That's not the workflow rule the Linux kernel is using, if Cc:-ing a 
+patchset was the only condition for upstream inclusion then we'd have a 
+*LOT* of crap in the Linux kernel.
 
-Please write normal conditional statements rather than burying things in
-the variable declarations usin the ternery operator, it makes things
-much more legible.
+Just applying those EFI changes without even as much as an Acked-by from 
+the EFI maintainers is a *totally* unacceptable workflow.
 
---/EQiL+SffV/fXkvV
-Content-Type: application/pgp-signature; name="signature.asc"
+Please revert/rebase and re-try this on the proper submission channels.
 
------BEGIN PGP SIGNATURE-----
+Meanwhile the broken code is NAK-ed by me:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzL2QEACgkQJNaLcl1U
-h9CnBQf+I75JGpPa7HZs9a5wiVauteNssp4QFPfRbk8PmvqiqEycEs+1ykqmWwhK
-K7c2GX0MELLAlaU9UmlelicrJB5+xaGGOAUFl5CVnVt9zxLdrXPvfeet/dK9FBtY
-Vpjh1BVvkUYgD9gz/u2sRgOtysfwQzfB17Uh3GtNHfoofg4Fhi/MqevPdkDyRf00
-ZelGCTTFYLeFLm66hzyjZHfGPlRBTG1G7IcNJ/mRgGg7Asc2LaxhauBM0nLTqANG
-H5t9WOoaoIbQy2JDR0PCw22mB0gE+tY7gkMZZy3NWxnzZk4uNTgR5Me2P/vly6Bc
-x6jXh8xYjanv7sdTg/r/in0JXtVYTA==
-=rEDi
------END PGP SIGNATURE-----
+   Nacked-by: Ingo Molnar <mingo@kernel.org>
 
---/EQiL+SffV/fXkvV--
+Thanks,
+
+	Ingo
