@@ -2,168 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE9F125FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 03:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07C3125F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 03:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfECBY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 May 2019 21:24:58 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:43249 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725995AbfECBY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 May 2019 21:24:58 -0400
-X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 21:24:57 EDT
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id C7A598E7;
-        Thu,  2 May 2019 21:19:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Thu, 02 May 2019 21:19:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=sPDbUJmHaVq97y4GuG/FIKWkWKV
-        tpZfVshd5q6sAmvk=; b=UthxIiQ1ntdc1HsURjtS8Up+4edtQxHwwGMSlVTIxQa
-        M5z7BuNJLIvNcVu2H8/duSREUvclFw+gPg52jQBrHqGPUXThnlwTQC0oJyu1K4G6
-        ptgXgOtQQCyYYut8UDJxiZrAuewJtbcdKlaApyQwyfr8h4hoaVcBD6DVSanDDK7z
-        UvdumQqpZ8CqmOEpaIQp+KsDBhTQzbuk7UOZ96EAYs38rbFQRFOXPQ+hWL7sq4w6
-        LpYRtsf+8ByUrsvHZ3M/qCJ41EflLCQIHm9stKYLDXxbVat7RvGyLDJRbmsF0K7w
-        njny6nxiuIxHYRpPzRr3SYKhJMhKGhpHjkBR7wt2oLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=sPDbUJ
-        mHaVq97y4GuG/FIKWkWKVtpZfVshd5q6sAmvk=; b=tGXCdIHVNAUwKbdpPkj2ku
-        YWF62ogALsBS+qCRu1CIURbjuRI6v2nLMrDmlv1IB3GCrwnGb9vnIn2NukUqf9qG
-        PSJ8UJV6IaUguc3IBpBAM3T63kgYivBtFqmfAN3+8qMnIPVT4RA/9873mikB0ISn
-        fpFvq9Jl3+8Bp1X4quiCMAORAyUE9lIIzMmITOnCbiZnRUn2e05jFJLx3INR9DIg
-        THAbJ8wm0Zl2DNopXkzOBBHwAFDNoSisSZdG633IU89ODXG/nOCDyOfv7UAn90gQ
-        qDl+Rjeojp8X3AmQU+4gJMS1frbuexXcQF1tlI5BzwqAN1SY4vxoz+YuXfLFLUSw
-        ==
-X-ME-Sender: <xms:BpfLXLkipxRY1xOmyt1Ojd3sIAZCFDpyodGmEOPJz0L-jvSMqK7LqQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjedtgdeghecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefvrghkrghs
-    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
-    hpqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgrlhhsrgdqphhrohhjvggtthdr
-    ohhrghenucfkphepudegrdefrdejhedrudekudenucfrrghrrghmpehmrghilhhfrhhomh
-    epohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphenucevlhhushhtvghrufhi
-    iigvpedt
-X-ME-Proxy: <xmx:BpfLXF7LeeYKYX79kzKoESKET-5AUUhoGQz-O4eqt5j_Zu7bzATvGg>
-    <xmx:BpfLXJpTb9xeYoQMrRpiHjCOrZu6z5edpKz-zn_QZNLqiXh9mtSSYg>
-    <xmx:BpfLXFQB2_6OgcLBYD3gkfqi-Kl7s3V4ARTRCtVOfiPUniBsVDhe6w>
-    <xmx:B5fLXCaQufuO0eLQRkQfJCsZUW1UeY3_HcR3cxKRZGkLqmoTEi44SA>
-Received: from workstation (ae075181.dynamic.ppp.asahi-net.or.jp [14.3.75.181])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CB2001037C;
-        Thu,  2 May 2019 21:18:59 -0400 (EDT)
-Date:   Fri, 3 May 2019 10:18:56 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Ross Zwisler <zwisler@chromium.org>
-Cc:     alsa-devel@alsa-project.org, Ross Zwisler <zwisler@google.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: update git tree for sound entries
-Message-ID: <20190503011855.GA30162@workstation>
-Mail-Followup-To: Ross Zwisler <zwisler@chromium.org>,
-        alsa-devel@alsa-project.org, Ross Zwisler <zwisler@google.com>,
-        Clemens Ladisch <clemens@ladisch.de>, Takashi Iwai <tiwai@suse.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-References: <20190502172700.215737-1-zwisler@google.com>
+        id S1726401AbfECBVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 May 2019 21:21:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37385 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726022AbfECBVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 May 2019 21:21:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44wDpy5wr6z9s9y;
+        Fri,  3 May 2019 11:20:58 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1556846459;
+        bh=78DbnTNk/myUa0YRgU5OapL3zHwOgBk3no9C0Rzfw5I=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tAyFz3W2q+hn6puBHPfGT8/k2E26T+2EHL/dIxnajHGyVh6f+CLHCrEAJ3Nva8JWO
+         YHVl94uuKfwKr5wHoYj2UU18UVW6rFU9AHZjyMvVo5zmph6o90i+LToF9s0YjC6l4P
+         MNgcBpXS1pIo/c56tlLUwjweoucqfqKbHWCd+HLUgz/SToiCMB0aP88uRuYmIqvXtI
+         68NzvFwSpciTmgnleUwVtudIkcW8k9QDyJoDzMPW50YsQ3Gu0LN8754IAdr5+K+jTu
+         7IzgiXVAHfUDTwRoxEqw8h5iBu6/M/98Yz9s1mfjkr7GvjLUVdCY3369QRdJua2TBy
+         AcS6wfyr5EzGA==
+Date:   Fri, 3 May 2019 11:20:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the vfs tree with the kbuild tree
+Message-ID: <20190503112058.51336cd2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502172700.215737-1-zwisler@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/N64jm+8l.uMFzxF4YR8ioZQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2019 at 11:27:00AM -0600, Ross Zwisler wrote:
-> Several sound related entries in MAINTAINERS refer to the old git tree
-> at "git://git.alsa-project.org/alsa-kernel.git".  This is no longer used
-> for development, and Takashi Iwai's kernel.org tree is used instead.
-> 
-> Signed-off-by: Ross Zwisler <zwisler@google.com>
-> ---
->  MAINTAINERS | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
+Hi all,
 
-This is a good catch.
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+  samples/Makefile
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e17ebf70b5480..d373d976a9317 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3351,7 +3351,7 @@ F:	include/uapi/linux/bsg.h
->  BT87X AUDIO DRIVER
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	Documentation/sound/cards/bt87x.rst
->  F:	sound/pci/bt87x.c
-> @@ -3404,7 +3404,7 @@ F:	drivers/scsi/FlashPoint.*
->  C-MEDIA CMI8788 DRIVER
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	sound/pci/oxygen/
->  
-> @@ -5696,7 +5696,7 @@ F:	drivers/edac/qcom_edac.c
->  EDIROL UA-101/UA-1000 DRIVER
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	sound/usb/misc/ua101.c
->  
-> @@ -6036,7 +6036,7 @@ F:	include/linux/f75375s.h
->  FIREWIRE AUDIO DRIVERS
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	sound/firewire/
->  
-> @@ -11593,7 +11593,7 @@ F:	Documentation/devicetree/bindings/opp/
->  OPL4 DRIVER
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	sound/drivers/opl4/
->  
-> @@ -14490,7 +14490,6 @@ M:	Takashi Iwai <tiwai@suse.com>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
->  W:	http://www.alsa-project.org/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
->  Q:	http://patchwork.kernel.org/project/alsa-devel/list/
->  S:	Maintained
->  F:	Documentation/sound/
-> @@ -16100,7 +16099,7 @@ F:	drivers/usb/storage/
->  USB MIDI DRIVER
->  M:	Clemens Ladisch <clemens@ladisch.de>
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> -T:	git git://git.alsa-project.org/alsa-kernel.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->  S:	Maintained
->  F:	sound/usb/midi.*
->  
-> -- 
-> 2.21.0.593.g511ec345e18-goog
+between commit:
 
-Regards
+  a757ed09d672 ("samples: guard sub-directories with CONFIG options")
 
-Takashi Sakamoto
+from the kbuild tree and commit:
+
+  f1b5618e013a ("vfs: Add a sample program for the new mount API")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc samples/Makefile
+index 0f2d70d785f5,95d71ffd62d5..000000000000
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@@ -1,21 -1,6 +1,21 @@@
+ +# SPDX-License-Identifier: GPL-2.0
+  # Makefile for Linux samples code
+ =20
+ -obj-$(CONFIG_SAMPLES)	+=3D kobject/ kprobes/ trace_events/ livepatch/ \
+ -			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ -			   configfs/ connector/ v4l/ trace_printk/ \
+ -			   vfio-mdev/ vfs/ qmi/ binderfs/
+ +obj-$(CONFIG_SAMPLE_ANDROID_BINDERFS)	+=3D binderfs/
+ +obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
+ +obj-$(CONFIG_SAMPLE_CONNECTOR)		+=3D connector/
+ +subdir-y				+=3D hidraw
+ +obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+=3D hw_breakpoint/
+ +obj-$(CONFIG_SAMPLE_KDB)		+=3D kdb/
+ +obj-$(CONFIG_SAMPLE_KFIFO)		+=3D kfifo/
+ +obj-$(CONFIG_SAMPLE_KOBJECT)		+=3D kobject/
+ +obj-$(CONFIG_SAMPLE_KPROBES)		+=3D kprobes/
+ +obj-$(CONFIG_SAMPLE_LIVEPATCH)		+=3D livepatch/
+ +obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+=3D qmi/
+ +obj-$(CONFIG_SAMPLE_RPMSG_CLIENT)	+=3D rpmsg/
+ +subdir-$(CONFIG_SAMPLE_SECCOMP)		+=3D seccomp
+- subdir-$(CONFIG_SAMPLE_STATX)		+=3D statx
+++subdir-$(CONFIG_SAMPLE_VFS)		+=3D vfs
+ +obj-$(CONFIG_SAMPLE_TRACE_EVENTS)	+=3D trace_events/
+ +obj-$(CONFIG_SAMPLE_TRACE_PRINTK)	+=3D trace_printk/
+ +obj-$(CONFIG_VIDEO_PCI_SKELETON)	+=3D v4l/
+ +obj-y					+=3D vfio-mdev/
+
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLl3oACgkQAVBC80lX
+0GyrEAf7BSGoO46Jk1cooZRmJFrWn9IvYS7DhIYtLoa64TxgHKaJPGXyqvTcn5h8
+DqjObvygN6PGwIxeXjfoj/TX4BBZd3vYTE7obcB4KJcysAeiMn2UU7Oyii2zoWFM
+/c6RQz31K/yWsPPo58b0b7Cqz+AObXiijcYVO1rZoR999LHyEmqA6WaJSUixhlrS
+KjlavZUVkwspxUqDbzm1OtcprLFPadAZMYEQQJv2VcleI6ayvI29ah/9QK6tCzYV
+t2dCgUsK3kHJUVIH+uLFF9NWjUiT8fYQ1DWMDGFojuyF+PCKRh16deQk0hQ2G90d
+XK01NnjqHH4AoKMqbdlYDCr9BWzG5A==
+=xQvL
+-----END PGP SIGNATURE-----
+
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ--
