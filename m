@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A834013349
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 19:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9F81334C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 19:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbfECRrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 13:47:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60615 "EHLO
+        id S1728775AbfECRsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 13:48:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36803 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfECRrt (ORCPT
+        with ESMTP id S1726480AbfECRsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 13:47:49 -0400
+        Fri, 3 May 2019 13:48:32 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x43Hlbvb2844992
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x43HmK8J2845299
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 3 May 2019 10:47:38 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x43Hlbvb2844992
+        Fri, 3 May 2019 10:48:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x43HmK8J2845299
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1556905658;
-        bh=JNo7t5Uv50o2X7kmD2OglHHDaoL7onANSklhJ6xEYWk=;
+        s=2019041745; t=1556905701;
+        bh=4+ckTtPbMORPhFYjpg2pFzQJAlYuwjP392LAUnNvpQE=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=eDv1zcwILyT5vUARtKE/8oFWR2mxKSTKwpsxli7FsEvP99Szav5K4rGyViJE/9One
-         6nNBOfptYAGNo5mbPW7Bs/Tva1mFMpk2BagIqQWKyuJhP6dPFOeP0SQRG+C/jeJ/SJ
-         tN1i1xd9rMhZEHhi0jjk9CdDbR/7pSNj5Zs0Eff8mcLXsxJU9PcA4EIwFe/+nAsNDp
-         9rsZJ8nyfYyC4TOBzrYK+45/JbbfxqnhRCc4gnfbhH9QGnDXYzUzERuikARdDYgC9n
-         YcWaNoyxxuNGGLeHX2is8tfpH49guAeceTzgHENOFSaBJjc+W4P4Cve/vnkzxMLcau
-         cxmmcgFNSr8Aw==
+        b=iLMy2LbtFV36LwfrOcDB3xkqyHuVxtqg4ING5NMI91aZyj/NrJQ2fWYXRrNYwfoCl
+         9XicAx7dIGl6ipK83gZwOFRBS5sd/9Dqk5DERjfSufh0L3iLNoAbkxkzvupVWmpQMs
+         PF0F00jnf7WuIb9j4hXFnImzCNlRhP3grNzGTRoaozK7Vu9wlwjQvlgUV1E9z/TY09
+         5IiQBJkvN0Nh7K507cxQi+C94gb2HK99NR5yVlzbuCoia9Lj8MjyGRya7gnA0wX/rg
+         eTmz8kzucbA0d2lPlbHrZMCYyBctXtLBIBLuW0/F/Bksy/u348Rl+7b107IjYct/lH
+         SRLOQhRCirARA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x43HlbU72844989;
-        Fri, 3 May 2019 10:47:37 -0700
-Date:   Fri, 3 May 2019 10:47:37 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x43HmKuE2845296;
+        Fri, 3 May 2019 10:48:20 -0700
+Date:   Fri, 3 May 2019 10:48:20 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Nicholas Piggin <tipbot@zytor.com>
-Message-ID: <tip-9219565aa89033a9cfdae788c1940473a1253d6c@git.kernel.org>
-Cc:     peterz@infradead.org, torvalds@linux-foundation.org, hpa@zytor.com,
-        rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, fweisbec@gmail.com,
-        npiggin@gmail.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
-          npiggin@gmail.com, fweisbec@gmail.com, peterz@infradead.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <20190411033448.20842-5-npiggin@gmail.com>
-References: <20190411033448.20842-5-npiggin@gmail.com>
+Message-ID: <tip-08ae95f4fd3b38b257f5dc7e6507e071c27ba0d5@git.kernel.org>
+Cc:     npiggin@gmail.com, tglx@linutronix.de, rafael.j.wysocki@intel.com,
+        fweisbec@gmail.com, hpa@zytor.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: hpa@zytor.com, npiggin@gmail.com, fweisbec@gmail.com,
+          rafael.j.wysocki@intel.com, tglx@linutronix.de,
+          peterz@infradead.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20190411033448.20842-6-npiggin@gmail.com>
+References: <20190411033448.20842-6-npiggin@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/isolation: Require a present CPU in
- housekeeping mask
-Git-Commit-ID: 9219565aa89033a9cfdae788c1940473a1253d6c
+Subject: [tip:sched/core] nohz_full: Allow the boot CPU to be nohz_full
+Git-Commit-ID: 08ae95f4fd3b38b257f5dc7e6507e071c27ba0d5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,18 +65,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9219565aa89033a9cfdae788c1940473a1253d6c
-Gitweb:     https://git.kernel.org/tip/9219565aa89033a9cfdae788c1940473a1253d6c
+Commit-ID:  08ae95f4fd3b38b257f5dc7e6507e071c27ba0d5
+Gitweb:     https://git.kernel.org/tip/08ae95f4fd3b38b257f5dc7e6507e071c27ba0d5
 Author:     Nicholas Piggin <npiggin@gmail.com>
-AuthorDate: Thu, 11 Apr 2019 13:34:47 +1000
+AuthorDate: Thu, 11 Apr 2019 13:34:48 +1000
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Fri, 3 May 2019 19:42:58 +0200
 
-sched/isolation: Require a present CPU in housekeeping mask
+nohz_full: Allow the boot CPU to be nohz_full
 
-During housekeeping mask setup, currently a possible CPU is required.
-That does not guarantee the CPU would be available at boot time, so
-check to ensure that at least one present CPU is in the mask.
+Allow the boot CPU/CPU0 to be nohz_full. Have the boot CPU take the
+do_timer duty during boot until a housekeeping CPU can take over.
+
+This is supported when CONFIG_PM_SLEEP_SMP is not configured, or when
+it is configured and the arch allows suspend on non-zero CPUs.
+
+nohz_full has been trialed at a large supercomputer site and found to
+significantly reduce jitter. In order to deploy it in production, they
+need CPU0 to be nohz_full because their job control system requires
+the application CPUs to start from 0, and the housekeeping CPUs are
+placed higher. An equivalent job scheduling that uses CPU0 for
+housekeeping could be achieved by modifying their system, but it is
+preferable if nohz_full can support their environment without
+modification.
 
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -87,59 +97,157 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linuxppc-dev@lists.ozlabs.org
-Link: https://lkml.kernel.org/r/20190411033448.20842-5-npiggin@gmail.com
+Link: https://lkml.kernel.org/r/20190411033448.20842-6-npiggin@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/isolation.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ kernel/time/tick-common.c | 50 +++++++++++++++++++++++++++++++++++++++++++----
+ kernel/time/tick-sched.c  | 34 ++++++++++++++++++++++----------
+ 2 files changed, 70 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index b02d148e7672..687302051a27 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -65,6 +65,7 @@ void __init housekeeping_init(void)
- static int __init housekeeping_setup(char *str, enum hk_flags flags)
- {
- 	cpumask_var_t non_housekeeping_mask;
-+	cpumask_var_t tmp;
- 	int err;
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index df401463a191..e49e8091f9ac 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -46,6 +46,14 @@ ktime_t tick_period;
+  *    procedure also covers cpu hotplug.
+  */
+ int tick_do_timer_cpu __read_mostly = TICK_DO_TIMER_BOOT;
++#ifdef CONFIG_NO_HZ_FULL
++/*
++ * tick_do_timer_boot_cpu indicates the boot CPU temporarily owns
++ * tick_do_timer_cpu and it should be taken over by an eligible secondary
++ * when one comes online.
++ */
++static int tick_do_timer_boot_cpu __read_mostly = -1;
++#endif
  
- 	alloc_bootmem_cpumask_var(&non_housekeeping_mask);
-@@ -75,16 +76,23 @@ static int __init housekeeping_setup(char *str, enum hk_flags flags)
- 		return 0;
+ /*
+  * Debugging: see timer_list.c
+@@ -167,6 +175,26 @@ void tick_setup_periodic(struct clock_event_device *dev, int broadcast)
  	}
+ }
  
-+	alloc_bootmem_cpumask_var(&tmp);
- 	if (!housekeeping_flags) {
- 		alloc_bootmem_cpumask_var(&housekeeping_mask);
- 		cpumask_andnot(housekeeping_mask,
- 			       cpu_possible_mask, non_housekeeping_mask);
--		if (cpumask_empty(housekeeping_mask))
++#ifdef CONFIG_NO_HZ_FULL
++static void giveup_do_timer(void *info)
++{
++	int cpu = *(unsigned int *)info;
 +
-+		cpumask_andnot(tmp, cpu_present_mask, non_housekeeping_mask);
-+		if (cpumask_empty(tmp)) {
-+			pr_warn("Housekeeping: must include one present CPU, "
-+				"using boot CPU:%d\n", smp_processor_id());
- 			__cpumask_set_cpu(smp_processor_id(), housekeeping_mask);
-+			__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-+		}
- 	} else {
--		cpumask_var_t tmp;
--
--		alloc_bootmem_cpumask_var(&tmp);
-+		cpumask_andnot(tmp, cpu_present_mask, non_housekeeping_mask);
-+		if (cpumask_empty(tmp))
-+			__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
- 		cpumask_andnot(tmp, cpu_possible_mask, non_housekeeping_mask);
- 		if (!cpumask_equal(tmp, housekeeping_mask)) {
- 			pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
-@@ -92,8 +100,8 @@ static int __init housekeeping_setup(char *str, enum hk_flags flags)
- 			free_bootmem_cpumask_var(non_housekeeping_mask);
- 			return 0;
++	WARN_ON(tick_do_timer_cpu != smp_processor_id());
++
++	tick_do_timer_cpu = cpu;
++}
++
++static void tick_take_do_timer_from_boot(void)
++{
++	int cpu = smp_processor_id();
++	int from = tick_do_timer_boot_cpu;
++
++	if (from >= 0 && from != cpu)
++		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
++}
++#endif
++
+ /*
+  * Setup the tick device
+  */
+@@ -186,12 +214,26 @@ static void tick_setup_device(struct tick_device *td,
+ 		 * this cpu:
+ 		 */
+ 		if (tick_do_timer_cpu == TICK_DO_TIMER_BOOT) {
+-			if (!tick_nohz_full_cpu(cpu))
+-				tick_do_timer_cpu = cpu;
+-			else
+-				tick_do_timer_cpu = TICK_DO_TIMER_NONE;
++			tick_do_timer_cpu = cpu;
++
+ 			tick_next_period = ktime_get();
+ 			tick_period = NSEC_PER_SEC / HZ;
++#ifdef CONFIG_NO_HZ_FULL
++			/*
++			 * The boot CPU may be nohz_full, in which case set
++			 * tick_do_timer_boot_cpu so the first housekeeping
++			 * secondary that comes up will take do_timer from
++			 * us.
++			 */
++			if (tick_nohz_full_cpu(cpu))
++				tick_do_timer_boot_cpu = cpu;
++
++		} else if (tick_do_timer_boot_cpu != -1 &&
++						!tick_nohz_full_cpu(cpu)) {
++			tick_take_do_timer_from_boot();
++			tick_do_timer_boot_cpu = -1;
++			WARN_ON(tick_do_timer_cpu != cpu);
++#endif
  		}
--		free_bootmem_cpumask_var(tmp);
- 	}
-+	free_bootmem_cpumask_var(tmp);
  
- 	if ((flags & HK_FLAG_TICK) && !(housekeeping_flags & HK_FLAG_TICK)) {
- 		if (IS_ENABLED(CONFIG_NO_HZ_FULL)) {
+ 		/*
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 6fa52cd6df0b..4aa917acbe1c 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -121,10 +121,16 @@ static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
+ 	 * into a long sleep. If two CPUs happen to assign themselves to
+ 	 * this duty, then the jiffies update is still serialized by
+ 	 * jiffies_lock.
++	 *
++	 * If nohz_full is enabled, this should not happen because the
++	 * tick_do_timer_cpu never relinquishes.
+ 	 */
+-	if (unlikely(tick_do_timer_cpu == TICK_DO_TIMER_NONE)
+-	    && !tick_nohz_full_cpu(cpu))
++	if (unlikely(tick_do_timer_cpu == TICK_DO_TIMER_NONE)) {
++#ifdef CONFIG_NO_HZ_FULL
++		WARN_ON(tick_nohz_full_running);
++#endif
+ 		tick_do_timer_cpu = cpu;
++	}
+ #endif
+ 
+ 	/* Check, if the jiffies need an update */
+@@ -395,8 +401,8 @@ void __init tick_nohz_full_setup(cpumask_var_t cpumask)
+ static int tick_nohz_cpu_down(unsigned int cpu)
+ {
+ 	/*
+-	 * The boot CPU handles housekeeping duty (unbound timers,
+-	 * workqueues, timekeeping, ...) on behalf of full dynticks
++	 * The tick_do_timer_cpu CPU handles housekeeping duty (unbound
++	 * timers, workqueues, timekeeping, ...) on behalf of full dynticks
+ 	 * CPUs. It must remain online when nohz full is enabled.
+ 	 */
+ 	if (tick_nohz_full_running && tick_do_timer_cpu == cpu)
+@@ -423,12 +429,15 @@ void __init tick_nohz_init(void)
+ 		return;
+ 	}
+ 
+-	cpu = smp_processor_id();
++	if (IS_ENABLED(CONFIG_PM_SLEEP_SMP) &&
++			!IS_ENABLED(CONFIG_PM_SLEEP_SMP_NONZERO_CPU)) {
++		cpu = smp_processor_id();
+ 
+-	if (cpumask_test_cpu(cpu, tick_nohz_full_mask)) {
+-		pr_warn("NO_HZ: Clearing %d from nohz_full range for timekeeping\n",
+-			cpu);
+-		cpumask_clear_cpu(cpu, tick_nohz_full_mask);
++		if (cpumask_test_cpu(cpu, tick_nohz_full_mask)) {
++			pr_warn("NO_HZ: Clearing %d from nohz_full range "
++				"for timekeeping\n", cpu);
++			cpumask_clear_cpu(cpu, tick_nohz_full_mask);
++		}
+ 	}
+ 
+ 	for_each_cpu(cpu, tick_nohz_full_mask)
+@@ -904,8 +913,13 @@ static bool can_stop_idle_tick(int cpu, struct tick_sched *ts)
+ 		/*
+ 		 * Boot safety: make sure the timekeeping duty has been
+ 		 * assigned before entering dyntick-idle mode,
++		 * tick_do_timer_cpu is TICK_DO_TIMER_BOOT
+ 		 */
+-		if (tick_do_timer_cpu == TICK_DO_TIMER_NONE)
++		if (unlikely(tick_do_timer_cpu == TICK_DO_TIMER_BOOT))
++			return false;
++
++		/* Should not happen for nohz-full */
++		if (WARN_ON_ONCE(tick_do_timer_cpu == TICK_DO_TIMER_NONE))
+ 			return false;
+ 	}
+ 
