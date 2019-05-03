@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E4EC12D31
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58EDC12D35
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfECMJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 08:09:57 -0400
+        id S1727839AbfECMKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:10:03 -0400
 Received: from mga06.intel.com ([134.134.136.31]:1063 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727173AbfECMJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:09:55 -0400
+        id S1727808AbfECMJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 08:09:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 05:09:54 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 05:09:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="343043079"
+   d="scan'208";a="343043083"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga005.fm.intel.com with ESMTP; 03 May 2019 05:09:53 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 03 May 2019 05:09:55 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] perf scripts python: exported-sql-viewer.py: Fix error when shrinking / enlarging font
-Date:   Fri,  3 May 2019 15:08:23 +0300
-Message-Id: <20190503120828.25326-2-adrian.hunter@intel.com>
+Subject: [PATCH 2/6] perf scripts python: exported-sql-viewer.py: Move view creation
+Date:   Fri,  3 May 2019 15:08:24 +0300
+Message-Id: <20190503120828.25326-3-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190503120828.25326-1-adrian.hunter@intel.com>
 References: <20190503120828.25326-1-adrian.hunter@intel.com>
@@ -35,53 +35,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following error if shrink / enlarge font is used with the help
-window.
-
-  Traceback (most recent call last):
-    File "tools/perf/scripts/python/exported-sql-viewer.py", line 2791, in ShrinkFont
-      ShrinkFont(win.view)
-  AttributeError: 'HelpWindow' object has no attribute 'view'
+As preparation for adding support for copying to clipboard, create view in
+TreeWindowBase instead of derived classes.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ tools/perf/scripts/python/exported-sql-viewer.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index c586abfb2b46..289e8dbd1444 100755
+index 289e8dbd1444..73fc02d6d1e4 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -2770,6 +2770,14 @@ class MainWindow(QMainWindow):
- 		help_menu = menu.addMenu("&Help")
- 		help_menu.addAction(CreateAction("&Exported SQL Viewer Help", "Helpful information", self.Help, self, QKeySequence.HelpContents))
+@@ -891,9 +891,10 @@ class TreeWindowBase(QMdiSubWindow):
+ 		super(TreeWindowBase, self).__init__(parent)
  
-+	def Try(self, fn):
-+		win = self.mdi_area.activeSubWindow()
-+		if win:
-+			try:
-+				fn(win.view)
-+			except:
-+				pass
+ 		self.model = None
+-		self.view = None
+ 		self.find_bar = None
+ 
++		self.view = QTreeView()
 +
- 	def Find(self):
- 		win = self.mdi_area.activeSubWindow()
- 		if win:
-@@ -2787,12 +2795,10 @@ class MainWindow(QMainWindow):
- 				pass
+ 	def DisplayFound(self, ids):
+ 		if not len(ids):
+ 			return False
+@@ -935,7 +936,6 @@ class CallGraphWindow(TreeWindowBase):
  
- 	def ShrinkFont(self):
--		win = self.mdi_area.activeSubWindow()
--		ShrinkFont(win.view)
-+		self.Try(ShrinkFont)
+ 		self.model = LookupCreateModel("Context-Sensitive Call Graph", lambda x=glb: CallGraphModel(x))
  
- 	def EnlargeFont(self):
--		win = self.mdi_area.activeSubWindow()
--		EnlargeFont(win.view)
-+		self.Try(EnlargeFont)
+-		self.view = QTreeView()
+ 		self.view.setModel(self.model)
  
- 	def EventMenu(self, events, reports_menu):
- 		branches_events = 0
+ 		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
+@@ -958,7 +958,6 @@ class CallTreeWindow(TreeWindowBase):
+ 
+ 		self.model = LookupCreateModel("Call Tree", lambda x=glb: CallTreeModel(x))
+ 
+-		self.view = QTreeView()
+ 		self.view.setModel(self.model)
+ 
+ 		for c, w in ((0, 230), (1, 100), (2, 100), (3, 70), (4, 70), (5, 100)):
 -- 
 2.17.1
 
