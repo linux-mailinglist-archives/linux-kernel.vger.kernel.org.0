@@ -2,192 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5ADD135F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 01:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3256E135ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 01:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfECXJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 19:09:05 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34077 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfECXJF (ORCPT
+        id S1726891AbfECXIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 19:08:20 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37919 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfECXIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 19:09:05 -0400
-Received: by mail-it1-f195.google.com with SMTP id p18so9351850itm.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 16:09:04 -0700 (PDT)
+        Fri, 3 May 2019 19:08:20 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v1so5482285lfg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 16:08:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n/nmHK1VkQE9pFpVfvhGPufZyGjT+bYRqh+BLBRKYLE=;
-        b=BLgK4l8SdUGPBQCFA4Jzo4taTvE26RARpOHwQKz1Q3fxznb11WxumD5L4EWil4o8G9
-         yHeUTC4Dec3gCWtAwywskb/ifuUi59BXyu/ykNsSYtSOWB+1a7L6RZTEg/qtvntKZHZQ
-         zL4dML/2N5VUDADVtl3GJzhxhPj/FM7mKNIOU=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PJAflPmQogNQpRfYKXa4wncPdUKgvcxegImOYQZ9y4M=;
+        b=YRB1C4a8aY6oNQ4Dcz6qJG4DjRq4rRf5c96hJky+mFEos14uxAjmg5IRtblz5Zm/+p
+         AIWWkKxTm6hIurYsOfUWuKlPO3f3CKS4z4ENU/Uxi4oZSRGIkqbYn5VX66A1WW96OEeW
+         VfyeY+ZH75pBqOv3uAMq5kkfebEdfOYQXUMAE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n/nmHK1VkQE9pFpVfvhGPufZyGjT+bYRqh+BLBRKYLE=;
-        b=rEDQjnLPAdWIdfjE2reTDV99NQE9JgviRvu9Jfl8bCzaN2Jr6AMjfGC/eJ7fWvki7s
-         js+gWlj7Vo/9NTYyUbTD6Dy//FcLDoR5MouRd55hwLBuq2slyiNZ2CQ4bbLZCg/GBrBL
-         2PEzT6e488yc/7VspPLuuhZcaEqs/d8tSt5ACoznl7d30PSos0gdjmhRqlPHKiPaRRZZ
-         /jCSA6VBRSHu6LdIXyzI8RbWUDu4k/zaX/WStUHW5qeCrYBiohrd2PQe21SOOLntAhVV
-         ceLg6P8dn7bmq6DRtjBpypCI5R/VoVqfrTZQgB1SYD3+7N73jadVRipoyk5EMp9ngCBM
-         HjHw==
-X-Gm-Message-State: APjAAAUYr23qCUuqVLrj8f29oJNtRsA1THRMJV/NHgln84zXDGwcHPQU
-        iiXsDRvuN5snR57MjS+c2aVb9Rvi+1w=
-X-Google-Smtp-Source: APXvYqzexUvR6AEKqEApODH83Gm5RZzbtjyT5OOTDFigNMJdePDj6wuTSFohkvpfg4kKrwxOmkRIsQ==
-X-Received: by 2002:a24:9103:: with SMTP id i3mr9360258ite.7.1556924943769;
-        Fri, 03 May 2019 16:09:03 -0700 (PDT)
-Received: from localhost ([2620:15c:183:200:33ce:f5cf:f863:d3a6])
-        by smtp.gmail.com with ESMTPSA id 12sm5549243itm.2.2019.05.03.16.09.02
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PJAflPmQogNQpRfYKXa4wncPdUKgvcxegImOYQZ9y4M=;
+        b=q0o/nvQpdQGExiWh1S1EK9sF6ixGKVJrlWm6QH/+2pHtE12nzQSz0eNpIXL702sjkE
+         xWE/uT3BxszhOX7JSfMKaEN+VbMrye9BA7DaKKqDLf4sl3HtkrhLdGavlZ+wuhb18y5h
+         HVCNAaljUag0q+j/YDKiXthXRjZrf5bGVHHqxDtUQiK3ck7Dm6HL8t7+BUxqtquWzL0Q
+         cWE7OLSO7SIbEUkYa3T4NZM+cF3aTcKJ0Sp6pIX/QG2jUsDk4JJ3uIrnQXxvH/TIJW80
+         8sszWHd3XauqIVYke5pRyXkDM8CeIqe8M/C9fjBgfSGMoF3aVdWWzeMJ5shumt5UBshF
+         9+bg==
+X-Gm-Message-State: APjAAAVIDSXhkvEkYlFVjiasfDhfcxW33fnONA/HFJMMUwre5K/1F/lw
+        F30z332st0zDjBpQGVxkQz6kP79QoEw=
+X-Google-Smtp-Source: APXvYqyMben1+gMfRC+iEMyz+q/GVBzSmHMhSauQBJ6O96Ib1CmDzKBpqSFtU68IoouDUAxHSSKo0w==
+X-Received: by 2002:ac2:50ca:: with SMTP id h10mr6556786lfm.31.1556924896866;
+        Fri, 03 May 2019 16:08:16 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id v11sm655643lfb.68.2019.05.03.16.08.15
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 May 2019 16:09:03 -0700 (PDT)
-From:   Fletcher Woodruff <fletcherw@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Fletcher Woodruff <fletcherw@chromium.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Subject: [PATCH v4 3/3] ASoC: rt5677: fall back to DT prop names on error
-Date:   Fri,  3 May 2019 17:07:51 -0600
-Message-Id: <20190503230751.168403-4-fletcherw@chromium.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-In-Reply-To: <20190503230751.168403-1-fletcherw@chromium.org>
-References: <20190503230751.168403-1-fletcherw@chromium.org>
+        Fri, 03 May 2019 16:08:15 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id y8so6314047ljd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2019 16:08:15 -0700 (PDT)
+X-Received: by 2002:a2e:9a84:: with SMTP id p4mr6156404lji.22.1556924895019;
+ Fri, 03 May 2019 16:08:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190501202830.347656894@goodmis.org> <20190501203152.397154664@goodmis.org>
+ <20190501232412.1196ef18@oasis.local.home> <20190502162133.GX2623@hirez.programming.kicks-ass.net>
+ <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
+ <20190502181811.GY2623@hirez.programming.kicks-ass.net> <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
+ <20190502202146.GZ2623@hirez.programming.kicks-ass.net> <CAHk-=wh8bi5c_GkyjPtDAiaXaZRqtmhWs30usUvs4qK_F+c9tg@mail.gmail.com>
+ <20190503152405.2d741af8@gandalf.local.home> <CAHk-=wiA-WbrFrDs-kOfJZMXy4zMo9-SZfk=7B-GfmBJ866naw@mail.gmail.com>
+ <20190503184919.2b7ef242@gandalf.local.home>
+In-Reply-To: <20190503184919.2b7ef242@gandalf.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 May 2019 16:07:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh2vPLvsGBi6JtmEYeqHxB5UpTzHDjY5JsWG=YR0Lypzw@mail.gmail.com>
+Message-ID: <CAHk-=wh2vPLvsGBi6JtmEYeqHxB5UpTzHDjY5JsWG=YR0Lypzw@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rt5677 driver uses ACPI-style property names to read from the
-device API. However, these do not match the property names in _DSD
-used on the Chromebook Pixel 2015, which are closer to the Device Tree
-style.  Unify the two functions for reading from the device API so that
-they try ACPI-style names first and fall back to the DT names on error.
+On Fri, May 3, 2019 at 3:49 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> You are saying that we have a do_int3() for user space int3, and
+> do_kernel_int3() for kernel space. That would need to be done in asm
+> for both, because having x86_64 call do_int3() for kernel and
+> user would be interesting.
 
-With this patch, plugging and unplugging the headphone jack switches
-between headphones and speakers automatically.
+The clean/simple way is to just do this
 
-Signed-off-by: Fletcher Woodruff <fletcherw@chromium.org>
----
- sound/soc/codecs/rt5677.c | 74 +++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 37 deletions(-)
+ - x86-32 does the special asm for the kernel_do_int3(), case and
+calls user_do_int3 otherwise.
 
-diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
-index da27cbfaec2b74..e6b75f52d4a433 100644
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -4998,48 +4998,50 @@ static const struct acpi_device_id rt5677_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, rt5677_acpi_match);
- 
--static void rt5677_read_acpi_properties(struct rt5677_priv *rt5677,
-+static void rt5677_read_device_properties(struct rt5677_priv *rt5677,
- 		struct device *dev)
- {
- 	u32 val;
- 
--	if (!device_property_read_u32(dev, "DCLK", &val))
--		rt5677->pdata.dmic2_clk_pin = val;
-+	rt5677->pdata.in1_diff =
-+		device_property_read_bool(dev, "IN1") ||
-+		device_property_read_bool(dev, "realtek,in1-differential");
- 
--	rt5677->pdata.in1_diff = device_property_read_bool(dev, "IN1");
--	rt5677->pdata.in2_diff = device_property_read_bool(dev, "IN2");
--	rt5677->pdata.lout1_diff = device_property_read_bool(dev, "OUT1");
--	rt5677->pdata.lout2_diff = device_property_read_bool(dev, "OUT2");
--	rt5677->pdata.lout3_diff = device_property_read_bool(dev, "OUT3");
-+	rt5677->pdata.in2_diff =
-+		device_property_read_bool(dev, "IN2") ||
-+		device_property_read_bool(dev, "realtek,in2-differential");
- 
--	device_property_read_u32(dev, "JD1", &rt5677->pdata.jd1_gpio);
--	device_property_read_u32(dev, "JD2", &rt5677->pdata.jd2_gpio);
--	device_property_read_u32(dev, "JD3", &rt5677->pdata.jd3_gpio);
--}
-+	rt5677->pdata.lout1_diff =
-+		device_property_read_bool(dev, "OUT1") ||
-+		device_property_read_bool(dev, "realtek,lout1-differential");
- 
--static void rt5677_read_device_properties(struct rt5677_priv *rt5677,
--		struct device *dev)
--{
--	rt5677->pdata.in1_diff = device_property_read_bool(dev,
--			"realtek,in1-differential");
--	rt5677->pdata.in2_diff = device_property_read_bool(dev,
--			"realtek,in2-differential");
--	rt5677->pdata.lout1_diff = device_property_read_bool(dev,
--			"realtek,lout1-differential");
--	rt5677->pdata.lout2_diff = device_property_read_bool(dev,
--			"realtek,lout2-differential");
--	rt5677->pdata.lout3_diff = device_property_read_bool(dev,
--			"realtek,lout3-differential");
-+	rt5677->pdata.lout2_diff =
-+		device_property_read_bool(dev, "OUT2") ||
-+		device_property_read_bool(dev, "realtek,lout2-differential");
-+
-+	rt5677->pdata.lout3_diff =
-+		device_property_read_bool(dev, "OUT3") ||
-+		device_property_read_bool(dev, "realtek,lout3-differential");
- 
- 	device_property_read_u8_array(dev, "realtek,gpio-config",
--			rt5677->pdata.gpio_config, RT5677_GPIO_NUM);
--
--	device_property_read_u32(dev, "realtek,jd1-gpio",
--			&rt5677->pdata.jd1_gpio);
--	device_property_read_u32(dev, "realtek,jd2-gpio",
--			&rt5677->pdata.jd2_gpio);
--	device_property_read_u32(dev, "realtek,jd3-gpio",
--			&rt5677->pdata.jd3_gpio);
-+				      rt5677->pdata.gpio_config,
-+				      RT5677_GPIO_NUM);
-+
-+	if (!device_property_read_u32(dev, "DCLK", &val) ||
-+	    !device_property_read_u32(dev, "realtek,dmic2_clk_pin", &val))
-+		rt5677->pdata.dmic2_clk_pin = val;
-+
-+	if (!device_property_read_u32(dev, "JD1", &val) ||
-+	    !device_property_read_u32(dev, "realtek,jd1-gpio", &val))
-+		rt5677->pdata.jd1_gpio = val;
-+
-+	if (!device_property_read_u32(dev, "JD2", &val) ||
-+	    !device_property_read_u32(dev, "realtek,jd2-gpio", &val))
-+		rt5677->pdata.jd2_gpio = val;
-+
-+	if (!device_property_read_u32(dev, "JD3", &val) ||
-+	    !device_property_read_u32(dev, "realtek,jd3-gpio", &val))
-+		rt5677->pdata.jd3_gpio = val;
- }
- 
- struct rt5677_irq_desc {
-@@ -5283,20 +5285,18 @@ static int rt5677_i2c_probe(struct i2c_client *i2c)
- 		match_id = of_match_device(rt5677_of_match, &i2c->dev);
- 		if (match_id)
- 			rt5677->type = (enum rt5677_type)match_id->data;
--
--		rt5677_read_device_properties(rt5677, &i2c->dev);
- 	} else if (ACPI_HANDLE(&i2c->dev)) {
- 		const struct acpi_device_id *acpi_id;
- 
- 		acpi_id = acpi_match_device(rt5677_acpi_match, &i2c->dev);
- 		if (acpi_id)
- 			rt5677->type = (enum rt5677_type)acpi_id->driver_data;
--
--		rt5677_read_acpi_properties(rt5677, &i2c->dev);
- 	} else {
- 		return -EINVAL;
- 	}
- 
-+	rt5677_read_device_properties(rt5677, &i2c->dev);
-+
- 	/* pow-ldo2 and reset are optional. The codec pins may be statically
- 	 * connected on the board without gpios. If the gpio device property
- 	 * isn't specified, devm_gpiod_get_optional returns NULL.
--- 
-2.21.0.1020.gf2820cf01a-goog
+ - x86-64 doesn't care, and just calls "do_int3()".
 
+We have a trivial helper function like
+
+    dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+    {
+        if (user_mode(regs))
+                user_int3(regs);
+        else
+                WARN_ON_ONCE(kernel_int3(regs) != regs);
+    }
+
+which adds that warning just for debug purposes.
+
+Then we make the rule be that user_int3() does the normal stuff, and
+kernel_int3() returns the pt_regs it was passed in.
+
+Easy-peasy, there is absolutely no difference between x86-64 and
+x86-32 here except for the trivial case that x86-32 does its thing at
+the asm layer, which is what allows "kernel_int3()" to move pt_regs
+around by a small amount.
+
+Now, the _real_ difference is when you do the "call_emulate()" case,
+which will have to do something like this
+
+    static struct pt_regs *emulate_call(struct pt_regs *regs, unsigned
+long return, unsigned long target)
+    {
+    #ifdef CONFIG_X86_32
+            /* BIG comment about how we need to move pt_regs to make
+room and to update the return 'sp' */
+            struct pt_regs *new = (void *)regs - 4;
+            unsigned long *sp = (unsigned long *)(new + 1);
+            memmove(new, regs, sizeof(*regs));
+            regs = new;
+    #else
+            unsigned long *sp = regs->sp;
+            regs->sp -= 4;
+    #endif
+            *sp = value;
+            regs->ip = target;
+            return regs;
+    }
+
+but look, the above isn't that complicated, is it? And notice how the
+subtle pt_regs movement is exactly where it needs to be and nowhere
+else.
+
+And what's the cost of all of this? NOTHING. The x86-32 entry code has
+to do the test for kernel space anyway, and *all* it does now is to
+call "kernel_int3" for the kernel case after having made a bit of
+extra room on the stack so that you *can* move pt_regs around (maybe
+people want to pop things too? It would work as well).
+
+See what I mean by "localized to the cases the need it"?
+
+              Linus
