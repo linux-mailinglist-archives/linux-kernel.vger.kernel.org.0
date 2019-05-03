@@ -2,133 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D82E512D34
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00B0012D49
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfECMKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 08:10:05 -0400
-Received: from mga06.intel.com ([134.134.136.31]:1063 "EHLO mga06.intel.com"
+        id S1727425AbfECMO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:14:59 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41891 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727840AbfECMKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:10:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726047AbfECMO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 08:14:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 05:10:01 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 05:14:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="343043128"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga005.fm.intel.com with ESMTP; 03 May 2019 05:10:01 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] perf scripts python: exported-sql-viewer.py: Add 'About' dialog box
-Date:   Fri,  3 May 2019 15:08:28 +0300
-Message-Id: <20190503120828.25326-7-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190503120828.25326-1-adrian.hunter@intel.com>
-References: <20190503120828.25326-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+   d="scan'208";a="343043907"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga005.fm.intel.com with ESMTP; 03 May 2019 05:14:58 -0700
+Date:   Fri, 3 May 2019 06:09:15 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Maxim Levitsky <mlevitsk@redhat.com>
+Cc:     "Heitke, Kenneth" <kenneth.heitke@intel.com>,
+        linux-nvme@lists.infradead.org, Fam Zheng <fam@euphon.net>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, kvm@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liang Cunming <cunming.liang@intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Jens Axboe <axboe@fb.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        John Ferlan <jferlan@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liu Changpeng <changpeng.liu@intel.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Amnon Ilan <ailan@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH v2 08/10] nvme/pci: implement the mdev external queue
+ allocation interface
+Message-ID: <20190503120915.GA30013@localhost.localdomain>
+References: <20190502114801.23116-1-mlevitsk@redhat.com>
+ <20190502114801.23116-9-mlevitsk@redhat.com>
+ <63a499c3-25be-5c5b-5822-124854945279@intel.com>
+ <f1f471e0b734413e6c0f7a8bb1a03041b1d12d6d.camel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1f471e0b734413e6c0f7a8bb1a03041b1d12d6d.camel@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With support for Python 2 or 3 and PySide 1 or 2 (Qt 4 or 5), it is useful
-to see what versions are in use. Add an 'About' dialog box that displays
-Python, PySide, Qt and database server (SQLite or PostgreSQL) version
-numbers.
+On Fri, May 03, 2019 at 12:20:17AM +0300, Maxim Levitsky wrote:
+> On Thu, 2019-05-02 at 15:12 -0600, Heitke, Kenneth wrote:
+> > On 5/2/2019 5:47 AM, Maxim Levitsky wrote:
+> > > +static void nvme_ext_queue_free(struct nvme_ctrl *ctrl, u16 qid)
+> > > +{
+> > > +	struct nvme_dev *dev = to_nvme_dev(ctrl);
+> > > +	struct nvme_queue *nvmeq;
+> > > +
+> > > +	mutex_lock(&dev->ext_dev_lock);
+> > > +	nvmeq = &dev->queues[qid];
+> > > +
+> > > +	if (WARN_ON(!test_bit(NVMEQ_EXTERNAL, &nvmeq->flags)))
+> > > +		return;
+> > 
+> > This condition is probably not expected to happen (since its a warning)
+> > but do you need to unlock the ext_dev_lock before returning?
+> 
+> This is true, I will fix this. This used to be BUG_ON, but due to checkpatch.pl
+> complains I turned them all to WARN_ON, and missed this.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- .../scripts/python/exported-sql-viewer.py     | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index 421f3828ea43..6fe553258ce5 100755
---- a/tools/perf/scripts/python/exported-sql-viewer.py
-+++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -2927,6 +2927,60 @@ class HelpOnlyWindow(QMainWindow):
- 
- 		self.setCentralWidget(self.text)
- 
-+# PostqreSQL server version
-+
-+def PostqreSQLServerVersion(db):
-+	query = QSqlQuery(db)
-+	QueryExec(query, "SELECT VERSION()")
-+	if query.next():
-+		v_str = query.value(0)
-+		v_list = v_str.strip().split(" ")
-+		if v_list[0] == "PostgreSQL" and v_list[2] == "on":
-+			return v_list[1]
-+		return v_str
-+	return "Unknown"
-+
-+# SQLite version
-+
-+def SQLiteVersion(db):
-+	query = QSqlQuery(db)
-+	QueryExec(query, "SELECT sqlite_version()")
-+	if query.next():
-+		return query.value(0)
-+	return "Unknown"
-+
-+# About dialog
-+
-+class AboutDialog(QDialog):
-+
-+	def __init__(self, glb, parent=None):
-+		super(AboutDialog, self).__init__(parent)
-+
-+		self.setWindowTitle("About Exported SQL Viewer")
-+		self.setMinimumWidth(300)
-+
-+		pyside_version = "1" if pyside_version_1 else "2"
-+
-+		text = "<pre>"
-+		text += "Python version:     " + sys.version.split(" ")[0] + "\n"
-+		text += "PySide version:     " + pyside_version + "\n"
-+		text += "Qt version:         " + qVersion() + "\n"
-+		if glb.dbref.is_sqlite3:
-+			text += "SQLite version:     " + SQLiteVersion(glb.db) + "\n"
-+		else:
-+			text += "PostqreSQL version: " + PostqreSQLServerVersion(glb.db) + "\n"
-+		text += "</pre>"
-+
-+		self.text = QTextBrowser()
-+		self.text.setHtml(text)
-+		self.text.setReadOnly(True)
-+		self.text.setOpenExternalLinks(True)
-+
-+		self.vbox = QVBoxLayout()
-+		self.vbox.addWidget(self.text)
-+
-+		self.setLayout(self.vbox);
-+
- # Font resize
- 
- def ResizeFont(widget, diff):
-@@ -3024,6 +3078,7 @@ class MainWindow(QMainWindow):
- 
- 		help_menu = menu.addMenu("&Help")
- 		help_menu.addAction(CreateAction("&Exported SQL Viewer Help", "Helpful information", self.Help, self, QKeySequence.HelpContents))
-+		help_menu.addAction(CreateAction("&About Exported SQL Viewer", "About this application", self.About, self))
- 
- 	def Try(self, fn):
- 		win = self.mdi_area.activeSubWindow()
-@@ -3109,6 +3164,10 @@ class MainWindow(QMainWindow):
- 	def Help(self):
- 		HelpWindow(self.glb, self)
- 
-+	def About(self):
-+		dialog = AboutDialog(self.glb, self)
-+		dialog.exec_()
-+
- # XED Disassembler
- 
- class xed_state_t(Structure):
--- 
-2.17.1
-
+Gentle reminder to trim your replies to the relevant context. It's
+much easier to read when we don't need to scroll through hundreds of
+unnecessary lines.
