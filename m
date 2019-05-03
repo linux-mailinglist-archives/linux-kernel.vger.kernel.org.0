@@ -2,148 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B64C12D53
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAF012D5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 14:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfECMQR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 3 May 2019 08:16:17 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34798 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbfECMQR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 08:16:17 -0400
-Received: by mail-vs1-f67.google.com with SMTP id b23so3443014vso.1;
-        Fri, 03 May 2019 05:16:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=r02NDTJKvjk9KzAU900wazAOg6qAOAQqJPf2KtzMQ7A=;
-        b=mBbBl0cv1WZ4T8693qKCa+Vq3CsHQGqf6TLPE2EjNpW/UQhaEnUoMbzzwejevIpTqw
-         pjclAmcPgCgc1EMha1jGIDMPg/FBaeZLA369cJOESqpOo/DpaIs2Eko4whmaszVWZL98
-         ntVJfyLRcbO3JDSbgXI7avuDNBK64ClOxL0hvQuASDwaY0cGi+lX1bdV9JdfbCWlS8bF
-         9pWDiENa2Pqhq3zDVr+NgCRP8gDWSfIeEUK7PdvFBMquEwPcmfrsUWEAKvZwcEqwYF+i
-         uNEcIYT5mYphkkJL1wXq9OM1sBp0xH7KfQorYZyiQeNptvkmdrH+a0N8YE56artoymBv
-         0phg==
-X-Gm-Message-State: APjAAAVq8v6o1qa9QzZuHEXdBoqqYDX/4vy1ECtBpkcIN3B96Qm+Njy2
-        4Z775ANLBop55jbtf1JrI4/0kdnqDnkf+JuTacQ=
-X-Google-Smtp-Source: APXvYqxkFMqBCpHBr5fg05KpIfdbCinXrKLv/dXZl+EdLUP87Fd6z2OFRFFR5u0RFRD31AR4k9DQENFp7CRHumXx+m4=
-X-Received: by 2002:a05:6102:113:: with SMTP id z19mr5254140vsq.166.1556885776469;
- Fri, 03 May 2019 05:16:16 -0700 (PDT)
+        id S1727753AbfECMTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 08:19:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:37321 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbfECMTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 08:19:00 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E4F0B68AFE; Fri,  3 May 2019 14:18:38 +0200 (CEST)
+Date:   Fri, 3 May 2019 14:18:38 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Maxim Levitsky <mlevitsk@redhat.com>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Jens Axboe <axboe@fb.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E . McKenney " <paulmck@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liang Cunming <cunming.liang@intel.com>,
+        Liu Changpeng <changpeng.liu@intel.com>,
+        Fam Zheng <fam@euphon.net>, Amnon Ilan <ailan@redhat.com>,
+        John Ferlan <jferlan@redhat.com>
+Subject: Re: [PATCH v2 00/10] RFC: NVME MDEV
+Message-ID: <20190503121838.GA21041@lst.de>
+References: <20190502114801.23116-1-mlevitsk@redhat.com>
 MIME-Version: 1.0
-References: <874l6c89nd.fsf@tarshish> <CAMuHMdUT3ug+SCzrnA2eD=QyOLaHUGAe-ZrbWfDUWxTJ4CWEtQ@mail.gmail.com>
- <8736lv92ls.fsf@tarshish>
-In-Reply-To: <8736lv92ls.fsf@tarshish>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 3 May 2019 14:16:04 +0200
-Message-ID: <CAMuHMdXooXuk8q1zC+KM==BiWPn9usWR6oM7xQ5VzwT6bjzcqg@mail.gmail.com>
-Subject: Re: strace for m68k bpf_prog_info mismatch
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     "Dmitry V . Levin" <ldv@altlinux.org>,
-        strace-devel@lists.strace.io,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190502114801.23116-1-mlevitsk@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baruch,
+I simply don't get the point of this series.
 
-On Fri, May 3, 2019 at 1:52 PM Baruch Siach <baruch@tkos.co.il> wrote:
-> On Fri, May 03 2019, Geert Uytterhoeven wrote:
-> > On Fri, May 3, 2019 at 6:06 AM Baruch Siach <baruch@tkos.co.il> wrote:
-> >> strace 5.0 fails to build for m86k/5208 with the Buildroot generated
-> >> toolchain:
-> >>
-> >> In file included from bpf_attr_check.c:6:0:
-> >> static_assert.h:20:25: error: static assertion failed: "bpf_prog_info_struct.nr_jited_ksyms offset mismatch"
-> >>  #  define static_assert _Static_assert
-> >>                          ^
-> >> bpf_attr_check.c:913:2: note: in expansion of macro ‘static_assert’
-> >>   static_assert(offsetof(struct bpf_prog_info_struct, nr_jited_ksyms) == offsetof(struct bpf_prog_info, nr_jited_ksyms),
-> >>   ^~~~~~~~~~~~~
-> >>
-> >> The direct cause is a difference in the hole after the gpl_compatible
-> >> field. Here is pahole output for the kernel struct (from v4.19):
-> >>
-> >> struct bpf_prog_info {
-> >>         ...
-> >>         __u32                      ifindex;              /*    80     4 */
-> >>         __u32                      gpl_compatible:1;     /*    84: 0  4 */
-> >>
-> >>         /* XXX 15 bits hole, try to pack */
-> >>         /* Bitfield combined with next fields */
-> >>
-> >>         __u64                      netns_dev;            /*    86     8 */
-> >
-> > I guess that should be "__aligned_u64 netns_dev;", to not rely on
-> > implicit alignment.
->
-> Thanks. I can confirm that this minimal change fixes strace build:
->
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index 929c8e537a14..709d4dddc229 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -2869,7 +2869,7 @@ struct bpf_prog_info {
->         char name[BPF_OBJ_NAME_LEN];
->         __u32 ifindex;
->         __u32 gpl_compatible:1;
-> -       __u64 netns_dev;
-> +       __aligned_u64 netns_dev;
->         __u64 netns_ino;
->         __u32 nr_jited_ksyms;
->         __u32 nr_jited_func_lens;
->
-> Won't that break ABI compatibility for affected architectures?
-
-Yes it will. Or it may have been unusable without the fix. I don't know
-for sure.
-
-> >> And this is for the strace struct:
-> >>
-> >> struct bpf_prog_info_struct {
-> >>         ...
-> >>         uint32_t                   ifindex;              /*    80     4 */
-> >>         uint32_t                   gpl_compatible:1;     /*    84: 0  4 */
-> >>
-> >>         /* XXX 31 bits hole, try to pack */
-> >
-> > How come the uint64_t below is 8-byte aligned, not 2-byte aligned?
-> > Does strace use a special definition of uint64_t?
->
-> I guess this is because of the netns_dev field definition in struct
-> bpf_prog_info_struct at bpf_attr.h:
->
-> struct bpf_prog_info_struct {
->        ...
->         uint32_t gpl_compatible:1;
->         /*
->          * The kernel UAPI is broken by Linux commit
->          * v4.16-rc1~123^2~227^2~5^2~2 .
->          */
->         uint64_t ATTRIBUTE_ALIGNED(8) netns_dev; /* skip check */
-
-Oh, the bug was even documented, with its cause ;-)
-That's commit 675fc275a3a2d905 ("bpf: offload: report device information
-for offloaded programs").
-
-Partially fixed by commit 36f9814a494a874d ("bpf: fix uapi hole for 32 bit
-compat applications"), which left architectures with 16-bit alignment
-broken...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MDEV is an interface for exposing parts of a device to a userspace
+program / VM.  But that this series appears to do is to expose a
+purely software defined nvme controller to userspace.  Which in
+principle is a good idea, but we have a much better framework for that,
+which is called vhost.
