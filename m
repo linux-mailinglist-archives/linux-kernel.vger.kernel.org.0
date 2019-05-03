@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FED912A07
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6605912A18
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 May 2019 10:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfECIpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 04:45:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5540 "EHLO mga01.intel.com"
+        id S1727122AbfECIqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 04:46:39 -0400
+Received: from mga01.intel.com ([192.55.52.88]:5541 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727193AbfECIpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 04:45:41 -0400
+        id S1727222AbfECIpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 04:45:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 01:45:41 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 01:45:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="147811585"
+   d="scan'208";a="147811587"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 03 May 2019 01:45:39 -0700
+  by orsmga003.jf.intel.com with ESMTP; 03 May 2019 01:45:41 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 13/22] intel_th: msu: Factor out pipeline draining
-Date:   Fri,  3 May 2019 11:44:46 +0300
-Message-Id: <20190503084455.23436-14-alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 14/22] intel_th: gth: Factor out trace start/stop
+Date:   Fri,  3 May 2019 11:44:47 +0300
+Message-Id: <20190503084455.23436-15-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190503084455.23436-1-alexander.shishkin@linux.intel.com>
 References: <20190503084455.23436-1-alexander.shishkin@linux.intel.com>
@@ -37,132 +37,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code that waits for the pipeline empty condition of the MSU is
-currently called in the path that disables the trace. We will also
-need this in the window switch trigger sequence. Therefore, factor
-out this code and make it accessible to the GTH device.
+The trace enable/disable functions of the GTH include the code that starts
+and stops trace flom from the sources. This start/stop functionality will
+also be used in the window switch trigger sequence.
+
+Factor out start/stop code from the larger trace enable/disable code in
+preparation for the window switch sequence.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- drivers/hwtracing/intel_th/gth.c      |  7 +++++++
- drivers/hwtracing/intel_th/intel_th.h |  4 ++++
- drivers/hwtracing/intel_th/msu.c      | 28 +++++++++++++++++----------
- 3 files changed, 29 insertions(+), 10 deletions(-)
+ drivers/hwtracing/intel_th/gth.c | 93 ++++++++++++++++++++++----------
+ 1 file changed, 64 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/hwtracing/intel_th/gth.c b/drivers/hwtracing/intel_th/gth.c
-index edc52d75e6bd..7e6b70047125 100644
+index 7e6b70047125..a879445ef451 100644
 --- a/drivers/hwtracing/intel_th/gth.c
 +++ b/drivers/hwtracing/intel_th/gth.c
-@@ -469,6 +469,10 @@ static void intel_th_gth_disable(struct intel_th_device *thdev,
- 				 struct intel_th_output *output)
+@@ -457,37 +457,28 @@ static int intel_th_output_attributes(struct gth_device *gth)
+ }
+ 
+ /**
+- * intel_th_gth_disable() - disable tracing to an output device
+- * @thdev:	GTH device
+- * @output:	output device's descriptor
++ * intel_th_gth_stop() - stop tracing to an output device
++ * @gth:		GTH device
++ * @output:		output device's descriptor
++ * @capture_done:	set when no more traces will be captured
+  *
+- * This will deconfigure all masters set to output to this device,
+- * disable tracing using force storeEn off signal and wait for the
+- * "pipeline empty" bit for corresponding output port.
++ * This will stop tracing using force storeEn off signal and wait for the
++ * pipelines to be empty for the corresponding output port.
+  */
+-static void intel_th_gth_disable(struct intel_th_device *thdev,
+-				 struct intel_th_output *output)
++static void intel_th_gth_stop(struct gth_device *gth,
++			      struct intel_th_output *output,
++			      bool capture_done)
  {
- 	struct gth_device *gth = dev_get_drvdata(&thdev->dev);
-+	struct intel_th_device *outdev =
-+		container_of(output, struct intel_th_device, output);
-+	struct intel_th_driver *outdrv =
-+		to_intel_th_driver(outdev->dev.driver);
+-	struct gth_device *gth = dev_get_drvdata(&thdev->dev);
+ 	struct intel_th_device *outdev =
+ 		container_of(output, struct intel_th_device, output);
+ 	struct intel_th_driver *outdrv =
+ 		to_intel_th_driver(outdev->dev.driver);
  	unsigned long count;
- 	int master;
+-	int master;
  	u32 reg;
-@@ -492,6 +496,9 @@ static void intel_th_gth_disable(struct intel_th_device *thdev,
+-
+-	spin_lock(&gth->gth_lock);
+-	output->active = false;
+-
+-	for_each_set_bit(master, gth->output[output->port].master,
+-			 TH_CONFIGURABLE_MASTERS) {
+-		gth_master_set(gth, master, -1);
+-	}
+-	spin_unlock(&gth->gth_lock);
++	u32 scr2 = 0xfc | (capture_done ? 1 : 0);
+ 
+ 	iowrite32(0, gth->base + REG_GTH_SCR);
+-	iowrite32(0xfd, gth->base + REG_GTH_SCR2);
++	iowrite32(scr2, gth->base + REG_GTH_SCR2);
+ 
+ 	/* wait on pipeline empty for the given port */
+ 	for (reg = 0, count = GTH_PLE_WAITLOOP_DEPTH;
+@@ -496,15 +487,63 @@ static void intel_th_gth_disable(struct intel_th_device *thdev,
  		cpu_relax();
  	}
  
-+	if (outdrv->wait_empty)
-+		outdrv->wait_empty(outdev);
++	if (!count)
++		dev_dbg(gth->dev, "timeout waiting for GTH[%d] PLE\n",
++			output->port);
 +
++	/* wait on output piepline empty */
+ 	if (outdrv->wait_empty)
+ 		outdrv->wait_empty(outdev);
+ 
  	/* clear force capture done for next captures */
  	iowrite32(0xfc, gth->base + REG_GTH_SCR2);
++}
  
-diff --git a/drivers/hwtracing/intel_th/intel_th.h b/drivers/hwtracing/intel_th/intel_th.h
-index 8b986ba160e4..74a6a4071e7f 100644
---- a/drivers/hwtracing/intel_th/intel_th.h
-+++ b/drivers/hwtracing/intel_th/intel_th.h
-@@ -20,6 +20,8 @@ enum {
- 	INTEL_TH_SWITCH,
- };
- 
-+struct intel_th_device;
-+
- /**
-  * struct intel_th_output - descriptor INTEL_TH_OUTPUT type devices
-  * @port:	output port number, assigned by the switch
-@@ -27,6 +29,7 @@ enum {
-  * @scratchpad:	scratchpad bits to flag when this output is enabled
-  * @multiblock:	true for multiblock output configuration
-  * @active:	true when this output is enabled
-+ * @wait_empty:	wait for device pipeline to be empty
-  *
-  * Output port descriptor, used by switch driver to tell which output
-  * port this output device corresponds to. Filled in at output device's
-@@ -165,6 +168,7 @@ struct intel_th_driver {
- 					   struct intel_th_output *output);
- 	/* output ops */
- 	irqreturn_t		(*irq)(struct intel_th_device *thdev);
-+	void			(*wait_empty)(struct intel_th_device *thdev);
- 	int			(*activate)(struct intel_th_device *thdev);
- 	void			(*deactivate)(struct intel_th_device *thdev);
- 	/* file_operations for those who want a device node */
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index a4f7a5b21d48..01408a0e2458 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -585,23 +585,14 @@ static int msc_configure(struct msc *msc)
-  */
- static void msc_disable(struct msc *msc)
- {
--	unsigned long count;
- 	u32 reg;
- 
- 	lockdep_assert_held(&msc->buf_mutex);
- 
- 	intel_th_trace_disable(msc->thdev);
- 
--	for (reg = 0, count = MSC_PLE_WAITLOOP_DEPTH;
--	     count && !(reg & MSCSTS_PLE); count--) {
--		reg = ioread32(msc->reg_base + REG_MSU_MSC0STS);
--		cpu_relax();
--	}
--
 -	if (!count)
--		dev_dbg(msc_dev(msc), "timeout waiting for MSC0 PLE\n");
--
- 	if (msc->mode == MSC_MODE_SINGLE) {
-+		reg = ioread32(msc->reg_base + REG_MSU_MSC0STS);
- 		msc->single_wrap = !!(reg & MSCSTS_WRAPSTAT);
- 
- 		reg = ioread32(msc->reg_base + REG_MSU_MSC0MWP);
-@@ -1380,6 +1371,22 @@ static const struct file_operations intel_th_msc_fops = {
- 	.owner		= THIS_MODULE,
- };
- 
-+static void intel_th_msc_wait_empty(struct intel_th_device *thdev)
+-		dev_dbg(&thdev->dev, "timeout waiting for GTH[%d] PLE\n",
+-			output->port);
++/**
++ * intel_th_gth_start() - start tracing to an output device
++ * @gth:	GTH device
++ * @output:	output device's descriptor
++ *
++ * This will start tracing using force storeEn signal.
++ */
++static void intel_th_gth_start(struct gth_device *gth,
++			       struct intel_th_output *output)
 +{
-+	struct msc *msc = dev_get_drvdata(&thdev->dev);
-+	unsigned long count;
-+	u32 reg;
++	u32 scr = 0xfc0000;
 +
-+	for (reg = 0, count = MSC_PLE_WAITLOOP_DEPTH;
-+	     count && !(reg & MSCSTS_PLE); count--) {
-+		reg = __raw_readl(msc->reg_base + REG_MSU_MSC0STS);
-+		cpu_relax();
-+	}
++	if (output->multiblock)
++		scr |= 0xff;
 +
-+	if (!count)
-+		dev_dbg(msc_dev(msc), "timeout waiting for MSC0 PLE\n");
++	iowrite32(scr, gth->base + REG_GTH_SCR);
++	iowrite32(0, gth->base + REG_GTH_SCR2);
 +}
 +
- static int intel_th_msc_init(struct msc *msc)
++/**
++ * intel_th_gth_disable() - disable tracing to an output device
++ * @thdev:	GTH device
++ * @output:	output device's descriptor
++ *
++ * This will deconfigure all masters set to output to this device,
++ * disable tracing using force storeEn off signal and wait for the
++ * "pipeline empty" bit for corresponding output port.
++ */
++static void intel_th_gth_disable(struct intel_th_device *thdev,
++				 struct intel_th_output *output)
++{
++	struct gth_device *gth = dev_get_drvdata(&thdev->dev);
++	int master;
++	u32 reg;
++
++	spin_lock(&gth->gth_lock);
++	output->active = false;
++
++	for_each_set_bit(master, gth->output[output->port].master,
++			 TH_CONFIGURABLE_MASTERS) {
++		gth_master_set(gth, master, -1);
++	}
++	spin_unlock(&gth->gth_lock);
++
++	intel_th_gth_stop(gth, output, true);
+ 
+ 	reg = ioread32(gth->base + REG_GTH_SCRPD0);
+ 	reg &= ~output->scratchpad;
+@@ -533,8 +572,8 @@ static void intel_th_gth_enable(struct intel_th_device *thdev,
  {
- 	atomic_set(&msc->user_count, -1);
-@@ -1660,6 +1667,7 @@ static struct intel_th_driver intel_th_msc_driver = {
- 	.probe	= intel_th_msc_probe,
- 	.remove	= intel_th_msc_remove,
- 	.irq		= intel_th_msc_interrupt,
-+	.wait_empty	= intel_th_msc_wait_empty,
- 	.activate	= intel_th_msc_activate,
- 	.deactivate	= intel_th_msc_deactivate,
- 	.fops	= &intel_th_msc_fops,
+ 	struct gth_device *gth = dev_get_drvdata(&thdev->dev);
+ 	struct intel_th *th = to_intel_th(thdev);
+-	u32 scr = 0xfc0000, scrpd;
+ 	int master;
++	u32 scrpd;
+ 
+ 	spin_lock(&gth->gth_lock);
+ 	for_each_set_bit(master, gth->output[output->port].master,
+@@ -542,9 +581,6 @@ static void intel_th_gth_enable(struct intel_th_device *thdev,
+ 		gth_master_set(gth, master, output->port);
+ 	}
+ 
+-	if (output->multiblock)
+-		scr |= 0xff;
+-
+ 	output->active = true;
+ 	spin_unlock(&gth->gth_lock);
+ 
+@@ -555,8 +591,7 @@ static void intel_th_gth_enable(struct intel_th_device *thdev,
+ 	scrpd |= output->scratchpad;
+ 	iowrite32(scrpd, gth->base + REG_GTH_SCRPD0);
+ 
+-	iowrite32(scr, gth->base + REG_GTH_SCR);
+-	iowrite32(0, gth->base + REG_GTH_SCR2);
++	intel_th_gth_start(gth, output);
+ }
+ 
+ /**
 -- 
 2.20.1
 
