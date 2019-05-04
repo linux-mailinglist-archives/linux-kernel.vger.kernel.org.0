@@ -2,77 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A64213A99
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3EA013A9E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfEDOfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 10:35:21 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34370 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfEDOfV (ORCPT
+        id S1727203AbfEDOg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 10:36:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39583 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfEDOgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 10:35:21 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j6so10055125qtq.1;
-        Sat, 04 May 2019 07:35:20 -0700 (PDT)
+        Sat, 4 May 2019 10:36:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w22so2865827pgi.6
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 07:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3/UhKsCGkW4s6b3CKLSpWg03k2UImtt0PnOB2N02e3E=;
+        b=rVTjYVBl38TZ1yBXffS6DjJV4YNwnABswrZ+TCLs6fD5UhADPj7DgToHW0h/bXLgqQ
+         kfcrY4jK1VlXfRQaGiHJhoMq+5vgoq6yba1hnjV/OfPeVpcxei6RT/lBQvgON/KaYTs2
+         hL8KXipjeKNmuLjlacRIvlGCdVABXceYeVfkzdmtxXtQE8cuoTwnChoWX/iIgCGz7xUD
+         j1HV9RevkOT+BKVwvqBOh3znIvMThd0uHxVy9+lc04uxvbEHmkW8WbAPluPycVNFkMye
+         75XOIbTePGnaDHmO9SPEIOOuyDOWutWnUvuJ4HxRq10qa9mQuYyaNThjRCaM3CdSsSiF
+         pXkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tQgaLnyd1PzWRuAcPpOm2m6B4C3dJFTkE6v5h3uPP4o=;
-        b=OjqydM2tYABlKRPwaDWqg1dM1O9OpwEEffgOkhAUV1/6BQeoWWmfHAQR3T/WH5gCs5
-         40kbSctPEwPq2sn3g3TV4i1tKBxEbBtNZxPWKYUT2HpUY58Mnn6VbIqbjn/DLUqQL3wH
-         f0Mk4KzQdxSZ+MBF1Yi+fKfYOBSgGsLa1nqJSZU56RtJNA9aucFHK5I/LDfS0/aWssQ9
-         BTAYUOe5iVMHIUstiDge+FboiadC8gMae4FABaBL+yuYKY8qf7c4NZXYK2kwrGlWN9a5
-         yOUfVADov/HCArKbMknjIp96e0SSPtrhccBjBlXRShYdVU1zvpj1s/H1STkjQFwhxpTb
-         P3cQ==
-X-Gm-Message-State: APjAAAWt3kmG+7cZNoxxr2bb+1VS2liIE/mE+ESevVRaykTA51F2A3u3
-        d6xCzpvkDD3RhVI5axMU92kzXjjmtmTeBnkmUKg=
-X-Google-Smtp-Source: APXvYqxvPIZmsXc7/1Lsx8u1uNwbWRJxYtcxgpxdevIAEaVf/6zZoMUz0DyMRRuNK8rGfyNiuEKbyfamxoIOG5ECJA4=
-X-Received: by 2002:ac8:29cf:: with SMTP id 15mr13552977qtt.319.1556980520015;
- Sat, 04 May 2019 07:35:20 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3/UhKsCGkW4s6b3CKLSpWg03k2UImtt0PnOB2N02e3E=;
+        b=CRWJbGm89C20N4sk2wb38nFINbPUyyBzlVpR3nKEhTWOkz+lQ0bi6Zy8rxthemMOQY
+         RzXvzTAA1gD/77YMohSgqQF3dVMp1I9Ge0JrEk+3eazz9aNOOQHDqj1Vfbq6KSvEKZ/t
+         CdJcoRkeFrbhTMpR8AKihsE4u/KDAnlRMKuGA/BdsM0V+WJR8vgBVFr5V3FLr5BYp5xq
+         Y38xi/Pf9ETlqnHP/rF44+S1uGsMbM/gR1dttJOmSinw/ld8jPrTT4yV7oIO7ERoT3/d
+         5hk1+1qMszdvyTx9nAqMA37F491KYKl0uTPTRyE4ltXCsPp0ZSNDdTEhuODv7pG9HWtc
+         0sDw==
+X-Gm-Message-State: APjAAAVT3LQBDo+4RQn4t6s3F5vs8/EdPuFKRN6jYWWkysHmEkJXlGFA
+        I0n1SIfBtgKHyhbAdCcML5lySwVRzMLXaREx+N8=
+X-Google-Smtp-Source: APXvYqxxlP38m6Yla41WSRx+7y8oQXHn/Bax/14XGYPPPuFOSLTT/RRUqfiOPW6k63m/lqFx4aSGAHuFK0kL3yp9n+A=
+X-Received: by 2002:aa7:9214:: with SMTP id 20mr19486575pfo.202.1556980615110;
+ Sat, 04 May 2019 07:36:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <1556402706-176271-1-git-send-email-dragan.cvetic@xilinx.com>
- <1556402706-176271-5-git-send-email-dragan.cvetic@xilinx.com> <20190502172345.GC1874@kroah.com>
-In-Reply-To: <20190502172345.GC1874@kroah.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 4 May 2019 10:35:02 -0400
-Message-ID: <CAK8P3a2EKXrg4amHDi5zVvOQ8AM+u6EAhBc=T8Hk_tU20xSV4w@mail.gmail.com>
-Subject: Re: [PATCH V3 04/12] misc: xilinx_sdfec: Add open, close and ioctl
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dragan Cvetic <dragan.cvetic@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Derek Kiernan <derek.kiernan@xilinx.com>
+References: <1556787561-5113-1-git-send-email-akinobu.mita@gmail.com>
+ <20190502125722.GA28470@localhost.localdomain> <CAC5umygdADGrYeJy=F53Mm4bNPHmo+WY4SD3HFSRqi_cLrz9jw@mail.gmail.com>
+ <20190503121232.GB30013@localhost.localdomain> <20190503122035.GA21501@lst.de>
+ <CAC5umyiGbDNCtzhJioR_2EV6-6xMuZXOMThCizwJEMHi+KqxAw@mail.gmail.com> <61bf6f0b-4087-cfb3-1ae6-539f18b5b6ea@gmail.com>
+In-Reply-To: <61bf6f0b-4087-cfb3-1ae6-539f18b5b6ea@gmail.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Sat, 4 May 2019 23:36:44 +0900
+Message-ID: <CAC5umygP5cQHQk2ytpNbV5yY-tQ1E-FayMugOfg5gTmnpYtnjQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] nvme-pci: support device coredump
+To:     Minwoo Im <minwoo.im.dev@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 1:23 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+2019=E5=B9=B45=E6=9C=884=E6=97=A5(=E5=9C=9F) 18:40 Minwoo Im <minwoo.im.dev=
+@gmail.com>:
 >
-> On Sat, Apr 27, 2019 at 11:04:58PM +0100, Dragan Cvetic wrote:
-> > Add char device interface per DT node present and support
-> > file operations:
-> > - open(),
-> > - close(),
-> > - unlocked_ioctl(),
-> > - compat_ioctl().
+> Hi Akinobu,
 >
-> Why do you need compat_ioctl() at all?  Any "new" driver should never
-> need it.  Just create your structures properly.
+> On 5/4/19 1:20 PM, Akinobu Mita wrote:
+> > 2019=E5=B9=B45=E6=9C=883=E6=97=A5(=E9=87=91) 21:20 Christoph Hellwig <h=
+ch@lst.de>:
+> >>
+> >> On Fri, May 03, 2019 at 06:12:32AM -0600, Keith Busch wrote:
+> >>> Could you actually explain how the rest is useful? I personally have
+> >>> never encountered an issue where knowing these values would have help=
+ed:
+> >>> every device timeout always needed device specific internal firmware
+> >>> logs in my experience.
+> >
+> > I agree that the device specific internal logs like telemetry are the m=
+ost
+> > useful.  The memory dump of command queues and completion queues is not
+> > that powerful but helps to know what commands have been submitted befor=
+e
+> > the controller goes wrong (IOW, it's sometimes not enough to know
+> > which commands are actually failed), and it can be parsed without vendo=
+r
+> > specific knowledge.
+>
+> I'm not pretty sure I can say that memory dump of queues are useless at a=
+ll.
+>
+> As you mentioned, sometimes it's not enough to know which command has
+> actually been failed because we might want to know what happened before a=
+nd
+> after the actual failure.
+>
+> But, the information of commands handled from device inside would be much
+> more useful to figure out what happened because in case of multiple queue=
+s,
+> the arbitration among them could not be represented by this memory dump.
 
-The function he added was the version that is needed when the structures
-are compatible. I submitted a series to add a generic 'compat_ptr_ioctl'
-implementation that would save a few lines here doing the same thing,
-but it's not merged yet.
+Correct.
 
-Generally speaking, every driver that has a .ioctl() function should also
-have a .compat_ioctl(), and ideally it should be exactly this trivial
-version.
+> > If the issue is reproducible, the nvme trace is the most powerful for t=
+his
+> > kind of information.  The memory dump of the queues is not that powerfu=
+l,
+> > but it can always be enabled by default.
+>
+> If the memory dump is a key to reproduce some issues, then it will be
+> powerful
+> to hand it to a vendor to solve it.  But I'm afraid of it because the
+> dump might
+> not be able to give relative submitted times among the commands in queues=
+.
 
-        Arnd
+I agree that only the memory dump of queues don't help much to reproduce
+issues.  However when analyzing the customer-side issues, we would like to
+know whether unusual commands have been issued before crash, especially on
+admin queue.
+
+> >> Yes.  Also not that NVMe now has the 'device initiated telemetry'
+> >> feauture, which is just a wired name for device coredump.  Wiring that
+> >> up so that we can easily provide that data to the device vendor would
+> >> actually be pretty useful.
+> >
+> > This version of nvme coredump captures controller registers and each qu=
+eue.
+> > So before resetting controller is a suitable time to capture these.
+> > If we'll capture other log pages in this mechanism, the coredump proced=
+ure
+> > will be splitted into two phases (before resetting controller and after
+> > resetting as soon as admin queue is available).
+>
+> I agree with that it would be nice if we have a information that might no=
+t
+> be that powerful rather than nothing.
+>
+> But, could we request controller-initiated telemetry log page if
+> supported by
+> the controller to get the internal information at the point of failure
+> like reset?
+> If the dump is generated with the telemetry log page, I think it would
+> be great
+> to be a clue to solve the issue.
+
+OK.  Let me try it in the next version.
