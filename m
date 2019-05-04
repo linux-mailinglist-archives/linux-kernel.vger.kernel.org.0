@@ -2,84 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE171388D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 11:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C554E13891
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfEDJxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 05:53:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbfEDJxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 05:53:02 -0400
-Received: from localhost.localdomain (unknown [194.230.155.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F08B2206DF;
-        Sat,  4 May 2019 09:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556963581;
-        bh=4xZE1hhgibu5lcOsNSkgzQ4lXnfNOgjAsG93TP2Du3U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kIzdCpa6xr5dRpkpZwgR3RpjnexnNhGsahyRYKoLpUbz9RmcYfsAOy/s/bIvXVt9D
-         oZ0QY6YKQNnny/W3e4/rkaVqrVsBWn9Dnu2MZZtugW8hSkrBi0CQBt2Tgd6AoPInVd
-         s0ycZ8lvH6PgNNuy3E2hXUNLu8a1+lydEdfhhnO0=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] dmaengine: fsl-edma: Adjust indentation
-Date:   Sat,  4 May 2019 11:52:25 +0200
-Message-Id: <20190504095225.23883-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190504095225.23883-1-krzk@kernel.org>
-References: <20190504095225.23883-1-krzk@kernel.org>
+        id S1726693AbfEDKDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:03:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7720 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725981AbfEDKDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:03:09 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B56C8D2AE4CE8C2929B2;
+        Sat,  4 May 2019 18:03:06 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Sat, 4 May 2019
+ 18:02:59 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <igor.russkikh@aquantia.com>,
+        <dmitry.bogdanov@aquantia.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: aquantia: Make aq_ndev_driver_name static
+Date:   Sat, 4 May 2019 17:57:55 +0800
+Message-ID: <20190504095755.32556-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix indentation and remove unneeded space after 'return' keyword.  This
-fixes checkpatch warning:
-    WARNING: Statements should start on a tabstop
+Fix sparse warning:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+drivers/net/ethernet/aquantia/atlantic/aq_main.c:26:12:
+ warning: symbol 'aq_ndev_driver_name' was not declared. Should it be static?
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/dma/fsl-edma.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
-index 75e8a7ba3a22..d641ef85a634 100644
---- a/drivers/dma/fsl-edma.c
-+++ b/drivers/dma/fsl-edma.c
-@@ -144,21 +144,21 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
- 				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't register eDMA IRQ.\n");
--			 return  ret;
-+			return ret;
- 		}
- 	} else {
- 		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
- 				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
--			return  ret;
-+			return ret;
- 		}
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_main.c b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
+index 7f45e99..1ea8b77 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
+@@ -23,7 +23,7 @@ MODULE_VERSION(AQ_CFG_DRV_VERSION);
+ MODULE_AUTHOR(AQ_CFG_DRV_AUTHOR);
+ MODULE_DESCRIPTION(AQ_CFG_DRV_DESC);
  
- 		ret = devm_request_irq(&pdev->dev, fsl_edma->errirq,
- 				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't register eDMA err IRQ.\n");
--			return  ret;
-+			return ret;
- 		}
- 	}
+-const char aq_ndev_driver_name[] = AQ_CFG_DRV_NAME;
++static const char aq_ndev_driver_name[] = AQ_CFG_DRV_NAME;
+ 
+ static const struct net_device_ops aq_ndev_ops;
  
 -- 
-2.17.1
+2.7.4
+
 
