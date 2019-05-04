@@ -2,54 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9996E1395C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3D213976
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 13:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfEDKoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:44:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbfEDKoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:44:08 -0400
-Received: from localhost (unknown [171.76.113.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57471206DF;
-        Sat,  4 May 2019 10:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556966648;
-        bh=JGWkOV/hj8H+O/TaeLZewNOAIluePPJyTL/Z+sEbtrc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R1/I7vGESntvEjsznnS5YSGrJEHFUUsl/HX7tDipbeSdMiEflWSxaLbl6HrrNSuQe
-         wOyfDUGn52JKUfQxlBb5rr94/JCdQXupAjocbPBTs4KEblMN1VfEwuuvut+fJsgksQ
-         +iffzYiqmarWuk5PjBCU0Qs1X9I3WtMvT/Zinvzo=
-Date:   Sat, 4 May 2019 16:13:59 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] Add support for Tegra186/Tegra194 and generic fixes
-Message-ID: <20190504104359.GB3845@vkoul-mobl.Dlink>
-References: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
+        id S1727285AbfEDLVI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 4 May 2019 07:21:08 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:34401
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726529AbfEDLVI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 07:21:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id D2A3CB4AE89;
+        Sat,  4 May 2019 10:59:39 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id CUcbApX0NwGO; Sat,  4 May 2019 10:59:39 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 38283B4B8DB;
+        Sat,  4 May 2019 10:59:39 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 7VibHHhnyatl; Sat,  4 May 2019 10:59:39 +0000 (UTC)
+Received: from [100.84.33.39] (unknown [106.197.209.246])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 02CDDB4B8C5;
+        Sat,  4 May 2019 10:59:29 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556801717-31507-1-git-send-email-spujar@nvidia.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   =?utf-8?q?Administraci=C3=B3n_=3Cexportaciones=40minpal=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
+Date:   Sat, 04 May 2019 16:29:21 +0530
+Message-Id: <20190504105930.02CDDB4B8C5@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-05-19, 18:25, Sameer Pujar wrote:
-> Audio DMA(ADMA) interface is a gateway in the AHUB for facilitating DMA
-> transfers between memory and all of its clients. Currently the driver
-> supports Tegra210 based platforms. This series adds support for Tegra186
-> and Tegra194 based platforms and fixes few functional issues.
+Aviso de seguridad:
 
-Applied all, thanks
--- 
-~Vinod
+Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+
+Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index ,copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
