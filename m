@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8D613BAF
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 814E513B9F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfEDSjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:39:46 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34280 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbfEDSip (ORCPT
+        id S1727591AbfEDSix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:38:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41150 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfEDSiq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 14:38:45 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s7so2438211ljh.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:43 -0700 (PDT)
+        Sat, 4 May 2019 14:38:46 -0400
+Received: by mail-lj1-f193.google.com with SMTP id k8so7841586lja.8
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VQ/F91AqqahwzDmzRYg8075AZY4HOxSjDSQnasY0MSg=;
-        b=0VsA2vvNiCwi/3NizZ/lIqxct6ZJWOymwyEubYEPu7TK/viAPZnxDFWLaRUFnpQy4R
-         wFvJ4G/ENkpKps/Kxy8MR52I7a1qVz2KF0UCSI0tn3gLxnDB5XMWfjikJo9TkbSB8J5O
-         jInIOybW4UdZfezQAfE+ER3aAfNq3v0dX14E5L2w/46bJsIPgsKv2T1hCbkhHynGVb/n
-         u4Qh2u6SB9SxS2b2bslcnLtpE++3YqsAK7AKrWCig4z3eKry1bBv1FTi2SMJw8WUlvSk
-         sEWqPyZPXk1cOpfQRgDKj3gBiD309ULlmLGXEnMlsBawdXJsk4n0FRvNY6PjXCVBdLTC
-         Xh8A==
+        bh=b49wfhLOumPQgXr+cfKeJZHxCawjUFOzEyK1tzSAUts=;
+        b=RwHJ7dZfVpqpBAYmi/ibFYlbZ/kYATHVpdcdtU9nc74g9me2OD/iV5iS4GzSkemCag
+         VRd+qudbu3Iaz4JvKMCP3ayuscMbX9TFON/RoABmjyntW7MWjmkLraeLrn2zAevlyn5Q
+         xC9fOwEVZRUQCB0NoYL5y5FCQhOdLss33UR12iyMiR3XD4g01iim+DVGQsmb07ceauVQ
+         jojWtBBkILKBbRpNYwh2gABontBTZbK6mBkvrrwL/FSz40Wp7N9P+kgQruqH1ueDWOL8
+         pgR1pIc1eEodYMUqMdfRPhTfKG2wLDpB2qI2OvCxiuRO8gldtHTKdVhBwV8qwkwVfldk
+         cSqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VQ/F91AqqahwzDmzRYg8075AZY4HOxSjDSQnasY0MSg=;
-        b=eqvC44bNvLnLbMVEH6sCoehBI3mwRd+X28QQ4jzwNg7Ag3YenS7HxfYlU5ghYoanh/
-         UCB2yPGPls0fXC5Q7aS7B+tIi1eS9N/0EoePpeG8Xf/xGn4ZI6yCtXIpYefZDxKtH3BL
-         WsnXF/nr873y3H/UXgBWRC+TG2gVeBHQUZQlcRLRHFWNLNIoQZbtgzde9Qrbrhuxp3vm
-         4y0bZkpwgguKlVBWVwRMxIasT6/30HIS2k3O0SO0yDty404RU6JPjtKSbg0R3hT4j/IQ
-         szmXAmtMZBZ+sQg/F3+fKI46FGXZl1Hy8FZoVyxQsUZKPh0yMrjuStUkgFSVUIENLRP+
-         K3wA==
-X-Gm-Message-State: APjAAAVkBw/ie8pqDsgSTaRLf6WqHe8faK6XUR+MamTg9/QjpsS/ogzO
-        lu6r4ZzDcCVb+lJBmSk8AWKHRg==
-X-Google-Smtp-Source: APXvYqxtiv102Cbm6gu1TZRu6QhFqSZ6qbPjj+8k/9IDGLCljN+nGo6Djs8R4lFiw4/ziq2YOX9huQ==
-X-Received: by 2002:a2e:9f53:: with SMTP id v19mr9012205ljk.0.1556995123138;
+        bh=b49wfhLOumPQgXr+cfKeJZHxCawjUFOzEyK1tzSAUts=;
+        b=HTD3HkzUfU18ax2HyP9gJBB97Jc0Ntj3oKv0aBb6rq3ve8jj+g+GTg168N4GlI17Ep
+         g9mMN8rOMy/LKEuvtsNwfmcAFKtV3serSK2C9muTRLoTA0/nGwRPlmF+lnTWYsL1tCB9
+         ZzMO1tAIZkJ2C3WsBTMA9gSIJ2KEspCsspKJlecT9w+0Bk/Ctt20asfkZyJC97grn7ly
+         5OUoFGbMl8o0rLYBgm0d/r6jonR4exrfVf0DMjadzGpdvS9fvrBW4h94b0vklINRs0O9
+         ksgfHROxuV8/iUxdbJCQWdQTI9/XTH7qM/3JnUb0NHUe2VM0/lGWr0rKoavNJ4+xFh2M
+         GWDw==
+X-Gm-Message-State: APjAAAU/W1QXK87/OkCDHUY5oOGnmQk1VQ8xpJKWz7zTxsDNb+FeK85p
+        IU21eD/0D2CsTe1k/USryY3CRchbrE2mrg==
+X-Google-Smtp-Source: APXvYqwwDDNDkYh/TIm9iL///KR7uA/jAIJx0/jMK8G2ANYER2hGicp76hXUrishFf8onWBWUqwkFg==
+X-Received: by 2002:a2e:2f0e:: with SMTP id v14mr2823075ljv.77.1556995123997;
         Sat, 04 May 2019 11:38:43 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.42
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:42 -0700 (PDT)
+        Sat, 04 May 2019 11:38:43 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Igor Konopko <igor.j.konopko@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 18/26] lightnvm: pblk: wait for inflight IOs in recovery
-Date:   Sat,  4 May 2019 20:38:03 +0200
-Message-Id: <20190504183811.18725-19-mb@lightnvm.io>
+Subject: [GIT PULL 19/26] lightnvm: pblk: remove internal IO timeout
+Date:   Sat,  4 May 2019 20:38:04 +0200
+Message-Id: <20190504183811.18725-20-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -66,94 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Igor Konopko <igor.j.konopko@intel.com>
 
-This patch changes the behaviour of recovery padding in order to
-support a case, when some IOs were already submitted to the drive and
-some next one are not submitted due to error returned.
-
-Currently in case of errors we simply exit the pad function without
-waiting for inflight IOs, which leads to panic on inflight IOs
-completion.
-
-After the changes we always wait for all the inflight IOs before
-exiting the function.
+Currently during pblk padding, there is internal IO timeout introduced,
+which is smaller than default NVMe timeout. This can lead to various
+use-after-free issues. Since in case of any IO timeouts NVMe and block
+layer will handle timeout by themselves and report it back to use,
+there is no need to keep this internal timeout in pblk.
 
 Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-recovery.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/lightnvm/pblk-recovery.c | 7 +------
+ drivers/lightnvm/pblk.h          | 2 --
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 124d8179b2ad..137e963cd51d 100644
+index 137e963cd51d..865fe310cab4 100644
 --- a/drivers/lightnvm/pblk-recovery.c
 +++ b/drivers/lightnvm/pblk-recovery.c
-@@ -208,7 +208,7 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- 	rq_ppas = pblk_calc_secs(pblk, left_ppas, 0, false);
- 	if (rq_ppas < pblk->min_write_pgs) {
- 		pblk_err(pblk, "corrupted pad line %d\n", line->id);
--		goto fail_free_pad;
-+		goto fail_complete;
- 	}
+@@ -290,12 +290,7 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
  
- 	rq_len = rq_ppas * geo->csecs;
-@@ -217,7 +217,7 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- 						PBLK_VMALLOC_META, GFP_KERNEL);
- 	if (IS_ERR(bio)) {
- 		ret = PTR_ERR(bio);
--		goto fail_free_pad;
-+		goto fail_complete;
- 	}
- 
- 	bio->bi_iter.bi_sector = 0; /* internal bio */
-@@ -226,8 +226,11 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- 	rqd = pblk_alloc_rqd(pblk, PBLK_WRITE_INT);
- 
- 	ret = pblk_alloc_rqd_meta(pblk, rqd);
--	if (ret)
--		goto fail_free_rqd;
-+	if (ret) {
-+		pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
-+		bio_put(bio);
-+		goto fail_complete;
-+	}
- 
- 	rqd->bio = bio;
- 	rqd->opcode = NVM_OP_PWRITE;
-@@ -274,7 +277,10 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- 	if (ret) {
- 		pblk_err(pblk, "I/O submission failed: %d\n", ret);
- 		pblk_up_chunk(pblk, rqd->ppa_list[0]);
--		goto fail_free_rqd;
-+		kref_put(&pad_rq->ref, pblk_recov_complete);
-+		pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
-+		bio_put(bio);
-+		goto fail_complete;
- 	}
- 
- 	left_line_ppas -= rq_ppas;
-@@ -282,6 +288,7 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- 	if (left_ppas && left_line_ppas)
- 		goto next_pad_rq;
- 
-+fail_complete:
+ fail_complete:
  	kref_put(&pad_rq->ref, pblk_recov_complete);
- 
- 	if (!wait_for_completion_io_timeout(&pad_rq->wait,
-@@ -297,14 +304,6 @@ static int pblk_recov_pad_line(struct pblk *pblk, struct pblk_line *line,
- free_rq:
- 	kfree(pad_rq);
- 	return ret;
 -
--fail_free_rqd:
--	pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
--	bio_put(bio);
--fail_free_pad:
--	kfree(pad_rq);
--	vfree(data);
--	return ret;
- }
+-	if (!wait_for_completion_io_timeout(&pad_rq->wait,
+-				msecs_to_jiffies(PBLK_COMMAND_TIMEOUT_MS))) {
+-		pblk_err(pblk, "pad write timed out\n");
+-		ret = -ETIME;
+-	}
++	wait_for_completion(&pad_rq->wait);
  
- static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
+ 	if (!pblk_line_is_full(line))
+ 		pblk_err(pblk, "corrupted padded line: %d\n", line->id);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 381f0746a9cf..90c703d3f84c 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -43,8 +43,6 @@
+ 
+ #define PBLK_CACHE_NAME_LEN (DISK_NAME_LEN + 16)
+ 
+-#define PBLK_COMMAND_TIMEOUT_MS 30000
+-
+ /* Max 512 LUNs per device */
+ #define PBLK_MAX_LUNS_BITMAP (4)
+ 
 -- 
 2.19.1
 
