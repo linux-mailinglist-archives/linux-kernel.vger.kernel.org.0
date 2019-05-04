@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B506813BA8
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AC213BBF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfEDSio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:38:44 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36670 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbfEDSie (ORCPT
+        id S1727920AbfEDSk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:40:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45258 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727366AbfEDSif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 14:38:34 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u17so6530431lfi.3
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:33 -0700 (PDT)
+        Sat, 4 May 2019 14:38:35 -0400
+Received: by mail-lj1-f196.google.com with SMTP id w12so7811823ljh.12
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4F8WeLtygmkHaRNyG44s6a3jySfehUltNliwBSf+M7I=;
-        b=poFms3OoHIZ7PDf7AcMggrXiPPAh59WkpmIF2VbxFE7gTfz4WKBU7bxZdH1UzD4OXs
-         oT4Np4UiPDYkTk2tfUM1AJtNfDkHp6ufjC26vz8IxSYxcp0Pl2CnxK4+Bg8QOek9WcEJ
-         y0pKxFEqD6JpZoPSEmoNNd97TG5pituizKE52/uujD65zx8mODr4o7vZgq3M4POm/zTL
-         Od8RatYkTVxVmYgfKQ7gKGLM1sUKUDOqS1WSzPPYfniHEl0rH6ctVslsgt7jecofHms4
-         2SqAYuhI1vhSNZwSl3XPCnrZ37qjeeTVkO2mqXqXA5myow+ssHzhl5U5TRQOrQughVcT
-         h2Sw==
+        bh=gj/yuGQs2NzUkZmqPY17o2QhTDN0kFaU7SFZqHnYJbI=;
+        b=APmfL13e6+WIsIRju2Lorrwk8f++NLt92PVKF0smDJQlmVOCBxYtsUuMNoZi+tmrsl
+         KwWHIx4oiG7mbBVhLV6oNx4TNOD3majLdjDO8MbTkAYweT5x2ZGt0c/wWHJEJDz5+xN3
+         CZ7WD0Y7UVxxOlPso2UxB5TkE84g2zt6qY6PgdGWuIEWdWfUQsed1aAWP04rU4Cz4uVh
+         WyTscCDhm4kf90uBTP3XLY4leeXXsxNAhf6tpDiwVV4DuS8C02d6QeqIFT0vORyJuSoq
+         2JN1+HBuNFJjKMo5sdWT3B7Xls8MVrUK71k5i9SIFu8kc+SH92pFgD6Id70HjXT53+q0
+         93rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4F8WeLtygmkHaRNyG44s6a3jySfehUltNliwBSf+M7I=;
-        b=V/9xSGG3n3SkoS87oWRm69Dim9W07Al0Yr6NR1PA+1y2T+FyQE8gQRKm36sukw33kj
-         MMfSWhWatE+lzRb0H1uBURbpMfGOE3M3IHlOv8LT7+Ex91bgllc/MmoYXJLMyNN0muOI
-         dtSQhsnjC9+06TDPRQS+OcUoghWCoV8ZGHwqSHrU6Ullzk8Tc5xFdEyLkjQkrthZ8ZNa
-         FfmDHYR0v0jilLVH54m4bBP1QTCGIYY39iKB3sXpzPLY+pFMkzl+S/aomb0Z1ZF+MDNh
-         qn5iKJIp7KY4/1CUMYvsroNiLPFgbn+VBneD2k2XU+7yoDa8xlaffJWguJotVNGJmI2K
-         kOMQ==
-X-Gm-Message-State: APjAAAVO+3low8Y7iasqD13hlisjsEt176j97ovAAmX3+MbDrmNWjmUb
-        tiHyy6pQPVUXAG9vANQZRC7HCw==
-X-Google-Smtp-Source: APXvYqzDN1JoftxMCs2EYI3TFANu6Q6uv8AuBwVW8Mwi5t8BldhwlSNeh0R0Z0jTZUQcYtOWeGyfvQ==
-X-Received: by 2002:a19:4a04:: with SMTP id x4mr8407373lfa.124.1556995113131;
+        bh=gj/yuGQs2NzUkZmqPY17o2QhTDN0kFaU7SFZqHnYJbI=;
+        b=MfnAMwzyELik+z6tgow32+/V9xGRrn7MTjF5BmfoNLHEkSA76bNYvHz94SkfjTTgLG
+         lzm6Lto2JTXGox8cqjnGJo8accAEfTlD38XLu3iJBrNV8W6PFkarWCjuQ589ZMIoyn06
+         G+E9/3VNzflgamy8fSdglBTZ9sbyuoNQDDainDJBnZb5uXjJO78l0Yw0q0W47a71bLq4
+         mrV8OQ+uqoCz61XZz2STIj9CLiuVFRxDLEg6j1p00NO5E7xpjiN72Jd53m7mf/D58OBG
+         vX6p8AqWaKl9dO+gbTJmh8SwiqmxHcnnRQIm88mYMKirt7iYvnzj5pQ3ackD+gRUjWDt
+         hnAA==
+X-Gm-Message-State: APjAAAUHm7a5oYyytFq6M+pBlJt2gUKlkZgnPeGnf7/i17YKvyWRou0q
+        8RzO2aqpfgoWzzSwYMhTECEOS5S3i9T0NA==
+X-Google-Smtp-Source: APXvYqybQkhDG2YODQje628BeV8Kwa8iZFZQs3CgscGeqrjhmj+Y/zwVrctXxkoZIYbabK+HfWCIiA==
+X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr7976733ljj.79.1556995113962;
         Sat, 04 May 2019 11:38:33 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.32
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:32 -0700 (PDT)
+        Sat, 04 May 2019 11:38:33 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Igor Konopko <igor.j.konopko@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 07/26] lightnvm: pblk: ensure that erase is chunk aligned
-Date:   Sat,  4 May 2019 20:37:52 +0200
-Message-Id: <20190504183811.18725-8-mb@lightnvm.io>
+Subject: [GIT PULL 08/26] lightnvm: pblk: cleanly fail when there is not enough memory
+Date:   Sat,  4 May 2019 20:37:53 +0200
+Message-Id: <20190504183811.18725-9-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -66,31 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Igor Konopko <igor.j.konopko@intel.com>
 
-The sector bits in the erase command may be uninitialized are
-uninitialized, causing the erase LBA to be unaligned to the chunk size.
+L2P table can be huge in many cases, since it typically requires 1GB
+of DRAM for 1TB of drive. When there is not enough memory available,
+OOM killer turns on and kills random processes, which can be very
+annoying for users.
 
-This is unexpected situation, since erase shall always be chunk
-aligned based on OCSSD the 2.0 specification.
+This patch changes the flag for L2P table allocation on order to handle
+this situation in more user friendly way.
+
+GFP_KERNEL and __GPF_HIGHMEM are default flags used in parameterless
+vmalloc() calls, so they are also keeped in that patch. Additionally
+__GFP_NOWARN flag is added in order to hide very long dmesg warn in
+case of the allocation failures. The most important flag introduced
+in that patch is __GFP_RETRY_MAYFAIL, which would cause allocator
+to try use free memory and if not available to drop caches, but not
+to run OOM killer.
 
 Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
-Reviewed-by: Javier González <javier@javigon.com>
 Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Reviewed-by: Javier González <javier@javigon.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-map.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/lightnvm/pblk-init.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 7fbc99b60cac..5408e32b2f13 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -162,6 +162,7 @@ int pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 81e8ed4d31ea..e0df3de1ce83 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -164,9 +164,14 @@ static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
+ 	int ret = 0;
  
- 			*erase_ppa = ppa_list[i];
- 			erase_ppa->a.blk = e_line->id;
-+			erase_ppa->a.reserved = 0;
+ 	map_size = pblk_trans_map_size(pblk);
+-	pblk->trans_map = vmalloc(map_size);
+-	if (!pblk->trans_map)
++	pblk->trans_map = __vmalloc(map_size, GFP_KERNEL | __GFP_NOWARN
++					| __GFP_RETRY_MAYFAIL | __GFP_HIGHMEM,
++					PAGE_KERNEL);
++	if (!pblk->trans_map) {
++		pblk_err(pblk, "failed to allocate L2P (need %zu of memory)\n",
++				map_size);
+ 		return -ENOMEM;
++	}
  
- 			spin_unlock(&e_line->lock);
+ 	pblk_ppa_set_empty(&ppa);
  
 -- 
 2.19.1
