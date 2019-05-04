@@ -2,122 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9C613ACB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F67913AD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfEDOww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 10:52:52 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:49048 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfEDOwv (ORCPT
+        id S1727138AbfEDO7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 10:59:54 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35295 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbfEDO7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 10:52:51 -0400
-Received: by mail-qt1-f201.google.com with SMTP id d39so9442068qtc.15
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 07:52:51 -0700 (PDT)
+        Sat, 4 May 2019 10:59:53 -0400
+Received: by mail-io1-f67.google.com with SMTP id r18so7644718ioh.2;
+        Sat, 04 May 2019 07:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Q+yvnmyjVEzdFHEWBcoadDmmU/3yK5ganIOIoyEwouc=;
-        b=qFtjqSrcM4UGgRoJ8/RzfeaVyMan+d7Ts2pByis/59NTZYLaxr1drG0H5BJleMrsrh
-         MfXyUTFpANjtUv9d/3lln9gmv0JiZwKgSmPn/unKXf6ckvtwaiukK2EpBgYXSp2zaMVT
-         oBZSmqvUFGBLW+493GEBswqRKrbAhreW7h3pvJZKJyvSY9xqc6PSChOyIBpwKVl7OcOV
-         OYC8eGUnH5wq7H0Hf6xM8doNcgTcKdvF+OGgfSn2qK2KmkPDC1b9x7Pj9K9UegrblR69
-         dmm+H2DsQQ2Abc1ZsllHD5tiuI6keEcXuEUtH1k4JAzFM/AERoSNSFeerIz2sPD+jA9M
-         2gsA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vXyPYwh2Aq3WibaP/8Un33K8uj/LrX/mI1kiBZBysck=;
+        b=Li6WFi66KT0Byk46CFTux0SmkV0EI1YQ8bZwJXDG/JDdJh3wfoMXQn5hGoTOn2gTfI
+         uVsEAYNKqtidKYzNjTEMoAjsV3mAgQjNaCUCXLDfTJPmBnU7DXmqTWre46h7b2GC0l6j
+         5lIkDb9ojo9nMH05JJJAPX9WFJ4VaTrTUd6OlNSDVWa8AXrkAqoAlVGuAt0s9uJKnRKf
+         s2DKUS1wSdnRtnF1txTk/8ydw9pPqUEf9Em7agPWuXuUFXAP25W90VeHxFy/EACmNmnS
+         /MlMLhqivEACnGzKITctDMTB6ewAoca/O2/pLHGTYBq+Bo43wlKBLP0vPbjBTEC9vU3N
+         3PNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Q+yvnmyjVEzdFHEWBcoadDmmU/3yK5ganIOIoyEwouc=;
-        b=rotXRxheaNQAlMrhzP2q0G51XB8mY7LOVy4Pda6KKcJYy/5poNAIo8LSRVay04Qz65
-         EcdGr3uWcjFCW3qR1Fj665GkYmk3/uhBY/iocgZjf0nHhZDkCbk76kFEGYdgbNYCdxMq
-         oyEH85iOthz0v6IcwcNPoo9NkIbTXPF2E9J0PxlqZNaktDT2zg/Ow7uO1GG0J7Q2EpQr
-         BKFgbZrIR0l4czQcUnNnP6kNax+qjxAa6tjonDH9vWjAewIferEWUrwNiPN28uhpw06w
-         dRceUWxgT9x3wYRDKkGA6P1h3ehSz7dOvT2uqpmjLk4uPxQ1zgHmewsVfZpvm6zieInS
-         hZZQ==
-X-Gm-Message-State: APjAAAV4jOIGiXkodBSusT6gLQaBLxbZ9uw9P8fgMglbIqqovY6e3CCV
-        XC6d7K6Pr6oK/+NFwQneED9MaOAuLjy0VQ==
-X-Google-Smtp-Source: APXvYqzaEcIiqQDURcZKk/Ciux9eOBC26QDYKJQb+X0sd9obaCdABR9WDozc3I83/n6peCeKM9N158e14DQdFQ==
-X-Received: by 2002:a05:620a:1015:: with SMTP id z21mr3134470qkj.229.1556981570541;
- Sat, 04 May 2019 07:52:50 -0700 (PDT)
-Date:   Sat,  4 May 2019 07:52:42 -0700
-Message-Id: <20190504145242.258875-1-shakeelb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v2] memcg, fsnotify: no oom-kill for remote memcg charging
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vXyPYwh2Aq3WibaP/8Un33K8uj/LrX/mI1kiBZBysck=;
+        b=YSZ7Wtv1S7Dfub6GxqV3Od2sR+evH9iKMZZ8CaXZdRb/grwxheS2YUFVBm0xA2aKgs
+         6LdxkCPXsKIXr3h61j3LwYHh9yzYOJZ4JbQGj7sh57raRE5pCyjRWd5JjcJcqN2wNBkr
+         U2sumfqUoXr2IVW181ktwpVjcZDZPv+3M6Bo1QF0qr35w294amMaknrQ4/5OfkLiz3DM
+         /iCAkCYqm0GAZJMApJU9PppF7pN9mcr9PJaHxVx0MsnI6xTdGd4yYtuC7dfr436dqTAS
+         obV2nkywAdhWXtdiQ24OP0qE8SHLeRGZS4ZxHwbYL0E4FneQUUL/iKuLxOKTKA2C029w
+         zuPw==
+X-Gm-Message-State: APjAAAVPmnZgLFG/IycaxDRny2toktdYweW06FcmGgqgoabiBCN4kbXi
+        HKI0mIUe+QrolpQ7abkmQII=
+X-Google-Smtp-Source: APXvYqzC3b9Dl43p57p3KMEmcNZzHnpDjPgVnP0RxcwE+lVMGcUTN7jBNnIE7IrZCFcARSPDRGRnSg==
+X-Received: by 2002:a6b:9306:: with SMTP id v6mr2387711iod.278.1556981992799;
+        Sat, 04 May 2019 07:59:52 -0700 (PDT)
+Received: from ?IPv6:2601:282:800:fd80:ad89:69d7:57b3:6a28? ([2601:282:800:fd80:ad89:69d7:57b3:6a28])
+        by smtp.googlemail.com with ESMTPSA id g13sm2043979iom.46.2019.05.04.07.59.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 04 May 2019 07:59:51 -0700 (PDT)
+Subject: Re: [PATCH v2] net: route: Fix vrf dst_entry ref count false
+ increasing
+To:     linmiaohe <linmiaohe@huawei.com>, davem@davemloft.net,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mousuanming <mousuanming@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>
+References: <1a4c0c31-e74c-5167-0668-328dd342005e@huawei.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <dd325420-37ae-f731-1ea8-01f630820af0@gmail.com>
+Date:   Sat, 4 May 2019 08:59:50 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1a4c0c31-e74c-5167-0668-328dd342005e@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit d46eb14b735b ("fs: fsnotify: account fsnotify metadata to
-kmemcg") added remote memcg charging for fanotify and inotify event
-objects. The aim was to charge the memory to the listener who is
-interested in the events but without triggering the OOM killer.
-Otherwise there would be security concerns for the listener. At the
-time, oom-kill trigger was not in the charging path. A parallel work
-added the oom-kill back to charging path i.e. commit 29ef680ae7c2
-("memcg, oom: move out_of_memory back to the charge path"). So to not
-trigger oom-killer in the remote memcg, explicitly add
-__GFP_RETRY_MAYFAIL to the fanotigy and inotify event allocations.
+On 5/4/19 7:13 AM, linmiaohe wrote:
+> From: Suanming.Mou <mousuanming@huawei.com>
+> 
+> When config ip in default vrf same as the ip in specified
+> vrf, fib_lookup will return the route from table local
+> even if the in device is an enslaved l3mdev. Then the
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
-Changelog since v1:
-- Fixed usage of __GFP_RETRY_MAYFAIL flag.
-
- fs/notify/fanotify/fanotify.c        | 5 ++++-
- fs/notify/inotify/inotify_fsnotify.c | 7 +++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 6b9c27548997..f78fd4c8f12d 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -288,10 +288,13 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 	/*
- 	 * For queues with unlimited length lost events are not expected and
- 	 * can possibly have security implications. Avoid losing events when
--	 * memory is short.
-+	 * memory is short. Also make sure to not trigger OOM killer in the
-+	 * target memcg for the limited size queues.
- 	 */
- 	if (group->max_events == UINT_MAX)
- 		gfp |= __GFP_NOFAIL;
-+	else
-+		gfp |= __GFP_RETRY_MAYFAIL;
- 
- 	/* Whoever is interested in the event, pays for the allocation. */
- 	memalloc_use_memcg(group->memcg);
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index ff30abd6a49b..17c08daa1ba7 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -99,9 +99,12 @@ int inotify_handle_event(struct fsnotify_group *group,
- 	i_mark = container_of(inode_mark, struct inotify_inode_mark,
- 			      fsn_mark);
- 
--	/* Whoever is interested in the event, pays for the allocation. */
-+	/*
-+	 * Whoever is interested in the event, pays for the allocation. However
-+	 * do not trigger the OOM killer in the target memcg.
-+	 */
- 	memalloc_use_memcg(group->memcg);
--	event = kmalloc(alloc_len, GFP_KERNEL_ACCOUNT);
-+	event = kmalloc(alloc_len, GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
- 	memalloc_unuse_memcg();
- 
- 	if (unlikely(!event)) {
--- 
-2.21.0.1020.gf2820cf01a-goog
-
+you need to move the local rule with a preference of 0 after the l3mdev
+rule.
