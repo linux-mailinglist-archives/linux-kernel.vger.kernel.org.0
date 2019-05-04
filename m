@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 978A413A9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A6C13A94
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfEDOg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 10:36:28 -0400
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:44739
-        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726070AbfEDOg2 (ORCPT
+        id S1726703AbfEDO1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 10:27:07 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:41469 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfEDO1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 10:36:28 -0400
-X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 May 2019 10:36:26 EDT
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AJAACjoM1c/7akqnwNWBkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEHAQEBAQEBgVQBAQEBAQELAYQlhBCTYAEBAQEBAQaBCC2DXoVukQG?=
- =?us-ascii?q?EfQKCKTcGDgEDAQEBBAEBAQEChl8BAQEBAgEjFUEQCw4KAgImAgJXBgEMBgI?=
- =?us-ascii?q?BAYMegXcFqjtxgS+FR4MegUWBCycBi2R4gQeBOIJrPodOglgEizeBboVolCU?=
- =?us-ascii?q?JgguSPwYblUiMG5Z2gXgzGggoCIMnkGNgkT8BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AJAACjoM1c/7akqnwNWBkBAQEBAQEBAQEBAQEHAQEBA?=
- =?us-ascii?q?QEBgVQBAQEBAQELAYQlhBCTYAEBAQEBAQaBCC2DXoVukQGEfQKCKTcGDgEDA?=
- =?us-ascii?q?QEBBAEBAQEChl8BAQEBAgEjFUEQCw4KAgImAgJXBgEMBgIBAYMegXcFqjtxg?=
- =?us-ascii?q?S+FR4MegUWBCycBi2R4gQeBOIJrPodOglgEizeBboVolCUJgguSPwYblUiMG?=
- =?us-ascii?q?5Z2gXgzGggoCIMnkGNgkT8BAQ?=
-X-IronPort-AV: E=Sophos;i="5.60,430,1549900800"; 
-   d="scan'208";a="173381743"
-Received: from 124-170-164-182.dyn.iinet.net.au (HELO [192.168.0.106]) ([124.170.164.182])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 04 May 2019 22:27:06 +0800
-Subject: Re: [PATCH 1/6] ARM: ks8695: watchdog: stop using mach/*.h
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-References: <20190415202501.941196-1-arnd@arndb.de>
- <2424c672-e3fb-4c32-4c24-fafc59d03a96@uclinux.org>
- <CACRpkdaJ+2bub_nDp9=5b4kyKjWDnOGKscWg3KsEVixDpk8rzA@mail.gmail.com>
- <20190503170613.GA1783@roeck-us.net>
-From:   Greg Ungerer <gerg@kernel.org>
-Message-ID: <d8d81aca-722d-8b5f-cd5f-30cc3e4e407b@kernel.org>
-Date:   Sun, 5 May 2019 00:26:53 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 4 May 2019 10:27:07 -0400
+Received: by mail-pg1-f170.google.com with SMTP id z3so466277pgp.8
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 07:27:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YwuBHfxUv+FsNTRE8OYRjXR2YtGLoZqY0npSTmEsbfw=;
+        b=EWcuTvn96WfVDGvWWPSnvmbcRd2uBXRiUVok0LeVOv7Lm/ZVRvPqql8jQsig+RYPPQ
+         mhwXmmocTPWWAxZLtYPx/t3nu5shKRqPOz5UipgEP58g9vhEbQ0izwN0UiADH6ZOtu8T
+         4My7UHNsA+VrGyEZa9uDAlrUIwJOxQNokLn8Gbyt8I5JuSmExn8lvfjkKxinWl+dp9J1
+         7J66tmcWqCevyrh2wmgMzpEpIe2X3Ayl4U38x5jILrI90w5cjt8jfyL+Uy766tDzhO7A
+         HrSBrSFWpdywz82D1vCb8dc3GjBQd4QyCx3yDodcvbNcHWJwTzl0geXdmRI+Exw5gQXq
+         WM1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YwuBHfxUv+FsNTRE8OYRjXR2YtGLoZqY0npSTmEsbfw=;
+        b=L0bngEidmzkqH1XqcTzcWoXHJ1qrmuCYCvwU6qRJ7x9w2jMdm2UkqROuSjlL7UZj0P
+         v7wAbXFq+bzipDN3yPL0JnopEtKPqCttAED2fQvXNI5l+2HqsPO3k3DCP2908FsR3fu3
+         wIohCzXXz2sFDswD6MT6cUWD3sMSctPMwWS4IF8Ql6/DjZygbjjErSMxtrYrtx7ib8jJ
+         3ZLC6V79hoydRx0sdrwUv2vOzv+fDIl4+f+4hAfCS6gXMAj/zGRtOPtguJ0x5Sp6f9f9
+         Wd34K2FOp9RrdrkTptJRWOXL/bqePsVYf/KYbge4K7MOrNGr3cHAIGiLM5WSRlexZmfX
+         8NMw==
+X-Gm-Message-State: APjAAAWjPNzstMPYWIOk5AadJ84Swvp8ExgrMDL5DDr/F2TKFkVtVsyf
+        i2dI3Lp6ebMDlTB2lVKBklZk0V4Qh8BSCj8IngA=
+X-Google-Smtp-Source: APXvYqyjzRNY6LxBhCOHZqPyasesLIaHD+lDP6hp0I048CH4/ILXVyk1V0RMtV+/tBP8AIOUIn6Xf2Pz8gc9/tNqQ8o=
+X-Received: by 2002:a63:6988:: with SMTP id e130mr19062126pgc.150.1556980026387;
+ Sat, 04 May 2019 07:27:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190503170613.GA1783@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1556787561-5113-1-git-send-email-akinobu.mita@gmail.com>
+ <1556787561-5113-4-git-send-email-akinobu.mita@gmail.com> <66a5d068-47b1-341f-988f-c890d7f01720@gmail.com>
+In-Reply-To: <66a5d068-47b1-341f-988f-c890d7f01720@gmail.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Sat, 4 May 2019 23:26:55 +0900
+Message-ID: <CAC5umyjsAh7aZ8JEh8=QMXpNwRdnxxfdPBDwmuVKfafG+rT-PA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] nvme-pci: add device coredump support
+To:     Minwoo Im <minwoo.im.dev@gmail.com>
+Cc:     linux-nvme@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2019=E5=B9=B45=E6=9C=884=E6=97=A5(=E5=9C=9F) 19:04 Minwoo Im <minwoo.im.dev=
+@gmail.com>:
+>
+> Hi, Akinobu,
+>
+> Regardless to reply of the cover, few nits here.
+>
+> On 5/2/19 5:59 PM, Akinobu Mita wrote:
+> > +
+> > +static const struct nvme_reg nvme_regs[] =3D {
+> > +     { NVME_REG_CAP,         "cap",          64 },
+> > +     { NVME_REG_VS,          "version",      32 },
+>
+> Why don't we just go with "vs" instead of full name of it just like
+> the others.
 
-On 4/5/19 3:06 am, Guenter Roeck wrote:
-> On Fri, May 03, 2019 at 08:16:05AM +0100, Linus Walleij wrote:
->> On Fri, May 3, 2019 at 8:02 AM Greg Ungerer <gerg@uclinux.org> wrote:
->>
->>> I dug out some old ks8695 based hardware to try this out.
->>> I had a lot of trouble getting anything modern working on it.
->>> In the end I still don't have a reliable test bed to test this properly.
->>
->> What is usually used by old ARMv4 systems is OpenWrt or
->> OpenEmbedded. Those is the only build systems that reliably
->> produce a userspace for these things now, and it is also the
->> appropriate size for this kind of systems.
+I tried to imitate the output of 'nvme show-regs'.
 
-No, I can produce a user space environment for the KS8695 as well
-using the uClinux-dist build system. But that worked even less well
-than the old root filesystem that I had (which was also built with
-an older version of that build system).
+> > +     { NVME_REG_INTMS,       "intms",        32 },
+> > +     { NVME_REG_INTMC,       "intmc",        32 },
+> > +     { NVME_REG_CC,          "cc",           32 },
+> > +     { NVME_REG_CSTS,        "csts",         32 },
+> > +     { NVME_REG_NSSR,        "nssr",         32 },
+> > +     { NVME_REG_AQA,         "aqa",          32 },
+> > +     { NVME_REG_ASQ,         "asq",          64 },
+> > +     { NVME_REG_ACQ,         "acq",          64 },
+> > +     { NVME_REG_CMBLOC,      "cmbloc",       32 },
+> > +     { NVME_REG_CMBSZ,       "cmbsz",        32 },
+>
+> If it's going to support optional registers also, then we can have
+> BP-related things (BPINFO, BPRSEL, BPMBL) here also.
 
-But there is no reason that old root filesystem should not work.
-And that is the thing that concerns me a bit here. I could mount
-it ok (it was a CRAMFS), it would run up the shell to a shell prompt,
-but when I try to run any commands from there they would oops.
-I didn't debug any further than that.
-
-
->>> Ultimately though I am left wondering if the ks8695 support in the
->>> kernel is useful to anyone the way it is at the moment. With a minimal
->>> kernel configuration I can boot up to a shell - but the system is
->>> really unreliable if you try to interactively use it. I don't think
->>> it is the hardware - it seems to run reliably with the old code
->>> it has running from flash on it. I am only testing the new kernel,
->>> running with the existing user space root filesystem on it (which
->>> dates from 2004 :-)
->>
->> Personally I think it is a bad sign that this subarch and boards do
->> not have active OpenWrt support, they are routers after all (right?)
->> and any active use of networking equipment should use a recent
->> userspace as well, given all the security bugs that popped up over
->> the years.
->>
->> With IXP4xx, Gemini and EP93xx we have found active users and
->> companies selling the chips and reference designs and even
->> recommending it for new products (!) at times.  If this is not the
->> case with KS8695 and no hobbyists are willing to submit it
->> to OpenWrt and modernize it to use device tree I think it should be
->> deleted from the kernel.
->>
-> 
-> That may be the best approach if indeed no one is using it,
-> much less maintaining it.
-
-Well, I for one don't really use it any more. So I don't have a lot
-of motivation to maintain it any longer.
-
-Regards
-Greg
-
+I'm going to change the register dump in binary format just like
+'nvme show-regs -o binary' does.  So we'll have registers from 00h to 4Fh.
