@@ -2,209 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C07BB13925
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3927113922
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfEDKZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:25:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbfEDKZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:25:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C84F1206BB;
-        Sat,  4 May 2019 10:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556965543;
-        bh=4iZ5vn7MMcFMFNiQ4hMRCFtwJ73/pIg1/xqKHpRP17g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m74hPReOU+nRfFt0TkloApM0khjcjUVvtoqHFW8r/8LhWxmVJwaCl2jUIys/ttmpe
-         2317dv6FFYaFaKTzkfQ3cLaTXnlSkdwSHHaEnWn8KWThMByUuqhLG64RiQxWTShvTZ
-         KTLyLJv082BY6j+uhQCdUUktEakyNqWhTe8j9EfM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 12/32] sctp: avoid running the sctp state machine recursively
-Date:   Sat,  4 May 2019 12:24:57 +0200
-Message-Id: <20190504102452.908532468@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190504102452.523724210@linuxfoundation.org>
-References: <20190504102452.523724210@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727555AbfEDK0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:26:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48458 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727504AbfEDK0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:26:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2E5B0AF03;
+        Sat,  4 May 2019 10:26:01 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Chaotian Jing <chaotian.jing@mediatek.com>
+Date:   Sat, 04 May 2019 20:24:57 +1000
+Subject: [PATCH 3/4] mmc: mtk-sd: enable internal card-detect logic.
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thirtythreeforty@gmail.com
+Message-ID: <155696549691.8632.10285608726034686897.stgit@noble.brown>
+In-Reply-To: <155696540998.8632.5242582397805128125.stgit@noble.brown>
+References: <155696540998.8632.5242582397805128125.stgit@noble.brown>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+The mtk-sd silicon has integrated card-detect logic that is
+enabled on the MT7621.  The circuit is phased out on newer hardware so
+we should be careful to only enabled it on hardware known to support
+it.  This a new "use_internal_cd" flag in struct mtk_mmc_compatible.
 
-[ Upstream commit fbd019737d71e405f86549fd738f81e2ff3dd073 ]
+If the sdhci isn't marked non-removable and doesn't have a
+cd-gpio configured, and if use_internal_cd is set, then assume the
+internal cd logic should be used as recommended by
+ Documentation/devicetree/bindings/mmc/mmc.txt
 
-Ying triggered a call trace when doing an asconf testing:
-
-  BUG: scheduling while atomic: swapper/12/0/0x10000100
-  Call Trace:
-   <IRQ>  [<ffffffffa4375904>] dump_stack+0x19/0x1b
-   [<ffffffffa436fcaf>] __schedule_bug+0x64/0x72
-   [<ffffffffa437b93a>] __schedule+0x9ba/0xa00
-   [<ffffffffa3cd5326>] __cond_resched+0x26/0x30
-   [<ffffffffa437bc4a>] _cond_resched+0x3a/0x50
-   [<ffffffffa3e22be8>] kmem_cache_alloc_node+0x38/0x200
-   [<ffffffffa423512d>] __alloc_skb+0x5d/0x2d0
-   [<ffffffffc0995320>] sctp_packet_transmit+0x610/0xa20 [sctp]
-   [<ffffffffc098510e>] sctp_outq_flush+0x2ce/0xc00 [sctp]
-   [<ffffffffc098646c>] sctp_outq_uncork+0x1c/0x20 [sctp]
-   [<ffffffffc0977338>] sctp_cmd_interpreter.isra.22+0xc8/0x1460 [sctp]
-   [<ffffffffc0976ad1>] sctp_do_sm+0xe1/0x350 [sctp]
-   [<ffffffffc099443d>] sctp_primitive_ASCONF+0x3d/0x50 [sctp]
-   [<ffffffffc0977384>] sctp_cmd_interpreter.isra.22+0x114/0x1460 [sctp]
-   [<ffffffffc0976ad1>] sctp_do_sm+0xe1/0x350 [sctp]
-   [<ffffffffc097b3a4>] sctp_assoc_bh_rcv+0xf4/0x1b0 [sctp]
-   [<ffffffffc09840f1>] sctp_inq_push+0x51/0x70 [sctp]
-   [<ffffffffc099732b>] sctp_rcv+0xa8b/0xbd0 [sctp]
-
-As it shows, the first sctp_do_sm() running under atomic context (NET_RX
-softirq) invoked sctp_primitive_ASCONF() that uses GFP_KERNEL flag later,
-and this flag is supposed to be used in non-atomic context only. Besides,
-sctp_do_sm() was called recursively, which is not expected.
-
-Vlad tried to fix this recursive call in Commit c0786693404c ("sctp: Fix
-oops when sending queued ASCONF chunks") by introducing a new command
-SCTP_CMD_SEND_NEXT_ASCONF. But it didn't work as this command is still
-used in the first sctp_do_sm() call, and sctp_primitive_ASCONF() will
-be called in this command again.
-
-To avoid calling sctp_do_sm() recursively, we send the next queued ASCONF
-not by sctp_primitive_ASCONF(), but by sctp_sf_do_prm_asconf() in the 1st
-sctp_do_sm() directly.
-
-Reported-by: Ying Xu <yinxu@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: NeilBrown <neil@brown.name>
 ---
- include/net/sctp/command.h |    1 -
- net/sctp/sm_sideeffect.c   |   29 -----------------------------
- net/sctp/sm_statefuns.c    |   35 +++++++++++++++++++++++++++--------
- 3 files changed, 27 insertions(+), 38 deletions(-)
+ drivers/mmc/host/mtk-sd.c |   64 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 60 insertions(+), 4 deletions(-)
 
---- a/include/net/sctp/command.h
-+++ b/include/net/sctp/command.h
-@@ -105,7 +105,6 @@ enum sctp_verb {
- 	SCTP_CMD_T1_RETRAN,	 /* Mark for retransmission after T1 timeout  */
- 	SCTP_CMD_UPDATE_INITTAG, /* Update peer inittag */
- 	SCTP_CMD_SEND_MSG,	 /* Send the whole use message */
--	SCTP_CMD_SEND_NEXT_ASCONF, /* Send the next ASCONF after ACK */
- 	SCTP_CMD_PURGE_ASCONF_QUEUE, /* Purge all asconf queues.*/
- 	SCTP_CMD_SET_ASOC,	 /* Restore association context */
- 	SCTP_CMD_LAST
---- a/net/sctp/sm_sideeffect.c
-+++ b/net/sctp/sm_sideeffect.c
-@@ -1112,32 +1112,6 @@ static void sctp_cmd_send_msg(struct sct
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 0c2be4f54b1f..c518cc208a1f 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -300,6 +300,8 @@
+ #define CMD_TIMEOUT         (HZ/10 * 5)	/* 100ms x5 */
+ #define DAT_TIMEOUT         (HZ    * 5)	/* 1000ms x5 */
+ 
++#define DEFAULT_DEBOUNCE	(8)	/* 8 cycles CD debounce */
++
+ #define PAD_DELAY_MAX	32 /* PAD delay cells */
+ /*--------------------------------------------------------------------------*/
+ /* Descriptor Structure                                                     */
+@@ -372,6 +374,7 @@ struct mtk_mmc_compatible {
+ 	bool stop_clk_fix;
+ 	bool enhance_rx;
+ 	bool support_64g;
++	bool use_internal_cd;
+ };
+ 
+ struct msdc_tune_para {
+@@ -430,6 +433,7 @@ struct msdc_host {
+ 	bool hs400_cmd_resp_sel_rising;
+ 				 /* cmd response sample selection for HS400 */
+ 	bool hs400_mode;	/* current eMMC will run at hs400 mode */
++	bool internal_cd;	/* Use internal card-detect logic */
+ 	struct msdc_save_para save_para; /* used when gate HCLK */
+ 	struct msdc_tune_para def_tune_para; /* default tune setting */
+ 	struct msdc_tune_para saved_tune_para; /* tune result of CMD21/CMD19 */
+@@ -526,6 +530,7 @@ static const struct mtk_mmc_compatible mt7620_compat = {
+ 	.busy_check = false,
+ 	.stop_clk_fix = false,
+ 	.enhance_rx = false,
++	.use_internal_cd = true,
+ };
+ 
+ static const struct of_device_id msdc_of_ids[] = {
+@@ -1430,6 +1435,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 			sdio_signal_irq(host->mmc);
+ 		}
+ 
++		if ((events & event_mask) & MSDC_INT_CDSC) {
++			if (host->internal_cd)
++				mmc_detect_change(host->mmc, msecs_to_jiffies(20));
++			events &= ~MSDC_INT_CDSC;
++		}
++
+ 		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+ 			break;
+ 
+@@ -1463,14 +1474,24 @@ static void msdc_init_hw(struct msdc_host *host)
+ 	/* Reset */
+ 	msdc_reset_hw(host);
+ 
+-	/* Disable card detection */
+-	sdr_clr_bits(host->base + MSDC_PS, MSDC_PS_CDEN);
+-
+ 	/* Disable and clear all interrupts */
+ 	writel(0, host->base + MSDC_INTEN);
+ 	val = readl(host->base + MSDC_INT);
+ 	writel(val, host->base + MSDC_INT);
+ 
++	/* Configure card detection */
++	if (host->internal_cd) {
++		sdr_set_field(host->base + MSDC_PS, MSDC_PS_CDDEBOUNCE,
++			      DEFAULT_DEBOUNCE);
++		sdr_set_bits(host->base + MSDC_PS, MSDC_PS_CDEN);
++		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_CDSC);
++		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_INSWKUP);
++	} else {
++		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_INSWKUP);
++		sdr_clr_bits(host->base + MSDC_PS, MSDC_PS_CDEN);
++		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_CDSC);
++	}
++
+ 	if (host->top_base) {
+ 		writel(0, host->top_base + EMMC_TOP_CONTROL);
+ 		writel(0, host->top_base + EMMC_TOP_CMD);
+@@ -1580,6 +1601,13 @@ static void msdc_init_hw(struct msdc_host *host)
+ static void msdc_deinit_hw(struct msdc_host *host)
+ {
+ 	u32 val;
++
++	if (host->internal_cd) {
++		/* Disabled card-detect */
++		sdr_clr_bits(host->base + MSDC_PS, MSDC_PS_CDEN);
++		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_INSWKUP);
++	}
++
+ 	/* Disable and clear all interrupts */
+ 	writel(0, host->base + MSDC_INTEN);
+ 
+@@ -2078,13 +2106,31 @@ static void msdc_ack_sdio_irq(struct mmc_host *mmc)
+ 	__msdc_enable_sdio_irq(mmc, 1);
  }
  
- 
--/* Sent the next ASCONF packet currently stored in the association.
-- * This happens after the ASCONF_ACK was succeffully processed.
-- */
--static void sctp_cmd_send_asconf(struct sctp_association *asoc)
--{
--	struct net *net = sock_net(asoc->base.sk);
--
--	/* Send the next asconf chunk from the addip chunk
--	 * queue.
--	 */
--	if (!list_empty(&asoc->addip_chunk_list)) {
--		struct list_head *entry = asoc->addip_chunk_list.next;
--		struct sctp_chunk *asconf = list_entry(entry,
--						struct sctp_chunk, list);
--		list_del_init(entry);
--
--		/* Hold the chunk until an ASCONF_ACK is received. */
--		sctp_chunk_hold(asconf);
--		if (sctp_primitive_ASCONF(net, asoc, asconf))
--			sctp_chunk_free(asconf);
--		else
--			asoc->addip_last_asconf = asconf;
--	}
--}
--
--
- /* These three macros allow us to pull the debugging code out of the
-  * main flow of sctp_do_sm() to keep attention focused on the real
-  * functionality there.
-@@ -1783,9 +1757,6 @@ static int sctp_cmd_interpreter(enum sct
- 			}
- 			sctp_cmd_send_msg(asoc, cmd->obj.msg, gfp);
- 			break;
--		case SCTP_CMD_SEND_NEXT_ASCONF:
--			sctp_cmd_send_asconf(asoc);
--			break;
- 		case SCTP_CMD_PURGE_ASCONF_QUEUE:
- 			sctp_asconf_queue_teardown(asoc);
- 			break;
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -3824,6 +3824,29 @@ enum sctp_disposition sctp_sf_do_asconf(
- 	return SCTP_DISPOSITION_CONSUME;
- }
- 
-+static enum sctp_disposition sctp_send_next_asconf(
-+					struct net *net,
-+					const struct sctp_endpoint *ep,
-+					struct sctp_association *asoc,
-+					const union sctp_subtype type,
-+					struct sctp_cmd_seq *commands)
++static int msdc_get_cd(struct mmc_host *mmc)
 +{
-+	struct sctp_chunk *asconf;
-+	struct list_head *entry;
++	struct msdc_host *host = mmc_priv(mmc);
++	int val;
 +
-+	if (list_empty(&asoc->addip_chunk_list))
-+		return SCTP_DISPOSITION_CONSUME;
++	if (mmc->caps & MMC_CAP_NONREMOVABLE)
++		return 1;
 +
-+	entry = asoc->addip_chunk_list.next;
-+	asconf = list_entry(entry, struct sctp_chunk, list);
++	if (!host->internal_cd)
++		return mmc_gpio_get_cd(mmc);
 +
-+	list_del_init(entry);
-+	sctp_chunk_hold(asconf);
-+	asoc->addip_last_asconf = asconf;
-+
-+	return sctp_sf_do_prm_asconf(net, ep, asoc, type, asconf, commands);
++	val = readl(host->base + MSDC_PS) & MSDC_PS_CDSTS;
++	if (mmc->caps2 & MMC_CAP2_CD_ACTIVE_HIGH)
++		return !!val;
++	else
++		return !val;
 +}
 +
- /*
-  * ADDIP Section 4.3 General rules for address manipulation
-  * When building TLV parameters for the ASCONF Chunk that will add or
-@@ -3915,14 +3938,10 @@ enum sctp_disposition sctp_sf_do_asconf_
- 				SCTP_TO(SCTP_EVENT_TIMEOUT_T4_RTO));
+ static const struct mmc_host_ops mt_msdc_ops = {
+ 	.post_req = msdc_post_req,
+ 	.pre_req = msdc_pre_req,
+ 	.request = msdc_ops_request,
+ 	.set_ios = msdc_ops_set_ios,
+ 	.get_ro = mmc_gpio_get_ro,
+-	.get_cd = mmc_gpio_get_cd,
++	.get_cd = msdc_get_cd,
+ 	.enable_sdio_irq = msdc_enable_sdio_irq,
+ 	.ack_sdio_irq = msdc_ack_sdio_irq,
+ 	.start_signal_voltage_switch = msdc_ops_switch_volt,
+@@ -2216,6 +2262,16 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	else
+ 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
  
- 		if (!sctp_process_asconf_ack((struct sctp_association *)asoc,
--					     asconf_ack)) {
--			/* Successfully processed ASCONF_ACK.  We can
--			 * release the next asconf if we have one.
--			 */
--			sctp_add_cmd_sf(commands, SCTP_CMD_SEND_NEXT_ASCONF,
--					SCTP_NULL());
--			return SCTP_DISPOSITION_CONSUME;
--		}
-+					     asconf_ack))
-+			return sctp_send_next_asconf(net, ep,
-+					(struct sctp_association *)asoc,
-+							type, commands);
++	if (!(mmc->caps & MMC_CAP_NONREMOVABLE) &&
++	    !mmc_can_gpio_cd(mmc) &&
++	    host->dev_comp->use_internal_cd) {
++		/*
++		 * Is removable but no GPIO declared, so
++		 * use internal functionality.
++		 */
++		host->internal_cd = true;
++	}
++
+ 	if (mmc->caps & MMC_CAP_SDIO_IRQ)
+ 		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
  
- 		abort = sctp_make_abort(asoc, asconf_ack,
- 					sizeof(struct sctp_errhdr));
 
 
