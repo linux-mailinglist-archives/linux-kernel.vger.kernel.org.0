@@ -2,133 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F4E138BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F6DC138BE
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfEDKZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:25:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbfEDKZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:25:41 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 351B9206BB;
-        Sat,  4 May 2019 10:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556965540;
-        bh=6aRTOHe1vzk7ZdyjrKT+Sww5jGiQ/Rt7yWqVE9bsLow=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ustnIczd6m1VarRUriUHyLIZ196HbF3u9/hLcM9CBLAUPhmb9qkKZjaI2WlQm2F7t
-         54ztADBBVXCOpWEbRaDVHC/9umoXYFZgicJzAoglOTwBb1A5pINP9gCc4eSE8lGJXm
-         O2ExsvdN9iFM2nlwo34lDW9meuu/+oHKti971iSg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 11/32] rxrpc: Fix net namespace cleanup
-Date:   Sat,  4 May 2019 12:24:56 +0200
-Message-Id: <20190504102452.880631446@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190504102452.523724210@linuxfoundation.org>
-References: <20190504102452.523724210@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727508AbfEDKZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:25:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48418 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727479AbfEDKZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:25:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 29B7CAF03;
+        Sat,  4 May 2019 10:25:55 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Chaotian Jing <chaotian.jing@mediatek.com>
+Date:   Sat, 04 May 2019 20:24:56 +1000
+Subject: [PATCH 2/4] mmc: mtk-sd: add support for config found in mt7620
+ family SOCs.
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thirtythreeforty@gmail.com
+Message-ID: <155696549676.8632.14384982012480111613.stgit@noble.brown>
+In-Reply-To: <155696540998.8632.5242582397805128125.stgit@noble.brown>
+References: <155696540998.8632.5242582397805128125.stgit@noble.brown>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+mt7620 family MIPS SOCs contain the mtk-sd silicon.
+Add support for this.
 
-[ Upstream commit b13023421b5179413421333f602850914f6a7ad8 ]
-
-In rxrpc_destroy_all_calls(), there are two phases: (1) make sure the
-->calls list is empty, emitting error messages if not, and (2) wait for the
-RCU cleanup to happen on outstanding calls (ie. ->nr_calls becomes 0).
-
-To avoid taking the call_lock, the function prechecks ->calls and if empty,
-it returns to avoid taking the lock - this is wrong, however: it still
-needs to go and do the second phase and wait for ->nr_calls to become 0.
-
-Without this, the rxrpc_net struct may get deallocated before we get to the
-RCU cleanup for the last calls.  This can lead to:
-
-  Slab corruption (Not tainted): kmalloc-16k start=ffff88802b178000, len=16384
-  050: 6b 6b 6b 6b 6b 6b 6b 6b 61 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkakkkkkkk
-
-Note the "61" at offset 0x58.  This corresponds to the ->nr_calls member of
-struct rxrpc_net (which is >9k in size, and thus allocated out of the 16k
-slab).
-
-Fix this by flipping the condition on the if-statement, putting the locked
-section inside the if-body and dropping the return from there.  The
-function will then always go on to wait for the RCU cleanup on outstanding
-calls.
-
-Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: NeilBrown <neil@brown.name>
 ---
- net/rxrpc/call_object.c |   38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt |    1 +
+ drivers/mmc/host/mtk-sd.c                        |   12 ++++++++++++
+ 2 files changed, 13 insertions(+)
 
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -604,30 +604,30 @@ void rxrpc_destroy_all_calls(struct rxrp
+diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+index 91a2ec59e497..8a532f4453f2 100644
+--- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
++++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+@@ -16,6 +16,7 @@ Required properties:
+ 	"mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
+ 	"mediatek,mt7622-mmc": for MT7622 SoC
+ 	"mediatek,mt7623-mmc", "mediatek,mt2701-mmc": for MT7623 SoC
++	"mediatek,mt7620-mmc", for MT7621 SoC (and others)
  
- 	_enter("");
+ - reg: physical base address of the controller and length
+ - interrupts: Should contain MSDC interrupt number
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 469d4a717175..0c2be4f54b1f 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -517,6 +517,17 @@ static const struct mtk_mmc_compatible mt8516_compat = {
+ 	.stop_clk_fix = true,
+ };
  
--	if (list_empty(&rxnet->calls))
--		return;
--
--	write_lock(&rxnet->call_lock);
-+	if (!list_empty(&rxnet->calls)) {
-+		write_lock(&rxnet->call_lock);
- 
--	while (!list_empty(&rxnet->calls)) {
--		call = list_entry(rxnet->calls.next, struct rxrpc_call, link);
--		_debug("Zapping call %p", call);
--
--		rxrpc_see_call(call);
--		list_del_init(&call->link);
--
--		pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
--		       call, atomic_read(&call->usage),
--		       rxrpc_call_states[call->state],
--		       call->flags, call->events);
-+		while (!list_empty(&rxnet->calls)) {
-+			call = list_entry(rxnet->calls.next,
-+					  struct rxrpc_call, link);
-+			_debug("Zapping call %p", call);
++static const struct mtk_mmc_compatible mt7620_compat = {
++	.clk_div_bits = 8,
++	.hs400_tune = false,
++	.pad_tune_reg = MSDC_PAD_TUNE,
++	.async_fifo = false,
++	.data_tune = false,
++	.busy_check = false,
++	.stop_clk_fix = false,
++	.enhance_rx = false,
++};
 +
-+			rxrpc_see_call(call);
-+			list_del_init(&call->link);
-+
-+			pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
-+			       call, atomic_read(&call->usage),
-+			       rxrpc_call_states[call->state],
-+			       call->flags, call->events);
-+
-+			write_unlock(&rxnet->call_lock);
-+			cond_resched();
-+			write_lock(&rxnet->call_lock);
-+		}
- 
- 		write_unlock(&rxnet->call_lock);
--		cond_resched();
--		write_lock(&rxnet->call_lock);
- 	}
- 
--	write_unlock(&rxnet->call_lock);
--
- 	atomic_dec(&rxnet->nr_calls);
- 	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
- }
+ static const struct of_device_id msdc_of_ids[] = {
+ 	{ .compatible = "mediatek,mt8135-mmc", .data = &mt8135_compat},
+ 	{ .compatible = "mediatek,mt8173-mmc", .data = &mt8173_compat},
+@@ -525,6 +536,7 @@ static const struct of_device_id msdc_of_ids[] = {
+ 	{ .compatible = "mediatek,mt2712-mmc", .data = &mt2712_compat},
+ 	{ .compatible = "mediatek,mt7622-mmc", .data = &mt7622_compat},
+ 	{ .compatible = "mediatek,mt8516-mmc", .data = &mt8516_compat},
++	{ .compatible = "mediatek,mt7620-mmc", .data = &mt7620_compat},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, msdc_of_ids);
 
 
