@@ -2,58 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46625138C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B311713931
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbfEDK0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:26:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48518 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727582AbfEDK0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:26:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2711EAF03;
-        Sat,  4 May 2019 10:26:07 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Chaotian Jing <chaotian.jing@mediatek.com>
-Date:   Sat, 04 May 2019 20:24:57 +1000
-Subject: [PATCH 4/4] mmc: mtk-sd: select REGULATOR
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thirtythreeforty@gmail.com
-Message-ID: <155696549700.8632.10790498625986428152.stgit@noble.brown>
-In-Reply-To: <155696540998.8632.5242582397805128125.stgit@noble.brown>
-References: <155696540998.8632.5242582397805128125.stgit@noble.brown>
-User-Agent: StGit/0.17.1-dirty
+        id S1728208AbfEDKaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:30:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727388AbfEDKZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:25:46 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E0C420862;
+        Sat,  4 May 2019 10:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556965545;
+        bh=bdyM8oxbQkd8wXQ6tcNLjvAslpgVHezybpZhC3gVPT0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lEFZD8xpIx02Hqo7NPIKl5bCre2X9oWRZeAbGoBa9DrbmVFkA0AseAlsAPhmXVM3/
+         CiP5i745U2Mif7OgvCsEIo/6L3SllEzCA4C31C+9MpFy0iJZrQZoJKtoEqGBxzatPj
+         XcCqEYtloUBcYZG19Wdc4uTeQJXmB5HzFViyHU/Y=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 13/32] selftests: fib_rule_tests: print the result and return 1 if any tests failed
+Date:   Sat,  4 May 2019 12:24:58 +0200
+Message-Id: <20190504102452.937110928@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190504102452.523724210@linuxfoundation.org>
+References: <20190504102452.523724210@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mtk-sd driver requires a regulator to be present, even if it is
-the "fixed" regulator.  So select REGULATOR to make it hard to build
-unusable configurations.
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-Signed-off-by: NeilBrown <neil@brown.name>
+[ Upstream commit f68d7c44e76532e46f292ad941aa3706cb9e6e40 ]
+
+Fixes: 65b2b4939a64 ("selftests: net: initial fib rule tests")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/net/fib_rule_tests.sh |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 9c01310a0d2e..1249cde7004d 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -941,6 +941,7 @@ config MMC_BCM2835
- config MMC_MTK
- 	tristate "MediaTek SD/MMC Card Interface support"
- 	depends on HAS_DMA
-+	select REGULATOR
- 	help
- 	  This selects the MediaTek(R) Secure digital and Multimedia card Interface.
- 	  If you have a machine with a integrated SD/MMC card reader, say Y or M here.
+--- a/tools/testing/selftests/net/fib_rule_tests.sh
++++ b/tools/testing/selftests/net/fib_rule_tests.sh
+@@ -27,6 +27,7 @@ log_test()
+ 		nsuccess=$((nsuccess+1))
+ 		printf "\n    TEST: %-50s  [ OK ]\n" "${msg}"
+ 	else
++		ret=1
+ 		nfail=$((nfail+1))
+ 		printf "\n    TEST: %-50s  [FAIL]\n" "${msg}"
+ 		if [ "${PAUSE_ON_FAIL}" = "yes" ]; then
+@@ -245,4 +246,9 @@ setup
+ run_fibrule_tests
+ cleanup
+ 
++if [ "$TESTS" != "none" ]; then
++	printf "\nTests passed: %3d\n" ${nsuccess}
++	printf "Tests failed: %3d\n"   ${nfail}
++fi
++
+ exit $ret
 
 
