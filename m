@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463B613BC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B506813BA8
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfEDSke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:40:34 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33663 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbfEDSie (ORCPT
+        id S1727465AbfEDSio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:38:44 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36670 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbfEDSie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 4 May 2019 14:38:34 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f23so7885421ljc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:32 -0700 (PDT)
+Received: by mail-lf1-f67.google.com with SMTP id u17so6530431lfi.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L1RXqMd3oM130PbV6/2cqI1sCTRLP7lSwTZjKdujSbk=;
-        b=FEEmpF/uTHtOxKNBHDa9xmhPxLUFRXtpFHeLfT8aZS8IA+WE7hA5EQolSTMGYOzZ8i
-         KXXsasRzJ30hky/IR69UYrMDyfOAeqgGJYK1f4wfCSYLiQH7fptaqtRQFZdUUxSIxjOh
-         SLet2L2RNpVWNDAIk820Q2nAwJCa4yUTZAFu698u1hHVLyRiFEcT1mUNffPngEnNE/4w
-         /i+ZmqoeO6zHEeTySUNx+9A/OKTYt0HyMShYo7dfLWS/SQlOqpReKNhYjxHQLVz2gIyR
-         ghabmVcWp+0lKgSEBBD6Dvzkd08VkN6jkpLqRtL25SG0NEw+jIOjCaegImJQy1AkL4wp
-         x3rQ==
+        bh=4F8WeLtygmkHaRNyG44s6a3jySfehUltNliwBSf+M7I=;
+        b=poFms3OoHIZ7PDf7AcMggrXiPPAh59WkpmIF2VbxFE7gTfz4WKBU7bxZdH1UzD4OXs
+         oT4Np4UiPDYkTk2tfUM1AJtNfDkHp6ufjC26vz8IxSYxcp0Pl2CnxK4+Bg8QOek9WcEJ
+         y0pKxFEqD6JpZoPSEmoNNd97TG5pituizKE52/uujD65zx8mODr4o7vZgq3M4POm/zTL
+         Od8RatYkTVxVmYgfKQ7gKGLM1sUKUDOqS1WSzPPYfniHEl0rH6ctVslsgt7jecofHms4
+         2SqAYuhI1vhSNZwSl3XPCnrZ37qjeeTVkO2mqXqXA5myow+ssHzhl5U5TRQOrQughVcT
+         h2Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L1RXqMd3oM130PbV6/2cqI1sCTRLP7lSwTZjKdujSbk=;
-        b=SWXimJRt5qtSBB7dr8IP0XI9Ci0hgwa9M+JjRNgao9shlin5B73XsF1qy6UfC3AZyU
-         pDldU3uixJ3wkfdivXDd+x5VHhrgqEhIbvmjlDWSxZL198hgNz0zHm6CulAwGI2zsoMC
-         oaOSyYZgTpvdeTSlQbwq+UkMp66i9287zRwZgmYEy9ZUI57Ax7PFvtuHwjMiNqJ+PfDf
-         nzNDRAC8qGCYmll/AP7qfsX1762EqtbUs3DM30NBuHumyjjm9fhIlEseZIfsafeeI/tb
-         oQdN6RLcKWVlV0coCND0gnepFZsoAw5h8oEHHd4lAV9DByxOWFqwZ5xhrLj2gMO6F6//
-         vqiA==
-X-Gm-Message-State: APjAAAUAPB/bTNLFV/xmT4/5TzKpfK3hzK7hqJchdLGGKr2iZo1JAN02
-        fCybWXdkTSAeM88KqEZCqz/1Yw==
-X-Google-Smtp-Source: APXvYqzAGtz1e6NHcfOW3QFIjfUSjblMN7qBzMhZVPiuh13K/e16wvS3V99lAsgGVs7f7829hjXZHQ==
-X-Received: by 2002:a2e:7308:: with SMTP id o8mr8295216ljc.171.1556995112270;
-        Sat, 04 May 2019 11:38:32 -0700 (PDT)
+        bh=4F8WeLtygmkHaRNyG44s6a3jySfehUltNliwBSf+M7I=;
+        b=V/9xSGG3n3SkoS87oWRm69Dim9W07Al0Yr6NR1PA+1y2T+FyQE8gQRKm36sukw33kj
+         MMfSWhWatE+lzRb0H1uBURbpMfGOE3M3IHlOv8LT7+Ex91bgllc/MmoYXJLMyNN0muOI
+         dtSQhsnjC9+06TDPRQS+OcUoghWCoV8ZGHwqSHrU6Ullzk8Tc5xFdEyLkjQkrthZ8ZNa
+         FfmDHYR0v0jilLVH54m4bBP1QTCGIYY39iKB3sXpzPLY+pFMkzl+S/aomb0Z1ZF+MDNh
+         qn5iKJIp7KY4/1CUMYvsroNiLPFgbn+VBneD2k2XU+7yoDa8xlaffJWguJotVNGJmI2K
+         kOMQ==
+X-Gm-Message-State: APjAAAVO+3low8Y7iasqD13hlisjsEt176j97ovAAmX3+MbDrmNWjmUb
+        tiHyy6pQPVUXAG9vANQZRC7HCw==
+X-Google-Smtp-Source: APXvYqzDN1JoftxMCs2EYI3TFANu6Q6uv8AuBwVW8Mwi5t8BldhwlSNeh0R0Z0jTZUQcYtOWeGyfvQ==
+X-Received: by 2002:a19:4a04:: with SMTP id x4mr8407373lfa.124.1556995113131;
+        Sat, 04 May 2019 11:38:33 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.31
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:31 -0700 (PDT)
+        Sat, 04 May 2019 11:38:32 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Igor Konopko <igor.j.konopko@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 06/26] lightnvm: pblk: fix race during put line
-Date:   Sat,  4 May 2019 20:37:51 +0200
-Message-Id: <20190504183811.18725-7-mb@lightnvm.io>
+Subject: [GIT PULL 07/26] lightnvm: pblk: ensure that erase is chunk aligned
+Date:   Sat,  4 May 2019 20:37:52 +0200
+Message-Id: <20190504183811.18725-8-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -66,54 +66,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Igor Konopko <igor.j.konopko@intel.com>
 
-In the pblk_put_line_back function, a race condition with
-__pblk_map_invalidate can make a line not part of any lists.
+The sector bits in the erase command may be uninitialized are
+uninitialized, causing the erase LBA to be unaligned to the chunk size.
 
-Fix gc_list by resetting it to null fixes the above issue.
+This is unexpected situation, since erase shall always be chunk
+aligned based on OCSSD the 2.0 specification.
 
-Fixes: a4bd217 ("lightnvm: physical block device (pblk) target")
 Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
 Reviewed-by: Javier González <javier@javigon.com>
 Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-gc.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/lightnvm/pblk-map.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-index ea9f392a395e..e23b1923b773 100644
---- a/drivers/lightnvm/pblk-gc.c
-+++ b/drivers/lightnvm/pblk-gc.c
-@@ -64,19 +64,23 @@ static void pblk_put_line_back(struct pblk *pblk, struct pblk_line *line)
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct list_head *move_list;
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 7fbc99b60cac..5408e32b2f13 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -162,6 +162,7 @@ int pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
  
-+	spin_lock(&l_mg->gc_lock);
- 	spin_lock(&line->lock);
- 	WARN_ON(line->state != PBLK_LINESTATE_GC);
- 	line->state = PBLK_LINESTATE_CLOSED;
- 	trace_pblk_line_state(pblk_disk_name(pblk), line->id,
- 					line->state);
-+
-+	/* We need to reset gc_group in order to ensure that
-+	 * pblk_line_gc_list will return proper move_list
-+	 * since right now current line is not on any of the
-+	 * gc lists.
-+	 */
-+	line->gc_group = PBLK_LINEGC_NONE;
- 	move_list = pblk_line_gc_list(pblk, line);
- 	spin_unlock(&line->lock);
--
--	if (move_list) {
--		spin_lock(&l_mg->gc_lock);
--		list_add_tail(&line->list, move_list);
--		spin_unlock(&l_mg->gc_lock);
--	}
-+	list_add_tail(&line->list, move_list);
-+	spin_unlock(&l_mg->gc_lock);
- }
+ 			*erase_ppa = ppa_list[i];
+ 			erase_ppa->a.blk = e_line->id;
++			erase_ppa->a.reserved = 0;
  
- static void pblk_gc_line_ws(struct work_struct *work)
+ 			spin_unlock(&e_line->lock);
+ 
 -- 
 2.19.1
 
