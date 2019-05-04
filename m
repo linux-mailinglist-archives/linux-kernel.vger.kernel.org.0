@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D08213BAC
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D9F13BB7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfEDSir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:38:47 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46106 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfEDSih (ORCPT
+        id S1727854AbfEDSkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:40:10 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37966 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbfEDSij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 14:38:37 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h21so7809313ljk.13
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:36 -0700 (PDT)
+        Sat, 4 May 2019 14:38:39 -0400
+Received: by mail-lj1-f196.google.com with SMTP id e18so7863469lja.5
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+/OOtnTLbHkDmzeoCsG8b330LBNfWdHUw38JK4lULhs=;
-        b=IN6g+teZxJLSd4CWb8gsZxUB2CnlGhDdLwQwDmgt543orjSm9K4ZMFa2vMCP26xjjB
-         bzzlZqa2QKzkBH97Am//OgCK2cC+hDYLIrKloGM/Ga9pZgnNyMozYokSm0/iSZnnjypI
-         8i6nCNp/Blx2FZR5a1rwfUwtTAiQCoyyijpsDIIT2jNNERxdm6zX48wIiPAKDH8z2kb1
-         oX0j1lxIwIJ4mS8F6EF9fzX5OhEeqO6tmIIqSidWNDEVTDn1H3IDWt+S1Z8qXduwqdhU
-         qo4GCV8gL6xUvtF9dq5fNI5t5oFQdvYFBB+tMxGxb+u/skKOt6rpB3QdMFthW1Dib9bi
-         6DAw==
+        bh=mmGpk7ZUHL8Q0bStKqXOqyguC9W0njoYT9sYdEGeaAs=;
+        b=iC+IQo9UqYv33GPSBkLM1zgc1h5+AE3FZIuiC7eKTBpoilJwL7ECAneuqkllAh96U6
+         wfHw7Xr85L/UbDLnDt8O0a8/tdfJIFV7lqnLgP8KLIr0A3ikK9M5dBtUz/nlwfG/mBH4
+         2njGj97PybYBeSqZ4pi5Ao9InKOeQHYn2NyeHOeHwc2TYU/2mULXCOFRo39PocfoeQCe
+         yTsYsl68/606bo3eV6qD5teYL+x+qWY1oA76E1KL1FPdEHMUcRUbV/+S7RWsY1q76ihV
+         D9CHQJ8q0XgMDXbC5D2PxiFM5AIeuc6hUaib+1LyhZX10jX7kBuaJIo2H3TezONORunm
+         7ECw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+/OOtnTLbHkDmzeoCsG8b330LBNfWdHUw38JK4lULhs=;
-        b=enE+T9e+hClSkys8tcaSiBSX727wiBOvgjl827kxnM9rANjAW/g8z1zAccZzZqM8NC
-         ZelF5y539jZeMN4q6JBZpbjOcxLPgbz35nAQvfA6GQ2ckkxCBLFEqdN5Vo4TSHqmo/5u
-         2j/SEkacTMiTgxJ+iILTh3iK8not96k7iBi5wFelSAZlDGz0CtfHEIPBKXVx9ktHd4vN
-         MYl3YODKSWgNOWmsuFL0ZEiSyrzOY90QMw9dn/0tVGjO36w0qQ/TLSp6ufnO4DqQ/7+q
-         aMe8vExJ79+YAAb493iv4+5ML2ovsl2XA2n7mbgNm80mmqTMVS4mvz2TAyLr7K4CnxtT
-         +wIg==
-X-Gm-Message-State: APjAAAWozBzYQqHe6kBNDzToorggCot/mGZ5V5/wZZ9SPNXsS2yuxsPF
-        +BQCcQb9XIBscnMsZfkxR6yaiQ==
-X-Google-Smtp-Source: APXvYqwCBbVrVJ42C8dYk6IwZdpxKKDIBPiA5fmRH/vaXVj4OGdepioKvN4ghGhmbXpYOQZhP8pHhA==
-X-Received: by 2002:a2e:3c12:: with SMTP id j18mr8892126lja.193.1556995115668;
-        Sat, 04 May 2019 11:38:35 -0700 (PDT)
+        bh=mmGpk7ZUHL8Q0bStKqXOqyguC9W0njoYT9sYdEGeaAs=;
+        b=kp99JqjUmiYFrIv4NWy+lkLqo4Lmlce7NnXyKLYSmrOGK0bmpFehDBtWFCbCMjXriz
+         E//6aPa71jjcV2p+02iVdXDCYoM0At6ms4xS+k+enr6uzNwCMw6LLp9LVz/sfzW15Mco
+         vtez+l9NUhrkBkKA4ISpQ3QCuIxOfZOyxrg+3XPFkiaMOHaiPnM/grgr0rBu8cl7QikW
+         MJ2hD67FeJ0Z22CkOK25pztRqZO10fnvwMWKtmWr8RLWUv8WeqqzgOYi+07A6qZEv3fO
+         fNAskJZePCbJlxUkpVsf/nRz5MgL9eWBxeiE1XyWUGSmESceX54r5h2T2AcbEYKgHASW
+         aY9g==
+X-Gm-Message-State: APjAAAUxS+L3KpmXnyKHJf2pgJpOJjwAtNZKrDQwqZy2UD9Av5XHOd4e
+        MljMp2afNU1rwoYVPPHc4GgOQg==
+X-Google-Smtp-Source: APXvYqzth9Zk3D3NyiSbi5AuOFlUqaxipPyz4ZJEzAdJU7hL4/Ia0W/QJGcd/9TrKDS6dYBlviQlUQ==
+X-Received: by 2002:a2e:92ce:: with SMTP id k14mr8884170ljh.83.1556995116575;
+        Sat, 04 May 2019 11:38:36 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.34
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:35 -0700 (PDT)
+        Sat, 04 May 2019 11:38:36 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Igor Konopko <igor.j.konopko@intel.com>,
+        Chansol Kim <chansol.kim@samsung.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 10/26] lightnvm: Inherit mdts from the parent nvme device
-Date:   Sat,  4 May 2019 20:37:55 +0200
-Message-Id: <20190504183811.18725-11-mb@lightnvm.io>
+Subject: [GIT PULL 11/26] lightnvm: pblk: fix bio leak when bio is split
+Date:   Sat,  4 May 2019 20:37:56 +0200
+Message-Id: <20190504183811.18725-12-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -64,77 +64,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Konopko <igor.j.konopko@intel.com>
+From: Chansol Kim <chansol.kim@samsung.com>
 
-Current lightnvm and pblk implementation does not care about NVMe max
-data transfer size, which can be smaller than 64*K=256K. There are
-existing NVMe controllers which NVMe max data transfer size is lower
-that 256K (for example 128K, which happens for existing NVMe
-controllers which are NVMe spec compliant). Such a controllers are not
-able to handle command which contains 64 PPAs, since the the size of
-DMAed buffer will be above the capabilities of such a controller.
+For large size io where blk_queue_split needs to be called inside
+pblk_rw_io, results in bio leak as bio_endio is not called on the
+newly allocated. One way to observe this is to mounting ext4
+filesystem on the target and issuing 1MB io with dd, e.g., dd bs=1MB
+if=/dev/null of=/mount/myvolume. kmemleak reports:
 
-Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+unreferenced object 0xffff88803d7d0100 (size 256):
+  comm "kworker/u16:1", pid 68, jiffies 4294899333 (age 284.120s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 60 e8 31 81 88 ff ff  .........`.1....
+    01 40 00 00 06 06 00 00 00 00 00 00 05 00 00 00  .@..............
+  backtrace:
+    [<000000001f5aa04f>] kmem_cache_alloc+0x204/0x3c0
+    [<0000000040945aab>] mempool_alloc_slab+0x1d/0x30
+    [<00000000b4959ab4>] mempool_alloc+0x83/0x220
+    [<00000000646bad9b>] bio_alloc_bioset+0x229/0x320
+    [<000000009264b251>] bio_clone_fast+0x26/0xc0
+    [<0000000008250252>] bio_split+0x41/0x110
+    [<00000000e365cad0>] blk_queue_split+0x349/0x930
+    [<00000000eb5426bc>] pblk_make_rq+0x1b5/0x1f0
+    [<00000000eea09cec>] generic_make_request+0x2f9/0x690
+    [<00000000ae6acede>] submit_bio+0x12e/0x1f0
+    [<00000000f9b8b82a>] ext4_io_submit+0x64/0x80
+    [<000000009e4f817d>] ext4_bio_write_page+0x32e/0x890
+    [<00000000cbd0d106>] mpage_submit_page+0x65/0xc0
+    [<000000000eec7359>] mpage_map_and_submit_buffers+0x171/0x330
+    [<000000009a7afcb6>] ext4_writepages+0xd5e/0x1650
+    [<000000004476b096>] do_writepages+0x39/0xc0
+
+In case there is a need for a split, blk_queue_split returns the newly
+allocated bio to the caller by changing the value of pointer passed as
+a reference, while the original is passed to generic_make_requests.
+
+Although pblk_rw_io's local variable bio* has changed and passed to
+pblk_submit_read and pblk_write_to_cache, work is done on this new
+bio*, and pblk_rw_io returns NVM_IO_DONE, pblk_make_rq calls bio_endio
+on the old bio* because it passed bio pointer by value to pblk_rw_io.
+
+pblk_rw_io is unfolded into pblk_make_rq so that there is no copying
+of bio* and bio_endio is called on the correct bio*.
+
+Signed-off-by: Chansol Kim <chansol.kim@samsung.com>
 Reviewed-by: Javier González <javier@javigon.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/core.c      | 9 +++++++--
- drivers/nvme/host/lightnvm.c | 1 +
- include/linux/lightnvm.h     | 1 +
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-init.c | 47 +++++++++++++++---------------------
+ 1 file changed, 19 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 5f82036fe322..c01f83b8fbaf 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -325,6 +325,7 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
- 	struct nvm_target *t;
- 	struct nvm_tgt_dev *tgt_dev;
- 	void *targetdata;
-+	unsigned int mdts;
- 	int ret;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index e0df3de1ce83..1e227a08e54a 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -47,36 +47,10 @@ static struct pblk_global_caches pblk_caches = {
  
- 	switch (create->conf.type) {
-@@ -412,8 +413,12 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
- 	tdisk->private_data = targetdata;
- 	tqueue->queuedata = targetdata;
+ struct bio_set pblk_bio_set;
  
--	blk_queue_max_hw_sectors(tqueue,
--			(dev->geo.csecs >> 9) * NVM_MAX_VLBA);
-+	mdts = (dev->geo.csecs >> 9) * NVM_MAX_VLBA;
-+	if (dev->geo.mdts) {
-+		mdts = min_t(u32, dev->geo.mdts,
-+				(dev->geo.csecs >> 9) * NVM_MAX_VLBA);
+-static int pblk_rw_io(struct request_queue *q, struct pblk *pblk,
+-			  struct bio *bio)
+-{
+-	int ret;
+-
+-	/* Read requests must be <= 256kb due to NVMe's 64 bit completion bitmap
+-	 * constraint. Writes can be of arbitrary size.
+-	 */
+-	if (bio_data_dir(bio) == READ) {
+-		blk_queue_split(q, &bio);
+-		ret = pblk_submit_read(pblk, bio);
+-		if (ret == NVM_IO_DONE && bio_flagged(bio, BIO_CLONED))
+-			bio_put(bio);
+-
+-		return ret;
+-	}
+-
+-	/* Prevent deadlock in the case of a modest LUN configuration and large
+-	 * user I/Os. Unless stalled, the rate limiter leaves at least 256KB
+-	 * available for user I/O.
+-	 */
+-	if (pblk_get_secs(bio) > pblk_rl_max_io(&pblk->rl))
+-		blk_queue_split(q, &bio);
+-
+-	return pblk_write_to_cache(pblk, bio, PBLK_IOTYPE_USER);
+-}
+-
+ static blk_qc_t pblk_make_rq(struct request_queue *q, struct bio *bio)
+ {
+ 	struct pblk *pblk = q->queuedata;
++	int ret;
+ 
+ 	if (bio_op(bio) == REQ_OP_DISCARD) {
+ 		pblk_discard(pblk, bio);
+@@ -86,7 +60,24 @@ static blk_qc_t pblk_make_rq(struct request_queue *q, struct bio *bio)
+ 		}
+ 	}
+ 
+-	switch (pblk_rw_io(q, pblk, bio)) {
++	/* Read requests must be <= 256kb due to NVMe's 64 bit completion bitmap
++	 * constraint. Writes can be of arbitrary size.
++	 */
++	if (bio_data_dir(bio) == READ) {
++		blk_queue_split(q, &bio);
++		ret = pblk_submit_read(pblk, bio);
++	} else {
++		/* Prevent deadlock in the case of a modest LUN configuration
++		 * and large user I/Os. Unless stalled, the rate limiter
++		 * leaves at least 256KB available for user I/O.
++		 */
++		if (pblk_get_secs(bio) > pblk_rl_max_io(&pblk->rl))
++			blk_queue_split(q, &bio);
++
++		ret = pblk_write_to_cache(pblk, bio, PBLK_IOTYPE_USER);
 +	}
-+	blk_queue_max_hw_sectors(tqueue, mdts);
- 
- 	set_capacity(tdisk, tt->capacity(targetdata));
- 	add_disk(tdisk);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index 949e29e1d782..4f20a10b39d3 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -977,6 +977,7 @@ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
- 	geo->csecs = 1 << ns->lba_shift;
- 	geo->sos = ns->ms;
- 	geo->ext = ns->ext;
-+	geo->mdts = ns->ctrl->max_hw_sectors;
- 
- 	dev->q = q;
- 	memcpy(dev->name, disk_name, DISK_NAME_LEN);
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 5d865a5d5cdc..d3b02708e5f0 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -358,6 +358,7 @@ struct nvm_geo {
- 	u16	csecs;		/* sector size */
- 	u16	sos;		/* out-of-band area size */
- 	bool	ext;		/* metadata in extended data buffer */
-+	u32	mdts;		/* Max data transfer size*/
- 
- 	/* device write constrains */
- 	u32	ws_min;		/* minimum write size */
++
++	switch (ret) {
+ 	case NVM_IO_ERR:
+ 		bio_io_error(bio);
+ 		break;
 -- 
 2.19.1
 
