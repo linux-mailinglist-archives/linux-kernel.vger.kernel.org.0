@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8950138FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4076813930
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfEDK2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:28:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7155 "EHLO huawei.com"
+        id S1728175AbfEDKax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:30:53 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7721 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727568AbfEDK2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:28:37 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 102CF6A7CC9AEFD6C2D8;
-        Sat,  4 May 2019 18:28:35 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sat, 4 May 2019
- 18:28:25 +0800
+        id S1727424AbfEDKat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:30:49 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0AED3270C2C608783DE6;
+        Sat,  4 May 2019 18:30:47 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Sat, 4 May 2019
+ 18:30:38 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <fbarrat@linux.ibm.com>, <ajd@linux.ibm.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+To:     <agk@redhat.com>, <snitzer@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <dm-devel@redhat.com>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] misc: ocxl: Make ocxl_remove static
-Date:   Sat, 4 May 2019 18:27:20 +0800
-Message-ID: <20190504102720.42220-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] dm dust: Make dm_dust_init and dm_dust_exit static
+Date:   Sat, 4 May 2019 18:30:36 +0800
+Message-ID: <20190504103036.34436-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -35,30 +34,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+Fix sparse warnings:
 
-drivers/misc/ocxl/pci.c:44:6: warning:
- symbol 'ocxl_remove' was not declared. Should it be static?
+drivers/md/dm-dust.c:495:12: warning: symbol 'dm_dust_init' was not declared. Should it be static?
+drivers/md/dm-dust.c:505:13: warning: symbol 'dm_dust_exit' was not declared. Should it be static?
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/misc/ocxl/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-dust.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/ocxl/pci.c b/drivers/misc/ocxl/pci.c
-index f2a3ef4..cb920aa 100644
---- a/drivers/misc/ocxl/pci.c
-+++ b/drivers/misc/ocxl/pci.c
-@@ -41,7 +41,7 @@ static int ocxl_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	return 0;
+diff --git a/drivers/md/dm-dust.c b/drivers/md/dm-dust.c
+index 178587b..3d42e40 100644
+--- a/drivers/md/dm-dust.c
++++ b/drivers/md/dm-dust.c
+@@ -492,7 +492,7 @@ static struct target_type dust_target = {
+ 	.prepare_ioctl = dust_prepare_ioctl,
+ };
+ 
+-int __init dm_dust_init(void)
++static int __init dm_dust_init(void)
+ {
+ 	int result = dm_register_target(&dust_target);
+ 
+@@ -502,7 +502,7 @@ int __init dm_dust_init(void)
+ 	return result;
  }
  
--void ocxl_remove(struct pci_dev *dev)
-+static void ocxl_remove(struct pci_dev *dev)
+-void __exit dm_dust_exit(void)
++static void __exit dm_dust_exit(void)
  {
- 	struct ocxl_fn *fn;
- 	struct ocxl_afu *afu;
+ 	dm_unregister_target(&dust_target);
+ }
 -- 
 2.7.4
 
