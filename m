@@ -2,107 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E0213C34
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 23:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5056A13C36
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 23:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfEDVur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 17:50:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41826 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfEDVuq (ORCPT
+        id S1727340AbfEDV5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 17:57:45 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52853 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfEDV5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 17:50:46 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hN2YN-0003qK-Um; Sat, 04 May 2019 21:50:44 +0000
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-wireless@vger.kernel.org
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: static analysis issue in rtl8188de driver
-Message-ID: <a1842b3e-f0af-d1a1-8609-a76c25dfd37b@canonical.com>
-Date:   Sat, 4 May 2019 22:50:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 4 May 2019 17:57:44 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o25so38853wmf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 14:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0aiiUSlKWk1zRxgyzOUd6WjEOUD1U9slmEAtOBZxokE=;
+        b=ENCHixr8kvbFs69ag0VlxSqslNcwxX0TA6M0wm51QM1wU7SbvXjIrTNn5V8rSHWFOv
+         xJSnAH/sSXdvDntndKHPv5YrobLTZInGrSVYRY68DSGsiI7g2seAqbaystvKqfOQPkvG
+         dDU7TccLhE1bVbIPfRnO35l4sU4gT/Eb9YFPNr8/VJSopLIqUQiqYMJjBI9omqa9t0lf
+         uyKMvpavApvDezuy8RMM4EeZ7yE6UIYW58V2ZMk8NnwGt2nl4vWwdPA9JKIY2Xi4MPtS
+         Mg9ln7LWcpzLZPmkFEZkbLkofxvY2ObpTWBxjYk16G8VwH+11ayL2b4FudVlmR33MYTI
+         Kcgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0aiiUSlKWk1zRxgyzOUd6WjEOUD1U9slmEAtOBZxokE=;
+        b=sYl5KCRC5GDbJ4ms9IYv8/ah5C/PDlAcZqdTzoApzDsrPJOWC5v/qtCsbEpu/DOa0Q
+         pnaDtGfZYAk+NBmSLXUBBPwN6dAjqxoGWOcXrUKKVL6Bm6GYpgXy1C6esgH/hoM0s1px
+         ePseQ+NCB2JrhIcead0b5F70BAUDjdH2HZ2Qoxu6hbs5wCaHinKNyDepvYZ1dRUHyQJI
+         8RPaXia0XkBnyUuyQO4i6jLiR7P7xzCh6m38njLTYEfP+aZdkrV4slV/2sv8/uvvS6I9
+         A+yudqLBDAGtkY4xjabbG+WDfRmMPUPu2BfUQ5OMwWf5P7VqoVpMBP+jFuEEO6Yf0UUS
+         AqjA==
+X-Gm-Message-State: APjAAAVVFpBZNrKomrrBQ2Pc6vhku2YWLQ/fZ8hHRF1T9c7sO1wonw9C
+        h+b89xbgpgGu2+ZlebxBlBaLGbrq
+X-Google-Smtp-Source: APXvYqwjx6mC/ZiEgi0mztjWdydVL+eNZPJAxYfPs3028a+B5I8gf7fiddCpvz8yYPhz1zd5RziKaw==
+X-Received: by 2002:a7b:cb16:: with SMTP id u22mr11152616wmj.60.1557007061855;
+        Sat, 04 May 2019 14:57:41 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id o6sm11649237wre.60.2019.05.04.14.57.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 04 May 2019 14:57:41 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, Omer Shpigelman <oshpigelman@habana.ai>
+Subject: [PATCH 1/2] habanalabs: halt debug engines on user process close
+Date:   Sun,  5 May 2019 00:57:32 +0300
+Message-Id: <20190504215733.12823-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-Static analysis with Coverity has found an issue in the rtl8188de
-wireless driver in drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c
-in function tl92d_dm_txpower_tracking_callback_thermalmeter.
+This patch fix a potential bug where a user's process has closed
+unexpectedly without disabling the debug engines. In that case, the debug
+engines might continue running but because the user's MMU mappings are
+going away, we will get page fault errors.
 
-The issue is that u8 array ofdm_index[3] is never initialized, however
-it is decremented and incremented in two places resulting in garbage
-value from the stack being updated in the following code:
+This behavior is also opposed to the general rule where nothing runs on
+the device after the user process closes.
 
-	if (thermalvalue > rtlpriv->dm.thermalvalue) {
-        	for (i = 0; i < rf; i++)
-                	ofdm_index[i] -= delta;
-        	cck_index -= delta;
-	} else {
-        	for (i = 0; i < rf; i++)
-                	ofdm_index[i] += index;
-        	cck_index += index;	
-	}
+The patch stops the debug H/W engines upon process termination and thus
+makes sure nothing runs on the device after the process goes away.
 
-At my first look at the code I believe ofdm_index should be just
-zero-initialized at declaration time, but I suspect that I'm overlooking
-something maybe a bit deeper. Any ideas?
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/context.c             |  6 ++++++
+ drivers/misc/habanalabs/goya/goya.c           |  3 ++-
+ drivers/misc/habanalabs/goya/goyaP.h          |  1 +
+ drivers/misc/habanalabs/goya/goya_coresight.c | 17 +++++++++++++++++
+ drivers/misc/habanalabs/habanalabs.h          |  2 ++
+ 5 files changed, 28 insertions(+), 1 deletion(-)
 
-Colin
+diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
+index 4804cdcf4c48..f4c92f110a72 100644
+--- a/drivers/misc/habanalabs/context.c
++++ b/drivers/misc/habanalabs/context.c
+@@ -26,6 +26,12 @@ static void hl_ctx_fini(struct hl_ctx *ctx)
+ 		dma_fence_put(ctx->cs_pending[i]);
+ 
+ 	if (ctx->asid != HL_KERNEL_ASID_ID) {
++		/*
++		 * The engines are stopped as there is no executing CS, but the
++		 * Coresight might be still working by accessing addresses
++		 * related to the stopped engines. Hence stop it explicitly.
++		 */
++		hdev->asic_funcs->halt_coresight(hdev);
+ 		hl_vm_ctx_fini(ctx);
+ 		hl_asid_free(hdev, ctx->asid);
+ 	}
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index a582e29c1ee4..02d116b01a1a 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -4819,7 +4819,8 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.set_dram_bar_base = goya_set_ddr_bar_base,
+ 	.init_iatu = goya_init_iatu,
+ 	.rreg = hl_rreg,
+-	.wreg = hl_wreg
++	.wreg = hl_wreg,
++	.halt_coresight = goya_halt_coresight
+ };
+ 
+ /*
+diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
+index 14e216cb3668..c83cab0d641e 100644
+--- a/drivers/misc/habanalabs/goya/goyaP.h
++++ b/drivers/misc/habanalabs/goya/goyaP.h
+@@ -202,6 +202,7 @@ void goya_add_device_attr(struct hl_device *hdev,
+ 			struct attribute_group *dev_attr_grp);
+ int goya_armcp_info_get(struct hl_device *hdev);
+ int goya_debug_coresight(struct hl_device *hdev, void *data);
++void goya_halt_coresight(struct hl_device *hdev);
+ 
+ void goya_mmu_prepare(struct hl_device *hdev, u32 asid);
+ int goya_mmu_clear_pgt_range(struct hl_device *hdev);
+diff --git a/drivers/misc/habanalabs/goya/goya_coresight.c b/drivers/misc/habanalabs/goya/goya_coresight.c
+index 1ac951f52d1e..49b5efb3a912 100644
+--- a/drivers/misc/habanalabs/goya/goya_coresight.c
++++ b/drivers/misc/habanalabs/goya/goya_coresight.c
+@@ -626,3 +626,20 @@ int goya_debug_coresight(struct hl_device *hdev, void *data)
+ 
+ 	return rc;
+ }
++
++void goya_halt_coresight(struct hl_device *hdev)
++{
++	struct hl_debug_params params = {0};
++	int i, rc;
++
++	for (i = GOYA_ETF_FIRST ; i <= GOYA_ETF_LAST ; i++) {
++		params.reg_idx = i;
++		rc = goya_config_etf(hdev, &params);
++		if (rc)
++			dev_err(hdev->dev, "halt ETF failed, %d/%d\n", rc, i);
++	}
++
++	rc = goya_config_etr(hdev, &params);
++	if (rc)
++		dev_err(hdev->dev, "halt ETR failed, %d\n", rc);
++}
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 71243b319920..adef7d9d7488 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -501,6 +501,7 @@ enum hl_pll_frequency {
+  * @init_iatu: Initialize the iATU unit inside the PCI controller.
+  * @rreg: Read a register. Needed for simulator support.
+  * @wreg: Write a register. Needed for simulator support.
++ * @halt_coresight: stop the ETF and ETR traces.
+  */
+ struct hl_asic_funcs {
+ 	int (*early_init)(struct hl_device *hdev);
+@@ -578,6 +579,7 @@ struct hl_asic_funcs {
+ 	int (*init_iatu)(struct hl_device *hdev);
+ 	u32 (*rreg)(struct hl_device *hdev, u32 reg);
+ 	void (*wreg)(struct hl_device *hdev, u32 reg, u32 val);
++	void (*halt_coresight)(struct hl_device *hdev);
+ };
+ 
+ 
+-- 
+2.17.1
 
