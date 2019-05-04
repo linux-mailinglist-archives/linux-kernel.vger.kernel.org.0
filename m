@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8172E13807
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 09:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6898F13808
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 09:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbfEDHDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 03:03:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
+        id S1727105AbfEDHEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 03:04:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfEDHDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 03:03:50 -0400
+        id S1725802AbfEDHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 03:04:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F73B206BB;
-        Sat,  4 May 2019 07:03:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54694206BB;
+        Sat,  4 May 2019 07:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556953429;
-        bh=06o88Q/xn9ojq7khzJkjBbDh8svWhXIRLYGsoQ+OuOU=;
+        s=default; t=1556953452;
+        bh=1AJ1bTaZS7IUTULpTVyVapc3iESDALoBwgOltqRyx1g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k2W1wzdjSC/WyY75j2/5/XcF4xTYDy7KFkG4lNjz+dD+W1OVD6XRKOqh+hTQQWWeN
-         CIn2qtCmCOEaAPJzbK/hpphO2vJsIfwtidaHr5ZTcrJbQ7IKclRdskff34c3G1u3ts
-         yE6NEl2TvI321zfcx7XCuJrB0q/5kfJrHMuw0GUM=
-Date:   Sat, 4 May 2019 09:03:46 +0200
+        b=fVDSyUsTzcMGxxWmCApcfqmTWyTv5WmwWG85SyqMN56Jkr0A11qqluNIxlTpWwuVf
+         dKJ01DVOS0J+IK8ICyyG4sEuXEwOkFYcS4sJHO36tNLncYRlqqHUVHh60AbbMZU5yZ
+         qPMgfxRTc5ddPGR/+0i09hV/FpRzS96OpSXiZIRY=
+Date:   Sat, 4 May 2019 09:04:10 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
@@ -33,7 +33,7 @@ Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Sanyog Kale <sanyog.r.kale@intel.com>
 Subject: Re: [RFC PATCH 6/7] soundwire: cadence_master: add debugfs register
  dump
-Message-ID: <20190504070346.GE9770@kroah.com>
+Message-ID: <20190504070410.GF9770@kroah.com>
 References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
  <20190504010030.29233-7-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
@@ -172,9 +172,4 @@ On Fri, May 03, 2019 at 08:00:29PM -0500, Pierre-Louis Bossart wrote:
 > +}
 > +EXPORT_SYMBOL(sdw_cdns_debugfs_init);
 
-Don't wrap debugfs calls with export symbol without using
-EXPORT_SYMBOL_GPL() or you will get grumpy emails from me :)
-
-thanks,
-
-greg k-h
+Wait, why is this exported at all?  No one is calling it.
