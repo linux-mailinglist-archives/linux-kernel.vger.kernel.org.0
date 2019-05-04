@@ -2,189 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71BD51380A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 09:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F45313804
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 09:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfEDHFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 03:05:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfEDHFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 03:05:02 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 627EF206BB;
-        Sat,  4 May 2019 07:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556953500;
-        bh=GYMXpi3hhHh/1tqU7eEVtX31z+AYgLC6wQ6uJbd1GEQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PZZs1eREhw6NBIq6VuDvQDiXChEU1fAUR8k089j7LxfPzqXH7j/9P/wcidcxS7/T1
-         4Zyu9CNSaglckP1Paujudy8lLQv/SaKOBQP6SqOTz2w3cmU9rAondYmwBsbfIrYY/x
-         x8Ipof+Kgkk0VD3SEU/2w8xV4pR5yd+kHO677tOg=
-Date:   Sat, 4 May 2019 09:04:58 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
-        srinivas.kandagatla@linaro.org,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 7/7] soundwire: intel: add debugfs register dump
-Message-ID: <20190504070458.GG9770@kroah.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-8-pierre-louis.bossart@linux.intel.com>
+        id S1726962AbfEDHBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 03:01:44 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7151 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726604AbfEDHBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 03:01:44 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 330EDE64C73B608B93FC;
+        Sat,  4 May 2019 15:01:42 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 4 May 2019 15:01:32 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH] [media] saa7164: fix remove_proc_entry warning
+Date:   Sat, 4 May 2019 15:10:57 +0800
+Message-ID: <20190504071057.58471-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190504010030.29233-8-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 08:00:30PM -0500, Pierre-Louis Bossart wrote:
-> Add debugfs file to dump the Intel SoundWire registers
-> 
-> Credits: this patch is based on an earlier internal contribution by
-> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. The main change
-> is the use of scnprintf to avoid known issues with snprintf.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/intel.c | 115 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 115 insertions(+)
-> 
-> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index 4ac141730b13..7fb2cd6d5bb5 100644
-> --- a/drivers/soundwire/intel.c
-> +++ b/drivers/soundwire/intel.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include <linux/acpi.h>
-> +#include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
->  #include <linux/interrupt.h>
-> @@ -16,6 +17,7 @@
->  #include <linux/soundwire/sdw.h>
->  #include <linux/soundwire/sdw_intel.h>
->  #include "cadence_master.h"
-> +#include "bus.h"
->  #include "intel.h"
->  
->  /* Intel SHIM Registers Definition */
-> @@ -98,6 +100,7 @@ struct sdw_intel {
->  	struct sdw_cdns cdns;
->  	int instance;
->  	struct sdw_intel_link_res *res;
-> +	struct dentry *fs;
->  };
->  
->  #define cdns_to_intel(_cdns) container_of(_cdns, struct sdw_intel, cdns)
-> @@ -161,6 +164,115 @@ static int intel_set_bit(void __iomem *base, int offset, u32 value, u32 mask)
->  	return -EAGAIN;
->  }
->  
-> +/*
-> + * debugfs
-> + */
-> +
-> +#define RD_BUF (2 * PAGE_SIZE)
-> +
-> +static ssize_t intel_sprintf(void __iomem *mem, bool l,
-> +			     char *buf, size_t pos, unsigned int reg)
-> +{
-> +	int value;
-> +
-> +	if (l)
-> +		value = intel_readl(mem, reg);
-> +	else
-> +		value = intel_readw(mem, reg);
-> +
-> +	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
-> +}
-> +
-> +static ssize_t intel_reg_read(struct file *file, char __user *user_buf,
-> +			      size_t count, loff_t *ppos)
-> +{
-> +	struct sdw_intel *sdw = file->private_data;
-> +	void __iomem *s = sdw->res->shim;
-> +	void __iomem *a = sdw->res->alh;
-> +	char *buf;
-> +	ssize_t ret;
-> +	int i, j;
-> +	unsigned int links, reg;
-> +
-> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
-> +	if (!buf)
-> +		return -ENOMEM;
-> +
-> +	links = intel_readl(s, SDW_SHIM_LCAP) & GENMASK(2, 0);
-> +
-> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
-> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
-> +
-> +	for (i = 0; i < 4; i++) {
-> +		reg = SDW_SHIM_LCAP + i * 4;
-> +		ret += intel_sprintf(s, true, buf, ret, reg);
-> +	}
-> +
-> +	for (i = 0; i < links; i++) {
-> +		ret += scnprintf(buf + ret, RD_BUF - ret, "\nLink%d\n", i);
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLSCAP(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS0CM(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS1CM(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS2CM(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS3CM(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PCMSCAP(i));
-> +
-> +		for (j = 0; j < 8; j++) {
-> +			ret += intel_sprintf(s, false, buf, ret,
-> +					SDW_SHIM_PCMSYCHM(i, j));
-> +			ret += intel_sprintf(s, false, buf, ret,
-> +					SDW_SHIM_PCMSYCHC(i, j));
-> +		}
-> +
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PDMSCAP(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_IOCTL(i));
-> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTMCTL(i));
-> +	}
-> +
-> +	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKEEN);
-> +	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKESTS);
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nALH\n");
-> +	for (i = 0; i < 8; i++)
-> +		ret += intel_sprintf(a, true, buf, ret, SDW_ALH_STRMZCFG(i));
-> +
-> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
-> +	kfree(buf);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations intel_reg_fops = {
-> +	.open = simple_open,
-> +	.read = intel_reg_read,
-> +	.llseek = default_llseek,
-> +};
-> +
-> +static void intel_debugfs_init(struct sdw_intel *sdw)
-> +{
-> +	struct dentry *root = sdw_bus_debugfs_get_root(sdw->cdns.bus.debugfs);
-> +
-> +	if (!root)
-> +		return;
-> +
-> +	sdw->fs = debugfs_create_dir("intel-sdw", root);
-> +	if (IS_ERR_OR_NULL(sdw->fs)) {
+if saa7164_proc_create() fails, saa7164_fini() will trigger a warning,
 
-Again, you do not care, do not check this.
+name 'saa7164'
+WARNING: CPU: 1 PID: 6311 at fs/proc/generic.c:672 remove_proc_entry+0x1e8/0x3a0
+  ? remove_proc_entry+0x1e8/0x3a0
+  ? try_stop_module+0x7b/0x240
+  ? proc_readdir+0x70/0x70
+  ? rcu_read_lock_sched_held+0xd7/0x100
+  saa7164_fini+0x13/0x1f [saa7164]
+  __x64_sys_delete_module+0x30c/0x480
+  ? __ia32_sys_delete_module+0x480/0x480
+  ? __x64_sys_clock_gettime+0x11e/0x1c0
+  ? __x64_sys_timer_create+0x1a0/0x1a0
+  ? trace_hardirqs_off_caller+0x40/0x180
+  ? do_syscall_64+0x18/0x450
+  do_syscall_64+0x9f/0x450
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-thanks,
+Fix it by checking the return of proc_create_single() before
+calling remove_proc_entry().
 
-greg k-h
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/media/pci/saa7164/saa7164-core.c | 31 +++++++++++++++---------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
+index 05f25c9bb308..51dff0d84399 100644
+--- a/drivers/media/pci/saa7164/saa7164-core.c
++++ b/drivers/media/pci/saa7164/saa7164-core.c
+@@ -1122,16 +1122,23 @@ static int saa7164_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
++static struct proc_dir_entry *saa7164_pe;
+ static int saa7164_proc_create(void)
+ {
+-	struct proc_dir_entry *pe;
+-
+-	pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
+-	if (!pe)
++	saa7164_pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
++	if (!saa7164_pe)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+ }
++static void saa7164_proc_destory(void)
++{
++	if (saa7164_pe)
++		remove_proc_entry("saa7164", NULL);
++}
++#else
++static int saa7164_proc_create(void) { return 0; }
++static void saa7164_proc_destory(void) {}
+ #endif
+ 
+ static int saa7164_thread_function(void *data)
+@@ -1503,19 +1510,21 @@ static struct pci_driver saa7164_pci_driver = {
+ 
+ static int __init saa7164_init(void)
+ {
+-	printk(KERN_INFO "saa7164 driver loaded\n");
++	int ret = pci_register_driver(&saa7164_pci_driver);
++
++	if (ret)
++		return ret;
+ 
+-#ifdef CONFIG_PROC_FS
+ 	saa7164_proc_create();
+-#endif
+-	return pci_register_driver(&saa7164_pci_driver);
++
++	printk(KERN_INFO "saa7164 driver loaded\n");
++
++	return 0;
+ }
+ 
+ static void __exit saa7164_fini(void)
+ {
+-#ifdef CONFIG_PROC_FS
+-	remove_proc_entry("saa7164", NULL);
+-#endif
++	saa7164_proc_destory();
+ 	pci_unregister_driver(&saa7164_pci_driver);
+ }
+ 
+-- 
+2.20.1
+
