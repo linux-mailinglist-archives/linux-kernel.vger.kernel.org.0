@@ -2,66 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D6213B22
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 18:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CDDA13B31
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 18:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfEDQMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 12:12:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39170 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfEDQMt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 12:12:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hMxHI-00035w-5A; Sat, 04 May 2019 16:12:44 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Boris Brezillon <bbrezillon@kernel.org>,
-        linux-i3c@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i3c: fix undefined behaviour of a shift of an int by more than 31 places
-Date:   Sat,  4 May 2019 17:12:43 +0100
-Message-Id: <20190504161243.18879-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726965AbfEDQdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 12:33:03 -0400
+Received: from 0.ictbs.com ([203.137.112.168]:43172 "EHLO 0.ictbs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfEDQdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 12:33:03 -0400
+X-Greylist: delayed 382 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 May 2019 12:33:02 EDT
+Received: by hq.local (Postfix, from userid 1000)
+        id 0754F66477; Sat,  4 May 2019 18:26:33 +0200 (CEST)
+Date:   Sat, 4 May 2019 18:26:33 +0200
+From:   Victor Bravo <1905@spmblk.com>
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org
+Subject: PROBLEM: brcmfmac's DMI-based fw file names break built-in fw loader
+Message-ID: <20190504162633.ldrz2nqfocg55grb@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The brcmfmac driver seems to have partially fixed problems which
+prevented it to be used in shared system/kernel images for multiple
+hardware by trying to load it's <config>.txt as
+<config>.<dmi_sys_vendor>.<dmi_product_name>.txt first and then
+falling back to <config>.txt. Real-life example:
 
-Currently the shift of two enum ints by more than 31 places on
-can result in undefined behaviour with 64 bit longs. Fix this by
-casting the ints to unsigned long before the shift.
+brcmfmac mmc1:0001:1: Direct firmware load for brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-T100HAN.txt failed with
+error -2
+brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac43340-sdio for chip
+BCM43340/2
 
-Addresses-Coverity: ("Bad shift operation")
-Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/i3c/master.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Unfortunately this doesn't really help on systems which use static
+kernel with firmware blobs (and also text configuration files in case of
+brcmfmac) built-in using CONFIG_EXTRA_FIRMWARE, as CONFIG_EXTRA_FIRMWARE
+doesn't support spaces in file names - kernel build fails with
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 1412abcff010..752256d4078f 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -385,8 +385,9 @@ static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
- 		return;
- 
- 	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
--	*ptr &= ~(I3C_ADDR_SLOT_STATUS_MASK << (bitpos % BITS_PER_LONG));
--	*ptr |= status << (bitpos % BITS_PER_LONG);
-+	*ptr &= ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
-+		  (bitpos % BITS_PER_LONG));
-+	*ptr |= (unsigned long)status << (bitpos % BITS_PER_LONG);
- }
- 
- static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
--- 
-2.20.1
+CONFIG_EXTRA_FIRMWARE="brcm/brcmfmac43340-sdio.bin brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-T100HAN.txt"
 
+for obvious reasons. So the only way here is to stay with good old
+brcmfmac43340-sdio.txt and support at most one brcmfmac-equipped machine
+per kernel image.
+
+Please consider filtering the DMI strings and replacing spaces and
+possibly other invalid characters with underscores, and/or adding module
+parameter to allow passing the string from command line (using
+brcmfmac.tag=t100 or brcmfmac.board=t100 to make the module load
+brcmfmac43340-sdio.t100.txt seems nicer to me, and isn't prone to
+breaking when DMI strings change on BIOS update).
+
+My brief grep-based research also suggest that strings retrieved
+by dmi_get_system_info() are passed to firmware loader without any
+checks for special character, /../ etc. I'm not sure whether this is
+considered to be proper & safe use, but if it's not, it may also have
+some security implications, as it allows attacker with access to DMI
+strings (using root rights/other OS/BIOS/physical access) to mess
+with kernel space or secure boot.
+
+I would also really appreciate not allowing future brcm (and other)
+drivers to leave staging area before they fully support =y.
+
+Regards,
+v.b.
