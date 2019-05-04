@@ -2,185 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF7913695
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 02:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1842136A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 02:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfEDA34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 20:29:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53757 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbfEDA3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 May 2019 20:29:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 17:29:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,427,1549958400"; 
-   d="scan'208";a="170430483"
-Received: from jlwhitty-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.28.45])
-  by fmsmga001.fm.intel.com with ESMTP; 03 May 2019 17:29:48 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org,
-        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
-        srinivas.kandagatla@linaro.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 8/8] soundwire: rename/clarify MIPI DisCo properties
-Date:   Fri,  3 May 2019 19:29:26 -0500
-Message-Id: <20190504002926.28815-9-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
-References: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
+        id S1726622AbfEDApR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 20:45:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34784 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfEDApQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 May 2019 20:45:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e9so9890996wrc.1;
+        Fri, 03 May 2019 17:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8VwFKzzRbLWX4hrPiMqxNUfmabJrkNHd9w6xJf41fv0=;
+        b=FFctQLEfxvEoAsqU4bSjqDc7VCXplurecawm7GYV8g6MaI9McurKHGn8bCUOdfYj+W
+         lNCqTHnZqxc4FxB2GazKevK99DFl50K3qZguO8UfLUu1gJLqjdIMu1s60khZu/XfF/Uf
+         8cEZNAQgCcFVrH7YaN3bNvSAEPkizc13v2rh5P4hHyWKcGmaH9YUAUfCS4kTvPDRNtsX
+         DYctTZ5MqSYikYXqs0Yx7AEZRgEK6X28uSHGn+mF48PFvvmeTTwJquwrZMZv7m3nXFN7
+         AWeGEz6bGP+ccISx5RLAujEn7S6YFilSc9j2RozEbfxoJjRWo1FQuYW6QLRXLP88Hy0B
+         EzJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8VwFKzzRbLWX4hrPiMqxNUfmabJrkNHd9w6xJf41fv0=;
+        b=oojV0EoTe0DW+LlZfy2rVBjoFoV8Lor6Dyw+8X7TI+/xSVebHLxBY/a4z6/7W901/g
+         n+OY67qRXvl9iA0/iSU1PFZZwaLVdMnzZBOT7HilYqQQ3tGs9RoJvWsyuKYSbhwZkLVh
+         Nqudb12Rh9OTOCTgIPHOpGV5SSjCAz/jqhdcmyBUfdtVKuM5gqd3xYXNkSgrGbCds7Eb
+         2EDfsx/xO8LBCG07lMX+0bg/wkH/DQ4Y/bVYR65ErBxI51swzC0IP59EmR4DDtxvRQDP
+         LwJGTio+hCybLYIMlhJPgVuOIl3P6Ob+IqT6wO1b0anLZhJ5JYqIiG3ZScXFFvNE5MCo
+         eyrw==
+X-Gm-Message-State: APjAAAU11b11p5tJMU7IBkO3J4sKJcq+jm30QMibwUbBs6D/EInsGA39
+        eT8zcgLvXClW44lLzi7Z3vM=
+X-Google-Smtp-Source: APXvYqyK9YUQkHKVjtH6dPewEE0ZYFQDZ7WJBX0XymDviA/UFFnvDcdpOSMbiHrrzdIbrVasy/VIug==
+X-Received: by 2002:adf:db8a:: with SMTP id u10mr9525582wri.82.1556930714443;
+        Fri, 03 May 2019 17:45:14 -0700 (PDT)
+Received: from localhost.localdomain (ipb218f40a.dynamic.kabel-deutschland.de. [178.24.244.10])
+        by smtp.gmail.com with ESMTPSA id b11sm5979161wmh.29.2019.05.03.17.45.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 03 May 2019 17:45:13 -0700 (PDT)
+From:   Eugeniu Rosca <roscaeugeniu@gmail.com>
+X-Google-Original-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "George G . Davis" <george_davis@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: [PATCH 0/6] Zap SCIF2 DMA configuration in R-Car Gen3 DTS
+Date:   Sat,  4 May 2019 02:42:52 +0200
+Message-Id: <20190504004258.23574-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing definitions are ambiguous and possibly misleading.
+This series is triggered by a regression on M3 targets caused by
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=703db5d1b175
+("arm64: dts: renesas: r8a7796: Enable DMA for SCIF2"), when applied
+on top of rcar-3.9.x Renesas official kernel.
 
-For DP0, 'flow-control' is only relevant for the BRA protocol and
-should not be confused with async modes explicitly not supported for
-DP0, add prefix to follow MIPI DisCo definition
+This collection of patches attempts to consistently propagate the fix
+across the existing R-Car3 DTS. Full story is placed into
+commit ("Revert "arm64: dts: renesas: r8a7796: Enable DMA for SCIF2"").
 
-The use of 'device_interrupts' is also questionable. The MIPI
-SoundWire spec defines Slave-, DP0- and DPN-level
-implementation-defined interrupts. Using the 'device' prefix in the
-last two cases is misleading, not only is the term 'device' overloaded
-but these properties are only valid at the DP0 and DPn levels. Rename
-to follow the MIPI definitions, no need to be creative here.
+While debugging drivers/tty/serial/sh-sci.c, a minor update avoiding
+__ptrval__ in dev_dbg() is included here as well.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/bus.c        |  2 +-
- drivers/soundwire/mipi_disco.c |  6 +++---
- drivers/soundwire/stream.c     |  6 +++---
- include/linux/soundwire/sdw.h  | 13 +++++++------
- 4 files changed, 14 insertions(+), 13 deletions(-)
+Tested using v5.1-rc7-131-gea9866793d1e on:
+ - H3-ES2.0-ULCB
+ - M3N-ES1.1-ULCB
+ - M3-ES1.1-Salvator-XS
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 96e42df8f458..fe745830a261 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -648,7 +648,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
- 		return 0;
- 
- 	/* Enable DP0 interrupts */
--	val = prop->dp0_prop->device_interrupts;
-+	val = prop->dp0_prop->imp_def_interrupts;
- 	val |= SDW_DP0_INT_PORT_READY | SDW_DP0_INT_BRA_FAILURE;
- 
- 	ret = sdw_update(slave, SDW_DP0_INTMASK, val, val);
-diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index 7db816691393..a065cba8c2c5 100644
---- a/drivers/soundwire/mipi_disco.c
-+++ b/drivers/soundwire/mipi_disco.c
-@@ -150,13 +150,13 @@ int sdw_slave_read_dp0(struct sdw_slave *slave,
- 				dp0->words, dp0->num_words);
- 	}
- 
--	dp0->flow_controlled = fwnode_property_read_bool(port,
-+	dp0->BRA_flow_controlled = fwnode_property_read_bool(port,
- 				"mipi-sdw-bra-flow-controlled");
- 
- 	dp0->simple_ch_prep_sm = fwnode_property_read_bool(port,
- 				"mipi-sdw-simplified-channel-prepare-sm");
- 
--	dp0->device_interrupts = fwnode_property_read_bool(port,
-+	dp0->imp_def_interrupts = fwnode_property_read_bool(port,
- 				"mipi-sdw-imp-def-dp0-interrupts-supported");
- 
- 	return 0;
-@@ -226,7 +226,7 @@ int sdw_slave_read_dpn(struct sdw_slave *slave,
- 
- 		fwnode_property_read_u32(node,
- 				"mipi-sdw-imp-def-dpn-interrupts-supported",
--				&dpn[i].device_interrupts);
-+				&dpn[i].imp_def_interrupts);
- 
- 		fwnode_property_read_u32(node, "mipi-sdw-min-channel-number",
- 					 &dpn[i].min_ch);
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index 89edc897b8eb..ce9cb7fa4724 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -439,7 +439,7 @@ static int sdw_prep_deprep_slave_ports(struct sdw_bus *bus,
- 
- 	prep_ch.bank = bus->params.next_bank;
- 
--	if (dpn_prop->device_interrupts || !dpn_prop->simple_ch_prep_sm)
-+	if (dpn_prop->imp_def_interrupts || !dpn_prop->simple_ch_prep_sm)
- 		intr = true;
- 
- 	/*
-@@ -449,7 +449,7 @@ static int sdw_prep_deprep_slave_ports(struct sdw_bus *bus,
- 	 */
- 	if (prep && intr) {
- 		ret = sdw_configure_dpn_intr(s_rt->slave, p_rt->num, prep,
--					     dpn_prop->device_interrupts);
-+					     dpn_prop->imp_def_interrupts);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -493,7 +493,7 @@ static int sdw_prep_deprep_slave_ports(struct sdw_bus *bus,
- 	/* Disable interrupt after Port de-prepare */
- 	if (!prep && intr)
- 		ret = sdw_configure_dpn_intr(s_rt->slave, p_rt->num, prep,
--					     dpn_prop->device_interrupts);
-+					     dpn_prop->imp_def_interrupts);
- 
- 	return ret;
- }
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 89c51838b7ec..3b231472464a 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -206,10 +206,11 @@ enum sdw_clk_stop_mode {
-  * (inclusive)
-  * @num_words: number of wordlengths supported
-  * @words: wordlengths supported
-- * @flow_controlled: Slave implementation results in an OK_NotReady
-+ * @BRA_flow_controlled: Slave implementation results in an OK_NotReady
-  * response
-  * @simple_ch_prep_sm: If channel prepare sequence is required
-- * @device_interrupts: If implementation-defined interrupts are supported
-+ * @imp_def_interrupts: If set, each bit corresponds to support for
-+ * implementation-defined interrupts
-  *
-  * The wordlengths are specified by Spec as max, min AND number of
-  * discrete values, implementation can define based on the wordlengths they
-@@ -220,9 +221,9 @@ struct sdw_dp0_prop {
- 	u32 min_word;
- 	u32 num_words;
- 	u32 *words;
--	bool flow_controlled;
-+	bool BRA_flow_controlled;
- 	bool simple_ch_prep_sm;
--	bool device_interrupts;
-+	bool imp_def_interrupts;
- };
- 
- /**
-@@ -272,7 +273,7 @@ struct sdw_dpn_audio_mode {
-  * @simple_ch_prep_sm: If the port supports simplified channel prepare state
-  * machine
-  * @ch_prep_timeout: Port-specific timeout value, in milliseconds
-- * @device_interrupts: If set, each bit corresponds to support for
-+ * @imp_def_interrupts: If set, each bit corresponds to support for
-  * implementation-defined interrupts
-  * @max_ch: Maximum channels supported
-  * @min_ch: Minimum channels supported
-@@ -297,7 +298,7 @@ struct sdw_dpn_prop {
- 	u32 max_grouping;
- 	bool simple_ch_prep_sm;
- 	u32 ch_prep_timeout;
--	u32 device_interrupts;
-+	u32 imp_def_interrupts;
- 	u32 max_ch;
- 	u32 min_ch;
- 	u32 num_ch;
+Eugeniu Rosca (6):
+  serial: sh-sci: Reveal ptrval in dev_dbg
+  Revert "arm64: dts: renesas: r8a7796: Enable DMA for SCIF2"
+  arm64: dts: renesas: r8a7795: zap dma configuration in scif2
+  Revert "arm64: dts: renesas: r8a77965: Enable DMA for SCIF2"
+  Revert "arm64: dts: renesas: r8a77990: Enable DMA for SCIF2"
+  Revert "arm64: dts: renesas: r8a77995: add DMA for SCIF2"
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 3 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 3 ---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 3 ---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 4 +---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 ---
+ drivers/tty/serial/sh-sci.c               | 8 ++++----
+ 6 files changed, 5 insertions(+), 19 deletions(-)
+
 -- 
-2.17.1
+2.21.0
 
