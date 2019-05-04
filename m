@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3966213AFF
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 17:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27CF913B08
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 17:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfEDPlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 11:41:05 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34223 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfEDPlF (ORCPT
+        id S1726890AbfEDP4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 11:56:03 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39010 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfEDP4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 11:41:05 -0400
-Received: by mail-ot1-f65.google.com with SMTP id h2so174983oth.1;
-        Sat, 04 May 2019 08:41:04 -0700 (PDT)
+        Sat, 4 May 2019 11:56:03 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e24so9800417edq.6
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 08:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=soleen.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NOqG3X6KeVU8jW9kB98iNlmMsjqP6JLYvww7EO9cTKU=;
-        b=CUK4rgKdIDA1cxCLaZilQgFgzUsj9LIn0xHBaVoj+tL1ynJO1ymrgmzCIBt1XKa9DI
-         7mjStmXpr4Md2G1X9It7LU6wyMY6LFu0S6zKL7bmKqY+bNDoDktyjuq1kMBlNR3owAYV
-         fn8d4tEvrjEXSxRAUphxi0KgZvkd5mQHAeysOjiVrT5NsPY948XFIo8roUsyLuV4nLfc
-         cToezmC45OVtOa6mCRXGhiyVILMOff9YGeo4gaTfIneOJAcp1eDoTn5R8Q2riM5NKqcC
-         YbhC2kUg/NUE225KMl7PJN8hQF2uMslrUhtUP9fXKkN8freEXF8UCm0LZFuzmbn+Xonv
-         q9eg==
+        bh=D/xUA4we+CfWIBMstY2ZZGUlR8dNMfA/8aG9kri4RSo=;
+        b=ZrdWTpIgvvrF424jIp+wrwRFjns9Vws1VhvhVyeQLQ8yUB0K/RtorMBF6hIJ8qdZr/
+         EMNY9XodjCnuUSks5vvIic5f25dogm0UqOVLHW1qPGEa5AIPjIUxhdJ6vyyG+zQwjSVb
+         Es6EOhcjogmP+jv9TmQXzop3fT6A5kIYR4QdSUVCyYBPBKteqVQv+Mr+7uyZmdwuPuLX
+         0XuWwnIzEw5utfKyj4eEzEOCUe+bSQvYbR0zp66AsLiLTgD/1mSrqF+0Fi72jzDJxuSU
+         jUBy/A5BIp4B5w1mm3m2TYLN7uiDehFBdz/RSQ6Qku4HP2JVpf746kbtSaqqIkqt/mKN
+         QUJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NOqG3X6KeVU8jW9kB98iNlmMsjqP6JLYvww7EO9cTKU=;
-        b=e9/KjuUzkp7Pd6MMPLP9p3eULVvJuukO586HbWrZWlVFzP/S1GAuPkHbpR4Si2Y6hW
-         Lv4z9f13Z5KJp1Fg8fpHXy/0t0S+BZMtcUt1/79qZUVGuz6QkIYahCKZyAfTP/PIpEwb
-         nXd9MZvHex1qSdqMqWD9sicpGVnIBWeWbqHJi7EMkJixE6NETfm3wgGNvnXrTXywsn2C
-         pMR3tVdyg7+9fW4LcLY7rxH6NWi8mtWItMPc+36eUeOZz+4TxGdpwgy9tNCm3Jidh8qX
-         ByDjc8QssUBquaOJcNb/RVckrzPSh6Xz8wDUzdsTYbwEFy37Iq04/DSuNGBla2WesAMs
-         dHHg==
-X-Gm-Message-State: APjAAAU0cmGbK0X4b7Z59hXDMHI0FE16LiaaKYelLDx0A6PFwDwS7Ib4
-        rK3p0L0w//IY4BNwccWr9bYa6jJ9J+nhWX6Xs+4=
-X-Google-Smtp-Source: APXvYqxcHQ/Bg7b3kWRZyf62dPFG7TyyCvCwOhkNH6X/hpK+QcYgbUfM30aI6ikuoHEyWbcw00nNIg2rTZHkgyI0YW8=
-X-Received: by 2002:a05:6830:14c2:: with SMTP id t2mr5165076otq.64.1556984464473;
- Sat, 04 May 2019 08:41:04 -0700 (PDT)
+        bh=D/xUA4we+CfWIBMstY2ZZGUlR8dNMfA/8aG9kri4RSo=;
+        b=Ey21+H2MH96GY7pgMQeTRcddpTbXVjFcxGjU8UQV8hy8N18N0BBDFzC+FMqLW6Pupy
+         w7h39EVYXrJXj+Irc8TQCgBK/002Iqlv+D+Cr2tNWz/j9R1K6kxJXkn1PgE7mSBeYhN9
+         92ERYAMYBVpoFP6i+ridfsVGhtZm5KgU1QCGUhryiU+bVinNxZPjIp3LZE7SQQ2utiEZ
+         nnFfhCVBBs2JXQ41TATYHw8EzIXxiWFPt65GtzTyHM+WX79mp18RFQy8HEjNrGBgZ0Fn
+         PqKdz7e1ahPf4exM8VH5ZYmyA8Z1wfH1HzO7YFLwcsNAb0mJoeYJyDEZ+9vNE9wXGGjp
+         Ac5g==
+X-Gm-Message-State: APjAAAWXehnVuim4+ziGNUNRWyM34UTtzw1rxdejdMD4fFt3CGYUrd6k
+        zp8XqLutMLCTzL7HyTfQTYON8b/JR7ECElzmBKiITw==
+X-Google-Smtp-Source: APXvYqwL1+OT6I7xDELCdfNz+oPiiC/N2OEv5oobeObUVGp+lISzqLMPEiMy5oB5eqPGvxPFUEwyNJ8Pi/qnMyQIUAw=
+X-Received: by 2002:a17:906:3fca:: with SMTP id k10mr11517604ejj.126.1556985361722;
+ Sat, 04 May 2019 08:56:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190422064046.2822-1-o.rempel@pengutronix.de>
- <20190422064046.2822-4-o.rempel@pengutronix.de> <20190422132533.GA12718@lunn.ch>
-In-Reply-To: <20190422132533.GA12718@lunn.ch>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Sat, 4 May 2019 23:40:53 +0800
-Message-ID: <CAJsYDVJ84RsNVe9Mj9sYYwwLmmMkinRSJW4ziW22Sf04wS5gyw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] net: ethernet: add ag71xx driver
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org
+References: <155552633539.2015392.2477781120122237934.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155552634075.2015392.3371070426600230054.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190501232517.crbmgcuk7u4gvujr@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+ <CAPcyv4hxy86gWN3ncTQmHi8DT31k8YzsweMfGHgCh=sORMQQcg@mail.gmail.com> <CAPcyv4hAh-Joe3Pt0r5CPSaWpZ4YoNF2jNDcvbMF2fsQm7Hetg@mail.gmail.com>
+In-Reply-To: <CAPcyv4hAh-Joe3Pt0r5CPSaWpZ4YoNF2jNDcvbMF2fsQm7Hetg@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Sat, 4 May 2019 11:55:50 -0400
+Message-ID: <CA+CK2bCVAuYFFee+P09H_5fN4w2BHXUS1ZeSVN7hxcCTwgobqA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/12] mm/sparsemem: Introduce struct mem_section_usage
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-On Mon, Apr 22, 2019 at 9:28 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> [...]
-> > +     /*
-> > +      * On most (all?) Atheros/QCA SoCs dual eth interfaces are not equal.
-> > +      *
-> > +      * That is to say eth0 can not work independently. It only works
-> > +      * when eth1 is working.
-> > +      */
+> > I'm ok with it being 16M for now unless it causes a problem in
+> > practice, i.e. something like the minimum hardware mapping alignment
+> > for physical memory being less than 16M.
 >
-> Please could you explain that some more? Is there just one MDIO bus
-> shared by two ethernet controllers? If so, it would be better to have
-> the MDIO bus controller as a separate driver.
+> On second thought, arbitrary differences across architectures is a bit
+> sad. The most common nvdimm namespace alignment granularity is
+> PMD_SIZE, so perhaps the default sub-section size should try to match
+> that default.
 
-mdio registers exists on both ethernet blocks. And due to how reset
-works on this ethernet IP, it's hard to split it into a separated
-driver. (Only asserting both eth and mdio resets together will reset
-everything including register values.)
-The reason why gmac1 should be brought up first is that on some chips,
-mdio on gmac0 connects to nothing and phy used by gmac0 is on mdio bus
-of gmac1.
+I think that even if you keep it 16M for now, at very least you should
+make the map_active bitmap scalable so it will be possible to change
+as required later without revisiting all functions that use it. Making
+it a static array won't slowdown x86, as it will be still a single
+64-bit word on x86.
 
-> [...]
-
-Regards,
-Chuanhong Guo
+Pasha
