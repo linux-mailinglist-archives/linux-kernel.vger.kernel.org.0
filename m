@@ -2,74 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097B01391D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14EF1389F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 12:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfEDKaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 06:30:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfEDK0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 06:26:10 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF2C52084A;
-        Sat,  4 May 2019 10:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556965569;
-        bh=b5/REvLuj5EedkrELyJMPb1LKUssGcL2wMYSc8F2S2o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJOs0T2Pn4SOjGz71OEAClVwSIC7TGDGq1ehrQpj0CJILkODKoL1LJ3ASZp19oQwt
-         wGJ7VvLTiUdGJUe3YcN3ePCQEXBy3i+PvZa85+jRa6aaqjuLhGyoEycCZ+0pVHfA3Q
-         rQ1SONqgYKCZUHyAkeGPrEXRXLAxiG55SCj9zje0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 21/32] bnxt_en: Free short FW command HWRM memory in error path in bnxt_init_one()
-Date:   Sat,  4 May 2019 12:25:06 +0200
-Message-Id: <20190504102453.156461845@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190504102452.523724210@linuxfoundation.org>
-References: <20190504102452.523724210@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726905AbfEDKP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 06:15:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51454 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725819AbfEDKP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 06:15:28 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5BDD631B4B829C42EB22;
+        Sat,  4 May 2019 18:15:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 4 May 2019 18:15:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Anton Altaparmakov <anton@tuxera.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ntfs: remove set but not used variable 'attr_len'
+Date:   Sat, 4 May 2019 10:25:06 +0000
+Message-ID: <20190504102506.99020-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-[ Upstream commit f9099d611449836a51a65f40ea7dc9cb5f2f665e ]
+fs/ntfs/inode.c: In function 'ntfs_truncate':
+fs/ntfs/inode.c:2357:6: warning:
+ variable 'attr_len' set but not used [-Wunused-but-set-variable]
 
-In the bnxt_init_one() error path, short FW command request memory
-is not freed. This patch fixes it.
+It is never use since introduction in
+commit dd072330d1a6 ("NTFS: Implement fs/ntfs/inode.[hc]::ntfs_truncate().
+It only supports       uncompressed and unencrypted files.")
 
-Fixes: e605db801bde ("bnxt_en: Support for Short Firmware Message")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ntfs/inode.c | 2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -10632,6 +10632,7 @@ init_err_cleanup_tc:
- 	bnxt_clear_int_mode(bp);
+diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+index fb1a2b49a5da..1c8b669e7a52 100644
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -2354,7 +2354,6 @@ int ntfs_truncate(struct inode *vi)
+ 	ATTR_RECORD *a;
+ 	const char *te = "  Leaving file length out of sync with i_size.";
+ 	int err, mp_size, size_change, alloc_change;
+-	u32 attr_len;
  
- init_err_pci_clean:
-+	bnxt_free_hwrm_short_cmd_req(bp);
- 	bnxt_free_hwrm_resources(bp);
- 	bnxt_free_ctx_mem(bp);
- 	kfree(bp->ctx);
+ 	ntfs_debug("Entering for inode 0x%lx.", vi->i_ino);
+ 	BUG_ON(NInoAttr(ni));
+@@ -2728,7 +2727,6 @@ int ntfs_truncate(struct inode *vi)
+ 	 * this cannot fail since we are making the attribute smaller thus by
+ 	 * definition there is enough space to do so.
+ 	 */
+-	attr_len = le32_to_cpu(a->length);
+ 	err = ntfs_attr_record_resize(m, a, mp_size +
+ 			le16_to_cpu(a->data.non_resident.mapping_pairs_offset));
+ 	BUG_ON(err);
+
 
 
