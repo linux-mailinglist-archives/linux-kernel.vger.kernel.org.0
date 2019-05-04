@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FEB13BB6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA4213BA3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfEDSkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:40:11 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36511 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbfEDSij (ORCPT
+        id S1727560AbfEDSiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:38:51 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40304 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbfEDSik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 14:38:39 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y8so7634159ljd.3
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:38 -0700 (PDT)
+        Sat, 4 May 2019 14:38:40 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d15so7847814ljc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4sMfKD6BWHHY2w0leCFH8ILHNGcbbmFVkVvKPdVieNc=;
-        b=hxarlySSKrvW9s7uG9u1fIU9cGNTvxWsqqv5ikXOvS3MO579hnmYEU/umNLoGeFlyl
-         3b1iwcDzIFAP3Jl/owreGfLhII+TA99CUWyvLxIy+qEtnklNfvtxIF9D7Njdv+Zzcbjo
-         l/3RVycxqsyLrrWfwwccNMkhZJ27/SNVUwFmdPdZ8E5ixWDdu/aXjl4UYR1ywEGw7bAP
-         0pNrQ9dWpNvVt+2WjOsORXL1uuYrbpMZ49Q/lnz+ObKGW2cYV/4d7OrN3Vrw/1ogTmFr
-         Nl+daEBaPqcL3gaWtAPqYqdgS6eGSQR/ORnzr8zbPNe2zZOCWgc9q1s2yZ3mI+T26CVI
-         oNow==
+        bh=5O6MLyuJzTZCFkCSq5yloQt0fdGoVw3zgENohA8hO08=;
+        b=Nbwf3XKwBmJoTj14dk59ALfYH+iU3xwyWgEGC+X7Ci+hsaGlkaVIlZgpOcGhqqR8xe
+         C+fkUeJAEeOWFsrtujSTwNLkxdcZOdeffxyPNAtHHdTGfsudMB7xVpkaiacGaaaUP/ZO
+         f2/jpfMkyv/FjymZbTk3WMj96GfndLQGfKeGP+8Ke5sWPPlEYOW6JpGouslht/hImfm+
+         NExUJyFd7A06vSvOQ9YbxDUUfwzSYNTTnCsRebIZG3/xrqbT6sjH3rgDUNwMHdVCJwUT
+         bMDyeudN8TEfx5hebgcy+N1SgFwBIYoGSkneT/D5YnwyXW59mPDdfAtn5eMEt0pwU+Cz
+         SU1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4sMfKD6BWHHY2w0leCFH8ILHNGcbbmFVkVvKPdVieNc=;
-        b=egZVyXKdQLZv2i1MDPRXzkisiO8RCTMGRgE/xqsjtJJCGyHP5BQ085BivTscrUBxy2
-         vanCwFyxecCetpGu+yNniRX9u+FzUt5VseT0Mge3/QKdynX7tN6z0DFxOoFFvAnATY/E
-         IVtZ7UBoxK3kpX7ZNlHNtqVjMf718tnKY5Sis08hz1heQctVvrHjaHiJ80SygnfY4AYJ
-         BDYEcy9dfm9XqTkjbas+c+ekDee+5KRJpY+yUWp6sq6/nu5tRGWJT3WYCvOXzaWLINv5
-         ME0IAJizeHkn59ItExWPCwIVIVNgpKaRmBQ1HVDRqse/P+kSpEx2NSr6qMyUj1/dTl4j
-         sIxw==
-X-Gm-Message-State: APjAAAUPUSeZLdKGNSzf+MU9KNiYAEJIh+t58ZcXHOp84OpjBKjM6VYl
-        sSgupvzIh8ZNnSxYRaNv1nQ9hw==
-X-Google-Smtp-Source: APXvYqwg9+2iF7iezU58WykeOaS9dYyJU+rYamqU1PfMDzCQIa5wT2f6a1cyss8VQSuveC8kunoMjw==
-X-Received: by 2002:a2e:7611:: with SMTP id r17mr2332585ljc.95.1556995117501;
-        Sat, 04 May 2019 11:38:37 -0700 (PDT)
+        bh=5O6MLyuJzTZCFkCSq5yloQt0fdGoVw3zgENohA8hO08=;
+        b=aMy1yrmO9Bnzpz+akERuAYCjHqQ08SA8lfxSkvOOlT1kqPHBqCT00m1D++oXmWSN+u
+         hQ5lkrPbrSetFdAaGTilldJ0JfO17Mu8cJNe5XQ1bGl2Na8C0FMuoxlfVlb12Hmkpcj0
+         juJxl6q0vqCVE68j9xDXdZgFq0AyNIeyV2liOucldzBMEcocc23+Fu8I2Ce05EI2g/sA
+         9cxViNOD8IB+X1h56HSWs/1HtVzbulqkaSXvbBGAvDbMpA+XKrrBuhcOPBpMIY5sYEhH
+         zycyYO7puJll980EwL/7C2ykdNiN/yn0YbpQySQtMVSPqpz0d7pC1CZCtDDj7X+StObG
+         GXmg==
+X-Gm-Message-State: APjAAAX/UM9ojl/eUlW0Aa2sezvseWJSOaSVX0pHRTQ8r/8ArehkYQIu
+        uV4JQtSxZ0ZSeAhcs+mCBI4AEg==
+X-Google-Smtp-Source: APXvYqxulArf5fnY87m4TK4QnGXQiIo3lPF8Za4+XQ+vQ2loWp9Fgs21Ekh3wK6iNhdRM9+5SJP50A==
+X-Received: by 2002:a2e:97c1:: with SMTP id m1mr2669190ljj.59.1556995118365;
+        Sat, 04 May 2019 11:38:38 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.36
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:36 -0700 (PDT)
+        Sat, 04 May 2019 11:38:37 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Marcin Dziegielewski <marcin.dziegielewski@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 12/26] lightnvm: pblk: set propper line as data_line after gc
-Date:   Sat,  4 May 2019 20:37:57 +0200
-Message-Id: <20190504183811.18725-13-mb@lightnvm.io>
+Subject: [GIT PULL 13/26] lightnvm: prevent race condition on pblk remove
+Date:   Sat,  4 May 2019 20:37:58 +0200
+Message-Id: <20190504183811.18725-14-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -66,30 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
 
-In current implementation of l2p recovery, when we are after gc and we
-have open line, we are not setting current data line properly (we set
-last line from the device instead of last line ordered by seq_nr) and
-in consequence, kernel panic and data corruption.
+When we trigger nvm target remove during device hot unplug, there is
+a probability to hit a general protection fault. This is caused by use
+of nvm_dev thay may be freed from another (hot unplug) thread
+(in the nvm_unregister function).
+
+Introduce lock in nvme_ioctl_dev_remove function to prevent this
+situation.
 
 Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
 Reviewed-by: Javier González <javier@javigon.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-recovery.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/lightnvm/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 83b467b5edc7..017874e03253 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -844,6 +844,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		spin_unlock(&l_mg->free_lock);
- 	} else {
- 		spin_lock(&l_mg->free_lock);
-+		l_mg->data_line = data_line;
- 		/* Allocate next line for preparation */
- 		l_mg->data_next = pblk_line_get(pblk);
- 		if (l_mg->data_next) {
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index c01f83b8fbaf..e2abe88a139c 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -1340,11 +1340,13 @@ static long nvm_ioctl_dev_remove(struct file *file, void __user *arg)
+ 		return -EINVAL;
+ 	}
+ 
++	down_read(&nvm_lock);
+ 	list_for_each_entry(dev, &nvm_devices, devices) {
+ 		ret = nvm_remove_tgt(dev, &remove);
+ 		if (!ret)
+ 			break;
+ 	}
++	up_read(&nvm_lock);
+ 
+ 	return ret;
+ }
 -- 
 2.19.1
 
