@@ -2,161 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A87B313A8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 978A413A9D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 16:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfEDOE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 10:04:29 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:54432 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726768AbfEDOE2 (ORCPT
+        id S1727123AbfEDOg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 10:36:28 -0400
+Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:44739
+        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726070AbfEDOg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 10:04:28 -0400
-X-UUID: 7b45a49b02564369a708bfd590c0959e-20190504
-X-UUID: 7b45a49b02564369a708bfd590c0959e-20190504
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1990895940; Sat, 04 May 2019 22:04:24 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 4 May 2019 22:04:22 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 4 May 2019 22:04:16 +0800
-Message-ID: <1556978656.25811.1.camel@mtksdaap41>
-Subject: Re: [PATCH v3 10/10] rtc: Add support for the MediaTek MT6358 RTC
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Brown" <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        Ran Bi <ran.bi@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        <linux-rtc@vger.kernel.org>
-Date:   Sat, 4 May 2019 22:04:16 +0800
-In-Reply-To: <20190503093117.54830-11-hsin-hsiung.wang@mediatek.com>
-References: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
-         <20190503093117.54830-11-hsin-hsiung.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Sat, 4 May 2019 10:36:28 -0400
+X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 May 2019 10:36:26 EDT
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AJAACjoM1c/7akqnwNWBkBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQEHAQEBAQEBgVQBAQEBAQELAYQlhBCTYAEBAQEBAQaBCC2DXoVukQG?=
+ =?us-ascii?q?EfQKCKTcGDgEDAQEBBAEBAQEChl8BAQEBAgEjFUEQCw4KAgImAgJXBgEMBgI?=
+ =?us-ascii?q?BAYMegXcFqjtxgS+FR4MegUWBCycBi2R4gQeBOIJrPodOglgEizeBboVolCU?=
+ =?us-ascii?q?JgguSPwYblUiMG5Z2gXgzGggoCIMnkGNgkT8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2AJAACjoM1c/7akqnwNWBkBAQEBAQEBAQEBAQEHAQEBA?=
+ =?us-ascii?q?QEBgVQBAQEBAQELAYQlhBCTYAEBAQEBAQaBCC2DXoVukQGEfQKCKTcGDgEDA?=
+ =?us-ascii?q?QEBBAEBAQEChl8BAQEBAgEjFUEQCw4KAgImAgJXBgEMBgIBAYMegXcFqjtxg?=
+ =?us-ascii?q?S+FR4MegUWBCycBi2R4gQeBOIJrPodOglgEizeBboVolCUJgguSPwYblUiMG?=
+ =?us-ascii?q?5Z2gXgzGggoCIMnkGNgkT8BAQ?=
+X-IronPort-AV: E=Sophos;i="5.60,430,1549900800"; 
+   d="scan'208";a="173381743"
+Received: from 124-170-164-182.dyn.iinet.net.au (HELO [192.168.0.106]) ([124.170.164.182])
+  by icp-osb-irony-out7.iinet.net.au with ESMTP; 04 May 2019 22:27:06 +0800
+Subject: Re: [PATCH 1/6] ARM: ks8695: watchdog: stop using mach/*.h
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+References: <20190415202501.941196-1-arnd@arndb.de>
+ <2424c672-e3fb-4c32-4c24-fafc59d03a96@uclinux.org>
+ <CACRpkdaJ+2bub_nDp9=5b4kyKjWDnOGKscWg3KsEVixDpk8rzA@mail.gmail.com>
+ <20190503170613.GA1783@roeck-us.net>
+From:   Greg Ungerer <gerg@kernel.org>
+Message-ID: <d8d81aca-722d-8b5f-cd5f-30cc3e4e407b@kernel.org>
+Date:   Sun, 5 May 2019 00:26:53 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190503170613.GA1783@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 94F06579A06AD170C4104FD99EDD8ACC6517C53AB96CA365032830D34A4671372000:8
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-03 at 17:31 +0800, Hsin-Hsiung Wang wrote:
-> From: Ran Bi <ran.bi@mediatek.com>
+
+On 4/5/19 3:06 am, Guenter Roeck wrote:
+> On Fri, May 03, 2019 at 08:16:05AM +0100, Linus Walleij wrote:
+>> On Fri, May 3, 2019 at 8:02 AM Greg Ungerer <gerg@uclinux.org> wrote:
+>>
+>>> I dug out some old ks8695 based hardware to try this out.
+>>> I had a lot of trouble getting anything modern working on it.
+>>> In the end I still don't have a reliable test bed to test this properly.
+>>
+>> What is usually used by old ARMv4 systems is OpenWrt or
+>> OpenEmbedded. Those is the only build systems that reliably
+>> produce a userspace for these things now, and it is also the
+>> appropriate size for this kind of systems.
+
+No, I can produce a user space environment for the KS8695 as well
+using the uClinux-dist build system. But that worked even less well
+than the old root filesystem that I had (which was also built with
+an older version of that build system).
+
+But there is no reason that old root filesystem should not work.
+And that is the thing that concerns me a bit here. I could mount
+it ok (it was a CRAMFS), it would run up the shell to a shell prompt,
+but when I try to run any commands from there they would oops.
+I didn't debug any further than that.
+
+
+>>> Ultimately though I am left wondering if the ks8695 support in the
+>>> kernel is useful to anyone the way it is at the moment. With a minimal
+>>> kernel configuration I can boot up to a shell - but the system is
+>>> really unreliable if you try to interactively use it. I don't think
+>>> it is the hardware - it seems to run reliably with the old code
+>>> it has running from flash on it. I am only testing the new kernel,
+>>> running with the existing user space root filesystem on it (which
+>>> dates from 2004 :-)
+>>
+>> Personally I think it is a bad sign that this subarch and boards do
+>> not have active OpenWrt support, they are routers after all (right?)
+>> and any active use of networking equipment should use a recent
+>> userspace as well, given all the security bugs that popped up over
+>> the years.
+>>
+>> With IXP4xx, Gemini and EP93xx we have found active users and
+>> companies selling the chips and reference designs and even
+>> recommending it for new products (!) at times.  If this is not the
+>> case with KS8695 and no hobbyists are willing to submit it
+>> to OpenWrt and modernize it to use device tree I think it should be
+>> deleted from the kernel.
+>>
 > 
-> This add support for the MediaTek MT6358 RTC. Driver using
-> compatible data to store different RTC_WRTGR address offset.
-> 
-> Signed-off-by: Ran Bi <ran.bi@mediatek.com>
-> ---
->  drivers/rtc/rtc-mt6397.c | 43 ++++++++++++++++++++++++++++++++--------
->  1 file changed, 35 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> index f85f1fc29e32..3476e29db87c 100644
-> --- a/drivers/rtc/rtc-mt6397.c
-> +++ b/drivers/rtc/rtc-mt6397.c
-> @@ -20,6 +20,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/io.h>
->  #include <linux/mfd/mt6397/core.h>
-> @@ -27,7 +28,8 @@
->  #define RTC_BBPU		0x0000
->  #define RTC_BBPU_CBUSY		BIT(6)
->  
-> -#define RTC_WRTGR		0x003c
-> +#define RTC_WRTGR_MT6358	0x3a
-> +#define RTC_WRTGR_MT6397	0x3c
->  
->  #define RTC_IRQ_STA		0x0002
->  #define RTC_IRQ_STA_AL		BIT(0)
-> @@ -71,6 +73,10 @@
->  #define RTC_NUM_YEARS		128
->  #define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
->  
-> +struct mtk_rtc_compatible {
-> +	u32			wrtgr_addr;
-> +};
-> +
->  struct mt6397_rtc {
->  	struct device		*dev;
->  	struct rtc_device	*rtc_dev;
-> @@ -78,7 +84,25 @@ struct mt6397_rtc {
->  	struct regmap		*regmap;
->  	int			irq;
->  	u32			addr_base;
-> +	const struct mtk_rtc_compatible *dev_comp;
-> +};
-> +
-> +static const struct mtk_rtc_compatible mt6358_rtc_compat = {
-> +	.wrtgr_addr = RTC_WRTGR_MT6358,
-> +};
-> +
-> +static const struct mtk_rtc_compatible mt6397_rtc_compat = {
-> +	.wrtgr_addr = RTC_WRTGR_MT6397,
-> +};
-> +
-> +static const struct of_device_id mt6397_rtc_of_match[] = {
-> +	{ .compatible = "mediatek,mt6358-rtc",
-> +		.data = (void *)&mt6358_rtc_compat, },
-> +	{ .compatible = "mediatek,mt6397-rtc",
-> +		.data = (void *)&mt6397_rtc_compat, },
-> +	{}
->  };
-> +MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
->  
->  static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
->  {
-> @@ -86,7 +110,8 @@ static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
->  	int ret;
->  	u32 data;
->  
-> -	ret = regmap_write(rtc->regmap, rtc->addr_base + RTC_WRTGR, 1);
-> +	ret = regmap_write(rtc->regmap,
-> +			   rtc->addr_base + rtc->dev_comp->wrtgr_addr, 1);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -332,6 +357,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  	struct resource *res;
->  	struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
->  	struct mt6397_rtc *rtc;
-> +	const struct of_device_id *of_id;
->  	int ret;
->  
->  	rtc = devm_kzalloc(&pdev->dev, sizeof(struct mt6397_rtc), GFP_KERNEL);
-> @@ -341,6 +367,13 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	rtc->addr_base = res->start;
->  
-> +	of_id = of_match_device(mt6397_rtc_of_match, &pdev->dev);
-> +	if (!of_id) {
+> That may be the best approach if indeed no one is using it,
+> much less maintaining it.
 
-This will never happens, but I'm fine with it.
+Well, I for one don't really use it any more. So I don't have a lot
+of motivation to maintain it any longer.
 
-Review-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-
-Joe.C
-
+Regards
+Greg
 
