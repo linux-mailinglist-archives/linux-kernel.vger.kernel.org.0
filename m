@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDE913694
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 02:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F5F13696
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 02:30:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfEDA3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 3 May 2019 20:29:50 -0400
-Received: from mga03.intel.com ([134.134.136.65]:11134 "EHLO mga03.intel.com"
+        id S1727015AbfEDA3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 3 May 2019 20:29:48 -0400
+Received: from mga18.intel.com ([134.134.136.126]:15260 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfEDA3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726928AbfEDA3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 3 May 2019 20:29:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 17:29:44 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 17:29:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,427,1549958400"; 
-   d="scan'208";a="170430439"
+   d="scan'208";a="170430455"
 Received: from jlwhitty-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.28.45])
-  by fmsmga001.fm.intel.com with ESMTP; 03 May 2019 17:29:41 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 03 May 2019 17:29:42 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -28,9 +28,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         srinivas.kandagatla@linaro.org,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 3/8] soundwire: mipi_disco: expose sdw_slave_read_dpn as symbol
-Date:   Fri,  3 May 2019 19:29:21 -0500
-Message-Id: <20190504002926.28815-4-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 4/8] soundwire: mipi_disco: expose sdw_slave_read_dp0 as symbol
+Date:   Fri,  3 May 2019 19:29:22 -0500
+Message-Id: <20190504002926.28815-5-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
 References: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
@@ -39,8 +39,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdw_slave_read_dpn was so far a static function, which prevented
-codec drivers from using it. Expose as non-static function and add symbol
+sdw_slave_read_dp0 was so far a static function, which prevented codec
+drivers from using it. Expose as non-static function and add symbol
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
@@ -49,41 +49,41 @@ Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
  2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index 6df68584c963..4995554bd6b6 100644
+index 4995554bd6b6..f6b1be920a19 100644
 --- a/drivers/soundwire/mipi_disco.c
 +++ b/drivers/soundwire/mipi_disco.c
-@@ -161,9 +161,9 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
- 	return 0;
+@@ -121,9 +121,9 @@ int sdw_master_read_prop(struct sdw_bus *bus)
  }
+ EXPORT_SYMBOL(sdw_master_read_prop);
  
--static int sdw_slave_read_dpn(struct sdw_slave *slave,
--			      struct sdw_dpn_prop *dpn, int count, int ports,
--			      char *type)
-+int sdw_slave_read_dpn(struct sdw_slave *slave,
-+		       struct sdw_dpn_prop *dpn, int count, int ports,
-+		       char *type)
+-static int sdw_slave_read_dp0(struct sdw_slave *slave,
+-			      struct fwnode_handle *port,
+-			      struct sdw_dp0_prop *dp0)
++int sdw_slave_read_dp0(struct sdw_slave *slave,
++		       struct fwnode_handle *port,
++		       struct sdw_dp0_prop *dp0)
  {
- 	struct fwnode_handle *node;
- 	u32 bit, i = 0;
-@@ -283,6 +283,7 @@ static int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 	int nval;
+ 
+@@ -160,6 +160,7 @@ static int sdw_slave_read_dp0(struct sdw_slave *slave,
  
  	return 0;
  }
-+EXPORT_SYMBOL(sdw_slave_read_dpn);
++EXPORT_SYMBOL(sdw_slave_read_dp0);
  
- /**
-  * sdw_slave_read_prop() - Read Slave properties
+ int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 		       struct sdw_dpn_prop *dpn, int count, int ports,
 diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 35662d9c2c62..04a45225e248 100644
+index 04a45225e248..594c17ed8593 100644
 --- a/include/linux/soundwire/sdw.h
 +++ b/include/linux/soundwire/sdw.h
-@@ -345,6 +345,9 @@ struct sdw_master_prop {
- 
- int sdw_master_read_prop(struct sdw_bus *bus);
- int sdw_slave_read_prop(struct sdw_slave *slave);
-+int sdw_slave_read_dpn(struct sdw_slave *slave,
-+		       struct sdw_dpn_prop *dpn, int count, int ports,
-+		       char *type);
+@@ -348,6 +348,9 @@ int sdw_slave_read_prop(struct sdw_slave *slave);
+ int sdw_slave_read_dpn(struct sdw_slave *slave,
+ 		       struct sdw_dpn_prop *dpn, int count, int ports,
+ 		       char *type);
++int sdw_slave_read_dp0(struct sdw_slave *slave,
++		       struct fwnode_handle *port,
++		       struct sdw_dp0_prop *dp0);
  
  /*
   * SDW Slave Structures and APIs
