@@ -2,68 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D341399C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 14:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5EE13979
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 13:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfEDMAI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 4 May 2019 08:00:08 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:56548
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727633AbfEDMAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 08:00:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 7C9CDB4C300;
-        Sat,  4 May 2019 11:13:13 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id cDlqnCe0ITqc; Sat,  4 May 2019 11:13:13 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E51E0B4C2F9;
-        Sat,  4 May 2019 11:13:12 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id QyRbfuhoaY7B; Sat,  4 May 2019 11:13:12 +0000 (UTC)
-Received: from [100.84.33.39] (unknown [106.197.209.246])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id E21B8B4C2F6;
-        Sat,  4 May 2019 11:13:04 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727434AbfEDLeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 07:34:12 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7722 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726529AbfEDLeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 07:34:12 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4919084083BFD99A0328;
+        Sat,  4 May 2019 19:34:09 +0800 (CST)
+Received: from [127.0.0.1] (10.184.189.20) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sat, 4 May 2019
+ 19:34:02 +0800
+Subject: Re: [PATCH] net: route: Fix vrf dst_entry ref count false increasing
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <davem@davemloft.net>, <christian@brauner.io>,
+        <roopa@cumulusnetworks.com>, <dsahern@gmail.com>,
+        <Jason@zx2c4.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     mousuanming <mousuanming@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>
+References: <76551ed7-47ef-7442-69de-6fb42fff4708@huawei.com>
+Message-ID: <9f599716-eef7-a224-0bda-2f4e7c2f58b4@huawei.com>
+Date:   Sat, 4 May 2019 19:33:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verificaci=C3=B3n_de_la_cuenta?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   =?utf-8?q?Administraci=C3=B3n_=3Cexportaciones=40minpal=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
-Date:   Sat, 04 May 2019 16:42:56 +0530
-Message-Id: <20190504111304.E21B8B4C2F6@smspyt.cancun.gob.mx>
+In-Reply-To: <76551ed7-47ef-7442-69de-6fb42fff4708@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.189.20]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguridad:
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+On 2019/5/4 16:03, linmiaohe wrote:
+> From: Suanming.Mou <mousuanming@huawei.com>
+> 
+> When config ip in default vrf same as the ip in specified
+> vrf, fib_lookup will return the route from table local
+> even if the in device is an enslaved l3mdev. Then the
+> dst_entry will hold the vrf device rather than loopback
+> device in local_input of function ip_route_input_slow.
+> So vrf dst_entry is false increased by route from table
+> local.
+> 
+> Here is reproduce step:
+> 1.enslave enp4s0 to vrf2, and config ip address:
+> ip link add vrf2 type vrf table 1
+> ip link set vrf2 up
+> ip link set enp4s0 master vrf2
+> ip addr ad 125.1.1.1/16 dev enp4s0
+> 
+> 2.config same ip in default vrf:
+> ip addr ad 125.1.1.1/16 dev enp6s0
+> 
+> 3.config peer and ping:
+> ip vrf exec vrf2 ping 125.1.1.2 -c 3
+> 
+> 4.del vrf2 link:
+> ip link del vrf2
+> 
+> And "unregister_netdevice: waiting for vrf2 to become free.
+> Usage count = 1" will occur.
+> 
+> Signed-off-by: Suanming.Mou <mousuanming@huawei.com>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>  net/core/fib_rules.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/net/core/fib_rules.c b/net/core/fib_rules.c
+> index ffbb827723a2..1a2c11ed1585 100644
+> --- a/net/core/fib_rules.c
+> +++ b/net/core/fib_rules.c
+> @@ -263,6 +263,11 @@ static int fib_rule_match(struct fib_rule *rule, struct fib_rules_ops *ops,
+>  	if (rule->tun_id && (rule->tun_id != fl->flowi_tun_key.tun_id))
+>  		goto out;
+> 
+> +	if (!rule->l3mdev &&
+> +	    (netif_index_is_l3_master(rule->fr_net, fl->flowi_iif) ||
+> +	     netif_index_is_l3_master(rule->fr_net, fl->flowi_oif)))
+> +		goto out;
+> +
+>  	if (rule->l3mdev && !l3mdev_fib_rule_match(rule->fr_net, fl, arg))
+>  		goto out;
+> 
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+I'am sorry, but I think this fix looks bad because this patch make vrf
+working with other ip rule impossible. I will send anothor patch to fix
+this. Thanks.
 
-Si el clic no funciona, haga clic en el enlace http://fsnhsnetadministrationsa.xtgem.com/index ,copie y pegue su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
-
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
