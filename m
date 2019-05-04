@@ -2,174 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6898F13808
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 09:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F8FC137FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 08:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfEDHEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 03:04:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfEDHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 03:04:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54694206BB;
-        Sat,  4 May 2019 07:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556953452;
-        bh=1AJ1bTaZS7IUTULpTVyVapc3iESDALoBwgOltqRyx1g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fVDSyUsTzcMGxxWmCApcfqmTWyTv5WmwWG85SyqMN56Jkr0A11qqluNIxlTpWwuVf
-         dKJ01DVOS0J+IK8ICyyG4sEuXEwOkFYcS4sJHO36tNLncYRlqqHUVHh60AbbMZU5yZ
-         qPMgfxRTc5ddPGR/+0i09hV/FpRzS96OpSXiZIRY=
-Date:   Sat, 4 May 2019 09:04:10 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
-        srinivas.kandagatla@linaro.org,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 6/7] soundwire: cadence_master: add debugfs register
- dump
-Message-ID: <20190504070410.GF9770@kroah.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-7-pierre-louis.bossart@linux.intel.com>
+        id S1727140AbfEDGy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 02:54:56 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43158 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726969AbfEDGyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 02:54:54 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 208E47543CC32401C728;
+        Sat,  4 May 2019 14:54:51 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 4 May 2019 14:54:43 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alastair D'Silva <alastair@d-silva.org>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ocxl: Fix return value check in afu_ioctl()
+Date:   Sat, 4 May 2019 07:04:30 +0000
+Message-ID: <20190504070430.57008-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190504010030.29233-7-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 08:00:29PM -0500, Pierre-Louis Bossart wrote:
-> Add debugfs file to dump the Cadence master registers
-> 
-> Credits: this patch is based on an earlier internal contribution by
-> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. The main change
-> is the use of scnprintf to avoid known issues with snprintf.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/cadence_master.c | 98 ++++++++++++++++++++++++++++++
->  drivers/soundwire/cadence_master.h |  5 ++
->  2 files changed, 103 insertions(+)
-> 
-> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index 682789bb8ab3..e9c30f18ce25 100644
-> --- a/drivers/soundwire/cadence_master.c
-> +++ b/drivers/soundwire/cadence_master.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/delay.h>
->  #include <linux/device.h>
-> +#include <linux/debugfs.h>
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
-> @@ -222,6 +223,103 @@ static int cdns_clear_bit(struct sdw_cdns *cdns, int offset, u32 value)
->  	return -EAGAIN;
->  }
->  
-> +/*
-> + * debugfs
-> + */
-> +
-> +#define RD_BUF (2 * PAGE_SIZE)
-> +
-> +static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
-> +			    char *buf, size_t pos, unsigned int reg)
-> +{
-> +	return scnprintf(buf + pos, RD_BUF - pos,
-> +			 "%4x\t%4x\n", reg, cdns_readl(cdns, reg));
-> +}
-> +
-> +static ssize_t cdns_reg_read(struct file *file, char __user *user_buf,
-> +			     size_t count, loff_t *ppos)
-> +{
-> +	struct sdw_cdns *cdns = file->private_data;
-> +	char *buf;
-> +	ssize_t ret;
-> +	int i, j;
-> +
-> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
-> +	if (!buf)
-> +		return -ENOMEM;
-> +
-> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
-> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nMCP Registers\n");
-> +	for (i = 0; i < 8; i++) /* 8 MCP registers */
-> +		ret += cdns_sprintf(cdns, buf, ret, i * 4);
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nStatus & Intr Registers\n");
-> +	for (i = 0; i < 13; i++) /* 13 Status & Intr registers */
-> +		ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_STAT + i * 4);
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nSSP & Clk ctrl Registers\n");
-> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL0);
-> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL1);
-> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL0);
-> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL1);
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nDPn B0 Registers\n");
-> +	for (i = 0; i < 7; i++) {
-> +		ret += scnprintf(buf + ret, RD_BUF - ret,
-> +				 "\nDP-%d\n", i);
-> +		for (j = 0; j < 6; j++)
-> +			ret += cdns_sprintf(cdns, buf, ret,
-> +					CDNS_DPN_B0_CONFIG(i) + j * 4);
-> +	}
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nDPn B1 Registers\n");
-> +	for (i = 0; i < 7; i++) {
-> +		ret += scnprintf(buf + ret, RD_BUF - ret,
-> +				 "\nDP-%d\n", i);
-> +
-> +		for (j = 0; j < 6; j++)
-> +			ret += cdns_sprintf(cdns, buf, ret,
-> +					CDNS_DPN_B1_CONFIG(i) + j * 4);
-> +	}
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nDPn Control Registers\n");
-> +	for (i = 0; i < 7; i++)
-> +		ret += cdns_sprintf(cdns, buf, ret,
-> +				CDNS_PORTCTRL + i * CDNS_PORT_OFFSET);
-> +
-> +	ret += scnprintf(buf + ret, RD_BUF - ret,
-> +			 "\nPDIn Config Registers\n");
-> +	for (i = 0; i < 7; i++)
-> +		ret += cdns_sprintf(cdns, buf, ret, CDNS_PDI_CONFIG(i));
-> +
-> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
-> +	kfree(buf);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations cdns_reg_fops = {
-> +	.open = simple_open,
-> +	.read = cdns_reg_read,
-> +	.llseek = default_llseek,
-> +};
-> +
-> +/**
-> + * sdw_cdns_debugfs_init() - Cadence debugfs init
-> + * @cdns: Cadence instance
-> + * @root: debugfs root
-> + */
-> +void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
-> +{
-> +	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
-> +}
-> +EXPORT_SYMBOL(sdw_cdns_debugfs_init);
+In case of error, the function eventfd_ctx_fdget() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Wait, why is this exported at all?  No one is calling it.
+This issue was detected by using the Coccinelle software.
+
+Fixes: 060146614643 ("ocxl: move event_fd handling to frontend")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/ocxl/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+index 8aa22893ed76..2870c25da166 100644
+--- a/drivers/misc/ocxl/file.c
++++ b/drivers/misc/ocxl/file.c
+@@ -257,8 +257,8 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 			return -EINVAL;
+ 		irq_id = ocxl_irq_offset_to_id(ctx, irq_fd.irq_offset);
+ 		ev_ctx = eventfd_ctx_fdget(irq_fd.eventfd);
+-		if (!ev_ctx)
+-			return -EFAULT;
++		if (IS_ERR(ev_ctx))
++			return PTR_ERR(ev_ctx);
+ 		rc = ocxl_irq_set_handler(ctx, irq_id, irq_handler, irq_free, ev_ctx);
+ 		break;
+
+
+
