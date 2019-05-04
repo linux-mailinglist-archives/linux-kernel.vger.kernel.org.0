@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2772B13BA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E91013B9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2019 20:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfEDSj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 14:39:29 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37978 "EHLO
+        id S1727633AbfEDSiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 14:38:55 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44162 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbfEDSiu (ORCPT
+        with ESMTP id S1727544AbfEDSiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 14:38:50 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e18so7863704lja.5
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:49 -0700 (PDT)
+        Sat, 4 May 2019 14:38:52 -0400
+Received: by mail-lj1-f195.google.com with SMTP id c6so2433367lji.11
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 11:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=o0cDU1BXv5VFQHPh2ti7WsJqqFC+QgZJXmk2RElz7/4=;
-        b=Yw9Rt8462pgPGQNH5YoTD4gO1SUCsji/TdAx5aRzo7lSmutgUdv2tjzEGTH14UPQQ+
-         gT3Ll8Dbn68+2Ny7OHrxKZsq0pyqitPsTDhH7E9ouZTmeo4av1g4/x0fCDpO6PcMUUPN
-         nofLR2t8f8fhZVZbTt2CV3v1CQ/2F0MGk8AqEjGeyfBw7X+/Dx/yi+OcRdPH0uV381Sy
-         wro9yA675OjNMI6P4WPNQsPDeBd5dL4lg5ZkxkOth2rjhmYFXFX6LKecTR6sHZ+yXO8t
-         HwN0TKLoBpwbcN4ksZf3AbHd+cDte4pU6rmu/Q0/qpynkRHJ3TSHeWEdXHuayWLYssn3
-         ZTwg==
+        bh=111n1Q8PXGJzaoGm9JyRCPHdkkw3QXVjBFzlxnZD76A=;
+        b=Y1xz9B5Tqg2VixkZD5Mh3Gm/KtlMFaA6xDtI4CoBYvmiMooJFwv+2LbBq/DJQO27P6
+         D3ywHDY/B9LpL8++IlGGmKfRypitZI3vBwEJUix+tP0x28iMhM7b9xf+l1ecDWmicp9x
+         50LgSjamwXXrzdRTe56oXPSTYx4lv4WOmwCClWlmWp2nEwzdxu7W8l99ITNnCbmZmvNq
+         iU/hUeK78uXnynUfd2Vxep8fTiQaG9tuOwBv/pBBRy5npVjkk4ps3VZYg1F0VtODrKyc
+         oKhIKr2MgdYO6S24A1VqecspnZdlbW2cbY7Krwhofku8AIs0214r8dK2nL2k2TZc5gwf
+         RZqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o0cDU1BXv5VFQHPh2ti7WsJqqFC+QgZJXmk2RElz7/4=;
-        b=f5MpuMdnqUJqRci5n+rYUt9OG/HFmn7A/DF0+lBwWRgJ5bH8PZJvQWb32xFrRD6cdi
-         /iY5QgF2JjpEJ0ZFqi1/5+20FqYjbc+hiw7x2/YO63Yh/fAL8ZfmhudRYvirCsn9768O
-         bGb9KK/qH0nWK2WNnmVX7XJvZ7xjFX8yH1lq+Vm/hY4MQnS5d80oThbmHpi4dz9kV0Hm
-         nKrmF8+EtXQQohdUxhMJ+gbfxHcJZOaeEro1bhvBhADLGQN8w5JB7LT/qPzL7NUc+tUi
-         NqH0/j3BWFHaTglv9DjFaCxkA6EdF6BtADt1BTTj4pkq6IoNLsoR3V+sJ2F47zyd79E9
-         ztkg==
-X-Gm-Message-State: APjAAAUaMqLgCkzyT9hX+nX5QLKxR3BCZ3c7jbBguthsLbKKYKpdtrhi
-        1bHyCJKdAZPHyo/YTBEQHX0Avg==
-X-Google-Smtp-Source: APXvYqw4JHliw8rAt42zU6TKO5tcUkqD3b3JbHhXJxYv5sshF7PsiThOnWntvJbYYitAicUNiKPnLw==
-X-Received: by 2002:a2e:c41:: with SMTP id o1mr4742110ljd.23.1556995128468;
-        Sat, 04 May 2019 11:38:48 -0700 (PDT)
+        bh=111n1Q8PXGJzaoGm9JyRCPHdkkw3QXVjBFzlxnZD76A=;
+        b=NpqwUM23lpBPUQiFTr5+xN4/6WFEAXmscc54mHti2Tzc+i4N+vHUyEckulNgEkWnnK
+         6nGAt0IN3y7/MIY454uRumBdMs4mg5FtM3MNWi7mBUkJ/GDe/fwiclnnEX5oScXBS49S
+         jO6sXIHBqHmrY5yYPHSTmJH4XV20KUc9YX0MXuwE/aYDtrKvjnBo0ZIHjmwSI2nb+1fS
+         /nBeUwi4SdCJgWg2BeCk7ub3M7UJB+grPEIM518nGb2/ZK8vI/+FC7+Ab/tzhB/JJq6F
+         bDNZf7sMOv0ZtwwmmNPFdB0LVuj2ee0vq91ia61yubob3llvdrEZisoK123sZPGs2TGl
+         P8rg==
+X-Gm-Message-State: APjAAAWOT+FuCanETAe9XN5zdfn1sdMDb4HTlwhh1Uq/Ka3aTwGNmp1V
+        SP/LGD85wAK5VphimpTJkN9vRQreU5UfVQ==
+X-Google-Smtp-Source: APXvYqwGAAFAneDP3QNlgjnihVBqXmiUyQzm98O70hpqr5y9l8RQlfomyezX0AvIUpLE3uiiM5MGRA==
+X-Received: by 2002:a2e:9241:: with SMTP id v1mr6645240ljg.6.1556995129283;
+        Sat, 04 May 2019 11:38:49 -0700 (PDT)
 Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.47
+        by smtp.gmail.com with ESMTPSA id q21sm1050260lfa.84.2019.05.04.11.38.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 11:38:47 -0700 (PDT)
+        Sat, 04 May 2019 11:38:48 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Igor Konopko <igor.j.konopko@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 22/26] lightnvm: pblk: recover only written metadata
-Date:   Sat,  4 May 2019 20:38:07 +0200
-Message-Id: <20190504183811.18725-23-mb@lightnvm.io>
+Subject: [GIT PULL 23/26] lightnvm: track inflight target creations
+Date:   Sat,  4 May 2019 20:38:08 +0200
+Message-Id: <20190504183811.18725-24-mb@lightnvm.io>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
 References: <20190504183811.18725-1-mb@lightnvm.io>
@@ -66,35 +66,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Igor Konopko <igor.j.konopko@intel.com>
 
-This patch ensures that smeta was fully written before even
-trying to read it based on chunk table state and write pointer.
+When creation process is still in progress, target is not yet on
+targets list. This causes a chance for removing whole lightnvm
+subsystem by calling nvm_unregister() in the meantime and finally by
+causing kernel panic inside target init function.
+
+This patch changes the behaviour by adding kref variable which tracks
+all the users of nvm_dev structure. When nvm_dev is allocated, kref
+value is set to 1. Then before every target creation the value is
+increased and decreased after target removal. The extra reference
+is decreased when nvm subsystem is unregistered.
 
 Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
+Reviewed-by: Javier González <javier@javigon.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-recovery.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/lightnvm/core.c  | 41 ++++++++++++++++++++++++++++++----------
+ include/linux/lightnvm.h |  1 +
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 865fe310cab4..a9085b0e6611 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -655,10 +655,12 @@ static int pblk_line_was_written(struct pblk_line *line,
- 	bppa = pblk->luns[smeta_blk].bppa;
- 	chunk = &line->chks[pblk_ppa_to_pos(geo, bppa)];
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index e2abe88a139c..0e9f7996ff1d 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -45,6 +45,8 @@ struct nvm_dev_map {
+ 	int num_ch;
+ };
  
--	if (chunk->state & NVM_CHK_ST_FREE)
--		return 0;
-+	if (chunk->state & NVM_CHK_ST_CLOSED ||
-+	    (chunk->state & NVM_CHK_ST_OPEN
-+	     && chunk->wp >= lm->smeta_sec))
-+		return 1;
++static void nvm_free(struct kref *ref);
++
+ static struct nvm_target *nvm_find_target(struct nvm_dev *dev, const char *name)
+ {
+ 	struct nvm_target *tgt;
+@@ -501,6 +503,7 @@ static int nvm_remove_tgt(struct nvm_dev *dev, struct nvm_ioctl_remove *remove)
+ 	}
+ 	__nvm_remove_target(t, true);
+ 	mutex_unlock(&dev->mlock);
++	kref_put(&dev->ref, nvm_free);
  
--	return 1;
-+	return 0;
+ 	return 0;
+ }
+@@ -1094,15 +1097,16 @@ static int nvm_core_init(struct nvm_dev *dev)
+ 	return ret;
  }
  
- static bool pblk_line_is_open(struct pblk *pblk, struct pblk_line *line)
+-static void nvm_free(struct nvm_dev *dev)
++static void nvm_free(struct kref *ref)
+ {
+-	if (!dev)
+-		return;
++	struct nvm_dev *dev = container_of(ref, struct nvm_dev, ref);
+ 
+ 	if (dev->dma_pool)
+ 		dev->ops->destroy_dma_pool(dev->dma_pool);
+ 
+-	nvm_unregister_map(dev);
++	if (dev->rmap)
++		nvm_unregister_map(dev);
++
+ 	kfree(dev->lun_map);
+ 	kfree(dev);
+ }
+@@ -1139,7 +1143,13 @@ static int nvm_init(struct nvm_dev *dev)
+ 
+ struct nvm_dev *nvm_alloc_dev(int node)
+ {
+-	return kzalloc_node(sizeof(struct nvm_dev), GFP_KERNEL, node);
++	struct nvm_dev *dev;
++
++	dev = kzalloc_node(sizeof(struct nvm_dev), GFP_KERNEL, node);
++	if (dev)
++		kref_init(&dev->ref);
++
++	return dev;
+ }
+ EXPORT_SYMBOL(nvm_alloc_dev);
+ 
+@@ -1147,12 +1157,16 @@ int nvm_register(struct nvm_dev *dev)
+ {
+ 	int ret, exp_pool_size;
+ 
+-	if (!dev->q || !dev->ops)
++	if (!dev->q || !dev->ops) {
++		kref_put(&dev->ref, nvm_free);
+ 		return -EINVAL;
++	}
+ 
+ 	ret = nvm_init(dev);
+-	if (ret)
++	if (ret) {
++		kref_put(&dev->ref, nvm_free);
+ 		return ret;
++	}
+ 
+ 	exp_pool_size = max_t(int, PAGE_SIZE,
+ 			      (NVM_MAX_VLBA * (sizeof(u64) + dev->geo.sos)));
+@@ -1162,7 +1176,7 @@ int nvm_register(struct nvm_dev *dev)
+ 						  exp_pool_size);
+ 	if (!dev->dma_pool) {
+ 		pr_err("nvm: could not create dma pool\n");
+-		nvm_free(dev);
++		kref_put(&dev->ref, nvm_free);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1184,6 +1198,7 @@ void nvm_unregister(struct nvm_dev *dev)
+ 		if (t->dev->parent != dev)
+ 			continue;
+ 		__nvm_remove_target(t, false);
++		kref_put(&dev->ref, nvm_free);
+ 	}
+ 	mutex_unlock(&dev->mlock);
+ 
+@@ -1191,13 +1206,14 @@ void nvm_unregister(struct nvm_dev *dev)
+ 	list_del(&dev->devices);
+ 	up_write(&nvm_lock);
+ 
+-	nvm_free(dev);
++	kref_put(&dev->ref, nvm_free);
+ }
+ EXPORT_SYMBOL(nvm_unregister);
+ 
+ static int __nvm_configure_create(struct nvm_ioctl_create *create)
+ {
+ 	struct nvm_dev *dev;
++	int ret;
+ 
+ 	down_write(&nvm_lock);
+ 	dev = nvm_find_nvm_dev(create->dev);
+@@ -1208,7 +1224,12 @@ static int __nvm_configure_create(struct nvm_ioctl_create *create)
+ 		return -EINVAL;
+ 	}
+ 
+-	return nvm_create_tgt(dev, create);
++	kref_get(&dev->ref);
++	ret = nvm_create_tgt(dev, create);
++	if (ret)
++		kref_put(&dev->ref, nvm_free);
++
++	return ret;
+ }
+ 
+ static long nvm_ioctl_info(struct file *file, void __user *arg)
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index d3b02708e5f0..4d0d5655c7b2 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -428,6 +428,7 @@ struct nvm_dev {
+ 	char name[DISK_NAME_LEN];
+ 	void *private_data;
+ 
++	struct kref ref;
+ 	void *rmap;
+ 
+ 	struct mutex mlock;
 -- 
 2.19.1
 
