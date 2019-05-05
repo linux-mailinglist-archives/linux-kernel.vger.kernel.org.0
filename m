@@ -2,121 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD571419A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 19:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E1EE141A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 19:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbfEERnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 13:43:49 -0400
-Received: from mx1.cock.li ([185.10.68.5]:46415 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726081AbfEERnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 13:43:49 -0400
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1557078224; bh=DJdHE0u5O0yorihys3d6p/PvPl9ahLoEF/nRpxntjlw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YQzSM5Z5vY/vUEAba8K8XQDzZVkVI6VfgiMHh8+yzeOrQOsayjHAxG8GqnQdD6UVZ
-         wo1FEgeLpgJ4t2YRsJ4ufW3C0tk8tLy2QKrrPvtJeiZVgEabSIbWATJP7LOBe8EIN2
-         uN1r5h52RwT4ocJRyXcOPtcK7em4Xqa+yuxQysQZmysXZYODVixhQAR1zRR+MaAf0w
-         BhzDbh1aerTL5hUBNoY5WkkIDa1Cu8vn4mntKj8bGeIajUIMB56VVE9hZD6zg1KCep
-         b1qo/pV6Hf4ZOmtVOijNTTU6Y1FpunWA6+FVeX9oVbukgkZhS9IyOLOaGtt9Pb1hMg
-         4rA811lGf16CA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        id S1727749AbfEERtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 13:49:14 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53224 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfEERtN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 13:49:13 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3F41914DA770F;
+        Sun,  5 May 2019 10:49:13 -0700 (PDT)
+Date:   Sun, 05 May 2019 10:49:12 -0700 (PDT)
+Message-Id: <20190505.104912.1247842313501822570.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     jakub.kicinski@netronome.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] netdevsim: Make nsim_num_vf static
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190504081207.22764-1-yuehaibing@huawei.com>
+References: <20190504081207.22764-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 05 May 2019 17:43:44 +0000
-From:   vsnsdualce2@redchan.it
-To:     rhkramer@gmail.com
-Cc:     debian-user@lists.debian.org, linux-kernel@vger.kernel.org,
-        Ivan Ivanov <qmastery16@gmail.com>, mailinglists@mattcrews.com,
-        jhasler@newsguy.com, scdbackup@gmx.net, richard@walnut.gen.nz,
-        curty@free.fr, jmtd@debian.org, mick.crane@gmail.com,
-        tomas@tuxteam.de, steve@einval.com, joe@jretrading.com,
-        rms@gnu.org, esr@thyrsus.com
-Subject: Re: Can a recipients rights under GNU GPL be revoked? - Bradley M.
- Kuhn is not an attorney (he should go get his JD and get licensed).
-In-Reply-To: <201905050807.51462.rhkramer@gmail.com>
-References: <60c1b08305c5326e3503f51d81622541@redchan.it>
- <201905050807.51462.rhkramer@gmail.com>
-Message-ID: <7075ee948a62ed059fb713b53e4e0c35@redchan.it>
-X-Sender: vsnsdualce2@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 05 May 2019 10:49:13 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rhkramer@gmail.com:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 4 May 2019 16:12:07 +0800
 
-https://www.americanbar.org/groups/professional_responsibility/publications/model_rules_of_professional_conduct/rule_5_4_professional_independence_of_a_lawyer/
-
-(Most state bar associations implement this or similar)
-
-
-
-(b) A lawyer shall not form a partnership with a nonlawyer if any of the 
-activities of the partnership consist of the practice of law.
-...
-(d) A lawyer shall not practice with or in the form of a professional 
-corporation or association authorized to practice law for a profit, if:
-
-(1) a nonlawyer owns any interest therein, except that a fiduciary 
-representative of the estate of a lawyer may hold the stock or interest 
-of the lawyer for a reasonable time during administration;
-
-(2) a nonlawyer is a corporate director or officer thereof or occupies 
-the position of similar responsibility in any form of association other 
-than a corporation ; or
-
-(3) a nonlawyer has the right to direct or control the professional 
-judgment of a lawyer.
-
-Steve McIntyre Wrote:
-> It's just bullshit trolling. Multiple different From: addresses, all
-> sent via cock.li. Easily blocked/ignored.
-
-> --
-> Steve McIntyre, Cambridge, UK.                                
-> >steve@einval.com
-> There's no sensation to compare with this
-> Suspended animation, A state of bliss
-
-How about you shut you fucking mouth about professions you are not 
-involved in?
-
-Free licenses are revocable. They are simply permission and not backed 
-by any bargained-for consideration. Weather you like it or not, Weather 
-it gets you "mad" or not.
-
-
-
-On 2019-05-05 12:07, rhkramer@gmail.com wrote:
-> On Sunday, May 05, 2019 12:51:15 AM vsnsdualce2@redchan.it wrote:
->> Bar rules do not allow lawyers to serve under a non-lawyer
->> in
->> an organization, and the organization was essentially a pro-bono law
->> firm
->> (which really needed a attorney in it's ranks...)
+> Fix sparse warning:
 > 
-> That's interesting, but (off the point of this email exchange), it 
-> puzzles me
-> -- many corporations headed by non-lawyers have lawyers on staff, so 
-> I'm
-> guessing that the statement you made applies only to organizations like 
-> law
-> firms, or, the lawyers on the staff of a non-law corporation are in
-> something at
-> least a little different than the normal employer / employee 
-> relationship.
+> drivers/net/netdevsim/bus.c:253:5: warning:
+>  symbol 'nsim_num_vf' was not declared. Should it be static?
 > 
-> (PS: I stand corrected on Kuhn being a lawyer -- thanks for the 
-> correction.)
-> 
-> Now I have to debate (with myself) whether to prune the cc list -- I 
-> forget
-> the original post -- was it really this widespread?
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Applied.
