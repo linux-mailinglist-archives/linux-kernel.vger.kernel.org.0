@@ -2,96 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B1013CB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 04:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 094B813CBB
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 04:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfEECEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 22:04:04 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45677 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbfEECED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 22:04:03 -0400
-Received: by mail-pf1-f196.google.com with SMTP id e24so4853098pfi.12
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2019 19:04:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZFhA4rpBi4Ho6CrUxobqyCCZrYULhg304dSUdvW7O94=;
-        b=VF97BCjYFHEAQLpYYbW91gr3FQIXdhnksyX+tLBpQCq6IOPLNoGKQ1xLm4n+GoZEK1
-         ZrMI9jRmv92rcu4yERa1vUnvkrYoiSlvlVDtuk58zcMFywKQjMNULJqXEPROjvk2LhoS
-         3IZ2EhwORtG6UrMA7SYMD7RU/CopH/XHCGLFM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZFhA4rpBi4Ho6CrUxobqyCCZrYULhg304dSUdvW7O94=;
-        b=MhUy4QCP1zApKnUUVaUucHGi2ehr71t0E9iOeaf2YeH3sN8jzxWT6oVxBL9V+FeGQt
-         bDpQUwy7rhae70G+yNxWO3MzmzImVLYHHwcihthgAs3aa7L91Vqb9/eaxaiOkcWcBJF5
-         95xGMGS7gFneI38S/CyQNZZLf4nQtPnlhJEbTL5LJyma/WUTW6IUzSVvHFh4XqadYLiT
-         qd6aOGqI20XN0Hg05lccaoTP0Ejx8XdcOQTwDDenUep1I7Kj941Ziei1o1EmCOLMhuAV
-         sk0onk4FMOtTZ/gZM0LcnujPqwhaILN80D66Pu6620J4oIhxwwFIibrRa6pOuKwWdcow
-         Ca/w==
-X-Gm-Message-State: APjAAAWoVBDlUIXk9ssBcu30cDT82OuIcTCDOa1uzbQfy8p2ZUPiBT1p
-        0jYSd5K2y9umBAwuy7liv326DBtKzZs=
-X-Google-Smtp-Source: APXvYqxVp6IA/vCCGuS3+eK5MQzvCZdy0r4p5IJ9nTyEy86IgB/c5iImNtANV5yxYN8IFPwA87P+VQ==
-X-Received: by 2002:aa7:91c8:: with SMTP id z8mr23430186pfa.110.1557021842475;
-        Sat, 04 May 2019 19:04:02 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 5sm2632829pfs.17.2019.05.04.19.03.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 04 May 2019 19:04:00 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH] doc/rcu: Correct field_count field naming in examples
-Date:   Sat,  4 May 2019 22:03:10 -0400
-Message-Id: <20190505020328.165839-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+        id S1727454AbfEECLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 22:11:20 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34292 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726636AbfEECLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 22:11:20 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1FB23F88FDFDF1B6B756;
+        Sun,  5 May 2019 10:11:18 +0800 (CST)
+Received: from [127.0.0.1] (10.184.189.20) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sun, 5 May 2019
+ 10:11:11 +0800
+Subject: Re: [PATCH v2] net: route: Fix vrf dst_entry ref count false
+ increasing
+To:     David Ahern <dsahern@gmail.com>, <davem@davemloft.net>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     mousuanming <mousuanming@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>
+References: <1a4c0c31-e74c-5167-0668-328dd342005e@huawei.com>
+ <dd325420-37ae-f731-1ea8-01f630820af0@gmail.com>
+From:   linmiaohe <linmiaohe@huawei.com>
+Message-ID: <d20b12f2-129a-7055-6dec-075523458b21@huawei.com>
+Date:   Sun, 5 May 2019 10:11:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd325420-37ae-f731-1ea8-01f630820af0@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.189.20]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I believe this field should be called field_count instead of file_count.
-Correct the doc with the same.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- Documentation/RCU/listRCU.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/RCU/listRCU.txt b/Documentation/RCU/listRCU.txt
-index adb5a3782846..190e666fc359 100644
---- a/Documentation/RCU/listRCU.txt
-+++ b/Documentation/RCU/listRCU.txt
-@@ -175,7 +175,7 @@ otherwise, the added fields would need to be filled in):
- 		list_for_each_entry(e, list, list) {
- 			if (!audit_compare_rule(rule, &e->rule)) {
- 				e->rule.action = newaction;
--				e->rule.file_count = newfield_count;
-+				e->rule.field_count = newfield_count;
- 				write_unlock(&auditsc_lock);
- 				return 0;
- 			}
-@@ -204,7 +204,7 @@ RCU ("read-copy update") its name.  The RCU code is as follows:
- 					return -ENOMEM;
- 				audit_copy_rule(&ne->rule, &e->rule);
- 				ne->rule.action = newaction;
--				ne->rule.file_count = newfield_count;
-+				ne->rule.field_count = newfield_count;
- 				list_replace_rcu(&e->list, &ne->list);
- 				call_rcu(&e->rcu, audit_free_rule);
- 				return 0;
--- 
-2.21.0.1020.gf2820cf01a-goog
+On 2019/5/4 22:59, David Ahern wrote:
+> On 5/4/19 7:13 AM, linmiaohe wrote:
+>> From: Suanming.Mou <mousuanming@huawei.com>
+>>
+>> When config ip in default vrf same as the ip in specified
+>> vrf, fib_lookup will return the route from table local
+>> even if the in device is an enslaved l3mdev. Then the
+> 
+> you need to move the local rule with a preference of 0 after the l3mdev
+> rule.
+> 
+> 
+
+Move the local rule after l3mdev rule can get rid of this problem. And
+even if this happend, we can delete the same ip address in default vrf
+to fix it.
+But I think maybe it's still a problem because other rule with default
+vrf out device holds the specified vrf device. It looks unreasonable.
+
+Many Thanks.
 
