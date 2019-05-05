@@ -2,69 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA43A1429E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 00:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC86142A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 00:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfEEWB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 18:01:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56926 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbfEEWBZ (ORCPT
+        id S1727940AbfEEWHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 18:07:08 -0400
+Received: from rcdn-iport-1.cisco.com ([173.37.86.72]:28484 "EHLO
+        rcdn-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbfEEWHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 18:01:25 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hNPCE-00019B-T5; Sun, 05 May 2019 22:01:23 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: fix shadowed variable ret return code being not checked
-Date:   Sun,  5 May 2019 23:01:22 +0100
-Message-Id: <20190505220122.5024-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Sun, 5 May 2019 18:07:07 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AMCQDJXc9c/4wNJK1lHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBZQKCD4E6ATKyK4F6EIRtgggjOgQNAQMBAQQBAQIBAm0ohj8LgT4BgzS?=
+ =?us-ascii?q?CC6sfiGOBRYEyAYZ3hFYXgX+BEYJkixIEk0mTaQmCC1aRYydugRABk0mMG5U?=
+ =?us-ascii?q?RgWkLE4FWMxoIGxWDKJBwHwORbwEB?=
+X-IronPort-AV: E=Sophos;i="5.60,435,1549929600"; 
+   d="scan'208";a="554054908"
+Received: from alln-core-7.cisco.com ([173.36.13.140])
+  by rcdn-iport-1.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 05 May 2019 22:07:06 +0000
+Received: from tusi.cisco.com (tusi.cisco.com [172.24.98.27])
+        by alln-core-7.cisco.com (8.15.2/8.15.2) with ESMTP id x45M76ds003095;
+        Sun, 5 May 2019 22:07:06 GMT
+From:   Ruslan Babayev <ruslan@babayev.com>
+To:     linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, mika.westerberg@linux.intel.com,
+        wsa@the-dreams.de, Andrew Morton <akpm@linux-foundation.org>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Enable SFP driver on ACPI based systems
+Date:   Sun,  5 May 2019 15:05:21 -0700
+Message-Id: <20190505220524.37266-1-ruslan@babayev.com>
+X-Mailer: git-send-email 2.17.1
+X-Outbound-SMTP-Client: 172.24.98.27, tusi.cisco.com
+X-Outbound-Node: alln-core-7.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+I have split the patch and resending to all relevant mailing lists as
+requested by Heiner Kallweit.
 
-Currently variable ret is declared in a while-loop code block that
-shadows another variable ret. When an error occurs in the while-loop
-the error return in ret is not being set in the outer code block and
-so the error check on ret is always going to be checking on the wrong
-ret variable resulting in check that is always going to be true and
-a premature return occurs.
 
-Fix this by removing the declaration of the inner while-loop variable
-ret so that shadowing does not occur.
-
-Addresses-Coverity: ("'Constant' variable guards dead code")
-Fixes: 6b06314c47e1 ("io_uring: add file set registration")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/io_uring.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 452e35357865..50f965060ef1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2363,7 +2363,6 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
- 	left = ctx->nr_user_files;
- 	while (left) {
- 		unsigned this_files = min_t(unsigned, left, SCM_MAX_FD);
--		int ret;
- 
- 		ret = __io_sqe_files_scm(ctx, this_files, total);
- 		if (ret)
--- 
-2.20.1
+[PATCH net-next 1/2] i2c: acpi: export
+[PATCH net-next 2/2] net: phy: sfp: enable i2c-bus detection on ACPI
 
