@@ -2,30 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84ADC1421E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 21:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5940814224
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 21:43:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbfEETeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 15:34:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40604 "EHLO mail.kernel.org"
+        id S1727824AbfEETng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 15:43:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727343AbfEETeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 15:34:50 -0400
+        id S1726636AbfEETnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 15:43:35 -0400
 Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C70552087F;
-        Sun,  5 May 2019 19:34:48 +0000 (UTC)
-Date:   Sun, 5 May 2019 15:34:47 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id B577F20578;
+        Sun,  5 May 2019 19:43:34 +0000 (UTC)
+Date:   Sun, 5 May 2019 15:43:33 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Cheng Jian <cj.chengjian@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, <huawei.libin@huawei.com>,
-        <xiexiuqi@huawei.com>, <mingo@redhat.com>
-Subject: Re: [PATCH] ftrace: enable trampoline when rec count decrement to
- one
-Message-ID: <20190505153447.594d4eab@oasis.local.home>
-In-Reply-To: <1556969979-111047-1-git-send-email-cj.chengjian@huawei.com>
-References: <1556969979-111047-1-git-send-email-cj.chengjian@huawei.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Viktor Rosendahl <viktor.rosendahl@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] ftrace: Implement fs notification for
+ preempt/irqsoff tracers
+Message-ID: <20190505154333.56f3a187@oasis.local.home>
+In-Reply-To: <20190504164710.GA55790@google.com>
+References: <20190501203650.29548-1-viktor.rosendahl@gmail.com>
+        <20190501203650.29548-2-viktor.rosendahl@gmail.com>
+        <20190504164710.GA55790@google.com>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -35,120 +37,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 4 May 2019 19:39:39 +0800
-Cheng Jian <cj.chengjian@huawei.com> wrote:
+On Sat, 4 May 2019 12:47:10 -0400
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-> Trampoline can only be enabled if there is only a single ops
-> attached to it. If there's only a single callback registered
-> to a function, and the ops has a trampoline registered for it,
-> then we can call the trampoline directly. This is very useful
-> for improving the performance of ftrace and livepatch.
-> 
-> But we always disable trampoline when unregister ftrace. So if
-> you have registered multiple ftrace_ops at the same location,
-> even if the other ones have been unregistered, you will no longer
-> be able to use trampoline.
-> 
-> To fix it, set FTRACE_FL_TRAMP flag if rec count is decremented
-> to one, and the ops that left has a trampoline.
-> 
-> Testing After this patch :
-> 
-> insmod livepatch_unshare_files.ko
-> cat /sys/kernel/debug/tracing/enabled_functions
-> 
-> 	unshare_files (1) R I	tramp: 0xffffffffc0000000(klp_ftrace_handler+0x0/0xa0) ->ftrace_ops_assist_func+0x0/0xf0
-> 
-> echo unshare_files > /sys/kernel/debug/tracing/set_ftrace_filter
-> echo function > /sys/kernel/debug/tracing/current_tracer
-> cat /sys/kernel/debug/tracing/enabled_functions
-> 
-> 	unshare_files (2) R I ->ftrace_ops_list_func+0x0/0x150
-> 
-> echo nop > /sys/kernel/debug/tracing/current_tracer
-> cat /sys/kernel/debug/tracing/enabled_functions
-> 
-> 	unshare_files (1) R I	tramp: 0xffffffffc0000000(klp_ftrace_handler+0x0/0xa0) ->ftrace_ops_assist_func+0x0/0xf0
+ 
+> I agree with the general idea, but I don't really like how it is done in the
+> patch.
 
-Thanks for the patch. There was some race condition that prevented me
-from doing this in the first place, but unfortunately, I don't remember
-what that was :-/
++1
 
-I'll have to think about this before applying this patch.
+> 
+> We do have a notification mechanism already in the form of trace_pipe. Can we
+> not improve that in some way to be notified of a new trace data? In theory,
+> the trace_pipe does fit into the description in the documentation: "Reads
+> from this file will block until new data is retrieved"
+> 
+> More comment below:
+> 
+> 
 
-Maybe there isn't a race condition, and I was just playing it safe, as
-there was a race condition between switching from regs caller back to
-non regs caller.
+> > +	config PREEMPTIRQ_FSNOTIFY
+> > +	bool "Generate fsnotify events for the latency tracers"
+> > +	default n
+> > +	depends on (IRQSOFF_TRACER || PREEMPT_TRACER) && FSNOTIFY
+> > +	help
+> > +	  This option will enable the generation of fsnotify events for the
+> > +	  trace file. This makes it possible for userspace to be notified about
+> > +	  modification of /sys/kernel/debug/tracing/trace through the inotify
+> > +	  interface.  
+> 
+> Does this have to be a CONFIG option? If prefer if the code automatically
+> does the notification and it is always enabled. I don't see any drawbacks of
+> that.
+
+I mentioned that anything it needs to be an option.
+
+
+> > +#ifdef CONFIG_PREEMPTIRQ_FSNOTIFY
+> > +
+> > +static void trace_notify_workfn(struct work_struct *work)  
+> [snip]
+> 
+> I prefer if this facility is available to other tracers as well such as
+> the wakeup tracer which is similar in output (check
+> Documentation/trace/ftrace.txt). I believe this should be a generic trace
+> facility, and not tracer specific.
+
+
+For what it's worth, I agree with everything Joel just stated.
+
+Thanks,
 
 -- Steve
-
-
-> 
-> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
-> ---
->  kernel/trace/ftrace.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index b920358..bdc29c2 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1626,6 +1626,11 @@ static bool test_rec_ops_needs_regs(struct
-> dyn_ftrace *rec) return  keep_regs;
->  }
->  
-> +static struct ftrace_ops *
-> +ftrace_find_tramp_ops_any(struct dyn_ftrace *rec);
-> +static struct ftrace_ops *
-> +ftrace_find_tramp_ops_next(struct dyn_ftrace *rec, struct ftrace_ops
-> *ops); +
->  static bool __ftrace_hash_rec_update(struct ftrace_ops *ops,
->  				     int filter_hash,
->  				     bool inc)
-> @@ -1754,15 +1759,17 @@ static bool __ftrace_hash_rec_update(struct
-> ftrace_ops *ops, }
->  
->  			/*
-> -			 * If the rec had TRAMP enabled, then it
-> needs to
-> -			 * be cleared. As TRAMP can only be enabled
-> iff
-> -			 * there is only a single ops attached to it.
-> -			 * In otherwords, always disable it on
-> decrementing.
-> -			 * In the future, we may set it if rec count
-> is
-> -			 * decremented to one, and the ops that is
-> left
-> -			 * has a trampoline.
-> +			 * The TRAMP needs to be set only if rec
-> count
-> +			 * is decremented to one, and the ops that is
-> +			 * left has a trampoline. As TRAMP can only
-> be
-> +			 * enabled if there is only a single ops
-> attached
-> +			 * to it.
->  			 */
-> -			rec->flags &= ~FTRACE_FL_TRAMP;
-> +			if (ftrace_rec_count(rec) == 1 &&
-> +			    ftrace_find_tramp_ops_any(rec))
-> +				rec->flags |= FTRACE_FL_TRAMP;
-> +			else
-> +				rec->flags &= ~FTRACE_FL_TRAMP;
->  
->  			/*
->  			 * flags will be cleared in
-> ftrace_check_record() @@ -1955,11 +1962,6 @@ static void
-> print_ip_ins(const char *fmt, const unsigned char *p)
-> printk(KERN_CONT "%s%02x", i ? ":" : "", p[i]); }
->  
-> -static struct ftrace_ops *
-> -ftrace_find_tramp_ops_any(struct dyn_ftrace *rec);
-> -static struct ftrace_ops *
-> -ftrace_find_tramp_ops_next(struct dyn_ftrace *rec, struct ftrace_ops
-> *ops); -
->  enum ftrace_bug_type ftrace_bug_type;
->  const void *ftrace_expected;
->  
-
