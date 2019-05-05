@@ -2,101 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EFA140BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF60140DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:52:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfEEPpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 11:45:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726524AbfEEPpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 11:45:10 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B11FA206DF;
-        Sun,  5 May 2019 15:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557071109;
-        bh=aKwSsB4VIQvPHjNpyepX94dwCojn4YcW4pPdu085lpA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0LZ8f5LyLX20WKafPP0af88glvklQ1x0J0Jve8bY4nJCqS9IyvDajjpokrGH3LdVt
-         +h1+08XmvOD2KobcKuiqSatQjSlPfOdnfVwZWlZnyukPLprLaQkxFC8O1M/49pfaFZ
-         5suhRhYTipcXVWcq6OvfsC/8fdhP0DI17yQOKFFs=
-Date:   Sun, 5 May 2019 16:45:03 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Philippe Schenker <dev@pschenker.ch>
-Cc:     linux-iio@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] iio: stmpe-adc: Enable all stmpe-adc interrupts
- just once
-Message-ID: <20190505164503.030d6687@archlinux>
-In-Reply-To: <20190503135725.9959-3-dev@pschenker.ch>
-References: <20190503135725.9959-1-dev@pschenker.ch>
-        <20190503135725.9959-3-dev@pschenker.ch>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727798AbfEEPw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 11:52:28 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39683 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbfEEPw1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 11:52:27 -0400
+Received: by mail-qt1-f195.google.com with SMTP id y42so12096363qtk.6
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 08:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ekhL+urX0SV3pO/WanUIad49ZFzCKRVsusysCBLgkOE=;
+        b=xWWosPQHmUFheOe1Au0aHAuk81jiD4yI3tFMkCufMgZkpHgtxb9cCqBttPlxKzRAHV
+         CrEPqOxXsAQiyW13TTg5vOY8UoMtKpL6DcTZe4PbEAXOnj8q+ze8NZrrvD041oNuuk4H
+         iw8RMna6hLhRus1sL/wdsLDLpFCZQ/CWWSRm0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ekhL+urX0SV3pO/WanUIad49ZFzCKRVsusysCBLgkOE=;
+        b=UccUQqf1RjXSn9BRDeAqrEUdImu33vrErX+DdSX+m9r2vC6J68VPBl1NDiODxby5K0
+         VEQveOKvzNoJGN26WxPrlBehkyOnKMCSAFGngtIpzvc1E0ntC1HSePEQsKvH0v1Z7vAy
+         EnmH0WU1YcjFgRAnMCiZ/f8TkQX5s2bQzcgD9T/FoDt28sg+lDcWZYg62cTwu21f/sv+
+         +qXMuiIG9Q6tden48vASXZbxfGFUz0mieOv2Eo0pYEBtZft+pBgRdPHIh5we8sSff088
+         mK7GWRByuq8zHdz/sOEiI5cMCcI2xeFIHvle+E6ce2K0C12TMCc5JjyZUJKG5DsqRYeq
+         1AUg==
+X-Gm-Message-State: APjAAAV4TaSS/t7wjclwo/8n/VrvVamFTV34aKGlUr8RE6qdEeYpq2S5
+        mzxJgGkL5VKiPPdUaqA+DvZ4Og==
+X-Google-Smtp-Source: APXvYqxdnS53Vsd6DpWFcZxDUYJu/q/j2nWSZ9Nnur37CeMi31rblPWvkG2lQoVA6LDxw23Tzx8FZg==
+X-Received: by 2002:a0c:8b6f:: with SMTP id d47mr17288737qvc.135.1557071546090;
+        Sun, 05 May 2019 08:52:26 -0700 (PDT)
+Received: from localhost ([2600:1003:b451:8ec8:55bc:61ad:9aa2:244e])
+        by smtp.gmail.com with ESMTPSA id v141sm5000241qka.35.2019.05.05.08.52.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 May 2019 08:52:25 -0700 (PDT)
+Date:   Sun, 5 May 2019 15:52:23 +0000
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michal Gregorczyk <michalgr@live.com>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Mohammad Husain <russoue@gmail.com>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        duyuchao <yuchao.du@unisoc.com>,
+        Manjo Raja Rao <linux@manojrajarao.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Tamir Carmeli <carmeli.tamir@gmail.com>,
+        Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Ziljstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Ingo Molnar <mingo@redhat.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH RFC] bpf: Add support for reading user pointers
+Message-ID: <20190505155223.GA4976@localhost>
+References: <20190502204958.7868-1-joel@joelfernandes.org>
+ <20190503121234.6don256zuvfjtdg6@e107158-lin.cambridge.arm.com>
+ <20190503134935.GA253329@google.com>
+ <20190505110423.u7g3f2viovvgzbtn@e107158-lin.cambridge.arm.com>
+ <20190505132949.GB3076@localhost>
+ <20190505144608.u3vsxyz5huveuskx@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190505144608.u3vsxyz5huveuskx@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  3 May 2019 15:57:25 +0200
-Philippe Schenker <dev@pschenker.ch> wrote:
+On Sun, May 05, 2019 at 03:46:08PM +0100, Qais Yousef wrote:
+> On 05/05/19 13:29, Joel Fernandes wrote:
+> > On Sun, May 05, 2019 at 12:04:24PM +0100, Qais Yousef wrote:
+> > > On 05/03/19 09:49, Joel Fernandes wrote:
+> > > > On Fri, May 03, 2019 at 01:12:34PM +0100, Qais Yousef wrote:
+> > > > > Hi Joel
+> > > > > 
+> > > > > On 05/02/19 16:49, Joel Fernandes (Google) wrote:
+> > > > > > The eBPF based opensnoop tool fails to read the file path string passed
+> > > > > > to the do_sys_open function. This is because it is a pointer to
+> > > > > > userspace address and causes an -EFAULT when read with
+> > > > > > probe_kernel_read. This is not an issue when running the tool on x86 but
+> > > > > > is an issue on arm64. This patch adds a new bpf function call based
+> > > > > 
+> > > > > I just did an experiment and if I use Android 4.9 kernel I indeed fail to see
+> > > > > PATH info when running opensnoop. But if I run on 5.1-rc7 opensnoop behaves
+> > > > > correctly on arm64.
+> > > > > 
+> > > > > My guess either a limitation that was fixed on later kernel versions or Android
+> > > > > kernel has some strict option/modifications that make this fail?
+> > > > 
+> > > > Thanks a lot for checking, yes I was testing 4.9 kernel with this patch (pixel 3).
+> > > > 
+> > > > I am not sure what has changed since then, but I still think it is a good
+> > > > idea to make the code more robust against such future issues anyway. In
+> > > > particular, we learnt with extensive discussions that user/kernel pointers
+> > > > are not necessarily distinguishable purely based on their address.
+> > > 
+> > > Yes I wasn't arguing against that. But the commit message is misleading or
+> > > needs more explanation at least. I tried 4.9.y stable and arm64 worked on that
+> > > too. Why do you think it's an arm64 problem?
+> > 
+> > Well it is broken on at least on at least one arm64 device and the patch I
+> > sent fixes it. We know that the bpf is using wrong kernel API so why not fix
+> > it? Are you saying we should not fix it like in this patch? Or do you have
+> > another fix in mind?
+> 
+> Again I have no issue with the new API. But the claim that it's a fix for
+> a broken arm64 is a big stretch. AFAICT you don't understand the root cause of
+> why copy_to_user_inatomic() fails in your case. Given that Android 4.9 has
+> its own patches on top of 4.9 stable, it might be something that was introduced
+> in one of these patches that breaks opensnoop, and by making it use the new API
+> you might be simply working around the problem. All I can see is that vanilla
+> 4.9 stable works on arm64.
 
-> From: Philippe Schenker <philippe.schenker@toradex.com>
-> 
-> This commit will enable the interrupts of all channels handled by this
-> driver only once in the probe function.
-> 
-> This will improve performance because one byte less has to be written over
-> i2c on each read out of the adc. On the fastest ADC mode this will improve
-> read out speed by 15%.
-> 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Makes sense. I'll pick this up once patch 2 discussion is sorted.
+Agreed that commit message could be improved. I believe issue is something to
+do with differences in 4.9 PAN emulation backports. AIUI PAN was introduced
+in upstream only in 4.10 so 4.9 needed backports.
 
-Jonathan
+I did not root cause this completely because "doing the right thing" fixed
+the issue. I will look more closely once I am home.
 
-> 
-> ---
-> 
->  drivers/iio/adc/stmpe-adc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
-> index baa41ffc0d76..427c890c6e7d 100644
-> --- a/drivers/iio/adc/stmpe-adc.c
-> +++ b/drivers/iio/adc/stmpe-adc.c
-> @@ -72,9 +72,6 @@ static int stmpe_read_voltage(struct stmpe_adc *info,
->  		return -EINVAL;
->  	}
->  
-> -	stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
-> -			STMPE_ADC_CH(info->channel));
-> -
->  	stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
->  			STMPE_ADC_CH(info->channel));
->  
-> @@ -328,6 +325,9 @@ static int stmpe_adc_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
-> +			~(norequest_mask & 0xFF));
-> +
->  	return devm_iio_device_register(&pdev->dev, indio_dev);
->  }
->  
+Thank you.
 
+
+
+
+> So I am happy about introducing the new API but not happy with the commit
+> message or the explanation given in it. Unless you can investigate the root
+> cause and relate how this fixes it (and not workaround a problem you're
+> specifically having) I think it's better to introduce this patch as a generic
+> new API that is more robust to handle reading __user data in BPF and drop
+> reference to opensnoop failures. They raise more questions and the real
+> intention of this patch anyway is to provide the new correct way for BPF
+> programs to read __user data regardless opensnoop fails or not AFAIU.
+> 
+> Cheers
+> 
+> --
+> Qais Yousef
