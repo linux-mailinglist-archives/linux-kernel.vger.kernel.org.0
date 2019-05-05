@@ -2,147 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A27513E71
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 10:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB39013C96
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 03:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfEEIdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 04:33:55 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40587 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfEEIdz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 04:33:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u17so5111179pfn.7
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 01:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kW9cFc3oY5uX+D8x24aFAh/eOz8mR3Xa9rRR63JZ7FE=;
-        b=KuITCgG6/MhcfWssqPO3bh4jADeh50kro0pY96IQauUkNWsThVozk9ys5p+dcOYwyk
-         xwkzNvUt/n1oYXOYf5pizL8KYVMREQoY+bGgOeUNNEAqigQ7Dx06y/PeHwLKw+5NT8VC
-         l5TWteBtOGzDt2FhoaOGoOoV5oXtDb4Mqu8NIW5kvl1SuMBQ4UwmNTq17kVZxMgQEtCb
-         17Mi8Uq/EgLF3bRG7ZRjUfyyGOHjXe9UKRi3N9YCYyfNG0+88V85skr71ZGuw95SPl3G
-         NpfqgdSXps2WinCzVPZ7AHysSmMZok4/SErNO+49d+jCKzPobSxXF+Oy2FavG7nAbUNF
-         o0bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kW9cFc3oY5uX+D8x24aFAh/eOz8mR3Xa9rRR63JZ7FE=;
-        b=QF4n1t/gdRfDkluI7hlECP7REEbvEh0Ux0cFrcCxiYAaZCN7a6xNsty4ORlPVYojqY
-         YfWZ/894xzdh/AvRIWrFf6ce6ZEnKDcY4QvTn3rD+/CHyyjRPMGSiN3q/r4R1Imfceiq
-         0VX0VEE+H1evilewBDbQhqQPa38XMwfVEn4Dmz/iJ69TD+/iwwzxw9pXWSwlylJtvccA
-         kbqHM9PW1fKTTsxPlhSYfjrrlzljHR1JqFISKPFNAoHv7D+BNPm8drmQAIdHoi2qZksB
-         oCctXG05RvmltLK+KPgAijFCzOEiPH5Pynm9EFIi0VKAEVFoxWUw0jqRMxKXO7Jwmsnw
-         evZQ==
-X-Gm-Message-State: APjAAAUIsb58dUT+e/3x/RuYA9as81eaGFikaPwNhv7TfUbO7I9jqVxq
-        DkbM1hIavtU1HwnfqOd8mKU=
-X-Google-Smtp-Source: APXvYqzQWdVsmMjhZY/tvLi3osuocNfeof5yskb0ufl3rA4pCMJgpak0r9V5hbbW1cvYD589up1mBQ==
-X-Received: by 2002:a63:360e:: with SMTP id d14mr23610439pga.188.1557045234544;
-        Sun, 05 May 2019 01:33:54 -0700 (PDT)
-Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id a18sm9013664pff.6.2019.05.05.01.33.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 May 2019 01:33:53 -0700 (PDT)
-From:   Nadav Amit <nadav.amit@gmail.com>
-X-Google-Original-From: Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH] x86/mm: Initialize pgd cache during mm initialization
-Date:   Sat,  4 May 2019 18:11:24 -0700
-Message-Id: <20190505011124.39692-1-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727413AbfEEB0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 21:26:20 -0400
+Received: from mga02.intel.com ([134.134.136.20]:59955 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726965AbfEEB0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 21:26:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 May 2019 18:26:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,431,1549958400"; 
+   d="scan'208";a="146319205"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 04 May 2019 18:26:14 -0700
+Cc:     baolu.lu@linux.intel.com, Heiko Stuebner <heiko@sntech.de>,
+        kvm@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        David Brown <david.brown@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        linux-tegra@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, murphyt7@tcd.ie,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [RFC 2/7] iommu/vt-d: Remove iova handling code from non-dma ops
+ path
+To:     Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
+References: <20190504132327.27041-1-tmurphy@arista.com>
+ <20190504132327.27041-3-tmurphy@arista.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <bf35694d-3ff4-0df7-0802-b0e87a9a0d47@linux.intel.com>
+Date:   Sun, 5 May 2019 09:19:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190504132327.27041-3-tmurphy@arista.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Poking-mm initialization might require to duplicate the PGD in early
-stage. Initialize the PGD cache earlier to prevent boot failures.
+Hi,
 
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 4fc19708b165 ("x86/alternatives: Initialize temporary mm for patching")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/pgtable.h |  1 +
- arch/x86/mm/pgtable.c          | 10 ++++++----
- init/main.c                    |  1 +
- 3 files changed, 8 insertions(+), 4 deletions(-)
+On 5/4/19 9:23 PM, Tom Murphy via iommu wrote:
+> @@ -4181,58 +4168,37 @@ static int intel_iommu_memory_notifier(struct notifier_block *nb,
+>   				       unsigned long val, void *v)
+>   {
+>   	struct memory_notify *mhp = v;
+> -	unsigned long long start, end;
+> -	unsigned long start_vpfn, last_vpfn;
+> +	unsigned long start_vpfn = mm_to_dma_pfn(mhp->start_pfn);
+> +	unsigned long last_vpfn = mm_to_dma_pfn(mhp->start_pfn +
+> +			mhp->nr_pages - 1);
+>   
+>   	switch (val) {
+>   	case MEM_GOING_ONLINE:
+> -		start = mhp->start_pfn << PAGE_SHIFT;
+> -		end = ((mhp->start_pfn + mhp->nr_pages) << PAGE_SHIFT) - 1;
+> -		if (iommu_domain_identity_map(si_domain, start, end)) {
+> -			pr_warn("Failed to build identity map for [%llx-%llx]\n",
+> -				start, end);
+> +		if (iommu_domain_identity_map(si_domain, start_vpfn,
+> +					last_vpfn)) {
+> +			pr_warn("Failed to build identity map for [%lx-%lx]\n",
+> +				start_vpfn, last_vpfn);
+>   			return NOTIFY_BAD;
+>   		}
+>   		break;
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 6b6bfdfe83aa..9635662e1163 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1027,6 +1027,7 @@ static inline int pgd_none(pgd_t pgd)
- 
- extern int direct_gbpages;
- void init_mem_mapping(void);
-+void pgd_cache_init(void);
- void early_alloc_pgt_buf(void);
- extern void memblock_find_dma_reserve(void);
- 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 3dbf440d4114..1f67b1e15bf6 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -373,14 +373,14 @@ static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
- 
- static struct kmem_cache *pgd_cache;
- 
--static int __init pgd_cache_init(void)
-+void __init pgd_cache_init(void)
- {
- 	/*
- 	 * When PAE kernel is running as a Xen domain, it does not use
- 	 * shared kernel pmd. And this requires a whole page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return 0;
-+		return;
- 
- 	/*
- 	 * when PAE kernel is not running as a Xen domain, it uses
-@@ -390,9 +390,7 @@ static int __init pgd_cache_init(void)
- 	 */
- 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_ALIGN,
- 				      SLAB_PANIC, NULL);
--	return 0;
- }
--core_initcall(pgd_cache_init);
- 
- static inline pgd_t *_pgd_alloc(void)
- {
-@@ -420,6 +418,10 @@ static inline void _pgd_free(pgd_t *pgd)
- }
- #else
- 
-+void __init pgd_cache_init(void)
-+{
-+}
-+
- static inline pgd_t *_pgd_alloc(void)
- {
- 	return (pgd_t *)__get_free_pages(PGALLOC_GFP, PGD_ALLOCATION_ORDER);
-diff --git a/init/main.c b/init/main.c
-index 949eed8015ec..7fac4ac2fede 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -537,6 +537,7 @@ static void __init mm_init(void)
- 	init_espfix_bsp();
- 	/* Should be run after espfix64 is set up. */
- 	pti_init();
-+	pgd_cache_init();
- }
- 
- void __init __weak arch_call_rest_init(void)
--- 
-2.17.1
+Actually we don't need to update the si_domain if iommu hardware
+supports pass-through mode. This should be made in a separated patch
+anyway.
 
+Best regards,
+Lu Baolu
