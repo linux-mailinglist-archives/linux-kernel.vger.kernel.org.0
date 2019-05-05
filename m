@@ -2,183 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0CC613D00
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA9913CFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfEEDkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 23:40:06 -0400
-Received: from mx1.cock.li ([185.10.68.5]:50305 "EHLO cock.li"
+        id S1727598AbfEEDcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 23:32:01 -0400
+Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:7394
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726524AbfEEDkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 23:40:06 -0400
-X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 May 2019 23:40:04 EDT
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        NO_RECEIVED,NO_RELAYS,T_DKIM_INVALID shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1726524AbfEEDcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 23:32:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6mRpMsbd2ECkI5XqAmmm/Zo5WsjadPqWFJytnNcIp+I=;
+ b=ljiQ50tdcX5x2ByQp5VTXSOzuN6NZwgboS6NsCsiUoqKYgZ9qJvthsjQjahEOhVmVgyfuELWCV+m5LWaBSafRRPgxxYNuX4k4AteJf4REYoiI3xcbkjQm74tJwH7mbw5FvkvnrWHiSghj6FagbmdzmksGrpnramcZHM+QhA/faA=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3788.eurprd04.prod.outlook.com (52.134.72.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.12; Sun, 5 May 2019 03:31:55 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e8ca:4f6b:e43:c170]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e8ca:4f6b:e43:c170%3]) with mapi id 15.20.1856.012; Sun, 5 May 2019
+ 03:31:55 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "eha@deif.com" <eha@deif.com>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] i2c: imx: Use __maybe_unused instead of #if CONFIG_PM
+Thread-Topic: [PATCH] i2c: imx: Use __maybe_unused instead of #if CONFIG_PM
+Thread-Index: AQHVAvMW5SvMlMIW0UqHU1fqWG2/GA==
+Date:   Sun, 5 May 2019 03:31:55 +0000
+Message-ID: <1557026820-29428-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0083.apcprd04.prod.outlook.com
+ (2603:1096:202:15::27) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c9540aff-ad98-4d8d-db10-08d6d10a38a7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3788;
+x-ms-traffictypediagnostic: DB3PR0402MB3788:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <DB3PR0402MB378857C27D412E423ABB9F15F5370@DB3PR0402MB3788.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 00286C0CA6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(376002)(346002)(39860400002)(199004)(189003)(53936002)(7736002)(6486002)(6506007)(386003)(2501003)(2616005)(26005)(316002)(7416002)(73956011)(66446008)(64756008)(66556008)(66476007)(66946007)(3846002)(6116002)(50226002)(186003)(8936002)(81166006)(81156014)(8676002)(68736007)(5660300002)(71190400001)(86362001)(71200400001)(110136005)(2201001)(4326008)(25786009)(6436002)(36756003)(2906002)(486006)(478600001)(99286004)(14454004)(476003)(6512007)(66066001)(14444005)(256004)(52116002)(102836004)(305945005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3788;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: HPBTnNEugpty74EITfg67+mf6/dreXESJNSkpDbEon4gPF1Ax6kLqNRsfpPqPTnF9s5pBRgiFYVDSc7IPSErh35hWTF+waF/UO9uMwe6PDUxYQLyUdnLSJlkRy7jYkmCZsgBeUW5MzZD7tWoV+xc0jO6o9ZuoZpx+slpB6rjoZGRUPTKnHJ9KnPgbZlVIGvTceFPcW04RYhRmpjZmsDOHrGugOW2szfnz5rMWmmkiDTkj7hAda30dA0GhyEV8CTUcvcdUqTopGXcCaRFFn6CdpH61qyIGnioRc8u/SH8cNW9Jy6n2GpLimNPFR6eGzbEfyYqGECeP+R+IPKoqpGr2wY6mKMIv2N7Ui519ZDIko+WlkzSHbj/WjE8X8sRWjDi1kAP+xYLPSmIbI3KvuZwq1sQ1zw3+CwS9boI7J6C/qE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1557027101; bh=Ycu/sgRiZ7p6JnXxec3R9Za1mSUA83GiAMKbkh+V3SE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=u0Aj8cvJGg2cCtkJX/viDa34b5X1Qs6v1kWLkge7sGUNPI0RiaEMJH8bwf+rwtZ9S
-         7U5lu6uIj0KBF2izuZO5e4RDmaCfJDZtcjemWI4Fbey8zMlV9nRWkGl8aZe4k5ySlt
-         UgfR9UGk9u2OqNJrQVIOdUaCwrEQCHwyfr5Xj30GdTT/iyufZUQUBHQAJa6T4gaVZe
-         1Xok+LNOFa46bYUW7rtvO9ZdaskWQgC0zHXFYj8oCxzPoKOUbW/IznkW8cEBSNGX6Y
-         92jZIbqYost088Q/qcqsIkRujGG0+VBH8yzqYZp9UP2NGCQGzkCJZOj/AJ/3wCmQQV
-         w5DRKj0POQ+YQ==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 05 May 2019 03:31:41 +0000
-From:   vsnsdualce@memeware.net
-To:     Ben Finney <bignose@debian.org>
-Cc:     debian-user@lists.debian.org, linux-kernel@vger.kernel.org,
-        qmastery16@gmail.com
-Subject: Re: Can a recipients rights under GNU GPL be revoked? - Yes if they
- are free(gratis) licensees.
-In-Reply-To: <86lg36cog6.fsf@benfinney.id.au>
-References: <86lg36cog6.fsf@benfinney.id.au>
-Message-ID: <e82fcc0d08cbaf6ddd186c2d9709df9a@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9540aff-ad98-4d8d-db10-08d6d10a38a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2019 03:31:55.3479
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3788
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes, if the licensee has not paid anything (no money, no service, etc) 
-that you asked him for, for the license, it can be freely revoked. The 
-"clarification" by the FSF is complete and utter bullshit (and was 
-prompted by my writing on the issue).
-
-For a licensee to prevent a revocation, he must be able to enforce some 
-promise regarding revocation (when it can occur, etc) that the copyright 
-holder made to him.
-
-In order to have an enforceable promise he must have paid the owner 
-something for that promise, otherwise it is an illusory promise and will 
-not be enforced by the court.
-
-"Promising" to fulfill a pre-existing duty is not sufficient payment 
-(consideration) either. One pre-existing duty we all have is to follow 
-laws. Promising to not violate someone's copyright is not valid 
-consideration as it is a pre-existing duty.
-
-Before the license grant the free-taker has the following "rights" to 
-the work:
-Nothing.
-
-After the license grant he has the following permissions regarding the 
-work:
-(Whatever the license says).
-
-And for that he has paid the copyright owner: nothing.
-
-No valid consideration, no contract, any "promise" made in the license 
-text is illusory: it cannot be relied upon (including the "irrevocable" 
-clause in the GPLv3: that clause is _inoperative_ from the perspective 
-of a free-licensee vs the owner).
-
-(Additionally, consideration, to be valid, must be bargained for. 
-Tendering unwanted "consideration" is no consideration at all, thus the 
-"fame is payment enough" argument from the dicta of a 9th circuit case 
-is of no value when the licensor did not specifically bargain for such 
-in exchange. You cannot hand the owner something after the fact and 
-declare it valid consideration)
-
-You can revoke. You can do so for any reason or for no reason at all.
-
-
-
-The FSF and SFLC swear that you can bite the hand that feeds you for 
-free. They are incorrect and purposefully deceiving you in order to 
-safeguard their movement against the men who actually did the work to 
-create the corpus it rests upon.
-
-
-
-Note: If you would like a nice expansive legal paper to read on this 
-issue, Sapna Kumar's paper is good: 
-https://scholarship.law.duke.edu/faculty_scholarship/1857/
-If that is too formal and you prefer a stream of consciousness message 
-board fight on this issue, the LKML has you covered: 
-https://lkml.org/lkml/2019/5/3/698  (and it covers the 9th circuit 
-Artifex case and 9th circuit Artistic License case which some people 
-will try to make you think invalidates your proprietary rights)
-If you want a book, to have and to hold, that recognizes this: 
-https://www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876
-If a paper by some mere lawyers isn't good enough, a law professor's 
-take on the subject might be more you style: 
-https://papers.ssrn.com/sol3/papers.cfm?abstract_id=243237
-
-Yes, the GPL is revocable from free licensees. Yes they will fight you 
-in court if you revoke from someone who cares, so when you are thinking 
-of revocation: 1) properly register your copyrights ... 3) Then revoke 
-from an entity domiciled in a property-friendly circuit that isn't going 
-to simply invalidate the idea of contracts requiring actual valid 
-consideration (IE: do not revoke from someone in the 9th circuit as your 
-first course of action: revoke from an entity in another circuit)
-
-(Also note: Do not send a cease-and-desist letter off the bat: the 
-entity can then rush to the court house to seek a hearing regarding his 
-rights to the work. You don't want to be in a race-to-the-courthouse 
-situation and not even know it)
-
-Part 0) and 2) are :Get [an] experienced copyright attorney(s) who is 
-well familiar with the leanings of the various federal circuits so you 
-can formulate a proper strategy. The 9th circuit loves "Big Tech" and 
-doesn't much care for the formalities of law, and if requiring 
-consideration to actually exist regarding copyright licenses for them to 
-be mutually enforceable contracts gets in the way of California's Tech 
-industry: guess how they're going to rule in a "new insightful 
-groundbreaking finding".
-
-
-
-On 2019-01-27 11:47, Ben Finney wrote:
-> Howdy all,
-> 
-> Recently in this forum, some concerns have been raised about works
-> covered by GNU GPL. In particular, whether a recipient of a work,
-> received under conditions of the GNU GPL, can have the freedoms of the
-> GNU GPL later withdrawn in that same work.
-> 
-> To reassure those who might worry whether they can reply on the freedom
-> granted in a work, it is worth reading the GNU FAQ document for the GNU
-> GPL at the Free Software Foundation:
-> 
->     [For any GNU GPL-licensed work,] the public already has the right 
-> to
->     use the program under the GPL, and this right cannot be withdrawn.
-> 
->     
-> <URL:https://www.gnu.org/licenses/gpl-faq.en.html#CanDeveloperThirdParty>
-> 
-> The same answer is in the FAQ specifically for the GNU GPL version 2.0
-> <URL:https://www.gnu.org/licenses/old-licenses/gpl-2.0-faq.html#CanDeveloperThirdParty>.
-> 
-> You can read more in the Software Freedom Conservancy's document
-> _Copyleft and the GNU General Public License: A Comprehensive Tutorial
-> and Guide_, specifically in §7.4 “GPLv2 Irrevocability”. That 
-> concludes:
-> 
->     Whether as a matter of a straightforward contractual obligation, or
->     as a matter of promissory estoppel, a contributor’s attempt to
->     revoke a copyright license grant and then enforce their copyright
->     against a user is highly unlikely to succeed.
-> 
-> 
-> <URL:https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4>
-> 
-> In other words: Any copyright holder can *say* they wish to
-> retroactively revoke the GNU GPL to some party. However, unless that
-> party has violated the conditions of the GNU GPL grant they originally
-> received, there does not appear to be any enforcible threat of
-> revocation that would succeed.
-> 
-> I hope these, along with the many court cases world-wide that have
-> tested the GNU GPL and found it to be enforcible, can reassure those
-> considering whether a particular copyright holder's whim can revoke the
-> freedoms guaranteed in a GNU GPL-covered work. I'd say there's nothing
-> to worry about from those threats.
+VXNlIF9fbWF5YmVfdW51c2VkIGZvciBydW50aW1lIFBNIHJlbGF0ZWQgZnVuY3Rpb25zIGluc3Rl
+YWQNCm9mICNpZiBDT05GSUdfUE0gdG8gc2ltcGx5IHRoZSBjb2RlLg0KDQpTaWduZWQtb2ZmLWJ5
+OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCi0tLQ0KIGRyaXZlcnMvaTJjL2J1
+c3Nlcy9pMmMtaW14LmMgfCAxMSArKystLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
+dGlvbnMoKyksIDggZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9idXNz
+ZXMvaTJjLWlteC5jIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1pbXguYw0KaW5kZXggZmQ3MGIx
+MS4uYjFiOGI5MyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMNCisr
+KyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMNCkBAIC0xMjIwLDggKzEyMjAsNyBAQCBz
+dGF0aWMgaW50IGkyY19pbXhfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQog
+CXJldHVybiAwOw0KIH0NCiANCi0jaWZkZWYgQ09ORklHX1BNDQotc3RhdGljIGludCBpMmNfaW14
+X3J1bnRpbWVfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQorc3RhdGljIGludCBfX21heWJl
+X3VudXNlZCBpMmNfaW14X3J1bnRpbWVfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQogew0K
+IAlzdHJ1Y3QgaW14X2kyY19zdHJ1Y3QgKmkyY19pbXggPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsN
+CiANCkBAIC0xMjMwLDcgKzEyMjksNyBAQCBzdGF0aWMgaW50IGkyY19pbXhfcnVudGltZV9zdXNw
+ZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCiAJcmV0dXJuIDA7DQogfQ0KIA0KLXN0YXRpYyBpbnQg
+aTJjX2lteF9ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQorc3RhdGljIGludCBf
+X21heWJlX3VudXNlZCBpMmNfaW14X3J1bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikN
+CiB7DQogCXN0cnVjdCBpbXhfaTJjX3N0cnVjdCAqaTJjX2lteCA9IGRldl9nZXRfZHJ2ZGF0YShk
+ZXYpOw0KIAlpbnQgcmV0Ow0KQEAgLTEyNDYsMTcgKzEyNDUsMTMgQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBkZXZfcG1fb3BzIGkyY19pbXhfcG1fb3BzID0gew0KIAlTRVRfUlVOVElNRV9QTV9PUFMo
+aTJjX2lteF9ydW50aW1lX3N1c3BlbmQsDQogCQkJICAgaTJjX2lteF9ydW50aW1lX3Jlc3VtZSwg
+TlVMTCkNCiB9Ow0KLSNkZWZpbmUgSTJDX0lNWF9QTV9PUFMgKCZpMmNfaW14X3BtX29wcykNCi0j
+ZWxzZQ0KLSNkZWZpbmUgSTJDX0lNWF9QTV9PUFMgTlVMTA0KLSNlbmRpZiAvKiBDT05GSUdfUE0g
+Ki8NCiANCiBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBpMmNfaW14X2RyaXZlciA9IHsN
+CiAJLnByb2JlID0gaTJjX2lteF9wcm9iZSwNCiAJLnJlbW92ZSA9IGkyY19pbXhfcmVtb3ZlLA0K
+IAkuZHJpdmVyID0gew0KIAkJLm5hbWUgPSBEUklWRVJfTkFNRSwNCi0JCS5wbSA9IEkyQ19JTVhf
+UE1fT1BTLA0KKwkJLnBtID0gJmkyY19pbXhfcG1fb3BzLA0KIAkJLm9mX21hdGNoX3RhYmxlID0g
+aTJjX2lteF9kdF9pZHMsDQogCX0sDQogCS5pZF90YWJsZSA9IGlteF9pMmNfZGV2dHlwZSwNCi0t
+IA0KMi43LjQNCg0K
