@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C43140CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6ED4140C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfEEPsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 11:48:38 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37761 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbfEEPsf (ORCPT
+        id S1727916AbfEEPsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 11:48:41 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39372 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfEEPsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 11:48:35 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 132so1305305ljj.4;
-        Sun, 05 May 2019 08:48:34 -0700 (PDT)
+        Sun, 5 May 2019 11:48:36 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z124so1312503lfd.6;
+        Sun, 05 May 2019 08:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=T/oDDLfoDfhOy7WyChIuVkS7IKV9TMbU7wV4adCUitI=;
-        b=ba/H+rWBrC18tHiXQYrajDMZMMGPeJb4pLyaiKprUqi1TD4zH8W4z+RAWNDjuaB6J0
-         YnmETdEGdm3uHhpxgFVECrfnqLpxQf3hiwCMUkkubqG+9dxFFpiKs0YqRCmezhM7BA3s
-         rF5eSj3w8GSQ2Y9VY3fMp0RPBBYDwbWYpAD7HRB1xuQ4vMEnbeAzxrSk/obZNrjb/Pka
-         o7NiL5Rpt0OJ5ykYrWxTxiP9OMmNYIQrb62Ec7hK6PBq+G9i7+EI5TNazyPqu75m6jCz
-         gmUTu7snuVy5xGHs1MLnKxdeMJvwVW/4QF2NrA+CJIlEHreZD8ajLnQcvLndaCZIGMfE
-         lceQ==
+        bh=ZzDXzspUdpdj1Pdn5HzSktqe5RpeeWan097KS/U2Nos=;
+        b=k2Af5U4Si/IpC5zFDjyuOkPKgNDvOQBhlEm00LSzX83W3oGDJd6vDMMul3u4++Kjll
+         QAMZ5IFiRVBiFE5Q7F44kVEeE6S86q79C6fZz1t0TxbK2gouIghqhvX5rwvPxpQcdEo6
+         dOnTVHZXATL1e3E/dU5J4BKWGW2xRQqzNYW6sNiXZY62Rr+nbp5+Lo7WNeNblqXC1JeL
+         U9AKYPa5mpqyGeL07SNpLxdKh+oRMPopgvxhmna1hRP4hemo4KZfd5xlNAlCOPEgYShn
+         nkrLm19etFXVngcWW/bZMCBof62f5bBeBnpcb+SUh39BGudGwDkTx0rYUFZaGkh7FUnN
+         474Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T/oDDLfoDfhOy7WyChIuVkS7IKV9TMbU7wV4adCUitI=;
-        b=e50jqGnDTXReoGVQGEpUI/sZsepXmCo1YCs6jLB4S6Ma+e9umDyNVx05ZHmueET8ix
-         CQxuVfbwYtyyIR7dynHqU3A88lVgX9Ct3QhQCJgOn5D/KMnJfyHUcOl9WyHw6GAZ591T
-         Wtk6WGzEf+TH77hhlpu9EMuDsjBzn/Srpn08TN3YVjX/GwxhED0aRN7yUiwhp8udTPZz
-         SPbNqv3RRONUANCulUgcZT+fzeXplzEXmrnAXF7Yzcn+24rlPpPSpAUmlek58XPBGN1c
-         btlXVkhiUPbaqoOC4D8QYiB8wydtKncn0wM0rYbvUYY+mAbmN/PlRfNPHA6WZVVbLbDl
-         PAog==
-X-Gm-Message-State: APjAAAVeWdK/GYm/xbNVsa6jDy5VzqQ36glML1ICa8HedGh4vs02V0z9
-        oZSRAsvnXt3lDawu+u5s1jY=
-X-Google-Smtp-Source: APXvYqy/jC22w3xG4JOm82UjunnBQ+qPoZTI7WGZxLQeKPk1HJ6uAeweoQplRcz7YkjRoAmSM9bcAw==
-X-Received: by 2002:a2e:498:: with SMTP id a24mr11003675ljf.34.1557071313317;
-        Sun, 05 May 2019 08:48:33 -0700 (PDT)
+        bh=ZzDXzspUdpdj1Pdn5HzSktqe5RpeeWan097KS/U2Nos=;
+        b=naBdZGCtCMIA51RtMjWrjp1ZnTg+RIRlX+ouoIRogjCP4NxOW75UGExfoF+Ly3JZHh
+         6ScdthpW/wV0z440+UDjqGOyxHRyAjUvbizbjxxDHBOFrq0zWrjcDHXzHLtZ896UN6Uc
+         OE4U4tvvip6Xg6OQ/2JQdGs0UdP76hWmp5xIn8iTnxnn9b2rBgGT5/KUxvaRM5x0F5nc
+         N+me/eSg+UvnR/UFNMvHf2Dt8ktveKvg2E/vnac9y3IdsXEGd8qxkNNdSekz1jDhG8gf
+         XvQnbSEoMzVAHirHJi5VPNJWKhifgd0dT3/qnubwp7ZpMv0E1RiS1ELcWt6UdGXtBcs4
+         qP5Q==
+X-Gm-Message-State: APjAAAUD0jy/w1MWbD9O6pCzv0JMwlqegnFi1qpM6/YVVRewqmPJTWIh
+        gDqYlmN4p3k5b8K8hvXdOjo=
+X-Google-Smtp-Source: APXvYqxG0kVtFr9MyL5J3Ka4IysRDtGdvmYcXWglnPkFzFDhErzvzq7XRAFYLb1ceUDvFZHjIqhLwg==
+X-Received: by 2002:ac2:4893:: with SMTP id x19mr10416172lfc.109.1557071314413;
+        Sun, 05 May 2019 08:48:34 -0700 (PDT)
 Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id d16sm1595278lfi.75.2019.05.05.08.48.31
+        by smtp.gmail.com with ESMTPSA id d16sm1595278lfi.75.2019.05.05.08.48.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 May 2019 08:48:31 -0700 (PDT)
+        Sun, 05 May 2019 08:48:33 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -56,9 +56,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/6] dt-bindings: mfd: max77620: Add compatible for Maxim 77663
-Date:   Sun,  5 May 2019 18:43:20 +0300
-Message-Id: <20190505154325.30026-2-digetx@gmail.com>
+Subject: [PATCH v4 2/6] dt-bindings: mfd: max77620: Add system-power-controller property
+Date:   Sun,  5 May 2019 18:43:21 +0300
+Message-Id: <20190505154325.30026-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190505154325.30026-1-digetx@gmail.com>
 References: <20190505154325.30026-1-digetx@gmail.com>
@@ -69,38 +69,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maxim 77663 has a few minor differences in regards to hardware interface
-and available capabilities by comparing it with 77620 and 20024 models,
-hence re-use 77620 device-tree binding for the 77663.
+Document new generic property that designates the PMIC as the system's
+power controller.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- Documentation/devicetree/bindings/mfd/max77620.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/mfd/max77620.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
-index 9c16d51cc15b..b75283787ba1 100644
+index b75283787ba1..5a642a51d58e 100644
 --- a/Documentation/devicetree/bindings/mfd/max77620.txt
 +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -4,7 +4,8 @@ Required properties:
- -------------------
- - compatible: Must be one of
- 		"maxim,max77620"
--		"maxim,max20024".
-+		"maxim,max20024"
-+		"maxim,max77663"
- - reg: I2C device address.
+@@ -18,6 +18,11 @@ Optional properties:
+ 			IRQ numbers for different interrupt source of MAX77620
+ 			are defined at dt-bindings/mfd/max77620.h.
  
- Optional properties:
-@@ -105,6 +106,7 @@ Optional properties:
- Here supported time periods by device in microseconds are as follows:
- MAX77620 supports 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds.
- MAX20024 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
-+MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
++- system-power-controller: Indicates that this PMIC is controlling the
++			   system power, see [1] for more details.
++
++[1] Documentation/devicetree/bindings/power/power-controller.txt
++
+ Optional subnodes and their properties:
+ =======================================
  
- -maxim,power-ok-control: configure map power ok bit
- 			1: Enables POK(Power OK) to control nRST_IO and GPIO1
 -- 
 2.21.0
 
