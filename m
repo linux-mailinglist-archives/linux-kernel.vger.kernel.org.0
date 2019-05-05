@@ -2,70 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CE813DDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 08:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D1313DE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 08:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfEEGX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 02:23:28 -0400
-Received: from sonic304-21.consmr.mail.ir2.yahoo.com ([77.238.179.146]:38496
-        "EHLO sonic304-21.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726237AbfEEGX2 (ORCPT
+        id S1727622AbfEEGX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 02:23:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727593AbfEEGX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 02:23:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1557037406; bh=M+2BQM2x3GSy/dmtDG0o07y3ZYWK28QOQCLRz1DcS2Q=; h=Date:From:Reply-To:Subject:References:From:Subject; b=LLG/fe4Mi4OxYzLCy4ll2W7WHaPPIKDwcqsp63zPQVamhuEJlMS9C6ylXavMg6TGnm4UiQ6wemaTN5lz7Y7o0OP4kYlZq5dzot8vsV+j3L0YjpQg21m/QCpHuZrIIWYlN+TlIulQiIdEGJSy2xF7m8ihso9Fu/R1M4+BqDnkmZoZ5nNhog3R0swA6tjYmfRV8v7DS5xzw/QTUVa3RmvUn1df1K8k9A8Uvqb3U+5RW7iabHxf6aSqPVni5pgHUq++WHpTrjWtu934z8CxMBWNSORrOuj3elp7Gt96pYsozQIVk82IsoxruGeGtzoeNu6Rf2DA6thJWWSWZbYpIoC8Fw==
-X-YMail-OSG: 9X8Eq48VM1lwpH671D9rwT1GcFdyMwjxNC6BRjIDSgiqbEUTW87Nsb5URAwBUsR
- 5JmhSZd_3dZaGPvAAgHQAxU2y6KQAUDx2SG8kQY4GWlP4R3I6Ry9jt9wiwbYzkPJobk6QcFmQWLt
- MQcTVJoIrguUTc_pXrNgtxHKsP5EhS1xP2_dGWAZoAeWu14yhDVRUPso1UY2eFNVOMHsdY06sY4H
- e5N5UHiPutrqgfs6HGk5JccpNdXLXE7AIHTLYEQqNcoHYdawoD09J1IB6SLIpe2tWrfcitRh5jKY
- B701ZnRX0zHh1gDhxYkBgEU9XrhX4nzIlFTdoaShs3bB3bqNMBiPZgjVEqhnmQISPmhcihrC_4Sz
- fBdRZD2ck0TflLdV1K4YVVxZxpSc4Ug2pa0NmI3KMoOCNpIxR.z4g9ydpmbU6sPAe56NVG2_RmGK
- s4LAZ3ZDrYCtAuGtxjSLpsJAZPF1Dy9FfctM3giMKBLLjl3Mg46LmvdUDjc73cxDv0.cd9LfYbFY
- lgqe8j.fGcL.I1GsEz_xuOSXCTfZu9W6EM0jxTu0HCg53NAxuGhHnVhMmnU1lPEZfutaLPO41B8J
- dSPdMIFcGqL8uh81r_0eCiGoT8yT4FR9EEYcJLVPYPGHp8eqiTIJQSLo7O_n6DoacVqlnYbyFGfG
- Enu3LlkeUElgOYL57V5Xm3HuvpEQyve0oVnyEflHx7s_DtumKubE3fm9PnQ.Kq_yDx4pKv5gNhM_
- 0dlJekISxOm.JnPxhFuawd_lgAp0W.Xp5dOC144ONWUeGFKjQedLHGAAoyPb0VTxtaoUkwlXZaD7
- ERm8XgYOohn186nRgusR046dSQIUjndxX9cjuMZ1G22dj_tsQsc0NU5hogb8prDyojZ8qz74Y7Ye
- 5tJ3TGG1QGpvwuL24NGG3swBRGYKDZaiewTnsSo4LqJVK.LHUxJ3HkVLyvUJTVcNf9e02jvSQFBJ
- M.GrUOYGZWdceM3n9tos90oajg.iyq9a3wUsqnuAoIMXvyUAGW6d.OSgeyByD4xoY6gaNDQhaADT
- r8lyjigJApNpOSTZCtW_C_TdnFBHtDF8cTOcMBJ6H_1OlFxnGftadKesipw.cHM3qKHOndIabo.8
- c7Mf5KWy36.UBImMIe.hzujqBlcguOuZesms.bD.7SFunFaC9qYRYeMjbRcDJ4gtcXss-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ir2.yahoo.com with HTTP; Sun, 5 May 2019 06:23:26 +0000
-Date:   Sun, 5 May 2019 06:23:22 +0000 (UTC)
-From:   Aisha Gaddafi <gaddafiaisha6187@aol.com>
-Reply-To: Aisha Gaddafi <gaisha983@gmail.com>
-Message-ID: <1347004842.7008392.1557037402864@mail.yahoo.com>
-Subject: Hello My Beloved One, i need your assistance
+        Sun, 5 May 2019 02:23:56 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x456LO5Z045012
+        for <linux-kernel@vger.kernel.org>; Sun, 5 May 2019 02:23:55 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s9r8bkvkp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 02:23:54 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sun, 5 May 2019 07:23:51 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 5 May 2019 07:23:44 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x456Nh9r52560040
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 5 May 2019 06:23:43 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 40EC84C046;
+        Sun,  5 May 2019 06:23:43 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D4414C040;
+        Sun,  5 May 2019 06:23:41 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.112])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun,  5 May 2019 06:23:41 +0000 (GMT)
+Date:   Sun, 5 May 2019 09:23:39 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-mips@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>, linux-hexagon@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        Helge Deller <deller@gmx.de>, x86@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Sam Creasey <sammy@sammy.net>, Arnd Bergmann <arnd@arndb.de>,
+        linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-m68k@lists.linux-m68k.org, Greentime Hu <green.hu@gmail.com>,
+        nios2-dev@lists.rocketboards.org, Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-alpha@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 12/15] powerpc/nohash/64: switch to generic version of
+ pte allocation
+References: <1556810922-20248-1-git-send-email-rppt@linux.ibm.com>
+ <1556810922-20248-13-git-send-email-rppt@linux.ibm.com>
+ <adcb6ae6-48d9-5ba9-2732-a0ab1d96667c@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <1347004842.7008392.1557037402864.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13554 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:66.0) Gecko/20100101 Firefox/66.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <adcb6ae6-48d9-5ba9-2732-a0ab1d96667c@c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19050506-0020-0000-0000-000003397072
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050506-0021-0000-0000-0000218C0137
+Message-Id: <20190505062339.GF15755@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-05_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905050057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Thu, May 02, 2019 at 06:56:07PM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 02/05/2019 à 17:28, Mike Rapoport a écrit :
+> >The 64-bit book-E powerpc implements pte_alloc_one(),
+> >pte_alloc_one_kernel(), pte_free_kernel() and pte_free() the same way as
+> >the generic version.
+> 
+> Will soon be converted to the same as the 3 other PPC subarches, see
+> https://patchwork.ozlabs.org/patch/1091590/
+ 
+Thanks for the heads up. I'll drop this from the next re-spin.
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+> Christophe
+> 
+> >
+> >Switch it to the generic version that does exactly the same thing.
+> >
+> >Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> >---
+> >  arch/powerpc/include/asm/nohash/64/pgalloc.h | 35 ++--------------------------
+> >  1 file changed, 2 insertions(+), 33 deletions(-)
+> >
+> >diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> >index 66d086f..bfb53a0 100644
+> >--- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> >+++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
+> >@@ -11,6 +11,8 @@
+> >  #include <linux/cpumask.h>
+> >  #include <linux/percpu.h>
+> >+#include <asm-generic/pgalloc.h>	/* for pte_{alloc,free}_one */
+> >+
+> >  struct vmemmap_backing {
+> >  	struct vmemmap_backing *list;
+> >  	unsigned long phys;
+> >@@ -92,39 +94,6 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+> >  	kmem_cache_free(PGT_CACHE(PMD_CACHE_INDEX), pmd);
+> >  }
+> >-
+> >-static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> >-{
+> >-	return (pte_t *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
+> >-}
+> >-
+> >-static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
+> >-{
+> >-	struct page *page;
+> >-	pte_t *pte;
+> >-
+> >-	pte = (pte_t *)__get_free_page(GFP_KERNEL | __GFP_ZERO | __GFP_ACCOUNT);
+> >-	if (!pte)
+> >-		return NULL;
+> >-	page = virt_to_page(pte);
+> >-	if (!pgtable_page_ctor(page)) {
+> >-		__free_page(page);
+> >-		return NULL;
+> >-	}
+> >-	return page;
+> >-}
+> >-
+> >-static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+> >-{
+> >-	free_page((unsigned long)pte);
+> >-}
+> >-
+> >-static inline void pte_free(struct mm_struct *mm, pgtable_t ptepage)
+> >-{
+> >-	pgtable_page_dtor(ptepage);
+> >-	__free_page(ptepage);
+> >-}
+> >-
+> >  static inline void pgtable_free(void *table, int shift)
+> >  {
+> >  	if (!shift) {
+> >
+> 
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+-- 
+Sincerely yours,
+Mike.
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
