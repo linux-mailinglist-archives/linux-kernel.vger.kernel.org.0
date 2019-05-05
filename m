@@ -2,97 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DE31401F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 16:16:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A984A14030
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 16:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfEEOQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 10:16:22 -0400
-Received: from bout01.mta.xmission.com ([166.70.11.15]:43818 "EHLO
-        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbfEEOQW (ORCPT
+        id S1727816AbfEEOVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 10:21:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42698 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbfEEOVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 10:16:22 -0400
-Received: from mx04.mta.xmission.com ([166.70.13.214])
-        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1hNHwA-0001vp-Qa; Sun, 05 May 2019 08:16:19 -0600
-Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
-        by mx04.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1hNHw9-0007RB-HU; Sun, 05 May 2019 08:16:18 -0600
-Received: from hacktheplanet (c-68-50-23-202.hsd1.in.comcast.net [68.50.23.202])
-        by plesk14.xmission.com (Postfix) with ESMTPSA id E79F71C556F;
-        Sun,  5 May 2019 14:16:15 +0000 (UTC)
-Date:   Sun, 5 May 2019 10:16:04 -0400
-From:   Scott Bauer <sbauer@plzdonthack.me>
-To:     David Kozub <zub@linux.fjfi.cvut.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Message-ID: <20190505141604.GA956@hacktheplanet>
-References: <1556666459-17948-1-git-send-email-zub@linux.fjfi.cvut.cz>
- <1556666459-17948-2-git-send-email-zub@linux.fjfi.cvut.cz>
+        Sun, 5 May 2019 10:21:47 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x45ECMgN054259
+        for <linux-kernel@vger.kernel.org>; Sun, 5 May 2019 10:21:46 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s9qpnrdcb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 10:21:46 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
+        Sun, 5 May 2019 15:21:44 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 5 May 2019 15:21:40 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x45ELd2X25296900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 5 May 2019 14:21:39 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAFC611C05B;
+        Sun,  5 May 2019 14:21:39 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A8AF11C04A;
+        Sun,  5 May 2019 14:21:39 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  5 May 2019 14:21:39 +0000 (GMT)
+Received: from [9.81.221.79] (unknown [9.81.221.79])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9DD45A018E;
+        Mon,  6 May 2019 00:21:37 +1000 (AEST)
+Subject: Re: [PATCH -next] misc: ocxl: Make ocxl_remove static
+To:     YueHaibing <yuehaibing@huawei.com>, fbarrat@linux.ibm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20190504102720.42220-1-yuehaibing@huawei.com>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+Date:   Mon, 6 May 2019 00:21:33 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556666459-17948-2-git-send-email-zub@linux.fjfi.cvut.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-XM-SPF: eid=1hNHw9-0007RB-HU;;;mid=<20190505141604.GA956@hacktheplanet>;;;hst=mx04.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
-X-SA-Exim-Connect-IP: 166.70.198.161
-X-SA-Exim-Mail-From: sbauer@plzdonthack.me
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong,XM_UncommonTLD01 autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.5 XM_UncommonTLD01 Less-common TLD
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;David Kozub <zub@linux.fjfi.cvut.cz>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 610 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.6 (0.6%), b_tie_ro: 2.5 (0.4%), parse: 1.17
-        (0.2%), extract_message_metadata: 24 (3.9%), get_uri_detail_list: 1.37
-        (0.2%), tests_pri_-1000: 26 (4.3%), tests_pri_-950: 1.44 (0.2%),
-        tests_pri_-900: 1.11 (0.2%), tests_pri_-90: 19 (3.0%), check_bayes: 17
-        (2.8%), b_tokenize: 6 (0.9%), b_tok_get_all: 4.9 (0.8%), b_comp_prob:
-        1.81 (0.3%), b_tok_touch_all: 2.6 (0.4%), b_finish: 0.72 (0.1%),
-        tests_pri_0: 485 (79.5%), check_dkim_signature: 0.72 (0.1%),
-        check_dkim_adsp: 24 (3.9%), poll_dns_idle: 52 (8.6%), tests_pri_10:
-        4.6 (0.8%), tests_pri_500: 42 (6.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] block: sed-opal: add ioctl for done-mark of shadow
- mbr
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on mx04.mta.xmission.com)
+In-Reply-To: <20190504102720.42220-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050514-0028-0000-0000-0000036A8A37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050514-0029-0000-0000-00002429FC9C
+Message-Id: <33cdfa0f-b9f6-5fa5-778c-bb4f668a92f3@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-05_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905050127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 01:20:57AM +0200, David Kozub wrote:
-> From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+On 4/5/19 8:27 pm, YueHaibing wrote:
+> Fix sparse warning:
 > 
-> Enable users to mark the shadow mbr as done without completely
-> deactivating the shadow mbr feature. This may be useful on reboots,
-> when the power to the disk is not disconnected in between and the shadow
-> mbr stores the required boot files. Of course, this saves also the
-> (few) commands required to enable the feature if it is already enabled
-> and one only wants to mark the shadow mbr as done.
+> drivers/misc/ocxl/pci.c:44:6: warning:
+>   symbol 'ocxl_remove' was not declared. Should it be static?
 > 
-> Co-authored-by: David Kozub <zub@linux.fjfi.cvut.cz>
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Looks fine.
-Reviewed by: Scott Bauer <sbauer@plzdonthack.me>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Good catch!
+
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+> ---
+>   drivers/misc/ocxl/pci.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/ocxl/pci.c b/drivers/misc/ocxl/pci.c
+> index f2a3ef4..cb920aa 100644
+> --- a/drivers/misc/ocxl/pci.c
+> +++ b/drivers/misc/ocxl/pci.c
+> @@ -41,7 +41,7 @@ static int ocxl_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>   	return 0;
+>   }
+>   
+> -void ocxl_remove(struct pci_dev *dev)
+> +static void ocxl_remove(struct pci_dev *dev)
+>   {
+>   	struct ocxl_fn *fn;
+>   	struct ocxl_afu *afu;
+> 
+
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
+
