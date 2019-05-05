@@ -2,110 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1C61427B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 23:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E8D14280
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 23:23:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfEEVUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 17:20:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50156 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726905AbfEEVUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 17:20:33 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 45E44452EC636B3761D0;
-        Mon,  6 May 2019 05:20:31 +0800 (CST)
-Received: from [127.0.0.1] (10.210.168.180) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 May 2019
- 05:20:26 +0800
-Subject: Re: [PATCH 17/24] libsas: switch remaining files to SPDX tags
-To:     Christoph Hellwig <hch@lst.de>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20190501161417.32592-1-hch@lst.de>
- <20190501161417.32592-18-hch@lst.de>
-CC:     Hannes Reinecke <hare@suse.de>, Lee Duncan <lduncan@suse.com>,
-        Chris Leech <cleech@redhat.com>, Willem Riede <osst@riede.org>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?Q?Kai_M=c3=a4kisara?= <Kai.Makisara@kolumbus.fi>,
-        <linux-scsi@vger.kernel.org>, <open-iscsi@googlegroups.com>,
-        <osst-users@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <c049de31-eff4-28b2-f4dc-4db2205895d2@huawei.com>
-Date:   Sun, 5 May 2019 22:20:08 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1727932AbfEEVXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 17:23:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33267 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726636AbfEEVXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 17:23:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44xzPt1tD4z9s5c;
+        Mon,  6 May 2019 07:23:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557091426;
+        bh=YA/FcEGzJdyHad6E/Sm0uJk7a32AdcrEnIvIoxm8LMQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=hBPEOQSOO28rV9xpDmcnRfMMoj8naqJ1axba+f15/qlpqSFCmx/3OGY7aaiIcCEHH
+         vX81kbxBgembkki2rOfN6caeDA09pRFzTfHNqpB2NMFKASIm0rheBW7ZmdnMTf1I8R
+         4wWZRgRRgIrlwdxrhryWAMr+ubGlwxRwsaybNdYOrC/GnZBGGQ93y1Ar6i56OYn/U+
+         vqZvtB4/Ec1NALk9YZmp8q6L4oLC+rLyXLxCxT0QwQKJ8vdItbdOuEKU4698piXK0v
+         796wPdi73LcGdcHmSyEY8PlhvaqVU3mYg81dei93F7rPJGgATTrhnN4sDJheH3CwiK
+         eymxjlbyPwuIg==
+Date:   Mon, 6 May 2019 07:23:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Ahern <dsahern@gmail.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190506072334.5eeb8858@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190501161417.32592-18-hch@lst.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.168.180]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iIoaWuLbT45b0W=22c.g9UB"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/05/2019 17:14, Christoph Hellwig wrote:
-> Use the the GPLv2 SPDX tag instead of verbose boilerplate text.
->
+--Sig_/iIoaWuLbT45b0W=22c.g9UB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Should we update the Kconfig+Makefile similarly?
+Hi all,
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/scsi/libsas/sas_discover.c  | 18 +-----------------
->  drivers/scsi/libsas/sas_event.c     | 18 +-----------------
->  drivers/scsi/libsas/sas_expander.c  | 16 +---------------
->  drivers/scsi/libsas/sas_host_smp.c  |  5 +----
->  drivers/scsi/libsas/sas_init.c      | 19 +------------------
->  drivers/scsi/libsas/sas_internal.h  | 19 +------------------
->  drivers/scsi/libsas/sas_phy.c       | 18 +-----------------
->  drivers/scsi/libsas/sas_port.c      | 18 +-----------------
->  drivers/scsi/libsas/sas_scsi_host.c | 19 +------------------
->  include/scsi/libsas.h               | 19 +------------------
->  include/scsi/sas.h                  | 19 +------------------
->  include/scsi/sas_ata.h              | 17 +----------------
->  12 files changed, 12 insertions(+), 193 deletions(-)
->
-> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+In commit
 
-...
+  64c6f4bbca74 ("neighbor: Reset gc_entries counter if new entry is release=
+d before insert")
 
->  #include <linux/export.h>
-> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-> index 83f2fd70ce76..76ea83ddafa7 100644
-> --- a/drivers/scsi/libsas/sas_expander.c
-> +++ b/drivers/scsi/libsas/sas_expander.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Serial Attached SCSI (SAS) Expander discovery and configuration
->   *
-> @@ -5,21 +6,6 @@
->   * Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
->   *
->   * This file is licensed under GPLv2.
+Fixes tag
 
-Was this just missed?
+  Fixes: 58956317c8d ("neighbor: Improve garbage collection")
 
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License as
-> - * published by the Free Software Foundation; either version 2 of the
-> - * License, or (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> - * General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> - *
->   */
->
+has these problem(s):
 
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/iIoaWuLbT45b0W=22c.g9UB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzPVFYACgkQAVBC80lX
+0GzgSQf/c6OvVDblN1/YNpJhV/j2sx2hjoI5gDJX3J2y1AR+2+BPmP/SDRL3ZJmM
+8ukm5AsBNqrIeYWlM9sSzjOoQd8DSvyviJcvXJRdGU8aHothh+5LYNcgYGY4/D9J
+JU0czzAObzpo7I5+/Wlse7k1qwqWHTLJLc7QbUbMihagc++flkjUP1XO+eOeT7qo
+QSHTveRrhX+E0nF6WLanSEVsMeofWf+ANI44cy9GyI68/ElhTT4Pk6G0rgEPtnp3
+E2Ct31QNroLOdwVHevUmYTBEW0zP0bRjCALxIi4MJvSlp8FmEgO6QEAhmzImDtW0
+706zq/XALUR8RVfwZJq7AFf5HU9ofg==
+=QLd4
+-----END PGP SIGNATURE-----
+
+--Sig_/iIoaWuLbT45b0W=22c.g9UB--
