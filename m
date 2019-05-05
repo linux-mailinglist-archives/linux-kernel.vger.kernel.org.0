@@ -2,106 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CA7140F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 18:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA5BF14107
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 18:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfEEQFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 12:05:40 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:55122 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfEEQFj (ORCPT
+        id S1727920AbfEEQZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 12:25:17 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45481 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbfEEQZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 12:05:39 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hNJds-0005zM-Jx; Sun, 05 May 2019 12:05:32 -0400
-Message-ID: <86b8d81d760ac1f6e622f1c873a5f9aad7862734.camel@surriel.com>
-Subject: Re: [PATCH] x86/fpu: Remove the _GPL from the
- kernel_fpu_begin/end() export
-From:   Rik van Riel <riel@surriel.com>
-To:     Sebastian Gottschall <s.gottschall@newmedia-net.de>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jikos@kernel.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        stable@vger.kernel.org, Jiri Kosina <jikos@jikos.cz>
-Date:   Sun, 05 May 2019 12:05:32 -0400
-In-Reply-To: <2238f6ed-9338-903c-760c-6200e73b1599@newmedia-net.de>
-References: <761345df6285930339aced868ebf8ec459091383.1556807897.git.luto@kernel.org>
-         <20190502154043.gfv4iplcvzjz3mc6@linutronix.de>
-         <nycvar.YFH.7.76.1905032044250.10635@cbobk.fhfr.pm>
-         <20190504004747.GA107909@gmail.com>
-         <2238f6ed-9338-903c-760c-6200e73b1599@newmedia-net.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-KJqJKfJKG1KaNhswI+ku"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Sun, 5 May 2019 12:25:16 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q23so3734549lfc.12;
+        Sun, 05 May 2019 09:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXT8MsjumpSbK0LF9e/6Gx85Nar5yEV08NRp9tHP9QI=;
+        b=kk7hTRVOzXx5yOJy1lSbpR9QDLa2XWBTPhV89BMJNa3v3Q0ZEIfXjZNd9HsC5YNMia
+         UPWHBRR4PBsSHcE01N4Yh5A6j9SqMb5b73khgsRhhT8caUSPP+sFu47enLFjuZbdjuTk
+         40URvZ4DSC5wYyE86rch2mfaJGCKKmU8so11GdImksw5Q5mZyewBdURQ8zSMurBKeSIS
+         lvojsuuNmn7FzekaRIcycgPeVWc2zobneKSi7XwyVXGB2AqwLrqiNUMkrpDzQmf4PvMh
+         VN5uDb5qhbigIdCs4fjFHHB1t7EvQRVWlJ/H1RSHA6LEpBz+Vmczlmq4cEOn/BVgwPcV
+         plIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXT8MsjumpSbK0LF9e/6Gx85Nar5yEV08NRp9tHP9QI=;
+        b=CtZonK92bmtu87cwwp2/7HYuyU5UFBD/cthBHvyeGR+3Fbus+JOjMrP5HhRK8sTKwv
+         JcxSDjWDN+XNIRiyz2ySBfJpsYx1ZILcwrto5r5+kROq4+k/ImP0MDtf/AXVSR2fkXzR
+         P6fwLNgaMcaMuSSXOX1E+zQChOm5PVG8JvVU11RIvFulQto+7ONjfXG+OvL8uSzyWFzv
+         NiK+NIpgDcsrBN9WP3Dg905VH8zS5eHQGkK2yuWEg/IH4tA+nb+hUDy+M2bS6xCExVyq
+         npS+jFhbHJWsmb6tvt9QisR9joQd6B8nq0hmqZMIe02j8cvYxzPwQi178ofwuSYx/1X5
+         fHgw==
+X-Gm-Message-State: APjAAAXItXlgehU+HKqgLsvD3XJ9W4urv9/H8Xa57tNeBtZ+td6TtxhT
+        1jcAz/gHH97lClaPFQrzLNg=
+X-Google-Smtp-Source: APXvYqxZLY9A7LXk6p9FfJOCA2owRihp7/bDf3R3d6wPXesiNMoMBxey1kmewzQ6mL/ETYfoygGydg==
+X-Received: by 2002:ac2:59d9:: with SMTP id x25mr3113603lfn.123.1557073514282;
+        Sun, 05 May 2019 09:25:14 -0700 (PDT)
+Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.gmail.com with ESMTPSA id g13sm1581649lfh.49.2019.05.05.09.25.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 May 2019 09:25:13 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] NVIDIA Tegra clocksource improvements and clean up
+Date:   Sun,  5 May 2019 19:24:29 +0300
+Message-Id: <20190505162436.23125-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---=-KJqJKfJKG1KaNhswI+ku
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This series primarily unifies the driver code across all Tegra SoC
+generations. In a result the clocksources are allocated per-CPU on
+older Tegra's and have a higher rating than the arch-timer, the newer
+Tegra210 is getting support for microsecond clocksource / delay-timer
+and the driver's code is getting much cleaner. Note that arch-timer usage
+is discouraged on all Tegra's due to the time jitter caused by the CPU
+frequency scaling.
 
-On Sat, 2019-05-04 at 04:28 +0200, Sebastian Gottschall wrote:
+The series was extensively tested on Tegra20 and Tegra30.
 
-> Using fpu code in kernel space in a kernel module is a derived work
-> of=20
-> the kernel itself?
-> dont get me wrong, but this is absurd. i mean you limit the use of
-> cpu=20
-> instructions. the use
-> of cpu instructions should be free of any licensing issue. i would
-> even=20
-> argument you are violating
-> the license of the cpu ower given to the kernel by executing it, by=20
-> restricting its use for no reason
+Changelog:
 
-Using FPU code in kernel space in a kernel module
-does not require the use of kernel_fpu_begin/end().
+v2: Rebased on recent linux-next. Now all of #ifdef's are removed from the
+    code due to the recent patch that generalized persistent clocksource.
 
-The kernel module could simply disable preemption,
-save the FPU registers, use the FPU, restore the
-FPU registers, and reenable preemption.
+    Couple other minor cosmetic changes.
 
-However, using kernel_fpu_begin/end() does get that
-module some nice optimizations that are specific to
-Linux.
+Dmitry Osipenko (7):
+  clocksource/drivers/tegra: Support per-CPU timers on all Tegra's
+  clocksource/drivers/tegra: Unify timer code
+  clocksource/drivers/tegra: Reset hardware state on init
+  clocksource/drivers/tegra: Replace readl/writel with relaxed versions
+  clocksource/drivers/tegra: Release all IRQ's on request_irq() error
+  clocksource/drivers/tegra: Minor code clean up
+  clocksource/drivers/tegra: Use SPDX identifier
 
---=20
-All Rights Reversed.
+ drivers/clocksource/timer-tegra20.c | 272 +++++++++++++---------------
+ 1 file changed, 121 insertions(+), 151 deletions(-)
 
---=-KJqJKfJKG1KaNhswI+ku
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlzPCcwACgkQznnekoTE
-3oP29Qf/T3Zcj5UuvogQBiLgNdSwVJSbdEDgvgAV797ZxOqO8Mst/2REoc0boFwo
-ChiG+LqAspHxwlocktLxjiS0DjW4mw6qKua0+5zEfB1ZeCXt0OJJ/ecnypzE2CV7
-OgWfrCHyPW8sfxtbFQx1yZKoqmWd6RwgqdP0xGly39TXG3yP4NLbGRhEL4MSEQTW
-JKEfKX2d72NRpuGvoaHXHMfMEGWS9t0es8FczpCs2jS05MEnl6GiuqklE0XOPtL+
-4X+aiMMBzd6DTuhVPKLoK+F9r12T1OZlgUpT3TXoZ0FOYnv2pAuscLTRgbi5t9XE
-wyOjiF7ZF0vgpQfiihgNFFWthiWMvQ==
-=/At1
------END PGP SIGNATURE-----
-
---=-KJqJKfJKG1KaNhswI+ku--
+-- 
+2.21.0
 
