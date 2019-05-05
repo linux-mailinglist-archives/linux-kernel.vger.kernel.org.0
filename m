@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 004CB140C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C43140CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 17:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbfEEPse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 11:48:34 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45586 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfEEPsd (ORCPT
+        id S1727820AbfEEPsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 11:48:38 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37761 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbfEEPsf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 11:48:33 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w12so8990985ljh.12;
-        Sun, 05 May 2019 08:48:32 -0700 (PDT)
+        Sun, 5 May 2019 11:48:35 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 132so1305305ljj.4;
+        Sun, 05 May 2019 08:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BlEG9NIkB+2QxScurVzvzhb4UAYd8wqCw9tKjxEGmJQ=;
-        b=Z5ljalxiS8q/cLjSGutusocESg6ENqIF3poRf0yJOfDEkDl0ZBxIYovnL4Wb9CwcUp
-         o7LMaEE14rnCOzLnDCIjefX6rQWpgp76lRN9yFZ9072J/5AdRhvRx2O4Z9+M2sXccDjC
-         7SNgfPR0iXoQVd392+b17D02toIX3hnYof0/m6HZD037jav3zl6/VtyJA1zC2GkDSnUX
-         bnpxSnBlg5LMveEg+GBdwhtfmfAApRxc8JhGFPUvr47YlP9/UQCE9H8n93yb2C8m6Y1V
-         mmMbNRF134Zjoms6dU/4NzZ/kqZhMwnveZRKrqrdJhjD4PotyPRGHJ0kYkJwxD6KFRPW
-         +4Cg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=T/oDDLfoDfhOy7WyChIuVkS7IKV9TMbU7wV4adCUitI=;
+        b=ba/H+rWBrC18tHiXQYrajDMZMMGPeJb4pLyaiKprUqi1TD4zH8W4z+RAWNDjuaB6J0
+         YnmETdEGdm3uHhpxgFVECrfnqLpxQf3hiwCMUkkubqG+9dxFFpiKs0YqRCmezhM7BA3s
+         rF5eSj3w8GSQ2Y9VY3fMp0RPBBYDwbWYpAD7HRB1xuQ4vMEnbeAzxrSk/obZNrjb/Pka
+         o7NiL5Rpt0OJ5ykYrWxTxiP9OMmNYIQrb62Ec7hK6PBq+G9i7+EI5TNazyPqu75m6jCz
+         gmUTu7snuVy5xGHs1MLnKxdeMJvwVW/4QF2NrA+CJIlEHreZD8ajLnQcvLndaCZIGMfE
+         lceQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BlEG9NIkB+2QxScurVzvzhb4UAYd8wqCw9tKjxEGmJQ=;
-        b=nYpnJyjDAuYTif36J7PNQn8TM9LEjdRDtShfizeatSTPLKCIMZbNTzaCqnwDexzv+C
-         OjhXxaiD1TBYY1QZttoJmt4mdu7bWdy5bRLXnjqdYnLntP3BnQU+fZolXYtIyJKLwsPn
-         J8IeEoig3j8e3OobVRSHyX4sVYxImV1g+F2sqILHu75JGeq8EYom2oEJZ2EVP5CNXERD
-         AQK7tlXr1VQIV5AAoAHcwpmGaFEDyMUaoBvx3rJY4VsoJFz0NM2jpcKLLDgqQ4CvG/H4
-         sDt9iZpwfDQGnz4y24LNx7iE6rzLpl9Ab0JyrBbQMmc950cfpaaSHM6NF2vfcJ+HsJOh
-         TjZA==
-X-Gm-Message-State: APjAAAVRuKiPirSHiaNh7NU4wzKKUWOysGQ21htrNA8WR4lkiGTyVhVF
-        QqBxz21fLYqccWZNEW+aWSk=
-X-Google-Smtp-Source: APXvYqxgEFFvRre94LLBuNrR+odXfimmP7OXvMOrD2Vr34gtNHuQQ0eq3glKVrQd9gHS4vmGxltDgg==
-X-Received: by 2002:a2e:9002:: with SMTP id h2mr3205865ljg.164.1557071311388;
-        Sun, 05 May 2019 08:48:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=T/oDDLfoDfhOy7WyChIuVkS7IKV9TMbU7wV4adCUitI=;
+        b=e50jqGnDTXReoGVQGEpUI/sZsepXmCo1YCs6jLB4S6Ma+e9umDyNVx05ZHmueET8ix
+         CQxuVfbwYtyyIR7dynHqU3A88lVgX9Ct3QhQCJgOn5D/KMnJfyHUcOl9WyHw6GAZ591T
+         Wtk6WGzEf+TH77hhlpu9EMuDsjBzn/Srpn08TN3YVjX/GwxhED0aRN7yUiwhp8udTPZz
+         SPbNqv3RRONUANCulUgcZT+fzeXplzEXmrnAXF7Yzcn+24rlPpPSpAUmlek58XPBGN1c
+         btlXVkhiUPbaqoOC4D8QYiB8wydtKncn0wM0rYbvUYY+mAbmN/PlRfNPHA6WZVVbLbDl
+         PAog==
+X-Gm-Message-State: APjAAAVeWdK/GYm/xbNVsa6jDy5VzqQ36glML1ICa8HedGh4vs02V0z9
+        oZSRAsvnXt3lDawu+u5s1jY=
+X-Google-Smtp-Source: APXvYqy/jC22w3xG4JOm82UjunnBQ+qPoZTI7WGZxLQeKPk1HJ6uAeweoQplRcz7YkjRoAmSM9bcAw==
+X-Received: by 2002:a2e:498:: with SMTP id a24mr11003675ljf.34.1557071313317;
+        Sun, 05 May 2019 08:48:33 -0700 (PDT)
 Received: from localhost.localdomain (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.gmail.com with ESMTPSA id d16sm1595278lfi.75.2019.05.05.08.48.29
+        by smtp.gmail.com with ESMTPSA id d16sm1595278lfi.75.2019.05.05.08.48.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 May 2019 08:48:30 -0700 (PDT)
+        Sun, 05 May 2019 08:48:31 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -56,10 +56,12 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/6] Add support for Maxim 77663 MFD
-Date:   Sun,  5 May 2019 18:43:19 +0300
-Message-Id: <20190505154325.30026-1-digetx@gmail.com>
+Subject: [PATCH v4 1/6] dt-bindings: mfd: max77620: Add compatible for Maxim 77663
+Date:   Sun,  5 May 2019 18:43:20 +0300
+Message-Id: <20190505154325.30026-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190505154325.30026-1-digetx@gmail.com>
+References: <20190505154325.30026-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,50 +69,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Maxim 77663 has a few minor differences in regards to hardware interface
+and available capabilities by comparing it with 77620 and 20024 models,
+hence re-use 77620 device-tree binding for the 77663.
 
-This series adds support for the Maxim 77663 chip that provides PMIC, RTC,
-GPIO and watchdog timer functionality. The hardware is very similar to the
-Maxim 77620/20024 hardware units that are already supported by the kernel,
-hence we will reuse the existing drivers for 77663. The GPIO, regulator,
-RTC and watchdog timer functionality was tested on a Nexus 7 tablet that
-has the Max77663 chip, everything is working perfectly fine. I'm looking
-at upstreaming support for that tablet device and Max77663 is one of the
-core components that are currently missing in the upstream kernel.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ Documentation/devicetree/bindings/mfd/max77620.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Changelog:
-
-v4: Addressed review comments from Rob Herring to v3 by making use of
-    generic "system-power-controller" property and making couple other
-    minor cosmetic changes. Added Mark's Brown a-b to the regulator-patch.
-
-v3: Dropped "Support device-tree properly" patch since turned out that
-    I2C core takes care of the device-tree matching and I wasn't aware of
-    it.
-
-v2: Added PINCTRL sub-device to Max77663 MFD as it looks compatible with
-    77620.
-
-    Added new "maxim,system-power-controller" OF property.
-
-    Patch "Support device-tree properly" now doesn't remove driver's
-    "id_table" since potentially it could have some use in the downstream
-    kernel forks and it doesn't hurt to keep it around.
-
-Dmitry Osipenko (6):
-  dt-bindings: mfd: max77620: Add compatible for Maxim 77663
-  dt-bindings: mfd: max77620: Add system-power-controller property
-  mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
-  mfd: max77620: Support Maxim 77663
-  mfd: max77620: Provide system power-off functionality
-  regulator: max77620: Support Maxim 77663
-
- .../devicetree/bindings/mfd/max77620.txt      |  9 +-
- drivers/mfd/max77620.c                        | 87 ++++++++++++++++++-
- drivers/regulator/max77620-regulator.c        | 26 +++++-
- include/linux/mfd/max77620.h                  |  5 +-
- 4 files changed, 122 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+index 9c16d51cc15b..b75283787ba1 100644
+--- a/Documentation/devicetree/bindings/mfd/max77620.txt
++++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+@@ -4,7 +4,8 @@ Required properties:
+ -------------------
+ - compatible: Must be one of
+ 		"maxim,max77620"
+-		"maxim,max20024".
++		"maxim,max20024"
++		"maxim,max77663"
+ - reg: I2C device address.
+ 
+ Optional properties:
+@@ -105,6 +106,7 @@ Optional properties:
+ Here supported time periods by device in microseconds are as follows:
+ MAX77620 supports 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds.
+ MAX20024 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
++MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
+ 
+ -maxim,power-ok-control: configure map power ok bit
+ 			1: Enables POK(Power OK) to control nRST_IO and GPIO1
 -- 
 2.21.0
 
