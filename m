@@ -2,115 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014D413D8C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 07:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB90C13D83
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 07:02:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfEEF2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 01:28:53 -0400
-Received: from [66.55.73.32] ([66.55.73.32]:51784 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1725814AbfEEF2w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 01:28:52 -0400
-X-Greylist: delayed 553 seconds by postgrey-1.27 at vger.kernel.org; Sun, 05 May 2019 01:28:52 EDT
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 669C22DC0068;
-        Sun,  5 May 2019 01:19:38 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1557033578;
-        bh=jTyWNX0tenu8oSQr1YIabggyKqUeXI66jOG52Th+zoI=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=mL/hJNzkdJZkxnMvbbWj1t882MsD+hC/wqp2+mlgQnaNxKIBDEH0uegq984+iGuLT
-         J6tsN3djphhaKLr9Tfjki7hCjn17efcZzii65JN7bHtpzydbag3GVokQQvopgn5o9x
-         NSGqSgvTaH0a2oHAYp+zgDEq60tZkb9foLNHGhDBG32BWwMbGwrKy2SbBOK7MbUWgw
-         rCfaBofYJ5XsT/Yx3hDGRxtE1qt6/tGCniwIlZOZfXr7QVoNSMYgWvjYjKMDvvcEKK
-         hUyKkpIEVn8y+8Q2GM7V56eCgNtiKjQkwet3km60McmutYTNPryVZR3v2UkkuifdQb
-         dy1FL3jTFG05TpMbcNjbFZUiLc6FPJMMj1QsXNofjPaxzsQ+dHArD1oQNgt4tth3e8
-         D2jaeRg8l4SzFnt8bpyjdDGNZ0x95rNj+0MVaMXxfc+VdknxRGj+/Vms8KmxW2PBs1
-         B+p6LEd/oH4Xll/9M9iydCluUIwAw+E1uIrcQumtwTaRPegVxWVCb6xtU//7KUVIIW
-         TyGPE3O0iowGR0lxm3d1Fuw//BYpkyF92otb5rlT7p0fSY/NSY+CQruEeYKAIxjK3y
-         NnzzslYESFYRdfl5XxzTpaRUAFQ2IV2ULnKDsXkxZE83jO1UcA1LzhnNEpK2ijB4PN
-         /3yq50LD6t15MHAApax1s8P4=
-Received: from Hawking (ntp.lan [10.0.1.1])
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x454ki37097385
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 5 May 2019 14:46:44 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'Wei Yongjun'" <weiyongjun1@huawei.com>,
-        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Andrew Donnellan'" <ajd@linux.ibm.com>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>
-Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20190504070430.57008-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190504070430.57008-1-weiyongjun1@huawei.com>
-Subject: RE: [PATCH -next] ocxl: Fix return value check in afu_ioctl()
-Date:   Sun, 5 May 2019 14:46:46 +1000
-Message-ID: <01d701d502fd$8c2da240$a488e6c0$@d-silva.org>
+        id S1726548AbfEEFAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 01:00:07 -0400
+Received: from mx1.cock.li ([185.10.68.5]:60651 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725814AbfEEFAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 01:00:07 -0400
+X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Sun, 05 May 2019 01:00:05 EDT
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1557031875; bh=I2FCNmKK327bFSGvkmTu/8fw2JSN3TtQWsMD6AuP8w0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZkM7nTTLiE2shejN5xCCMnCuCC3XaQ5JGBDl9ju9ynAnsCYHLtc+eV2ORRJ11ksXm
+         9IQ/hJfxrpZzjx3X5cXqJqXx1DaCuxeEpQHRcemqV/FipOX+YFP88QM8rLv1fGvhfj
+         rRgJhDIwkUV9m2fRjpP5juUm/DHl87njhsUaInIEOf4eB5ovWlEL8rXq5hXXS7uc+X
+         ZZl7HDPFgi930bAo5+9q+EUBR1SOuWjazFUJjj7SWR+u60/aYtc9xFkunlagwPorqc
+         L95oW27MZjVCsEniJ7cKlT0nEN5hSyFlfIWYZ4X9rDtDpP6lYlTh4i/gbG7lGxd1iZ
+         hplrntcj/ztpQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJOAUDns2AVT+PBmhNLMaSajBbpZaVp+Ezg
-Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Sun, 05 May 2019 14:46:45 +1000 (AEST)
+Date:   Sun, 05 May 2019 04:51:15 +0000
+From:   vsnsdualce2@redchan.it
+To:     rhkramer@gmail.com
+Cc:     debian-user@lists.debian.org, linux-kernel@vger.kernel.org,
+        Ivan Ivanov <qmastery16@gmail.com>, mailinglists@mattcrews.com,
+        jhasler@newsguy.com, scdbackup@gmx.net, richard@walnut.gen.nz,
+        curty@free.fr, jmtd@debian.org, mick.crane@gmail.com,
+        tomas@tuxteam.de, steve@einval.com, joe@jretrading.com,
+        rms@gnu.org, esr@thyrsus.com
+Subject: Re: Can a recipients rights under GNU GPL be revoked? - Bradley M.
+ Kuhn is not an attorney (he should go get his JD and get licensed).
+Message-ID: <60c1b08305c5326e3503f51d81622541@redchan.it>
+X-Sender: vsnsdualce2@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> Sent: Saturday, 4 May 2019 5:05 PM
-> To: Frederic Barrat <fbarrat@linux.ibm.com>; Andrew Donnellan
-> <ajd@linux.ibm.com>; Arnd Bergmann <arnd@arndb.de>; Greg Kroah-
-> Hartman <gregkh@linuxfoundation.org>; Alastair D'Silva <alastair@d-
-> silva.org>
-> Cc: Wei Yongjun <weiyongjun1@huawei.com>; linuxppc-
-> dev@lists.ozlabs.org; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH -next] ocxl: Fix return value check in afu_ioctl()
-> 
-> In case of error, the function eventfd_ctx_fdget() returns ERR_PTR() and
-> never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR().
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 060146614643 ("ocxl: move event_fd handling to frontend")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/misc/ocxl/file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
-> 8aa22893ed76..2870c25da166 100644
-> --- a/drivers/misc/ocxl/file.c
-> +++ b/drivers/misc/ocxl/file.c
-> @@ -257,8 +257,8 @@ static long afu_ioctl(struct file *file, unsigned int
-cmd,
->  			return -EINVAL;
->  		irq_id = ocxl_irq_offset_to_id(ctx, irq_fd.irq_offset);
->  		ev_ctx = eventfd_ctx_fdget(irq_fd.eventfd);
-> -		if (!ev_ctx)
-> -			return -EFAULT;
-> +		if (IS_ERR(ev_ctx))
-> +			return PTR_ERR(ev_ctx);
->  		rc = ocxl_irq_set_handler(ctx, irq_id, irq_handler,
-irq_free,
-> ev_ctx);
->  		break;
+> of the GPL.  (And Bradley Kuhn is a lawyer -- my older mind can't 
+> remember if
+> he was the lawyer who argued (and lost) a previous free software case 
+> (don't
+> remember the details) in front of the US Supreme Court.  (Sometimes 
+> referred
 
-LGTM
+rhkramer@gmail.com:
+Bradley M. Kuhn is not an attorney, which is why he had to step down as 
+head
+of his organization and hire a lawyer to head the organization
+in his place: Bar rules do not allow lawyers to serve under a non-lawyer 
+in
+an organization, and the organization was essentially a pro-bono law 
+firm
+(which really needed a attorney in it's ranks...)
 
-Acked-by: Alastair D'Silva <alastair@d-silva.org>
+https://en.wikipedia.org/wiki/Bradley_M._Kuhn
 
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva     msn: alastair@d-silva.org
-blog: http://alastair.d-silva.org    Twitter: @EvilDeece
+Yes the "oh I just stepped down because we need a woman to head this 
+organization
+now" claim he makes is, in fact, disingenuous. What they needed is a 
+lawyer in
+the organization: and the lawyer could not be directed by non-lawyers.
 
+http://ebb.org/bkuhn/
+> Kuhn holds a summa cum laude B.S. in Computer Science from Loyola 
+> University in Maryland, and an M.S. in Computer Science from the 
+> University of Cincinnati.
+
+http://ebb.org/bkuhn/resume/
+No J.D., No law license.
+
+
+I have both.
+
+I don't want to drag someone down, but I had to correct your mistake.
+Once he applies to law school, gets his degree, and later his license 
+I'm sure he will correct his as well.
+
+
+On 2019-01-28 00:35, rhkramer@gmail.com wrote:
+> On Sunday, January 27, 2019 07:24:17 PM rhkramer@gmail.com wrote:
+>> Resending to the list -- I didn't notice that Ivan had sent this to me
+>> only, and my reply, of course, then went to him only.
+>> 
+>> On Sunday, January 27, 2019 10:06:46 AM Ivan Ivanov wrote:
+>> > Yes: The linux devs can rescind their license grant. GPLv2 is a bare
+>> > license and is revocable by the grantor. Search for "vsnsdualce" "gpl"
+>> > online to find his messages which prove that, he is a lawyer and has
+>> > investigated this subject very well. I am CC'ing him in case you'd
+>> > like to request more information. So if you didn't like the Code of
+>> > Conduct covertly accepted behind the scenes against your will, and
+>> > maybe some other questionable political decisions in technical
+>> > projects
+> 
+> ...
+> 
+>> I *might* go read some of the stuff by vsnsdualce, but the Weboob 
+>> situation
+>> is not an example of a (free or GPL) license being rescinded.  (You 
+>> didn't
+>> quite say it was, but one could infer that is what you are trying to 
+>> say
+>> by its inclusion in the same paragraph.)
+> 
+> Ok, I went and read a few things by "vsnsdualce" re the GPL, in 
+> particular:
+> 
+> http://readlist.com/lists/gentoo.org/gentoo-user/42/213256.html
+> 
+> And from that, I went to:
+> 
+> https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+> 
+> It seems clear that this is one of those things that I talked about in 
+> my
+> previous last paragraph (the aside, still quoted below) -- vsnsdualce 
+> is
+> stating his opinion / taking a position that is in opposition to the 
+> postions
+> / opinions of other lawyers.
+> 
+> I don't know how far he is willing to go to try to confirm his 
+> position, but
+> until a court case or something similar (and probably appeals) decides 
+> the
+> issue, there are two opinions.
+> 
+> If I had to guess / be which would prevail, I would bet on the side of
+> copyleft.org who, in a way are the successors (mcow) to the original 
+> author(s)
+> of the GPL.  (And Bradley Kuhn is a lawyer -- my older mind can't 
+> remember if
+> he was the lawyer who argued (and lost) a previous free software case 
+> (don't
+> remember the details) in front of the US Supreme Court.  (Sometimes 
+> referred
+> to as "the supremes", but they don't really sing that well (well, to be 
+> fair,
+> I guess I never heard them sing ;-)
+> 
+> Even if he was the guy that lost that case (I'm fairly sure it was 
+> someone
+> else), he is certainly a very experienced lawyer, and very familiar 
+> with the
+> issues around this license.  I would trust his opinion more that I 
+> would
+> "vsnsdualce"'s.
+> 
+> ...
+> 
+>> 
+>> Just another aside: One of my takes on lawyers is that they interpret 
+>> laws
+>> and take legal positions for various reasons, often to further their 
+>> own
+>> or their client's interests, and then are willing to fight the legal
+>> battle that may ensue.  A lawyer expressing an opinion does not make 
+>> that
+>> opinion correct / legal.
