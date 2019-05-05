@@ -2,136 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD2AC13E7E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 10:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C724413E82
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 10:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfEEIxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 04:53:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50262 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727388AbfEEIxd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 04:53:33 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x458qBo9143243
-        for <linux-kernel@vger.kernel.org>; Sun, 5 May 2019 04:53:32 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s9raq747a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 04:53:32 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sun, 5 May 2019 09:53:29 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 5 May 2019 09:53:26 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x458rPKe63242432
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 5 May 2019 08:53:25 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7928852052;
-        Sun,  5 May 2019 08:53:25 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.112])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 9E0295204F;
-        Sun,  5 May 2019 08:53:24 +0000 (GMT)
-Date:   Sun, 5 May 2019 11:53:23 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Helge Deller <deller@gmx.de>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-parisc@vger.kernel.org, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org
-Subject: Re: DISCONTIGMEM is deprecated
-References: <20190419094335.GJ18914@techsingularity.net>
- <20190419140521.GI7751@bombadil.infradead.org>
- <20190419142835.GM18914@techsingularity.net>
- <9e7b80a9-b90e-ac04-8b30-b2f285cd4432@gmx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1727660AbfEEIyE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 5 May 2019 04:54:04 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:55932 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbfEEIyE (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Sun, 5 May 2019 04:54:04 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Sun, 05 May 2019 02:54:03 -0600
+Message-Id: <5CCEA4A5020000F900063FA7@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Sun, 05 May 2019 02:53:57 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     <jlbec@evilplan.org>, <mark@fasheh.com>, <jiangqi903@gmail.com>
+Cc:     <akpm@linux-foundation.org>, <ocfs2-devel@oss.oracle.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 2/2] ocfs2: add locking filter debugfs file
+References: <20190429083353.1410-1-ghe@suse.com>
+ <f65e80e4-c99c-c84f-30c1-65991aec4da7@gmail.com>
+In-Reply-To: <f65e80e4-c99c-c84f-30c1-65991aec4da7@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <9e7b80a9-b90e-ac04-8b30-b2f285cd4432@gmx.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19050508-0012-0000-0000-0000031878B9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050508-0013-0000-0000-00002150EEE3
-Message-Id: <20190505085322.GH15755@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=796 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905050080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Apr 19, 2019 at 10:08:31PM +0200, Helge Deller wrote:
-> On 19.04.19 16:28, Mel Gorman wrote:
-> > On Fri, Apr 19, 2019 at 07:05:21AM -0700, Matthew Wilcox wrote:
-> >> On Fri, Apr 19, 2019 at 10:43:35AM +0100, Mel Gorman wrote:
-> >>> DISCONTIG is essentially deprecated and even parisc plans to move to
-> >>> SPARSEMEM so there is no need to be fancy, this patch simply disables
-> >>> watermark boosting by default on DISCONTIGMEM.
-> >>
-> >> I don't think parisc is the only arch which uses DISCONTIGMEM for !NUMA
-> >> scenarios.  Grepping the arch/ directories shows:
-> >>
-> >> alpha (does support NUMA, but also non-NUMA DISCONTIGMEM)
-> >> arc (for supporting more than 1GB of memory)
-> >> ia64 (looks complicated ...)
-> >> m68k (for multiple chunks of memory)
-> >> mips (does support NUMA but also non-NUMA)
-> >> parisc (both NUMA and non-NUMA)
-> >>
-> >> I'm not sure that these architecture maintainers even know that DISCONTIGMEM
-> >> is deprecated.  Adding linux-arch to the cc.
-> >
-> > Poor wording then -- yes, DISCONTIGMEM is still used but look where it's
-> > used. I find it impossible to believe that any new arch would support
-> > DISCONTIGMEM or that DISCONTIGMEM would be selected when SPARSEMEM is
-> > available.`It's even more insane when you consider that SPARSEMEM can be
-> > extended to support VMEMMAP so that it has similar overhead to FLATMEM
-> > when mapping pfns to struct pages and vice-versa.
+
+>>> On 2019/5/5 at 14:54, in message
+<f65e80e4-c99c-c84f-30c1-65991aec4da7@gmail.com>, Joseph Qi
+<jiangqi903@gmail.com> wrote:
+> Hi Gang,
 > 
-> FYI, on parisc we will switch from DISCONTIGMEM to SPARSEMEM with kernel 5.2.
-> The patch was quite simple and it's currently in the for-next tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git/commit/?h=for-next&id=281b718721a5e78288271d632731cea9697749f7
-
-A while ago I've sent a patch that removes ARCH_DISCARD_MEMBLOCK option [1]
-so the hunk below is not needed:
-
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index c8038165b81f..26c215570adf 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -36,6 +36,7 @@ config PARISC
- 	select GENERIC_STRNCPY_FROM_USER
- 	select SYSCTL_ARCH_UNALIGN_ALLOW
- 	select SYSCTL_EXCEPTION_TRACE
-+	select ARCH_DISCARD_MEMBLOCK
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select VIRT_TO_BUS
- 	select MODULES_USE_ELF_RELA
-
-
-[1] https://lore.kernel.org/lkml/1556102150-32517-1-git-send-email-rppt@linux.ibm.com/
- 
-> Helge
+> On 19/4/29 16:33, Gang He wrote:
+>> Add locking filter debugfs file, which is used to filter lock
+>> resources dump from locking_state debugfs file.
+>> We use d_filter_secs field to filter lock resources dump,
+>> the default d_filter_secs(0) value filters nothing,
+>> otherwise, only dump the last N seconds active lock resources.
+>> This enhancement can avoid dumping lots of old records.
+>> The d_filter_secs value can be changed via locking_filter file.
+>> 
+>> Compared with v1, the main change is to add CONFIG_OCFS2_FS_STATS
+>> macro definition judgment.
+>> 
+>> Signed-off-by: Gang He <ghe@suse.com>
+>> ---
+>>  fs/ocfs2/dlmglue.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>  fs/ocfs2/ocfs2.h   |  2 ++
+>>  2 files changed, 40 insertions(+)
+>> 
+>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>> index dccf4136f8c1..554d37d52510 100644
+>> --- a/fs/ocfs2/dlmglue.c
+>> +++ b/fs/ocfs2/dlmglue.c
+>> @@ -3006,6 +3006,8 @@ struct ocfs2_dlm_debug *ocfs2_new_dlm_debug(void)
+>>  	kref_init(&dlm_debug->d_refcnt);
+>>  	INIT_LIST_HEAD(&dlm_debug->d_lockres_tracking);
+>>  	dlm_debug->d_locking_state = NULL;
+>> +	dlm_debug->d_locking_filter = NULL;
+>> +	dlm_debug->d_filter_secs = 0;
+>>  out:
+>>  	return dlm_debug;
+>>  }
+>> @@ -3104,11 +3106,33 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, 
+> void *v)
+>>  {
+>>  	int i;
+>>  	char *lvb;
+>> +	u32 now, last = 0;
+>>  	struct ocfs2_lock_res *lockres = v;
+>> +	struct ocfs2_dlm_debug *dlm_debug =
+>> +			((struct ocfs2_dlm_seq_priv *)m->private)->p_dlm_debug;
+>>  
+>>  	if (!lockres)
+>>  		return -EINVAL;
+>>  
+>> +	if (dlm_debug->d_filter_secs) {
+>> +		now = ktime_to_timespec(ktime_get()).tv_sec;
+>> +#ifdef CONFIG_OCFS2_FS_STATS
+>> +		if (lockres->l_lock_prmode.ls_last >
+>> +		    lockres->l_lock_exmode.ls_last)
+>> +			last = lockres->l_lock_prmode.ls_last;
+>> +		else
+>> +			last = lockres->l_lock_exmode.ls_last;
+>> +#endif
+>> +		/*
+>> +		 * Use d_filter_secs field to filter lock resources dump,
+>> +		 * the default d_filter_secs(0) value filters nothing,
+>> +		 * otherwise, only dump the last N seconds active lock
+>> +		 * resources.
+>> +		 */
+>> +		if ((now - last) > dlm_debug->d_filter_secs)
+>> +			return 0;
+>> +	}
+>> +
+>>  	seq_printf(m, "0x%x\t", OCFS2_DLM_DEBUG_STR_VERSION);
+>>  
+>>  	if (lockres->l_type == OCFS2_LOCK_TYPE_DENTRY)
+>> @@ -3258,6 +3282,19 @@ static int ocfs2_dlm_init_debug(struct ocfs2_super 
+> *osb)
+>>  		goto out;
+>>  	}
+>>  
+>> +	dlm_debug->d_locking_filter = debugfs_create_u32("locking_filter",
+>> +						0600,
+>> +						osb->osb_debug_root,
+>> +						&dlm_debug->d_filter_secs);
+>> +	if (!dlm_debug->d_locking_filter) {
+>> +		ret = -EINVAL;
+>> +		mlog(ML_ERROR,
+>> +		     "Unable to create locking filter debugfs file.\n");
+>> +		debugfs_remove(dlm_debug->d_locking_state);
+>> +		dlm_debug->d_locking_state = NULL;
 > 
+> Or we can just leave this cleanup for ocfs2_dlm_shutdown_debug()?
+Yes, it looks more concise to delete these two lines code, then let ocfs2_dlm_shutdown_debug()
+function to handle the cleanup in case failure.
 
--- 
-Sincerely yours,
-Mike.
+Thanks
+Gang
 
+> 
+> Thanks,
+> Joseph
+> 
+>> +		goto out;
+>> +	}
+>> +
+>>  	ocfs2_get_dlm_debug(dlm_debug);
+>>  out:
+>>  	return ret;
+>> @@ -3269,6 +3306,7 @@ static void ocfs2_dlm_shutdown_debug(struct 
+> ocfs2_super *osb)
+>>  
+>>  	if (dlm_debug) {
+>>  		debugfs_remove(dlm_debug->d_locking_state);
+>> +		debugfs_remove(dlm_debug->d_locking_filter);
+>>  		ocfs2_put_dlm_debug(dlm_debug);
+>>  	}
+>>  }
+>> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+>> index 8efa022684f4..f4da51099889 100644
+>> --- a/fs/ocfs2/ocfs2.h
+>> +++ b/fs/ocfs2/ocfs2.h
+>> @@ -237,6 +237,8 @@ struct ocfs2_orphan_scan {
+>>  struct ocfs2_dlm_debug {
+>>  	struct kref d_refcnt;
+>>  	struct dentry *d_locking_state;
+>> +	struct dentry *d_locking_filter;
+>> +	u32 d_filter_secs;
+>>  	struct list_head d_lockres_tracking;
+>>  };
+>>  
+>> 
