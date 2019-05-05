@@ -2,71 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B532313F4A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 13:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F7713F4D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 14:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfEEL6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 07:58:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56902 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbfEEL6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 07:58:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A6E71993;
-        Sun,  5 May 2019 04:58:36 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82F2B3F5C1;
-        Sun,  5 May 2019 04:58:34 -0700 (PDT)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Qais Yousef <qais.yousef@arm.com>
-Subject: [PATCH 7/7] sched: export the newly added tracepoints
-Date:   Sun,  5 May 2019 12:57:32 +0100
-Message-Id: <20190505115732.9844-8-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190505115732.9844-1-qais.yousef@arm.com>
-References: <20190505115732.9844-1-qais.yousef@arm.com>
+        id S1727314AbfEEMGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 08:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfEEMGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 08:06:41 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 308212087F;
+        Sun,  5 May 2019 12:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557058000;
+        bh=i8IgdodhDZT8g5eCpvqZfSm1dEue2uSu7hzNSi3wo/g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cpZ1S1/AQ9rhuyjtEZDYnx4L2bY5l9lFvyP+OW+7a0LxVtFerBDlbkXXPdc8nm0pO
+         0w1eRFNiSnFirzFkNkn7/dSeBJR7EOvvIqcJu8C2mFiBjGAFURigZcIhvu6MBT/OYb
+         LCTDsoVGfOsfiXXlsWj4a8En2538tmbAQ72bj31M=
+Date:   Sun, 5 May 2019 13:06:34 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     =?UTF-8?B?Sm/Do28=?= Seckler <joaoseckler@gmail.com>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com,
+        stefan.popa@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: adt7316: match parenthesis alignment
+Message-ID: <20190505130634.4bd56579@archlinux>
+In-Reply-To: <20190429175939.2jvt4qwrtbmpvhl6@smtp.gmail.com>
+References: <20190429175939.2jvt4qwrtbmpvhl6@smtp.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So that external modules can hook into them and extract the info they
-need. Since these new tracepoints have no events associated with them
-exporting these tracepoints make them useful for external modules to
-perform testing and debugging. There's no other way otherwise to access
-them.
+On Mon, 29 Apr 2019 14:59:40 -0300
+Jo=C3=A3o Seckler <joaoseckler@gmail.com> wrote:
 
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
----
- kernel/sched/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> This patch solves the following checkpatch.pl message:
+> CHECK: Alignment should match open parenthesis.
+> This makes the file more compliant with the preferred coding style for
+> the Linux kernel.
+>=20
+> Signed-off-by: Jo=C3=A3o Seckler <joaoseckler@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4778c48a7fda..1841a4e9918e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -22,6 +22,14 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/sched.h>
- 
-+/*
-+ * Export tracepoints that act as a bare tracehook (ie: have no trace event
-+ * associated with them) to allow external modules to probe them.
-+ */
-+EXPORT_TRACEPOINT_SYMBOL_GPL(sched_load_rq);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(sched_load_se);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(sched_overutilized);
-+
- DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- 
- #if defined(CONFIG_SCHED_DEBUG) && defined(CONFIG_JUMP_LABEL)
--- 
-2.17.1
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/staging/iio/addac/adt7316.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/ad=
+dac/adt7316.c
+> index b6a65ee8d558..37ce563cb0e1 100644
+> --- a/drivers/staging/iio/addac/adt7316.c
+> +++ b/drivers/staging/iio/addac/adt7316.c
+> @@ -2154,7 +2154,7 @@ int adt7316_probe(struct device *dev, struct adt731=
+6_bus *bus,
+>  		chip->dac_bits =3D 8;
+> =20
+>  	chip->ldac_pin =3D devm_gpiod_get_optional(dev, "adi,ldac",
+> -						GPIOD_OUT_LOW);
+> +						 GPIOD_OUT_LOW);
+>  	if (IS_ERR(chip->ldac_pin)) {
+>  		ret =3D PTR_ERR(chip->ldac_pin);
+>  		dev_err(dev, "Failed to request ldac GPIO: %d\n", ret);
 
