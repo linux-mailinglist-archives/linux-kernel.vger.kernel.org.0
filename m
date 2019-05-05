@@ -2,73 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D481D13CFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB5313D01
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfEEDeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 23:34:37 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37802 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726524AbfEEDeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 23:34:37 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 111978EE0C7;
-        Sat,  4 May 2019 20:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557027276;
-        bh=EMCsSEoeKD2tfQRbUT3DsFzOc7Zxy9wYitORbSIGSyQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Msyze7y8mfbtJc8zDpyufeamAMJK8y4tojihXKqFAbqCBlW84ZJQz2DRFhM1oHVWe
-         xz3gfThsH96Pj2PcXs+5Bc4+JiApCH/Advbn4kVm3jxZMoiUynSgis3CE1QzF7ZJCC
-         DWePoYa3cEHzoRuofRWoV2H7p/YZLQ7nMNRNZCt0=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pCzQJRjBDpxJ; Sat,  4 May 2019 20:34:35 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 41B488EE0A4;
-        Sat,  4 May 2019 20:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557027275;
-        bh=EMCsSEoeKD2tfQRbUT3DsFzOc7Zxy9wYitORbSIGSyQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ko9mJbwT396D+BtJT/B6qk4ESXCvhq7qAXbhmpjE4HAY+Ufs044aBYl/ceZufnV+B
-         jYHEmfAI1EWQAnZaZd2QWlmipCCp946pf2aT1SXy1BNviCEw4bUe/mDTXm2gpIzYm1
-         meyNtO8+UU0fgGaDUi2861jXV9bzmOAiwCRdWeI0=
-Message-ID: <1557027274.2821.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH] mptsas:  fix undefined behaviour of a shift of an int
- by more than 31 places
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Colin King <colin.king@canonical.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sat, 04 May 2019 20:34:34 -0700
-In-Reply-To: <20190504164010.24937-1-colin.king@canonical.com>
-References: <20190504164010.24937-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727622AbfEEDk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 23:40:59 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3004 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726524AbfEEDk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 23:40:58 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id CF7D13334185D4094407;
+        Sun,  5 May 2019 11:40:56 +0800 (CST)
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 5 May 2019 11:40:55 +0800
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sun, 5 May 2019 11:40:55 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <linux-f2fs-devel@lists.sourceforge.net>, <jaegeuk@kernel.org>
+CC:     <drosen@google.com>, <linux-kernel@vger.kernel.org>,
+        <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid potential race on sbi->unusable_block_count access/update
+Date:   Sun, 5 May 2019 11:40:46 +0800
+Message-ID: <20190505034046.17905-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-ClientProxiedBy: dggeme720-chm.china.huawei.com (10.1.199.116) To
+ dggeme763-chm.china.huawei.com (10.3.19.109)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-05-04 at 17:40 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the shift of int value 1 by more than 31 places can result
-> in undefined behaviour. Fix this by making the 1 a ULL value before
-> the shift operation.
+Use sbi.stat_lock to protect sbi->unusable_block_count accesss/udpate, in
+order to avoid potential race on it.
 
-Fusion SAS is pretty ancient.  I thought the largest one ever produced
-had four phys, so how did you produce the overflow?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 4 ++++
+ fs/f2fs/segment.c    | 5 ++++-
+ fs/f2fs/super.c      | 6 ++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-James
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 805a33088e82..ed70b68b2b38 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1536,7 +1536,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+ 	clear_sbi_flag(sbi, SBI_NEED_CP);
+ 	clear_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
++
++	spin_lock(&sbi->stat_lock);
+ 	sbi->unusable_block_count = 0;
++	spin_unlock(&sbi->stat_lock);
++
+ 	__set_cp_next_pack(sbi);
+ 
+ 	/*
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8388d2abacb5..8dee063c833f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2169,8 +2169,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 			 * before, we must track that to know how much space we
+ 			 * really have.
+ 			 */
+-			if (f2fs_test_bit(offset, se->ckpt_valid_map))
++			if (f2fs_test_bit(offset, se->ckpt_valid_map)) {
++				spin_lock(&sbi->stat_lock);
+ 				sbi->unusable_block_count++;
++				spin_unlock(&sbi->stat_lock);
++			}
+ 		}
+ 
+ 		if (f2fs_test_and_clear_bit(offset, se->discard_map))
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dce4416cb1d8..d40cae0cba56 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1226,10 +1226,13 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_blocks = total_count - start_count;
+ 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
+ 						sbi->current_reserved_blocks;
++
++	spin_lock(&sbi->stat_lock);
+ 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
+ 		buf->f_bfree = 0;
+ 	else
+ 		buf->f_bfree -= sbi->unusable_block_count;
++	spin_unlock(&sbi->stat_lock);
+ 
+ 	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
+ 		buf->f_bavail = buf->f_bfree -
+@@ -1508,7 +1511,10 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		goto out_unlock;
+ 
++	spin_lock(&sbi->stat_lock);
+ 	sbi->unusable_block_count = 0;
++	spin_unlock(&sbi->stat_lock);
++
+ out_unlock:
+ 	mutex_unlock(&sbi->gc_mutex);
+ restore_flag:
+-- 
+2.18.0.rc1
 
