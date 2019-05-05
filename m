@@ -2,156 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 023A313CF8
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0CC613D00
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 05:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfEEDbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 23:31:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34505 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfEEDbk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 23:31:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c13so4726278pgt.1;
-        Sat, 04 May 2019 20:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zkpxz+bEVJim4pTUs/VL14wDtnfj/pMmqSrNj8K7mhg=;
-        b=bNSaL0iUEkpv/cfyuXJBFxaS+pwPz5m6gm04nrZ4dKHfuNqANXIwiWIUAnqY/YOjyK
-         DfwdwpinZJao09utvZS8sN+PLV7Bmpk9KXvg/z9spovwImGoJGhrEXT01nDl44Vr+5Ec
-         zToqvcRsJ1DKMe/u4vJoG2v23hUUrWfmn10yTdoBzXos2zFQZHkDIDZ1MXv7FQzTspJW
-         D+AfmZURVuOp7E3F3dprACtAG5StMi+XlC3FLoP0St1qAYQbY/P/4quq8jHRbLfZeS8T
-         /nXvtcwA9XSM1Iud7xABryx1i5ASq88feG7eCV1nF9miKPhg4qXIXtG7fJJg+jM3GTTw
-         WtUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zkpxz+bEVJim4pTUs/VL14wDtnfj/pMmqSrNj8K7mhg=;
-        b=RH1iXs4yvcdM7t7Ix/p1YTuC/t7BC9qb2ZL2Yz1tQw6/OIVnOQNNcn2D2KqEwPJwSe
-         u14fpqE/m0sgRCZ8pG0DdFrpbAaDGRhV+N+LkIPZDhA+0dFoquP7ZDxQsebkOoBhCYJz
-         8QtOZ9fxlVLouioKI4KXsWPAmoq4ZV6wFM6sapx24X+K4we8y8/9xHF6zfgy/6TQNrJb
-         7XaSm+ikyhH8q/zI/Mnjx3Qa2ekFeXCQ6vHVx6zVsI7gDyVdvnpJvNpQ1uuPRVBkBUBz
-         pg91sDWrvhgmHqWFQwfROuAkijYCU9AHGVvENRsCos0zzCeRzSQGlHz9o0nM79mycp+4
-         EFfw==
-X-Gm-Message-State: APjAAAU2vYXCJ+tn2L92777xk+2awfD7fmPgNZqGiiPUxrloa4AHieKA
-        kRg0brsRPP07g2NdcvGhFvDHeOX2
-X-Google-Smtp-Source: APXvYqxXgktIUMCC3hbPZMaqaPBL/9R6BJGeXpDugLmJfMUqqyiJd5f/vi3BLd9J2nLIhsrkqLbEgw==
-X-Received: by 2002:a63:750c:: with SMTP id q12mr22629407pgc.133.1557027099550;
-        Sat, 04 May 2019 20:31:39 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j6sm8379049pfe.107.2019.05.04.20.31.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 20:31:38 -0700 (PDT)
-Subject: Re: [PATCH 5.0 00/32] 5.0.13-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20190504102452.523724210@linuxfoundation.org>
- <20190505030515.txopqluki6mc2px2@xps.therub.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <4913833a-5b46-20d0-4dce-3e6d46a7a498@roeck-us.net>
-Date:   Sat, 4 May 2019 20:31:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727572AbfEEDkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 23:40:06 -0400
+Received: from mx1.cock.li ([185.10.68.5]:50305 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726524AbfEEDkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 23:40:06 -0400
+X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 May 2019 23:40:04 EDT
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        NO_RECEIVED,NO_RELAYS,T_DKIM_INVALID shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-In-Reply-To: <20190505030515.txopqluki6mc2px2@xps.therub.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1557027101; bh=Ycu/sgRiZ7p6JnXxec3R9Za1mSUA83GiAMKbkh+V3SE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=u0Aj8cvJGg2cCtkJX/viDa34b5X1Qs6v1kWLkge7sGUNPI0RiaEMJH8bwf+rwtZ9S
+         7U5lu6uIj0KBF2izuZO5e4RDmaCfJDZtcjemWI4Fbey8zMlV9nRWkGl8aZe4k5ySlt
+         UgfR9UGk9u2OqNJrQVIOdUaCwrEQCHwyfr5Xj30GdTT/iyufZUQUBHQAJa6T4gaVZe
+         1Xok+LNOFa46bYUW7rtvO9ZdaskWQgC0zHXFYj8oCxzPoKOUbW/IznkW8cEBSNGX6Y
+         92jZIbqYost088Q/qcqsIkRujGG0+VBH8yzqYZp9UP2NGCQGzkCJZOj/AJ/3wCmQQV
+         w5DRKj0POQ+YQ==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Sun, 05 May 2019 03:31:41 +0000
+From:   vsnsdualce@memeware.net
+To:     Ben Finney <bignose@debian.org>
+Cc:     debian-user@lists.debian.org, linux-kernel@vger.kernel.org,
+        qmastery16@gmail.com
+Subject: Re: Can a recipients rights under GNU GPL be revoked? - Yes if they
+ are free(gratis) licensees.
+In-Reply-To: <86lg36cog6.fsf@benfinney.id.au>
+References: <86lg36cog6.fsf@benfinney.id.au>
+Message-ID: <e82fcc0d08cbaf6ddd186c2d9709df9a@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/4/19 8:05 PM, Dan Rue wrote:
-> On Sat, May 04, 2019 at 12:24:45PM +0200, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 5.0.13 release.
->> There are 32 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Mon 06 May 2019 10:24:23 AM UTC.
->> Anything received after that time might be too late.
-> 
-> Results from Linaro’s test farm.
-> Regressions detected.
-> 
+Yes, if the licensee has not paid anything (no money, no service, etc) 
+that you asked him for, for the license, it can be freely revoked. The 
+"clarification" by the FSF is complete and utter bullshit (and was 
+prompted by my writing on the issue).
 
-Confusing. What are the regressions ? Below it says that there are none.
+For a licensee to prevent a revocation, he must be able to enforce some 
+promise regarding revocation (when it can occur, etc) that the copyright 
+holder made to him.
 
-Guenter
+In order to have an enforceable promise he must have paid the owner 
+something for that promise, otherwise it is an illusory promise and will 
+not be enforced by the court.
 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 5.0.13-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-5.0.y
-> git commit: c6bd3efdcefd68cc590853c50594a9fc971d93cd
-> git describe: v5.0.12-33-gc6bd3efdcefd
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.0-oe/build/v5.0.12-33-gc6bd3efdcefd
-> 
-> No regressions (compared to build v5.0.11-102-g17f93022a8c9)
-> 
-> No fixes (compared to build v5.0.11-102-g17f93022a8c9)
-> 
-> Ran 25060 total tests in the following environments and test suites.
-> 
-> Environments
-> --------------
-> - dragonboard-410c
-> - hi6220-hikey
-> - i386
-> - juno-r2
-> - qemu_arm
-> - qemu_arm64
-> - qemu_i386
-> - qemu_x86_64
-> - x15
-> - x86
-> 
-> Test Suites
-> -----------
-> * build
-> * install-android-platform-tools-r2600
-> * kselftest
-> * libgpiod
-> * libhugetlbfs
-> * ltp-cap_bounds-tests
-> * ltp-commands-tests
-> * ltp-containers-tests
-> * ltp-cpuhotplug-tests
-> * ltp-cve-tests
-> * ltp-dio-tests
-> * ltp-fcntl-locktests-tests
-> * ltp-filecaps-tests
-> * ltp-fs_bind-tests
-> * ltp-fs_perms_simple-tests
-> * ltp-fsx-tests
-> * ltp-hugetlb-tests
-> * ltp-io-tests
-> * ltp-ipc-tests
-> * ltp-math-tests
-> * ltp-mm-tests
-> * ltp-nptl-tests
-> * ltp-pty-tests
-> * ltp-sched-tests
-> * ltp-securebits-tests
-> * ltp-syscalls-tests
-> * ltp-timers-tests
-> * perf
-> * spectre-meltdown-checker-test
-> * v4l2-compliance
-> * kvm-unit-tests
-> * ltp-fs-tests
-> * ltp-open-posix-tests
-> * kselftest-vsyscall-mode-native
-> * kselftest-vsyscall-mode-none
-> 
+"Promising" to fulfill a pre-existing duty is not sufficient payment 
+(consideration) either. One pre-existing duty we all have is to follow 
+laws. Promising to not violate someone's copyright is not valid 
+consideration as it is a pre-existing duty.
 
+Before the license grant the free-taker has the following "rights" to 
+the work:
+Nothing.
+
+After the license grant he has the following permissions regarding the 
+work:
+(Whatever the license says).
+
+And for that he has paid the copyright owner: nothing.
+
+No valid consideration, no contract, any "promise" made in the license 
+text is illusory: it cannot be relied upon (including the "irrevocable" 
+clause in the GPLv3: that clause is _inoperative_ from the perspective 
+of a free-licensee vs the owner).
+
+(Additionally, consideration, to be valid, must be bargained for. 
+Tendering unwanted "consideration" is no consideration at all, thus the 
+"fame is payment enough" argument from the dicta of a 9th circuit case 
+is of no value when the licensor did not specifically bargain for such 
+in exchange. You cannot hand the owner something after the fact and 
+declare it valid consideration)
+
+You can revoke. You can do so for any reason or for no reason at all.
+
+
+
+The FSF and SFLC swear that you can bite the hand that feeds you for 
+free. They are incorrect and purposefully deceiving you in order to 
+safeguard their movement against the men who actually did the work to 
+create the corpus it rests upon.
+
+
+
+Note: If you would like a nice expansive legal paper to read on this 
+issue, Sapna Kumar's paper is good: 
+https://scholarship.law.duke.edu/faculty_scholarship/1857/
+If that is too formal and you prefer a stream of consciousness message 
+board fight on this issue, the LKML has you covered: 
+https://lkml.org/lkml/2019/5/3/698  (and it covers the 9th circuit 
+Artifex case and 9th circuit Artistic License case which some people 
+will try to make you think invalidates your proprietary rights)
+If you want a book, to have and to hold, that recognizes this: 
+https://www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876
+If a paper by some mere lawyers isn't good enough, a law professor's 
+take on the subject might be more you style: 
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=243237
+
+Yes, the GPL is revocable from free licensees. Yes they will fight you 
+in court if you revoke from someone who cares, so when you are thinking 
+of revocation: 1) properly register your copyrights ... 3) Then revoke 
+from an entity domiciled in a property-friendly circuit that isn't going 
+to simply invalidate the idea of contracts requiring actual valid 
+consideration (IE: do not revoke from someone in the 9th circuit as your 
+first course of action: revoke from an entity in another circuit)
+
+(Also note: Do not send a cease-and-desist letter off the bat: the 
+entity can then rush to the court house to seek a hearing regarding his 
+rights to the work. You don't want to be in a race-to-the-courthouse 
+situation and not even know it)
+
+Part 0) and 2) are :Get [an] experienced copyright attorney(s) who is 
+well familiar with the leanings of the various federal circuits so you 
+can formulate a proper strategy. The 9th circuit loves "Big Tech" and 
+doesn't much care for the formalities of law, and if requiring 
+consideration to actually exist regarding copyright licenses for them to 
+be mutually enforceable contracts gets in the way of California's Tech 
+industry: guess how they're going to rule in a "new insightful 
+groundbreaking finding".
+
+
+
+On 2019-01-27 11:47, Ben Finney wrote:
+> Howdy all,
+> 
+> Recently in this forum, some concerns have been raised about works
+> covered by GNU GPL. In particular, whether a recipient of a work,
+> received under conditions of the GNU GPL, can have the freedoms of the
+> GNU GPL later withdrawn in that same work.
+> 
+> To reassure those who might worry whether they can reply on the freedom
+> granted in a work, it is worth reading the GNU FAQ document for the GNU
+> GPL at the Free Software Foundation:
+> 
+>     [For any GNU GPL-licensed work,] the public already has the right 
+> to
+>     use the program under the GPL, and this right cannot be withdrawn.
+> 
+>     
+> <URL:https://www.gnu.org/licenses/gpl-faq.en.html#CanDeveloperThirdParty>
+> 
+> The same answer is in the FAQ specifically for the GNU GPL version 2.0
+> <URL:https://www.gnu.org/licenses/old-licenses/gpl-2.0-faq.html#CanDeveloperThirdParty>.
+> 
+> You can read more in the Software Freedom Conservancy's document
+> _Copyleft and the GNU General Public License: A Comprehensive Tutorial
+> and Guide_, specifically in §7.4 “GPLv2 Irrevocability”. That 
+> concludes:
+> 
+>     Whether as a matter of a straightforward contractual obligation, or
+>     as a matter of promissory estoppel, a contributor’s attempt to
+>     revoke a copyright license grant and then enforce their copyright
+>     against a user is highly unlikely to succeed.
+> 
+> 
+> <URL:https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4>
+> 
+> In other words: Any copyright holder can *say* they wish to
+> retroactively revoke the GNU GPL to some party. However, unless that
+> party has violated the conditions of the GNU GPL grant they originally
+> received, there does not appear to be any enforcible threat of
+> revocation that would succeed.
+> 
+> I hope these, along with the many court cases world-wide that have
+> tested the GNU GPL and found it to be enforcible, can reassure those
+> considering whether a particular copyright holder's whim can revoke the
+> freedoms guaranteed in a GNU GPL-covered work. I'd say there's nothing
+> to worry about from those threats.
