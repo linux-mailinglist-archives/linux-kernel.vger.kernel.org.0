@@ -2,173 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE19A13CCF
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 04:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D0F13CD7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2019 04:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfEECcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 4 May 2019 22:32:08 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:40736 "EHLO mail.hallyn.com"
+        id S1727584AbfEECoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 4 May 2019 22:44:03 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46360 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726390AbfEECcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 May 2019 22:32:07 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id EEBF95E2; Sat,  4 May 2019 21:32:04 -0500 (CDT)
-Date:   Sat, 4 May 2019 21:32:04 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        jannh@google.com, dhowells@redhat.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org, arnd@arndb.de,
-        ebiederm@xmission.com, keescook@chromium.org, tglx@linutronix.de,
-        mtk.manpages@gmail.com, akpm@linux-foundation.org, oleg@redhat.com,
-        cyphar@cyphar.com, joel@joelfernandes.org, dancol@google.com
-Subject: Re: RFC: on adding new CLONE_* flags [WAS Re: [PATCH 0/4] clone: add
- CLONE_PIDFD]
-Message-ID: <20190505023204.GA4445@mail.hallyn.com>
-References: <20190414201436.19502-1-christian@brauner.io>
- <dc05ffe3-c2ff-8b3e-d181-e0cc620bf91d@metux.net>
- <20190415155034.GA25351@mail.hallyn.com>
- <000a64d6-1e22-21bf-f232-15f141092e44@metux.net>
- <20190429154949.GA23456@mail.hallyn.com>
- <c95fbdbb-a62b-4ad1-f4be-7d1a8f96f508@metux.net>
+        id S1726390AbfEECoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 May 2019 22:44:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 May 2019 19:44:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,431,1549958400"; 
+   d="scan'208";a="146346574"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 04 May 2019 19:43:55 -0700
+Cc:     baolu.lu@linux.intel.com, murphyt7@tcd.ie,
+        Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [RFC 6/7] iommu/vt-d: convert the intel iommu driver to the
+ dma-iommu ops api
+To:     Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
+References: <20190504132327.27041-1-tmurphy@arista.com>
+ <20190504132327.27041-7-tmurphy@arista.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <602b77a2-9c68-ad14-b64f-904a7ff27a15@linux.intel.com>
+Date:   Sun, 5 May 2019 10:37:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c95fbdbb-a62b-4ad1-f4be-7d1a8f96f508@metux.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190504132327.27041-7-tmurphy@arista.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 07:31:43PM +0200, Enrico Weigelt, metux IT consult wrote:
+Hi,
 
-Argh.  Sorry, it seems your emails aren't making it into my inbox, only
-my once-in-a-long-while-checked lkml folder.  Sorry again.
+On 5/4/19 9:23 PM, Tom Murphy wrote:
+> static int intel_iommu_add_device(struct device *dev)
+>   {
+> +	struct dmar_domain *dmar_domain;
+> +	struct iommu_domain *domain;
+>   	struct intel_iommu *iommu;
+>   	struct iommu_group *group;
+> -	struct iommu_domain *domain;
+> +	dma_addr_t base;
+>   	u8 bus, devfn;
+>   
+>   	iommu = device_to_iommu(dev, &bus, &devfn);
+> @@ -4871,9 +4514,12 @@ static int intel_iommu_add_device(struct device *dev)
+>   	if (IS_ERR(group))
+>   		return PTR_ERR(group);
+>   
+> +	base = IOVA_START_PFN << VTD_PAGE_SHIFT;
+>   	domain = iommu_get_domain_for_dev(dev);
+> +	dmar_domain = to_dmar_domain(domain);
+>   	if (domain->type == IOMMU_DOMAIN_DMA)
+> -		dev->dma_ops = &intel_dma_ops;
+> +		iommu_setup_dma_ops(dev, base,
+> +				__DOMAIN_MAX_ADDR(dmar_domain->gaw) - base);
 
-> On 29.04.19 17:49, Serge E. Hallyn wrote:
-> 
-> >> * all users are equal - no root at all. the only exception is the>>   initial process, which gets the kernel devices mounted into his>>
->  namespace.> > This does not match my understanding, but I'm most likely
-> wrong.  (I thought> there was an actual 'host owner' uid, which mostly
-> is only used for initial> process, but is basically root with a
-> different name, and used far less.  No> uid transitions without factotem
-> so that it *looked* like no root user).
-> Not quite (IIRC). The hostowner is just the user who booted the machine,
-> the initial process runs under this uname and gets the kernel devices
-> bound into his namespace, so he can start fileservers on them.
-> 
-> Also the caphash device (the one you can create capabilities, eg. for
-> user change, which then can be used via capuse device) can only be
-> opened once - usually by the host factotum.
-> 
-> There really is no such thing like root user.
-> 
-> >> What I'd like to achieve on Linux:>>>> * unprivileged users can have their own mount namespace, where
-> they>>   can mount at will (maybe just 9P).> > No problem, you can do
-> that now.
->
-> But only within separate userns, IMHO. (and, when I last tried, plain
+I didn't find the implementation of iommu_setup_dma_ops() in this
+series. Will the iova resource be initialized in this function?
 
-"Only within a separate userns" - but why does that matter?  It's just
-a different uid mapping.
+If so, will this block iommu_group_create_direct_mappings() which
+reserves and maps the reserved iova ranges.
 
-> users couldn't directly create their userns).
+>   
+>   	iommu_group_put(group);
+>   	return 0;
+> @@ -5002,19 +4648,6 @@ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sd
+>   	return ret;
+>   }
+>   
+> -static void intel_iommu_apply_resv_region(struct device *dev,
+> -					  struct iommu_domain *domain,
+> -					  struct iommu_resv_region *region)
+> -{
+> -	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
+> -	unsigned long start, end;
+> -
+> -	start = IOVA_PFN(region->start);
+> -	end   = IOVA_PFN(region->start + region->length - 1);
+> -
+> -	WARN_ON_ONCE(!reserve_iova(&dmar_domain->iovad, start, end));
+> -}
+> -
+>   struct intel_iommu *intel_svm_device_to_iommu(struct device *dev)
+>   {
+>   	struct intel_iommu *iommu;
+> @@ -5050,13 +4683,13 @@ const struct iommu_ops intel_iommu_ops = {
+>   	.detach_dev		= intel_iommu_detach_device,
+>   	.map			= intel_iommu_map,
+>   	.unmap			= intel_iommu_unmap,
+> +	.flush_iotlb_all	= iommu_flush_iova,
+>   	.flush_iotlb_range	= intel_iommu_flush_iotlb_range,
+>   	.iova_to_phys		= intel_iommu_iova_to_phys,
+>   	.add_device		= intel_iommu_add_device,
+>   	.remove_device		= intel_iommu_remove_device,
+>   	.get_resv_regions	= intel_iommu_get_resv_regions,
+>   	.put_resv_regions	= intel_iommu_put_resv_regions,
+> -	.apply_resv_region	= intel_iommu_apply_resv_region,
 
-Plain users can definately create their own userns, directly.  On some
-distros there is a kernel knob like
+With this removed, how will iommu_group_create_direct_mappings() work?
 
-#cat /proc/sys/kernel/unprivileged_userns_clone
-1
-
-which when unset prevents unprivileged users creating a namespace.
-
-> >> * but they still appear as the same normal users to the rest of the
-> >>   system
-> > 
-> > No problem, you can do that now.
-> 
-> How exactly ? Did I miss something vital ?
-
-By unsharing your namespace and writing the new uid mapping.  You can of
-course only map your own uid without using any privileged helpers at all.
-And it requires help from a second process, which does the writing to
-the uid map file after the first process has unshared.  But you can do it.
-For instance, using the nsexec.c at
-
-	https://github.com/fcicq/nsexec
-
-You can:
-
-Terminal 1:
-	shallyn@stp:~/src/nsexec$ ./nsexec -UWm
-	about to unshare with 10020000
-	Press any key to exec (I am 31157)
-
-Now in terminal 2:
-
-Terminal 2:
-	shallyn@stp:~/src/nsexec$ echo "0 1000 1" > /proc/31157/uid_map
-	shallyn@stp:~/src/nsexec$ echo deny > /proc/31157/setgroups
-	shallyn@stp:~/src/nsexec$ echo "0 1000 1" > /proc/31157/gid_map
-
-Then back in terminal 1:
-	# id
-	uid=0(root) gid=0(root) groups=0(root),65534(nogroup)
-	# mount --bind /etc /mnt
-	# echo $?
-	0
-	# ls /root
-	ls: cannot open directory '/root': Permission denied
-
-To the rest of the system you look like uid 1000.  You could have
-chosen uid 1000 in your new namespace, but then you couldn't mount.
-Of course you can nest user namespaces so you could create another,
-this time mapping uid 1000 so you look like 1000 to yourself as well.
-
-> >> * 9p programs (compiled for Linux ABI) can run parallel to traditional
-> >>   linux programs within the same user and sessions (eg. from a terminal,
-> >>   i can call both the same way)
-> >> * namespace modifications affect both equally (eg. I could run ff in
-> >>   an own ns)
-> > 
-> > affect both of what equally?
-> 
-> mount / bind.
-> 
-> > That's exactly what user namespaces are for.  You can create a new
-> > user namespace, using no privilege at all, with your current uid (i.e.
-> > 1000) mapped to whatever uid you like; if you pick 0, then you can unshare all
-> > the namespaces you like.  
-> 
-> But I don't like to appear as 'root' in here. I just wanna have my own
-> filesystem namespace, nothing more.
-
-Right.  As you know setuid makes that impossible, unfortunately.  That's
-where nonewprivs shows promise.
-
-> > Once you unshare mnt_ns, you can mount to your
-> > heart's content.  To other processes on the host, your process is
-> > uid 1000.
-> 
-> Is that the uid, I'm appearing to filesystems ?
-
-Yes.
-
-> > Regarding factotem, I agree that with the pidfd work going on etc, it's getting
-> > more and more tempting to attempt a switch to that.  Looking back at my folder,
-> > I see you posted a kernel patch for it.  I had done the same long ago.  Happy to
-> > work with you again on that, and put a simple daemon into shadow package, if
-> > util-linux isn't deemed the far better place.
-> 
-> Yeah :)
-> 
-> 
-> --mtx
-> 
-> -- 
-> Enrico Weigelt, metux IT consult
-> Free software and Linux embedded engineering
-> info@metux.net -- +49-151-27565287
+Best regards,
+Lu Baolu
