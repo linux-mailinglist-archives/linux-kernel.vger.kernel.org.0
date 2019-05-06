@@ -2,56 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C0515018
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB7C14FD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfEFPZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:25:39 -0400
-Received: from mx1.chost.de ([5.175.28.52]:40320 "EHLO mx1.chost.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbfEFPZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:25:38 -0400
-X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 11:25:37 EDT
-Received: from vm002.chost.de ([::ffff:192.168.122.102])
-  by mx1.chost.de with SMTP; Mon, 06 May 2019 17:21:16 +0200
-  id 000000000133BD2A.000000005CD050EC.00007663
-Received: by vm002.chost.de (sSMTP sendmail emulation); Mon, 06 May 2019 17:21:15 +0200
-From:   Christoph Probst <kernel@probst.it>
-To:     linux-cifs@vger.kernel.org
-Cc:     Steve French <sfrench@samba.org>, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, Christoph Probst <kernel@probst.it>
-Subject: [PATCH] cifs: fix strcat buffer overflow in smb21_set_oplock_level()
-Date:   Mon,  6 May 2019 17:16:32 +0200
-Message-Id: <1557155792-2703-1-git-send-email-kernel@probst.it>
-X-Mailer: git-send-email 2.1.4
+        id S1726710AbfEFPQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:16:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52786 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726236AbfEFPQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:16:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5A4E8ACFB;
+        Mon,  6 May 2019 15:16:54 +0000 (UTC)
+Date:   Mon, 6 May 2019 17:16:52 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/2] eeprom: ee1004: Deal with nack on page selection
+Message-ID: <20190506171652.3ba909de@endymion>
+In-Reply-To: <04843f27-bb0f-d631-32c8-80cd122b7399@linux.intel.com>
+References: <20190506151539.69ee75e8@endymion>
+        <20190506151656.47494e56@endymion>
+        <04843f27-bb0f-d631-32c8-80cd122b7399@linux.intel.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change strcat to strcpy in the "None" case as it is never valid to append
-"None" to any other message. It may also overflow char message[5], in a
-race condition on cinode if cinode->oplock is unset by another thread
-after "RHW" or "RH" had been written to message.
+On Mon, 6 May 2019 17:03:20 +0300, Jarkko Nikula wrote:
+> On 5/6/19 4:16 PM, Jean Delvare wrote:
+> > Some EE1004 implementations will not properly ack page selection
+> > commands. They still set the page correctly, so there is no actual
+> > error. Deal with this case gracefully by checking the currently
+> > selected page after we receive a nack. If the page is set right then
+> > we can continue.
+> > 
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >   drivers/misc/eeprom/ee1004.c |   12 +++++++++++-
+> >   1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> Does Dreamcat4 deserve reported and tested by tags here? I guess 
+> anonymous address is fine with those tags?
 
-Signed-off-by: Christoph Probst <kernel@probst.it>
----
- fs/cifs/smb2ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My assumption is that someone who posts anonymously in the first place
+has no desire to be credited for anything or even mentioned anywhere.
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index c36ff0d..5fd5567 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2936,7 +2936,7 @@ smb21_set_oplock_level(struct cifsInodeInfo *cinode, __u32 oplock,
- 		strcat(message, "W");
- 	}
- 	if (!cinode->oplock)
--		strcat(message, "None");
-+		strcpy(message, "None");
- 	cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
- 		 &cinode->vfs_inode);
- }
+> (I re-tested these two patches on top of v5.1 and they make decode-dimms 
+> working on a machine with 2-4 * Crucial DD4 dimms)
+
+Thank you very much.
+
 -- 
-2.1.4
-
+Jean Delvare
+SUSE L3 Support
