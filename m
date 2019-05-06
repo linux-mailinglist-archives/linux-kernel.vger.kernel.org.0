@@ -2,79 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5782A151E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0278F151D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfEFQtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 12:49:04 -0400
-Received: from mga14.intel.com ([192.55.52.115]:25683 "EHLO mga14.intel.com"
+        id S1726682AbfEFQny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:43:54 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55209 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbfEFQtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 12:49:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726327AbfEFQny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 12:43:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 09:49:03 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 09:43:53 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="230002448"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 06 May 2019 09:49:01 -0700
-Date:   Mon, 6 May 2019 10:43:25 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Maxim Levitsky <mlevitsk@redhat.com>, Fam Zheng <fam@euphon.net>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@fb.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Amnon Ilan <ailan@redhat.com>, John Ferlan <jferlan@redhat.com>
-Subject: Re: [PATCH v2 00/10] RFC: NVME MDEV
-Message-ID: <20190506164325.GB2219@localhost.localdomain>
-References: <20190502114801.23116-1-mlevitsk@redhat.com>
- <20190503121838.GA21041@lst.de>
- <e8f6981863bdbba89adcba1c430083e68546ac1a.camel@redhat.com>
- <20190506125752.GA5288@lst.de>
+   d="scan'208";a="230000844"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 06 May 2019 09:43:53 -0700
+Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
+        by linux.intel.com (Postfix) with ESMTP id 08F6258010A;
+        Mon,  6 May 2019 09:43:51 -0700 (PDT)
+Subject: Re: [alsa-devel] [RFC PATCH 1/7] soundwire: Add sysfs support for
+ master(s)
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
+ <20190504010030.29233-2-pierre-louis.bossart@linux.intel.com>
+ <20190504065242.GA9770@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <b36e5b42-6069-0a73-8cab-7fcfc999f3a8@linux.intel.com>
+Date:   Mon, 6 May 2019 11:43:51 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190506125752.GA5288@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190504065242.GA9770@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 05:57:52AM -0700, Christoph Hellwig wrote:
-> > However, similar to the (1), when the driver will support the devices with
-> > hardware based passthrough, it will have to dedicate a bunch of queues to the
-> > guest, configure them with the appropriate PASID, and then let the guest useA
-> > these queues directly.
-> 
-> We will not let you abuse the nvme queues for anything else.  We had
-> that discussion with the mellanox offload and it not only unsafe but
-> also adds way to much crap to the core nvme code for corner cases.
-> 
-> Or to put it into another way:  unless your paravirt interface requires
-> zero specific changes to the core nvme code it is not acceptable at all.
+Thanks for the quick feedback Greg!
 
-I agree we shouldn't specialize generic queues for this, but I think
-it is worth revisiting driver support for assignable hardware resources
-iff the specification defines it.
+>> +static const struct attribute_group sdw_master_node_group = {
+>> +	.attrs = master_node_attrs,
+>> +};
+>> +
+>> +static const struct attribute_group *sdw_master_node_groups[] = {
+>> +	&sdw_master_node_group,
+>> +	NULL
+>> +};
+> 
+> Minor nit, you can use the ATTRIBUTE_GROUPS() macro here to save you a
+> few lines.
 
-Until then, you can always steer processes to different queues by
-assigning them to different CPUs.
+will do.
+
+>> +
+>> +static void sdw_device_release(struct device *dev)
+>> +{
+>> +	struct sdw_master_sysfs *master = to_sdw_device(dev);
+>> +
+>> +	kfree(master);
+>> +}
+>> +
+>> +static struct device_type sdw_device_type = {
+>> +	.name =	"sdw_device",
+>> +	.release = sdw_device_release,
+>> +};
+>> +
+>> +int sdw_sysfs_bus_init(struct sdw_bus *bus)
+>> +{
+>> +	struct sdw_master_sysfs *master;
+>> +	int err;
+>> +
+>> +	if (bus->sysfs) {
+>> +		dev_err(bus->dev, "SDW sysfs is already initialized\n");
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	master = kzalloc(sizeof(*master), GFP_KERNEL);
+>> +	if (!master)
+>> +		return -ENOMEM;
+> 
+> Why are you creating a whole new device to put all of this under?  Is
+> this needed?  What will the sysfs tree look like when you do this?  Why
+> can't the "bus" device just get all of these attributes and no second
+> device be created?
+
+This is indeed my main question on this code (see cover letter) and why 
+I tagged the series as RFC. I find it odd to create an int-sdw.0 
+platform device to model the SoundWire master, and a sdw-master:0 device 
+whose purpose is only to expose the properties of that master. it'd be 
+simpler if all the properties were exposed one level up.
+
+Vinod and Sanyog might be able to shed some light on this?
