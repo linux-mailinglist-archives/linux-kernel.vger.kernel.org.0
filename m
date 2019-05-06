@@ -2,70 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 542D8150DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6645D150E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfEFQFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 12:05:20 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42195 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfEFQFU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 12:05:20 -0400
-Received: by mail-ed1-f65.google.com with SMTP id l25so15862124eda.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 09:05:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7kAz1+Z51tvw2opcrMQjw6Dq/g17HazdZTaAQbA0zpA=;
-        b=QdIo7bLyHNB8VtoEVEGMIf4+K1KdvC0BAq7RLP/8ruUhRYXtKaA7Bhj7RrX9eMiehr
-         NDZHPk+pNS+vXy0CKM7376V2Hh1Cz9moQ+i/LpxNsSlITwws1bNYgw3QnNSd5ebreWa6
-         FsHgBvlIOmpz3Ai/a9GDIHMpiQl+byPScyHN9u4QDgiyHZ0+AfGktxm/8Pjsq5aO8syi
-         QOu6gBAfCxWZXJ8WmH9ycBo/40e+kWTh8mkyzERGjT8YrMORrBZ2O84jT3d9BH9HcVRV
-         HdilhwvuoREiteMegsiIQx8w0vN6MEkYKpXftNQ0QcXIXAT6dnJ+ZKsK9bMFDQEDKndd
-         /vlg==
-X-Gm-Message-State: APjAAAU59EztttWEGjjLa1TunXJR0Ta5tX5+/48XC+kT2Mmvmy4d8joR
-        h/oNMb0/QOZnlU42oY1yCp4JiQ8WfhM=
-X-Google-Smtp-Source: APXvYqyKZiHoyTQVnVWoq+9/z12oY37alfcUhw1IsuXmlbo71MsqQkUjqe8oa0tPQsiQgwcy5rKKQQ==
-X-Received: by 2002:a50:deca:: with SMTP id d10mr26557704edl.25.1557158717949;
-        Mon, 06 May 2019 09:05:17 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d17sm520436ejb.15.2019.05.06.09.05.16
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 09:05:16 -0700 (PDT)
-Subject: Re: [PATCH RFC] brcmfmac: sanitize DMI strings v2
-To:     Victor Bravo <1905@spmblk.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org
-References: <cce7604e-2b02-80ed-1df5-6f304cada0cb@broadcom.com>
- <20190504194440.4zcxjrtj2aft3ka4@localhost>
- <16a87149068.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <20190505150355.3fbng4ny34x255vk@localhost>
- <0f75a3d4-94af-5503-94c3-e8af2364448d@redhat.com>
- <20190506090609.msudhncj7e5vdtzw@localhost>
- <70677dff-4336-28d5-7ab9-7ba7c3d74ebc@redhat.com>
- <20190506102032.3ximjecado4mz62j@localhost>
- <fb07ae01-4cca-98e7-1c2d-dfdf44909900@redhat.com>
- <87d0kvvkej.fsf@codeaurora.org> <20190506152441.ifjcdi73elxuq5it@localhost>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3f3cca6e-50b7-c61d-4a62-26ce508af9e7@redhat.com>
-Date:   Mon, 6 May 2019 18:05:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726578AbfEFQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:09:00 -0400
+Received: from smtp-out.xnet.cz ([178.217.244.18]:54633 "EHLO smtp-out.xnet.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfEFQJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 12:09:00 -0400
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id B7E5243D8;
+        Mon,  6 May 2019 18:08:56 +0200 (CEST)
+Received: by meh.true.cz (OpenSMTPD) with ESMTP id 49140d29;
+        Mon, 6 May 2019 18:08:55 +0200 (CEST)
+From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH RESEND net-next 0/3] of_get_mac_address ERR_PTR fixes
+Date:   Mon,  6 May 2019 18:08:37 +0200
+Message-Id: <1557158920-31586-1-git-send-email-ynezz@true.cz>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190506152441.ifjcdi73elxuq5it@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -73,65 +44,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 06-05-19 17:24, Victor Bravo wrote:
-> On Mon, May 06, 2019 at 03:26:28PM +0300, Kalle Valo wrote:
->> Hans de Goede <hdegoede@redhat.com> writes:
->>
->>> If we're going to do some filtering, then I suggest we play it safe and also
->>> disallow other chars which may be used as a separator somewhere, specifically
->>> ':' and ','.
->>>
->>> Currently upstream linux-firmware has these files which rely on the DMI
->>> matching:
->>>
->>> brcmfmac4330-sdio.Prowise-PT301.txt
->>> brcmfmac43430-sdio.Hampoo-D2D3_Vi8A1.txt
->>> brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt
->>>
->>> The others are either part of the DMI override table for devices with unsuitable
->>> DMI strings like "Default String"; or are device-tree based.
->>>
->>> So as long as we don't break those 3 (or break the ONDA one but get a symlink
->>> in place) we can sanitize a bit more then just non-printable and '/'.
->>>
->>> Kalle, Arend, what is your opinion on this?
->>>
->>> Note I do not expect the ONDA V80 Plus to have a lot of Linux users,
->>> but it definitely has some.
->>
->> To me having spaces in filenames is a bad idea, but on the other hand we
->> do have the "don't break existing setups" rule, so it's not so simple. I
->> vote for not allowing spaces, I think that's the best for the long run,
->> but don't know what Arend thinks.
-> 
-> I have found a fresh judicate on this:
-> https://lkml.org/lkml/2018/12/22/221
-> 
-> It seems clear that we have to support at least spaces for some time
-> (maybe wih separate config option which will be deprecated but on by
-> defaut until old files are considered gone).
+this patch series is an attempt to fix the mess, I've somehow managed to
+introduce.
 
-Ah that issue, well that is not really comparable in that case a lot of
-peoples setups were completely broken by that commit and it was a
-quite surprising behavior change in a userspace facing API.
+First patch in this series is defacto v5 of the previous 05/10 patch in the
+series, but since the v4 of this 05/10 patch wasn't picked up by the
+patchwork for some unknown reason, this patch wasn't applied with the other
+9 patches in the series, so I'm resending it as a separate patch of this
+fixup series again.
 
-The nvram loading path already does 2 tries, I really don't want to
-unnecessary complicate it with a third try.
+Second patch is a result of this rebase against net-next tree, where I was
+checking again all current users of of_get_mac_address and found out, that
+there's new one in DSA, so I've converted this user to the new ERR_PTR
+encoded error value as well.
 
-The Onda V80 Plus is a X86 based Windows / Android dual boot tablet,
-as said before I do not expect a ton of users to be running regular
-Linux on it.
+Third patch which was sent as v5 wasn't considered for merge, but I still
+think, that we need to check for possible NULL value, thus current IS_ERR
+check isn't sufficient and we need to use IS_ERR_OR_NULL instead.
 
-Given Kalle's clear preference for getting rid of the spaces lets
-just do that. But first we must get a symlink added to linux-firmware
-using the name with the _, newer kernels requiring a newer linux-firmware
-to match is not unheard of AFAIK, so combined with the limited amount
-of users I think this is a reasonable compromise.
+Cheers,
 
-Kalle, do you agree with getting the symlink added to linux-firmware
-ASAP as a fix for the V80 Plus issue; or do you want to see a fallback
-to the un-cleaned name as you suggested before ?
+Petr
 
-Regards,
+Petr Štetiar (3):
+  net: ethernet: support of_get_mac_address new ERR_PTR error
+  net: dsa: support of_get_mac_address new ERR_PTR error
+  staging: octeon-ethernet: Fix of_get_mac_address ERR_PTR check
 
-Hans
+ drivers/net/ethernet/aeroflex/greth.c                 | 2 +-
+ drivers/net/ethernet/allwinner/sun4i-emac.c           | 2 +-
+ drivers/net/ethernet/altera/altera_tse_main.c         | 2 +-
+ drivers/net/ethernet/arc/emac_main.c                  | 2 +-
+ drivers/net/ethernet/aurora/nb8800.c                  | 2 +-
+ drivers/net/ethernet/broadcom/bcmsysport.c            | 2 +-
+ drivers/net/ethernet/broadcom/bgmac-bcma.c            | 2 +-
+ drivers/net/ethernet/broadcom/bgmac-platform.c        | 2 +-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c        | 2 +-
+ drivers/net/ethernet/cavium/octeon/octeon_mgmt.c      | 2 +-
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c     | 2 +-
+ drivers/net/ethernet/davicom/dm9000.c                 | 2 +-
+ drivers/net/ethernet/ethoc.c                          | 2 +-
+ drivers/net/ethernet/ezchip/nps_enet.c                | 2 +-
+ drivers/net/ethernet/freescale/fec_main.c             | 2 +-
+ drivers/net/ethernet/freescale/fec_mpc52xx.c          | 2 +-
+ drivers/net/ethernet/freescale/fman/mac.c             | 2 +-
+ drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 2 +-
+ drivers/net/ethernet/freescale/gianfar.c              | 2 +-
+ drivers/net/ethernet/freescale/ucc_geth.c             | 2 +-
+ drivers/net/ethernet/hisilicon/hisi_femac.c           | 2 +-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c         | 2 +-
+ drivers/net/ethernet/lantiq_xrx200.c                  | 2 +-
+ drivers/net/ethernet/marvell/mv643xx_eth.c            | 2 +-
+ drivers/net/ethernet/marvell/mvneta.c                 | 2 +-
+ drivers/net/ethernet/marvell/pxa168_eth.c             | 2 +-
+ drivers/net/ethernet/marvell/sky2.c                   | 2 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c           | 2 +-
+ drivers/net/ethernet/micrel/ks8851.c                  | 2 +-
+ drivers/net/ethernet/micrel/ks8851_mll.c              | 2 +-
+ drivers/net/ethernet/nxp/lpc_eth.c                    | 2 +-
+ drivers/net/ethernet/qualcomm/qca_spi.c               | 2 +-
+ drivers/net/ethernet/qualcomm/qca_uart.c              | 2 +-
+ drivers/net/ethernet/renesas/ravb_main.c              | 2 +-
+ drivers/net/ethernet/renesas/sh_eth.c                 | 2 +-
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c   | 2 +-
+ drivers/net/ethernet/socionext/sni_ave.c              | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     | 2 +-
+ drivers/net/ethernet/ti/cpsw.c                        | 2 +-
+ drivers/net/ethernet/ti/netcp_core.c                  | 2 +-
+ drivers/net/ethernet/wiznet/w5100.c                   | 2 +-
+ drivers/net/ethernet/xilinx/ll_temac_main.c           | 2 +-
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c     | 2 +-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c         | 2 +-
+ drivers/staging/octeon/ethernet.c                     | 2 +-
+ net/dsa/slave.c                                       | 2 +-
+ net/ethernet/eth.c                                    | 2 +-
+ 47 files changed, 47 insertions(+), 47 deletions(-)
+
+-- 
+1.9.1
+
