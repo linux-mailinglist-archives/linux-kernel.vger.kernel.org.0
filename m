@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 098EA14E1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5909814CF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfEFO6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:58:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39164 "EHLO mail.kernel.org"
+        id S1729052AbfEFOqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:46:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728664AbfEFOna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:43:30 -0400
+        id S1729021AbfEFOqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48C3021019;
-        Mon,  6 May 2019 14:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FC062053B;
+        Mon,  6 May 2019 14:46:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153809;
-        bh=e5OyHT0kIM9tCgtPrUtYgCVbFfRiUBN5ta8F6o2joag=;
+        s=default; t=1557153960;
+        bh=HxP6j9eOxPuAu3PNxMhnaWz0ZlCmBnUYcwZkays1naA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KsXscSj2T+78rgDrhkSbhQBmaYtlD0fV2A8EwBUJPJoBr1xTSBlyE06fg+EZQq8TX
-         vBrwFoCEkYw/BrUS2U3S2E4RziqOlSjH4ZJGf16caBuPYe/o7Hcbzl4c2Y+owAvQbz
-         U8iFyNjj7AIdRqgZ0lapmDT7MrAG/w3yyDrmKLpw=
+        b=iJFQvAT6BDST7VHQyCH5qZ8D4CuweiGSxl2/7LwLN3zlE9obQ9dDLNwLquJQfIG0c
+         T1KUFxuIBDUOUnQTiaEzCCClQI1C45uEmza5YeSfwrJddHwd2mgHQDzARhhfDo91Cu
+         YJQxWxiCoiPjtrl27UsPvZySQbYgmIQlKpi/ILXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 97/99] x86/mm/tlb: Revert "x86/mm: Align TLB invalidation info"
+        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 62/75] staging: iio: adt7316: fix the dac write calculation
 Date:   Mon,  6 May 2019 16:33:10 +0200
-Message-Id: <20190506143102.620292973@linuxfoundation.org>
+Message-Id: <20190506143058.890036809@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,49 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-commit 780e0106d468a2962b16b52fdf42898f2639e0a0 upstream.
+commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
 
-Revert the following commit:
+The lsb calculation is not masking the correct bits from the user input.
+Subtract 1 from (1 << offset) to correctly set up the mask to be applied
+to user input.
 
-  515ab7c41306: ("x86/mm: Align TLB invalidation info")
+The lsb register stores its value starting at the bit 7 position.
+adt7316_store_DAC() currently assumes the value is at the other end of the
+register. Shift the lsb value before storing it in a new variable lsb_reg,
+and write this variable to the lsb register.
 
-I found out (the hard way) that under some .config options (notably L1_CACHE_SHIFT=7)
-and compiler combinations this on-stack alignment leads to a 320 byte
-stack usage, which then triggers a KASAN stack warning elsewhere.
-
-Using 320 bytes of stack space for a 40 byte structure is ludicrous and
-clearly not right.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Nadav Amit <namit@vmware.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 515ab7c41306 ("x86/mm: Align TLB invalidation info")
-Link: http://lkml.kernel.org/r/20190416080335.GM7905@worktop.programming.kicks-ass.net
-[ Minor changelog edits. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/tlb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/iio/addac/adt7316.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -694,7 +694,7 @@ void flush_tlb_mm_range(struct mm_struct
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -1447,7 +1447,7 @@ static ssize_t adt7316_show_DAC(struct a
+ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+ 		int channel, const char *buf, size_t len)
  {
- 	int cpu;
+-	u8 msb, lsb, offset;
++	u8 msb, lsb, lsb_reg, offset;
+ 	u16 data;
+ 	int ret;
  
--	struct flush_tlb_info info __aligned(SMP_CACHE_BYTES) = {
-+	struct flush_tlb_info info = {
- 		.mm = mm,
- 	};
+@@ -1465,9 +1465,13 @@ static ssize_t adt7316_store_DAC(struct
+ 		return -EINVAL;
  
+ 	if (chip->dac_bits > 8) {
+-		lsb = data & (1 << offset);
++		lsb = data & ((1 << offset) - 1);
++		if (chip->dac_bits == 12)
++			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
++		else
++			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
+ 		ret = chip->bus.write(chip->bus.client,
+-			ADT7316_DA_DATA_BASE + channel * 2, lsb);
++			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
+ 		if (ret)
+ 			return -EIO;
+ 	}
 
 
