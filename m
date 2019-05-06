@@ -2,257 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 400FF147A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD39147AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfEFJd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 05:33:27 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35522 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfEFJdZ (ORCPT
+        id S1726376AbfEFJfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 05:35:08 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:39863 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfEFJfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 05:33:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so14596481edr.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:33:23 -0700 (PDT)
+        Mon, 6 May 2019 05:35:07 -0400
+Received: by mail-wr1-f45.google.com with SMTP id v10so4072568wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=awhhrnN2/+oxUF2NNig63hHj+UDu6IjGilpFCLNHsYc=;
+        b=thAZLvYifY0AML0erfiAC1u3F2RTmP3/msIYKbnNfcCyLlvwvk5eQPui1qSVjhkLKf
+         lhx6olM9LApDXJG/osmfaW/+bubFdLd27yUfpSgmOJI1QcLEDfAZtzAS3tHxF+M63PR0
+         /rZN1OStxvB4nPRxi40ofxNkpnwf+ACB7Lq2E5xEcQHLvHirA4I9kevtbaZ1x6wR4BGN
+         VQbaD4IrcKzBCehG0ENJWL7fuNGm5zxkZPs975LlaUTs7JjRsF7K0m0nk7PlT7oIrnyN
+         wGgQHdQS3CdWBiFoNHyhYMiUV7K4uaCjPOlIIsCWHOR1pxdsSKlpzADlWSGrl5b83zWR
+         PWmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G0XYBH52ucBUD953mXrmSQQF5BnxjfabJRIahkcnQTg=;
-        b=GhYFJzn5N+4Ly4Z4ZW4zo9LDQpjKKwU1EPG0PTrEcoRsRvrrO6wt1GfUz/oTBxGvZM
-         X6HRniKGOFukRpbwDuR4VhF7/uaGslHlr8D4XDMi0ney1hMIAjrCqHqPjhuZTBfrRcnU
-         B9nmlqpfPUgjFRquzjHQUMn8MEPFdm3IT+9JfcnyqA7VusPzdSupQX3G15vR36eDE/No
-         aN0xX0CRr/tuXXpG8FsI0A0G8eHwMWX7su4bZNFlA/npKcVB7nPI4thLbWGnkMEz/N/c
-         wxR/tLckkjut8Zhmh7mSnCXPZPLKHZPkDMKUeBQqZKdN8GRulhyoTJF5gDsLya6L9MfJ
-         pjIA==
-X-Gm-Message-State: APjAAAVuhv+1++QC/Naig0n0pAx6DH4ZtyFUVPCIWpIYpGbJg8kVHkus
-        1lvO6qbhiDVPRpVX5VeOrmqCueqVW8Q=
-X-Google-Smtp-Source: APXvYqyBYlSVwVv58BhbYj0+wirL+diFLAP8Rvk2Cv9EL+vNUW2t6UyC3DpIIV2WTBtx00vPFgD/3Q==
-X-Received: by 2002:a17:906:1343:: with SMTP id x3mr17834323ejb.218.1557135202165;
-        Mon, 06 May 2019 02:33:22 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d28sm1465969ejl.83.2019.05.06.02.33.21
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 02:33:21 -0700 (PDT)
-Subject: Re: [PATCH RFC] brcmfmac: sanitize DMI strings v2
-To:     Victor Bravo <1905@spmblk.com>
-Cc:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org
-References: <20190504162633.ldrz2nqfocg55grb@localhost>
- <cce7604e-2b02-80ed-1df5-6f304cada0cb@broadcom.com>
- <20190504194440.4zcxjrtj2aft3ka4@localhost>
- <16a87149068.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <20190505150355.3fbng4ny34x255vk@localhost>
- <0f75a3d4-94af-5503-94c3-e8af2364448d@redhat.com>
- <20190506090609.msudhncj7e5vdtzw@localhost>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <70677dff-4336-28d5-7ab9-7ba7c3d74ebc@redhat.com>
-Date:   Mon, 6 May 2019 11:33:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:content-transfer-encoding
+         :user-agent;
+        bh=awhhrnN2/+oxUF2NNig63hHj+UDu6IjGilpFCLNHsYc=;
+        b=h0ir4hqd8UsZCmMF5BS6EcTTW4IGaAVq+q7HUOrCse4lOr+GAdGQsuKPo9kWGOC9sc
+         7xjSUBEZuP2sE8HNtcPXMNB8Y+g4Ms8pXPmW6TbEH/2lw/HNIcv5WxdYZv4Rj74NU2yn
+         4mLXb0v7hI1szXYGaqq6H+I/5ONJNxLMGx5LvdUqN34aip4AfRqpYVg5yn/enIzZZVXs
+         RFfMt72yQy0RIoDWEI63yPB6Wk6YBphZotVqkp9TiaeXPGB+9CsDy3ATJxB6ozqSl0hG
+         npSNBMV59ZKsnsnmQa7k0Vuhr075OutVzgqjh4L9m3WJwBwkq0wCLCvtZiNmGG1GILo9
+         xSrA==
+X-Gm-Message-State: APjAAAV+Ldu4GbAdBrVmXXYvRc9w6DkD+ROdRUmDS6fR5DO8WHPVlyke
+        WBug+g4OWot20vctOQH7sse6JRB5
+X-Google-Smtp-Source: APXvYqyrujTuX8ge/NPahf0KLgmOo1CEQQ/zMSF03eg+PnSj9qmP6hbjeCZuHmRPCNocvva7WUtPpA==
+X-Received: by 2002:adf:e907:: with SMTP id f7mr10579427wrm.125.1557135305934;
+        Mon, 06 May 2019 02:35:05 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 91sm15645125wrs.43.2019.05.06.02.35.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 02:35:05 -0700 (PDT)
+Date:   Mon, 6 May 2019 11:35:03 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/asm changes for v5.2
+Message-ID: <20190506093503.GA55099@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190506090609.msudhncj7e5vdtzw@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Linus,
 
-On 06-05-19 11:06, Victor Bravo wrote:
-> On Mon, May 06, 2019 at 10:13:38AM +0200, Hans de Goede wrote:
->> Hi,
-> 
-> Hi,
-> 
->> On 05-05-19 17:03, Victor Bravo wrote:
->>> Sanitize DMI strings in brcmfmac driver to make resulting filenames
->>> contain only safe characters. This version replaces all non-printable
->>> characters incl. delete (0-31, 127-255), spaces and slashes with
->>> underscores.
->>>
->>> This change breaks backward compatibility, but adds control over strings
->>> passed to firmware loader and compatibility with CONFIG_EXTRA_FIRMWARE
->>> which doesn't support spaces in filenames.
->>>
->>> Changes from v1: don't revert fresh commit by someone else
->>>
->>> Signed-off-by: Victor Bravo <1905@spmblk.com>
->>
->> Thank you for the patch, but I'm sorry to say this patch cannot go in as is,
->> because it will break existing systems.
->>
->> If you look here:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/brcm
->>
->> You will see a file named: "brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt" there, which
->> has a space in its name (and which works fine).
-> 
-> Thanks for the updates. Spaces are actually a problem as files with spaces
-> don't work when built-in with CONFIG_EXTRA_FIRMWARE (which is used with
-> non-modular kernel containing brcmfmac driver).
-> 
-> If the DMI string contains slashes, they will cause problems
-> for obvious reasons too.
+Please pull the latest x86-asm-for-linus git tree from:
 
-Right, as said I'm fine with sanitizing the names, so dropping e.g. / chars,
-but replacing space with _ will cause wifi to stop working on Onda V80 Plus devices and
-we have a clear no regressions policy in the kernel.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
 
->> I'm fine with doing some sanitizing of the strings, but replacing spaces with _
->> breaks existing use-cases (will cause a regression for them) and a space is absolutely
->> a valid character in a filename and the firmware-loader can deal with this just fine.
->>
->> If the code for building firmwares into the kernel cannot deal with spaces then IMHO
->> that code should be fixed instead. Have you looked into fixing that?
-> 
-> Yes, but updating CONFIG_EXTRA_FIRMWARE to support spaces because of
-> this looks much like
+   # HEAD: 3855f11d54a07256cc4a6fb85c692000208a73a7 x86/um/vdso: Drop unnecessary cc-ldoption
 
-<snip off-topic remark>
+This tree includes the following changes:
 
-> Do you really think it's a good idea to propose that in
-> this case?
+ - cpu_has() cleanups
+ - sync_bitops.h modernization to the rmwcc.h facility, similarly to bitops.h
+ - Continued LTO annotations/fixes
+ - misc cleanups and smaller cleanups
 
-I think expecting spaces in filenames to just work is quite reasonable, after all
-its been a long time since we've left DOS-es 8.3 filename limitations.
+ Thanks,
 
-Have you actually looked at how hard it would be to make filenames with spaces work
-with CONFIG_EXTRA_FIRMWARE ?
+	Ingo
 
-No matter how you spin it, the space problem is a CONFIG_EXTRA_FIRMWARE bug, not an
-issue with the brcmfmac code.
+------------------>
+Andi Kleen (2):
+      x86/asm: Mark all top level asm statements as .text
+      x86/cpu/amd: Exclude 32bit only assembler from 64bit build
 
->> As for your T100HA example from earlier in this thread, the brcmfmac driver now
->> also supports getting the firmware from a special EFI nvram variable, which the
->> T100HA sets, so you do not need to provide a nvram file on the T100HA and things
->> will still work.
-> 
-> I don't really get this. Can you please suggest how do I make the driver
-> use something different than "brcmfmac43340-sdio.txt" or
-> "brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-T100HAN.txt" on T100HAN?
+Borislav Petkov (4):
+      x86/cpufeature: Remove __pure attribute to _static_cpu_has()
+      x86/asm: Clarify static_cpu_has()'s intended use
+      x86: Convert some slow-path static_cpu_has() callers to boot_cpu_has()
+      x86/mm: Convert some slow-path static_cpu_has() callers to boot_cpu_has()
 
-If you leave out either file, then with a recent kernel you should see this
-brcm_info trigger:
+Jan Beulich (1):
+      x86/asm: Modernize sync_bitops.h
 
-         brcmf_info("Using nvram EFI variable\n");
+Jann Horn (1):
+      x86/uaccess: Fix implicit cast of __user pointer
 
-So you should see this message when you do:
+Leonardo Brás (1):
+      x86/vdso: Rename variable to fix -Wshadow warning
 
-dmesg | grep "Using nvram EFI variable"
+Masahiro Yamada (1):
+      x86/build/vdso: Add FORCE to the build rule of %.so
 
-And the wifi on the T100HAN should just work, without needing to do any
-manual config / provide an nvram file in anyway.
-
-I always strive to make hardware just work with Linux and any UEFI x86 machine
-using brcmfmac which provides the necessary nvram EFI variable in its firmware
-should now just work when booting say a Fedora 30 livecd.
-
-The EFI nvram var support has been tested successfully on the following models:
-
-Acer Iconia Tab8 w1-8
-Acer One 10
-Asus T100CHI
-Asus T100HA
-Asus T100TA
-Asus T200TA
-Lenovo Mixx 2 8
-Lenovo Yoga2 tablet 10
-
-Regards,
-
-Hans
+Nick Desaulniers (1):
+      x86/um/vdso: Drop unnecessary cc-ldoption
 
 
+ arch/x86/entry/vdso/Makefile         |  2 +-
+ arch/x86/entry/vdso/vdso2c.h         | 13 +++++++------
+ arch/x86/include/asm/cpufeature.h    | 11 +++++++----
+ arch/x86/include/asm/fpu/internal.h  |  7 +++----
+ arch/x86/include/asm/sync_bitops.h   | 31 +++++++++----------------------
+ arch/x86/include/asm/uaccess.h       |  3 +--
+ arch/x86/kernel/apic/apic_numachip.c |  2 +-
+ arch/x86/kernel/cpu/amd.c            |  5 ++++-
+ arch/x86/kernel/cpu/aperfmperf.c     |  6 +++---
+ arch/x86/kernel/cpu/common.c         |  2 +-
+ arch/x86/kernel/cpu/mce/inject.c     |  2 +-
+ arch/x86/kernel/cpu/proc.c           | 10 +++++-----
+ arch/x86/kernel/kprobes/core.c       |  1 +
+ arch/x86/kernel/ldt.c                | 14 +++++++-------
+ arch/x86/kernel/paravirt.c           |  2 +-
+ arch/x86/kernel/process.c            |  4 ++--
+ arch/x86/kernel/reboot.c             |  2 +-
+ arch/x86/kernel/vm86_32.c            |  2 +-
+ arch/x86/lib/error-inject.c          |  1 +
+ arch/x86/mm/dump_pagetables.c        |  4 ++--
+ arch/x86/mm/pgtable.c                |  4 ++--
+ arch/x86/mm/pti.c                    |  2 +-
+ arch/x86/um/vdso/Makefile            |  2 +-
+ 23 files changed, 63 insertions(+), 69 deletions(-)
 
->>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/dmi.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/dmi.c
->>> index 7535cb0d4ac0..84571e09b465 100644
->>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/dmi.c
->>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/dmi.c
->>> @@ -23,6 +23,14 @@
->>>    /* The DMI data never changes so we can use a static buf for this */
->>>    static char dmi_board_type[128];
->>> +/* Array of 128 bits representing 7-bit characters allowed in DMI strings. */
->>> +static unsigned char brcmf_dmi_allowed_chars[] = {
->>> +	0x00, 0x00, 0x00, 0x00, 0xfe, 0x7f, 0xff, 0xff,
->>> +	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f
->>> +};
->>> +
->>> +#define BRCMF_DMI_SAFE_CHAR '_'
->>> +
->>>    struct brcmf_dmi_data {
->>>    	u32 chip;
->>>    	u32 chiprev;
->>> @@ -99,6 +107,15 @@ static const struct dmi_system_id dmi_platform_data[] = {
->>>    	{}
->>>    };
->>> +void brcmf_dmi_sanitize(char *dst, const unsigned char *allowed, char safe)
->>> +{
->>> +	while (*dst) {
->>> +		if ((*dst < 0) || !(allowed[*dst / 8] & (1 << (*dst % 8))))
->>
->> At a first look I have no clue what this code is doing and I honestly do not feel
->> like figuring it out, this is clever, but IMHO not readable.
-> 
-> Understood. The cluless part actually checks corresponding bit
-> in allowed array, which is a bit mask describing what characters
-> are allowed or not.
-> 
->> Please just write this as if (*dst < 0x21 || (*dst > foo && < bar) || etc,
->> so that a human can actually see in one look what the code is doing.
->>
->> You may want to wait for Arend to give his opinion before changing this though,
->> maybe he likes the code as is.
->>
->> Also note that that should be < 0x20 of course, since we need to preserve spaces
->> as is to avoid a regression.
-> 
-> This has been already discussed, spaces are a problem. There even was an
-> opinion that adding the code that doesn't bother with spaces and slashes
-> might be a regression as well.
-> 
-> Regards,
-> 
-> v.
-> 
->> Regards,
->>
->> Hans
->>
->>
->>
->>
->>
->>> +			*dst = safe;
->>> +		dst++;
->>> +	}
->>> +}
->>> +
->>>    void brcmf_dmi_probe(struct brcmf_mp_device *settings, u32 chip, u32 chiprev)
->>>    {
->>>    	const struct dmi_system_id *match;
->>> @@ -126,6 +143,9 @@ void brcmf_dmi_probe(struct brcmf_mp_device *settings, u32 chip, u32 chiprev)
->>>    	if (sys_vendor && product_name) {
->>>    		snprintf(dmi_board_type, sizeof(dmi_board_type), "%s-%s",
->>>    			 sys_vendor, product_name);
->>> +		brcmf_dmi_sanitize(dmi_board_type,
->>> +				   brcmf_dmi_allowed_chars,
->>> +				   BRCMF_DMI_SAFE_CHAR);
->>>    		settings->board_type = dmi_board_type;
->>>    	}
->>>    }
->>>
->>
