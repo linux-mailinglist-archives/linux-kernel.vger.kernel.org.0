@@ -2,92 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893D114650
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E1C14654
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfEFI3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:29:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39300 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfEFI3j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726337AbfEFI3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 6 May 2019 04:29:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 64EC760DA8; Mon,  6 May 2019 08:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557131378;
-        bh=lrmi5R4AZI3gF9Ncy7xLnfPSXtgWNbQ9CagJI2qZ7+M=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=RHi4YtGwgHzqvCu1ud3ucO7u3R77mQCk2xODHPcoxrP+EQivknugVQHl94txl6ZYj
-         iA3PWT4GL3s3SSJLCCSake0xAqfDP3JdU9HpI/sGMDwZFAbaLfth0USUE44DVOcdGG
-         nYxSV8OYekuGBShow4V0xsIuk0Zbeq3M58uNfSLE=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from x230.qca.qualcomm.com (37-136-65-53.rev.dnainternet.fi [37.136.65.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B6EF60CEC;
-        Mon,  6 May 2019 08:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557131377;
-        bh=lrmi5R4AZI3gF9Ncy7xLnfPSXtgWNbQ9CagJI2qZ7+M=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=HFVHKT+4XIcM5qAVlIob4+mQjYOF3TYIfL91ASGWFwwOmpVk0FaEyD8+x0gGt76PP
-         ag0S2s2j813Cv4M6mgOWspQG8EK1HG2TSOKM3XdrhYiGrKvz/g2wW4N4Yfvu0aDoIG
-         dsk+g8E9MKv4NUN6yX3paB0P6hW0ksKlhDhtr25U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B6EF60CEC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: pull-request: wireless-drivers 2019-04-30
-References: <8736lzpm0m.fsf@kamboji.qca.qualcomm.com>
-        <20190430.120117.1616322040923778364.davem@davemloft.net>
-        <87r29jo2jy.fsf@kamboji.qca.qualcomm.com>
-        <20190505.005130.1921658214241614481.davem@davemloft.net>
-Date:   Mon, 06 May 2019 11:29:34 +0300
-In-Reply-To: <20190505.005130.1921658214241614481.davem@davemloft.net> (David
-        Miller's message of "Sun, 05 May 2019 00:51:30 -0700 (PDT)")
-Message-ID: <87v9yougsx.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+Received: from mga18.intel.com ([134.134.136.126]:4122 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfEFI3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 04:29:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 01:29:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,437,1549958400"; 
+   d="scan'208";a="229830002"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 06 May 2019 01:29:35 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hNZ0A-00086o-9W; Mon, 06 May 2019 11:29:34 +0300
+Date:   Mon, 6 May 2019 11:29:34 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Frederick Lawler <fred@fredlawl.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
+        lukas@wunner.de, keith.busch@intel.com, mr.nuke.me@gmail.com,
+        liudongdong3@huawei.com, thesven73@gmail.com
+Subject: Re: [PATCH v2 6/9] PCI: hotplug: Prefix dmesg logs with PCIe service
+ name
+Message-ID: <20190506082934.GI9224@smile.fi.intel.com>
+References: <20190503035946.23608-1-fred@fredlawl.com>
+ <20190503035946.23608-7-fred@fredlawl.com>
+ <20190503200437.GD180403@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503200437.GD180403@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> writes:
+On Fri, May 03, 2019 at 03:04:37PM -0500, Bjorn Helgaas wrote:
+> On Thu, May 02, 2019 at 10:59:43PM -0500, Frederick Lawler wrote:
 
-> From: Kalle Valo <kvalo@codeaurora.org>
-> Date: Tue, 30 Apr 2019 19:55:45 +0300
->
->> David Miller <davem@davemloft.net> writes:
->> 
->>> Thanks for the conflict resolution information, it is very helpful.
->>>
->>> However, can you put it into the merge commit text next time as well?
->>> I cut and pasted it in there when I pulled this stuff in.
->> 
->> A good idea, I'll do that. Just to be sure, do you mean that I should
->> add it only with conflicts between net and net-next (like in this case)?
->> Or should I add it everytime I see a conflict, for example between
->> wireless-drivers-next and net-next? I hope my question is not too
->> confusing...
->
-> When there is a major conflict for me to resolve when I pull in your
-> pull reqeust, please place the conflict resolution help text into the
-> merge commit message.
->
-> I hope this is now clear :-)
+> > +#define pr_fmt(fmt) "pciehp: " fmt
+> > +#define dev_fmt pr_fmt
+> 
+> Can these go in pciehp.h?
 
-Got it now, thanks!
+In general, no, it can't. The pr_fmt() / dev_fmt() macro must precede any
+header inclusion, thus it makes them position dependent.
+
+Otherwise, one has to guarantee above by accurately keeping a header inclusion
+ordering.
 
 -- 
-Kalle Valo
+With Best Regards,
+Andy Shevchenko
+
+
