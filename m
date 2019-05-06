@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D9914608
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D845E14603
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfEFIVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:21:20 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36959 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfEFIUu (ORCPT
+        id S1726727AbfEFIU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 04:20:56 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38814 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfEFIUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:20:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g3so6352394pfi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:49 -0700 (PDT)
+        Mon, 6 May 2019 04:20:53 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 10so6355802pfo.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+8HIoRSyDPaSOtCc6WVfXhPNvkE0D51zSx8WtXTLxao=;
-        b=TjJlj6D6iObGQWNC6mjY5viFyYUfLeBqv1XY3YKsicJRHP86kDbbTdEGVmnymlA7kZ
-         VxSty4rFVgFLMtC9Z+QlWk//k+Y0pTjLR8zPN/nsNkhh1ZNi9lEcDWqptfwjs2Y6nQ5D
-         Sgu+rvwEDXACiJX0eKrMv49tcVS8+wA+MSJw0G47lN7gfR7pR/a7moJfdk9ep0FVnlSP
-         LV0IurlVDrj0c7IH3PfqGOcaf7n1bgRHbMScXa9YO/pknhbhdH4nlYMST2BlQXdC1g6W
-         2+hSOO+SC6aYHW6oKmBnO7aKuM+tCMBQTPsXUUobfeyarEawOzqfiauJSshv8Iz7Vp/B
-         W6uQ==
+        bh=r6Ul8DqLCrwUzW/73FoDcrnG9o+ApspVb0NBeqVAdd8=;
+        b=hvsUWLx42A+WRy5nb3rtkdmvbL88ClAOBumICvHHENL9aBosAJJvsojy2mJkQgLe/i
+         PJOM51rfzWErur+UtjhVQgkwvI4fvVvtX328WwrFda5xsP/rPA14X7UlH8tmJTEKV5IC
+         FVvynx1zFzjcq4u80+/T/Ed40SjJFKCZMnk1rvcosqj8TRSYJMpunekTAP9c3XKPQRIx
+         3PJGz1dklrRr4fq5NrS3W3dvvCsskEEG5EQvPvuikNN4JLXpkHPwak5BBYuToi2BeJ82
+         yAJTJH7uQeSmeuZFBu1TBNXOcDLETwCA+IoMrdMkwnjfhF4mzfUFJapMcvOoGK7s37rz
+         N5cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+8HIoRSyDPaSOtCc6WVfXhPNvkE0D51zSx8WtXTLxao=;
-        b=lJZdAjkq1gaWabUNz01fAQLgUGoLsVAwq5PUiqGECWJ2ieHIzW3kXOIpRHfp/cpsir
-         bOSCpA6P+NVZsZlWS8KhH0yTNt1fQ8ddtQUG1oBhzXBu0KKh+QHHIl50+JgRW2xg1DAh
-         jV6EtbsklyIotFK2zWkb3l28ewSWMm5U/MeJ34GXHjGuazhbyg48PjIPpub7+Nlcx4cH
-         furd3ZapXuTJfA0OIDHRTLiOvigGizZ0UTJwtHZPkIzFvleBGae33a25Mvvk7V/9gWKL
-         fpFQc85GK3VHKLXysb7zZO6CsEb0UxofwCenSikR5W7m/1Y4rex87QPL289uDDcpWeYh
-         YndQ==
-X-Gm-Message-State: APjAAAV1aG4YFQ2gm4D8lfpua9teUaaHJ3VwuiumoNURnIE8coOps4PK
-        HuQ3RhCQPgqjA5cZOknqS6A=
-X-Google-Smtp-Source: APXvYqyps9j/IbWcccPBcH3kvO0rvSxX5ijEtgazw/TVq1cRwYEZgNPyUzd6eObN8vDSc1MgTUMrkg==
-X-Received: by 2002:a63:de11:: with SMTP id f17mr29708964pgg.94.1557130849411;
-        Mon, 06 May 2019 01:20:49 -0700 (PDT)
+        bh=r6Ul8DqLCrwUzW/73FoDcrnG9o+ApspVb0NBeqVAdd8=;
+        b=ViDJhTs8KSuHwoDDwQXimcu0Z8fC0ovZZOd4quAcqnoD/62X6hwLzjQhNyaApma/sf
+         P3iuh9Moo2PR+F4lz/M51qWQwzcm66LaTDPaW4444bEJQGwptyYBra2y9iAKQAU0NSxl
+         6Mip++InC7UCuUXSrSelp3+Qfx53MjcLzrOXDiR2ZFHfjZ2FKpcsxGqVEZWCS8bZU3HO
+         9vF/mNweoSimU2E9+MLFhR7OFmp1MOU0Qa3BGDlAs/h3gplsiQGutiKyNcWq/mssoXlk
+         pMp4bMZwgZK8FVbpDrG+7lk0j50zX0ftBQMswbHGtuJWYn4Mch0dLypz5TSKC0xTNNO8
+         cPNg==
+X-Gm-Message-State: APjAAAX2aVE2hQ74JGHuQhIkxSVvgkJ5qZNnhsNobOBkUHssV/lm6Hiz
+        q1k7k5BcTn72oOpq3J0r28Q=
+X-Google-Smtp-Source: APXvYqz4o2SPXUcSTdbu7daT3P7D16Mm9N/Qg38znPGo6ijgAtTye/zW+Mjd0ZciiLiHsNEUVMNKMg==
+X-Received: by 2002:a62:4c5:: with SMTP id 188mr32120914pfe.29.1557130852698;
+        Mon, 06 May 2019 01:20:52 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.46
+        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 01:20:48 -0700 (PDT)
+        Mon, 06 May 2019 01:20:52 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v2 19/23] locking/lockdep: Refactorize check_noncircular and check_redundant
-Date:   Mon,  6 May 2019 16:19:35 +0800
-Message-Id: <20190506081939.74287-20-duyuyang@gmail.com>
+Subject: [PATCH v2 20/23] locking/lockdep: Check redundant dependency only when CONFIG_LOCKDEP_SMALL
+Date:   Mon,  6 May 2019 16:19:36 +0800
+Message-Id: <20190506081939.74287-21-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190506081939.74287-1-duyuyang@gmail.com>
 References: <20190506081939.74287-1-duyuyang@gmail.com>
@@ -63,179 +63,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two functions now handle different check results themselves. A new
-check_path function is added to check whether there is a path in the
-dependency graph. No functional change.
+As Peter has put it all sound and complete for the cause, I simply quote:
 
+"It (check_redundant) was added for cross-release (which has since been
+reverted) which would generate a lot of redundant links (IIRC) but
+having it makes the reports more convoluted -- basically, if we had an
+A-B-C relation, then A-C will not be added to the graph because it is
+already covered. This then means any report will include B, even though
+a shorter cycle might have been possible."
+
+This would increase the number of direct dependencies. For a simple workload
+(make clean; reboot; make vmlinux -j8), the data looks like this:
+
+ CONFIG_LOCKDEP_SMALL: direct dependencies:                  6926
+
+!CONFIG_LOCKDEP_SMALL: direct dependencies:                  9052    (+30.7%)
+
+Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 118 +++++++++++++++++++++++++++++------------------
- 1 file changed, 74 insertions(+), 44 deletions(-)
+ kernel/locking/lockdep.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index ebfa42a..2502ea4 100644
+index 2502ea4..9d2728c 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -1678,33 +1678,90 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+@@ -1734,6 +1734,7 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+ 	return ret;
  }
  
++#ifdef CONFIG_LOCKDEP_SMALL
  /*
-- * Prove that the dependency graph starting at <entry> can not
-- * lead to <target>. Print an error and return 0 if it does.
-+ * Check that the dependency graph starting at <src> can lead to
-+ * <target> or not. Print an error and return 0 if it does.
-  */
- static noinline int
--check_noncircular(struct lock_list *root, struct lock_class *target,
--		struct lock_list **target_entry)
-+check_path(struct lock_class *target, struct lock_list *src_entry,
-+	   struct lock_list **target_entry)
- {
--	int result;
-+	int ret;
-+
-+	ret = __bfs_forwards(src_entry, (void *)target, class_equal,
-+			     target_entry);
-+
-+	if (unlikely(ret < 0))
-+		print_bfs_bug(ret);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Prove that the dependency graph starting at <src> can not
-+ * lead to <target>. If it can, there is a circle when adding
-+ * <target> -> <src> dependency.
-+ *
-+ * Print an error and return 0 if it does.
-+ */
-+static noinline int
-+check_noncircular(struct held_lock *src, struct held_lock *target,
-+		  struct lock_trace *trace)
-+{
-+	int ret;
-+	struct lock_list *uninitialized_var(target_entry);
-+	struct lock_list src_entry = {
-+		.class = hlock_class(src),
-+		.parent = NULL,
-+	};
+  * Check that the dependency graph starting at <src> can lead to
+  * <target> or not. If it can, <src> -> <target> dependency is already
+@@ -1763,6 +1764,7 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
  
- 	debug_atomic_inc(nr_cyclic_checks);
- 
--	result = __bfs_forwards(root, target, class_equal, target_entry);
-+	ret = check_path(hlock_class(target), &src_entry, &target_entry);
- 
--	return result;
-+	if (unlikely(!ret)) {
-+		if (!trace->nr_entries) {
-+			/*
-+			 * If save_trace fails here, the printing might
-+			 * trigger a WARN but because of the !nr_entries it
-+			 * should not do bad things.
-+			 */
-+			save_trace(trace);
-+		}
-+
-+		print_circular_bug(&src_entry, target_entry, src, target);
-+	}
-+
-+	return ret;
+ 	return ret;
  }
- 
-+/*
-+ * Check that the dependency graph starting at <src> can lead to
-+ * <target> or not. If it can, <src> -> <target> dependency is already
-+ * in the graph.
-+ *
-+ * Print an error and return 2 if it does or 1 if it does not.
-+ */
- static noinline int
--check_redundant(struct lock_list *root, struct lock_class *target,
--		struct lock_list **target_entry)
-+check_redundant(struct held_lock *src, struct held_lock *target)
- {
--	int result;
-+	int ret;
-+	struct lock_list *uninitialized_var(target_entry);
-+	struct lock_list src_entry = {
-+		.class = hlock_class(src),
-+		.parent = NULL,
-+	};
- 
- 	debug_atomic_inc(nr_redundant_checks);
- 
--	result = __bfs_forwards(root, target, class_equal, target_entry);
-+	ret = check_path(hlock_class(target), &src_entry, &target_entry);
- 
--	return result;
-+	if (!ret) {
-+		debug_atomic_inc(nr_redundant);
-+		ret = 2;
-+	} else if (ret < 0)
-+		ret = 0;
-+
-+	return ret;
- }
++#endif
  
  #ifdef CONFIG_TRACE_IRQFLAGS
-@@ -2302,9 +2359,7 @@ static inline void inc_chains(void)
- check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	       struct held_lock *next, int distance, struct lock_trace *trace)
- {
--	struct lock_list *uninitialized_var(target_entry);
- 	struct lock_list *entry;
--	struct lock_list this;
- 	int ret;
  
- 	if (!hlock_class(prev)->key || !hlock_class(next)->key) {
-@@ -2335,25 +2390,9 @@ static inline void inc_chains(void)
- 	 * MAX_CIRCULAR_QUEUE_SIZE) which keeps track of a breadth of nodes
- 	 * in the graph whose neighbours are to be checked.
- 	 */
--	this.class = hlock_class(next);
--	this.parent = NULL;
--	ret = check_noncircular(&this, hlock_class(prev), &target_entry);
--	if (unlikely(!ret)) {
--		if (!trace->nr_entries) {
--			/*
--			 * If save_trace fails here, the printing might
--			 * trigger a WARN but because of the !nr_entries it
--			 * should not do bad things.
--			 */
--			save_trace(trace);
--		}
--		print_circular_bug(&this, target_entry, next, prev);
-+	ret = check_noncircular(next, prev, trace);
-+	if (unlikely(ret <= 0))
- 		return 0;
--	}
--	else if (unlikely(ret < 0)) {
--		print_bfs_bug(ret);
--		return 0;
--	}
+@@ -2423,12 +2425,14 @@ static inline void inc_chains(void)
+ 		}
+ 	}
  
- 	if (!check_irq_usage(curr, prev, next))
- 		return 0;
-@@ -2387,18 +2426,9 @@ static inline void inc_chains(void)
++#ifdef CONFIG_LOCKDEP_SMALL
  	/*
  	 * Is the <prev> -> <next> link redundant?
  	 */
--	this.class = hlock_class(prev);
--	this.parent = NULL;
--	ret = check_redundant(&this, hlock_class(next), &target_entry);
--	if (!ret) {
--		debug_atomic_inc(nr_redundant);
--		return 2;
--	}
--	if (ret < 0) {
--		print_bfs_bug(ret);
--		return 0;
--	}
--
-+	ret = check_redundant(prev, next);
-+	if (ret != 1)
-+		return ret;
+ 	ret = check_redundant(prev, next);
+ 	if (ret != 1)
+ 		return ret;
++#endif
  
  	if (!trace->nr_entries && !save_trace(trace))
  		return 0;
