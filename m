@@ -2,156 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E539915048
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA031504C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfEFPcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:32:04 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:40484 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfEFPcD (ORCPT
+        id S1726718AbfEFPc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:32:29 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43844 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfEFPc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:32:03 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x46FNh45115129;
-        Mon, 6 May 2019 15:31:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : subject : from :
- message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=SZE4EOlLUP9XAHu+F55NnybWPNXRnaHNvaGcKOa2Ccg=;
- b=Klruus0vw+N3kiEe1s3wZWKOQ7//i58xeehfUO9K7fX8V69HN7gfsfJ36frLHZ3xCgXR
- vQKGCzVDDPttPKvDpNk4T+BAYyqCWt0RdmwnAqSfYnNZfjAzffdfgQFx1dOSF0U/WvnV
- 6gXZutVkUwu+lElate4HQGEwUOFmoRb/7Z7b4jKEj4Sx9WcIV4gVai9qxU4FsjoC4Jlv
- RonTCK6Uu5Wy6RKEdionqJ/3jCi0271vE1A/e4UGqePdH4TqiM43C6WBA3zv7s+QHxvK
- US7YLFfZE6EDmdIsyfF0cVBgsbC2CT7jQEbd9xUf9ZoXvMyT+mWKq6mOUeNqi6THlopG 2Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2s94b5qcwb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 May 2019 15:31:53 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x46FV6Z1106851;
-        Mon, 6 May 2019 15:31:53 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2s94b8ydre-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 May 2019 15:31:52 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x46FVogg015252;
-        Mon, 6 May 2019 15:31:50 GMT
-Received: from [192.168.1.84] (/99.156.91.244)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 06 May 2019 08:31:50 -0700
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        JFS Discussion <jfs-discussion@lists.sourceforge.net>
-Subject: [GIT PULL] jfs updates for 5.2
-From:   Dave Kleikamp <dave.kleikamp@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.kleikamp@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- rnNNL3zBkwD3nWcTxFnX
-Message-ID: <e999ebed-a882-049c-dab5-631a2c0a4ec3@oracle.com>
-Date:   Mon, 6 May 2019 10:31:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 6 May 2019 11:32:29 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r4so2527247wro.10
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 08:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QoUlLUoustH5Kyyuv8cjzxtarKz9Yt28dcTG37LlDQc=;
+        b=h0Qs3cb1N9VZYPv8SKIXGev/EpRRT057Mw/+lwEKRU0wLYa49RxNQR0uhiGXWaVaSx
+         dkKmTbNYMXhRNk4HA7BIPXCKtbIX/jm4GDAJoXsD/R2kcPitxoAt+t5L4rQQEIHvi5Ua
+         ANUWozNt8ZLo/qmWjlyIjWRwN1SwZ1Z1ESS5zGv8tyt1mng2cpH2XbxcUoA6N4reddWS
+         P0unyNYp8+08m1j2eV09L82wnCZqSQBxhNmQztthHtmUCuc/rwkM2vL0hhXAlXvKcULu
+         4u2vKXoEtfk2F/KOq3aZnG3XTlEpboZi7drQ7BN/ngoo0ojPwBsqhn9oIdr+oJF2CWUd
+         86MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QoUlLUoustH5Kyyuv8cjzxtarKz9Yt28dcTG37LlDQc=;
+        b=mOFNKzf0zurs2InBp9JnTyWIqrnHa6jh0eUVqEhDg1kCpfXiePUQ1pj+7r4U6cM81m
+         V8dwPHnyXy7DCozUusjW07jpFXYWXTjOuKzYgerXRoj985VdaAGyIkTAg+P/nS0fcU5F
+         rxSs0+1pXHYhcDnoJB2sBxoktil3N3o+i2KNreLNYIppk2mjfBf+WB9Zosu0BkAujv2t
+         9xszfJazh5OHoQmHmGQOhsSmbTn2o7GVL2cSOtj8G64eHhLQ9DmFSq5kIlBwO2bzR0UF
+         w38TpUtfPaPbsreqEvg/5l3Mvi3tEnw3RzNYt5/nnziRYcE413iZUj76uejiz6D3Le5a
+         gaTg==
+X-Gm-Message-State: APjAAAVm3tIyXBoo25gsSilUpjYipOeoQT6d2OKu1/QT5HumDPQB7yPL
+        waZmTTGauHpPk9vtmvF/1hyRvwVWFM+xjLjw6356QA==
+X-Google-Smtp-Source: APXvYqytW0qHXUrR+10+PwAXQ3sa1dgLOTzgAB8CEL88CNxDnMKajzkJZIFB1K5SBaebS6V4BbioAAjynh76NIYsJSs=
+X-Received: by 2002:a5d:5551:: with SMTP id g17mr20101431wrw.50.1557156746670;
+ Mon, 06 May 2019 08:32:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905060132
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905060132
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com> <20190429020925.18136-2-baolu.lu@linux.intel.com>
+In-Reply-To: <20190429020925.18136-2-baolu.lu@linux.intel.com>
+From:   Tom Murphy <tmurphy@arista.com>
+Date:   Mon, 6 May 2019 16:32:15 +0100
+Message-ID: <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain type
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ashok Raj <ashok.raj@intel.com>, jacob.jun.pan@intel.com,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        James Sewart <jamessewart@arista.com>,
+        Dmitry Safonov <dima@arista.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 01aa9d518eae8a4d75cd3049defc6ed0b6d0a658:
+The AMD driver already solves this problem and uses the generic
+iommu_request_dm_for_dev function. It seems like both drivers have the
+same problem and could use the same solution. Is there any reason we
+can't have use the same solution for the intel and amd driver?
 
-  Merge tag 'docs-4.20' of git://git.lwn.net/linux (2018-10-24 18:01:11 +0100)
+Could we just  copy the implementation of the AMD driver? It would be
+nice to have the same behavior across both drivers especially as we
+move to make both drivers use more generic code.
 
-are available in the Git repository at:
-
-  git://github.com/kleikamp/linux-shaggy.git tags/jfs-5.2
-
-for you to fetch changes up to a5fdd713d256887b5f012608701149fa939e5645:
-
-  jfs: fix bogus variable self-initialization (2019-03-22 09:38:37 -0500)
-
-----------------------------------------------------------------
-Several minor jfs fixes
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      fs/jfs: Switch to use new generic UUID API
-
-Arnd Bergmann (1):
-      jfs: fix bogus variable self-initialization
-
-Chengguang Xu (1):
-      jfs: compare old and new mode before setting update_mode flag
-
-Colin Ian King (1):
-      jfs: fix spelling mistake, EACCESS -> EACCES
-
-Dave Kleikamp (1):
-      jfs: remove incorrect comment in jfs_superblock
-
- fs/jfs/acl.c            |  3 ++-
- fs/jfs/jfs_incore.h     |  6 ++++--
- fs/jfs/jfs_logmgr.c     | 18 +++++++++---------
- fs/jfs/jfs_logmgr.h     | 10 +++++-----
- fs/jfs/jfs_mount.c      |  4 ++--
- fs/jfs/jfs_superblock.h |  8 ++++----
- fs/jfs/jfs_txnmgr.c     |  3 +--
- fs/jfs/namei.c          |  2 +-
- fs/jfs/super.c          |  8 +++++---
- 9 files changed, 33 insertions(+), 29 deletions(-)
+On Mon, Apr 29, 2019 at 3:16 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> This adds an optional ops entry to query the default domain
+> types supported by the iommu driver for  a specific device.
+> This is necessary in cases where the iommu driver can only
+> support a specific type of default domain for a device. In
+> normal cases, this ops will return IOMMU_DOMAIN_ANY which
+> indicates that the iommu driver supports both IOMMU_DOMAIN_DMA
+> and IOMMU_DOMAIN_IDENTITY, hence the static default domain
+> type will be used.
+>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/iommu.c | 13 ++++++++++---
+>  include/linux/iommu.h | 11 +++++++++++
+>  2 files changed, 21 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index acd6830e6e9b..1ad9a1f2e078 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1097,15 +1097,22 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
+>          * IOMMU driver.
+>          */
+>         if (!group->default_domain) {
+> +               unsigned int domain_type = IOMMU_DOMAIN_ANY;
+>                 struct iommu_domain *dom;
+>
+> -               dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
+> -               if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
+> +               if (ops->def_domain_type)
+> +                       domain_type = ops->def_domain_type(dev);
+> +
+> +               if (domain_type == IOMMU_DOMAIN_ANY)
+> +                       domain_type = iommu_def_domain_type;
+> +
+> +               dom = __iommu_domain_alloc(dev->bus, domain_type);
+> +               if (!dom && domain_type != IOMMU_DOMAIN_DMA) {
+>                         dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
+>                         if (dom) {
+>                                 dev_warn(dev,
+>                                          "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
+> -                                        iommu_def_domain_type);
+> +                                        domain_type);
+>                         }
+>                 }
+>
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 8239ece9fdfc..ba9a5b996a63 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -79,12 +79,16 @@ struct iommu_domain_geometry {
+>   *     IOMMU_DOMAIN_DMA        - Internally used for DMA-API implementations.
+>   *                               This flag allows IOMMU drivers to implement
+>   *                               certain optimizations for these domains
+> + *     IOMMU_DOMAIN_ANY        - All domain types defined here
+>   */
+>  #define IOMMU_DOMAIN_BLOCKED   (0U)
+>  #define IOMMU_DOMAIN_IDENTITY  (__IOMMU_DOMAIN_PT)
+>  #define IOMMU_DOMAIN_UNMANAGED (__IOMMU_DOMAIN_PAGING)
+>  #define IOMMU_DOMAIN_DMA       (__IOMMU_DOMAIN_PAGING |        \
+>                                  __IOMMU_DOMAIN_DMA_API)
+> +#define IOMMU_DOMAIN_ANY       (IOMMU_DOMAIN_IDENTITY |        \
+> +                                IOMMU_DOMAIN_UNMANAGED |       \
+> +                                IOMMU_DOMAIN_DMA)
+>
+>  struct iommu_domain {
+>         unsigned type;
+> @@ -196,6 +200,11 @@ enum iommu_dev_features {
+>   * @dev_feat_enabled: check enabled feature
+>   * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
+>   * @aux_get_pasid: get the pasid given an aux-domain
+> + * @def_domain_type: get per-device default domain type that the IOMMU
+> + *             driver is able to support. Valid returns values:
+> + *             - IOMMU_DOMAIN_DMA: only suports non-identity domain
+> + *             - IOMMU_DOMAIN_IDENTITY: only supports identity domain
+> + *             - IOMMU_DOMAIN_ANY: supports all
+>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>   */
+>  struct iommu_ops {
+> @@ -251,6 +260,8 @@ struct iommu_ops {
+>         void (*aux_detach_dev)(struct iommu_domain *domain, struct device *dev);
+>         int (*aux_get_pasid)(struct iommu_domain *domain, struct device *dev);
+>
+> +       int (*def_domain_type)(struct device *dev);
+> +
+>         unsigned long pgsize_bitmap;
+>  };
+>
+> --
+> 2.17.1
+>
