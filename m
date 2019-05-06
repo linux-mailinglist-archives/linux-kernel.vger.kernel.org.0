@@ -2,94 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9FD1489F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 12:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33574148AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbfEFK4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 06:56:02 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52905 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbfEFKz7 (ORCPT
+        id S1726321AbfEFLGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 07:06:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45229 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfEFLGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 06:55:59 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o25so4062409wmf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 03:55:58 -0700 (PDT)
+        Mon, 6 May 2019 07:06:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s15so16653001wra.12
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 04:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZyOCX6SJM9uDIrHF8mFcZJhvJSqc64v/9SiyLVN1Jx4=;
-        b=aKCEzVIhgsKYynQjmrT2gBIZ7xlBqNEDqvhl341pYylRair9vaZJUSQjX3Ivc//xL/
-         +X18Vn2LxWoK27VbGP9j+ZWHhw/PAPwLa2jZHnT+gc+AlyZ3s4XxDB83Hwupg0QCDAE2
-         WWVbMfBhIFUlxxvbs3Qb/WWezC65iLsEzYwkPX8MsQz3yzbvGICLVAQHSqK9RrT+OIzU
-         ImaxfmyqBpSuujyq5WGaZYYdP2HxaVScblj7TWpxNFj5zHWN1ebXgMpNUqjjyOnc+hQ5
-         6snq9MT+NlBlp6Qt3BhpYGRqf59hr75/3ixXINZbrcCux0SBz9VSd22cQOMFmE+EwzKj
-         OjTQ==
+        d=evidence-eu-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/WSCEYuhhIZhrdNR3eZzQ9y5FWNDHwa5zFsYG0jxNiI=;
+        b=rlCBOM/R+x7A1TwH7u2eH7ftbrxI0jRGxSucYenh5j8cBSOO02xwzogLxxsFR3UtVM
+         lQTSUH6HoirCwCpzWZ+MF3XaKYBIgRf5gMhc0f7Z7tbLZ3CmxBsclRm0pGm54yF9oRtT
+         ObhlNiUzsm+lemGax0xJ5ZyZIHuHqsDK1Gd9Ihn6xU63A8w5oLn4NsuyxPW3RSXMquD7
+         7CwJCkiWufAXUggemXoZC0/riOad+VS1EEMtqsAjNejkwiC1SKEsBR5EQVvGzbzWgS1h
+         MsoX60tpXwmEPM4bJt1fe0EA5hyOnXgofJislcdhZr+r2mKhjGNvSWGqfa5ooh+7fIqV
+         QTSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=ZyOCX6SJM9uDIrHF8mFcZJhvJSqc64v/9SiyLVN1Jx4=;
-        b=NZHcjvc1NVWgXKKWVtu9MN8E8sw+yZdfBfyBcppbkNooZi7Yt7fd4GK4qzKsrZTgto
-         mKYjYZso9huCTBHn48xaQZGMPeY0BhEsLIWefNAeI+ZvP8uyAOSA96fd25w8U9PC70Tl
-         Ac7iDUv5LrBIalTqxD+TQScKpKAYc9VtPG0hY6cZosPao7CHDNh5sCw+TBNNVgDo3OdZ
-         7SlMiYGPA/lCcGeB1Ewt9xiSWI0oEQfKFrm1RrHJGfZPIKyI3GaAiMe1EVTLB7Ze9w8D
-         /zBWJRjqeS9DJwABMHD79EiugRyFDFbJVCtvqyq3SQF/9bxy4nwzr8MwWwJQJtzPP3Kl
-         M0lQ==
-X-Gm-Message-State: APjAAAU/U1m+B1Q851TPzGxH/CfppNkrVq05+BvlZf0rkUwkDSHCMxH5
-        E2qz2+5v2CmM1xq60rbUOcM=
-X-Google-Smtp-Source: APXvYqzJEU4on1qCD6Yu7pkH20vcto0LpJr0qrnP6EAXH2ioanm74CgvI2Ce0hoIiKLwAyzadHTm8Q==
-X-Received: by 2002:a05:600c:114e:: with SMTP id z14mr1413762wmz.92.1557140157838;
-        Mon, 06 May 2019 03:55:57 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q2sm12269467wrd.48.2019.05.06.03.55.56
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/WSCEYuhhIZhrdNR3eZzQ9y5FWNDHwa5zFsYG0jxNiI=;
+        b=jYF2+vxLbLRgKg83HFsz5+OEr4QUDF8YSMXW7cDE16TfFXqVc6FnayB0WbdS34Y/lx
+         O3XcCTUK1sQUTGkZSqymacOzvNJpOHV8ieQSQ5o8esM9+NM+ZVOaH9Z2ccTy0TAZZsYB
+         krf12kp6DGve/DhE8s59vKBrElC+TiWcw/jpUXoaovIxbWs7OSlXX/Ky1b7K7y9S1wrD
+         ukG0J8vLuRxp5ZtbJ9Bwj4sjgWJ0mPanxiGYAVnj3JGUHQBzHDDG5smTM+AjYpFU6UNg
+         4SHsmFLcpFR8HzgVT8Wad2w50Qh4aUFIQE3qLiM28BMvBFT609Jci6DTFc7mTgpDrfS4
+         0jbA==
+X-Gm-Message-State: APjAAAUKiVLsl5JSX9t3AtG93EeDvHPiVUu1zqtwrIoyr3xYiiNCh2VS
+        4uHJX5P4lMvq+rxgJ9EGBOFZIQ==
+X-Google-Smtp-Source: APXvYqwIktXi/WewNIG8TzLvHW3qhRUbKBSX8nOz90drrwSLvtYSW34WOiC2qK6P6DTRh0Pd4F0tDQ==
+X-Received: by 2002:a5d:5041:: with SMTP id h1mr10039967wrt.181.1557140799720;
+        Mon, 06 May 2019 04:06:39 -0700 (PDT)
+Received: from erbrow (93-47-161-30.ip113.fastwebnet.it. [93.47.161.30])
+        by smtp.gmail.com with ESMTPSA id h123sm12751081wme.6.2019.05.06.04.06.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 03:55:57 -0700 (PDT)
-Date:   Mon, 6 May 2019 12:55:54 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/topology changes for v5.2
-Message-ID: <20190506105554.GA71356@gmail.com>
+        Mon, 06 May 2019 04:06:38 -0700 (PDT)
+Date:   Mon, 6 May 2019 13:06:29 +0200
+From:   Claudio Scordino <claudio@evidence.eu.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+        alessio.balsini@gmail.com, bristot@redhat.com, will.deacon@arm.com,
+        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, henrik@austad.us,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [RFD/RFC PATCH 4/8] sched: Split scheduler execution context
+Message-ID: <20190506110628.GA5016@erbrow>
+References: <20181009092434.26221-1-juri.lelli@redhat.com>
+ <20181009092434.26221-5-juri.lelli@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181009092434.26221-5-juri.lelli@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Dear Juri,
 
-Please pull the latest x86-topology-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-topology-for-linus
-
-   # HEAD: 8fea0f59e97df3b9b8d2a76af54f633f4586751b x86/topology: Make DEBUG_HOTPLUG_CPU0 pr_info() more descriptive
-
-Two main changes: preparatory changes for Intel multi-die topology 
-support, plus a syslog message tweak.
-
- Thanks,
-
-	Ingo
-
------------------->
-Juri Lelli (1):
-      x86/topology: Make DEBUG_HOTPLUG_CPU0 pr_info() more descriptive
-
-Len Brown (3):
-      x86/topology: Fix documentation typo
-      topology: Simplify cputopology.txt formatting and wording
-      x86/smpboot: Rename match_die() to match_pkg()
+just a small comment for the next round of patches (I guess after
+OSPM)...
 
 
- Documentation/cputopology.txt  | 46 +++++++++++++++++++++---------------------
- Documentation/x86/topology.txt |  2 +-
- arch/x86/kernel/smpboot.c      |  6 +++---
- arch/x86/kernel/topology.c     |  2 +-
- 4 files changed, 28 insertions(+), 28 deletions(-)
+On 091018, 11:24, Juri Lelli wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
+> 
+> Lets define the scheduling context as all the scheduler state in
+> task_struct and the execution context as all state required to run the
+> task.
+> 
+> Currently both are intertwined in task_struct. We want to logically
+> split these such that we can run the execution context of one task
+> with the scheduling context of another.
+> 
+> To this purpose introduce rq::proxy to point to the task_struct used
+> for scheduler state and preserve rq::curr to denote the execution
+> context.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> [added lot of comments/questions - identifiable by XXX]
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> ---
+>  kernel/sched/core.c  | 62 ++++++++++++++++++++++++++++++++++----------
+>  kernel/sched/fair.c  |  4 +++
+>  kernel/sched/sched.h | 30 ++++++++++++++++++++-
+>  3 files changed, 82 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index fe0223121883..d3c481b734dd 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -224,12 +224,13 @@ static enum hrtimer_restart hrtick(struct hrtimer *timer)
+>  {
+>  	struct rq *rq = container_of(timer, struct rq, hrtick_timer);
+>  	struct rq_flags rf;
+> +	struct task_struct *curr = rq->proxy;
+
+You may want to use a different naming for these local variables (e.g.
+"proxy") to help the reader in not confusing curr (i.e. scheduling ctx)
+with rq::curr (i.e. execution ctx).
+
+Best regards,
+
+               Claudio
