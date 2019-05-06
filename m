@@ -2,90 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A035814D30
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C532C14D55
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfEFOs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:48:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45366 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729527AbfEFOsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:48:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7C17EABE7;
-        Mon,  6 May 2019 14:48:49 +0000 (UTC)
-Date:   Mon, 6 May 2019 16:48:46 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Cc:     mhocko@suse.com, mike.kravetz@oracle.com, shenkai8@huawei.com,
-        linfeilong@huawei.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, wangwang2@huawei.com,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, agl@us.ibm.com,
-        nacc@us.ibm.com
-Subject: Re: [PATCH v2] mm/hugetlb: Don't put_page in lock of hugetlb_lock
-Message-ID: <20190506144835.GA10427@linux>
-References: <12a693da-19c8-dd2c-ea6a-0a5dc9d2db27@huawei.com>
- <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
+        id S1729391AbfEFOud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:50:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44747 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726967AbfEFOu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:50:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:50:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
+   d="scan'208";a="168448180"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 06 May 2019 07:50:27 -0700
+Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
+        by linux.intel.com (Postfix) with ESMTP id BC9BC58010A;
+        Mon,  6 May 2019 07:50:26 -0700 (PDT)
+Subject: Re: [alsa-devel] [RFC PATCH 6/7] soundwire: cadence_master: add
+ debugfs register dump
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
+ <20190504010030.29233-7-pierre-louis.bossart@linux.intel.com>
+ <20190504070346.GE9770@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <dbcb67d0-aec3-cae7-c908-81a2e40efbb5@linux.intel.com>
+Date:   Mon, 6 May 2019 09:50:26 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190504070346.GE9770@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 10:06:38PM +0800, Zhiqiang Liu wrote:
-> From: Kai Shen <shenkai8@huawei.com>
-> 
-> spinlock recursion happened when do LTP test:
-> #!/bin/bash
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> 
-> The dtor returned by get_compound_page_dtor in __put_compound_page
-> may be the function of free_huge_page which will lock the hugetlb_lock,
-> so don't put_page in lock of hugetlb_lock.
-> 
->  BUG: spinlock recursion on CPU#0, hugemmap05/1079
->   lock: hugetlb_lock+0x0/0x18, .magic: dead4ead, .owner: hugemmap05/1079, .owner_cpu: 0
->  Call trace:
->   dump_backtrace+0x0/0x198
->   show_stack+0x24/0x30
->   dump_stack+0xa4/0xcc
->   spin_dump+0x84/0xa8
->   do_raw_spin_lock+0xd0/0x108
->   _raw_spin_lock+0x20/0x30
->   free_huge_page+0x9c/0x260
->   __put_compound_page+0x44/0x50
->   __put_page+0x2c/0x60
->   alloc_surplus_huge_page.constprop.19+0xf0/0x140
->   hugetlb_acct_memory+0x104/0x378
->   hugetlb_reserve_pages+0xe0/0x250
->   hugetlbfs_file_mmap+0xc0/0x140
->   mmap_region+0x3e8/0x5b0
->   do_mmap+0x280/0x460
->   vm_mmap_pgoff+0xf4/0x128
->   ksys_mmap_pgoff+0xb4/0x258
->   __arm64_sys_mmap+0x34/0x48
->   el0_svc_common+0x78/0x130
->   el0_svc_handler+0x38/0x78
->   el0_svc+0x8/0xc
-> 
-> Fixes: 9980d744a0 ("mm, hugetlb: get rid of surplus page accounting tricks")
-> Signed-off-by: Kai Shen <shenkai8@huawei.com>
-> Signed-off-by: Feilong Lin <linfeilong@huawei.com>
-> Reported-by: Wang Wang <wangwang2@huawei.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>> +void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
+>> +{
+>> +	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
+>> +}
+>> +EXPORT_SYMBOL(sdw_cdns_debugfs_init);
+> 
+> Don't wrap debugfs calls with export symbol without using
+> EXPORT_SYMBOL_GPL() or you will get grumpy emails from me :)
 
--- 
-Oscar Salvador
-SUSE L3
+Yes, that's a miss. I've already seen this comment and fixed it for SOF, 
+I should have thought about it for SoundWire, my bad.
