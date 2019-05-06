@@ -2,104 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA47214521
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C510F14515
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfEFH0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:26:05 -0400
-Received: from smtp-sp200-211.kinghost.net ([177.185.200.211]:52689 "EHLO
-        smtp-sp200-211.kinghost.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbfEFH0D (ORCPT
+        id S1726085AbfEFHUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:20:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36085 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfEFHUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:26:03 -0400
-X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 03:26:02 EDT
-Received: from smtpi-sp-236.kinghost.net (smtpi-sp-236.kinghost.net [177.185.201.236])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-sp200-211.kinghost.net (Postfix) with ESMTPS id A250A1028C563;
-        Mon,  6 May 2019 04:17:28 -0300 (-03)
-Received: from t460s.bristot.redhat.com (host49-62-dynamic.23-79-r.retail.telecomitalia.it [79.23.62.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daniel@bristot.eti.br)
-        by smtpi-sp-236.kinghost.net (Postfix) with ESMTPSA id CAF936000E09;
-        Mon,  6 May 2019 04:17:10 -0300 (-03)
-Subject: Re: [patch 0/3] do not raise timer softirq unconditionally
- (spinlockless version)
-To:     Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Haris Okanovic <haris.okanovic@ni.com>
-References: <20190415201213.600254019@amt.cnet>
- <20190506032234.GA31395@amt.cnet>
-From:   Daniel Bristot de Oliveira <daniel@bristot.me>
-Message-ID: <a6be2e0e-52a8-f711-ac37-23f267864710@bristot.me>
-Date:   Mon, 6 May 2019 09:17:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 6 May 2019 03:20:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n25so182104wmi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=/grF58AXpzz9yvksa/HkvMQkIZ6mqEgNZDRk6V3fMV4=;
+        b=gVzKPfneDmP/7jhHy2YDOAlSVLFZnxWHYdv1Lz9zpBQDwoQrE1cEa3JbjXuFSB1v5a
+         bk5mjere84hC6YT4fYmE9IotDSMwQXDv+JjrsaMF6jL/j/ZXNvmA3dQ9LEM7FuyxJaYT
+         6muva72A9uWyMjIVDdRl5zp8tCHpX50N+OpcqeJF6Yzi1vVuq7cKYQHUw6Iuw7otWmhr
+         Oqfkmw2MqznOb90oBvFIaYpQJds1nEyb9x6qSqpX5iELSTYwk1/kyBzQCNyDdlfJOOL1
+         /6t0WIRu88X/wlWKEv2RwXzWlf8Rb4DQVSVjTnwxf3ndJBoIlG8YWkO7w56Jj01VMOIB
+         ORbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=/grF58AXpzz9yvksa/HkvMQkIZ6mqEgNZDRk6V3fMV4=;
+        b=FaiJXoV2DmnYsopgN5+A1qgSRYO/cpy2U1EXqaUbhDygHnBCwKJAGtzcbwh3jzFuWf
+         3TK/GqOa70Db1PMmPd8z5MU3VUUMVnENsl+xGCsvRkkzZJan8INmQnKYR5VyTyd4Je8y
+         TlFqqgPmht1E7ydmXE7dyr3LGctE24LuaFC56r8QVPrg9qPd+5yuC4rc4/ruf8/cUvvc
+         N+DoBSxTITQzZ0y5341dJJOSFoq23u+27NifDalZpbryQAClz2nx06H1Pv9S7hcB7Pia
+         83t1GEQq0XQk/OQ8AzwtF1WSUhe2JsXlu7Gaepwj2qBMNAYJgaGGQPJ2/KLaECc37v2n
+         Cjng==
+X-Gm-Message-State: APjAAAWOdgcAt3OCcHD0nWN7zGMEhpAAWa+e+AXM68yRznlhI3nwYssj
+        XQhWjbWbeYE4nXsJKmeeP50=
+X-Google-Smtp-Source: APXvYqzac3Xe7s0HbJoMo6W6sH9zt269qfBpyVlld4sa4IqCNcNLsw6HLomi8OxkRekscr8soRzK2Q==
+X-Received: by 2002:a1c:cb8f:: with SMTP id b137mr6920534wmg.64.1557127215697;
+        Mon, 06 May 2019 00:20:15 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y7sm23290283wrg.45.2019.05.06.00.20.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 00:20:14 -0700 (PDT)
+Date:   Mon, 6 May 2019 09:20:12 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] objtool changes for v5.2: Add build-time uaccess
+ permissions and DF validation
+Message-ID: <20190506072012.GA33946@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190506032234.GA31395@amt.cnet>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SND-ID: E3DhL4HZvWApxdeEu0+R3k19tF2vhIUMcvigv4x0qidpkEMv/61pVU+Ic2kX
-        C2E5z/9xJ4WEtUyKW/eV3FZ7zhqtVpQq2rjAS9f/ld8u8XLveOASo+XsFvtl
-        fyg1Roh2/gu+MMqdAzdRWQS+64XBwkZTLUA7Ph3GQXSsMww6UD/8S+aanUho
-        IQ7tGG0VakRWx37deil8OFZrQKJQyN4BocczqtMGU2CiI3RLchuLbPCoCmKi
-        KqI9xnpV7BuyRt6tR5iO/zIbR6bdAogIXhE6ZlJYAlQxzpwu99C3N3CJ08kC
-        iVSrHZCwPpv4j9CFgUIqLRaYZ3IZWQH5oknHgj+u36l4SjejbQIvFm5obt98
-        575EsUIkk0HIfVdbYdHsx1tgX75FMt0Qvnfc1js83zgnxBdDfA+9852OfC8s
-        nH+nsJpoNDaVrjiOj996yvUM33s9yqwtuvfAl2xL0Sp5Mf+3xAjkLEOl7R+y
-        X+eLIOXKjqXyvZMlHOmAkAU/GmKsHJXFg6xcnlCUg2ZEbsu7vTG7HTcv/Env
-        7SoqTSFM2XKRP6Uv7/3WPxyafXnIFxTm79V0f9heYXZeGAqKnQZD+Inx6rIl
-        6m4wHWfHR4bNpgWNWrPobW9jve0ZMORBaQFDAaY1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
+
+Please pull the latest core-objtool-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-objtool-for-linus
+
+   # HEAD: 29da93fea3ea39ab9b12270cc6be1b70ef201c9e mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC versions
+
+This is a series from Peter Zijlstra that adds x86 build-time uaccess 
+validation of SMAP to objtool, which will detect and warn about the 
+following uaccess API usage bugs and weirdnesses:
+
+	call to %s() with UACCESS enabled
+	return with UACCESS enabled
+	return with UACCESS disabled from a UACCESS-safe function
+	recursive UACCESS enable
+	redundant UACCESS disable
+	UACCESS-safe disables UACCESS
+
+As it turns out not leaking uaccess permissions outside the intended 
+uaccess functionality is hard when the interfaces are complex and when 
+such bugs are mostly dormant.
+
+As a bonus we now also check the DF flag. We had at least one 
+high-profile bug in that area in the early days of Linux, and the 
+checking is fairly simple. The checks performed and warnings emitted are:
+
+	call to %s() with DF set
+	return with DF set
+	return with modified stack frame
+	recursive STD
+	redundant CLD
+
+It's all x86-only for now, but later on this can also be used for PAN on 
+ARM and objtool is fairly cross-platform in principle.
+
+While all warnings emitted by this new checking facility that got 
+reported to us were fixed, there might be GCC version dependent warnings 
+that were not reported yet - which we'll address, should they trigger.
+
+The warnings are non-fatal build warnings.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Josh Poimboeuf (1):
+      tracing: Improve "if" macro code generation
+
+Peter Zijlstra (26):
+      sched/x86: Save [ER]FLAGS on context switch
+      x86/ia32: Fix ia32_restore_sigcontext() AC leak
+      i915, uaccess: Fix redundant CLAC
+      x86/uaccess: Move copy_user_handle_tail() into asm
+      x86/uaccess: Fix up the fixup
+      x86/nospec, objtool: Introduce ANNOTATE_IGNORE_ALTERNATIVE
+      x86/uaccess, xen: Suppress SMAP warnings
+      x86/uaccess: Always inline user_access_begin()
+      x86/uaccess, signal: Fix AC=1 bloat
+      x86/uaccess: Introduce user_access_{save,restore}()
+      x86/smap: Ditch __stringify()
+      x86/uaccess, kasan: Fix KASAN vs SMAP
+      x86/uaccess, ubsan: Fix UBSAN vs. SMAP
+      x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP
+      x86/uaccess, kcov: Disable stack protector
+      objtool: Set insn->func for alternatives
+      objtool: Handle function aliases
+      objtool: Rewrite add_ignores()
+      objtool: Add --backtrace support
+      objtool: Rewrite alt->skip_orig
+      objtool: Fix sibling call detection
+      objtool: Add UACCESS validation
+      objtool: Add Direction Flag validation
+      sched/x86_64: Don't save flags on context switch
+      x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation
+      mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC versions
 
 
-On 5/6/19 5:22 AM, Marcelo Tosatti wrote:
-> On Mon, Apr 15, 2019 at 05:12:13PM -0300, Marcelo Tosatti wrote:
->> For isolated CPUs, we'd like to skip awakening ktimersoftd
->> (the switch to and then back from ktimersoftd takes 10us in
->> virtualized environments, in addition to other OS overhead,
->> which exceeds telco requirements for packet forwarding for
->> 5G) from the sched tick.
->>
->> The patch "timers: do not raise softirq unconditionally" from Thomas
->> attempts to address that by checking, in the sched tick, whether its
->> necessary to raise the timer softirq. Unfortunately, it attempts to grab
->> the tvec base spinlock which generates the issue described in the patch
->> "Revert "timers: do not raise softirq unconditionally"".
->>
->> tvec_base->lock protects addition of timers to the wheel versus
->> timer interrupt execution.
->>
->> This patch does not grab the tvec base spinlock from irq context,
->> but rather performs a lockless access to base->pending_map.
->>
->> It handles the the race between timer addition and timer interrupt
->> execution by unconditionally (in case of isolated CPUs) raising the
->> timer softirq after making sure the updated bitmap is visible
->> on remote CPUs.
->>
->> This patchset reduces cyclictest latency from 25us to 14us
->> on my testbox. 
->>
->>
-> 
-> Ping?
-> 
-
-Hi Marcelo,
-
-I've been running your patches with lockdep and other debug options and did not
-find any problem of this kind. Also, I did not find any kind of timing
-regressions in tests with the PREEMPT RT...
-
--- Daniel
+ arch/x86/entry/entry_32.S                  |   2 +
+ arch/x86/ia32/ia32_signal.c                |  29 ++-
+ arch/x86/include/asm/alternative-asm.h     |  11 +
+ arch/x86/include/asm/alternative.h         |  10 +
+ arch/x86/include/asm/asm.h                 |  24 --
+ arch/x86/include/asm/nospec-branch.h       |  28 +-
+ arch/x86/include/asm/smap.h                |  37 ++-
+ arch/x86/include/asm/switch_to.h           |   1 +
+ arch/x86/include/asm/uaccess.h             |  12 +-
+ arch/x86/include/asm/uaccess_64.h          |   3 -
+ arch/x86/include/asm/xen/hypercall.h       |  24 +-
+ arch/x86/kernel/process_32.c               |   7 +
+ arch/x86/kernel/process_64.c               |   1 +
+ arch/x86/kernel/signal.c                   |  29 ++-
+ arch/x86/lib/copy_user_64.S                |  48 ++++
+ arch/x86/lib/memcpy_64.S                   |   3 +-
+ arch/x86/lib/usercopy_64.c                 |  20 --
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c |   6 +-
+ include/linux/compiler.h                   |   2 +-
+ include/linux/uaccess.h                    |   2 +
+ kernel/Makefile                            |   1 +
+ kernel/trace/trace_branch.c                |   4 +
+ lib/Makefile                               |   1 +
+ lib/strncpy_from_user.c                    |   5 +-
+ lib/strnlen_user.c                         |   4 +-
+ lib/ubsan.c                                |   4 +
+ mm/kasan/Makefile                          |   3 +
+ mm/kasan/common.c                          |  10 +
+ mm/kasan/report.c                          |   3 +-
+ scripts/Makefile.build                     |   3 +
+ tools/objtool/arch.h                       |   8 +-
+ tools/objtool/arch/x86/decode.c            |  21 +-
+ tools/objtool/builtin-check.c              |   4 +-
+ tools/objtool/builtin.h                    |   2 +-
+ tools/objtool/check.c                      | 400 ++++++++++++++++++++++-------
+ tools/objtool/check.h                      |   4 +-
+ tools/objtool/elf.c                        |  15 +-
+ tools/objtool/elf.h                        |   3 +-
+ tools/objtool/special.c                    |  18 ++
+ tools/objtool/special.h                    |   1 +
+ tools/objtool/warn.h                       |   8 +
+ 41 files changed, 602 insertions(+), 219 deletions(-)
