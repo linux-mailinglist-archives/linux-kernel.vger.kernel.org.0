@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCFAE14D45
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE2C114CF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbfEFOtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:49:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51412 "EHLO mail.kernel.org"
+        id S1729064AbfEFOqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:46:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfEFOth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:49:37 -0400
+        id S1728489AbfEFOqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34708214AF;
-        Mon,  6 May 2019 14:49:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6378521479;
+        Mon,  6 May 2019 14:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154176;
-        bh=bnZKPWW5gBASz/YwZfTz0WY3Gxq1ffXsOQJ0Zxd+gRY=;
+        s=default; t=1557153965;
+        bh=3Ca6qMXXyzzlbNgKoHpmWEQMnGIcdn4oM83zHpLqnTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZX0RP9giZZEhMVl9SM7c+WrvhCjuGvvs6wGywxodZ3/BFiAXskPTR2gHXJ0POWA1V
-         v6Xl9gayDAoPKlGRGXu08HHmbBnid6UhA/JJ9XDYiJzRhEhUw3zwnhM3sLCV+XQihL
-         cWBEo7XDiwK/Lgo1tBwTVpfXN1922cxH9R3d1LRA=
+        b=ocXc07/VfoOzXt3yR8KwRrH6LatNMf2k0vwSrBiBLXaDWxLJCJxJzA0gthKqqFkkj
+         uAQbwaJGearQSwpIT1VvecFbemkhyslrxGw7iA+rE+DIIVpcHvDKhlMFykaqWlWwGf
+         v4HSkjP/wXfQ94skTC2ivhaswOQuavsSgfglTquE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 40/62] jffs2: fix use-after-free on symlink traversal
+        stable@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 63/75] scsi: RDMA/srpt: Fix a credit leak for aborted commands
 Date:   Mon,  6 May 2019 16:33:11 +0200
-Message-Id: <20190506143054.607149267@linuxfoundation.org>
+Message-Id: <20190506143058.977870720@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4fdcfab5b5537c21891e22e65996d4d0dd8ab4ca ]
+From: Bart Van Assche <bvanassche@acm.org>
 
-free the symlink body after the same RCU delay we have for freeing the
-struct inode itself, so that traversal during RCU pathwalk wouldn't step
-into freed memory.
+commit 40ca8757291ca7a8775498112d320205b2a2e571 upstream.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Make sure that the next time a response is sent to the initiator that the
+credit it had allocated for the aborted request gets freed.
+
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Fixes: 131e6abc674e ("target: Add TFO->abort_task for aborted task resources release") # v3.15
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/jffs2/readinode.c | 5 -----
- fs/jffs2/super.c     | 5 ++++-
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
-index 06a71dbd4833..2f236cca6095 100644
---- a/fs/jffs2/readinode.c
-+++ b/fs/jffs2/readinode.c
-@@ -1414,11 +1414,6 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f)
- 
- 	jffs2_kill_fragtree(&f->fragtree, deleted?c:NULL);
- 
--	if (f->target) {
--		kfree(f->target);
--		f->target = NULL;
--	}
--
- 	fds = f->dents;
- 	while(fds) {
- 		fd = fds;
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 226640563df3..76aedbc97773 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -47,7 +47,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
- static void jffs2_i_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
--	kmem_cache_free(jffs2_inode_cachep, JFFS2_INODE_INFO(inode));
-+	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
-+
-+	kfree(f->target);
-+	kmem_cache_free(jffs2_inode_cachep, f);
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -2381,8 +2381,19 @@ static void srpt_queue_tm_rsp(struct se_
+ 	srpt_queue_response(cmd);
  }
  
- static void jffs2_destroy_inode(struct inode *inode)
--- 
-2.20.1
-
++/*
++ * This function is called for aborted commands if no response is sent to the
++ * initiator. Make sure that the credits freed by aborting a command are
++ * returned to the initiator the next time a response is sent by incrementing
++ * ch->req_lim_delta.
++ */
+ static void srpt_aborted_task(struct se_cmd *cmd)
+ {
++	struct srpt_send_ioctx *ioctx = container_of(cmd,
++				struct srpt_send_ioctx, cmd);
++	struct srpt_rdma_ch *ch = ioctx->ch;
++
++	atomic_inc(&ch->req_lim_delta);
+ }
+ 
+ static int srpt_queue_status(struct se_cmd *cmd)
 
 
