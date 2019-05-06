@@ -2,77 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0474B14B66
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123FD14B6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEFOAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:00:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35098 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfEFOAd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:00:33 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w24so6436483plp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MbsZIl3ArB5wEdByvk9rAkhe7aFmbknUmqiIp7u42Ng=;
-        b=LhftYKUl9AlNvf4VZqvgbwBPxpgUgibHvvGfFBJck7yL7q8JqiiTpSivC9g3C2AFl4
-         4JUYNszhcoDNOslLs5nZ4G2pJUjBS7WrbJjFZRKG5kiO9v/Y4utk1M6fHTclgYYg7XkA
-         TYdf2hqusC/TGIjs1k3Ap64OeIAylNxoGi+XI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MbsZIl3ArB5wEdByvk9rAkhe7aFmbknUmqiIp7u42Ng=;
-        b=Ne8/psSdGnGslfE6wozxJX08bj1GXrOCaMI5Bfyt3MlxPyLhifpvuvZIv/+b6dmKwu
-         DVONCifDg/2oT2cqf1vq89SWCSbDuGkrL4d5qKIMtA6nNMAj2j1LKF9LgbY199HH2uHN
-         x/Fdgj2YE3fld+VQ1Ok7Jkqqhy4TnI3E6A50E92iKDwSZLHzRVVMcLMNGEnx6lAeMuCu
-         fiy1ZYDo2cU74oXf7VBQ28Og4HYqSCSTqcb1RZSDwnmBfjNNEr5s89MgWPnwG4lzHaYb
-         xVdG6lw6oc4NxfH5hBjPZMHGxUdQmf9pPrZW+dnh6plrcpluX1p8OVVcfTUUemKlto2i
-         qheg==
-X-Gm-Message-State: APjAAAUlyk/3d6qpp7rs5AphV2Gzd2MFCj8A6JKVb6LcQURrA3NBiw4j
-        JJuZnfi112T5rSQixKFQkVWuvA==
-X-Google-Smtp-Source: APXvYqzPlaGBL9bRnL5IaA1pHdnIdt0qf3kR4PAAdxPyMLDsxAogkCmgpD0uGJF9NCNvxLGa6Ne/gQ==
-X-Received: by 2002:a17:902:8f88:: with SMTP id z8mr31603828plo.54.1557151232688;
-        Mon, 06 May 2019 07:00:32 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 124sm11882126pfe.124.2019.05.06.07.00.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 07:00:31 -0700 (PDT)
-Date:   Mon, 6 May 2019 10:00:30 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Viktor Rosendahl <viktor.rosendahl@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] ftrace: Implement fs notification for
- preempt/irqsoff tracers
-Message-ID: <20190506140030.GA234965@google.com>
-References: <20190504164710.GA55790@google.com>
- <20190505223915.4569-1-viktor.rosendahl@gmail.com>
- <20190505190133.49b5ea46@oasis.local.home>
- <b415ea04-e078-a73c-3609-56fb195841c3@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b415ea04-e078-a73c-3609-56fb195841c3@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726297AbfEFOCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfEFOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:02:34 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF3F2054F;
+        Mon,  6 May 2019 14:02:33 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hNeCO-0006xr-Le; Mon, 06 May 2019 10:02:32 -0400
+Message-Id: <20190506140206.573397982@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Mon, 06 May 2019 10:02:06 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>
+Subject: [for-next][PATCH 0/3] ktest: Updates for this merge window
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 01:54:04AM +0200, Viktor Rosendahl wrote:
-> On 5/6/19 1:01 AM, Steven Rostedt wrote:
-[snip]
-> > Hmm, what about adding a notifier to tracing_max_latency instead? And
-> > do it not as a config option, but have it always enabled. It would send a
-> > notification when it changes, and that only happens when there's a new
-> > max latency. Would that work for you?
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+for-next
 
-That sounds like a much better approach. thanks,
+Head SHA1: 37e1677330bdc2e96e70f18701e589876f054c67
 
- - Joel
 
+Masayoshi Mizuma (2):
+      ktest: Add support for meta characters in GRUB_MENU
+      ktest: introduce REBOOT_RETURN_CODE to confirm the result of REBOOT
+
+Steven Rostedt (VMware) (1):
+      ktest: Show name and iteration on errors
+
+----
+ tools/testing/ktest/ktest.pl    | 41 +++++++++++++++++++++++++++++++++--------
+ tools/testing/ktest/sample.conf |  4 ++++
+ 2 files changed, 37 insertions(+), 8 deletions(-)
