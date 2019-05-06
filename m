@@ -2,186 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBE1152CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA77B15312
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbfEFRd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 13:33:56 -0400
-Received: from smtp1.cloudbase.it ([46.107.15.2]:16077 "EHLO
-        smtp1.cloudbase.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfEFRd4 (ORCPT
+        id S1726878AbfEFRuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 13:50:40 -0400
+Received: from mail133-31.atl131.mandrillapp.com ([198.2.133.31]:9935 "EHLO
+        mail133-31.atl131.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725883AbfEFRuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 13:33:56 -0400
-Received: from ader1990.cloudbase.it (unknown [89.46.161.178])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp1.cloudbase.it (Postfix) with ESMTPSA id 780E250853;
-        Mon,  6 May 2019 19:38:06 +0300 (EEST)
-From:   Adrian Vladu <avladu@cloudbasesolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Subject: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for lsvmbus
-Date:   Mon,  6 May 2019 17:33:31 +0000
-Message-Id: <20190506173331.18906-1-avladu@cloudbasesolutions.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190506172737.18122-1-avladu@cloudbasesolutions.com>
-References: <20190506172737.18122-1-avladu@cloudbasesolutions.com>
+        Mon, 6 May 2019 13:50:37 -0400
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 13:50:36 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=/hQmroba0dU65ofpriWdOomY8Gf3MCvdyaVKjqbmg6E=;
+ b=oPD6V7mS4MbnHKjHkK7be7CJhbuTr23hcNgqEhiZVjecNtfctDrgmaa0RVlBabYplMEqXZZADiIc
+   kDzaRP2t1bQPL8WZ6X4QvNPAoEWK4mIQ1FopHRjriBiybMO8vG0hQt4b7UG4jH2ZY8LwFe/zkMRm
+   eGRzdyOLEb92GzDOc9k=
+Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-31.atl131.mandrillapp.com id hq1puq1sar8j for <linux-kernel@vger.kernel.org>; Mon, 6 May 2019 17:34:14 +0000 (envelope-from <bounce-md_31050260.5cd07016.v1-185e68dc7b554458a7256644e91bc41d@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1557164054; h=From : 
+ Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=/hQmroba0dU65ofpriWdOomY8Gf3MCvdyaVKjqbmg6E=; 
+ b=qVPcNvqg08wPA6FMIdjCA+tSzZzNm9TI5bVoQEAabETbf69s0Eeug/NTWFcErZYTX1x8Fj
+ R1oF1zaY4yMDD09nWZ2H4opPS1hZ4M8PNWwNDbLSx6qCU8EhC5PhDBXIxtLa5PIaVBzIzUYr
+ sQQaZKm+oH7ojU36MW49o8m641RHE=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH 3/3] vfs: pass ppos=NULL to .read()/.write() of FMODE_STREAM files
+Received: from [87.98.221.171] by mandrillapp.com id 185e68dc7b554458a7256644e91bc41d; Mon, 06 May 2019 17:34:14 +0000
+X-Mailer: git-send-email 2.20.1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@denx.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kirill Smelkov <kirr@nexedi.com>
+Message-Id: <438ab720c675a16d53bb18f76a94d25bbe420c45.1557162679.git.kirr@nexedi.com>
+In-Reply-To: <cover.1557162679.git.kirr@nexedi.com>
+References: <cover.1557162679.git.kirr@nexedi.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.185e68dc7b554458a7256644e91bc41d
+X-Mandrill-User: md_31050260
+Date:   Mon, 06 May 2019 17:34:14 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed pep8/flake8 python style code for lsvmbus tool.
+This amends commit 10dce8af3422 ("fs: stream_open - opener for
+stream-like files so that read and write can run simultaneously without
+deadlock") in how position is passed into .read()/.write() handler for
+stream-like files:
 
-The TAB indentation was on purpose ignored (pep8 rule W191) to make
-sure the code is complying with the Linux code guideline.
-The following command do not show any warnings now:
-pep8 --ignore=W191 lsvmbus
-flake8 --ignore=W191 lsvmbus
+Rasmus noticed that we currently pass 0 as position and ignore any position
+change if that is done by a file implementation. This papers over bugs if ppos
+is used in files that declare themselves as being stream-like as such bugs will
+go unnoticed. Even if a file implementation is correctly converted into using
+stream_open, its read/write later could be changed to use ppos and even though
+that won't be working correctly, that bug might go unnoticed without someone
+doing wrong behaviour analysis. It is thus better to pass ppos=NULL into
+read/write for stream-like files as that don't give any chance for ppos usage
+bugs because it will oops if ppos is ever used inside .read() or .write().
 
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+Note 1: rw_verify_area, new_sync_{read,write} needs to be updated
+because they are called by vfs_read/vfs_write & friends before
+file_operations .read/.write .
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Dexuan Cui <decui@microsoft.com>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+Note 2: if file backend uses new-style .read_iter/.write_iter, position
+is still passed into there as non-pointer kiocb.ki_pos . Currently
+stream_open.cocci (semantic patch added by 10dce8af3422) ignores files
+whose file_operations has *_iter methods.
+
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
 ---
- tools/hv/lsvmbus | 75 +++++++++++++++++++++++++++---------------------
- 1 file changed, 42 insertions(+), 33 deletions(-)
+ fs/open.c       |   5 ++-
+ fs/read_write.c | 113 ++++++++++++++++++++++++++++--------------------
+ 2 files changed, 70 insertions(+), 48 deletions(-)
 
-diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
-index 55e7374bade0..099f2c44dbed 100644
---- a/tools/hv/lsvmbus
-+++ b/tools/hv/lsvmbus
-@@ -4,10 +4,10 @@
- import os
- from optparse import OptionParser
+diff --git a/fs/open.c b/fs/open.c
+index a00350018a47..9c7d724a6f67 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1219,8 +1219,9 @@ EXPORT_SYMBOL(nonseekable_open);
+ /*
+  * stream_open is used by subsystems that want stream-like file descriptors.
+  * Such file descriptors are not seekable and don't have notion of position
+- * (file.f_pos is always 0). Contrary to file descriptors of other regular
+- * files, .read() and .write() can run simultaneously.
++ * (file.f_pos is always 0 and ppos passed to .read()/.write() is always NULL).
++ * Contrary to file descriptors of other regular files, .read() and .write()
++ * can run simultaneously.
+  *
+  * stream_open never fails and is marked to return int so that it could be
+  * directly used as file_operations.open .
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 61b43ad7608e..c543d965e288 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -365,29 +365,37 @@ SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
+ int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t count)
+ {
+ 	struct inode *inode;
+-	loff_t pos;
+ 	int retval = -EINVAL;
  
-+help_msg = "print verbose messages. Try -vv, -vvv for  more verbose messages"
- parser = OptionParser()
--parser.add_option("-v", "--verbose", dest="verbose",
--		   help="print verbose messages. Try -vv, -vvv for \
--			more verbose messages", action="count")
-+parser.add_option(
-+	"-v", "--verbose", dest="verbose", help=help_msg, action="count")
+ 	inode = file_inode(file);
+ 	if (unlikely((ssize_t) count < 0))
+ 		return retval;
+-	pos = *ppos;
+-	if (unlikely(pos < 0)) {
+-		if (!unsigned_offsets(file))
+-			return retval;
+-		if (count >= -pos) /* both values are in 0..LLONG_MAX */
+-			return -EOVERFLOW;
+-	} else if (unlikely((loff_t) (pos + count) < 0)) {
+-		if (!unsigned_offsets(file))
+-			return retval;
+-	}
  
- (options, args) = parser.parse_args()
+-	if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
+-		retval = locks_mandatory_area(inode, file, pos, pos + count - 1,
+-				read_write == READ ? F_RDLCK : F_WRLCK);
+-		if (retval < 0)
+-			return retval;
++	/*
++	 * ranged mandatory locking does not apply to streams - it makes sense
++	 * only for files where position has a meaning.
++	 */
++	if (ppos) {
++		loff_t pos = *ppos;
++
++		if (unlikely(pos < 0)) {
++			if (!unsigned_offsets(file))
++				return retval;
++			if (count >= -pos) /* both values are in 0..LLONG_MAX */
++				return -EOVERFLOW;
++		} else if (unlikely((loff_t) (pos + count) < 0)) {
++			if (!unsigned_offsets(file))
++				return retval;
++		}
++
++		if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
++			retval = locks_mandatory_area(inode, file, pos, pos + count - 1,
++					read_write == READ ? F_RDLCK : F_WRLCK);
++			if (retval < 0)
++				return retval;
++		}
+ 	}
++
+ 	return security_file_permission(file,
+ 				read_write == READ ? MAY_READ : MAY_WRITE);
+ }
+@@ -400,12 +408,13 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
+ 	ssize_t ret;
  
-@@ -21,27 +21,28 @@ if not os.path.isdir(vmbus_sys_path):
- 	exit(-1)
+ 	init_sync_kiocb(&kiocb, filp);
+-	kiocb.ki_pos = *ppos;
++	kiocb.ki_pos = (ppos ? *ppos : 0);
+ 	iov_iter_init(&iter, READ, &iov, 1, len);
  
- vmbus_dev_dict = {
--	'{0e0b6031-5213-4934-818b-38d90ced39db}' : '[Operating system shutdown]',
--	'{9527e630-d0ae-497b-adce-e80ab0175caf}' : '[Time Synchronization]',
--	'{57164f39-9115-4e78-ab55-382f3bd5422d}' : '[Heartbeat]',
--	'{a9a0f4e7-5a45-4d96-b827-8a841e8c03e6}' : '[Data Exchange]',
--	'{35fa2e29-ea23-4236-96ae-3a6ebacba440}' : '[Backup (volume checkpoint)]',
--	'{34d14be3-dee4-41c8-9ae7-6b174977c192}' : '[Guest services]',
--	'{525074dc-8985-46e2-8057-a307dc18a502}' : '[Dynamic Memory]',
--	'{cfa8b69e-5b4a-4cc0-b98b-8ba1a1f3f95a}' : 'Synthetic mouse',
--	'{f912ad6d-2b17-48ea-bd65-f927a61c7684}' : 'Synthetic keyboard',
--	'{da0a7802-e377-4aac-8e77-0558eb1073f8}' : 'Synthetic framebuffer adapter',
--	'{f8615163-df3e-46c5-913f-f2d2f965ed0e}' : 'Synthetic network adapter',
--	'{32412632-86cb-44a2-9b5c-50d1417354f5}' : 'Synthetic IDE Controller',
--	'{ba6163d9-04a1-4d29-b605-72e2ffb1dc7f}' : 'Synthetic SCSI Controller',
--	'{2f9bcc4a-0069-4af3-b76b-6fd0be528cda}' : 'Synthetic fiber channel adapter',
--	'{8c2eaf3d-32a7-4b09-ab99-bd1f1c86b501}' : 'Synthetic RDMA adapter',
--	'{44c4f61d-4444-4400-9d52-802e27ede19f}' : 'PCI Express pass-through',
--	'{276aacf4-ac15-426c-98dd-7521ad3f01fe}' : '[Reserved system device]',
--	'{f8e65716-3cb3-4a06-9a60-1889c5cccab5}' : '[Reserved system device]',
--	'{3375baf4-9e15-4b30-b765-67acb10d607b}' : '[Reserved system device]',
-+	'{0e0b6031-5213-4934-818b-38d90ced39db}': '[Operating system shutdown]',
-+	'{9527e630-d0ae-497b-adce-e80ab0175caf}': '[Time Synchronization]',
-+	'{57164f39-9115-4e78-ab55-382f3bd5422d}': '[Heartbeat]',
-+	'{a9a0f4e7-5a45-4d96-b827-8a841e8c03e6}': '[Data Exchange]',
-+	'{35fa2e29-ea23-4236-96ae-3a6ebacba440}': '[Backup (volume checkpoint)]',
-+	'{34d14be3-dee4-41c8-9ae7-6b174977c192}': '[Guest services]',
-+	'{525074dc-8985-46e2-8057-a307dc18a502}': '[Dynamic Memory]',
-+	'{cfa8b69e-5b4a-4cc0-b98b-8ba1a1f3f95a}': 'Synthetic mouse',
-+	'{f912ad6d-2b17-48ea-bd65-f927a61c7684}': 'Synthetic keyboard',
-+	'{da0a7802-e377-4aac-8e77-0558eb1073f8}': 'Synthetic framebuffer adapter',
-+	'{f8615163-df3e-46c5-913f-f2d2f965ed0e}': 'Synthetic network adapter',
-+	'{32412632-86cb-44a2-9b5c-50d1417354f5}': 'Synthetic IDE Controller',
-+	'{ba6163d9-04a1-4d29-b605-72e2ffb1dc7f}': 'Synthetic SCSI Controller',
-+	'{2f9bcc4a-0069-4af3-b76b-6fd0be528cda}': 'Synthetic fiber channel adapter',
-+	'{8c2eaf3d-32a7-4b09-ab99-bd1f1c86b501}': 'Synthetic RDMA adapter',
-+	'{44c4f61d-4444-4400-9d52-802e27ede19f}': 'PCI Express pass-through',
-+	'{276aacf4-ac15-426c-98dd-7521ad3f01fe}': '[Reserved system device]',
-+	'{f8e65716-3cb3-4a06-9a60-1889c5cccab5}': '[Reserved system device]',
-+	'{3375baf4-9e15-4b30-b765-67acb10d607b}': '[Reserved system device]',
+ 	ret = call_read_iter(filp, &kiocb, &iter);
+ 	BUG_ON(ret == -EIOCBQUEUED);
+-	*ppos = kiocb.ki_pos;
++	if (ppos)
++		*ppos = kiocb.ki_pos;
+ 	return ret;
  }
  
-+
- def get_vmbus_dev_attr(dev_name, attr):
- 	try:
- 		f = open('%s/%s/%s' % (vmbus_sys_path, dev_name, attr), 'r')
-@@ -52,6 +53,7 @@ def get_vmbus_dev_attr(dev_name, attr):
+@@ -468,12 +477,12 @@ static ssize_t new_sync_write(struct file *filp, const char __user *buf, size_t
+ 	ssize_t ret;
  
- 	return lines
+ 	init_sync_kiocb(&kiocb, filp);
+-	kiocb.ki_pos = *ppos;
++	kiocb.ki_pos = (ppos ? *ppos : 0);
+ 	iov_iter_init(&iter, WRITE, &iov, 1, len);
  
-+
- class VMBus_Dev:
- 	pass
+ 	ret = call_write_iter(filp, &kiocb, &iter);
+ 	BUG_ON(ret == -EIOCBQUEUED);
+-	if (ret > 0)
++	if (ret > 0 && ppos)
+ 		*ppos = kiocb.ki_pos;
+ 	return ret;
+ }
+@@ -558,15 +567,10 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
+ 	return ret;
+ }
  
-@@ -66,12 +68,13 @@ for f in os.listdir(vmbus_sys_path):
+-static inline loff_t file_pos_read(struct file *file)
+-{
+-	return file->f_mode & FMODE_STREAM ? 0 : file->f_pos;
+-}
+-
+-static inline void file_pos_write(struct file *file, loff_t pos)
++/* file_ppos returns &file->f_pos or NULL if file is stream */
++static inline loff_t *file_ppos(struct file *file)
+ {
+-	if ((file->f_mode & FMODE_STREAM) == 0)
+-		file->f_pos = pos;
++	return file->f_mode & FMODE_STREAM ? NULL : &file->f_pos;
+ }
  
- 	chn_vp_mapping = get_vmbus_dev_attr(f, 'channel_vp_mapping')
- 	chn_vp_mapping = [c.strip() for c in chn_vp_mapping]
--	chn_vp_mapping = sorted(chn_vp_mapping,
--		key = lambda c : int(c.split(':')[0]))
-+	chn_vp_mapping = sorted(
-+		chn_vp_mapping, key=lambda c: int(c.split(':')[0]))
+ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
+@@ -575,10 +579,14 @@ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
+ 	ssize_t ret = -EBADF;
  
--	chn_vp_mapping = ['\tRel_ID=%s, target_cpu=%s' %
--				(c.split(':')[0], c.split(':')[1])
--					for c in chn_vp_mapping]
-+	chn_vp_mapping = [
-+		'\tRel_ID=%s, target_cpu=%s' %
-+		(c.split(':')[0], c.split(':')[1]) for c in chn_vp_mapping
-+	]
- 	d = VMBus_Dev()
- 	d.sysfs_path = '%s/%s' % (vmbus_sys_path, f)
- 	d.vmbus_id = vmbus_id
-@@ -85,7 +88,7 @@ for f in os.listdir(vmbus_sys_path):
- 	vmbus_dev_list.append(d)
+ 	if (f.file) {
+-		loff_t pos = file_pos_read(f.file);
+-		ret = vfs_read(f.file, buf, count, &pos);
+-		if (ret >= 0)
+-			file_pos_write(f.file, pos);
++		loff_t pos, *ppos = file_ppos(f.file);
++		if (ppos) {
++			pos = *ppos;
++			ppos = &pos;
++		}
++		ret = vfs_read(f.file, buf, count, ppos);
++		if (ret >= 0 && ppos)
++			f.file->f_pos = pos;
+ 		fdput_pos(f);
+ 	}
+ 	return ret;
+@@ -595,10 +603,14 @@ ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
+ 	ssize_t ret = -EBADF;
  
+ 	if (f.file) {
+-		loff_t pos = file_pos_read(f.file);
+-		ret = vfs_write(f.file, buf, count, &pos);
+-		if (ret >= 0)
+-			file_pos_write(f.file, pos);
++		loff_t pos, *ppos = file_ppos(f.file);
++		if (ppos) {
++			pos = *ppos;
++			ppos = &pos;
++		}
++		ret = vfs_write(f.file, buf, count, ppos);
++		if (ret >= 0 && ppos)
++			f.file->f_pos = pos;
+ 		fdput_pos(f);
+ 	}
  
--vmbus_dev_list  = sorted(vmbus_dev_list, key = lambda d : int(d.vmbus_id))
-+vmbus_dev_list = sorted(vmbus_dev_list, key=lambda d: int(d.vmbus_id))
+@@ -673,14 +685,15 @@ static ssize_t do_iter_readv_writev(struct file *filp, struct iov_iter *iter,
+ 	ret = kiocb_set_rw_flags(&kiocb, flags);
+ 	if (ret)
+ 		return ret;
+-	kiocb.ki_pos = *ppos;
++	kiocb.ki_pos = (ppos ? *ppos : 0);
  
- format0 = '%2s: %s'
- format1 = '%2s: Class_ID = %s - %s\n%s'
-@@ -95,9 +98,15 @@ for d in vmbus_dev_list:
- 	if verbose == 0:
- 		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
- 	elif verbose == 1:
--		print (('VMBUS ID ' + format1) %	\
--			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
-+		print(
-+			('VMBUS ID ' + format1) %
-+			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
-+		)
- 	else:
--		print (('VMBUS ID ' + format2) % \
--			(d.vmbus_id, d.class_id, d.dev_desc, \
--			d.device_id, d.sysfs_path, d.chn_vp_mapping))
-+		print(
-+			('VMBUS ID ' + format2) %
-+			(
-+				d.vmbus_id, d.class_id, d.dev_desc,
-+				d.device_id, d.sysfs_path, d.chn_vp_mapping
-+			)
-+		)
+ 	if (type == READ)
+ 		ret = call_read_iter(filp, &kiocb, iter);
+ 	else
+ 		ret = call_write_iter(filp, &kiocb, iter);
+ 	BUG_ON(ret == -EIOCBQUEUED);
+-	*ppos = kiocb.ki_pos;
++	if (ppos)
++		*ppos = kiocb.ki_pos;
+ 	return ret;
+ }
+ 
+@@ -1013,10 +1026,14 @@ static ssize_t do_readv(unsigned long fd, const struct iovec __user *vec,
+ 	ssize_t ret = -EBADF;
+ 
+ 	if (f.file) {
+-		loff_t pos = file_pos_read(f.file);
+-		ret = vfs_readv(f.file, vec, vlen, &pos, flags);
+-		if (ret >= 0)
+-			file_pos_write(f.file, pos);
++		loff_t pos, *ppos = file_ppos(f.file);
++		if (ppos) {
++			pos = *ppos;
++			ppos = &pos;
++		}
++		ret = vfs_readv(f.file, vec, vlen, ppos, flags);
++		if (ret >= 0 && ppos)
++			f.file->f_pos = pos;
+ 		fdput_pos(f);
+ 	}
+ 
+@@ -1033,10 +1050,14 @@ static ssize_t do_writev(unsigned long fd, const struct iovec __user *vec,
+ 	ssize_t ret = -EBADF;
+ 
+ 	if (f.file) {
+-		loff_t pos = file_pos_read(f.file);
+-		ret = vfs_writev(f.file, vec, vlen, &pos, flags);
+-		if (ret >= 0)
+-			file_pos_write(f.file, pos);
++		loff_t pos, *ppos = file_ppos(f.file);
++		if (ppos) {
++			pos = *ppos;
++			ppos = &pos;
++		}
++		ret = vfs_writev(f.file, vec, vlen, ppos, flags);
++		if (ret >= 0 && ppos)
++			f.file->f_pos = pos;
+ 		fdput_pos(f);
+ 	}
+ 
 -- 
-2.19.1
-
+2.20.1
