@@ -2,362 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6C81536B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB291536F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfEFSLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 14:11:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:58512 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbfEFSLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 14:11:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D67F8A78;
-        Mon,  6 May 2019 11:11:31 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF87A3F5AF;
-        Mon,  6 May 2019 11:11:29 -0700 (PDT)
-Date:   Mon, 6 May 2019 19:11:22 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, tglx@linutronix.de, marc.zyngier@arm.com,
-        jpoimboe@redhat.com
-Subject: [GIT PULL] arm64: updates for 5.2
-Message-ID: <20190506181122.GC2875@brain-police>
+        id S1727111AbfEFSMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 14:12:08 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:63707 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbfEFSMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 14:12:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1557166327; x=1588702327;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kSNx+lxYuo3ZB4wLZaFfiu/cEsS0WNJBcu8Rvh04o+g=;
+  b=Hpqzmp7lCbRcGmTNTF53P9yItCnAYnp5mwz6quSLtpq1wuprDykGxZ3M
+   Y4Gj/oz2HAoaSYWJ482HB8V1q+M597CI7vIB1Y31z9wwVJP1sNhebWJ5w
+   UJyJ2L++laUAqtAjsL8gxVKWvBuMoauVafeub54MI7bHnMnhb+VftL2Uu
+   BaeOxsImhDBxZje4HXwYFP8qQwzrhCq4gAD8+6Tjv9tpj0zrK4MiNV7PI
+   WJtex6J/z30ESlX8zv+icD49DiUKcIf2zU9cLIKJiCouY3zZ0x+0Nhry4
+   JsgO0j0rGuRTRa1VkSrZODgxyw0TMvhqwKaDnblCD++ganuBH3OE9dbE5
+   A==;
+X-IronPort-AV: E=Sophos;i="5.60,438,1549900800"; 
+   d="scan'208";a="107627387"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 May 2019 02:12:07 +0800
+IronPort-SDR: wzysNnNR4qSOsJJiwuoEHd7LNEb+BwGp3NByYDbrztM96rMKUA/NUeJws4E/0wlJfmdyw/6Y+O
+ kVqC8j26/CzQhHihoNe9HfutJ2iIzTpjGf67yW0Fhi1wVUm0sUWT/22ZRHimQHu/R8Kk3MjXi5
+ AH8yzIf64dfeksWMFOjYcC7Hd/0rEZO7zfabafMFJ02C6jt+fhOb4dkSZ0Wo/fQS9E0RhcYd44
+ fIvDcAcN+iKJ+O/uDHgd8KhD6g7BeNByY3z1Tn/S5EtVATOzSvy/Tr260e4uC53lF6Nbe9Ezwn
+ VpfRcai7aV+WJ47AaFrxeeJH
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 06 May 2019 10:48:14 -0700
+IronPort-SDR: N4vHFeb9yilB1u5h0DfwTf9Q8su5GyfQuHxi0t6LXwH6cd7GrO+Xw5I4Q+WLargOZI/0nbJc51
+ +pFVB+xUHbPY0h6d2A70OerA+RcrN01QHI+tkORHVYYUPSi4GY2XI+5XoWlEb8D+JZbj0LCvOG
+ TMs0rn7jcy87efy60PpWKc32uT1UXsg01Ve3PwIGs5EFKtHuhs323IN2HO1sNmxy7WQ4MIjvu8
+ TSEHm9pd7Juov5SzdvM2EMtH46LAfbarnt4zXWoocw3id+eoFiXg2yDaKVxH3nOl+Pqc37Ku6s
+ YtI=
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 06 May 2019 11:12:07 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>, Tom Rini <trini@konsulko.com>,
+        Karsten Merker <merker@debian.org>,
+        Alexander Graf <agraf@suse.de>,
+        Anup Patel <anup@brainfault.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Joe Hershberger <joe.hershberger@ni.com>,
+        Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rick Chen <rick@andestech.com>, Simon Glass <sjg@chromium.org>,
+        u-boot@lists.denx.de
+Subject: [U-Boot] [v4 PATCH] RISCV: image: Add booti support
+Date:   Mon,  6 May 2019 11:11:34 -0700
+Message-Id: <20190506181134.9575-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This patch adds booti support for RISC-V Linux kernel. The existing
+bootm method will also continue to work as it is.
 
-Please pull these arm64 updates for 5.2. As per usual, there are details
-in the tag, but it's worth noting that we're including the core
-"mitigations=" command-line code here from -tip so that we could develop
-arm64 support on top of adding support for the "cpu/vulnerabilities"
-directory under sysfs.
+It depends on the following kernel patch which adds the header to the
+flat Image. Gzip compressed Image (Image.gz) support is not enabled with
+this patch.
 
-There is a straightforward conflict with -tip in the mm/kasan Makefile,
-which just involves replacing a '-pg' with '$(CC_FLAGS_FTRACE)'. I also
-ended up applying a duplicate of 045afc24124d ("arm64: futex: Fix
-FUTEX_WAKE_OP atomic ops with non-zero result value") as 84ff7a09c371,
-which I'm not very pleased about. The fix in mainline was based on -rc4,
-so the alternative would've been merging all of that in, which seemed a
-lot messier. In future, we're going to avoid fast-forwarding our fixes
-branch with each -rc, so this shouldn't happen again.
+https://patchwork.kernel.org/patch/10925543/
 
-Cheers,
+Tested on HiFive Unleashed and QEMU.
 
-Will
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Reviewed-by: Tom Rini <trini@konsulko.com>
+Tested-by: Karsten Merker <merker@debian.org>
+---
+Changes from v3->v4
+1. Rebased on top of master to avoid git am errors.
 
---->8
+Changes from v2->v3
+1. Updated the image header structure as per kernel patch.
+2. Removed Image.gz support as it will be added as separate RFC patch.
+---
+ arch/riscv/lib/Makefile |  1 +
+ arch/riscv/lib/image.c  | 55 +++++++++++++++++++++++++++++++++++++++++
+ cmd/Kconfig             |  2 +-
+ cmd/booti.c             |  8 ++++--
+ 4 files changed, 63 insertions(+), 3 deletions(-)
+ create mode 100644 arch/riscv/lib/image.c
 
-The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
+diff --git a/arch/riscv/lib/Makefile b/arch/riscv/lib/Makefile
+index 1c332db436a9..6ae6ebbeafda 100644
+--- a/arch/riscv/lib/Makefile
++++ b/arch/riscv/lib/Makefile
+@@ -7,6 +7,7 @@
+ # Rick Chen, Andes Technology Corporation <rick@andestech.com>
+ 
+ obj-$(CONFIG_CMD_BOOTM) += bootm.o
++obj-$(CONFIG_CMD_BOOTI) += bootm.o image.o
+ obj-$(CONFIG_CMD_GO) += boot.o
+ obj-y	+= cache.o
+ obj-$(CONFIG_RISCV_RDTIME) += rdtime.o
+diff --git a/arch/riscv/lib/image.c b/arch/riscv/lib/image.c
+new file mode 100644
+index 000000000000..d063beb7dfbe
+--- /dev/null
++++ b/arch/riscv/lib/image.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
++ * Authors:
++ *	Atish Patra <atish.patra@wdc.com>
++ * Based on arm/lib/image.c
++ */
++
++#include <common.h>
++#include <mapmem.h>
++#include <errno.h>
++#include <linux/sizes.h>
++#include <linux/stddef.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++/* ASCII version of "RISCV" defined in Linux kernel */
++#define LINUX_RISCV_IMAGE_MAGIC 0x5643534952
++
++struct linux_image_h {
++	uint32_t	code0;		/* Executable code */
++	uint32_t	code1;		/* Executable code */
++	uint64_t	text_offset;	/* Image load offset */
++	uint64_t	image_size;	/* Effective Image size */
++	uint64_t	res1;		/* reserved */
++	uint64_t	res2;		/* reserved */
++	uint64_t	res3;		/* reserved */
++	uint64_t	magic;		/* Magic number */
++	uint32_t	res4;		/* reserved */
++	uint32_t	res5;		/* reserved */
++};
++
++int booti_setup(ulong image, ulong *relocated_addr, ulong *size,
++		bool force_reloc)
++{
++	struct linux_image_h *lhdr;
++
++	lhdr = (struct linux_image_h *)map_sysmem(image, 0);
++
++	if (lhdr->magic != LINUX_RISCV_IMAGE_MAGIC) {
++		puts("Bad Linux RISCV Image magic!\n");
++		return -EINVAL;
++	}
++
++	if (lhdr->image_size == 0) {
++		puts("Image lacks image_size field, error!\n");
++		return -EINVAL;
++	}
++	*size = lhdr->image_size;
++	*relocated_addr = gd->ram_base + lhdr->text_offset;
++
++	unmap_sysmem(lhdr);
++
++	return 0;
++}
+diff --git a/cmd/Kconfig b/cmd/Kconfig
+index 069e0ea7300b..4e11e0f404c8 100644
+--- a/cmd/Kconfig
++++ b/cmd/Kconfig
+@@ -223,7 +223,7 @@ config CMD_BOOTZ
+ 
+ config CMD_BOOTI
+ 	bool "booti"
+-	depends on ARM64
++	depends on ARM64 || RISCV
+ 	default y
+ 	help
+ 	  Boot an AArch64 Linux Kernel image from memory.
+diff --git a/cmd/booti.c b/cmd/booti.c
+index 04353b68eccc..5e902993865b 100644
+--- a/cmd/booti.c
++++ b/cmd/booti.c
+@@ -77,7 +77,11 @@ int do_booti(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ 	bootm_disable_interrupts();
+ 
+ 	images.os.os = IH_OS_LINUX;
++#ifdef CONFIG_RISCV_SMODE
++	images.os.arch = IH_ARCH_RISCV;
++#elif CONFIG_ARM64
+ 	images.os.arch = IH_ARCH_ARM64;
++#endif
+ 	ret = do_bootm_states(cmdtp, flag, argc, argv,
+ #ifdef CONFIG_SYS_BOOT_RAMDISK_HIGH
+ 			      BOOTM_STATE_RAMDISK |
+@@ -92,7 +96,7 @@ int do_booti(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ #ifdef CONFIG_SYS_LONGHELP
+ static char booti_help_text[] =
+ 	"[addr [initrd[:size]] [fdt]]\n"
+-	"    - boot arm64 Linux Image stored in memory\n"
++	"    - boot arm64/riscv Linux Image stored in memory\n"
+ 	"\tThe argument 'initrd' is optional and specifies the address\n"
+ 	"\tof an initrd in memory. The optional parameter ':size' allows\n"
+ 	"\tspecifying the size of a RAW initrd.\n"
+@@ -107,5 +111,5 @@ static char booti_help_text[] =
+ 
+ U_BOOT_CMD(
+ 	booti,	CONFIG_SYS_MAXARGS,	1,	do_booti,
+-	"boot arm64 Linux Image image from memory", booti_help_text
++	"boot arm64/riscv Linux Image image from memory", booti_help_text
+ );
+-- 
+2.21.0
 
-  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-upstream
-
-for you to fetch changes up to b33f908811b7627015238e0dee9baf2b4c9d720d:
-
-  Merge branch 'for-next/perf' of git://git.kernel.org/pub/scm/linux/kernel/git/will/linux into for-next/core (2019-05-03 10:18:08 +0100)
-
-----------------------------------------------------------------
-arm64 updates for 5.2
-
-Mostly just incremental improvements here:
-
-- Introduce AT_HWCAP2 for advertising CPU features to userspace
-
-- Expose SVE2 availability to userspace
-
-- Support for "data cache clean to point of deep persistence" (DC PODP)
-
-- Honour "mitigations=off" on the cmdline and advertise status via sysfs
-
-- CPU timer erratum workaround (Neoverse-N1 #1188873)
-
-- Introduce perf PMU driver for the SMMUv3 performance counters
-
-- Add config option to disable the kuser helpers page for AArch32 tasks
-
-- Futex modifications to ensure liveness under contention
-
-- Rework debug exception handling to seperate kernel and user handlers
-
-- Non-critical fixes and cleanup
-
-----------------------------------------------------------------
-Alexandru Elisei (1):
-      arm64: Use defines instead of magic numbers
-
-Andrew Murray (6):
-      arm64: HWCAP: add support for AT_HWCAP2
-      arm64: HWCAP: encapsulate elf_hwcap
-      arm64: Handle trapped DC CVADP
-      arm64: Expose DC CVADP to userspace
-      arm64: add CVADP support to the cache maintenance helper
-      arm64: Advertise ARM64_HAS_DCPODP cpu feature
-
-Anshuman Khandual (1):
-      KVM: ARM: Remove pgtable page standard functions from stage-2 page tables
-
-Arun KS (1):
-      arm64: Fix size of __early_cpu_boot_status
-
-Boyang Zhou (1):
-      arm64: mmap: Ensure file offset is treated as unsigned
-
-Dave Martin (1):
-      arm64: Expose SVE2 features for userspace
-
-Jean-Philippe Brucker (2):
-      arm64: Clear OSDLR_EL1 on CPU boot
-      arm64: Save and restore OSDLR_EL1 across suspend/resume
-
-Jeremy Linton (6):
-      arm64: Provide a command line to disable spectre_v2 mitigation
-      arm64: add sysfs vulnerability show for meltdown
-      arm64: Always enable spectre-v2 vulnerability detection
-      arm64: add sysfs vulnerability show for spectre-v2
-      arm64: Always enable ssb vulnerability detection
-      arm64: add sysfs vulnerability show for speculative store bypass
-
-Josh Poimboeuf (6):
-      cpu/speculation: Add 'mitigations=' cmdline option
-      x86/speculation: Support 'mitigations=' cmdline option
-      powerpc/speculation: Support 'mitigations=' cmdline option
-      s390/speculation: Support 'mitigations=' cmdline option
-      arm64/speculation: Support 'mitigations=' cmdline option
-      Documentation: Add ARM64 to kernel-parameters.rst
-
-Kees Cook (1):
-      arm64: sysreg: Make mrs_s and msr_s macros work with Clang and LTO
-
-Kefeng Wang (1):
-      ACPI/IORT: Reject platform device creation on NUMA node mapping failure
-
-Marc Zyngier (13):
-      arm64: Advertise mitigation of Spectre-v2, or lack thereof
-      arm64: Use firmware to detect CPUs that are not affected by Spectre-v2
-      arm64: Restrict ARM64_ERRATUM_1188873 mitigation to AArch32
-      arm64: Make ARM64_ERRATUM_1188873 depend on COMPAT
-      arm64: Add part number for Neoverse N1
-      arm64: Apply ARM64_ERRATUM_1188873 to Neoverse-N1
-      ARM: vdso: Remove dependency with the arch_timer driver internals
-      watchdog/sbsa: Use arch_timer_read_counter instead of arch_counter_get_cntvct
-      arm64: Use arch_timer_read_counter instead of arch_counter_get_cntvct
-      clocksource/arm_arch_timer: Direcly assign set_next_event workaround
-      clocksource/arm_arch_timer: Drop use of static key in arch_timer_reg_read_stable
-      clocksource/arm_arch_timer: Remove use of workaround static key
-      clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters
-
-Mark Rutland (1):
-      arm64: instrument smp_{load_acquire,store_release}
-
-Masahiro Yamada (2):
-      arm64: vdso: fix and clean-up Makefile
-      arm64: vdso: use $(LD) instead of $(CC) to link VDSO
-
-Masami Hiramatsu (1):
-      arm64: ptrace: Add function argument access API
-
-Matteo Croce (1):
-      arm64/vdso: don't leak kernel addresses
-
-Mian Yousaf Kaukab (2):
-      arm64: Add sysfs vulnerability show for spectre-v1
-      arm64: enable generic CPU vulnerabilites support
-
-Miles Chen (2):
-      arm64: setup min_low_pfn
-      arm64: mm: check virtual addr in virt_to_page() if CONFIG_DEBUG_VIRTUAL=y
-
-Muchun Song (1):
-      arm64: mm: fix incorrect assignment of 'max_mapnr'
-
-Neil Leeder (2):
-      ACPI/IORT: Add support for PMCG
-      perf/smmuv3: Add arm64 smmuv3 pmu driver
-
-Nishad Kamdar (1):
-      arm64: Use the correct style for SPDX License Identifier
-
-Qian Cai (3):
-      arm64/mm: fix kernel-doc comments
-      arm64: Fix compiler warning from pte_unmap() with -Wunused-but-set-variable
-      arm64: mm: Remove pte_unmap_nested()
-
-Raphael Gault (1):
-      arm64: perf_event: Remove wrongfully used inline
-
-Robin Murphy (2):
-      perf/arm-cci: Remove broken race mitigation
-      perf/arm-ccn: Clean up CPU hotplug handling
-
-Shameer Kolothum (2):
-      perf/smmuv3: Add MSI irq support
-      perf/smmuv3: Enable HiSilicon Erratum 162001800 quirk
-
-Torsten Duwe (3):
-      arm64: Makefile: Replace -pg with CC_FLAGS_FTRACE
-      efi/arm/arm64: Makefile: Replace -pg with CC_FLAGS_FTRACE
-      kasan: Makefile: Replace -pg with CC_FLAGS_FTRACE
-
-Vincenzo Frascino (7):
-      arm64: compat: Reduce address limit
-      arm64: vdso: Fix clock_getres() for CLOCK_REALTIME
-      arm64: compat: Alloc separate pages for vectors and sigpage
-      arm64: compat: Split kuser32
-      arm64: compat: Refactor aarch32_alloc_vdso_pages()
-      arm64: compat: Add KUSER_HELPERS config option
-      arm64: compat: Reduce address limit for 64K pages
-
-Wen Yang (1):
-      arm64: cpu_ops: fix a leaked reference by adding missing of_node_put
-
-Will Deacon (25):
-      arm64: mm: Make show_pte() a static function
-      arm64: mm: Ensure we ignore the initrd if it is placed out of range
-      arm64: debug: Remove unused return value from do_debug_exception()
-      arm64: debug: Rename addr parameter for non-watchpoint exception hooks
-      arm64: debug: Remove meaningless comment
-      arm64: debug: Separate debug hooks based on target exception level
-      arm64: kprobes: Avoid calling kprobes debug handlers explicitly
-      arm64: debug: Remove redundant user_mode(regs) checks from debug handlers
-      arm64: probes: Move magic BRK values into brk-imm.h
-      arm64: debug: Clean up brk_handler()
-      arm64: mm: Consolidate early page table allocation
-      arm64: Kconfig: Make CONFIG_COMPAT a menuconfig entry
-      Merge branch 'core/speculation' of git://git.kernel.org/.../tip/tip into for-next/mitigations
-      arm64: futex: Fix FUTEX_WAKE_OP atomic ops with non-zero result value
-      locking/futex: Allow low-level atomic operations to return -EAGAIN
-      arm64: futex: Bound number of LDXR/STXR loops in FUTEX_WAKE_OP
-      arm64: futex: Avoid copying out uninitialised stack in failed cmpxchg()
-      futex: Update comments and docs about return values of arch futex code
-      arm64: Kconfig: Tidy up errata workaround help text
-      arm64: arch_timer: Ensure counter register reads occur with seqlock held
-      arm64: ssbs: Don't treat CPUs with SSBS as unaffected by SSB
-      Merge branch 'for-next/futex' of git://git.kernel.org/.../arm64/linux into for-next/core
-      Merge branch 'for-next/mitigations' of git://git.kernel.org/.../arm64/linux into for-next/core
-      Merge branch 'for-next/timers' of git://git.kernel.org/.../arm64/linux into for-next/core
-      Merge branch 'for-next/perf' of git://git.kernel.org/.../will/linux into for-next/core
-
-Xiongfeng Wang (1):
-      firmware: arm_sdei: Prohibit probing in '_sdei_handler'
-
-Yu Zhao (3):
-      arm64: mm: use appropriate ctors for page tables
-      arm64: mm: don't call page table ctors for init_mm
-      arm64: mm: enable per pmd page table lock
-
- Documentation/admin-guide/kernel-parameters.rst |   1 +
- Documentation/admin-guide/kernel-parameters.txt |  42 +-
- Documentation/arm64/cpu-feature-registers.txt   |  16 +
- Documentation/arm64/elf_hwcaps.txt              |  41 +-
- Documentation/arm64/silicon-errata.txt          |   2 +
- Documentation/arm64/sve.txt                     |  17 +
- Documentation/robust-futexes.txt                |   3 +-
- arch/arm/include/asm/arch_timer.h               |  18 +-
- arch/arm/include/asm/cp15.h                     |   2 +
- arch/arm/include/asm/stage2_pgtable.h           |   4 +-
- arch/arm/vdso/vgettimeofday.c                   |   5 +-
- arch/arm64/Kconfig                              | 132 ++--
- arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h   |   2 +-
- arch/arm64/crypto/aes-ce-ccm-glue.c             |   2 +-
- arch/arm64/crypto/aes-neonbs-glue.c             |   2 +-
- arch/arm64/crypto/chacha-neon-glue.c            |   2 +-
- arch/arm64/crypto/crct10dif-ce-glue.c           |   4 +-
- arch/arm64/crypto/ghash-ce-glue.c               |   8 +-
- arch/arm64/crypto/nhpoly1305-neon-glue.c        |   2 +-
- arch/arm64/crypto/sha256-glue.c                 |   4 +-
- arch/arm64/include/asm/arch_timer.h             | 119 +++-
- arch/arm64/include/asm/assembler.h              |   8 +-
- arch/arm64/include/asm/barrier.h                |  24 +-
- arch/arm64/include/asm/brk-imm.h                |   5 +
- arch/arm64/include/asm/cpucaps.h                |   3 +-
- arch/arm64/include/asm/cpufeature.h             |  25 +-
- arch/arm64/include/asm/cputype.h                |   2 +
- arch/arm64/include/asm/debug-monitors.h         |  25 +-
- arch/arm64/include/asm/elf.h                    |   6 +-
- arch/arm64/include/asm/esr.h                    |   7 +-
- arch/arm64/include/asm/futex.h                  |  63 +-
- arch/arm64/include/asm/hwcap.h                  |  60 +-
- arch/arm64/include/asm/irqflags.h               |   8 +-
- arch/arm64/include/asm/kprobes.h                |   2 -
- arch/arm64/include/asm/kvm_hyp.h                |   4 +-
- arch/arm64/include/asm/memory.h                 |   2 +-
- arch/arm64/include/asm/pgalloc.h                |  12 +-
- arch/arm64/include/asm/pgtable.h                |   5 +-
- arch/arm64/include/asm/pointer_auth.h           |   2 +-
- arch/arm64/include/asm/processor.h              |   8 +
- arch/arm64/include/asm/ptrace.h                 |  22 +
- arch/arm64/include/asm/sdei.h                   |   2 +-
- arch/arm64/include/asm/signal32.h               |   2 -
- arch/arm64/include/asm/stage2_pgtable.h         |   4 +-
- arch/arm64/include/asm/sysreg.h                 |  59 +-
- arch/arm64/include/asm/system_misc.h            |   1 -
- arch/arm64/include/asm/tlb.h                    |   5 +-
- arch/arm64/include/asm/vdso_datapage.h          |   1 +
- arch/arm64/include/asm/vmap_stack.h             |   2 +-
- arch/arm64/include/uapi/asm/hwcap.h             |  13 +-
- arch/arm64/kernel/Makefile                      |  11 +-
- arch/arm64/kernel/asm-offsets.c                 |   2 +-
- arch/arm64/kernel/cpu_errata.c                  | 256 +++++--
- arch/arm64/kernel/cpu_ops.c                     |   1 +
- arch/arm64/kernel/cpufeature.c                  | 193 ++++--
- arch/arm64/kernel/cpuinfo.c                     |   9 +-
- arch/arm64/kernel/debug-monitors.c              | 115 ++--
- arch/arm64/kernel/entry.S                       |  19 +-
- arch/arm64/kernel/fpsimd.c                      |   4 +-
- arch/arm64/kernel/head.S                        |  12 +-
- arch/arm64/kernel/kgdb.c                        |  30 +-
- arch/arm64/kernel/kuser32.S                     |  66 +-
- arch/arm64/kernel/perf_event.c                  |   4 +-
- arch/arm64/kernel/probes/kprobes.c              |  22 +-
- arch/arm64/kernel/probes/uprobes.c              |  19 +-
- arch/arm64/kernel/signal32.c                    |   3 +-
- arch/arm64/kernel/sigreturn32.S                 |  46 ++
- arch/arm64/kernel/sys.c                         |   2 +-
- arch/arm64/kernel/traps.c                       |  33 +-
- arch/arm64/kernel/vdso.c                        | 139 +++-
- arch/arm64/kernel/vdso/Makefile                 |  19 +-
- arch/arm64/kernel/vdso/gettimeofday.S           |  22 +-
- arch/arm64/lib/Makefile                         |   2 +-
- arch/arm64/mm/fault.c                           |  16 +-
- arch/arm64/mm/init.c                            |   5 +-
- arch/arm64/mm/mmu.c                             |  47 +-
- arch/arm64/mm/numa.c                            |  25 +-
- arch/arm64/mm/proc.S                            |  34 +-
- arch/powerpc/kernel/security.c                  |   6 +-
- arch/powerpc/kernel/setup_64.c                  |   2 +-
- arch/s390/kernel/nospec-branch.c                |   3 +-
- arch/x86/kernel/cpu/bugs.c                      |  11 +-
- arch/x86/mm/pti.c                               |   4 +-
- drivers/acpi/arm64/iort.c                       | 150 +++-
- drivers/clocksource/arm_arch_timer.c            | 138 ++--
- drivers/firmware/arm_sdei.c                     |   3 +
- drivers/firmware/efi/libstub/Makefile           |   6 +-
- drivers/perf/Kconfig                            |   9 +
- drivers/perf/Makefile                           |   1 +
- drivers/perf/arm-cci.c                          |  21 +-
- drivers/perf/arm-ccn.c                          |  25 +-
- drivers/perf/arm_smmuv3_pmu.c                   | 865 ++++++++++++++++++++++++
- drivers/watchdog/sbsa_gwdt.c                    |   2 +-
- include/asm-generic/futex.h                     |   8 +-
- include/linux/acpi_iort.h                       |   8 +
- include/linux/cpu.h                             |  24 +
- kernel/cpu.c                                    |  15 +
- kernel/futex.c                                  | 188 +++--
- mm/kasan/Makefile                               |   6 +-
- virt/kvm/arm/mmu.c                              |   2 +-
- 100 files changed, 2624 insertions(+), 839 deletions(-)
- create mode 100644 arch/arm64/kernel/sigreturn32.S
- create mode 100644 drivers/perf/arm_smmuv3_pmu.c
