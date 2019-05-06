@@ -2,154 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40E614D75
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5A214D56
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbfEFOsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:48:38 -0400
-Received: from mga17.intel.com ([192.55.52.151]:60780 "EHLO mga17.intel.com"
+        id S1729195AbfEFOuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:50:52 -0400
+Received: from gate.crashing.org ([63.228.1.57]:56032 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729476AbfEFOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:48:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:48:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="343986368"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 06 May 2019 07:48:32 -0700
-Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
-        by linux.intel.com (Postfix) with ESMTP id 63339580238;
-        Mon,  6 May 2019 07:48:31 -0700 (PDT)
-Subject: Re: [alsa-devel] [RFC PATCH 5/7] soundwire: add debugfs support
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-6-pierre-louis.bossart@linux.intel.com>
- <20190504070301.GD9770@kroah.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <a9e1c3d2-fe29-1683-9253-b66034c62010@linux.intel.com>
-Date:   Mon, 6 May 2019 09:48:30 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190504070301.GD9770@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726346AbfEFOtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:49:14 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x46EmgOD026749;
+        Mon, 6 May 2019 09:48:42 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x46Emeop026748;
+        Mon, 6 May 2019 09:48:40 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Mon, 6 May 2019 09:48:40 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/10] implement DYNAMIC_DEBUG_RELATIVE_POINTERS
+Message-ID: <20190506144840.GZ8599@gate.crashing.org>
+References: <20190409212517.7321-1-linux@rasmusvillemoes.dk> <1afb0702-3cc5-ba4f-2bdd-604d9da2b846@rasmusvillemoes.dk> <20190506070544.GA66463@gmail.com> <25dfde77-fdad-0b99-75ec-4ba480058970@rasmusvillemoes.dk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25dfde77-fdad-0b99-75ec-4ba480058970@rasmusvillemoes.dk>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 06, 2019 at 09:34:55AM +0200, Rasmus Villemoes wrote:
+> I _am_ bending the C rules a bit with the "extern some_var; asm
+> volatile(".section some_section\nsome_var: blabla");". I should probably
+> ask on the gcc list whether this way of defining a local symbol in
+> inline assembly and referring to it from C is supposed to work, or it
+> just happens to work by chance.
 
->> @@ -136,6 +139,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
->>   void sdw_delete_bus_master(struct sdw_bus *bus)
->>   {
->>   	sdw_sysfs_bus_exit(bus);
->> +	if (bus->debugfs)
->> +		sdw_bus_debugfs_exit(bus->debugfs);
-> 
-> No need to check, just call it.
-
-That was on my todo list, will remove.
+It only works by chance.  There is no way GCC can know the asm needs
+that variable.  If you make it (or its address) an input of the asm it
+should work as far as I can see?  (Need exact code to analyse it exactly).
 
 
->> +struct sdw_bus_debugfs {
->> +	struct sdw_bus *bus;
-> 
-> Why do you need to save this pointer?
-> 
->> +	struct dentry *fs;
-> 
-> This really is all you need to have around, right?
-
-will check.
-
->> +struct dentry *sdw_bus_debugfs_get_root(struct sdw_bus_debugfs *d)
->> +{
->> +	if (d)
->> +		return d->fs;
->> +	return NULL;
->> +}
->> +EXPORT_SYMBOL(sdw_bus_debugfs_get_root);
-> 
-> _GPL()?
-
-Oops, that's a big miss. will fix, thanks for spotting this.
-
-> 
-> But why is this exported at all?  No one calls this function.
-
-I will have to check.
-
-> 
->> +struct sdw_slave_debugfs {
->> +	struct sdw_slave *slave;
-> 
-> Same question as above, why do you need this pointer?
-
-will check.
-
-> 
-> And meta-comment, if you _EVER_ save off a pointer to a reference
-> counted object (like this and the above one), you HAVE to grab a
-> reference to it, otherwise it can go away at any point in time as that
-> is the point of reference counted objects.
-> 
-> So even if you do need/want this, you have to properly handle the
-> reference count by incrementing/decrementing it as needed.
-
-good comment, thank you for the guidance.
-
->> +struct sdw_slave_debugfs *sdw_slave_debugfs_init(struct sdw_slave *slave)
->> +{
->> +	struct sdw_bus_debugfs *master;
->> +	struct sdw_slave_debugfs *d;
->> +	char name[32];
->> +
->> +	master = slave->bus->debugfs;
->> +	if (!master)
->> +		return NULL;
->> +
->> +	d = kzalloc(sizeof(*d), GFP_KERNEL);
->> +	if (!d)
->> +		return NULL;
->> +
->> +	/* create the debugfs slave-name */
->> +	snprintf(name, sizeof(name), "%s", dev_name(&slave->dev));
->> +	d->fs = debugfs_create_dir(name, master->fs);
->> +	if (IS_ERR_OR_NULL(d->fs)) {
->> +		dev_err(&slave->dev, "slave debugfs root creation failed\n");
->> +		goto err;
->> +	}
-> 
-> You never care about the return value of a debugfs call.  I have a 100+
-> patch series stripping all of this out of the kernel, please don't force
-> me to add another one to it :)
-> 
-> Just call debugfs and move on, you can always put the return value of
-> one call into another one just fine, and your function logic should
-> never change if debugfs returns an error or not, you do not care.
-
-Yes, it's agreed that we should not depend on debugfs or fail here. will 
-fix, no worries.
-
->
->> +void sdw_debugfs_init(void)
->> +{
->> +	sdw_debugfs_root = debugfs_create_dir("soundwire", NULL);
->> +	if (IS_ERR_OR_NULL(sdw_debugfs_root)) {
->> +		pr_warn("SoundWire: Failed to create debugfs directory\n");
->> +		sdw_debugfs_root = NULL;
->> +		return;
-> 
-> Same here, just call the function and return.
-
-yep, will do.
+Segher
