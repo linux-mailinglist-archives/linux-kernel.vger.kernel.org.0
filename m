@@ -2,141 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CAD14E15
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE56614CD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfEFOnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:43:41 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37840 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfEFOnj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:43:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w37so15584677edw.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:43:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vaAPp8PyjYHsdP1CZGhOGZcNrdzUmU4mz1az3gjIEag=;
-        b=TeJLtrEe4JxAY6kU+FgDMqxxH774q5OmDnPgF4z1LCxJ0gA2hydu8AIgwxknkumsP+
-         w+p3KFDudzEwfTQwrebwzQ8H7AFC6XnqlApAqm6znxrbNtpsSorAwrpuQTF7daJEPSte
-         JtoM1vJiuvvMaYngrNIWUOuj8SndGJQPvePfs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=vaAPp8PyjYHsdP1CZGhOGZcNrdzUmU4mz1az3gjIEag=;
-        b=iDd9kV18T+38PdJC5C9R5/xoEHV1uSkDcRy0LVptMBglOFoJ96lOLSA3RuJFKDJnJ4
-         7ewjNcZLcwPsfb/Ry5e/tnsnG6sY1uuic102EhJdiXl1VEmeDg3IELdA4lJImWnPkThK
-         FhuTssYhPx0lJJr0UhQ5glJ+FwHp4VBMi4Kl1/EOjbXEPWbgLr71+S0jqXlc4zz3BIS2
-         msa9xr0e3i/dJRa6Ohzjoj2d+5eeShdFBv0KK0z5nDLJcpSVdHlPbWPIfEuTtPxJq3Yp
-         6QO4pNgd1y7gYv8TG5skHPcUfe/rYE+gO9wKLmikXhsnaRH4XWu8zRj/sgTwo6IHfEqe
-         2ylQ==
-X-Gm-Message-State: APjAAAV0nP5nzTd6BlqEnf4lOXuJA6BIDQq+VRIYXiY5LCGOUqtvJUHI
-        51gdOk8rIZAzed6zRfQiHcineQ==
-X-Google-Smtp-Source: APXvYqwtl5T/MpDTj7LbNirYR1SvYe+WhzHms3LVnX/pzSNP1kZnlocJBCYDhRieEoZXTXVwEMT6xg==
-X-Received: by 2002:a50:be42:: with SMTP id b2mr27581867edi.228.1557153817556;
-        Mon, 06 May 2019 07:43:37 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id q18sm1602623ejp.56.2019.05.06.07.43.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 07:43:36 -0700 (PDT)
-Date:   Mon, 6 May 2019 16:43:34 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     jagdsh.linux@gmail.com
-Cc:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, bskeggs@redhat.com, hierry.reding@gmail.com,
-        jcrouse@codeaurora.org, jsanka@codeaurora.org,
-        skolluku@codeaurora.org, paul.burton@mips.com,
-        jrdr.linux@gmail.com, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH] gpu/drm: Remove duplicate headers
-Message-ID: <20190506144334.GH17751@phenom.ffwll.local>
-Mail-Followup-To: jagdsh.linux@gmail.com, robdclark@gmail.com,
-        sean@poorly.run, airlied@linux.ie, bskeggs@redhat.com,
-        hierry.reding@gmail.com, jcrouse@codeaurora.org,
-        jsanka@codeaurora.org, skolluku@codeaurora.org,
-        paul.burton@mips.com, jrdr.linux@gmail.com,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        nouveau@lists.freedesktop.org
-References: <1556906293-128921-1-git-send-email-jagdsh.linux@gmail.com>
+        id S1728527AbfEFOo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:44:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40414 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728774AbfEFOoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:44:22 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D69EB479F90414FF5DC2;
+        Mon,  6 May 2019 22:44:18 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 May 2019
+ 22:44:10 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <g.nault@alphalink.fr>,
+        <jian.w.wen@oracle.com>, <edumazet@google.com>, <kafai@fb.com>,
+        <xiyou.wangcong@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] l2tp: Fix possible NULL pointer dereference
+Date:   Mon, 6 May 2019 22:44:04 +0800
+Message-ID: <20190506144404.25220-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556906293-128921-1-git-send-email-jagdsh.linux@gmail.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 11:28:13PM +0530, jagdsh.linux@gmail.com wrote:
-> From: Jagadeesh Pagadala <jagdsh.linux@gmail.com>
-> 
-> Remove duplicate headers which are included twice.
-> 
-> Signed-off-by: Jagadeesh Pagadala <jagdsh.linux@gmail.com>
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000128
+PGD 0 P4D 0
+Oops: 0000 [#1
+CPU: 0 PID: 5697 Comm: modprobe Tainted: G        W         5.1.0-rc7+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:__lock_acquire+0x53/0x10b0
+Code: 8b 1c 25 40 5e 01 00 4c 8b 6d 10 45 85 e4 0f 84 bd 06 00 00 44 8b 1d 7c d2 09 02 49 89 fe 41 89 d2 45 85 db 0f 84 47 02 00 00 <48> 81 3f a0 05 70 83 b8 00 00 00 00 44 0f 44 c0 83 fe 01 0f 86 3a
+RSP: 0018:ffffc90001c07a28 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff88822f038440 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000128
+RBP: ffffc90001c07a88 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000128 R15: 0000000000000000
+FS:  00007fead0811540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000128 CR3: 00000002310da000 CR4: 00000000000006f0
+Call Trace:
+ ? __lock_acquire+0x24e/0x10b0
+ lock_acquire+0xdf/0x230
+ ? flush_workqueue+0x71/0x530
+ flush_workqueue+0x97/0x530
+ ? flush_workqueue+0x71/0x530
+ l2tp_exit_net+0x170/0x2b0 [l2tp_core
+ ? l2tp_exit_net+0x93/0x2b0 [l2tp_core
+ ops_exit_list.isra.6+0x36/0x60
+ unregister_pernet_operations+0xb8/0x110
+ unregister_pernet_device+0x25/0x40
+ l2tp_init+0x55/0x1000 [l2tp_core
+ ? 0xffffffffa018d000
+ do_one_initcall+0x6c/0x3cc
+ ? do_init_module+0x22/0x1f1
+ ? rcu_read_lock_sched_held+0x97/0xb0
+ ? kmem_cache_alloc_trace+0x325/0x3b0
+ do_init_module+0x5b/0x1f1
+ load_module+0x1db1/0x2690
+ ? m_show+0x1d0/0x1d0
+ __do_sys_finit_module+0xc5/0xd0
+ __x64_sys_finit_module+0x15/0x20
+ do_syscall_64+0x6b/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7fead031a839
+Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffe8d9acca8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 0000560078398b80 RCX: 00007fead031a839
+RDX: 0000000000000000 RSI: 000056007659dc2e RDI: 0000000000000003
+RBP: 000056007659dc2e R08: 0000000000000000 R09: 0000560078398b80
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
+R13: 00005600783a04a0 R14: 0000000000040000 R15: 0000560078398b80
+Modules linked in: l2tp_core(+) e1000 ip_tables ipv6 [last unloaded: l2tp_core
+CR2: 0000000000000128
+---[ end trace 8322b2b8bf83f8e1
 
-I collected some acks for the msm and nouveau parts and pushed this. For
-next time around would be great if you split these up along driver/module
-boundaries, so that each maintainer can pick this up directly.
+If alloc_workqueue fails in l2tp_init, l2tp_net_ops
+is unregistered on failure path. Then l2tp_exit_net
+is called which will flush NULL workqueue, this patch
+add a NULL check to fix it.
 
-Thanks for your patch.
--Daniel
+Fixes: 67e04c29ec0d ("l2tp: unregister l2tp_net_ops on failure path")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/l2tp/l2tp_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c             | 1 -
->  drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c        | 2 --
->  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 1 -
->  3 files changed, 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-> index 018df2c..45a5bc6 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-> @@ -15,7 +15,6 @@
->  #include "dpu_hwio.h"
->  #include "dpu_hw_lm.h"
->  #include "dpu_hw_mdss.h"
-> -#include "dpu_kms.h"
->  
->  #define LM_OP_MODE                        0x00
->  #define LM_OUT_SIZE                       0x04
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
-> index c80b967..2b44ba5 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
-> @@ -26,8 +26,6 @@
->  
->  #include <subdev/gpio.h>
->  
-> -#include <subdev/gpio.h>
-> -
->  static void
->  nv04_bus_intr(struct nvkm_bus *bus)
->  {
-> diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> index 2c9c972..cacf2e0 100644
-> --- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> +++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> @@ -53,7 +53,6 @@
->  #include <linux/of_graph.h>
->  #include <linux/pm.h>
->  
-> -#include <drm/drm_panel.h>
->  #include <drm/drmP.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_mipi_dsi.h>
-> -- 
-> 1.8.3.1
-> 
-
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index 52b5a27..e4dec03 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1735,7 +1735,8 @@ static __net_exit void l2tp_exit_net(struct net *net)
+ 	}
+ 	rcu_read_unlock_bh();
+ 
+-	flush_workqueue(l2tp_wq);
++	if (l2tp_wq)
++		flush_workqueue(l2tp_wq);
+ 	rcu_barrier();
+ 
+ 	for (hash = 0; hash < L2TP_HASH_SIZE_2; hash++)
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+1.8.3.1
+
+
