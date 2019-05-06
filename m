@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC9614CDC
+	by mail.lfdr.de (Postfix) with ESMTP id 97A3A14CDD
 	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbfEFOpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41510 "EHLO mail.kernel.org"
+        id S1728637AbfEFOpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:45:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728879AbfEFOpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:00 -0400
+        id S1728626AbfEFOpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:45:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 055E72053B;
-        Mon,  6 May 2019 14:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DD0720449;
+        Mon,  6 May 2019 14:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153899;
-        bh=dSgiSJOkgwKJOQchPPXosPfklzC3ZKRtMnVJZJRghE0=;
+        s=default; t=1557153902;
+        bh=JK/v2MkIjQROkV0ZWEqSRpWKOhdaWykh5GI1KeZuzys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QPPXc3aPzHA+HGC5f3ACERaVAv3tpkcRbnLKKdR4U+7j/gCwzYSKsFPxHTF6+m0yl
-         mXNBq3VDJNwqJ/nCSiCDl9pE109zEFmWMTbygQzyUJvbNLCc/4jvaktgbeR4d9pzb4
-         n9XhiVv/5VGwLzA6/PdgsjyKWY2S4uKkaL0vwibA=
+        b=SGrPAsEJAcPtgOd+/YzjHKXWbsQMoJtA/CKT4ms0BnPiYRT4nyQAVwGD5c62GBkJY
+         UJzJ5WxZFggu26vuItCpQzC2PIUE35X4jHzDWKx1OHroGhzgem9jrBesbFg5pN+gMt
+         O8RfoX5HHbDeBph1U/8FqJeT0tasHt6ffAjwieW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 37/75] net: stmmac: dont overwrite discard_frame status
-Date:   Mon,  6 May 2019 16:32:45 +0200
-Message-Id: <20190506143056.578889905@linuxfoundation.org>
+Subject: [PATCH 4.14 38/75] net: stmmac: fix dropping of multi-descriptor RX frames
+Date:   Mon,  6 May 2019 16:32:46 +0200
+Message-Id: <20190506143056.677620529@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
 References: <20190506143053.287515952@linuxfoundation.org>
@@ -44,37 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1b746ce8b397e58f9e40ce5c63b7198de6930482 ]
+[ Upstream commit 8ac0c24fe1c256af6644caf3d311029440ec2fbd ]
 
-If we have error bits set, the discard_frame status will get overwritten
-by checksum bit checks, which might set the status back to good one.
-Fix by checking the COE status only if the frame is good.
+Packets without the last descriptor set should be dropped early. If we
+receive a frame larger than the DMA buffer, the HW will continue using the
+next descriptor. Driver mistakes these as individual frames, and sometimes
+a truncated frame (without the LD set) may look like a valid packet.
+
+This fixes a strange issue where the system replies to 4098-byte ping
+although the MTU/DMA buffer size is set to 4096, and yet at the same
+time it's logging an oversized packet.
 
 Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-index acd65a4f94d4..cdfe9a350ac0 100644
+index cdfe9a350ac0..f2150efddc88 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-@@ -231,9 +231,10 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
- 	 * It doesn't match with the information reported into the databook.
- 	 * At any rate, we need to understand if the CSUM hw computation is ok
- 	 * and report this info to the upper layers. */
--	ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
--				 !!(rdes0 & RDES0_FRAME_TYPE),
--				 !!(rdes0 & ERDES0_RX_MAC_ADDR));
-+	if (likely(ret == good_frame))
-+		ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
-+					 !!(rdes0 & RDES0_FRAME_TYPE),
-+					 !!(rdes0 & ERDES0_RX_MAC_ADDR));
+@@ -201,6 +201,11 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ 	if (unlikely(rdes0 & RDES0_OWN))
+ 		return dma_own;
  
- 	if (unlikely(rdes0 & RDES0_DRIBBLING))
- 		x->dribbling_bit++;
++	if (unlikely(!(rdes0 & RDES0_LAST_DESCRIPTOR))) {
++		stats->rx_length_errors++;
++		return discard_frame;
++	}
++
+ 	if (unlikely(rdes0 & RDES0_ERROR_SUMMARY)) {
+ 		if (unlikely(rdes0 & RDES0_DESCRIPTOR_ERROR)) {
+ 			x->rx_desc++;
 -- 
 2.20.1
 
