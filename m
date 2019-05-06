@@ -2,55 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E961558D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B95515582
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfEFV1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:27:32 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56066 "EHLO
+        id S1727018AbfEFV0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:26:48 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52506 "EHLO
         mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbfEFV0p (ORCPT
+        with ESMTP id S1726989AbfEFV0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:26:45 -0400
-Received: by mail-it1-f195.google.com with SMTP id q132so7656309itc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:44 -0700 (PDT)
+        Mon, 6 May 2019 17:26:46 -0400
+Received: by mail-it1-f195.google.com with SMTP id q65so21434307itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=Qnh1PqflMtuOsb3/Ee+gNIvckaCG66vFJ9igq6RFDjU=;
-        b=gh1eKqxb96m2RL4uCY8re8fO0mAGsJlW9xSJl2M0sHCcfCBOjXC6vemaAeiYorscYP
-         8XrAYL1NkY0JZV3SIRPn5AgZeBK+X5IK5EGMCCamSv28OyeUtPzypiGpFd9fV6MrOG1d
-         aPVs6EDKkn43HaCtAEOUEOqrU/H4rehP70sdSBcjUNNw/Rn00E8UAY434meD18AcZOVy
-         KqTIsxWHFRig3xKg0KWbTjPVMpBTatZGmCng5uJVChfgkakeYt0cPEw1Al33ma/xDUVf
-         Ol9UmT4V2F3lyy/+eeHK/rIyesjBxfXyNn+1O/QaJtnx7vThchhdZ4L5Invy8BT2bxYw
-         OM/Q==
+        bh=xc8GKgAhN2BvbVtHbXIFXp3HIXwPjdL/8iP1wX8Tn7g=;
+        b=ozFQSbOZOyhObe/no7EhClYnzFZzOsCbgo4msZ+u1fLhicbN21oM6AcTsExK91rdfm
+         +fd2ZYhdfc1ENDRemCuw90t6iFB2kxr/M4UEI/n50xyxxONR5P1en9MSoLwTBqo6UTJM
+         iFF6tNPbknYhDiFetefa0H6devKafP72nRFJgEYqIXHEDkYSEQ1cR2B/4B3nncGSDCEE
+         /W9jvzmMy6tczOttS/cQo3oQxb7DXtFxVY3uH1dFwVZZrvX4dnlo1Sb3xRySj7tJ5fz8
+         J86Jcy7BD6NS5kds6a7j7+KKKQU6kwsq6V0BmY0ibj+rLOaBKxXOJ5tGEU8QSJmVT8Hq
+         88Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=Qnh1PqflMtuOsb3/Ee+gNIvckaCG66vFJ9igq6RFDjU=;
-        b=lMi+dOJ9dU2vpJCvYPdACQvsE3NNnoGmBz2g0Qyq/nafYUUpP6BsNtO+Ga/ob+47+T
-         VZ28nRbhrZhVZ/3DJngL/Z4W5ZUM3b9utJ8cV9U4+JlmGpfm1BbHj3jobxWmLThSkr85
-         FI9VX7bbHDl2W40OAHfX45aR3mv0/A1fIpAA4qMMygnx5R1G4e+9nEGYifLo1cZ0jsSE
-         b7IN+2NoU1rZr1+iftNdq8SYOXm3vwpkTD51IcGjxxxw9+ZNrHKtwEetW0pWSo3MDHms
-         vkpmITqplNV3o1zr8G7T8tvHEz+4SvdWgOkhCqs1KAMOUO6MFQqnx7y1adMCPpyq6cO2
-         1uIQ==
-X-Gm-Message-State: APjAAAVwEGGb9CLVLCHQoVDEh4n2hMmyB1jqKyqm4zm6fZCPxHnPw25p
-        /W99YqAy247mfvUQJqg21Ms=
-X-Google-Smtp-Source: APXvYqyKfHHzGhgerpsPvgIAjSceMAGCzXfzyXAQkYtmvu7oSjJDJCmFhGbNdRS8TlKczI2judtU9w==
-X-Received: by 2002:a24:fc46:: with SMTP id b67mr19326794ith.4.1557178004268;
-        Mon, 06 May 2019 14:26:44 -0700 (PDT)
+        bh=xc8GKgAhN2BvbVtHbXIFXp3HIXwPjdL/8iP1wX8Tn7g=;
+        b=PKFb8c13aUCh91M6GrBSbSrCO5ba2FTGLH5UovrJlTIlQqWvtlF+9Xt/haE7rkrzAJ
+         Kk1uybinx/Ogif/nd+wuvZ7XW0Q74P/Uy85nzS2OtEmwlDIEw3smW9bxZj3h3TTXiigG
+         6HU8Toc5p9QAhQxQ4FaVNVz+UDZMYxugaGX0a3z7bxAMufCCP0q4jN278fxo7ao0wK1H
+         RZn3UC78sAYAw3kg+nG3QUvq+zCFhJYk69ux4r9VjOn8qaE4Q+nDMu6hFmGBLNlTtNUw
+         MLPgx95QzI/PKNrrcakL+33lHC0EZgcPmnr8ndbvXuHg+9k9rWtESK50aZ6+2d2zbccq
+         ZpxA==
+X-Gm-Message-State: APjAAAVTjc5mw4IV/UXGLhiYQcgyGBAzqWaIc7QDEWKiIKFcxq+zmkCl
+        63uwiTG2XrmppppQEMXYJEM=
+X-Google-Smtp-Source: APXvYqygrG8Bj0hd8b9f6a8cGA8LyqsJ5nXu/CF7g9z3/v2GelvFtbElk0TBz6cXZlTaVLTMyd56yg==
+X-Received: by 2002:a24:4161:: with SMTP id x94mr19479400ita.83.1557178005568;
+        Mon, 06 May 2019 14:26:45 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.43
+        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 14:26:43 -0700 (PDT)
+        Mon, 06 May 2019 14:26:44 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
-Subject: [PATCH 15/22] topology: Create core_cpus and die_cpus sysfs attributes
-Date:   Mon,  6 May 2019 17:26:10 -0400
-Message-Id: <4c63e5caaca85c67d8e0e498b975e1cdbaccb2eb.1557177585.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Len Brown <len.brown@intel.com>
+Subject: [PATCH 16/22] perf/x86/intel/uncore: Support multi-die/package
+Date:   Mon,  6 May 2019 17:26:11 -0400
+Message-Id: <1d7c4d47cfca91c11b0e078d86a8f7f7da6d862a.1557177585.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
@@ -61,249 +64,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Len Brown <len.brown@intel.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Create CPU topology sysfs attributes: "core_cpus" and "core_cpus_list"
+Uncore becomes die-scope on Xeon Cascade Lake-AP. Uncore driver needs to
+support die-scope uncore units.
 
-These attributes represent all of the logical CPUs that share the
-same core.
+Use topology_logical_die_id() to replace topology_logical_package_id().
+For previous platforms which doesn't have multi-die,
+topology_logical_die_id() is identical as topology_logical_package_id().
 
-These attriutes is synonymous with the existing "thread_siblings" and
-"thread_siblings_list" attribute, which will be deprecated.
+In pci_probe/remove, the group id reads from PCI BUS is logical die id
+for multi-die systems.
 
-Create CPU topology sysfs attributes: "die_cpus" and "die_cpus_list".
-These attributes represent all of the logical CPUs that share the
-same die.
+Use topology_die_cpumask() to replace topology_core_cpumask().
+For previous platforms which doesn't have multi-die,
+topology_die_cpumask() is identical as topology_core_cpumask().
 
+There is no functional change for previous platforms.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Len Brown <len.brown@intel.com>
-Suggested-by: Brice Goglin <Brice.Goglin@inria.fr>
 ---
- Documentation/cputopology.txt   | 21 +++++++++++++++------
- arch/x86/include/asm/smp.h      |  1 +
- arch/x86/include/asm/topology.h |  1 +
- arch/x86/kernel/smpboot.c       | 22 ++++++++++++++++++++++
- arch/x86/xen/smp_pv.c           |  1 +
- drivers/base/topology.c         | 12 ++++++++++++
- include/linux/topology.h        |  3 +++
- 7 files changed, 55 insertions(+), 6 deletions(-)
+ arch/x86/events/intel/uncore.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-index 48af5c290e20..b90dafcc8237 100644
---- a/Documentation/cputopology.txt
-+++ b/Documentation/cputopology.txt
-@@ -36,15 +36,15 @@ drawer_id:
- 	identifier (rather than the kernel's).	The actual value is
- 	architecture and platform dependent.
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 9fe64c01a2e5..a6461ff85a32 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -100,7 +100,7 @@ ssize_t uncore_event_show(struct kobject *kobj,
  
--thread_siblings:
-+core_cpus:
- 
--	internal kernel map of cpuX's hardware threads within the same
--	core as cpuX.
-+	internal kernel map of CPUs within the same core.
-+	(deprecated name: "thread_siblings")
- 
--thread_siblings_list:
-+core_cpus_list:
- 
--	human-readable list of cpuX's hardware threads within the same
--	core as cpuX.
-+	human-readable list of CPUs within the same core.
-+	(deprecated name: "thread_siblings_list");
- 
- package_cpus:
- 
-@@ -56,6 +56,14 @@ package_cpus_list:
- 	human-readable list of CPUs sharing the same physical_package_id.
- 	(deprecated name: "core_siblings_list")
- 
-+die_cpus:
-+
-+	internal kernel map of CPUs within the same die.
-+
-+die_cpus_list:
-+
-+	human-readable list of CPUs within the same die.
-+
- book_siblings:
- 
- 	internal kernel map of cpuX's hardware threads within the same
-@@ -93,6 +101,7 @@ these macros in include/asm-XXX/topology.h::
- 	#define topology_drawer_id(cpu)
- 	#define topology_sibling_cpumask(cpu)
- 	#define topology_core_cpumask(cpu)
-+	#define topology_die_cpumask(cpu)
- 	#define topology_book_cpumask(cpu)
- 	#define topology_drawer_cpumask(cpu)
- 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 2e95b6c1bca3..39266d193597 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -23,6 +23,7 @@ extern unsigned int num_processors;
- 
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
-+DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
- /* cpus sharing the last level cache: */
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
- DECLARE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id);
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 9de16b4f6023..4b14d2318251 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -111,6 +111,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
- #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
- 
- #ifdef CONFIG_SMP
-+#define topology_die_cpumask(cpu)		(per_cpu(cpu_die_map, cpu))
- #define topology_core_cpumask(cpu)		(per_cpu(cpu_core_map, cpu))
- #define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
- 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index a114375e14f7..48a671443266 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -91,6 +91,10 @@ EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
- EXPORT_PER_CPU_SYMBOL(cpu_core_map);
- 
-+/* representing HT, core, and die siblings of each logical CPU */
-+DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
-+EXPORT_PER_CPU_SYMBOL(cpu_die_map);
-+
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
- 
- /* Per CPU bogomips and other parameters */
-@@ -509,6 +513,15 @@ static bool match_pkg(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 	return false;
- }
- 
-+static bool match_die(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
-+{
-+	if ((c->phys_proc_id == o->phys_proc_id) &&
-+		(c->cpu_die_id == o->cpu_die_id))
-+		return true;
-+	return false;
-+}
-+
-+
- #if defined(CONFIG_SCHED_SMT) || defined(CONFIG_SCHED_MC)
- static inline int x86_sched_itmt_flags(void)
+ struct intel_uncore_box *uncore_pmu_to_box(struct intel_uncore_pmu *pmu, int cpu)
  {
-@@ -571,6 +584,7 @@ void set_cpu_sibling_map(int cpu)
- 		cpumask_set_cpu(cpu, topology_sibling_cpumask(cpu));
- 		cpumask_set_cpu(cpu, cpu_llc_shared_mask(cpu));
- 		cpumask_set_cpu(cpu, topology_core_cpumask(cpu));
-+		cpumask_set_cpu(cpu, topology_die_cpumask(cpu));
- 		c->booted_cores = 1;
- 		return;
- 	}
-@@ -619,6 +633,9 @@ void set_cpu_sibling_map(int cpu)
- 		}
- 		if (match_pkg(c, o) && !topology_same_node(c, o))
- 			x86_has_numa_in_package = true;
-+
-+		if ((i == cpu) || (has_mp && match_die(c, o)))
-+			link_mask(topology_die_cpumask, cpu, i);
- 	}
+-	unsigned int pkgid = topology_logical_package_id(cpu);
++	unsigned int pkgid = topology_logical_die_id(cpu);
  
- 	threads = cpumask_weight(topology_sibling_cpumask(cpu));
-@@ -1214,6 +1231,7 @@ static __init void disable_smp(void)
- 		physid_set_mask_of_physid(0, &phys_cpu_present_map);
- 	cpumask_set_cpu(0, topology_sibling_cpumask(0));
- 	cpumask_set_cpu(0, topology_core_cpumask(0));
-+	cpumask_set_cpu(0, topology_die_cpumask(0));
- }
+ 	/*
+ 	 * The unsigned check also catches the '-1' return value for non
+@@ -942,7 +942,8 @@ static int uncore_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	if (phys_id < 0)
+ 		return -ENODEV;
  
- /*
-@@ -1309,6 +1327,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 	for_each_possible_cpu(i) {
- 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
-+		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
- 	}
+-	pkg = topology_phys_to_logical_pkg(phys_id);
++	pkg = (topology_max_die_per_package() > 1) ? phys_id :
++					topology_phys_to_logical_pkg(phys_id);
+ 	if (pkg < 0)
+ 		return -EINVAL;
  
-@@ -1529,6 +1548,8 @@ static void remove_siblinginfo(int cpu)
- 			cpu_data(sibling).booted_cores--;
- 	}
+@@ -1033,7 +1034,8 @@ static void uncore_pci_remove(struct pci_dev *pdev)
  
-+	for_each_cpu(sibling, topology_die_cpumask(cpu))
-+		cpumask_clear_cpu(cpu, topology_die_cpumask(sibling));
- 	for_each_cpu(sibling, topology_sibling_cpumask(cpu))
- 		cpumask_clear_cpu(cpu, topology_sibling_cpumask(sibling));
- 	for_each_cpu(sibling, cpu_llc_shared_mask(cpu))
-@@ -1536,6 +1557,7 @@ static void remove_siblinginfo(int cpu)
- 	cpumask_clear(cpu_llc_shared_mask(cpu));
- 	cpumask_clear(topology_sibling_cpumask(cpu));
- 	cpumask_clear(topology_core_cpumask(cpu));
-+	cpumask_clear(topology_die_cpumask(cpu));
- 	c->cpu_core_id = 0;
- 	c->booted_cores = 0;
- 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 145506f9fdbe..ac13b0be8448 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -251,6 +251,7 @@ static void __init xen_pv_smp_prepare_cpus(unsigned int max_cpus)
- 	for_each_possible_cpu(i) {
- 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
-+		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
- 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
- 	}
- 	set_cpu_sibling_map(0);
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index dc3c19b482f3..4e033d4cc0dc 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -53,10 +53,18 @@ define_siblings_show_func(thread_siblings, sibling_cpumask);
- static DEVICE_ATTR_RO(thread_siblings);
- static DEVICE_ATTR_RO(thread_siblings_list);
+ 	box = pci_get_drvdata(pdev);
+ 	if (!box) {
+-		pkg = topology_phys_to_logical_pkg(phys_id);
++		pkg = (topology_max_die_per_package() > 1) ? phys_id :
++					topology_phys_to_logical_pkg(phys_id);
+ 		for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
+ 			if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
+ 				uncore_extra_pci_dev[pkg].dev[i] = NULL;
+@@ -1110,7 +1112,7 @@ static void uncore_change_type_ctx(struct intel_uncore_type *type, int old_cpu,
+ 	struct intel_uncore_box *box;
+ 	int i, pkg;
  
-+define_siblings_show_func(core_cpus, sibling_cpumask);
-+static DEVICE_ATTR_RO(core_cpus);
-+static DEVICE_ATTR_RO(core_cpus_list);
-+
- define_siblings_show_func(core_siblings, core_cpumask);
- static DEVICE_ATTR_RO(core_siblings);
- static DEVICE_ATTR_RO(core_siblings_list);
+-	pkg = topology_logical_package_id(old_cpu < 0 ? new_cpu : old_cpu);
++	pkg = topology_logical_die_id(old_cpu < 0 ? new_cpu : old_cpu);
+ 	for (i = 0; i < type->num_boxes; i++, pmu++) {
+ 		box = pmu->boxes[pkg];
+ 		if (!box)
+@@ -1151,7 +1153,7 @@ static int uncore_event_cpu_offline(unsigned int cpu)
+ 	if (!cpumask_test_and_clear_cpu(cpu, &uncore_cpu_mask))
+ 		goto unref;
+ 	/* Find a new cpu to collect uncore events */
+-	target = cpumask_any_but(topology_core_cpumask(cpu), cpu);
++	target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
  
-+define_siblings_show_func(die_cpus, die_cpumask);
-+static DEVICE_ATTR_RO(die_cpus);
-+static DEVICE_ATTR_RO(die_cpus_list);
-+
- define_siblings_show_func(package_cpus, core_cpumask);
- static DEVICE_ATTR_RO(package_cpus);
- static DEVICE_ATTR_RO(package_cpus_list);
-@@ -83,8 +91,12 @@ static struct attribute *default_attrs[] = {
- 	&dev_attr_core_id.attr,
- 	&dev_attr_thread_siblings.attr,
- 	&dev_attr_thread_siblings_list.attr,
-+	&dev_attr_core_cpus.attr,
-+	&dev_attr_core_cpus_list.attr,
- 	&dev_attr_core_siblings.attr,
- 	&dev_attr_core_siblings_list.attr,
-+	&dev_attr_die_cpus.attr,
-+	&dev_attr_die_cpus_list.attr,
- 	&dev_attr_package_cpus.attr,
- 	&dev_attr_package_cpus_list.attr,
- #ifdef CONFIG_SCHED_BOOK
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index 5cc8595dd0e4..47a3e3c08036 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -196,6 +196,9 @@ static inline int cpu_to_mem(int cpu)
- #ifndef topology_core_cpumask
- #define topology_core_cpumask(cpu)		cpumask_of(cpu)
- #endif
-+#ifndef topology_die_cpumask
-+#define topology_die_cpumask(cpu)		cpumask_of(cpu)
-+#endif
+ 	/* Migrate uncore events to the new target */
+ 	if (target < nr_cpu_ids)
+@@ -1164,7 +1166,7 @@ static int uncore_event_cpu_offline(unsigned int cpu)
  
- #ifdef CONFIG_SCHED_SMT
- static inline const struct cpumask *cpu_smt_mask(int cpu)
+ unref:
+ 	/* Clear the references */
+-	pkg = topology_logical_package_id(cpu);
++	pkg = topology_logical_die_id(cpu);
+ 	for (; *types; types++) {
+ 		type = *types;
+ 		pmu = type->pmus;
+@@ -1223,7 +1225,7 @@ static int uncore_event_cpu_online(unsigned int cpu)
+ 	struct intel_uncore_box *box;
+ 	int i, ret, pkg, target;
+ 
+-	pkg = topology_logical_package_id(cpu);
++	pkg = topology_logical_die_id(cpu);
+ 	ret = allocate_boxes(types, pkg, cpu);
+ 	if (ret)
+ 		return ret;
+@@ -1242,7 +1244,7 @@ static int uncore_event_cpu_online(unsigned int cpu)
+ 	 * Check if there is an online cpu in the package
+ 	 * which collects uncore events already.
+ 	 */
+-	target = cpumask_any_and(&uncore_cpu_mask, topology_core_cpumask(cpu));
++	target = cpumask_any_and(&uncore_cpu_mask, topology_die_cpumask(cpu));
+ 	if (target < nr_cpu_ids)
+ 		return 0;
+ 
+@@ -1411,7 +1413,7 @@ static int __init intel_uncore_init(void)
+ 	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+ 		return -ENODEV;
+ 
+-	max_packages = topology_max_packages();
++	max_packages = topology_max_packages() * topology_max_die_per_package();
+ 
+ 	uncore_init = (struct intel_uncore_init_fun *)id->driver_data;
+ 	if (uncore_init->pci_init) {
 -- 
 2.18.0-rc0
 
