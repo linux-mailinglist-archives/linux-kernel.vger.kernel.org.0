@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1320A14E6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7867514CE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbfEFPAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:00:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36984 "EHLO mail.kernel.org"
+        id S1728934AbfEFOpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727684AbfEFOmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:17 -0400
+        id S1728920AbfEFOpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:45:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A80C021019;
-        Mon,  6 May 2019 14:42:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D934B2087F;
+        Mon,  6 May 2019 14:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153737;
-        bh=NPJ3DpwJTS2Oi6ThWQAWVDa3v0iLtAEYsoJkBu8Lgrs=;
+        s=default; t=1557153915;
+        bh=xNJS3Z9UgUqOenpoe5QyhRpsXLh5282+tmmL3AgQYPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nFsMehdv5qjdgdIhvqPn2QeuCXe1bKRMKMlvcOPQ8Shc0w/BXvPjeHNMk8OjJo8Xy
-         aOcMUnsisFtO8s1Pqzk5uq+NZz0QIkgQvU3jFab2b4mSKj/eNhWtbBdrcgtCiaI9x/
-         CsoXMKMvDqo7yzgzFf9kX1x2Y/vVIey2LMda04NY=
+        b=KCCjt+JRRStYYXM6dbNyWF6kuoPvTHU7yRhPqjOo4SmA3JXGwJsNRnjzlQDScY5v0
+         INnmowW0t1sy0ZmSQquRZlB0qVnmsTp+lv8HMMsQ5clyF5lh+ULahOPNV8RpE5C+W3
+         oHqDZl9ZTHTEdRk/oOEJv39tg7jHbpcUDNiKNGoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 77/99] scsi: RDMA/srpt: Fix a credit leak for aborted commands
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 42/75] rtc: da9063: set uie_unsupported when relevant
 Date:   Mon,  6 May 2019 16:32:50 +0200
-Message-Id: <20190506143101.095873136@linuxfoundation.org>
+Message-Id: <20190506143057.019504365@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,49 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+[ Upstream commit 882c5e552ffd06856de42261460f46e18319d259 ]
 
-commit 40ca8757291ca7a8775498112d320205b2a2e571 upstream.
+The DA9063AD doesn't support alarms on any seconds and its granularity is
+the minute. Set uie_unsupported in that case.
 
-Make sure that the next time a response is sent to the initiator that the
-credit it had allocated for the aborted request gets freed.
-
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Fixes: 131e6abc674e ("target: Add TFO->abort_task for aborted task resources release") # v3.15
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/rtc/rtc-da9063.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2793,8 +2793,19 @@ static void srpt_queue_tm_rsp(struct se_
- 	srpt_queue_response(cmd);
- }
+diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
+index f85cae240f12..7e92e491c2e7 100644
+--- a/drivers/rtc/rtc-da9063.c
++++ b/drivers/rtc/rtc-da9063.c
+@@ -480,6 +480,13 @@ static int da9063_rtc_probe(struct platform_device *pdev)
+ 	da9063_data_to_tm(data, &rtc->alarm_time, rtc);
+ 	rtc->rtc_sync = false;
  
-+/*
-+ * This function is called for aborted commands if no response is sent to the
-+ * initiator. Make sure that the credits freed by aborting a command are
-+ * returned to the initiator the next time a response is sent by incrementing
-+ * ch->req_lim_delta.
-+ */
- static void srpt_aborted_task(struct se_cmd *cmd)
- {
-+	struct srpt_send_ioctx *ioctx = container_of(cmd,
-+				struct srpt_send_ioctx, cmd);
-+	struct srpt_rdma_ch *ch = ioctx->ch;
++	/*
++	 * TODO: some models have alarms on a minute boundary but still support
++	 * real hardware interrupts. Add this once the core supports it.
++	 */
++	if (config->rtc_data_start != RTC_SEC)
++		rtc->rtc_dev->uie_unsupported = 1;
 +
-+	atomic_inc(&ch->req_lim_delta);
- }
- 
- static int srpt_queue_status(struct se_cmd *cmd)
+ 	irq_alarm = platform_get_irq_byname(pdev, "ALARM");
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq_alarm, NULL,
+ 					da9063_alarm_event,
+-- 
+2.20.1
+
 
 
