@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E023914C6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FF5E14CCB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfEFOkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:40:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33792 "EHLO mail.kernel.org"
+        id S1726742AbfEFOoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:44:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727546AbfEFOk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:40:27 -0400
+        id S1727654AbfEFOoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:44:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D3621530;
-        Mon,  6 May 2019 14:40:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3BF3214AF;
+        Mon,  6 May 2019 14:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153626;
-        bh=n9KLBnL/pvKdMIVL8hx/z7Yx7bXPZJ9Lx2mfJEqAGz4=;
+        s=default; t=1557153850;
+        bh=UIHC9Cy2fpk/qppWUPfyau/uOaITclXHx0K+EQfW83s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TC2eFTltRCPkB2CGLrGWvXmGQQeys8gMQ9lEuZhBvg+Bpoe3gAo/mPN302PI6/aih
-         bPSzxuNZatTPmg/xaVS3fZCL94dT/DwnSknoo+OIdjWmu26HaQAECSp3R682svRVFl
-         Ka4tPgfX7CymXSTggmJXNXITvTq/4MZMdWBB/3pc=
+        b=gITQZ2APY/OEabH4bZ9BG30UDEUWz5lPGmpmemhey0VLlSk0inWqq6TABvvMmkHUj
+         KFOIco/4pcMHzfoCrL2PMgvDN4kOT1GkPMKPLWb5pJIl2cyjUQmJps2N75AIkK9egm
+         MO/M0PVPBq5NHeBd8sgvjYDvMGqsU4lUSTZcnxTw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 37/99] bonding: show full hw address in sysfs for slave entries
+        Shmulik Ladkani <shmulik.ladkani@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 02/75] ipv4: ip_do_fragment: Preserve skb_iif during fragmentation
 Date:   Mon,  6 May 2019 16:32:10 +0200
-Message-Id: <20190506143057.304467958@linuxfoundation.org>
+Message-Id: <20190506143053.481001390@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 18bebc6dd3281955240062655a4df35eef2c46b3 ]
+From: Shmulik Ladkani <shmulik@metanetworks.com>
 
-Bond expects ethernet hwaddr for its slave, but it can be longer than 6
-bytes - infiniband interface for example.
+[ Upstream commit d2f0c961148f65bc73eda72b9fa3a4e80973cb49 ]
 
- # cat /sys/devices/<skipped>/net/ib0/address
- 80:00:02:08:fe:80:00:00:00:00:00:00:7c:fe:90:03:00:be:5d:e1
+Previously, during fragmentation after forwarding, skb->skb_iif isn't
+preserved, i.e. 'ip_copy_metadata' does not copy skb_iif from given
+'from' skb.
 
- # cat /sys/devices/<skipped>/net/ib0/bonding_slave/perm_hwaddr
- 80:00:02:08:fe:80
+As a result, ip_do_fragment's creates fragments with zero skb_iif,
+leading to inconsistent behavior.
 
-So print full hwaddr in sysfs "bonding_slave/perm_hwaddr" as well.
+Assume for example an eBPF program attached at tc egress (post
+forwarding) that examines __sk_buff->ingress_ifindex:
+ - the correct iif is observed if forwarding path does not involve
+   fragmentation/refragmentation
+ - a bogus iif is observed if forwarding path involves
+   fragmentation/refragmentatiom
 
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Fix, by preserving skb_iif during 'ip_copy_metadata'.
+
+Signed-off-by: Shmulik Ladkani <shmulik.ladkani@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_sysfs_slave.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/ip_output.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/bonding/bond_sysfs_slave.c b/drivers/net/bonding/bond_sysfs_slave.c
-index 2f120b2ffef0..4985268e2273 100644
---- a/drivers/net/bonding/bond_sysfs_slave.c
-+++ b/drivers/net/bonding/bond_sysfs_slave.c
-@@ -55,7 +55,9 @@ static SLAVE_ATTR_RO(link_failure_count);
- 
- static ssize_t perm_hwaddr_show(struct slave *slave, char *buf)
- {
--	return sprintf(buf, "%pM\n", slave->perm_hwaddr);
-+	return sprintf(buf, "%*phC\n",
-+		       slave->dev->addr_len,
-+		       slave->perm_hwaddr);
- }
- static SLAVE_ATTR_RO(perm_hwaddr);
- 
--- 
-2.20.1
-
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -518,6 +518,7 @@ static void ip_copy_metadata(struct sk_b
+ 	to->pkt_type = from->pkt_type;
+ 	to->priority = from->priority;
+ 	to->protocol = from->protocol;
++	to->skb_iif = from->skb_iif;
+ 	skb_dst_drop(to);
+ 	skb_dst_copy(to, from);
+ 	to->dev = from->dev;
 
 
