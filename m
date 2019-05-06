@@ -2,65 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624D914998
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E94614947
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfEFMbl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 08:31:41 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:57615
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1725856AbfEFMbk (ORCPT
+        id S1726085AbfEFMF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 08:05:26 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37233 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfEFMF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 08:31:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 3DB96B4FADA;
-        Mon,  6 May 2019 12:03:50 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Hc9jOjk-ljYI; Mon,  6 May 2019 12:03:49 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id A3EC0B4F99B;
-        Mon,  6 May 2019 12:03:49 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DTerbhN6Ro0a; Mon,  6 May 2019 12:03:49 +0000 (UTC)
-Received: from [100.86.76.53] (unknown [106.197.214.147])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 95CEEB4FAC4;
-        Mon,  6 May 2019 12:03:38 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?verifica=C3=A7=C3=A3o_de_e-mail?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador da Web <exportaciones@minpal.gob.ve>
-Date:   Mon, 06 May 2019 17:33:25 +0530
-Message-Id: <20190506120338.95CEEB4FAC4@smspyt.cancun.gob.mx>
+        Mon, 6 May 2019 08:05:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6so6369521pgc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 05:05:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=HNEnwk6bTyI+OdxTHxmPibg++VUvhYqw1S30xXcVZwM=;
+        b=f/5+htOyvjkdDYEDCOaeUK7pb2MKXpEDjDcB9ympoEJwxl8lLpuo+/Do9n529BCo7G
+         fy3eB+/l9rwfBf35NTTLyd4TCsrhybdKdrUmOODARQue/Kl8V9U1fbSn2sLxnTzw7s3e
+         rxvR+cKHuYXhsWa76q/R17RMzgAGDDZba8esw+/oste9ySRMomylMMQfpYM+Kb7ZMBWH
+         HWPlkCsTmWxd7DTrh9JACEnS1o0WoP/ds6ehK3ObZBcW0Rd1oi++HcOT5Z10RlWrxV0b
+         t/Y/JBqtVTOHxVRFjsKFuthtsgL1WcoBvbOg6muXU6Ikd7MmXAftmvnsbp5YbwZnBIcV
+         KXlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HNEnwk6bTyI+OdxTHxmPibg++VUvhYqw1S30xXcVZwM=;
+        b=BUSZm6kzN5xgp6EttNVwON/oZI3fwBlcFaGqj84nXKlCYQgD+QslHztLmwdq0rBsYi
+         g5oX8wnt5ecox23swUrzWs8zB4weHvxBzbpUWow1upC6lIHcmNjTPA1RX66D9CK6xIyb
+         GQo8Tz2FVcdI+JMeQSiT4hqGyWi+qwvf0dvLpT2eRepWxjIURACQ/c74yoOcbEAmMan2
+         Yd8pmt85kxrMss4RsQ2EmZZyAwPSxzDDp8z23r0LCV6/KgEQoGpHJ3PNif/A50+VMcea
+         iQF5cK69kmUkbCK7APoYJkA8mC/wQJOHIgccwD278YS/Effee5kjQaIalp9Cr67CRahU
+         1oxQ==
+X-Gm-Message-State: APjAAAXK+TfL1srw8vMkNIGx3et/ytXIORfgNLdh/t8Dsfg0ejGz5/MW
+        P3SuEAl/zFHfGIGzj/rZlVNU
+X-Google-Smtp-Source: APXvYqwFs/Zc/eWEWDAECt5UzKf54ZygzFhrTr+07TNz+PDBlMsTsn8Aof9hCZQDwHTJxr0qMFJQeQ==
+X-Received: by 2002:a63:9dc8:: with SMTP id i191mr30660274pgd.91.1557144325309;
+        Mon, 06 May 2019 05:05:25 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:611b:55a4:e119:3b84:2d86:5b07])
+        by smtp.gmail.com with ESMTPSA id q17sm26482318pfi.185.2019.05.06.05.05.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 05:05:24 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     heiko@sntech.de
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ezequiel@collabora.com, tom@vamrs.com, dev@vamrs.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/2] arm64: dts: rockchip: Enable SPI0 and SPI4 on Rock960
+Date:   Mon,  6 May 2019 17:34:57 +0530
+Message-Id: <20190506120458.25842-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de segurança:
+Enable SPI0 and SPI4 exposed on the Low and High speed expansion
+connectors of Rock960.
 
-Esta mensagem é do nosso Centro de administração para todos os usuários da nossa conta de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-rock960.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+index 12285c51cceb..7498344d4a73 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+@@ -114,6 +114,18 @@
+ 	};
+ };
+ 
++&spi0 {
++	/* On Low speed expansion */
++	label = "LS-SPI0";
++	status = "okay";
++};
++
++&spi4 {
++	/* On High speed expansion */
++	label = "HS-SPI1";
++	status = "okay";
++};
++
+ &usbdrd_dwc3_0 {
+ 	dr_mode = "otg";
+ };
+-- 
+2.17.1
 
-Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
-
-Clique no link http://fsnhsnetadministrationsa.xtgem.com/index se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
-
-Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
-Claro que você vai gostar da nova e melhorada interface de webmail.
-
-Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
-
-Obrigado por usar nossos serviços
-
-==============================================
-
-Sinceramente Web Admin.
-E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
-Número de registo 9697083H) ID do cliente 068806M Todos os direitos reservados.
