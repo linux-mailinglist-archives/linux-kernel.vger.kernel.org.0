@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70BFE14C65
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8AA14C15
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfEFOkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33110 "EHLO mail.kernel.org"
+        id S1727118AbfEFOgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:36:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727465AbfEFOj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:39:58 -0400
+        id S1726564AbfEFOgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:36:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FC70214AE;
-        Mon,  6 May 2019 14:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4696E204EC;
+        Mon,  6 May 2019 14:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153597;
-        bh=zxlYefP47DFqSGibVPrbuROJZDuq76+KTbQaLHVeOiw=;
+        s=default; t=1557153365;
+        bh=nD6+/xIy6pqXa9KgPPOcUQnBHoKVtX0H5oZGvLHkLbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbl1vEb0bPdaLmgc2jbr0KjpDlZYeJQu58yMOW3V8XtLvjlrTDOIogCg2UNKBTNDE
-         7IMBiNPVzdA1L89j9lolJKl6Bc/IYh0UfaJWP95sUP0dl8qoLVPj4rBBHb4tMiHUdY
-         tPdu24gSBdBoSEQLiUmpX6qBYOwkRVf9WmFs7W3A=
+        b=pW3pc+4vMvOfaIrFt7+lxOTvyYxsijmb0GhnS8bUCdynji2vHcXyeDIbUY25qdCkU
+         Zg+irWttomtxWvKoY6wfCLK1RzS6S3t+AVKWin6PAU5cL8bmEapPS4GbmjTePuh3IK
+         hQhYR63lhLqhGg1aovl42ybA580VrVoZ9CwY/IfQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Broadus <jbroadus@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.19 08/99] i2c: Allow recovery of the initial IRQ by an I2C client device.
-Date:   Mon,  6 May 2019 16:31:41 +0200
-Message-Id: <20190506143054.617663858@linuxfoundation.org>
+        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 5.0 044/122] HID: quirks: Fix keyboard + touchpad on Lenovo Miix 630
+Date:   Mon,  6 May 2019 16:31:42 +0200
+Message-Id: <20190506143058.868183112@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Broadus <jbroadus@gmail.com>
+[ Upstream commit 2bafa1e9625400bec4c840a168d70ba52607a58d ]
 
-commit 93b6604c5a669d84e45fe5129294875bf82eb1ff upstream.
+Similar to commit edfc3722cfef ("HID: quirks: Fix keyboard + touchpad on
+Toshiba Click Mini not working"), the Lenovo Miix 630 has a combo
+keyboard/touchpad device with vid:pid of 04F3:0400, which is shared with
+Elan touchpads.  The combo on the Miix 630 has an ACPI id of QTEC0001,
+which is not claimed by the elan_i2c driver, so key on that similar to
+what was done for the Toshiba Click Mini.
 
-A previous change allowed I2C client devices to discover new IRQs upon
-reprobe by clearing the IRQ in i2c_device_remove. However, if an IRQ was
-assigned in i2c_new_device, that information is lost.
-
-For example, the touchscreen and trackpad devices on a Dell Inspiron laptop
-are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
-client device structures are initialized during an ACPI walk. After
-removing the i2c_hid device, modprobe fails.
-
-This change caches the initial IRQ value in i2c_new_device and then resets
-the client device IRQ to the initial value in i2c_device_remove.
-
-Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
-Signed-off-by: Jim Broadus <jbroadus@gmail.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-[wsa: this is an easy to backport fix for the regression. We will
-refactor the code to handle irq assignments better in general.]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/i2c/i2c-core-base.c |    9 +++++----
- include/linux/i2c.h         |    1 +
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/hid/hid-quirks.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -430,7 +430,7 @@ static int i2c_device_remove(struct devi
- 	dev_pm_clear_wake_irq(&client->dev);
- 	device_init_wakeup(&client->dev, false);
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 94088c0ed68a..e24790c988c0 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -744,7 +744,6 @@ static const struct hid_device_id hid_ignore_list[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DEALEXTREAME, USB_DEVICE_ID_DEALEXTREAME_RADIO_SI4701) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EARTHMATE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EM_LT20) },
+-	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0400) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ESSENTIAL_REALITY, USB_DEVICE_ID_ESSENTIAL_REALITY_P5) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC5UH) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC4UM) },
+@@ -1025,6 +1024,10 @@ bool hid_ignore(struct hid_device *hdev)
+ 		if (hdev->product == 0x0401 &&
+ 		    strncmp(hdev->name, "ELAN0800", 8) != 0)
+ 			return true;
++		/* Same with product id 0x0400 */
++		if (hdev->product == 0x0400 &&
++		    strncmp(hdev->name, "QTEC0001", 8) != 0)
++			return true;
+ 		break;
+ 	}
  
--	client->irq = 0;
-+	client->irq = client->init_irq;
- 
- 	return status;
- }
-@@ -741,10 +741,11 @@ i2c_new_device(struct i2c_adapter *adap,
- 	client->flags = info->flags;
- 	client->addr = info->addr;
- 
--	client->irq = info->irq;
--	if (!client->irq)
--		client->irq = i2c_dev_irq_from_resources(info->resources,
-+	client->init_irq = info->irq;
-+	if (!client->init_irq)
-+		client->init_irq = i2c_dev_irq_from_resources(info->resources,
- 							 info->num_resources);
-+	client->irq = client->init_irq;
- 
- 	strlcpy(client->name, info->type, sizeof(client->name));
- 
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -333,6 +333,7 @@ struct i2c_client {
- 	char name[I2C_NAME_SIZE];
- 	struct i2c_adapter *adapter;	/* the adapter we sit on	*/
- 	struct device dev;		/* the device structure		*/
-+	int init_irq;			/* irq set at initialization	*/
- 	int irq;			/* irq issued by device		*/
- 	struct list_head detected;
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
+-- 
+2.20.1
+
 
 
