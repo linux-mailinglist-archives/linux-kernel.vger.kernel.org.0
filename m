@@ -2,70 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89DD5148B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DACE148E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfEFLN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 07:13:58 -0400
-Received: from mga05.intel.com ([192.55.52.43]:16206 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725852AbfEFLN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 07:13:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 04:13:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,437,1549958400"; 
-   d="scan'208";a="155495557"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 May 2019 04:13:55 -0700
-Subject: Re: [PATCH] usb: host: xhci_debugfs: Fix a null pointer dereference
- in xhci_debugfs_create_endpoint()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     mathias.nyman@intel.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190504033748.17964-1-baijiaju1990@gmail.com>
- <20190504063340.GA26311@kroah.com>
- <db68433e-d655-217a-4a73-4bb83069addc@gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <939faa2c-54a8-1ae9-500c-3e25e1e2c691@linux.intel.com>
-Date:   Mon, 6 May 2019 14:16:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726414AbfEFL2a convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 07:28:30 -0400
+Received: from smtp.profeco.gob.mx ([201.144.226.30]:17357 "EHLO
+        owa.profeco.gob.mx" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726147AbfEFL2a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 07:28:30 -0400
+X-Greylist: delayed 321 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 07:28:29 EDT
+Received: from PFCOCEEXCH02.profeco.gob.mx (10.4.60.109) by
+ PFCOCEEXCH03.profeco.gob.mx (10.4.60.108) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 6 May 2019 06:23:03 -0500
+Received: from coris.com (103.125.190.80) by PFCOCEEXCH02.profeco.gob.mx
+ (10.4.60.123) with Microsoft SMTP Server id 14.3.408.0; Mon, 6 May 2019
+ 06:22:54 -0500
+Reply-To: <kentpace@sina.com>
+From:   <derek@coris.com>
+To:     <linux-kernel@vger.kernel.org>
+Subject: Are you still alive
+Date:   Mon, 6 May 2019 04:23:08 -0700
+Message-ID: <20190506042307.5ECC75480A133482@coris.com>
 MIME-Version: 1.0
-In-Reply-To: <db68433e-d655-217a-4a73-4bb83069addc@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4.5.2019 10.30, Jia-Ju Bai wrote:
-> 
-> 
-> On 2019/5/4 14:33, Greg KH wrote:
->> On Sat, May 04, 2019 at 11:37:48AM +0800, Jia-Ju Bai wrote:
->>> In xhci_debugfs_create_slot(), kzalloc() can fail and
->>> dev->debugfs_private will be NULL.
->>> In xhci_debugfs_create_endpoint(), dev->debugfs_private is used without
->>> any null-pointer check, and can cause a null pointer dereference.
->>>
->>> To fix this bug, a null-pointer check is added in
->>> xhci_debugfs_create_endpoint().
->>>
->>> This bug is found by a runtime fuzzing tool named FIZZER written by us.
->>>
->>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> Very rare case, but nice fix.  You should put "potential" in your
->> subject line as this is something that no one should ever hit :)
-> 
-> Okay, Greg, thanks for this advice :)
-> 
+Dear, 
 
-Adding patch to queue, and added "potential" to subject line.
+Please confirm if you are still alive because two gentle men 
+walked into my office this morning to claim your inheritance 
+funds with our bank. They said that you are dead and that they 
+are your  representative. 
 
--Mathias
+I got your email from the file of your relative 
+who is yet to be paid for the Contract he has executed before his 
+death several years ago.
+
+You the beneficiary of this fund has 
+not been in contact with the bank to claim your fund. The 
+gentlemen submitted an address where they want your VISA DEBIT 
+ATM CARD sent. 
+
+If you are still alive, please indicate by sending your full 
+contact details within 7 day of receiving this message, faliure 
+to do so, I will send the card to the address submitted by your 
+representatives. 
+
+
+Regards
