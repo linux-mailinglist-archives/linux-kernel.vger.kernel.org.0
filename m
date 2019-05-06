@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A88914BFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 023F814EAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfEFOfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:35:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55164 "EHLO mail.kernel.org"
+        id S1727932AbfEFOkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:40:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726861AbfEFOfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:35:12 -0400
+        id S1727911AbfEFOjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:39:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F2E420B7C;
-        Mon,  6 May 2019 14:35:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D19020449;
+        Mon,  6 May 2019 14:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153311;
-        bh=c+RirpKRmLCnZH63iU9x2IOb/hAAViXjJzoHg5qZteY=;
+        s=default; t=1557153594;
+        bh=WUgK1XaP9CKxLVpil8QiQgTYWULgkduitlNHJqWTq7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlrMpal9DPgHra3yfujVCv0NbQFO7c6HaKp6yaTj0IVPzrn0Hh3fZROwbPzjDgH0U
-         fWwqtClCqmaoXA51KRpaCx3GBAr9TYozQxq/tjrQv71ir8yVkTt4NA1Ts9dq0SVymk
-         aHZYK20yDyff/Wm9Vat3Vw2x6a0+7qtvB9yHLNp8=
+        b=DdkijRLpNdfRRdXftbLVYf0VulmVJzzuy2OYVRhZMb1KZJ4eJ45W3KXfmPcI8L/03
+         2xosVCFzAbjhaQHWalZ8QCSIHyeJRBiXjWFWNKQPqg5qToPu7veKHl1JpDIT2V2cxV
+         o7eBgapDaGGDBsu6WZso+cw9tUcq4BLj4gAkFv1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Vecera <ivecera@redhat.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 041/122] ixgbe: fix mdio bus registration
-Date:   Mon,  6 May 2019 16:31:39 +0200
-Message-Id: <20190506143058.606057843@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.19 07/99] i2c: Clear client->irq in i2c_device_remove
+Date:   Mon,  6 May 2019 16:31:40 +0200
+Message-Id: <20190506143054.531634333@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7ec52b9df7d7472240fa96223185894b1897aeb0 ]
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-The ixgbe ignores errors returned from mdiobus_register() and leaves
-adapter->mii_bus non-NULL and MDIO bus state as MDIOBUS_ALLOCATED.
-This triggers a BUG from mdiobus_unregister() during ixgbe_remove() call.
+commit 6f108dd70d3010c391c1e9f56f3f20d1f9e75450 upstream.
 
-Fixes: 8fa10ef01260 ("ixgbe: register a mdiobus")
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+The IRQ will be mapped in i2c_device_probe only if client->irq is zero and
+i2c_device_remove does not clear this. When rebinding an I2C device,
+whos IRQ provider has also been rebound this means that an IRQ mapping
+will never be created, causing the I2C device to fail to acquire its
+IRQ. Fix this issue by clearing client->irq in i2c_device_remove,
+forcing i2c_device_probe to lookup the mapping again.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/i2c/i2c-core-base.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-index cc4907f9ff02..2fb97967961c 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-@@ -905,13 +905,12 @@ s32 ixgbe_mii_bus_init(struct ixgbe_hw *hw)
- 	struct pci_dev *pdev = adapter->pdev;
- 	struct device *dev = &adapter->netdev->dev;
- 	struct mii_bus *bus;
-+	int err = -ENODEV;
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -430,6 +430,8 @@ static int i2c_device_remove(struct devi
+ 	dev_pm_clear_wake_irq(&client->dev);
+ 	device_init_wakeup(&client->dev, false);
  
--	adapter->mii_bus = devm_mdiobus_alloc(dev);
--	if (!adapter->mii_bus)
-+	bus = devm_mdiobus_alloc(dev);
-+	if (!bus)
- 		return -ENOMEM;
- 
--	bus = adapter->mii_bus;
--
- 	switch (hw->device_id) {
- 	/* C3000 SoCs */
- 	case IXGBE_DEV_ID_X550EM_A_KR:
-@@ -949,12 +948,15 @@ s32 ixgbe_mii_bus_init(struct ixgbe_hw *hw)
- 	 */
- 	hw->phy.mdio.mode_support = MDIO_SUPPORTS_C45 | MDIO_SUPPORTS_C22;
- 
--	return mdiobus_register(bus);
-+	err = mdiobus_register(bus);
-+	if (!err) {
-+		adapter->mii_bus = bus;
-+		return 0;
-+	}
- 
- ixgbe_no_mii_bus:
- 	devm_mdiobus_free(dev, bus);
--	adapter->mii_bus = NULL;
--	return -ENODEV;
-+	return err;
++	client->irq = 0;
++
+ 	return status;
  }
  
- /**
--- 
-2.20.1
-
 
 
