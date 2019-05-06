@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B9AC14CCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10DB514C2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbfEFOoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:44:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40336 "EHLO mail.kernel.org"
+        id S1727393AbfEFOhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:37:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbfEFOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:44:13 -0400
+        id S1726308AbfEFOhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:37:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63A5620449;
-        Mon,  6 May 2019 14:44:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A4AF20449;
+        Mon,  6 May 2019 14:37:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153852;
-        bh=ji2Fkc2JCt0iE1AsuDOUcQhSeTai/544j7ODEE/aw8Y=;
+        s=default; t=1557153442;
+        bh=EJNks6oQRfwFiHCaA3iNcKyx/VTPfSwq9cHjpSIFI2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p3V5ymTqeKrKOhs59BB93WWDWtHWXtPpoCJrISyBJ7l0x2qU14iEbVxS4wVqg+VTA
-         q81Dr1y80N6X8jMMTyAPIH7qcdfJNoMJzPSGawd5FJ5lvk85pz0iR4ha2U8Y1GbL5B
-         xmqFuAy7lLwZa5XpIryjKlqM9etRiXptbDhorYK0=
+        b=EUHeg1FnBKMjtA00yc1qo7zw4Na+g4hsDJOMzmPbgY+2lco9OdiavKwJp4ZwvZ/Vh
+         izHdYZOw3bVdFupkxENoNtWUvSuAiKnuWQd0+hzYasc5l/mIlIdMeohpWSUWRJ413H
+         W+t4Y3QyNw5vEp7gZ6EVr9kuCDGxGWDTdtcpOTUk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+d65f673b847a1a96cdba@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 20/75] USB: w1 ds2490: Fix bug caused by improper use of altsetting array
-Date:   Mon,  6 May 2019 16:32:28 +0200
-Message-Id: <20190506143054.983786741@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.0 091/122] staging: iio: adt7316: fix the dac write calculation
+Date:   Mon,  6 May 2019 16:32:29 +0200
+Message-Id: <20190506143102.862115202@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-commit c114944d7d67f24e71562fcfc18d550ab787e4d4 upstream.
+commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
 
-The syzkaller USB fuzzer spotted a slab-out-of-bounds bug in the
-ds2490 driver.  This bug is caused by improper use of the altsetting
-array in the usb_interface structure (the array's entries are not
-always stored in numerical order), combined with a naive assumption
-that all interfaces probed by the driver will have the expected number
-of altsettings.
+The lsb calculation is not masking the correct bits from the user input.
+Subtract 1 from (1 << offset) to correctly set up the mask to be applied
+to user input.
 
-The bug can be fixed by replacing references to the possibly
-non-existent intf->altsetting[alt] entry with the guaranteed-to-exist
-intf->cur_altsetting entry.
+The lsb register stores its value starting at the bit 7 position.
+adt7316_store_DAC() currently assumes the value is at the other end of the
+register. Shift the lsb value before storing it in a new variable lsb_reg,
+and write this variable to the lsb register.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+d65f673b847a1a96cdba@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/w1/masters/ds2490.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/iio/addac/adt7316.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/w1/masters/ds2490.c
-+++ b/drivers/w1/masters/ds2490.c
-@@ -1018,15 +1018,15 @@ static int ds_probe(struct usb_interface
- 	/* alternative 3, 1ms interrupt (greatly speeds search), 64 byte bulk */
- 	alt = 3;
- 	err = usb_set_interface(dev->udev,
--		intf->altsetting[alt].desc.bInterfaceNumber, alt);
-+		intf->cur_altsetting->desc.bInterfaceNumber, alt);
- 	if (err) {
- 		dev_err(&dev->udev->dev, "Failed to set alternative setting %d "
- 			"for %d interface: err=%d.\n", alt,
--			intf->altsetting[alt].desc.bInterfaceNumber, err);
-+			intf->cur_altsetting->desc.bInterfaceNumber, err);
- 		goto err_out_clear;
- 	}
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -1442,7 +1442,7 @@ static ssize_t adt7316_show_DAC(struct a
+ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+ 				 int channel, const char *buf, size_t len)
+ {
+-	u8 msb, lsb, offset;
++	u8 msb, lsb, lsb_reg, offset;
+ 	u16 data;
+ 	int ret;
  
--	iface_desc = &intf->altsetting[alt];
-+	iface_desc = intf->cur_altsetting;
- 	if (iface_desc->desc.bNumEndpoints != NUM_EP-1) {
- 		pr_info("Num endpoints=%d. It is not DS9490R.\n",
- 			iface_desc->desc.bNumEndpoints);
+@@ -1460,9 +1460,13 @@ static ssize_t adt7316_store_DAC(struct
+ 		return -EINVAL;
+ 
+ 	if (chip->dac_bits > 8) {
+-		lsb = data & (1 << offset);
++		lsb = data & ((1 << offset) - 1);
++		if (chip->dac_bits == 12)
++			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
++		else
++			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
+ 		ret = chip->bus.write(chip->bus.client,
+-			ADT7316_DA_DATA_BASE + channel * 2, lsb);
++			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
+ 		if (ret)
+ 			return -EIO;
+ 	}
 
 
