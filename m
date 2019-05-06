@@ -2,104 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40248144DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F364144F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbfEFHBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:01:10 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31788 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbfEFHBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:01:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 00:01:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,437,1549958400"; 
-   d="scan'208";a="140379799"
-Received: from irsmsx106.ger.corp.intel.com ([163.33.3.31])
-  by orsmga008.jf.intel.com with ESMTP; 06 May 2019 00:01:05 -0700
-Received: from irsmsx102.ger.corp.intel.com ([169.254.2.21]) by
- IRSMSX106.ger.corp.intel.com ([169.254.8.235]) with mapi id 14.03.0415.000;
- Mon, 6 May 2019 08:01:05 +0100
-From:   "Reshetova, Elena" <elena.reshetova@intel.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Ingo Molnar <mingo@kernel.org>
-CC:     Andy Lutomirski <luto@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        "Eric Biggers" <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: RE: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Thread-Topic: [PATCH] x86/entry/64: randomize kernel stack offset upon
- syscall
-Thread-Index: AQHU81HQwzT9MH4dM0y/JZXnSwiYT6Y8wW2AgAAdM1CAAXexAIAANZ3ggAAW1gCAAApRgIAAMeKAgAAd+PCAAQuGgIAAYQuAgAAKhwCACsPi4IADJTwAgAAcagCAAExngIAEBbGAgACIbACAAbyQ8IAA626AgAGZfXCAAARpgIAAWpuAgAAF74CAABf/AIAAAvkAgAGZnrD///dzgIAEI1ng
-Date:   Mon, 6 May 2019 07:01:04 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4C7125F@IRSMSX102.ger.corp.intel.com>
-References: <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
- <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net>
- <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
- <303fc4ee5ac04e4fac104df1188952e8@AcuMS.aculab.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C6C2C3@IRSMSX102.ger.corp.intel.com>
- <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
- <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
- <20190502150853.GA16779@gmail.com>
- <d64b3562d179430f9bdd8712999ff98a@AcuMS.aculab.com>
- <20190502164524.GB115950@gmail.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C6F523@IRSMSX102.ger.corp.intel.com>
- <e4fbad8c51284a0583b98c52de4a207d@AcuMS.aculab.com>
-In-Reply-To: <e4fbad8c51284a0583b98c52de4a207d@AcuMS.aculab.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDkwNzNhZTgtMTVmZi00NmVmLThmNzAtN2VhNjNkZDY3OWViIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQnVQcFlEbXZGaU9iYUlqU3dUQ2JydWNzS1ZZblZhNVJ5dGtXZTRRU3pzTnZsRHB4dkdyTTI5NjBVeWVmWmhKcyJ9
-x-originating-ip: [163.33.239.182]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726418AbfEFHEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:04:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41693 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfEFHEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:04:48 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k8so10089090lja.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:04:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iNnmod9ZKYpePclbWo4PT7+A86yCjlpOu7Z5K0IfDaI=;
+        b=pDlv+7ag2wt+konKcf3YjvXQ6Rx8/AkKeXQxV1jX2Yytl40iicDeBaiJDqbX1JNyQr
+         dmy65YjhxAUORD4wvQCuMlzacDMJ3Gv3BOZ4wyPiCHxJbsVE8p+pIhpKg9KPEeiIYfut
+         2t/qiJZs/QJWX8oAuj9XOnR3mE1OMSi+mDyfHECpsTb6MaNv3Q53YK0yef+Z487Kpx4i
+         HHgX3CBx/h482EqJqKDZNPhTMgzEvMbtTfQRCY1ChPdtS4DaHFcNfq/y9M8Rgoyah0Hq
+         ikkFaNXi8C43tOIs5Gm1aGBA/Ad71E3g0vMbVmm3JB1k+Gvlnx1hAAonb082ZSfAbS3f
+         OLlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iNnmod9ZKYpePclbWo4PT7+A86yCjlpOu7Z5K0IfDaI=;
+        b=V9B9JZsGMLac/YA4Aqg2SwNADh7mLo5ugUzHppeCe2AAllA5UEg3Oe50ah7YCqR+5z
+         1kolIBfdEfiPanEilv2fwOcop7kTex3mFS7JXH8GOySQmZaRoGD8FINcNRyO5RJpXLzA
+         /YfxxxhGiZaci1WKhbMhU4RxJGydeH3YzC8h0yd+92SCV+xKtYx0BlX1AksFx5LbgE9O
+         mU/Sxm860FOjVqnM1aaLoXxj7pD8rODfoGHj/un/3FwXg410i38E26GDCjra7uQDrdAR
+         IkqQa++m9e7LpnOtm1YMzKHJzP4JFXIq7mtr1U158x/EekaxJQLpzsP4HCfrayAxxPd5
+         sfvQ==
+X-Gm-Message-State: APjAAAVTaMnyL3xPlo0+k35t3TQJn1sp3hCwftVdjx+pxD5EiMYcJSh5
+        eOcPlFiKghCWO2r5MjfP66J2T53jjyhGexhawXDPQw==
+X-Google-Smtp-Source: APXvYqwpSJLl8gV6pdZU4YYHl94me2CBN5IMcXEz3u0oBYWdfeT0XTVNkb2FrbRHhDYCHk2DkNUzwnMuw0PYb0iLxEY=
+X-Received: by 2002:a2e:8e93:: with SMTP id z19mr9427670ljk.159.1557126286550;
+ Mon, 06 May 2019 00:04:46 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190505130413.32253-1-masneyb@onstation.org> <20190505130413.32253-4-masneyb@onstation.org>
+In-Reply-To: <20190505130413.32253-4-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 6 May 2019 09:04:35 +0200
+Message-ID: <CACRpkdZFK9EGptXbtowUMai6M-jdh6OSTU2=X9A-N3R7hcvXiQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/6] ARM: qcom_defconfig: add display-related options
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        freedreno@lists.freedesktop.org, Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBSZXNoZXRvdmEsIEVsZW5hDQo+ID4gU2VudDogMDMgTWF5IDIwMTkgMTc6MTcNCj4g
-Li4uDQo+ID4gcmRyYW5kIChjYWxsaW5nIGV2ZXJ5IDggc3lzY2FsbHMpOiBTaW1wbGUgc3lzY2Fs
-bDogMC4wNzk1IG1pY3Jvc2Vjb25kcw0KPiANCj4gWW91IGNvdWxkIHRyeSBzb21ldGhpbmcgbGlr
-ZToNCj4gCXU2NCByYW5kX3ZhbCA9IGNwdV92YXItPnN5c2NhbGxfcmFuZA0KPiANCj4gCXdoaWxl
-ICh1bmxpa2VseShyYW5kX3ZhbCA9PSAwKSkNCj4gCQlyYW5kX3ZhbCA9IHJkcmFuZDY0KCk7DQo+
-IA0KPiAJc3RhY2tfb2Zmc2V0ID0gcmFuZF92YWwgJiAweGZmOw0KPiAJcmFuZF92YWwgPj49IDY7
-DQo+IAlpZiAobGlrZWx5KHJhbmRfdmFsID49IDQpKQ0KPiAJCWNwdV92YXItPnN5c2NhbGxfcmFu
-ZCA9IHJhbmRfdmFsOw0KPiAJZWxzZQ0KPiAJCWNwdV92YXItPnN5c2NhbGxfcmFuZCA9IHJkcmFu
-ZDY0KCk7DQo+IA0KPiAJcmV0dXJuIHN0YWNrX29mZnNldDsNCj4gDQo+IFRoYXQgZ2l2ZXMgeW91
-IDEwIHN5c3RlbSBjYWxscyBwZXIgcmRyYW5kIGluc3RydWN0aW9uDQo+IGFuZCBtb3N0bHkgdGFr
-ZXMgdGhlIGxhdGVuY3kgb3V0IG9mIGxpbmUuDQoNCkkgYW0gbm90IHJlYWxseSBoYXBweSBnb2lu
-ZyB0aGUgcmRyYW5kIHBhdGggZm9yIGEgY291cGxlIG9mIHJlYXNvbnM6DQotIGl0IGlzIG5vdCBh
-dmFpbGFibGUgb24gb2xkZXIgUENzDQotIGl0cyBwZXJmb3JtYW5jZSB2YXJpZXMgYWNyb3NzIENQ
-VXMgdGhhdCBzdXBwb3J0IGl0IChhbmQgYXMgSSB1bmRlcnN0b29kIHZhcmllcyBxdWl0ZSBzb21l
-KQ0KLSBpdCBpcyB4ODYgY2VudHJpYyBhbmQgbm90IGdlbmVyaWMNCg0KU28sIGlmIHdlIGNhbiB1
-c2UgZ2V0X3JhbmRvbV9ieXRlcygpIGludGVyZmFjZSB3aXRob3V0IHRpZ2h0ZW5pbmcgb3Vyc2Vs
-dmVzIHRvDQphIHBhcnRpY3VsYXIgaW5zdHJ1Y3Rpb24sIEkgdGhpbmsgaXQgd291bGQgYmUgYmV0
-dGVyLiANClRoZSBudW1iZXJzIEkgaGF2ZSBtZWFzdXJlZCBzbyBmYXIgZm9yIGJ1ZmZlciBzaXpl
-IG9mIDQwOTYgaXMgU1cgb25seSwgDQpJIHdpbGwgdHJ5IHRvIG1lYXN1cmUgdG9kYXkgd2hhdCBi
-b29zdCAoaWYgYW55KSB3ZSBjYW4gaGF2ZSBpZiB3ZSB1c2UgU0lNRCANCmNvZGUgZm9yIGl0LiAN
-Cg0KQmVzdCBSZWdhcmRzLA0KRWxlbmEuDQo=
+On Sun, May 5, 2019 at 3:04 PM Brian Masney <masneyb@onstation.org> wrote:
+
+> Add the CMA (Contiguous Memory Allocator) for the MSM DRM driver, the
+> simple panel, and the TI LM3630A driver in order to support the display
+> on the LG Nexus 5 (hammerhead) phone.
+>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+> The panel and backlight are currently compiled into the kernel, but will
+> be moved to be modules once the display is fully working in a later
+> verison of this patch series.
+
+I don't see why we would want to do that, the FB console is
+traditionally (x86) good to alwa=C3=BDs get up, as serial console
+might not always be available. For example for people
+who can't solder special cables but still want to boot a
+custom ROM on their Nexus. So I'd say keep it like this.
+
+Yours,
+Linus Walleij
