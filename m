@@ -2,142 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E681558C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 103DA1559F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfEFV1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:27:24 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40563 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfEFV1V (ORCPT
+        id S1726566AbfEFV3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:29:35 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:12930 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfEFV3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:27:21 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h4so19201728wre.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:27:19 -0700 (PDT)
+        Mon, 6 May 2019 17:29:34 -0400
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Woojung.Huh@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Woojung.Huh@microchip.com";
+  x-sender="Woojung.Huh@microchip.com"; x-conformance=spf_only;
+  x-record-type="v=spf1"; x-record-text="v=spf1 mx
+  a:ushub1.microchip.com a:smtpout.microchip.com
+  a:mx1.microchip.iphmx.com a:mx2.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Woojung.Huh@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; spf=Pass smtp.mailfrom=Woojung.Huh@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,439,1549954800"; 
+   d="scan'208";a="33461632"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 May 2019 14:29:33 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 6 May 2019 14:29:33 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2IPjvXS9ovmHMp9QDNvfJjrdnqj8PLY/VSE8ERdo3T0=;
-        b=dKpZCWP9myNRHzdWXZ6L33Bb73ivM+YgfGeA+BpqzEeVQa3KbVgnpyyVHRTymnmIa6
-         6W+nlMthTqFhKi3/9zP/3qY5BeWB0mLQA/H+v/PPkf4DOaxCj+bJUKaRc15R4PkfiaQG
-         bHp0hSwK/M7MOQW8PKMv+/PBTVdsrPcAO2yY4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2IPjvXS9ovmHMp9QDNvfJjrdnqj8PLY/VSE8ERdo3T0=;
-        b=GCP+WDVCnmt23qvvT44yV3mPrX527HjIS/GKtyCfibV/c4wQppMxLsytH8DxFLKlg7
-         9RXQlfFzL64RHe+FpCZVNoU6qUREVW2S9pYH2in7GPcvz1KEg580g5HJNTn0e7AcB5ii
-         sNvrhHXph3JS25s5sRElGDhdGbUKJ6VtQjlKzenz+14KJ6A++tmfZcAc0kQucRj9Y3aw
-         jIj6i3UHh97K+vsRTXqb2nY58Th+hFBTvYBZ0go8dcy7oW+WpLGNrJBFZ4HOieuFOGie
-         3tXQnwhooJKs/UNQ4/WIpfaXTT6lvnqrRkEvux9IRPB5B24CnKa7gI/WYT9E6RnFDXjg
-         wb/A==
-X-Gm-Message-State: APjAAAUpwRXEVD1nklHr5ZJGpVnqI3WbiXhjjhnuZdZQO2OemyTReI0m
-        ENxzL7rDVngLKNXL/iriCF4hsw==
-X-Google-Smtp-Source: APXvYqyOtk3Rqom23UwLgtBVc+ZvknnqAUBdzMotGRsBa6ozNAIpwlohAeAAzm8RjF7k21eMmadFVQ==
-X-Received: by 2002:adf:db0b:: with SMTP id s11mr12592644wri.180.1557178038670;
-        Mon, 06 May 2019 14:27:18 -0700 (PDT)
-Received: from bill-the-cat (cpe-65-184-141-147.ec.res.rr.com. [65.184.141.147])
-        by smtp.gmail.com with ESMTPSA id a22sm9808162wmb.47.2019.05.06.14.27.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 14:27:14 -0700 (PDT)
-Date:   Mon, 6 May 2019 17:27:09 -0400
-From:   Tom Rini <trini@konsulko.com>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     Karsten Merker <merker@debian.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>,
-        Anup Patel <anup@brainfault.org>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Joe Hershberger <joe.hershberger@ni.com>,
-        Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rick Chen <rick@andestech.com>, Simon Glass <sjg@chromium.org>,
-        u-boot@lists.denx.de
-Subject: Re: [U-Boot] [v4 PATCH] RISCV: image: Add booti support
-Message-ID: <20190506212709.GD31207@bill-the-cat>
-References: <20190506181134.9575-1-atish.patra@wdc.com>
- <251ea152-6407-02e2-076c-7ee377f6181d@gmx.de>
- <20190506203956.ty6gkmhm4dlylld4@excalibur.cnev.de>
- <d1c63af6-e1e0-4ec3-e97a-4c3e9ec11623@gmx.de>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bz4unriP6vkqt6KG0HTVxImRo2Alxmy+fyKM0lqVdYU=;
+ b=EzEITD7WFSU/qUi7DUDxXpXxWdolCW2/9zqRd0keoaX5xgJKkIhHdZc6xNlMhi+2zld1cDL09rJUTLODWBtdurAYnfo2jEh8HT2/6Ujm76HUJXX5Xv/SXjnM2XK9p3LWiK0d4XPLJf037An0DwTvGKK/OOf9Yejak6+osxfcxoc=
+Received: from DM5PR1101MB2139.namprd11.prod.outlook.com (10.174.104.136) by
+ DM5PR1101MB2090.namprd11.prod.outlook.com (10.174.104.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Mon, 6 May 2019 21:29:18 +0000
+Received: from DM5PR1101MB2139.namprd11.prod.outlook.com
+ ([fe80::dcb0:6ce:8f02:9d65]) by DM5PR1101MB2139.namprd11.prod.outlook.com
+ ([fe80::dcb0:6ce:8f02:9d65%3]) with mapi id 15.20.1856.012; Mon, 6 May 2019
+ 21:29:18 +0000
+From:   <Woojung.Huh@microchip.com>
+To:     <ynezz@true.cz>, <netdev@vger.kernel.org>, <davem@davemloft.net>,
+        <steve.glendinning@shawell.net>, <UNGLinuxDriver@microchip.com>
+CC:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <frowand.list@gmail.com>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <maxime.ripard@bootlin.com>, <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH net-next v2 4/4] net: usb: smsc: fix warning reported by
+ kbuild test robot
+Thread-Topic: [PATCH net-next v2 4/4] net: usb: smsc: fix warning reported by
+ kbuild test robot
+Thread-Index: AQHVBFKA7+FmJGtDekycg4kDQT61q6ZenKEg
+Date:   Mon, 6 May 2019 21:29:18 +0000
+Message-ID: <DM5PR1101MB21399FAD9C7E072F24207C14E7300@DM5PR1101MB2139.namprd11.prod.outlook.com>
+References: <1557177887-30446-1-git-send-email-ynezz@true.cz>
+ <1557177887-30446-5-git-send-email-ynezz@true.cz>
+In-Reply-To: <1557177887-30446-5-git-send-email-ynezz@true.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [47.19.18.123]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8d876469-f074-4f84-2d07-08d6d269e596
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR1101MB2090;
+x-ms-traffictypediagnostic: DM5PR1101MB2090:
+x-microsoft-antispam-prvs: <DM5PR1101MB2090F33ADC151AA37234D676E7300@DM5PR1101MB2090.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0029F17A3F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(346002)(39860400002)(189003)(199004)(33656002)(7696005)(86362001)(229853002)(316002)(110136005)(14444005)(8676002)(256004)(72206003)(54906003)(478600001)(99286004)(52536014)(6636002)(76176011)(81166006)(6246003)(66476007)(7416002)(64756008)(55016002)(66446008)(66556008)(73956011)(66946007)(9686003)(4326008)(53936002)(8936002)(25786009)(6116002)(3846002)(6436002)(76116006)(68736007)(486006)(71200400001)(71190400001)(66574012)(66066001)(305945005)(14454004)(7736002)(81156014)(446003)(11346002)(476003)(5660300002)(6506007)(26005)(2501003)(74316002)(102836004)(2906002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR1101MB2090;H:DM5PR1101MB2139.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: jfM9JAw2WI01RYvQnbkGVl+fT2Qv4vi2ZotEaqeI8rnn+PU/Rthha5IDTxTGuh/SXtT+3Lm1unHb99oZISHDh9HtTCrN1/IGXWWOWXUKnSgyZdOvhcMjYFWMc7j0AI6QhjTytPmrUEfV4bRB0FAPeaXyBOpxsMA+GyjRqqSPnneGcjDjqcqTMMwrpuhXMzoyIW1+NMIrmqpK9Mk+jLHdA785025OSNOooBtTiv6SllFi5TGrBbL3Ugr8EdRxdMxBFu2bTbqRNvTVFFSyNJqSgLtTkba6xFgZn7MUXUm36tZ1AmHZkTaVNgOwKwaWzhHS1C6pg+csCJLo0t/5KCvCgKT0rwIaqwK0pWAe6lf6Bzw2PNW1KDD8ab7thAPMmnuYzft3skhfze1jqs+cy9W1tX8zAPY1ETJSZYOO+584lp0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8MGw1ILlV46eIqUv"
-Content-Disposition: inline
-In-Reply-To: <d1c63af6-e1e0-4ec3-e97a-4c3e9ec11623@gmx.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d876469-f074-4f84-2d07-08d6d269e596
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2019 21:29:18.3226
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1101MB2090
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---8MGw1ILlV46eIqUv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 06, 2019 at 11:10:57PM +0200, Heinrich Schuchardt wrote:
-> On 5/6/19 10:39 PM, Karsten Merker wrote:
-> >On Mon, May 06, 2019 at 10:06:39PM +0200, Heinrich Schuchardt wrote:
-> >>On 5/6/19 8:11 PM, Atish Patra wrote:
-> >>>This patch adds booti support for RISC-V Linux kernel. The existing
-> >>>bootm method will also continue to work as it is.
-> >[...]
-> >>>+	"boot arm64/riscv Linux Image image from memory", booti_help_text
-> >>
-> >>%s/Image image/image/
-> >>
-> >>"arm64/riscv" is distracting. If I am on RISC-V I cannot boot an ARM64
-> >>image here. Remove the reference to the architecture, please.
-> >
-> >Hello,
-> >
-> >I'm not sure about the last point - ISTR (please correct me if my
-> >memory betrays me here) that an arm64 U-Boot can in principle be
-> >used to boot either an arm64 or an armv7 kernel, but the commands
-> >are different in those cases (booti for an arm64 "Image" format
-> >kernel and bootz for an armv7 "zImage" format kernel), so having
-> >the information which kernel format is supported by the
-> >respective commands appears useful to me.  If the arm64 kernel
-> >image format would have a distinctive name (like "zImage" on
-> >armv7 or "bzImage" on x86) that would be less problematic, but
-> >with the confusion potential of "boot a Linux Image" (as in the
-> >arm64/riscv-specific "Image" format) vs "boot a Linux image" (as
-> >in generally some form of kernel image), I think explicitly
-> >mentioning the supported architectures makes sense.
->=20
-> In this case you have to ensure that only the *supported* architectures
-> are mentioned. RISC-V is not supported on ARM64.
-
-The help should be re-worded to be both architecture agnostic and clear
-that it is for the Linux Kernel 'Image' format images.
-
---=20
-Tom
-
---8MGw1ILlV46eIqUv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJc0KatAAoJEIf59jXTHXZS06wQAMJiT+a5vv3S5ScRWpC2NcYp
-Zr1k+ddMgy31YS8htCujzgmgKJkxK3ZjdLMiDbzeRC/4r6FZ/E2r8jeU8wRo+39c
-wdiC60MqLuQ2Z33KpZyox1JRniBra0nmVZwdItoUG1SXFcC50DWryhGH8pTBMja4
-5moE9rBAo2W/cTQ+rCnYK32IRfTu17hhhJxu3ufv/aNkS4ofvnad/fw7nz38vE+4
-HxQeNSvo0O411C2ZUlFo/i97Okv7BFwf1I2orfQhKusfpNZxOFl0QPayhDf1/BRV
-RpYf3U742omDpH4nX07WFRP6wsa8hTY+n6rHPagAP0/M3aj4/LqxowMuWlV+2rp7
-YFx9cwuxO8OxgBpF5YFdUMed/79OXwIZmvCTxYoY7dLetsMXmj7yBV7gXSRthzFt
-TMgPIQDMfGhSk+Xn6EWMvID41okr4aeseIcWs5OGVYZJcVfuDGxiNwU7OKqE1wco
-WGbLKuL8e4wlH/JBI6ZHlTPxIDgOUyHODE+FFejLfRmaF4AvmQOw6RT/Tuc6Qzqm
-DYFaALNELpL4CUr6/yV8TqCJ6YyBSjT3W9VSwrWh/e3HH7/sjtp6fGcWI3puQa18
-M70ZdZZrhl05LqPsyLS4Qv/gFpcGiqa3bBU195fKOjK6pghsZ+5MXG+vtOCgHw6n
-fUu6+6tNKfSw1n6iEJfz
-=cbu5
------END PGP SIGNATURE-----
-
---8MGw1ILlV46eIqUv--
+PiBUaGlzIHBhdGNoIGZpeGVzIGZvbGxvd2luZyB3YXJuaW5nIHJlcG9ydGVkIGJ5IGtidWlsZCB0
+ZXN0IHJvYm90Og0KPiANCj4gIEluIGZ1bmN0aW9uIOKAmG1lbWNweeKAmSwNCj4gICAgICBpbmxp
+bmVkIGZyb20g4oCYc21zYzc1eHhfaW5pdF9tYWNfYWRkcmVzc+KAmSBhdCBkcml2ZXJzL25ldC91
+c2Ivc21zYzc1eHguYzo3Nzg6MywNCj4gICAgICBpbmxpbmVkIGZyb20g4oCYc21zYzc1eHhfYmlu
+ZOKAmSBhdCBkcml2ZXJzL25ldC91c2Ivc21zYzc1eHguYzoxNTAxOjI6DQo+ICAuL2luY2x1ZGUv
+bGludXgvc3RyaW5nLmg6MzU1Ojk6IHdhcm5pbmc6IGFyZ3VtZW50IDIgbnVsbCB3aGVyZSBub24t
+bnVsbCBleHBlY3RlZCBbLVdub25udWxsXQ0KPiAgICByZXR1cm4gX19idWlsdGluX21lbWNweShw
+LCBxLCBzaXplKTsNCj4gICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCj4g
+IGRyaXZlcnMvbmV0L3VzYi9zbXNjNzV4eC5jOiBJbiBmdW5jdGlvbiDigJhzbXNjNzV4eF9iaW5k
+4oCZOg0KPiAgLi9pbmNsdWRlL2xpbnV4L3N0cmluZy5oOjM1NTo5OiBub3RlOiBpbiBhIGNhbGwg
+dG8gYnVpbHQtaW4gZnVuY3Rpb24g4oCYX19idWlsdGluX21lbWNweeKAmQ0KPiANCj4gSSd2ZSBy
+ZXBsYWNlZCB0aGUgb2ZmZW5kaW5nIG1lbWNweSB3aXRoIGV0aGVyX2FkZHJfY29weSwgYmVjYXVz
+ZSBJJ20NCj4gMTAwJSBzdXJlLCB0aGF0IG9mX2dldF9tYWNfYWRkcmVzcyBjYW4ndCByZXR1cm4g
+TlVMTCBhcyBpdCByZXR1cm5zIHZhbGlkDQo+IHBvaW50ZXIgb3IgRVJSX1BUUiBlbmNvZGVkIHZh
+bHVlLCBub3RoaW5nIGVsc2UuDQo+IA0KPiBJJ20gaGVzaXRhbnQgdG8ganVzdCBjaGFuZ2UgSVNf
+RVJSIGludG8gSVNfRVJSX09SX05VTEwgY2hlY2ssIGFzIHRoaXMNCj4gd291bGQgbWFrZSB0aGUg
+d2FybmluZyBkaXNhcHBlYXIgYWxzbywgYnV0IGl0IHdvdWxkIGJlIGNvbmZ1c2luZyB0bw0KPiBj
+aGVjayBmb3IgaW1wb3NzaWJsZSByZXR1cm4gdmFsdWUganVzdCB0byBtYWtlIGEgY29tcGlsZXIg
+aGFwcHkuDQo+IA0KPiBGaXhlczogYWRmYjNjYjJjNTJlICgibmV0OiB1c2I6IHN1cHBvcnQgb2Zf
+Z2V0X21hY19hZGRyZXNzIG5ldyBFUlJfUFRSIGVycm9yIikNCj4gUmVwb3J0ZWQtYnk6IGtidWls
+ZCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBQZXRyIMWgdGV0
+aWFyIDx5bmV6ekB0cnVlLmN6Pg0KPiAtLS0NCg0KUmV2aWV3ZWQtYnk6IFdvb2p1bmcgSHVoIDx3
+b29qdW5nLmh1aEBtaWNyb2NoaXAuY29tPg0KDQo=
