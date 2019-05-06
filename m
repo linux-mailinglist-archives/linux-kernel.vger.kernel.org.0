@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B87A914CA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C52E14ED0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfEFOmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:42:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
+        id S1727565AbfEFOiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbfEFOmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:04 -0400
+        id S1726810AbfEFOiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:38:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 970B221479;
-        Mon,  6 May 2019 14:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65BA121530;
+        Mon,  6 May 2019 14:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153724;
-        bh=385CK5g0kpK3lqPM3QqwDpj3sUCE0y8wLuVdT640+NY=;
+        s=default; t=1557153489;
+        bh=Cme42BXyM5B/axh0ikcg14fPMotlgAYQcMcYvYb9TJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdjBNjfmVbrEl1QKBRQs5k0uBD5y63PfTzjTj+k9zuub/hIUpUZjD1iGK5e8YGJzR
-         vGrBjThXoNBkZXEn8kNU1uEluBbEd20nI21Si2TXSBYDeXm/XB8qaAGykyfUNlyavU
-         2F9vF5umbKvEFwbSx3Ea33msRnXHWGRdE8GQp+gk=
+        b=BfZ9hj78/24yrzP2eaxnruruRKelLFGNYYdD8gF1VKG7Omt5QJYAKJnBbM1tAouz5
+         NOFgQ/qqb8BpXsZaTGNqshJB86s7gCDZKJmQs+KmRuQkqPJKCwd5QOLXgL2aRKZBPZ
+         pO8i7Kul/JXLRM0wpJDjgHo14shZG3g2ep2C7K0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.19 73/99] clk: qcom: Add missing freq for usb30_master_clk on 8998
-Date:   Mon,  6 May 2019 16:32:46 +0200
-Message-Id: <20190506143100.745505322@linuxfoundation.org>
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.0 109/122] Input: snvs_pwrkey - initialize necessary driver data before enabling IRQ
+Date:   Mon,  6 May 2019 16:32:47 +0200
+Message-Id: <20190506143104.321484206@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jhugo@codeaurora.org>
+From: Anson Huang <anson.huang@nxp.com>
 
-commit 0c8ff62504e3a667387e87889a259632c3199a86 upstream.
+commit bf2a7ca39fd3ab47ef71c621a7ee69d1813b1f97 upstream.
 
-The usb30_master_clk supports a 60Mhz frequency, but that is missing from
-the table of supported frequencies.  Add it.
+SNVS IRQ is requested before necessary driver data initialized,
+if there is a pending IRQ during driver probe phase, kernel
+NULL pointer panic will occur in IRQ handler. To avoid such
+scenario, just initialize necessary driver data before enabling
+IRQ. This patch is inspired by NXP's internal kernel tree.
 
-Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: d3dc6e232215 ("input: keyboard: imx: add snvs power key driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/qcom/gcc-msm8998.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/keyboard/snvs_pwrkey.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -1101,6 +1101,7 @@ static struct clk_rcg2 ufs_axi_clk_src =
+--- a/drivers/input/keyboard/snvs_pwrkey.c
++++ b/drivers/input/keyboard/snvs_pwrkey.c
+@@ -148,6 +148,9 @@ static int imx_snvs_pwrkey_probe(struct
+ 		return error;
+ 	}
  
- static const struct freq_tbl ftbl_usb30_master_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
-+	F(60000000, P_GPLL0_OUT_MAIN, 10, 0, 0),
- 	F(120000000, P_GPLL0_OUT_MAIN, 5, 0, 0),
- 	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
- 	{ }
++	pdata->input = input;
++	platform_set_drvdata(pdev, pdata);
++
+ 	error = devm_request_irq(&pdev->dev, pdata->irq,
+ 			       imx_snvs_pwrkey_interrupt,
+ 			       0, pdev->name, pdev);
+@@ -163,9 +166,6 @@ static int imx_snvs_pwrkey_probe(struct
+ 		return error;
+ 	}
+ 
+-	pdata->input = input;
+-	platform_set_drvdata(pdev, pdata);
+-
+ 	device_init_wakeup(&pdev->dev, pdata->wakeup);
+ 
+ 	return 0;
 
 
