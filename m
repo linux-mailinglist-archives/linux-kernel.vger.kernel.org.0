@@ -2,107 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB7E143CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 05:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE8F14569
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725994AbfEFDmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 23:42:17 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36030 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbfEFDmR (ORCPT
+        id S1726501AbfEFHiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:38:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38894 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbfEFHho (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 23:42:17 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c14so3280919qke.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 20:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=evolvfc+v/PDNzMrluV2UQ6Ca3y538x1hstsH93Ra8w=;
-        b=YK8OVjTBIW7T1GEvXYMhHWYCjfY3CgPx2TBCu4U4XnziD9WfeBWmRvw2MH656182yn
-         v5E0ELEy7ybRGIf2LIaEXC7e1+AM0CnRv5xRiw1C471J0xEK8w1mhdkecvwfAYvxvjDY
-         yEi6/iycQ4h9EvgcyvKoe2ixzmmhGCYpefZa5Z+PLYdasB/4vegCtIs2bXERfCL4hSay
-         UXvHLowEBEas4JJHnZhu0G8PzVTc/fIyGDuHJ45a68VqBtnLLtlGc6xoy1ALDydOn6jo
-         WSh7oYMiR6uJnW4+hL/thRHdHwH9vVKxcgfV2U2qQsp4JbN+vWZh7cOIaPCJ9+1SOKs2
-         MF1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=evolvfc+v/PDNzMrluV2UQ6Ca3y538x1hstsH93Ra8w=;
-        b=GIqfRaA6s2C4uvaTTDsfpAUb3YKH9l2M9tc3MgbT1/APwFlsUVd0n6zXxVsyajYo5t
-         bA76pngmGGFI7wXMQiHTwcoYOAgd5C+Qjjv5L69RuKQXNcftFIXwtSI1O4kGKlZzB8ej
-         20aXjk1YcAJpmdMLYdXscMwxRWfez9bapZcyxGj9H0Ah5I5k/Q18NGuH1wQX1TzqYnGY
-         CrMSG8fA5inbB9Sy7kpyohv4I84WT8/SYJUiEygIz63XIDHubQSMD1W8d/4f9NrinWLb
-         9Gi572hp16JubYYmUAZ2UG05dqd4eWEaNERYZRmqdxvL+ozc/C35h1WSK08YIXbWtItx
-         G3pQ==
-X-Gm-Message-State: APjAAAWc5+G0NlstmFFkhe+WrXhtf3ajXu63XlX2890VlAEn0+1yMeYV
-        ItgyHexPiSrz1/hU8PZmhR5LIHmmhqVEoK4FcwaBjg4QQ/ICJg==
-X-Google-Smtp-Source: APXvYqzU2ai2PliPSf6C3qkb0Wsn8YH7PTRkcyfGmoYYVW+WtUlIKFpIeosC5YtXgT9nqOiKc5vDmanRuyCqoRkt7eg=
-X-Received: by 2002:a37:404b:: with SMTP id n72mr18080998qka.98.1557114136488;
- Sun, 05 May 2019 20:42:16 -0700 (PDT)
+        Mon, 6 May 2019 03:37:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tzpXHk7pggK3a6IReCA75UnDglv4kzjtwAX41NwuIs4=; b=NjHcG+e5mciylrLgGpMM5XvoQ
+        xOog8IPCBf1UzwcpqaA6fQTHSG8iv9C6CvC2qOUWzWc1Idw1jS0qia5310WtllkAjfaM+7p5dv1QQ
+        FniGskOBWOn5W4M7Dick338AZbeW9tlV5ueQYGHR76aN7OvKeA+i2lFdJW9zctVOk0mJ4=;
+Received: from kd111239184067.au-net.ne.jp ([111.239.184.67] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hNYBt-0000s1-90; Mon, 06 May 2019 07:37:37 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 7342C441D41; Mon,  6 May 2019 04:53:45 +0100 (BST)
+Date:   Mon, 6 May 2019 12:53:45 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     "S.j. Wang" <shengjiu.wang@nxp.com>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V4] ASoC: fsl_esai: Add pm runtime function
+Message-ID: <20190506035345.GJ14916@sirena.org.uk>
+References: <VE1PR04MB64794DF2979F3AD350A9EB3DE3370@VE1PR04MB6479.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190424101934.51535-1-duyuyang@gmail.com> <20190424101934.51535-20-duyuyang@gmail.com>
- <20190425193247.GU12232@hirez.programming.kicks-ass.net> <CAHttsrY4jK2cayBE8zNCSJKDAkzLiBb40GVfQHpJi2YK1nEZaQ@mail.gmail.com>
- <20190430121148.GV2623@hirez.programming.kicks-ass.net> <CAHttsrYfCdpNwQ81ppFQ9b_57tuLYOb=xi=CbRBysnB+LgjGGg@mail.gmail.com>
-In-Reply-To: <CAHttsrYfCdpNwQ81ppFQ9b_57tuLYOb=xi=CbRBysnB+LgjGGg@mail.gmail.com>
-From:   Yuyang Du <duyuyang@gmail.com>
-Date:   Mon, 6 May 2019 11:42:05 +0800
-Message-ID: <CAHttsrZKx0cgs6t9ahxmV7ENp6QWG4H9N7KMvsgrucQ_rsqTJQ@mail.gmail.com>
-Subject: Re: [PATCH 19/28] locking/lockdep: Optimize irq usage check when
- marking lock usage bit
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     will.deacon@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
-        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7e8BFhNxqpjiNKz7"
+Content-Disposition: inline
+In-Reply-To: <VE1PR04MB64794DF2979F3AD350A9EB3DE3370@VE1PR04MB6479.eurprd04.prod.outlook.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 May 2019 at 11:05, Yuyang Du <duyuyang@gmail.com> wrote:
->
-> On Tue, 30 Apr 2019 at 20:12, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > IOW he's going to massively explode this storage.
-> > >
-> > > If I understand correctly, he is not going to.
-> > >
-> > > First of all, we can divide the whole usage thing into tracking and checking.
-> > >
-> > > Frederic's fine-grained soft vector state is applied to usage
-> > > tracking, i.e., which specific vectors a lock is used or enabled.
-> > >
-> > > But for usage checking, which vectors are does not really matter. So,
-> > > the current size of the arrays and bitmaps are good enough. Right?
-> >
-> > Frederic? My understanding was that he really was going to split the
-> > whole thing. The moment you allow masking individual soft vectors, you
-> > get per-vector dependency chains.
->
-> It seems so. What I understand is: for IRQ usage, the difference is:
->
-> Each lock has a new usage mask:
->
->         softirq10, ..., softirq1, hardirq
->
-> where softirq1 | softirq2 | ... | softirq10 = softirq
->
-> where softirq, exactly what was, virtually is used in the checking.
-> This is mainly because, any irq vector has any usage, the lock has
-> that usage, be it hard or soft.
->
-> If that is right, hardirq can be split too (why not if softirq does
-> :)). So, maybe a bitmap to do them all for tracking, and optionally
-> maintain aggregate softirq and hardirq for checking as before.
-> Regardless, may irq-safe reachability thing is not affected.
->
-> And for the chain, which is mainly for caching does not really matter
-> split or not (either way, the outcome will be the same?), because
-> there will be a hash for a chain anyway, which is the same. Right?
 
-Oh, another look at the patch, I was wrong, it can be very different
-if consider: used in vector X vs. enabled on vector Y (which is ok),
-when enablement can be so fine-grained as well, which is actually the
-point of the patch, though no difference for now :(
+--7e8BFhNxqpjiNKz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, May 05, 2019 at 03:28:59AM +0000, S.j. Wang wrote:
+
+> We find that maybe it is caused by the Transfer-Encoding format.
+> We sent the patch by the  --transfer-encoding=8bit, but in the receiver side
+> it shows:
+]
+> Content-Type: text/plain; charset="utf-8"
+> Content-Transfer-Encoding: base64
+
+> It may be caused by our company's mail server. We are checking...
+
+Ah, that looks likely...  not sure I have any great suggestions for how
+to resolve it but at least it looks like progress on figuring out the
+cause, I haven't been able to see anything wrong locally.
+
+--7e8BFhNxqpjiNKz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzPr8gACgkQJNaLcl1U
+h9DVeQf7ByKyqDU+F0dmHJsGDAll4nFkuDLq9wax+i1rjUCghvBhzq+0tNPf51Dk
+oJT0+OmCtKJcYIu4Z7OsLBDr75SiQE83YxdWnaAGik49IJUA7ggTXCtXfpLcs2Vy
+VtPc2H969t2crPjYI3AkUIJzYHB2GCwgsWvKmDeWS0c6Sb55eN5DptFsS6UuPcrI
+CCOhBJvO9P85bBNjkMRAla+SM6GV77Uq5DC4iV7ert68gwp8pRVdMY1sNTx9J7BZ
+soqk2U9xLPJtJUeZs89WKZy8mCW1BtFuvQAvt1W/mNJmkWWedc4FkAQgHV3b/pIn
+z4slaJ2AqBkaAIC0hq6wGq8dKSVecQ==
+=/QHA
+-----END PGP SIGNATURE-----
+
+--7e8BFhNxqpjiNKz7--
