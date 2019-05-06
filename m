@@ -2,68 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38EC1148BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6EE2148C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfEFLQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 07:16:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35404 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfEFLQF (ORCPT
+        id S1726483AbfEFLQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 07:16:13 -0400
+Received: from [195.159.176.226] ([195.159.176.226]:52154 "EHLO
+        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfEFLQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 07:16:05 -0400
-Received: by mail-io1-f67.google.com with SMTP id r18so10777591ioh.2;
-        Mon, 06 May 2019 04:16:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:newsgroups:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ll4tLtKAz5QfqQNpJ8SOOQ8DBmPbzjjbapAWPj5NxaA=;
-        b=O4ELULrFzjuXLVhmIJ0iWCRsqi2vpscptwlzxT8ncscRH0fiSg4ocaplwaW1Vq4DS8
-         8kknL+jkrRMKRGTlD20UwPPQ5wztsRxHlwnHaSfWjIR8Cz1tEneerB6MPBIm1mSY0f/W
-         bDswQ3/9zD164+sFqKRjjLNnLN2ThRE9FZCBJ3aIWN7hldnjnZPR4wFdsthmnJDzbU+q
-         VMDf3ulbbylpVBo4K92BKLw6cUEzFrDLDXop3FhLQw/gaxwMT+oSlR2zeHlixCM2ocDf
-         HjgkAVh+moZ67ZDzd43pQn0uFNSkzJnm2oMW1Hm76w1L5MrkS2AATYLINtXX/ggJfak+
-         6fsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:newsgroups:references
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Ll4tLtKAz5QfqQNpJ8SOOQ8DBmPbzjjbapAWPj5NxaA=;
-        b=hRI6RLupc1T0jH5tC+8Zt1Q8xI2PQHt1Ii6mxU/GfXyBkSa6wU4mW2PnwC/DEcioTp
-         rcA8xHABC/QVhzqpCFDBP8fhFBeeuka1yAwvyIKBbRQ+1YlcuMxOuK2EU4XaVRfMJUxA
-         P+Ih/xG5ym3FvSYgurRHDo9/iQFvjjcuibkFmfdMBMjKBdZ5e6ApuURDVqAc4zna7ciM
-         kI9sExpSC4PqPClx0JwtSYwX2l3NbQrLDYI06zqCpw1qTdnQ6XsvsXqnc/XW+XvUWy1O
-         /THIDxwnDJzpSSpnKFG3M/2QKRc0ji8pv7SQopfx1IzwqIGULODmp1Is5R6t/Hn8B0NX
-         iK5g==
-X-Gm-Message-State: APjAAAWgKRDFYCUD1FDwmFUknUpP97Xsm5OPtvM2rRxmwUaQnDLaODcG
-        LRSnpvGPtdst3jCtkhQz058MhUkN
-X-Google-Smtp-Source: APXvYqzaAZaaReBRZqOTq7QjKFbI3hBW0J8EDh/qu8rPIMmtrAExjTwBy18jZSWfdty949f+TWigcA==
-X-Received: by 2002:a5e:d503:: with SMTP id e3mr17129537iom.46.1557141363901;
-        Mon, 06 May 2019 04:16:03 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
-        by smtp.googlemail.com with ESMTPSA id 12sm8361952itm.2.2019.05.06.04.16.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 04:16:03 -0700 (PDT)
+        Mon, 6 May 2019 07:16:10 -0400
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
+        id 1hNbbJ-000vSh-Fy
+        for linux-kernel@vger.kernel.org; Mon, 06 May 2019 13:16:05 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v1 3/3] drm/tegra: Support PM QoS memory bandwidth
  management
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Newsgroups: gmane.linux.kernel,gmane.comp.video.dri.devel,gmane.linux.ports.tegra
+Date:   Mon, 6 May 2019 14:15:59 +0300
+Message-ID: <e1dc16d2-db9e-6869-81dc-8ffe5d5fd6fe@gmail.com>
 References: <20190505173707.29282-1-digetx@gmail.com>
  <20190505173707.29282-4-digetx@gmail.com>
-Message-ID: <e1dc16d2-db9e-6869-81dc-8ffe5d5fd6fe@gmail.com>
-Date:   Mon, 6 May 2019 14:15:59 +0300
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
-MIME-Version: 1.0
 In-Reply-To: <20190505173707.29282-4-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -150,3 +119,4 @@ getting the patches upstreamed.
 
 -- 
 Dmitry
+
