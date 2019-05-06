@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFDF14DE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE4614CA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfEFO4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:56:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41866 "EHLO mail.kernel.org"
+        id S1728442AbfEFOmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:42:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727693AbfEFOpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:13 -0400
+        id S1728425AbfEFOmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 308972053B;
-        Mon,  6 May 2019 14:45:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 853E7214AE;
+        Mon,  6 May 2019 14:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153912;
-        bh=+52cvG3pHsqSgjG/lMIyF9g7CcFQcev64IC0EDoxeF4=;
+        s=default; t=1557153731;
+        bh=HxP6j9eOxPuAu3PNxMhnaWz0ZlCmBnUYcwZkays1naA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GR3V8/rU8/PU3cnjxg5ANjKW5PYeZSKLNIv0rvveMxazpwtNpMgFN1oWKr1SgbhUX
-         2O5q9A/UKPP5EyAN9BxYWdpZS4BSur8glMLSSDjpdV8WJt/WAtWNghcn5eZXbA3apA
-         LpWpYxqYqYOSUBHBGITlQzYwu9slp8WPh/BeIrC4=
+        b=u7JkXTvhTDoqMFDLENcnSNL6mQ2UxZdiV3SzDJMqQwIngTlkB9iTQ8Quc40Ldmm7g
+         8mWUZxxybjH7iCJBhKuN9V/hd4ugp30/8qG+kkTe+GoRzvTmgOgh+Jwl78nQO68eG9
+         0kj9+dQskPg1kJcoofj+lZ1PLiREVpqtE+zU0Zq8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 41/75] debugfs: fix use-after-free on symlink traversal
+        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 76/99] staging: iio: adt7316: fix the dac write calculation
 Date:   Mon,  6 May 2019 16:32:49 +0200
-Message-Id: <20190506143056.946616088@linuxfoundation.org>
+Message-Id: <20190506143101.024824746@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 93b919da64c15b90953f96a536e5e61df896ca57 ]
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-symlink body shouldn't be freed without an RCU delay.  Switch debugfs to
-->destroy_inode() and use of call_rcu(); free both the inode and symlink
-body in the callback.  Similar to solution for bpf, only here it's even
-more obvious that ->evict_inode() can be dropped.
+commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The lsb calculation is not masking the correct bits from the user input.
+Subtract 1 from (1 << offset) to correctly set up the mask to be applied
+to user input.
+
+The lsb register stores its value starting at the bit 7 position.
+adt7316_store_DAC() currently assumes the value is at the other end of the
+register. Shift the lsb value before storing it in a new variable lsb_reg,
+and write this variable to the lsb register.
+
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/debugfs/inode.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/staging/iio/addac/adt7316.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index ccfe1e1cb6bc..f4df6feec271 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -170,19 +170,24 @@ static int debugfs_show_options(struct seq_file *m, struct dentry *root)
- 	return 0;
- }
- 
--static void debugfs_evict_inode(struct inode *inode)
-+static void debugfs_i_callback(struct rcu_head *head)
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -1447,7 +1447,7 @@ static ssize_t adt7316_show_DAC(struct a
+ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
+ 		int channel, const char *buf, size_t len)
  {
--	truncate_inode_pages_final(&inode->i_data);
--	clear_inode(inode);
-+	struct inode *inode = container_of(head, struct inode, i_rcu);
- 	if (S_ISLNK(inode->i_mode))
- 		kfree(inode->i_link);
-+	free_inode_nonrcu(inode);
-+}
-+
-+static void debugfs_destroy_inode(struct inode *inode)
-+{
-+	call_rcu(&inode->i_rcu, debugfs_i_callback);
- }
+-	u8 msb, lsb, offset;
++	u8 msb, lsb, lsb_reg, offset;
+ 	u16 data;
+ 	int ret;
  
- static const struct super_operations debugfs_super_operations = {
- 	.statfs		= simple_statfs,
- 	.remount_fs	= debugfs_remount,
- 	.show_options	= debugfs_show_options,
--	.evict_inode	= debugfs_evict_inode,
-+	.destroy_inode	= debugfs_destroy_inode,
- };
+@@ -1465,9 +1465,13 @@ static ssize_t adt7316_store_DAC(struct
+ 		return -EINVAL;
  
- static struct vfsmount *debugfs_automount(struct path *path)
--- 
-2.20.1
-
+ 	if (chip->dac_bits > 8) {
+-		lsb = data & (1 << offset);
++		lsb = data & ((1 << offset) - 1);
++		if (chip->dac_bits == 12)
++			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
++		else
++			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
+ 		ret = chip->bus.write(chip->bus.client,
+-			ADT7316_DA_DATA_BASE + channel * 2, lsb);
++			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
+ 		if (ret)
+ 			return -EIO;
+ 	}
 
 
