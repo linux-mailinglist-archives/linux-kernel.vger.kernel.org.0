@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5363814C9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AEE714DA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfEFOl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
+        id S1729256AbfEFOrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:47:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbfEFOly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:41:54 -0400
+        id S1729000AbfEFOrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:47:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CEAC21019;
-        Mon,  6 May 2019 14:41:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F7382053B;
+        Mon,  6 May 2019 14:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153713;
-        bh=jxET2lkC8axXa57NGv2c8LLSq54+oEHQi4BAnWts6Mc=;
+        s=default; t=1557154027;
+        bh=6OLcQgIjS7NVKbmeXUd0NWX6d9Ro1I2XL7AtRspSGts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fuZXM7gLylJZnNholcJIFNCAS70XQnWfe5JCD22Ugy62Ji9v30SctKgRPHef7PlpU
-         /qyHoquk2zH4xIdnuVAyeoTiz5x2Nv6LbKutyXadDEfFP/qrl+R7wTLX9d34veNOVH
-         pHJStEykRtivmFT9vUa7m912RjLQE3JxK6NAEV8o=
+        b=z2cR26MMpEHiLRrSyPw+F+0hy3ZKAr1kr6KRjNU5xVXh+OX9Nn9ugz9dAxqZwr8iV
+         w590LGCo1gOsfsgn6pprgra1GmM60o/IaEZIa2BlnODTdk4/okalAj9FzTsbfQ0PNZ
+         8fn6h8+nInwDdLE0L24sgSiRfM6UANU5RerF2Iwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot <syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com>
-Subject: [PATCH 4.19 69/99] block: pass no-op callback to INIT_WORK().
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 4.9 11/62] mm/kasan: Switch to using __pa_symbol and lm_alias
 Date:   Mon,  6 May 2019 16:32:42 +0200
-Message-Id: <20190506143100.414365876@linuxfoundation.org>
+Message-Id: <20190506143052.072825443@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2e3c18d0ada16f145087b2687afcad1748c0827c ]
+From: Laura Abbott <labbott@redhat.com>
 
-syzbot is hitting flush_work() warning caused by commit 4d43d395fed12463
-("workqueue: Try to catch flush_work() without INIT_WORK().") [1].
-Although that commit did not expect INIT_WORK(NULL) case, calling
-flush_work() without setting a valid callback should be avoided anyway.
-Fix this problem by setting a no-op callback instead of NULL.
+commit 5c6a84a3f4558a6115fef1b59343c7ae56b3abc3 upstream.
 
-[1] https://syzkaller.appspot.com/bug?id=e390366bc48bc82a7c668326e0663be3b91cbd29
+__pa_symbol is the correct API to find the physical address of symbols.
+Switch to it to allow for debugging APIs to work correctly. Other
+functions such as p*d_populate may call __pa internally. Ensure that the
+address passed is in the linear region by calling lm_alias.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-and-tested-by: syzbot <syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com>
-Cc: Tejun Heo <tj@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[sl: rename blk_timeout_work]
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/blk-core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ mm/kasan/kasan_init.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index eb8b52241453..33488b1426b7 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -980,6 +980,10 @@ static void blk_rq_timed_out_timer(struct timer_list *t)
- 	kblockd_schedule_work(&q->timeout_work);
- }
+--- a/mm/kasan/kasan_init.c
++++ b/mm/kasan/kasan_init.c
+@@ -15,6 +15,7 @@
+ #include <linux/kasan.h>
+ #include <linux/kernel.h>
+ #include <linux/memblock.h>
++#include <linux/mm.h>
+ #include <linux/pfn.h>
  
-+static void blk_timeout_work_dummy(struct work_struct *work)
-+{
-+}
-+
- /**
-  * blk_alloc_queue_node - allocate a request queue
-  * @gfp_mask: memory allocation flags
-@@ -1034,7 +1038,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id,
- 	timer_setup(&q->backing_dev_info->laptop_mode_wb_timer,
- 		    laptop_mode_timer_fn, 0);
- 	timer_setup(&q->timeout, blk_rq_timed_out_timer, 0);
--	INIT_WORK(&q->timeout_work, NULL);
-+	INIT_WORK(&q->timeout_work, blk_timeout_work_dummy);
- 	INIT_LIST_HEAD(&q->timeout_list);
- 	INIT_LIST_HEAD(&q->icq_list);
- #ifdef CONFIG_BLK_CGROUP
--- 
-2.20.1
-
+ #include <asm/page.h>
+@@ -49,7 +50,7 @@ static void __init zero_pte_populate(pmd
+ 	pte_t *pte = pte_offset_kernel(pmd, addr);
+ 	pte_t zero_pte;
+ 
+-	zero_pte = pfn_pte(PFN_DOWN(__pa(kasan_zero_page)), PAGE_KERNEL);
++	zero_pte = pfn_pte(PFN_DOWN(__pa_symbol(kasan_zero_page)), PAGE_KERNEL);
+ 	zero_pte = pte_wrprotect(zero_pte);
+ 
+ 	while (addr + PAGE_SIZE <= end) {
+@@ -69,7 +70,7 @@ static void __init zero_pmd_populate(pud
+ 		next = pmd_addr_end(addr, end);
+ 
+ 		if (IS_ALIGNED(addr, PMD_SIZE) && end - addr >= PMD_SIZE) {
+-			pmd_populate_kernel(&init_mm, pmd, kasan_zero_pte);
++			pmd_populate_kernel(&init_mm, pmd, lm_alias(kasan_zero_pte));
+ 			continue;
+ 		}
+ 
+@@ -92,9 +93,9 @@ static void __init zero_pud_populate(pgd
+ 		if (IS_ALIGNED(addr, PUD_SIZE) && end - addr >= PUD_SIZE) {
+ 			pmd_t *pmd;
+ 
+-			pud_populate(&init_mm, pud, kasan_zero_pmd);
++			pud_populate(&init_mm, pud, lm_alias(kasan_zero_pmd));
+ 			pmd = pmd_offset(pud, addr);
+-			pmd_populate_kernel(&init_mm, pmd, kasan_zero_pte);
++			pmd_populate_kernel(&init_mm, pmd, lm_alias(kasan_zero_pte));
+ 			continue;
+ 		}
+ 
+@@ -135,11 +136,11 @@ void __init kasan_populate_zero_shadow(c
+ 			 * puds,pmds, so pgd_populate(), pud_populate()
+ 			 * is noops.
+ 			 */
+-			pgd_populate(&init_mm, pgd, kasan_zero_pud);
++			pgd_populate(&init_mm, pgd, lm_alias(kasan_zero_pud));
+ 			pud = pud_offset(pgd, addr);
+-			pud_populate(&init_mm, pud, kasan_zero_pmd);
++			pud_populate(&init_mm, pud, lm_alias(kasan_zero_pmd));
+ 			pmd = pmd_offset(pud, addr);
+-			pmd_populate_kernel(&init_mm, pmd, kasan_zero_pte);
++			pmd_populate_kernel(&init_mm, pmd, lm_alias(kasan_zero_pte));
+ 			continue;
+ 		}
+ 
 
 
