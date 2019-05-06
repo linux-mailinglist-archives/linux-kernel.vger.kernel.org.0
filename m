@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C52E14ED0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 573FE14D0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfEFOiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59208 "EHLO mail.kernel.org"
+        id S1729300AbfEFOrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:47:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726810AbfEFOiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:10 -0400
+        id S1728776AbfEFOrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:47:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65BA121530;
-        Mon,  6 May 2019 14:38:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F32620578;
+        Mon,  6 May 2019 14:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153489;
-        bh=Cme42BXyM5B/axh0ikcg14fPMotlgAYQcMcYvYb9TJ4=;
+        s=default; t=1557154040;
+        bh=b4htW5DfEGMi9hOIptOK6giroC6eysaZT+46tVecKns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BfZ9hj78/24yrzP2eaxnruruRKelLFGNYYdD8gF1VKG7Omt5QJYAKJnBbM1tAouz5
-         NOFgQ/qqb8BpXsZaTGNqshJB86s7gCDZKJmQs+KmRuQkqPJKCwd5QOLXgL2aRKZBPZ
-         pO8i7Kul/JXLRM0wpJDjgHo14shZG3g2ep2C7K0o=
+        b=ILPYOUYghjZetxqdqVBkkiadkrYrlgCvca2jvlZ+RgFTViY+LMoCdflUUztKENw/p
+         J+eH91KDQQLDMMPPNITvoMo82/h+vZxRVeUCIW9eMVYAxfKW6Br+QSzvZqgG7yGvQ2
+         +FokOwJnEjnSfo2LYgMKChi1w3UHeqBuZRXgxJNM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.0 109/122] Input: snvs_pwrkey - initialize necessary driver data before enabling IRQ
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 4.9 16/62] kasan: remove redundant initialization of variable real_size
 Date:   Mon,  6 May 2019 16:32:47 +0200
-Message-Id: <20190506143104.321484206@linuxfoundation.org>
+Message-Id: <20190506143052.471187212@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit bf2a7ca39fd3ab47ef71c621a7ee69d1813b1f97 upstream.
+commit 48c232395431c23d35cf3b4c5a090bd793316578 upstream.
 
-SNVS IRQ is requested before necessary driver data initialized,
-if there is a pending IRQ during driver probe phase, kernel
-NULL pointer panic will occur in IRQ handler. To avoid such
-scenario, just initialize necessary driver data before enabling
-IRQ. This patch is inspired by NXP's internal kernel tree.
+Variable real_size is initialized with a value that is never read, it is
+re-assigned a new value later on, hence the initialization is redundant
+and can be removed.
 
-Fixes: d3dc6e232215 ("input: keyboard: imx: add snvs power key driver")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cleans up clang warning:
+
+  lib/test_kasan.c:422:21: warning: Value stored to 'real_size' during its initialization is never read
+
+Link: http://lkml.kernel.org/r/20180206144950.32457-1-colin.king@canonical.com
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/keyboard/snvs_pwrkey.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ lib/test_kasan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/keyboard/snvs_pwrkey.c
-+++ b/drivers/input/keyboard/snvs_pwrkey.c
-@@ -148,6 +148,9 @@ static int imx_snvs_pwrkey_probe(struct
- 		return error;
- 	}
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -355,7 +355,7 @@ static noinline void __init kasan_stack_
+ static noinline void __init ksize_unpoisons_memory(void)
+ {
+ 	char *ptr;
+-	size_t size = 123, real_size = size;
++	size_t size = 123, real_size;
  
-+	pdata->input = input;
-+	platform_set_drvdata(pdev, pdata);
-+
- 	error = devm_request_irq(&pdev->dev, pdata->irq,
- 			       imx_snvs_pwrkey_interrupt,
- 			       0, pdev->name, pdev);
-@@ -163,9 +166,6 @@ static int imx_snvs_pwrkey_probe(struct
- 		return error;
- 	}
- 
--	pdata->input = input;
--	platform_set_drvdata(pdev, pdata);
--
- 	device_init_wakeup(&pdev->dev, pdata->wakeup);
- 
- 	return 0;
+ 	pr_info("ksize() unpoisons the whole allocated chunk\n");
+ 	ptr = kmalloc(size, GFP_KERNEL);
 
 
