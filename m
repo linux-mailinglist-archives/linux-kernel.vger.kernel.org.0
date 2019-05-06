@@ -2,128 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EBE14508
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA47214521
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfEFHLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:11:51 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45949 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfEFHLu (ORCPT
+        id S1726411AbfEFH0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:26:05 -0400
+Received: from smtp-sp200-211.kinghost.net ([177.185.200.211]:52689 "EHLO
+        smtp-sp200-211.kinghost.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725828AbfEFH0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:11:50 -0400
-Received: by mail-io1-f65.google.com with SMTP id b3so4558504iob.12
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u8UT3Tn0T2EP3iQmDK1wowFJS5RBn2hVawFqvc++3dU=;
-        b=d4yoYmO7+QLVUx1XeEVtgfXn+9mEq5nbnq3Ff/ns4s/RG+VKMH3QVIz4fT5MRFxFgO
-         eA8TI7hh8gf6QqXZ2QGankFqvWBqIYQx7UeMsJGNz3/5GwcJOwwALATBwnnTxe5diKSK
-         gZg4oo04esqti8ArfExvZS+7e9ob6e2abCc+E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u8UT3Tn0T2EP3iQmDK1wowFJS5RBn2hVawFqvc++3dU=;
-        b=JDy9I8gOd0rR//azX9me0knEwQeWeDe1gBrx/McYceV+Fo3SYvPxGmZr8fLtNpMV/j
-         I3aBv1uE0OswnaGpgH8DqRCKRcpT8QkAyeksfePY8jbACiUpETMnxpCbxX5zCMr1PwsJ
-         a5sFV+gUj0n+EQ6kjA3apxcXZaQtYETQsUJAxoAVapuElTBthCdRbcONr/1p5uvhEP3t
-         G6oQl9+1s7zAiZk7e2078Kaqo/wjmZlTgjCCKC0uy6Y9om51W678o/cKZhUwcB/9c/D7
-         Y0dzDvlQD0ViX44zOSBQXIV6tpdxiiEKRFTNvBERygy2nueNBaO1lhRrJ2xHaPj3rxjC
-         gAcg==
-X-Gm-Message-State: APjAAAXCn9rgJJfZAy2KCEVdIFtvOYFGvsSGT5xZwJCDKiYVbURGWRf8
-        2CBd47cW31I9t6sZGvIjp5Jn4I/w+Eb8JhtlVC0B5g==
-X-Google-Smtp-Source: APXvYqxtJtItUL3SFcvknMu2SDjVfpED2iuBsb8Ja6ehJj2ySNhVJwztFSL/SpK7NM1x2+2/ZRJgiI4aPK/8vZPaoq8=
-X-Received: by 2002:a6b:b654:: with SMTP id g81mr11945265iof.34.1557126709525;
- Mon, 06 May 2019 00:11:49 -0700 (PDT)
+        Mon, 6 May 2019 03:26:03 -0400
+X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 03:26:02 EDT
+Received: from smtpi-sp-236.kinghost.net (smtpi-sp-236.kinghost.net [177.185.201.236])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by smtp-sp200-211.kinghost.net (Postfix) with ESMTPS id A250A1028C563;
+        Mon,  6 May 2019 04:17:28 -0300 (-03)
+Received: from t460s.bristot.redhat.com (host49-62-dynamic.23-79-r.retail.telecomitalia.it [79.23.62.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: daniel@bristot.eti.br)
+        by smtpi-sp-236.kinghost.net (Postfix) with ESMTPSA id CAF936000E09;
+        Mon,  6 May 2019 04:17:10 -0300 (-03)
+Subject: Re: [patch 0/3] do not raise timer softirq unconditionally
+ (spinlockless version)
+To:     Marcelo Tosatti <mtosatti@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Haris Okanovic <haris.okanovic@ni.com>
+References: <20190415201213.600254019@amt.cnet>
+ <20190506032234.GA31395@amt.cnet>
+From:   Daniel Bristot de Oliveira <daniel@bristot.me>
+Message-ID: <a6be2e0e-52a8-f711-ac37-23f267864710@bristot.me>
+Date:   Mon, 6 May 2019 09:17:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190502141643.21080-1-daniel.vetter@ffwll.ch> <20190503151437.dc2ty2mnddabrz4r@pathway.suse.cz>
-In-Reply-To: <20190503151437.dc2ty2mnddabrz4r@pathway.suse.cz>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 6 May 2019 09:11:37 +0200
-Message-ID: <CAKMK7uF8AD6033_tJw1Y7VsAXb6OD_syZtG3a-JM2g9eEb-P9g@mail.gmail.com>
-Subject: Re: [PATCH] RFC: console: hack up console_trylock more
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190506032234.GA31395@amt.cnet>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SND-ID: E3DhL4HZvWApxdeEu0+R3k19tF2vhIUMcvigv4x0qidpkEMv/61pVU+Ic2kX
+        C2E5z/9xJ4WEtUyKW/eV3FZ7zhqtVpQq2rjAS9f/ld8u8XLveOASo+XsFvtl
+        fyg1Roh2/gu+MMqdAzdRWQS+64XBwkZTLUA7Ph3GQXSsMww6UD/8S+aanUho
+        IQ7tGG0VakRWx37deil8OFZrQKJQyN4BocczqtMGU2CiI3RLchuLbPCoCmKi
+        KqI9xnpV7BuyRt6tR5iO/zIbR6bdAogIXhE6ZlJYAlQxzpwu99C3N3CJ08kC
+        iVSrHZCwPpv4j9CFgUIqLRaYZ3IZWQH5oknHgj+u36l4SjejbQIvFm5obt98
+        575EsUIkk0HIfVdbYdHsx1tgX75FMt0Qvnfc1js83zgnxBdDfA+9852OfC8s
+        nH+nsJpoNDaVrjiOj996yvUM33s9yqwtuvfAl2xL0Sp5Mf+3xAjkLEOl7R+y
+        X+eLIOXKjqXyvZMlHOmAkAU/GmKsHJXFg6xcnlCUg2ZEbsu7vTG7HTcv/Env
+        7SoqTSFM2XKRP6Uv7/3WPxyafXnIFxTm79V0f9heYXZeGAqKnQZD+Inx6rIl
+        6m4wHWfHR4bNpgWNWrPobW9jve0ZMORBaQFDAaY1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 3, 2019 at 5:14 PM Petr Mladek <pmladek@suse.com> wrote:
-> On Thu 2019-05-02 16:16:43, Daniel Vetter wrote:
-> > console_trylock, called from within printk, can be called from pretty
-> > much anywhere. Including try_to_wake_up. Note that this isn't common,
-> > usually the box is in pretty bad shape at that point already. But it
-> > really doesn't help when then lockdep jumps in and spams the logs,
-> > potentially obscuring the real backtrace we're really interested in.
-> > One case I've seen (slightly simplified backtrace):
-> >
-> >  Call Trace:
-> >   <IRQ>
-> >   console_trylock+0xe/0x60
-> >   vprintk_emit+0xf1/0x320
-> >   printk+0x4d/0x69
-> >   __warn_printk+0x46/0x90
-> >   native_smp_send_reschedule+0x2f/0x40
-> >   check_preempt_curr+0x81/0xa0
-> >   ttwu_do_wakeup+0x14/0x220
-> >   try_to_wake_up+0x218/0x5f0
-> >   pollwake+0x6f/0x90
-> >   credit_entropy_bits+0x204/0x310
-> >   add_interrupt_randomness+0x18f/0x210
-> >   handle_irq+0x67/0x160
-> >   do_IRQ+0x5e/0x130
-> >   common_interrupt+0xf/0xf
-> >   </IRQ>
-> >
-> > This alone isn't a problem, but the spinlock in the semaphore is also
-> > still held while waking up waiters (up() -> __up() -> try_to_wake_up()
-> > callchain), which then closes the runqueue vs. semaphore.lock loop,
-> > and upsets lockdep, which issues a circular locking splat to dmesg.
-> > Worse it upsets developers, since we don't want to spam dmesg with
-> > clutter when the machine is dying already.
-> >
-> > Fix this by creating a __down_trylock which only trylocks the
-> > semaphore.lock. This isn't correct in full generality, but good enough
-> > for console_lock:
-> >
-> > - there's only ever one console_lock holder, we won't fail spuriously
-> >   because someone is doing a down() or up() while there's still room
-> >   (unlike other semaphores with count > 1).
-> >
-> > - console_unlock() has one massive retry loop, which will catch anyone
-> >   who races the trylock against the up(). This makes sure that no
-> >   printk lines will get lost. Making the trylock more racy therefore
-> >   has no further impact.
->
-> To be honest, I do not see how this could solve the problem.
->
-> The circular dependency is still there. If the new __down_trylock()
-> succeeds then console_unlock() will get called in the same context
-> and it will still need to call up() -> try_to_wake_up().
->
-> Note that there are many other console_lock() callers that might
-> happen in parallel and might appear in the wait queue.
 
-Hm right. It's very rare we hit this in our CI and I don't know how to
-repro otherwise, so just threw this out at the wall to see if it
-sticks. I'll try and come up with a new trick then.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On 5/6/19 5:22 AM, Marcelo Tosatti wrote:
+> On Mon, Apr 15, 2019 at 05:12:13PM -0300, Marcelo Tosatti wrote:
+>> For isolated CPUs, we'd like to skip awakening ktimersoftd
+>> (the switch to and then back from ktimersoftd takes 10us in
+>> virtualized environments, in addition to other OS overhead,
+>> which exceeds telco requirements for packet forwarding for
+>> 5G) from the sched tick.
+>>
+>> The patch "timers: do not raise softirq unconditionally" from Thomas
+>> attempts to address that by checking, in the sched tick, whether its
+>> necessary to raise the timer softirq. Unfortunately, it attempts to grab
+>> the tvec base spinlock which generates the issue described in the patch
+>> "Revert "timers: do not raise softirq unconditionally"".
+>>
+>> tvec_base->lock protects addition of timers to the wheel versus
+>> timer interrupt execution.
+>>
+>> This patch does not grab the tvec base spinlock from irq context,
+>> but rather performs a lockless access to base->pending_map.
+>>
+>> It handles the the race between timer addition and timer interrupt
+>> execution by unconditionally (in case of isolated CPUs) raising the
+>> timer softirq after making sure the updated bitmap is visible
+>> on remote CPUs.
+>>
+>> This patchset reduces cyclictest latency from 25us to 14us
+>> on my testbox. 
+>>
+>>
+> 
+> Ping?
+> 
+
+Hi Marcelo,
+
+I've been running your patches with lockdep and other debug options and did not
+find any problem of this kind. Also, I did not find any kind of timing
+regressions in tests with the PREEMPT RT...
+
+-- Daniel
