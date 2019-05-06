@@ -2,102 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F28814FA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C6A14F7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfEFPM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:12:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727082AbfEFPMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:12:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3E9521479;
-        Mon,  6 May 2019 15:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557155574;
-        bh=t8vKwFlI0bJLS5h2dD31IGjB9vHPflvMjtuqWataVgE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zp/FHHK69KnVw6FJoIY0+qmT20u56Ud5KTj1UbT0/sgJtv+vuS7wCrfY7+pCgNGiX
-         wS4WWPW4HlweOLnXiKhTgbevvWyzvsWh63LhEZit/dYUO3WOym8435ft6j7T06kMcu
-         tXz3VBexFyPWtE4sp3vLnUDqvjr/z+3Y+tgLeAUs=
-Date:   Mon, 6 May 2019 17:10:26 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.9 09/62] kasan: turn on
- -fsanitize-address-use-after-scope
-Message-ID: <20190506151026.GA12193@kroah.com>
-References: <20190506143051.102535767@linuxfoundation.org>
- <20190506143051.888762392@linuxfoundation.org>
- <6636d7cf-03fe-e253-f981-e07d75858b33@virtuozzo.com>
+        id S1726691AbfEFPLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:11:40 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33955 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbfEFPLj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:11:39 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v18so7220536lfi.1;
+        Mon, 06 May 2019 08:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3n8DB0gQwJicPY+O/w22a7ewwEDUX9hB2LtejHOoNts=;
+        b=EO7ChWYsyrakC76AmReTFv00un3dIoEiTYk+qJhQMzSoqijYHKzXWuCJ0I0/VU5+S8
+         WCnjKlHFzlziDSMNgOzSqKrJJGfa3uTmljF6dAGFDmaPbA55EH3n8aKu2IIHoAFAuMmG
+         a3Mr+XOjgvi+w8w4UBryQEXVVV+LqcPovPz59VSYG0uI4APCFnbHIYmkF6FtivdqaB1e
+         NjNmVGEpJn8QGiNNiFe5xdSXAJs3el23/a3uvA0X/R7m+IJGGJv+ZkOcHdOIdCW9zLnV
+         JnQN4fv0vXOUpC//Uh3srp6E2xGbDxgcfsD77JMk2WCiSFIUqTXoah9mtf5wKUn8Qmu2
+         sbPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3n8DB0gQwJicPY+O/w22a7ewwEDUX9hB2LtejHOoNts=;
+        b=TfLrbUqgo2E02DUR1vwEl0lM/vAaU510j/mPf+54Xn6gWn97XNrSgBcmJBeL3ZdS4Q
+         O5Wwv4mB45OCzLXpAJbzb7VJJ6/N+GtGmWtX/ryEpva/VFH555TgEjCpV4eqFOO7pg22
+         nx4+hi4FIuOKcLH1nMP+m0dBpCas0hEwmKygaOXtBsxhB4awPI440A38A+3rK8iQtq+V
+         yAqkGlBswmYwdwDTCrs/8F3w5pVD9N9D9ts+4veEFII1DUWt+0qhYJUq0QawuIJSszo9
+         +gk/dJsqvdjiORBR//alpIP0Su8rS0Rfcj7gMJ6k4jpQfvz8GUowbSITpclSfSxBFnLQ
+         CwZg==
+X-Gm-Message-State: APjAAAXPG318iLIFaxw7SAkT7bpNqs7D4KhdrT5uoqhMljw68dFznFKv
+        mgfY+aXMDHCTbvd3ojasJ24+fwi87Tr4UDMF2MKTQQln
+X-Google-Smtp-Source: APXvYqyQGsKPS9Hdd59Ha7rPHw1HVuuhjHYyGU+XfzoaZ3HVWK85YhYX+8My/y5uNGX2MbxZeqyZlipR/byBJ4J/xt4=
+X-Received: by 2002:ac2:434a:: with SMTP id o10mr2019737lfl.122.1557155497459;
+ Mon, 06 May 2019 08:11:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6636d7cf-03fe-e253-f981-e07d75858b33@virtuozzo.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190506140830.25376-1-angus@akkea.ca> <20190506140830.25376-4-angus@akkea.ca>
+In-Reply-To: <20190506140830.25376-4-angus@akkea.ca>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 6 May 2019 12:11:41 -0300
+Message-ID: <CAOMZO5C6XQUWBi39jKeVJg3Jj6auB0mF3h8bWMYZ_prXwgc9Fg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] usb: typec: tcpm: Clear the fault status register
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 05:55:54PM +0300, Andrey Ryabinin wrote:
-> 
-> 
-> On 5/6/19 5:32 PM, Greg Kroah-Hartman wrote:
-> > From: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> > 
-> > commit c5caf21ab0cf884ef15b25af234f620e4a233139 upstream.
-> > 
-> > In the upcoming gcc7 release, the -fsanitize=kernel-address option at
-> > first implied new -fsanitize-address-use-after-scope option.  This would
-> > cause link errors on older kernels because they don't have two new
-> > functions required for use-after-scope support.  Therefore, gcc7 changed
-> > default to -fno-sanitize-address-use-after-scope.
-> > 
-> > Now the kernel has everything required for that feature since commit
-> > 828347f8f9a5 ("kasan: support use-after-scope detection").  So, to make it
-> > work, we just have to enable use-after-scope in CFLAGS.
-> > 
-> > Link: http://lkml.kernel.org/r/1481207977-28654-1-git-send-email-aryabinin@virtuozzo.com
-> > Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> > Acked-by: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: Alexander Potapenko <glider@google.com>
-> > Cc: Andrey Konovalov <andreyknvl@google.com>
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  scripts/Makefile.kasan |    2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > --- a/scripts/Makefile.kasan
-> > +++ b/scripts/Makefile.kasan
-> > @@ -29,6 +29,8 @@ else
-> >      endif
-> >  endif
-> >  
-> > +CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
-> > +
-> >  CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-> >  
-> >  endif
-> > 
-> > 
-> 
-> This shouldn't be in the -stable.
+Hi Angus,
 
-Why not?  Does no one use gcc7 with this kernel and kasan?
+On Mon, May 6, 2019 at 11:10 AM Angus Ainslie (Purism) <angus@akkea.ca> wrote:
+>
+> If the fault status register doesn't get cleared then
+> the ptn5110 interrupt gets stuck on. As the fault register gets
+> set everytime the ptn5110 powers on the interrupt is always stuck.
+>
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 
-thanks,
+Since this is a bug fix, I would suggest adding a Fixes tag and Cc
+stable if appropriate.
 
-greg k-h
+I would also put this patch as the first one in the series, so that it
+can be easily applied to older stable trees.
