@@ -2,182 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F161B15164
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:32:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD85115157
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfEFQcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 12:32:03 -0400
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:56307 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfEFQcB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 12:32:01 -0400
-Received: by mail-ua1-f74.google.com with SMTP id j14so236952ual.22
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 09:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=SWVsw2knEHBiqwTje+QZ95uhvJ0Eq8KQC+Uh3mHLIrs=;
-        b=RgL6sD0qMVVBo2W6IqHUBM5jj9VtirOB0KEMhgfz8sMUxbZ1FQX2voyY3kT1G83YUB
-         c2NHug1MaUbvaiT2/kwsYJcX1LID/13F0wNOf2AHICLEHy5XvFyjYislt0SYk+XJ6yKP
-         649zRPJ+NdSdXSoussFiI5QFPPYrqQUh3ojhtBNMt1d4e4tKjAnQkQjx5Eh1zuXQvQIM
-         JcTGFQAzGxQj9nG+dHgIo2BfMYCnSXgaj1ghPhO7L6oN78p0fysyobcM96NyuviAQaqi
-         YZLFqu1hahvJ559CgByQZZLzdRPUlocjvpj3Ingemtoy/aM5Di1UnW6jML/TVEYZ07jc
-         pviA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=SWVsw2knEHBiqwTje+QZ95uhvJ0Eq8KQC+Uh3mHLIrs=;
-        b=QVG4rU8DmBahYGwWAfZRNTcIjsDU8p+8spdnTGVmV/HvvVkHSfAoEwZCHTg+VYB6C9
-         N31LSOnLDBnnsauSocxuzf3RPfqg/CPGQYD2R1x8eCS5C7aicEo03/K7E+gU+uQ52lap
-         4wIdaU//igMXTImD6mcfDHruLvx/Xkb+R/8mfht8Az52yC6JT0wzjK3x2IH+MjCQfoaQ
-         laGiA1Gau6bfXYPOkDKEnueC8VIzSlCQI+Vu1BFaOl+xM2XA0vWpW2mJbbXsekvbHUUh
-         pjRFSPUo2qoiZz8q8qPUPHRhGNt8fc9Fwn6/hMwA4zhhJlrRAoOZhL24HQXWi13cW7l8
-         vgGQ==
-X-Gm-Message-State: APjAAAVVbz/yKuOXgkiH4xhYSa20zj/kD3juoD/bR1ay9pNiO3gxu2mn
-        1xy3JdfsVU6ocxXN5Q7GOZewhaxRirCL2iBr
-X-Google-Smtp-Source: APXvYqzqHfit8S9j9GkAK338RCzBXfh/l/pOO+ozkZWr4c4UHEKzTSoAg+io9ZiclURMXMIijYhqt5pgUoOVGv8c
-X-Received: by 2002:a67:f6c4:: with SMTP id v4mr13696595vso.182.1557160319808;
- Mon, 06 May 2019 09:31:59 -0700 (PDT)
-Date:   Mon,  6 May 2019 18:31:03 +0200
-In-Reply-To: <cover.1557160186.git.andreyknvl@google.com>
-Message-Id: <e31d9364eb0c2eba8ce246a558422e811d82d21b.1557160186.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1557160186.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v15 17/17] selftests, arm64: add a selftest for passing tagged
- pointers to kernel
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727257AbfEFQbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:31:46 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:42457 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727177AbfEFQbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 12:31:44 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 44yStK1Tgsz9v0K7;
+        Mon,  6 May 2019 18:31:37 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=P5+DJ7Wb; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id CpNBf7_aZXGe; Mon,  6 May 2019 18:31:37 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 44yStK0FMgz9v0K6;
+        Mon,  6 May 2019 18:31:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1557160297; bh=yRinLegSyNuQk1RUEKDqwhCd8nwbiVxqrPc16LJu4GU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=P5+DJ7WbCCG+/X0uMpSJWcr0mfyFEW5HxVlaji0QqDgeSWmgAwSXBwr6QvPxcUmo+
+         WfMLuJ2l4oWXBtaoH0Oman/cVy25hsthMVccUN+MJRH8DpX/32HySF9MgUN35bIhoZ
+         0SLSQMphHjygVMgYin2hepj2y/t4AWCMa0/wao5g=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 46BF28B8E9;
+        Mon,  6 May 2019 18:31:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id hGgPJhHpLTle; Mon,  6 May 2019 18:31:42 +0200 (CEST)
+Received: from localhost.localdomain (po15451.idsi0.si.c-s.fr [172.25.231.6])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 168478B8E7;
+        Mon,  6 May 2019 18:31:42 +0200 (CEST)
+Subject: Re: [PATCH] powerpc/32: Remove memory clobber asm constraint on
+ dcbX() functions
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org, Scott Wood <oss@buserror.net>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20180109065759.4E54B6C73D@localhost.localdomain>
+ <e482662f-254c-4ab7-b0a8-966a3159d705@c-s.fr>
+ <20190503181508.GQ8599@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <c2391ff5-ae01-5a3c-ad87-9cbda82b36ab@c-s.fr>
+Date:   Mon, 6 May 2019 16:31:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190503181508.GQ8599@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a part of a series that extends arm64 kernel ABI to allow to
-pass tagged user pointers (with the top byte set to something else other
-than 0x00) as syscall arguments.
+Hi Segher,
 
-This patch adds a simple test, that calls the uname syscall with a
-tagged user pointer as an argument. Without the kernel accepting tagged
-user pointers the test fails with EFAULT.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- tools/testing/selftests/arm64/.gitignore      |  1 +
- tools/testing/selftests/arm64/Makefile        | 11 ++++++++++
- .../testing/selftests/arm64/run_tags_test.sh  | 12 +++++++++++
- tools/testing/selftests/arm64/tags_test.c     | 21 +++++++++++++++++++
- 4 files changed, 45 insertions(+)
- create mode 100644 tools/testing/selftests/arm64/.gitignore
- create mode 100644 tools/testing/selftests/arm64/Makefile
- create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
- create mode 100644 tools/testing/selftests/arm64/tags_test.c
+On 05/03/2019 06:15 PM, Segher Boessenkool wrote:
+> Hi Christophe,
+> 
+> On Fri, May 03, 2019 at 04:14:13PM +0200, Christophe Leroy wrote:
+>> A while ago I proposed the following patch, and didn't get any comment
+>> back on it.
+> 
+> I didn't see it.  Maybe because of holiday :-)
 
-diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
-new file mode 100644
-index 000000000000..e8fae8d61ed6
---- /dev/null
-+++ b/tools/testing/selftests/arm64/.gitignore
-@@ -0,0 +1 @@
-+tags_test
-diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
-new file mode 100644
-index 000000000000..a61b2e743e99
---- /dev/null
-+++ b/tools/testing/selftests/arm64/Makefile
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# ARCH can be overridden by the user for cross compiling
-+ARCH ?= $(shell uname -m 2>/dev/null || echo not)
-+
-+ifneq (,$(filter $(ARCH),aarch64 arm64))
-+TEST_GEN_PROGS := tags_test
-+TEST_PROGS := run_tags_test.sh
-+endif
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
-new file mode 100755
-index 000000000000..745f11379930
---- /dev/null
-+++ b/tools/testing/selftests/arm64/run_tags_test.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+echo "--------------------"
-+echo "running tags test"
-+echo "--------------------"
-+./tags_test
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+else
-+	echo "[PASS]"
-+fi
-diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
-new file mode 100644
-index 000000000000..2bd1830a7ebe
---- /dev/null
-+++ b/tools/testing/selftests/arm64/tags_test.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <stdint.h>
-+#include <sys/utsname.h>
-+
-+#define SHIFT_TAG(tag)		((uint64_t)(tag) << 56)
-+#define SET_TAG(ptr, tag)	(((uint64_t)(ptr) & ~SHIFT_TAG(0xff)) | \
-+					SHIFT_TAG(tag))
-+
-+int main(void)
-+{
-+	struct utsname *ptr = (struct utsname *)malloc(sizeof(*ptr));
-+	void *tagged_ptr = (void *)SET_TAG(ptr, 0x42);
-+	int err = uname(tagged_ptr);
-+
-+	free(ptr);
-+	return err;
-+}
--- 
-2.21.0.1020.gf2820cf01a-goog
+Thanks for this answer, I guess I'll drop it for the time being.
 
+However, I've tried your suggestion below and get unnexpected result.
+
+[...]
+
+> 
+> 
+> [ Btw.  Instead of
+> 
+> 	__asm__ __volatile__ ("dcbf 0, %0" : : "r"(addr) : "memory");
+> 
+> you can do
+> 
+> 	__asm__ __volatile__ ("dcbf %0" : : "Z"(addr) : "memory");
+> 
+> to save some insns here and there. ]
+
+Tried that change on dcbz() and checked function clear_page()
+
+static inline void clear_page(void *addr)
+{
+	unsigned int i;
+
+	for (i = 0; i < PAGE_SIZE / L1_CACHE_BYTES; i++, addr += L1_CACHE_BYTES)
+		dcbz(addr);
+}
+
+void clear_user_page(void *page, unsigned long vaddr, struct page *pg)
+{
+	clear_page(page);
+
+	/*
+	 * We shouldn't have to do this, but some versions of glibc
+	 * require it (ld.so assumes zero filled pages are icache clean)
+	 * - Anton
+	 */
+	flush_dcache_page(pg);
+}
+EXPORT_SYMBOL(clear_user_page);
+
+
+Before the change,
+
+clear_user_page:
+	mflr 0
+	stw 0,4(1)
+	bl _mcount
+	stwu 1,-16(1)
+	li 9,128
+	mflr 0
+	mtctr 9
+	stw 0,20(1)
+.L46:
+#APP
+  # 88 "./arch/powerpc/include/asm/cache.h" 1
+	dcbz 0, 3
+  # 0 "" 2
+#NO_APP
+	addi 3,3,32
+	bdnz .L46
+	lwz 0,20(1)
+	mr 3,5
+	mtlr 0
+	addi 1,1,16
+	b flush_dcache_page
+
+
+After the change
+
+
+clear_user_page:
+	mflr 0
+	stw 0,4(1)
+	bl _mcount
+	stwu 1,-32(1)
+	li 9,128
+	mflr 0
+	mtctr 9
+	stw 0,36(1)
+.L46:
+	stw 3,8(1)
+	addi 9,1,8
+#APP
+  # 88 "./arch/powerpc/include/asm/cache.h" 1
+	dcbz 0(9)
+  # 0 "" 2
+#NO_APP
+	addi 3,3,32
+	bdnz .L46
+	mr 3,5
+	bl flush_dcache_page
+	lwz 0,36(1)
+	addi 1,1,32
+	mtlr 0
+	blr
+
+
+So first of all it uses an unexisting form of dcbz : "dcbz 0(9)"
+And in addition, it stores r3 somewhere and I guess expects to read it 
+with dcbz ???
+
+Looks like 'Z' is not the right constraint to use.
+
+Christophe
