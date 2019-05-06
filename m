@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E3F14D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C01C14C47
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729362AbfEFOrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47088 "EHLO mail.kernel.org"
+        id S1727622AbfEFOi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbfEFOrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:47:40 -0400
+        id S1727601AbfEFOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:38:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3662087F;
-        Mon,  6 May 2019 14:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03046206A3;
+        Mon,  6 May 2019 14:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154059;
-        bh=X/bvWcZjlXeIMLrwmuCEXq0NPlqn86uuGONRxZlPlzQ=;
+        s=default; t=1557153506;
+        bh=m3SyE3HDVUxz0/YHku9Vj8PnmGa/Efm5Uo1tFhUs7wg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LWCfcaBCAoxEhG3nMIIwfsRJh3EKmYj3WnvQNTbHLe6E+xfkiR1o6LNBORBHlSA7o
-         E3RFXwlAX1RVf0gxd8156FWMlXBCFfoPzYP6/u9+V6I1CUhv7tetnsrGlkcJlONmlO
-         zaRcOItPppVqaDXKT94RaIjPLhTXk0hxeGdJkJyM=
+        b=CdUjSBWUJaWGkZ/qDkxcHOAXrpx21oQ5uf/VsuY1KjzSx8l89NWBNWc+UkEA3nzyj
+         l0/esad5pLAaEgJneqj6yFU7FBbCNfJNnwoNYPTnOhHL+1zj5dNgJKt+dBTl2mcg+O
+         Sl4+aayt3bQZTkzfJzdTp+db+fGkhLFEJanHgkqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+2eb9121678bdb36e6d57@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 22/62] USB: yurex: Fix protection fault after device removal
+        stable@vger.kernel.org,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.0 115/122] powerpc/mm/hash: Handle mmap_min_addr correctly in get_unmapped_area topdown search
 Date:   Mon,  6 May 2019 16:32:53 +0200
-Message-Id: <20190506143052.974180184@linuxfoundation.org>
+Message-Id: <20190506143104.717707766@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-commit ef61eb43ada6c1d6b94668f0f514e4c268093ff3 upstream.
+commit 3b4d07d2674f6b4a9281031f99d1f7efd325b16d upstream.
 
-The syzkaller USB fuzzer found a general-protection-fault bug in the
-yurex driver.  The fault occurs when a device has been unplugged; the
-driver's interrupt-URB handler logs an error message referring to the
-device by name, after the device has been unregistered and its name
-deallocated.
+When doing top-down search the low_limit is not PAGE_SIZE but rather
+max(PAGE_SIZE, mmap_min_addr). This handle cases in which mmap_min_addr >
+PAGE_SIZE.
 
-This problem is caused by the fact that the interrupt URB isn't
-cancelled until the driver's private data structure is released, which
-can happen long after the device is gone.  The cure is to make sure
-that the interrupt URB is killed before yurex_disconnect() returns;
-this is exactly the sort of thing that usb_poison_urb() was meant for.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+2eb9121678bdb36e6d57@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Fixes: fba2369e6ceb ("mm: use vm_unmapped_area() on powerpc architecture")
+Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/mm/slice.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -324,6 +324,7 @@ static void yurex_disconnect(struct usb_
- 	usb_deregister_dev(interface, &yurex_class);
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -32,6 +32,7 @@
+ #include <linux/export.h>
+ #include <linux/hugetlb.h>
+ #include <linux/sched/mm.h>
++#include <linux/security.h>
+ #include <asm/mman.h>
+ #include <asm/mmu.h>
+ #include <asm/copro.h>
+@@ -377,6 +378,7 @@ static unsigned long slice_find_area_top
+ 	int pshift = max_t(int, mmu_psize_defs[psize].shift, PAGE_SHIFT);
+ 	unsigned long addr, found, prev;
+ 	struct vm_unmapped_area_info info;
++	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
  
- 	/* prevent more I/O from starting */
-+	usb_poison_urb(dev->urb);
- 	mutex_lock(&dev->io_mutex);
- 	dev->interface = NULL;
- 	mutex_unlock(&dev->io_mutex);
+ 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
+ 	info.length = len;
+@@ -393,7 +395,7 @@ static unsigned long slice_find_area_top
+ 	if (high_limit > DEFAULT_MAP_WINDOW)
+ 		addr += mm->context.slb_addr_limit - DEFAULT_MAP_WINDOW;
+ 
+-	while (addr > PAGE_SIZE) {
++	while (addr > min_addr) {
+ 		info.high_limit = addr;
+ 		if (!slice_scan_available(addr - 1, available, 0, &addr))
+ 			continue;
+@@ -405,8 +407,8 @@ static unsigned long slice_find_area_top
+ 		 * Check if we need to reduce the range, or if we can
+ 		 * extend it to cover the previous available slice.
+ 		 */
+-		if (addr < PAGE_SIZE)
+-			addr = PAGE_SIZE;
++		if (addr < min_addr)
++			addr = min_addr;
+ 		else if (slice_scan_available(addr - 1, available, 0, &prev)) {
+ 			addr = prev;
+ 			goto prev_slice;
+@@ -528,7 +530,7 @@ unsigned long slice_get_unmapped_area(un
+ 		addr = _ALIGN_UP(addr, page_size);
+ 		slice_dbg(" aligned addr=%lx\n", addr);
+ 		/* Ignore hint if it's too large or overlaps a VMA */
+-		if (addr > high_limit - len ||
++		if (addr > high_limit - len || addr < mmap_min_addr ||
+ 		    !slice_area_is_free(mm, addr, len))
+ 			addr = 0;
+ 	}
 
 
