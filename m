@@ -2,515 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCAAB15447
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C5415451
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfEFTQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 15:16:44 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52832 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfEFTQ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 15:16:28 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x46JGAwT075445;
-        Mon, 6 May 2019 14:16:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1557170170;
-        bh=uXhkk3fR8NBm4kiyeQ7RzvM4oQl2voYg/J34248TiUs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=keelLBsb2ciAAW1kUYSw78/8wS74kJ55Bo9TYItggsjamfRM9RZH6IeXSN9dqfpzL
-         PFXNmk36kya+GQwirsSxqZ95SX9iebIz+OcAqZv8YLDc68as42tHtIlQ7hcec44PsX
-         a/A8RvcIrEvDLQ3WSxJjl6eZVmttEKRa7oaqevCo=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x46JGApa092542
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 May 2019 14:16:10 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 6 May
- 2019 14:16:10 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 6 May 2019 14:16:10 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x46JGAfn077977;
-        Mon, 6 May 2019 14:16:10 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <lee.jones@linaro.org>, <rdunlap@infradead.org>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 7/7] leds: lm3697: Introduce the lm3697 driver
-Date:   Mon, 6 May 2019 14:16:14 -0500
-Message-ID: <20190506191614.25051-8-dmurphy@ti.com>
-X-Mailer: git-send-email 2.21.0.5.gaeb582a983
-In-Reply-To: <20190506191614.25051-1-dmurphy@ti.com>
-References: <20190506191614.25051-1-dmurphy@ti.com>
+        id S1726689AbfEFTSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 15:18:11 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:26234 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726145AbfEFTSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 15:18:10 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 8683DA1093;
+        Mon,  6 May 2019 21:18:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id EKEQeCr6Tfp8; Mon,  6 May 2019 21:17:52 +0200 (CEST)
+Date:   Tue, 7 May 2019 05:17:35 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+Message-ID: <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+References: <20190506165439.9155-1-cyphar@cyphar.com>
+ <20190506165439.9155-6-cyphar@cyphar.com>
+ <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yezcske27bisu2pl"
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the lm3697 LED driver for backlighting and display.
 
-Datasheet location:
-http://www.ti.com/lit/ds/symlink/lm3697.pdf
+--yezcske27bisu2pl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+On 2019-05-06, Jann Horn <jannh@google.com> wrote:
+> On Mon, May 6, 2019 at 6:56 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > The need to be able to scope path resolution of interpreters became
+> > clear with one of the possible vectors used in CVE-2019-5736 (which
+> > most major container runtimes were vulnerable to).
+> >
+> > Naively, it might seem that openat(2) -- which supports path scoping --
+> > can be combined with execveat(AT_EMPTY_PATH) to trivially scope the
+> > binary being executed. Unfortunately, a "bad binary" (usually a symlink)
+> > could be written as a #!-style script with the symlink target as the
+> > interpreter -- which would be completely missed by just scoping the
+> > openat(2). An example of this being exploitable is CVE-2019-5736.
+> >
+> > In order to get around this, we need to pass down to each binfmt_*
+> > implementation the scoping flags requested in execveat(2). In order to
+> > maintain backwards-compatibility we only pass the scoping AT_* flags.
+> >
+> > To avoid breaking userspace (in the exceptionally rare cases where you
+> > have #!-scripts with a relative path being execveat(2)-ed with dfd !=3D
+> > AT_FDCWD), we only pass dfd down to binfmt_* if any of our new flags are
+> > set in execveat(2).
+>=20
+> This seems extremely dangerous. I like the overall series, but not this p=
+atch.
+>=20
+> > @@ -1762,6 +1774,12 @@ static int __do_execve_file(int fd, struct filen=
+ame *filename,
+> >
+> >         sched_exec();
+> >
+> > +       bprm->flags =3D flags & (AT_XDEV | AT_NO_MAGICLINKS | AT_NO_SYM=
+LINKS |
+> > +                              AT_THIS_ROOT);
+> [...]
+> > +#define AT_THIS_ROOT           0x100000 /* - Scope ".." resolution to =
+dirfd (like chroot(2)). */
+>=20
+> So now what happens if there is a setuid root ELF binary with program
+> interpreter "/lib64/ld-linux-x86-64.so.2" (like /bin/su), and an
+> unprivileged user runs it with execveat(..., AT_THIS_ROOT)? Is that
+> going to let the unprivileged user decide which interpreter the
+> setuid-root process should use? From a high-level perspective, opening
+> the interpreter should be controlled by the program that is being
+> loaded, not by the program that invoked it.
 
-v4 - Updated common header name - https://lore.kernel.org/patchwork/patch/1068619/
+I went a bit nuts with openat_exec(), and I did end up adding it to the
+ELF interpreter lookup (and you're completely right that this is a bad
+idea -- I will drop it from this patch if it's included in the next
+series).
 
-v3 - Moved TI_COMMON_LMU flag above LM3697 flag for inheritance also fixed removed
-REGMAP dependency - v1 comments https://lore.kernel.org/patchwork/patch/1054503/
-v2 comments https://lore.kernel.org/patchwork/patch/1058761/
+The proposed solutions you give below are much nicer than this patch so
+I can drop it and work on fixing those issues separately.
 
-v2 - Made changes to get max_brightness from ti_lmu common code, fixed commit
-message extra LF otherwise no additional changes - https://lore.kernel.org/patchwork/patch/1054503/
+> In my opinion, CVE-2019-5736 points out two different problems:
+>
+> The big problem: The __ptrace_may_access() logic has a special-case
+> short-circuit for "introspection" that you can't opt out of; this
+> makes it possible to open things in procfs that are related to the
+> current process even if the credentials of the process wouldn't permit
+> accessing another process like it. I think the proper fix to deal with
+> this would be to add a prctl() flag for "set whether introspection is
+> allowed for this process", and if userspace has manually un-set that
+> flag, any introspection special-case logic would be skipped.
 
- drivers/leds/Kconfig       |   7 +
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-lm3697.c | 395 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 403 insertions(+)
- create mode 100644 drivers/leds/leds-lm3697.c
+We could do PR_SET_DUMPABLE=3D3 for this, I guess?
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a88dad3be96c..255fdd5e8491 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -784,6 +784,13 @@ config LEDS_TI_LMU_COMMON
- 	  This supports common features between the TI LM3532, LM3631, LM3632,
- 	  LM3633, LM3695 and LM3697.
- 
-+config LEDS_LM3697
-+	tristate "LED driver for LM3697"
-+	depends on LEDS_TI_LMU_COMMON
-+	help
-+	  Say Y to enable the LM3697 LED driver for TI LMU devices.
-+	  This supports the LED device LM3697.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 9d7cdd363603..8ab825c8b5c3 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -81,6 +81,7 @@ obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
- obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
- obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
- obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
-+obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-new file mode 100644
-index 000000000000..54e0e35df824
---- /dev/null
-+++ b/drivers/leds/leds-lm3697.c
-@@ -0,0 +1,395 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// TI LM3697 LED chip family driver
-+// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/leds-ti-lmu-common.h>
-+
-+#define LM3697_REV			0x0
-+#define LM3697_RESET			0x1
-+#define LM3697_OUTPUT_CONFIG		0x10
-+#define LM3697_CTRL_A_RAMP		0x11
-+#define LM3697_CTRL_B_RAMP		0x12
-+#define LM3697_CTRL_A_B_RT_RAMP		0x13
-+#define LM3697_CTRL_A_B_RAMP_CFG	0x14
-+#define LM3697_CTRL_A_B_BRT_CFG		0x16
-+#define LM3697_CTRL_A_FS_CURR_CFG	0x17
-+#define LM3697_CTRL_B_FS_CURR_CFG	0x18
-+#define LM3697_PWM_CFG			0x1c
-+#define LM3697_CTRL_A_BRT_LSB		0x20
-+#define LM3697_CTRL_A_BRT_MSB		0x21
-+#define LM3697_CTRL_B_BRT_LSB		0x22
-+#define LM3697_CTRL_B_BRT_MSB		0x23
-+#define LM3697_CTRL_ENABLE		0x24
-+
-+#define LM3697_SW_RESET		BIT(0)
-+
-+#define LM3697_CTRL_A_EN	BIT(0)
-+#define LM3697_CTRL_B_EN	BIT(1)
-+#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
-+
-+#define LM3697_MAX_LED_STRINGS	3
-+
-+#define LM3697_CONTROL_A	0
-+#define LM3697_CONTROL_B	1
-+#define LM3697_MAX_CONTROL_BANKS 2
-+
-+/**
-+ * struct lm3697_led -
-+ * @hvled_strings: Array of LED strings associated with a control bank
-+ * @label: LED label
-+ * @led_dev: LED class device
-+ * @priv: Pointer to the device struct
-+ * @lmu_data: Register and setting values for common code
-+ * @control_bank: Control bank the LED is associated to. 0 is control bank A
-+ *		   1 is control bank B
-+ */
-+struct lm3697_led {
-+	u32 hvled_strings[LM3697_MAX_LED_STRINGS];
-+	char label[LED_MAX_NAME_SIZE];
-+	struct led_classdev led_dev;
-+	struct lm3697 *priv;
-+	struct ti_lmu_bank lmu_data;
-+	int control_bank;
-+	int enabled;
-+	int num_leds;
-+};
-+
-+/**
-+ * struct lm3697 -
-+ * @enable_gpio: Hardware enable gpio
-+ * @regulator: LED supply regulator pointer
-+ * @client: Pointer to the I2C client
-+ * @regmap: Devices register map
-+ * @dev: Pointer to the devices device struct
-+ * @lock: Lock for reading/writing the device
-+ * @leds: Array of LED strings
-+ */
-+struct lm3697 {
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	struct mutex lock;
-+
-+	int bank_cfg;
-+
-+	struct lm3697_led leds[];
-+};
-+
-+static const struct reg_default lm3697_reg_defs[] = {
-+	{LM3697_OUTPUT_CONFIG, 0x6},
-+	{LM3697_CTRL_A_RAMP, 0x0},
-+	{LM3697_CTRL_B_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
-+	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
-+	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
-+	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
-+	{LM3697_PWM_CFG, 0xc},
-+	{LM3697_CTRL_A_BRT_LSB, 0x0},
-+	{LM3697_CTRL_A_BRT_MSB, 0x0},
-+	{LM3697_CTRL_B_BRT_LSB, 0x0},
-+	{LM3697_CTRL_B_BRT_MSB, 0x0},
-+	{LM3697_CTRL_ENABLE, 0x0},
-+};
-+
-+static const struct regmap_config lm3697_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LM3697_CTRL_ENABLE,
-+	.reg_defaults = lm3697_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
-+static int lm3697_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
-+					      led_dev);
-+	int ctrl_en_val = (1 << led->control_bank);
-+	int ret;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (brt_val == LED_OFF) {
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ~ctrl_en_val);
-+		if (ret) {
-+			dev_err(&led->priv->client->dev, "Cannot write ctrl register\n");
-+			goto brightness_out;
-+		}
-+
-+		led->enabled = LED_OFF;
-+	} else {
-+		ret = ti_lmu_common_set_brightness(&led->lmu_data, brt_val);
-+		if (ret) {
-+			dev_err(&led->priv->client->dev,
-+				"Cannot write brightness\n");
-+			goto brightness_out;
-+		}
-+
-+		if (!led->enabled) {
-+			ret = regmap_update_bits(led->priv->regmap,
-+						 LM3697_CTRL_ENABLE,
-+						 ctrl_en_val, ctrl_en_val);
-+			if (ret) {
-+				dev_err(&led->priv->client->dev,
-+					"Cannot enable the device\n");
-+				goto brightness_out;
-+			}
-+
-+			led->enabled = brt_val;
-+		}
-+	}
-+
-+brightness_out:
-+	mutex_unlock(&led->priv->lock);
-+	return ret;
-+}
-+
-+static int lm3697_init(struct lm3697 *priv)
-+{
-+	struct lm3697_led *led;
-+	int i, ret;
-+
-+	if (priv->enable_gpio) {
-+		gpiod_direction_output(priv->enable_gpio, 1);
-+	} else {
-+		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "Cannot reset the device\n");
-+			goto out;
-+		}
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG, priv->bank_cfg);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
-+
-+	for (i = 0; i < LM3697_MAX_CONTROL_BANKS; i++) {
-+		led = &priv->leds[i];
-+		ret = ti_lmu_common_set_ramp(&led->lmu_data);
-+		if (ret)
-+			dev_err(&priv->client->dev, "Setting the ramp rate failed\n");
-+	}
-+out:
-+	return ret;
-+}
-+
-+static int lm3697_probe_dt(struct lm3697 *priv)
-+{
-+	struct fwnode_handle *child = NULL;
-+	struct lm3697_led *led;
-+	const char *name;
-+	int control_bank;
-+	size_t i = 0;
-+	int ret = -EINVAL;
-+	int j;
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-+	if (IS_ERR(priv->regulator))
-+		priv->regulator = NULL;
-+
-+	device_for_each_child_node(priv->dev, child) {
-+		ret = fwnode_property_read_u32(child, "reg", &control_bank);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "reg property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		if (control_bank > LM3697_CONTROL_B) {
-+			dev_err(&priv->client->dev, "reg property is invalid\n");
-+			ret = -EINVAL;
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		led = &priv->leds[i];
-+
-+		ret = ti_lmu_common_get_brt_res(&priv->client->dev,
-+						child, &led->lmu_data);
-+		if (ret)
-+			dev_warn(&priv->client->dev, "brightness resolution property missing\n");
-+
-+		led->control_bank = control_bank;
-+		led->lmu_data.regmap = priv->regmap;
-+		led->lmu_data.runtime_ramp_reg = LM3697_CTRL_A_RAMP +
-+						 control_bank;
-+		led->lmu_data.msb_brightness_reg = LM3697_CTRL_A_BRT_MSB +
-+						   led->control_bank * 2;
-+		led->lmu_data.lsb_brightness_reg = LM3697_CTRL_A_BRT_LSB +
-+						   led->control_bank * 2;
-+
-+		led->num_leds = fwnode_property_read_u32_array(child,
-+						       "led-sources",
-+						       NULL, 0);
-+
-+		if (led->num_leds > LM3697_MAX_LED_STRINGS) {
-+			dev_err(&priv->client->dev, "To many LED strings defined\n");
-+			continue;
-+		}
-+
-+		ret = fwnode_property_read_u32_array(child, "led-sources",
-+						    led->hvled_strings,
-+						    led->num_leds);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led-sources property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		for (j = 0; j < led->num_leds; j++)
-+			priv->bank_cfg |=
-+				(led->control_bank << led->hvled_strings[j]);
-+
-+		ret = ti_lmu_common_get_ramp_params(&priv->client->dev,
-+						    child, &led->lmu_data);
-+		if (ret)
-+			dev_warn(&priv->client->dev, "runtime-ramp properties missing\n");
-+
-+		fwnode_property_read_string(child, "linux,default-trigger",
-+					    &led->led_dev.default_trigger);
-+
-+		ret = fwnode_property_read_string(child, "label", &name);
-+		if (ret)
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::", priv->client->name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				 "%s:%s", priv->client->name, name);
-+
-+		led->priv = priv;
-+		led->led_dev.name = led->label;
-+		led->led_dev.max_brightness = led->lmu_data.max_brightness;
-+		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
-+
-+		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led register err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		i++;
-+	}
-+
-+child_out:
-+	return ret;
-+}
-+
-+static int lm3697_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct lm3697 *led;
-+	int count;
-+	int ret;
-+
-+	count = device_get_child_node_count(&client->dev);
-+	if (!count) {
-+		dev_err(&client->dev, "LEDs are not defined in device tree!");
-+		return -ENODEV;
-+	}
-+
-+	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
-+			   GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	mutex_init(&led->lock);
-+	i2c_set_clientdata(client, led);
-+
-+	led->client = client;
-+	led->dev = &client->dev;
-+	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lm3697_probe_dt(led);
-+	if (ret)
-+		return ret;
-+
-+	return lm3697_init(led);
-+}
-+
-+static int lm3697_remove(struct i2c_client *client)
-+{
-+	struct lm3697 *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
-+				 LM3697_CTRL_A_B_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable the device\n");
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lm3697_id[] = {
-+	{ "lm3697", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lm3697_id);
-+
-+static const struct of_device_id of_lm3697_leds_match[] = {
-+	{ .compatible = "ti,lm3697", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
-+
-+static struct i2c_driver lm3697_driver = {
-+	.driver = {
-+		.name	= "lm3697",
-+		.of_match_table = of_lm3697_leds_match,
-+	},
-+	.probe		= lm3697_probe,
-+	.remove		= lm3697_remove,
-+	.id_table	= lm3697_id,
-+};
-+module_i2c_driver(lm3697_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.21.0.5.gaeb582a983
+> An additional problem: /proc/*/exe can be used to open a file for
+> writing; I think it may have been Andy Lutomirski who pointed out some
+> time ago that it would be nice if you couldn't use /proc/*/fd/* to
+> re-open files with more privileges, which is sort of the same thing.
 
+This is something I'm currently working on a series for, which would
+boil down to some restrictions on how re-opening of file descriptors
+works through procfs.
+
+However, execveat() of a procfs magiclink is a bit hard to block --
+there is no way for userspace to to represent a file being "open for
+execute" so they are all "open for execute" by default and blocking it
+outright seems a bit extreme (though I actually hope to eventually add
+the ability to mark an O_PATH as "open for X" to resolveat(2) -- hence
+why I've reserved some bits).
+
+(Thinking more about it, there is an argument that I should include the
+above patch into this series so that we can block re-opening of fds
+opened through resolveat(2) without explicit flags from the outset.)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--yezcske27bisu2pl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlzQiEwACgkQSnvnv3De
+m59OaBAAz2IFmbji63Cay/WhNNJQnxuHC886Ekc041hMJQn7ciW0w6zqI4hbIEHr
+/bI4P+8riONORm5RBnyRyLHLS8iaC1VZJmWbFnZM5h8j8++jA5f8qVaBpcGrXWrn
+d1d7ypyVWtxAQJmttIfxGy2d5xzqDpS99ZPnsthF1LQAW1HpKR8maW+Q/cqoTGK5
+X33vxwVJaFAatwFDRwsuztAt23m3sJouDvJMuAUOC7/SmQJX2ZI5NRJVUNQOX2Ch
+bvKadGzJ8wm31laLSTCDmH3mzKDGshuGCzsqoBgbjRG4s0jPQwAQcbGnj2gcf3gK
+1l1jTibk7oOecrUs/GV0++QEkt+mcSJjPsD2oqo9GczTWyPXxQowXJHyPnwhSB1R
+MRPZKsSDdTo6gX5hdTzSD/vqyFGtBZArR0h+KhtLs88ypfyd7Bn8cgRQ99bPK3Nb
+afiAPQoCyS+4LMLGvRhxuGwjzWvBNKaR463yygtqSfZDzqWLr7eTorj+0KuJhmvo
+zDJcj8wnUlWkRXS7Unpj6xy0vKX2mJrkxlOCi39DYYWNTQkj52qLZ+efH44ex0i9
+wqAXHmt07+ys/LvIDXHnFzyZSafLhKp7OTWXUiEhVDHCwxFbfQQmsP12pRuoJT9H
+OeQgWaVC58G2O4hlrjZBfowV1g9fLjVm/oj+CMVGdhrYyVYSuP4=
+=LRko
+-----END PGP SIGNATURE-----
+
+--yezcske27bisu2pl--
