@@ -2,99 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF87014736
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CD014747
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfEFJLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 05:11:02 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58976 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfEFJLC (ORCPT
+        id S1726531AbfEFJL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 05:11:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38871 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfEFJL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 05:11:02 -0400
-Received: from localhost.localdomain (unknown [IPv6:2a02:2450:102f:3e0:95da:b269:747c:91b3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robertfoss)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9A482261136;
-        Mon,  6 May 2019 10:10:57 +0100 (BST)
-From:   Robert Foss <robert.foss@collabora.com>
-To:     airlied@linux.ie, kraxel@redhat.com, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Chia-I Wu <olvaffe@gmail.com>
-Cc:     Robert Foss <robert.foss@collabora.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: [PATCH v2] drm/virtio: Remove redundant return type
-Date:   Mon,  6 May 2019 11:10:34 +0200
-Message-Id: <20190506091034.30289-1-robert.foss@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 6 May 2019 05:11:57 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k16so16267206wrn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=iopmvjh/K0goQnipddx1YjV4JvPA9HSsZDyAOf6j4zs=;
+        b=Rpc1bCWAsZZNhkui+Nwh1LEaxyv1JdRUY0agjMgVlJEW+lGdQS5+VP/7mdNwc+Vzpu
+         3EJNyLtZWKg5f6B8wVIJZZjRAq695HToWLIf20BxSvxmlVzEyFMdTmxfGjEo8OftzMeF
+         61gMnSP6lYn3TKPrZ1qF96rIBKkVCFrRnhIF5i0OPuYv6KKMMy4jV6/q0tjjMItZVg5N
+         TIu0rNOZrfahM7EuYOmItUDvibG6+u97O+G/VnPKpewdSVJbrTUuKC636oAS9yWggkiT
+         6zwVBjGR3vGyfzcK6/Ml/tH8tQ9qsi51eSwW9es5pPd9E4mMHBxZUPwqytKTcdc2myY0
+         oKbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=iopmvjh/K0goQnipddx1YjV4JvPA9HSsZDyAOf6j4zs=;
+        b=J6ZQ226p/BFd379QqH8iGEKjPixos26wE/8lmx3XY1fnT2YJBreU6Kyv74oVTWbMe0
+         QkFTmw/38/4BpEWHE8pGv1vDniATwwiBl+fpFgA99GJaXbN6sUjRceBYQzl0c3IbbRT0
+         7m4sICnG9Dpq1ODRjYtyTYvePTn0jgtboOdkkLGrtbIUzdDn1xGidp61r0kU6SrKcQbV
+         KC50XhnrzgMVYYK7vpfZuPnEdqZ2j4ENGxYTUTzBCdA/EULYgOizqf5339USsHgaWMh3
+         34Iat0Ts8FfWOPUGo5vgn9c2iEVQWiOabjRXqEGlhYrL6UGQ7Vx3o0gMIHaIW2SuuHyM
+         2IPg==
+X-Gm-Message-State: APjAAAW4CA2u+kKHFBXwEJqwhGaRLHzSa6U4Jgid2go5c3sm1jlPS/q3
+        DFZqZSEGrejc2IJyLLwusbs=
+X-Google-Smtp-Source: APXvYqzTUMW9ShnDwejfRuN3nCa1dkjC/AklXs3mXJ4ZH5WE5kuRDjq16o4Z/JKhhQs9zl3Z6CgZTg==
+X-Received: by 2002:adf:ea86:: with SMTP id s6mr17106315wrm.44.1557133915984;
+        Mon, 06 May 2019 02:11:55 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h24sm12543197wmb.40.2019.05.06.02.11.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 02:11:55 -0700 (PDT)
+Date:   Mon, 6 May 2019 11:11:53 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] scheduler changes for v5.2
+Message-ID: <20190506091153.GA38979@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio_gpu_fence_emit() always returns 0, since it
-has no error paths.
+Linus,
 
-Consequently no calls for virtio_gpu_fence_emit()
-use the return value, and it can be removed.
+Please pull the latest sched-core-for-linus git tree from:
 
-Signed-off-by: Robert Foss <robert.foss@collabora.com>
-Suggested-by: Emil Velikov <emil.velikov@collabora.com>
-Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
----
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
 
-This patch was suggested in this email thread:
+   # HEAD: 08ae95f4fd3b38b257f5dc7e6507e071c27ba0d5 nohz_full: Allow the boot CPU to be nohz_full
 
-[PATCH] drm/virtio: allocate fences with GFP_KERNEL
-https://www.spinics.net/lists/dri-devel/msg208536.html
+The main changes in this cycle were:
 
-Changes since v1:
- - Rebased on drm-misc-next
- - Added r-b from Chia-I Wu
+ - Make nohz housekeeping processing more permissive and less intrusive 
+   to isolated CPUs
+
+ - Decouple CPU-bound workqueue acconting from the scheduler and move it 
+   into the workqueue code.
+
+ - Optimize topology building
+
+ - Better handle quota and period overflows
+
+ - Add more RCU annotations
+
+ - Comment updates, misc cleanups
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Colin Ian King (1):
+      sched/debug: Fix spelling mistake "logaritmic" -> "logarithmic"
+
+Joel Fernandes (Google) (4):
+      sched/cpufreq: Annotate cpufreq_update_util_data pointer with __rcu
+      sched_domain: Annotate RCU pointers properly
+      rcuwait: Annotate task_struct with __rcu
+      sched/core: Annotate perf_domain pointer with __rcu
+
+Joel Savitz (1):
+      sched/core: Fix typo in comment
+
+Juri Lelli (2):
+      cgroup/cpuset: Update stale generate_sched_domains() comments
+      sched/topology: Update init_sched_domains() comment
+
+Konstantin Khlebnikov (3):
+      sched/rt: Check integer overflow at usec to nsec conversion
+      sched/core: Handle overflow in cpu_shares_write_u64
+      sched/core: Check quota and period overflow at usec to nsec conversion
+
+Nicholas Piggin (6):
+      sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs
+      sched/core: Allow the remote scheduler tick to be started on CPU0
+      power/suspend: Add function to disable secondaries for suspend
+      kernel/cpu: Allow non-zero CPU to be primary for suspend / kexec freeze
+      sched/isolation: Require a present CPU in housekeeping mask
+      nohz_full: Allow the boot CPU to be nohz_full
+
+Peter Zijlstra (2):
+      sched/core: Remove ttwu_activate()
+      sched/core: Unify p->on_rq updates
+
+Thomas Gleixner (1):
+      sched/core, workqueues: Distangle worker accounting from rq lock
+
+Valentin Schneider (3):
+      sched/topology: Fix build_sched_groups() comment
+      sched/topology: Skip duplicate group rewrites in build_sched_groups()
+      sched/fair: Remove unneeded prototype of capacity_of()
+
+YueHaibing (2):
+      sched/fair: Make sync_entity_load_avg() and remove_entity_load_avg() static
+      sched/core: Make some functions static
 
 
- drivers/gpu/drm/virtio/virtgpu_drv.h   | 2 +-
- drivers/gpu/drm/virtio/virtgpu_fence.c | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 90461feeafdb..2d3e5b1debb3 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -355,7 +355,7 @@ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma);
- bool virtio_fence_signaled(struct dma_fence *f);
- struct virtio_gpu_fence *virtio_gpu_fence_alloc(
- 	struct virtio_gpu_device *vgdev);
--int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
-+void virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
- 			  struct virtio_gpu_fence *fence);
- void virtio_gpu_fence_event_process(struct virtio_gpu_device *vdev,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fence.c b/drivers/gpu/drm/virtio/virtgpu_fence.c
-index 8aecc36a0417..70d6c4329778 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fence.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fence.c
-@@ -85,7 +85,7 @@ struct virtio_gpu_fence *virtio_gpu_fence_alloc(struct virtio_gpu_device *vgdev)
- 	return fence;
- }
- 
--int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
-+void virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
- 			  struct virtio_gpu_fence *fence)
- {
-@@ -102,7 +102,6 @@ int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 
- 	cmd_hdr->flags |= cpu_to_le32(VIRTIO_GPU_FLAG_FENCE);
- 	cmd_hdr->fence_id = cpu_to_le64(fence->f.seqno);
--	return 0;
- }
- 
- void virtio_gpu_fence_event_process(struct virtio_gpu_device *vgdev,
--- 
-2.20.1
-
+ arch/powerpc/Kconfig           |   4 ++
+ include/linux/cpu.h            |  17 ++++++
+ include/linux/rcuwait.h        |   2 +-
+ include/linux/sched/topology.h |   4 +-
+ kernel/cgroup/cpuset.c         |  11 ++--
+ kernel/cpu.c                   |  10 +++-
+ kernel/kexec_core.c            |   4 +-
+ kernel/power/Kconfig           |   9 +++
+ kernel/power/hibernate.c       |  12 ++--
+ kernel/power/suspend.c         |   4 +-
+ kernel/sched/core.c            | 127 +++++++++++++----------------------------
+ kernel/sched/cpufreq.c         |   2 +-
+ kernel/sched/debug.c           |   2 +-
+ kernel/sched/fair.c            |  25 ++++----
+ kernel/sched/isolation.c       |  18 ++++--
+ kernel/sched/rt.c              |   5 ++
+ kernel/sched/sched.h           |  18 +++---
+ kernel/sched/topology.c        |  31 +++++-----
+ kernel/time/tick-common.c      |  50 ++++++++++++++--
+ kernel/time/tick-sched.c       |  34 +++++++----
+ kernel/workqueue.c             |  54 ++++++++----------
+ kernel/workqueue_internal.h    |   5 +-
+ 22 files changed, 255 insertions(+), 193 deletions(-)
