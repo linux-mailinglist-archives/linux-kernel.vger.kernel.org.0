@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 872EF14D59
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A733B14D7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfEFOvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:51:04 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41405 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfEFOvD (ORCPT
+        id S1727861AbfEFOv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:51:29 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33747 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729483AbfEFOvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:51:03 -0400
-Received: by mail-ed1-f65.google.com with SMTP id m4so15618761edd.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:51:02 -0700 (PDT)
+        Mon, 6 May 2019 10:51:20 -0400
+Received: by mail-qk1-f193.google.com with SMTP id k189so788271qkc.0;
+        Mon, 06 May 2019 07:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:message-id:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-disposition:content-transfer-encoding;
+        bh=EUqbtnBDML3NXPrwjM3lOcCy0+gNa0GHK0Zw6wsv7vk=;
+        b=AXTDnLjU4V5dPhIaqTfxEvyLYGM6Ju3eFNv0qIjyCiDhH80SqzSBl8gqCzk71+F8En
+         6FZBzMHUG20Ea88H/H4v3tV6iodGgF81A4RWwPpTJptIvVzUiMQUN3vx/S2PGtidPIVu
+         txpEda5KDfCAQvKaGidI40u3a2CT6ltxytWXxIgllylF3HU7mFmHw2Z3Lhy59yXdMvLM
+         y6v6ykITIP9UnL7CtW8v+klC7wr/X2vN5DT1hSv9JjdgeBNj78eEV77CVowZfYziAiGs
+         24NBtWK6UJTL7Z4R7jdP+qXnenOUqbd0eKNm0fGpbpg8kRu6C9MHRRt8KVF/35B4F8N/
+         wEQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
+         :references:mime-version:content-disposition
          :content-transfer-encoding;
-        bh=WILAIYS5L39NX5qaghFqLvb4HjkqylYpmgnllvPlJjg=;
-        b=NiIACnkwzxcX7l3PwUU/TshLH+JxnaVGNxqSInvTeh06UTcLR+90kCrDZv2TO8VhnU
-         dJuqS4kK2gPS70YIgAlTpviLJJ3p2jo2a9dWpzf2VFO+RMatmVwaf6fJOIdwvsCp/uJh
-         5SABF7qmumarpGjKplOChMovdkNGF+KhcAfh/EtGnbxLXreTTZPZI/PDXJSElY7Ip/j1
-         jSCeJplCT2HNUy9jYamwVmMb1xbZQff1fiib3+DFbNvjMHR24gSX2Qd1rOgzhEZfc604
-         KLJnQrpJBGmjYJvtB/QWUk+eoU+T4TiF7J2F2RV1DstDIZVfHM3uY6H3ioELXqnaa31+
-         P88w==
-X-Gm-Message-State: APjAAAXW1T4iOvG0NZV8/scMvgEagXN83nQnNFFqyRZdPTNHKR7Iq2Y7
-        SC7dsfTQjwv1ZlHBA1bD0jNQJameI0E=
-X-Google-Smtp-Source: APXvYqxtOyAlYjQxfUDU7l6TzpK8MooojS7/5sM8tPSiP4KeZYsMNp2wlWeIWPLe9qOpa7t38MBgpw==
-X-Received: by 2002:a50:89b0:: with SMTP id g45mr26933010edg.200.1557154261729;
-        Mon, 06 May 2019 07:51:01 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id b23sm3155976ede.75.2019.05.06.07.51.00
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 07:51:00 -0700 (PDT)
-Subject: Re: [PATCH 0/1] Add several Beckhoff Automation boards to
- critclk_systems DMI table
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel-dev@beckhoff.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190502130351.5341-1-linux-kernel-dev@beckhoff.com>
- <CAHp75Vc4xWbnGoaS8tRDV4_F-Qifh7K1hoFn0V-OObun2Sd0DA@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <21677236-b7fc-c51b-958a-269b5e65af54@redhat.com>
-Date:   Mon, 6 May 2019 16:50:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        bh=EUqbtnBDML3NXPrwjM3lOcCy0+gNa0GHK0Zw6wsv7vk=;
+        b=BBSKYS91VIRrvwbeJ/IEG5BZT5sFbgDcbDcbikYZPQ/PWwiMnwfF1BZ30qeWbw46as
+         8+AXx+e6XlpS+IJAy2Zf1Ougm2IYP+2Rt+Lrh7KUUBwpbw8Y9DLHWDFnJmKvC4Kqp8os
+         DYXCobpAH/bJLqoe9Fa903h5V1I3dlo2i0wVaM7df3DmTIYLRh5N3fr0Q0gaE4hKlvyA
+         oEJIKqA6nOVpK31aDXonlciehtea0wwRlETwFswzvtFqR4LZfqaj/+zMZ1C9dTgW4IAp
+         zsblnQjyWAy3xkJMw2QAneHVKTyaDGR/1unOowkBqQZiC9/6jocoyQthoZauJR4KlvIf
+         5RPQ==
+X-Gm-Message-State: APjAAAWMbzkMPXvbghZbWd7NMMQyRu5hFO0ZHQ9AgTMpi9YrC7mbIHy4
+        VNTT6qERaidtOZPYa3gpIP8=
+X-Google-Smtp-Source: APXvYqxTY7WCj2xqd8jZnjpQFVhDqMsXc162OV4Ev36zk054hC0qFGnC4etgldMyVboC8w5Y9MBvNA==
+X-Received: by 2002:a37:52c1:: with SMTP id g184mr11795366qkb.338.1557154279804;
+        Mon, 06 May 2019 07:51:19 -0700 (PDT)
+Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
+        by smtp.gmail.com with ESMTPSA id m62sm5695639qkd.68.2019.05.06.07.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 07:51:18 -0700 (PDT)
+Date:   Mon, 6 May 2019 10:51:17 -0400
+Message-ID: <20190506105117.GB24823@t480s.localdomain>
+From:   Vivien Didelot <vivien.didelot@gmail.com>
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Andrew Lunn <andrew@lunn.ch>, LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/5] net: dsa: mv88e6xxx: rename smi read/write
+ functions
+In-Reply-To: <8d14f3e0-4b95-900c-55f0-dfff30ae655f@prevas.dk>
+References: <20190501193126.19196-1-rasmus.villemoes@prevas.dk>
+ <20190501193126.19196-3-rasmus.villemoes@prevas.dk>
+ <20190503175732.GB4060@t480s.localdomain>
+ <8d14f3e0-4b95-900c-55f0-dfff30ae655f@prevas.dk>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc4xWbnGoaS8tRDV4_F-Qifh7K1hoFn0V-OObun2Sd0DA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Rasmus,
 
-On 06-05-19 14:40, Andy Shevchenko wrote:
-> On Thu, May 2, 2019 at 4:04 PM <linux-kernel-dev@beckhoff.com> wrote:
->>
->> From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
->>
->> There are several Beckhoff Automation industrial PC boards which use
->> pmc_plt_clk* clocks for ethernet controllers. The patch adds affected boards
->> to critclk_systems DMI table so the clocks are marked as CLK_CRITICAL and
->> not turned off.
->> This should be applied on top of another patch as both change
->> the same table:
->> [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to critclk_systems DMI table
+On Mon, 6 May 2019 05:57:11 +0000, Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
+
+> > I have a preparatory patch which does almost exactly that. I'm sending it
+> > to simplify this patchset.
 > 
-> Yes, that's why it either should go via CLK tree, or I need an
-> immutable tag or branch from them.
-> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> OK, I'll hold off sending a v2 until I see how 1/5 and 2/5 are obsoleted
+> by your patch(es).
 
-As I just mentioned in your reply to the "[PATCH] platform/x86: pmc_atom:
-Add Lex 3I380D industrial PC to critclk_systems DMI table":
+You may rebase your patches now and add your new implementation of
+register access through SMI in the smi.c file if that is necessary.
 
-"Stephen added the patches this depends on to his fixes branch, so they
-are in the 5.1 / Torvald's master branch, since we are now in the 5.2 merge
-window, you should be able to cleanly apply this directly."
 
-So both that patch and this patch should be able to go through the d-p-x86 tree
-unless I'm missing something?
+Thanks,
 
-Regards,
-
-Hans
-
-> 
->>
->> Steffen Dirkwinkel (1):
->>    platform/x86: pmc_atom: Add several Beckhoff Automation boards to
->>      critclk_systems DMI table
->>
->>   drivers/platform/x86/pmc_atom.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> --
->> 2.21.0
-> 
-> 
-> 
+	Vivien
