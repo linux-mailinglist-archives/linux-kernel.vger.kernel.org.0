@@ -2,96 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630BA1444D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 07:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F28A914428
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 06:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfEFFtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 01:49:16 -0400
-Received: from ms01.santannapisa.it ([193.205.80.98]:57922 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfEFFtK (ORCPT
+        id S1725856AbfEFEtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 00:49:08 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46458 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbfEFEtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 01:49:10 -0400
-X-Greylist: delayed 3600 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 01:48:55 EDT
-Received: from [151.41.47.232] (account l.abeni@santannapisa.it HELO sweethome.home-life.hub)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 138841012; Mon, 06 May 2019 06:49:02 +0200
-From:   Luca Abeni <luca.abeni@santannapisa.it>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        luca abeni <luca.abeni@santannapisa.it>
-Subject: [RFC PATCH 6/6] sched/dl: Try not to select a too fast core
-Date:   Mon,  6 May 2019 06:48:36 +0200
-Message-Id: <20190506044836.2914-7-luca.abeni@santannapisa.it>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190506044836.2914-1-luca.abeni@santannapisa.it>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+        Mon, 6 May 2019 00:49:07 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a7so3353325oie.13
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 21:49:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GzaHgoeX6HRTRXwU9I5H6cKQKwKQ7SwKMXfF2Gqzjfc=;
+        b=QPwyQ3h2uEHwPxv8iaZf6hrszwXTPil84uK8d64fjkCax7hPZu7Le2VNv/hIoCcg30
+         KMJzCQm3rouXV//peObIT94XlBSxQsh91n8kAWxkGxmgwVppGJXGYQRXFod4N/A9u6tS
+         9+6B2UwXK33scEKkmtgt9CzMCSSGLW10NDv4E1dViftGBsiNLkfgN+FduotdRoEFC8IE
+         wjnGk3+2Wfgd9JRtSkqkU0z7lucy4I3ELmbOMj9XHR6w+u1vkw25sJfJuiVCU5P0nSVu
+         1jg0wONRtHLRum8M38z3Mftl5XVgtSpUjhFiqJggjYZLJCwitUsKUhxbhA2aOrio2o1C
+         ESgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GzaHgoeX6HRTRXwU9I5H6cKQKwKQ7SwKMXfF2Gqzjfc=;
+        b=DiaCWA/OaA/OmP0aL59nv10Z0D8lwrsTNyfjK1sksuXvbXXxVj0HMhm6nBAWxJ59Ub
+         feU3SdXYSTZMC6kxx9hTOGufzmhvH/RBvRMiSbjicjR9fDfw4ZpOYCF+SbYkNOXRc6qV
+         fzppzqnCJ9ZKCjnujA2mdNgDiCGlwYk181RSskTk2l/18EoUrH7pe58Z2pjTX27KKWT1
+         yuNENyF+w4q0ZgsBa1nvBlu0HP68234Ia6SJHl34tP2IxGq5oKtxp+CKKebkRoHhZ0Nx
+         LujhVLM71WP4MwNLuP0hC6WGr/ZGe34J3ZvLAoCUAh+g7N7XGDKMsQbgMdGrFtPRaUeI
+         l2aA==
+X-Gm-Message-State: APjAAAWGDD2gkUCZVR9Gzidee5JM1NKXRHjpic6351Ndx2ifvm3BxIYF
+        RS3pE96xNcIKXeXA7cKGgIcALB8eUhfE4b77WC5Vyw==
+X-Google-Smtp-Source: APXvYqwdmhrKDGqSljr1mSaJesF23CESLgd++Xum0FAD3sdqWQS3KgMK0sbiDZqT2hMnnz9C+a1jlWkruqQPG8y93Ec=
+X-Received: by 2002:aca:61c3:: with SMTP id v186mr7223512oib.27.1557118146389;
+ Sun, 05 May 2019 21:49:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1555330115.git.baolin.wang@linaro.org> <d77dca51a14087873627d735a17adcfde5517398.1555330115.git.baolin.wang@linaro.org>
+ <20190429115723.GK3845@vkoul-mobl.Dlink> <CAMz4kuLf4wgr4Js3xH1aQVc4c2XK1Oq2TnsUq=NSowQUq5ZN5g@mail.gmail.com>
+ <20190429140537.GN3845@vkoul-mobl.Dlink> <CAMz4ku+ctQrcR+6t1ouakeG3dbgL3qR8fz-Hft4s9FnxtFL1ng@mail.gmail.com>
+ <20190430082954.GQ3845@vkoul-mobl.Dlink> <CAMz4kuKV3J+aw9sic=QOhmcnr+H_pZ-pmq4pRbLX1R+XAR=phA@mail.gmail.com>
+ <CAMz4kuLFyckFdzVgL9FH0xW8036OoAbyjHqfOAVhibPyNssPDA@mail.gmail.com> <20190502060148.GH3845@vkoul-mobl.Dlink>
+In-Reply-To: <20190502060148.GH3845@vkoul-mobl.Dlink>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Mon, 6 May 2019 12:48:54 +0800
+Message-ID: <CAMz4ku+ayStr4qvpX-ZO_WnrhESp5NrDFbVjC9W7QXiqyx14wA@mail.gmail.com>
+Subject: Re: [PATCH 4/7] dmaengine: sprd: Add device validation to support
+ multiple controllers
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>, eric.long@unisoc.com,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: luca abeni <luca.abeni@santannapisa.it>
+Hi Vinod,
 
-When a task can fit on multiple CPU cores, try to select the slowest
-core that is able to properly serve the task. This avoids useless
-future migrations, leaving the "fast cores" idle for more heavyweight
-tasks.
+On Thu, 2 May 2019 at 14:01, Vinod Koul <vkoul@kernel.org> wrote:
+>
+> On 30-04-19, 16:53, Baolin Wang wrote:
+> > Hi Vinod,
+> >
+> > On Tue, 30 Apr 2019 at 16:34, Baolin Wang <baolin.wang@linaro.org> wrote:
+> > >
+> > > On Tue, 30 Apr 2019 at 16:30, Vinod Koul <vkoul@kernel.org> wrote:
+> > > >
+> > > > On 30-04-19, 13:30, Baolin Wang wrote:
+> > > > > On Mon, 29 Apr 2019 at 22:05, Vinod Koul <vkoul@kernel.org> wrote:
+> > > > > >
+> > > > > > On 29-04-19, 20:20, Baolin Wang wrote:
+> > > > > > > On Mon, 29 Apr 2019 at 19:57, Vinod Koul <vkoul@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > On 15-04-19, 20:14, Baolin Wang wrote:
+> > > > > > > > > From: Eric Long <eric.long@unisoc.com>
+> > > > > > > > >
+> > > > > > > > > Since we can support multiple DMA engine controllers, we should add
+> > > > > > > > > device validation in filter function to check if the correct controller
+> > > > > > > > > to be requested.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Eric Long <eric.long@unisoc.com>
+> > > > > > > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > > > > > > > ---
+> > > > > > > > >  drivers/dma/sprd-dma.c |    5 +++++
+> > > > > > > > >  1 file changed, 5 insertions(+)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+> > > > > > > > > index 0f92e60..9f99d4b 100644
+> > > > > > > > > --- a/drivers/dma/sprd-dma.c
+> > > > > > > > > +++ b/drivers/dma/sprd-dma.c
+> > > > > > > > > @@ -1020,8 +1020,13 @@ static void sprd_dma_free_desc(struct virt_dma_desc *vd)
+> > > > > > > > >  static bool sprd_dma_filter_fn(struct dma_chan *chan, void *param)
+> > > > > > > > >  {
+> > > > > > > > >       struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+> > > > > > > > > +     struct of_phandle_args *dma_spec =
+> > > > > > > > > +             container_of(param, struct of_phandle_args, args[0]);
+> > > > > > > > >       u32 slave_id = *(u32 *)param;
+> > > > > > > > >
+> > > > > > > > > +     if (chan->device->dev->of_node != dma_spec->np)
+> > > > > > > >
+> > > > > > > > Are you not using of_dma_find_controller() that does this, so this would
+> > > > > > > > be useless!
+> > > > > > >
+> > > > > > > Yes, we can use of_dma_find_controller(), but that will be a little
+> > > > > > > complicated than current solution. Since we need introduce one
+> > > > > > > structure to save the node to validate in the filter function like
+> > > > > > > below, which seems make things complicated. But if you still like to
+> > > > > > > use of_dma_find_controller(), I can change to use it in next version.
+> > > > > >
+> > > > > > Sorry I should have clarified more..
+> > > > > >
+> > > > > > of_dma_find_controller() is called by xlate, so you already run this
+> > > > > > check, so why use this :)
+> > > > >
+> > > > > The of_dma_find_controller() can save the requested device node into
+> > > > > dma_spec, and in the of_dma_simple_xlate() function, it will call
+> > > > > dma_request_channel() to request one channel, but it did not validate
+> > > > > the device node to find the corresponding dma device in
+> > > > > dma_request_channel(). So we should in our filter function to validate
+> > > > > the device node with the device node specified by the dma_spec. Hope I
+> > > > > make things clear.
+> > > >
+> > > > But dma_request_channel() calls of_dma_request_slave_channel() which
+> > > > invokes of_dma_find_controller() why is it broken for you if that is the
+> > > > case..
+> > >
+> > > No,the calling process should be:
+> > > dma_request_slave_channel()
+> > > --->dma_request_chan()--->of_dma_request_slave_channel()---->of_dma_simple_xlate()
+> > > ----> dma_request_channel().
+>
+> The thing is that this is a generic issue, so fix should be in the core
+> and not in the driver. Agree in you case of_dma_find_controller() is not
+> invoked, so we should fix that in core
+>
+> >
+> > You can check other drivers, they also will save the device node to
+> > validate in their filter function.
+> > For example the imx-sdma driver:
+> > https://elixir.bootlin.com/linux/v5.1-rc6/source/drivers/dma/imx-sdma.c#L1931
+>
+> Exactly, more the reason this should be in core :)
 
-Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
----
- kernel/sched/cpudeadline.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+Sorry for late reply due to my holiday.
 
-diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-index 2a4ac7b529b7..897ed71af515 100644
---- a/kernel/sched/cpudeadline.c
-+++ b/kernel/sched/cpudeadline.c
-@@ -143,17 +143,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
- 	       struct cpumask *later_mask)
- {
- 	const struct sched_dl_entity *dl_se = &p->dl;
-+	struct cpumask tmp_mask;
- 
- 	if (later_mask &&
--	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_allowed)) {
-+	    cpumask_and(&tmp_mask, cp->free_cpus, &p->cpus_allowed)) {
- 		int cpu, max_cpu = -1;
--		u64 max_cap = 0;
-+		u64 max_cap = 0, min_cap = SCHED_CAPACITY_SCALE * SCHED_CAPACITY_SCALE;
- 
--		for_each_cpu(cpu, later_mask) {
-+		cpumask_clear(later_mask);
-+		for_each_cpu(cpu, &tmp_mask) {
- 			u64 cap;
- 
--			if (!dl_task_fit(&p->dl, cpu, &cap))
--				cpumask_clear_cpu(cpu, later_mask);
-+			if (dl_task_fit(&p->dl, cpu, &cap) && (cap <= min_cap)) {
-+				if (cap < min_cap) {
-+					min_cap = cap;
-+					cpumask_clear(later_mask);
-+				}
-+				cpumask_set_cpu(cpu, later_mask);
-+			}
- 
- 			if (cap > max_cap) {
- 				max_cap = cap;
+OK, I can move the fix into the core. So I think I will drop this
+patch from my patchset, and I will create another patch set to fix the
+device node validation issue with converting other drivers which did
+the similar things. Thanks.
+
 -- 
-2.20.1
-
+Baolin Wang
+Best Regards
