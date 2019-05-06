@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7192E14D07
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66DCB14E5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfEFOrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46084 "EHLO mail.kernel.org"
+        id S1728390AbfEFOmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:42:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729267AbfEFOrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:47:13 -0400
+        id S1728369AbfEFOl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:41:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64F0720449;
-        Mon,  6 May 2019 14:47:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69BD521479;
+        Mon,  6 May 2019 14:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154032;
-        bh=ZWme/I8XL5DLX6KM91dRGi4a4dE7wwzF7MHXMGfGN9E=;
+        s=default; t=1557153718;
+        bh=XHfRqNPamAIh+JBrPyP1AVVMI9BBXbcniQkJsMVsSHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=obu/ygWjkqXN3BWalGEjXQYSsY6ht/3WCtLYa2Yusn9fiejiAhcrZUPLqn54yzLMy
-         f5dLd+u1/3P6WgsB5HFEXi2npGfQz1YyfT1Sk0LnHyfoNm2ozxt3yXHoNygd9UqWvT
-         7zV78hgU1N8P5ZyVAzq1ugt9N54uiqfnRbY0XgGU=
+        b=id0u6tFkxAx06jhSzr3fwtHpExRzjmu1WsOuTziCbzF40TAnQHXVRDTnDKU7N8O1R
+         Kqr5GCBlXOTlPoyRMyfGFTGAWgPSS7yXRCpmYLYM4OqwsFuQi4lYzPA3Y4CIzPhecl
+         utSqsKjmyIuRw9DNLEJ95Xy+nHWfRphmhZhgbooA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 4.9 13/62] arm64: kasan: avoid bad virt_to_pfn()
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 71/99] Bluetooth: btusb: request wake pin with NOAUTOEN
 Date:   Mon,  6 May 2019 16:32:44 +0200
-Message-Id: <20190506143052.234114233@linuxfoundation.org>
+Message-Id: <20190506143100.581802215@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit b0de0ccc8b9edd8846828e0ecdc35deacdf186b0 upstream.
+commit 771acc7e4a6e5dba779cb1a7fd851a164bc81033 upstream.
 
-Booting a v4.11-rc1 kernel with DEBUG_VIRTUAL and KASAN enabled produces
-the following splat (trimmed for brevity):
+Badly-designed systems might have (for example) active-high wake pins
+that default to high (e.g., because of external pull ups) until they
+have an active firmware which starts driving it low.  This can cause an
+interrupt storm in the time between request_irq() and disable_irq().
 
-[    0.000000] virt_to_phys used for non-linear address: ffff200008080000 (0xffff200008080000)
-[    0.000000] WARNING: CPU: 0 PID: 0 at arch/arm64/mm/physaddr.c:14 __virt_to_phys+0x48/0x70
-[    0.000000] PC is at __virt_to_phys+0x48/0x70
-[    0.000000] LR is at __virt_to_phys+0x48/0x70
-[    0.000000] Call trace:
-[    0.000000] [<ffff2000080b1ac0>] __virt_to_phys+0x48/0x70
-[    0.000000] [<ffff20000a03b86c>] kasan_init+0x1c0/0x498
-[    0.000000] [<ffff20000a034018>] setup_arch+0x2fc/0x948
-[    0.000000] [<ffff20000a030c68>] start_kernel+0xb8/0x570
-[    0.000000] [<ffff20000a0301e8>] __primary_switched+0x6c/0x74
+We don't support shared interrupts here, so let's just pre-configure the
+interrupt to avoid auto-enabling it.
 
-This is because we use virt_to_pfn() on a kernel image address when
-trying to figure out its nid, so that we can allocate its shadow from
-the same node.
-
-As with other recent changes, this patch uses lm_alias() to solve this.
-
-We could instead use NUMA_NO_NODE, as x86 does for all shadow
-allocations, though we'll likely want the "real" memory shadow to be
-backed from its corresponding nid anyway, so we may as well be
-consistent and find the nid for the image shadow.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Fixes: fd913ef7ce61 ("Bluetooth: btusb: Add out-of-band wakeup support")
+Fixes: 5364a0b4f4be ("arm64: dts: rockchip: move QCA6174A wakeup pin into its USB node")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/kasan_init.c |    2 +-
+ drivers/bluetooth/btusb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -153,7 +153,7 @@ void __init kasan_init(void)
- 	clear_pgds(KASAN_SHADOW_START, KASAN_SHADOW_END);
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2888,6 +2888,7 @@ static int btusb_config_oob_wake(struct
+ 		return 0;
+ 	}
  
- 	vmemmap_populate(kimg_shadow_start, kimg_shadow_end,
--			 pfn_to_nid(virt_to_pfn(_text)));
-+			 pfn_to_nid(virt_to_pfn(lm_alias(_text))));
++	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_irq(&hdev->dev, irq, btusb_oob_wake_handler,
+ 			       0, "OOB Wake-on-BT", data);
+ 	if (ret) {
+@@ -2902,7 +2903,6 @@ static int btusb_config_oob_wake(struct
+ 	}
  
- 	/*
- 	 * vmemmap_populate() has populated the shadow region that covers the
+ 	data->oob_wake_irq = irq;
+-	disable_irq(irq);
+ 	bt_dev_info(hdev, "OOB Wake-on-BT configured at IRQ %u", irq);
+ 	return 0;
+ }
 
 
