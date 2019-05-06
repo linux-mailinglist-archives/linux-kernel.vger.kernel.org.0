@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43FD214DF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5363814C9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbfEFO4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:56:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41314 "EHLO mail.kernel.org"
+        id S1728370AbfEFOl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:41:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728178AbfEFOow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:44:52 -0400
+        id S1728364AbfEFOly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:41:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01EFD2053B;
-        Mon,  6 May 2019 14:44:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CEAC21019;
+        Mon,  6 May 2019 14:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153891;
-        bh=Gf/gTgeIoE4zABm9pswI2HzfvG1pzYaXciTyOVoaJ0M=;
+        s=default; t=1557153713;
+        bh=jxET2lkC8axXa57NGv2c8LLSq54+oEHQi4BAnWts6Mc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0d6L+0RIfi8iJEzx874/Z4aQxKt6ZXAIQAID6deLoxAQGa7e/lIJwEuYir5Bf+pdB
-         2E1RUN/lYo+bN/is30vdyjT+pyBJ1dN6IQU/Q7cZyw3DrTT8dqzpu2w33WmzZY6WU6
-         n7E8TjF4gzuZl4/8wFh7VRxTwwXBotwIca/fQ6GY=
+        b=fuZXM7gLylJZnNholcJIFNCAS70XQnWfe5JCD22Ugy62Ji9v30SctKgRPHef7PlpU
+         /qyHoquk2zH4xIdnuVAyeoTiz5x2Nv6LbKutyXadDEfFP/qrl+R7wTLX9d34veNOVH
+         pHJStEykRtivmFT9vUa7m912RjLQE3JxK6NAEV8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omri Kahalon <omrik@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/75] net/mlx5: E-Switch, Fix esw manager vport indication for more vport commands
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>,
+        syzbot <syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com>
+Subject: [PATCH 4.19 69/99] block: pass no-op callback to INIT_WORK().
 Date:   Mon,  6 May 2019 16:32:42 +0200
-Message-Id: <20190506143056.299952048@linuxfoundation.org>
+Message-Id: <20190506143100.414365876@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eca4a928585ac08147e5cc8e2111ecbc6279ee31 ]
+[ Upstream commit 2e3c18d0ada16f145087b2687afcad1748c0827c ]
 
-Traditionally, the PF (Physical Function) which resides on vport 0 was
-the E-switch manager. Since the ECPF (Embedded CPU Physical Function),
-which resides on vport 0xfffe, was introduced as the E-Switch manager,
-the assumption that the E-switch manager is on vport 0 is incorrect.
+syzbot is hitting flush_work() warning caused by commit 4d43d395fed12463
+("workqueue: Try to catch flush_work() without INIT_WORK().") [1].
+Although that commit did not expect INIT_WORK(NULL) case, calling
+flush_work() without setting a valid callback should be avoided anyway.
+Fix this problem by setting a no-op callback instead of NULL.
 
-Since the eswitch code already uses the actual vport value, all we
-need is to always set other_vport=1.
+[1] https://syzkaller.appspot.com/bug?id=e390366bc48bc82a7c668326e0663be3b91cbd29
 
-Signed-off-by: Omri Kahalon <omrik@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-and-tested-by: syzbot <syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com>
+Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[sl: rename blk_timeout_work]
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ block/blk-core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index d2914116af8e..090d54275a7d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -79,8 +79,7 @@ static int arm_vport_context_events_cmd(struct mlx5_core_dev *dev, u16 vport,
- 		 opcode, MLX5_CMD_OP_MODIFY_NIC_VPORT_CONTEXT);
- 	MLX5_SET(modify_nic_vport_context_in, in, field_select.change_event, 1);
- 	MLX5_SET(modify_nic_vport_context_in, in, vport_number, vport);
--	if (vport)
--		MLX5_SET(modify_nic_vport_context_in, in, other_vport, 1);
-+	MLX5_SET(modify_nic_vport_context_in, in, other_vport, 1);
- 	nic_vport_ctx = MLX5_ADDR_OF(modify_nic_vport_context_in,
- 				     in, nic_vport_context);
- 
-@@ -108,8 +107,7 @@ static int modify_esw_vport_context_cmd(struct mlx5_core_dev *dev, u16 vport,
- 	MLX5_SET(modify_esw_vport_context_in, in, opcode,
- 		 MLX5_CMD_OP_MODIFY_ESW_VPORT_CONTEXT);
- 	MLX5_SET(modify_esw_vport_context_in, in, vport_number, vport);
--	if (vport)
--		MLX5_SET(modify_esw_vport_context_in, in, other_vport, 1);
-+	MLX5_SET(modify_esw_vport_context_in, in, other_vport, 1);
- 	return mlx5_cmd_exec(dev, in, inlen, out, sizeof(out));
+diff --git a/block/blk-core.c b/block/blk-core.c
+index eb8b52241453..33488b1426b7 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -980,6 +980,10 @@ static void blk_rq_timed_out_timer(struct timer_list *t)
+ 	kblockd_schedule_work(&q->timeout_work);
  }
  
++static void blk_timeout_work_dummy(struct work_struct *work)
++{
++}
++
+ /**
+  * blk_alloc_queue_node - allocate a request queue
+  * @gfp_mask: memory allocation flags
+@@ -1034,7 +1038,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id,
+ 	timer_setup(&q->backing_dev_info->laptop_mode_wb_timer,
+ 		    laptop_mode_timer_fn, 0);
+ 	timer_setup(&q->timeout, blk_rq_timed_out_timer, 0);
+-	INIT_WORK(&q->timeout_work, NULL);
++	INIT_WORK(&q->timeout_work, blk_timeout_work_dummy);
+ 	INIT_LIST_HEAD(&q->timeout_list);
+ 	INIT_LIST_HEAD(&q->icq_list);
+ #ifdef CONFIG_BLK_CGROUP
 -- 
 2.20.1
 
