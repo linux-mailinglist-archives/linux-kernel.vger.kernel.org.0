@@ -2,174 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADABC147A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 591D4147AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfEFJbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 05:31:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41769 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfEFJbU (ORCPT
+        id S1726437AbfEFJd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 05:33:29 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54174 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfEFJd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 05:31:20 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c12so16330436wrt.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:31:19 -0700 (PDT)
+        Mon, 6 May 2019 05:33:27 -0400
+Received: by mail-it1-f195.google.com with SMTP id l10so19198110iti.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jtRFjy/ehRAYk//LfsI+2USZzRiCd7GC507WcuG6cc4=;
-        b=UFaUSzZKG/jnxKSFfWj1nOjpXy5SuG3q30YGpMx2iSti0UAACL0LINWH2jjPvXg/BM
-         UTmzGdJua3Xh+1bMezhsKScY6Kx3emYbaP50oquNLFsja6iZBAbvul1zSWfQns30FxeI
-         OWoNZTy7pVTCjx7eT5NsmZM3bDCK5/dGVlCrwP7sjCJvs+4TrDqA7sK4i5pZ/pxnBqoG
-         zyAIP6uZ2DE5A/rJvcxSWICsQUWTWmfcGQFhY9K+JamelKfsPvde/9tMvlGrDU7VlQWz
-         sH1jfV64wFu4bdhbQvRA+mQH99XsiYmfw/mmN2063lk7PGa7AKzIPjrDZwS88416LVxI
-         PCKg==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gyd/Ti2kNFqn57KrY+jJie0lDAypj1lVK7fphS1Bm7M=;
+        b=HKsFzThl5UWeChygjAOtiRYkHMtsyGBOPTcSmC+vo3Rm32ECFjRyNUWDPcIzhoy4Wf
+         YYkKqERL30biuuTmsK95DtLtLhsfmquox7B7WsSAMs92vIvpxcFh9m4T2bkRn8Bjn5lN
+         zE1+piUwnv4R43r5rHaMnAB+nQRO/IT8RT7Ig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=jtRFjy/ehRAYk//LfsI+2USZzRiCd7GC507WcuG6cc4=;
-        b=r4YH5dnJxkyxzArJAWaSIH5XXRE6UYGH7NB2ffCORZRJGo4yIUJ1EEY8Isn+Y4pfsn
-         s1ARCQRtYue4XahRcl9gMDvgWfHSQiGxEuGnhFxEqH1EUTvjK4WgNlR3vqNCkePpH8s7
-         5WZmifrjEwBBYQv8fAA7JoNuooYbcX7vkLMb5z6BT2APmhz+o0v3lTCu0GWbiHqnok6W
-         Kvi4A+oSW5a1sqy0E1Wn7m49zK+uT+Odf9EzCfAzPGcZKXSyLthiw+LgN7eB+tk5N2F4
-         yMQBchd5MfY7poTASC4H2KwZsMM64daNt0WixtI/WAA6Inn4eUym2fZLk3bA9mMnWumZ
-         vsRw==
-X-Gm-Message-State: APjAAAVQqVnEPjfTYD1SpaWsCRwi7cda46CZpL6OruzBSuXKOTmRi+qz
-        Bjq3fWbLOS+c+dr6ZYO4CEI=
-X-Google-Smtp-Source: APXvYqyqyJjvKE3f1MF4k0J6gibvL6wj1hkzMkP5RDvwZ0qcuYRSXDn1DiKJPVAnTvUpw5cnsTVEQQ==
-X-Received: by 2002:adf:eac6:: with SMTP id o6mr7399170wrn.222.1557135078459;
-        Mon, 06 May 2019 02:31:18 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id f6sm8804992wmh.13.2019.05.06.02.31.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 02:31:17 -0700 (PDT)
-Date:   Mon, 6 May 2019 11:31:15 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/apic change for v5.2
-Message-ID: <20190506093115.GA48027@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gyd/Ti2kNFqn57KrY+jJie0lDAypj1lVK7fphS1Bm7M=;
+        b=U2/Rxb2Vgp65vj60nBAerUm+GO4dFyDGqmwXxUUg9qh/yWEcz568AFAoTe+mqfn6aO
+         SDA5bcC3+Yqh19Ra6OuPCxfMfopVtux3Fq3VTs9K3HOT+pV9npbEUIt/G6bkdhtsTcbg
+         vIb7c8ZnrXLte19uXE6L1GrHZZ19PJopziPHF4JiYw2LPAcSSqHTOKkwTkAoeEZkf924
+         lcFEFTyTlPquX+/eGxe9NBd+LG3GEekTVjsftsO7wewDdNOfSE9Tebko1bXjhaLCjtbj
+         ybW7ciUjJqpIjCOoEZOWtWGL5kel9JLYhCS89H12APe8Pm34AaKPYzuIXHKKr6/H8Zba
+         2MXg==
+X-Gm-Message-State: APjAAAVugUVbg1qGDeIOAwI+wL8tlYKkHvTQCh7BrWWLKAhmxHrS+4uA
+        kBxEp5woGWIgFnrRZaGOaNNiIYcLPIrlKXgpkHkC8g==
+X-Google-Smtp-Source: APXvYqx/SnEtjDy0ciVF4+liqkodEYASR4S6w603/eqwIhIS2Lvf6CSIQVgbf5ng1w20fkg51AF8ckTTLJqxn2r59Ac=
+X-Received: by 2002:a24:65cf:: with SMTP id u198mr6958544itb.32.1557135206826;
+ Mon, 06 May 2019 02:33:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190503115928.27662-1-jagan@amarulasolutions.com> <20190503144651.ttqfha656dykqjzo@flea>
+In-Reply-To: <20190503144651.ttqfha656dykqjzo@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 6 May 2019 15:03:15 +0530
+Message-ID: <CAMty3ZCQTiX5OvCG_uMRS02vFu0c1-bkcyauLD6oaFcd=y3RNA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: allwinner: h6: orangepi-one-plus: Add Ethernet support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, May 3, 2019 at 8:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Fri, May 03, 2019 at 05:29:28PM +0530, Jagan Teki wrote:
+> > Add Ethernet support for orangepi-one-plus board,
+> >
+> > - Ethernet port connected via RTL8211E PHY
+> > - PHY suppiled with
+> >   GMAC-2V5, fixed regulator with GMAC_EN pin via PD6
+> >   GMAC-3V, which is supplied by VCC3V3-MAC via aldo2
+> > - RGMII-RESET pin connected via PD14
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Your commit log should be improved. We can get those informations from
+> the patch itself...
 
-Please pull the latest x86-apic-for-linus git tree from:
+Thought it was a clear commit log :)  will update anyway.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
+>
+> > ---
+> > Changes for v2:
+> > - emac changes on top of https://patchwork.kernel.org/cover/10899529/
+> >   series
+> >
+> >  .../allwinner/sun50i-h6-orangepi-one-plus.dts |  8 ++++
+> >  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 42 +++++++++++++++++++
+> >  2 files changed, 50 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > index 12e17567ab56..9e8ed1053715 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > @@ -9,4 +9,12 @@
+> >  / {
+> >       model = "OrangePi One Plus";
+> >       compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
+> > +
+> > +     aliases {
+> > +             ethernet0 = &emac;
+> > +     };
+> > +};
+> > +
+> > +&emac {
+> > +     status = "okay";
+> >  };
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > index 62e27948a3fa..c48e24acaf8a 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > @@ -45,6 +45,48 @@
+> >               regulator-max-microvolt = <5000000>;
+> >               regulator-always-on;
+> >       };
+> > +
+> > +     /*
+> > +      * The board uses 2.5V RGMII signalling. Power sequence to enable
+> > +      * the phy is to enable GMAC-2V5 and GMAC-3V (aldo2) power rails
+> > +      * at the same time and to wait 100ms.
+> > +      */
+> > +     reg_gmac_2v5: gmac-2v5 {
+> > +             compatible = "regulator-fixed";
+> > +             regulator-name = "gmac-2v5";
+> > +             regulator-min-microvolt = <2500000>;
+> > +             regulator-max-microvolt = <2500000>;
+> > +             startup-delay-us = <100000>;
+> > +             enable-active-high;
+> > +             gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* GMAC_EN: PD6 */
+> > +
+> > +             /* The real parent of gmac-2v5 is reg_vcc5v, but we need to
+> > +              * enable two regulators to power the phy. This is one way
+> > +              * to achieve that.
+> > +              */
+> > +             vin-supply = <&reg_aldo2>; /* VCC3V3-MAC: GMAC-3V */
+> > +     };
+> > +};
+> > +
+> > +&emac {
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&ext_rgmii_pins>;
+> > +     phy-mode = "rgmii";
+> > +     phy-handle = <&ext_rgmii_phy>;
+> > +     phy-supply = <&reg_gmac_2v5>;
+> > +     allwinner,rx-delay-ps = <1500>;
+> > +     allwinner,tx-delay-ps = <700>;
+> > +};
+> > +
+> > +&mdio {
+> > +     ext_rgmii_phy: ethernet-phy@1 {
+> > +             compatible = "ethernet-phy-ieee802.3-c22";
+> > +             reg = <1>;
+> > +
+> > +             reset-gpios = <&pio 3 14 GPIO_ACTIVE_LOW>; /* RGMII-RESET: PD14 */
+> > +             reset-assert-us = <15000>;
+> > +             reset-deassert-us = <40000>;
+> > +     };
+> >  };
+>
+> ... however, at no point in time you explain why you made that switch,
+> and while most of the definition of the EMAC nodes is in the DTSI, you
+> only enable it in one DTS.
 
-   # HEAD: 6eb4f08293e971cb1b7b867c7fe994c244b91460 x86/apic: Unify duplicated local apic timer clockevent initialization
-
-Contains a single commit which unifies the unnecessarily diverged 
-implementations of APIC timer initialization. As a result the max_delta 
-parameter is now consistently taken into account.
-
- Thanks,
-
-	Ingo
-
------------------->
-Jacob Pan (1):
-      x86/apic: Unify duplicated local apic timer clockevent initialization
-
-
- arch/x86/kernel/apic/apic.c | 57 ++++++++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index b7bcdd781651..ab6af775f06c 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -802,6 +802,24 @@ calibrate_by_pmtimer(long deltapm, long *delta, long *deltatsc)
- 	return 0;
- }
- 
-+static int __init lapic_init_clockevent(void)
-+{
-+	if (!lapic_timer_frequency)
-+		return -1;
-+
-+	/* Calculate the scaled math multiplication factor */
-+	lapic_clockevent.mult = div_sc(lapic_timer_frequency/APIC_DIVISOR,
-+					TICK_NSEC, lapic_clockevent.shift);
-+	lapic_clockevent.max_delta_ns =
-+		clockevent_delta2ns(0x7FFFFFFF, &lapic_clockevent);
-+	lapic_clockevent.max_delta_ticks = 0x7FFFFFFF;
-+	lapic_clockevent.min_delta_ns =
-+		clockevent_delta2ns(0xF, &lapic_clockevent);
-+	lapic_clockevent.min_delta_ticks = 0xF;
-+
-+	return 0;
-+}
-+
- static int __init calibrate_APIC_clock(void)
- {
- 	struct clock_event_device *levt = this_cpu_ptr(&lapic_events);
-@@ -810,25 +828,21 @@ static int __init calibrate_APIC_clock(void)
- 	long delta, deltatsc;
- 	int pm_referenced = 0;
- 
--	/**
--	 * check if lapic timer has already been calibrated by platform
--	 * specific routine, such as tsc calibration code. if so, we just fill
-+	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
-+		return 0;
-+
-+	/*
-+	 * Check if lapic timer has already been calibrated by platform
-+	 * specific routine, such as tsc calibration code. If so just fill
- 	 * in the clockevent structure and return.
- 	 */
--
--	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
--		return 0;
--	} else if (lapic_timer_frequency) {
-+	if (!lapic_init_clockevent()) {
- 		apic_printk(APIC_VERBOSE, "lapic timer already calibrated %d\n",
--				lapic_timer_frequency);
--		lapic_clockevent.mult = div_sc(lapic_timer_frequency/APIC_DIVISOR,
--					TICK_NSEC, lapic_clockevent.shift);
--		lapic_clockevent.max_delta_ns =
--			clockevent_delta2ns(0x7FFFFF, &lapic_clockevent);
--		lapic_clockevent.max_delta_ticks = 0x7FFFFF;
--		lapic_clockevent.min_delta_ns =
--			clockevent_delta2ns(0xF, &lapic_clockevent);
--		lapic_clockevent.min_delta_ticks = 0xF;
-+			    lapic_timer_frequency);
-+		/*
-+		 * Direct calibration methods must have an always running
-+		 * local APIC timer, no need for broadcast timer.
-+		 */
- 		lapic_clockevent.features &= ~CLOCK_EVT_FEAT_DUMMY;
- 		return 0;
- 	}
-@@ -869,17 +883,8 @@ static int __init calibrate_APIC_clock(void)
- 	pm_referenced = !calibrate_by_pmtimer(lapic_cal_pm2 - lapic_cal_pm1,
- 					&delta, &deltatsc);
- 
--	/* Calculate the scaled math multiplication factor */
--	lapic_clockevent.mult = div_sc(delta, TICK_NSEC * LAPIC_CAL_LOOPS,
--				       lapic_clockevent.shift);
--	lapic_clockevent.max_delta_ns =
--		clockevent_delta2ns(0x7FFFFFFF, &lapic_clockevent);
--	lapic_clockevent.max_delta_ticks = 0x7FFFFFFF;
--	lapic_clockevent.min_delta_ns =
--		clockevent_delta2ns(0xF, &lapic_clockevent);
--	lapic_clockevent.min_delta_ticks = 0xF;
--
- 	lapic_timer_frequency = (delta * APIC_DIVISOR) / LAPIC_CAL_LOOPS;
-+	lapic_init_clockevent();
- 
- 	apic_printk(APIC_VERBOSE, "..... delta %ld\n", delta);
- 	apic_printk(APIC_VERBOSE, "..... mult: %u\n", lapic_clockevent.mult);
+The dtsi is shared b/w 1+ and lite2 and 1+ has emac, so I enabled the
+status directly on dts and keeping the relevant nodes on dtsi just
+like SoC dtsi does. do I need to mention this in commit log?
