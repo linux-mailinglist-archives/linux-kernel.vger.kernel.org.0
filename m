@@ -2,108 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF83314553
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7CC11455D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfEFHe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:34:59 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39799 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfEFHe7 (ORCPT
+        id S1726394AbfEFHhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:37:48 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53807 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfEFHhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:34:59 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q10so10175447ljc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ok4FiX0qqzxFXNlfPJQBxeAS7MtYAthIHs0pXM/1gsw=;
-        b=HfCKA2GcWuIWfyCu6q7Vb4VuU5C85rltY95cYwAzVOuNpcOxt9Vpj8t6IWJzXJpM16
-         uc9PlW5f9Go3h/CJ9UsWwq1rdbfbTV7+cveeHt9cUsGuK9G3I7pEgW3Zv9bOFVDQOZbH
-         MpdHFdCp7U0R6aqGNC2FBUx6AIBp++6riZnVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ok4FiX0qqzxFXNlfPJQBxeAS7MtYAthIHs0pXM/1gsw=;
-        b=s8AW9AAlOAsUAda3HdLWbgN0rPSSyw5jkTt6dcHkB8VnOIQGBZB/jqPER41gJ072hh
-         +ZwvBsc4rsHSdtJbGZ3wYZJ2hiOoNih+wjUxX1BC9VOML4hhIddSxs5gGOivGuzQOMW2
-         vNTn3A+6IghMx3nMDw79aW18/5FPWHwTdP9LTMHXO+zoMhIzODszyPbW2Ea4Wq+kqQiZ
-         dPCHCUyXcJrb6B/Pg9YBb68MoCGJA8rwB6eGroh8zX03uTDNXxCFuKugtVC9jqfE0ZWI
-         S6OjHbRjXG9PmJpXrRj/8rwBM9JcWMKQnVKxi+ne7C1oS74qC3BN7A8aqcTXoyYbVnle
-         gX1g==
-X-Gm-Message-State: APjAAAVKZFTDJ9lqPcf6LmH2x90Jra0PbVGFf96s7TQVC1u0QyNAB0Zd
-        k8FVCKAD2Kf7cRs4clMHQXTn2Q==
-X-Google-Smtp-Source: APXvYqyIXcDanMudqDV0cbvEgmg2JswEqVaUi3W8CZa23fGsbc0VYTSqSxQKNyi+uTC2tZHBHGapWQ==
-X-Received: by 2002:a2e:9f07:: with SMTP id u7mr3713010ljk.115.1557128097278;
-        Mon, 06 May 2019 00:34:57 -0700 (PDT)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y25sm2083764ljh.31.2019.05.06.00.34.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 00:34:56 -0700 (PDT)
-Subject: Re: [PATCH 00/10] implement DYNAMIC_DEBUG_RELATIVE_POINTERS
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Baron <jbaron@akamai.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>
-References: <20190409212517.7321-1-linux@rasmusvillemoes.dk>
- <1afb0702-3cc5-ba4f-2bdd-604d9da2b846@rasmusvillemoes.dk>
- <20190506070544.GA66463@gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <25dfde77-fdad-0b99-75ec-4ba480058970@rasmusvillemoes.dk>
-Date:   Mon, 6 May 2019 09:34:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 6 May 2019 03:37:46 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hNYBt-0003eJ-FE; Mon, 06 May 2019 09:37:37 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hNYBr-00071K-1w; Mon, 06 May 2019 09:37:35 +0200
+Date:   Mon, 6 May 2019 09:37:35 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Chuanhua Han <chuanhua.han@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "eha@deif.com" <eha@deif.com>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "peda@axentia.se" <peda@axentia.se>,
+        Sumit Batra <sumit.batra@nxp.com>
+Subject: Re: [EXT] Re: [PATCH 1/2] i2c: imx: I2C Driver doesn't consider
+ I2C_IPGCLK_SEL RCW bit when using ls1046a SoC
+Message-ID: <20190506073735.ctzybytamu44pbvv@pengutronix.de>
+References: <20190430044719.30720-1-chuanhua.han@nxp.com>
+ <20190430125043.weqwzim4gpsvtkfe@pengutronix.de>
+ <AM6PR04MB43571B8D52C1FE9ED20DBA1D97360@AM6PR04MB4357.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190506070544.GA66463@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM6PR04MB43571B8D52C1FE9ED20DBA1D97360@AM6PR04MB4357.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:13:06 up 48 days, 18:23, 78 users,  load average: 1.12, 1.24,
+ 1.24
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2019 09.05, Ingo Molnar wrote:
+On Sat, May 04, 2019 at 09:28:48AM +0000, Chuanhua Han wrote:
 > 
 > 
-> It's sad to see such nice data footprint savings go the way of the dodo 
-> just because GCC 4.8 is buggy.
-> 
-> The current compatibility cut-off is GCC 4.6:
-> 
->   GNU C                  4.6              gcc --version
-> 
-> Do we know where the GCC bug was fixed, was it in GCC 4.9?
+> > -----Original Message-----
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: 2019年4月30日 20:51
+> > To: Chuanhua Han <chuanhua.han@nxp.com>
+> > Cc: shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; robh+dt@kernel.org;
+> > mark.rutland@arm.com; linux-kernel@vger.kernel.org;
+> > linux-i2c@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > devicetree@vger.kernel.org; festevam@gmail.com; dl-linux-imx
+> > <linux-imx@nxp.com>; wsa+renesas@sang-engineering.com;
+> > u.kleine-koenig@pengutronix.de; eha@deif.com; linux@rempel-privat.de;
+> > l.stach@pengutronix.de; peda@axentia.se; Sumit Batra
+> > <sumit.batra@nxp.com>
+> > Subject: [EXT] Re: [PATCH 1/2] i2c: imx: I2C Driver doesn't consider
+> > I2C_IPGCLK_SEL RCW bit when using ls1046a SoC
+> > 
+> > Caution: EXT Email
+> > 
+> > On Tue, Apr 30, 2019 at 12:47:18PM +0800, Chuanhua Han wrote:
+> > > The current kernel driver does not consider I2C_IPGCLK_SEL (424 bit of
+> > > RCW) in deciding  i2c_clk_rate in function i2c_imx_set_clk() { 0
+> > > Platform clock/4, 1 Platform clock/2}.
+> > >
+> > > When using ls1046a SoC, this populates incorrect value in IBFD
+> > > register if I2C_IPGCLK_SEL = 0, which generates half of the desired Clock.
+> > >
+> > > Therefore, if ls1046a SoC is used, we need to set the i2c clock
+> > > according to the corresponding RCW.
+> > 
+> > So the clock driver reports the wrong clock. Please fix the clock driver then.
+> No, this is a problem with the i2c driver. It is not a problem with
+> the clock driver, so the i2c driver needs to be modified.
 
-Not sure. The report was from a build on CentOS with gcc 4.8.5, so I
-tried installing the gcc-4.8 package on my Ubuntu machine and could
-reproduce. Then I tried installed gcc-4.9, and after disabling
-CONFIG_RETPOLINE (both CentOS and Ubuntu carry backported retpoline
-support in their 4.8, but apparently not 4.9), I could see that the
-problem was gone. But whether it's gone because it no longer elides an
-asm volatile() on a code path it otherwise emits code for, or because it
-simply doesn't emit the unused static inline() at all I don't know.
+So how does this RCW bit get evaluated? According to the reference
+manual only one clock goes to the i2c module (described as 1/2 Platform
+Clock) and the i2c module only takes one clock. So it seems there must
+be a /2 divider somewhere, either in each i2c module or somewhere
+outside. Can your IC guys tell you where it is?
 
-I thought 0day also tested a range of supported compiler versions, so I
-was rather surprised at getting this report at all. But I suppose the
-arch/config matrix is already pretty huge. Anyway, the bug certainly
-doesn't exist in any of the gcc versions 0day does test.
+One reason I suggested the clock driver is that the clock driver
+contains SoC specific code already, so it should be easier to integrate
+there.
 
-I _am_ bending the C rules a bit with the "extern some_var; asm
-volatile(".section some_section\nsome_var: blabla");". I should probably
-ask on the gcc list whether this way of defining a local symbol in
-inline assembly and referring to it from C is supposed to work, or it
-just happens to work by chance.
+Sascha
 
-Rasmus
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
