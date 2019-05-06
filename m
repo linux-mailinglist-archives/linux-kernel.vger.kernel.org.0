@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6638E14C3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F11A414CE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfEFOhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:37:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58690 "EHLO mail.kernel.org"
+        id S1728963AbfEFOpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:45:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726658AbfEFOhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:50 -0400
+        id S1727970AbfEFOp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:45:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50F55206A3;
-        Mon,  6 May 2019 14:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C43D2087F;
+        Mon,  6 May 2019 14:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153468;
-        bh=FSyqmkAp+KiiecRVP+XIwK6GrP0VO5e0HsZ/5kTldmE=;
+        s=default; t=1557153928;
+        bh=ac8+ottuAzNNDDHobrSZSOlMjZQau3zVmBG2sTcIjeY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vzBk6vhZIxt2xGQZrUw+HLc5QvBJ6O+EqfdCZaUhYLllyF7mNdXqF3o05FZWlFIGd
-         3V29qw2F07RwYnyxMouOqMZ12jX4OPsYWmDTYl2J4nrjd/t+qtwkl+CqiX3IWYAtWK
-         Xkxi6vcTU1ZMPSeMUQY0RF1S1W3GSB5IQzBmnlWM=
+        b=E7kmJ0c+1+YLa3Si/xIx+ph4Ykx825tWD06CvtsBunGwLtFEhfYemPXCp4xqme+Ql
+         vfGbpgwDhAl4W5gr/+J+M0oQGyfRNuUJ1fmXoN1Lvxe4Og1jgnU9hHI9FMX7Tl5Y2w
+         E3jYpdlDCPxJK1qWOWQdkbPq8YzcgiLGKjIgZ7eg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 079/122] xsysace: Fix error handling in ace_setup
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 09/75] rxrpc: Fix net namespace cleanup
 Date:   Mon,  6 May 2019 16:32:17 +0200
-Message-Id: <20190506143101.923401474@linuxfoundation.org>
+Message-Id: <20190506143054.066122957@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +43,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 47b16820c490149c2923e8474048f2c6e7557cab ]
+From: David Howells <dhowells@redhat.com>
 
-If xace hardware reports a bad version number, the error handling code
-in ace_setup() calls put_disk(), followed by queue cleanup. However, since
-the disk data structure has the queue pointer set, put_disk() also
-cleans and releases the queue. This results in blk_cleanup_queue()
-accessing an already released data structure, which in turn may result
-in a crash such as the following.
+[ Upstream commit b13023421b5179413421333f602850914f6a7ad8 ]
 
-[   10.681671] BUG: Kernel NULL pointer dereference at 0x00000040
-[   10.681826] Faulting instruction address: 0xc0431480
-[   10.682072] Oops: Kernel access of bad area, sig: 11 [#1]
-[   10.682251] BE PAGE_SIZE=4K PREEMPT Xilinx Virtex440
-[   10.682387] Modules linked in:
-[   10.682528] CPU: 0 PID: 1 Comm: swapper Tainted: G        W         5.0.0-rc6-next-20190218+ #2
-[   10.682733] NIP:  c0431480 LR: c043147c CTR: c0422ad8
-[   10.682863] REGS: cf82fbe0 TRAP: 0300   Tainted: G        W          (5.0.0-rc6-next-20190218+)
-[   10.683065] MSR:  00029000 <CE,EE,ME>  CR: 22000222  XER: 00000000
-[   10.683236] DEAR: 00000040 ESR: 00000000
-[   10.683236] GPR00: c043147c cf82fc90 cf82ccc0 00000000 00000000 00000000 00000002 00000000
-[   10.683236] GPR08: 00000000 00000000 c04310bc 00000000 22000222 00000000 c0002c54 00000000
-[   10.683236] GPR16: 00000000 00000001 c09aa39c c09021b0 c09021dc 00000007 c0a68c08 00000000
-[   10.683236] GPR24: 00000001 ced6d400 ced6dcf0 c0815d9c 00000000 00000000 00000000 cedf0800
-[   10.684331] NIP [c0431480] blk_mq_run_hw_queue+0x28/0x114
-[   10.684473] LR [c043147c] blk_mq_run_hw_queue+0x24/0x114
-[   10.684602] Call Trace:
-[   10.684671] [cf82fc90] [c043147c] blk_mq_run_hw_queue+0x24/0x114 (unreliable)
-[   10.684854] [cf82fcc0] [c04315bc] blk_mq_run_hw_queues+0x50/0x7c
-[   10.685002] [cf82fce0] [c0422b24] blk_set_queue_dying+0x30/0x68
-[   10.685154] [cf82fcf0] [c0423ec0] blk_cleanup_queue+0x34/0x14c
-[   10.685306] [cf82fd10] [c054d73c] ace_probe+0x3dc/0x508
-[   10.685445] [cf82fd50] [c052d740] platform_drv_probe+0x4c/0xb8
-[   10.685592] [cf82fd70] [c052abb0] really_probe+0x20c/0x32c
-[   10.685728] [cf82fda0] [c052ae58] driver_probe_device+0x68/0x464
-[   10.685877] [cf82fdc0] [c052b500] device_driver_attach+0xb4/0xe4
-[   10.686024] [cf82fde0] [c052b5dc] __driver_attach+0xac/0xfc
-[   10.686161] [cf82fe00] [c0528428] bus_for_each_dev+0x80/0xc0
-[   10.686314] [cf82fe30] [c0529b3c] bus_add_driver+0x144/0x234
-[   10.686457] [cf82fe50] [c052c46c] driver_register+0x88/0x15c
-[   10.686610] [cf82fe60] [c09de288] ace_init+0x4c/0xac
-[   10.686742] [cf82fe80] [c0002730] do_one_initcall+0xac/0x330
-[   10.686888] [cf82fee0] [c09aafd0] kernel_init_freeable+0x34c/0x478
-[   10.687043] [cf82ff30] [c0002c6c] kernel_init+0x18/0x114
-[   10.687188] [cf82ff40] [c000f2f0] ret_from_kernel_thread+0x14/0x1c
-[   10.687349] Instruction dump:
-[   10.687435] 3863ffd4 4bfffd70 9421ffd0 7c0802a6 93c10028 7c9e2378 93e1002c 38810008
-[   10.687637] 7c7f1b78 90010034 4bfffc25 813f008c <81290040> 75290100 4182002c 80810008
-[   10.688056] ---[ end trace 13c9ff51d41b9d40 ]---
+In rxrpc_destroy_all_calls(), there are two phases: (1) make sure the
+->calls list is empty, emitting error messages if not, and (2) wait for the
+RCU cleanup to happen on outstanding calls (ie. ->nr_calls becomes 0).
 
-Fix the problem by setting the disk queue pointer to NULL before calling
-put_disk(). A more comprehensive fix might be to rearrange the code
-to check the hardware version before initializing data structures,
-but I don't know if this would have undesirable side effects, and
-it would increase the complexity of backporting the fix to older kernels.
+To avoid taking the call_lock, the function prechecks ->calls and if empty,
+it returns to avoid taking the lock - this is wrong, however: it still
+needs to go and do the second phase and wait for ->nr_calls to become 0.
 
-Fixes: 74489a91dd43a ("Add support for Xilinx SystemACE CompactFlash interface")
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Without this, the rxrpc_net struct may get deallocated before we get to the
+RCU cleanup for the last calls.  This can lead to:
+
+  Slab corruption (Not tainted): kmalloc-16k start=ffff88802b178000, len=16384
+  050: 6b 6b 6b 6b 6b 6b 6b 6b 61 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkakkkkkkk
+
+Note the "61" at offset 0x58.  This corresponds to the ->nr_calls member of
+struct rxrpc_net (which is >9k in size, and thus allocated out of the 16k
+slab).
+
+Fix this by flipping the condition on the if-statement, putting the locked
+section inside the if-body and dropping the return from there.  The
+function will then always go on to wait for the RCU cleanup on outstanding
+calls.
+
+Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/xsysace.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/rxrpc/call_object.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
-index 87ccef4bd69e..32a21b8d1d85 100644
---- a/drivers/block/xsysace.c
-+++ b/drivers/block/xsysace.c
-@@ -1090,6 +1090,8 @@ static int ace_setup(struct ace_device *ace)
- 	return 0;
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -684,27 +684,27 @@ void rxrpc_destroy_all_calls(struct rxrp
  
- err_read:
-+	/* prevent double queue cleanup */
-+	ace->gd->queue = NULL;
- 	put_disk(ace->gd);
- err_alloc_disk:
- 	blk_cleanup_queue(ace->queue);
--- 
-2.20.1
-
+ 	_enter("");
+ 
+-	if (list_empty(&rxnet->calls))
+-		return;
+-
+-	write_lock(&rxnet->call_lock);
++	if (!list_empty(&rxnet->calls)) {
++		write_lock(&rxnet->call_lock);
+ 
+-	while (!list_empty(&rxnet->calls)) {
+-		call = list_entry(rxnet->calls.next, struct rxrpc_call, link);
+-		_debug("Zapping call %p", call);
+-
+-		rxrpc_see_call(call);
+-		list_del_init(&call->link);
+-
+-		pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
+-		       call, atomic_read(&call->usage),
+-		       rxrpc_call_states[call->state],
+-		       call->flags, call->events);
++		while (!list_empty(&rxnet->calls)) {
++			call = list_entry(rxnet->calls.next,
++					  struct rxrpc_call, link);
++			_debug("Zapping call %p", call);
++
++			rxrpc_see_call(call);
++			list_del_init(&call->link);
++
++			pr_err("Call %p still in use (%d,%s,%lx,%lx)!\n",
++			       call, atomic_read(&call->usage),
++			       rxrpc_call_states[call->state],
++			       call->flags, call->events);
++
++			write_unlock(&rxnet->call_lock);
++			cond_resched();
++			write_lock(&rxnet->call_lock);
++		}
+ 
+ 		write_unlock(&rxnet->call_lock);
+-		cond_resched();
+-		write_lock(&rxnet->call_lock);
+ 	}
+-
+-	write_unlock(&rxnet->call_lock);
+ }
 
 
