@@ -2,246 +2,712 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760F614F5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B8614ED2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfEFOee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:34:34 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5366 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfEFOec (ORCPT
+        id S1727575AbfEFOiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:23 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45329 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfEFOiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:34:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd045d40000>; Mon, 06 May 2019 07:33:56 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 06 May 2019 07:34:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 06 May 2019 07:34:30 -0700
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 May
- 2019 14:34:29 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 6 May 2019 14:34:29 +0000
-Received: from jilin-desktop.nvidia.com (Not Verified[10.19.120.147]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cd045f30000>; Mon, 06 May 2019 07:34:29 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
-        <stern@rowland.harvard.edu>, <hminas@synopsys.com>,
-        <kai.heng.feng@canonical.com>, <drinkcat@chromium.org>,
-        <prime.zeng@hisilicon.com>, <malat@debian.org>,
-        <nsaenzjulienne@suse.de>, <jflat@chromium.org>,
-        <linus.walleij@linaro.org>, <clabbe@baylibre.com>,
-        <colin.king@canonical.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jim Lin <jilin@nvidia.com>
-Subject: [PATCH v4 1/1] usb: xhci: Add Clear_TT_Buffer
-Date:   Mon, 6 May 2019 22:34:22 +0800
-Message-ID: <1557153262-22972-1-git-send-email-jilin@nvidia.com>
-X-Mailer: git-send-email 2.1.4
+        Mon, 6 May 2019 10:38:17 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a5so1535009pls.12
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:38:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v+PO9lMge7+TYt+NYWmGc45Jx0a0UQSXMwGvBPkyCIs=;
+        b=BZBaShp1bxahCq5IQxP6N28HYPmCVEfKqppKqkMIse/8hWn+JC6kEOXxgOQpfVoEe3
+         2sVcjvYrapRRye7oipuzpWn99Bj7dcYC22oEDY83OvdSIhP3SgQp31vcrNfWhQ8BzE5F
+         wfJzqxNwPhaXwqqOIhxHo13QDs7AKDNyp4nd+kDqdIF2EQrzLwGOqXqd9n/vyVwuq/xK
+         qHn4VsBS1L5mNfmoxdfGgPUqG7i3Dw0DaGVbxWLmoo96hulBLyh3C6xuBheUNKFzpUJ1
+         7ao3T1qL924lIcZIfooLHxUiPC/7R1V5d2RX99EEnLnLIKcm2F8pECq2ousi9FvUdMmG
+         g7Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v+PO9lMge7+TYt+NYWmGc45Jx0a0UQSXMwGvBPkyCIs=;
+        b=n9ojVlm0cJf2PB16y8NLXAjGvmyv033tT1DVGhV+8BFlBOMiL63pF7400piJ5xfPr/
+         mxS3XBGvzEz008AaTDybrWaNYNj32RMhGYU5boeUGI69rbizPNSkV5BeWlEwQFyjFJfz
+         5jgIFvFek8M/cUsUZMnnsR5wf3WiaKn2gllCX6Tg1WQ2NxPTYAj09ESSZzlK2AljiE0g
+         lZ6p4PuOonIw2iyfxQrhtLCWyjRiQ3VEmvyytx++Hg9gVXPf9ufpUgusU5vy7ocqLBvr
+         Afnvk2sCPy5yP54Im6MbhBa3hXDVqEBU6bYYW/ylNIryqTshJcBtSUH8kDRkifoLKSMs
+         LxbQ==
+X-Gm-Message-State: APjAAAXQlvwXo1ZgP2TSf4KuySwbsM6ROmHghbUSIuObwMnVkWArU8Dp
+        YVny6RWt7B2/BIa25CnZtIbnXMj5IUT0h6EBc7QVAg==
+X-Google-Smtp-Source: APXvYqxyKuo3TFlg9+L89lzY8ZTqiUb9pAU7urx33cGqngXWf5yGTbaNapcxoC8B329CqR1HvYKGLRtCOUFASwzuuxs=
+X-Received: by 2002:a17:902:3324:: with SMTP id a33mr1336421plc.1.1557153496619;
+ Mon, 06 May 2019 07:38:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557153236; bh=Q/DEh0KWbfxsLAH92wY6N5X/0pxwczeiWJVLn2rXiz0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=aIQvJMFdJT/Bxvg9Dzyu2zyfHOxF4gVaoLQabwfl2LTdgtZ6e9Q3/8waaiO3VO2O0
-         QS0qR05gslyEQVeHTHNhSPfnQY+3oaFdUGqiQMBnmhKOnSiKClZwQQCj4CzLw075Nc
-         yzefh3hABlD35I/1iOOzvW96rVDaIHWP+PPdXT4wKUvn2WHUZhL2mR5tV4E29jwzdl
-         jToknEh0Wt8KZLHphNSC//f83UVGCG6JzwRlNS+zcn6idAgiMQCbz497pRDq0YQO+4
-         Rs95Nhtet9stpgC5EfkT5o5qZ4aP8v38pvxIZnfQ9DcRcC+5aSW8znl1pJ/ARUF+5t
-         2Zh/XDrdiyc7g==
+References: <1557036518-286348-1-git-send-email-pengms1@lenovo.com> <00dfd048-d8f7-4f33-941d-ab5f2c507aae@www.fastmail.com>
+In-Reply-To: <00dfd048-d8f7-4f33-941d-ab5f2c507aae@www.fastmail.com>
+From:   Patrick Venture <venture@google.com>
+Date:   Mon, 6 May 2019 07:38:04 -0700
+Message-ID: <CAO=notye14F+PCTc+a4GqS+yBWVQpRXH7+wEDX96jq9iWYMOGg@mail.gmail.com>
+Subject: Re: [PATCH v6] ARM: dts: aspeed: Adding Lenovo Hr630 BMC
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     Andrew Peng <pengms1@lenovo.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-aspeed@lists.ozlabs.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lisa YJ19 Liu <liuyj19@lenovo.com>,
+        Duke KH Du <dukh@lenovo.com>,
+        Yonghui YH21 Liu <liuyh21@lenovo.com>,
+        Harry Sung1 <hsung1@lenovo.com>, Joel Stanley <joel@jms.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-processing for full-/low-speed endpoints connected via a TT, the host
-software must use the Clear_TT_Buffer request to the TT to ensure
-that the buffer is not in the busy state".
+On Sun, May 5, 2019 at 8:17 PM Andrew Jeffery <andrew@aj.id.au> wrote:
+>
+>
+>
+> On Sun, 5 May 2019, at 15:38, Andrew Peng wrote:
+> > Initial introduction of Lenovo Hr630 family equipped with
+> > Aspeed 2500 BMC SoC. Hr630 is a x86 server development kit
+> > with a ASPEED ast2500 BMC manufactured by Lenovo.
+> > Specifically, This adds the Hr630 platform device tree file
+> > used by the Hr630 BMC machines.
+> >
+> > This also adds an entry of Hr630 device tree file in Makefile
+> >
+> > Signed-off-by: Andrew Peng <pengms1@lenovo.com>
+> > Signed-off-by: Yonghui Liu <liuyh21@lenovo.com>
+> > Signed-off-by: Lisa Liu <liuyj19@lenovo.com>
+>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-In our case, a full-speed speaker (ConferenceCam) is behind a high-
-speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-request we may continue to get STALL with the folllowing requests,
-like Set_Interface.
+Reviewed-by: Patrick Venture <venture@google.com>
 
-Here we add Clear_TT_Buffer for the following Set_Interface requests
-to get ACK successfully.
+>
+> > ---
+> > Changes in v6:
+> >  - add appropriate pinctrl property for uar1, uart2, uart3 and adc.
+> >  - remove vhub definition and comment.
+> >  - remove some GPIO definitions.
+> >  - revise Makefile according to sort alphabetically.
+> > Changes in v5:
+> >  - revise pca9545 and pca9546 switch aliases name.
+> > Changes in v4:
+> >  - add pca9546 switch aliases name.
+> > Changes in v3:
+> >  - revise i2c switch aliases name.
+> > Changes in v2:
+> >  - add i2c switch aliases name.
+> >  - remove the unused eeprom device from DT file.
+> >  - remove "Licensed under..." sentence.
+> >
+> >  arch/arm/boot/dts/Makefile                    |   1 +
+> >  arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts | 566 ++++++++++++++++++++++++++
+> >  2 files changed, 567 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
+> >
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index f4f5aea..1276167 100644
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -1255,6 +1255,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+> >       aspeed-bmc-facebook-cmm.dtb \
+> >       aspeed-bmc-facebook-tiogapass.dtb \
+> >       aspeed-bmc-intel-s2600wf.dtb \
+> > +     aspeed-bmc-lenovo-hr630.dtb \
+> >       aspeed-bmc-opp-lanyang.dtb \
+> >       aspeed-bmc-opp-palmetto.dtb \
+> >       aspeed-bmc-opp-romulus.dtb \
+> > diff --git a/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
+> > b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
+> > new file mode 100644
+> > index 0000000..d3695a3
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/aspeed-bmc-lenovo-hr630.dts
+> > @@ -0,0 +1,566 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Device Tree file for Lenovo Hr630 platform
+> > + *
+> > + * Copyright (C) 2019-present Lenovo
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "aspeed-g5.dtsi"
+> > +#include <dt-bindings/gpio/aspeed-gpio.h>
+> > +
+> > +/ {
+> > +     model = "HR630 BMC";
+> > +     compatible = "lenovo,hr630-bmc", "aspeed,ast2500";
+> > +
+> > +     aliases {
+> > +             i2c14 = &i2c_rbp;
+> > +             i2c15 = &i2c_fbp1;
+> > +             i2c16 = &i2c_fbp2;
+> > +             i2c17 = &i2c_fbp3;
+> > +             i2c18 = &i2c_riser2;
+> > +             i2c19 = &i2c_pcie4;
+> > +             i2c20 = &i2c_riser1;
+> > +             i2c21 = &i2c_ocp;
+> > +     };
+> > +
+> > +     chosen {
+> > +             stdout-path = &uart5;
+> > +             bootargs = "console=tty0 console=ttyS4,115200 earlyprintk";
+> > +     };
+> > +
+> > +     memory@80000000 {
+> > +             device_type = "memory";
+> > +             reg = <0x80000000 0x20000000>;
+> > +     };
+> > +
+> > +     reserved-memory {
+> > +             #address-cells = <1>;
+> > +             #size-cells = <1>;
+> > +             ranges;
+> > +
+> > +             flash_memory: region@98000000 {
+> > +                     no-map;
+> > +                     reg = <0x98000000 0x00100000>; /* 1M */
+> > +             };
+> > +
+> > +             gfx_memory: framebuffer {
+> > +                     size = <0x01000000>;
+> > +                     alignment = <0x01000000>;
+> > +                     compatible = "shared-dma-pool";
+> > +                     reusable;
+> > +             };
+> > +     };
+> > +
+> > +     leds {
+> > +             compatible = "gpio-leds";
+> > +
+> > +             heartbeat {
+> > +                     gpios = <&gpio ASPEED_GPIO(J, 1) GPIO_ACTIVE_LOW>;
+> > +             };
+> > +
+> > +             fault {
+> > +                     gpios = <&gpio ASPEED_GPIO(J, 0) GPIO_ACTIVE_LOW>;
+> > +             };
+> > +     };
+> > +
+> > +     iio-hwmon {
+> > +             compatible = "iio-hwmon";
+> > +             io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
+> > +             <&adc 4>, <&adc 5>, <&adc 6>, <&adc 7>,
+> > +             <&adc 8>, <&adc 9>, <&adc 10>,
+> > +             <&adc 12>, <&adc 13>, <&adc 14>;
+> > +     };
+> > +
+> > +};
+> > +
+> > +&fmc {
+> > +     status = "okay";
+> > +     flash@0 {
+> > +             status = "okay";
+> > +             m25p,fast-read;
+> > +             label = "bmc";
+> > +             spi-max-frequency = <50000000>;
+> > +#include "openbmc-flash-layout.dtsi"
+> > +     };
+> > +};
+> > +
+> > +&lpc_ctrl {
+> > +     status = "okay";
+> > +     memory-region = <&flash_memory>;
+> > +     flash = <&spi1>;
+> > +};
+> > +
+> > +&uart1 {
+> > +     status = "okay";
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_txd1_default
+> > +                     &pinctrl_rxd1_default>;
+> > +};
+> > +
+> > +&uart2 {
+> > +     /* Rear RS-232 connector */
+> > +     status = "okay";
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_txd2_default
+> > +                     &pinctrl_rxd2_default
+> > +                     &pinctrl_nrts2_default
+> > +                     &pinctrl_ndtr2_default
+> > +                     &pinctrl_ndsr2_default
+> > +                     &pinctrl_ncts2_default
+> > +                     &pinctrl_ndcd2_default
+> > +                     &pinctrl_nri2_default>;
+> > +};
+> > +
+> > +&uart3 {
+> > +     status = "okay";
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_txd3_default
+> > +                     &pinctrl_rxd3_default>;
+> > +};
+> > +
+> > +&uart5 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&ibt {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&mac0 {
+> > +     status = "okay";
+> > +
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_rmii1_default>;
+> > +     use-ncsi;
+> > +};
+> > +
+> > +&mac1 {
+> > +     status = "okay";
+> > +
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
+> > +};
+> > +
+> > +&adc {
+> > +     status = "okay";
+> > +
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_adc0_default
+> > +                     &pinctrl_adc1_default
+> > +                     &pinctrl_adc2_default
+> > +                     &pinctrl_adc3_default
+> > +                     &pinctrl_adc4_default
+> > +                     &pinctrl_adc5_default
+> > +                     &pinctrl_adc6_default
+> > +                     &pinctrl_adc7_default
+> > +                     &pinctrl_adc8_default
+> > +                     &pinctrl_adc9_default
+> > +                     &pinctrl_adc10_default
+> > +                     &pinctrl_adc12_default
+> > +                     &pinctrl_adc13_default
+> > +                     &pinctrl_adc14_default>;
+> > +};
+> > +
+> > +&i2c0 {
+> > +     status = "okay";
+> > +     /* temp1 inlet */
+> > +     tmp75@4e {
+> > +             compatible = "national,lm75";
+> > +             reg = <0x4e>;
+> > +     };
+> > +};
+> > +
+> > +&i2c1 {
+> > +     status = "okay";
+> > +     /* temp2 outlet */
+> > +     tmp75@4d {
+> > +             compatible = "national,lm75";
+> > +             reg = <0x4d>;
+> > +     };
+> > +};
+> > +
+> > +&i2c2 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c3 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c4 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c5 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c6 {
+> > +     status = "okay";
+> > +     /*      Slot 0,
+> > +      *      Slot 1,
+> > +      *      Slot 2,
+> > +      *      Slot 3
+> > +      */
+> > +
+> > +     i2c-switch@70 {
+> > +             compatible = "nxp,pca9545";
+> > +             reg = <0x70>;
+> > +             #address-cells = <1>;
+> > +             #size-cells = <0>;
+> > +             i2c-mux-idle-disconnect;        /* may use mux@70 next. */
 
-Originally usb_hub_clear_tt_buffer uses urb->dev->devnum as device
-address while sending Clear_TT_Buffer command, but this doesn't work
-for XHCI.
-We have to extend usb_hub_clear_tt_buffer parameter to specify device
-number that will have the TT state of its hub cleared.
+Per an earlier email, this comment, and its sibling comment don't
+really make sense, and there's no chance of a bus collision here since
+the switches reside on different buses.  If the switches were under
+the same bus then accesses could collide the address ranges without
+the "i2c-mux-idle-disconnect" property set.
 
-Signed-off-by: Jim Lin <jilin@nvidia.com>
----
-v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
-    , remove its claiming in xhci.h
-v3: Add description for clearing_tt (xhci.h)
-v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
-    to protect for Clear_TT_Buffer to be run serially.
-    Remove xhci_clear_tt_buffer_complete as it's not necessary.
-    Same reason as the above.
-    Extend usb_hub_clear_tt_buffer parameter
+I'm ok with this being here, but someone will want to send a follow-up
+patchset at some point to remove the comment - at the least.
 
- drivers/usb/core/hub.c            |  5 +++--
- drivers/usb/dwc2/hcd_intr.c       |  2 +-
- drivers/usb/host/ehci-q.c         |  2 +-
- drivers/usb/host/fotg210-hcd.c    |  2 +-
- drivers/usb/host/xhci-ring.c      | 22 ++++++++++++++++++++++
- drivers/usb/isp1760/isp1760-hcd.c |  5 +++--
- include/linux/usb/hcd.h           |  2 +-
- 7 files changed, 32 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 15a2934dc29d..4dec054c9776 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -840,6 +840,7 @@ int usb_hub_set_port_power(struct usb_device *hdev, struct usb_hub *hub,
- /**
-  * usb_hub_clear_tt_buffer - clear control/bulk TT state in high speed hub
-  * @urb: an URB associated with the failed or incomplete split transaction
-+ * @devnum : device number that will have the TT state of its hub cleared
-  *
-  * High speed HCDs use this to tell the hub driver that some split control or
-  * bulk transaction failed in a way that requires clearing internal state of
-@@ -851,7 +852,7 @@ int usb_hub_set_port_power(struct usb_device *hdev, struct usb_hub *hub,
-  *
-  * Return: 0 if successful. A negative error code otherwise.
-  */
--int usb_hub_clear_tt_buffer(struct urb *urb)
-+int usb_hub_clear_tt_buffer(struct urb *urb, int devnum)
- {
- 	struct usb_device	*udev = urb->dev;
- 	int			pipe = urb->pipe;
-@@ -873,7 +874,7 @@ int usb_hub_clear_tt_buffer(struct urb *urb)
- 	/* info that CLEAR_TT_BUFFER needs */
- 	clear->tt = tt->multi ? udev->ttport : 1;
- 	clear->devinfo = usb_pipeendpoint (pipe);
--	clear->devinfo |= udev->devnum << 4;
-+	clear->devinfo |= devnum << 4;
- 	clear->devinfo |= usb_pipecontrol(pipe)
- 			? (USB_ENDPOINT_XFER_CONTROL << 11)
- 			: (USB_ENDPOINT_XFER_BULK << 11);
-diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
-index 88b5dcf3aefc..a3bb6911a62a 100644
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -125,7 +125,7 @@ static void dwc2_hc_handle_tt_clear(struct dwc2_hsotg *hsotg,
- 
- 	if (qtd->urb->status != -EPIPE && qtd->urb->status != -EREMOTEIO) {
- 		chan->qh->tt_buffer_dirty = 1;
--		if (usb_hub_clear_tt_buffer(usb_urb))
-+		if (usb_hub_clear_tt_buffer(usb_urb, usb_urb->dev->devnum))
- 			/* Clear failed; let's hope things work anyway */
- 			chan->qh->tt_buffer_dirty = 0;
- 	}
-diff --git a/drivers/usb/host/ehci-q.c b/drivers/usb/host/ehci-q.c
-index aa2f77f1506d..9f64c260239e 100644
---- a/drivers/usb/host/ehci-q.c
-+++ b/drivers/usb/host/ehci-q.c
-@@ -169,7 +169,7 @@ static void ehci_clear_tt_buffer(struct ehci_hcd *ehci, struct ehci_qh *qh,
- 		if (!ehci_is_TDI(ehci)
- 				|| urb->dev->tt->hub !=
- 				   ehci_to_hcd(ehci)->self.root_hub) {
--			if (usb_hub_clear_tt_buffer(urb) == 0)
-+			if (!usb_hub_clear_tt_buffer(urb, urb->dev->devnum))
- 				qh->clearing_tt = 1;
- 		} else {
- 
-diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
-index 0da68df259c8..bd29ed0fbd46 100644
---- a/drivers/usb/host/fotg210-hcd.c
-+++ b/drivers/usb/host/fotg210-hcd.c
-@@ -2123,7 +2123,7 @@ static void fotg210_clear_tt_buffer(struct fotg210_hcd *fotg210,
- 
- 		if (urb->dev->tt->hub !=
- 				fotg210_to_hcd(fotg210)->self.root_hub) {
--			if (usb_hub_clear_tt_buffer(urb) == 0)
-+			if (!usb_hub_clear_tt_buffer(urb, urb->dev->devnum))
- 				qh->clearing_tt = 1;
- 		}
- 	}
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 9215a28dad40..aa2a21e6cde3 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1786,6 +1786,27 @@ struct xhci_segment *trb_in_td(struct xhci_hcd *xhci,
- 	return NULL;
- }
- 
-+static void xhci_clear_hub_tt_buffer(struct xhci_hcd *xhci,
-+	unsigned int slot_id, struct xhci_td *td)
-+{
-+	struct xhci_virt_device *dev;
-+	struct xhci_slot_ctx *slot_ctx;
-+	int devnum;
-+
-+	/*
-+	 * As part of low/full-speed endpoint-halt processing
-+	 * we must clear the TT buffer (USB 2.0 specification 11.17.5).
-+	 */
-+	if (td->urb->dev->tt && !usb_pipeint(td->urb->pipe) &&
-+	    (td->urb->dev->tt->hub != xhci_to_hcd(xhci)->self.root_hub)) {
-+		dev = xhci->devs[slot_id];
-+		slot_ctx = xhci_get_slot_ctx(xhci, dev->out_ctx);
-+		devnum = (int) le32_to_cpu(slot_ctx->dev_state) &
-+			DEV_ADDR_MASK;
-+		usb_hub_clear_tt_buffer(td->urb, devnum);
-+	}
-+}
-+
- static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 		unsigned int slot_id, unsigned int ep_index,
- 		unsigned int stream_id, struct xhci_td *td,
-@@ -1804,6 +1825,7 @@ static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 	if (reset_type == EP_HARD_RESET) {
- 		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
- 		xhci_cleanup_stalled_ring(xhci, ep_index, stream_id, td);
-+		xhci_clear_hub_tt_buffer(xhci, slot_id, td);
- 	}
- 	xhci_ring_cmd_db(xhci);
- }
-diff --git a/drivers/usb/isp1760/isp1760-hcd.c b/drivers/usb/isp1760/isp1760-hcd.c
-index 8142c6b4c4cf..f1d68092becb 100644
---- a/drivers/usb/isp1760/isp1760-hcd.c
-+++ b/drivers/usb/isp1760/isp1760-hcd.c
-@@ -1166,7 +1166,8 @@ static void handle_done_ptds(struct usb_hcd *hcd)
- 					(qtd->urb->status != -EPIPE) &&
- 					(qtd->urb->status != -EREMOTEIO)) {
- 				qh->tt_buffer_dirty = 1;
--				if (usb_hub_clear_tt_buffer(qtd->urb))
-+				if (usb_hub_clear_tt_buffer(qtd->urb,
-+						qtd->urb->dev->devnum))
- 					/* Clear failed; let's hope things work
- 					   anyway */
- 					qh->tt_buffer_dirty = 0;
-@@ -1633,7 +1634,7 @@ static void dequeue_urb_from_qtd(struct usb_hcd *hcd, struct isp1760_qh *qh,
- 
- 	if ((urb->dev->speed != USB_SPEED_HIGH) && urb_was_running) {
- 		qh->tt_buffer_dirty = 1;
--		if (usb_hub_clear_tt_buffer(urb))
-+		if (usb_hub_clear_tt_buffer(urb, urb->dev->devnum))
- 			/* Clear failed; let's hope things work anyway */
- 			qh->tt_buffer_dirty = 0;
- 	}
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 695931b03684..01720f1f7d62 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -559,7 +559,7 @@ struct usb_tt_clear {
- 	struct usb_host_endpoint	*ep;
- };
- 
--extern int usb_hub_clear_tt_buffer(struct urb *urb);
-+extern int usb_hub_clear_tt_buffer(struct urb *urb, int devnum);
- extern void usb_ep0_reinit(struct usb_device *);
- 
- /* (shifted) direction/type/recipient from the USB 2.0 spec, table 9.2 */
--- 
-2.1.4
-
+> > +
+> > +             i2c_rbp: i2c@0 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <0>;
+> > +             };
+> > +
+> > +             i2c_fbp1: i2c@1 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <1>;
+> > +             };
+> > +
+> > +             i2c_fbp2: i2c@2 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <2>;
+> > +             };
+> > +
+> > +             i2c_fbp3: i2c@3 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <3>;
+> > +             };
+> > +     };
+> > +};
+> > +
+> > +&i2c7 {
+> > +     status = "okay";
+> > +
+> > +     /*      Slot 0,
+> > +      *      Slot 1,
+> > +      *      Slot 2,
+> > +      *      Slot 3
+> > +      */
+> > +     i2c-switch@76 {
+> > +             compatible = "nxp,pca9546";
+> > +             reg = <0x76>;
+> > +             #address-cells = <1>;
+> > +             #size-cells = <0>;
+> > +             i2c-mux-idle-disconnect;  /* may use mux@76 next. */
+> > +
+> > +             i2c_riser2: i2c@0 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <0>;
+> > +             };
+> > +
+> > +             i2c_pcie4: i2c@1 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <1>;
+> > +             };
+> > +
+> > +             i2c_riser1: i2c@2 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <2>;
+> > +             };
+> > +
+> > +             i2c_ocp: i2c@3 {
+> > +                     #address-cells = <1>;
+> > +                     #size-cells = <0>;
+> > +                     reg = <3>;
+> > +             };
+> > +     };
+> > +};
+> > +
+> > +&i2c8 {
+> > +     status = "okay";
+> > +
+> > +     eeprom@57 {
+> > +             compatible = "atmel,24c256";
+> > +             reg = <0x57>;
+> > +             pagesize = <16>;
+> > +     };
+> > +};
+> > +
+> > +&i2c9 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c10 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c11 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&i2c12 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&ehci1 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&uhci {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&gfx {
+> > +     status = "okay";
+> > +     memory-region = <&gfx_memory>;
+> > +};
+> > +
+> > +&pwm_tacho {
+> > +     status = "okay";
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&pinctrl_pwm0_default
+> > +     &pinctrl_pwm1_default
+> > +     &pinctrl_pwm2_default
+> > +     &pinctrl_pwm3_default
+> > +     &pinctrl_pwm4_default
+> > +     &pinctrl_pwm5_default
+> > +     &pinctrl_pwm6_default>;
+> > +
+> > +     fan@0 {
+> > +             reg = <0x00>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+> > +     };
+> > +
+> > +     fan@1 {
+> > +             reg = <0x00>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x01>;
+> > +     };
+> > +
+> > +     fan@2 {
+> > +             reg = <0x01>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x02>;
+> > +     };
+> > +
+> > +     fan@3 {
+> > +             reg = <0x01>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x03>;
+> > +     };
+> > +
+> > +     fan@4 {
+> > +             reg = <0x02>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x04>;
+> > +     };
+> > +
+> > +     fan@5 {
+> > +             reg = <0x02>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x05>;
+> > +     };
+> > +
+> > +     fan@6 {
+> > +             reg = <0x03>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x06>;
+> > +     };
+> > +
+> > +     fan@7 {
+> > +             reg = <0x03>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x07>;
+> > +     };
+> > +
+> > +     fan@8 {
+> > +             reg = <0x04>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x08>;
+> > +     };
+> > +
+> > +     fan@9 {
+> > +             reg = <0x04>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x09>;
+> > +     };
+> > +
+> > +     fan@10 {
+> > +             reg = <0x05>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x0a>;
+> > +     };
+> > +
+> > +     fan@11 {
+> > +             reg = <0x05>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x0b>;
+> > +     };
+> > +
+> > +     fan@12 {
+> > +             reg = <0x06>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x0c>;
+> > +     };
+> > +
+> > +     fan@13 {
+> > +             reg = <0x06>;
+> > +             aspeed,fan-tach-ch = /bits/ 8 <0x0d>;
+> > +     };
+> > +};
+> > +
+> > +&gpio {
+> > +
+> > +     pin_gpio_b5 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(B, 5) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "IRQ_BMC_PCH_SMI_LPC_N";
+> > +     };
+> > +
+> > +     pin_gpio_f0 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(F, 0) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "IRQ_BMC_PCH_NMI_R";
+> > +     };
+> > +
+> > +     pin_gpio_f3 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(F, 3) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "I2C_BUS0_RST_OUT_N";
+> > +     };
+> > +
+> > +     pin_gpio_f4 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(F, 4) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "FM_SKT0_FAULT_LED";
+> > +     };
+> > +
+> > +     pin_gpio_f5 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(F, 5) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "FM_SKT1_FAULT_LED";
+> > +     };
+> > +
+> > +     pin_gpio_g4 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(G, 4) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "FAN_PWR_CTL_N";
+> > +     };
+> > +
+> > +     pin_gpio_g7 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(G, 7) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "RST_BMC_PCIE_I2CMUX_N";
+> > +     };
+> > +
+> > +     pin_gpio_h2 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "PSU1_FFS_N_R";
+> > +     };
+> > +
+> > +     pin_gpio_h3 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(H, 3) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "PSU2_FFS_N_R";
+> > +     };
+> > +
+> > +     pin_gpio_i3 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(I, 3) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "BMC_INTRUDED_COVER";
+> > +     };
+> > +
+> > +     pin_gpio_j2 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(J, 2) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "BMC_BIOS_UPDATE_N";
+> > +     };
+> > +
+> > +     pin_gpio_j3 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(J, 3) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "RST_BMC_HDD_I2CMUX_N";
+> > +     };
+> > +
+> > +     pin_gpio_s2 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(S, 2) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "BMC_VGA_SW";
+> > +     };
+> > +
+> > +     pin_gpio_s4 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(S, 4) GPIO_ACTIVE_HIGH>;
+> > +             output;
+> > +             line-name = "VBAT_EN_N";
+> > +     };
+> > +
+> > +     pin_gpio_s6 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(S, 6) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "PU_BMC_GPIOS6";
+> > +     };
+> > +
+> > +     pin_gpio_y0 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Y, 0) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "BMC_NCSI_MUX_CTL_S0";
+> > +     };
+> > +
+> > +     pin_gpio_y1 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Y, 1) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "BMC_NCSI_MUX_CTL_S1";
+> > +     };
+> > +
+> > +     pin_gpio_z0 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Z, 0) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "I2C_RISER2_INT_N";
+> > +     };
+> > +
+> > +     pin_gpio_z2 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "I2C_RISER2_RESET_N";
+> > +     };
+> > +
+> > +     pin_gpio_z3 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Z, 3) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "FM_BMC_PCH_SCI_LPC_N";
+> > +     };
+> > +
+> > +     pin_gpio_z7 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(Z, 7) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "BMC_POST_CMPLT_N";
+> > +     };
+> > +
+> > +     pin_gpio_aa0 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(AA, 0) GPIO_ACTIVE_HIGH>;
+> > +             output-low;
+> > +             line-name = "HOST_BMC_USB_SEL";
+> > +     };
+> > +
+> > +     pin_gpio_aa5 {
+> > +             gpio-hog;
+> > +             gpios = <ASPEED_GPIO(AA, 5) GPIO_ACTIVE_HIGH>;
+> > +             output-high;
+> > +             line-name = "I2C_BUS1_RST_OUT_N";
+> > +     };
+> > +
+> > +};
+> > --
+> > 2.7.4
+> >
+> >
