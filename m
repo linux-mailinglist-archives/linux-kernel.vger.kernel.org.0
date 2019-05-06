@@ -2,121 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC3814BAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E092014BB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbfEFOUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:20:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38034 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726037AbfEFOUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:20:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE89EAE18;
-        Mon,  6 May 2019 14:20:02 +0000 (UTC)
-Date:   Mon, 6 May 2019 16:20:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Cc:     mike.kravetz@oracle.com, shenkai8@huawei.com,
-        linfeilong@huawei.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, wangwang2@huawei.com,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, agl@us.ibm.com,
-        nacc@us.ibm.com, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] mm/hugetlb: Don't put_page in lock of hugetlb_lock
-Message-ID: <20190506142001.GC31017@dhcp22.suse.cz>
-References: <12a693da-19c8-dd2c-ea6a-0a5dc9d2db27@huawei.com>
- <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
+        id S1726409AbfEFOVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:21:37 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:34068 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfEFOVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:21:37 -0400
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x46EKWH9001979
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 6 May 2019 07:20:43 -0700
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 6 May 2019 07:20:11 -0700
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 06B1B2E063C; Mon,  6 May 2019 10:20:10 -0400 (EDT)
+Date:   Mon, 6 May 2019 10:20:10 -0400
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: Fwd: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20190506142010.GC2649@windriver.com>
+References: <20190506094609.08e930f2@canb.auug.org.au>
+ <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
+ <20190506033151.GB2649@windriver.com>
+ <CAK7LNAS=D96B_OgnRu-NK0-G+y8itvhe3qvwfYxZUCSqdC0gEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK7LNAS=D96B_OgnRu-NK0-G+y8itvhe3qvwfYxZUCSqdC0gEA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 06-05-19 22:06:38, Zhiqiang Liu wrote:
-> From: Kai Shen <shenkai8@huawei.com>
-> 
-> spinlock recursion happened when do LTP test:
-> #!/bin/bash
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> ./runltp -p -f hugetlb &
-> 
-> The dtor returned by get_compound_page_dtor in __put_compound_page
-> may be the function of free_huge_page which will lock the hugetlb_lock,
-> so don't put_page in lock of hugetlb_lock.
-> 
->  BUG: spinlock recursion on CPU#0, hugemmap05/1079
->   lock: hugetlb_lock+0x0/0x18, .magic: dead4ead, .owner: hugemmap05/1079, .owner_cpu: 0
->  Call trace:
->   dump_backtrace+0x0/0x198
->   show_stack+0x24/0x30
->   dump_stack+0xa4/0xcc
->   spin_dump+0x84/0xa8
->   do_raw_spin_lock+0xd0/0x108
->   _raw_spin_lock+0x20/0x30
->   free_huge_page+0x9c/0x260
->   __put_compound_page+0x44/0x50
->   __put_page+0x2c/0x60
->   alloc_surplus_huge_page.constprop.19+0xf0/0x140
->   hugetlb_acct_memory+0x104/0x378
->   hugetlb_reserve_pages+0xe0/0x250
->   hugetlbfs_file_mmap+0xc0/0x140
->   mmap_region+0x3e8/0x5b0
->   do_mmap+0x280/0x460
->   vm_mmap_pgoff+0xf4/0x128
->   ksys_mmap_pgoff+0xb4/0x258
->   __arm64_sys_mmap+0x34/0x48
->   el0_svc_common+0x78/0x130
->   el0_svc_handler+0x38/0x78
->   el0_svc+0x8/0xc
-> 
-> Fixes: 9980d744a0 ("mm, hugetlb: get rid of surplus page accounting tricks")
-> Signed-off-by: Kai Shen <shenkai8@huawei.com>
-> Signed-off-by: Feilong Lin <linfeilong@huawei.com>
-> Reported-by: Wang Wang <wangwang2@huawei.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
-> v1->v2: add Acked-by: Michal Hocko <mhocko@suse.com>
+[Re: Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 21:07) Masahiro Yamada wrote:
 
-A new version for single ack is usually an overkill and only makes the
-situation more confusing. You have also didn't add Cc: stable as
-suggested during the review. That part is arguably more important.
-
-You also haven't CCed Andrew (now done) and your patch will not get
-merged without him applying it. Anyway, let's wait for Andrew to pick
-this patch up.
-
+> Hi Paul,
 > 
->  mm/hugetlb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 6cdc7b2..c1e7b81 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1574,8 +1574,9 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
->  	 */
->  	if (h->surplus_huge_pages >= h->nr_overcommit_huge_pages) {
->  		SetPageHugeTemporary(page);
-> +		spin_unlock(&hugetlb_lock);
->  		put_page(page);
-> -		page = NULL;
-> +		return NULL;
->  	} else {
->  		h->surplus_huge_pages++;
->  		h->surplus_huge_pages_node[page_to_nid(page)]++;
-> -- 
-> 1.8.3.1
+> On Mon, May 6, 2019 at 12:34 PM Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> >
+> > [Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 11:19) Masahiro Yamada wrote:
+> >
+> > > Hi Paul,
+> > >
+> > > In today's linux-next build testing,
+> > > more "make ... explicitly non-modular"
+> > > candidates showed up.
+> > >
+> >
+> > Hi Masahiro,
+> >
+> > I am not 100% clear on what you are asking me.  There are lots and lots
+> > of these in the kernel.... many fixed, and many remain unfortunately.
+> >
+> > > arch/arm/plat-omap/dma.c
+> > > drivers/clocksource/timer-ti-dm.c
+> > > drivers/mfd/omap-usb-host.c
+> > > drivers/mfd/omap-usb-tll.c
+> >
+> > None of these are "new".  I just checked, and I have had patches for all
+> > these for a long time, in my personal queue, found by my audits.
 > 
+> 
+> OK, I saw many patches from you
+> addressing this issue,
+> so I just thought you might be motivated to
+> fix them.
+> 
+> Anyway, I have a reason to fix them
+> because a patch in my tree is causing build errors.
 
--- 
-Michal Hocko
-SUSE Labs
+I understand now.  I missed the connection between these drivers and the
+Kbuild change when I read this last night.  Sorry about that.
+
+I can send the changes to those four files, but since I can't guarantee
+they will be merged quickly (or at all!) - that will leave the commit in
+the Kbuild tree causing build regressions for days or likely even weeks.
+
+> So, I will do something for them
+> if you do not have a plan to send patches soon.
+
+I will be happy to send them, but we just opened the two week merge
+window, and a lot of maintainers don't like getting sent new patches
+until the two week merge window has closed - so we should avoid that.
+
+I'm not sure how you would like to proceed - one way would be that we
+get the drivers above changed in 5.2 and you delay your kbuild change
+until we start v5.3 - to that end I'd be happy to add the Kbuild change
+to my internal build testing in the meantime, if you would like.
+
+Now that I understand the problem, let me know what you would like to
+do, and I'll do what I can to help out.
+
+Thanks,
+Paul.
