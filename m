@@ -2,141 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9B2145B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7D31441B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 06:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbfEFIEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725813AbfEFIEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:04:38 -0400
-Received: from localhost (unknown [37.142.3.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CD8D205C9;
-        Mon,  6 May 2019 08:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557129877;
-        bh=aSxwpZyAx91AXfm4TuHmW+RnPTruleH6onxPV1n9D0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iEUUA4REKPaH7Of/eQberc8b0k9clawaABMfvirXepExQ6ELKyesV8htmW6mOXwU/
-         6WOLwJWKpynbePUTnqRoOkjDnwkY1A36ipwJFXBt2PoEKKhJhMKheDqLJz/B9CxIbc
-         RVE5kQ7zODTxMY3dydYX4x0yN/P9p958RdtUhqFk=
-Date:   Mon, 6 May 2019 07:13:12 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vu Pham <vuhuong@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
-Message-ID: <20190506041312.GJ6938@mtr-leonro.mtl.com>
-References: <20190430135846.0c17df6e@canb.auug.org.au>
- <20190506140147.23d41ac1@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
-Content-Disposition: inline
-In-Reply-To: <20190506140147.23d41ac1@canb.auug.org.au>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1725846AbfEFEY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 00:24:28 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40443 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725710AbfEFEY1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 00:24:27 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id EBAE720F51;
+        Mon,  6 May 2019 00:24:23 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Mon, 06 May 2019 00:24:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm2; bh=vvpSEtd/71ILYVnxht0QzJ3t9KHpGOA
+        BdcYTEMQnFnY=; b=BvJ/3C+IsTJlE3JZt+akWqhUuurfqr85XWkuxTk6XWvc6Hv
+        I8HzRy+inMg56yezGMfICg/mgb3mqTkwZLPVony1rsYhtnP7FsMCYEJj/rQIOIxz
+        OT2H4eZY7JPqWWeUPGdjdscfM+rFkg0IXkPF8V5MAXpGWVzM9RW27pEE4BgOjPHN
+        E8VxiveMfbOiA8NdCMGfKpLddsSZQ3/Y1YfUQ61Zras2yLtv1BTs09Fq9PLs6lEb
+        VMmqnmisGj9al8vfqEM07fJkqzxx8VrATkxhXL69FVLU2Xla1Pmwak6li+seetqD
+        yx+efktSd04jw5c9MY9VS3JXIc70cQ0zmsizP+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vvpSEt
+        d/71ILYVnxht0QzJ3t9KHpGOABdcYTEMQnFnY=; b=d8zTvlnKIZ99YD0EcU/6CB
+        1YKJz0mMB4fMvN7y5nBCWVhKz6Ralyn8SlVkVmqZhbJZw0fiUXMxISgRHjkduc4a
+        8Y+7zl5c3MV8nQar/k/Mq0omEGBnpx7DioVlNLd/G25cV4EjT3r4R4Nwaan6FCbd
+        y69UD4gwAstyKz0nLp/K5OxO/qSfF7IQnBWmCLUIWJR48rERnCnTAP3tZky+EweK
+        c/B9sCW1PuHXZ9CJ92E9UpWsGWy5uSmjKIfDAtnyt67r7zm1DssWos9WW+8r3E7E
+        3uaK345q2GAUq+hBLsJIUL/tEoRg5aCH+tBeDeqv6YRl6jTM0QhIMIZ9ImCpOoug
+        ==
+X-ME-Sender: <xms:9bbPXDTXQERiByBN7ueIdBBWGKvLLTvpXXdEP1Cnvg_5Mg4PkSlylw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjeeigdekhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:9bbPXJowtklksSLCrnL19NWbqRExZANDMYdik5fxSZLkpyT_n-xOUQ>
+    <xmx:9bbPXBZWgZ_X03aerpo-O4DjS7RPwOeK7H_13mUcLdE11qyCFmEEkQ>
+    <xmx:9bbPXES6tGlFSKWnBE2VVcXNh8oo8zCxVotneQCYb4EwQ3L3nXTdTg>
+    <xmx:97bPXBrQC5vH8uH97yfNiXOmXjuTHF4XBvRWl6di87l-C-HnXC3_Lw>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 66C437C6D9; Mon,  6 May 2019 00:24:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-449-gfb3fc5a-fmstable-20190430v1
+Mime-Version: 1.0
+Message-Id: <76491a70-01ca-4308-a09e-4f223ac49ebd@www.fastmail.com>
+In-Reply-To: <20190503181336.579877-1-vijaykhemka@fb.com>
+References: <20190503181336.579877-1-vijaykhemka@fb.com>
+Date:   Mon, 06 May 2019 00:24:13 -0400
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Vijay Khemka" <vijaykhemka@fb.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     sdasari@fb.com
+Subject: Re: [PATCH v2] misc: aspeed-lpc-ctrl: Correct return values
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, May 06, 2019 at 02:01:47PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Sat, 4 May 2019, at 03:43, Vijay Khemka wrote:
+> Corrected some of return values with appropriate meanings and reported
+> relevant messages as debug information.
+> 
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+
+Thanks for the fixes, this looks okay now. However, was there a reason for
+not squashing change into your previous patch that introduced the issues
+this fixes? That hasn't been applied yet either as far as I'm aware. I'd prefer
+we do that and submit a single, good patch if we can.
+
+Andrew
+
+> ---
+>  drivers/misc/aspeed-lpc-ctrl.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/misc/aspeed-lpc-ctrl.c 
+> b/drivers/misc/aspeed-lpc-ctrl.c
+> index 332210e06e98..aca13779764a 100644
+> --- a/drivers/misc/aspeed-lpc-ctrl.c
+> +++ b/drivers/misc/aspeed-lpc-ctrl.c
+> @@ -93,8 +93,8 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, 
+> unsigned int cmd,
+>  
+>  		/* If memory-region is not described in device tree */
+>  		if (!lpc_ctrl->mem_size) {
+> -			dev_err(dev, "Didn't find reserved memory\n");
+> -			return -EINVAL;
+> +			dev_dbg(dev, "Didn't find reserved memory\n");
+> +			return -ENXIO;
+>  		}
+>  
+>  		map.size = lpc_ctrl->mem_size;
+> @@ -134,16 +134,16 @@ static long aspeed_lpc_ctrl_ioctl(struct file 
+> *file, unsigned int cmd,
+>  
+>  		if (map.window_type == ASPEED_LPC_CTRL_WINDOW_FLASH) {
+>  			if (!lpc_ctrl->pnor_size) {
+> -				dev_err(dev, "Didn't find host pnor flash\n");
+> -				return -EINVAL;
+> +				dev_dbg(dev, "Didn't find host pnor flash\n");
+> +				return -ENXIO;
+>  			}
+>  			addr = lpc_ctrl->pnor_base;
+>  			size = lpc_ctrl->pnor_size;
+>  		} else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
+>  			/* If memory-region is not described in device tree */
+>  			if (!lpc_ctrl->mem_size) {
+> -				dev_err(dev, "Didn't find reserved memory\n");
+> -				return -EINVAL;
+> +				dev_dbg(dev, "Didn't find reserved memory\n");
+> +				return -ENXIO;
+>  			}
+>  			addr = lpc_ctrl->mem_base;
+>  			size = lpc_ctrl->mem_size;
+> @@ -239,7 +239,7 @@ static int aspeed_lpc_ctrl_probe(struct 
+> platform_device *pdev)
+>  		of_node_put(node);
+>  		if (rc) {
+>  			dev_err(dev, "Couldn't address to resource for reserved memory\n");
+> -			return -ENOMEM;
+> +			return -ENXIO;
+>  		}
+>  
+>  		lpc_ctrl->mem_size = resource_size(&resm);
+> -- 
+> 2.17.1
+> 
 >
-> On Tue, 30 Apr 2019 13:58:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi Leon,
-> >
-> > Today's linux-next merge of the mlx5-next tree got a conflict in:
-> >
-> >   drivers/infiniband/hw/mlx5/main.c
-> >
-> > between commit:
-> >
-> >   35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
-> >
-> > from the rdma tree and commit:
-> >
-> >   c42260f19545 ("net/mlx5: Separate and generalize dma device from pci device")
-> >
-> > from the mlx5-next tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
-> >
-> > diff --cc drivers/infiniband/hw/mlx5/main.c
-> > index 6135a0b285de,fae6a6a1fbea..000000000000
-> > --- a/drivers/infiniband/hw/mlx5/main.c
-> > +++ b/drivers/infiniband/hw/mlx5/main.c
-> > @@@ -200,12 -172,18 +200,12 @@@ static int mlx5_netdev_event(struct not
-> >
-> >   	switch (event) {
-> >   	case NETDEV_REGISTER:
-> >  +		/* Should already be registered during the load */
-> >  +		if (ibdev->is_rep)
-> >  +			break;
-> >   		write_lock(&roce->netdev_lock);
-> > - 		if (ndev->dev.parent == &mdev->pdev->dev)
-> >  -		if (ibdev->rep) {
-> >  -			struct mlx5_eswitch *esw = ibdev->mdev->priv.eswitch;
-> >  -			struct net_device *rep_ndev;
-> >  -
-> >  -			rep_ndev = mlx5_ib_get_rep_netdev(esw,
-> >  -							  ibdev->rep->vport);
-> >  -			if (rep_ndev == ndev)
-> >  -				roce->netdev = ndev;
-> >  -		} else if (ndev->dev.parent == mdev->device) {
-> > ++		if (ndev->dev.parent == mdev->device)
-> >   			roce->netdev = ndev;
-> >  -		}
-> >   		write_unlock(&roce->netdev_lock);
-> >   		break;
-> >
->
-> This is now a conflict between the net-next tree and the rdma tree.
-
-Thanks Stephen,
-Looks good.
-
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQT1m3YD37UfMCUQBNwp8NhrnBAZsQUCXM+0OwAKCRAp8NhrnBAZ
-sc9RAQDmnIWke/N+pH96y3NysRRPQo5qL4qm8zgCrYToys2YcgEAqTnEoZ5Y/T4A
-E1YB7CSiFyMI3G6S6lzNHE4EgrcehAk=
-=ruXy
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
