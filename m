@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C10F14B6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 923CD14B6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfEFOCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60128 "EHLO mail.kernel.org"
+        id S1726365AbfEFOCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:02:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfEFOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726236AbfEFOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 May 2019 10:02:34 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C759A20C01;
-        Mon,  6 May 2019 14:02:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0356121479;
+        Mon,  6 May 2019 14:02:34 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hNeCO-0006ys-W4; Mon, 06 May 2019 10:02:33 -0400
-Message-Id: <20190506140232.883315684@goodmis.org>
+        id 1hNeCP-0006zM-4l; Mon, 06 May 2019 10:02:33 -0400
+Message-Id: <20190506140233.037857277@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 06 May 2019 10:02:08 -0400
+Date:   Mon, 06 May 2019 10:02:09 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>,
         Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: [for-next][PATCH 2/3] ktest: Add support for meta characters in GRUB_MENU
+Subject: [for-next][PATCH 3/3] ktest: introduce REBOOT_RETURN_CODE to confirm the result of REBOOT
 References: <20190506140206.573397982@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -37,50 +37,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-ktest fails if meta characters are in GRUB_MENU, for example
-GRUB_MENU = 'Fedora (test)'
+Unexpected power cycle occurs while the installation of the
+kernel.
 
-The failure happens because the meta characters are not escaped,
-so the menu doesn't match in any entries in GRUB_FILE.
+   ssh root@Test sync ... [0 seconds] SUCCESS
+   ssh root@Test reboot ... [1 second] FAILED!
+   virsh destroy Test; sleep 5; virsh start Test ... [6 seconds] SUCCESS
 
-Use quotemeta() to escape the meta characters.
+That is because REBOOT, the default is "ssh $SSH_USER@$MACHINE
+reboot", exits as 255 even if the reboot is successfully done,
+like as:
 
-Link: http://lkml.kernel.org/r/20190417235823.18176-1-msys.mizuma@gmail.com
+   ]# ssh root@Test reboot
+   Connection to Test closed by remote host.
+   ]# echo $?
+   255
+   ]#
+
+To avoid the unexpected power cycle, introduce a new parameter,
+REBOOT_RETURN_CODE to judge whether REBOOT is successfully done
+or not.
+
+Link: http://lkml.kernel.org/r/20190418135943.12640-1-msys.mizuma@gmail.com
 
 Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/testing/ktest/ktest.pl | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/testing/ktest/ktest.pl    | 9 +++++++++
+ tools/testing/ktest/sample.conf | 4 ++++
+ 2 files changed, 13 insertions(+)
 
 diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index 75f8cecdd549..3bec099a6cf4 100755
+index 3bec099a6cf4..275ad8ac8872 100755
 --- a/tools/testing/ktest/ktest.pl
 +++ b/tools/testing/ktest/ktest.pl
-@@ -1878,9 +1878,10 @@ sub get_grub2_index {
- 	or dodie "unable to get $grub_file";
+@@ -58,6 +58,7 @@ my %default = (
+     "SCP_TO_TARGET"		=> "scp \$SRC_FILE \$SSH_USER\@\$MACHINE:\$DST_FILE",
+     "SCP_TO_TARGET_INSTALL"	=> "\${SCP_TO_TARGET}",
+     "REBOOT"			=> "ssh \$SSH_USER\@\$MACHINE reboot",
++    "REBOOT_RETURN_CODE"	=> 255,
+     "STOP_AFTER_SUCCESS"	=> 10,
+     "STOP_AFTER_FAILURE"	=> 60,
+     "STOP_TEST_AFTER"		=> 600,
+@@ -105,6 +106,7 @@ my $reboot_type;
+ my $reboot_script;
+ my $power_cycle;
+ my $reboot;
++my $reboot_return_code;
+ my $reboot_on_error;
+ my $switch_to_good;
+ my $switch_to_test;
+@@ -278,6 +280,7 @@ my %option_map = (
+     "POST_BUILD_DIE"		=> \$post_build_die,
+     "POWER_CYCLE"		=> \$power_cycle,
+     "REBOOT"			=> \$reboot,
++    "REBOOT_RETURN_CODE"	=> \$reboot_return_code,
+     "BUILD_NOCLEAN"		=> \$noclean,
+     "MIN_CONFIG"		=> \$minconfig,
+     "OUTPUT_MIN_CONFIG"		=> \$output_minconfig,
+@@ -1749,6 +1752,7 @@ sub run_command {
+     my $dord = 0;
+     my $dostdout = 0;
+     my $pid;
++    my $command_orig = $command;
  
-     my $found = 0;
-+    my $grub_menu_qt = quotemeta($grub_menu);
+     $command =~ s/\$SSH_USER/$ssh_user/g;
+     $command =~ s/\$MACHINE/$machine/g;
+@@ -1803,6 +1807,11 @@ sub run_command {
+     # shift 8 for real exit status
+     $run_command_status = $? >> 8;
  
-     while (<IN>) {
--	if (/^menuentry.*$grub_menu/) {
-+	if (/^menuentry.*$grub_menu_qt/) {
- 	    $grub_number++;
- 	    $found = 1;
- 	    last;
-@@ -1921,9 +1922,10 @@ sub get_grub_index {
- 	or dodie "unable to get menu.lst";
++    if ($command_orig eq $default{REBOOT} &&
++	$run_command_status == $reboot_return_code) {
++	$run_command_status = 0;
++    }
++
+     close(CMD);
+     close(LOG) if ($dolog);
+     close(RD)  if ($dord);
+diff --git a/tools/testing/ktest/sample.conf b/tools/testing/ktest/sample.conf
+index 6ca6ca0ce695..8c893a58b68e 100644
+--- a/tools/testing/ktest/sample.conf
++++ b/tools/testing/ktest/sample.conf
+@@ -887,6 +887,10 @@
+ # The variables SSH_USER and MACHINE are defined.
+ #REBOOT = ssh $SSH_USER@$MACHINE reboot
  
-     my $found = 0;
-+    my $grub_menu_qt = quotemeta($grub_menu);
- 
-     while (<IN>) {
--	if (/^\s*title\s+$grub_menu\s*$/) {
-+	if (/^\s*title\s+$grub_menu_qt\s*$/) {
- 	    $grub_number++;
- 	    $found = 1;
- 	    last;
++# The return code of REBOOT
++# (default 255)
++#REBOOT_RETURN_CODE = 255
++
+ # The way triple faults are detected is by testing the kernel
+ # banner. If the kernel banner for the kernel we are testing is
+ # found, and then later a kernel banner for another kernel version
 -- 
 2.20.1
 
