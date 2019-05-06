@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3950414ED5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B32F14D98
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfEFOi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
+        id S1728708AbfEFOxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:53:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbfEFOiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:21 -0400
+        id S1729318AbfEFOrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:47:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFD5C21479;
-        Mon,  6 May 2019 14:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38C5F205ED;
+        Mon,  6 May 2019 14:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153500;
-        bh=8S9jqxSugKzCwYoFHMOwDkEPnCxhTDlkdzKVKwSDLxY=;
+        s=default; t=1557154054;
+        bh=3MntDR9kUmhFdar+ptPW4odvKho86UrhSYTPEEofWs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N+NuqAXzarhKnixlKP3ftsrKsFskq78bbq0QPmIwk/Ua0tsbpGxu5Av7/MxdWCGpP
-         m7XqxdzZovOAaw9wfoZqlfyHeWgzVD7I9xW4s+Fc97Mk6GlWmk27h87fvoGQ46HeaC
-         fJxv2q5nk8ISnOQ2pbrnlU4rCo6IADkmbHUFqwNI=
+        b=2SXarBdFxdIo/o9j8G+V+X09jdgtlAtDDK9YsqM61n2sQ32hadTMh+pWXij92TLkO
+         zbscBVeSVAEAdywCFhnNjC30TUhYx5q+Zmfs2ru8SZ/4T0NNBPj4T+r3ypEhjpFX3F
+         9f05rIqdbQkMxq9i761qXkBACHp7lTKlq9pCdKVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 5.0 113/122] selinux: never allow relabeling on context mounts
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 4.9 20/62] arm64: mm: dont print out page table entries on EL0 faults
 Date:   Mon,  6 May 2019 16:32:51 +0200
-Message-Id: <20190506143104.604395622@linuxfoundation.org>
+Message-Id: <20190506143052.802065560@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Kristina Martsenko <kristina.martsenko@arm.com>
 
-commit a83d6ddaebe541570291205cb538e35ad4ff94f9 upstream.
+commit bf396c09c2447a787d02af34cf167e953f85fa42 upstream.
 
-In the SECURITY_FS_USE_MNTPOINT case we never want to allow relabeling
-files/directories, so we should never set the SBLABEL_MNT flag. The
-'special handling' in selinux_is_sblabel_mnt() is only intended for when
-the behavior is set to SECURITY_FS_USE_GENFS.
+When we take a fault from EL0 that can't be handled, we print out the
+page table entries associated with the faulting address. This allows
+userspace to print out any current page table entries, including kernel
+(TTBR1) entries. Exposing kernel mappings like this could pose a
+security risk, so don't print out page table information on EL0 faults.
+(But still print it out for EL1 faults.) This also follows the same
+behaviour as x86, printing out page table entries on kernel mode faults
+but not user mode faults.
 
-While there, make the logic in selinux_is_sblabel_mnt() more explicit
-and add a BUILD_BUG_ON() to make sure that introducing a new
-SECURITY_FS_USE_* forces a review of the logic.
-
-Fixes: d5f3a5f6e7e7 ("selinux: add security in-core xattr support for pstore and debugfs")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/hooks.c |   40 +++++++++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 9 deletions(-)
+ arch/arm64/mm/fault.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -534,16 +534,10 @@ static int may_context_mount_inode_relab
- 	return rc;
- }
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -231,7 +231,6 @@ static void __do_user_fault(struct task_
+ 		pr_info("%s[%d]: unhandled %s (%d) at 0x%08lx, esr 0x%03x\n",
+ 			tsk->comm, task_pid_nr(tsk), inf->name, sig,
+ 			addr, esr);
+-		show_pte(addr);
+ 		show_regs(regs);
+ 	}
  
--static int selinux_is_sblabel_mnt(struct super_block *sb)
-+static int selinux_is_genfs_special_handling(struct super_block *sb)
- {
--	struct superblock_security_struct *sbsec = sb->s_security;
--
--	return sbsec->behavior == SECURITY_FS_USE_XATTR ||
--		sbsec->behavior == SECURITY_FS_USE_TRANS ||
--		sbsec->behavior == SECURITY_FS_USE_TASK ||
--		sbsec->behavior == SECURITY_FS_USE_NATIVE ||
--		/* Special handling. Genfs but also in-core setxattr handler */
--		!strcmp(sb->s_type->name, "sysfs") ||
-+	/* Special handling. Genfs but also in-core setxattr handler */
-+	return	!strcmp(sb->s_type->name, "sysfs") ||
- 		!strcmp(sb->s_type->name, "pstore") ||
- 		!strcmp(sb->s_type->name, "debugfs") ||
- 		!strcmp(sb->s_type->name, "tracefs") ||
-@@ -553,6 +547,34 @@ static int selinux_is_sblabel_mnt(struct
- 		  !strcmp(sb->s_type->name, "cgroup2")));
- }
- 
-+static int selinux_is_sblabel_mnt(struct super_block *sb)
-+{
-+	struct superblock_security_struct *sbsec = sb->s_security;
-+
-+	/*
-+	 * IMPORTANT: Double-check logic in this function when adding a new
-+	 * SECURITY_FS_USE_* definition!
-+	 */
-+	BUILD_BUG_ON(SECURITY_FS_USE_MAX != 7);
-+
-+	switch (sbsec->behavior) {
-+	case SECURITY_FS_USE_XATTR:
-+	case SECURITY_FS_USE_TRANS:
-+	case SECURITY_FS_USE_TASK:
-+	case SECURITY_FS_USE_NATIVE:
-+		return 1;
-+
-+	case SECURITY_FS_USE_GENFS:
-+		return selinux_is_genfs_special_handling(sb);
-+
-+	/* Never allow relabeling on context mounts */
-+	case SECURITY_FS_USE_MNTPOINT:
-+	case SECURITY_FS_USE_NONE:
-+	default:
-+		return 0;
-+	}
-+}
-+
- static int sb_finish_set_opts(struct super_block *sb)
- {
- 	struct superblock_security_struct *sbsec = sb->s_security;
 
 
