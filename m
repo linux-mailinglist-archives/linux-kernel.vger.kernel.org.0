@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DF514CFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EFE14C48
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbfEFOqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44552 "EHLO mail.kernel.org"
+        id S1727634AbfEFOic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbfEFOqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:34 -0400
+        id S1727089AbfEFOi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:38:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C7CB2087F;
-        Mon,  6 May 2019 14:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95FB320449;
+        Mon,  6 May 2019 14:38:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153993;
-        bh=jt2Wjvys7LVUP9B3WLdw1zC71qSfk0vFWyALeThIUho=;
+        s=default; t=1557153509;
+        bh=Se1UYjdv/oxKz9idkt8C+cBvkrjTu635luiJ9L5APx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H9vTBwzJCBRxLmi3SlUKt1NTyys+B4bzsLRKJI6lUHsArLrbtm4R+1refwjabWmqV
-         19VPh0ZVarGLJBzYWkgDXPwLy0+RxVYg0UZoSCH/vvVhowB/ZbAAFUEVWw4OoTlF+b
-         4C9zu5scacHFqT3d6DrfzPTHltcnK+5CCuQWrkL8=
+        b=nrEG4t7MPVD7osJuAtjJfoL8gm9AovLfXn0mK6GFdEasFIAdnDanRibrivKy+5tAS
+         iYOmMhaLQVRC8dS1DJJ4SLzmjb5hao5PW5iJbKHIbTi53mdRDwS0avH2vyu7nVP1cx
+         5wX9i7Ku2C6lEMbFVAfB7HFD2Mtrr02EDJrFEOeM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Long Li <longli@microsoft.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 46/75] scsi: storvsc: Fix calculation of sub-channel count
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Pu Wen <puwen@hygon.cn>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
+Subject: [PATCH 5.0 116/122] x86/mce: Improve error message when kernel cannot recover, p2
 Date:   Mon,  6 May 2019 16:32:54 +0200
-Message-Id: <20190506143057.377252559@linuxfoundation.org>
+Message-Id: <20190506143104.790501326@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,58 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 382e06d11e075a40b4094b6ef809f8d4bcc7ab2a ]
+From: Tony Luck <tony.luck@intel.com>
 
-When the number of sub-channels offered by Hyper-V is >= the number of CPUs
-in the VM, calculate the correct number of sub-channels.  The current code
-produces one too many.
+commit 41f035a86b5b72a4f947c38e94239d20d595352a upstream.
 
-This scenario arises only when the number of CPUs is artificially
-restricted (for example, with maxcpus=<n> on the kernel boot line), because
-Hyper-V normally offers a sub-channel count < number of CPUs.  While the
-current code doesn't break, the extra sub-channel is unbalanced across the
-CPUs (for example, a total of 5 channels on a VM with 4 CPUs).
+In
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Long Li <longli@microsoft.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  c7d606f560e4 ("x86/mce: Improve error message when kernel cannot recover")
+
+a case was added for a machine check caused by a DATA access to poison
+memory from the kernel. A case should have been added also for an
+uncorrectable error during an instruction fetch in the kernel.
+
+Add that extra case so the error message now reads:
+
+  mce: [Hardware Error]: Machine check: Instruction fetch error in kernel
+
+Fixes: c7d606f560e4 ("x86/mce: Improve error message when kernel cannot recover")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190225205940.15226-1-tony.luck@intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/storvsc_drv.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/mce/severity.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index beb585ddc07d..5adeb1e4b186 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -658,13 +658,22 @@ static void handle_sc_creation(struct vmbus_channel *new_sc)
- static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
- {
- 	struct storvsc_device *stor_device;
--	int num_cpus = num_online_cpus();
- 	int num_sc;
- 	struct storvsc_cmd_request *request;
- 	struct vstor_packet *vstor_packet;
- 	int ret, t;
- 
--	num_sc = ((max_chns > num_cpus) ? num_cpus : max_chns);
-+	/*
-+	 * If the number of CPUs is artificially restricted, such as
-+	 * with maxcpus=1 on the kernel boot line, Hyper-V could offer
-+	 * sub-channels >= the number of CPUs. These sub-channels
-+	 * should not be created. The primary channel is already created
-+	 * and assigned to one CPU, so check against # CPUs - 1.
-+	 */
-+	num_sc = min((int)(num_online_cpus() - 1), max_chns);
-+	if (!num_sc)
-+		return;
-+
- 	stor_device = get_out_stor_device(device);
- 	if (!stor_device)
- 		return;
--- 
-2.20.1
-
+--- a/arch/x86/kernel/cpu/mce/severity.c
++++ b/arch/x86/kernel/cpu/mce/severity.c
+@@ -165,6 +165,11 @@ static struct severity {
+ 		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_DATA),
+ 		KERNEL
+ 		),
++	MCESEV(
++		PANIC, "Instruction fetch error in kernel",
++		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_INSTR),
++		KERNEL
++		),
+ #endif
+ 	MCESEV(
+ 		PANIC, "Action required: unknown MCACOD",
 
 
