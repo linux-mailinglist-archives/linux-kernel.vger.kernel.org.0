@@ -2,155 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BCB61569E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B19156B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfEFXud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 19:50:33 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44787 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfEFXuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 19:50:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z16so7248725pgv.11;
-        Mon, 06 May 2019 16:50:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=e1BH/13SfZ3XaTKw+rGmuIvZM7E0chy4OEUBJjQkVh8=;
-        b=iyy8Cwb4tUyXOPBZZ7vKSInyJ69btlQW1E4XeTw5U1q2Ce9HLHYwmDAplXSYp225HK
-         029WfgJX6vRfVdONCUTcveff+4IoZGtol/wThCLXWa1p3cP3TLiLR9SZIldzRJ1Wtsgj
-         EYAgJfU7YSrqw9RMRmdJv0sINk9g+kOhi5MNBYtI5i4447BoxTpGHd20kXy70J9Cvsz8
-         wEzOFSv23qFy+BmWyChYmoN1PosP0Vt97V8LKygscl7XL7enmsE7MpxNtoLqzNSwIp2L
-         mk1rtfRAeTAONgnvQiVN20hwRlm4QAGeKjVYJu4lGTavcEP0IKRB4ookcM7m2dHrguZ8
-         noSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=e1BH/13SfZ3XaTKw+rGmuIvZM7E0chy4OEUBJjQkVh8=;
-        b=LxkdV5IPsHZ5GcHaQ+3htVxTg9CbOHRXWEiB+3w3DHefbiY5Rp6dfEmlsqrp/RdyZN
-         sqbkKDjukcYOOZrWenrLtfoJ/UcseoPmS0v6V7crhop0C6ULTscaJH28ilyo0CHtYZn/
-         xCEl+XOXrOnTkECnjXOsim0Uc9bLToYhL9z681mC2QDO5Nvn8+GwNh8ytWXdDbNCuxjr
-         eknCcPIl8F0ym62D5xcmD7ZhDELpkYfCJmOWmHEEAQIuodQBnhO3AsjVGYQ3GFHg42Vt
-         GNy1eXuKOlp+7wShCJ+F7w4EXDN4AhJ26lmqS4Cajuq5ggXKbypugCBXLZU0T6mo2Zcj
-         e3Yg==
-X-Gm-Message-State: APjAAAWmpM7LS7WE/1o1jmDZyQx28kMzFe80uR/t54aJYP4Qt+wcw9TK
-        K95my20vyRI7QEHDpS4BTEg=
-X-Google-Smtp-Source: APXvYqzS7UG3lbx7Dlz4TGjj9fWBy1CPaNYzoREyX0fqJR3dCZKaqUGdJz3+MMWnhVaIyXpczhl47A==
-X-Received: by 2002:aa7:8243:: with SMTP id e3mr4766738pfn.213.1557186631397;
-        Mon, 06 May 2019 16:50:31 -0700 (PDT)
-Received: from localhost ([203.63.161.72])
-        by smtp.gmail.com with ESMTPSA id e8sm20817127pfc.47.2019.05.06.16.50.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 16:50:30 -0700 (PDT)
-Date:   Tue, 07 May 2019 09:50:24 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [tip:sched/core] sched/isolation: Require a present CPU in
- housekeeping mask
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     fweisbec@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        linux-tip-commits@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, rafael.j.wysocki@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org
-References: <20190411033448.20842-5-npiggin@gmail.com>
-        <tip-9219565aa89033a9cfdae788c1940473a1253d6c@git.kernel.org>
-        <20190504002733.GB19076@lenoir> <1556952021.2xpa7joi2y.astroid@bobo.none>
-        <20190506151615.GA14529@lenoir>
-In-Reply-To: <20190506151615.GA14529@lenoir>
+        id S1727073AbfEFXxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:53:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:48235 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726438AbfEFXxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 19:53:52 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44yfhX2KZ5z9s4Y;
+        Tue,  7 May 2019 09:53:44 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557186829;
+        bh=1ZkSqqhaWdar3DSYNSZygWd6BNjV3T2Rq82XDyUlWZY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qeg7CmE+B93GelVTK/EEjmDhlaPi60C+o10fljli7AWrvGk1kAuqC5Acere/uwcwc
+         37Sr23T7kXgaWWpTmISokB1TSDJEl71mapSMoJbqie0/wMYX6sFemkrCZnEFaIjNBv
+         SzVrJsSk0NraO8GlRhGiskb4+upQGUhj+4WwwhdnMutL0/tAvHQQuj8O4Eg4Lh9VSn
+         bupPpwARzv71FOzyy/uvJJUGNCbyoJjKEHebT7iqljbW6hlC8Sb1/t2Sk8eHlwkNjL
+         1Ny/UDXJPT+dhx3UeKzpwP7QcXdFH6ZPFbsyLifTppg87nWcbB+Kf98DMOt89u+7II
+         Xm0O/1rnMi6xQ==
+Date:   Tue, 7 May 2019 09:53:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zhangliguang <zhangliguang@linux.alibaba.com>
+Subject: linux-next: manual merge of the vfs tree with the fuse tree
+Message-ID: <20190507095323.4ec2d3f7@canb.auug.org.au>
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1557186148.ocs72ssdjc.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/I4aUjkWfSAsJYqYUG=XoBhP"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frederic Weisbecker's on May 7, 2019 1:16 am:
-> On Sat, May 04, 2019 at 04:59:12PM +1000, Nicholas Piggin wrote:
->> Frederic Weisbecker's on May 4, 2019 10:27 am:
->> > On Fri, May 03, 2019 at 10:47:37AM -0700, tip-bot for Nicholas Piggin =
-wrote:
->> >> Commit-ID:  9219565aa89033a9cfdae788c1940473a1253d6c
->> >> Gitweb:     https://git.kernel.org/tip/9219565aa89033a9cfdae788c19404=
-73a1253d6c
->> >> Author:     Nicholas Piggin <npiggin@gmail.com>
->> >> AuthorDate: Thu, 11 Apr 2019 13:34:47 +1000
->> >> Committer:  Ingo Molnar <mingo@kernel.org>
->> >> CommitDate: Fri, 3 May 2019 19:42:58 +0200
->> >>=20
->> >> sched/isolation: Require a present CPU in housekeeping mask
->> >>=20
->> >> During housekeeping mask setup, currently a possible CPU is required.
->> >> That does not guarantee the CPU would be available at boot time, so
->> >> check to ensure that at least one present CPU is in the mask.
->> >=20
->> > I have a doubt about the requirements and semantics of cpu_present_mas=
-k.
->> > IIUC a present CPU means that it is physically plugged in (from ACPI
->> > perspective) but might not be logically plugged in (set on cpu_online_=
-mask).
->>=20
->> Right, a superset of cpu_possible_mask, subset of cpu_online_mask. It=20
->> means that CPU can be brought online at any time.
->>=20
->> > But do we have the guarantee that a present CPU _will_ be online at le=
-ast once
->> > right after the boot? After all, kernel parameters such as "maxcpus=3D=
-" can prevent
->> > from turning some CPUs on. I guess there are even more creative ways t=
-o achieve
->> > that.
->> >=20
->> > In any case we really require the housekeeper to be forced online. Per=
-haps
->> > I missed that enforcement somewhere in the patchset?
->>=20
->> No I think you're right, that may be able to boot without anything in
->> the housekeeping mask. Maybe we can just cpu_up() a CPU in the=20
->> housekeeping mask with a warning that it has overidden their SMP
->> command line option. I'll take a look at it.
->=20
-> But then what if cpu_up() fails? In this case I can think of only two
-> answers:
->=20
-> * Force the boot CPU as the housekeeper.
-> * Rollback the whole thing: nohz and all isolation.
+--Sig_/I4aUjkWfSAsJYqYUG=XoBhP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If cpu_up fails despite being in the present map and we explicitly
-selected it as the housekeeper? I think it would be okay to print
-a message telling admin to correct the config, and panic.
+Hi all,
 
-We try a best effort to make the system boot and limp along, but if
-you misconfigure it, crashing is not unreasonable. There's lots of
-command line option misconfiguration that will cause the same thing.
+Today's linux-next merge of the vfs tree got a conflict in:
 
-The primary problem with my patch that needs to be addressed is that
-the error is not explicitly caught and printed if the housekeeper
-does not come up, so the system might die in non-obvious ways.
+  fs/fuse/inode.c
 
->=20
-> The second solution looks sane to me. After all if the user doesn't
-> include CPU 0 in the housekeeping set, forcing it isn't going to
-> help much.
->=20
-> But that means we must enhance the isolation code (nohz included)
-> to be able to dynamically add/del CPUs to the houseeeping/isolation
-> set. That's not going to be easy but it's a necessary evolution
-> of that subsystem since we want to drive it through cpusets.
->=20
-> I should start working on that.
+between commit:
 
-I considered that when looking at the series, but couldn't justify
-the complexity based on my usage (which is static boot time).
+  829f949b6e06 ("fuse: clean up fuse_alloc_inode")
 
-If you have other uses for it, then that would solve all these boot
-time issues as well, which will be nice.
+from the fuse tree and commit:
 
-Thanks,
-Nick
+  9baf28bbfea1 ("fuse: switch to ->free_inode()")
 
-=
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/fuse/inode.c
+index bc02bad1be7c,f485d09d14df..000000000000
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@@ -102,25 -104,16 +102,16 @@@ static struct inode *fuse_alloc_inode(s
+  		return NULL;
+  	}
+ =20
+ -	return inode;
+ +	return &fi->inode;
+  }
+ =20
+- static void fuse_i_callback(struct rcu_head *head)
+- {
+- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
+- 	kmem_cache_free(fuse_inode_cachep, get_fuse_inode(inode));
+- }
+-=20
+- static void fuse_destroy_inode(struct inode *inode)
++ static void fuse_free_inode(struct inode *inode)
+  {
+  	struct fuse_inode *fi =3D get_fuse_inode(inode);
+- 	if (S_ISREG(inode->i_mode) && !is_bad_inode(inode)) {
+- 		WARN_ON(!list_empty(&fi->write_files));
+- 		WARN_ON(!list_empty(&fi->queued_writes));
+- 	}
++=20
+  	mutex_destroy(&fi->mutex);
+  	kfree(fi->forget);
+- 	call_rcu(&inode->i_rcu, fuse_i_callback);
++ 	kmem_cache_free(fuse_inode_cachep, fi);
+  }
+ =20
+  static void fuse_evict_inode(struct inode *inode)
+
+--Sig_/I4aUjkWfSAsJYqYUG=XoBhP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQyPMACgkQAVBC80lX
+0Gz67wf/T/vGJqlHvEO8LO6cCYEIVD/kUhvd4CgokwwnlFfi1xl49mT1TJmFF8yp
+qYVlD4u2+voT2x+6QxRpl6FmKj9UFpP6961xfgkYavGlwLvE/FhLfpkiVdXJdTAD
+ICcFlz94g8+g2g0rfJxwcBMPSN16T2IqOGaxEZjmjgKyPNL6FOUmLQdUekAUPP6p
+MqOz+lagWGvceW78ywEXGdABwo6Yi8FaCk+uYMBx8JRn4vTKmH0K42kLVGXHugz6
+ObE/UWoUvojKlrwT4ycuOgfqzvQmqTRf8FiJizUCPw3OU8Y/HTFIQEUKyE6rLxfO
+ho3C5GOHDPDlm/k8EAmIofkV/GwnkQ==
+=R/hD
+-----END PGP SIGNATURE-----
+
+--Sig_/I4aUjkWfSAsJYqYUG=XoBhP--
