@@ -2,126 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B5915228
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2B5151EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfEFRAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 13:00:34 -0400
-Received: from smtp1.cloudbase.it ([46.107.15.2]:52602 "EHLO
-        smtp1.cloudbase.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbfEFRAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 13:00:32 -0400
-Received: from ader1990.cloudbase.it (unknown [89.46.161.178])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp1.cloudbase.it (Postfix) with ESMTPSA id 301C350881;
-        Mon,  6 May 2019 18:56:30 +0300 (EEST)
-From:   Adrian Vladu <avladu@cloudbasesolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Subject: [PATCH] hv: tools: fix typos in toolchain
-Date:   Mon,  6 May 2019 16:51:24 +0000
-Message-Id: <20190506165124.6865-1-avladu@cloudbasesolutions.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+        id S1726590AbfEFQwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:52:38 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:48555 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfEFQwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 12:52:38 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 572BE6DA6E;
+        Mon,  6 May 2019 16:52:30 +0000 (UTC)
+Message-ID: <282ccf0979e6c58effd0e177917bdf824c32f64e.camel@aosc.io>
+Subject: Re: [PATCH 1/7] iio: adc: sun4i-gpadc: rework for support multiple
+ thermal sensor
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jonathan Cameron <jic23@kernel.org>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org, lars@metafoo.de,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        wens@csie.org, robh+dt@kernel.org, pmeerw@pmeerw.net,
+        knaack.h@gmx.de, lee.jones@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 07 May 2019 00:52:22 +0800
+In-Reply-To: <20190506122807.4u323iys74jddcet@flea>
+References: <20190503072813.2719-1-tiny.windzz@gmail.com>
+         <20190503072813.2719-2-tiny.windzz@gmail.com>
+         <20190505162215.3594f77d@archlinux> <20190506122807.4u323iys74jddcet@flea>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typos in the HyperV toolchain.
+在 2019-05-06一的 14:28 +0200，Maxime Ripard写道：
+> Hi,
+> 
+> On Sun, May 05, 2019 at 04:22:15PM +0100, Jonathan Cameron wrote:
+> > On Fri,  3 May 2019 03:28:07 -0400
+> > Yangtao Li <tiny.windzz@gmail.com> wrote:
+> > 
+> > > For some SOCs, there are more than one thermal sensor, and there
+> > > are
+> > > currently four sensors on the A80. So we need to do some work in
+> > > order
+> > > to support multiple thermal sensors:
+> > > 
+> > >   1) add sensor_count in gpadc_data.
+> > >   2) introduce sun4i_sensor_tzd in sun4i_gpadc_iio, to support
+> > > multiple
+> > >      thermal_zone_device and distinguish between different
+> > > sensors.
+> > >   3) modify read temperature and initialization function.
+> > 
+> > This comment doesn't mention the devm change. If it had it would
+> > have
+> > raised immediate alarm bells.
+> > 
+> > I'm also not keen on the web of pointers that this driver is
+> > steadily
+> > evolving.  I can't immediately see how to reduce that complexity
+> > however.
+> 
+> So I might be responsible for that, and looking back, this has been a
+> mistake.
+> 
+> This driver was initally put together to support a controller found
+> in
+> older (A10 up to A31) Allwinner SoCs. This controller had an ADC
+> driver that could be operated as a touchscreen controller, and was
+> providing a CPU temperature sensor and a general purpose ADC.
+> 
+> However, we already had a driver for that controller in drivers/input
+> to report the CPU temperature, and the one in IIO was introduced to
+> support the general purpose ADC (and the CPU temperature). The long
+> term goal was to add the touchscreen feature as well eventually so
+> that we could remove the one in drivers/input. That didn't happen.
+> 
+> At the same time, the Allwinner hardware slowly evolved to remove the
+> touchscreen and ADC features, and only keep the CPU temperature
+> readout. It then evolved further on to support multiple temperatures
+> (for different clusters, the GPU, and so on).
+> 
+> So, today, we're in a situation where I was pushing everything into
+> that IIO drivers since there was similiraties between all the
+> generations, but the fact that we have to support so many odd cases
+> (DT bindings compatibility, controllers with and without ADC, etc)
+> that it becomes a real mess.
+> 
+> And that mess isn't really used by anybody, since we want to have the
+> touchscreen.
+> 
+> There's only one SoC that is supported only by that driver, which is
+> the A33 that only had a CPU temperature readout, and is still pretty
+> similar to the latest SoC from Allwinner (that is supported by this
+> series).
+> 
+> I guess, for everyone's sanity and in order to not stall this
+> further,
+> it would just be better to create an hwmon driver for the A33 (and
+> onwards, including the H6) for the SoC that just have the temperature
+> readout feature. And for the older SoC, we just keep the older driver
+> under input/. Once the A33 is supported, we'll remove the driver in
+> IIO (and the related bits in drivers/mfd).
 
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+I think a thermal driver is better.
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
----
- tools/hv/hv_get_dhcp_info.sh | 2 +-
- tools/hv/hv_kvp_daemon.c     | 6 +++---
- tools/hv/hv_set_ifconfig.sh  | 2 +-
- tools/hv/hv_vss_daemon.c     | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+Other SoCs' thermal sensor drivers are all thermal drivers.
 
-diff --git a/tools/hv/hv_get_dhcp_info.sh b/tools/hv/hv_get_dhcp_info.sh
-index c38686c44656..2f2a3c7df3de 100755
---- a/tools/hv/hv_get_dhcp_info.sh
-+++ b/tools/hv/hv_get_dhcp_info.sh
-@@ -13,7 +13,7 @@
- #	the script prints the string "Disabled" to stdout.
- #
- # Each Distro is expected to implement this script in a distro specific
--# fashion. For instance on Distros that ship with Network Manager enabled,
-+# fashion. For instance, on Distros that ship with Network Manager enabled,
- # this script can be based on the Network Manager APIs for retrieving DHCP
- # information.
- 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 0ce50c319cfd..f5597503c771 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -700,7 +700,7 @@ static void kvp_get_ipconfig_info(char *if_name,
- 
- 
- 	/*
--	 * Gather the DNS  state.
-+	 * Gather the DNS state.
- 	 * Since there is no standard way to get this information
- 	 * across various distributions of interest; we just invoke
- 	 * an external script that needs to be ported across distros
-@@ -1051,7 +1051,7 @@ static int parse_ip_val_buffer(char *in_buf, int *offset,
- 	char *start;
- 
- 	/*
--	 * in_buf has sequence of characters that are seperated by
-+	 * in_buf has sequence of characters that are separated by
- 	 * the character ';'. The last sequence does not have the
- 	 * terminating ";" character.
- 	 */
-@@ -1492,7 +1492,7 @@ int main(int argc, char *argv[])
- 		case KVP_OP_GET_IP_INFO:
- 			kvp_ip_val = &hv_msg->body.kvp_ip_val;
- 
--			error =  kvp_mac_to_ip(kvp_ip_val);
-+			error = kvp_mac_to_ip(kvp_ip_val);
- 
- 			if (error)
- 				hv_msg->error = error;
-diff --git a/tools/hv/hv_set_ifconfig.sh b/tools/hv/hv_set_ifconfig.sh
-index 7ed9f85ef908..d10fe35b7f25 100755
---- a/tools/hv/hv_set_ifconfig.sh
-+++ b/tools/hv/hv_set_ifconfig.sh
-@@ -12,7 +12,7 @@
- # be used to configure the interface.
- #
- # Each Distro is expected to implement this script in a distro specific
--# fashion. For instance on Distros that ship with Network Manager enabled,
-+# fashion. For instance, on Distros that ship with Network Manager enabled,
- # this script can be based on the Network Manager APIs for configuring the
- # interface.
- #
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index c2bb8a360177..b58c4bbc0a26 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -53,7 +53,7 @@ static int vss_do_freeze(char *dir, unsigned int cmd)
- 	 * If a partition is mounted more than once, only the first
- 	 * FREEZE/THAW can succeed and the later ones will get
- 	 * EBUSY/EINVAL respectively: there could be 2 cases:
--	 * 1) a user may mount the same partition to differnt directories
-+	 * 1) a user may mount the same partition to different directories
- 	 *  by mistake or on purpose;
- 	 * 2) The subvolume of btrfs appears to have the same partition
- 	 * mounted more than once.
--- 
-2.19.1
+> 
+> Armbian already has a driver for that they never upstreamed iirc, so
+> it might be a good starting point, and we would add the support for
+> the H6. How does that sound?
+
+I think the developer abandoned to upstream it because of the previous
+problem ;-)
+
+Maybe it can be taken and add A33&H6 support.
+
+> 
+> Sorry for wasting everybody's time on this.
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
