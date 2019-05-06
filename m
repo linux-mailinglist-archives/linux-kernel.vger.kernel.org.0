@@ -2,128 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 753C0144E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BAD8144F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfEFHDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:03:44 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:50302 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEFHDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:03:39 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id AC99646E20D2C3CA686D;
-        Mon,  6 May 2019 15:03:36 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x4673RgY076284;
-        Mon, 6 May 2019 15:03:27 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019050615033117-10027951 ;
-          Mon, 6 May 2019 15:03:31 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/4] media: xilinx: fix leaked of_node references
-Date:   Mon, 6 May 2019 15:05:18 +0800
-Message-Id: <1557126318-21487-5-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1557126318-21487-1-git-send-email-wen.yang99@zte.com.cn>
-References: <1557126318-21487-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-05-06 15:03:31,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-05-06 15:03:25,
-        Serialize complete at 2019-05-06 15:03:25
-X-MAIL: mse-fl2.zte.com.cn x4673RgY076284
+        id S1726402AbfEFHFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:05:50 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56066 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfEFHFt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:05:49 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y2so14019746wmi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5V6LFql9im1SPXc8YxW9Jo3rXT30savTgK/RedsezR8=;
+        b=mhLOADL9bqOSSqke/X5TKBE3LDOfe2nbKYMCQidDFMKBOdyksQDafV2jYPTRt2XxBe
+         AdhtK98Z9Qxa7k22gSsr4uMp++J7DJbPsAhdgfb4d5rFBZ8JOqqMs1k4kRy78OluZ8NI
+         pqQYYSOwsVMYq21D3e54iLqFIjWOrUzSsrICzv8PwvE7myCD7zrEUJp1hdO/BX13E0Nn
+         wk/uUxhcjd9TslYzN8t1cQtvFP+7Et0dSRmpFlNiShDBF0XQ6b1XvX5nTSblzJmmF7rO
+         c8AhnCXdKulvKkejpAhstMRJse9EKwnjepdomaYnKBuF4DTKvVcp9RCoyhnLMlTUZvdm
+         QhgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5V6LFql9im1SPXc8YxW9Jo3rXT30savTgK/RedsezR8=;
+        b=EkxpgN7RePV45939cj4xv+DJ4xsgXmezEPWdmobgCICxRs6ZpIcrH9JKOE/5bnue4J
+         ZfwbIse9EPrqYlhsHUcFCeGHD7Oad3ETTR6pimMLKi3AqWKPl/8d/J16iBHwITz0w2No
+         QEwJj+lJmfDWUALisIDDRpta9MZ3GlC5kXCO4J4CjcjYG3VaefTl6a+kwbt6l/FIywj0
+         YKNEQwLfUyDEluBHaYbeYzv+vxLvnmYScYXhaH6hu6izLjrGnY39TpvPdqWSd+6Rz5cN
+         fVR4J9j5uPfsVMwZtU3BC3eUKxz7xXsS761x1V8dVCjbi/7UWdbaT9FH9n27k+VxfpmH
+         4czQ==
+X-Gm-Message-State: APjAAAXDKw19f5Zmb5108calFySXD3k3d0U9u1GYVVnJb+7D8823HYyz
+        rN/ydVNBOVPuQT3UlYgj3p8=
+X-Google-Smtp-Source: APXvYqy4zpd3s31UHNJkzYltTQzBio1Fvf2VRSVUdP+5SE+cZ9IqATPxo97xjNReMAPbQjW779nz8w==
+X-Received: by 2002:a7b:ce10:: with SMTP id m16mr9133691wmc.36.1557126347523;
+        Mon, 06 May 2019 00:05:47 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id d3sm18551842wmf.46.2019.05.06.00.05.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 00:05:46 -0700 (PDT)
+Date:   Mon, 6 May 2019 09:05:44 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 00/10] implement DYNAMIC_DEBUG_RELATIVE_POINTERS
+Message-ID: <20190506070544.GA66463@gmail.com>
+References: <20190409212517.7321-1-linux@rasmusvillemoes.dk>
+ <1afb0702-3cc5-ba4f-2bdd-604d9da2b846@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1afb0702-3cc5-ba4f-2bdd-604d9da2b846@rasmusvillemoes.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_get_child_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
 
-Detected by coccinelle with the following warnings:
-drivers/media/platform/xilinx/xilinx-vipp.c:487:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 477, but without a corresponding object release within this function.
-drivers/media/platform/xilinx/xilinx-vipp.c:491:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 477, but without a corresponding object release within this function.
+* Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-media@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/media/platform/exynos4-is/fimc-is.c   | 1 +
- drivers/media/platform/exynos4-is/media-dev.c | 1 +
- drivers/media/platform/xilinx/xilinx-vipp.c   | 8 +++++---
- 3 files changed, 7 insertions(+), 3 deletions(-)
+> On 09/04/2019 23.25, Rasmus Villemoes wrote:
+> 
+> > While refreshing these patches, which were orignally just targeted at
+> > x86-64, it occured to me that despite the implementation relying on
+> > inline asm, there's nothing x86 specific about it, and indeed it seems
+> > to work out-of-the-box for ppc64 and arm64 as well, but those have
+> > only been compile-tested.
+> 
+> So, apart from the Clang build failures for non-x86, I now also got a
+> report that gcc 4.8 miscompiles this stuff in some cases [1], even for
+> x86 - gcc 4.9 does not seem to have the problem. So, given that the 5.2
+> merge window just opened, I suppose this is the point where I should
+> pull the plug on this experiment :(
+> 
+> Rasmus
+> 
+> [1] Specifically, the problem manifested in net/ipv4/tcp_input.c: Both
+> uses of the static inline inet_csk_clear_xmit_timer() pass a
+> compile-time constant 'what', so the ifs get folded away and both uses
+> are completely inlined. Yet, gcc still decides to emit a copy of the
+> final 'else' branch of inet_csk_clear_xmit_timer() as its own
+> inet_csk_reset_xmit_timer.part.55 function, which is of course unused.
+> And despite the asm() that defines the ddebug descriptor being an "asm
+> volatile", gcc thinks it's fine to elide that (the code path is
+> unreachable, after all....), so the entire asm for that function is
+> 
+>         .section        .text.unlikely
+>         .type   inet_csk_reset_xmit_timer.part.55, @function
+> inet_csk_reset_xmit_timer.part.55:
+>         movq    $.LC1, %rsi     #,
+>         movq    $__UNIQUE_ID_ddebug160, %rdi    #,
+>         xorl    %eax, %eax      #
+>         jmp     __dynamic_pr_debug      #
+>         .size   inet_csk_reset_xmit_timer.part.55,
+> .-inet_csk_reset_xmit_timer.part.55
+> 
+> which of course fails to link since the symbol __UNIQUE_ID_ddebug160 is
+> nowhere defined.
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 02da0b0..25df4c6 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -809,6 +809,7 @@ static int fimc_is_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	is->pmu_regs = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!is->pmu_regs)
- 		return -ENOMEM;
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 463f2d8..a31dacf 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -450,6 +450,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	else
- 		pd->fimc_bus_type = pd->sensor_bus_type;
- 
-+	of_node_put(np);
- 	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
- 		of_node_put(rem);
- 		return -EINVAL;
-diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-index edce040..307717c 100644
---- a/drivers/media/platform/xilinx/xilinx-vipp.c
-+++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-@@ -472,7 +472,7 @@ static int xvip_graph_dma_init(struct xvip_composite_device *xdev)
- {
- 	struct device_node *ports;
- 	struct device_node *port;
--	int ret;
-+	int ret = 0;
- 
- 	ports = of_get_child_by_name(xdev->dev->of_node, "ports");
- 	if (ports == NULL) {
-@@ -484,11 +484,13 @@ static int xvip_graph_dma_init(struct xvip_composite_device *xdev)
- 		ret = xvip_graph_dma_init_one(xdev, port);
- 		if (ret < 0) {
- 			of_node_put(port);
--			return ret;
-+			goto out_put_node;
- 		}
- 	}
- 
--	return 0;
-+out_put_node:
-+	of_node_put(ports);
-+	return ret;
- }
- 
- static void xvip_graph_cleanup(struct xvip_composite_device *xdev)
--- 
-2.9.5
+It's sad to see such nice data footprint savings go the way of the dodo 
+just because GCC 4.8 is buggy.
 
+The current compatibility cut-off is GCC 4.6:
+
+  GNU C                  4.6              gcc --version
+
+Do we know where the GCC bug was fixed, was it in GCC 4.9?
+
+According to the GCC release dates:
+
+  https://www.gnu.org/software/gcc/releases.html
+
+4.8.0 was released in early-2013, while 4.9.0 was released in early-2014. 
+So the tooling compatibility window for latest upstream would narrow from 
+~6 years to ~5 years.
+
+Thanks,
+
+	Ingo
