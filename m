@@ -2,124 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D6314CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34CAD14E15
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfEFOmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:42:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16244 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728524AbfEFOml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:42:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="140532081"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga008.jf.intel.com with ESMTP; 06 May 2019 07:42:38 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hNepA-0006aJ-R8; Mon, 06 May 2019 17:42:36 +0300
-Date:   Mon, 6 May 2019 17:42:36 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- net-next tree
-Message-ID: <20190506144236.GL9224@smile.fi.intel.com>
-References: <20190506204303.0d0082d7@canb.auug.org.au>
+        id S1728690AbfEFOnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:43:41 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37840 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728678AbfEFOnj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:39 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w37so15584677edw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vaAPp8PyjYHsdP1CZGhOGZcNrdzUmU4mz1az3gjIEag=;
+        b=TeJLtrEe4JxAY6kU+FgDMqxxH774q5OmDnPgF4z1LCxJ0gA2hydu8AIgwxknkumsP+
+         w+p3KFDudzEwfTQwrebwzQ8H7AFC6XnqlApAqm6znxrbNtpsSorAwrpuQTF7daJEPSte
+         JtoM1vJiuvvMaYngrNIWUOuj8SndGJQPvePfs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=vaAPp8PyjYHsdP1CZGhOGZcNrdzUmU4mz1az3gjIEag=;
+        b=iDd9kV18T+38PdJC5C9R5/xoEHV1uSkDcRy0LVptMBglOFoJ96lOLSA3RuJFKDJnJ4
+         7ewjNcZLcwPsfb/Ry5e/tnsnG6sY1uuic102EhJdiXl1VEmeDg3IELdA4lJImWnPkThK
+         FhuTssYhPx0lJJr0UhQ5glJ+FwHp4VBMi4Kl1/EOjbXEPWbgLr71+S0jqXlc4zz3BIS2
+         msa9xr0e3i/dJRa6Ohzjoj2d+5eeShdFBv0KK0z5nDLJcpSVdHlPbWPIfEuTtPxJq3Yp
+         6QO4pNgd1y7gYv8TG5skHPcUfe/rYE+gO9wKLmikXhsnaRH4XWu8zRj/sgTwo6IHfEqe
+         2ylQ==
+X-Gm-Message-State: APjAAAV0nP5nzTd6BlqEnf4lOXuJA6BIDQq+VRIYXiY5LCGOUqtvJUHI
+        51gdOk8rIZAzed6zRfQiHcineQ==
+X-Google-Smtp-Source: APXvYqwtl5T/MpDTj7LbNirYR1SvYe+WhzHms3LVnX/pzSNP1kZnlocJBCYDhRieEoZXTXVwEMT6xg==
+X-Received: by 2002:a50:be42:: with SMTP id b2mr27581867edi.228.1557153817556;
+        Mon, 06 May 2019 07:43:37 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id q18sm1602623ejp.56.2019.05.06.07.43.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 May 2019 07:43:36 -0700 (PDT)
+Date:   Mon, 6 May 2019 16:43:34 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     jagdsh.linux@gmail.com
+Cc:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch, bskeggs@redhat.com, hierry.reding@gmail.com,
+        jcrouse@codeaurora.org, jsanka@codeaurora.org,
+        skolluku@codeaurora.org, paul.burton@mips.com,
+        jrdr.linux@gmail.com, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH] gpu/drm: Remove duplicate headers
+Message-ID: <20190506144334.GH17751@phenom.ffwll.local>
+Mail-Followup-To: jagdsh.linux@gmail.com, robdclark@gmail.com,
+        sean@poorly.run, airlied@linux.ie, bskeggs@redhat.com,
+        hierry.reding@gmail.com, jcrouse@codeaurora.org,
+        jsanka@codeaurora.org, skolluku@codeaurora.org,
+        paul.burton@mips.com, jrdr.linux@gmail.com,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        nouveau@lists.freedesktop.org
+References: <1556906293-128921-1-git-send-email-jagdsh.linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190506204303.0d0082d7@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1556906293-128921-1-git-send-email-jagdsh.linux@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 08:43:03PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Fri, May 03, 2019 at 11:28:13PM +0530, jagdsh.linux@gmail.com wrote:
+> From: Jagadeesh Pagadala <jagdsh.linux@gmail.com>
 > 
-> Today's linux-next merge of the akpm-current tree got a conflict in:
+> Remove duplicate headers which are included twice.
 > 
->   lib/Makefile
-> 
-> between commit:
-> 
->   554aae35007e ("lib: Add support for generic packing operations")
-> 
-> from the net-next tree and commit:
-> 
->   1a1e7f563bd5 ("lib: Move mathematic helpers to separate folder")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> Signed-off-by: Jagadeesh Pagadala <jagdsh.linux@gmail.com>
 
-Seems correct to me.
-Thanks!
+I collected some acks for the msm and nouveau parts and pushed this. For
+next time around would be great if you split these up along driver/module
+boundaries, so that each maintainer can pick this up directly.
 
+Thanks for your patch.
+-Daniel
+
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c             | 1 -
+>  drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c        | 2 --
+>  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 1 -
+>  3 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
+> index 018df2c..45a5bc6 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
+> @@ -15,7 +15,6 @@
+>  #include "dpu_hwio.h"
+>  #include "dpu_hw_lm.h"
+>  #include "dpu_hw_mdss.h"
+> -#include "dpu_kms.h"
+>  
+>  #define LM_OP_MODE                        0x00
+>  #define LM_OUT_SIZE                       0x04
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
+> index c80b967..2b44ba5 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bus/nv04.c
+> @@ -26,8 +26,6 @@
+>  
+>  #include <subdev/gpio.h>
+>  
+> -#include <subdev/gpio.h>
+> -
+>  static void
+>  nv04_bus_intr(struct nvkm_bus *bus)
+>  {
+> diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+> index 2c9c972..cacf2e0 100644
+> --- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+> +++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+> @@ -53,7 +53,6 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/pm.h>
+>  
+> -#include <drm/drm_panel.h>
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_mipi_dsi.h>
 > -- 
-> Cheers,
-> Stephen Rothwell
+> 1.8.3.1
 > 
-> diff --cc lib/Makefile
-> index 83d7df2661ff,4eeb814eee2e..000000000000
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@@ -17,20 -17,9 +17,20 @@@ KCOV_INSTRUMENT_list_debug.o := 
->   KCOV_INSTRUMENT_debugobjects.o := n
->   KCOV_INSTRUMENT_dynamic_debug.o := n
->   
->  +# Early boot use of cmdline, don't instrument it
->  +ifdef CONFIG_AMD_MEM_ENCRYPT
->  +KASAN_SANITIZE_string.o := n
->  +
->  +ifdef CONFIG_FUNCTION_TRACER
->  +CFLAGS_REMOVE_string.o = -pg
->  +endif
->  +
->  +CFLAGS_string.o := $(call cc-option, -fno-stack-protector)
->  +endif
->  +
->   lib-y := ctype.o string.o vsprintf.o cmdline.o \
->   	 rbtree.o radix-tree.o timerqueue.o xarray.o \
-> - 	 idr.o int_sqrt.o extable.o \
-> + 	 idr.o extable.o \
->   	 sha1.o chacha.o irq_regs.o argv_split.o \
->   	 flex_proportions.o ratelimit.o show_mem.o \
->   	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
-> @@@ -120,8 -110,6 +122,7 @@@ obj-$(CONFIG_DEBUG_LIST) += list_debug.
->   obj-$(CONFIG_DEBUG_OBJECTS) += debugobjects.o
->   
->   obj-$(CONFIG_BITREVERSE) += bitrev.o
->  +obj-$(CONFIG_PACKING)	+= packing.o
-> - obj-$(CONFIG_RATIONAL)	+= rational.o
->   obj-$(CONFIG_CRC_CCITT)	+= crc-ccitt.o
->   obj-$(CONFIG_CRC16)	+= crc16.o
->   obj-$(CONFIG_CRC_T10DIF)+= crc-t10dif.o
-
-
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
