@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB3414C4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C89714CFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfEFOim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59890 "EHLO mail.kernel.org"
+        id S1727853AbfEFOqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:46:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726894AbfEFOik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:40 -0400
+        id S1728447AbfEFOqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEC7C214AE;
-        Mon,  6 May 2019 14:38:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA32620449;
+        Mon,  6 May 2019 14:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153519;
-        bh=egkP3sJ+gY1BD2t3nH5Y9gV7Pntrz0MosAeGmt+n9bk=;
+        s=default; t=1557154012;
+        bh=PfctUM6oIIxO1h4owGlyOr3ZDoVD2mBUki2EavE2GpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PRJOQFaFDsct95FYkpTOzcNEn4NuX5GF3TKjboh4souPl/43dqg/2yP0WaPdMoblh
-         XQCWQud7TGKA1ke0HyxQRh77mdtrdHOU6pWiP7eUVYQh9CwvyUYnuTAN+PJ4Sy7zEj
-         kMt1Ui42sELmgY1PlDUfu0xGW5lsKimhrDwoL9I0=
+        b=GND8Vwfly2znYlzu1uoV15F6a8/ZHi70kmzmv6RthrNn4dA4I5x/yZgAiALhKNitg
+         qSLQ036jVLoqgOAhQSY/EOiZKLJwSMtCpgTfUbARyQc7M0duB+oLZ4/0DgSYZJFVH6
+         fnI+NNW/TQtHnn6h8adg2QwsFn0hUESjLOOK/uCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Borislav Petkov <bp@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
-Subject: [PATCH 5.0 119/122] x86/mm: Fix a crash with kmemleak_scan()
-Date:   Mon,  6 May 2019 16:32:57 +0200
-Message-Id: <20190506143105.074769856@linuxfoundation.org>
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 50/75] net: hns: fix ICMP6 neighbor solicitation messages discard problem
+Date:   Mon,  6 May 2019 16:32:58 +0200
+Message-Id: <20190506143057.764149473@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,82 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+[ Upstream commit f058e46855dcbc28edb2ed4736f38a71fd19cadb ]
 
-commit 0d02113b31b2017dd349ec9df2314e798a90fa6e upstream.
+ICMP6 neighbor solicitation messages will be discard by the Hip06
+chips, because of not setting forwarding pool. Enable promisc mode
+has the same problem.
 
-The first kmemleak_scan() call after boot would trigger the crash below
-because this callpath:
+This patch fix the wrong forwarding table configs for the multicast
+vague matching when enable promisc mode, and add forwarding pool
+for the forwarding table.
 
-  kernel_init
-    free_initmem
-      mem_encrypt_free_decrypted_mem
-        free_init_pages
-
-unmaps memory inside the .bss when DEBUG_PAGEALLOC=y.
-
-kmemleak_init() will register the .data/.bss sections and then
-kmemleak_scan() will scan those addresses and dereference them looking
-for pointer references. If free_init_pages() frees and unmaps pages in
-those sections, kmemleak_scan() will crash if referencing one of those
-addresses:
-
-  BUG: unable to handle kernel paging request at ffffffffbd402000
-  CPU: 12 PID: 325 Comm: kmemleak Not tainted 5.1.0-rc4+ #4
-  RIP: 0010:scan_block
-  Call Trace:
-   scan_gray_list
-   kmemleak_scan
-   kmemleak_scan_thread
-   kthread
-   ret_from_fork
-
-Since kmemleak_free_part() is tolerant to unknown objects (not tracked
-by kmemleak), it is fine to call it from free_init_pages() even if not
-all address ranges passed to this function are known to kmemleak.
-
- [ bp: Massage. ]
-
-Fixes: b3f0907c71e0 ("x86/mm: Add .bss..decrypted section to hold shared variables")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190423165811.36699-1-cai@lca.pw
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/init.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 33 +++++++++++++++----
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -5,6 +5,7 @@
- #include <linux/memblock.h>
- #include <linux/swapfile.h>
- #include <linux/swapops.h>
-+#include <linux/kmemleak.h>
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index 7e82dfbb4340..7d0f3cd8a002 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -2743,6 +2743,17 @@ int hns_dsaf_get_regs_count(void)
+ 	return DSAF_DUMP_REGS_NUM;
+ }
  
- #include <asm/set_memory.h>
- #include <asm/e820/api.h>
-@@ -766,6 +767,11 @@ void free_init_pages(const char *what, u
- 	if (debug_pagealloc_enabled()) {
- 		pr_info("debug: unmapping init [mem %#010lx-%#010lx]\n",
- 			begin, end - 1);
-+		/*
-+		 * Inform kmemleak about the hole in the memory since the
-+		 * corresponding pages will be unmapped.
-+		 */
-+		kmemleak_free_part((void *)begin, end - begin);
- 		set_memory_np(begin, (end - begin) >> PAGE_SHIFT);
- 	} else {
- 		/*
++static int hns_dsaf_get_port_id(u8 port)
++{
++	if (port < DSAF_SERVICE_NW_NUM)
++		return port;
++
++	if (port >= DSAF_BASE_INNER_PORT_NUM)
++		return port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
++
++	return -EINVAL;
++}
++
+ static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
+ {
+ 	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 1, 0, 0, 0x80};
+@@ -2808,23 +2819,33 @@ static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
+ 	memset(&temp_key, 0x0, sizeof(temp_key));
+ 	mask_entry.addr[0] = 0x01;
+ 	hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
+-			     port, mask_entry.addr);
++			     0xf, mask_entry.addr);
+ 	tbl_tcam_mcast.tbl_mcast_item_vld = 1;
+ 	tbl_tcam_mcast.tbl_mcast_old_en = 0;
+ 
+-	if (port < DSAF_SERVICE_NW_NUM) {
+-		mskid = port;
+-	} else if (port >= DSAF_BASE_INNER_PORT_NUM) {
+-		mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
+-	} else {
++	/* set MAC port to handle multicast */
++	mskid = hns_dsaf_get_port_id(port);
++	if (mskid == -EINVAL) {
+ 		dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
+ 			dsaf_dev->ae_dev.name, port,
+ 			mask_key.high.val, mask_key.low.val);
+ 		return;
+ 	}
++	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
++		     mskid % 32, 1);
+ 
++	/* set pool bit map to handle multicast */
++	mskid = hns_dsaf_get_port_id(port_num);
++	if (mskid == -EINVAL) {
++		dev_err(dsaf_dev->dev,
++			"%s, pool bit map pnum(%d)error,key(%#x:%#x)\n",
++			dsaf_dev->ae_dev.name, port_num,
++			mask_key.high.val, mask_key.low.val);
++		return;
++	}
+ 	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
+ 		     mskid % 32, 1);
++
+ 	memcpy(&temp_key, &mask_key, sizeof(mask_key));
+ 	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
+ 				   (struct dsaf_tbl_tcam_data *)(&mask_key),
+-- 
+2.20.1
+
 
 
