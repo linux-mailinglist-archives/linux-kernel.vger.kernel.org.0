@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C01C14C47
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D39714E6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfEFOi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59530 "EHLO mail.kernel.org"
+        id S1728492AbfEFPAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:00:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbfEFOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:27 -0400
+        id S1728463AbfEFOm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03046206A3;
-        Mon,  6 May 2019 14:38:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 243E821019;
+        Mon,  6 May 2019 14:42:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153506;
-        bh=m3SyE3HDVUxz0/YHku9Vj8PnmGa/Efm5Uo1tFhUs7wg=;
+        s=default; t=1557153747;
+        bh=wdJHCb6eLGgZW6ZWOF9BARQq6nr5/scEFc8SspQFYfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CdUjSBWUJaWGkZ/qDkxcHOAXrpx21oQ5uf/VsuY1KjzSx8l89NWBNWc+UkEA3nzyj
-         l0/esad5pLAaEgJneqj6yFU7FBbCNfJNnwoNYPTnOhHL+1zj5dNgJKt+dBTl2mcg+O
-         Sl4+aayt3bQZTkzfJzdTp+db+fGkhLFEJanHgkqs=
+        b=CcEbNVtvv7f1S584nh7JjlvtZ5xX3jk2ehYijcyTZyxdyA6rkeoN75ZxJVuwUU842
+         vi29bHAMb9f//tJfNJ7uRsrO6sRefR4N1VCw1ybQcMH00+uEW2q8S/XsPxyWhmS5x/
+         3cwZiDuVslM0PrjOvJkEqG1HjbmoLNl57ftBGc7w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.0 115/122] powerpc/mm/hash: Handle mmap_min_addr correctly in get_unmapped_area topdown search
-Date:   Mon,  6 May 2019 16:32:53 +0200
-Message-Id: <20190506143104.717707766@linuxfoundation.org>
+        stable@vger.kernel.org, "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 81/99] platform/x86: intel_pmc_core: Fix PCH IP name
+Date:   Mon,  6 May 2019 16:32:54 +0200
+Message-Id: <20190506143101.396567680@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-commit 3b4d07d2674f6b4a9281031f99d1f7efd325b16d upstream.
+commit d6827015e671cd17871c9b7a0fabe06c044f7470 upstream.
 
-When doing top-down search the low_limit is not PAGE_SIZE but rather
-max(PAGE_SIZE, mmap_min_addr). This handle cases in which mmap_min_addr >
-PAGE_SIZE.
+For Cannonlake and Icelake, the IP name for Res_6 should be SPF i.e.
+South Port F. No functional change is intended other than just renaming
+the IP appropriately.
 
-Fixes: fba2369e6ceb ("mm: use vm_unmapped_area() on powerpc architecture")
-Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "David E. Box" <david.e.box@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Fixes: 291101f6a735 ("platform/x86: intel_pmc_core: Add CannonLake PCH support")
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/slice.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/platform/x86/intel_pmc_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -32,6 +32,7 @@
- #include <linux/export.h>
- #include <linux/hugetlb.h>
- #include <linux/sched/mm.h>
-+#include <linux/security.h>
- #include <asm/mman.h>
- #include <asm/mmu.h>
- #include <asm/copro.h>
-@@ -377,6 +378,7 @@ static unsigned long slice_find_area_top
- 	int pshift = max_t(int, mmu_psize_defs[psize].shift, PAGE_SHIFT);
- 	unsigned long addr, found, prev;
- 	struct vm_unmapped_area_info info;
-+	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -185,7 +185,7 @@ static const struct pmc_bit_map cnp_pfea
+ 	{"CNVI",                BIT(3)},
+ 	{"UFS0",                BIT(4)},
+ 	{"EMMC",                BIT(5)},
+-	{"Res_6",               BIT(6)},
++	{"SPF",			BIT(6)},
+ 	{"SBR6",                BIT(7)},
  
- 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
- 	info.length = len;
-@@ -393,7 +395,7 @@ static unsigned long slice_find_area_top
- 	if (high_limit > DEFAULT_MAP_WINDOW)
- 		addr += mm->context.slb_addr_limit - DEFAULT_MAP_WINDOW;
- 
--	while (addr > PAGE_SIZE) {
-+	while (addr > min_addr) {
- 		info.high_limit = addr;
- 		if (!slice_scan_available(addr - 1, available, 0, &addr))
- 			continue;
-@@ -405,8 +407,8 @@ static unsigned long slice_find_area_top
- 		 * Check if we need to reduce the range, or if we can
- 		 * extend it to cover the previous available slice.
- 		 */
--		if (addr < PAGE_SIZE)
--			addr = PAGE_SIZE;
-+		if (addr < min_addr)
-+			addr = min_addr;
- 		else if (slice_scan_available(addr - 1, available, 0, &prev)) {
- 			addr = prev;
- 			goto prev_slice;
-@@ -528,7 +530,7 @@ unsigned long slice_get_unmapped_area(un
- 		addr = _ALIGN_UP(addr, page_size);
- 		slice_dbg(" aligned addr=%lx\n", addr);
- 		/* Ignore hint if it's too large or overlaps a VMA */
--		if (addr > high_limit - len ||
-+		if (addr > high_limit - len || addr < mmap_min_addr ||
- 		    !slice_area_is_free(mm, addr, len))
- 			addr = 0;
- 	}
+ 	{"SBR7",                BIT(0)},
 
 
