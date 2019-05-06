@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA4A514CFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B2B414D33
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbfEFOqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44630 "EHLO mail.kernel.org"
+        id S1727429AbfEFOtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:49:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729177AbfEFOqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:37 -0400
+        id S1727117AbfEFOtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:49:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEE0220C01;
-        Mon,  6 May 2019 14:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C480620C01;
+        Mon,  6 May 2019 14:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153996;
-        bh=BEmpdl3QLKjnFxAoy5mwhcZC6waPtqWdaqaKJlGL7jc=;
+        s=default; t=1557154136;
+        bh=Uf0AHVJu6yPNntVN2NijqXaa7UTWJ8gYvQmPSYC/pTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WKEtBWSVKsMtpiZEPONfbT2tiDPXqEWoK4AuKAHJhDMvWN7+eTdTd+MsDOgx6HEBZ
-         Bp59B1tga3U2VBRH0Zgps7iM8qh71WbWwXjtpRv2wj/6tG2OGmS6vkeZNb9enzn6FL
-         wBNb127M0u4xXbRYByX/aNq1CPmWBtrpsfRF+jFY=
+        b=X4cVtftKxjTmMrOpKkrx4d0vWoP1+ag/ZFGG9OW3BnhcIfYxWQC5KBP1AGT1c1mnh
+         HBEGb901t8Hbv+uKua+Vt7F3IJsUN5mYmiciRTgFwsnfMofsFdZXQP+DHbo2yy08x9
+         tcmqg2mYxFk/XfJOLgfykqJmHssscoWE4Qzi0aIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.14 73/75] clk: x86: Add system specific quirk to mark clocks as critical
-Date:   Mon,  6 May 2019 16:33:21 +0200
-Message-Id: <20190506143059.946722014@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 51/62] xsysace: Fix error handling in ace_setup
+Date:   Mon,  6 May 2019 16:33:22 +0200
+Message-Id: <20190506143055.726774205@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,133 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Müller <dave.mueller@gmx.ch>
+[ Upstream commit 47b16820c490149c2923e8474048f2c6e7557cab ]
 
-commit 7c2e07130090ae001a97a6b65597830d6815e93e upstream.
+If xace hardware reports a bad version number, the error handling code
+in ace_setup() calls put_disk(), followed by queue cleanup. However, since
+the disk data structure has the queue pointer set, put_disk() also
+cleans and releases the queue. This results in blk_cleanup_queue()
+accessing an already released data structure, which in turn may result
+in a crash such as the following.
 
-Since commit 648e921888ad ("clk: x86: Stop marking clocks as
-CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
-unconditionally gated off. Unfortunately this will break systems where these
-clocks are used for external purposes beyond the kernel's knowledge. Fix it
-by implementing a system specific quirk to mark the necessary pmc_plt_clks as
-critical.
+[   10.681671] BUG: Kernel NULL pointer dereference at 0x00000040
+[   10.681826] Faulting instruction address: 0xc0431480
+[   10.682072] Oops: Kernel access of bad area, sig: 11 [#1]
+[   10.682251] BE PAGE_SIZE=4K PREEMPT Xilinx Virtex440
+[   10.682387] Modules linked in:
+[   10.682528] CPU: 0 PID: 1 Comm: swapper Tainted: G        W         5.0.0-rc6-next-20190218+ #2
+[   10.682733] NIP:  c0431480 LR: c043147c CTR: c0422ad8
+[   10.682863] REGS: cf82fbe0 TRAP: 0300   Tainted: G        W          (5.0.0-rc6-next-20190218+)
+[   10.683065] MSR:  00029000 <CE,EE,ME>  CR: 22000222  XER: 00000000
+[   10.683236] DEAR: 00000040 ESR: 00000000
+[   10.683236] GPR00: c043147c cf82fc90 cf82ccc0 00000000 00000000 00000000 00000002 00000000
+[   10.683236] GPR08: 00000000 00000000 c04310bc 00000000 22000222 00000000 c0002c54 00000000
+[   10.683236] GPR16: 00000000 00000001 c09aa39c c09021b0 c09021dc 00000007 c0a68c08 00000000
+[   10.683236] GPR24: 00000001 ced6d400 ced6dcf0 c0815d9c 00000000 00000000 00000000 cedf0800
+[   10.684331] NIP [c0431480] blk_mq_run_hw_queue+0x28/0x114
+[   10.684473] LR [c043147c] blk_mq_run_hw_queue+0x24/0x114
+[   10.684602] Call Trace:
+[   10.684671] [cf82fc90] [c043147c] blk_mq_run_hw_queue+0x24/0x114 (unreliable)
+[   10.684854] [cf82fcc0] [c04315bc] blk_mq_run_hw_queues+0x50/0x7c
+[   10.685002] [cf82fce0] [c0422b24] blk_set_queue_dying+0x30/0x68
+[   10.685154] [cf82fcf0] [c0423ec0] blk_cleanup_queue+0x34/0x14c
+[   10.685306] [cf82fd10] [c054d73c] ace_probe+0x3dc/0x508
+[   10.685445] [cf82fd50] [c052d740] platform_drv_probe+0x4c/0xb8
+[   10.685592] [cf82fd70] [c052abb0] really_probe+0x20c/0x32c
+[   10.685728] [cf82fda0] [c052ae58] driver_probe_device+0x68/0x464
+[   10.685877] [cf82fdc0] [c052b500] device_driver_attach+0xb4/0xe4
+[   10.686024] [cf82fde0] [c052b5dc] __driver_attach+0xac/0xfc
+[   10.686161] [cf82fe00] [c0528428] bus_for_each_dev+0x80/0xc0
+[   10.686314] [cf82fe30] [c0529b3c] bus_add_driver+0x144/0x234
+[   10.686457] [cf82fe50] [c052c46c] driver_register+0x88/0x15c
+[   10.686610] [cf82fe60] [c09de288] ace_init+0x4c/0xac
+[   10.686742] [cf82fe80] [c0002730] do_one_initcall+0xac/0x330
+[   10.686888] [cf82fee0] [c09aafd0] kernel_init_freeable+0x34c/0x478
+[   10.687043] [cf82ff30] [c0002c6c] kernel_init+0x18/0x114
+[   10.687188] [cf82ff40] [c000f2f0] ret_from_kernel_thread+0x14/0x1c
+[   10.687349] Instruction dump:
+[   10.687435] 3863ffd4 4bfffd70 9421ffd0 7c0802a6 93c10028 7c9e2378 93e1002c 38810008
+[   10.687637] 7c7f1b78 90010034 4bfffc25 813f008c <81290040> 75290100 4182002c 80810008
+[   10.688056] ---[ end trace 13c9ff51d41b9d40 ]---
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: David Müller <dave.mueller@gmx.ch>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix the problem by setting the disk queue pointer to NULL before calling
+put_disk(). A more comprehensive fix might be to rearrange the code
+to check the hardware version before initializing data structures,
+but I don't know if this would have undesirable side effects, and
+it would increase the complexity of backporting the fix to older kernels.
 
+Fixes: 74489a91dd43a ("Add support for Xilinx SystemACE CompactFlash interface")
+Acked-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/x86/clk-pmc-atom.c                 |   14 +++++++++++---
- drivers/platform/x86/pmc_atom.c                |   21 +++++++++++++++++++++
- include/linux/platform_data/x86/clk-pmc-atom.h |    3 +++
- 3 files changed, 35 insertions(+), 3 deletions(-)
+ drivers/block/xsysace.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -165,7 +165,7 @@ static const struct clk_ops plt_clk_ops
- };
+diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
+index c4328d9d9981..f838119d12b2 100644
+--- a/drivers/block/xsysace.c
++++ b/drivers/block/xsysace.c
+@@ -1062,6 +1062,8 @@ static int ace_setup(struct ace_device *ace)
+ 	return 0;
  
- static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
--					void __iomem *base,
-+					const struct pmc_clk_data *pmc_data,
- 					const char **parent_names,
- 					int num_parents)
- {
-@@ -184,9 +184,17 @@ static struct clk_plt *plt_clk_register(
- 	init.num_parents = num_parents;
- 
- 	pclk->hw.init = &init;
--	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
-+	pclk->reg = pmc_data->base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
- 	spin_lock_init(&pclk->lock);
- 
-+	/*
-+	 * On some systems, the pmc_plt_clocks already enabled by the
-+	 * firmware are being marked as critical to avoid them being
-+	 * gated by the clock framework.
-+	 */
-+	if (pmc_data->critical && plt_clk_is_enabled(&pclk->hw))
-+		init.flags |= CLK_IS_CRITICAL;
-+
- 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
- 	if (ret) {
- 		pclk = ERR_PTR(ret);
-@@ -332,7 +340,7 @@ static int plt_clk_probe(struct platform
- 		return PTR_ERR(parent_names);
- 
- 	for (i = 0; i < PMC_CLK_NUM; i++) {
--		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
-+		data->clks[i] = plt_clk_register(pdev, i, pmc_data,
- 						 parent_names, data->nparents);
- 		if (IS_ERR(data->clks[i])) {
- 			err = PTR_ERR(data->clks[i]);
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -17,6 +17,7 @@
- 
- #include <linux/debugfs.h>
- #include <linux/device.h>
-+#include <linux/dmi.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/platform_data/x86/clk-pmc-atom.h>
-@@ -421,11 +422,27 @@ static int pmc_dbgfs_register(struct pmc
- }
- #endif /* CONFIG_DEBUG_FS */
- 
-+/*
-+ * Some systems need one or more of their pmc_plt_clks to be
-+ * marked as critical.
-+ */
-+static const struct dmi_system_id critclk_systems[] __initconst = {
-+	{
-+		.ident = "MPL CEC1x",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
-+		},
-+	},
-+	{ /*sentinel*/ }
-+};
-+
- static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
- 			  const struct pmc_data *pmc_data)
- {
- 	struct platform_device *clkdev;
- 	struct pmc_clk_data *clk_data;
-+	const struct dmi_system_id *d = dmi_first_match(critclk_systems);
- 
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
-@@ -433,6 +450,10 @@ static int pmc_setup_clks(struct pci_dev
- 
- 	clk_data->base = pmc_regmap; /* offset is added by client */
- 	clk_data->clks = pmc_data->clks;
-+	if (d) {
-+		clk_data->critical = true;
-+		pr_info("%s critclks quirk enabled\n", d->ident);
-+	}
- 
- 	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
- 					       PLATFORM_DEVID_NONE,
---- a/include/linux/platform_data/x86/clk-pmc-atom.h
-+++ b/include/linux/platform_data/x86/clk-pmc-atom.h
-@@ -35,10 +35,13 @@ struct pmc_clk {
-  *
-  * @base:	PMC clock register base offset
-  * @clks:	pointer to set of registered clocks, typically 0..5
-+ * @critical:	flag to indicate if firmware enabled pmc_plt_clks
-+ *		should be marked as critial or not
-  */
- struct pmc_clk_data {
- 	void __iomem *base;
- 	const struct pmc_clk *clks;
-+	bool critical;
- };
- 
- #endif /* __PLATFORM_DATA_X86_CLK_PMC_ATOM_H */
+ err_read:
++	/* prevent double queue cleanup */
++	ace->gd->queue = NULL;
+ 	put_disk(ace->gd);
+ err_alloc_disk:
+ 	blk_cleanup_queue(ace->queue);
+-- 
+2.20.1
+
 
 
