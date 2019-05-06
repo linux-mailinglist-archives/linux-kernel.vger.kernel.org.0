@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0722151E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38E9151E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfEFQrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 12:47:11 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46315 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfEFQrL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 12:47:11 -0400
-Received: by mail-ua1-f65.google.com with SMTP id n23so4879131uap.13;
-        Mon, 06 May 2019 09:47:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KRsp84CR/wZjf7JSxDT5PziM3wZtSANeGjBl9N5WJPY=;
-        b=M2WAm3zKsvX/U5EO7RnbWnpV7F70x5KP9SwdmROsIEe7qOoeXWRK/+dzNYEuN7DLdf
-         KDiyG3t+V1q1W/2lcHpFRCAjPDRAece4OzP3HgQ70yac83vwQH2I7qeyWnOZxbjGxSry
-         uNssbiAoB9NF16QnVpDN0lkqrY4gbxmqhiQUth7bzjspFgVUdVufYKb7yy5gav8ib7va
-         fCM6mIluYhwjk0tIbKmyO+xtf0Q1hpTY1re0EL819Pxrdtgft9vI+diJeECilhTadEvt
-         Ou3xkObFCbrw1QKB6/KPuTzovxu/Q6hq3ZYypnLNHgSO21EaBxgw908AnK1j75jnyKNX
-         x0vw==
-X-Gm-Message-State: APjAAAXDkuZUo++LyflJ+YmIvW2c76Sg4eQTkYA8HIZJzlLFcRI3A6E9
-        6Ld0RkJ1Iktz1RK0weH0ap6sPSvnq24muHlImOc=
-X-Google-Smtp-Source: APXvYqxivUBYKeylf06dc/FajmKOGINCDT9FRcHViFrODon94uEeIITcByJUAga3hTH23Y3VDVffI/Cm5Acd2hQyJVE=
-X-Received: by 2002:a9f:2b84:: with SMTP id y4mr10578570uai.28.1557161229621;
- Mon, 06 May 2019 09:47:09 -0700 (PDT)
+        id S1726644AbfEFQuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:50:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32938 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfEFQuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 12:50:20 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C2BB07E43D;
+        Mon,  6 May 2019 16:50:19 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B47F75EDE4;
+        Mon,  6 May 2019 16:50:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon,  6 May 2019 18:50:19 +0200 (CEST)
+Date:   Mon, 6 May 2019 18:50:09 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, jack@suse.com,
+        Waiman Long <longman@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [RT WARNING] DEBUG_LOCKS_WARN_ON(rt_mutex_owner(lock) !=
+ current) with fsfreeze (4.19.25-rt16)
+Message-ID: <20190506165009.GA28959@redhat.com>
+References: <20190326093421.GA29508@localhost.localdomain>
+ <20190419085627.GI4742@localhost.localdomain>
+ <20190430125130.uw7mhdnsoqr2v3gf@linutronix.de>
+ <20190430132811.GB2589@hirez.programming.kicks-ass.net>
+ <20190501170953.GB2650@hirez.programming.kicks-ass.net>
+ <20190502100932.GA7323@redhat.com>
+ <20190502114258.GB7323@redhat.com>
+ <20190503145059.GC2606@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20190504004258.23574-1-erosca@de.adit-jv.com> <20190504004258.23574-2-erosca@de.adit-jv.com>
- <20190506134700.ya565idfzzc3enbm@verge.net.au> <20190506152433.GA22769@vmlxhi-102.adit-jv.com>
-In-Reply-To: <20190506152433.GA22769@vmlxhi-102.adit-jv.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 6 May 2019 18:46:57 +0200
-Message-ID: <CAMuHMdXJzEYL48qwHAxrRsurQLBipZsQpv+w8i=+B2XCM_CZng@mail.gmail.com>
-Subject: Re: [PATCH 1/6] serial: sh-sci: Reveal ptrval in dev_dbg
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "George G . Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Helge Deller <deller@gmx.de>,
-        Michael Neuling <mikey@neuling.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Borislav Petkov <bp@suse.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503145059.GC2606@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 06 May 2019 16:50:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugeniu,
-
-On Mon, May 6, 2019 at 5:24 PM Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
-> On Mon, May 06, 2019 at 03:47:05PM +0200, Simon Horman wrote:
-> > On Sat, May 04, 2019 at 02:42:53AM +0200, Eugeniu Rosca wrote:
-> > > Starting with v4.15-rc2 commit ad67b74d2469d9 ("printk: hash addresses
-> > > printed with %p"), enabling debug prints in sh-sci.c would generate
-> > > output like below confusing the users who try to sneak into the
-> > > internals of the driver:
-> > >
-> > > sh-sci e6e88000.serial: sci_request_dma: TX: got channel (____ptrval____)
-> > > sh-sci e6e88000.serial: sci_request_dma: mapped 4096@(____ptrval____) to 0x00000006798bf000
-> > > sh-sci e6e88000.serial: sci_request_dma: RX: got channel (____ptrval____)
-> > > sh-sci e6e88000.serial: sci_dma_tx_work_fn: (____ptrval____): 0...2, cookie 2
-> > >
-> > > There are two possible fixes for that:
-> > >  - get rid of '%p' prints if they don't reveal any useful information
-> > >  - s/%p/%px/, since it is unlikely we have any concerns leaking the
-> > >    pointer values when running a debug/non-production kernel
-> >
-> > I am concerned that this may expose information in circumstances
-> > where it is undesirable. Is it generally accepted practice to
-> > use %px in conjunction with dev_dbg() ?
-> >
-> > ...
+On 05/03, Peter Zijlstra wrote:
 >
-> Below commits performed a similar s/%p/%px/ update in debug context:
->
-> Authors (CC-ed)   Commit         Subject
-> ----------------------------------------
-> Christophe Leroy  b18f0ae92b0a1d ("powerpc/prom: fix early DEBUG messages")
-> Helge Deller      3847dab7742186 ("parisc: Add alternative coding infrastructure")
-> Michael Neuling   51c3c62b58b357 ("powerpc: Avoid code patching freed init sections")
-> Kuninori Morimoto dabdbe3ae0cb9a ("ASoC: rsnd: don't use %p for dev_dbg()")
-> Philip Yang       fa7e65147e5dca ("drm/amdkfd: use %px to print user space address instead of %p")
-> Matthew Wilcox    68c1f08203f2b0 ("lib/list_debug.c: print unmangled addresses")
-> Borislav Petkov   0e6c16c652cada ("x86/alternative: Print unadorned pointers")
-> Darrick J. Wong   c96900435fa9fd ("xfs: use %px for data pointers when debugging")
-> Helge Deller      04903c06b4854d ("parisc: Show unhashed HPA of Dino chip")
->
-> To quote Matthew, with respect to any debug prints:
-> If an attacker can force this message to be printed, we've already lost.
+> -static void lockdep_sb_freeze_release(struct super_block *sb)
+> -{
+> -	int level;
+> -
+> -	for (level = SB_FREEZE_LEVELS - 1; level >= 0; level--)
+> -		percpu_rwsem_release(sb->s_writers.rw_sem + level, 0, _THIS_IP_);
+> -}
+> -
+> -/*
+> - * Tell lockdep we are holding these locks before we call ->unfreeze_fs(sb).
+> - */
+> -static void lockdep_sb_freeze_acquire(struct super_block *sb)
+> -{
+> -	int level;
+> -
+> -	for (level = 0; level < SB_FREEZE_LEVELS; ++level)
+> -		percpu_rwsem_acquire(sb->s_writers.rw_sem + level, 0, _THIS_IP_);
+> +	percpu_down_write_non_owner(sb->s_writers.rw_sem + level-1);
+>  }
 
-I think the issue with using %px in debug code is that a distro may enable
-CONFIG_DYNAMIC_DEBUG (it is enabled in several defconfigs), after which
-an attacker just has to convince/trick the system into enabling debug for that
-particular driver.
+I'd suggest to not change fs/super.c, keep these helpers, and even not introduce
+xxx_write_non_owner().
 
-> In any case, I won't be affected much if the change is not accepted,
-> since it doesn't resolve any major issue on my end. Thanks!
+freeze_super() takes other locks, it calls sync_filesystem(), freeze_fs(), lockdep
+should know that this task holds SB_FREEZE_XXX locks for writing.
 
-OK.
 
-Gr{oetje,eeting}s,
+> @@ -80,14 +83,8 @@ int __percpu_down_read(struct percpu_rw_
+>  	 * and reschedule on the preempt_enable() in percpu_down_read().
+>  	 */
+>  	preempt_enable_no_resched();
+> -
+> -	/*
+> -	 * Avoid lockdep for the down/up_read() we already have them.
+> -	 */
+> -	__down_read(&sem->rw_sem);
+> +	wait_event(sem->waiters, !atomic_read(&sem->block));
+>  	this_cpu_inc(*sem->read_count);
 
-                        Geert
+Argh, this looks racy :/
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Suppose that sem->block == 0 when wait_event() is called, iow the writer released
+the lock.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Now suppose that this __percpu_down_read() races with another percpu_down_write().
+The new writer can set sem->block == 1 and call readers_active_check() in between,
+after wait_event() and before this_cpu_inc(*sem->read_count).
+
+Oleg.
+
