@@ -2,90 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E22514A67
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0526A14A73
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfEFM51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 08:57:27 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41919 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbfEFM51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 08:57:27 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d9so6342970pls.8;
-        Mon, 06 May 2019 05:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+F4BP6Z6pdgPYBmGiDkA2x8IUuujt5MWxpyaN1c1LKs=;
-        b=ci7YCJu8+XUKg2RH1l7XMjiZfMGXRlgke94KizZTcHgAu/4ILy9koavEnzpOFp6d3r
-         bnicWCemdUKK2FDI4I7bL2+Smk55v/5HqkV3SYS8/TxVGXTjAz3rVeCNvmXV2U+8yUso
-         xnbWkC7aO+qaROgZHWtU9/PbAkwGFxbNkUJDqPwDYVDghdWEpYy5ukkwFBV9Lgre1vlh
-         s3H3YsGq+6nafuECKlm6LkEeVLE7YNwFibHgzGwa1mExr+kYcyy2h6n2YpDuXCy45OQd
-         gIQv/pYHU7/d9/X7E9ancWi8L5uTFMNKWrE6L95rvMQSXjMMQ0JBpttEqkzMk3MpckWF
-         VPtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+F4BP6Z6pdgPYBmGiDkA2x8IUuujt5MWxpyaN1c1LKs=;
-        b=rJDQJpg3FZ6xf9mva4hQhTlyz8HKt4HJ6V2CCbZLc40kY6NdlyHWo1YkOsLGzVQ3+S
-         RMJs5crlJTVX6d4/SIlksVz4x5FKVYV8Gbgo+mgntIEKBugq4XUJK0jMPkzSapeMel0I
-         27aBk1cPQj9JqO886Z1n+rBV5ga+WPKGp6v6A9XPwwqEjoydg6SwIGYMZsFI6qjX4/Z2
-         jGqK2cnENJ3l0byz0L2ZzvqzDYIgmnoisKRI1auh12M3oIUPAHZgk5NjqZ6OW0c8MDQK
-         JUFcZTs5J5Ddu70ACgKOz36EnYO7owZy8T9I6e0vk/b013vEvU3XJKDFHaw4wcab3H9a
-         BPJQ==
-X-Gm-Message-State: APjAAAWVD8bbOqBb7PvwfNsJNLgglfbPA2+AdScPeg5Aw2A1q0tAgQdG
-        GpfomHtIV0PFLacPqNi8Ddk/Tefn05s=
-X-Google-Smtp-Source: APXvYqzptrCaNBB1gCCDzvNE3XVvaRMoRZesFUuCFxpdpCnucKJPfLFldDhcTXa/OCsExmHmkkUx8A==
-X-Received: by 2002:a17:902:9a48:: with SMTP id x8mr32230389plv.133.1557147446632;
-        Mon, 06 May 2019 05:57:26 -0700 (PDT)
-Received: from localhost.localdomain ([125.142.23.13])
-        by smtp.googlemail.com with ESMTPSA id a6sm13696382pfn.181.2019.05.06.05.57.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 05:57:26 -0700 (PDT)
-From:   Suwan Kim <suwan.kim027@gmail.com>
-To:     shuah@kernel.org, valentina.manea.m@gmail.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suwan Kim <suwan.kim027@gmail.com>
-Subject: [PATCH 2/2] usbip: Remove repeated setting of hcd->state in vhci_bus_resume()
-Date:   Mon,  6 May 2019 21:55:50 +0900
-Message-Id: <20190506125550.7826-2-suwan.kim027@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190506125550.7826-1-suwan.kim027@gmail.com>
-References: <20190506125550.7826-1-suwan.kim027@gmail.com>
+        id S1726482AbfEFM6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 08:58:13 -0400
+Received: from verein.lst.de ([213.95.11.211]:52187 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbfEFM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 08:58:13 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 7423D67358; Mon,  6 May 2019 14:57:52 +0200 (CEST)
+Date:   Mon, 6 May 2019 14:57:52 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Maxim Levitsky <mlevitsk@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Fam Zheng <fam@euphon.net>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, kvm@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liang Cunming <cunming.liang@intel.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Jens Axboe <axboe@fb.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liu Changpeng <changpeng.liu@intel.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Amnon Ilan <ailan@redhat.com>, John Ferlan <jferlan@redhat.com>
+Subject: Re: [PATCH v2 00/10] RFC: NVME MDEV
+Message-ID: <20190506125752.GA5288@lst.de>
+References: <20190502114801.23116-1-mlevitsk@redhat.com> <20190503121838.GA21041@lst.de> <e8f6981863bdbba89adcba1c430083e68546ac1a.camel@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8f6981863bdbba89adcba1c430083e68546ac1a.camel@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hcd resumes, hcd_bus_resume() calls vhci_bus_resume() which sets
-hcd->state as HC_STATE_RUNNING. But after calling vhci_bus_resume(),
-hcd_bus_resume() also sets hcd->state as HC_STATE_RUNNING. So, setting
-hcd->state in vhci_hcd_resume() is unnecessary.
+On Mon, May 06, 2019 at 12:04:06PM +0300, Maxim Levitsky wrote:
+> 1. Frontend interface (the interface that faces the guest/userspace/etc):
+> 
+> VFIO/mdev is just way to expose a (partially) software defined PCIe device to a
+> guest.
+> 
+> Vhost on the other hand is an interface that is hardcoded and optimized for
+> virtio. It can be extended to be pci generic, but why to do so if we already
+> have VFIO.
 
-Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
----
- drivers/usb/usbip/vhci_hcd.c | 2 --
- 1 file changed, 2 deletions(-)
+I wouldn't say vhost is virtio specific.  At least Hanne's vhost-nvme
+doesn't get impacted by that a whole lot.
 
-diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-index e6f378d00fb6..335d61676fb4 100644
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -1252,8 +1252,6 @@ static int vhci_bus_resume(struct usb_hcd *hcd)
- 	spin_lock_irqsave(&vhci->lock, flags);
- 	if (!HCD_HW_ACCESSIBLE(hcd))
- 		rc = -ESHUTDOWN;
--	else
--		hcd->state = HC_STATE_RUNNING;
- 	spin_unlock_irqrestore(&vhci->lock, flags);
- 
- 	return rc;
--- 
-2.20.1
+> 2. Backend interface (the connection to the real nvme device):
+> 
+> Currently the backend interface _doesn't have_ to allocate a dedicated queue and
+> bypass the block layer. It can use the block submit_bio/blk_poll as I
+> demonstrate in the last patch in the series. Its 2x slower though.
+> 
+> However, similar to the (1), when the driver will support the devices with
+> hardware based passthrough, it will have to dedicate a bunch of queues to the
+> guest, configure them with the appropriate PASID, and then let the guest useA
+> these queues directly.
 
+We will not let you abuse the nvme queues for anything else.  We had
+that discussion with the mellanox offload and it not only unsafe but
+also adds way to much crap to the core nvme code for corner cases.
+
+Or to put it into another way:  unless your paravirt interface requires
+zero specific changes to the core nvme code it is not acceptable at all.
