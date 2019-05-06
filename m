@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D983014B6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C10F14B6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfEFOCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:02:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60124 "EHLO mail.kernel.org"
+        id S1726386AbfEFOCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:02:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbfEFOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726149AbfEFOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 May 2019 10:02:34 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAF5A206BF;
+        by mail.kernel.org (Postfix) with ESMTPSA id C759A20C01;
         Mon,  6 May 2019 14:02:33 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hNeCO-0006yN-RJ; Mon, 06 May 2019 10:02:32 -0400
-Message-Id: <20190506140232.735699092@goodmis.org>
+        id 1hNeCO-0006ys-W4; Mon, 06 May 2019 10:02:33 -0400
+Message-Id: <20190506140232.883315684@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 06 May 2019 10:02:07 -0400
+Date:   Mon, 06 May 2019 10:02:08 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>
-Subject: [for-next][PATCH 1/3] ktest: Show name and iteration on errors
+Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Subject: [for-next][PATCH 2/3] ktest: Add support for meta characters in GRUB_MENU
 References: <20190506140206.573397982@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -34,92 +35,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-If a test has an error, display not only the what type of test failed, but
-if the test was giving a name, display that too, as well as the current
-iteration of the tests. Each test has an iteration number associated to it.
-For error messages display that iteration number along with the test type
-and test name. This includes the message that gets sent via email.
+ktest fails if meta characters are in GRUB_MENU, for example
+GRUB_MENU = 'Fedora (test)'
 
+The failure happens because the meta characters are not escaped,
+so the menu doesn't match in any entries in GRUB_FILE.
+
+Use quotemeta() to escape the meta characters.
+
+Link: http://lkml.kernel.org/r/20190417235823.18176-1-msys.mizuma@gmail.com
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/testing/ktest/ktest.pl | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ tools/testing/ktest/ktest.pl | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index 87af8a68ab25..75f8cecdd549 100755
+index 75f8cecdd549..3bec099a6cf4 100755
 --- a/tools/testing/ktest/ktest.pl
 +++ b/tools/testing/ktest/ktest.pl
-@@ -1437,16 +1437,27 @@ sub do_not_reboot {
+@@ -1878,9 +1878,10 @@ sub get_grub2_index {
+ 	or dodie "unable to get $grub_file";
  
- my $in_die = 0;
+     my $found = 0;
++    my $grub_menu_qt = quotemeta($grub_menu);
  
-+sub get_test_name() {
-+    my $name;
-+
-+    if (defined($test_name)) {
-+	$name = "$test_name:$test_type";
-+    } else {
-+	$name = $test_type;
-+    }
-+    return $name;
-+}
-+
- sub dodie {
+     while (<IN>) {
+-	if (/^menuentry.*$grub_menu/) {
++	if (/^menuentry.*$grub_menu_qt/) {
+ 	    $grub_number++;
+ 	    $found = 1;
+ 	    last;
+@@ -1921,9 +1922,10 @@ sub get_grub_index {
+ 	or dodie "unable to get menu.lst";
  
-     # avoid recusion
-     return if ($in_die);
-     $in_die = 1;
+     my $found = 0;
++    my $grub_menu_qt = quotemeta($grub_menu);
  
--    doprint "CRITICAL FAILURE... ", @_, "\n";
--
-     my $i = $iteration;
- 
-+    doprint "CRITICAL FAILURE... [TEST $i] ", @_, "\n";
-+
-     if ($reboot_on_error && !do_not_reboot) {
- 
- 	doprint "REBOOTING\n";
-@@ -1462,7 +1473,8 @@ sub dodie {
-     }
- 
-     if ($email_on_error) {
--        send_email("KTEST: critical failure for your [$test_type] test",
-+	my $name = get_test_name;
-+        send_email("KTEST: critical failure for test $i [$name]",
-                 "Your test started at $script_start_time has failed with:\n@_\n");
-     }
- 
-@@ -4193,7 +4205,8 @@ sub send_email {
- 
- sub cancel_test {
-     if ($email_when_canceled) {
--        send_email("KTEST: Your [$test_type] test was cancelled",
-+	my $name = get_test_name;
-+        send_email("KTEST: Your [$name] test was cancelled",
-                 "Your test started at $script_start_time was cancelled: sig int");
-     }
-     die "\nCaught Sig Int, test interrupted: $!\n"
-@@ -4247,7 +4260,8 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
-             run_command $pre_ktest;
-         }
-         if ($email_when_started) {
--            send_email("KTEST: Your [$test_type] test was started",
-+	    my $name = get_test_name;
-+            send_email("KTEST: Your [$name] test was started",
-                 "Your test was started on $script_start_time");
-         }
-     }
-@@ -4414,7 +4428,7 @@ if ($opt{"POWEROFF_ON_SUCCESS"}) {
- doprint "\n    $successes of $opt{NUM_TESTS} tests were successful\n\n";
- 
- if ($email_when_finished) {
--    send_email("KTEST: Your [$test_type] test has finished!",
-+    send_email("KTEST: Your test has finished!",
-             "$successes of $opt{NUM_TESTS} tests started at $script_start_time were successful!");
- }
- exit 0;
+     while (<IN>) {
+-	if (/^\s*title\s+$grub_menu\s*$/) {
++	if (/^\s*title\s+$grub_menu_qt\s*$/) {
+ 	    $grub_number++;
+ 	    $found = 1;
+ 	    last;
 -- 
 2.20.1
 
