@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491B814EEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A3214C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfEFPGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:06:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58814 "EHLO mail.kernel.org"
+        id S1728135AbfEFOk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:40:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726658AbfEFOhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:54 -0400
+        id S1728114AbfEFOk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACA93214AF;
-        Mon,  6 May 2019 14:37:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19E72214AE;
+        Mon,  6 May 2019 14:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153474;
-        bh=zDAKcMa/8chgKR168C5oTv7UXbBJQlB3EXyfwadbaiE=;
+        s=default; t=1557153656;
+        bh=ngwj5a2qD/QNwjivqdPgXmVKw5Q0d0X280koxUtLsf0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qeJejRd3lDaaFcGE1GSwf6eYDBWKUUJWWAu2UDIi85PRuVnrfODvWGXoj3tJRRZDs
-         KSFSzNnQL69dSrGlAEH0ZIlleuDV1Igm9Wve9Pp8wckdssEm0PRnJ6wSWqeM7mM+mN
-         Xs4Cgn1CPLrg/TxRwQ5uxwucbtmaaCK94oBg3Goo=
+        b=iwL1wZ2SdoE2qUWvmLZRhcPY0qwHF0bZdXcggEtmcKs2iq7BzxWdhPlvhfFnMSRBV
+         iSvszv4kPmxO+22afnVGZEzfzXV72uHO0+pwr9bYRXf6tWOUU3Eq9dwkORm9ZkKrZq
+         8Pd3oVQaLpVXdVH8Da9b+dlDRJp15LtoN5sRJdQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 081/122] ARM: orion: dont use using 64-bit DMA masks
-Date:   Mon,  6 May 2019 16:32:19 +0200
-Message-Id: <20190506143102.082580250@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Shenghui Wang <shhuiw@foxmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 47/99] block: use blk_free_flush_queue() to free hctx->fq in blk_mq_init_hctx
+Date:   Mon,  6 May 2019 16:32:20 +0200
+Message-Id: <20190506143058.336095707@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cd92d74d67c811dc22544430b9ac3029f5bd64c5 ]
+[ Upstream commit b9a1ff504b9492ad6beb7d5606e0e3365d4d8499 ]
 
-clang warns about statically defined DMA masks from the DMA_BIT_MASK
-macro with length 64:
+kfree() can leak the hctx->fq->flush_rq field.
 
-arch/arm/plat-orion/common.c:625:29: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-                .coherent_dma_mask      = DMA_BIT_MASK(64),
-                                          ^~~~~~~~~~~~~~~~
-include/linux/dma-mapping.h:141:54: note: expanded from macro 'DMA_BIT_MASK'
- #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-
-The ones in orion shouldn't really be 64 bit masks, so changing them
-to what the driver can support avoids the warning.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/plat-orion/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/blk-mq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-orion/common.c b/arch/arm/plat-orion/common.c
-index a2399fd66e97..1e970873439c 100644
---- a/arch/arm/plat-orion/common.c
-+++ b/arch/arm/plat-orion/common.c
-@@ -622,7 +622,7 @@ static struct platform_device orion_xor0_shared = {
- 	.resource	= orion_xor0_shared_resources,
- 	.dev            = {
- 		.dma_mask               = &orion_xor_dmamask,
--		.coherent_dma_mask      = DMA_BIT_MASK(64),
-+		.coherent_dma_mask      = DMA_BIT_MASK(32),
- 		.platform_data          = &orion_xor0_pdata,
- 	},
- };
-@@ -683,7 +683,7 @@ static struct platform_device orion_xor1_shared = {
- 	.resource	= orion_xor1_shared_resources,
- 	.dev            = {
- 		.dma_mask               = &orion_xor_dmamask,
--		.coherent_dma_mask      = DMA_BIT_MASK(64),
-+		.coherent_dma_mask      = DMA_BIT_MASK(32),
- 		.platform_data          = &orion_xor1_pdata,
- 	},
- };
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 7d53f2314d7c..414656796ecf 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2236,7 +2236,7 @@ static int blk_mq_init_hctx(struct request_queue *q,
+ 	return 0;
+ 
+  free_fq:
+-	kfree(hctx->fq);
++	blk_free_flush_queue(hctx->fq);
+  exit_hctx:
+ 	if (set->ops->exit_hctx)
+ 		set->ops->exit_hctx(hctx, hctx_idx);
 -- 
 2.20.1
 
