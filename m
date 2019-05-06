@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 054B414E57
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C1714C32
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfEFOlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:41:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36070 "EHLO mail.kernel.org"
+        id S1727413AbfEFOhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:37:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727832AbfEFOlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:41:46 -0400
+        id S1727395AbfEFOh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:37:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CFB021019;
-        Mon,  6 May 2019 14:41:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4490320449;
+        Mon,  6 May 2019 14:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153705;
-        bh=iQRuPbmdXIi0lGoFvr2R2Tz7DVczw5Bk8bNILLR9LVo=;
+        s=default; t=1557153447;
+        bh=GUiVy+722ByJzV1vIVKdMdL5x+aWBD1kEf1es+X2vUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PyGoFdoSn0gCj/MNM0KyLdr373ccNhxYGhV6RsbMszw5vANzCuOfLBcVVcMCe+YYK
-         W0UTrB8YBavW2GbjevEpPagzJEmNMskEbrsn94G2MWX5facsdhFlZQN/2vZk1QA01p
-         k2SE1TH3bCmgWCZVWMDFYPXmFepzI0gegJAAaSZg=
+        b=fr1FjVKlmt36gqaPndBc7bSzIEf7OVYKrae4EGA7qzXmuXBZYOqz40F7UELwZ2l4M
+         Tc58wiEZT+wz1DSXeoI1S8m9kq1o+XCH/GeQ6FnjOXtbDfQx3JlHWrGAk92Bc8MR/d
+         +YmyoHef0hfkH9sT+zo8473lX6iDxhwawEfzWGCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 58/99] net: hns: fix ICMP6 neighbor solicitation messages discard problem
+        stable@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.0 093/122] scsi: RDMA/srpt: Fix a credit leak for aborted commands
 Date:   Mon,  6 May 2019 16:32:31 +0200
-Message-Id: <20190506143059.319853587@linuxfoundation.org>
+Message-Id: <20190506143103.030056875@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f058e46855dcbc28edb2ed4736f38a71fd19cadb ]
+From: Bart Van Assche <bvanassche@acm.org>
 
-ICMP6 neighbor solicitation messages will be discard by the Hip06
-chips, because of not setting forwarding pool. Enable promisc mode
-has the same problem.
+commit 40ca8757291ca7a8775498112d320205b2a2e571 upstream.
 
-This patch fix the wrong forwarding table configs for the multicast
-vague matching when enable promisc mode, and add forwarding pool
-for the forwarding table.
+Make sure that the next time a response is sent to the initiator that the
+credit it had allocated for the aborted request gets freed.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Fixes: 131e6abc674e ("target: Add TFO->abort_task for aborted task resources release") # v3.15
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 33 +++++++++++++++----
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index b8155f5e71b4..fdff5526d2e8 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -2750,6 +2750,17 @@ int hns_dsaf_get_regs_count(void)
- 	return DSAF_DUMP_REGS_NUM;
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -2887,8 +2887,19 @@ static void srpt_queue_tm_rsp(struct se_
+ 	srpt_queue_response(cmd);
  }
  
-+static int hns_dsaf_get_port_id(u8 port)
-+{
-+	if (port < DSAF_SERVICE_NW_NUM)
-+		return port;
-+
-+	if (port >= DSAF_BASE_INNER_PORT_NUM)
-+		return port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
-+
-+	return -EINVAL;
-+}
-+
- static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
++/*
++ * This function is called for aborted commands if no response is sent to the
++ * initiator. Make sure that the credits freed by aborting a command are
++ * returned to the initiator the next time a response is sent by incrementing
++ * ch->req_lim_delta.
++ */
+ static void srpt_aborted_task(struct se_cmd *cmd)
  {
- 	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 1, 0, 0, 0x80};
-@@ -2815,23 +2826,33 @@ static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
- 	memset(&temp_key, 0x0, sizeof(temp_key));
- 	mask_entry.addr[0] = 0x01;
- 	hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
--			     port, mask_entry.addr);
-+			     0xf, mask_entry.addr);
- 	tbl_tcam_mcast.tbl_mcast_item_vld = 1;
- 	tbl_tcam_mcast.tbl_mcast_old_en = 0;
- 
--	if (port < DSAF_SERVICE_NW_NUM) {
--		mskid = port;
--	} else if (port >= DSAF_BASE_INNER_PORT_NUM) {
--		mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
--	} else {
-+	/* set MAC port to handle multicast */
-+	mskid = hns_dsaf_get_port_id(port);
-+	if (mskid == -EINVAL) {
- 		dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
- 			dsaf_dev->ae_dev.name, port,
- 			mask_key.high.val, mask_key.low.val);
- 		return;
- 	}
-+	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
-+		     mskid % 32, 1);
- 
-+	/* set pool bit map to handle multicast */
-+	mskid = hns_dsaf_get_port_id(port_num);
-+	if (mskid == -EINVAL) {
-+		dev_err(dsaf_dev->dev,
-+			"%s, pool bit map pnum(%d)error,key(%#x:%#x)\n",
-+			dsaf_dev->ae_dev.name, port_num,
-+			mask_key.high.val, mask_key.low.val);
-+		return;
-+	}
- 	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
- 		     mskid % 32, 1);
++	struct srpt_send_ioctx *ioctx = container_of(cmd,
++				struct srpt_send_ioctx, cmd);
++	struct srpt_rdma_ch *ch = ioctx->ch;
 +
- 	memcpy(&temp_key, &mask_key, sizeof(mask_key));
- 	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
- 				   (struct dsaf_tbl_tcam_data *)(&mask_key),
--- 
-2.20.1
-
++	atomic_inc(&ch->req_lim_delta);
+ }
+ 
+ static int srpt_queue_status(struct se_cmd *cmd)
 
 
