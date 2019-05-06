@@ -2,89 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B43155CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:48:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D91155BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfEFVsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:48:17 -0400
-Received: from mga06.intel.com ([134.134.136.31]:9220 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbfEFVsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:48:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 14:48:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,439,1549958400"; 
-   d="scan'208";a="148968542"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga003.jf.intel.com with ESMTP; 06 May 2019 14:48:15 -0700
-Date:   Mon, 6 May 2019 14:39:49 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v8 13/15] x86/split_lock: Enable split lock detection by
- default
-Message-ID: <20190506213948.GA124959@romley-ivt3.sc.intel.com>
-References: <1556134382-58814-1-git-send-email-fenghua.yu@intel.com>
- <1556134382-58814-14-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1904250943160.1762@nanos.tec.linutronix.de>
+        id S1726593AbfEFVk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:40:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38843 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfEFVk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 17:40:56 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u21so3297076lja.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xUYUM3YLijTLeXzveWxy2iQb0w6OPHiVIv+ceBz6sbU=;
+        b=m0ZBtK+RKIGoQCPFhcGmfz/fR3JKMpEkCQ2BKr5QPJZXeqhFiy2oIj3ZogI+wRIxj0
+         jifNGNwp6ddF/XhxQP3WkBjB3ovSwqjpy/mWyntoNVojLGJau7uISsv+WyTvOF3J4IRk
+         4Ycf7GbpX+jn2dskciVGM8+W8mrEHA2nlVBtE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xUYUM3YLijTLeXzveWxy2iQb0w6OPHiVIv+ceBz6sbU=;
+        b=EmxsoCy+SUnxBTXN5IPmded2J+OJUBJuk7CEW6SLc9vjdGy+WmtJd8Au0J5qcvbmLZ
+         UEGBrAR2C/Qx8kaL2F4xGIC5TtygaQPENQPqehmQFiKdeE2cRTlOGQSnIsaZLeyMkXiC
+         HteDNUrS+C+j8G09i2cgph2AfOUxS6AwyCEfQESq/d9oEJzyTP55+TTKoCFF58nkSqut
+         8Zz566+G/IvLQs6aD0eH67fldpG6TtdSTdyP35KR6o86VaBHY8/HAJMZB3AJzgUp37Vw
+         eBlO2RaGmOSOKhV1qRPoB4n9+ihmk7psP1kH1218/oi0qi/MWVaARDjmMkrG69LGOPgE
+         r87Q==
+X-Gm-Message-State: APjAAAU/9HmdCIYI3earBb/R1EsCw1ZnEttWwj2YG+IAc5Eyy6oF25O7
+        smxo2OV0eEoauihxIoz15i9942KCwXA=
+X-Google-Smtp-Source: APXvYqxaNzH3u8iEg31KGdX++txgdZVJIXj9xW1eItA2iUvYSlEdl01cqBsZLBH0Z/EIMZufKHy7Cw==
+X-Received: by 2002:a2e:9d59:: with SMTP id y25mr14469750ljj.137.1557178854022;
+        Mon, 06 May 2019 14:40:54 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id l5sm2743059lfh.70.2019.05.06.14.40.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 14:40:53 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id q10so12426919ljc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:40:53 -0700 (PDT)
+X-Received: by 2002:a2e:4a1a:: with SMTP id x26mr13281214lja.49.1557178852739;
+ Mon, 06 May 2019 14:40:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1904250943160.1762@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190503174730.245762-1-dianders@chromium.org>
+In-Reply-To: <20190503174730.245762-1-dianders@chromium.org>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Mon, 6 May 2019 14:40:40 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXOkHxYumCBv-T0gxTjdMVTu-c=33Lk-0TUgJ3WGUn2DVQ@mail.gmail.com>
+Message-ID: <CA+ASDXOkHxYumCBv-T0gxTjdMVTu-c=33Lk-0TUgJ3WGUn2DVQ@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Improve backward compatibility with older Chromebooks
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 09:50:20AM +0200, Thomas Gleixner wrote:
-> On Wed, 24 Apr 2019, Fenghua Yu wrote:
-> >  
-> > +static void split_lock_update_msr(void)
-> > +{
-> > +	/* Enable split lock detection */
-> > +	msr_set_bit(MSR_TEST_CTL, TEST_CTL_SPLIT_LOCK_DETECT_SHIFT);
-> > +	this_cpu_or(msr_test_ctl_cache, TEST_CTL_SPLIT_LOCK_DETECT);
-> 
-> I'm pretty sure, that I told you to utilize the cache proper. Again:
-> 
-> > > Nothing in this file initializes msr_test_ctl_cache explicitely. Register
-> > > caching always requires to read the register and store it in the cache
-> > > before doing anything with it. Nothing guarantees that all bits in that MSR
-> > > are 0 by default forever.
-> > >
-> > > And once you do that _before_ calling split_lock_update_msr() then you can
-> > > spare the RMW in that function.
-> 
-> So you managed to fix the initializaiton part, but then you still do a
-> pointless RMW.
+On Fri, May 3, 2019 at 10:48 AM Douglas Anderson <dianders@chromium.org> wrote:
+> When you try to run an upstream kernel on an old ARM-based Chromebook
+> you'll find that console-ramoops doesn't work.
 
-Ok. I see. msr_set_bit() is a RMW operation.
+Ooh, nice! I still get annoyed by old depthcharge firmware. It's
+almost as if we should have gotten an upstream binding approved before
+baking it into firmware...
 
-So is the following the right code to update msr and cache variable?
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
 
-+static void split_lock_update_msr(void)
-+{
-+   /* Enable split lock detection */
-+   this_cpu_or(msr_test_ctl_cache, TEST_CTL_SPLIT_LOCK_DETECT);
-+   wrmsrl(MSR_TEST_CTL, msr_test_ctl_cache);
+> @@ -703,6 +704,23 @@ static int ramoops_parse_dt(struct platform_device *pdev,
+>
+>  #undef parse_size
+>
+> +       /*
+> +        * Some old Chromebooks relied on the kernel setting the console_size
+> +        * and pmsg_size to the record size since that's what the downstream
+> +        * kernel did.  These same Chromebooks had "ramoops" straight under
+> +        * the root node which isn't according to the upstream bindings.
 
-Thanks.
+The last part of the sentence technically isn't true -- the original
+bindings (notably, with no DT maintainer Reviewed-by) didn't specify
+where such a node should be found:
 
--Fenghua
+35da60941e44 pstore/ram: add Device Tree bindings
+
+so child-of-root used to be a valid location. But anyway, this code is
+just part of a heuristic for "old DT" (where later bindings clarified
+this), so it still seems valid.
+
+>  Let's
+> +        * make those old Chromebooks work by detecting this and mimicing the
+
+s/mimicing/mimicking/
+
+> +        * expected behavior.
+> +        */
+> +       parent_node = of_get_parent(of_node);
+> +       if (of_node_is_root(parent_node) &&
+> +           !pdata->console_size && !pdata->ftrace_size &&
+> +           !pdata->pmsg_size && !pdata->ecc_info.ecc_size) {
+> +               pdata->console_size = pdata->record_size;
+> +               pdata->pmsg_size = pdata->record_size;
+> +       }
+> +       of_node_put(parent_node);
+> +
+>         return 0;
+>  }
+>
+
+Otherwise, looks good to me:
+
+Reviewed-by: Brian Norris <briannorris@chromium.org>
