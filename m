@@ -2,125 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B32144A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB20144AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbfEFGzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 02:55:03 -0400
-Received: from mail-eopbgr30082.outbound.protection.outlook.com ([40.107.3.82]:58769
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725813AbfEFGzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 02:55:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/tIQCrft4vu7JSTRSxL8lCCCVPuM20V2XxZBct5JMns=;
- b=MG7rNX13ekaXGwIq+W7b8go8I5iaB+4Hinb2jc4qeF+yWqtVYChuM/hgDETIC4hRodJpyZXMyalCOUswv7xUpkVZF47Q521pLaD2xvmJacZnh9VzJ1ES6oWIVxJYJ7EX5S1suxczyxyYdlyjVv4UutKtBBFsXCrXvej4Hy3vM/k=
-Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
- AM6PR04MB5526.eurprd04.prod.outlook.com (20.178.94.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.10; Mon, 6 May 2019 06:54:58 +0000
-Received: from AM6PR04MB4007.eurprd04.prod.outlook.com
- ([fe80::2816:971e:ba5e:4d12]) by AM6PR04MB4007.eurprd04.prod.outlook.com
- ([fe80::2816:971e:ba5e:4d12%5]) with mapi id 15.20.1856.012; Mon, 6 May 2019
- 06:54:58 +0000
-From:   Robert Chiras <robert.chiras@nxp.com>
-To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "afaerber@suse.de" <afaerber@suse.de>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "johan@kernel.org" <johan@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "treding@nvidia.com" <treding@nvidia.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "sam@ravnborg.org" <sam@ravnborg.org>, Jun Li <jun.li@nxp.com>,
-        "martin.blumenstingl@googlemail.com" 
-        <martin.blumenstingl@googlemail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-Subject: Re: [EXT] Re: [PATCH v9 2/2] phy: Add driver for mixel mipi dphy
- found on NXP's i.MX8 SoCs
-Thread-Topic: [EXT] Re: [PATCH v9 2/2] phy: Add driver for mixel mipi dphy
- found on NXP's i.MX8 SoCs
-Thread-Index: AQHVAPzRmWpjaKnPJ0eQppDSCW9zEKZdrzyA
-Date:   Mon, 6 May 2019 06:54:58 +0000
-Message-ID: <1557125693.7006.3.camel@nxp.com>
-References: <cover.1556633413.git.agx@sigxcpu.org>
-         <b999b07673e59c676d2e43a786b635beb056e9bf.1556633413.git.agx@sigxcpu.org>
-         <4ce62b78-64ac-ca84-733f-bc4d10a67c54@suse.de>
-In-Reply-To: <4ce62b78-64ac-ca84-733f-bc4d10a67c54@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=robert.chiras@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7612ced1-fc0a-498d-701e-08d6d1efc125
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB5526;
-x-ms-traffictypediagnostic: AM6PR04MB5526:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM6PR04MB5526A06A34649D7204461693E3300@AM6PR04MB5526.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0029F17A3F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(81156014)(45080400002)(8676002)(68736007)(76116006)(91956017)(2616005)(11346002)(64756008)(66946007)(66556008)(446003)(73956011)(66446008)(71190400001)(7736002)(71200400001)(478600001)(66476007)(966005)(7416002)(102836004)(14454004)(186003)(76176011)(305945005)(2501003)(486006)(8936002)(103116003)(26005)(6506007)(44832011)(6512007)(3846002)(6486002)(99286004)(6116002)(6436002)(86362001)(476003)(53936002)(66574012)(81166006)(6246003)(25786009)(229853002)(110136005)(54906003)(256004)(5660300002)(2906002)(36756003)(316002)(6306002)(66066001)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5526;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hwlZEpLnYXq7shhT+BtSEnlpcj+JC2akyoGtmxX3pZT9W2eW55dDHbPesePlxuopILQm7BnxdGT1BUsiVCYwYtFQwJzftmvKwHSmpexqKUECyQUipcEEsGiqqbHF7crcuEG1yb8uKsNsMPmmy6UnphImhOtgOiySW5SYtZkX8MBOk9VxkPI06o1OGPktfazDQEqr/T+OCmSSEoSbotElQxPsMiBTuq1n2RHQDkpPkXysAKpKdbJNnPrBGOUUNH1h4wDqYzzvL+L6A/FDF7Z29tnGl3APbTOQz43hm0ZbW5U3sbZ94gMGBoZkdufvstlD0yBeaWiaxWxyWA3wZt+4b0zxE6qgTLF3e2MhYpp2EMSSBlD+sF7w0vzWAho0ZmuyckK2K2/oeQjt1dNs8wg58ZWkJrVXQ7xMvZAlqmVUMc4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3D16E7ABF72A224DACDD9C819AE894B5@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1725994AbfEFG5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 02:57:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34717 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbfEFG5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 02:57:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f7so5432238wrq.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 23:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=6iWT290E2JR6T3igYyiNh+USqSQP3gzvlqEL5UD9o98=;
+        b=seiSWGdWqymGLOv1hQjIwsSl1ZlZzpvK/RDoSO6yfPmPt1VEWAjNBokXDrYhWVFoCs
+         DOaePFVKujLFGLPanepWrDYSDeX4qTzxhhHkW4E12OANUaUUd0xkvGTCwPhZdade5+iv
+         MwtEsqOgO3fzYI52iSqqQBtboh8mpT2J3G66vWmtVujDOX/SqiMO8arrfXhyCEPNEauC
+         1KvESs2rUIwaDp9YKp6D3E78kMM+w8q2gUcmWXFV4F66gFlXTSFJubNQsCrxRu350AXi
+         TzxgSBYPyCRZMXmKvjhO77dqeyqjPXEylHOkzsUfDCLfz/c2GW5YB/0qEHdkRuL6fqqa
+         dc9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=6iWT290E2JR6T3igYyiNh+USqSQP3gzvlqEL5UD9o98=;
+        b=f9gqU00IeHsEkkNHOYNG2fy9ZGFYmt3JWmmtPdpC2YLGyYMzSrsUvfz9T5Wcb4qL2H
+         M4sgxI+bZtfDI2NJRA4/HAvAgc9suF0Io2wAnzmvWQgDvgVRfu1O59D1GRKkVsmzaNDR
+         yxQwnWsU/OwUpntBs82T4YYSRKmIbyRAySOmo3TY4hOJGe78Z4+b4EZPKuq/lCFlJ903
+         0VxTg+7qqlYEQdDaQQ8ZaiaamWN0JoAXTSi227ydFkO1aj13de2N5vc89A42CxXWGKpY
+         jGq+lkMmD76YxytCpv06NBqZitfinN7F3cd7qrnXpNE93h+2mdlc30gJ08Bfpsnvf5Lm
+         CNFQ==
+X-Gm-Message-State: APjAAAWFCtYEfaVCbPnDwbOUe31VuJXBYUhgHEIWoJxBW8zu5Vq6Lp9a
+        QZiEF5ktutzYwE2ngFhNsjc=
+X-Google-Smtp-Source: APXvYqyVeTH66EEha866ziC/UClmUlYGD/EP9kxkdOQFda3tVQJkpI3qQnlXzCIUAJc2Stj8gB0chQ==
+X-Received: by 2002:adf:f88f:: with SMTP id u15mr16411674wrp.155.1557125869627;
+        Sun, 05 May 2019 23:57:49 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z10sm4791544wrs.8.2019.05.05.23.57.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 May 2019 23:57:48 -0700 (PDT)
+Date:   Mon, 6 May 2019 08:57:46 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [GIT PULL] core/mm changes for v5.2: Unify TLB flushing across
+ architectures
+Message-ID: <20190506065746.GA105888@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7612ced1-fc0a-498d-701e-08d6d1efc125
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2019 06:54:58.6248
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5526
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gSm8sIDIwMTktMDUtMDIgYXQgMTc6MzYgKzAyMDAsIEFuZHJlYXMgRsOkcmJlciB3cm90ZToN
-Cj4gDQo+IEFtIDMwLjA0LjE5IHVtIDE2OjQwIHNjaHJpZWIgR3VpZG8gR8O8bnRoZXI6DQo+ID4g
-DQo+ID4gVGhpcyBhZGRzIHN1cHBvcnQgZm9yIHRoZSBNaXhlbCBEUEhZIGFzIGZvdW5kIG9uIGku
-TVg4IENQVXMgYnV0DQo+ID4gc2luY2UNCj4gPiB0aGlzIGlzIGFuIElQIGNvcmUgaXQgd2lsbCBs
-aWtlbHkgYmUgZm91bmQgb24gb3RoZXJzIGluIHRoZSBmdXR1cmUuDQo+ID4gU28NCj4gPiBpbnN0
-ZWFkIG9mIGFkZGluZyB0aGlzIHRvIHRoZSBud2wgaG9zdCBkcml2ZXIgbWFrZSBpdCBhIGdlbmVy
-aWMgUEhZDQo+ID4gZHJpdmVyLg0KPiA+IA0KPiA+IFRoZSBkcml2ZXIgc3VwcG9ydHMgdGhlIGku
-TVg4TVEuIFN1cHBvcnQgZm9yIGkuTVg4UU0gYW5kIGkuTVg4UVhQDQo+ID4gY2FuIGJlDQo+ID4g
-YWRkZWQgb25jZSB0aGUgbmVjZXNzYXJ5IHN5c3RlbSBjb250cm9sbGVyIGJpdHMgYXJlIGluIHZp
-YQ0KPiA+IG1peGVsX2RwaHlfZGV2ZGF0YS4NCj4gPiANCj4gPiBDby1hdXRob3JlZC1ieTogUm9i
-ZXJ0IENoaXJhcyA8cm9iZXJ0LmNoaXJhc0BueHAuY29tPg0KPiBUaGlzIHNob3VsZCBiZSBDby1k
-ZXZlbG9wZWQtYnkgYW5kIGlzIGxhY2tpbmcgYSBTaWduZWQtb2ZmLWJ5IGZyb20NCj4gdGhhdA0K
-PiBhdXRob3IuIFJvYmVydCwgY2FuIHlvdSBwbGVhc2UgcHJvdmlkZSBvbmU/DQpTdXJlLiBBZGRl
-ZCBiZWxvdy4NCj4gDQo+IGh0dHBzOi8vZXVyMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
-ay5jb20vP3VybD1odHRwcyUzQSUyRiUyRnd3dw0KPiAua2VybmVsLm9yZyUyRmRvYyUyRmh0bWwl
-MkZsYXRlc3QlMkZwcm9jZXNzJTJGc3VibWl0dGluZy0NCj4gcGF0Y2hlcy5odG1sJTIzd2hlbi10
-by11c2UtYWNrZWQtYnktY2MtYW5kLWNvLWRldmVsb3BlZC0NCj4gYnkmYW1wO2RhdGE9MDIlN0Mw
-MSU3Q3JvYmVydC5jaGlyYXMlNDBueHAuY29tJTdDMDEyZjY1NzdhYWI0NDBmNjJlMTYwDQo+IDhk
-NmNmMTNmMmEwJTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYz
-NjkyNDA4MTkxNw0KPiA3NTQ0MTEmYW1wO3NkYXRhPSUyRnJGTnJBYUw3TXdQWHVhWU9seGZhOE80
-SkxOSUxxNWVGRXE5MnFWMkpaZyUzRCZhbXANCj4gO3Jlc2VydmVkPTANCj4gDQo+ID4gDQo+ID4g
-U2lnbmVkLW9mZi1ieTogR3VpZG8gR8O8bnRoZXIgPGFneEBzaWd4Y3B1Lm9yZz4NClNpZ25lZC1v
-ZmYtYnk6IFJvYmVydCBDaGlyYXMgPHJvYmVydC5jaGlyYXNAbnhwLmNvbT4NCj4gVGhhbmtzLA0K
-PiBBbmRyZWFzDQo+IA0KPiAtLQ0KPiBTVVNFIExpbnV4IEdtYkgsIE1heGZlbGRzdHIuIDUsIDkw
-NDA5IE7DvHJuYmVyZywgR2VybWFueQ0KPiBHRjogRmVsaXggSW1lbmTDtnJmZmVyLCBNYXJ5IEhp
-Z2dpbnMsIFNyaSBSYXNpYWgNCj4gSFJCIDIxMjg0IChBRyBOw7xybmJlcmcp
+Linus,
+
+Please pull the latest core-mm-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-mm-for-linus
+
+   # HEAD: f6c6010a07734103a31faa0cc977641b358c45b0 mm/resource: Use resource_overlaps() to simplify region_intersects()
+
+This tree contains the generic mmu_gather feature from Peter Zijlstra, 
+which is an all-arch unification of TLB flushing APIs, via the following 
+(broad) steps:
+
+ - enhance the <asm-generic/tlb.h> APIs to cover more arch details
+
+ - convert most TLB flushing arch implementations to the generic 
+   <asm-generic/tlb.h> APIs.
+
+ - remove leftovers of per arch implementations
+
+After this series every single architecture makes use of the unified TLB 
+flushing APIs.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Martin Schwidefsky (2):
+      asm-generic/tlb: Introduce CONFIG_HAVE_MMU_GATHER_NO_GATHER=y
+      s390/tlb: Convert to generic mmu_gather
+
+Peter Zijlstra (17):
+      asm-generic/tlb: Provide a comment
+      asm-generic/tlb, arch: Provide CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+      asm-generic/tlb, arch: Provide generic VIPT cache flush
+      asm-generic/tlb, arch: Provide generic tlb_flush() based on flush_tlb_range()
+      asm-generic/tlb: Provide generic tlb_flush() based on flush_tlb_mm()
+      asm-generic/tlb, ia64: Conditionally provide tlb_migrate_finish()
+      asm-generic/tlb, arch: Invert CONFIG_HAVE_RCU_TABLE_INVALIDATE
+      arm/tlb: Convert to generic mmu_gather
+      ia64/tlb: Convert to generic mmu_gather
+      sh/tlb: Convert SH to generic mmu_gather
+      um/tlb: Convert to generic mmu_gather
+      arch/tlb: Clean up simple architectures
+      asm-generic/tlb: Remove arch_tlb*_mmu()
+      asm-generic/tlb: Remove CONFIG_HAVE_GENERIC_MMU_GATHER
+      asm-generic/tlb: Remove tlb_flush_mmu_free()
+      asm-generic/tlb: Remove tlb_table_flush()
+      ia64/tlb: Eradicate tlb_migrate_finish() callback
+
+Wei Yang (1):
+      mm/resource: Use resource_overlaps() to simplify region_intersects()
+
+
+ Documentation/core-api/cachetlb.rst |  10 --
+ arch/Kconfig                        |   8 +-
+ arch/alpha/Kconfig                  |   1 +
+ arch/alpha/include/asm/tlb.h        |   6 -
+ arch/arc/include/asm/tlb.h          |  32 ----
+ arch/arm/include/asm/tlb.h          | 255 ++-----------------------------
+ arch/arm64/Kconfig                  |   1 -
+ arch/arm64/include/asm/tlb.h        |   1 +
+ arch/c6x/Kconfig                    |   1 +
+ arch/c6x/include/asm/tlb.h          |   2 -
+ arch/h8300/include/asm/tlb.h        |   2 -
+ arch/hexagon/include/asm/tlb.h      |  12 --
+ arch/ia64/include/asm/machvec.h     |  13 --
+ arch/ia64/include/asm/machvec_sn2.h |   2 -
+ arch/ia64/include/asm/tlb.h         | 259 +-------------------------------
+ arch/ia64/include/asm/tlbflush.h    |  25 ++++
+ arch/ia64/mm/tlb.c                  |  23 ++-
+ arch/ia64/sn/kernel/sn2/sn2_smp.c   |   7 -
+ arch/m68k/Kconfig                   |   1 +
+ arch/m68k/include/asm/tlb.h         |  14 --
+ arch/microblaze/Kconfig             |   1 +
+ arch/microblaze/include/asm/tlb.h   |   9 --
+ arch/mips/include/asm/tlb.h         |  17 ---
+ arch/nds32/include/asm/tlb.h        |  16 --
+ arch/nds32/include/asm/tlbflush.h   |   1 -
+ arch/nios2/Kconfig                  |   1 +
+ arch/nios2/include/asm/tlb.h        |  14 +-
+ arch/openrisc/Kconfig               |   1 +
+ arch/openrisc/include/asm/tlb.h     |   8 +-
+ arch/parisc/include/asm/tlb.h       |  18 ---
+ arch/powerpc/Kconfig                |   2 +
+ arch/powerpc/include/asm/tlb.h      |  18 +--
+ arch/riscv/include/asm/tlb.h        |   1 +
+ arch/s390/Kconfig                   |   2 +
+ arch/s390/include/asm/tlb.h         | 130 +++++-----------
+ arch/s390/mm/pgalloc.c              |  63 +-------
+ arch/sh/include/asm/pgalloc.h       |   9 ++
+ arch/sh/include/asm/tlb.h           | 132 +----------------
+ arch/sparc/Kconfig                  |   1 +
+ arch/sparc/include/asm/tlb_32.h     |  18 ---
+ arch/um/include/asm/tlb.h           | 158 +-------------------
+ arch/unicore32/Kconfig              |   1 +
+ arch/unicore32/include/asm/tlb.h    |   7 +-
+ arch/x86/Kconfig                    |   1 -
+ arch/x86/include/asm/tlb.h          |   1 +
+ arch/xtensa/include/asm/tlb.h       |  26 ----
+ include/asm-generic/tlb.h           | 288 ++++++++++++++++++++++++++++++++----
+ kernel/iomem.c                      |   4 +-
+ kernel/resource.c                   |  11 +-
+ kernel/sched/core.c                 |   1 -
+ mm/huge_memory.c                    |   4 +-
+ mm/hugetlb.c                        |   2 +-
+ mm/madvise.c                        |   2 +-
+ mm/memory.c                         |   6 +-
+ mm/mmu_gather.c                     | 129 ++++++++--------
+ 55 files changed, 482 insertions(+), 1296 deletions(-)
