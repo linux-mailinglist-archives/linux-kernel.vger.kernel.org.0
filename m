@@ -2,165 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB5015543
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F8F15547
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfEFVKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:10:11 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41322 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfEFVKL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:10:11 -0400
-Received: by mail-ua1-f67.google.com with SMTP id s30so5208565uas.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8bHpgQyzNXmSigtHpLPdMgiBL3zjoqHtCMHUPQ65vlc=;
-        b=efbGg26t1plscKmTr5AG/RpzJ3Ly5HJYzat+OL5lpECeRe1if/gjdAvwM+3ktU48Ud
-         FmojR3dM0QW0g9CApczD3ijClH8YvAj9cTzAqrmcZ0tq90TckGXajrvoaa1RrzTz9rR/
-         tjoKcGH8AkqVNdaJKEU9GZYqZp4DICTTtYSnM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8bHpgQyzNXmSigtHpLPdMgiBL3zjoqHtCMHUPQ65vlc=;
-        b=GERRpCzQY0qIkEz0IdIFTehXEpXz+stmu3xOJPvmz0V7uYwxvNLA5XZEab9Efhjtjl
-         VHGUqRqn5J+HiZFD9/xbh/XiWHp8eSXxi35eII91DTMu7Qyh/u32cf2HVG5PDWBZqivg
-         vG7lB5Bqc79tvN5xnCGHuzK4KI+EzPWqxn1adhWJcu0wWcUeIP8y+TzcHMbAmYXwcWPJ
-         EvHhAGuMyGado6z2+CAVBTjzzQOSyx/rpYtesFf84JD8kEDUhaQhPh+NX1czRvPHP4JT
-         LhobkSTCK1fBcSXkTUV5VFSHaXrckDt8agxD3qzYusbOmhD/gWK4XhU0gVC7f8rxzdqe
-         JJOQ==
-X-Gm-Message-State: APjAAAWLcGc1eZlZMU8CRtVirJs9ccxSAKduDXruUuEA+hGl1dp/Zljc
-        81DChEJaRy2JQONN0sBXsPEkIt1AHWM=
-X-Google-Smtp-Source: APXvYqyVRGNqCSUFAnJJ9rm44NNz0M8XJjdxWzYMChqgeScVvaGCq2eeg9n/E8IAGn1OQVSdGGgDDg==
-X-Received: by 2002:ab0:70d4:: with SMTP id r20mr12008901ual.67.1557177009060;
-        Mon, 06 May 2019 14:10:09 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 15sm1923057vkg.16.2019.05.06.14.10.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 14:10:08 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id e2so9030041vsc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:10:07 -0700 (PDT)
-X-Received: by 2002:a67:f849:: with SMTP id b9mr9084650vsp.188.1557177007238;
- Mon, 06 May 2019 14:10:07 -0700 (PDT)
+        id S1726652AbfEFVLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:11:30 -0400
+Received: from mout.gmx.net ([212.227.15.19]:54405 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726118AbfEFVL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 17:11:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1557177062;
+        bh=/9l/qd+r58ylmiHOE4NA8AoDRrxfM+PNzgRWOgpNaPk=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Qgj2/hg5GuY0VuntTXIzZ8A6r4kqeWkPC2BWV4cOZpLZLAFKe+XPPyF+dAi3X/VTP
+         izJB3T4xkESlCp30nQP3KxK77Ua1k58mmi7LIx+ovlUqr+LkUUoN21rTqbz2pkAPb9
+         OcYp/h+vxhc1EbupTIhLulXc6tvSTKMTsWljSK4A=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.123.60] ([84.118.159.3]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lbuo0-1gyHxK0jjA-00jL4A; Mon, 06
+ May 2019 23:11:02 +0200
+Subject: Re: [U-Boot] [v4 PATCH] RISCV: image: Add booti support
+To:     Karsten Merker <merker@debian.org>
+Cc:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org,
+        Tom Rini <trini@konsulko.com>, Alexander Graf <agraf@suse.de>,
+        Anup Patel <anup@brainfault.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Joe Hershberger <joe.hershberger@ni.com>,
+        Lukas Auer <lukas.auer@aisec.fraunhofer.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rick Chen <rick@andestech.com>, Simon Glass <sjg@chromium.org>,
+        u-boot@lists.denx.de
+References: <20190506181134.9575-1-atish.patra@wdc.com>
+ <251ea152-6407-02e2-076c-7ee377f6181d@gmx.de>
+ <20190506203956.ty6gkmhm4dlylld4@excalibur.cnev.de>
+From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
+Message-ID: <d1c63af6-e1e0-4ec3-e97a-4c3e9ec11623@gmx.de>
+Date:   Mon, 6 May 2019 23:10:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190503174730.245762-1-dianders@chromium.org>
-In-Reply-To: <20190503174730.245762-1-dianders@chromium.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 6 May 2019 14:09:55 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jL9cJ+8scZ+Cg9yqdc9+rb563xs-qVjXXuPRJYjNa4Y8w@mail.gmail.com>
-Message-ID: <CAGXu5jL9cJ+8scZ+Cg9yqdc9+rb563xs-qVjXXuPRJYjNa4Y8w@mail.gmail.com>
-Subject: Re: [PATCH] pstore/ram: Improve backward compatibility with older Chromebooks
-To:     Douglas Anderson <dianders@chromium.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        linux-rockchip@lists.infradead.org, jwerner@chromium.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190506203956.ty6gkmhm4dlylld4@excalibur.cnev.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:s6IwZrncBXf7Fh6U1XxTRe95WTouGkx4f8d1YiwRa/To0Rwtf/E
+ fGVleujpBTNCRGQht31GNgCeFG7qROKK1mBAH7RR+WPDP42iycW9mr9R7aaftoH4ByQvI/3
+ lvno0lbyMBY0SzkVGhp1yvIbkzXn3tY3FSUDqtyt41Zx5ONDhsaxgx8f6HdlsaUqLC6ZYIQ
+ +p5rAFu59tEHvD7ejXQlw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:CS5Fp8jeRLc=:sIvm7dGh7Ctu0Rpx0Mj/ui
+ ZxMMD0VeU6vKYUecnj7+ISeypUZmw2708mUQUzRK0kw7ofXCTCKxvb1VzmvTzwnVmNqYck5L8
+ 9swIbLF8VO8WlE2IG6aVCo+mlmUUyPdMtWItreqi8Yu9CKNyZsTNBlZTSKJMUX12v+qc7wThD
+ b40EoBQsei0rd4OU0D8ATgBNSfZqjh4++J5cXIaZo6OB+7VwOZeCwDPVYkDYBu0LwW7auilPT
+ IM1kHe1ODXAxzwDiwA85RMkGiO7eH4lSNacA6yic/7/0DbTMrYL8Osqs4e0y5LqctAQfFCrJL
+ j/Y0TB8lopUtH1ACSb2k+UYFonGZChZnSQouxowapLrDLNiEnMWgDhdbRpTOmbWJI4Io8QPoG
+ pOFZfsQv0eagKBhuDkicnxbCYDerJfk3bsiNfcgMVRT5HdKsRttA5uuVGVFscQlPAiSuOphgt
+ UcitjgxvmHJ0BSkhJBY6CHEQ6tQlj3Ne7SnLaJmy7rtvC1XctG848p1IjBlyDtVQrVjjKxve3
+ 5C3Lj/aKnTCdxc/k8OWfc67OhpMWyV7w6JgC5S6VPohf46bHk48exe1nYbsnbOrub8lifTErA
+ j0IuZOY2+dN+uzWQ26Cp1u6/yUzs4QZjvSeclgaKQvJVjrWskvVQWYAO6qsZ6az8r0nL0R0np
+ dFsvZkV3snEKGEenV09jyRk6y72bhbUAOJD1G43ybhF5eLRXtDidq7RLegCKh4pbPxfWzHTs8
+ 6EZJ0qN+5s60MRhI+KBasw6810PJxFl9+qB8GggnCRyCe1XyBhN1EJt+kb36ifVYJlOgS5ZRY
+ TsPc8kEzxX34q9GzxV91r2LXVgKYmByp7DbYRWEegFgDJ0pTzavmPByfi2LkKEqhY0R8PkAU/
+ FN8r0aLxUZ89kqvx3IpCTLCqP4q3wTBCJ7nVIJOpIdaeYUENIKqTWQ84RhE535SxHv8njVBVa
+ U8d3ls0giXg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
-Date: Fri, May 3, 2019 at 10:48 AM
-To: Kees Cook, Anton Vorontsov
-Cc: <linux-rockchip@lists.infradead.org>, <jwerner@chromium.org>,
-<groeck@chromium.org>, <mka@chromium.org>, <briannorris@chromium.org>,
-Douglas Anderson, Colin Cross, Tony Luck,
-<linux-kernel@vger.kernel.org>
+On 5/6/19 10:39 PM, Karsten Merker wrote:
+> On Mon, May 06, 2019 at 10:06:39PM +0200, Heinrich Schuchardt wrote:
+>> On 5/6/19 8:11 PM, Atish Patra wrote:
+>>> This patch adds booti support for RISC-V Linux kernel. The existing
+>>> bootm method will also continue to work as it is.
+> [...]
+>>> +	"boot arm64/riscv Linux Image image from memory", booti_help_text
+>>
+>> %s/Image image/image/
+>>
+>> "arm64/riscv" is distracting. If I am on RISC-V I cannot boot an ARM64
+>> image here. Remove the reference to the architecture, please.
+>
+> Hello,
+>
+> I'm not sure about the last point - ISTR (please correct me if my
+> memory betrays me here) that an arm64 U-Boot can in principle be
+> used to boot either an arm64 or an armv7 kernel, but the commands
+> are different in those cases (booti for an arm64 "Image" format
+> kernel and bootz for an armv7 "zImage" format kernel), so having
+> the information which kernel format is supported by the
+> respective commands appears useful to me.  If the arm64 kernel
+> image format would have a distinctive name (like "zImage" on
+> armv7 or "bzImage" on x86) that would be less problematic, but
+> with the confusion potential of "boot a Linux Image" (as in the
+> arm64/riscv-specific "Image" format) vs "boot a Linux image" (as
+> in generally some form of kernel image), I think explicitly
+> mentioning the supported architectures makes sense.
 
-> When you try to run an upstream kernel on an old ARM-based Chromebook
-> you'll find that console-ramoops doesn't work.
->
-> Old ARM-based Chromebooks, before <https://crrev.com/c/439792>
-> ("ramoops: support upstream {console,pmsg,ftrace}-size properties")
-> used to create a "ramoops" node at the top level that looked like:
->
-> / {
->   ramoops {
->     compatible = "ramoops";
->     reg = <...>;
->     record-size = <...>;
->     dump-oops;
->   };
-> };
->
-> ...and these Chromebooks assumed that the downstream kernel would make
-> console_size / pmsg_size match the record size.  The above ramoops
-> node was added by the firmware so it's not easy to make any changes.
->
-> Let's match the expected behavior, but only for those using the old
-> backward-compatible way of working where ramoops is right under the
-> root node.
->
-> NOTE: if there are some out-of-tree devices that had ramoops at the
-> top level, left everything but the record size as 0, and somehow
-> doesn't want this behavior, we can try to add more conditions here.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+In this case you have to ensure that only the *supported* architectures
+are mentioned. RISC-V is not supported on ARM64.
 
-I like this; thanks! Rob is this okay by you? I just want to
-double-check since it's part of the DT parsing logic.
+Best regards
 
-I'll pick it up and add a Cc: stable.
-
--Kees
-
-> ---
->
->  fs/pstore/ram.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index c5c685589e36..8df3bfa2837f 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -669,6 +669,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
->                             struct ramoops_platform_data *pdata)
->  {
->         struct device_node *of_node = pdev->dev.of_node;
-> +       struct device_node *parent_node;
->         struct resource *res;
->         u32 value;
->         int ret;
-> @@ -703,6 +704,23 @@ static int ramoops_parse_dt(struct platform_device *pdev,
->
->  #undef parse_size
->
-> +       /*
-> +        * Some old Chromebooks relied on the kernel setting the console_size
-> +        * and pmsg_size to the record size since that's what the downstream
-> +        * kernel did.  These same Chromebooks had "ramoops" straight under
-> +        * the root node which isn't according to the upstream bindings.  Let's
-> +        * make those old Chromebooks work by detecting this and mimicing the
-> +        * expected behavior.
-> +        */
-> +       parent_node = of_get_parent(of_node);
-> +       if (of_node_is_root(parent_node) &&
-> +           !pdata->console_size && !pdata->ftrace_size &&
-> +           !pdata->pmsg_size && !pdata->ecc_info.ecc_size) {
-> +               pdata->console_size = pdata->record_size;
-> +               pdata->pmsg_size = pdata->record_size;
-> +       }
-> +       of_node_put(parent_node);
-> +
->         return 0;
->  }
->
-> --
-> 2.21.0.1020.gf2820cf01a-goog
->
-
-
--- 
-Kees Cook
+Heinrich
