@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6CDE144AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 201D8144A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfEFGzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 02:55:43 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58254 "EHLO huawei.com"
+        id S1726287AbfEFGzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 02:55:36 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58252 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725710AbfEFGzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 02:55:43 -0400
+        id S1725710AbfEFGzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 02:55:36 -0400
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 721023DD45301D10986E;
+        by Forcepoint Email with ESMTP id 6C6F98BBE9FC15A36768;
         Mon,  6 May 2019 14:55:33 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
@@ -22,16 +22,16 @@ To:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <qiuzhenfa@hisilicon.com>, <john.garry@huawei.com>,
         <guohanjun@huawei.com>, Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 1/2] drivers: base: cacheinfo: Add variable to record max cache line size
-Date:   Mon, 6 May 2019 14:53:56 +0800
-Message-ID: <1557125637-9558-1-git-send-email-zhangshaokun@hisilicon.com>
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Sudeep Holla" <sudeep.holla@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v2 2/2] arm64: cacheinfo: Update cache_line_size detected from DT or PPTT
+Date:   Mon, 6 May 2019 14:53:57 +0800
+Message-ID: <1557125637-9558-2-git-send-email-zhangshaokun@hisilicon.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557125637-9558-1-git-send-email-zhangshaokun@hisilicon.com>
+References: <1557125637-9558-1-git-send-email-zhangshaokun@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.132]
@@ -41,63 +41,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add coherency_max_size variable to record the maximum cache line size
-for different cache levels. We will synchronize it with CTR_EL0.CWG
-reporting in cache_line_size() for arm64.
+cache_line_size is derived from CTR_EL0.CWG field and is called mostly
+for I/O device drivers. For HiSilicon certain plantform, like the
+Kunpeng920 server SoC, cache line sizes are different between L1/2
+cache and L3 cache while L1 cache line size is 64-byte and L3 is 128-byte,
+but CTR_EL0.CWG is misreporting using L1 cache line size.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
+We shall correct the right value which is important for I/O performance.
+Let's update the cache line size if it is detected from DT or PPTT
+information.
+
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>
+Reported-by: Zhenfa Qiu <qiuzhenfa@hisilicon.com>
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
-ChangeLog since v1
-  -- Move coherency_max_size to drivers/base/cacheinfo.c
-  -- Address Catalin's comments
-  Link: https://www.spinics.net/lists/arm-kernel/msg723615.html
+ arch/arm64/include/asm/cache.h |  6 +-----
+ arch/arm64/kernel/cacheinfo.c  | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
- drivers/base/cacheinfo.c  | 5 +++++
- include/linux/cacheinfo.h | 2 ++
- 2 files changed, 7 insertions(+)
-
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index a7359535caf5..8827c60f51e2 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -213,6 +213,8 @@ int __weak cache_setup_acpi(unsigned int cpu)
- 	return -ENOTSUPP;
- }
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index 926434f413fa..758af6340314 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -91,11 +91,7 @@ static inline u32 cache_type_cwg(void)
  
-+unsigned int coherency_max_size;
+ #define __read_mostly __attribute__((__section__(".data..read_mostly")))
+ 
+-static inline int cache_line_size(void)
+-{
+-	u32 cwg = cache_type_cwg();
+-	return cwg ? 4 << cwg : ARCH_DMA_MINALIGN;
+-}
++int cache_line_size(void);
+ 
+ /*
+  * Read the effective value of CTR_EL0.
+diff --git a/arch/arm64/kernel/cacheinfo.c b/arch/arm64/kernel/cacheinfo.c
+index 0bf0a835122f..6ffe908d476c 100644
+--- a/arch/arm64/kernel/cacheinfo.c
++++ b/arch/arm64/kernel/cacheinfo.c
+@@ -28,6 +28,16 @@
+ #define CLIDR_CTYPE(clidr, level)	\
+ 	(((clidr) & CLIDR_CTYPE_MASK(level)) >> CLIDR_CTYPE_SHIFT(level))
+ 
++int cache_line_size(void)
++{
++	u32 cwg = cache_type_cwg();
 +
- static int cache_shared_cpu_map_setup(unsigned int cpu)
++	if (coherency_max_size != 0)
++		return coherency_max_size;
++
++	return cwg ? 4 << cwg : ARCH_DMA_MINALIGN;
++}
++
+ static inline enum cache_type get_cache_type(int level)
  {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-@@ -251,6 +253,9 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
- 				cpumask_set_cpu(i, &this_leaf->shared_cpu_map);
- 			}
- 		}
-+		/* record the maximum cache line size */
-+		if (this_leaf->coherency_line_size > coherency_max_size)
-+			coherency_max_size = this_leaf->coherency_line_size;
- 	}
- 
- 	return 0;
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index 70e19bc6cc9f..46b92cd61d0c 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -17,6 +17,8 @@ enum cache_type {
- 	CACHE_TYPE_UNIFIED = BIT(2),
- };
- 
-+extern unsigned int coherency_max_size;
-+
- /**
-  * struct cacheinfo - represent a cache leaf node
-  * @id: This cache's id. It is unique among caches with the same (type, level).
+ 	u64 clidr;
 -- 
 2.7.4
 
