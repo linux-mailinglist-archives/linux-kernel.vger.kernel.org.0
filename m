@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46BD214BFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E663D14EB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfEFOe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:34:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54810 "EHLO mail.kernel.org"
+        id S1727885AbfEFPD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:03:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfEFOe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:34:56 -0400
+        id S1727854AbfEFOjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:39:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C0C2204EC;
-        Mon,  6 May 2019 14:34:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24CFC206A3;
+        Mon,  6 May 2019 14:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153295;
-        bh=ePS8osDNz7U7/25e/JhiEYUQFdUlZbEFXwT29LA7/l4=;
+        s=default; t=1557153580;
+        bh=h5G9h/bRS+IuYmY6CVOdg7fWktl2RLXV8mvmFo2gtw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CgY2nowrO0XRgUk4BFBLnpy2CbYvNitUdbjFiXDB/01VXrAY7v6TuK7Akdto27MpZ
-         LcqCgKxtNCN+yqxqyn1u4hFxuUNPISbI1OipgMfdH6XcBLgPezH+GFknRoS+xch/Ue
-         ihxLAK3qcd+k1g0t0GBDtVziMAW7vuQBpLdPtUOk=
+        b=zxqoSt0MJBk5Hcgmy/m3DdFTGArj2jeSwGTtyi3JZ2UJSMMRp7Jjo7QHz3kSIIB8K
+         M/XLWejrz781eqWgvnpfDn3YjN5MJYbvtqgSFIGBiatsqL4aGHE082jFYQc+W7Psrm
+         y4bBj25tIhKevVp1nxW4U9pi/Y0sTfT6jrWrIH6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 036/122] ARM: dts: rockchip: Fix gpu opp node names for rk3288
-Date:   Mon,  6 May 2019 16:31:34 +0200
-Message-Id: <20190506143058.116696685@linuxfoundation.org>
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 02/99] mwifiex: Make resume actually do something useful again on SDIO cards
+Date:   Mon,  6 May 2019 16:31:35 +0200
+Message-Id: <20190506143054.102508636@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d040e4e8deeaa8257d6aa260e29ad69832b5d630 ]
+From: Douglas Anderson <dianders@chromium.org>
 
-The device tree compiler yells like this:
-  Warning (unit_address_vs_reg):
-  /gpu-opp-table/opp@100000000:
-  node has a unit name, but no reg property
+commit b82d6c1f8f8288f744a9dcc16cd3085d535decca upstream.
 
-Let's match the cpu opp node names and use a dash.
+The commit fc3a2fcaa1ba ("mwifiex: use atomic bitops to represent
+adapter status variables") had a fairly straightforward bug in it.  It
+contained this bit of diff:
 
+ - if (!adapter->is_suspended) {
+ + if (test_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags)) {
+
+As you can see the patch missed the "!" when converting to the atomic
+bitops.  This meant that the resume hasn't done anything at all since
+that commit landed and suspend/resume for mwifiex SDIO cards has been
+totally broken.
+
+After fixing this mwifiex suspend/resume appears to work again, at
+least with the simple testing I've done.
+
+Fixes: fc3a2fcaa1ba ("mwifiex: use atomic bitops to represent adapter status variables")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/rk3288.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sdio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 09868dcee34b..df0c5456c94f 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -1282,27 +1282,27 @@
- 	gpu_opp_table: gpu-opp-table {
- 		compatible = "operating-points-v2";
+--- a/drivers/net/wireless/marvell/mwifiex/sdio.c
++++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
+@@ -181,7 +181,7 @@ static int mwifiex_sdio_resume(struct de
  
--		opp@100000000 {
-+		opp-100000000 {
- 			opp-hz = /bits/ 64 <100000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@200000000 {
-+		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <950000>;
- 		};
--		opp@300000000 {
-+		opp-300000000 {
- 			opp-hz = /bits/ 64 <300000000>;
- 			opp-microvolt = <1000000>;
- 		};
--		opp@400000000 {
-+		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <1100000>;
- 		};
--		opp@500000000 {
-+		opp-500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
- 			opp-microvolt = <1200000>;
- 		};
--		opp@600000000 {
-+		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <1250000>;
- 		};
--- 
-2.20.1
-
+ 	adapter = card->adapter;
+ 
+-	if (test_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags)) {
++	if (!test_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags)) {
+ 		mwifiex_dbg(adapter, WARN,
+ 			    "device already resumed\n");
+ 		return 0;
 
 
