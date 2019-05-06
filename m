@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC811453F
+	by mail.lfdr.de (Postfix) with ESMTP id A328014540
 	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfEFH2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:28:54 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40431 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfEFH2x (ORCPT
+        id S1726400AbfEFH26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:28:58 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39865 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfEFH25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:28:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d31so6029222pgl.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:28:53 -0700 (PDT)
+        Mon, 6 May 2019 03:28:57 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e92so5926469plb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=yZiVOrjB2GkVNwkAlHEh8RFkK/dk9IRsTM24Q28H3wk=;
-        b=BIbUM15mdf5AnhdYErzvP660w8KBiAQdvle7iP059JvrT4k+uzyqvT//ZxuanToIjD
-         1Kb9X+z0JegAGTabVvBbhp740j9+Izw32tIaWryq1OWoDktcb7SFTJXvkSBBS7XIy5BS
-         w/TZVda78BdDeIrOpWMJpPJlAeW2kdDO0hhjnbpr4wjtjYlJEebf+aTL7fDHI9F84eWI
-         b+hqqNP3fOdVK/ZGwIf6/bOjKzgQR1ABGO4qaoTi/1KjD7SJ2JO9i/V7XHK+JE2/5OOZ
-         sqZ+h030Cbc/0UU7plh6j9v/Vf5ktuW4KK9cnoS69oR0f4KFJGhBgsbgaYtwMB8gc300
-         CBPQ==
+        bh=XiE8oaht+rMtBmlWqUkyAiRGtKqurxER2iPBNv/AZyQ=;
+        b=QM6C/+CxMNKnMh006FzIBzR75xV6ddm6r2gjuSGSnBTOuDfQ0qvMZAiep9jBsBelyX
+         teqGh33rlt74rnloK7VIXqKkie8/XG90UQlY9PEUqS5i6oYPFe1u9h3hNCHny+nnwi01
+         sqd4g8X8ILX5QLXgsR+H16BiiIRX3xekPo/+zeuPEtWO8CBbs1UhDfu7RtPcFiwhRs+s
+         xl5tF5Punv/vtUbqy/LiKvRqzGspIdKQN8b6+bHCzCbWHN+D+1W4fnyPKnGz1w98WLXf
+         AXbuaK9LrIvC7nQKLYh/0PJxEvCq+BkYvRi/lRTtC5YWoagquPmnnPC/pTgi4/ky7SnV
+         p3cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=yZiVOrjB2GkVNwkAlHEh8RFkK/dk9IRsTM24Q28H3wk=;
-        b=O398iFE2ZC5p7Jwjwr/JHvtpt2axRFtsCaLLYA6mWy6ngoCO6dzx2T/oPKQe43OBr9
-         87Pe4FwEwOuriJcAwJcRYXvsvay2cReAD/yd8hTPL4scFtYWlbujRBu3nx3Z1KKH82RY
-         Rc2Tqopm0DgiF1pmJsUtbPgh+2oQvO4kYtv+SZ5Kbj+3iCDZmRxP8i62rSVIid9U4g9H
-         ORYU3S+7xGwlINJi2tLfvVtR4+2Y5+7hedUPMH2Q8e5iIVx5oCxIeEJxc+aQtiJNNs+V
-         mQX+n/ADp9ueJV/SZ2ySiHOcHxpJAvpyduWNaBkRHVzFmesfQ+gcnUZtIeU+zt8uzlSQ
-         A3fA==
-X-Gm-Message-State: APjAAAUW0nK7RGmfozyAfL9yWxR2RzZtzw12r5jfjIBn2YIrb+sCgArD
-        Pbg1I+FwZawZd+Aad2g2bdPbJg==
-X-Google-Smtp-Source: APXvYqzHzKI5EXvMMXIj3Xf2ZtcA2DXEhYvat7pS5eMq/YjxE0hsjieqQIDbWkY7srVfcJRNFsGL6g==
-X-Received: by 2002:a63:5c24:: with SMTP id q36mr30268665pgb.314.1557127732915;
-        Mon, 06 May 2019 00:28:52 -0700 (PDT)
+        bh=XiE8oaht+rMtBmlWqUkyAiRGtKqurxER2iPBNv/AZyQ=;
+        b=fuHF05LvWzE6kl92x9PB61GsiHksmrZuSilyy5xuQtI3aS5JLWDIa0omM4Gz1HLd+e
+         O26yRJuY1Bes6Wu44YHa+UuFUyJpWq1iSptxth1pPyNlXwsciiZyijAa+bPCrb44Bolu
+         SsqjaU/gD57OjOSbu9ll+msDDbsp3fZuAUbph2+6lH96vR43jxNtyj4bm0tkqUY9LvdF
+         uQ7dFfCWSLk9DCFNF3vGGJvMI+0npQ6VrlQ26YVvPOxTs/6RS8sGKGaBpHynx+Yolhnu
+         5QEvVGXcx1dFs9V1uf1+06yGv7XMDCyk1jvjAVZIkfQXLxN/VMYRYRQvxTIh1pDNBo+x
+         iR8g==
+X-Gm-Message-State: APjAAAV/9yISIiZwpGM6TGOkdSYp3airrqkHc8pJYR50DKDF+wRJrhDt
+        Q0NJxXZ5x2CxDW/6aLIcmZewOw==
+X-Google-Smtp-Source: APXvYqyBQXCG2IHBXGY3XWmAbAAHiq6tcvTP9kRhpMo9V9eQzxxH1EXyIhGDtVHdER/iEPX7+cT3qQ==
+X-Received: by 2002:a17:902:7883:: with SMTP id q3mr30341452pll.60.1557127736687;
+        Mon, 06 May 2019 00:28:56 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id w38sm21700894pgk.90.2019.05.06.00.28.49
+        by smtp.gmail.com with ESMTPSA id w38sm21700894pgk.90.2019.05.06.00.28.53
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 06 May 2019 00:28:52 -0700 (PDT)
+        Mon, 06 May 2019 00:28:56 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     dan.j.williams@intel.com, vkoul@kernel.org
 Cc:     eric.long@unisoc.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
         vincent.guittot@linaro.org, baolin.wang@linaro.org,
         dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/6] dmaengine: sprd: Fix the possible crash when getting descriptor status
-Date:   Mon,  6 May 2019 15:28:28 +0800
-Message-Id: <a9a7084ff0914dce047a8a31bab79a9314a6e0f0.1557127239.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 2/6] dmaengine: sprd: Add validation of current descriptor in irq handler
+Date:   Mon,  6 May 2019 15:28:29 +0800
+Message-Id: <6eee7d5ad68d60ebedf443e24678e5b467fcf0e6.1557127239.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1557127239.git.baolin.wang@linaro.org>
 References: <cover.1557127239.git.baolin.wang@linaro.org>
@@ -63,35 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We will get a NULL virtual descriptor by vchan_find_desc() when the descriptor
-has been submitted, that will crash the kernel when getting the descriptor
-status.
-
-In this case, since the descriptor has been submitted to process, but it
-is not completed now, which means the descriptor is listed into the
-'vc->desc_submitted' list now. So we can not get current processing descriptor
-by vchan_find_desc(), but the pointer 'schan->cur_desc' will point to the
-current processing descriptor, then we can use 'schan->cur_desc' to get
-current processing descriptor's status to avoid this issue.
+When user terminates one DMA channel to free all its descriptors, but
+at the same time one transaction interrupt was triggered possibly, now
+we should not handle this interrupt by validating if the 'schan->cur_desc'
+was set as NULL to avoid crashing the kernel.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/sprd-dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/sprd-dma.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 48431e2..e29342a 100644
+index e29342a..431e289 100644
 --- a/drivers/dma/sprd-dma.c
 +++ b/drivers/dma/sprd-dma.c
-@@ -625,7 +625,7 @@ static enum dma_status sprd_dma_tx_status(struct dma_chan *chan,
- 		else
- 			pos = 0;
- 	} else if (schan->cur_desc && schan->cur_desc->vd.tx.cookie == cookie) {
--		struct sprd_dma_desc *sdesc = to_sprd_dma_desc(vd);
-+		struct sprd_dma_desc *sdesc = schan->cur_desc;
+@@ -552,12 +552,17 @@ static irqreturn_t dma_irq_handle(int irq, void *dev_id)
+ 		schan = &sdev->channels[i];
  
- 		if (sdesc->dir == DMA_DEV_TO_MEM)
- 			pos = sprd_dma_get_dst_addr(schan);
+ 		spin_lock(&schan->vc.lock);
++
++		sdesc = schan->cur_desc;
++		if (!sdesc) {
++			spin_unlock(&schan->vc.lock);
++			return IRQ_HANDLED;
++		}
++
+ 		int_type = sprd_dma_get_int_type(schan);
+ 		req_type = sprd_dma_get_req_type(schan);
+ 		sprd_dma_clear_int(schan);
+ 
+-		sdesc = schan->cur_desc;
+-
+ 		/* cyclic mode schedule callback */
+ 		cyclic = schan->linklist.phy_addr ? true : false;
+ 		if (cyclic == true) {
 -- 
 1.7.9.5
 
