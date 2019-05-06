@@ -2,150 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E494814C5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456AA14C81
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfEFOje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:39:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42448 "EHLO mx1.suse.de"
+        id S1727638AbfEFOkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:40:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42784 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727825AbfEFOj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:39:28 -0400
+        id S1727618AbfEFOkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1E63DAC94;
-        Mon,  6 May 2019 14:39:26 +0000 (UTC)
-Date:   Mon, 6 May 2019 16:39:24 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Joao Moreira <jmoreira@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Matz <matz@suse.de>, Nicolai Stange <nstange@suse.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-Subject: Re: [PATCH v3 0/9] klp-convert livepatch build tooling
-In-Reply-To: <20190503142900.GB24094@redhat.com>
-Message-ID: <alpine.LSU.2.21.1905061628250.19850@pobox.suse.cz>
-References: <20190412212654.GA21627@redhat.com> <alpine.LSU.2.21.1904161323230.17836@pobox.suse.cz> <20190503142900.GB24094@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        by mx1.suse.de (Postfix) with ESMTP id 6371DAC0C;
+        Mon,  6 May 2019 14:40:45 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     phil@raspberrypi.org, dan.carpenter@oracle.com,
+        stefan.wahren@i2se.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Subject: [PATCH v2 0/3] staging: vchiq: use interruptible waits
+Date:   Mon,  6 May 2019 16:40:27 +0200
+Message-Id: <20190506144030.29056-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 May 2019, Joe Lawrence wrote:
+Hi,
+this series tries to address an issue that came up in Raspbian's kernel
+tree [1] and upstream distros [2][3].
 
-> On Tue, Apr 16, 2019 at 01:37:13PM +0200, Miroslav Benes wrote:
-> >
-> > [ ... snip ... ]
-> >
-> > Quick look, but it seems quite similar to the problem we had with
-> > apply_alternatives(). See arch/x86/kernel/livepatch.c and the commit which
-> > introduced it.
-> 
-> That was an interesting diversion :)  I think I grok the idea as:
-> 
-> The kernel supports a few different code-patching methods:
-> 
->   - SMP locks
->   - alternatives
->   - paravirt
->   - jump labels
-> 
-> and we need to ensure that they do not prematurely operate on unresolved
-> klp-relocations.  The solution that led to arch/x86/kernel/livepatch.c
-> introduces "klp.arch" sections that rename such klp-relocations *and*
-> their associated special section data structures.  Processing is then
-> deferred until after a relevant klp_object is loaded.
+We adopted some changes that moved wait calls from a custom
+implementation to the more standard killable family of functions. Users
+complained that all the VCHIQ threads showed up in D state (which is the
+expected behaviour).
 
-Correct.
- 
-> > I think, we should do the same for jump labels. Add
-> > jump_label_apply_nops() from module_finalize() to
-> > arch_klp_init_object_loaded() and convert jump_table ELF section so its
-> > processing is delayed.
-> 
-> Nod.  Tthat sounds about right.  There may be some more work yet in the
-> static keys API as well, but I'm not 100%.
-> 
-> > Which leads me another TODO... klp-convert does not convert even
-> > .altinstructions and .parainstructions sections, so it has that problem as
-> > well. If I remember, it was on Josh's TODO list when he first introduced
-> > klp-convert. See cover.1477578530.git.jpoimboe@redhat.com.
-> 
-> In the RFC, Josh highlights a somewhat difficult problem regarding these
-> special sections -- how to associate these special section data
-> structures and their relocations to a specific klp_object.
-> 
-> If I understand his suggestion, he proposed annotating livepatch module
-> replacement functions as to stuff them into specially named ELF sections
-> (which would include the klp_object name) and then bypass the existing
-> livepatch registration API.  No minor change.
->
-> With that in mind, I'm starting to think of a game plan for klp-convert
-> like:
-> 
->   - phase 1: detect /abort unsupported sections
-> 
->   - phase 2: manual annotations in livepatch modules (like
->              KLP_MODULE_RELOC / SYMPOS, but for special sections) so
->              that klp-convert can start building "klp.arch" sections
-> 
->   - phase 3: livepatch API change above to support somewhat more
->              automatic generation of phase 2 annotations
+The custom implementation we deleted tried to mimic the killable family
+of functions, yet accepted more signals than the later; SIGKILL |
+SIGINT | SIGQUIT | SIGTRAP | SIGSTOP | SIGCONT for the custom
+implementation as opposed to plain old SIGKILL.
 
-Looks good to me. First, I'd focus on something which covers (hopefully) a 
-vast majority cases and then we can do the rest. So yes, this seems to be 
-a good plan.
+Raspbian maintainers decided roll back some of those changes and leave
+the wait functions as interruptible. Hence creating some divergence
+between both trees.
 
-> > And of course we should look at the other supported architectures and
-> > their module_finalize() functions. I have it on my TODO list somewhere,
-> > but you know how it works with those :/. I am sure there are more hidden
-> > surprises there.
-> 
-> Hmm, well powerpc and s390 do appear to have processing for special
-> sections as well ... but for the moment, I'm going to focus on x86 as
-> that seems like enough work for now :)
+One could argue that not liking having the threads stuck in D state is
+not really a software issue. It's more a cosmetic thing that can scare
+people when they look at "uptime". On the other hand, if we are ever to
+unstage this driver, we'd really need a proper justification for using
+the killable family of functions. Which I think it's not really clear at
+the moment.
 
-Yes, please :).
- 
-> > > Detection
-> > > ---------
-> > >
-> > > I can post ("livepatch/klp-convert: abort on static key conversion")
-> > > here as a follow commit if it looks reasonable and folks wish to review
-> > > it... or we can try and tackle static keys before merging klp-convert.
-> >
-> > Good idea. I'd rather fix it, but I think it could be a lot of work, so
-> > something like this patch seems to be a good idea.
-> 
-> I'm thinking of adding this in a commit so klp-convert can intercept
-> these sections:
-> 
->   static bool is_section_supported(char *sname)
->   {
->           if (strcmp(sname, ".rela.altinstructions") == 0)
->                   return false;
->           if (strcmp(sname, ".rela.parainstructions") == 0)
->                   return false;
->           if (strcmp(sname, ".rela__jump_table") == 0)
->                   return false;
->           return true;
->   }
-> 
-> Right now my v4 collection has a bunch of small fixups and nitpick
-> corrections.  It feels like a good resting place for now before
-> embarking on special section support, what do you think?
+As Raspbian's kernel has been working for a while with interruptible
+waits I propose we follow through. If needed we can always go back to
+killable. But at least we'll have a proper understanding on the actual
+needs. In the end the driver is in staging, and the potential for errors
+small.
 
-Yes.
+Regards,
+Nicolas
 
-Thanks
-Miroslav
+[1] https://github.com/raspberrypi/linux/issues/2881
+[2] https://archlinuxarm.org/forum/viewtopic.php?f=65&t=13485
+[3] https://lists.fedoraproject.org/archives/list/arm@lists.fedoraproject.org/message/GBXGJ7DOV5CQQXFPOZCXTRD6W4BEPT4Q/
+
+--
+
+Changes since v1:
+  - Proplery format revert commits
+  - Add code comment to remind of this issue
+  - Add Fixes tags
+
+Nicolas Saenz Julienne (3):
+  staging: vchiq_2835_arm: revert "quit using custom
+    down_interruptible()"
+  staging: vchiq: revert "switch to wait_for_completion_killable"
+  staging: vchiq: make wait events interruptible
+
+ .../interface/vchiq_arm/vchiq_2835_arm.c      |  2 +-
+ .../interface/vchiq_arm/vchiq_arm.c           | 21 +++++++------
+ .../interface/vchiq_arm/vchiq_core.c          | 31 ++++++++++++-------
+ .../interface/vchiq_arm/vchiq_util.c          |  6 ++--
+ 4 files changed, 35 insertions(+), 25 deletions(-)
+
+-- 
+2.21.0
+
