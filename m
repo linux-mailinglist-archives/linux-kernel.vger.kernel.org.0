@@ -2,248 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3571E156C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BD0F15673
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfEFXyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 19:54:19 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21905 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726438AbfEFXyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 19:54:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 16:54:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,439,1549958400"; 
-   d="scan'208";a="168641737"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga004.fm.intel.com with ESMTP; 06 May 2019 16:54:16 -0700
-Subject: [PATCH v8 12/12] libnvdimm/pfn: Stop padding pmem namespaces to
- section alignment
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Jeff Moyer <jmoyer@redhat.com>, linux-nvdimm@lists.01.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        osalvador@suse.de, mhocko@suse.com
-Date:   Mon, 06 May 2019 16:40:30 -0700
-Message-ID: <155718603019.130019.12886712685677568035.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155718596657.130019.17139634728875079809.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <155718596657.130019.17139634728875079809.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1727316AbfEFXlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:41:05 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44215 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfEFXlD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 19:41:03 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d3so3131452plj.11
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 16:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Cu/5JLglbZpHB47mRPcBeCr0QHZlpel2E25udH/pb8w=;
+        b=efMGrJ6hFKv1kWPIdHDNK8bAG+KmrqFIq7qrsTa6ne5vSAl2jnHP54JiVIsTJdEJDi
+         CBW+7olfq5tZCbPUpejU5CnjJ1THnVL4aJ3zbedyl9GQNj8YoAcIW4iaPZ44FJEWCS1t
+         Os3V8E/VAJdllE5t/eGLCt1E4LaaHPWBEM/eoUCcEKNLUHXy0yDGTVWdyCU7/lupW7kV
+         DHP+LpyR+7o30TJJre/FmlFduYquWNTocbcId5NpAGjpNfC9+tp4qUt4A3fhgqSbIXLW
+         CZ+MqHNnqxuSWHsxFvu1cVO/C0mj+GiMqfkDgHRnUQy6yOOean9ifprUG9mjO/Ml+tSE
+         pruQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Cu/5JLglbZpHB47mRPcBeCr0QHZlpel2E25udH/pb8w=;
+        b=a57VCEoPYzgzfvvQOqhoMvg1HB5lVvb+j94BCZcz3mR+V+gURuhWMZCxUPqZDx2oWR
+         atu8xpE/Eu0t34D+lg+gqWAea8CafP3OooUpN6L9Y4yIsIkWTQ6Fzo3+XyAkuguOme8D
+         1IMu81ojXsC49mfGkUnDJCVXKIWnVlPqPH9E+1tLccRiPKSkZv0q2YUtzQXEnHMAjhMD
+         +rK8uG4gHyKLVhF+lvcrGPQyGEOJ4BITkGr8WWXYs2wwNr8hL5HfnmpTLhilwcEfvscl
+         QrIzIJAgXUtqXh0Sag7a/qYS2faGpB6zUbiMqGwiXBdzhTKxhAlJI4lGmLnJ8dZVwCfJ
+         eLCQ==
+X-Gm-Message-State: APjAAAUhkRZf+kw3XbgVwMB3bTU0earHDAFQWDZ46W5K//DK58xeIVkf
+        Z+oInChAEJgus28UrwgQrGfYWg==
+X-Google-Smtp-Source: APXvYqyvNo1wcRlCIjQJfL9ucrmYmg+degrKDwjLlQZEoxJHLyUp1v/+wMdRm0VtY/kOSZU5ltjnHw==
+X-Received: by 2002:a17:902:e00a:: with SMTP id ca10mr5734832plb.18.1557186062326;
+        Mon, 06 May 2019 16:41:02 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:5820:d6a2:5572:e4a3? ([2601:646:c200:1ef2:5820:d6a2:5572:e4a3])
+        by smtp.gmail.com with ESMTPSA id n9sm13924474pff.59.2019.05.06.16.41.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 16:41:01 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16E227)
+In-Reply-To: <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+Date:   Mon, 6 May 2019 16:41:00 -0700
+Cc:     Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A982EE7E-7E92-460A-A458-2F9C3586E9DA@amacapital.net>
+References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com> <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com> <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+To:     Aleksa Sarai <cyphar@cyphar.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the mm core supports section-unaligned hotplug of ZONE_DEVICE
-memory, we no longer need to add padding at pfn/dax device creation
-time. The kernel will still honor padding established by older kernels.
 
-Reported-by: Jeff Moyer <jmoyer@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/pfn.h      |   14 --------
- drivers/nvdimm/pfn_devs.c |   77 ++++++++-------------------------------------
- include/linux/mmzone.h    |    3 ++
- 3 files changed, 16 insertions(+), 78 deletions(-)
 
-diff --git a/drivers/nvdimm/pfn.h b/drivers/nvdimm/pfn.h
-index e901e3a3b04c..cc042a98758f 100644
---- a/drivers/nvdimm/pfn.h
-+++ b/drivers/nvdimm/pfn.h
-@@ -41,18 +41,4 @@ struct nd_pfn_sb {
- 	__le64 checksum;
- };
- 
--#ifdef CONFIG_SPARSEMEM
--#define PFN_SECTION_ALIGN_DOWN(x) SECTION_ALIGN_DOWN(x)
--#define PFN_SECTION_ALIGN_UP(x) SECTION_ALIGN_UP(x)
--#else
--/*
-- * In this case ZONE_DEVICE=n and we will disable 'pfn' device support,
-- * but we still want pmem to compile.
-- */
--#define PFN_SECTION_ALIGN_DOWN(x) (x)
--#define PFN_SECTION_ALIGN_UP(x) (x)
--#endif
--
--#define PHYS_SECTION_ALIGN_DOWN(x) PFN_PHYS(PFN_SECTION_ALIGN_DOWN(PHYS_PFN(x)))
--#define PHYS_SECTION_ALIGN_UP(x) PFN_PHYS(PFN_SECTION_ALIGN_UP(PHYS_PFN(x)))
- #endif /* __NVDIMM_PFN_H */
-diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-index a2406253eb70..7f54374b082f 100644
---- a/drivers/nvdimm/pfn_devs.c
-+++ b/drivers/nvdimm/pfn_devs.c
-@@ -595,14 +595,14 @@ static u32 info_block_reserve(void)
- }
- 
- /*
-- * We hotplug memory at section granularity, pad the reserved area from
-- * the previous section base to the namespace base address.
-+ * We hotplug memory at sub-section granularity, pad the reserved area
-+ * from the previous section base to the namespace base address.
-  */
- static unsigned long init_altmap_base(resource_size_t base)
- {
- 	unsigned long base_pfn = PHYS_PFN(base);
- 
--	return PFN_SECTION_ALIGN_DOWN(base_pfn);
-+	return SUBSECTION_ALIGN_DOWN(base_pfn);
- }
- 
- static unsigned long init_altmap_reserve(resource_size_t base)
-@@ -610,7 +610,7 @@ static unsigned long init_altmap_reserve(resource_size_t base)
- 	unsigned long reserve = info_block_reserve() >> PAGE_SHIFT;
- 	unsigned long base_pfn = PHYS_PFN(base);
- 
--	reserve += base_pfn - PFN_SECTION_ALIGN_DOWN(base_pfn);
-+	reserve += base_pfn - SUBSECTION_ALIGN_DOWN(base_pfn);
- 	return reserve;
- }
- 
-@@ -641,8 +641,7 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 		nd_pfn->npfns = le64_to_cpu(pfn_sb->npfns);
- 		pgmap->altmap_valid = false;
- 	} else if (nd_pfn->mode == PFN_MODE_PMEM) {
--		nd_pfn->npfns = PFN_SECTION_ALIGN_UP((resource_size(res)
--					- offset) / PAGE_SIZE);
-+		nd_pfn->npfns = PHYS_PFN((resource_size(res) - offset));
- 		if (le64_to_cpu(nd_pfn->pfn_sb->npfns) > nd_pfn->npfns)
- 			dev_info(&nd_pfn->dev,
- 					"number of pfns truncated from %lld to %ld\n",
-@@ -658,54 +657,14 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 	return 0;
- }
- 
--static u64 phys_pmem_align_down(struct nd_pfn *nd_pfn, u64 phys)
--{
--	return min_t(u64, PHYS_SECTION_ALIGN_DOWN(phys),
--			ALIGN_DOWN(phys, nd_pfn->align));
--}
--
--/*
-- * Check if pmem collides with 'System RAM', or other regions when
-- * section aligned.  Trim it accordingly.
-- */
--static void trim_pfn_device(struct nd_pfn *nd_pfn, u32 *start_pad, u32 *end_trunc)
--{
--	struct nd_namespace_common *ndns = nd_pfn->ndns;
--	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
--	struct nd_region *nd_region = to_nd_region(nd_pfn->dev.parent);
--	const resource_size_t start = nsio->res.start;
--	const resource_size_t end = start + resource_size(&nsio->res);
--	resource_size_t adjust, size;
--
--	*start_pad = 0;
--	*end_trunc = 0;
--
--	adjust = start - PHYS_SECTION_ALIGN_DOWN(start);
--	size = resource_size(&nsio->res) + adjust;
--	if (region_intersects(start - adjust, size, IORESOURCE_SYSTEM_RAM,
--				IORES_DESC_NONE) == REGION_MIXED
--			|| nd_region_conflict(nd_region, start - adjust, size))
--		*start_pad = PHYS_SECTION_ALIGN_UP(start) - start;
--
--	/* Now check that end of the range does not collide. */
--	adjust = PHYS_SECTION_ALIGN_UP(end) - end;
--	size = resource_size(&nsio->res) + adjust;
--	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
--				IORES_DESC_NONE) == REGION_MIXED
--			|| !IS_ALIGNED(end, nd_pfn->align)
--			|| nd_region_conflict(nd_region, start, size))
--		*end_trunc = end - phys_pmem_align_down(nd_pfn, end);
--}
--
- static int nd_pfn_init(struct nd_pfn *nd_pfn)
- {
- 	struct nd_namespace_common *ndns = nd_pfn->ndns;
- 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
--	u32 start_pad, end_trunc, reserve = info_block_reserve();
- 	resource_size_t start, size;
- 	struct nd_region *nd_region;
-+	unsigned long npfns, align;
- 	struct nd_pfn_sb *pfn_sb;
--	unsigned long npfns;
- 	phys_addr_t offset;
- 	const char *sig;
- 	u64 checksum;
-@@ -736,43 +695,35 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
- 		return -ENXIO;
- 	}
- 
--	memset(pfn_sb, 0, sizeof(*pfn_sb));
--
--	trim_pfn_device(nd_pfn, &start_pad, &end_trunc);
--	if (start_pad + end_trunc)
--		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
--				dev_name(&ndns->dev), start_pad + end_trunc);
--
- 	/*
- 	 * Note, we use 64 here for the standard size of struct page,
- 	 * debugging options may cause it to be larger in which case the
- 	 * implementation will limit the pfns advertised through
- 	 * ->direct_access() to those that are included in the memmap.
- 	 */
--	start = nsio->res.start + start_pad;
-+	start = nsio->res.start;
- 	size = resource_size(&nsio->res);
--	npfns = PFN_SECTION_ALIGN_UP((size - start_pad - end_trunc - reserve)
--			/ PAGE_SIZE);
-+	npfns = PHYS_PFN(size - SZ_8K);
-+	align = max(nd_pfn->align, (1UL << SUBSECTION_SHIFT));
- 	if (nd_pfn->mode == PFN_MODE_PMEM) {
- 		/*
- 		 * The altmap should be padded out to the block size used
- 		 * when populating the vmemmap. This *should* be equal to
- 		 * PMD_SIZE for most architectures.
- 		 */
--		offset = ALIGN(start + reserve + 64 * npfns,
--				max(nd_pfn->align, PMD_SIZE)) - start;
-+		offset = ALIGN(start + SZ_8K + 64 * npfns, align) - start;
- 	} else if (nd_pfn->mode == PFN_MODE_RAM)
--		offset = ALIGN(start + reserve, nd_pfn->align) - start;
-+		offset = ALIGN(start + SZ_8K, align) - start;
- 	else
- 		return -ENXIO;
- 
--	if (offset + start_pad + end_trunc >= size) {
-+	if (offset >= size) {
- 		dev_err(&nd_pfn->dev, "%s unable to satisfy requested alignment\n",
- 				dev_name(&ndns->dev));
- 		return -ENXIO;
- 	}
- 
--	npfns = (size - offset - start_pad - end_trunc) / SZ_4K;
-+	npfns = PHYS_PFN(size - offset);
- 	pfn_sb->mode = cpu_to_le32(nd_pfn->mode);
- 	pfn_sb->dataoff = cpu_to_le64(offset);
- 	pfn_sb->npfns = cpu_to_le64(npfns);
-@@ -781,8 +732,6 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
- 	memcpy(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16);
- 	pfn_sb->version_major = cpu_to_le16(1);
- 	pfn_sb->version_minor = cpu_to_le16(3);
--	pfn_sb->start_pad = cpu_to_le32(start_pad);
--	pfn_sb->end_trunc = cpu_to_le32(end_trunc);
- 	pfn_sb->align = cpu_to_le32(nd_pfn->align);
- 	checksum = nd_sb_checksum((struct nd_gen_sb *) pfn_sb);
- 	pfn_sb->checksum = cpu_to_le64(checksum);
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 49e7fb452dfd..15e07f007ba2 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1181,6 +1181,9 @@ static inline unsigned long section_nr_to_pfn(unsigned long sec)
- #define SUBSECTIONS_PER_SECTION (1UL << (SECTION_SIZE_BITS - SUBSECTION_SHIFT))
- #endif
- 
-+#define SUBSECTION_ALIGN_UP(pfn) ALIGN((pfn), PAGES_PER_SUBSECTION)
-+#define SUBSECTION_ALIGN_DOWN(pfn) ((pfn) & PAGE_SUBSECTION_MASK)
-+
- struct mem_section_usage {
- 	DECLARE_BITMAP(subsection_map, SUBSECTIONS_PER_SECTION);
- 	/* See declaration of similar field in struct zone */
+> On May 6, 2019, at 12:17 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>=20
+>> On 2019-05-06, Jann Horn <jannh@google.com> wrote:
+>>> On Mon, May 6, 2019 at 6:56 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+>>> The need to be able to scope path resolution of interpreters became
+>>> clear with one of the possible vectors used in CVE-2019-5736 (which
+>>> most major container runtimes were vulnerable to).
+>>>=20
+>>> Naively, it might seem that openat(2) -- which supports path scoping --
+>>> can be combined with execveat(AT_EMPTY_PATH) to trivially scope the
+>>> binary being executed. Unfortunately, a "bad binary" (usually a symlink)=
 
+>>> could be written as a #!-style script with the symlink target as the
+>>> interpreter -- which would be completely missed by just scoping the
+>>> openat(2). An example of this being exploitable is CVE-2019-5736.
+>>>=20
+>>> In order to get around this, we need to pass down to each binfmt_*
+>>> implementation the scoping flags requested in execveat(2). In order to
+>>> maintain backwards-compatibility we only pass the scoping AT_* flags.
+>>>=20
+>>> To avoid breaking userspace (in the exceptionally rare cases where you
+>>> have #!-scripts with a relative path being execveat(2)-ed with dfd !=3D
+>>> AT_FDCWD), we only pass dfd down to binfmt_* if any of our new flags are=
+
+>>> set in execveat(2).
+>>=20
+>> This seems extremely dangerous. I like the overall series, but not this p=
+atch.
+>>=20
+>>> @@ -1762,6 +1774,12 @@ static int __do_execve_file(int fd, struct filena=
+me *filename,
+>>>=20
+>>>        sched_exec();
+>>>=20
+>>> +       bprm->flags =3D flags & (AT_XDEV | AT_NO_MAGICLINKS | AT_NO_SYML=
+INKS |
+>>> +                              AT_THIS_ROOT);
+>> [...]
+>>> +#define AT_THIS_ROOT           0x100000 /* - Scope ".." resolution to d=
+irfd (like chroot(2)). */
+>>=20
+>> So now what happens if there is a setuid root ELF binary with program
+>> interpreter "/lib64/ld-linux-x86-64.so.2" (like /bin/su), and an
+>> unprivileged user runs it with execveat(..., AT_THIS_ROOT)? Is that
+>> going to let the unprivileged user decide which interpreter the
+>> setuid-root process should use? =46rom a high-level perspective, opening
+>> the interpreter should be controlled by the program that is being
+>> loaded, not by the program that invoked it.
+>=20
+> I went a bit nuts with openat_exec(), and I did end up adding it to the
+> ELF interpreter lookup (and you're completely right that this is a bad
+> idea -- I will drop it from this patch if it's included in the next
+> series).
+>=20
+> The proposed solutions you give below are much nicer than this patch so
+> I can drop it and work on fixing those issues separately.
+>=20
+>> In my opinion, CVE-2019-5736 points out two different problems:
+>>=20
+>> The big problem: The __ptrace_may_access() logic has a special-case
+>> short-circuit for "introspection" that you can't opt out of; this
+>> makes it possible to open things in procfs that are related to the
+>> current process even if the credentials of the process wouldn't permit
+>> accessing another process like it. I think the proper fix to deal with
+>> this would be to add a prctl() flag for "set whether introspection is
+>> allowed for this process", and if userspace has manually un-set that
+>> flag, any introspection special-case logic would be skipped.
+>=20
+> We could do PR_SET_DUMPABLE=3D3 for this, I guess?
+>=20
+>> An additional problem: /proc/*/exe can be used to open a file for
+>> writing; I think it may have been Andy Lutomirski who pointed out some
+>> time ago that it would be nice if you couldn't use /proc/*/fd/* to
+>> re-open files with more privileges, which is sort of the same thing.
+>=20
+> This is something I'm currently working on a series for, which would
+> boil down to some restrictions on how re-opening of file descriptors
+> works through procfs.
+>=20
+> However, execveat() of a procfs magiclink is a bit hard to block --
+> there is no way for userspace to to represent a file being "open for
+> execute" so they are all "open for execute" by default and blocking it
+> outright seems a bit extreme (though I actually hope to eventually add
+> the ability to mark an O_PATH as "open for X" to resolveat(2) -- hence
+> why I've reserved some bits).
+
+There=E2=80=99s an O_MAYEXEC series floating around.
+
+>=20
+> (Thinking more about it, there is an argument that I should include the
+> above patch into this series so that we can block re-opening of fds
+> opened through resolveat(2) without explicit flags from the outset.)
+>=20
+> --=20
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
