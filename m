@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5909814CF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCFAE14D45
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbfEFOqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43396 "EHLO mail.kernel.org"
+        id S1729601AbfEFOtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:49:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729021AbfEFOqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:01 -0400
+        id S1729579AbfEFOth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:49:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FC062053B;
-        Mon,  6 May 2019 14:46:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34708214AF;
+        Mon,  6 May 2019 14:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153960;
-        bh=HxP6j9eOxPuAu3PNxMhnaWz0ZlCmBnUYcwZkays1naA=;
+        s=default; t=1557154176;
+        bh=bnZKPWW5gBASz/YwZfTz0WY3Gxq1ffXsOQJ0Zxd+gRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJFQvAT6BDST7VHQyCH5qZ8D4CuweiGSxl2/7LwLN3zlE9obQ9dDLNwLquJQfIG0c
-         T1KUFxuIBDUOUnQTiaEzCCClQI1C45uEmza5YeSfwrJddHwd2mgHQDzARhhfDo91Cu
-         YJQxWxiCoiPjtrl27UsPvZySQbYgmIQlKpi/ILXg=
+        b=ZX0RP9giZZEhMVl9SM7c+WrvhCjuGvvs6wGywxodZ3/BFiAXskPTR2gHXJ0POWA1V
+         v6Xl9gayDAoPKlGRGXu08HHmbBnid6UhA/JJ9XDYiJzRhEhUw3zwnhM3sLCV+XQihL
+         cWBEo7XDiwK/Lgo1tBwTVpfXN1922cxH9R3d1LRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 62/75] staging: iio: adt7316: fix the dac write calculation
-Date:   Mon,  6 May 2019 16:33:10 +0200
-Message-Id: <20190506143058.890036809@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 40/62] jffs2: fix use-after-free on symlink traversal
+Date:   Mon,  6 May 2019 16:33:11 +0200
+Message-Id: <20190506143054.607149267@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+[ Upstream commit 4fdcfab5b5537c21891e22e65996d4d0dd8ab4ca ]
 
-commit 78accaea117c1ae878774974fab91ac4a0b0e2b0 upstream.
+free the symlink body after the same RCU delay we have for freeing the
+struct inode itself, so that traversal during RCU pathwalk wouldn't step
+into freed memory.
 
-The lsb calculation is not masking the correct bits from the user input.
-Subtract 1 from (1 << offset) to correctly set up the mask to be applied
-to user input.
-
-The lsb register stores its value starting at the bit 7 position.
-adt7316_store_DAC() currently assumes the value is at the other end of the
-register. Shift the lsb value before storing it in a new variable lsb_reg,
-and write this variable to the lsb register.
-
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/addac/adt7316.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/jffs2/readinode.c | 5 -----
+ fs/jffs2/super.c     | 5 ++++-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -1447,7 +1447,7 @@ static ssize_t adt7316_show_DAC(struct a
- static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
- 		int channel, const char *buf, size_t len)
+diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
+index 06a71dbd4833..2f236cca6095 100644
+--- a/fs/jffs2/readinode.c
++++ b/fs/jffs2/readinode.c
+@@ -1414,11 +1414,6 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f)
+ 
+ 	jffs2_kill_fragtree(&f->fragtree, deleted?c:NULL);
+ 
+-	if (f->target) {
+-		kfree(f->target);
+-		f->target = NULL;
+-	}
+-
+ 	fds = f->dents;
+ 	while(fds) {
+ 		fd = fds;
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 226640563df3..76aedbc97773 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -47,7 +47,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+ static void jffs2_i_callback(struct rcu_head *head)
  {
--	u8 msb, lsb, offset;
-+	u8 msb, lsb, lsb_reg, offset;
- 	u16 data;
- 	int ret;
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+-	kmem_cache_free(jffs2_inode_cachep, JFFS2_INODE_INFO(inode));
++	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
++
++	kfree(f->target);
++	kmem_cache_free(jffs2_inode_cachep, f);
+ }
  
-@@ -1465,9 +1465,13 @@ static ssize_t adt7316_store_DAC(struct
- 		return -EINVAL;
- 
- 	if (chip->dac_bits > 8) {
--		lsb = data & (1 << offset);
-+		lsb = data & ((1 << offset) - 1);
-+		if (chip->dac_bits == 12)
-+			lsb_reg = lsb << ADT7316_DA_12_BIT_LSB_SHIFT;
-+		else
-+			lsb_reg = lsb << ADT7316_DA_10_BIT_LSB_SHIFT;
- 		ret = chip->bus.write(chip->bus.client,
--			ADT7316_DA_DATA_BASE + channel * 2, lsb);
-+			ADT7316_DA_DATA_BASE + channel * 2, lsb_reg);
- 		if (ret)
- 			return -EIO;
- 	}
+ static void jffs2_destroy_inode(struct inode *inode)
+-- 
+2.20.1
+
 
 
