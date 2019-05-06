@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB0414E4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0301C14CCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfEFOl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:41:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
+        id S1726991AbfEFOoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:44:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728229AbfEFOlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:41:23 -0400
+        id S1726872AbfEFOoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:44:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 822622087F;
-        Mon,  6 May 2019 14:41:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0581F20449;
+        Mon,  6 May 2019 14:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153683;
-        bh=tVT4BUfcBUytwcxsLLXjx+9CLdXeN8ftHXA5BRVr70w=;
+        s=default; t=1557153855;
+        bh=XBqr77ZhheD/8A/Zy8fu0em5ulYkzuA3oOt0LkK5bRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GI0xKHyRV7O15aO4Dau4GSFQnJ2NlC5w5EwwRKkwSijvQmiI9oTJ9UPrX6Tp3Su3s
-         cIOPCPCGwG6OP50pUHXvelQlMo7JpoVAOyj9K3J2NC1DkbVbgBrAu+NLrt1X//m2Tm
-         R9NFqV7Y54D4hBrCGLLD38B/wg6L1WiI309+O7Mg=
+        b=Uet9lAHkw78gseRfkikaypWJ2pN6BJIF+l0yplQpdNGg/7nzSws5Q7zMpThdE4LIw
+         T/wd7CudPRDslgfYoFVPe4qZHU5hcSBw0v7L137UAxcfgkX+kMhSDci4sw9Q9M0IFn
+         SzMLvVNlqeKadOUsiDPlHNQe5BGGt6bk50qePQPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 56/99] net: hns: Use NAPI_POLL_WEIGHT for hns driver
+        stable@vger.kernel.org, Malte Leip <malte@leip.net>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH 4.14 21/75] usb: usbip: fix isoc packet num validation in get_pipe
 Date:   Mon,  6 May 2019 16:32:29 +0200
-Message-Id: <20190506143059.143338658@linuxfoundation.org>
+Message-Id: <20190506143055.074929487@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit acb1ce15a61154aa501891d67ebf79bc9ea26818 ]
+From: Malte Leip <malte@leip.net>
 
-When the HNS driver loaded, always have an error print:
-"netif_napi_add() called with weight 256"
+commit c409ca3be3c6ff3a1eeb303b191184e80d412862 upstream.
 
-This is because the kernel checks the NAPI polling weights
-requested by drivers and it prints an error message if a driver
-requests a weight bigger than 64.
+Change the validation of number_of_packets in get_pipe to compare the
+number of packets to a fixed maximum number of packets allowed, set to
+be 1024. This number was chosen due to it being used by other drivers as
+well, for example drivers/usb/host/uhci-q.c
 
-So use NAPI_POLL_WEIGHT to fix it.
+Background/reason:
+The get_pipe function in stub_rx.c validates the number of packets in
+isochronous mode and aborts with an error if that number is too large,
+in order to prevent malicious input from possibly triggering large
+memory allocations. This was previously done by checking whether
+pdu->u.cmd_submit.number_of_packets is bigger than the number of packets
+that would be needed for pdu->u.cmd_submit.transfer_buffer_length bytes
+if all except possibly the last packet had maximum length, given by
+usb_endpoint_maxp(epd) *  usb_endpoint_maxp_mult(epd). This leads to an
+error if URBs with packets shorter than the maximum possible length are
+submitted, which is allowed according to
+Documentation/driver-api/usb/URB.rst and occurs for example with the
+snd-usb-audio driver.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: c6688ef9f297 ("usbip: fix stub_rx: harden CMD_SUBMIT path to handle malicious input")
+Signed-off-by: Malte Leip <malte@leip.net>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/usb/usbip/stub_rx.c      |   12 +++---------
+ drivers/usb/usbip/usbip_common.h |    7 +++++++
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 3a6e5cc76c5b..1c70f9aa0aa7 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -29,9 +29,6 @@
+--- a/drivers/usb/usbip/stub_rx.c
++++ b/drivers/usb/usbip/stub_rx.c
+@@ -383,16 +383,10 @@ static int get_pipe(struct stub_device *
+ 	}
  
- #define SERVICE_TIMER_HZ (1 * HZ)
- 
--#define NIC_TX_CLEAN_MAX_NUM 256
--#define NIC_RX_CLEAN_MAX_NUM 64
+ 	if (usb_endpoint_xfer_isoc(epd)) {
+-		/* validate packet size and number of packets */
+-		unsigned int maxp, packets, bytes;
 -
- #define RCB_IRQ_NOT_INITED 0
- #define RCB_IRQ_INITED 1
- #define HNS_BUFFER_SIZE_2048 2048
-@@ -2151,7 +2148,7 @@ static int hns_nic_init_ring_data(struct hns_nic_priv *priv)
- 			hns_nic_tx_fini_pro_v2;
+-		maxp = usb_endpoint_maxp(epd);
+-		maxp *= usb_endpoint_maxp_mult(epd);
+-		bytes = pdu->u.cmd_submit.transfer_buffer_length;
+-		packets = DIV_ROUND_UP(bytes, maxp);
+-
++		/* validate number of packets */
+ 		if (pdu->u.cmd_submit.number_of_packets < 0 ||
+-		    pdu->u.cmd_submit.number_of_packets > packets) {
++		    pdu->u.cmd_submit.number_of_packets >
++		    USBIP_MAX_ISO_PACKETS) {
+ 			dev_err(&sdev->udev->dev,
+ 				"CMD_SUBMIT: isoc invalid num packets %d\n",
+ 				pdu->u.cmd_submit.number_of_packets);
+--- a/drivers/usb/usbip/usbip_common.h
++++ b/drivers/usb/usbip/usbip_common.h
+@@ -135,6 +135,13 @@ extern struct device_attribute dev_attr_
+ #define USBIP_DIR_OUT	0x00
+ #define USBIP_DIR_IN	0x01
  
- 		netif_napi_add(priv->netdev, &rd->napi,
--			       hns_nic_common_poll, NIC_TX_CLEAN_MAX_NUM);
-+			       hns_nic_common_poll, NAPI_POLL_WEIGHT);
- 		rd->ring->irq_init_flag = RCB_IRQ_NOT_INITED;
- 	}
- 	for (i = h->q_num; i < h->q_num * 2; i++) {
-@@ -2164,7 +2161,7 @@ static int hns_nic_init_ring_data(struct hns_nic_priv *priv)
- 			hns_nic_rx_fini_pro_v2;
- 
- 		netif_napi_add(priv->netdev, &rd->napi,
--			       hns_nic_common_poll, NIC_RX_CLEAN_MAX_NUM);
-+			       hns_nic_common_poll, NAPI_POLL_WEIGHT);
- 		rd->ring->irq_init_flag = RCB_IRQ_NOT_INITED;
- 	}
- 
--- 
-2.20.1
-
++/*
++ * Arbitrary limit for the maximum number of isochronous packets in an URB,
++ * compare for example the uhci_submit_isochronous function in
++ * drivers/usb/host/uhci-q.c
++ */
++#define USBIP_MAX_ISO_PACKETS 1024
++
+ /**
+  * struct usbip_header_basic - data pertinent to every request
+  * @command: the usbip request type
 
 
