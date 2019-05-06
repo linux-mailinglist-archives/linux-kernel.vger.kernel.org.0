@@ -2,101 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E3E14DCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 109A214DA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfEFOy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:54:58 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27605 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbfEFOqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:46:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="343985669"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga005.fm.intel.com with ESMTP; 06 May 2019 07:46:21 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hNesm-0006d2-HJ; Mon, 06 May 2019 17:46:20 +0300
-Date:   Mon, 6 May 2019 17:46:20 +0300
-From:   "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>
-To:     Alexandru Ardelean <ardeleanalex@gmail.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>
-Subject: Re: [PATCH 1/2] lib: add __sysfs_match_string_with_gaps() helper
-Message-ID: <20190506144620.GM9224@smile.fi.intel.com>
-References: <20190422083257.21805-1-alexandru.ardelean@analog.com>
- <20190422210606.GA8805@kroah.com>
- <86ea407aaa891e50a3bdaf2c3653636a365076ee.camel@analog.com>
- <20190424133455.00002909@huawei.com>
- <20190425193736.GA11458@kroah.com>
- <CA+U=DsoyPQyNDX6CDx=xE73H9A=66BGKhTseEvZcZZPnpPAfQw@mail.gmail.com>
- <20190426142754.GU9224@smile.fi.intel.com>
- <CA+U=DspC2gbcWgEoCfTs-K0UaGt9DBLkXoyFufShUXD61uAAbQ@mail.gmail.com>
+        id S1729239AbfEFOxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:53:44 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54378 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729286AbfEFOrS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:47:18 -0400
+Received: by mail-it1-f195.google.com with SMTP id a190so20668253ite.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 07:47:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DpOTHTN61DNh0jzA3oEB6+Erb5rOcYNfwyvkegv2Kn0=;
+        b=YHXOsoSNPP+91o/8xFKA+1I+O1WnTJI+Pr6esCtIaRNNgKIicPD2Gh0yARBvQhzH0Y
+         BakP/wZbniH9i/FfRVNfXkbYa0M8K+BKP5yMHcKdDJoWja4VJaCdSZHiG1MuGKQCDZ64
+         ph3u/3UFn0JyCX0VYhubw5krtx5184RP3j64o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DpOTHTN61DNh0jzA3oEB6+Erb5rOcYNfwyvkegv2Kn0=;
+        b=VKP8v5FE8HTBsduGgOA8rK06MEZOlXqZIyKg+JaQBaNGcEgZDLBR7ybljvBCXcpxcx
+         8fb6ARaR4X0hk5bHx7GWF5uNFU3YeaaD4tJrx8avln+mGJWgx5el+1xksot9qa8XG8tb
+         gTbGr5SPYt/6paSjdcljj6figcMBKJ6GPEx2w2h+EBBHE2EYI2AW5urfxZ2rldudUvI0
+         jh0MdwkuO8pWMr/JF9kdiq1BNj6t9GZI/sOBm9mDJmfzzjiueETIo486FgUoT4lWraGF
+         j1SeD0nNZyPJyV94yRHNgQ8Fm/TzWHIjCiXMzygOY1GTyPif4De/csivKfaRiCZfdyEZ
+         mfZw==
+X-Gm-Message-State: APjAAAUw6ZSf2qHhslWvf80e+bolglln/4aWvgn8oCaABuMp94iOTgmX
+        i6H4Ov0buI487DMafKMxfkXIwPc1N1U=
+X-Google-Smtp-Source: APXvYqxKSTCiJxdwYirrcVpxqxAb++n6X86LP1uUdw7zskem8MIedd+9DqDZSsQjNfBe0xXVMemvsw==
+X-Received: by 2002:a05:660c:799:: with SMTP id h25mr18380320itk.85.1557154037724;
+        Mon, 06 May 2019 07:47:17 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id q125sm3478606iod.88.2019.05.06.07.47.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 07:47:16 -0700 (PDT)
+Subject: Re: [PATCH] selftests: add sleep between detach and usbip list -l
+To:     Greg KH <greg@kroah.com>
+Cc:     valentina.manea.m@gmail.com, shuah@kernel.org,
+        linux-usb@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20190502194740.15344-1-skhan@linuxfoundation.org>
+ <20190505091356.GB25646@kroah.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <ed0a3115-ee5a-97b6-b69c-073c9595d734@linuxfoundation.org>
+Date:   Mon, 6 May 2019 08:47:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+U=DspC2gbcWgEoCfTs-K0UaGt9DBLkXoyFufShUXD61uAAbQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190505091356.GB25646@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 04:45:43PM +0300, Alexandru Ardelean wrote:
-> On Fri, Apr 26, 2019 at 5:27 PM andriy.shevchenko@linux.intel.com
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > On Fri, Apr 26, 2019 at 12:29:11PM +0300, Alexandru Ardelean wrote:
-> >
-> > > Hmm, I actually did not give much thought to that -1.
-> > > I'll check into this and see about a V3.
-> > > It may make more sense to just fix the original
-> > > `__sysfs_match_string()`, but I'll need to go through the users of
-> > > this function and see.
-> >
-> > I was thinking about existing users of such (with "gaps") cases.
-> > Not all of them have NULL there and would like to avoid some members.
-> > Though, I think that we may ignore NULL items if -1 is supplied.
-> >
-> > Think as well about ARRAY_SIZE() as given to that.
-> >
+On 5/5/19 3:13 AM, Greg KH wrote:
+> On Thu, May 02, 2019 at 01:47:40PM -0600, Shuah Khan wrote:
+>> Add a sleep between detach and check for exportable devices to avoid
+>> the following segfault from libc-2.27.so
+>>
+>> [ 6268.136108] usbip[5565]: segfault at 0 ip 00007f2a947bddfd sp 00007ffd1a8705e8 error 4 in libc-2.27.so[7f2a94703000+1e7000]
+>>
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>> ---
+>>   tools/testing/selftests/drivers/usb/usbip/usbip_test.sh | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
+>> index 128f0ab24307..beacf24a8df7 100755
+>> --- a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
+>> +++ b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
+>> @@ -171,10 +171,14 @@ echo "Detach invalid port tests - expect invalid port error message";
+>>   src/usbip detach -p 100;
+>>   echo "=============================================================="
+>>   
+>> +# let detach complete. Avoid segfaults from libc-2.27.so
+>> +sleep 3;
 > 
-> I am a bit vague on what you are proposing.
-> Is it:
+> That feels very "arbitrary", why do we "know" it will take at most 3
+> seconds?  I guess there's not much else we can do here except maybe
+> somehow watch sysfs until the device is really gone?
 > 
-> a) Leave __sysfs_match_string() as-is and introduce a new
-> `__sysfs_match_string_with_gaps()` helper/variant ?
-> b) Fix __sysfs_match_string() to break/exit on the first NULL, only if
-> -1 is provided ?
-> 
-> Either is fine, but I wanted to clarify.
 
-The current logic something like "-1 to go till first NULL" and ARRAY_SIZE() in
-*some* cases is basically the synonym to above.
-
-What I meant is to check if there is *any* case where ARRAY_SIZE() behaves in
-the same way as -1. Those cases should be fixed accordingly.
-
-Otherwise, the b) is what would be preferred according to the discussion.
-
-> > And consider to fix match_string() accordingly.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yeah. Number 3 is somewhat arbitrary. It helps the host process the
+detach request from the client and update the sysfs. Detach returns
+as soon as client side is done, and the test is running the next
+command on the host side. If I were run these commands manually, it
+gives enough settling time. I am looking for a quick way to allow
+settling time in this automated test.
 
 
+thanks,
+-- Shuah
