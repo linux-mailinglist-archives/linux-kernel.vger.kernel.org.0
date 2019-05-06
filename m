@@ -2,86 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6E71547B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6CEA1547E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfEFTh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 15:37:28 -0400
-Received: from sonic310-24.consmr.mail.ne1.yahoo.com ([66.163.186.205]:45611
-        "EHLO sonic310-24.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726190AbfEFTh1 (ORCPT
+        id S1726562AbfEFThr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 15:37:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726190AbfEFThq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 15:37:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1557171445; bh=rs873MWACCTdefYzwFEaFuDABnbgTg7DFdIrLwGs3bU=; h=Date:From:Reply-To:Subject:References:From:Subject; b=BBRe5Nk2yaLzKn/YsS677sAHdb8ieHzdFWTVvlpFInig+MG1em/tCEKzCbhJLcbGHdvAyphY7+F/+8CILy9ItR0aYj9z9LnHH/dEBPboToeIXXa8yXwIuw/bsyCTZzGaMxmMprUOnkDnopjsixYF5c7UfO73+6jzmhI1oTegbCNLYv52u5jBzV31ddyrTL7tj+od1yZvD/qpb24hPkFPkKHK7J5CNbGCW+Pu6TvFFJ3eU2QRcCZSsDSc3XZXnJfs8ZzmIw2L2NwldlFlE/FaW8sgdkL2VbBOqRrBIctMVoPoxCGGqBR56FkH8Sz1BgxRSyOxWoFQhagDvYYia3tS9w==
-X-YMail-OSG: qBJZ5coVM1nElHbtfKRm93YBPnj9V.v1UozeEGUbkDKMQlfFPmuOuM7R5bYMhz3
- gDPB_Kkl_y1tbn9Dxg5ukZXfb.f8n0tbKHZlRvLeVFlpt03rFoJoMxQ8nWPH4IkpgFdiH9U_x17d
- XaNTIv9ZO.7Mz.0MjNC8BZmNwIxJ2CnBrbNjLwJalGxDmcfLrHOKKylQesa_F7jqK2hzqqKGDexs
- dKn4YXF6oAUgj7ww35u_hkaMkq8yuYQ5ymwtZttLL9xeMICObub566ghnbUVb5n7APsBPA0h..3H
- 3.k71q7uIXc98N0xyjsJgWkOGokkidJe0dYSNICwBqoC2ZMCs1qn7XXQsdS_00cNvLlCXDLHJtQP
- He00uzXsl98fg5t4btYrVE4pX2QcmL7Z3i9pmgFi.Zw6u7pni88S6MDPtG1WEeAfSmkOP2HSsrW8
- xakaOJEjL8KO61rj0GaTae0CkcpRADutrylcYlBjPPjMhkFhH9F6TLR47YGW8yHUFS.an9S8v5zQ
- AOtMYA6Kd6wYPn1WRjABXFqRPIC9KYRMK3JMSMQeO0mzK865qiIY30eWTsN.Kv6oZLKh1Y8ILo_h
- aJrAoccQrbku1f73IrqHtJJBe0jV0UA_RnnztokhqLW7FBeZdZgiE5xkmajki.Awc6BlDF3wfJoY
- xTSq.WOplpi45A5BLFTnaz2vcXOrC5C9cGqIb7ZktI0rWPEh6vVTU2LPGsikyiWCPRO1gLcdd5le
- Q3ReUM9cfltMbJATs9q_DmrwAaDLdZAflZ6Hrk6QKIIWA76BWpjfw7Ug_9Ta0rThLEM14eCTBcMD
- RY4wZqFfzdI2zKoI.yJ96oHe4urBrMwfPKC_Vcde25P0VDAOq6vX9v.DK5npQTS6YnfzFIzu4HvJ
- LgAxhhixcEzm4WouNW9QGjEEwErUyABP03yES9R6QNIogP_MbxZ.71BM4d7Z3X13RgvNLjQdlBeB
- ZZkB1NsZZQm3_VG734hLf4P8Bk_tKojZBXJYXdyx9K69w7Qt4P3PyFBJuB0znC7hJR6hUvTK3Ueu
- edzDaEDkYZyEX6mue7hXukXNbM_PvhjNXBXW1pILYt2FjU6kFknOCYRb8DaiVj9VPnc0cqvSRBBH
- JaO0BvpAFIDv0igoBHZx29rliNvJBYTMrs92C40jnAwTNENI2whVzOXMOF3ALgsTHAVvNManoJ9I
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 6 May 2019 19:37:25 +0000
-Date:   Mon, 6 May 2019 19:37:24 +0000 (UTC)
-From:   Elizabeth Edwards <mrselizabethedward1@gmail.com>
-Reply-To: Elizabeth Edwards <elisabeth1981@mail.com>
-Message-ID: <359686610.2163681.1557171444225@mail.yahoo.com>
-Subject: Dear Friend,
+        Mon, 6 May 2019 15:37:46 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x46Jb4ZV100771
+        for <linux-kernel@vger.kernel.org>; Mon, 6 May 2019 15:37:44 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sar9jqj8y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 15:37:44 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 6 May 2019 20:37:44 +0100
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 6 May 2019 20:37:40 +0100
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x46JbcWa34930920
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 May 2019 19:37:38 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 546E9AC05B;
+        Mon,  6 May 2019 19:37:38 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09562AC059;
+        Mon,  6 May 2019 19:37:38 +0000 (GMT)
+Received: from [9.60.75.251] (unknown [9.60.75.251])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  6 May 2019 19:37:37 +0000 (GMT)
+Subject: Re: [PATCH v2 1/7] s390: vfio-ap: wait for queue empty on queue reset
+To:     pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     freude@linux.ibm.com, borntraeger@de.ibm.com, cohuck@redhat.com,
+        frankja@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, pasic@linux.ibm.com,
+        alex.williamson@redhat.com, kwankhede@nvidia.com
+References: <1556918073-13171-1-git-send-email-akrowiak@linux.ibm.com>
+ <1556918073-13171-2-git-send-email-akrowiak@linux.ibm.com>
+ <0bdb1655-4c4e-1982-a842-9dfc7c02a576@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 6 May 2019 15:37:37 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <359686610.2163681.1557171444225.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13583 YahooMailBasic Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <0bdb1655-4c4e-1982-a842-9dfc7c02a576@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050619-2213-0000-0000-00000389BF5B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011061; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01199536; UDB=6.00629317; IPR=6.00980412;
+ MB=3.00026760; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-06 19:37:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050619-2214-0000-0000-00005E548F93
+Message-Id: <ecc5d1d5-a1ea-64ed-2af0-b2a6ca00d748@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905060161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/6/19 2:41 AM, Pierre Morel wrote:
+> On 03/05/2019 23:14, Tony Krowiak wrote:
+>> Refactors the AP queue reset function to wait until the queue is empty
+>> after the PQAP(ZAPQ) instruction is executed to zero out the queue as
+>> required by the AP architecture.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c | 35 
+>> ++++++++++++++++++++++++++++++++---
+>>   1 file changed, 32 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 900b9cf20ca5..b88a2a2ba075 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -271,6 +271,32 @@ static int vfio_ap_mdev_verify_no_sharing(struct 
+>> ap_matrix_mdev *matrix_mdev)
+>>       return 0;
+>>   }
+>> +static void vfio_ap_mdev_wait_for_qempty(unsigned long apid, unsigned 
+>> long apqi)
+>> +{
+>> +    struct ap_queue_status status;
+>> +    ap_qid_t qid = AP_MKQID(apid, apqi);
+>> +    int retry = 5;
+>> +
+>> +    do {
+>> +        status = ap_tapq(qid, NULL);
+>> +        switch (status.response_code) {
+>> +        case AP_RESPONSE_NORMAL:
+>> +            if (status.queue_empty)
+>> +                return;
+>> +            msleep(20);
+> 
+> NIT:     Fall through ?
 
+Yes
 
-Dear Friend,
+> 
+>> +            break;
+>> +        case AP_RESPONSE_RESET_IN_PROGRESS:
+>> +        case AP_RESPONSE_BUSY:
+>> +            msleep(20);
+>> +            break;
+>> +        default:
+>> +            pr_warn("%s: tapq err %02x: %04lx.%02lx may not be empty\n",
+>> +                __func__, status.response_code, apid, apqi);
+> 
+> I do not thing the warning sentence is appropriate:
+> The only possible errors here are if the AP is not available due to AP 
+> checkstop, deconfigured AP or invalid APQN.
 
-Please forgive me for stressing you with my predicaments as I know that thi=
-s letter may come to you as big surprise. Actually, as my pastor advised me=
- to reject earthly reward and thanks by handing the project to someone I ha=
-ve never seen or met for a greater reward in heaven awaits for whoever can =
-give such a costly donation. I came across your E-mail from my personal sea=
-rch, and I decided to email you directly believing that you will be honest =
-to fulfill my final wish before or after my death.
- Meanwhile, I am Madam Elizabeth Edwards, 73 years, am from USA, still chil=
-dless. I am suffering from Adenocarcinoma Cancer of the lungs for the past =
-8 years and from all indication my condition is really deteriorating as my =
-doctors have confirmed and courageously advised me that I may not live beyo=
-nd 2 weeks from now for the reason that my tumor has reached a critical sta=
-ge which has defiled all forms of medical treatment.
+Right you are! I'll work on a new message.
 
-Since my days are numbered, I=E2=80=99ve decided willingly to fulfill my lo=
-ng-time vow to donate to the underprivileged the sum of Eighteen million fi=
-ve hundred thousand dollars ($18.5m) I deposited in a different account ove=
-r 8 years now because I have tried to handle this project by myself but I h=
-ave seen that my health could not allow me to do so anymore. My promise for=
- the poor includes building of well-equipped charity foundation hospital an=
-d a technical school for their survival.
+> 
+> 
+>> +            return;
+>> +        }
+>> +    } while (--retry);
+>> +}
+>> +
+>>   /**
+>>    * assign_adapter_store
+>>    *
+>> @@ -790,15 +816,18 @@ static int vfio_ap_mdev_group_notifier(struct 
+>> notifier_block *nb,
+>>       return NOTIFY_OK;
+>>   }
+>> -static int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int 
+>> apqi,
+>> -                    unsigned int retry)
+>> +int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi)
+>>   {
+>>       struct ap_queue_status status;
+>> +    int retry = 5;
+>>       do {
+>>           status = ap_zapq(AP_MKQID(apid, apqi));
+>>           switch (status.response_code) {
+>>           case AP_RESPONSE_NORMAL:
+>> +            vfio_ap_mdev_wait_for_qempty(apid, apqi);
+>> +            return 0;
+>> +        case AP_RESPONSE_DECONFIGURED:
+> 
+> Since you modify the switch, you can return for all the following cases:
+> AP_RESPONSE_DECONFIGURE
+> ..._CHECKSTOP
+> ..._INVALID_APQN
+> 
+> 
+> And you should wait for qempty on AP_RESET_IN_PROGRESS along with 
+> AP_RESPONSE_NORMAL
 
-If you will be honest, kind and willing to assist me handle this charity pr=
-oject as I=E2=80=99ve mentioned here, I will like you to provide me your pe=
-rsonal data like. Contact me through this email address (elisabethe1981@mai=
-l.com) and also send me your private email address.
+If a queue reset is in progress, we retry the zapq. Are you saying we
+should wait for qempty then reissue the zapq?
 
-(1) Your full name:
-(2) country:
-(3) phone number:
-(4) Age:
+> 
+>>               return 0;
+>>           case AP_RESPONSE_RESET_IN_PROGRESS:
+>>           case AP_RESPONSE_BUSY:
+> 
+> While at modifying this function, the AP_RESPONSE_BUSY is not a valid 
+> code for ZAPQ, you can remove this.
 
-Best Regards!
-Mrs. Elizabeth Edwards
+Okay
+
+> 
+>> @@ -824,7 +853,7 @@ static int vfio_ap_mdev_reset_queues(struct 
+>> mdev_device *mdev)
+>>                    matrix_mdev->matrix.apm_max + 1) {
+>>           for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
+>>                        matrix_mdev->matrix.aqm_max + 1) {
+>> -            ret = vfio_ap_mdev_reset_queue(apid, apqi, 1);
+>> +            ret = vfio_ap_mdev_reset_queue(apid, apqi);
+> 
+> IMHO, since you are at changing this call, passing the apqn as parameter 
+> would be a good simplification.
+
+Okay.
+
+> 
+> 
+> 
+>>               /*
+>>                * Regardless whether a queue turns out to be busy, or
+>>                * is not operational, we need to continue resetting
+> 
+> Depends on why the reset failed, but this is out of scope.
+
+I'm not sure what you mean by out of scope here, but you do make a valid
+point. If the response code for the zapq is AP_RESPONSE_DECONFIGURED,
+there is probably no sense in continuing to reset queues for that
+particular adapter. I'll consider a change here.
+
+> 
+>>
+> 
+> 
+
