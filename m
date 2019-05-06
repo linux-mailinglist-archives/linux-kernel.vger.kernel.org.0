@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B82414CEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB06D14E26
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfEFOpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42878 "EHLO mail.kernel.org"
+        id S1728404AbfEFO7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:59:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729004AbfEFOps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:48 -0400
+        id S1727909AbfEFOnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FFD121019;
-        Mon,  6 May 2019 14:45:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E185C21655;
+        Mon,  6 May 2019 14:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153947;
-        bh=VKIaQHqILKktV1uilDIzU4auAHkCA0xrJuZDJAa28PY=;
+        s=default; t=1557153799;
+        bh=SqD8OrZ7/sr4F+8A2XazlG09XH1CvAtt77rj9BDVjYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m7grC+xeCog9BxJW7MMCrL0p14trNyFvqoccpxTcFr9HQxvZgzq64ndDJBC37ht82
-         ZhqH63MBcdTKcs1C+/xXuva46vf2vWQNvsIRb3LyorcNShTHlx/uKG5BEDlPsiRFIY
-         x00nEA1S79VmUZvjBfSLl5xQRO88DwHM+CJLKN4g=
+        b=YbqLv5ux0jyHBfwfog0ceFq+0q7ZCovlrQgovLqUcFqqeDSFdNhl0Yaol13rhnx3F
+         Dwu9N47ONQAafuG4Dz/Vi0RlZMBnHE5jpCk5nYGOt5x+DLb5Smpv9NTu8rLI3RzhIb
+         YT0F39v2Wm52PsTFUDZP3tiXy+qbVkCTtd4lzleA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 57/75] ARM: iop: dont use using 64-bit DMA masks
-Date:   Mon,  6 May 2019 16:33:05 +0200
-Message-Id: <20190506143058.420952736@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Pu Wen <puwen@hygon.cn>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.19 93/99] x86/mce: Improve error message when kernel cannot recover, p2
+Date:   Mon,  6 May 2019 16:33:06 +0200
+Message-Id: <20190506143102.288742394@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,152 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2125801ccce19249708ca3245d48998e70569ab8 ]
+From: Tony Luck <tony.luck@intel.com>
 
-clang warns about statically defined DMA masks from the DMA_BIT_MASK
-macro with length 64:
+commit 41f035a86b5b72a4f947c38e94239d20d595352a upstream.
 
- arch/arm/mach-iop13xx/setup.c:303:35: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
- static u64 iop13xx_adma_dmamask = DMA_BIT_MASK(64);
-                                  ^~~~~~~~~~~~~~~~
- include/linux/dma-mapping.h:141:54: note: expanded from macro 'DMA_BIT_MASK'
- #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-                                                      ^ ~~~
+In
 
-The ones in iop shouldn't really be 64 bit masks, so changing them
-to what the driver can support avoids the warning.
+  c7d606f560e4 ("x86/mce: Improve error message when kernel cannot recover")
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+a case was added for a machine check caused by a DATA access to poison
+memory from the kernel. A case should have been added also for an
+uncorrectable error during an instruction fetch in the kernel.
+
+Add that extra case so the error message now reads:
+
+  mce: [Hardware Error]: Machine check: Instruction fetch error in kernel
+
+Fixes: c7d606f560e4 ("x86/mce: Improve error message when kernel cannot recover")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190225205940.15226-1-tony.luck@intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/mach-iop13xx/setup.c |  8 ++++----
- arch/arm/mach-iop13xx/tpmi.c  | 10 +++++-----
- arch/arm/plat-iop/adma.c      |  6 +++---
- 3 files changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce-severity.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-iop13xx/setup.c b/arch/arm/mach-iop13xx/setup.c
-index 53c316f7301e..fe4932fda01d 100644
---- a/arch/arm/mach-iop13xx/setup.c
-+++ b/arch/arm/mach-iop13xx/setup.c
-@@ -300,7 +300,7 @@ static struct resource iop13xx_adma_2_resources[] = {
- 	}
- };
- 
--static u64 iop13xx_adma_dmamask = DMA_BIT_MASK(64);
-+static u64 iop13xx_adma_dmamask = DMA_BIT_MASK(32);
- static struct iop_adma_platform_data iop13xx_adma_0_data = {
- 	.hw_id = 0,
- 	.pool_size = PAGE_SIZE,
-@@ -324,7 +324,7 @@ static struct platform_device iop13xx_adma_0_channel = {
- 	.resource = iop13xx_adma_0_resources,
- 	.dev = {
- 		.dma_mask = &iop13xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop13xx_adma_0_data,
- 	},
- };
-@@ -336,7 +336,7 @@ static struct platform_device iop13xx_adma_1_channel = {
- 	.resource = iop13xx_adma_1_resources,
- 	.dev = {
- 		.dma_mask = &iop13xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop13xx_adma_1_data,
- 	},
- };
-@@ -348,7 +348,7 @@ static struct platform_device iop13xx_adma_2_channel = {
- 	.resource = iop13xx_adma_2_resources,
- 	.dev = {
- 		.dma_mask = &iop13xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop13xx_adma_2_data,
- 	},
- };
-diff --git a/arch/arm/mach-iop13xx/tpmi.c b/arch/arm/mach-iop13xx/tpmi.c
-index db511ec2b1df..116feb6b261e 100644
---- a/arch/arm/mach-iop13xx/tpmi.c
-+++ b/arch/arm/mach-iop13xx/tpmi.c
-@@ -152,7 +152,7 @@ static struct resource iop13xx_tpmi_3_resources[] = {
- 	}
- };
- 
--u64 iop13xx_tpmi_mask = DMA_BIT_MASK(64);
-+u64 iop13xx_tpmi_mask = DMA_BIT_MASK(32);
- static struct platform_device iop13xx_tpmi_0_device = {
- 	.name = "iop-tpmi",
- 	.id = 0,
-@@ -160,7 +160,7 @@ static struct platform_device iop13xx_tpmi_0_device = {
- 	.resource = iop13xx_tpmi_0_resources,
- 	.dev = {
- 		.dma_mask          = &iop13xx_tpmi_mask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 	},
- };
- 
-@@ -171,7 +171,7 @@ static struct platform_device iop13xx_tpmi_1_device = {
- 	.resource = iop13xx_tpmi_1_resources,
- 	.dev = {
- 		.dma_mask          = &iop13xx_tpmi_mask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 	},
- };
- 
-@@ -182,7 +182,7 @@ static struct platform_device iop13xx_tpmi_2_device = {
- 	.resource = iop13xx_tpmi_2_resources,
- 	.dev = {
- 		.dma_mask          = &iop13xx_tpmi_mask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 	},
- };
- 
-@@ -193,7 +193,7 @@ static struct platform_device iop13xx_tpmi_3_device = {
- 	.resource = iop13xx_tpmi_3_resources,
- 	.dev = {
- 		.dma_mask          = &iop13xx_tpmi_mask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 	},
- };
- 
-diff --git a/arch/arm/plat-iop/adma.c b/arch/arm/plat-iop/adma.c
-index a4d1f8de3b5b..d9612221e484 100644
---- a/arch/arm/plat-iop/adma.c
-+++ b/arch/arm/plat-iop/adma.c
-@@ -143,7 +143,7 @@ struct platform_device iop3xx_dma_0_channel = {
- 	.resource = iop3xx_dma_0_resources,
- 	.dev = {
- 		.dma_mask = &iop3xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop3xx_dma_0_data,
- 	},
- };
-@@ -155,7 +155,7 @@ struct platform_device iop3xx_dma_1_channel = {
- 	.resource = iop3xx_dma_1_resources,
- 	.dev = {
- 		.dma_mask = &iop3xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop3xx_dma_1_data,
- 	},
- };
-@@ -167,7 +167,7 @@ struct platform_device iop3xx_aau_channel = {
- 	.resource = iop3xx_aau_resources,
- 	.dev = {
- 		.dma_mask = &iop3xx_adma_dmamask,
--		.coherent_dma_mask = DMA_BIT_MASK(64),
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = (void *) &iop3xx_aau_data,
- 	},
- };
--- 
-2.20.1
-
+--- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
++++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
+@@ -165,6 +165,11 @@ static struct severity {
+ 		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_DATA),
+ 		KERNEL
+ 		),
++	MCESEV(
++		PANIC, "Instruction fetch error in kernel",
++		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_INSTR),
++		KERNEL
++		),
+ #endif
+ 	MCESEV(
+ 		PANIC, "Action required: unknown MCACOD",
 
 
