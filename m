@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B95515582
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684FF15585
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfEFV0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:26:48 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52506 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbfEFV0q (ORCPT
+        id S1727059AbfEFV0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:26:52 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36572 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbfEFV0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:26:46 -0400
-Received: by mail-it1-f195.google.com with SMTP id q65so21434307itg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:45 -0700 (PDT)
+        Mon, 6 May 2019 17:26:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id e19so2634176iob.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=xc8GKgAhN2BvbVtHbXIFXp3HIXwPjdL/8iP1wX8Tn7g=;
-        b=ozFQSbOZOyhObe/no7EhClYnzFZzOsCbgo4msZ+u1fLhicbN21oM6AcTsExK91rdfm
-         +fd2ZYhdfc1ENDRemCuw90t6iFB2kxr/M4UEI/n50xyxxONR5P1en9MSoLwTBqo6UTJM
-         iFF6tNPbknYhDiFetefa0H6devKafP72nRFJgEYqIXHEDkYSEQ1cR2B/4B3nncGSDCEE
-         /W9jvzmMy6tczOttS/cQo3oQxb7DXtFxVY3uH1dFwVZZrvX4dnlo1Sb3xRySj7tJ5fz8
-         J86Jcy7BD6NS5kds6a7j7+KKKQU6kwsq6V0BmY0ibj+rLOaBKxXOJ5tGEU8QSJmVT8Hq
-         88Zg==
+        bh=/r/wJJuIve3cfROEOjQXmKOysyLZKrQ8MKJaix41P8Y=;
+        b=l4Zux9CLadNQDk3oTwHbkN7o28DsDibkY8AY2cR1I7KATEicc8ajZaTuDbm0mZn171
+         ZxIFFZEnJHgZbndLiEMVqZmEWdxy0py2/dS3mgH497e4P+hpqEp3jLczYKIGB9AIrbBC
+         HrAW88p+uOi7XFFBUbjXsWhHUjUm5MT9GZXm2ZRvqi5l0vBDeII3co7PzbCwOh2Tii1I
+         ceCI4ynvXr7w46s1zgfOFehnAw1b89XbO7hJPv4+afEvZeafaqTmLbDLyhM3l9rrUCYE
+         Ngm4wHGQGhI/wQkN6FgCd2vzPnKPWXNL0aqFYuXTsUMTzq/GKhpnO+kx9IrXaBmCvJ9U
+         +l1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=xc8GKgAhN2BvbVtHbXIFXp3HIXwPjdL/8iP1wX8Tn7g=;
-        b=PKFb8c13aUCh91M6GrBSbSrCO5ba2FTGLH5UovrJlTIlQqWvtlF+9Xt/haE7rkrzAJ
-         Kk1uybinx/Ogif/nd+wuvZ7XW0Q74P/Uy85nzS2OtEmwlDIEw3smW9bxZj3h3TTXiigG
-         6HU8Toc5p9QAhQxQ4FaVNVz+UDZMYxugaGX0a3z7bxAMufCCP0q4jN278fxo7ao0wK1H
-         RZn3UC78sAYAw3kg+nG3QUvq+zCFhJYk69ux4r9VjOn8qaE4Q+nDMu6hFmGBLNlTtNUw
-         MLPgx95QzI/PKNrrcakL+33lHC0EZgcPmnr8ndbvXuHg+9k9rWtESK50aZ6+2d2zbccq
-         ZpxA==
-X-Gm-Message-State: APjAAAVTjc5mw4IV/UXGLhiYQcgyGBAzqWaIc7QDEWKiIKFcxq+zmkCl
-        63uwiTG2XrmppppQEMXYJEM=
-X-Google-Smtp-Source: APXvYqygrG8Bj0hd8b9f6a8cGA8LyqsJ5nXu/CF7g9z3/v2GelvFtbElk0TBz6cXZlTaVLTMyd56yg==
-X-Received: by 2002:a24:4161:: with SMTP id x94mr19479400ita.83.1557178005568;
-        Mon, 06 May 2019 14:26:45 -0700 (PDT)
+        bh=/r/wJJuIve3cfROEOjQXmKOysyLZKrQ8MKJaix41P8Y=;
+        b=Tonhih7xlfuO4fpAy7WGpi156oIYXhHMTAAJm9OtNaAQo7/OklMHlDpvOU12kerpMf
+         lZbTL31l/WPyK0Nrrg4Z9pSNn3P0oLq1rIx8fsoStx5Qdxogbiyoxa2m6WUY2pwkJe+D
+         zQvzjkxDi03T1VFJPpS0Ia5x0fpFQsP8FSRQ/BoJb0gZ8ItufL2vW00Z8XlLLpADKjg4
+         ecEFiJOsKBVFtsWb31UFLgKGTjh6GHplHVxxVWBimdP0jSyFMxHQW3ok/fjCuRGpuTWi
+         SSk3Fz7DUrJaqe637gVT9ymsBvVp/Yatw1sQtK6UbFHs92VuHQQGMq0PFllK7LfRiQtn
+         3D2g==
+X-Gm-Message-State: APjAAAUgc3HZtpc4cnm98Voue32n2jCVsHdvKjj/FKUiec+01cgdR2hp
+        w7AekEiSaOYEp0UMp0XidoJY3T3E
+X-Google-Smtp-Source: APXvYqxXxwIkU1NSFkOIGEA6JA271eLAsJnX2tYJEPz+c8MaLwriPvsbJl8KEpIcz0VclcEhboSZAQ==
+X-Received: by 2002:a6b:b503:: with SMTP id e3mr3075269iof.216.1557178006814;
+        Mon, 06 May 2019 14:26:46 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.44
+        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 14:26:44 -0700 (PDT)
+        Mon, 06 May 2019 14:26:46 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Kan Liang <kan.liang@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Len Brown <len.brown@intel.com>
-Subject: [PATCH 16/22] perf/x86/intel/uncore: Support multi-die/package
-Date:   Mon,  6 May 2019 17:26:11 -0400
-Message-Id: <1d7c4d47cfca91c11b0e078d86a8f7f7da6d862a.1557177585.git.len.brown@intel.com>
+Subject: [PATCH 17/22] perf/x86/intel/rapl: Support multi-die/package
+Date:   Mon,  6 May 2019 17:26:12 -0400
+Message-Id: <914b7783c40acb58bffd90a2d378062659c974cb.1557177585.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
@@ -66,15 +66,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Uncore becomes die-scope on Xeon Cascade Lake-AP. Uncore driver needs to
-support die-scope uncore units.
+RAPL becomes die-scope on Xeon Cascade Lake-AP. Perf RAPL driver needs
+to support die-scope RAPL domain.
 
 Use topology_logical_die_id() to replace topology_logical_package_id().
 For previous platforms which doesn't have multi-die,
 topology_logical_die_id() is identical as topology_logical_package_id().
-
-In pci_probe/remove, the group id reads from PCI BUS is logical die id
-for multi-die systems.
 
 Use topology_die_cpumask() to replace topology_core_cpumask().
 For previous platforms which doesn't have multi-die,
@@ -86,96 +83,57 @@ Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Len Brown <len.brown@intel.com>
 ---
- arch/x86/events/intel/uncore.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/x86/events/intel/rapl.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 9fe64c01a2e5..a6461ff85a32 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -100,7 +100,7 @@ ssize_t uncore_event_show(struct kobject *kobj,
+diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
+index 94dc564146ca..e49f69c51b10 100644
+--- a/arch/x86/events/intel/rapl.c
++++ b/arch/x86/events/intel/rapl.c
+@@ -161,7 +161,7 @@ static u64 rapl_timer_ms;
  
- struct intel_uncore_box *uncore_pmu_to_box(struct intel_uncore_pmu *pmu, int cpu)
+ static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
  {
 -	unsigned int pkgid = topology_logical_package_id(cpu);
 +	unsigned int pkgid = topology_logical_die_id(cpu);
  
  	/*
  	 * The unsigned check also catches the '-1' return value for non
-@@ -942,7 +942,8 @@ static int uncore_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 	if (phys_id < 0)
- 		return -ENODEV;
+@@ -571,7 +571,7 @@ static int rapl_cpu_offline(unsigned int cpu)
  
--	pkg = topology_phys_to_logical_pkg(phys_id);
-+	pkg = (topology_max_die_per_package() > 1) ? phys_id :
-+					topology_phys_to_logical_pkg(phys_id);
- 	if (pkg < 0)
- 		return -EINVAL;
- 
-@@ -1033,7 +1034,8 @@ static void uncore_pci_remove(struct pci_dev *pdev)
- 
- 	box = pci_get_drvdata(pdev);
- 	if (!box) {
--		pkg = topology_phys_to_logical_pkg(phys_id);
-+		pkg = (topology_max_die_per_package() > 1) ? phys_id :
-+					topology_phys_to_logical_pkg(phys_id);
- 		for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
- 			if (uncore_extra_pci_dev[pkg].dev[i] == pdev) {
- 				uncore_extra_pci_dev[pkg].dev[i] = NULL;
-@@ -1110,7 +1112,7 @@ static void uncore_change_type_ctx(struct intel_uncore_type *type, int old_cpu,
- 	struct intel_uncore_box *box;
- 	int i, pkg;
- 
--	pkg = topology_logical_package_id(old_cpu < 0 ? new_cpu : old_cpu);
-+	pkg = topology_logical_die_id(old_cpu < 0 ? new_cpu : old_cpu);
- 	for (i = 0; i < type->num_boxes; i++, pmu++) {
- 		box = pmu->boxes[pkg];
- 		if (!box)
-@@ -1151,7 +1153,7 @@ static int uncore_event_cpu_offline(unsigned int cpu)
- 	if (!cpumask_test_and_clear_cpu(cpu, &uncore_cpu_mask))
- 		goto unref;
- 	/* Find a new cpu to collect uncore events */
+ 	pmu->cpu = -1;
+ 	/* Find a new cpu to collect rapl events */
 -	target = cpumask_any_but(topology_core_cpumask(cpu), cpu);
 +	target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
  
- 	/* Migrate uncore events to the new target */
- 	if (target < nr_cpu_ids)
-@@ -1164,7 +1166,7 @@ static int uncore_event_cpu_offline(unsigned int cpu)
+ 	/* Migrate rapl events to the new target */
+ 	if (target < nr_cpu_ids) {
+@@ -598,14 +598,14 @@ static int rapl_cpu_online(unsigned int cpu)
+ 		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+ 		rapl_hrtimer_init(pmu);
  
- unref:
- 	/* Clear the references */
--	pkg = topology_logical_package_id(cpu);
-+	pkg = topology_logical_die_id(cpu);
- 	for (; *types; types++) {
- 		type = *types;
- 		pmu = type->pmus;
-@@ -1223,7 +1225,7 @@ static int uncore_event_cpu_online(unsigned int cpu)
- 	struct intel_uncore_box *box;
- 	int i, ret, pkg, target;
+-		rapl_pmus->pmus[topology_logical_package_id(cpu)] = pmu;
++		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
+ 	}
  
--	pkg = topology_logical_package_id(cpu);
-+	pkg = topology_logical_die_id(cpu);
- 	ret = allocate_boxes(types, pkg, cpu);
- 	if (ret)
- 		return ret;
-@@ -1242,7 +1244,7 @@ static int uncore_event_cpu_online(unsigned int cpu)
- 	 * Check if there is an online cpu in the package
- 	 * which collects uncore events already.
+ 	/*
+ 	 * Check if there is an online cpu in the package which collects rapl
+ 	 * events already.
  	 */
--	target = cpumask_any_and(&uncore_cpu_mask, topology_core_cpumask(cpu));
-+	target = cpumask_any_and(&uncore_cpu_mask, topology_die_cpumask(cpu));
+-	target = cpumask_any_and(&rapl_cpu_mask, topology_core_cpumask(cpu));
++	target = cpumask_any_and(&rapl_cpu_mask, topology_die_cpumask(cpu));
  	if (target < nr_cpu_ids)
  		return 0;
  
-@@ -1411,7 +1413,7 @@ static int __init intel_uncore_init(void)
- 	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
- 		return -ENODEV;
+@@ -675,7 +675,7 @@ static void cleanup_rapl_pmus(void)
  
--	max_packages = topology_max_packages();
-+	max_packages = topology_max_packages() * topology_max_die_per_package();
+ static int __init init_rapl_pmus(void)
+ {
+-	int maxpkg = topology_max_packages();
++	int maxpkg = topology_max_packages() * topology_max_die_per_package();
+ 	size_t size;
  
- 	uncore_init = (struct intel_uncore_init_fun *)id->driver_data;
- 	if (uncore_init->pci_init) {
+ 	size = sizeof(*rapl_pmus) + maxpkg * sizeof(struct rapl_pmu *);
 -- 
 2.18.0-rc0
 
