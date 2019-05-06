@@ -2,147 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A91414561
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB7E143CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 05:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfEFHhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:37:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39164 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEFHhx (ORCPT
+        id S1725994AbfEFDmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 23:42:17 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36030 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfEFDmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:37:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MlFyerrYRCSvPhKw2U+CT72hE7v7yaWVoYGE318wXPc=; b=N1euGcYiwa2CPfRpDTB2kTUHI
-        3sBVaJ2Rw9Z5DDgVI4HY/3r4mDZCa5xj1+kGB6PX58BCiHIa7Gom+vBUyS3TDJlQhHQnq84ccmLJz
-        WlwLAM+JS+XliWoOWhIB7QYZu+JlGFRqdv/AQTdE477BIRPZ1mXfYDzbBE3/F0EA3NmBQ=;
-Received: from kd111239184067.au-net.ne.jp ([111.239.184.67] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hNYBt-0000s0-8z; Mon, 06 May 2019 07:37:37 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 1D8B2441D3C; Mon,  6 May 2019 04:37:33 +0100 (BST)
-Date:   Mon, 6 May 2019 12:37:33 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rtc@vger.kernel.org, srv_heupstream@mediatek.com
-Subject: Re: [PATCH v3 07/10] regulator: mt6358: Add support for MT6358
- regulator
-Message-ID: <20190506033733.GH14916@sirena.org.uk>
-References: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
- <20190503093117.54830-8-hsin-hsiung.wang@mediatek.com>
+        Sun, 5 May 2019 23:42:17 -0400
+Received: by mail-qk1-f193.google.com with SMTP id c14so3280919qke.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 20:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=evolvfc+v/PDNzMrluV2UQ6Ca3y538x1hstsH93Ra8w=;
+        b=YK8OVjTBIW7T1GEvXYMhHWYCjfY3CgPx2TBCu4U4XnziD9WfeBWmRvw2MH656182yn
+         v5E0ELEy7ybRGIf2LIaEXC7e1+AM0CnRv5xRiw1C471J0xEK8w1mhdkecvwfAYvxvjDY
+         yEi6/iycQ4h9EvgcyvKoe2ixzmmhGCYpefZa5Z+PLYdasB/4vegCtIs2bXERfCL4hSay
+         UXvHLowEBEas4JJHnZhu0G8PzVTc/fIyGDuHJ45a68VqBtnLLtlGc6xoy1ALDydOn6jo
+         WSh7oYMiR6uJnW4+hL/thRHdHwH9vVKxcgfV2U2qQsp4JbN+vWZh7cOIaPCJ9+1SOKs2
+         MF1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=evolvfc+v/PDNzMrluV2UQ6Ca3y538x1hstsH93Ra8w=;
+        b=GIqfRaA6s2C4uvaTTDsfpAUb3YKH9l2M9tc3MgbT1/APwFlsUVd0n6zXxVsyajYo5t
+         bA76pngmGGFI7wXMQiHTwcoYOAgd5C+Qjjv5L69RuKQXNcftFIXwtSI1O4kGKlZzB8ej
+         20aXjk1YcAJpmdMLYdXscMwxRWfez9bapZcyxGj9H0Ah5I5k/Q18NGuH1wQX1TzqYnGY
+         CrMSG8fA5inbB9Sy7kpyohv4I84WT8/SYJUiEygIz63XIDHubQSMD1W8d/4f9NrinWLb
+         9Gi572hp16JubYYmUAZ2UG05dqd4eWEaNERYZRmqdxvL+ozc/C35h1WSK08YIXbWtItx
+         G3pQ==
+X-Gm-Message-State: APjAAAWc5+G0NlstmFFkhe+WrXhtf3ajXu63XlX2890VlAEn0+1yMeYV
+        ItgyHexPiSrz1/hU8PZmhR5LIHmmhqVEoK4FcwaBjg4QQ/ICJg==
+X-Google-Smtp-Source: APXvYqzU2ai2PliPSf6C3qkb0Wsn8YH7PTRkcyfGmoYYVW+WtUlIKFpIeosC5YtXgT9nqOiKc5vDmanRuyCqoRkt7eg=
+X-Received: by 2002:a37:404b:: with SMTP id n72mr18080998qka.98.1557114136488;
+ Sun, 05 May 2019 20:42:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RbAp84Sx/Z5HOs1D"
-Content-Disposition: inline
-In-Reply-To: <20190503093117.54830-8-hsin-hsiung.wang@mediatek.com>
-X-Cookie: -- I have seen the FUN --
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190424101934.51535-1-duyuyang@gmail.com> <20190424101934.51535-20-duyuyang@gmail.com>
+ <20190425193247.GU12232@hirez.programming.kicks-ass.net> <CAHttsrY4jK2cayBE8zNCSJKDAkzLiBb40GVfQHpJi2YK1nEZaQ@mail.gmail.com>
+ <20190430121148.GV2623@hirez.programming.kicks-ass.net> <CAHttsrYfCdpNwQ81ppFQ9b_57tuLYOb=xi=CbRBysnB+LgjGGg@mail.gmail.com>
+In-Reply-To: <CAHttsrYfCdpNwQ81ppFQ9b_57tuLYOb=xi=CbRBysnB+LgjGGg@mail.gmail.com>
+From:   Yuyang Du <duyuyang@gmail.com>
+Date:   Mon, 6 May 2019 11:42:05 +0800
+Message-ID: <CAHttsrZKx0cgs6t9ahxmV7ENp6QWG4H9N7KMvsgrucQ_rsqTJQ@mail.gmail.com>
+Subject: Re: [PATCH 19/28] locking/lockdep: Optimize irq usage check when
+ marking lock usage bit
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     will.deacon@arm.com, Ingo Molnar <mingo@kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
+        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 6 May 2019 at 11:05, Yuyang Du <duyuyang@gmail.com> wrote:
+>
+> On Tue, 30 Apr 2019 at 20:12, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > IOW he's going to massively explode this storage.
+> > >
+> > > If I understand correctly, he is not going to.
+> > >
+> > > First of all, we can divide the whole usage thing into tracking and checking.
+> > >
+> > > Frederic's fine-grained soft vector state is applied to usage
+> > > tracking, i.e., which specific vectors a lock is used or enabled.
+> > >
+> > > But for usage checking, which vectors are does not really matter. So,
+> > > the current size of the arrays and bitmaps are good enough. Right?
+> >
+> > Frederic? My understanding was that he really was going to split the
+> > whole thing. The moment you allow masking individual soft vectors, you
+> > get per-vector dependency chains.
+>
+> It seems so. What I understand is: for IRQ usage, the difference is:
+>
+> Each lock has a new usage mask:
+>
+>         softirq10, ..., softirq1, hardirq
+>
+> where softirq1 | softirq2 | ... | softirq10 = softirq
+>
+> where softirq, exactly what was, virtually is used in the checking.
+> This is mainly because, any irq vector has any usage, the lock has
+> that usage, be it hard or soft.
+>
+> If that is right, hardirq can be split too (why not if softirq does
+> :)). So, maybe a bitmap to do them all for tracking, and optionally
+> maintain aggregate softirq and hardirq for checking as before.
+> Regardless, may irq-safe reachability thing is not affected.
+>
+> And for the chain, which is mainly for caching does not really matter
+> split or not (either way, the outcome will be the same?), because
+> there will be a hash for a chain anyway, which is the same. Right?
 
---RbAp84Sx/Z5HOs1D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, May 03, 2019 at 05:31:14PM +0800, Hsin-Hsiung Wang wrote:
-
-A few fairly minor things but mostly this looks good.
-
-> +static const u32 vcama1_voltages[] = {
-> +	1800000, 2500000, 2700000,
-> +	2800000, 2900000, 3000000,
-> +};
-
-> +static const u32 vcama2_voltages[] = {
-> +	1800000, 2500000, 2700000,
-> +	2800000, 2900000, 3000000,
-> +};
-> +
-
-These two tables look the same?
-
-> +static int mt6358_get_voltage_sel(struct regulator_dev *rdev)
-> +{
-> +	int idx, ret;
-> +	u32 selector;
-> +	struct mt6358_regulator_info *info = rdev_get_drvdata(rdev);
-> +	const u32 *pvol;
-> +
-> +	ret = regmap_read(rdev->regmap, info->desc.vsel_reg, &selector);
-> +	if (ret != 0) {
-> +		dev_info(&rdev->dev,
-> +			 "Failed to get mt6358 %s vsel reg: %d\n",
-> +			 info->desc.name, ret);
-> +		return ret;
-> +	}
-> +
-> +	selector = (selector & info->desc.vsel_mask) >> info->vsel_shift;
-> +	pvol = (const u32 *)info->index_table;
-> +	ret = -1;
-> +	for (idx = 0; idx < info->desc.n_voltages; idx++) {
-> +		if (pvol[idx] == selector) {
-> +			ret = idx;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-
-I don't entirely understand what this is intended to do which suggests
-it could use some comments.  As far as I can tell it's looking up the
-hardware selector in a table and then using the index of the entry in
-that table as the selector in order to deal with a sparse set of
-selectors, is that right?  You should be able to handle this by having
-_list_voltage() return an error code for the invalid selectors though we
-don't have helpers for that yet as it's an unusual design.
-
-Also -1 is not a good return value in the case where you fail to do a
-mapping, use -EINVAL.
-
-> +	ret = regmap_read(rdev->regmap, info->da_vsel_reg, &regval);
-> +	if (ret != 0) {
-> +		dev_info(&rdev->dev,
-> +			 "Failed to get mt6358 Buck %s vsel reg: %d\n",
-> +			 info->desc.name, ret);
-> +		return ret;
-> +	}
-
-These error messages should be dev_err().
-
---RbAp84Sx/Z5HOs1D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzPq/oACgkQJNaLcl1U
-h9BktAf/aapG5sI3j3lduVVaxhPGb7OblQA1/rmv6rhzowc0XcjywrRfMMlL6sep
-mS9qN1bqSNfzF9jPmK9OZS012K04jHqCbDzeJ8tJbRdq1SXNO0KpIukzTaPghrsc
-I42t/n4iqmnDtVyHRlBmhIpzeeJPdghqNRL+Q0WnBFEAtCjMq3TBXasmbEqPNFBs
-zMZHo7/pfbBJfeNiVYj4Z9Fujt9G1cLEiG0386sgTZLt2GXC1tFk5nsh1Z7dJppa
-U+L2jM+HMVU9ylQcVEMzsJx//3eEQHBMvGL18tkGtjU8zWnYUpue/A4MKziwwRyI
-WXOx4oPTy0KypDnnAhOZhT12VM+D1g==
-=otJk
------END PGP SIGNATURE-----
-
---RbAp84Sx/Z5HOs1D--
+Oh, another look at the patch, I was wrong, it can be very different
+if consider: used in vector X vs. enabled on vector Y (which is ok),
+when enablement can be so fine-grained as well, which is actually the
+point of the patch, though no difference for now :(
