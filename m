@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F09214BFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D327414C60
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfEFOfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:35:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55040 "EHLO mail.kernel.org"
+        id S1726976AbfEFOjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:39:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfEFOfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:35:06 -0400
+        id S1727885AbfEFOjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:39:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D294420B7C;
-        Mon,  6 May 2019 14:35:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66BEE206A3;
+        Mon,  6 May 2019 14:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153306;
-        bh=SGIO49HU9nzxxhyzNornMmXmuF4ftIIlr/spORJIoHE=;
+        s=default; t=1557153586;
+        bh=Dy+I8rsDbFZauPhRvbkfbHNORIdzXayt9jJPqi/2LOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoNJ4QZZHFNm3wIBk8ofECOpGlVOpvXhnx4q1qdTqS5dFpcjp/vv2cXvfxcoFdDcN
-         T319DoXA+w+CzuOghugEymdK1tlxmBZpJl19SW1ov2sEZUndLheHhpZC8+1Jb8Rt4q
-         BP2gjqz/3DpSC1xs0wYfRQ10OKK06DoWESSOonjw=
+        b=OJf14wEzfjize+4yc9N6IiaFEoef5Kp9UYCTR4pTYnVPruNY7qYvjrgxMlfy50336
+         h5CbXHseH+m2mWMFmEWI0XFsS/a6q0ZpVLISYe6YLx2ZeeGlm0pktaK1Sa30b3PD7Y
+         hIyU9gYJvBqiZNQL0vXqIZYgkRvb27qp+3cg8xUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 039/122] i40e: fix i40e_ptp_adjtime when given a negative delta
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.19 04/99] i2c: synquacer: fix enumeration of slave devices
 Date:   Mon,  6 May 2019 16:31:37 +0200
-Message-Id: <20190506143058.408004932@linuxfoundation.org>
+Message-Id: <20190506143054.270143744@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b3ccbbce1e455b8454d3935eb9ae0a5f18939e24 ]
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Commit 0ac30ce43323 ("i40e: fix up 32 bit timespec references",
-2017-07-26) claims to be cleaning up references to 32-bit timespecs.
+commit 95e0cf3caeb11e1b0398c747b5cfa12828263824 upstream.
 
-The actual contents of the commit make no sense, as it converts a call
-to timespec64_add into timespec64_add_ns. This would seem ok, if (a) the
-change was documented in the commit message, and (b) timespec64_add_ns
-supported negative numbers.
+The I2C host driver for SynQuacer fails to populate the of_node and
+ACPI companion fields of the struct i2c_adapter it instantiates,
+resulting in enumeration of the subordinate I2C bus to fail.
 
-timespec64_add_ns doesn't work with signed deltas, because the
-implementation is based around iter_div_u64_rem. This change resulted in
-a regression where i40e_ptp_adjtime would interpret small negative
-adjustments as large positive additions, resulting in incorrect
-behavior.
+Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C controller")
+Cc: <stable@vger.kernel.org> # v4.19+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This commit doesn't appear to fix anything, is not well explained, and
-introduces a bug, so lets just revert it.
-
-Reverts: 0ac30ce43323 ("i40e: fix up 32 bit timespec references", 2017-07-26)
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_ptp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-synquacer.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ptp.c b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-index 5fb4353c742b..31575c0bb884 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-@@ -146,12 +146,13 @@ static int i40e_ptp_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
- static int i40e_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
- 	struct i40e_pf *pf = container_of(ptp, struct i40e_pf, ptp_caps);
--	struct timespec64 now;
-+	struct timespec64 now, then;
+--- a/drivers/i2c/busses/i2c-synquacer.c
++++ b/drivers/i2c/busses/i2c-synquacer.c
+@@ -602,6 +602,8 @@ static int synquacer_i2c_probe(struct pl
+ 	i2c->adapter = synquacer_i2c_ops;
+ 	i2c_set_adapdata(&i2c->adapter, i2c);
+ 	i2c->adapter.dev.parent = &pdev->dev;
++	i2c->adapter.dev.of_node = pdev->dev.of_node;
++	ACPI_COMPANION_SET(&i2c->adapter.dev, ACPI_COMPANION(&pdev->dev));
+ 	i2c->adapter.nr = pdev->id;
+ 	init_completion(&i2c->completion);
  
-+	then = ns_to_timespec64(delta);
- 	mutex_lock(&pf->tmreg_lock);
- 
- 	i40e_ptp_read(pf, &now, NULL);
--	timespec64_add_ns(&now, delta);
-+	now = timespec64_add(now, then);
- 	i40e_ptp_write(pf, (const struct timespec64 *)&now);
- 
- 	mutex_unlock(&pf->tmreg_lock);
--- 
-2.20.1
-
 
 
