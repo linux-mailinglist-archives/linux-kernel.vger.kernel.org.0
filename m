@@ -2,252 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA481536E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E001815373
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfEFSLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 14:11:52 -0400
-Received: from sauhun.de ([88.99.104.3]:36670 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbfEFSLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 14:11:52 -0400
-Received: from localhost (p54B3305A.dip0.t-ipconnect.de [84.179.48.90])
-        by pokefinder.org (Postfix) with ESMTPSA id E83DE2C0963;
-        Mon,  6 May 2019 20:11:48 +0200 (CEST)
-Date:   Mon, 6 May 2019 20:11:48 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Asmaa Mnebhi <Asmaa@mellanox.com>
-Cc:     minyard@acm.org, vadimp@mellanox.com, michaelsh@mellanox.com,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 1/1] Add support for IPMB driver
-Message-ID: <20190506181148.GA20968@kunai>
-References: <cover.1557156354.git.Asmaa@mellanox.com>
- <9856500095266840f5cf111d6b296c4689414b2d.1557156354.git.Asmaa@mellanox.com>
+        id S1726894AbfEFSMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 14:12:46 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:42939 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbfEFSMp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 14:12:45 -0400
+Received: from [192.168.1.166] ([37.4.249.123]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MHFwM-1hS3hN2Tz6-00DJIf; Mon, 06 May 2019 20:12:29 +0200
+Subject: Re: [PATCH v2 0/3] staging: vchiq: use interruptible waits
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Cc:     phil@raspberrypi.org, dan.carpenter@oracle.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+References: <20190506144030.29056-1-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <b2679404-ba00-d18e-fe15-44c6e280dc11@i2se.com>
+Date:   Mon, 6 May 2019 20:12:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <9856500095266840f5cf111d6b296c4689414b2d.1557156354.git.Asmaa@mellanox.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190506144030.29056-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:OO0YujQIAL03yiODcrGeZwSAoqP+QyZGcS3Rb/0D4viZDd3HuAr
+ A0n/6hygucW8vIYS2sdJnsPBdTgKZVIeJrBLQfCJXdQU82yox2zXEi82Aeh1xK73P87Lwkf
+ fdt1AfVEuBdqTkkgEITpoL3bFeRm3MvFQBya5po2xJvt4rt2lLSzf0NQlXFpi32U8ln6dhY
+ NDXoAES+YgvwLNCrGIXTA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3UH7jCBTWv8=:f5pksuQByHCya4v0SpsqPd
+ rvQGgK/Xf2fZ9FYd+D6KuDn3qJN+Zbt9Tw+SFtQBpaq6cFtjdcKxJXw9Fy5JuQlVgwtBCX31b
+ z0Z0Hl0XTK6phUUZkj7VGHQdgtexXFW8TPIHyFr7rIgwjxMPKJ+LxKO27AYkkUtd/vCF9U+lr
+ xCigT9DIOy9Mwe8xe7yhDu/bnEn4MO4TwIrG4iU9woBrZgZV9vL/xKNwgTLi74duS9Q16ew5X
+ VoAUCtjyPTO3kdUWffGc/512KXhfUkZwHCzzfWPyZ5LOnAee/MxoExhsgUppX/iB6n7Vd3roy
+ Dvu3n0HeGlFQlFPj3AoduvgguL/J9ONCEIbVTRHdRbZ+CXcjHducbyhmgH5qyQOAgtGOXTadg
+ rBOdc610VxGRLPEDH1kMYiJR3par4JD8+78izqlvoNEY75HoppdHzZeY2j8SZfGc/HJaSgbLi
+ 3Kas8kPfJgRZBLDDw4+C0QFEIz9qYjqSaTGS64OHFZMxonrm2hixuuXkn6pcNRzm/vkaBkEMQ
+ YZ1til0P90w1e9vmGgK51WXz6YsEUZRdHWFnqkWQF9lT33dqWgu8/zuLjV4CHuLQ73+5mCdz9
+ eVsae038tLQ+5C8LzogmOk/I6yTvlwHG36GhYxl7pkJgo2mtZW7qugKnhPpQ688Oz1niaOd6V
+ TRl7aEpOA56HSzu+8FKf4FH++RBHLUE7dT2yQo47X5PU6S6BuDiLDvVeYoKDa6f1Rv792Ws3q
+ crWF3LZmzEg8pNdmeg6mBWvOFSW1uX/f4LpOGp7o5LudukrpVUORNlxnGeA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Nicolas,
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 06.05.19 um 16:40 schrieb Nicolas Saenz Julienne:
+> Hi,
+> ...
+>
+> Regards,
+> Nicolas
+>
+> [1] https://github.com/raspberrypi/linux/issues/2881
+> [2] https://archlinuxarm.org/forum/viewtopic.php?f=65&t=13485
+> [3] https://lists.fedoraproject.org/archives/list/arm@lists.fedoraproject.org/message/GBXGJ7DOV5CQQXFPOZCXTRD6W4BEPT4Q/
+>
+> --
+>
+> Changes since v1:
+>   - Proplery format revert commits
+>   - Add code comment to remind of this issue
+>   - Add Fixes tags
+>
+> Nicolas Saenz Julienne (3):
+>   staging: vchiq_2835_arm: revert "quit using custom
+>     down_interruptible()"
+>   staging: vchiq: revert "switch to wait_for_completion_killable"
+>   staging: vchiq: make wait events interruptible
+>
+>  .../interface/vchiq_arm/vchiq_2835_arm.c      |  2 +-
+>  .../interface/vchiq_arm/vchiq_arm.c           | 21 +++++++------
+>  .../interface/vchiq_arm/vchiq_core.c          | 31 ++++++++++++-------
+>  .../interface/vchiq_arm/vchiq_util.c          |  6 ++--
+>  4 files changed, 35 insertions(+), 25 deletions(-)
+>
+against which tree should this series apply?
 
-Hi,
+Since the merge window opened the current staging-linus wont be
+available soon.
 
-some more words from the I2C world.
+Stefan
 
-> +For instance, you can instantiate the ipmb-dev-int device from
-> +user space at the 7 bit address 0x10 on bus 2:
-> +
-> +  # echo ipmb-dev 0x10 > /sys/bus/i2c/devices/i2c-2/new_device
-
-"0x1010" as described in Documentation/i2c/slave-interface
-
-> +config IPMB_DEVICE_INTERFACE
-> +       tristate 'IPMB Interface handler'
-> +       depends on I2C && I2C_SLAVE
-
-Minor nit: I2C could be dropped because I2C_SLAVE depends on it.
-
-> --- a/drivers/char/ipmi/Makefile
-> +++ b/drivers/char/ipmi/Makefile
-> @@ -26,3 +26,4 @@ obj-$(CONFIG_IPMI_KCS_BMC) +=3D kcs_bmc.o
->  obj-$(CONFIG_ASPEED_BT_IPMI_BMC) +=3D bt-bmc.o
->  obj-$(CONFIG_ASPEED_KCS_IPMI_BMC) +=3D kcs_bmc_aspeed.o
->  obj-$(CONFIG_NPCM7XX_KCS_IPMI_BMC) +=3D kcs_bmc_npcm7xx.o
-> +obj-$(CONFIG_IPMB_DEVICE_INTERFACE) +=3D ipmb_dev_int.o
-
-Dunno if IPMI maintainers care about sorting here?
-
-> +#define	dev_fmt(fmt) "ipmb_dev_int: " fmt
-
-I think this can go now. dev_* with miscchar device (as it is done now)
-should be all good.
-
-> +#define	MAX_MSG_LEN		128
-> +#define	IPMB_REQUEST_LEN_MIN	7
-> +#define	NETFN_RSP_BIT_MASK	0x4
-> +#define	REQUEST_QUEUE_MAX_LEN	256
-> +
-> +#define	IPMB_MSG_LEN_IDX	0
-> +#define	RQ_SA_8BIT_IDX		1
-> +#define	NETFN_LUN_IDX		2
-> +
-> +#define	IPMB_MSG_PAYLOAD_LEN_MAX (MAX_MSG_LEN - IPMB_REQUEST_LEN_MIN - 1)
-> +
-> +#define	SMBUS_MSG_HEADER_LENGTH	2
-> +#define	SMBUS_MSG_IDX_OFFSET	(SMBUS_MSG_HEADER_LENGTH + 1)
-> +
-> +#define	GET_8BIT_ADDR(addr_7bit) ((addr_7bit << 1) && 0xff)
-
-Still wondering about the tabs after define.
-
-> +static int receive_ipmb_request(struct ipmb_dev *ipmb_dev_p,
-> +				bool non_blocking,
-> +				struct ipmb_msg *ipmb_request)
-> +{
-> +	struct ipmb_request_elem *queue_elem;
-> +	unsigned long flags;
-> +	int res;
-> +
-> +	spin_lock_irqsave(&ipmb_dev_p->lock, flags);
-> +
-> +	while (!atomic_read(&ipmb_dev_p->request_queue_len)) {
-> +		spin_unlock_irqrestore(&ipmb_dev_p->lock, flags);
-> +		if (non_blocking)
-> +			return -EAGAIN;
-> +
-> +		res =3D wait_event_interruptible(ipmb_dev_p->wait_queue,
-> +				atomic_read(&ipmb_dev_p->request_queue_len));
-> +		if (res)
-> +			return res;
-> +
-> +		spin_lock_irqsave(&ipmb_dev_p->lock, flags);
-> +	}
-> +
-> +	if (list_empty(&ipmb_dev_p->request_queue)) {
-> +		dev_err(&ipmb_dev_p->client->dev, "request_queue is empty\n");
-
-Spinlock still held?? Kinda proves that the flow of code is still hard
-to read. (I mean it is way better without the goto, but still...)
-
-> +		return -EIO;
-> +	}
-> +
-> +	queue_elem =3D list_first_entry(&ipmb_dev_p->request_queue,
-> +					struct ipmb_request_elem, list);
-> +	memcpy(ipmb_request, &queue_elem->request, sizeof(*ipmb_request));
-> +	list_del(&queue_elem->list);
-> +	kfree(queue_elem);
-> +	atomic_dec(&ipmb_dev_p->request_queue_len);
-> +
-> +	spin_unlock_irqrestore(&ipmb_dev_p->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-
-=2E..
-
-> +static s32 i2c_smbus_write_block_data_local(struct i2c_client *client,
-> +					u8 command, u8 length,
-> +					u16 requester_i2c_addr,
-> +					const char *msg)
-> +{
-> +	union i2c_smbus_data data;
-> +	int ret;
-> +
-> +	if (length > I2C_SMBUS_BLOCK_MAX)
-> +		length =3D I2C_SMBUS_BLOCK_MAX;
-> +
-> +	data.block[0] =3D length;
-> +	memcpy(&data.block[1], msg, length);
-> +
-> +	ret =3D i2c_smbus_xfer(client->adapter, requester_i2c_addr,
-> +				client->flags,
-> +				I2C_SMBUS_WRITE, command,
-> +				I2C_SMBUS_BLOCK_DATA, &data);
-> +
-> +	return ret;
-> +}
-
-This function must go. You need it solely to pass 'requester_i2c_addr'
-along, but this shows that you are using the wrong i2c_client struct.
-And, in deed, you don't want your own here because you don't want to
-send to yourself here. Usually, you'd register a new i2c_client with the
-address you want to talk to using 'i2c_new_device'. However, since this
-is a userspace interface, I guess we can do something similar as in
-i2c-dev.c, namely an anonymous i2c_client. Read on.
-
-> +
-> +static ssize_t ipmb_write(struct file *file, const char __user *buf,
-> +			size_t count, loff_t *ppos)
-> +{
-> +	struct ipmb_dev *ipmb_dev_p =3D to_ipmb_dev(file);
-> +	u8 msg[MAX_MSG_LEN];
-> +	ssize_t ret;
-> +	u8 rq_sa, netf_rq_lun, msg_len;
-
-=46rom the top of my head, not sure if I got all details right:
-
-+	struct i2c_client rq_client =3D { };
-
-> +	if (count > sizeof(msg))
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(&msg, buf, count) || count < msg[0])
-> +		return -EFAULT;
-> +
-> +	rq_sa =3D msg[RQ_SA_8BIT_IDX] >> 1;
-> +	netf_rq_lun =3D msg[NETFN_LUN_IDX];
-
-+	rq_client.name =3D "IPMB anonymous"
-+	rq_client.adapter =3D ipmb_dev_p->client->adapter;
-+	rq_client.addr =3D rq_sa;
-
-> +	/*
-> +	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
-> +	 * i2c_smbus_write_block_data_local
-> +	 */
-> +	msg_len =3D msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
-> +
-> +	mutex_lock(&ipmb_dev_p->file_mutex);
-> +	ret =3D i2c_smbus_write_block_data_local(ipmb_dev_p->client,
-> +					netf_rq_lun, msg_len, rq_sa, msg +
-> +					SMBUS_MSG_IDX_OFFSET);
-
-and then replace the call above with
-
-	ret =3D i2c_smbus_write_block_data(&rq_client, ...)
-
-> +	mutex_unlock(&ipmb_dev_p->file_mutex);
-> +
-> +	return ret ? : count;
-> +}
-> +
-
-=2E..
-
-> +static int ipmb_probe(struct i2c_client *client,
-> +			const struct i2c_device_id *id)
-> +{
-> +	struct ipmb_dev *ipmb_dev_p;
-
-And I still dislike the _p suffix. It is not common Kernel coding style
-and unless it is common in this subsystem, I'd suggest to drop it for
-consistency reasons.
-
-Thanks for keeping at this driver,
-
-   Wolfram
-
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzQeN8ACgkQFA3kzBSg
-Kbaj/hAApiDVxD7pkgluceLpkK21ZpmmDagflamm30SJz06UItvtO2ky+/69MD33
-gdOvQOkwmvlPKA5xNkNxPKxKeY7BOiRDIlxAB03+ji2E6b8Xlsqc2yVoULtoDA6V
-2D18AvoY6SbDXMcDQLiclF5e42X8mEqkhfrOqVndvSZ3hgf1Rd66bMJ//hiH3Jjk
-SnEMS62fKuziVk5ylaGZs4/MFuC5PAyGagK8TehXD8Jryc9rUtZrvx4X1EfQfQss
-iVJoQONl23OenWdGO2ruBb+S+uIOl7bM7TZdapSsILO+CBpONJxb9O01hcKD9edt
-rlvSX9BMF773RPnGH4zQ5+Oi6Y2uK/oi+e8qFkwNgPpdbZGW7iPjoBQIP+iK1X4Y
-xN9jxX0MNBz9CwgYjmh8ddWYoNAP3qqoiqz9+Pt5dtBMtbDSZ3HKFLIfmbWcxwD9
-SEVgHIgMrsmyWp5kbVGvOnRirGQ9tQUSu3k1BJeR/YBPWMVMqF9DWcRGyQ01CZE0
-w5TmGyUClqK5gwBnfUpAFoa9SQpF/Pg3R13QW4GhTAAZ40NFI9J6cbPLveKccuuh
-B3f1ot2jYhY/1s9iJK7QWmFO/Q54+ppyv3nuo4ZfEGkDOvig2PO/17gJDMbklRQu
-5khg61orMc6XKDGlji8zcLnJWsnk87EV6jKPDH9VYeY09wdguzs=
-=h9g0
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
