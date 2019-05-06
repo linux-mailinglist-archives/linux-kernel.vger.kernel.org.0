@@ -2,177 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5FE14381
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 04:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6565214386
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 04:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbfEFCTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 22:19:47 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:57598 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfEFCTr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 22:19:47 -0400
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x462Jdw5003248;
-        Mon, 6 May 2019 11:19:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x462Jdw5003248
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557109180;
-        bh=Vya/13bsWcbegIjw+dGbayHmf3WM/WFP+czE83gdy80=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vob8ntYVYqlBp6KqtMsWpwPA+xJsOkwSq6oXdeMUhqTjf2lOmAmyUZFv7ssxQ+pL2
-         SdAczp/EDK7W1WM2IDmzF5nKONgyZxJbc818rGuA0nfHgnDu7v8HlTks6LOefqFSzR
-         cpUd/w7OGCIGpNTmV/40bA8NMXqyP+ZYMsSjpuLjKbAPF/F1Bz2ZiKKGEIXynNV4Ey
-         fTzKbHIigMzufgzmBucoNXbJ5GyqPCyd7Y8uHhSiA+2mLizDXENLp5cxutyi8B46Zv
-         vUaYZGoP+AhgMTMtE9KZf0oiWmetCIolMYWytypJ7p6l3KpPOEAyFauqmbRnVmsDX4
-         7E6zBsZZvCzrQ==
-X-Nifty-SrcIP: [209.85.222.47]
-Received: by mail-ua1-f47.google.com with SMTP id 49so701298uas.0;
-        Sun, 05 May 2019 19:19:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAV9BlHi2h6nU5YWVYKKOBy73C/uIyWCjwTbd4MbWkfe66hmIbKh
-        ZXhN+VJNGxCSjgzfCJeSlAFfuKVlnTskQeJM0Rs=
-X-Google-Smtp-Source: APXvYqzNpAk6HvfTjhnOfMFygyp2YynWbz0GYI0vCCnRJtWS0p6k5Elw2WFFMSUkfCuMRxcH3asnT/kVNT2VXeXe/oA=
-X-Received: by 2002:a9f:2d99:: with SMTP id v25mr10412617uaj.25.1557109178802;
- Sun, 05 May 2019 19:19:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190506094609.08e930f2@canb.auug.org.au>
-In-Reply-To: <20190506094609.08e930f2@canb.auug.org.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 6 May 2019 11:19:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
-Message-ID: <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
-Subject: Fwd: linux-next: build failure after merge of the kbuild tree
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000007ac93f05882ebb3c"
+        id S1726094AbfEFC26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 22:28:58 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:56748 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbfEFC26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 22:28:58 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7870200100;
+        Mon,  6 May 2019 04:28:55 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D1CB92001A2;
+        Mon,  6 May 2019 04:28:52 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A9B25402A6;
+        Mon,  6 May 2019 10:28:48 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com, leoyang.li@nxp.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [V2 1/2] dmaengine: fsl-qdma: fixed the source/destination descriptor format
+Date:   Mon,  6 May 2019 10:21:10 +0800
+Message-Id: <20190506022111.31751-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000007ac93f05882ebb3c
-Content-Type: text/plain; charset="UTF-8"
+CMD of Source/Destination descriptor format should be lower of
+struct fsl_qdma_engine number data address.
 
-Hi Paul,
-
-In today's linux-next build testing,
-more "make ... explicitly non-modular"
-candidates showed up.
-
-
-arch/arm/plat-omap/dma.c
-drivers/clocksource/timer-ti-dm.c
-drivers/mfd/omap-usb-host.c
-drivers/mfd/omap-usb-tll.c
-
-Would you send patches?
-
-I think EXPORT_SYMBOL_GPL() in omap-usb-tll.c
-are also unnecessary.
-
-Thanks.
-
-
-
----------- Forwarded message ---------
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, May 6, 2019 at 8:51 AM
-Subject: linux-next: build failure after merge of the kbuild tree
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
-Mailing List <linux-kernel@vger.kernel.org>, Alexey Gladkov
-<gladkov.alexey@gmail.com>, Keshava Munegowda <keshava_mgowda@ti.com>,
-Samuel Ortiz <sameo@linux.intel.com>
-
-
-Hi Masahiro,
-
-After merging the kbuild tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-In file included from include/linux/module.h:18,
-                 from drivers/mfd/omap-usb-tll.c:21:
-drivers/mfd/omap-usb-tll.c:462:26: error: expected ',' or ';' before
-'USBHS_DRIVER_NAME'
- MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-                          ^~~~~~~~~~~~~~~~~
-include/linux/moduleparam.h:26:47: note: in definition of macro '__MODULE_INFO'
-   = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-                                               ^~~~
-include/linux/module.h:164:30: note: in expansion of macro 'MODULE_INFO'
- #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
-                              ^~~~~~~~~~~
-drivers/mfd/omap-usb-tll.c:462:1: note: in expansion of macro 'MODULE_ALIAS'
- MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
- ^~~~~~~~~~~~
-
-Caused by commit
-
-  6a26793a7891 ("moduleparam: Save information about built-in modules
-in separate file")
-
-USBHS_DRIVER_NAME is not defined and this kbuild tree change has
-exposed it. It has been this way since commit
-
-  16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
-
-From v3.7-rc1 in 2012.
-
-I have applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 6 May 2019 09:39:14 +1000
-Subject: [PATCH] mfd: omap: remove unused MODULE_ALIAS from omap-usb-tll.c
-
-USBHS_DRIVER_NAME has never been defined, so this cannot have ever
-been used.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- drivers/mfd/omap-usb-tll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changed for V2:
+	- Fix descriptor spelling
 
-diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-index 446713dbee27..1cc8937e8bec 100644
---- a/drivers/mfd/omap-usb-tll.c
-+++ b/drivers/mfd/omap-usb-tll.c
-@@ -459,7 +459,7 @@ EXPORT_SYMBOL_GPL(omap_tll_disable);
+ drivers/dma/fsl-qdma.c |   25 +++++++++++++++++--------
+ 1 files changed, 17 insertions(+), 8 deletions(-)
 
- MODULE_AUTHOR("Keshava Munegowda <keshava_mgowda@ti.com>");
- MODULE_AUTHOR("Roger Quadros <rogerq@ti.com>");
--MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-+// MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("usb tll driver for TI OMAP EHCI and OHCI controllers");
-
---
-2.20.1
-
---
-Cheers,
-Stephen Rothwell
-
-
+diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
+index aa1d0ae..2e8b46b 100644
+--- a/drivers/dma/fsl-qdma.c
++++ b/drivers/dma/fsl-qdma.c
+@@ -113,6 +113,7 @@
+ /* Field definition for Descriptor offset */
+ #define QDMA_CCDF_STATUS		20
+ #define QDMA_CCDF_OFFSET		20
++#define QDMA_SDDF_CMD(x)		(((u64)(x)) << 32)
+ 
+ /* Field definition for safe loop count*/
+ #define FSL_QDMA_HALT_COUNT		1500
+@@ -214,6 +215,12 @@ struct fsl_qdma_engine {
+ 
+ };
+ 
++static inline void
++qdma_sddf_set_cmd(struct fsl_qdma_format *sddf, u32 val)
++{
++	sddf->data = QDMA_SDDF_CMD(val);
++}
++
+ static inline u64
+ qdma_ccdf_addr_get64(const struct fsl_qdma_format *ccdf)
+ {
+@@ -341,6 +348,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+ static void fsl_qdma_comp_fill_memcpy(struct fsl_qdma_comp *fsl_comp,
+ 				      dma_addr_t dst, dma_addr_t src, u32 len)
+ {
++	u32 cmd;
+ 	struct fsl_qdma_format *sdf, *ddf;
+ 	struct fsl_qdma_format *ccdf, *csgf_desc, *csgf_src, *csgf_dest;
+ 
+@@ -353,6 +361,7 @@ static void fsl_qdma_comp_fill_memcpy(struct fsl_qdma_comp *fsl_comp,
+ 
+ 	memset(fsl_comp->virt_addr, 0, FSL_QDMA_COMMAND_BUFFER_SIZE);
+ 	memset(fsl_comp->desc_virt_addr, 0, FSL_QDMA_DESCRIPTOR_BUFFER_SIZE);
++
+ 	/* Head Command Descriptor(Frame Descriptor) */
+ 	qdma_desc_addr_set64(ccdf, fsl_comp->bus_addr + 16);
+ 	qdma_ccdf_set_format(ccdf, qdma_ccdf_get_offset(ccdf));
+@@ -369,14 +378,14 @@ static void fsl_qdma_comp_fill_memcpy(struct fsl_qdma_comp *fsl_comp,
+ 	/* This entry is the last entry. */
+ 	qdma_csgf_set_f(csgf_dest, len);
+ 	/* Descriptor Buffer */
+-	sdf->data =
+-		cpu_to_le64(FSL_QDMA_CMD_RWTTYPE <<
+-			    FSL_QDMA_CMD_RWTTYPE_OFFSET);
+-	ddf->data =
+-		cpu_to_le64(FSL_QDMA_CMD_RWTTYPE <<
+-			    FSL_QDMA_CMD_RWTTYPE_OFFSET);
+-	ddf->data |=
+-		cpu_to_le64(FSL_QDMA_CMD_LWC << FSL_QDMA_CMD_LWC_OFFSET);
++	cmd = cpu_to_le32(FSL_QDMA_CMD_RWTTYPE <<
++			  FSL_QDMA_CMD_RWTTYPE_OFFSET);
++	qdma_sddf_set_cmd(sdf, cmd);
++
++	cmd = cpu_to_le32(FSL_QDMA_CMD_RWTTYPE <<
++			  FSL_QDMA_CMD_RWTTYPE_OFFSET);
++	cmd |= cpu_to_le32(FSL_QDMA_CMD_LWC << FSL_QDMA_CMD_LWC_OFFSET);
++	qdma_sddf_set_cmd(ddf, cmd);
+ }
+ 
+ /*
 -- 
-Best Regards
-Masahiro Yamada
+1.7.1
 
---0000000000007ac93f05882ebb3c
-Content-Type: application/pgp-signature; name=noname
-Content-Disposition: attachment; filename=noname
-Content-Transfer-Encoding: base64
-Content-ID: <16a8aec8052c204bfcc1>
-X-Attachment-Id: 16a8aec8052c204bfcc1
-
-LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NCg0KaVFFekJBRUJDQUFkRmlFRU5JQzk2Z2la
-ODF0V2RMZ0tBVkJDODBsWDBHd0ZBbHpQZGNFQUNna1FBVkJDODBsWA0KMEd4UnRnZi9lNGNBdXRw
-WENGUFdOcGRtTEpuejB5UitrOUN0UGdhd0I2dTEvNWhvUGswbkZyWTZCU0hwbGltdw0KUjg2L2o4
-ajRoVmswMy9Yd3RjYVNGaXNqbnpVZ2lOSU04K3lWVU1WWUd0b20rM3hLLzR5RW42UGxXd1lybDBI
-UQ0KbG5pemx1U2lyZk1IOHVkN1FxV3htMk1xbENuVlJTV0piM3UrM0pzaUljSkNiS3I3MjNVczNI
-SUtKWktoK1MvdQ0KK3F3OXpscGM5c1U5N0JBWTBuVHh0VVFUVXVBTHF4UGYvanlXejlnR095dmF1
-dW1zd1lDb3MxSmtVeHMzaWhqNg0KaGErWklyeWdXT3VmVXF0bGFENXNveGoxbEdNdkpheXZ2K3R6
-bk1wQTNFUGxQMGNRTmwxR1FIbFQvWlVOTGJ4bQ0KVmpYcUNoUjZYaXRldWxyRG9tVGd5VHlJaUkz
-WmVBPT0NCj1SNXhNDQotLS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0NCg==
---0000000000007ac93f05882ebb3c--
