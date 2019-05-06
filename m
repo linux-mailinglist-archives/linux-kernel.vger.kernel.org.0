@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2549B14E3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACFE14EF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfEFOko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:40:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
+        id S1727311AbfEFPGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbfEFOkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:40:41 -0400
+        id S1726302AbfEFOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:37:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 397E6206A3;
-        Mon,  6 May 2019 14:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73A6E206A3;
+        Mon,  6 May 2019 14:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153640;
-        bh=kE/1oxJYgmNTL8Ovm9139oKe/JLOIehv6BCJ+0rIqKw=;
+        s=default; t=1557153452;
+        bh=ploqfepncoVXrCe87IV0KnwkIwovppJmkPjVgS6u8tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tQn86XPxl/DcEu1vLLVUp3OEqYESBX8pfsC803Zy70aNFjBDaitrneZoYA94jHnzP
-         UEkJS+vfB8LfwSid0puvuaF6lOeJIgNVk56tqQ4DNYVKgSdwVZNbdpvw4BKv2Lhj4P
-         AS/vhL14k0C4Ti6PkfKvKcpZUNdlkBu1IQCCFUy4=
+        b=TXOr6AhtrsnQi0FxlRLrUMM5IXm4o6FKZsE/DMtbGyFVlQ1VX6jR/EV1NYxn0gFbL
+         H29W38aNWzPld+ZpgwPZS1Nj5n3l8dtlCTDEAe2tPdmn1Y6a2HQnGRc0cDyWGRWZLj
+         KGDSdwL7R3anZZNPao4xSF0VLwHZ3usbh52lNRMc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/99] net: stmmac: dont overwrite discard_frame status
-Date:   Mon,  6 May 2019 16:32:14 +0200
-Message-Id: <20190506143057.683729949@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <lkp@intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 5.0 077/122] sh: fix multiple function definition build errors
+Date:   Mon,  6 May 2019 16:32:15 +0200
+Message-Id: <20190506143101.753765207@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +49,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1b746ce8b397e58f9e40ce5c63b7198de6930482 ]
+[ Upstream commit acaf892ecbf5be7710ae05a61fd43c668f68ad95 ]
 
-If we have error bits set, the discard_frame status will get overwritten
-by checksum bit checks, which might set the status back to good one.
-Fix by checking the COE status only if the frame is good.
+Many of the sh CPU-types have their own plat_irq_setup() and
+arch_init_clk_ops() functions, so these same (empty) functions in
+arch/sh/boards/of-generic.c are not needed and cause build errors.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If there is some case where these empty functions are needed, they can
+be retained by marking them as "__weak" while at the same time making
+builds that do not need them succeed.
+
+Fixes these build errors:
+
+arch/sh/boards/of-generic.o: In function `plat_irq_setup':
+(.init.text+0x134): multiple definition of `plat_irq_setup'
+arch/sh/kernel/cpu/sh2/setup-sh7619.o:(.init.text+0x30): first defined here
+arch/sh/boards/of-generic.o: In function `arch_init_clk_ops':
+(.init.text+0x118): multiple definition of `arch_init_clk_ops'
+arch/sh/kernel/cpu/sh2/clock-sh7619.o:(.init.text+0x0): first defined here
+
+Link: http://lkml.kernel.org/r/9ee4e0c5-f100-86a2-bd4d-1d3287ceab31@infradead.org
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/sh/boards/of-generic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-index e8855e6adb48..c42ef6c729c0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-@@ -231,9 +231,10 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
- 	 * It doesn't match with the information reported into the databook.
- 	 * At any rate, we need to understand if the CSUM hw computation is ok
- 	 * and report this info to the upper layers. */
--	ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
--				 !!(rdes0 & RDES0_FRAME_TYPE),
--				 !!(rdes0 & ERDES0_RX_MAC_ADDR));
-+	if (likely(ret == good_frame))
-+		ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
-+					 !!(rdes0 & RDES0_FRAME_TYPE),
-+					 !!(rdes0 & ERDES0_RX_MAC_ADDR));
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index 958f46da3a79..d91065e81a4e 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -164,10 +164,10 @@ static struct sh_machine_vector __initmv sh_of_generic_mv = {
  
- 	if (unlikely(rdes0 & RDES0_DRIBBLING))
- 		x->dribbling_bit++;
+ struct sh_clk_ops;
+ 
+-void __init arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
++void __init __weak arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
+ {
+ }
+ 
+-void __init plat_irq_setup(void)
++void __init __weak plat_irq_setup(void)
+ {
+ }
 -- 
 2.20.1
 
