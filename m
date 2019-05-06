@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB4C14CE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A723114E3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfEFOpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
+        id S1727389AbfEFOks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:40:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728947AbfEFOpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:23 -0400
+        id S1728068AbfEFOko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD6CC20C01;
-        Mon,  6 May 2019 14:45:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC39920449;
+        Mon,  6 May 2019 14:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153923;
-        bh=EfC+rTvkvgtF2c64+touIRCbnSPbW/2Jv0J9DZubt30=;
+        s=default; t=1557153643;
+        bh=dm6ifMpfXiurS4QVclu7KofyLbAIH7zrtJpf5C4whmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YPr2jM9JVGZZRLPxwDNFfsF3u7idB1HcaIEXxMrjjdz032LWi/72WpDHuPKOAdSY7
-         1ZgCwKh/U7IYFJqzQ38+iSPbtW6I8qGTnbOF5IqrUwmujHZty2libDkZooWOq00zjl
-         z+VYdNsWEGT6667zcG7w9Rdv+xIFZZJVZKo/YjPc=
+        b=l/3SzNlMxYEEgGHMSlLRvGc0hj9adD/4nPPzN2GBykxb9atJWt/9i2cCYmXetQ5wD
+         8JNUXo1Rya0p4l1u44o8ewJAs+zZyhmgxiBVU9OvZ9HLx780ZO5VLUSlxlk06xLCys
+         Me04CywUCQNRv7HkoMre6IkdfNZw5+KCjzcDCAn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/75] bnxt_en: Improve multicast address setup logic.
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 42/99] net: stmmac: fix dropping of multi-descriptor RX frames
 Date:   Mon,  6 May 2019 16:32:15 +0200
-Message-Id: <20190506143053.900726965@linuxfoundation.org>
+Message-Id: <20190506143057.775937269@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+[ Upstream commit 8ac0c24fe1c256af6644caf3d311029440ec2fbd ]
 
-[ Upstream commit b4e30e8e7ea1d1e35ffd64ca46f7d9a7f227b4bf ]
+Packets without the last descriptor set should be dropped early. If we
+receive a frame larger than the DMA buffer, the HW will continue using the
+next descriptor. Driver mistakes these as individual frames, and sometimes
+a truncated frame (without the LD set) may look like a valid packet.
 
-The driver builds a list of multicast addresses and sends it to the
-firmware when the driver's ndo_set_rx_mode() is called.  In rare
-cases, the firmware can fail this call if internal resources to
-add multicast addresses are exhausted.  In that case, we should
-try the call again by setting the ALL_MCAST flag which is more
-guaranteed to succeed.
+This fixes a strange issue where the system replies to 4098-byte ping
+although the MTU/DMA buffer size is set to 4096, and yet at the same
+time it's logging an oversized packet.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -6768,8 +6768,15 @@ static int bnxt_cfg_rx_mode(struct bnxt
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index c42ef6c729c0..5202d6ad7919 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -201,6 +201,11 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ 	if (unlikely(rdes0 & RDES0_OWN))
+ 		return dma_own;
  
- skip_uc:
- 	rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, 0);
-+	if (rc && vnic->mc_list_count) {
-+		netdev_info(bp->dev, "Failed setting MC filters rc: %d, turning on ALL_MCAST mode\n",
-+			    rc);
-+		vnic->rx_mask |= CFA_L2_SET_RX_MASK_REQ_MASK_ALL_MCAST;
-+		vnic->mc_list_count = 0;
-+		rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, 0);
++	if (unlikely(!(rdes0 & RDES0_LAST_DESCRIPTOR))) {
++		stats->rx_length_errors++;
++		return discard_frame;
 +	}
- 	if (rc)
--		netdev_err(bp->dev, "HWRM cfa l2 rx mask failure rc: %x\n",
-+		netdev_err(bp->dev, "HWRM cfa l2 rx mask failure rc: %d\n",
- 			   rc);
- 
- 	return rc;
++
+ 	if (unlikely(rdes0 & RDES0_ERROR_SUMMARY)) {
+ 		if (unlikely(rdes0 & RDES0_DESCRIPTOR_ERROR)) {
+ 			x->rx_desc++;
+-- 
+2.20.1
+
 
 
