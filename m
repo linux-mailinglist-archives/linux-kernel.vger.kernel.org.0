@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698C814C3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1EE14E76
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfEFOhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58630 "EHLO mail.kernel.org"
+        id S1727874AbfEFPCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:02:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbfEFOhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:46 -0400
+        id S1727628AbfEFOkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC446204EC;
-        Mon,  6 May 2019 14:37:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E8DF20449;
+        Mon,  6 May 2019 14:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153466;
-        bh=7OxJbkyPyhXvXcm9b2wqW0qcqTSUjNm69XWQPModrrQ=;
+        s=default; t=1557153648;
+        bh=BW+VHU0loTzVm3SELTlzuflSSzXdyuYxgBH/Rf5wt48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RfFhi8niW4jC0Q+yX3cg5HBf2uFgbjmx5rwIWMeNARXFB/irLNlgirrqa/DsKUj5A
-         2gCGHVUfrPvshuMpIAeup1QsngerCF3O5nwM3tYCtslDU69/6nXycWRStP8OGzIQlb
-         T9d8VSnNkaF3+oikMh0rEH7kDw5N9aU30mWFiUdw=
+        b=EsUYE9YGptHA+vKQ+bTEm2KoI9mnyuQcQa2dIIR6u6b5XfdJNye33JyCNebOSdJgI
+         P8oY3Zp+m7Zgl6u7ZeB1hic+e0HomJlZIjCdIbov8Ntg0P8ddCpbwQZfdpOlbztG5M
+         CK6A1EH90XFJGJs6WOb2QGVUuz2Vr3x/zl1RBosc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 078/122] null_blk: prevent crash from bad home_node value
-Date:   Mon,  6 May 2019 16:32:16 +0200
-Message-Id: <20190506143101.836774644@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 44/99] jffs2: fix use-after-free on symlink traversal
+Date:   Mon,  6 May 2019 16:32:17 +0200
+Message-Id: <20190506143058.026866233@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7ff684a683d777c4956fce93e60accbab2bd7696 ]
+[ Upstream commit 4fdcfab5b5537c21891e22e65996d4d0dd8ab4ca ]
 
-At module load, if the selected home_node value is greater than
-the available numa nodes, the system will crash in
-__alloc_pages_nodemask() due to a bad paging request.  Prevent this
-user error crash by detecting the bad value, logging an error, and
-setting g_home_node back to the default of NUMA_NO_NODE.
+free the symlink body after the same RCU delay we have for freeing the
+struct inode itself, so that traversal during RCU pathwalk wouldn't step
+into freed memory.
 
-Signed-off-by: John Pittman <jpittman@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/null_blk_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/jffs2/readinode.c | 5 -----
+ fs/jffs2/super.c     | 5 ++++-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
-index 62c9654b9ce8..fd7a9be54595 100644
---- a/drivers/block/null_blk_main.c
-+++ b/drivers/block/null_blk_main.c
-@@ -1749,6 +1749,11 @@ static int __init null_init(void)
- 		return -EINVAL;
- 	}
+diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
+index 389ea53ea487..bccfc40b3a74 100644
+--- a/fs/jffs2/readinode.c
++++ b/fs/jffs2/readinode.c
+@@ -1414,11 +1414,6 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f)
  
-+	if (g_home_node != NUMA_NO_NODE && g_home_node >= nr_online_nodes) {
-+		pr_err("null_blk: invalid home_node value\n");
-+		g_home_node = NUMA_NO_NODE;
-+	}
+ 	jffs2_kill_fragtree(&f->fragtree, deleted?c:NULL);
+ 
+-	if (f->target) {
+-		kfree(f->target);
+-		f->target = NULL;
+-	}
+-
+ 	fds = f->dents;
+ 	while(fds) {
+ 		fd = fds;
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index bb6ae387469f..05d892c79339 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -47,7 +47,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+ static void jffs2_i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+-	kmem_cache_free(jffs2_inode_cachep, JFFS2_INODE_INFO(inode));
++	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
 +
- 	if (g_queue_mode == NULL_Q_RQ) {
- 		pr_err("null_blk: legacy IO path no longer available\n");
- 		return -EINVAL;
++	kfree(f->target);
++	kmem_cache_free(jffs2_inode_cachep, f);
+ }
+ 
+ static void jffs2_destroy_inode(struct inode *inode)
 -- 
 2.20.1
 
