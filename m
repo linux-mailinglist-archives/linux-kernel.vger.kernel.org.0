@@ -2,115 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C95D1548E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE3B154AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfEFTnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 15:43:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34988 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfEFTnp (ORCPT
+        id S1726631AbfEFTxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 15:53:32 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43604 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfEFTxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 15:43:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w12so5378725wrp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 12:43:43 -0700 (PDT)
+        Mon, 6 May 2019 15:53:32 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u27so9785420lfg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 12:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hdQK4zeXJdKAqwIz6ylcK7HoOO8NEuJPBT9FxY26xd8=;
-        b=Mco/GNEDGXkBn81HrESqzeOpPljTOGYV6OeTxdLuWuJ21abaW14Lt2Dl1pyLFAfphJ
-         JDv0VHonxXAAuOmGd8iJrgwQvV1CbBCgciz5SLYDiolZVLPg1/gUDhm06zF/eMR32OrZ
-         JFXp7sxmCnGKvl/rYYgdUOnQESgec+Kv7CnNglfWpveLcH0Z6sPqv5RpO59q9ayq2R/9
-         3OCeOrf6F5QXmf4Y+W3rYHp8xY1mckbQDwkkIqGR9yPPDd1m7VoBnfK0kUBjNI7ErH8L
-         5EM8yymmXjT5k9LyDfNkwrQ4EXen+tJjXIu50/cWyl6IJpYRtqct8yRndJpO8CU+y5Sv
-         Fwzw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v4kkKa3SRWQVadtU9idY39CCQftkxcpIoOM0XAJqBTM=;
+        b=cdF+EPKS6Ge2/s30X7OzfVs/i8EBdXNa487B1p2vGBTd+n7CgEMvurpKHpXcLVem3u
+         rzevt8MxZIrbBVHT/2blPyzn4vnzFxGcHXwbP4Rlh59f3LBxbz5pPdNbdmV6lS7efsQa
+         93j00k6IAskp5TeuRRIvJP0yqXdlZxHNFN5Nw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=hdQK4zeXJdKAqwIz6ylcK7HoOO8NEuJPBT9FxY26xd8=;
-        b=pAYXY9IUqLTRDzPYARUUc4RxURLyQ+HjRYP2lSC4SeETAB4a7zg3SYRmz1Of3zJIQP
-         IYD2pX1iyOiZdc3hUFoqAW3ZGJbS6e8nyGb/pu4JmWHNbyI3S9vSvXVLz7ePcsh2tAdv
-         EkKnJLHv74a5qrmAEQwBd3N1InaA4m2wCJ6y58g5SDzEv+VmPuGY5j5tmHf7frfDRvlO
-         Fm7aoMKDIh5lg5A/peCiSdmFRzpVzYuptJVaIK8I3P4kEQePo+wCOZsTiVIjnx+k3xz3
-         reiUH8BlgKrcGim6vtEy9QWggO8otOI3GbFuCQO5863ihQwReaWQL4dYt+7H6p9Uxcjj
-         +HbA==
-X-Gm-Message-State: APjAAAV2drBS0hZtB+y/EILJd8sbc5FkrwxNeZgcO1T/NLNfaKz8/0V1
-        EXEbXHJEwTtBI0DGYJb5zZo=
-X-Google-Smtp-Source: APXvYqzc79vDyEk4ZenL4HoBaD6mvQFsQwD9nqX0lKa4VMK7ZBUlfZ50ZmWuc+CDMEh5d8gCZ9JuIQ==
-X-Received: by 2002:a5d:434c:: with SMTP id u12mr13913404wrr.92.1557171822968;
-        Mon, 06 May 2019 12:43:42 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j10sm33590971wrb.0.2019.05.06.12.43.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 12:43:41 -0700 (PDT)
-Date:   Mon, 6 May 2019 21:43:39 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Waiman Long <longman9394@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] locking changes for v5.2
-Message-ID: <20190506194339.GA20938@gmail.com>
-References: <20190506085014.GA130963@gmail.com>
- <a5ee37fe-bdcf-2da7-4f02-6d64b4dcd2d3@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v4kkKa3SRWQVadtU9idY39CCQftkxcpIoOM0XAJqBTM=;
+        b=JwP7q6Pg/DIPEfmu88PbWaP7YujOaH7+8Bpr1/zm16YW5f7cHOjPzAIdmqmEb0C80p
+         +6BcxxZz6Dej1poQ66mhsuzvOha0T/miDNJHv2b2Fz/RB1CPzWw4Hwuz9GhJOMvkyOlP
+         N0d3UXimIExDZHuLQymk91Q3AAHgqvhInG3VBBeHfx4wjJSXrMd8X1+AeVRNFX/d8lGa
+         ME3Pl4kEN/nOUnNUO4Zkf0gnIpjH1lSXVO5wxleHK3vUR8hJtW8hGXO7+wFhUcCFgwHq
+         nEE2Ch6e9yhvgYd6zd95AFn1RVyXdhu6Yhh8e0uO+NyKpc0RsesGP5cQHb4nPEqQozHs
+         WJbA==
+X-Gm-Message-State: APjAAAWIiUeREOLLqDo3stcIenu2OUyZrEgEGlarveYP0DYd4jZH5xhK
+        AaLcpe2HbHYzvti3zjEZiFff/dKtIzE=
+X-Google-Smtp-Source: APXvYqzOwmfAQosv4tDUNBYwplFBpgMx9W0YrszkfkGZwH2JnPpAniNM8cYhbz/YbLgNcIQ3ZyxBPA==
+X-Received: by 2002:ac2:55b5:: with SMTP id y21mr8391971lfg.84.1557172409666;
+        Mon, 06 May 2019 12:53:29 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id k8sm1090668ljc.91.2019.05.06.12.53.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 12:53:29 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id v18so7849770lfi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 12:53:29 -0700 (PDT)
+X-Received: by 2002:ac2:43cf:: with SMTP id u15mr13815824lfl.67.1557171988295;
+ Mon, 06 May 2019 12:46:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a5ee37fe-bdcf-2da7-4f02-6d64b4dcd2d3@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
+ <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
+ <20190502202146.GZ2623@hirez.programming.kicks-ass.net> <20190502185225.0cdfc8bc@gandalf.local.home>
+ <20190502193129.664c5b2e@gandalf.local.home> <20190502195052.0af473cf@gandalf.local.home>
+ <20190503092959.GB2623@hirez.programming.kicks-ass.net> <20190503092247.20cc1ff0@gandalf.local.home>
+ <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net> <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
+ <20190506081951.GJ2606@hirez.programming.kicks-ass.net> <20190506095631.6f71ad7c@gandalf.local.home>
+ <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
+ <20190506130643.62c35eeb@gandalf.local.home> <CAHk-=whesas+GDtHZks62wqXWXe4d_g3XJ359GX81qj=Fgs6qQ@mail.gmail.com>
+ <20190506145745.17c59596@gandalf.local.home>
+In-Reply-To: <20190506145745.17c59596@gandalf.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 May 2019 12:46:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
+Message-ID: <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 6, 2019 at 11:57 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> You should have waited another week to open that merge window ;-)
 
-* Waiman Long <longman9394@gmail.com> wrote:
+Hmm. I'm looking at it while the test builds happen, and since I don't
+see what's wrong in the low-level entry code, I'm looking at the
+ftrace code instead.
 
-> On 5/6/19 4:50 AM, Ingo Molnar wrote:
-> > Linus,
-> >
-> > Please pull the latest locking-core-for-linus git tree from:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-for-linus
-> >
-> >    # HEAD: d671002be6bdd7f77a771e23bf3e95d1f16775e6 locking/lockdep: Remove unnecessary unlikely()
-> >
-> > [ Dependency note: this tree depends on commits also in the RCU tree, 
-> >   please disregard this pull request if you weren't able to pull the RCU 
-> >   tree for some reason. ]
-> >
-> > Here are the locking changes in this cycle:
-> >
-> >  - rwsem unification and simpler micro-optimizations to prepare for more 
-> >    intrusive (and more lucrative) scalability improvements in v5.3
-> >    (Waiman Long)
-> 
-> Is it possible to pull in also my "locking/rwsem: Prevent decrement of
-> reader count before  increment" patch for 5.2? The rests can wait until 5.3.
+What's going on here?
 
-Sure - how close is this to a straight:
+               *pregs = int3_emulate_call(regs, (unsigned
+long)ftrace_regs_caller);
 
-	git revert 70800c3c0cc5
+that line makes no sense. Why would we emulate a call to
+ftrace_regs_caller()? That function sets up a pt_regs, and then calls
+ftrace_stub().
 
-?
+But we *have* pt_regs here already with the right values. Why isn't
+this just a direct call to ftrace_stub() from within the int3 handler?
 
-If it's close enough then please resubmit this as a 'Revert "..."' patch, 
-which I'll queue up in locking/urgent.
+And the thing is, calling ftrace_regs_caller() looks wrong, because
+that's not what happens for *real* mcount handling, which uses that
+"create_trampoline()" to create the thing we're supposed to really
+use?
 
-It also is a performance, not a correctness fix, and should probably get 
-a Cc: stable as well, right?
+Anyway, I simply don't understand the code, so I'm confused. But why
+is the int3 emulation creating a call that doesn't seem to match what
+the instruction that we're actually rewriting is supposed to do?
 
-In any case it doesn't directly affect the locking/core bits pull request 
-for Linus, 70800c3c0cc5 is already upstream.
+IOW, it looks to me like ftrace_int3_handler() is actually emulating
+something different than what ftrace_modify_code() is actually
+modifying the code to do!
 
-Thanks,
+Since the only caller of ftrace_modify_code() is update_ftrace_func(),
+why is that function not just saving the target and we'd emulate the
+call to that? Using anything else looks crazy?
 
-	Ingo
+But as mentioned, I just don't understand the ftrace logic. It looks
+insane to me, and much more likely to be buggy than the very simple
+entry code.
+
+             Linus
