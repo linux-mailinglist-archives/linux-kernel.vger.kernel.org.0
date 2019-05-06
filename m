@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC8A615655
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B0E15656
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:31:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfEFXax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 19:30:53 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15239 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfEFXav (ORCPT
+        id S1726544AbfEFXay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:30:54 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4553 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfEFXaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 19:30:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd0c3880000>; Mon, 06 May 2019 16:30:16 -0700
+        Mon, 6 May 2019 19:30:52 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cd0c3a80000>; Mon, 06 May 2019 16:30:48 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 06 May 2019 16:30:50 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 06 May 2019 16:30:52 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 06 May 2019 16:30:50 -0700
+        by hqpgpgate102.nvidia.com on Mon, 06 May 2019 16:30:52 -0700
 Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 May
- 2019 23:30:50 +0000
+ 2019 23:30:51 +0000
 From:   <rcampbell@nvidia.com>
 To:     <linux-mm@kvack.org>
 CC:     <linux-kernel@vger.kernel.org>,
@@ -35,9 +35,9 @@ CC:     <linux-kernel@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         Souptick Joarder <jrdr.linux@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 3/5] mm/hmm: Use mm_get_hmm() in hmm_range_register()
-Date:   Mon, 6 May 2019 16:29:40 -0700
-Message-ID: <20190506232942.12623-4-rcampbell@nvidia.com>
+Subject: [PATCH 4/5] mm/hmm: hmm_vma_fault() doesn't always call hmm_range_unregister()
+Date:   Mon, 6 May 2019 16:29:41 -0700
+Message-ID: <20190506232942.12623-5-rcampbell@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190506232942.12623-1-rcampbell@nvidia.com>
 References: <20190506232942.12623-1-rcampbell@nvidia.com>
@@ -49,17 +49,17 @@ X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557185416; bh=5WlIjBgfvDyvCsXkm0NjNZ11WXFUwiQ4B+j31tyLuKg=;
+        t=1557185448; bh=7sEAG7BmE97PPZ9CLmnt92JqaAHK4dBbaboJKD5IMgE=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          X-Originating-IP:X-ClientProxiedBy:Content-Transfer-Encoding:
          Content-Type;
-        b=KhdjRbMYg4rMUz7KfK9xJEDf8RwHRFmHw5yW1h4Jhf0lnVFlVigwpaMNLfTtjfrFx
-         FSIoT52YDf6KQSTBJdQfBl0Y1SP60r51yon4cBXYK9TZYAcpO2GqaSkcFKpR3kteJr
-         9827Jc7XMXh9Mj3Brr3ZtP217RpbYYz1SQ0Nq9ZoiNGBmos3CU60FFaGS+avEFFpb5
-         cMxwubKqGavAbg5bTZ6Ioa2/Ov1aLGeAmVmwfEtyYXUDolypmiKZUxu+hA+nRIz0U8
-         jFTgs+iYsHmsF6Cr3/i1vWvMvEF6Q0erFwpi0nglHSYFRtvywldCLt2OpEHi64nDss
-         c7GjIKJjQXBCQ==
+        b=U4L0ZESXdXyu4HWeu/nKyyIqj74DonoGBT6SFnyPRAxU2VVbgRApkhErj1Q1lHVhn
+         hDKrjw8OaE+4TPmGG7K+tvEa0IPgVTVALNe10MY6RAMneTRUExBPAa9QTbcSXgjawc
+         YsETYgttxPSIe5L+FFEiF/0y/82hiXtBq78QwYYYkVXC0McXLmVwZXXAIkAsozuDto
+         U4+R4b0iXWXeBU/tcZFJoxYXX7qb+74B6xFTqzHr2cOTdo37eAj4WGbYL2vcvUazhl
+         7hehU8zjzQyFMHe1OtBiBzHA74ngo4oL5rgwjQ5tply3Wwok7XgXIWx1tDz48a2D1b
+         hOAXoOVT2c3PQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,11 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ralph Campbell <rcampbell@nvidia.com>
 
-In hmm_range_register(), the call to hmm_get_or_create() implies that
-hmm_range_register() could be called before hmm_mirror_register() when
-in fact, that would violate the HMM API.
+The helper function hmm_vma_fault() calls hmm_range_register() but is
+missing a call to hmm_range_unregister() in one of the error paths.
+This leads to a reference count leak and ultimately a memory leak on
+struct hmm.
 
-Use mm_get_hmm() instead of hmm_get_or_create() to get the HMM structure.
+Always call hmm_range_unregister() if hmm_range_register() succeeded.
 
 Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
 Cc: John Hubbard <jhubbard@nvidia.com>
@@ -84,22 +85,38 @@ Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Souptick Joarder <jrdr.linux@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- mm/hmm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/hmm.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index f6c4c8633db9..2aa75dbed04a 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -936,7 +936,7 @@ int hmm_range_register(struct hmm_range *range,
- 	range->start =3D start;
- 	range->end =3D end;
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 35a429621e1e..fa0671d67269 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -559,6 +559,7 @@ static inline int hmm_vma_fault(struct hmm_range *range=
+, bool block)
+ 		return (int)ret;
 =20
--	range->hmm =3D hmm_get_or_create(mm);
-+	range->hmm =3D mm_get_hmm(mm);
- 	if (!range->hmm)
- 		return -EFAULT;
+ 	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
++		hmm_range_unregister(range);
+ 		/*
+ 		 * The mmap_sem was taken by driver we release it here and
+ 		 * returns -EAGAIN which correspond to mmap_sem have been
+@@ -570,13 +571,13 @@ static inline int hmm_vma_fault(struct hmm_range *ran=
+ge, bool block)
 =20
+ 	ret =3D hmm_range_fault(range, block);
+ 	if (ret <=3D 0) {
++		hmm_range_unregister(range);
+ 		if (ret =3D=3D -EBUSY || !ret) {
+ 			/* Same as above, drop mmap_sem to match old API. */
+ 			up_read(&range->vma->vm_mm->mmap_sem);
+ 			ret =3D -EBUSY;
+ 		} else if (ret =3D=3D -EAGAIN)
+ 			ret =3D -EBUSY;
+-		hmm_range_unregister(range);
+ 		return ret;
+ 	}
+ 	return 0;
 --=20
 2.20.1
 
