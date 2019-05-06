@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 064041460F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:22:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B351D145EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfEFIUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:20:03 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45161 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfEFIT7 (ORCPT
+        id S1726434AbfEFIUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 04:20:04 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45539 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbfEFIUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:19:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i21so6078128pgi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:19:59 -0700 (PDT)
+        Mon, 6 May 2019 04:20:03 -0400
+Received: by mail-pf1-f195.google.com with SMTP id e24so6334745pfi.12
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cMVBTmSR+asjmdXMW52Lr83ftcHwe5LGfvqtjWqKkaM=;
-        b=e1i0+EuDJCKj6QbrLdXwMAtjfORD7l/YyGUVw0+RbG9okkNhDe3a1L7Z8wQ9KrhmlN
-         Wi6Z/SBSqNjyt2FxalWBywtLKJ22ldcp8D9K5u9N4O42q1kP9RusTGOATAUpcJtD7HTQ
-         +hlVr06uzEqhyZ2qT/q8d+F1VtxXMwyLF6yynpFZ/58bfmbRG2/Ch2agsZ4Hr4cTHsh5
-         kIkU3368im43o2iPHOnxgy346QzLutxY/i1d9T46OpHkG3z2CIoooAQRzcFPNTERth74
-         6RZrKBRqrkK6DQxFoHej1gzSddc0NpkZbrV9Q51mOHdbrOfGo+6PW+0EpNkFYYcbbbvd
-         7tjQ==
+        bh=BUGgnBE5twSTtjE0GGP0JI8EGLp+1ZG15lAdVhxxXbA=;
+        b=NiDkS4zwWSm38mORkyBURO587JKzxrsID9Zdpb2iq52x87ENYYubMyr4XHTCAHHdKe
+         4F1Hh/N4kEMEnzK4B6WLLEft2XkkZPbZi3nYNU269uMoI2Zw7fGQuGQI///0bWewEs/J
+         LEvOhx4bKGY7Jcaz8eg+AD5/MNjYUWXLxgxDPtQNXgG8peY9EhRG2JWbE3zuNWpMYCDI
+         zDHm8wSZZuw5jt6h7uwzy8U9dPmyWMkTse+ieN98e3MBJ9pOmg9fVuamEpweZ99xIG7f
+         wVP1Ax2p3ZlJS/qO1NP8EHUso2ssY6bPxwR0SvdX6moR/jZbBd7aMbdsSEsWKKrxlC/r
+         SuIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cMVBTmSR+asjmdXMW52Lr83ftcHwe5LGfvqtjWqKkaM=;
-        b=VilEhZbU2CjrzACyNwEOqEOUySESrUYuwQqF5Pnk5xSexA284aMmk1LfUMve3zK2rC
-         0vqD9Cv0LZV/wruekxYpte89K8u43E95JDFRJCJhK3duMoeTTBNvrgIdMj0SMe6edRye
-         ATGH1w1CgjYffjIUAeUX/Z0jgTr+fldk6T/tYT/iDEhPgwJ16ODZWCwsR0OYWFRKwPTK
-         zkXPY10UlNV61Z8/64WS9hnx3EWk51rAvQ612E0p50kOUtyLhDgQcp05DI0OUWnIIpLP
-         a0MNaOJfSmeOBEqm6p48jKGTrwiwBeHEkLX24mLb7ajXC9OHZ21c/7ziCu3+qdc+wCFk
-         pmbA==
-X-Gm-Message-State: APjAAAUNsEi1KdVURTZrol7+ieEGdkGgK4bAPKUbadgkGWp7u64Vg5ya
-        UKe94+tXn5bxGp4vxzPitH0=
-X-Google-Smtp-Source: APXvYqxhEfFEF4P0Gr+0Nsv7Y017Gy+tTC88EF48EWWw3v9uuaev/kf9O86n3Np1rXXbNvIdeqP0VA==
-X-Received: by 2002:a63:dc50:: with SMTP id f16mr30550408pgj.396.1557130798969;
-        Mon, 06 May 2019 01:19:58 -0700 (PDT)
+        bh=BUGgnBE5twSTtjE0GGP0JI8EGLp+1ZG15lAdVhxxXbA=;
+        b=BSTk6R1FFNDip5UDbRxEfrOSBTNqTKW+aNzsDfFRMbslhiWu18h0OAG22wieik/7pJ
+         bOxEUULqvgAVfVbM7ZzTPndbBBwzc3unWzwV0iohYAYNIDstm4c0pckwJoGGqpKVV3dm
+         wKRpq+vXeVbLJV93QbWi3J8kUjLHWXaDqF7BsC/QhB1uS4+t1QAOCL3qqQnqTRA++Uco
+         dHJSBHXbVHtEYpqe2I0JDyISQfjCJEtYeTc77J7HcgNrKrL4iKcOFd9ny5UZCUpTasC4
+         +H7/vWrdLPBuaBbx3Q7YEEDSMGHJtz3/4dYgLXCpJzrre32JSUiUvdwU3TzGMsw292fP
+         g/1w==
+X-Gm-Message-State: APjAAAX4zzUPIqtZhLNFOlrQa7TgjzBxzQasSqHKlRPlepW2lUK+B4gg
+        ZasVo/jek9yIqleJXzCmkj0=
+X-Google-Smtp-Source: APXvYqyybdtAeqlSeH0Ya7dmTpakVRbj0lfuNfo68FjxXOtTWnoBDixz2TvJdCZmsydJaBqIBV9w6Q==
+X-Received: by 2002:a63:1354:: with SMTP id 20mr13391683pgt.356.1557130802143;
+        Mon, 06 May 2019 01:20:02 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.19.56
+        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.19.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 01:19:58 -0700 (PDT)
+        Mon, 06 May 2019 01:20:01 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v2 03/23] locking/lockdep: Adjust lock usage bit character checks
-Date:   Mon,  6 May 2019 16:19:19 +0800
-Message-Id: <20190506081939.74287-4-duyuyang@gmail.com>
+Subject: [PATCH v2 04/23] locking/lockdep: Remove useless conditional macro
+Date:   Mon,  6 May 2019 16:19:20 +0800
+Message-Id: <20190506081939.74287-5-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190506081939.74287-1-duyuyang@gmail.com>
 References: <20190506081939.74287-1-duyuyang@gmail.com>
@@ -63,53 +63,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lock usage bit characters are defined and determined with tricks.
-Add some explanation to make it a bit clearer, then adjust the logic to
-check the usage, which optimizes the code a bit.
-
-No functional change.
+Since #defined(CONFIG_PROVE_LOCKING) is used in the scope of #ifdef
+CONFIG_PROVE_LOCKING, it can be removed.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ kernel/locking/lockdep.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index a019330..720d195 100644
+index 720d195..a0837a0 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -499,15 +499,26 @@ static inline unsigned long lock_flag(enum lock_usage_bit bit)
- 
- static char get_usage_char(struct lock_class *class, enum lock_usage_bit bit)
- {
-+	/*
-+	 * The usage character defaults to '.' (i.e., irqs disabled and not in
-+	 * irq context), which is the safest usage category.
-+	 */
- 	char c = '.';
- 
--	if (class->usage_mask & lock_flag(bit + LOCK_USAGE_DIR_MASK))
-+	/*
-+	 * The order of the following usage checks matters, which will
-+	 * result in the outcome character as follows:
-+	 *
-+	 * - '+': irq is enabled and not in irq context
-+	 * - '-': in irq context and irq is disabled
-+	 * - '?': in irq context and irq is enabled
-+	 */
-+	if (class->usage_mask & lock_flag(bit + LOCK_USAGE_DIR_MASK)) {
- 		c = '+';
--	if (class->usage_mask & lock_flag(bit)) {
--		c = '-';
--		if (class->usage_mask & lock_flag(bit + LOCK_USAGE_DIR_MASK))
-+		if (class->usage_mask & lock_flag(bit))
- 			c = '?';
--	}
-+	} else if (class->usage_mask & lock_flag(bit))
-+		c = '-';
- 
- 	return c;
+@@ -1669,7 +1669,7 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+ 	return result;
  }
+ 
+-#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
++#ifdef CONFIG_TRACE_IRQFLAGS
+ 
+ static inline int usage_accumulate(struct lock_list *entry, void *mask)
+ {
+@@ -2147,7 +2147,7 @@ static inline void inc_chains(void)
+ 	nr_process_chains++;
+ }
+ 
+-#endif
++#endif /* CONFIG_TRACE_IRQFLAGS */
+ 
+ static void
+ print_deadlock_scenario(struct held_lock *nxt, struct held_lock *prv)
+@@ -2828,7 +2828,7 @@ static inline int validate_chain(struct task_struct *curr,
+ static void print_lock_trace(struct lock_trace *trace, unsigned int spaces)
+ {
+ }
+-#endif
++#endif /* CONFIG_PROVE_LOCKING */
+ 
+ /*
+  * We are building curr_chain_key incrementally, so double-check
 -- 
 1.8.3.1
 
