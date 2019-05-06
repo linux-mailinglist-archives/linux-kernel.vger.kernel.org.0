@@ -2,134 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 259541487C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 12:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 087731487F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 12:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfEFKo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 06:44:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52762 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfEFKo1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 06:44:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o25so4022767wmf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 03:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=F5AfuL7zt8o5dfccSY5UL2mBseC8RDufw18x0o3qLjs=;
-        b=oP6y+jdZqwB+6b6OUcuCypGjhR2aQ3HoMcZdVin8BU3kJbb2r/nUD67rx2UetthaQM
-         2hRKT2/GoNBracMj4x5GcuLLPaKP1bwGKoN7VqwEUAdL+V/NIwFXaPtUTgweww1oVlYb
-         FffUJK9aD5YRoTy7hXptRgB7aFTCe1L98GpvEJd6N6dlgl1bjEd/yo8nhQ5kDv+lw85d
-         whHnZfVtRWWgM6TnN9+N0xhLlCpHlJgfXZmSl7MLUIGweWlom4a2/dm2BkYm4IMhj6ZE
-         c6VtFO91O+IwRegCvFlClXIc+Hm//83vEHNzE+AJouQzGMwFiciqLuefi30GqPdOYvFt
-         mKKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=F5AfuL7zt8o5dfccSY5UL2mBseC8RDufw18x0o3qLjs=;
-        b=jG2aLhTCOc0P2+qPXWCMDK7i0UGd+0qowGP4Qew8IEGo/NR2I7jmL+eegiuf31yDey
-         cbrmra5VTujkf0lRoKhG2QqdQjsHKRwoTAfYIKhO/qi8lrdgmSjFcMNZkWqhfPS13bzs
-         Z5q87M1SgVvzy6RAQ8j8UXLvShD0Vr7s71rEz5EaX87bmdzdYTGjy8iaEaIay3VvgBSe
-         uwAYfj4hg+/zf+ji7LU0zkFiSxWChfNUUYLlN0iOwt85CMMlXaLeX5Y+hW+a+GGfmcMe
-         Qcy/n8ja61ZNykBzy8ZT/RFiqwMxN+NUuGUE3Spi8LbbSJvUMGLzfw2UEVPA6SrnWV/4
-         ihnA==
-X-Gm-Message-State: APjAAAWhuUTaNoEfeBzGQsdOeIHH8/s5vvH/btB0NwjQxuQOYDnJfUPR
-        8WMx9Q0hPxVgEaDEeOLj3vk=
-X-Google-Smtp-Source: APXvYqx8bl89kt1xjI79oen/lc2djya5kMF2JV/2BF/NqEbq5NP6kYIWd6Kdw3cdwsF/n78SCW7+YA==
-X-Received: by 2002:a7b:cc12:: with SMTP id f18mr16505091wmh.40.1557139465751;
-        Mon, 06 May 2019 03:44:25 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id b12sm17787071wrf.21.2019.05.06.03.44.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 03:44:25 -0700 (PDT)
-Date:   Mon, 6 May 2019 12:44:23 +0200
-From:   Ingo Molnar <mingo@kernel.org>
+        id S1726455AbfEFKpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 06:45:12 -0400
+Received: from relay.sw.ru ([185.231.240.75]:53854 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbfEFKpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 06:45:11 -0400
+Received: from [172.16.25.12] (helo=i7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hNb7J-0002zI-Ox; Mon, 06 May 2019 13:45:05 +0300
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/platform changes for v5.2
-Message-ID: <20190506104423.GA86522@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/2] ubsan: Fix nasty -Wbuiltin-declaration-mismatch GCC-9 warnings
+Date:   Mon,  6 May 2019 13:45:26 +0300
+Message-Id: <20190506104527.10724-1-aryabinin@virtuozzo.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <CAHk-=winPBAQwSr9onDoa_ejnV6uWhFiAuQSwd1X-B16vknyXw@mail.gmail.com>
+References: <CAHk-=winPBAQwSr9onDoa_ejnV6uWhFiAuQSwd1X-B16vknyXw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Building lib/ubsan.c with gcc-9 results in a ton of nasty warnings
+like this one:
+    lib/ubsan.c warning: conflicting types for built-in function
+         ‘__ubsan_handle_negate_overflow’; expected ‘void(void *, void *)’ [-Wbuiltin-declaration-mismatch]
 
-Please pull the latest x86-platform-for-linus git tree from:
+The kernel's declarations of __ubsan_handle_*() often uses 'unsigned long'
+types in parameters while GCC these parameters as 'void *' types,
+hence the mismatch.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-platform-for-linus
+Fix this by using 'void *' to match GCC's declarations.
 
-   # HEAD: 14e581c381b942ce5463a7e61326d8ce1c843be7 x86/kvm: Make steal_time visible
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Fixes: c6d308534aef ("UBSAN: run-time undefined behavior sanity checker")
+Cc: <stable@vger.kernel.org>
+---
+ lib/ubsan.c | 49 +++++++++++++++++++++++--------------------------
+ 1 file changed, 23 insertions(+), 26 deletions(-)
 
-Smaller update for Hyper-V to support EOI assist, plus LTO fixes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Andi Kleen (2):
-      x86/hyperv: Make hv_vcpu_is_preempted() visible
-      x86/kvm: Make steal_time visible
-
-Vitaly Kuznetsov (1):
-      x86/hyper-v: Implement EOI assist
-
-
- arch/x86/hyperv/hv_apic.c     | 5 +++++
- arch/x86/hyperv/hv_spinlock.c | 2 +-
- arch/x86/kernel/kvm.c         | 2 +-
- 3 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index 8eb6fbee8e13..5c056b8aebef 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -86,6 +86,11 @@ static void hv_apic_write(u32 reg, u32 val)
- 
- static void hv_apic_eoi_write(u32 reg, u32 val)
- {
-+	struct hv_vp_assist_page *hvp = hv_vp_assist_page[smp_processor_id()];
-+
-+	if (hvp && (xchg(&hvp->apic_assist, 0) & 0x1))
-+		return;
-+
- 	wrmsr(HV_X64_MSR_EOI, val, 0);
+diff --git a/lib/ubsan.c b/lib/ubsan.c
+index e4162f59a81c..1e9e2ab25539 100644
+--- a/lib/ubsan.c
++++ b/lib/ubsan.c
+@@ -86,11 +86,13 @@ static bool is_inline_int(struct type_descriptor *type)
+ 	return bits <= inline_bits;
  }
  
-diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
-index a861b0456b1a..07f21a06392f 100644
---- a/arch/x86/hyperv/hv_spinlock.c
-+++ b/arch/x86/hyperv/hv_spinlock.c
-@@ -56,7 +56,7 @@ static void hv_qlock_wait(u8 *byte, u8 val)
- /*
-  * Hyper-V does not support this so far.
-  */
--bool hv_vcpu_is_preempted(int vcpu)
-+__visible bool hv_vcpu_is_preempted(int vcpu)
+-static s_max get_signed_val(struct type_descriptor *type, unsigned long val)
++static s_max get_signed_val(struct type_descriptor *type, void *val)
  {
- 	return false;
+ 	if (is_inline_int(type)) {
+ 		unsigned extra_bits = sizeof(s_max)*8 - type_bit_width(type);
+-		return ((s_max)val) << extra_bits >> extra_bits;
++		unsigned long ulong_val = (unsigned long)val;
++
++		return ((s_max)ulong_val) << extra_bits >> extra_bits;
+ 	}
+ 
+ 	if (type_bit_width(type) == 64)
+@@ -99,15 +101,15 @@ static s_max get_signed_val(struct type_descriptor *type, unsigned long val)
+ 	return *(s_max *)val;
  }
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 5c93a65ee1e5..3f0cc828cc36 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -67,7 +67,7 @@ static int __init parse_no_stealacc(char *arg)
- early_param("no-steal-acc", parse_no_stealacc);
  
- static DEFINE_PER_CPU_DECRYPTED(struct kvm_vcpu_pv_apf_data, apf_reason) __aligned(64);
--static DEFINE_PER_CPU_DECRYPTED(struct kvm_steal_time, steal_time) __aligned(64);
-+DEFINE_PER_CPU_DECRYPTED(struct kvm_steal_time, steal_time) __aligned(64) __visible;
- static int has_steal_clock = 0;
+-static bool val_is_negative(struct type_descriptor *type, unsigned long val)
++static bool val_is_negative(struct type_descriptor *type, void *val)
+ {
+ 	return type_is_signed(type) && get_signed_val(type, val) < 0;
+ }
  
- /*
+-static u_max get_unsigned_val(struct type_descriptor *type, unsigned long val)
++static u_max get_unsigned_val(struct type_descriptor *type, void *val)
+ {
+ 	if (is_inline_int(type))
+-		return val;
++		return (unsigned long)val;
+ 
+ 	if (type_bit_width(type) == 64)
+ 		return *(u64 *)val;
+@@ -116,7 +118,7 @@ static u_max get_unsigned_val(struct type_descriptor *type, unsigned long val)
+ }
+ 
+ static void val_to_string(char *str, size_t size, struct type_descriptor *type,
+-	unsigned long value)
++			void *value)
+ {
+ 	if (type_is_int(type)) {
+ 		if (type_bit_width(type) == 128) {
+@@ -163,8 +165,8 @@ static void ubsan_epilogue(unsigned long *flags)
+ 	current->in_ubsan--;
+ }
+ 
+-static void handle_overflow(struct overflow_data *data, unsigned long lhs,
+-			unsigned long rhs, char op)
++static void handle_overflow(struct overflow_data *data, void *lhs,
++			void *rhs, char op)
+ {
+ 
+ 	struct type_descriptor *type = data->type;
+@@ -191,8 +193,7 @@ static void handle_overflow(struct overflow_data *data, unsigned long lhs,
+ }
+ 
+ void __ubsan_handle_add_overflow(struct overflow_data *data,
+-				unsigned long lhs,
+-				unsigned long rhs)
++				void *lhs, void *rhs)
+ {
+ 
+ 	handle_overflow(data, lhs, rhs, '+');
+@@ -200,23 +201,21 @@ void __ubsan_handle_add_overflow(struct overflow_data *data,
+ EXPORT_SYMBOL(__ubsan_handle_add_overflow);
+ 
+ void __ubsan_handle_sub_overflow(struct overflow_data *data,
+-				unsigned long lhs,
+-				unsigned long rhs)
++				void *lhs, void *rhs)
+ {
+ 	handle_overflow(data, lhs, rhs, '-');
+ }
+ EXPORT_SYMBOL(__ubsan_handle_sub_overflow);
+ 
+ void __ubsan_handle_mul_overflow(struct overflow_data *data,
+-				unsigned long lhs,
+-				unsigned long rhs)
++				void *lhs, void *rhs)
+ {
+ 	handle_overflow(data, lhs, rhs, '*');
+ }
+ EXPORT_SYMBOL(__ubsan_handle_mul_overflow);
+ 
+ void __ubsan_handle_negate_overflow(struct overflow_data *data,
+-				unsigned long old_val)
++				void *old_val)
+ {
+ 	unsigned long flags;
+ 	char old_val_str[VALUE_LENGTH];
+@@ -237,8 +236,7 @@ EXPORT_SYMBOL(__ubsan_handle_negate_overflow);
+ 
+ 
+ void __ubsan_handle_divrem_overflow(struct overflow_data *data,
+-				unsigned long lhs,
+-				unsigned long rhs)
++				void *lhs, void *rhs)
+ {
+ 	unsigned long flags;
+ 	char rhs_val_str[VALUE_LENGTH];
+@@ -323,7 +321,7 @@ static void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
+ }
+ 
+ void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
+-				unsigned long ptr)
++				void *ptr)
+ {
+ 	struct type_mismatch_data_common common_data = {
+ 		.location = &data->location,
+@@ -332,12 +330,12 @@ void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
+ 		.type_check_kind = data->type_check_kind
+ 	};
+ 
+-	ubsan_type_mismatch_common(&common_data, ptr);
++	ubsan_type_mismatch_common(&common_data, (unsigned long)ptr);
+ }
+ EXPORT_SYMBOL(__ubsan_handle_type_mismatch);
+ 
+ void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
+-				unsigned long ptr)
++				void *ptr)
+ {
+ 
+ 	struct type_mismatch_data_common common_data = {
+@@ -347,12 +345,12 @@ void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
+ 		.type_check_kind = data->type_check_kind
+ 	};
+ 
+-	ubsan_type_mismatch_common(&common_data, ptr);
++	ubsan_type_mismatch_common(&common_data, (unsigned long)ptr);
+ }
+ EXPORT_SYMBOL(__ubsan_handle_type_mismatch_v1);
+ 
+ void __ubsan_handle_vla_bound_not_positive(struct vla_bound_data *data,
+-					unsigned long bound)
++					void *bound)
+ {
+ 	unsigned long flags;
+ 	char bound_str[VALUE_LENGTH];
+@@ -369,8 +367,7 @@ void __ubsan_handle_vla_bound_not_positive(struct vla_bound_data *data,
+ }
+ EXPORT_SYMBOL(__ubsan_handle_vla_bound_not_positive);
+ 
+-void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data,
+-				unsigned long index)
++void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data, void *index)
+ {
+ 	unsigned long flags;
+ 	char index_str[VALUE_LENGTH];
+@@ -388,7 +385,7 @@ void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data,
+ EXPORT_SYMBOL(__ubsan_handle_out_of_bounds);
+ 
+ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
+-					unsigned long lhs, unsigned long rhs)
++					void *lhs, void *rhs)
+ {
+ 	unsigned long flags;
+ 	struct type_descriptor *rhs_type = data->rhs_type;
+@@ -439,7 +436,7 @@ void __ubsan_handle_builtin_unreachable(struct unreachable_data *data)
+ EXPORT_SYMBOL(__ubsan_handle_builtin_unreachable);
+ 
+ void __ubsan_handle_load_invalid_value(struct invalid_value_data *data,
+-				unsigned long val)
++				void *val)
+ {
+ 	unsigned long flags;
+ 	char val_str[VALUE_LENGTH];
+-- 
+2.21.0
+
