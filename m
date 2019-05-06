@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF4E14A13
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F08414A1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfEFMoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 08:44:37 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14196 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726149AbfEFMog (ORCPT
+        id S1726369AbfEFMpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 08:45:32 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27616 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725994AbfEFMpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 08:44:36 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x46CaCNt024824;
-        Mon, 6 May 2019 14:44:12 +0200
+        Mon, 6 May 2019 08:45:31 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x46CaDeE002530;
+        Mon, 6 May 2019 14:44:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=HcUcOaTSxNRSHfChXOh8afB0SuVIe92QW4amRAQNihQ=;
- b=eH544rpHGPR9xBm7uk7Y71brxiGS03XZC82Xzr0sDpVNMbckNm9W1fb3J+w0yqNfxVDo
- m8UoN3ybLtOnyVJLZotVpPzRt/EZlI2JX8I3jp5RJ2ghtggMrbgU2vlKAGn/kV8BW0Jc
- jzVgYkzBSwl9AvnLby0Y35tn0N0RIqsSAEBH3cR99C5lg/3xjYAG/kACAQmE9W+006uf
- wRxrkzlz42TAlJCCSdaWr4AhIod6bNMEL9Zf2QubC4JBnFAiPzltp5bEkkOv2CsR7aMU
- ivlmA74IfYDVqpw4b6mhSj81KSg3MtwkLkJZfhBj855OGSRjm7OOBfUEjO4ReFDW/Nel Rw== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=eY0+5DYyMAqjb4Zccz3yB8/8lAlH/xHNJKu3nTKjXys=;
+ b=pjrJrSZzywdlkGypwgTqgKHAqYlReBsynnO7GW5AnMK8onxlK8YjoWvcVJ84fv2OQrTz
+ L1Um5HbKcgktE+wuAm1fbZkXgrVao4DL/LWf8BtWyMQaCOrS31WCZPdQV7EKgxqty0+r
+ Wq5GzkV+b7YE+a6n7kzwjPwrfmZEOauza6uuHyh2cH8tuNPP9djkxN8iV0eubHoBw0L6
+ g5cQSg9ITcAfuMPaHoFMYMj1Kb7iYpoIUcHf71++lsnJT+u+nzK3HkFtQFt7vRl+OATa
+ mG+Ldc7CzUWHyG7KgV2f+qL1EhhnNU09eiFNBQ9RvG7+OQWFuUhJ3Oo3Jf1xEWbHNMj/ zw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2s94cd9a95-1
+        by mx08-00178001.pphosted.com with ESMTP id 2s94cb9en8-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 06 May 2019 14:44:12 +0200
+        Mon, 06 May 2019 14:44:13 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 000A938;
-        Mon,  6 May 2019 12:44:10 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B431A2583;
-        Mon,  6 May 2019 12:44:10 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 6 May 2019
- 14:44:10 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 38EE33D;
+        Mon,  6 May 2019 12:44:12 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D69A32586;
+        Mon,  6 May 2019 12:44:11 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 6 May 2019
+ 14:44:11 +0200
 Received: from localhost (10.201.23.16) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 6 May 2019 14:44:10
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 6 May 2019 14:44:11
  +0200
 From:   Olivier Moysan <olivier.moysan@st.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
@@ -48,10 +49,12 @@ To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>,
         <arnaud.pouliquen@st.com>
 CC:     <benjamin.gaignard@st.com>
-Subject: [PATCH 0/3] ASoC: stm32: spdifrx: add some features
-Date:   Mon, 6 May 2019 14:44:03 +0200
-Message-ID: <1557146646-18150-1-git-send-email-olivier.moysan@st.com>
+Subject: [PATCH 1/3] ASoC: stm32: spdifrx: update pcm hardware constraints
+Date:   Mon, 6 May 2019 14:44:04 +0200
+Message-ID: <1557146646-18150-2-git-send-email-olivier.moysan@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557146646-18150-1-git-send-email-olivier.moysan@st.com>
+References: <1557146646-18150-1-git-send-email-olivier.moysan@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.23.16]
@@ -62,19 +65,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update and add some features in STM32 SPDIFRX driver.
-- pdate pcm hardware constraints
-- change trace level on iec control
-- add management of identification registers
+- Set period minimum size. Ensure at least 5ms period
+up to 48kHz/16 bits to prevent underrun/overrun.
+- Remove MDMA constraints on period maximum size and
+set period maximum to half the buffer maximum size.
 
-Olivier Moysan (3):
-  ASoC: stm32: spdifrx: update pcm hardware constraints
-  ASoC: stm32: spdifrx: change trace level on iec control
-  ASoC: stm32: spdifrx: manage identification registers
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+---
+ sound/soc/stm/stm32_spdifrx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- sound/soc/stm/stm32_spdifrx.c | 42 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 38 insertions(+), 4 deletions(-)
-
+diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
+index b4c3d983e195..aa83b50efabb 100644
+--- a/sound/soc/stm/stm32_spdifrx.c
++++ b/sound/soc/stm/stm32_spdifrx.c
+@@ -845,7 +845,8 @@ static struct snd_soc_dai_driver stm32_spdifrx_dai[] = {
+ static const struct snd_pcm_hardware stm32_spdifrx_pcm_hw = {
+ 	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_MMAP,
+ 	.buffer_bytes_max = 8 * PAGE_SIZE,
+-	.period_bytes_max = 2048, /* MDMA constraint */
++	.period_bytes_min = 1024,
++	.period_bytes_max = 4 * PAGE_SIZE,
+ 	.periods_min = 2,
+ 	.periods_max = 8,
+ };
 -- 
 2.7.4
 
