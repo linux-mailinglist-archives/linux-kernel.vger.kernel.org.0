@@ -2,106 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3E11487E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 12:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EBA414883
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 12:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfEFKpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 06:45:11 -0400
-Received: from relay.sw.ru ([185.231.240.75]:53852 "EHLO relay.sw.ru"
+        id S1726477AbfEFKqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 06:46:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:48322 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbfEFKpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 06:45:10 -0400
-Received: from [172.16.25.12] (helo=i7.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hNb7K-0002zI-3h; Mon, 06 May 2019 13:45:06 +0300
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH 2/2] ubsan: Remove vla bound checks.
-Date:   Mon,  6 May 2019 13:45:27 +0300
-Message-Id: <20190506104527.10724-2-aryabinin@virtuozzo.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506104527.10724-1-aryabinin@virtuozzo.com>
-References: <CAHk-=winPBAQwSr9onDoa_ejnV6uWhFiAuQSwd1X-B16vknyXw@mail.gmail.com>
- <20190506104527.10724-1-aryabinin@virtuozzo.com>
+        id S1725948AbfEFKqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 06:46:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9A11374;
+        Mon,  6 May 2019 03:46:03 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0452C3F5AF;
+        Mon,  6 May 2019 03:46:02 -0700 (PDT)
+Subject: Re: [PATCH] sched/fair: Remove rq->load
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org
+References: <20190424084556.604-1-dietmar.eggemann@arm.com>
+Message-ID: <c76a9ece-bfc9-c9dc-a0e0-a41698f56f78@arm.com>
+Date:   Mon, 6 May 2019 12:46:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190424084556.604-1-dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel the kernel is built with -Wvla for some time, so is not supposed
-to have any variable length arrays. Remove vla bounds checking from ubsan
-since it's useless now.
+Hi,
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
----
- lib/ubsan.c            | 18 ------------------
- lib/ubsan.h            |  5 -----
- scripts/Makefile.ubsan |  1 -
- 3 files changed, 24 deletions(-)
+On 4/24/19 10:45 AM, Dietmar Eggemann wrote:
+> The CFS class is the only one maintaining and using the CPU wide load
+> (rq->load(.weight)). The last use case of the CPU wide load in CFS's
+> set_next_entity() can be replaced by using the load of the CFS class
+> (rq->cfs.load(.weight)) instead.
+> 
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> ---
+>   kernel/sched/debug.c | 2 --
+>   kernel/sched/fair.c  | 7 ++-----
+>   kernel/sched/sched.h | 2 --
+>   3 files changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index 8039d62ae36e..1148f43dbd42 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -656,8 +656,6 @@ do {									\
+>   	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
+>   
+>   	P(nr_running);
+> -	SEQ_printf(m, "  .%-30s: %lu\n", "load",
+> -		   rq->load.weight);
+>   	P(nr_switches);
+>   	P(nr_load_updates);
+>   	P(nr_uninterruptible);
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index a4d9e14bf138..73a6718f29cc 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -2682,8 +2682,6 @@ static void
+>   account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>   {
+>   	update_load_add(&cfs_rq->load, se->load.weight);
+> -	if (!parent_entity(se))
+> -		update_load_add(&rq_of(cfs_rq)->load, se->load.weight);
+>   #ifdef CONFIG_SMP
+>   	if (entity_is_task(se)) {
+>   		struct rq *rq = rq_of(cfs_rq);
+> @@ -2699,8 +2697,6 @@ static void
+>   account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>   {
+>   	update_load_sub(&cfs_rq->load, se->load.weight);
+> -	if (!parent_entity(se))
+> -		update_load_sub(&rq_of(cfs_rq)->load, se->load.weight);
+>   #ifdef CONFIG_SMP
+>   	if (entity_is_task(se)) {
+>   		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
+> @@ -4096,7 +4092,8 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>   	 * least twice that of our own weight (i.e. dont track it
+>   	 * when there are only lesser-weight tasks around):
+>   	 */
+> -	if (schedstat_enabled() && rq_of(cfs_rq)->load.weight >= 2*se->load.weight) {
+> +	if (schedstat_enabled() &&
+> +	    rq_of(cfs_rq)->cfs.load.weight >= 2*se->load.weight) {
+>   		schedstat_set(se->statistics.slice_max,
+>   			max((u64)schedstat_val(se->statistics.slice_max),
+>   			    se->sum_exec_runtime - se->prev_sum_exec_runtime));
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index efa686eeff26..e4059e81e99c 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -830,8 +830,6 @@ struct rq {
+>   	atomic_t nohz_flags;
+>   #endif /* CONFIG_NO_HZ_COMMON */
+>   
+> -	/* capture load from *all* tasks on this CPU: */
+> -	struct load_weight	load;
+>   	unsigned long		nr_load_updates;
+>   	u64			nr_switches;
 
-diff --git a/lib/ubsan.c b/lib/ubsan.c
-index 1e9e2ab25539..c4859c2d2f1b 100644
---- a/lib/ubsan.c
-+++ b/lib/ubsan.c
-@@ -349,24 +349,6 @@ void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
- }
- EXPORT_SYMBOL(__ubsan_handle_type_mismatch_v1);
- 
--void __ubsan_handle_vla_bound_not_positive(struct vla_bound_data *data,
--					void *bound)
--{
--	unsigned long flags;
--	char bound_str[VALUE_LENGTH];
--
--	if (suppress_report(&data->location))
--		return;
--
--	ubsan_prologue(&data->location, &flags);
--
--	val_to_string(bound_str, sizeof(bound_str), data->type, bound);
--	pr_err("variable length array bound value %s <= 0\n", bound_str);
--
--	ubsan_epilogue(&flags);
--}
--EXPORT_SYMBOL(__ubsan_handle_vla_bound_not_positive);
--
- void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data, void *index)
- {
- 	unsigned long flags;
-diff --git a/lib/ubsan.h b/lib/ubsan.h
-index f4d8d0bd4016..b8fa83864467 100644
---- a/lib/ubsan.h
-+++ b/lib/ubsan.h
-@@ -57,11 +57,6 @@ struct nonnull_arg_data {
- 	int arg_index;
- };
- 
--struct vla_bound_data {
--	struct source_location location;
--	struct type_descriptor *type;
--};
--
- struct out_of_bounds_data {
- 	struct source_location location;
- 	struct type_descriptor *array_type;
-diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-index 38b2b4818e8e..019771b845c5 100644
---- a/scripts/Makefile.ubsan
-+++ b/scripts/Makefile.ubsan
-@@ -3,7 +3,6 @@ ifdef CONFIG_UBSAN
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=shift)
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=integer-divide-by-zero)
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=unreachable)
--      CFLAGS_UBSAN += $(call cc-option, -fsanitize=vla-bound)
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=signed-integer-overflow)
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=bounds)
-       CFLAGS_UBSAN += $(call cc-option, -fsanitize=object-size)
--- 
-2.21.0
+Is there anything else I should do for this patch ?
 
+Thanks,
+
+-- Dietmar
