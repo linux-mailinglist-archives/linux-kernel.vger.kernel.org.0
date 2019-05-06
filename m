@@ -2,100 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 127A314FD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C0515018
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfEFPQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
+        id S1726944AbfEFPZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:25:39 -0400
+Received: from mx1.chost.de ([5.175.28.52]:40320 "EHLO mx1.chost.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726653AbfEFPQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:16:20 -0400
-Received: from localhost (lfbn-1-18355-218.w90-101.abo.wanadoo.fr [90.101.143.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFC7D2053B;
-        Mon,  6 May 2019 15:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557155780;
-        bh=PAUvR3Wb9ZgDXvvdn3Knt6Ky3jXq/dkf1xIHL5qQzN0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=07Mu5sKBKQ89GPgcRr/fFMGvEhchgNlu0LlC1/YEkesH/uGsoYB4XEwMkBjGeM5CA
-         ymfGWjx6/Ng9dkUCt6ZCoeDuh7copZPALyal5AwpZSj88CS5qLXkDvK3gg5aIBONOv
-         E64CAT5DxaeaN8DoefCPiCkiz7u7VD9HJuJUph6E=
-Date:   Mon, 6 May 2019 17:16:17 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     fweisbec@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, rafael.j.wysocki@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:sched/core] sched/isolation: Require a present CPU in
- housekeeping mask
-Message-ID: <20190506151615.GA14529@lenoir>
-References: <20190411033448.20842-5-npiggin@gmail.com>
- <tip-9219565aa89033a9cfdae788c1940473a1253d6c@git.kernel.org>
- <20190504002733.GB19076@lenoir>
- <1556952021.2xpa7joi2y.astroid@bobo.none>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556952021.2xpa7joi2y.astroid@bobo.none>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726414AbfEFPZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:25:38 -0400
+X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 11:25:37 EDT
+Received: from vm002.chost.de ([::ffff:192.168.122.102])
+  by mx1.chost.de with SMTP; Mon, 06 May 2019 17:21:16 +0200
+  id 000000000133BD2A.000000005CD050EC.00007663
+Received: by vm002.chost.de (sSMTP sendmail emulation); Mon, 06 May 2019 17:21:15 +0200
+From:   Christoph Probst <kernel@probst.it>
+To:     linux-cifs@vger.kernel.org
+Cc:     Steve French <sfrench@samba.org>, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, Christoph Probst <kernel@probst.it>
+Subject: [PATCH] cifs: fix strcat buffer overflow in smb21_set_oplock_level()
+Date:   Mon,  6 May 2019 17:16:32 +0200
+Message-Id: <1557155792-2703-1-git-send-email-kernel@probst.it>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 04, 2019 at 04:59:12PM +1000, Nicholas Piggin wrote:
-> Frederic Weisbecker's on May 4, 2019 10:27 am:
-> > On Fri, May 03, 2019 at 10:47:37AM -0700, tip-bot for Nicholas Piggin wrote:
-> >> Commit-ID:  9219565aa89033a9cfdae788c1940473a1253d6c
-> >> Gitweb:     https://git.kernel.org/tip/9219565aa89033a9cfdae788c1940473a1253d6c
-> >> Author:     Nicholas Piggin <npiggin@gmail.com>
-> >> AuthorDate: Thu, 11 Apr 2019 13:34:47 +1000
-> >> Committer:  Ingo Molnar <mingo@kernel.org>
-> >> CommitDate: Fri, 3 May 2019 19:42:58 +0200
-> >> 
-> >> sched/isolation: Require a present CPU in housekeeping mask
-> >> 
-> >> During housekeeping mask setup, currently a possible CPU is required.
-> >> That does not guarantee the CPU would be available at boot time, so
-> >> check to ensure that at least one present CPU is in the mask.
-> > 
-> > I have a doubt about the requirements and semantics of cpu_present_mask.
-> > IIUC a present CPU means that it is physically plugged in (from ACPI
-> > perspective) but might not be logically plugged in (set on cpu_online_mask).
-> 
-> Right, a superset of cpu_possible_mask, subset of cpu_online_mask. It 
-> means that CPU can be brought online at any time.
-> 
-> > But do we have the guarantee that a present CPU _will_ be online at least once
-> > right after the boot? After all, kernel parameters such as "maxcpus=" can prevent
-> > from turning some CPUs on. I guess there are even more creative ways to achieve
-> > that.
-> > 
-> > In any case we really require the housekeeper to be forced online. Perhaps
-> > I missed that enforcement somewhere in the patchset?
-> 
-> No I think you're right, that may be able to boot without anything in
-> the housekeeping mask. Maybe we can just cpu_up() a CPU in the 
-> housekeeping mask with a warning that it has overidden their SMP
-> command line option. I'll take a look at it.
+Change strcat to strcpy in the "None" case as it is never valid to append
+"None" to any other message. It may also overflow char message[5], in a
+race condition on cinode if cinode->oplock is unset by another thread
+after "RHW" or "RH" had been written to message.
 
-But then what if cpu_up() fails? In this case I can think of only two
-answers:
+Signed-off-by: Christoph Probst <kernel@probst.it>
+---
+ fs/cifs/smb2ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Force the boot CPU as the housekeeper.
-* Rollback the whole thing: nohz and all isolation.
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index c36ff0d..5fd5567 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2936,7 +2936,7 @@ smb21_set_oplock_level(struct cifsInodeInfo *cinode, __u32 oplock,
+ 		strcat(message, "W");
+ 	}
+ 	if (!cinode->oplock)
+-		strcat(message, "None");
++		strcpy(message, "None");
+ 	cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
+ 		 &cinode->vfs_inode);
+ }
+-- 
+2.1.4
 
-The second solution looks sane to me. After all if the user doesn't
-include CPU 0 in the housekeeping set, forcing it isn't going to
-help much.
-
-But that means we must enhance the isolation code (nohz included)
-to be able to dynamically add/del CPUs to the houseeeping/isolation
-set. That's not going to be easy but it's a necessary evolution
-of that subsystem since we want to drive it through cpusets.
-
-I should start working on that.
