@@ -2,187 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241B4143C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 05:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A91414561
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbfEFDdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 23:33:09 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:56328 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725813AbfEFDdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 23:33:08 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x463W2hq018658
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 5 May 2019 20:32:12 -0700
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 5 May 2019 20:31:52 -0700
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- D3EFD2E04E4; Sun,  5 May 2019 23:31:51 -0400 (EDT)
-Date:   Sun, 5 May 2019 23:31:51 -0400
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: Fwd: linux-next: build failure after merge of the kbuild tree
-Message-ID: <20190506033151.GB2649@windriver.com>
-References: <20190506094609.08e930f2@canb.auug.org.au>
- <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
+        id S1726442AbfEFHhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:37:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39164 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfEFHhx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:37:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MlFyerrYRCSvPhKw2U+CT72hE7v7yaWVoYGE318wXPc=; b=N1euGcYiwa2CPfRpDTB2kTUHI
+        3sBVaJ2Rw9Z5DDgVI4HY/3r4mDZCa5xj1+kGB6PX58BCiHIa7Gom+vBUyS3TDJlQhHQnq84ccmLJz
+        WlwLAM+JS+XliWoOWhIB7QYZu+JlGFRqdv/AQTdE477BIRPZ1mXfYDzbBE3/F0EA3NmBQ=;
+Received: from kd111239184067.au-net.ne.jp ([111.239.184.67] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hNYBt-0000s0-8z; Mon, 06 May 2019 07:37:37 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 1D8B2441D3C; Mon,  6 May 2019 04:37:33 +0100 (BST)
+Date:   Mon, 6 May 2019 12:37:33 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, srv_heupstream@mediatek.com
+Subject: Re: [PATCH v3 07/10] regulator: mt6358: Add support for MT6358
+ regulator
+Message-ID: <20190506033733.GH14916@sirena.org.uk>
+References: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
+ <20190503093117.54830-8-hsin-hsiung.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RbAp84Sx/Z5HOs1D"
 Content-Disposition: inline
-In-Reply-To: <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190503093117.54830-8-hsin-hsiung.wang@mediatek.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 11:19) Masahiro Yamada wrote:
 
-> Hi Paul,
-> 
-> In today's linux-next build testing,
-> more "make ... explicitly non-modular"
-> candidates showed up.
-> 
+--RbAp84Sx/Z5HOs1D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Masahiro,
+On Fri, May 03, 2019 at 05:31:14PM +0800, Hsin-Hsiung Wang wrote:
 
-I am not 100% clear on what you are asking me.  There are lots and lots
-of these in the kernel.... many fixed, and many remain unfortunately.
+A few fairly minor things but mostly this looks good.
 
-> arch/arm/plat-omap/dma.c
-> drivers/clocksource/timer-ti-dm.c
-> drivers/mfd/omap-usb-host.c
-> drivers/mfd/omap-usb-tll.c
+> +static const u32 vcama1_voltages[] = {
+> +	1800000, 2500000, 2700000,
+> +	2800000, 2900000, 3000000,
+> +};
 
-None of these are "new".  I just checked, and I have had patches for all
-these for a long time, in my personal queue, found by my audits.
+> +static const u32 vcama2_voltages[] = {
+> +	1800000, 2500000, 2700000,
+> +	2800000, 2900000, 3000000,
+> +};
+> +
 
-> Would you send patches?
+These two tables look the same?
 
-It isn't that simple.  I wish it was.  Some subsystem maintainers are
-glad to take the patches, and some think they are a waste of time and
-reject them immediately.  Some I've sent just simply get "crickets".
+> +static int mt6358_get_voltage_sel(struct regulator_dev *rdev)
+> +{
+> +	int idx, ret;
+> +	u32 selector;
+> +	struct mt6358_regulator_info *info = rdev_get_drvdata(rdev);
+> +	const u32 *pvol;
+> +
+> +	ret = regmap_read(rdev->regmap, info->desc.vsel_reg, &selector);
+> +	if (ret != 0) {
+> +		dev_info(&rdev->dev,
+> +			 "Failed to get mt6358 %s vsel reg: %d\n",
+> +			 info->desc.name, ret);
+> +		return ret;
+> +	}
+> +
+> +	selector = (selector & info->desc.vsel_mask) >> info->vsel_shift;
+> +	pvol = (const u32 *)info->index_table;
+> +	ret = -1;
+> +	for (idx = 0; idx < info->desc.n_voltages; idx++) {
+> +		if (pvol[idx] == selector) {
+> +			ret = idx;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
 
-What that means is, that I need to look at each maintainer's
-requirements, and ensure the patch and commit log are matching
-expectatins - I will not just spam out hundreds of patches across all
-subsystems.  Anyone who has spent considerable time in linux development
-knows that is a recipe for failure.
+I don't entirely understand what this is intended to do which suggests
+it could use some comments.  As far as I can tell it's looking up the
+hardware selector in a table and then using the index of the entry in
+that table as the selector in order to deal with a sparse set of
+selectors, is that right?  You should be able to handle this by having
+_list_voltage() return an error code for the invalid selectors though we
+don't have helpers for that yet as it's an unusual design.
 
-So I need to work across each subsystem - one at a time, with their
-individual maintainer requirements in mind, and if you look at git
-history, you will see that has been what I've tried to do when I had
-free time to work on fixing these across the whole linux tree.
+Also -1 is not a good return value in the case where you fail to do a
+mapping, use -EINVAL.
 
-But fortunately, none of these represent a CVE/security issue, so I've
-never had a reason to try and pretend there was any reason for an
-immediate fix/merge - they just represent a better attention to detail
-in the code we merge and support that I'd like to see happen tree-wide.
+> +	ret = regmap_read(rdev->regmap, info->da_vsel_reg, &regval);
+> +	if (ret != 0) {
+> +		dev_info(&rdev->dev,
+> +			 "Failed to get mt6358 Buck %s vsel reg: %d\n",
+> +			 info->desc.name, ret);
+> +		return ret;
+> +	}
 
-I appreciate that you are also interested in seeing all these fixed, and
-I also wish they could all be solved in one version, but unfortunately I
-don't think that is pragmatic.  So in the meantime, I will continue to
-chip away at things when we are early in the dev cycle and not starting
-the two week merge window, as we are just now.
+These error messages should be dev_err().
 
-Thanks,
-Paul.
---
+--RbAp84Sx/Z5HOs1D
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> I think EXPORT_SYMBOL_GPL() in omap-usb-tll.c
-> are also unnecessary.
-> 
-> Thanks.
-> 
-> 
-> 
-> ---------- Forwarded message ---------
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, May 6, 2019 at 8:51 AM
-> Subject: linux-next: build failure after merge of the kbuild tree
-> To: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
-> Mailing List <linux-kernel@vger.kernel.org>, Alexey Gladkov
-> <gladkov.alexey@gmail.com>, Keshava Munegowda <keshava_mgowda@ti.com>,
-> Samuel Ortiz <sameo@linux.intel.com>
-> 
-> 
-> Hi Masahiro,
-> 
-> After merging the kbuild tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> In file included from include/linux/module.h:18,
->                  from drivers/mfd/omap-usb-tll.c:21:
-> drivers/mfd/omap-usb-tll.c:462:26: error: expected ',' or ';' before
-> 'USBHS_DRIVER_NAME'
->  MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
->                           ^~~~~~~~~~~~~~~~~
-> include/linux/moduleparam.h:26:47: note: in definition of macro '__MODULE_INFO'
->    = __MODULE_INFO_PREFIX __stringify(tag) "=" info
->                                                ^~~~
-> include/linux/module.h:164:30: note: in expansion of macro 'MODULE_INFO'
->  #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
->                               ^~~~~~~~~~~
-> drivers/mfd/omap-usb-tll.c:462:1: note: in expansion of macro 'MODULE_ALIAS'
->  MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
->  ^~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   6a26793a7891 ("moduleparam: Save information about built-in modules
-> in separate file")
-> 
-> USBHS_DRIVER_NAME is not defined and this kbuild tree change has
-> exposed it. It has been this way since commit
-> 
->   16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
-> 
-> From v3.7-rc1 in 2012.
-> 
-> I have applied the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 6 May 2019 09:39:14 +1000
-> Subject: [PATCH] mfd: omap: remove unused MODULE_ALIAS from omap-usb-tll.c
-> 
-> USBHS_DRIVER_NAME has never been defined, so this cannot have ever
-> been used.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/mfd/omap-usb-tll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-> index 446713dbee27..1cc8937e8bec 100644
-> --- a/drivers/mfd/omap-usb-tll.c
-> +++ b/drivers/mfd/omap-usb-tll.c
-> @@ -459,7 +459,7 @@ EXPORT_SYMBOL_GPL(omap_tll_disable);
-> 
->  MODULE_AUTHOR("Keshava Munegowda <keshava_mgowda@ti.com>");
->  MODULE_AUTHOR("Roger Quadros <rogerq@ti.com>");
-> -MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-> +// MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
->  MODULE_LICENSE("GPL v2");
->  MODULE_DESCRIPTION("usb tll driver for TI OMAP EHCI and OHCI controllers");
-> 
-> --
-> 2.20.1
-> 
-> --
-> Cheers,
-> Stephen Rothwell
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzPq/oACgkQJNaLcl1U
+h9BktAf/aapG5sI3j3lduVVaxhPGb7OblQA1/rmv6rhzowc0XcjywrRfMMlL6sep
+mS9qN1bqSNfzF9jPmK9OZS012K04jHqCbDzeJ8tJbRdq1SXNO0KpIukzTaPghrsc
+I42t/n4iqmnDtVyHRlBmhIpzeeJPdghqNRL+Q0WnBFEAtCjMq3TBXasmbEqPNFBs
+zMZHo7/pfbBJfeNiVYj4Z9Fujt9G1cLEiG0386sgTZLt2GXC1tFk5nsh1Z7dJppa
+U+L2jM+HMVU9ylQcVEMzsJx//3eEQHBMvGL18tkGtjU8zWnYUpue/A4MKziwwRyI
+WXOx4oPTy0KypDnnAhOZhT12VM+D1g==
+=otJk
+-----END PGP SIGNATURE-----
 
+--RbAp84Sx/Z5HOs1D--
