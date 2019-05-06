@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED8614C4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F2514D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfEFOit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
+        id S1728043AbfEFOrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbfEFOir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:47 -0400
+        id S1728064AbfEFOq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C787421479;
-        Mon,  6 May 2019 14:38:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA3982053B;
+        Mon,  6 May 2019 14:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153527;
-        bh=uu0EMjhOToFcA+5jmlzRFDtcC1h61DsUoHuGmibseAg=;
+        s=default; t=1557154017;
+        bh=9XJoIW3im0c4o9kP86IKLI5/0HF/dfsUCxOv8kUS0xA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tp2THbaIpJ25MmAB23bkb5Pw68P4/cqFLSqA1uMvJCRn3DUnE11F8Y3UsS2rxTmRA
-         Z+nyOT88PMqkGLh16CfPpDtDbw9YWeT3+2nPZunF2NiXYyGnB4TXu7OyCaUYMp1bio
-         g83MRQkszaV5IeRNP/FUR4LliwUh58APw7DvQzb4=
+        b=c/TmI0SpcsMfzwpocrXAwZDZtN7agpHYMy07YaR8HZ9TSQ1r6qpqPFL1YQB29MUPV
+         ew0k/Jh58iiGNN1ItN/m8kEyy6rImKkJ9OnMjOEnZGCCr2BLKGMTBieKiEuKD0COz+
+         HaCwquvEeYc6tfeH1W81sEb5n/u5hIjESDN6YTm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.0 122/122] media: v4l2: i2c: ov7670: Fix PLL bypass register values
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Qian Cai <cai@lca.pw>, Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Avi Kivity <avi@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 52/75] kmemleak: powerpc: skip scanning holes in the .bss section
 Date:   Mon,  6 May 2019 16:33:00 +0200
-Message-Id: <20190506143105.263885603@linuxfoundation.org>
+Message-Id: <20190506143057.956132371@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,82 +51,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+[ Upstream commit 298a32b132087550d3fa80641ca58323c5dfd4d9 ]
 
-commit 61da76beef1e4f0b6ba7be4f8d0cf0dac7ce1f55 upstream.
+Commit 2d4f567103ff ("KVM: PPC: Introduce kvm_tmp framework") adds
+kvm_tmp[] into the .bss section and then free the rest of unused spaces
+back to the page allocator.
 
-The following commits:
-commit f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
-commit 04ee6d92047e ("[media] media: ov7670: add possibility to bypass pll for ov7675")
-introduced the ability to bypass PLL multiplier and use input clock (xvclk)
-as pixel clock output frequency for ov7675 sensor.
+kernel_init
+  kvm_guest_init
+    kvm_free_tmp
+      free_reserved_area
+        free_unref_page
+          free_unref_page_prepare
 
-PLL is bypassed using register DBLV[7:6], according to ov7670 and ov7675
-sensor manuals. Macros used to set DBLV register seem wrong in the
-driver, as their values do not match what reported in the datasheet.
+With DEBUG_PAGEALLOC=y, it will unmap those pages from kernel.  As the
+result, kmemleak scan will trigger a panic when it scans the .bss
+section with unmapped pages.
 
-Fix by changing DBLV_* macros to use bits [7:6] and set bits [3:0] to
-default 0x0a reserved value (according to datasheets).
+This patch creates dedicated kmemleak objects for the .data, .bss and
+potentially .data..ro_after_init sections to allow partial freeing via
+the kmemleak_free_part() in the powerpc kvm_free_tmp() function.
 
-While at there, remove a write to DBLV register in
-"ov7675_set_framerate()" that over-writes the previous one to the same
-register that takes "info->pll_bypass" flag into account instead of setting PLL
-multiplier to 4x unconditionally.
-
-And, while at there, since "info->pll_bypass" is only used in
-set/get_framerate() functions used by ov7675 only, it is not necessary
-to check for the device id at probe time to make sure that when using
-ov7670 "info->pll_bypass" is set to false.
-
-Fixes: f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20190321171917.62049-1-catalin.marinas@arm.com
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Qian Cai <cai@lca.pw>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Tested-by: Qian Cai <cai@lca.pw>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Avi Kivity <avi@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov7670.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/powerpc/kernel/kvm.c |  7 +++++++
+ mm/kmemleak.c             | 16 +++++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -160,10 +160,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-
- #define REG_GFIX	0x69	/* Fix gain control */
+diff --git a/arch/powerpc/kernel/kvm.c b/arch/powerpc/kernel/kvm.c
+index 9ad37f827a97..7b59cc853abf 100644
+--- a/arch/powerpc/kernel/kvm.c
++++ b/arch/powerpc/kernel/kvm.c
+@@ -22,6 +22,7 @@
+ #include <linux/kvm_host.h>
+ #include <linux/init.h>
+ #include <linux/export.h>
++#include <linux/kmemleak.h>
+ #include <linux/kvm_para.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+@@ -712,6 +713,12 @@ static void kvm_use_magic_page(void)
  
- #define REG_DBLV	0x6b	/* PLL control an debugging */
--#define   DBLV_BYPASS	  0x00	  /* Bypass PLL */
--#define   DBLV_X4	  0x01	  /* clock x4 */
--#define   DBLV_X6	  0x10	  /* clock x6 */
--#define   DBLV_X8	  0x11	  /* clock x8 */
-+#define   DBLV_BYPASS	  0x0a	  /* Bypass PLL */
-+#define   DBLV_X4	  0x4a	  /* clock x4 */
-+#define   DBLV_X6	  0x8a	  /* clock x6 */
-+#define   DBLV_X8	  0xca	  /* clock x8 */
- 
- #define REG_SCALING_XSC	0x70	/* Test pattern and horizontal scale factor */
- #define   TEST_PATTTERN_0 0x80
-@@ -863,7 +863,7 @@ static int ov7675_set_framerate(struct v
- 	if (ret < 0)
- 		return ret;
- 
--	return ov7670_write(sd, REG_DBLV, DBLV_X4);
-+	return 0;
+ static __init void kvm_free_tmp(void)
+ {
++	/*
++	 * Inform kmemleak about the hole in the .bss section since the
++	 * corresponding pages will be unmapped with DEBUG_PAGEALLOC=y.
++	 */
++	kmemleak_free_part(&kvm_tmp[kvm_tmp_index],
++			   ARRAY_SIZE(kvm_tmp) - kvm_tmp_index);
+ 	free_reserved_area(&kvm_tmp[kvm_tmp_index],
+ 			   &kvm_tmp[ARRAY_SIZE(kvm_tmp)], -1, NULL);
  }
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index d9e0be2a8189..337be9aacb7a 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1492,11 +1492,6 @@ static void kmemleak_scan(void)
+ 	}
+ 	rcu_read_unlock();
  
- static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
-@@ -1801,11 +1801,7 @@ static int ov7670_probe(struct i2c_clien
- 		if (config->clock_speed)
- 			info->clock_speed = config->clock_speed;
+-	/* data/bss scanning */
+-	scan_large_block(_sdata, _edata);
+-	scan_large_block(__bss_start, __bss_stop);
+-	scan_large_block(__start_ro_after_init, __end_ro_after_init);
+-
+ #ifdef CONFIG_SMP
+ 	/* per-cpu sections scanning */
+ 	for_each_possible_cpu(i)
+@@ -2027,6 +2022,17 @@ void __init kmemleak_init(void)
+ 	}
+ 	local_irq_restore(flags);
  
--		/*
--		 * It should be allowed for ov7670 too when it is migrated to
--		 * the new frame rate formula.
--		 */
--		if (config->pll_bypass && id->driver_data != MODEL_OV7670)
-+		if (config->pll_bypass)
- 			info->pll_bypass = true;
- 
- 		if (config->pclk_hb_disable)
++	/* register the data/bss sections */
++	create_object((unsigned long)_sdata, _edata - _sdata,
++		      KMEMLEAK_GREY, GFP_ATOMIC);
++	create_object((unsigned long)__bss_start, __bss_stop - __bss_start,
++		      KMEMLEAK_GREY, GFP_ATOMIC);
++	/* only register .data..ro_after_init if not within .data */
++	if (__start_ro_after_init < _sdata || __end_ro_after_init > _edata)
++		create_object((unsigned long)__start_ro_after_init,
++			      __end_ro_after_init - __start_ro_after_init,
++			      KMEMLEAK_GREY, GFP_ATOMIC);
++
+ 	/*
+ 	 * This is the point where tracking allocations is safe. Automatic
+ 	 * scanning is started during the late initcall. Add the early logged
+-- 
+2.20.1
+
 
 
