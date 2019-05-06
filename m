@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624FB14C41
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0A714E7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfEFOiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59078 "EHLO mail.kernel.org"
+        id S1728165AbfEFPC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726763AbfEFOiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:05 -0400
+        id S1727266AbfEFOki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE89E214AE;
-        Mon,  6 May 2019 14:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85F2120449;
+        Mon,  6 May 2019 14:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153484;
-        bh=Ks4IhupySPKOGfhYMtULW/Pq6Zqh/yXRgg58Nf33rLI=;
+        s=default; t=1557153638;
+        bh=fGypdjTx6Z0zes3v8RKt4C+YcBhsi29fYLXC6YeumsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LXdlg9mPwwFrL2Tp6lzokVAgnj6vwJx8etb2tgnUDjKbK0w2VB44AAlJmrifXs55H
-         /bdKsTQXAICvdt+FvnHit9inqBxUwEdJM5e6yS3hS2wAVP5ByJlQwSORk2YHmMRY96
-         0Eyrfaw/8l3fYge6GLpcdCUhhD0ArhKdK0Ge9MrQ=
+        b=vBu3ARBu+pbYG3X4X2op9qe9pAO9TQPRvR91UyRccUZYVLW3qrGIJ3IRU6peCgsqp
+         cFa7QQ1l+rHttGDAl1Nvp3EQiHqIETliiqXzd5RMnlqLcuRkauBl/QOJTHrkr0WX1y
+         A76nG8d6B+TPIvOFf5BK7btjOWiVq/JqybQcp7EI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Qian Cai <cai@lca.pw>, Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Avi Kivity <avi@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.0 075/122] kmemleak: powerpc: skip scanning holes in the .bss section
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 40/99] net: stmmac: dont stop NAPI processing when dropping a packet
 Date:   Mon,  6 May 2019 16:32:13 +0200
-Message-Id: <20190506143101.613229428@linuxfoundation.org>
+Message-Id: <20190506143057.582023111@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,104 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 298a32b132087550d3fa80641ca58323c5dfd4d9 ]
+[ Upstream commit 07b3975352374c3f5ebb4a42ef0b253fe370542d ]
 
-Commit 2d4f567103ff ("KVM: PPC: Introduce kvm_tmp framework") adds
-kvm_tmp[] into the .bss section and then free the rest of unused spaces
-back to the page allocator.
+Currently, if we drop a packet, we exit from NAPI loop before the budget
+is consumed. In some situations this will make the RX processing stall
+e.g. when flood pinging the system with oversized packets, as the
+errorneous packets are not dropped efficiently.
 
-kernel_init
-  kvm_guest_init
-    kvm_free_tmp
-      free_reserved_area
-        free_unref_page
-          free_unref_page_prepare
+If we drop a packet, we should just continue to the next one as long as
+the budget allows.
 
-With DEBUG_PAGEALLOC=y, it will unmap those pages from kernel.  As the
-result, kmemleak scan will trigger a panic when it scans the .bss
-section with unmapped pages.
-
-This patch creates dedicated kmemleak objects for the .data, .bss and
-potentially .data..ro_after_init sections to allow partial freeing via
-the kmemleak_free_part() in the powerpc kvm_free_tmp() function.
-
-Link: http://lkml.kernel.org/r/20190321171917.62049-1-catalin.marinas@arm.com
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Reported-by: Qian Cai <cai@lca.pw>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-Tested-by: Qian Cai <cai@lca.pw>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Avi Kivity <avi@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krcmar <rkrcmar@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/kvm.c |  7 +++++++
- mm/kmemleak.c             | 16 +++++++++++-----
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/kernel/kvm.c b/arch/powerpc/kernel/kvm.c
-index 683b5b3805bd..cd381e2291df 100644
---- a/arch/powerpc/kernel/kvm.c
-+++ b/arch/powerpc/kernel/kvm.c
-@@ -22,6 +22,7 @@
- #include <linux/kvm_host.h>
- #include <linux/init.h>
- #include <linux/export.h>
-+#include <linux/kmemleak.h>
- #include <linux/kvm_para.h>
- #include <linux/slab.h>
- #include <linux/of.h>
-@@ -712,6 +713,12 @@ static void kvm_use_magic_page(void)
- 
- static __init void kvm_free_tmp(void)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index bacc2fd63bfc..5debe93ea4eb 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3333,9 +3333,8 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
  {
-+	/*
-+	 * Inform kmemleak about the hole in the .bss section since the
-+	 * corresponding pages will be unmapped with DEBUG_PAGEALLOC=y.
-+	 */
-+	kmemleak_free_part(&kvm_tmp[kvm_tmp_index],
-+			   ARRAY_SIZE(kvm_tmp) - kvm_tmp_index);
- 	free_reserved_area(&kvm_tmp[kvm_tmp_index],
- 			   &kvm_tmp[ARRAY_SIZE(kvm_tmp)], -1, NULL);
- }
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 707fa5579f66..6c318f5ac234 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -1529,11 +1529,6 @@ static void kmemleak_scan(void)
- 	}
- 	rcu_read_unlock();
+ 	struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
+ 	struct stmmac_channel *ch = &priv->channel[queue];
+-	unsigned int entry = rx_q->cur_rx;
++	unsigned int next_entry = rx_q->cur_rx;
+ 	int coe = priv->hw->rx_csum;
+-	unsigned int next_entry;
+ 	unsigned int count = 0;
+ 	bool xmac;
  
--	/* data/bss scanning */
--	scan_large_block(_sdata, _edata);
--	scan_large_block(__bss_start, __bss_stop);
--	scan_large_block(__start_ro_after_init, __end_ro_after_init);
--
- #ifdef CONFIG_SMP
- 	/* per-cpu sections scanning */
- 	for_each_possible_cpu(i)
-@@ -2071,6 +2066,17 @@ void __init kmemleak_init(void)
+@@ -3353,10 +3352,12 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 		stmmac_display_ring(priv, rx_head, DMA_RX_SIZE, true);
  	}
- 	local_irq_restore(flags);
+ 	while (count < limit) {
+-		int status;
++		int entry, status;
+ 		struct dma_desc *p;
+ 		struct dma_desc *np;
  
-+	/* register the data/bss sections */
-+	create_object((unsigned long)_sdata, _edata - _sdata,
-+		      KMEMLEAK_GREY, GFP_ATOMIC);
-+	create_object((unsigned long)__bss_start, __bss_stop - __bss_start,
-+		      KMEMLEAK_GREY, GFP_ATOMIC);
-+	/* only register .data..ro_after_init if not within .data */
-+	if (__start_ro_after_init < _sdata || __end_ro_after_init > _edata)
-+		create_object((unsigned long)__start_ro_after_init,
-+			      __end_ro_after_init - __start_ro_after_init,
-+			      KMEMLEAK_GREY, GFP_ATOMIC);
++		entry = next_entry;
 +
- 	/*
- 	 * This is the point where tracking allocations is safe. Automatic
- 	 * scanning is started during the late initcall. Add the early logged
+ 		if (priv->extend_desc)
+ 			p = (struct dma_desc *)(rx_q->dma_erx + entry);
+ 		else
+@@ -3417,7 +3418,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 						   "len %d larger than size (%d)\n",
+ 						   frame_len, priv->dma_buf_sz);
+ 				priv->dev->stats.rx_length_errors++;
+-				break;
++				continue;
+ 			}
+ 
+ 			/* ACS is set; GMAC core strips PAD/FCS for IEEE 802.3
+@@ -3452,7 +3453,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 						dev_warn(priv->device,
+ 							 "packet dropped\n");
+ 					priv->dev->stats.rx_dropped++;
+-					break;
++					continue;
+ 				}
+ 
+ 				dma_sync_single_for_cpu(priv->device,
+@@ -3477,7 +3478,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 							   "%s: Inconsistent Rx chain\n",
+ 							   priv->dev->name);
+ 					priv->dev->stats.rx_dropped++;
+-					break;
++					continue;
+ 				}
+ 				prefetch(skb->data - NET_IP_ALIGN);
+ 				rx_q->rx_skbuff[entry] = NULL;
+@@ -3512,7 +3513,6 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 			priv->dev->stats.rx_packets++;
+ 			priv->dev->stats.rx_bytes += frame_len;
+ 		}
+-		entry = next_entry;
+ 	}
+ 
+ 	stmmac_rx_refill(priv, queue);
 -- 
 2.20.1
 
