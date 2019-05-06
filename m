@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714F914D87
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C5814CD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbfEFOwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:52:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48692 "EHLO mail.kernel.org"
+        id S1728830AbfEFOoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:44:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbfEFOsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:48:24 -0400
+        id S1727806AbfEFOog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:44:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FB9C205ED;
-        Mon,  6 May 2019 14:48:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EBD1214C6;
+        Mon,  6 May 2019 14:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154104;
-        bh=V0HXgS5cL9B9SvKB1cc/CEQhrIEe7EaGF/Yh0vHBp2E=;
+        s=default; t=1557153875;
+        bh=d9V7BZ2TONf1lKjTI4YgdsMSqaVto2zYZiqqP5HV9qA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yCyKQwK6Wk3a4kre1wzPSTMPZbwN4gQDv3kPjRagi5sL0VFvYZqpua5MVYL0Prl1Y
-         creFsfDFTG7p5BfjAIIMA5osL4saK13FGJ2WRRa9ulKTqS6FxdZmN/YFFSiT3z/ral
-         4eukFCAhmT2FZq7XgKvqbtgKE3Jub46/FXPDagJw=
+        b=dMYXdsajSxEX8GbbxpM9yLi7sJ1Y8CSmTKuzQp68H10EbmLh2rcY93JUxlvX/dyJW
+         /uL888DYFoPot2wi644rCez32k6v/6TmfIMR/Kl+KK5ym619tIONSu24JxLaTij171
+         ByaqGBf/bWmux2cH6h6/Ki3fHjTrNJEf8Vrz/Ynk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 06/62] bnxt_en: Improve multicast address setup logic.
+        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 29/75] batman-adv: Reduce claim hash refcnt only for removed entry
 Date:   Mon,  6 May 2019 16:32:37 +0200
-Message-Id: <20190506143051.646342236@linuxfoundation.org>
+Message-Id: <20190506143055.827893610@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+[ Upstream commit 4ba104f468bbfc27362c393815d03aa18fb7a20f ]
 
-[ Upstream commit b4e30e8e7ea1d1e35ffd64ca46f7d9a7f227b4bf ]
+The batadv_hash_remove is a function which searches the hashtable for an
+entry using a needle, a hashtable bucket selection function and a compare
+function. It will lock the bucket list and delete an entry when the compare
+function matches it with the needle. It returns the pointer to the
+hlist_node which matches or NULL when no entry matches the needle.
 
-The driver builds a list of multicast addresses and sends it to the
-firmware when the driver's ndo_set_rx_mode() is called.  In rare
-cases, the firmware can fail this call if internal resources to
-add multicast addresses are exhausted.  In that case, we should
-try the call again by setting the ALL_MCAST flag which is more
-guaranteed to succeed.
+The batadv_bla_del_claim is not itself protected in anyway to avoid that
+any other function is modifying the hashtable between the search for the
+entry and the call to batadv_hash_remove. It can therefore happen that the
+entry either doesn't exist anymore or an entry was deleted which is not the
+same object as the needle. In such an situation, the reference counter (for
+the reference stored in the hashtable) must not be reduced for the needle.
+Instead the reference counter of the actually removed entry has to be
+reduced.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Otherwise the reference counter will underflow and the object might be
+freed before all its references were dropped. The kref helpers reported
+this problem as:
+
+  refcount_t: underflow; use-after-free.
+
+Fixes: 23721387c409 ("batman-adv: add basic bridge loop avoidance code")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ net/batman-adv/bridge_loop_avoidance.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5954,8 +5954,15 @@ static int bnxt_cfg_rx_mode(struct bnxt
+diff --git a/net/batman-adv/bridge_loop_avoidance.c b/net/batman-adv/bridge_loop_avoidance.c
+index c3c848f64fdd..c761c0c233e4 100644
+--- a/net/batman-adv/bridge_loop_avoidance.c
++++ b/net/batman-adv/bridge_loop_avoidance.c
+@@ -803,6 +803,8 @@ static void batadv_bla_del_claim(struct batadv_priv *bat_priv,
+ 				 const u8 *mac, const unsigned short vid)
+ {
+ 	struct batadv_bla_claim search_claim, *claim;
++	struct batadv_bla_claim *claim_removed_entry;
++	struct hlist_node *claim_removed_node;
  
- skip_uc:
- 	rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, 0);
-+	if (rc && vnic->mc_list_count) {
-+		netdev_info(bp->dev, "Failed setting MC filters rc: %d, turning on ALL_MCAST mode\n",
-+			    rc);
-+		vnic->rx_mask |= CFA_L2_SET_RX_MASK_REQ_MASK_ALL_MCAST;
-+		vnic->mc_list_count = 0;
-+		rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, 0);
-+	}
- 	if (rc)
--		netdev_err(bp->dev, "HWRM cfa l2 rx mask failure rc: %x\n",
-+		netdev_err(bp->dev, "HWRM cfa l2 rx mask failure rc: %d\n",
- 			   rc);
+ 	ether_addr_copy(search_claim.addr, mac);
+ 	search_claim.vid = vid;
+@@ -813,10 +815,18 @@ static void batadv_bla_del_claim(struct batadv_priv *bat_priv,
+ 	batadv_dbg(BATADV_DBG_BLA, bat_priv, "%s(): %pM, vid %d\n", __func__,
+ 		   mac, batadv_print_vid(vid));
  
- 	return rc;
+-	batadv_hash_remove(bat_priv->bla.claim_hash, batadv_compare_claim,
+-			   batadv_choose_claim, claim);
+-	batadv_claim_put(claim); /* reference from the hash is gone */
++	claim_removed_node = batadv_hash_remove(bat_priv->bla.claim_hash,
++						batadv_compare_claim,
++						batadv_choose_claim, claim);
++	if (!claim_removed_node)
++		goto free_claim;
+ 
++	/* reference from the hash is gone */
++	claim_removed_entry = hlist_entry(claim_removed_node,
++					  struct batadv_bla_claim, hash_entry);
++	batadv_claim_put(claim_removed_entry);
++
++free_claim:
+ 	/* don't need the reference from hash_find() anymore */
+ 	batadv_claim_put(claim);
+ }
+-- 
+2.20.1
+
 
 
