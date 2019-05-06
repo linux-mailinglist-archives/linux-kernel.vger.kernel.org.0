@@ -2,109 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D181A1454D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F04314516
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfEFH3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:29:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:25096 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbfEFH3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:29:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 00:24:20 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga002.jf.intel.com with ESMTP; 06 May 2019 00:24:15 -0700
-Subject: Re: [PATCH] mmc: block: Fix memory leak in blk-mq when cleaning up
-To:     Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-rockchip@lists.infradead.org, groeck@chromium.org,
-        mka@chromium.org, drinkcat@chromium.org,
-        Ming Lei <ming.lei@redhat.com>, linux-mmc@vger.kernel.org,
-        Hannes Reinecke <hare@suse.com>, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>
-References: <20190503233526.226272-1-dianders@chromium.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c7dde396-6536-bd9b-95af-9ed57fbebc86@intel.com>
-Date:   Mon, 6 May 2019 10:22:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726118AbfEFHZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:25:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56475 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbfEFHZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:25:00 -0400
+Received: from [IPv6:2601:646:8680:2bb1:2c1a:a861:2af0:6203] ([IPv6:2601:646:8680:2bb1:2c1a:a861:2af0:6203])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x467OfQH4051413
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Mon, 6 May 2019 00:24:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x467OfQH4051413
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1557127484;
+        bh=2mwrs2IoZVU00bTH7LKnu03eIVqUi3rcwkPWpTGsk+M=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=lSoJLHq1Va2vnsuWLt02IKTx0oR3sdc0lc57h+vP4uFmYsJTWktIExKX0xK5WjRKR
+         nzIs3dfpoaibeFrx3YUhnDVFUefI9YztGzdqxH5nCBugpRtCGbA+iYV+ZY0v4CPefw
+         jniAOXi73xkFsIYnCQHM1CCqBAwK9NZeg9bXU8UnXJwisicrY945VNiPPjy5INznj5
+         7yp+oXCpIkhvuTkUGy/lZBRbV72U7PntH9Zx3JEQ06eTptNHQAGYXz1wOrCFSwkvZd
+         EEyzD9HMArvJ8lKVF4Tr8G+JRU24U8whDjhuIre4PgKiQL9UWafw8trYoOmyBOldcG
+         9A5YgP0UpFjKg==
+Date:   Mon, 06 May 2019 00:24:32 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190506072012.GA33946@gmail.com>
+References: <20190506072012.GA33946@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190503233526.226272-1-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [GIT PULL] objtool changes for v5.2: Add build-time uaccess permissions and DF validation
+To:     Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+From:   hpa@zytor.com
+Message-ID: <3D9DB587-A502-42EA-A6F6-5790735310F5@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/05/19 2:35 AM, Douglas Anderson wrote:
-> If I run the following on rk3288-veyron-minnie (a 2GB machine)
-> 
->   cd /sys/bus/platform/drivers/dwmmc_rockchip
->   for i in $(seq 1 3000); do
->     echo "========================" $i
->     echo ff0f0000.dwmmc > unbind
->     sleep .5
->     echo ff0f0000.dwmmc > bind
->     while true; do
->       if [ -e /dev/mmcblk2 ]; then
->         break;
->       fi
->       sleep .1
->     done
->   done
-> 
-> Then I start OOMing somewhere between iteration 200 and 250.  Using
-> kmemleak, I see reports like:
-> 
-> unreferenced object 0xe39c5580 (size 64):
->   comm "kworker/1:0", pid 17, jiffies 4294821091 (age 96.952s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ad19d10a>] __kmalloc+0x1ec/0x2dc
->     [<a28614c3>] blk_mq_alloc_tag_set+0x27c/0x2bc
->     [<0955ae01>] mmc_init_queue+0xa8/0x2a8
->     [<5102b986>] mmc_blk_alloc_req+0xf8/0x2d4
->     [<f1c2214f>] mmc_blk_probe+0x4a8/0x6c0
->     [<0dfdd9d5>] mmc_bus_probe+0x24/0x28
-> 
-> It's pretty clear that we're missing a call to blk_mq_free_tag_set().
-> Let's add it.
-> 
-> Fixes: 81196976ed94 ("mmc: block: Add blk-mq support")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On May 6, 2019 12:20:12 AM PDT, Ingo Molnar <mingo@kernel=2Eorg> wrote:
+>Linus,
+>
+>Please pull the latest core-objtool-for-linus git tree from:
+>
+>git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/tip/tip=2Egit
+>core-objtool-for-linus
+>
+># HEAD: 29da93fea3ea39ab9b12270cc6be1b70ef201c9e mm/uaccess: Use
+>'unsigned long' to placate UBSAN warnings on older GCC versions
+>
+>This is a series from Peter Zijlstra that adds x86 build-time uaccess=20
+>validation of SMAP to objtool, which will detect and warn about the=20
+>following uaccess API usage bugs and weirdnesses:
+>
+>	call to %s() with UACCESS enabled
+>	return with UACCESS enabled
+>	return with UACCESS disabled from a UACCESS-safe function
+>	recursive UACCESS enable
+>	redundant UACCESS disable
+>	UACCESS-safe disables UACCESS
+>
+>As it turns out not leaking uaccess permissions outside the intended=20
+>uaccess functionality is hard when the interfaces are complex and when=20
+>such bugs are mostly dormant=2E
+>
+>As a bonus we now also check the DF flag=2E We had at least one=20
+>high-profile bug in that area in the early days of Linux, and the=20
+>checking is fairly simple=2E The checks performed and warnings emitted
+>are:
+>
+>	call to %s() with DF set
+>	return with DF set
+>	return with modified stack frame
+>	recursive STD
+>	redundant CLD
+>
+>It's all x86-only for now, but later on this can also be used for PAN
+>on=20
+>ARM and objtool is fairly cross-platform in principle=2E
+>
+>While all warnings emitted by this new checking facility that got=20
+>reported to us were fixed, there might be GCC version dependent
+>warnings=20
+>that were not reported yet - which we'll address, should they trigger=2E
+>
+>The warnings are non-fatal build warnings=2E
+>
+> Thanks,
+>
+>	Ingo
+>
+>------------------>
+>Josh Poimboeuf (1):
+>      tracing: Improve "if" macro code generation
+>
+>Peter Zijlstra (26):
+>      sched/x86: Save [ER]FLAGS on context switch
+>      x86/ia32: Fix ia32_restore_sigcontext() AC leak
+>      i915, uaccess: Fix redundant CLAC
+>      x86/uaccess: Move copy_user_handle_tail() into asm
+>      x86/uaccess: Fix up the fixup
+>      x86/nospec, objtool: Introduce ANNOTATE_IGNORE_ALTERNATIVE
+>      x86/uaccess, xen: Suppress SMAP warnings
+>      x86/uaccess: Always inline user_access_begin()
+>      x86/uaccess, signal: Fix AC=3D1 bloat
+>      x86/uaccess: Introduce user_access_{save,restore}()
+>      x86/smap: Ditch __stringify()
+>      x86/uaccess, kasan: Fix KASAN vs SMAP
+>      x86/uaccess, ubsan: Fix UBSAN vs=2E SMAP
+>      x86/uaccess, ftrace: Fix ftrace_likely_update() vs=2E SMAP
+>      x86/uaccess, kcov: Disable stack protector
+>      objtool: Set insn->func for alternatives
+>      objtool: Handle function aliases
+>      objtool: Rewrite add_ignores()
+>      objtool: Add --backtrace support
+>      objtool: Rewrite alt->skip_orig
+>      objtool: Fix sibling call detection
+>      objtool: Add UACCESS validation
+>      objtool: Add Direction Flag validation
+>      sched/x86_64: Don't save flags on context switch
+>x86/uaccess: Dont leak the AC flag into __put_user() argument
+>evaluation
+>mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC
+>versions
+>
+>
+> arch/x86/entry/entry_32=2ES                  |   2 +
+> arch/x86/ia32/ia32_signal=2Ec                |  29 ++-
+> arch/x86/include/asm/alternative-asm=2Eh     |  11 +
+> arch/x86/include/asm/alternative=2Eh         |  10 +
+> arch/x86/include/asm/asm=2Eh                 |  24 --
+> arch/x86/include/asm/nospec-branch=2Eh       |  28 +-
+> arch/x86/include/asm/smap=2Eh                |  37 ++-
+> arch/x86/include/asm/switch_to=2Eh           |   1 +
+> arch/x86/include/asm/uaccess=2Eh             |  12 +-
+> arch/x86/include/asm/uaccess_64=2Eh          |   3 -
+> arch/x86/include/asm/xen/hypercall=2Eh       |  24 +-
+> arch/x86/kernel/process_32=2Ec               |   7 +
+> arch/x86/kernel/process_64=2Ec               |   1 +
+> arch/x86/kernel/signal=2Ec                   |  29 ++-
+> arch/x86/lib/copy_user_64=2ES                |  48 ++++
+> arch/x86/lib/memcpy_64=2ES                   |   3 +-
+> arch/x86/lib/usercopy_64=2Ec                 |  20 --
+> drivers/gpu/drm/i915/i915_gem_execbuffer=2Ec |   6 +-
+> include/linux/compiler=2Eh                   |   2 +-
+> include/linux/uaccess=2Eh                    |   2 +
+> kernel/Makefile                            |   1 +
+> kernel/trace/trace_branch=2Ec                |   4 +
+> lib/Makefile                               |   1 +
+> lib/strncpy_from_user=2Ec                    |   5 +-
+> lib/strnlen_user=2Ec                         |   4 +-
+> lib/ubsan=2Ec                                |   4 +
+> mm/kasan/Makefile                          |   3 +
+> mm/kasan/common=2Ec                          |  10 +
+> mm/kasan/report=2Ec                          |   3 +-
+> scripts/Makefile=2Ebuild                     |   3 +
+> tools/objtool/arch=2Eh                       |   8 +-
+> tools/objtool/arch/x86/decode=2Ec            |  21 +-
+> tools/objtool/builtin-check=2Ec              |   4 +-
+> tools/objtool/builtin=2Eh                    |   2 +-
+>tools/objtool/check=2Ec                      | 400
+>++++++++++++++++++++++-------
+> tools/objtool/check=2Eh                      |   4 +-
+> tools/objtool/elf=2Ec                        |  15 +-
+> tools/objtool/elf=2Eh                        |   3 +-
+> tools/objtool/special=2Ec                    |  18 ++
+> tools/objtool/special=2Eh                    |   1 +
+> tools/objtool/warn=2Eh                       |   8 +
+> 41 files changed, 602 insertions(+), 219 deletions(-)
 
-Same as:
-
-	https://lore.kernel.org/lkml/20190502190714.181664-1-rrangel@chromium.org/
-
-> ---
-> 
->  drivers/mmc/core/queue.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-> index 7c364a9c4eeb..09071e13282e 100644
-> --- a/drivers/mmc/core/queue.c
-> +++ b/drivers/mmc/core/queue.c
-> @@ -480,6 +480,8 @@ void mmc_cleanup_queue(struct mmc_queue *mq)
->  	 */
->  	flush_work(&mq->complete_work);
->  
-> +	blk_mq_free_tag_set(&mq->tag_set);
-> +
->  	mq->card = NULL;
->  }
->  
-> 
-
+Superb work=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
