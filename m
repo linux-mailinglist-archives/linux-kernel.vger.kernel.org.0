@@ -2,80 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5A2149F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D23149F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfEFMjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 08:39:53 -0400
-Received: from sauhun.de ([88.99.104.3]:34358 "EHLO pokefinder.org"
+        id S1726379AbfEFMkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 08:40:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfEFMjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 08:39:53 -0400
-Received: from localhost (p54B3305A.dip0.t-ipconnect.de [84.179.48.90])
-        by pokefinder.org (Postfix) with ESMTPSA id 1104F2C0963;
-        Mon,  6 May 2019 14:39:51 +0200 (CEST)
-Date:   Mon, 6 May 2019 14:39:50 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     syzbot <syzbot+6da9575ba2db4da91831@syzkaller.appspotmail.com>,
-        airlied@linux.ie, dmitry.torokhov@gmail.com,
-        dri-devel@lists.freedesktop.org, hpa@zytor.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, patrik.r.jakobsson@gmail.com,
-        rydberg@bitmath.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Subject: Re: KASAN: use-after-free Read in add_uevent_var
-Message-ID: <20190506123950.GA18177@kunai>
-References: <000000000000559435058813dc8d@google.com>
- <20190506081525.GD17751@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <20190506081525.GD17751@phenom.ffwll.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725856AbfEFMkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 08:40:17 -0400
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D01B20830;
+        Mon,  6 May 2019 12:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557146417;
+        bh=0WZ5m/hI9ht1JgwBW9Bs/jdn55WP1IMFhu8S8OuNGF0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T1AKWa9dN8KvyAEOWZD2bYOThQ0RwF7JLJNQlV6bUZmz2d4sQ0oVetaB3R8lvDQbl
+         2XpBPqllDm8rKUHwT/JVrxUbPiGHzHBQDTAeq/CUkhO9oJauOnzW+BEVc9aUG672C2
+         lfo44+UGq5w42LZBwPlxuiQqNqDNmiv+qqz2VRFA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH] kbuild: Fix cross compile link with ccache
+Date:   Mon,  6 May 2019 14:40:00 +0200
+Message-Id: <1557146400-12269-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix calling objcopy in case of cross compile environments:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	ARCH="arm" CROSS_COMPILE="ccache arm-linux-gnueabi-" make
+	scripts/link-vmlinux.sh: line 211: ccache arm-linux-gnueabi-objcopy: command not found
 
+Fixes: 6a26793a7891 ("moduleparam: Save information about built-in modules in separate file")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ scripts/link-vmlinux.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > The bug was bisected to:
-> >=20
-> > commit 0a1c7959acd9674a0e4e59f911f3e5fbf25fd693
-> > Author: Wolfram Sang <wsa@the-dreams.de>
-> > Date:   Wed May 17 15:22:18 2017 +0000
-> >=20
-> >     gpu: drm: tc35876x: move header file out of I2C realm
->=20
-> Bisect seems to have gone off the rails. No idea where or why.
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 62b9fc561af7..42ea6f9264ef 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -208,7 +208,7 @@ modpost_link vmlinux.o
+ ${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
+ 
+ info MODINFO modules.builtin.modinfo
+-"${OBJCOPY}" -j .modinfo -O binary vmlinux.o modules.builtin.modinfo
++${OBJCOPY} -j .modinfo -O binary vmlinux.o modules.builtin.modinfo
+ 
+ kallsymso=""
+ kallsyms_vmlinux=""
+-- 
+2.7.4
 
-Yes, luckily it was obvious here, saving us from chasing ghosts.
-
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzQKxIACgkQFA3kzBSg
-KbYGlA/+IRmumqdM8Lj+ELaaAGYdWD5XIpHr2MBZBYifi/kUl3ZIlPtdAUcuE7qH
-GAZDCVKFU1bcvI/00L584DRCnWEIkXWGlh5S2yPzPPND3qAJjIy75L0JkdVLxG1k
-bjy6/ALj/GHSP6ry9FqdOCtyL6NMkbimjKjd5q/hoSLTcGCp5z4SWs3K4J3FiuQy
-JCsZbsm6pl7ZVhnF214HWaTss2fmfFfPSPIN0bkdbUup5NguCKGDVHLQBiALz8uI
-NucdPf/ElZrpylRz079UNaQ3HnE3Pu9aVET02qefVwtPVO4sJ+BIZLuw0vNvBAv9
-ari8b2DByEXXA8CBk0mjm/xaSGbqiVR90L4FsC0UZdGB5MXWkWofXCW1JPNYvc8a
-4wVjX63Y6EuccAezuLbS7m2plfPftdOR3CvP4HX15A5ax4yjbBEEKqpoDJDwqifk
-ANnvUTa/X4ts+Ld5yFlC3rfACUPj23VY8zR6HswWis5LKjnGUhNdDlzmILFLYmuM
-oPHN6BzMIRiMbKFrKbUHzuNLTMR607d4I/dKpnqr6oUjYFFo1pdKHgbrjgxF8y1p
-cH+mDe/8N0thkS27Chss8yvzVdtmFoZHSDaeY7QfOG41hqMINNVOLFOkYT9NyoTM
-Tdo8ZXHM3+m7SvR0T0AqZ/HTxf4yYziNEuwXTtf0Odih/aGcti4=
-=tKNJ
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
