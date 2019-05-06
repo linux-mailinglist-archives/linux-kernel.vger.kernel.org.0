@@ -2,62 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C532C14D55
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F6614D57
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbfEFOud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:50:33 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44747 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbfEFOu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:50:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:50:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="168448180"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 06 May 2019 07:50:27 -0700
-Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
-        by linux.intel.com (Postfix) with ESMTP id BC9BC58010A;
-        Mon,  6 May 2019 07:50:26 -0700 (PDT)
-Subject: Re: [alsa-devel] [RFC PATCH 6/7] soundwire: cadence_master: add
- debugfs register dump
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-7-pierre-louis.bossart@linux.intel.com>
- <20190504070346.GE9770@kroah.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <dbcb67d0-aec3-cae7-c908-81a2e40efbb5@linux.intel.com>
-Date:   Mon, 6 May 2019 09:50:26 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1729415AbfEFOu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:50:58 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38756 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfEFOu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:50:57 -0400
+Received: by mail-pl1-f195.google.com with SMTP id a59so6492682pla.5;
+        Mon, 06 May 2019 07:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yft7gFfFtwWc/a4cPI5/imyDvpQ6B50i8MJ8FHJY3Qs=;
+        b=STLGVkk9q3xG5XzEWIxDxCWzi7LbMYZk/zsgVLMCL4xGBxj0aS+nJAMPhJvVrh8ZZ5
+         tyWv/Cdqs+zOFxlkBgEgmvES139xCjiWTbeLWMB3i50jOyxm88aFFEbIjm0HVnFlaXhr
+         Bz7CDYehYQXVOmPoOXvPc+bfDchq+uKGmgI70iI3yk2t+/ElBy27YV3T8059gbL8drxm
+         phfRyQ8OlvTTKYppdrvKlcl0xpcJHkktMY3ianUgMFAOTO6mKeK1HgkSZOGGvK4yShTf
+         WucVDLAwRYwYS9sGY2k9EiifogAt7NurM4daSspYuJxu5lKI6qUrhWMlaF6hiGtgZRF3
+         k+3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yft7gFfFtwWc/a4cPI5/imyDvpQ6B50i8MJ8FHJY3Qs=;
+        b=UTKMdhpF5waoK3jN85LSv3dXPKBnArZNd+uPIRzwS5Rr7YF17MUuZTINPgsS9Kymjy
+         f4g0GBh4VrB3sadraIl1yTkH3Mi5KdU9A5ln/4O3zHYmxy1YcvBg+jOBy8DXSyokJ/pe
+         mXHtF5iWrbn71QOk2Z57MdlvacYOTo5Rl6a1/l8UN1lSKvtxylUMkSxanH0/gE5GRdGl
+         NAdZjR/6CwmCmyPLfpm+/XfThSHh1/ry0Ffo8/T7VbIzYylkpCanqQbmnCBSMFDe+I4H
+         ecr9zh8AVP7WHVs0LQ9ZOFznQXoB/7Br11WL4TBd62t8o+ce9pYgNvP81hkJhZ59gE9w
+         4HNA==
+X-Gm-Message-State: APjAAAUz6ZvDbzxOzlCzDCWOWehtOVM4BsGX2FHgPaRZwVJYUV68gMKW
+        XtR0J/hs6wnItLBIFpPGU6AH1cK653NWJbJEugdXw7HKu1lTkw==
+X-Google-Smtp-Source: APXvYqy8wpf4YDDJWESxP3aiIHocm0jQsnFWNLQ3cd6ry01eg907GSjDg7den4prkFMH+wV8/3Jw0LpLJV0BD5ifkqY=
+X-Received: by 2002:a17:902:758b:: with SMTP id j11mr33334728pll.87.1557154256970;
+ Mon, 06 May 2019 07:50:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190504070346.GE9770@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190506232200.1acfe572@canb.auug.org.au>
+In-Reply-To: <20190506232200.1acfe572@canb.auug.org.au>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 6 May 2019 17:50:45 +0300
+Message-ID: <CAHp75VcbWN+--XSepr3Ea48cnfY3h7=TpmM2sEt0rJLZ_QX2rA@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 6, 2019 at 4:22 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commit
+>
+>   cc86bb923508 ("platform/x86: thinkpad_acpi: fix spelling mistake "capabilites" -> "capabilities"")
+>
+> is missing a Signed-off-by from its committer.
 
->> +void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
->> +{
->> +	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
->> +}
->> +EXPORT_SYMBOL(sdw_cdns_debugfs_init);
-> 
-> Don't wrap debugfs calls with export symbol without using
-> EXPORT_SYMBOL_GPL() or you will get grumpy emails from me :)
+It's fixed now, thanks!
 
-Yes, that's a miss. I've already seen this comment and fixed it for SOF, 
-I should have thought about it for SoundWire, my bad.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
