@@ -2,305 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17086147EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E01147ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 11:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfEFJ6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 05:58:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42567 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbfEFJ63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 05:58:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l2so16454394wrb.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=spyvVZOA092Rq/pDhbTlA8tcvHt4DyPzwJ7M6MsQeGA=;
-        b=tcCdgTG8H8MAKQGHBtyfaqhZgC9xPbMemqlo38nW50o2fdg9QUHXNAT05F4uz1pgJc
-         g27KbxkrZLb3kgtKhQgpVmDkVX6BEU/+azucdZWPCLyIqEu8rt7mTwuKWkekCiUD0ED/
-         P/RJu8RgYwvRkf2APWHfhpQOGR7yjvjvY3DTseJwtmVY96NxWYu22fLGqSWGTQcY3MeW
-         Gd+KQkz69EtpMjAk9S69OuaY5tVbutsWwasUcqwjWM04T12h4yasr9m/1FVxUZZqJn+1
-         MKzAqrgvTZpvR0csyALcM4iwqJ1spJwi1ENeVtpWdrFy6QLquyNyi1EsnxIFXyRB1ImH
-         sdsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=spyvVZOA092Rq/pDhbTlA8tcvHt4DyPzwJ7M6MsQeGA=;
-        b=b9q4VGi2wYEGU09E7auIazMPaY9EwcIM51v9YPN8Je3mHaPeTJnmQ0xVe6x+qr0VIf
-         VkkZJECQfO6LNNMTK4cr/GDWeCUrQNLIdiVDCnPNJxFG3cPAFaincNTwclmUeBbyrYoy
-         YCMeJ6LwnA71nmJWZi06ho0b7bTj3mb0DDlL7EhfDdjFQjOk7qrRqTz0IthtpBzilmvF
-         Q4vnynxUhD7Q3C7U0/YR4NPIqamiLBo/j9+HahXyh4wSw8vYvoJRgdzKem3hFdbsNbKq
-         Y6m1E2ayJpqxXrawIA0Wdvvm8Zlw1TH4h+FfKyUC7D2H47Wy3LN10kP+HnT35P4vmEXe
-         FTPg==
-X-Gm-Message-State: APjAAAWZfw8tz2mstMnITcLM3zjn3sc6qkZ0Vvto73Yirc3aOJv+/I9k
-        AX5N930IbJc/Z1kYelruqTX3UQ==
-X-Google-Smtp-Source: APXvYqx0DOK7WHFX9ytkejwPIliORawCMPCyR4HJ+H09HoIufnGhw37LS35rMEm75u7m8KRZrZHuMA==
-X-Received: by 2002:a5d:5108:: with SMTP id s8mr115083wrt.99.1557136706779;
-        Mon, 06 May 2019 02:58:26 -0700 (PDT)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id c10sm23409791wrd.69.2019.05.06.02.58.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 02:58:26 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: [PATCH v2 4/4] ASoC: hdmi-codec: remove ops dependency on the dai id
-Date:   Mon,  6 May 2019 11:58:15 +0200
-Message-Id: <20190506095815.24578-5-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190506095815.24578-1-jbrunet@baylibre.com>
-References: <20190506095815.24578-1-jbrunet@baylibre.com>
+        id S1726520AbfEFJ66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 05:58:58 -0400
+Received: from smtp-out.xnet.cz ([178.217.244.18]:35125 "EHLO smtp-out.xnet.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726338AbfEFJ65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 05:58:57 -0400
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id DFA9E384F;
+        Mon,  6 May 2019 11:58:54 +0200 (CEST)
+Received: by meh.true.cz (OpenSMTPD) with ESMTP id 31fc53e1;
+        Mon, 6 May 2019 11:58:53 +0200 (CEST)
+From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next 0/3] of_get_mac_address ERR_PTR fixes
+Date:   Mon,  6 May 2019 11:58:34 +0200
+Message-Id: <1557136717-531-1-git-send-email-ynezz@true.cz>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dependency on the dai_id can be removed by setting different ops
-for the i2s and spdif dai and storing the dai format information in
-each dai structure. It simplies the code a bit.
+Hi,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/codecs/hdmi-codec.c | 100 +++++++++++++++++++++++-----------
- 1 file changed, 67 insertions(+), 33 deletions(-)
+this patch series is an attempt to fix the mess, I've somehow managed to
+introduce.
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 9408e6bc4d3e..90a892766625 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -278,7 +278,6 @@ static const struct hdmi_codec_cea_spk_alloc hdmi_codec_channel_alloc[] = {
- 
- struct hdmi_codec_priv {
- 	struct hdmi_codec_pdata hcd;
--	struct hdmi_codec_daifmt daifmt[2];
- 	uint8_t eld[MAX_ELD_BYTES];
- 	struct snd_pcm_chmap *chmap_info;
- 	unsigned int chmap_idx;
-@@ -445,6 +444,7 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
- {
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
-+	struct hdmi_codec_daifmt *cf = dai->playback_dma_data;
- 	struct hdmi_codec_params hp = {
- 		.iec = {
- 			.status = { 0 },
-@@ -489,28 +489,27 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
- 	hp.channels = params_channels(params);
- 
- 	return hcp->hcd.ops->hw_params(dai->dev->parent, hcp->hcd.data,
--				       &hcp->daifmt[dai->id], &hp);
-+				       cf, &hp);
- }
- 
--static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
--			      unsigned int fmt)
-+static int hdmi_codec_i2s_set_fmt(struct snd_soc_dai *dai,
-+				  unsigned int fmt)
- {
--	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
--	struct hdmi_codec_daifmt cf = { 0 };
-+	struct hdmi_codec_daifmt *cf = dai->playback_dma_data;
- 
--	if (dai->id == DAI_ID_SPDIF)
--		return 0;
-+	/* Reset daifmt */
-+	memset(cf, 0, sizeof(*cf));
- 
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBM_CFM:
--		cf.bit_clk_master = 1;
--		cf.frame_clk_master = 1;
-+		cf->bit_clk_master = 1;
-+		cf->frame_clk_master = 1;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFM:
--		cf.frame_clk_master = 1;
-+		cf->frame_clk_master = 1;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFS:
--		cf.bit_clk_master = 1;
-+		cf->bit_clk_master = 1;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFS:
- 		break;
-@@ -522,43 +521,41 @@ static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
- 	case SND_SOC_DAIFMT_NB_NF:
- 		break;
- 	case SND_SOC_DAIFMT_NB_IF:
--		cf.frame_clk_inv = 1;
-+		cf->frame_clk_inv = 1;
- 		break;
- 	case SND_SOC_DAIFMT_IB_NF:
--		cf.bit_clk_inv = 1;
-+		cf->bit_clk_inv = 1;
- 		break;
- 	case SND_SOC_DAIFMT_IB_IF:
--		cf.frame_clk_inv = 1;
--		cf.bit_clk_inv = 1;
-+		cf->frame_clk_inv = 1;
-+		cf->bit_clk_inv = 1;
- 		break;
- 	}
- 
- 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 	case SND_SOC_DAIFMT_I2S:
--		cf.fmt = HDMI_I2S;
-+		cf->fmt = HDMI_I2S;
- 		break;
- 	case SND_SOC_DAIFMT_DSP_A:
--		cf.fmt = HDMI_DSP_A;
-+		cf->fmt = HDMI_DSP_A;
- 		break;
- 	case SND_SOC_DAIFMT_DSP_B:
--		cf.fmt = HDMI_DSP_B;
-+		cf->fmt = HDMI_DSP_B;
- 		break;
- 	case SND_SOC_DAIFMT_RIGHT_J:
--		cf.fmt = HDMI_RIGHT_J;
-+		cf->fmt = HDMI_RIGHT_J;
- 		break;
- 	case SND_SOC_DAIFMT_LEFT_J:
--		cf.fmt = HDMI_LEFT_J;
-+		cf->fmt = HDMI_LEFT_J;
- 		break;
- 	case SND_SOC_DAIFMT_AC97:
--		cf.fmt = HDMI_AC97;
-+		cf->fmt = HDMI_AC97;
- 		break;
- 	default:
- 		dev_err(dai->dev, "Invalid DAI interface format\n");
- 		return -EINVAL;
- 	}
- 
--	hcp->daifmt[dai->id] = cf;
--
- 	return 0;
- }
- 
-@@ -573,14 +570,20 @@ static int hdmi_codec_digital_mute(struct snd_soc_dai *dai, int mute)
- 	return 0;
- }
- 
--static const struct snd_soc_dai_ops hdmi_dai_ops = {
-+static const struct snd_soc_dai_ops hdmi_codec_i2s_dai_ops = {
- 	.startup	= hdmi_codec_startup,
- 	.shutdown	= hdmi_codec_shutdown,
- 	.hw_params	= hdmi_codec_hw_params,
--	.set_fmt	= hdmi_codec_set_fmt,
-+	.set_fmt	= hdmi_codec_i2s_set_fmt,
- 	.digital_mute	= hdmi_codec_digital_mute,
- };
- 
-+static const struct snd_soc_dai_ops hdmi_codec_spdif_dai_ops = {
-+	.startup	= hdmi_codec_startup,
-+	.shutdown	= hdmi_codec_shutdown,
-+	.hw_params	= hdmi_codec_hw_params,
-+	.digital_mute	= hdmi_codec_digital_mute,
-+};
- 
- #define HDMI_RATES	(SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |\
- 			 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200 |\
-@@ -648,20 +651,52 @@ static int hdmi_codec_pcm_new(struct snd_soc_pcm_runtime *rtd,
- static int hdmi_dai_probe(struct snd_soc_dai *dai)
- {
- 	struct snd_soc_dapm_context *dapm;
-+	struct hdmi_codec_daifmt *daifmt;
- 	struct snd_soc_dapm_route route = {
- 		.sink = "TX",
- 		.source = dai->driver->playback.stream_name,
- 	};
-+	int ret;
- 
- 	dapm = snd_soc_component_get_dapm(dai->component);
-+	ret = snd_soc_dapm_add_routes(dapm, &route, 1);
-+	if (ret)
-+		return ret;
-+
-+	daifmt = kzalloc(sizeof(*daifmt), GFP_KERNEL);
-+	if (!daifmt)
-+		return -ENOMEM;
- 
--	return snd_soc_dapm_add_routes(dapm, &route, 1);
-+	dai->playback_dma_data = daifmt;
-+	return 0;
-+}
-+
-+static int hdmi_dai_spdif_probe(struct snd_soc_dai *dai)
-+{
-+	struct hdmi_codec_daifmt *cf = dai->playback_dma_data;
-+	int ret;
-+
-+	ret = hdmi_dai_probe(dai);
-+	if (ret)
-+		return ret;
-+
-+	cf = dai->playback_dma_data;
-+	cf->fmt = HDMI_SPDIF;
-+
-+	return 0;
-+}
-+
-+static int hdmi_codec_dai_remove(struct snd_soc_dai *dai)
-+{
-+	kfree(dai->playback_dma_data);
-+	return 0;
- }
- 
- static const struct snd_soc_dai_driver hdmi_i2s_dai = {
- 	.name = "i2s-hifi",
- 	.id = DAI_ID_I2S,
- 	.probe = hdmi_dai_probe,
-+	.remove = hdmi_codec_dai_remove,
- 	.playback = {
- 		.stream_name = "I2S Playback",
- 		.channels_min = 2,
-@@ -670,14 +705,15 @@ static const struct snd_soc_dai_driver hdmi_i2s_dai = {
- 		.formats = I2S_FORMATS,
- 		.sig_bits = 24,
- 	},
--	.ops = &hdmi_dai_ops,
-+	.ops = &hdmi_codec_i2s_dai_ops,
- 	.pcm_new = hdmi_codec_pcm_new,
- };
- 
- static const struct snd_soc_dai_driver hdmi_spdif_dai = {
- 	.name = "spdif-hifi",
- 	.id = DAI_ID_SPDIF,
--	.probe = hdmi_dai_probe,
-+	.probe = hdmi_dai_spdif_probe,
-+	.remove = hdmi_codec_dai_remove,
- 	.playback = {
- 		.stream_name = "SPDIF Playback",
- 		.channels_min = 2,
-@@ -685,7 +721,7 @@ static const struct snd_soc_dai_driver hdmi_spdif_dai = {
- 		.rates = HDMI_RATES,
- 		.formats = SPDIF_FORMATS,
- 	},
--	.ops = &hdmi_dai_ops,
-+	.ops = &hdmi_codec_spdif_dai_ops,
- 	.pcm_new = hdmi_codec_pcm_new,
- };
- 
-@@ -747,10 +783,8 @@ static int hdmi_codec_probe(struct platform_device *pdev)
- 		i++;
- 	}
- 
--	if (hcd->spdif) {
-+	if (hcd->spdif)
- 		daidrv[i] = hdmi_spdif_dai;
--		hcp->daifmt[DAI_ID_SPDIF].fmt = HDMI_SPDIF;
--	}
- 
- 	dev_set_drvdata(dev, hcp);
- 
+First patch in this series is defacto v5 of the previous 05/10 patch in the
+series, but since the v4 of this 05/10 patch wasn't picked up by the
+patchwork for some unknown reason, this patch wasn't applied with the other
+9 patches in the series, so I'm resending it as a separate patch of this
+fixup series again.
+
+Second patch is a result of this rebase against net-next tree, where I was
+checking again all current users of of_get_mac_address and found out, that
+there's new one in DSA, so I've converted this user to the new ERR_PTR
+encoded error value as well.
+
+Third patch which was sent as v5 wasn't considered for merge, but I still
+think, that we need to check for possible NULL value, thus current IS_ERR
+check isn't sufficient and we need to use IS_ERR_OR_NULL instead.
+
+Cheers,
+
+Petr
+
+Petr Štetiar (3):
+  net: ethernet: support of_get_mac_address new ERR_PTR error
+  net: dsa: support of_get_mac_address new ERR_PTR error
+  staging: octeon-ethernet: Fix of_get_mac_address ERR_PTR check
+
+ drivers/net/ethernet/aeroflex/greth.c                 | 2 +-
+ drivers/net/ethernet/allwinner/sun4i-emac.c           | 2 +-
+ drivers/net/ethernet/altera/altera_tse_main.c         | 2 +-
+ drivers/net/ethernet/arc/emac_main.c                  | 2 +-
+ drivers/net/ethernet/aurora/nb8800.c                  | 2 +-
+ drivers/net/ethernet/broadcom/bcmsysport.c            | 2 +-
+ drivers/net/ethernet/broadcom/bgmac-bcma.c            | 2 +-
+ drivers/net/ethernet/broadcom/bgmac-platform.c        | 2 +-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c        | 2 +-
+ drivers/net/ethernet/cavium/octeon/octeon_mgmt.c      | 2 +-
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c     | 2 +-
+ drivers/net/ethernet/davicom/dm9000.c                 | 2 +-
+ drivers/net/ethernet/ethoc.c                          | 2 +-
+ drivers/net/ethernet/ezchip/nps_enet.c                | 2 +-
+ drivers/net/ethernet/freescale/fec_main.c             | 2 +-
+ drivers/net/ethernet/freescale/fec_mpc52xx.c          | 2 +-
+ drivers/net/ethernet/freescale/fman/mac.c             | 2 +-
+ drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 2 +-
+ drivers/net/ethernet/freescale/gianfar.c              | 2 +-
+ drivers/net/ethernet/freescale/ucc_geth.c             | 2 +-
+ drivers/net/ethernet/hisilicon/hisi_femac.c           | 2 +-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c         | 2 +-
+ drivers/net/ethernet/lantiq_xrx200.c                  | 2 +-
+ drivers/net/ethernet/marvell/mv643xx_eth.c            | 2 +-
+ drivers/net/ethernet/marvell/mvneta.c                 | 2 +-
+ drivers/net/ethernet/marvell/pxa168_eth.c             | 2 +-
+ drivers/net/ethernet/marvell/sky2.c                   | 2 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c           | 2 +-
+ drivers/net/ethernet/micrel/ks8851.c                  | 2 +-
+ drivers/net/ethernet/micrel/ks8851_mll.c              | 2 +-
+ drivers/net/ethernet/nxp/lpc_eth.c                    | 2 +-
+ drivers/net/ethernet/qualcomm/qca_spi.c               | 2 +-
+ drivers/net/ethernet/qualcomm/qca_uart.c              | 2 +-
+ drivers/net/ethernet/renesas/ravb_main.c              | 2 +-
+ drivers/net/ethernet/renesas/sh_eth.c                 | 2 +-
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c   | 2 +-
+ drivers/net/ethernet/socionext/sni_ave.c              | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     | 2 +-
+ drivers/net/ethernet/ti/cpsw.c                        | 2 +-
+ drivers/net/ethernet/ti/netcp_core.c                  | 2 +-
+ drivers/net/ethernet/wiznet/w5100.c                   | 2 +-
+ drivers/net/ethernet/xilinx/ll_temac_main.c           | 2 +-
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c     | 2 +-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c         | 2 +-
+ drivers/staging/octeon/ethernet.c                     | 2 +-
+ net/dsa/slave.c                                       | 2 +-
+ net/ethernet/eth.c                                    | 2 +-
+ 47 files changed, 47 insertions(+), 47 deletions(-)
+
 -- 
-2.20.1
+1.9.1
 
