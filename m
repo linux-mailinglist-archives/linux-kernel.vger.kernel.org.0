@@ -2,78 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257A015472
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FC515477
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfEFTb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 15:31:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58866 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEFTb2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 15:31:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
+        id S1726529AbfEFTdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 15:33:17 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:56155 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbfEFTdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 15:33:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=gZ+PznOa1NPjwtyprbc4xPeHY4zz9L/0ME3WLNqb0aA=; b=rg74RFa+90w0Nw3xnzbjpJ8v6i
-        KTB6rv1ErhwxB+owHswOKFjpS88NMEarvqWtjhl0donO1sfb4HH5TfrKgK8y2SfOVFy4W3HkEFmLJ
-        lrZlgBYYAtfSkn2tk30kjrsbEg6Q/Oe9NjoCneCzyacU5IwQdbSS8f5HUqn7ioebEafQ5y7uzy8FM
-        Awxinlg4oyPq9iH5PejF8x8bI8y9ep2pJ+64PBSgq00De78MRLU1fqk4iH9cmw0plZvg6q7CfZtdF
-        6KAFObr9ILkjwJE94jh8zGy0FveUCKx1wLZ3iTBLnWpLKiXgDL2aDBq+hv0lEBaFZbRBJDTE1uPhu
-        myKi9A0Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hNjKh-0008GU-35; Mon, 06 May 2019 19:31:27 +0000
-To:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] x86: olpc: fix section mismatch warning
-Message-ID: <76cbb7d3-bb91-4900-0275-a9b09fd7c77b@infradead.org>
-Date:   Mon, 6 May 2019 12:31:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=RHdPpckqPDyvdI9hgd3ivdy7BwlPmrYeJYGbEjPzhIQ=; b=iq6UXkezK/7BH2CDHnWD3aQ5XX
+        ss0J4xpEHOHbGyhUDCClE+O69DEIO63WhcoaAHzo85qoEaWdZfFn8sNfWzlnbquVGX/rNv8fbsAB6
+        V0pfgR8+0A21ihKwa5Fe7wkrlUF5Dy8Osx1qln/qxYTJsNTATDIhcIylvwzAUVGX4Uv8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hNjMH-0000Xf-9I; Mon, 06 May 2019 21:33:05 +0200
+Date:   Mon, 6 May 2019 21:33:05 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ruslan Babayev <ruslan@babayev.com>
+Cc:     linux@armlinux.org.uk, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        mika.westerberg@linux.intel.com, wsa@the-dreams.de,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org, xe-linux-external@cisco.com
+Subject: Re: [PATCH net-next 2/2] net: phy: sfp: enable i2c-bus detection on
+ ACPI based systems
+Message-ID: <20190506193305.GA25013@lunn.ch>
+References: <20190505220524.37266-3-ruslan@babayev.com>
+ <20190506125523.GA15291@lunn.ch>
+ <87zhnztnby.fsf@babayev.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhnztnby.fsf@babayev.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+> Hi Andrew,
+> 
+> I had the GPIOs and the "maximum-power" property in my ACPI snippet initially,
+> but then decided to take it out thinking it was not relevant for the
+> current patch. I can add the missing pieces back in V2.
+> This is what it would like:
+> 
+> Device (SFP0)
+> {
+>     Name (_HID, "PRP0001")
+>     Name (_CRS, ResourceTemplate()
+>     {
+>         GpioIo(Exclusive, PullDefault, 0, 0, IoRestrictionNone,
+>                "\\_SB.PCI0.RP01.GPIO", 0, ResourceConsumer)
+>             { 0, 1, 2, 3, 4 }
+>     })
+>     Name (_DSD, Package ()
+>     {
+>         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>         Package () {
+>             Package () { "compatible", "sff,sfp" },
+>             Package () { "i2c-bus", \_SB.PCI0.RP01.I2C.MUX.CH0 },
+>             Package () { "maximum-power-milliwatt", 1000 },
+>             Package () { "tx-disable-gpios", Package () { ^SFP0, 0, 0, 1} },
+>             Package () { "reset-gpio",       Package () { ^SFP0, 0, 1, 1} },
+>             Package () { "mod-def0-gpios",   Package () { ^SFP0, 0, 2, 1} },
+>             Package () { "tx-fault-gpios",   Package () { ^SFP0, 0, 3, 0} },
+>             Package () { "los-gpios",        Package () { ^SFP0, 0, 4, 1} },
+>         },
+>     })
+> }
 
-Fix section mismatch warning:
+Hi Ruslan
 
-WARNING: vmlinux.o(.text+0x36e00): Section mismatch in reference from the function olpc_dt_compatible_match() to the function .init.text:olpc_dt_getproperty()
-The function olpc_dt_compatible_match() references
-the function __init olpc_dt_getproperty().
-This is often because olpc_dt_compatible_match lacks a __init 
-annotation or the annotation of olpc_dt_getproperty is wrong.
+I know approximately 0 about ACPI. But that at least lists all the
+properties we expect. Thanks.
 
-All calls to olpc_dt_compatible_match() are from __init functions,
-so it can be marked __init also.
+> > Before accepting this patch, i would like to know more about the
+> > complete solution.
+> 
+> I haven't gotten that far yet, but for the Phylink I was thinking something along the
+> lines of:
+> 
+> Device (PHY0)
+> {
+>     Name (_HID, "PRP0001")
+>     Name (_DSD, Package ()
+>     {
+>         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>         Package () {
+>             Package () { "compatible", "ethernet-phy-ieee802.3-c45" },
+>             Package () { "sfp", \_SB.PCI0.RP01.SFP0 },
+>         },
+>     })
+> }
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: x86@kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
----
- arch/x86/platform/olpc/olpc_dt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You probably also need managed = "in-band-status" and
+phy-mode = "sgmii";
 
---- linux-next-20190506.orig/arch/x86/platform/olpc/olpc_dt.c
-+++ linux-next-20190506/arch/x86/platform/olpc/olpc_dt.c
-@@ -220,7 +220,7 @@ static u32 __init olpc_dt_get_board_revi
- 	return be32_to_cpu(rev);
- }
- 
--int olpc_dt_compatible_match(phandle node, const char *compat)
-+int __init olpc_dt_compatible_match(phandle node, const char *compat)
- {
- 	char buf[64], *p;
- 	int plen, len;
+armada-388-clearfog.dtsi is probably the best reference, much of the
+development work for Phylink and SFPs was done on that board.
 
+> I don't have a complete solution working yet. With these patches
+> I was hoping to get some early feedback.
 
+Please post your patches as "RFC" in the subject line, if you are
+wanting early feedback.
+
+Thanks
+	Andrew
