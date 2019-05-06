@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF5E14CCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4874314F38
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfEFOoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:44:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40258 "EHLO mail.kernel.org"
+        id S1727227AbfEFOgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:36:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727654AbfEFOoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:44:11 -0400
+        id S1726755AbfEFOgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:36:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3BF3214AF;
-        Mon,  6 May 2019 14:44:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25A86204EC;
+        Mon,  6 May 2019 14:36:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153850;
-        bh=UIHC9Cy2fpk/qppWUPfyau/uOaITclXHx0K+EQfW83s=;
+        s=default; t=1557153400;
+        bh=EQp7oXnTmCsCwvZ8Cp0LLZDWRQp/lNx09s7/4MGjgmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gITQZ2APY/OEabH4bZ9BG30UDEUWz5lPGmpmemhey0VLlSk0inWqq6TABvvMmkHUj
-         KFOIco/4pcMHzfoCrL2PMgvDN4kOT1GkPMKPLWb5pJIl2cyjUQmJps2N75AIkK9egm
-         MO/M0PVPBq5NHeBd8sgvjYDvMGqsU4lUSTZcnxTw=
+        b=AXpDTPIBa9DPYzuDhVc+GRh19XML8OFnL2Qp/7suWx21uUqVueWAnokvf2q9lzc+H
+         +D4AqOFUxweK6JmIKbfBCCFh6KhN0rozNos+fFbWkWlo26va0q4fyYXUDozhipZzAT
+         sPOw/VZZm1PDlSGi3LUeNq4LDZyu0xq449FZvBP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shmulik Ladkani <shmulik.ladkani@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/75] ipv4: ip_do_fragment: Preserve skb_iif during fragmentation
-Date:   Mon,  6 May 2019 16:32:10 +0200
-Message-Id: <20190506143053.481001390@linuxfoundation.org>
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 5.0 073/122] libcxgb: fix incorrect ppmax calculation
+Date:   Mon,  6 May 2019 16:32:11 +0200
+Message-Id: <20190506143101.466252453@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shmulik Ladkani <shmulik@metanetworks.com>
+[ Upstream commit cc5a726c79158bd307150e8d4176ec79b52001ea ]
 
-[ Upstream commit d2f0c961148f65bc73eda72b9fa3a4e80973cb49 ]
+BITS_TO_LONGS() uses DIV_ROUND_UP() because of
+this ppmax value can be greater than available
+per cpu page pods.
 
-Previously, during fragmentation after forwarding, skb->skb_iif isn't
-preserved, i.e. 'ip_copy_metadata' does not copy skb_iif from given
-'from' skb.
+This patch removes BITS_TO_LONGS() to fix this
+issue.
 
-As a result, ip_do_fragment's creates fragments with zero skb_iif,
-leading to inconsistent behavior.
-
-Assume for example an eBPF program attached at tc egress (post
-forwarding) that examines __sk_buff->ingress_ifindex:
- - the correct iif is observed if forwarding path does not involve
-   fragmentation/refragmentation
- - a bogus iif is observed if forwarding path involves
-   fragmentation/refragmentatiom
-
-Fix, by preserving skb_iif during 'ip_copy_metadata'.
-
-Signed-off-by: Shmulik Ladkani <shmulik.ladkani@gmail.com>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- net/ipv4/ip_output.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -518,6 +518,7 @@ static void ip_copy_metadata(struct sk_b
- 	to->pkt_type = from->pkt_type;
- 	to->priority = from->priority;
- 	to->protocol = from->protocol;
-+	to->skb_iif = from->skb_iif;
- 	skb_dst_drop(to);
- 	skb_dst_copy(to, from);
- 	to->dev = from->dev;
+diff --git a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+index 74849be5f004..e2919005ead3 100644
+--- a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
++++ b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+@@ -354,7 +354,10 @@ static struct cxgbi_ppm_pool *ppm_alloc_cpu_pool(unsigned int *total,
+ 		ppmax = max;
+ 
+ 	/* pool size must be multiple of unsigned long */
+-	bmap = BITS_TO_LONGS(ppmax);
++	bmap = ppmax / BITS_PER_TYPE(unsigned long);
++	if (!bmap)
++		return NULL;
++
+ 	ppmax = (bmap * sizeof(unsigned long)) << 3;
+ 
+ 	alloc_sz = sizeof(*pools) + sizeof(unsigned long) * bmap;
+@@ -402,6 +405,10 @@ int cxgbi_ppm_init(void **ppm_pp, struct net_device *ndev,
+ 	if (reserve_factor) {
+ 		ppmax_pool = ppmax / reserve_factor;
+ 		pool = ppm_alloc_cpu_pool(&ppmax_pool, &pool_index_max);
++		if (!pool) {
++			ppmax_pool = 0;
++			reserve_factor = 0;
++		}
+ 
+ 		pr_debug("%s: ppmax %u, cpu total %u, per cpu %u.\n",
+ 			 ndev->name, ppmax, ppmax_pool, pool_index_max);
+-- 
+2.20.1
+
 
 
