@@ -2,109 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F394D14617
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D1C1461B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfEFIVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:21:43 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46026 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfEFIVl (ORCPT
+        id S1726801AbfEFIWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 04:22:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36496 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfEFIWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:21:41 -0400
-Received: by mail-ua1-f68.google.com with SMTP id o33so4325767uae.12;
-        Mon, 06 May 2019 01:21:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S9nH2/USIL+iRP9MPRGrYGXOMekiKUf2TMy8HKrGO9M=;
-        b=UmkW6A3vMKPdlQLG1SUllwXpusbPoWD9J/1Y9ETccVBn/vGpyGsy+dyJv7dn0puYG8
-         cbH23D6UCvgL93GOanLGU6skr8E3n7nja5byu2XAlnlAg6/l3mp5xf0tZKVDTV7nmZy5
-         v4X0xu8DLuGo2tszd1cR9j77l0R/SUu2LeLDOfo0yd4e+Kv1J4nKIPa1O3iIVI2GEfQe
-         Rwb5PTrHc5GAsuI37NmI2650PojVUh7i/Zz8d7sp+jyWDOAlj3bqKTnVBN8z5/FPYv7s
-         BlcUkFy0QOYHj8w6PMqJahzS9Ljla3k5wJhwSBG5FrEoUR5hZbVc7e+/HhArPFBbZOu3
-         LPJg==
-X-Gm-Message-State: APjAAAWfijWihe9lbo3VdgloQcZq5gOt0qkR4qI9lGxQ+lD6bPDqWO0+
-        zadJN9Ujf50QrklrDnU/XRoNxzCnZ+RnsoEissY=
-X-Google-Smtp-Source: APXvYqxqv+fTd1rbHutpVs13X+K+M5qGvWiddcVBn8JlEOm5/Dn/AUyXEdYY45zzfeEUqaRkut2w+Y+OOuVsebvtV54=
-X-Received: by 2002:ab0:1646:: with SMTP id l6mr12236479uae.75.1557130900203;
- Mon, 06 May 2019 01:21:40 -0700 (PDT)
+        Mon, 6 May 2019 04:22:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7533760770; Mon,  6 May 2019 08:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557130923;
+        bh=ZZzz+rr8wUgFTo9VKrB62hBLxoIXWzDCDWK5CKHD47c=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=AAysGIPa1wpc6nexIkzNVQsIm3FJQNLGxIoo1KXbNUTpTSZpOtbwu0oN2saJjHSd+
+         qZFywZpj3gndNs47ou0IDwFRfjvs+bgnMjSW971xgygSVBWyX136wD5ryoTgquy+CM
+         4uR9jH/xXRhLtKDog+NGIb0HgZpWfPKMykgma3Bw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from x230.qca.qualcomm.com (37-136-65-53.rev.dnainternet.fi [37.136.65.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A7E8F60770;
+        Mon,  6 May 2019 08:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557130921;
+        bh=ZZzz+rr8wUgFTo9VKrB62hBLxoIXWzDCDWK5CKHD47c=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=lSRn3hu5N/n0P+oGt6NqE4QpryoJ5SmalOwAxzaiMOn7s415F4X0ULqCUeiEucDQB
+         ZP9RRennoLrtyU4NEqSfQyNGan1k7eXt9YkyBybcfHEkKRCzBmSEX3HYykvhpaO8M0
+         L6WwHtMe3NiIGJCdB9OslHXkv7bTkdg0agGfiBzA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A7E8F60770
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     davem@davemloft.net, colin.king@canonical.com,
+        yuehaibing@huawei.com, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: wireless: b43: Avoid possible double calls to b43_one_core_detach()
+References: <20190504091000.18665-1-baijiaju1990@gmail.com>
+Date:   Mon, 06 May 2019 11:21:55 +0300
+In-Reply-To: <20190504091000.18665-1-baijiaju1990@gmail.com> (Jia-Ju Bai's
+        message of "Sat, 4 May 2019 17:10:00 +0800")
+Message-ID: <874l68vvq4.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <20190502143339.434882399@linuxfoundation.org> <20190502143346.636141727@linuxfoundation.org>
-In-Reply-To: <20190502143346.636141727@linuxfoundation.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 6 May 2019 10:21:28 +0200
-Message-ID: <CAMuHMdVQWLfBOCyXza0bwG5-4FJ5z2gLjpsPEj8FaQepd5_nMA@mail.gmail.com>
-Subject: Re: [PATCH 5.0 100/101] leds: pca9532: fix a potential NULL pointer dereference
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Kangjie Lu <kjlu@umn.edu>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Jia-Ju Bai <baijiaju1990@gmail.com> writes:
 
-On Thu, May 2, 2019 at 5:34 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> [ Upstream commit 0aab8e4df4702b31314a27ec4b0631dfad0fae0a ]
+> In b43_request_firmware(), when ieee80211_register_hw() fails,
+> b43_one_core_detach() is called. In b43_bcma_remove() and
+> b43_ssb_remove(), b43_one_core_detach() is called again. In this case, 
+> null-pointer dereferences and double-free problems can occur when 
+> the driver is removed.
 >
-> In case of_match_device cannot find a match, return -EINVAL to avoid
-> NULL pointer dereference.
+> To fix this bug, the call to b43_one_core_detach() in
+> b43_request_firmware() is deleted.
 >
-> Fixes: fa4191a609f2 ("leds: pca9532: Add device tree support")
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+> This bug is found by a runtime fuzzing tool named FIZZER written by us.
+>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43/main.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -513,6 +513,7 @@ static int pca9532_probe(struct i2c_client *client,
->         const struct i2c_device_id *id)
->  {
->         int devid;
-> +       const struct of_device_id *of_id;
->         struct pca9532_data *data = i2c_get_clientdata(client);
->         struct pca9532_platform_data *pca9532_pdata =
->                         dev_get_platdata(&client->dev);
-> @@ -528,8 +529,11 @@ static int pca9532_probe(struct i2c_client *client,
->                         dev_err(&client->dev, "no platform data\n");
->                         return -EINVAL;
->                 }
-> -               devid = (int)(uintptr_t)of_match_device(
-> -                       of_pca9532_leds_match, &client->dev)->data;
-> +               of_id = of_match_device(of_pca9532_leds_match,
-> +                               &client->dev);
-> +               if (unlikely(!of_id))
+You can use just "b43:" as prefix, no need to have "net:" nor
+"wireless:" in the title. I'll fix it this time, but please use correct
+style in the future.
 
-This condition (1) can never be true, as of_pca9532_leds_match[]
-populates the .data field of all entries, and (2) is already checked for
-in pca9532_of_populate_pdata(), so pca9532_probe() would already
-have aborted with -ENODEV before.
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#commit_title_is_wrong
 
-https://lore.kernel.org/lkml/CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com/
-
-So please stop backporting this to even more stable trees.
-Thanks!
-
-> +                       return -EINVAL;
-> +               devid = (int)(uintptr_t) of_id->data;
->         } else {
->                 devid = id->driver_data;
->         }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Kalle Valo
