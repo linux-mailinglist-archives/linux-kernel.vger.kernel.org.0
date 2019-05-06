@@ -2,162 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895FA14544
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E2AD1454E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfEFH3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:29:12 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45583 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfEFH3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:29:10 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i21so6017173pgi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=211d8ZTQI3btAur7YnSUlr/RUpH4zvR8vL+Saj1rS5o=;
-        b=jo3K4Scdrs1k7OvhlUC3Vu6KN+wS+aF0U3qudxCeN/Ts9VlRxCjFMr46/su1MGI9mX
-         B0I01reNOOD0ZaHGwco7gr4FJEycBmyHjrgjB07y+GEf+NVM1lLsbzAl3Qr5gulmikdj
-         uXIBABZq+91UQZ8NFVIO/bkfFlr7jv0PgZvAemLVWFjoH+9+a3KT7mH1nQuyqXXcZ4w6
-         zie4wrpqjqHhXytnykFQHis0Y/66Wq3JVD0ZIiRXGfxkWnCKzWH00MK5kQA4RQ6LQu6t
-         8Gj30YLpIu1qPXyFyhtZWQ/cgOeplpaBP5FvMx6XM4wIqI9yM91uhnJjppwLhjkU/a0q
-         5bCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=211d8ZTQI3btAur7YnSUlr/RUpH4zvR8vL+Saj1rS5o=;
-        b=K1tfJfUWvubFvylHdJPRlm65qMHiXEEb/Dgz0U1EGPnigF2Lsq52dS/mcPXPTiHFk+
-         qM2R3AhMZI4ls0sOEiNyqtxSOs0gx2/Tu9d4WAr2rCf+HovZgL6lsV6nt665pesz+Fr6
-         hkqC6JCrUvm/fOmoR4ERI9ro0zgqQlR6GCj0s+S0KzEpbXcfHk1hMxKH8udrxNTpIAFt
-         ySw8dLzlJ+Wi+wIc7xxwo2G5Kr0QXhaOgOleVBD38upWMx9GUuRF6i2zubPobAAEIq9E
-         NEMM4zjMswWD1P3Vqx73FK/RVHobFeYk/1L4oXGbSXgwDzjkh5ZxRlIz47kutD16PMDU
-         HJdA==
-X-Gm-Message-State: APjAAAUbU1aADWBisrM+Arzs5DQEu8CjhOfaMjMAD7g9nrZ0NHrF5KGi
-        WDXtqrBPERk7sREggyksPKB86g==
-X-Google-Smtp-Source: APXvYqxuZVpXjI9hNU1TBDdPuWhKxlPJ1PqiM3uimd5q/iX+ojTZItgChQGwubcXQg5brQKglhy9Rw==
-X-Received: by 2002:a63:1cf:: with SMTP id 198mr22124192pgb.155.1557127750187;
-        Mon, 06 May 2019 00:29:10 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id w38sm21700894pgk.90.2019.05.06.00.29.07
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 06 May 2019 00:29:09 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     dan.j.williams@intel.com, vkoul@kernel.org
-Cc:     eric.long@unisoc.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
-        vincent.guittot@linaro.org, baolin.wang@linaro.org,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] dmaengine: sprd: Add interrupt support for 2-stage transfer
-Date:   Mon,  6 May 2019 15:28:33 +0800
-Message-Id: <23f960d05bc30a93fb128cde53ad798cc6c7c19d.1557127239.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1557127239.git.baolin.wang@linaro.org>
-References: <cover.1557127239.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1557127239.git.baolin.wang@linaro.org>
-References: <cover.1557127239.git.baolin.wang@linaro.org>
+        id S1726085AbfEFHc1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 03:32:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:27841 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbfEFHc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:32:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 00:32:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,437,1549958400"; 
+   d="scan'208";a="344117474"
+Received: from irsmsx153.ger.corp.intel.com ([163.33.192.75])
+  by fmsmga006.fm.intel.com with ESMTP; 06 May 2019 00:32:23 -0700
+Received: from irsmsx111.ger.corp.intel.com (10.108.20.4) by
+ IRSMSX153.ger.corp.intel.com (163.33.192.75) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 6 May 2019 08:32:15 +0100
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.21]) by
+ irsmsx111.ger.corp.intel.com ([169.254.2.85]) with mapi id 14.03.0415.000;
+ Mon, 6 May 2019 08:32:14 +0100
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>
+CC:     David Laight <David.Laight@aculab.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: RE: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+Thread-Topic: [PATCH] x86/entry/64: randomize kernel stack offset upon
+ syscall
+Thread-Index: AQHU81HQwzT9MH4dM0y/JZXnSwiYT6Y8wW2AgAAdM1CAAXexAIAANZ3ggAAW1gCAAApRgIAAMeKAgAAd+PCAAQuGgIAAYQuAgAAKhwCACsPi4IADJTwAgAAcagCAAExngIAEBbGAgACIbACAAbyQ8IAA626AgAGZfXCAAARpgIAAWpuAgAAF74CABdWt4A==
+Date:   Mon, 6 May 2019 07:32:14 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4C712F7@IRSMSX102.ger.corp.intel.com>
+References: <2236FBA76BA1254E88B949DDB74E612BA4C63E24@IRSMSX102.ger.corp.intel.com>
+ <20190426140102.GA4922@mit.edu>
+ <57357E35-3D9B-4CA7-BAB9-0BE89E0094D2@amacapital.net>
+ <2236FBA76BA1254E88B949DDB74E612BA4C66A8A@IRSMSX102.ger.corp.intel.com>
+ <6860856C-6A92-4569-9CD8-FF6C5C441F30@amacapital.net>
+ <2236FBA76BA1254E88B949DDB74E612BA4C6A4D7@IRSMSX102.ger.corp.intel.com>
+ <303fc4ee5ac04e4fac104df1188952e8@AcuMS.aculab.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C6C2C3@IRSMSX102.ger.corp.intel.com>
+ <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
+ <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
+ <20190502150853.GA16779@gmail.com>
+In-Reply-To: <20190502150853.GA16779@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTRmNDFjMWEtYjg0OS00OWUzLWEwNjAtY2U5MTYwNjQ3ZjUyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoick5hUktJayswZTc4VGFLSGtcL2tIWFoyREhucmxJN2cwV3NRMWZwM0RDaXdFMHMza0ZBNXhFN3FTZjVpR0JYNlgifQ==
+x-originating-ip: [163.33.239.180]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For 2-stage transfer, some users like Audio still need transaction interrupt
-to notify when the 2-stage transfer is completed. Thus we should enable
-2-stage transfer interrupt to support this feature.
+> * Andy Lutomirski <luto@kernel.org> wrote:
+> 
+> > Or we decide that calling get_random_bytes() is okay with IRQs off and
+> > this all gets a bit simpler.
+> 
+> BTW., before we go down this path any further, is the plan to bind this
+> feature to a real CPU-RNG capability, i.e. to the RDRAND instruction,
+> which excludes a significant group of x86 of CPUs?
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/dma/sprd-dma.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+I would not like to bind this to only CPUs that have RDRAND. 
+That's why I was looking into using kernel's CSRNG (we can also use it
+as backup when rdrand is not available).
+ 
+> Because calling tens of millions of system calls per second will deplete
+> any non-CPU-RNG sources of entropy and will also starve all other users
+> of random numbers, which might have a more legitimate need for
+> randomness, such as the networking stack ...
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 01abed5..baac476 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -62,6 +62,8 @@
- /* SPRD_DMA_GLB_2STAGE_GRP register definition */
- #define SPRD_DMA_GLB_2STAGE_EN		BIT(24)
- #define SPRD_DMA_GLB_CHN_INT_MASK	GENMASK(23, 20)
-+#define SPRD_DMA_GLB_DEST_INT		BIT(22)
-+#define SPRD_DMA_GLB_SRC_INT		BIT(20)
- #define SPRD_DMA_GLB_LIST_DONE_TRG	BIT(19)
- #define SPRD_DMA_GLB_TRANS_DONE_TRG	BIT(18)
- #define SPRD_DMA_GLB_BLOCK_DONE_TRG	BIT(17)
-@@ -135,6 +137,7 @@
- /* define DMA channel mode & trigger mode mask */
- #define SPRD_DMA_CHN_MODE_MASK		GENMASK(7, 0)
- #define SPRD_DMA_TRG_MODE_MASK		GENMASK(7, 0)
-+#define SPRD_DMA_INT_TYPE_MASK		GENMASK(7, 0)
+This should not apply to the proper CSRNG. They of course also have a
+limitation on the amount of bits they can produce safely (as any crypto
+primitive), but this period is very big and within that it does not affect
+any other user of this CSPRNG, otherwise all guarantees are broken. 
  
- /* define the DMA transfer step type */
- #define SPRD_DMA_NONE_STEP		0
-@@ -190,6 +193,7 @@ struct sprd_dma_chn {
- 	u32			dev_id;
- 	enum sprd_dma_chn_mode	chn_mode;
- 	enum sprd_dma_trg_mode	trg_mode;
-+	enum sprd_dma_int_type	int_type;
- 	struct sprd_dma_desc	*cur_desc;
- };
- 
-@@ -429,6 +433,9 @@ static int sprd_dma_set_2stage_config(struct sprd_dma_chn *schan)
- 		val = chn & SPRD_DMA_GLB_SRC_CHN_MASK;
- 		val |= BIT(schan->trg_mode - 1) << SPRD_DMA_GLB_TRG_OFFSET;
- 		val |= SPRD_DMA_GLB_2STAGE_EN;
-+		if (schan->int_type != SPRD_DMA_NO_INT)
-+			val |= SPRD_DMA_GLB_SRC_INT;
-+
- 		sprd_dma_glb_update(sdev, SPRD_DMA_GLB_2STAGE_GRP1, val, val);
- 		break;
- 
-@@ -436,6 +443,9 @@ static int sprd_dma_set_2stage_config(struct sprd_dma_chn *schan)
- 		val = chn & SPRD_DMA_GLB_SRC_CHN_MASK;
- 		val |= BIT(schan->trg_mode - 1) << SPRD_DMA_GLB_TRG_OFFSET;
- 		val |= SPRD_DMA_GLB_2STAGE_EN;
-+		if (schan->int_type != SPRD_DMA_NO_INT)
-+			val |= SPRD_DMA_GLB_SRC_INT;
-+
- 		sprd_dma_glb_update(sdev, SPRD_DMA_GLB_2STAGE_GRP2, val, val);
- 		break;
- 
-@@ -443,6 +453,9 @@ static int sprd_dma_set_2stage_config(struct sprd_dma_chn *schan)
- 		val = (chn << SPRD_DMA_GLB_DEST_CHN_OFFSET) &
- 			SPRD_DMA_GLB_DEST_CHN_MASK;
- 		val |= SPRD_DMA_GLB_2STAGE_EN;
-+		if (schan->int_type != SPRD_DMA_NO_INT)
-+			val |= SPRD_DMA_GLB_DEST_INT;
-+
- 		sprd_dma_glb_update(sdev, SPRD_DMA_GLB_2STAGE_GRP1, val, val);
- 		break;
- 
-@@ -450,6 +463,9 @@ static int sprd_dma_set_2stage_config(struct sprd_dma_chn *schan)
- 		val = (chn << SPRD_DMA_GLB_DEST_CHN_OFFSET) &
- 			SPRD_DMA_GLB_DEST_CHN_MASK;
- 		val |= SPRD_DMA_GLB_2STAGE_EN;
-+		if (schan->int_type != SPRD_DMA_NO_INT)
-+			val |= SPRD_DMA_GLB_DEST_INT;
-+
- 		sprd_dma_glb_update(sdev, SPRD_DMA_GLB_2STAGE_GRP2, val, val);
- 		break;
- 
-@@ -911,11 +927,15 @@ static int sprd_dma_fill_linklist_desc(struct dma_chan *chan,
- 		schan->linklist.virt_addr = 0;
- 	}
- 
--	/* Set channel mode and trigger mode for 2-stage transfer */
-+	/*
-+	 * Set channel mode, interrupt mode and trigger mode for 2-stage
-+	 * transfer.
-+	 */
- 	schan->chn_mode =
- 		(flags >> SPRD_DMA_CHN_MODE_SHIFT) & SPRD_DMA_CHN_MODE_MASK;
- 	schan->trg_mode =
- 		(flags >> SPRD_DMA_TRG_MODE_SHIFT) & SPRD_DMA_TRG_MODE_MASK;
-+	schan->int_type = flags & SPRD_DMA_INT_TYPE_MASK;
- 
- 	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
- 	if (!sdesc)
--- 
-1.7.9.5
+> I.e. I'm really *super sceptical* of this whole plan, as currently
+> formulated.
+> 
+> If we bind it to RDRAND then we shouldn't be using the generic
+> drivers/char/random.c pool *at all*, but just call the darn instruction
+> directly. This is an x86 patch-set after all, right?
 
+Yes, but my main issues with RDRAND (even if we focus strictly onx86) are:
+- it is not available on older PCs
+- its performance varies across CPUs that support it (and as I understood varies quite some)
+The last one can actually give unpleasant surprises... 
+ 
+> Furthermore the following post suggests that RDRAND isn't a per CPU
+> capability, but a core or socket level facility, depending on CPU make:
+> 
+>   https://stackoverflow.com/questions/10484164/what-is-the-latency-and-
+> throughput-of-the-rdrand-instruction-on-ivy-bridge
+> 
+> 8 gigabits/sec sounds good throughput in principle, if there's no
+> scalability pathologies with that.
+> 
+> It would also be nice to know whether RDRAND does buffering *internally*,
+> in which case it might be better to buffer as little at the system call
+> level as possible, to allow the hardware RNG buffer to rebuild between
+> system calls.
+
+I will try asking around about concrete details on RDRAND behavior. 
+I have various bits and pieces I have been told plus measurements I did, but things 
+don't quite add up.. 
+
+> 
+> I.e. I'd suggest to retrieve randomness via a fixed number of RDRAND-r64
+> calls (where '1' is a perfectly valid block size - it should be
+> measured), which random bits are then used as-is for the ~6 bits of
+> system call stack offset. (I'd even suggest 7 bits: that skips a full
+> cache line almost for free and makes the fuzz actually meaningful: no
+> spear attacker will take a 1/128, 0.8% chance to successfully attack a
+> critical system.)
+> 
+> Then those 64*N random bits get buffered and consumed in 5-7 bit chunk,
+> in a super efficient fashion, possibly inlining the fast path, totally
+> outside the flow of the drivers/char/random.c
+
+I will ask around on what is the best way to use RDRAND for our purpose.
+
+> 
+> Any non-CPU source of randomness for system calls and plans to add
+> several extra function calls to every x86 system call is crazy talk I
+> believe...
+
+So, if we go the CPU randomness path, then what do we fall back to when
+RNRAND is not available? Skip randomization altogether or backup to
+CSRNG?
+
+Best Regards,
+Elena.
