@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B427314D2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9E014CF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfEFOsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49444 "EHLO mail.kernel.org"
+        id S1729164AbfEFOqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:46:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729503AbfEFOsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:48:45 -0400
+        id S1727489AbfEFOq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 539C420C01;
-        Mon,  6 May 2019 14:48:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D659221019;
+        Mon,  6 May 2019 14:46:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154124;
-        bh=+m3qKxuvwCbNfYp497QYpLkuddLq7KOSIfHzlGfKYKE=;
+        s=default; t=1557153988;
+        bh=tkZNyjCJmEXNeB56U5CbHmUrYxxIezFMwWCZ4Upz2Aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIYYW2LNeF1+BOBiZcxN61GAwwzEdveL8HjbjU1P90m2/nDgMisJm/LlZc1A80DD7
-         VoIx3t3xekJvFc+KqqvdVUQ1cBH9vj/D6XsLgEPa8d1XrdsYUO5CLM7yNdG2T6gvxj
-         QhAr5XnyoKiKpA4pjvy0Uzdg0Qe9lFrFb9tnWo9Y=
+        b=LuJwF64tkxPNgZTKaFyV5+mHpo68z9f6iZCWOyGW7Wioc7uveKqT9rkQRlUma+o4j
+         WnakuWYkYRXP2Wve0kWN0eL8KzydKcCTgrIXdshzYwraEa9HVwbmo9E7hvaYylnbZR
+         hbSqIc4teGTUqV036gD2WS04u+zwNzhijgo+XudY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 47/62] net: hns: Use NAPI_POLL_WEIGHT for hns driver
-Date:   Mon,  6 May 2019 16:33:18 +0200
-Message-Id: <20190506143055.323707576@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 71/75] powerpc/mm/hash: Handle mmap_min_addr correctly in get_unmapped_area topdown search
+Date:   Mon,  6 May 2019 16:33:19 +0200
+Message-Id: <20190506143059.702895487@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit acb1ce15a61154aa501891d67ebf79bc9ea26818 ]
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-When the HNS driver loaded, always have an error print:
-"netif_napi_add() called with weight 256"
+commit 3b4d07d2674f6b4a9281031f99d1f7efd325b16d upstream.
 
-This is because the kernel checks the NAPI polling weights
-requested by drivers and it prints an error message if a driver
-requests a weight bigger than 64.
+When doing top-down search the low_limit is not PAGE_SIZE but rather
+max(PAGE_SIZE, mmap_min_addr). This handle cases in which mmap_min_addr >
+PAGE_SIZE.
 
-So use NAPI_POLL_WEIGHT to fix it.
+Fixes: fba2369e6ceb ("mm: use vm_unmapped_area() on powerpc architecture")
+Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/powerpc/mm/slice.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index f77578a5ea9d..24a815997ec5 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -28,9 +28,6 @@
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -31,6 +31,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/export.h>
+ #include <linux/hugetlb.h>
++#include <linux/security.h>
+ #include <asm/mman.h>
+ #include <asm/mmu.h>
+ #include <asm/copro.h>
+@@ -328,6 +329,7 @@ static unsigned long slice_find_area_top
+ 	int pshift = max_t(int, mmu_psize_defs[psize].shift, PAGE_SHIFT);
+ 	unsigned long addr, found, prev;
+ 	struct vm_unmapped_area_info info;
++	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
  
- #define SERVICE_TIMER_HZ (1 * HZ)
+ 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
+ 	info.length = len;
+@@ -344,7 +346,7 @@ static unsigned long slice_find_area_top
+ 	if (high_limit  > DEFAULT_MAP_WINDOW)
+ 		addr += mm->context.addr_limit - DEFAULT_MAP_WINDOW;
  
--#define NIC_TX_CLEAN_MAX_NUM 256
--#define NIC_RX_CLEAN_MAX_NUM 64
--
- #define RCB_IRQ_NOT_INITED 0
- #define RCB_IRQ_INITED 1
- #define HNS_BUFFER_SIZE_2048 2048
-@@ -1822,7 +1819,7 @@ static int hns_nic_init_ring_data(struct hns_nic_priv *priv)
- 			hns_nic_tx_fini_pro_v2;
- 
- 		netif_napi_add(priv->netdev, &rd->napi,
--			       hns_nic_common_poll, NIC_TX_CLEAN_MAX_NUM);
-+			       hns_nic_common_poll, NAPI_POLL_WEIGHT);
- 		rd->ring->irq_init_flag = RCB_IRQ_NOT_INITED;
+-	while (addr > PAGE_SIZE) {
++	while (addr > min_addr) {
+ 		info.high_limit = addr;
+ 		if (!slice_scan_available(addr - 1, available, 0, &addr))
+ 			continue;
+@@ -356,8 +358,8 @@ static unsigned long slice_find_area_top
+ 		 * Check if we need to reduce the range, or if we can
+ 		 * extend it to cover the previous available slice.
+ 		 */
+-		if (addr < PAGE_SIZE)
+-			addr = PAGE_SIZE;
++		if (addr < min_addr)
++			addr = min_addr;
+ 		else if (slice_scan_available(addr - 1, available, 0, &prev)) {
+ 			addr = prev;
+ 			goto prev_slice;
+@@ -479,7 +481,7 @@ unsigned long slice_get_unmapped_area(un
+ 		addr = _ALIGN_UP(addr, page_size);
+ 		slice_dbg(" aligned addr=%lx\n", addr);
+ 		/* Ignore hint if it's too large or overlaps a VMA */
+-		if (addr > high_limit - len ||
++		if (addr > high_limit - len || addr < mmap_min_addr ||
+ 		    !slice_area_is_free(mm, addr, len))
+ 			addr = 0;
  	}
- 	for (i = h->q_num; i < h->q_num * 2; i++) {
-@@ -1835,7 +1832,7 @@ static int hns_nic_init_ring_data(struct hns_nic_priv *priv)
- 			hns_nic_rx_fini_pro_v2;
- 
- 		netif_napi_add(priv->netdev, &rd->napi,
--			       hns_nic_common_poll, NIC_RX_CLEAN_MAX_NUM);
-+			       hns_nic_common_poll, NAPI_POLL_WEIGHT);
- 		rd->ring->irq_init_flag = RCB_IRQ_NOT_INITED;
- 	}
- 
--- 
-2.20.1
-
 
 
