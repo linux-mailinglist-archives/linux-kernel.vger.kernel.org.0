@@ -2,86 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A733B14D7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB9814D80
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfEFOv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:51:29 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33747 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729483AbfEFOvU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:51:20 -0400
-Received: by mail-qk1-f193.google.com with SMTP id k189so788271qkc.0;
-        Mon, 06 May 2019 07:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:message-id:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=EUqbtnBDML3NXPrwjM3lOcCy0+gNa0GHK0Zw6wsv7vk=;
-        b=AXTDnLjU4V5dPhIaqTfxEvyLYGM6Ju3eFNv0qIjyCiDhH80SqzSBl8gqCzk71+F8En
-         6FZBzMHUG20Ea88H/H4v3tV6iodGgF81A4RWwPpTJptIvVzUiMQUN3vx/S2PGtidPIVu
-         txpEda5KDfCAQvKaGidI40u3a2CT6ltxytWXxIgllylF3HU7mFmHw2Z3Lhy59yXdMvLM
-         y6v6ykITIP9UnL7CtW8v+klC7wr/X2vN5DT1hSv9JjdgeBNj78eEV77CVowZfYziAiGs
-         24NBtWK6UJTL7Z4R7jdP+qXnenOUqbd0eKNm0fGpbpg8kRu6C9MHRRt8KVF/35B4F8N/
-         wEQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=EUqbtnBDML3NXPrwjM3lOcCy0+gNa0GHK0Zw6wsv7vk=;
-        b=BBSKYS91VIRrvwbeJ/IEG5BZT5sFbgDcbDcbikYZPQ/PWwiMnwfF1BZ30qeWbw46as
-         8+AXx+e6XlpS+IJAy2Zf1Ougm2IYP+2Rt+Lrh7KUUBwpbw8Y9DLHWDFnJmKvC4Kqp8os
-         DYXCobpAH/bJLqoe9Fa903h5V1I3dlo2i0wVaM7df3DmTIYLRh5N3fr0Q0gaE4hKlvyA
-         oEJIKqA6nOVpK31aDXonlciehtea0wwRlETwFswzvtFqR4LZfqaj/+zMZ1C9dTgW4IAp
-         zsblnQjyWAy3xkJMw2QAneHVKTyaDGR/1unOowkBqQZiC9/6jocoyQthoZauJR4KlvIf
-         5RPQ==
-X-Gm-Message-State: APjAAAWMbzkMPXvbghZbWd7NMMQyRu5hFO0ZHQ9AgTMpi9YrC7mbIHy4
-        VNTT6qERaidtOZPYa3gpIP8=
-X-Google-Smtp-Source: APXvYqxTY7WCj2xqd8jZnjpQFVhDqMsXc162OV4Ev36zk054hC0qFGnC4etgldMyVboC8w5Y9MBvNA==
-X-Received: by 2002:a37:52c1:: with SMTP id g184mr11795366qkb.338.1557154279804;
-        Mon, 06 May 2019 07:51:19 -0700 (PDT)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id m62sm5695639qkd.68.2019.05.06.07.51.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 07:51:18 -0700 (PDT)
-Date:   Mon, 6 May 2019 10:51:17 -0400
-Message-ID: <20190506105117.GB24823@t480s.localdomain>
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc:     Andrew Lunn <andrew@lunn.ch>, LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/5] net: dsa: mv88e6xxx: rename smi read/write
- functions
-In-Reply-To: <8d14f3e0-4b95-900c-55f0-dfff30ae655f@prevas.dk>
-References: <20190501193126.19196-1-rasmus.villemoes@prevas.dk>
- <20190501193126.19196-3-rasmus.villemoes@prevas.dk>
- <20190503175732.GB4060@t480s.localdomain>
- <8d14f3e0-4b95-900c-55f0-dfff30ae655f@prevas.dk>
+        id S1729608AbfEFOvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:51:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:25432 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727127AbfEFOvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:51:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:51:38 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 06 May 2019 07:51:38 -0700
+Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
+        by linux.intel.com (Postfix) with ESMTP id D641258010A;
+        Mon,  6 May 2019 07:51:36 -0700 (PDT)
+Subject: Re: [alsa-devel] [RFC PATCH 7/7] soundwire: intel: add debugfs
+ register dump
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
+ <20190504010030.29233-8-pierre-louis.bossart@linux.intel.com>
+ <20190504070458.GG9770@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <b01b3d30-901a-f5dc-8526-32a6dad9afd0@linux.intel.com>
+Date:   Mon, 6 May 2019 09:51:36 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190504070458.GG9770@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
 
-On Mon, 6 May 2019 05:57:11 +0000, Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
-
-> > I have a preparatory patch which does almost exactly that. I'm sending it
-> > to simplify this patchset.
+>> +static void intel_debugfs_init(struct sdw_intel *sdw)
+>> +{
+>> +	struct dentry *root = sdw_bus_debugfs_get_root(sdw->cdns.bus.debugfs);
+>> +
+>> +	if (!root)
+>> +		return;
+>> +
+>> +	sdw->fs = debugfs_create_dir("intel-sdw", root);
+>> +	if (IS_ERR_OR_NULL(sdw->fs)) {
 > 
-> OK, I'll hold off sending a v2 until I see how 1/5 and 2/5 are obsoleted
-> by your patch(es).
+> Again, you do not care, do not check this.
 
-You may rebase your patches now and add your new implementation of
-register access through SMI in the smi.c file if that is necessary.
-
-
-Thanks,
-
-	Vivien
+yes will check all this.
+Thanks for all the comments, much appreciated.
