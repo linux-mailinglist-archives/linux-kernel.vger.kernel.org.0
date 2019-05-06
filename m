@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 342F114DD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3E614E61
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbfEFOpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41688 "EHLO mail.kernel.org"
+        id S1727938AbfEFOmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:42:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728322AbfEFOpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:05 -0400
+        id S1728407AbfEFOmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CF872053B;
-        Mon,  6 May 2019 14:45:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E52A206A3;
+        Mon,  6 May 2019 14:42:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153904;
-        bh=wSF1rZpdzAqgbTHCypVuZXS9cGeEhisqDgsiN6qgusU=;
+        s=default; t=1557153726;
+        bh=eyFQyilBY65uHC4KqCfyG7XQzSgs6BspptZVvJr2wYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=baFHLNX81uP8QvuMDRKzb9Taa96OhrT+oTX310atOI0y7hsPUYef9pgLufvVth3zL
-         SrBj7RPKkOE9YMXuhxdAPygAWLnYj+OHEjsWyZ90PtuC62g0Xt89st+yn4GJMW6d72
-         nL2+ubcVWgZs0KRC+7vugSe8czVybrocArxN6BZU=
+        b=nJJCDNEF0YmTQPhsf7pXhMj9PndiyLKtI+Fm4lNkbHtqTQeOFXs8E9HvJf+BNf09/
+         OICN1pLLpdmyyRHapXWbi2+k9Mtf2UGCOUxMaaVgxxuRb+2f+qFyWluf/qN/t+/Mua
+         zZsaLxj2w+8xB4vwSu/uQ1Uba/mTrbWSo0Jn1Q4M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 39/75] net: stmmac: dont log oversized frames
+        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 74/99] staging: iio: adt7316: allow adt751x to use internal vref for all dacs
 Date:   Mon,  6 May 2019 16:32:47 +0200
-Message-Id: <20190506143056.761302074@linuxfoundation.org>
+Message-Id: <20190506143100.836033993@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 057a0c5642a2ff2db7c421cdcde34294a23bf37b ]
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-This is log is harmful as it can trigger multiple times per packet. Delete
-it.
+commit 10bfe7cc1739c22f0aa296b39e53f61e9e3f4d99 upstream.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+With adt7516/7/9, internal vref is available for dacs a and b, dacs c and
+d, or all dacs. The driver doesn't currently support internal vref for all
+dacs. Change the else if to an if so both bits are checked rather than
+just one or the other.
+
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/stmicro/stmmac/norm_desc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/iio/addac/adt7316.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
-index db4cee57bb24..66c17bab5997 100644
---- a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
-@@ -91,8 +91,6 @@ static int ndesc_get_rx_status(void *data, struct stmmac_extra_stats *x,
- 		return dma_own;
- 
- 	if (unlikely(!(rdes0 & RDES0_LAST_DESCRIPTOR))) {
--		pr_warn("%s: Oversized frame spanned multiple buffers\n",
--			__func__);
- 		stats->rx_length_errors++;
- 		return discard_frame;
- 	}
--- 
-2.20.1
-
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -1086,7 +1086,7 @@ static ssize_t adt7316_store_DAC_interna
+ 		ldac_config = chip->ldac_config & (~ADT7516_DAC_IN_VREF_MASK);
+ 		if (data & 0x1)
+ 			ldac_config |= ADT7516_DAC_AB_IN_VREF;
+-		else if (data & 0x2)
++		if (data & 0x2)
+ 			ldac_config |= ADT7516_DAC_CD_IN_VREF;
+ 	} else {
+ 		ret = kstrtou8(buf, 16, &data);
 
 
