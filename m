@@ -2,65 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7859414A94
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 15:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0E114969
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 14:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEFNKG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 09:10:06 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:50549
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1725773AbfEFNKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 09:10:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id A78DCB47B0B;
-        Mon,  6 May 2019 12:15:51 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 6jVOcLU8mv-l; Mon,  6 May 2019 12:15:51 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 25E32B4BDE1;
-        Mon,  6 May 2019 12:15:51 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KHnUQIwpt_7E; Mon,  6 May 2019 12:15:51 +0000 (UTC)
-Received: from [100.86.76.53] (unknown [106.197.214.147])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 2B76FB47B0B;
-        Mon,  6 May 2019 12:15:39 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726149AbfEFMSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 08:18:08 -0400
+Received: from uho.ysoft.cz ([81.19.3.130]:44284 "EHLO uho.ysoft.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbfEFMSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 08:18:08 -0400
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+        by uho.ysoft.cz (Postfix) with ESMTP id 31414A444E;
+        Mon,  6 May 2019 14:18:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+        s=20160406-ysoft-com; t=1557145084;
+        bh=BG1iY/eflDP17+5L43NWdu8cKBZW9ASGCdoXdZ226OE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gdLvPXKHSzo9OjUH6H9WEvCzDCqirgb69yaL1IT1G76e8mCDCrvZeRdlJV3x+xZ0Y
+         PmU+iRXyaBe01dEpVOhiqHjG14O/WqSyf9oeCQx2oQh2D8cDVBMhqgin1MIGE1V88N
+         ddmgi4Gj1Tb3SGzL7AbAMI7bAM3K6dlfFGPRv/h4=
+Subject: Re: [RFC PATCH 1/4] dt-bindings: input: Add support for the MPR121
+ without interrupt line
+To:     Rob Herring <robh@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <1556267420-93219-1-git-send-email-michal.vokac@ysoft.com>
+ <1556267420-93219-2-git-send-email-michal.vokac@ysoft.com>
+ <20190502004849.GA8232@bogus>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <8dd2efa1-0fc9-d99a-d015-323350e1abdc@ysoft.com>
+Date:   Mon, 6 May 2019 14:18:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?verifica=C3=A7=C3=A3o_de_e-mail?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador da Web <exportaciones@minpal.gob.ve>
-Date:   Mon, 06 May 2019 17:45:25 +0530
-Message-Id: <20190506121540.2B76FB47B0B@smspyt.cancun.gob.mx>
+In-Reply-To: <20190502004849.GA8232@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de seguranÁa:
+On 02. 05. 19 2:48, Rob Herring wrote:
+> On Fri, Apr 26, 2019 at 10:30:17AM +0200, Michal Vok√°ƒç wrote:
+>> Normally, the MPR121 controller uses separate interrupt line to notify
+>> the I2C host that a key was touched/released. To support platforms that
+>> can not use the interrupt line, polling of the MPR121 registers can be
+>> used.
+> 
+> Other than making the 'interrupts' property optional, that's a driver
+> change, not a DT change. IOW, we shouldn't need a whole new binding.
+> 
 
-Esta mensagem È do nosso Centro de administraÁ„o para todos os usu·rios da nossa conta de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail ser· atualizada para uma interface de usu·rio de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
+OK, I will update the existing binding instead.
 
-Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu cat·logo de endereÁos esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usu·rio e senha para atualizar sua conta.
+Thank you,
+Michal
 
-Se o clique n„o funcionar, copie e cole o URL abaixo em um navegador da web para verific·-lo.
+>>
+>> Signed-off-by: Michal Vok√°ƒç <michal.vokac@ysoft.com>
+>> ---
+>>   .../bindings/input/mpr121-touchkey-polled.txt      | 26 ++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/input/mpr121-touchkey-polled.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/mpr121-touchkey-polled.txt b/Documentation/devicetree/bindings/input/mpr121-touchkey-polled.txt
+>> new file mode 100644
+>> index 000000000000..6bb1d312614c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/input/mpr121-touchkey-polled.txt
+>> @@ -0,0 +1,26 @@
+>> +* Freescale MPR121 Controller without interrupt line
+>> +
+>> +Required Properties:
+>> +- compatible:		Should be "fsl,mpr121-touchkey-polled"
+>> +- reg:			The I2C slave address of the device.
+>> +- vdd-supply:		Phandle to the Vdd power supply.
+>> +- linux,keycodes:	Specifies an array of numeric keycode values to
+>> +			be used for reporting button presses. The array can
+>> +			contain up to 12 entries.
+>> +
+>> +Optional Properties:
+>> +- autorepeat:		Enable autorepeat feature.
+>> +
+>> +Example:
+>> +
+>> +#include "dt-bindings/input/input.h"
+>> +
+>> +	touchkeys: keys@5a {
+>> +		compatible = "fsl,mpr121-touchkey-polled";
+>> +		reg = <0x5a>;
+>> +		autorepeat;
+>> +		vdd-supply = <&ldo4_reg>;
+>> +		linux,keycodes = <KEY_0>, <KEY_1>, <KEY_2>, <KEY_3>,
+>> +				<KEY_4> <KEY_5>, <KEY_6>, <KEY_7>,
+>> +				<KEY_8>, <KEY_9>, <KEY_A>, <KEY_B>;
+>> +	};
+>> -- 
+>> 2.1.4
+>>
 
-Clique no link http://fsnhsnetadministrationsa.xtgem.com/index se clicar n„o funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
-
-Todos os emails estar„o seguros nesta transiÁ„o! Todas as suas mensagens antigas estar„o l· e vocÍ ter· novas mensagens n„o lidas esperando por vocÍ. Estavam
-Claro que vocÍ vai gostar da nova e melhorada interface de webmail.
-
-Se vocÍ n„o cumprir este aviso, retiraremos imediatamente o acesso ‡ sua conta de e-mail.
-
-Obrigado por usar nossos serviÁos
-
-==============================================
-
-Sinceramente Web Admin.
-E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
-N˙mero de registo 9697083H) ID do cliente 068806M Todos os direitos reservados.
