@@ -2,143 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E7715396
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A45B153A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfEFSZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 14:25:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45005 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfEFSZy (ORCPT
+        id S1726515AbfEFSaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 14:30:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46081 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfEFSaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 14:25:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y13so7197270pfm.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 11:25:54 -0700 (PDT)
+        Mon, 6 May 2019 14:30:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t187so2747460pgb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 11:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=NXCCd9DEwpVv+CkVk+97oddxbHXiAPPbrF6iGBSrYgc=;
-        b=NKrWKCiGbzmza35fOtOMvL+ftXETfh3uUcp/GkaCXcI8/XzVP8qVDBZioaj7yzgwas
-         2tQRRTKTuRAtOwQhT+kcUBv2qp2jRZVnznAovTkgFRvmAuuaShMFB+Nx1bbVUNa9A7OX
-         8BLulEh57QbYge20tVCIr34v+fwMGVGOSH1ehzMLel+zcPUV1nVeQpw7cWLe4F7TLSOw
-         ++VBDFOhS3lKU6/bS8dLLIX6A8ANpsIH1DryjqnbCnoWXwVNSYR3C7RBe/CPhV/P7ncT
-         Cg2Mr2IcrlFerHMT/L21aU76jEgkMtiGDQAE6F2Y4uyRJKfpkAmDpf2MCdenO33CvIPF
-         KysQ==
+        bh=FWiIIVTvafssa7j5YFzK8jBCCcMF1hHZ27yFT6HUiho=;
+        b=VratITt3OckNpkTxBZmxmeeBz10CUAb/72hiWmNGZIyDt6Rx8s7JILbsP3ytTf4MLZ
+         xQ3bzgaughDO59vyRGYHyS+tdAN5djfgX5XflzdqlujfPYO/6DmX5rQVJ/iqp/Kl6ay9
+         mLJ6koEBR7aMD9PbYgYeulv2p0N+35KVTbLys=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=NXCCd9DEwpVv+CkVk+97oddxbHXiAPPbrF6iGBSrYgc=;
-        b=l4XkZDYYLg1zHbR7lpP6FjR5CV6+k3bXPo3wkBTw1TgvEW88JWRB+EDyEfVdA+m8dM
-         Bs+qlChlTa3ced4jkcDMIRSy/HTSmGTWBxaSSI9XK0V6lv6F6/+bXDu7mmAhnK7h6G+m
-         cIuGz96vmZPSh7nSgvIk7lbw+kAQ4ysYVGgH5CHZOVLnewI0sMEz9TKZjXlTKs3SHCPK
-         /TEBsVGUibjgE+QSjwga5ywo9Xn7dj+4h33H9OHoAp1HskouC13gWqmZu/mpWikpbDtO
-         ElJCnk/ROyEOT7dchjCLPxZ5v8c6sFN853gBRdiYrsX41kRE5ZzwMkTAgyIEVA/omIsr
-         OnPg==
-X-Gm-Message-State: APjAAAVT5q3o1StjKZ21rLOKg/Xo6Qfyd83FtuFyXvtoAaFLoo9sjKxu
-        c8ipr3Bo/R2YTRW/bgtKRGF58g==
-X-Google-Smtp-Source: APXvYqz/rXdpBxODnklgvIEL8bDQcS0bWQdd3xgt2Ribpt+WuSOewfTAdZg7WDT5L829vlRrQKqfdA==
-X-Received: by 2002:a62:121c:: with SMTP id a28mr34935323pfj.58.1557167153191;
-        Mon, 06 May 2019 11:25:53 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id x66sm15776570pfb.78.2019.05.06.11.25.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 11:25:52 -0700 (PDT)
-Date:   Mon, 06 May 2019 11:25:52 -0700 (PDT)
-X-Google-Original-Date: Mon, 06 May 2019 11:25:42 PDT (-0700)
-Subject:     Re: [PATCH 13/15] riscv: switch to generic version of pte allocation
-In-Reply-To: <1556810922-20248-14-git-send-email-rppt@linux.ibm.com>
-CC:     akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        catalin.marinas@arm.com, geert@linux-m68k.org, green.hu@gmail.com,
-        gxt@pku.edu.cn, guoren@kernel.org, deller@gmx.de, lftan@altera.com,
-        willy@infradead.org, mattst88@gmail.com, mpe@ellerman.id.au,
-        mhocko@suse.com, paul.burton@mips.com, rkuo@codeaurora.org,
-        richard@nod.at, linux@armlinux.org.uk, sammy@sammy.net,
-        x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-um@lists.infradead.org,
-        nios2-dev@lists.rocketboards.org, rppt@linux.ibm.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     rppt@linux.ibm.com
-Message-ID: <mhng-c23d2e8b-1dc0-48db-a4cf-d6964ca650c0@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FWiIIVTvafssa7j5YFzK8jBCCcMF1hHZ27yFT6HUiho=;
+        b=ZPQAu+g7hCW171eQy0q24x4cAhybYyh6nDTO3Sl5fSMf+c/j2snjoRrrUopUg2uVbo
+         AjiCshMvvIr6c3acQ8vVlJ9N7w728YVawvae4SrNm0UmwTOJp/A82WgJdbTRDZxcgiod
+         psJKevVB8MZ8+WG0jSg8p1Aq47+MUhAHrWxLNKIgBuQgJ91sSRmqLsN5uUlu/TSEseGK
+         SgOulvF121tdMDy6Zm/HBIi2u5G5sZNl6UVXwhJImR/SvKsVm1zO5AEubC8ejFSgvdC+
+         A5ZqT92tUJS2WAl2DhrSbPDAp+xB/8MRuhsLq86oGjgpMUtDYyubAdAohhw+gIulQU3V
+         wP5g==
+X-Gm-Message-State: APjAAAUadPyt/4tvBXvySJ6UaSFlPz9T3O0KC+L53jJn8K53Hn2AiRo8
+        PVLuy09HfS1hniXZ9pwA3yChdw==
+X-Google-Smtp-Source: APXvYqwGOuhHbwCeB8eBEMqaNKfBx6lNy2CUJCcAW0YkFG5ZwcpzzaxxWjTmY7QfNb9/MYQEEEjByQ==
+X-Received: by 2002:a62:41cd:: with SMTP id g74mr35756752pfd.216.1557167418165;
+        Mon, 06 May 2019 11:30:18 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id o81sm18858033pfa.156.2019.05.06.11.30.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 06 May 2019 11:30:17 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Alexis Savery <asavery@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] loop: Better discard for block devices
+Date:   Mon,  6 May 2019 11:27:34 -0700
+Message-Id: <20190506182736.21064-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 02 May 2019 08:28:40 PDT (-0700), rppt@linux.ibm.com wrote:
-> The only difference between the generic and RISC-V implementation of PTE
-> allocation is the usage of __GFP_RETRY_MAYFAIL for both kernel and user
-> PTEs and the absence of __GFP_ACCOUNT for the user PTEs.
->
-> The conversion to the generic version removes the __GFP_RETRY_MAYFAIL and
-> ensures that GFP_ACCOUNT is used for the user PTE allocations.
+This series addresses some errors seen when using the loop
+device directly backed by a block device. The first change plumbs
+out the correct error message, and the second change prevents the
+error from occurring in many cases.
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+The errors look like this:
+[   90.880875] print_req_error: I/O error, dev loop5, sector 0
 
-I'm assuming this is going in along with the rest of the patches, so I'm not
-going to add it to my tree.
+The errors occur when trying to do a discard or write zeroes operation
+on a loop device backed by a block device that does not support write zeroes.
+Firstly, the error itself is incorrectly reported as I/O error, but is
+actually EOPNOTSUPP. The first patch plumbs out EOPNOTSUPP to properly
+report the error.
 
->
-> The pte_free() and pte_free_kernel() versions are identical to the generic
-> ones and can be simply dropped.
->
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->  arch/riscv/include/asm/pgalloc.h | 29 ++---------------------------
->  1 file changed, 2 insertions(+), 27 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/pgalloc.h b/arch/riscv/include/asm/pgalloc.h
-> index 94043cf..48f28bb 100644
-> --- a/arch/riscv/include/asm/pgalloc.h
-> +++ b/arch/riscv/include/asm/pgalloc.h
-> @@ -18,6 +18,8 @@
->  #include <linux/mm.h>
->  #include <asm/tlb.h>
->
-> +#include <asm-generic/pgalloc.h>	/* for pte_{alloc,free}_one */
-> +
->  static inline void pmd_populate_kernel(struct mm_struct *mm,
->  	pmd_t *pmd, pte_t *pte)
->  {
-> @@ -82,33 +84,6 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
->
->  #endif /* __PAGETABLE_PMD_FOLDED */
->
-> -static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
-> -{
-> -	return (pte_t *)__get_free_page(
-> -		GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
-> -}
-> -
-> -static inline struct page *pte_alloc_one(struct mm_struct *mm)
-> -{
-> -	struct page *pte;
-> -
-> -	pte = alloc_page(GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
-> -	if (likely(pte != NULL))
-> -		pgtable_page_ctor(pte);
-> -	return pte;
-> -}
-> -
-> -static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-> -{
-> -	free_page((unsigned long)pte);
-> -}
-> -
-> -static inline void pte_free(struct mm_struct *mm, pgtable_t pte)
-> -{
-> -	pgtable_page_dtor(pte);
-> -	__free_page(pte);
-> -}
-> -
->  #define __pte_free_tlb(tlb, pte, buf)   \
->  do {                                    \
->  	pgtable_page_dtor(pte);         \
+The second patch prevents these errors from occurring by mirroring the
+zeroing capabilities of the underlying block device into the loop device.
+Before this change, discard was always reported as being supported, and
+the loop device simply turns around and does an fallocate operation on the
+backing device. After this change, backing block devices that do support
+zeroing will continue to work as before, and continue to get all the
+benefits of doing that. Backing devices that do not support zeroing will
+fail earlier, avoiding hitting the loop device at all and ultimately
+avoiding this error in the logs.
+
+I can also confirm that this fixes test block/003 in the blktests, when
+running blktests on a loop device backed by a block device.
+
+
+Changes in v5:
+- Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
+
+Changes in v4:
+- Mirror blkdev's write_zeroes into loopdev's discard_sectors.
+
+Changes in v3:
+- Updated tags
+- Updated commit description
+
+Changes in v2:
+- Unnested error if statement (Bart)
+
+Evan Green (2):
+  loop: Report EOPNOTSUPP properly
+  loop: Better discard support for block devices
+
+ drivers/block/loop.c | 66 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 22 deletions(-)
+
+-- 
+2.20.1
+
