@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276FF14F47
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F28814FA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfEFPJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:09:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62153 "EHLO mga17.intel.com"
+        id S1727124AbfEFPM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:12:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfEFPJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:09:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 08:09:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="155580576"
-Received: from spandruv-mobl3.jf.intel.com ([10.251.2.135])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 May 2019 08:09:18 -0700
-Message-ID: <b7e0708b951b5848a1a8cd3be1e9cf1ffa112cb4.camel@linux.intel.com>
-Subject: Re: [PATCH] drivers: thermal: processor_thermal: Downgrade error
- message
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Zhang Rui <rui.zhang@intel.com>, edubezval@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 06 May 2019 08:09:18 -0700
-In-Reply-To: <1557147020.2456.5.camel@intel.com>
-References: <20190430034213.40028-1-srinivas.pandruvada@linux.intel.com>
-         <1557147020.2456.5.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727082AbfEFPMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:12:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3E9521479;
+        Mon,  6 May 2019 15:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557155574;
+        bh=t8vKwFlI0bJLS5h2dD31IGjB9vHPflvMjtuqWataVgE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zp/FHHK69KnVw6FJoIY0+qmT20u56Ud5KTj1UbT0/sgJtv+vuS7wCrfY7+pCgNGiX
+         wS4WWPW4HlweOLnXiKhTgbevvWyzvsWh63LhEZit/dYUO3WOym8435ft6j7T06kMcu
+         tXz3VBexFyPWtE4sp3vLnUDqvjr/z+3Y+tgLeAUs=
+Date:   Mon, 6 May 2019 17:10:26 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.9 09/62] kasan: turn on
+ -fsanitize-address-use-after-scope
+Message-ID: <20190506151026.GA12193@kroah.com>
+References: <20190506143051.102535767@linuxfoundation.org>
+ <20190506143051.888762392@linuxfoundation.org>
+ <6636d7cf-03fe-e253-f981-e07d75858b33@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6636d7cf-03fe-e253-f981-e07d75858b33@virtuozzo.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-06 at 20:50 +0800, Zhang Rui wrote:
-> On 一, 2019-04-29 at 20:42 -0700, Srinivas Pandruvada wrote:
-> > Downgrade "Unsupported event" message from dev_err to dev_dbg.
-> > Otherwise it
-> > floods with this message one some platforms.
+On Mon, May 06, 2019 at 05:55:54PM +0300, Andrey Ryabinin wrote:
+> 
+> 
+> On 5/6/19 5:32 PM, Greg Kroah-Hartman wrote:
+> > From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 > > 
-> > Signed-off-by: Srinivas Pandruvada <
-> > srinivas.pandruvada@linux.intel.c
-> > om>
-> > ---
-> >  .../thermal/intel/int340x_thermal/processor_thermal_device.c    |
-> > 2
-> > +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > commit c5caf21ab0cf884ef15b25af234f620e4a233139 upstream.
 > > 
-> > diff --git
-> > a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > index 4b206b594825..436c256f111d 100644
+> > In the upcoming gcc7 release, the -fsanitize=kernel-address option at
+> > first implied new -fsanitize-address-use-after-scope option.  This would
+> > cause link errors on older kernels because they don't have two new
+> > functions required for use-after-scope support.  Therefore, gcc7 changed
+> > default to -fno-sanitize-address-use-after-scope.
+> > 
+> > Now the kernel has everything required for that feature since commit
+> > 828347f8f9a5 ("kasan: support use-after-scope detection").  So, to make it
+> > work, we just have to enable use-after-scope in CFLAGS.
+> > 
+> > Link: http://lkml.kernel.org/r/1481207977-28654-1-git-send-email-aryabinin@virtuozzo.com
+> > Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> > Acked-by: Dmitry Vyukov <dvyukov@google.com>
+> > Cc: Alexander Potapenko <glider@google.com>
+> > Cc: Andrey Konovalov <andreyknvl@google.com>
+> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
 > > ---
-> > a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > +++
-> > b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > @@ -275,7 +275,7 @@ static void proc_thermal_notify(acpi_handle
-> > handle, u32 event, void *data)
-> >  				THERMAL_DEVICE_POWER_CAPABILITY_CHAN
-> > GED);
-> >  		break;
-> >  	default:
-> > -		dev_err(proc_priv->dev, "Unsupported event
-> > [0x%x]\n", event);
-> > +		dev_dbg(proc_priv->dev, "Unsupported event
-> > [0x%x]\n", event);
-> >  		break;
-> >  	}
-> >  }
+> >  scripts/Makefile.kasan |    2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > --- a/scripts/Makefile.kasan
+> > +++ b/scripts/Makefile.kasan
+> > @@ -29,6 +29,8 @@ else
+> >      endif
+> >  endif
+> >  
+> > +CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
+> > +
+> >  CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+> >  
+> >  endif
+> > 
+> > 
 > 
-> a similar patch has been applied, the only difference is that I'm
-> using
-> dev_notice instead.
-> 
-https://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git/commit
-> /?h=next&id=3c7110fab805766450c5d2eac1c994d4c8c230d3
+> This shouldn't be in the -stable.
 
-I think dev_notice still appear with non debug log level (!=7), so
-dmesg from most distro will still have this print, which will concern
-some users unnecessarily, which we can't do anything.
+Why not?  Does no one use gcc7 with this kernel and kasan?
 
-Thanks,
-Srinivas
+thanks,
 
-> 
-> thanks,
-> rui
-
+greg k-h
