@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA89914EF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B0014F1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbfEFOhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:37:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S1727602AbfEFPHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:07:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbfEFOhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:39 -0400
+        id S1727115AbfEFPHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:07:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B236521655;
-        Mon,  6 May 2019 14:37:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 481C32087F;
+        Mon,  6 May 2019 15:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153458;
-        bh=04rM0I+qMJMAKWuL5WnxMkTzXm+eljTfA/ntXWA47nA=;
+        s=default; t=1557155269;
+        bh=gIPycv8dbcn1JC3zOTMxaLgrxP4VVdplls7mNHRinzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HBh5hlK9VG/lKzFtol2QbJdWRGQ4NWp0+LGSJ7hYNz+H7DaY1Lek07q83Zk+8dX7a
-         Np7MMDMh8IkaFcz6iCJs6ELqwFIfA8cC6UW5Mr8L3aYxwccbzSErMmy5oqDBm0Uq3k
-         AXnoNHy2AA1Ta4ccPzLq7cpkBAplxTmchhDMoMh8=
+        b=jCmNzWNUc7uzzPuR3VCjw7I+hd7jaBr3SQCi0A2xFTJ/rkb3IompkjPx1exqOKJ+p
+         B9XzLXU2O+gwVOaHef6MkuHM1bY1Jwe/48WGeAZzPOynr+BKp/OBEB3lzw1Hoabevb
+         BOvaQmHciqG5rJU6YpTP6lVl4OLQWHXF2BwUo4Ek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.0 096/122] ASoC: sunxi: sun50i-codec-analog: Rename hpvcc regulator supply to cpvdd
-Date:   Mon,  6 May 2019 16:32:34 +0200
-Message-Id: <20190506143103.415299937@linuxfoundation.org>
+        stable@vger.kernel.org, "he, bo" <bo.he@intel.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>, Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 27/75] HID: debug: fix race condition with between rdesc_show() and device removal
+Date:   Mon,  6 May 2019 16:32:35 +0200
+Message-Id: <20190506143055.631670523@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+[ Upstream commit cef0d4948cb0a02db37ebfdc320e127c77ab1637 ]
 
-commit 5fd812e6f5ae0376134234ceb70e8de541ccb10d upstream.
+There is a race condition that could happen if hid_debug_rdesc_show()
+is running while hdev is in the process of going away (device removal,
+system suspend, etc) which could result in NULL pointer dereference:
 
-The A64 datasheet lists the supply rail for the headphone amp's charge
-pump as "CPVDD". cpvdd-supply is the name of the property for this power
-rail specified in the device tree bindings. "HPVCC" was the name used in
-the A33 datasheet for the same function.
+	 BUG: unable to handle kernel paging request at 0000000783316040
+	 CPU: 1 PID: 1512 Comm: getevent Tainted: G     U     O 4.19.20-quilt-2e5dc0ac-00029-gc455a447dd55 #1
+	 RIP: 0010:hid_dump_device+0x9b/0x160
+	 Call Trace:
+	  hid_debug_rdesc_show+0x72/0x1d0
+	  seq_read+0xe0/0x410
+	  full_proxy_read+0x5f/0x90
+	  __vfs_read+0x3a/0x170
+	  vfs_read+0xa0/0x150
+	  ksys_read+0x58/0xc0
+	  __x64_sys_read+0x1a/0x20
+	  do_syscall_64+0x55/0x110
+	  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Rename the supply so it matches the datasheet, bindings, and the subject
-from the original commit.
+Grab driver_input_lock to make sure the input device exists throughout the
+whole process of dumping the rdesc.
 
-Fixes: ca0412a05756 ("ASoC: sunxi: sun50i-codec-analog: Add support for cpvdd regulator supply")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[jkosina@suse.cz: update changelog a bit]
+Signed-off-by: he, bo <bo.he@intel.com>
+Signed-off-by: "Zhang, Jun" <jun.zhang@intel.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sunxi/sun50i-codec-analog.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-debug.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/soc/sunxi/sun50i-codec-analog.c
-+++ b/sound/soc/sunxi/sun50i-codec-analog.c
-@@ -274,7 +274,7 @@ static const struct snd_soc_dapm_widget
- 	 * stream widgets at the card level.
- 	 */
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index a90967cd4987..a0bcbb633b67 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -1060,10 +1060,15 @@ static int hid_debug_rdesc_show(struct seq_file *f, void *p)
+ 	seq_printf(f, "\n\n");
  
--	SND_SOC_DAPM_REGULATOR_SUPPLY("hpvcc", 0, 0),
-+	SND_SOC_DAPM_REGULATOR_SUPPLY("cpvdd", 0, 0),
- 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
- 			 SND_SOC_NOPM, 0, 0, sun50i_codec_hp_src),
- 	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN50I_ADDA_HP_CTRL,
-@@ -362,7 +362,7 @@ static const struct snd_soc_dapm_route s
- 	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
- 	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
- 	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
--	{ "Headphone Amp", NULL, "hpvcc" },
-+	{ "Headphone Amp", NULL, "cpvdd" },
- 	{ "HP", NULL, "Headphone Amp" },
+ 	/* dump parsed data and input mappings */
++	if (down_interruptible(&hdev->driver_input_lock))
++		return 0;
++
+ 	hid_dump_device(hdev, f);
+ 	seq_printf(f, "\n");
+ 	hid_dump_input_mapping(hdev, f);
  
- 	/* Microphone Routes */
++	up(&hdev->driver_input_lock);
++
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
 
 
