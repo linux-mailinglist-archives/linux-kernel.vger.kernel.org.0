@@ -2,80 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9491714FB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B8214FC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfEFPNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:13:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41916 "EHLO mail.kernel.org"
+        id S1726558AbfEFPOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:14:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38530 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfEFPNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:13:14 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726322AbfEFPOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:14:39 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 797E821655;
-        Mon,  6 May 2019 15:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557155593;
-        bh=urvZds8q7ORx0dlZAA0EP3S0wW1PZs1TK0DarwdKs1g=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DKxTEPyFRW8lrwyVRMXDbv8BBbQCtBSy3WUL6weEtoojh0I4m3FG7wc/tOuYO9Bln
-         G+BfI+y0vdLOWP1pMcePV7KxU7ykes5/NurWrbUQ9YvZPWPPTDcLNDVwYw3DdAMmOU
-         jXMxFVNtyNGgE1D/2pHA1++fpJaL2l49qa8i4DuM=
-Subject: Re: [PATCH 1/2] usbip: Remove repeated setting of hcd->state in
- vhci_bus_suspend()
-To:     Suwan Kim <suwan.kim027@gmail.com>, valentina.manea.m@gmail.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20190506125550.7826-1-suwan.kim027@gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <440389ab-62c3-7bc2-0e9b-0b302a88c929@kernel.org>
-Date:   Mon, 6 May 2019 09:13:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mx1.redhat.com (Postfix) with ESMTPS id C23E6307D942;
+        Mon,  6 May 2019 15:14:38 +0000 (UTC)
+Received: from treble (ovpn-122-172.rdu2.redhat.com [10.10.122.172])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 433C65F9D6;
+        Mon,  6 May 2019 15:14:30 +0000 (UTC)
+Date:   Mon, 6 May 2019 10:14:28 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+Message-ID: <20190506151428.r6fhirmoz5nrmiu5@treble>
+References: <20190501202830.347656894@goodmis.org>
+ <20190501203152.397154664@goodmis.org>
+ <20190501232412.1196ef18@oasis.local.home>
+ <20190502162133.GX2623@hirez.programming.kicks-ass.net>
+ <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190506125550.7826-1-suwan.kim027@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wijZ-MD4g3zMJ9W2r=h8LUWneiu29OWuxZEoSfAF=0bhQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 06 May 2019 15:14:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/6/19 6:55 AM, Suwan Kim wrote:
-> When hcd suspends execution, hcd_bus_suspend() calls vhci_bus_suspend()
-> which sets hcd->state as HC_STATE_SUSPENDED. But after calling
-> vhci_bus_suspend(), hcd_bus_suspend() also sets hcd->state as
-> HC_STATE_SUSPENDED.
-> So, setting hcd->state in vhci_hcd_suspend() is unnecessary.
+On Thu, May 02, 2019 at 11:02:40AM -0700, Linus Torvalds wrote:
+> On Thu, May 2, 2019 at 9:21 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > TL;DR, on x86_32 kernel->kernel IRET frames are only 3 entries and do
+> > not include ESP/SS, so not only wasn't regs->sp setup, if you changed it
+> > it wouldn't be effective and corrupt random stack state.
 > 
-> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-> ---
->   drivers/usb/usbip/vhci_hcd.c | 4 ----
->   1 file changed, 4 deletions(-)
+> Indeed, the 32-bit case for same-RPL exceptions/iret is entirely
+> different, and I'd forgotten about that.
 > 
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index 667d9c0ec905..e6f378d00fb6 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -1238,10 +1238,6 @@ static int vhci_bus_suspend(struct usb_hcd *hcd)
->   
->   	dev_dbg(&hcd->self.root_hub->dev, "%s\n", __func__);
->   
-> -	spin_lock_irqsave(&vhci->lock, flags);
-> -	hcd->state = HC_STATE_SUSPENDED;
-> -	spin_unlock_irqrestore(&vhci->lock, flags);
-> -
->   	return 0;
->   }
->   
+> And honestly, this makes the 32-bit case much worse. Now the entry
+> stack modifications of int3 suddenly affect not just the entry, but
+> every exit too.
 > 
+> This is _exactly_ the kind of subtle kernel entry/exit code I wanted
+> us to avoid.
 
-Tell me more about why you think this change is needed? How did you test
-this change?
+I actually love this patch (absent the bugs).  This is already something
+that has been sorely needed for years.
 
-thanks,
--- Shuah
+The "struct pt_regs is incomplete on x86-32" thing is a monstrosity
+which has long been a source of confusion and bugs.  Sure, this patch
+adds some complexity to the entry code, but on the other hand it
+actually makes it possible to use pt_regs sanely: regs->sp is no longer
+uninitialized.  So a class of (very non-obvious) bugs is eliminated.
+
+I don't think it would make sense to make this change for int3 only,
+because the benefits are global.
+
+-- 
+Josh
