@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F207C15676
+	by mail.lfdr.de (Postfix) with ESMTP id 8717115675
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfEFXl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 19:41:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51758 "EHLO mail.kernel.org"
+        id S1727339AbfEFXlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:41:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfEFXkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 19:40:08 -0400
-Subject: Re: [GIT PULL] SMP hotplug support changes for v5.2
+        id S1727124AbfEFXkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 19:40:09 -0400
+Subject: Re: [GIT PULL] timer updates for v5.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557186008;
-        bh=wLvblnipMupvIvx03SJNjzBBfSa4LBKvClGrLhdhqOk=;
+        s=default; t=1557186009;
+        bh=RhkafdhnbSajgcnFbG+mxw0hzaysraIAabcr51aBl9k=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=OjxOoxUecejh83YfvRscRlyhNkuRd8C3G+ALshYiGhhn9ivY8iV9UyONNTnk8ECS+
-         rVpgt4sFeP4+jheS35tGYFsvZuh2FV/xXB29/zUhlCMlixZgJuWt9liROsXRYdxfpQ
-         3pCM1drk7L8a+5eXaDzlWcK+r+A07JEcV/V7FqpE=
+        b=LZG5uH6irETWEJbNzFn3uQBc09gOlusAYby98vmPoEmcZMW+/hLyy+peBMyxi8yAR
+         JT6DimlbTwwaec2UfCw4XfZBBtny1nUAG+Er+ZBaR7wCuLBrtc6eI+8SeTKEQa5TiS
+         OO7qxp2gHpyt23mwe+IgTBqJ/8ri57e9uMrXsOsg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190506091632.GA42696@gmail.com>
-References: <20190506091632.GA42696@gmail.com>
+In-Reply-To: <20190506092459.GA86912@gmail.com>
+References: <20190506092459.GA86912@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190506091632.GA42696@gmail.com>
+X-PR-Tracked-Message-Id: <20190506092459.GA86912@gmail.com>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- smp-hotplug-for-linus
-X-PR-Tracked-Commit-Id: d4645d30b50d1691c26ff0f8fa4e718b08f8d3bb
+ timers-core-for-linus
+X-PR-Tracked-Commit-Id: 13e792a19d4e3a1c64e94197ba357685fd584ded
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5a2bf1abbf96fca02b9785c252e569ef8e004851
-Message-Id: <155718600840.9113.13445751111078551504.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: a0e928ed7c603a47dca8643e58db224a799ff2c5
+Message-Id: <155718600897.9113.10237766595124193948.pr-tracker-bot@kernel.org>
 Date:   Mon, 06 May 2019 23:40:08 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -42,12 +42,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 May 2019 11:16:33 +0200:
+The pull request you sent on Mon, 6 May 2019 11:24:59 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-hotplug-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-core-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5a2bf1abbf96fca02b9785c252e569ef8e004851
+https://git.kernel.org/torvalds/c/a0e928ed7c603a47dca8643e58db224a799ff2c5
 
 Thank you!
 
