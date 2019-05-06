@@ -2,124 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A17B14AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 15:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC0D14AEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 15:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEFN3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 09:29:33 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:55766 "EHLO vps0.lunn.ch"
+        id S1726312AbfEFNbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 09:31:05 -0400
+Received: from vps.xff.cz ([195.181.215.36]:51150 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725852AbfEFN3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 09:29:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=iqK/8epn5ls+IZG0UVMrU/nhCwJXFn7xBX1PC/hdTw8=; b=Xi4GnazFzWujEyL0+B6GoxfPXw
-        yypf4DnisTvFQyII2YxI8Dq+6W1uRpKc+dxsYsBsa+Dpv2j+og2+nHKl5eyc96I8rPF6SecgNg+qv
-        dnTngDKXOw4HfSo1EdOyX4oJ89lR64yLS2wQ4mZE13dQi9ckbzmSoJ8oR4rkGq2lWWRs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hNdgK-00051K-MA; Mon, 06 May 2019 15:29:24 +0200
-Date:   Mon, 6 May 2019 15:29:24 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, palmer@sifive.com,
-        paul.walmsley@sifive.com, peter@korsgaard.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 v1 3/3] i2c-ocores: sifive: add polling mode
- workaround for FU540-C000 SoC.
-Message-ID: <20190506132924.GD15291@lunn.ch>
-References: <1557147240-29551-1-git-send-email-sagar.kadam@sifive.com>
- <1557147240-29551-4-git-send-email-sagar.kadam@sifive.com>
+        id S1725852AbfEFNbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 09:31:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1557149462; bh=5NaP41T2tboqejgP6JhPceVbZhbz7QlauYREMH66sUE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rffGOnol+UCVtuc4lDzDpU7ZELd4yFrvN3P6lLYRyUkMf2wJhR1AX8b8lMAji2h0n
+         2hcL/yQD/1SZ52jNLuAZBeuMne37sNSo4TNFrHQfo/McQbm19+xPw/4MvcC02mOFbD
+         hwZXO1KICQaLB/t3qCIZHRwM9Q6pRPorlo98oDeI=
+Date:   Mon, 6 May 2019 15:31:01 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2] arm64: allwinner: h6:
+ orangepi-one-plus: Add Ethernet support
+Message-ID: <20190506133101.c3twwwydy5mez3db@core.my.home>
+Mail-Followup-To: Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20190503115928.27662-1-jagan@amarulasolutions.com>
+ <20190503144651.ttqfha656dykqjzo@flea>
+ <CAMty3ZCQTiX5OvCG_uMRS02vFu0c1-bkcyauLD6oaFcd=y3RNA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557147240-29551-4-git-send-email-sagar.kadam@sifive.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAMty3ZCQTiX5OvCG_uMRS02vFu0c1-bkcyauLD6oaFcd=y3RNA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  /*
->   * 'process_lock' exists because ocores_process() and ocores_process_timeout()
-> @@ -239,8 +240,13 @@ static irqreturn_t ocores_isr(int irq, void *dev_id)
->  	struct ocores_i2c *i2c = dev_id;
->  	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
->  
-> -	if (!(stat & OCI2C_STAT_IF))
-> +	if (i2c->flags && SIFIVE_FLAG_POLL) {
+On Mon, May 06, 2019 at 03:03:15PM +0530, Jagan Teki wrote:
+> On Fri, May 3, 2019 at 8:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Fri, May 03, 2019 at 05:29:28PM +0530, Jagan Teki wrote:
+> > > Add Ethernet support for orangepi-one-plus board,
+> > >
+> > > - Ethernet port connected via RTL8211E PHY
+> > > - PHY suppiled with
+> > >   GMAC-2V5, fixed regulator with GMAC_EN pin via PD6
+> > >   GMAC-3V, which is supplied by VCC3V3-MAC via aldo2
+> > > - RGMII-RESET pin connected via PD14
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > Your commit log should be improved. We can get those informations from
+> > the patch itself...
+> 
+> Thought it was a clear commit log :)  will update anyway.
+> 
+> >
+> > > ---
+> > > Changes for v2:
+> > > - emac changes on top of https://patchwork.kernel.org/cover/10899529/
+> > >   series
+> > >
+> > >  .../allwinner/sun50i-h6-orangepi-one-plus.dts |  8 ++++
+> > >  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 42 +++++++++++++++++++
+> > >  2 files changed, 50 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > > index 12e17567ab56..9e8ed1053715 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> > > @@ -9,4 +9,12 @@
+> > >  / {
+> > >       model = "OrangePi One Plus";
+> > >       compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
+> > > +
+> > > +     aliases {
+> > > +             ethernet0 = &emac;
+> > > +     };
+> > > +};
+> > > +
+> > > +&emac {
+> > > +     status = "okay";
+> > >  };
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > > index 62e27948a3fa..c48e24acaf8a 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> > > @@ -45,6 +45,48 @@
+> > >               regulator-max-microvolt = <5000000>;
+> > >               regulator-always-on;
+> > >       };
+> > > +
+> > > +     /*
+> > > +      * The board uses 2.5V RGMII signalling. Power sequence to enable
+> > > +      * the phy is to enable GMAC-2V5 and GMAC-3V (aldo2) power rails
+> > > +      * at the same time and to wait 100ms.
+> > > +      */
+> > > +     reg_gmac_2v5: gmac-2v5 {
+> > > +             compatible = "regulator-fixed";
+> > > +             regulator-name = "gmac-2v5";
+> > > +             regulator-min-microvolt = <2500000>;
+> > > +             regulator-max-microvolt = <2500000>;
+> > > +             startup-delay-us = <100000>;
+> > > +             enable-active-high;
+> > > +             gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* GMAC_EN: PD6 */
+> > > +
+> > > +             /* The real parent of gmac-2v5 is reg_vcc5v, but we need to
+> > > +              * enable two regulators to power the phy. This is one way
+> > > +              * to achieve that.
+> > > +              */
+> > > +             vin-supply = <&reg_aldo2>; /* VCC3V3-MAC: GMAC-3V */
+> > > +     };
+> > > +};
+> > > +
+> > > +&emac {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&ext_rgmii_pins>;
+> > > +     phy-mode = "rgmii";
+> > > +     phy-handle = <&ext_rgmii_phy>;
+> > > +     phy-supply = <&reg_gmac_2v5>;
+> > > +     allwinner,rx-delay-ps = <1500>;
+> > > +     allwinner,tx-delay-ps = <700>;
+> > > +};
+> > > +
+> > > +&mdio {
+> > > +     ext_rgmii_phy: ethernet-phy@1 {
+> > > +             compatible = "ethernet-phy-ieee802.3-c22";
+> > > +             reg = <1>;
+> > > +
+> > > +             reset-gpios = <&pio 3 14 GPIO_ACTIVE_LOW>; /* RGMII-RESET: PD14 */
+> > > +             reset-assert-us = <15000>;
+> > > +             reset-deassert-us = <40000>;
+> > > +     };
+> > >  };
+> >
+> > ... however, at no point in time you explain why you made that switch,
+> > and while most of the definition of the EMAC nodes is in the DTSI, you
+> > only enable it in one DTS.
+> 
+> The dtsi is shared b/w 1+ and lite2 and 1+ has emac, so I enabled the
+> status directly on dts and keeping the relevant nodes on dtsi just
+> like SoC dtsi does. do I need to mention this in commit log?
 
-Do you really want && here?
+Lite 2 doesn't have reg_gmac_2v5 and it also doesn't have the external phy.
+But with this patch, reg_gmac_2v5 will also show up in the Lite 2's final
+DTB.
 
-> +		if (stat & OCI2C_STAT_IF)
-> +			if (!(stat & OCI2C_STAT_BUSY))
-> +				return IRQ_NONE;
-> +	} else if (!(stat & OCI2C_STAT_IF)) {
->  		return IRQ_NONE;
-> +	}
->  
->  	ocores_process(i2c, stat);
->  
-> @@ -356,6 +362,11 @@ static void ocores_process_polling(struct ocores_i2c *i2c)
->  		ret = ocores_isr(-1, i2c);
->  		if (ret == IRQ_NONE)
->  			break; /* all messages have been transferred */
-> +		else {
-> +			if (i2c->flags && SIFIVE_FLAG_POLL)
+Comapred to SoC dtsi, the SoC always has things that are in the dtsi, they
+are just not enabled/used by the board, but they are present on the chip.
 
-And here?
+So this comes down to what the meaning of board-level dtsi should be. I
+doubt we want it to mean "a collection of stuff that may or may not be
+present on the boards that depend on it".
 
-> +				if (i2c->state == STATE_DONE)
-> +					break;
-> +		}
->  	}
->  }
->  
-> @@ -406,7 +417,7 @@ static int ocores_xfer(struct i2c_adapter *adap,
->  {
->  	struct ocores_i2c *i2c = i2c_get_adapdata(adap);
->  
-> -	if (i2c->flags & OCORES_FLAG_POLL)
-> +	if ((i2c->flags & OCORES_FLAG_POLL) || (i2c->flags & SIFIVE_FLAG_POLL))
+regards,
+	o.
 
-You can combine this
-
-if ((i2c->flags & (OCORES_FLAG_POLL | SIFIVE_FLAG_POLL))
-
->  		return ocores_xfer_polling(adap, msgs, num);
->  	return ocores_xfer_core(i2c, msgs, num, false);
->  }
-> @@ -597,6 +608,7 @@ static int ocores_i2c_probe(struct platform_device *pdev)
->  {
->  	struct ocores_i2c *i2c;
->  	struct ocores_i2c_platform_data *pdata;
-> +	const struct of_device_id *match;
->  	struct resource *res;
->  	int irq;
->  	int ret;
-> @@ -678,13 +690,21 @@ static int ocores_i2c_probe(struct platform_device *pdev)
->  
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq == -ENXIO) {
-> -		i2c->flags |= OCORES_FLAG_POLL;
-> +		/*
-> +		 * Set a SIFIVE_FLAG_POLL to enable workaround for FU540
-> +		 * in polling mode interface of i2c-ocore driver.
-> +		 */
-> +		match = of_match_node(ocores_i2c_match, pdev->dev.of_node);
-> +		if (match && (long)match->data == TYPE_SIFIVE_REV0)
-> +			i2c->flags |= SIFIVE_FLAG_POLL;
-> +		else
-> +			i2c->flags |= OCORES_FLAG_POLL;
-
-Please take a look at the whole code, and consider if it is better to
-set both SIFIVE_FLAG_POLL and OCORES_FLAG_POLL. Maybe rename
-SIFIVE_FLAG_POLL to OCORES_FLAG_BROKEN_IRQ_BIT?
-
-Thanks
-	Andrew
+> -- 
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
