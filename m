@@ -2,105 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 201D8144A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0630E144A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 08:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfEFGzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 02:55:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58252 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725710AbfEFGzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 02:55:36 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6C6F98BBE9FC15A36768;
-        Mon,  6 May 2019 14:55:33 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 6 May 2019 14:55:27 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <qiuzhenfa@hisilicon.com>, <john.garry@huawei.com>,
-        <guohanjun@huawei.com>, Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Sudeep Holla" <sudeep.holla@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2 2/2] arm64: cacheinfo: Update cache_line_size detected from DT or PPTT
-Date:   Mon, 6 May 2019 14:53:57 +0800
-Message-ID: <1557125637-9558-2-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557125637-9558-1-git-send-email-zhangshaokun@hisilicon.com>
-References: <1557125637-9558-1-git-send-email-zhangshaokun@hisilicon.com>
+        id S1726046AbfEFGyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 02:54:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34414 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725836AbfEFGyk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 02:54:40 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x466q4EQ079384
+        for <linux-kernel@vger.kernel.org>; Mon, 6 May 2019 02:54:39 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sad5tdtq1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 02:54:39 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 6 May 2019 07:54:36 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 6 May 2019 07:54:33 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x466sWZ160686528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 May 2019 06:54:32 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0581652050;
+        Mon,  6 May 2019 06:54:32 +0000 (GMT)
+Received: from [9.145.46.119] (unknown [9.145.46.119])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 602115204F;
+        Mon,  6 May 2019 06:54:31 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 3/7] s390: vfio-ap: sysfs interface to display guest
+ CRYCB
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     freude@linux.ibm.com, borntraeger@de.ibm.com, cohuck@redhat.com,
+        frankja@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, pasic@linux.ibm.com,
+        alex.williamson@redhat.com, kwankhede@nvidia.com
+References: <1556918073-13171-1-git-send-email-akrowiak@linux.ibm.com>
+ <1556918073-13171-4-git-send-email-akrowiak@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Mon, 6 May 2019 08:54:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1556918073-13171-4-git-send-email-akrowiak@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050606-0008-0000-0000-000002E3B0CA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050606-0009-0000-0000-0000225027A3
+Message-Id: <a2361365-050e-dfdd-ccd2-0167ccfcdfbf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-06_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905060059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cache_line_size is derived from CTR_EL0.CWG field and is called mostly
-for I/O device drivers. For HiSilicon certain plantform, like the
-Kunpeng920 server SoC, cache line sizes are different between L1/2
-cache and L3 cache while L1 cache line size is 64-byte and L3 is 128-byte,
-but CTR_EL0.CWG is misreporting using L1 cache line size.
+On 03/05/2019 23:14, Tony Krowiak wrote:
+> Introduces a sysfs interface on the matrix mdev device to display the
+> contents of the shadow of the guest's CRYCB
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c | 59 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 59 insertions(+)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 44a04b4aa9ae..1021466cb661 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -771,6 +771,64 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+>   }
+>   static DEVICE_ATTR_RO(matrix);
+>   
+> +static ssize_t guest_matrix_show(struct device *dev,
+> +				 struct device_attribute *attr, char *buf)
+> +{
+> +	struct mdev_device *mdev = mdev_from_dev(dev);
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +	char *bufpos = buf;
+> +	unsigned long apid;
+> +	unsigned long apqi;
+> +	unsigned long apid1;
+> +	unsigned long apqi1;
+> +	unsigned long napm_bits;
+> +	unsigned long naqm_bits;
+> +	int nchars = 0;
+> +	int n;
+> +
+> +	if (!matrix_mdev->shadow_crycb)
+> +		return -ENODEV;
+> +
+> +	mutex_lock(&matrix_dev->lock);
+> +	napm_bits = matrix_mdev->shadow_crycb->apm_max + 1;
+> +	naqm_bits = matrix_mdev->shadow_crycb->aqm_max + 1;
+> +	apid1 = find_first_bit_inv(matrix_mdev->shadow_crycb->apm, napm_bits);
+> +	apqi1 = find_first_bit_inv(matrix_mdev->shadow_crycb->aqm, naqm_bits);
+> +
+> +	if ((apid1 < napm_bits) && (apqi1 < naqm_bits)) {
+> +		for_each_set_bit_inv(apid, matrix_mdev->shadow_crycb->apm,
+> +				     napm_bits) {
+> +			for_each_set_bit_inv(apqi,
+> +					     matrix_mdev->shadow_crycb->aqm,
+> +					     naqm_bits) {
+> +				n = sprintf(bufpos, "%02lx.%04lx\n", apid,
+> +					    apqi);
+> +				bufpos += n;
+> +				nchars += n;
+> +			}
+> +		}
+> +	} else if (apid1 < napm_bits) {
+> +		for_each_set_bit_inv(apid, matrix_mdev->shadow_crycb->apm,
+> +				     napm_bits) {
+> +			n = sprintf(bufpos, "%02lx.\n", apid);
+> +			bufpos += n;
+> +			nchars += n;
+> +		}
+> +	} else if (apqi1 < naqm_bits) {
+> +		for_each_set_bit_inv(apqi, matrix_mdev->shadow_crycb->aqm,
+> +				     naqm_bits) {
+> +			n = sprintf(bufpos, ".%04lx\n", apqi);
+> +			bufpos += n;
+> +			nchars += n;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&matrix_dev->lock);
+> +
+> +	return nchars;
+> +}
+> +static DEVICE_ATTR_RO(guest_matrix);
+> +
+>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>   	&dev_attr_assign_adapter.attr,
+>   	&dev_attr_unassign_adapter.attr,
+> @@ -780,6 +838,7 @@ static struct attribute *vfio_ap_mdev_attrs[] = {
+>   	&dev_attr_unassign_control_domain.attr,
+>   	&dev_attr_control_domains.attr,
+>   	&dev_attr_matrix.attr,
+> +	&dev_attr_guest_matrix.attr,
+>   	NULL,
+>   };
+>   
+> 
 
-We shall correct the right value which is important for I/O performance.
-Let's update the cache line size if it is detected from DT or PPTT
-information.
+Code seems very similar to matrix_show, can't you share the code?
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>
-Reported-by: Zhenfa Qiu <qiuzhenfa@hisilicon.com>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- arch/arm64/include/asm/cache.h |  6 +-----
- arch/arm64/kernel/cacheinfo.c  | 10 ++++++++++
- 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-index 926434f413fa..758af6340314 100644
---- a/arch/arm64/include/asm/cache.h
-+++ b/arch/arm64/include/asm/cache.h
-@@ -91,11 +91,7 @@ static inline u32 cache_type_cwg(void)
- 
- #define __read_mostly __attribute__((__section__(".data..read_mostly")))
- 
--static inline int cache_line_size(void)
--{
--	u32 cwg = cache_type_cwg();
--	return cwg ? 4 << cwg : ARCH_DMA_MINALIGN;
--}
-+int cache_line_size(void);
- 
- /*
-  * Read the effective value of CTR_EL0.
-diff --git a/arch/arm64/kernel/cacheinfo.c b/arch/arm64/kernel/cacheinfo.c
-index 0bf0a835122f..6ffe908d476c 100644
---- a/arch/arm64/kernel/cacheinfo.c
-+++ b/arch/arm64/kernel/cacheinfo.c
-@@ -28,6 +28,16 @@
- #define CLIDR_CTYPE(clidr, level)	\
- 	(((clidr) & CLIDR_CTYPE_MASK(level)) >> CLIDR_CTYPE_SHIFT(level))
- 
-+int cache_line_size(void)
-+{
-+	u32 cwg = cache_type_cwg();
-+
-+	if (coherency_max_size != 0)
-+		return coherency_max_size;
-+
-+	return cwg ? 4 << cwg : ARCH_DMA_MINALIGN;
-+}
-+
- static inline enum cache_type get_cache_type(int level)
- {
- 	u64 clidr;
+
+
+
 -- 
-2.7.4
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
