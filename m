@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4F94145FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAEAB14601
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfEFIUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:20:45 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41665 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbfEFIUo (ORCPT
+        id S1726695AbfEFIUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 04:20:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37787 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbfEFIUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:20:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z3so2386924pgp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:43 -0700 (PDT)
+        Mon, 6 May 2019 04:20:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6so6097745pgc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QKYp824sV52iVA5xCpuAmZ1milKgy4gJjXqB3YKplKQ=;
-        b=LYrnxC+RUl1AAvsFrPANYyFpmGaeZaKA2Omy4NayExV/OtWjJX+Pp02UcjWWeYaJ6W
-         ui020TlrTCzKPIhmSky/bxGGo0pRHwzS3UvRyNJaqeW2eLK8fQNYcq6HR11jHS5TKAeQ
-         A8Ce8NpCd6u6bjkWBJAwti1tVqEH2bGo5py2b9jzfLwT9JfOURzUyr5m6Ub+D75LOGB6
-         FkdDT36OL8Kr8DFc4YDHr5tt5MOBKKFJ8BFtOFO6skbaV3/v4LU+etwOzL7958zbZuCl
-         J0CttbzArUXrKaRscmkORA+ziFaIEshKR8Lb5fj5wLqJ/cS5fVrNva91rNqIpq+jwS09
-         pUsQ==
+        bh=SQz2jf18ZhbqJGiF1vojuJ/sEIUTmJdMiuQ/TuxIMiQ=;
+        b=oeP9QoMfqrvYsVVeDTczuzWMPHS5M4FcWUa5gYiUME40nj1Izqbf9tmrF4nHNvjlHq
+         g2Dy1e5xi9tNYBX0pQpHDITLdVHd+yKuyaif6n74MQ/XOwFeAHF5sU/MG5t0M3yZx/KX
+         KKEN64unlZdGVMyyA5SvgZvTOZODSbXCBUkFh+jj4cnEfGf/uXMUgcOtUF1ZTCxq7MTb
+         bWh9yeorjBRD6Fd5BTz5Pe8XYsk8xz0s4UoQ9+JPKFVJqh+z5fsEui2nbuVTnBsXhHaD
+         ruCIxrOB70DGuNw6mrgyElK0GRs4UmFPn3TBrNg9YgNoCSvgH6nGkMuNO9rchu9TURiD
+         Dtcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QKYp824sV52iVA5xCpuAmZ1milKgy4gJjXqB3YKplKQ=;
-        b=Buqcvdwkh/pG63765I92Q2UrwkLaUBclM9+dyOAMH/gUd7lUHk/xXPL1KFH+YpT/Jb
-         vbVBjLS8CpOO7RaW1bLPl6AC4RiEZnTPzjktza4Yw1E14jEQTvwduAwJK6DiLjEc3x8+
-         cFlQuGFg1I48iSTEPoR3PFl0N5vZJx6sWKqQLTkzGtC7aoLEUgYo6O1yYZhpUUGsGigS
-         EjekIjUBpZNa5n8fL1eWd4lE5sMNjMfxjCb3fE+khEgaG4YshNMC+5inpq6A3c/pzxrN
-         5ZltuUKDWxudxEthGyDM9Xxx8oumDoAB5AJPDa5bGSQIMLrbVcebmmCTXXhaCkEITupJ
-         Q/TQ==
-X-Gm-Message-State: APjAAAUfXYW2r2J58H4XZOGcnxbjBl++/uHyfqbSfXjJHMO/V48XENQI
-        ITcsaVfv6RJSoDmp8LkV6yw=
-X-Google-Smtp-Source: APXvYqz2rYU1+D7dRxi/5jj5hY7xCaTnGabIrgvSeuCovNAq+TXSHb59X+vNme4IUeZpMIpsM6F1QA==
-X-Received: by 2002:a63:dc50:: with SMTP id f16mr30552874pgj.396.1557130843097;
-        Mon, 06 May 2019 01:20:43 -0700 (PDT)
+        bh=SQz2jf18ZhbqJGiF1vojuJ/sEIUTmJdMiuQ/TuxIMiQ=;
+        b=lX4PfkTGcE3UoHbSVq6gQbzI+hTCfIkGHMOsssESnOSEoXvb8nXY4S8vrmXdVNAg5b
+         k0l46B+r0LRfZnVApHlGV0p5/d9n7xUFHhfCVOmeJkq97ME25/+sYEXQqwR71NASyu8t
+         9G7fZF2zPNp7qrBJsBFEBdzeHPNwTd24CIYnbstW8K6te67xzhz+Ge+I8mPyDUHUgD9/
+         wUBkozmq2eViTB7ckvuHxqRLX6VtgnhAg/Pl64UtKiS+pWeaJl6kjmJuoRAsFhk9P1k0
+         3XwU5aDFEYhnKA9F8hvWu6RQEEZLnUcUT1WHibT5ZtENozqEF/f/cE7qbn0u5sIACFjq
+         Ynow==
+X-Gm-Message-State: APjAAAVGGl2Iix6psX1YjseIFfFspA/CvJ+ZGqPbD1sDpLMphP80vfuA
+        Hw1YUrBAIcFfq+kS5cW7ugI=
+X-Google-Smtp-Source: APXvYqwIx+uOCRMH8DADdj4zTgK9ml3evRwlIfwlP1nb+p06taeClNpk8N+eFFgufaqvR+zsYWf/sg==
+X-Received: by 2002:a63:a351:: with SMTP id v17mr15329785pgn.431.1557130846304;
+        Mon, 06 May 2019 01:20:46 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.40
+        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 01:20:42 -0700 (PDT)
+        Mon, 06 May 2019 01:20:45 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v2 17/23] locking/lockdep: Remove redundant argument in check_deadlock
-Date:   Mon,  6 May 2019 16:19:33 +0800
-Message-Id: <20190506081939.74287-18-duyuyang@gmail.com>
+Subject: [PATCH v2 18/23] locking/lockdep: Remove unused argument in __lock_release
+Date:   Mon,  6 May 2019 16:19:34 +0800
+Message-Id: <20190506081939.74287-19-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190506081939.74287-1-duyuyang@gmail.com>
 References: <20190506081939.74287-1-duyuyang@gmail.com>
@@ -63,45 +63,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In check_deadlock(), the third argument read comes from the second
-argument hlock so that it can be removed. No functional change.
+The @nested is not used in __release_lock so remove it despite that it
+is not used in lock_release in the first place.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/locking/lockdep.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 7bd62e2..67b6a76 100644
+index 67b6a76..ebfa42a 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -2241,7 +2241,7 @@ static inline void inc_chains(void)
-  * Returns: 0 on deadlock detected, 1 on OK, 2 on recursive read
+@@ -4095,7 +4095,7 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
+  * @nested is an hysterical artifact, needs a tree wide cleanup.
   */
  static int
--check_deadlock(struct task_struct *curr, struct held_lock *next, int read)
-+check_deadlock(struct task_struct *curr, struct held_lock *next)
+-__lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
++__lock_release(struct lockdep_map *lock, unsigned long ip)
  {
- 	struct held_lock *prev;
- 	struct held_lock *nest = NULL;
-@@ -2260,7 +2260,7 @@ static inline void inc_chains(void)
- 		 * Allow read-after-read recursion of the same
- 		 * lock class (i.e. read_lock(lock)+read_lock(lock)):
- 		 */
--		if ((read == 2) && prev->read)
-+		if ((next->read == 2) && prev->read)
- 			return 2;
- 
- 		/*
-@@ -2834,7 +2834,7 @@ static int validate_chain(struct task_struct *curr,
- 		 * The simple case: does the current hold the same lock
- 		 * already?
- 		 */
--		int ret = check_deadlock(curr, hlock, hlock->read);
-+		int ret = check_deadlock(curr, hlock);
- 
- 		if (!ret)
- 			return 0;
+ 	struct task_struct *curr = current;
+ 	struct held_lock *hlock;
+@@ -4383,7 +4383,7 @@ void lock_release(struct lockdep_map *lock, int nested,
+ 	check_flags(flags);
+ 	current->lockdep_recursion = 1;
+ 	trace_lock_release(lock, ip);
+-	if (__lock_release(lock, nested, ip))
++	if (__lock_release(lock, ip))
+ 		check_chain_key(current);
+ 	current->lockdep_recursion = 0;
+ 	raw_local_irq_restore(flags);
 -- 
 1.8.3.1
 
