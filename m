@@ -2,194 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4779214EDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EFA14E9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfEFPFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:05:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:52592 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbfEFOiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A8ACA78;
-        Mon,  6 May 2019 07:38:16 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12D6A3F575;
-        Mon,  6 May 2019 07:38:14 -0700 (PDT)
-Date:   Mon, 6 May 2019 15:38:12 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 4/7] sched: Add sched_load_rq tracepoint
-Message-ID: <20190506143811.tvvvguz3erptdb3k@e107158-lin.cambridge.arm.com>
-References: <20190505115732.9844-1-qais.yousef@arm.com>
- <20190505115732.9844-5-qais.yousef@arm.com>
- <20190506090859.GK2606@hirez.programming.kicks-ass.net>
+        id S1727785AbfEFOjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:39:17 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33524 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbfEFOjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:39:14 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f23so11327648ljc.0;
+        Mon, 06 May 2019 07:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aea4AeGRcNFYVaxX9HKC+puP0Uu/dDxECENRVLl8ZzQ=;
+        b=hKgCp8gP1dbtFfMP1v2Z6/JR65Xgq8Df0RqAuCJQ9vs/9uy/h8M0pWhM65UvcdvWy7
+         EzHPVghXOEczgnEYKPs3RoXqNBOk8kjvoYYfIfA6pOtzdnkLvrDn4r5CE6BvI0zBxo4R
+         kiEWvwJdyCWc38A/7O3XNOisUPzDYRfMChRsjowiP8xjTLPu6dv63WzRtT6dm1p9m4CW
+         jVR9NzG8VkcxPEArSjO2NEvknjvp4tA3x/+LA24wRGUodIdoWpLEz2QxLEtsBx9rmxG0
+         3oiYYQOtz03f9ud+IY8flRIV6Hi3Cfi4Bx6R5hp4bFFKos8xIIH/9orVEcsr11pejURe
+         ebDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aea4AeGRcNFYVaxX9HKC+puP0Uu/dDxECENRVLl8ZzQ=;
+        b=XOx9RSkMkIdi8j+IbbZE2rA1R1Cxo8JCVmd5xcCrgBdP+69zARZVUkBQ5CeLw/BhPR
+         3HoqGOR/AaHUt/2gRy7w1jXwDmmY1Jd0pzBqlCtrwnOKnT7Tsk0kVAoBmEkHnW/llib3
+         dhKgBMdua5dN9jrjuND2Y0CDHEtuqgcxaFycP7/6oDGddWnvuE99kYOGVPQYYahWBbLr
+         VfI0I+ClXE3bKDno+mDnW3MfWrdNpKH8x0PT4YhXcLv1IJJRpxKQCWsRdQ4Za891oiTZ
+         kAAX53wgDMLgIQEwtX/55Xdff07VmQ6KBomrlxfFJdqEtdC9h1o1ANeSneLwmiqZP1Ie
+         O/cA==
+X-Gm-Message-State: APjAAAXGFNA/ChKHsLgnetp1BUoU0U0HsRCscpsg+raWg6Yty5VfjWzq
+        gQYKIhAdjy/ZU042GLK1qV8=
+X-Google-Smtp-Source: APXvYqxSzsUHKviXNs/xM2+ZB2tYRfkOuCfgvHSUV1EGi1G7PCKqMGLpl6MFky2QGSZHRz+h8uvViw==
+X-Received: by 2002:a2e:9c57:: with SMTP id t23mr13974422ljj.152.1557153550534;
+        Mon, 06 May 2019 07:39:10 -0700 (PDT)
+Received: from mobilestation ([5.164.217.122])
+        by smtp.gmail.com with ESMTPSA id q29sm2416918ljc.8.2019.05.06.07.39.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 06 May 2019 07:39:09 -0700 (PDT)
+Date:   Mon, 6 May 2019 17:39:07 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Vladimir Oltean <olteanv@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Serge Semin <Sergey.Semin@t-platforms.ru>,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] net: phy: realtek: Change TX-delay setting for
+ RGMII modes only
+Message-ID: <20190506143906.o3tublcxr5ge46rg@mobilestation>
+References: <20190426212112.5624-1-fancer.lancer@gmail.com>
+ <20190426212112.5624-2-fancer.lancer@gmail.com>
+ <20190426214631.GV4041@lunn.ch>
+ <20190426233511.qnkgz75ag7axt5lp@mobilestation>
+ <f27df721-47aa-a708-aaee-69be53def814@gmail.com>
+ <CA+h21hpTRCrD=FxDr=ihDPr+Pdhu6hXT3xcKs47-NZZZ3D9zyg@mail.gmail.com>
+ <20190429211225.ce7cspqwvlhwdxv6@mobilestation>
+ <CAFBinCBxgMr6ZkOSGfXZ9VwJML=GnzrL+FSo5jMpN27L2o5+JA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190506090859.GK2606@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAFBinCBxgMr6ZkOSGfXZ9VwJML=GnzrL+FSo5jMpN27L2o5+JA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/19 11:08, Peter Zijlstra wrote:
-> On Sun, May 05, 2019 at 12:57:29PM +0100, Qais Yousef wrote:
+Hello Martin.
+
+On Tue, Apr 30, 2019 at 11:16:21PM +0200, Martin Blumenstingl wrote:
+>  Hello Serge,
 > 
-> > +/*
-> > + * Following tracepoints are not exported in tracefs and provide hooking
-> > + * mechanisms only for testing and debugging purposes.
-> > + */
-> > +DECLARE_TRACE(sched_load_rq,
-> > +	TP_PROTO(int cpu, const char *path, struct sched_avg *avg),
-> > +	TP_ARGS(cpu, path, avg));
-> > +
+> On Mon, Apr 29, 2019 at 11:12 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+> [...]
+> > > > > Apparently the current config_init method doesn't support RXID setting.
+> > > > > The patch introduced current function code was submitted by
+> > > > > Martin Blumenstingl in 2016:
+> > > > > https://patchwork.kernel.org/patch/9447581/
+> > > > > and was reviewed by Florian. So we'd better ask him why it was ok to mark
+> > > > > the RGMII_ID as supported while only TX-delay could be set.
+> > > > > I also failed to find anything regarding programmatic rtl8211f delays setting
+> > > > > in the Internet. So at this point we can set TX-delay only for f-model of the PHY.
+> let me give you a bit of context on that patch:
+> most boards (SBCs and TV boxes) with an Amlogic SoC and a Gigabit
+> Ethernet PHY use a Realtek RTL8211F PHY. we were seeing high packet
+> loss when transmitting from the board to another device.
+> it took us very long to understand that a combination of different
+> hardware and driver pieces lead to this issue:
+> - in the MAC driver we enabled a 2ns TX delay by default, like Amlogic
+> does it in their vendor (BSP) kernel
+> - we used the upstream Realtek RTL8211F PHY driver which only enabled
+> the TX delay if requested (it never disabled the TX delay)
+> - hardware defaults or pin strapping of the Realtek RTL8211F PHY
+> enabled the TX delay in the PHY
 > 
-> > +DECLARE_TRACE(sched_load_se,
-> > +       TP_PROTO(int cpu, const char *path, struct sched_entity *se),
-> > +       TP_ARGS(cpu, path, se));
-> > +
+> This means that the TX delay was applied twice: once at the MAC and
+> once at the PHY.
+> That lead to high packet loss when transmitting data.
+> To solve that I wrote the patch you mentioned, which has since been
+> ported over to u-boot (for a non-Amlogic related board)
 > 
-> > +DECLARE_TRACE(sched_overutilized,
-> > +       TP_PROTO(int overutilized),
-> > +       TP_ARGS(overutilized));
+
+Yeah. This is a standard problem if you ever worked with a hardware just
+designed, when you try to make MAC+PHY working together. If you experienced
+packets loss and it's RGMII, then most likely the problem with delays.
+
+> > > > > Anyway lets clarify the situation before to proceed further. You are suggesting
+> > > > > to return an error in case if either RGMII_ID or RGMII_RXID interface mode is
+> > > > > requested to be enabled for the PHY. It's fair seeing the driver can't fully
+> > > > > support either of them.
+> I don't have any datasheet for the Realtek RTL8211F PHY and I'm not in
+> the position to get one (company contracts seem to be required for
+> this).
+> Linux is not my main job, I do driver development in my spare time.
 > 
-> This doesn't generate any actual userspace because of the lack of
-> DEFINE_EVENT() ?
-
-Documentation/trace/tracepoints.rst suggests using DEFINE_TRACE(). But using
-that causes compilation errors because of some magic that is being redefined.
-Not doing DEFINE_TRACE() gave the intended effect according to the document, so
-I assumed it's outdated.
-
-
-kernel/sched/core.c:27:1: note: in expansion of macro ‘DEFINE_TRACE’
- DEFINE_TRACE(sched_overutilized);
- ^~~~~~~~~~~~
-./include/linux/tracepoint.h:287:20: note: previous definition of ‘__tracepoint_sched_overutilized’ was here
-  struct tracepoint __tracepoint_##name     \
-                    ^
-./include/linux/tracepoint.h:293:2: note: in expansion of macro ‘DEFINE_TRACE_FN’
-  DEFINE_TRACE_FN(name, NULL, NULL);
-  ^~~~~~~~~~~~~~~
-./include/trace/define_trace.h:67:2: note: in expansion of macro ‘DEFINE_TRACE’
-  DEFINE_TRACE(name)
-  ^~~~~~~~~~~~
-./include/trace/events/sched.h:603:1: note: in expansion of macro ‘DECLARE_TRACE’
- DECLARE_TRACE(sched_overutilized,
- ^~~~~~~~~~~~~
-
-
-DEFINE_EVENT() is only used with TRACE_EVENT() so certainly we don't want it
-here.
-
+> there may or may not be a register or pin strapping to configure the RX delay.
+> due to this I decided to leave the RX delay behavior "not defined"
+> instead of rejecting RGMII_RXID and RGMII_ID.
 > 
-> > diff --git a/kernel/sched/sched_tracepoints.h b/kernel/sched/sched_tracepoints.h
-> > new file mode 100644
-> > index 000000000000..f4ded705118e
-> > --- /dev/null
-> > +++ b/kernel/sched/sched_tracepoints.h
-> > @@ -0,0 +1,39 @@
+> > > > That is how I read Andrew's suggestion and it is reasonable. WRT to the
+> > > > original changes from Martin, he is probably the one you would want to
+> > > > add to this conversation in case there are any RX delay control knobs
+> > > > available, I certainly don't have the datasheet, and Martin's change
+> > > > looks and looked reasonable, seemingly independent of the direction of
+> > > > this very conversation we are having.
+> the changes in patch 1 are looking good to me (except that I would use
+> phy_modify_paged instead of open-coding it, functionally it's
+> identical with what you have already)
 > 
-> Like with the other newly introduced header files, this one is lacking
-> the normal include guard.
 
-I was going to add them but then when I looked in sched.h and autogroup.h they
-had none. So I thought the convention is to not use guard here.
+Nah, this isn't going to work since the config register is placed on an extension
+page. So in order to reach the register first I needed to enable a standard page,
+then select an extended page, then modify the register bits.
 
-I will add it.
-
+> I'm not sure about patch 2:
+> personally I would wait for someone to come up with the requirement to
+> use RGMII_RXID with a RTL8211F PHY.
+> that person will then a board to test the changes and (hopefully) a
+> datasheet to explain the RX delay situation with that PHY.
+> that way we only change the RGMII_RXID behavior once (when someone
+> requests support for it) instead of twice (now with your change, later
+> on when someone needs RGMII_RXID support in the RTL8211F driver)
 > 
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Scheduler tracepoints that are probe-able only and aren't exported ABI in
-> > + * tracefs.
-> > + */
-> > +
-> > +#include <trace/events/sched.h>
-> > +
-> > +#define SCHED_TP_PATH_LEN		64
-> > +
-> > +
-> > +static __always_inline void sched_tp_load_cfs_rq(struct cfs_rq *cfs_rq)
-> > +{
-> > +	if (trace_sched_load_rq_enabled()) {
-> > +		int cpu = cpu_of(rq_of(cfs_rq));
-> > +		char path[SCHED_TP_PATH_LEN];
-> > +
-> > +		cfs_rq_tg_path(cfs_rq, path, SCHED_TP_PATH_LEN);
-> > +		trace_sched_load_rq(cpu, path, &cfs_rq->avg);
-> > +	}
-> > +}
-> > +
-> > +static __always_inline void sched_tp_load_rt_rq(struct rq *rq)
-> > +{
-> > +	if (trace_sched_load_rq_enabled()) {
-> > +		int cpu = cpu_of(rq);
-> > +
-> > +		trace_sched_load_rq(cpu, NULL, &rq->avg_rt);
-> > +	}
-> > +}
-> > +
-> > +static __always_inline void sched_tp_load_dl_rq(struct rq *rq)
-> > +{
-> > +	if (trace_sched_load_rq_enabled()) {
-> > +		int cpu = cpu_of(rq);
-> > +
-> > +		trace_sched_load_rq(cpu, NULL, &rq->avg_dl);
-> > +	}
-> > +}
+> that said, the change in patch 2 itself looks fine on Amlogic boards
+> (because all upstream .dts let the MAC generate the TX delay). I
+> haven't runtime-tested your patch there yet.
+> but there seem to be other boards (than the Amlogic ones, the RTL8211F
+> PHY driver discussion in u-boot was not related to an Amlogic board)
+> out there with a RTL8211F PHY (these may or may not be supported in
+> mainline Linux or u-boot and may or may not use RGMII_RXID where you
+> are now changing the behavior). that's not a problem by itself, but
+> you should be aware of this.
 > 
-> > +static __always_inline void sched_tp_load_se(struct sched_entity *se)
-> > +{
-> > +       if (trace_sched_load_se_enabled()) {
-> > +               struct cfs_rq *gcfs_rq = group_cfs_rq(se);
-> > +               struct cfs_rq *cfs_rq = cfs_rq_of(se);
-> > +               char path[SCHED_TP_PATH_LEN];
-> > +               int cpu = cpu_of(rq_of(cfs_rq));
-> > +
-> > +               cfs_rq_tg_path(gcfs_rq, path, SCHED_TP_PATH_LEN);
-> > +               trace_sched_load_se(cpu, path, se);
-> > +       }
-> > +}
+> [...]
+> > rtl8211(e|f) TX/RX delays can be configured either by external pins
+> > strapping or via software registers. This is one of the clue to provide
+> > a proper config_init method code. But not all rtl8211f phys provide
+> > that software register, and if they do it only concerns TX-delay (as we
+> > aware of). So we need to take this into account when creating the updated
+> > versions of these functions.
+> >
+> > (Martin, I also Cc'ed you in this discussion, so if you have anything to
+> > say in this matter, please don't hesitate to comment.)
+> Amlogic boards, such as the Hardkernel Odroid-C1 and Odroid-C2 as well
+> as the Khadas VIM2 use a "RTL8211F" RGMII PHY. I don't know whether
+> there are multiple versions of this PHY. all RTL8211F I have seen so
+> far did behave exactly the same.
 > 
-> These functions really should be called trace_*()
-
-I can rename the wrappers to trace_pelt_load_rq() or sched_trace_pelt_load_rq()
-as Steve was suggesting.
-
-I assume you're okay with the name of the tracepoints and your comment was
-about the wrapper above only? ie: sched_load_rq vs pelt_rq.
-
+> I also don't know whether the RX delay is configurable (by pin
+> strapping or some register) on RTL8211F PHYs because I don't have
+> access to the datasheet.
 > 
-> Also; I _really_ hate how fat they are. Why can't we do simple straight
-
-We can create a percpu variable instead of pushing the path on the stack. But
-this might fail if the trancepoint is called in a preempt enabled path. Also
-having the percpu variable always hanging when these mostly disabled is ugly.
-
-Maybe there's a better way to handle extracting this path info without copying
-it here. Let me see if I can improve on this.
-
-> forward things like:
 > 
-> 	trace_pelt_cfq(cfq);
-> 	trace_pelt_rq(rq);
-> 	trace_pelt_se(se);
-> 
-> And then have the thing attached to the event do the fat bits like
-> extract the path and whatnot.
+> Martin
 
-Thanks
+Ok. Thanks for the comments. I am sure the RX-delay is configurable at list
+via external RXD pin strapping at the chip powering up procedure. The only
+problem with a way of software to change the setting.
 
---
-Qais Yousef
+I don't think there is going to be anyone revealing that realtek black boxed
+registers layout anytime soon. So as I see it it's better to leave the
+rtl8211f-part as is for now.
+
+-Sergey
