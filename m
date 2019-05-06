@@ -2,73 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95898152AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384D3152D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfEFRWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 13:22:32 -0400
-Received: from mga07.intel.com ([134.134.136.100]:31139 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbfEFRWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 13:22:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 10:22:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="230014478"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga001.jf.intel.com with ESMTP; 06 May 2019 10:22:15 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v2 5/5] PCI: Skip Enhanced Allocation (EA) initalization for VF device
-Date:   Mon,  6 May 2019 10:20:07 -0700
-Message-Id: <9370d51d14d9cd0ad4101db14e808fa3ab7efcf5.1557162861.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1726998AbfEFRfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 13:35:34 -0400
+Received: from mail15.wdc04.mandrillapp.com ([205.201.139.15]:42572 "EHLO
+        mail15.wdc04.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726481AbfEFRfd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 13:35:33 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 13:35:32 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=rfgDjKTmnZ6x2r/PxDrCJ83aQW0m2mt8bkvR4gYyUZI=;
+ b=HObcMkf2W6O6fwlygJtXbYbc0oSye2NwhLsho7jTS0yOwAYVH707i7RC9rpJQe7d729YApkSJ76X
+   SeGtT2C+OcnQmVQVVupdDkhixWSF6ZF3iydMIMNhKz4d4YJxnC/QtAT+kdJ2lHpfAfhSf9bLJX7g
+   /Hwou4neSzOxGpEmZN4=
+Received: from pmta08.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail15.wdc04.mandrillapp.com id hq1o681jvmgn for <linux-kernel@vger.kernel.org>; Mon, 6 May 2019 17:20:31 +0000 (envelope-from <bounce-md_31050260.5cd06cdf.v1-8f57005ab0a942f89ee306f3c0d38324@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1557163231; h=From : 
+ Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
+ Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
+ List-Unsubscribe; bh=rfgDjKTmnZ6x2r/PxDrCJ83aQW0m2mt8bkvR4gYyUZI=; 
+ b=pubZ8tJEC1thyqxSEMseIrocIG5cQDkAFEWbx42MTqPTAi5WOgNztrj3GBNQFpscE353a4
+ 6+HkHnnHXC85RKcczFGbg6sQm1eKwuplMyq7zLxhbdSC/B1maplNkQmQ92xlKgWOMMZMQiVb
+ IcMI/pLO8K8rxLFm2zXqSbI6d6RBg=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH 0/3] stream_open bits for Linux 5.2
+Received: from [87.98.221.171] by mandrillapp.com id 8f57005ab0a942f89ee306f3c0d38324; Mon, 06 May 2019 17:20:31 +0000
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1557162861.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1557162861.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@denx.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kirill Smelkov <kirr@nexedi.com>
+Message-Id: <cover.1557162679.git.kirr@nexedi.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.8f57005ab0a942f89ee306f3c0d38324
+X-Mandrill-User: md_31050260
+Date:   Mon, 06 May 2019 17:20:31 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Linus,
 
-As per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced Allocation
-Capability. So skip pci_ea_init() for virtual devices.
+Please consider applying the following stream_open related patches:
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Suggested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/pci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+- The first one removes unnecessary double nonseekable_open from
+  drivers/char/dtlk.c as noticed by Pavel Machek while reviewing
+  nonseekable_open -> stream_open mass conversion.
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 766f5779db92..0ba3930e3b54 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2976,6 +2976,13 @@ void pci_ea_init(struct pci_dev *dev)
- 	int offset;
- 	int i;
- 
-+	/*
-+	 * Per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced
-+	 * Allocation Capability.
-+	 */
-+	if (dev->is_virtfn)
-+		return;
-+
- 	/* find PCI EA capability in list */
- 	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
- 	if (!ea)
+- The second one is the mass conversion patch promised in 10dce8af3422 ("fs:
+  stream_open - opener for stream-like files so that read and write can run
+  simultaneously without deadlock") and is automatically generated by running
+
+	$ make coccicheck MODE=patch COCCI=scripts/coccinelle/api/stream_open.cocci
+
+  I've verified each generated change manually - that it is correct to convert -
+  and each other nonseekable_open instance left - that it is either not correct
+  to convert there, or that it is not converted due to current stream_open.cocci
+  limitations. More details on this in the patch.
+
+- The third patch changes VFS to pass ppos=NULL into .read/.write for files
+  that declare themselves streams. It was suggested by Rasmus Villemoes and makes
+  sure that if ppos starts to be erroneously used in a stream file, such bug
+  won't go unnoticed and will produce an oops instead of creating illusion of
+  position change being taken into account.
+
+  Note: this patch does not conflict with "fuse: Add FOPEN_STREAM to use
+  stream_open()" that will be hopefully coming via FUSE tree, because fs/fuse/
+  uses new-style .read_iter/.write_iter, and for these accessors position is
+  still passed as non-pointer kiocb.ki_pos .
+
+I was hoping for the patches to be picked up into VFS tree, but since that did
+not happenned for some reason I'm sending them to you directly.
+
+Maybe it will help: the patches can be also pulled from here:
+
+	git pull https://lab.nexedi.com/kirr/linux.git y/stream_open-5.2
+
+
+Thanks beforehand,
+Kirill
+
+Kirill Smelkov (3):
+  dtlk: remove double call to nonseekable_open
+  *: convert stream-like files from nonseekable_open -> stream_open
+  vfs: pass ppos=NULL to .read()/.write() of FMODE_STREAM files
+
+ arch/powerpc/platforms/52xx/mpc52xx_gpt.c |   2 +-
+ arch/powerpc/platforms/cell/spufs/file.c  |   2 +-
+ arch/um/drivers/harddog_kern.c            |   2 +-
+ arch/x86/kernel/cpu/microcode/core.c      |   2 +-
+ drivers/char/ds1620.c                     |   2 +-
+ drivers/char/dtlk.c                       |   3 +-
+ drivers/char/ipmi/ipmi_watchdog.c         |   2 +-
+ drivers/char/pcmcia/cm4000_cs.c           |   2 +-
+ drivers/char/pcmcia/scr24x_cs.c           |   2 +-
+ drivers/char/tb0219.c                     |   2 +-
+ drivers/firewire/nosy.c                   |   2 +-
+ drivers/gnss/core.c                       |   2 +-
+ drivers/hid/uhid.c                        |   2 +-
+ drivers/hwmon/fschmd.c                    |   2 +-
+ drivers/hwmon/w83793.c                    |   2 +-
+ drivers/infiniband/core/ucm.c             |   2 +-
+ drivers/infiniband/core/ucma.c            |   2 +-
+ drivers/infiniband/core/user_mad.c        |   2 +-
+ drivers/infiniband/core/uverbs_main.c     |   2 +-
+ drivers/input/evdev.c                     |   2 +-
+ drivers/input/joydev.c                    |   2 +-
+ drivers/input/misc/uinput.c               |   2 +-
+ drivers/isdn/capi/capi.c                  |   2 +-
+ drivers/leds/uleds.c                      |   2 +-
+ drivers/media/rc/lirc_dev.c               |   2 +-
+ drivers/pci/switch/switchtec.c            |   2 +-
+ drivers/platform/chrome/cros_ec_debugfs.c |   2 +-
+ drivers/rtc/rtc-ds1374.c                  |   2 +-
+ drivers/rtc/rtc-m41t80.c                  |   2 +-
+ drivers/s390/char/fs3270.c                |   2 +-
+ drivers/s390/char/tape_char.c             |   2 +-
+ drivers/s390/char/zcore.c                 |   2 +-
+ drivers/s390/crypto/zcrypt_api.c          |   2 +-
+ drivers/spi/spidev.c                      |   2 +-
+ drivers/staging/pi433/pi433_if.c          |   2 +-
+ drivers/usb/misc/ldusb.c                  |   2 +-
+ drivers/watchdog/acquirewdt.c             |   2 +-
+ drivers/watchdog/advantechwdt.c           |   2 +-
+ drivers/watchdog/alim1535_wdt.c           |   2 +-
+ drivers/watchdog/alim7101_wdt.c           |   2 +-
+ drivers/watchdog/ar7_wdt.c                |   2 +-
+ drivers/watchdog/at91rm9200_wdt.c         |   2 +-
+ drivers/watchdog/ath79_wdt.c              |   2 +-
+ drivers/watchdog/bcm63xx_wdt.c            |   2 +-
+ drivers/watchdog/cpu5wdt.c                |   2 +-
+ drivers/watchdog/cpwd.c                   |   2 +-
+ drivers/watchdog/eurotechwdt.c            |   2 +-
+ drivers/watchdog/f71808e_wdt.c            |   2 +-
+ drivers/watchdog/gef_wdt.c                |   2 +-
+ drivers/watchdog/geodewdt.c               |   2 +-
+ drivers/watchdog/ib700wdt.c               |   2 +-
+ drivers/watchdog/ibmasr.c                 |   2 +-
+ drivers/watchdog/indydog.c                |   2 +-
+ drivers/watchdog/intel_scu_watchdog.c     |   2 +-
+ drivers/watchdog/iop_wdt.c                |   2 +-
+ drivers/watchdog/it8712f_wdt.c            |   2 +-
+ drivers/watchdog/ixp4xx_wdt.c             |   2 +-
+ drivers/watchdog/ks8695_wdt.c             |   2 +-
+ drivers/watchdog/m54xx_wdt.c              |   2 +-
+ drivers/watchdog/machzwd.c                |   2 +-
+ drivers/watchdog/mixcomwd.c               |   2 +-
+ drivers/watchdog/mtx-1_wdt.c              |   2 +-
+ drivers/watchdog/mv64x60_wdt.c            |   2 +-
+ drivers/watchdog/nuc900_wdt.c             |   2 +-
+ drivers/watchdog/nv_tco.c                 |   2 +-
+ drivers/watchdog/pc87413_wdt.c            |   2 +-
+ drivers/watchdog/pcwd.c                   |   4 +-
+ drivers/watchdog/pcwd_pci.c               |   4 +-
+ drivers/watchdog/pcwd_usb.c               |   4 +-
+ drivers/watchdog/pika_wdt.c               |   2 +-
+ drivers/watchdog/pnx833x_wdt.c            |   2 +-
+ drivers/watchdog/rc32434_wdt.c            |   2 +-
+ drivers/watchdog/rdc321x_wdt.c            |   2 +-
+ drivers/watchdog/riowd.c                  |   2 +-
+ drivers/watchdog/sa1100_wdt.c             |   2 +-
+ drivers/watchdog/sb_wdog.c                |   2 +-
+ drivers/watchdog/sbc60xxwdt.c             |   2 +-
+ drivers/watchdog/sbc7240_wdt.c            |   2 +-
+ drivers/watchdog/sbc8360.c                |   2 +-
+ drivers/watchdog/sbc_epx_c3.c             |   2 +-
+ drivers/watchdog/sbc_fitpc2_wdt.c         |   2 +-
+ drivers/watchdog/sc1200wdt.c              |   2 +-
+ drivers/watchdog/sc520_wdt.c              |   2 +-
+ drivers/watchdog/sch311x_wdt.c            |   2 +-
+ drivers/watchdog/scx200_wdt.c             |   2 +-
+ drivers/watchdog/smsc37b787_wdt.c         |   2 +-
+ drivers/watchdog/w83877f_wdt.c            |   2 +-
+ drivers/watchdog/w83977f_wdt.c            |   2 +-
+ drivers/watchdog/wafer5823wdt.c           |   2 +-
+ drivers/watchdog/watchdog_dev.c           |   2 +-
+ drivers/watchdog/wdrtas.c                 |   4 +-
+ drivers/watchdog/wdt.c                    |   4 +-
+ drivers/watchdog/wdt285.c                 |   2 +-
+ drivers/watchdog/wdt977.c                 |   2 +-
+ drivers/watchdog/wdt_pci.c                |   4 +-
+ drivers/xen/evtchn.c                      |   2 +-
+ fs/open.c                                 |   5 +-
+ fs/read_write.c                           | 113 +++++++++++++---------
+ net/batman-adv/icmp_socket.c              |   2 +-
+ net/batman-adv/log.c                      |   2 +-
+ net/rfkill/core.c                         |   2 +-
+ sound/core/control.c                      |   2 +-
+ sound/core/rawmidi.c                      |   2 +-
+ sound/core/seq/seq_clientmgr.c            |   2 +-
+ sound/core/timer.c                        |   2 +-
+ 105 files changed, 179 insertions(+), 158 deletions(-)
+
 -- 
 2.20.1
-
