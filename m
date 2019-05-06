@@ -2,118 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F07E815135
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE1D15110
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 18:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEFQ1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 12:27:07 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37847 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEFQ1G (ORCPT
+        id S1726393AbfEFQUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 12:20:51 -0400
+Received: from mail-it1-f171.google.com ([209.85.166.171]:53041 "EHLO
+        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfEFQUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 12:27:06 -0400
-Received: by mail-lf1-f65.google.com with SMTP id h126so9603885lfh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 09:27:05 -0700 (PDT)
+        Mon, 6 May 2019 12:20:50 -0400
+Received: by mail-it1-f171.google.com with SMTP id q65so19778082itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 09:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YVhVdCTcPM0PTipUC5cKupbZldiZWmaMJ+OXUnCYkpU=;
-        b=Uf62pHFtgllYqALvEUKMKV6I76IKCFItvVqLvjkQ3d2lCpV1XjpBx0yJQ+iFGh0+Ij
-         IF7dcBQsUWv2vieVJNPLLPfGaN2XG0Ytn2qDMwNEB3RNtdjQ3+fNKlJGrdwbxOWlqMDS
-         z9PbLEvLjajjgofELNpGz9INcqnXVrYbR8qgQ=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BuGEc0vp73+CwK2wSYl6CczFb1TBM5nZdYcbz+gryjc=;
+        b=0CcrcuuwYR5OzKH6JXGj6/m3G2KYeHcBAed3WoSESbTKWyuqornMti4ZH+2+UMiz9w
+         pj7MUQXrNbOTlVzojPKYqisqLCEedwcM7oC0JyRDYDwP/n0IyBOtiVpcyl5YKvRAZ0St
+         WWxkx540B+W0QI14Wfmr5jXaREV66pJeD+p369M3BOIbyQp3Rpa0LpuceAaxgJfiKuD0
+         5+H2zH4PRdWy/qdKy9GjoxJQ7PTE1+PFqALzPAIKWHCt8hVnlHXfDxQkwRa/1SqxMm+S
+         kCBmKQTmhWwhsbCYyblo4Vtv3ol4q6P/R7ohseyLCsABF77VMWhTYo0zA4q//eClsRcG
+         Y4Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YVhVdCTcPM0PTipUC5cKupbZldiZWmaMJ+OXUnCYkpU=;
-        b=eFdPSGA4c0BthVnYuc+yeCJ9RBxV0KNGu21qfG1EBNdnLMqNJxZ1h/GdVJnJnPEU4w
-         wDquK9M9HB7p6mYbIkvVEj4HIyYIdyZKkSDw1DlOQUR3JwPyxxOGido544BE6VyhppBW
-         6nrhdeIJPlWZlWM3rX0TuiBMXEyxScv6n00Rnsjng4G6Rcz95KTnl5b8BY2uhPH08arK
-         kLyzSaIs6zcBORCOexUOENpcYvyfz+0wU1ZEkgIdNYsye7yXNgSNdIgR3ZrFDq4O6bVq
-         8KNUtmmO/wS5WS7uAtfb22goNU69O6akBomg5wUNTMEY/2KxrkR7hjTqwmxWTyAyNIe8
-         RITA==
-X-Gm-Message-State: APjAAAVNcZ5Gz9QNXzZkbCJJmjZwnGIWY523UdWjHHeu3bTnGRmiiHAv
-        uCWH2V22GPM6hy5cETlZpsdwEcpLqrA=
-X-Google-Smtp-Source: APXvYqzKWTgnXZVZHtutOUSsu84buwJOYZukLmX6lVHq3TpacZ96PQy/JPOPWmXkj/ketK1yt6Ckrg==
-X-Received: by 2002:ac2:485a:: with SMTP id 26mr13566398lfy.23.1557160024350;
-        Mon, 06 May 2019 09:27:04 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id r3sm2509811ljr.7.2019.05.06.09.27.03
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BuGEc0vp73+CwK2wSYl6CczFb1TBM5nZdYcbz+gryjc=;
+        b=csUuXXV0DtVxZpQwUe4AKAjN6B2OCX5zaVfaMCWjgRwhD+sB0BM4ZJ1dpAq+4waMST
+         N36JWhbIlqZNHyLyqk58Na0TLTXcT/glj6yT8+Awvf3NEnVJJiCX3yLS3wW7bbxvZyME
+         sf8AwZmd9axsKpX7bIDsfdPhbBXDeqzALgZiyWsOuESQWnlS2jKTxrcCoZrGUUjA1d8N
+         gpQ9Q/F7LZ91EUrDg22u8C0mCbmDpm/aa/VNViQnYZ3CUNq3U3yIkQENKwXoXWHSXXK9
+         R47knGagMyxlDwF+nqsYMJQvn8jvO6jS0bPK77Dpd22j/un6bB2Y/q94Bu8xP7tzC1ei
+         NtEg==
+X-Gm-Message-State: APjAAAUdThFZ6F+fNBTB024dAIHTiuNwKKqLkz7VGczz0JROWagNfr3H
+        5TMcd+v760cTJOIsafbkRM3GiHi8AFIDHw==
+X-Google-Smtp-Source: APXvYqxuP5CUFLnijUuK0/cyd6x2CzTcjJSjxfwQOE3eW5rTIEZGVI6gjnUdGx6HRA7ZBcwKZWUoNA==
+X-Received: by 2002:a02:52c9:: with SMTP id d192mr19531902jab.53.1557159649143;
+        Mon, 06 May 2019 09:20:49 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id f1sm1831326ioc.45.2019.05.06.09.20.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 09:27:04 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id k8so11619927lja.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 09:27:03 -0700 (PDT)
-X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr13394592ljq.118.1557159592300;
- Mon, 06 May 2019 09:19:52 -0700 (PDT)
+        Mon, 06 May 2019 09:20:47 -0700 (PDT)
+Subject: Re: [GIT PULL 00/26] lightnvm updates for 5.2
+To:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190504183811.18725-1-mb@lightnvm.io>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <db614650-6edd-9055-c8a1-5303c0447b70@kernel.dk>
+Date:   Mon, 6 May 2019 10:20:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
- <CAHk-=wi6A9tgw=kkPh5Ywqt687VvsVEjYXVkAnq0jpt0u0tk6g@mail.gmail.com>
- <20190502202146.GZ2623@hirez.programming.kicks-ass.net> <20190502185225.0cdfc8bc@gandalf.local.home>
- <20190502193129.664c5b2e@gandalf.local.home> <20190502195052.0af473cf@gandalf.local.home>
- <20190503092959.GB2623@hirez.programming.kicks-ass.net> <20190503092247.20cc1ff0@gandalf.local.home>
- <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net> <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
- <20190506081951.GJ2606@hirez.programming.kicks-ass.net> <20190506095631.6f71ad7c@gandalf.local.home>
- <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 May 2019 09:19:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjs8hhEdLUb=rD1tZC-JzBHALpi0hQSNf=esw96Gnta6A@mail.gmail.com>
-Message-ID: <CAHk-=wjs8hhEdLUb=rD1tZC-JzBHALpi0hQSNf=esw96Gnta6A@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190504183811.18725-1-mb@lightnvm.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 9:17 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So what is it that doesn't actually work? I've looked at the patch
-> even more, and I can't for the life of me see how it wouldn't work.
+On 5/4/19 12:37 PM, Matias Bjørling wrote:
+> Hi Jens,
+> 
+> Can you please pick up the following patches for the 5.2 window if
+> it is too late.
 
-And I do still react to PeterZ's
+It's very late. Even if I had applied this the second it came in, it
+would not even have made linux-next before the merge window opens...
+I'll queue this up for later in the merge window merging, but generally
+I need to have bigger series a week before final. This generally means
+around -rc6 time.
 
- arch/x86/entry/entry_32.S            | 150 +++++++++++++++++++++++++++++------
+-- 
+Jens Axboe
 
-vs
-
- arch/x86/entry/entry_32.S            |  7 ++++++-
-
-for mine. And PeterZ's  apparently still had bugs.
-
-Yes, mine can have bugs too, but I really *have* done some basic
-testing, and with 6 lines of code, I think they are more localized.
-
-                Linus
