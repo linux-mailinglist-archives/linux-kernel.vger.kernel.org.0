@@ -2,58 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFDE15584
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524DE15589
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfEFV0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 17:26:51 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44761 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfEFV0s (ORCPT
+        id S1727089AbfEFV1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:27:14 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51652 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbfEFV0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 17:26:48 -0400
-Received: by mail-io1-f65.google.com with SMTP id v9so8560037ion.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:48 -0700 (PDT)
+        Mon, 6 May 2019 17:26:50 -0400
+Received: by mail-it1-f196.google.com with SMTP id s3so10676228itk.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 14:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=BZvfoMetd7XOqGPD4+QBEFZbIkXgaAiftB+eMxWYjro=;
-        b=kQ3llac0UgjHyZ9Ahv7/k2JBk/q++o/dQ0uKOdS1miBtZWs6UWI4u0L54AT6UAJeMq
-         DIrd5qCEngzb3BhlEvfqMYS1y7x8dwrVapKZ0Ny6dFECau9XX1fjlcaIWmGVX+NWNiGW
-         byaoMEn0Ho6+qRsOxsAL99y/J3tLu6JTKY+cjKhHP8E89uX7jG7WWryCNrt1d5WW70Rv
-         RZdEg7KbAr/EehXujB2+ida8yoouWOuIpPYwqrKsW93Z4BP6+ouX+yQ6h+wXVB8R9V88
-         zsFas9zHpfniGaqQO0OC2CEaPmdRPBedXRGYY9mRBXIKgOj/LXd8SUU1KE2WT4Nb+jaR
-         jJsg==
+        bh=Dx804oXotrdBCjDYRi4vm3VGxxsLjZ4ijasSE6Np2js=;
+        b=Tq0eqZWGDoAlbxgT9QHVWbk6BysR/9gyoIrKRY0UIGS9XZ/SUe+4rAX3jgBG6EHIxE
+         8ENgCA3ABsGRERLTGxVwYR63gYVfsC1DMcW829O4z14Gqw3RfgjAYS7MSVPXXuWBEXie
+         xKZ0TLfVnAmjBIMx5ijkphRQb8VqrXngGkOiFooanbLiB0mYhdZKAWDCcFlx7SaM9r/G
+         alwXz9c5dYPkBmR1d4D113/Uy8qDjKVt+Egj62ak5Jsaordu2PVhFwbf3BeJo5mmA/Fw
+         BCGVP274TnY5iPXlMPDwjGB3uu5e9gTKHaVs3cMeB5UKN3H29Dd+wwMTeynJUY0svoe3
+         dk9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=BZvfoMetd7XOqGPD4+QBEFZbIkXgaAiftB+eMxWYjro=;
-        b=paZQtX9poOqe3UfA0gZ490zsytinLXFjLgH3q4Xk7wQWypU94p0Sx/xlladPtqGYon
-         mHULnNJETkBuqZCsySog0CMTLiYCYW9k8/p5ItaGUJeuS+A9CKIIa9ivhZ/9qvkSNw+x
-         c48DOHzb23btDMhQyeXiXx+CzkhLLhluVZ0nKCLDpVqA9DcTM8cXyVCMUJ+PcmS3Oazz
-         IenTAhk1YPdesOm7QIQZghulE1aqNslluF6Ul1jIWLZLPmEX35GKkuxi7Wq2oIq413Bi
-         a8sIglHJe4rMYHlofxq8HTHvyYmgnMhDsqtY1OXVrin/P2nfCO4ve6ATjtFxJblAlAWs
-         cViQ==
-X-Gm-Message-State: APjAAAVN3FD0e6+vTr82Hk26LXiqMSuA2xaxURcrZ959SMnHaTEBGtiD
-        BJDBNvpv1tqkPr83plkLrJQ=
-X-Google-Smtp-Source: APXvYqym28vTaYtEHfTlqYh4eUtqNXdmJndS1qXu3qmb27W129PrR5OMT1rQ39Ehiy3dgo39ZqX+uA==
-X-Received: by 2002:a6b:760d:: with SMTP id g13mr18361487iom.114.1557178008281;
-        Mon, 06 May 2019 14:26:48 -0700 (PDT)
+        bh=Dx804oXotrdBCjDYRi4vm3VGxxsLjZ4ijasSE6Np2js=;
+        b=pTZRo5SGcQ9AO0DqhmAxwBA1Sn2pmthHjtABjwPiQKmXqI3JodePrAXMEdcglzGMUZ
+         ANI8Xp8iKSMaf/SpTr49YaLydhxfv/fbkhZDrxQCCx55kqRChROhd6YK9TC75TRkYGa6
+         NpvvgYRMeEtiFz3m69rhZKCVBJnFhzj/nTFLkjuK2qLPhIkQ20XWSjwL+qkAG5GI/Tu7
+         dhZcIyO1LXF8YsLQd6RJx8reH0eg+t6j9zFsYvSXQaK8cAw6jr6nT0k6YtgMfxBWl0T/
+         HTibXcs1WSLOvP3tX1ROvDLVoGFHX7hAffIF++PnnysATXkX+2L+p8DGAdIdXtzgeK2c
+         C51A==
+X-Gm-Message-State: APjAAAUl0zLYiZg1X7/AW08yxcAVUafrYBqWT9cnxtuF+zPCZyX/zbL2
+        ckjCSnxrjQhTDCiMJtgtbeo=
+X-Google-Smtp-Source: APXvYqx2df93Xw5pSz7MqKWZGkSh0hNwLg2HQd45QQF460AKJkshSDBGfmu30SlR+OfwMHiatYyagw==
+X-Received: by 2002:a24:65cd:: with SMTP id u196mr5385699itb.74.1557178009499;
+        Mon, 06 May 2019 14:26:49 -0700 (PDT)
 Received: from nuc8.lan (h69-131-112-51.cntcnh.dsl.dynamic.tds.net. [69.131.112.51])
-        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.46
+        by smtp.gmail.com with ESMTPSA id v25sm4268009ioh.81.2019.05.06.14.26.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 14:26:47 -0700 (PDT)
+        Mon, 06 May 2019 14:26:48 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Len Brown <len.brown@intel.com>
-Subject: [PATCH 18/22] perf/x86/intel/cstate: Support multi-die/package
-Date:   Mon,  6 May 2019 17:26:13 -0400
-Message-Id: <ada9f26858dceb7484b51c23cc8028401379b4c8.1557177585.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH 19/22] thermal/x86_pkg_temp_thermal: rename internal variables to zones from packages
+Date:   Mon,  6 May 2019 17:26:14 -0400
+Message-Id: <ee5354482e81deea76b44c1e619717a87b9e36a7.1557177585.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
 References: <6f53f0e494d743c79e18f6e3a98085711e6ddd0c.1557177585.git.len.brown@intel.com>
@@ -64,71 +62,401 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Len Brown <len.brown@intel.com>
 
-Some cstate counters becomes die-scope on Xeon Cascade Lake-AP. Perf
-cstate driver needs to support die-scope cstate counters.
+Syntax update only -- no logical or functional change.
 
-Use topology_die_cpumask() to replace topology_core_cpumask().
-For previous platforms which doesn't have multi-die,
-topology_die_cpumask() is identical as topology_core_cpumask().
-There is no functional change for previous platforms.
+In response to the new multi-die/package changes, update variable names
+to use the more generic thermal "zone" terminology, instead of "package",
+as the zones can refer to either packages or die.
 
-Name the die-scope PMU "cstate_die".
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Len Brown <len.brown@intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
 ---
- arch/x86/events/intel/cstate.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/thermal/intel/x86_pkg_temp_thermal.c | 142 ++++++++++---------
+ 1 file changed, 72 insertions(+), 70 deletions(-)
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 94a4b7fc75d0..52c5fea29457 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -302,7 +302,7 @@ static int cstate_pmu_event_init(struct perf_event *event)
- 			return -EINVAL;
- 		event->hw.event_base = pkg_msr[cfg].msr;
- 		cpu = cpumask_any_and(&cstate_pkg_cpu_mask,
--				      topology_core_cpumask(event->cpu));
-+				      topology_die_cpumask(event->cpu));
+diff --git a/drivers/thermal/intel/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+index 405b3858900a..87e929ffb0cb 100644
+--- a/drivers/thermal/intel/x86_pkg_temp_thermal.c
++++ b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+@@ -55,7 +55,7 @@ MODULE_PARM_DESC(notify_delay_ms,
+ */
+ #define MAX_NUMBER_OF_TRIPS	2
+ 
+-struct pkg_device {
++struct zone_device {
+ 	int				cpu;
+ 	bool				work_scheduled;
+ 	u32				tj_max;
+@@ -70,10 +70,10 @@ static struct thermal_zone_params pkg_temp_tz_params = {
+ 	.no_hwmon	= true,
+ };
+ 
+-/* Keep track of how many package pointers we allocated in init() */
+-static int max_packages __read_mostly;
+-/* Array of package pointers */
+-static struct pkg_device **packages;
++/* Keep track of how many zone pointers we allocated in init() */
++static int max_id __read_mostly;
++/* Array of zone pointers */
++static struct zone_device **zones;
+ /* Serializes interrupt notification, work and hotplug */
+ static DEFINE_SPINLOCK(pkg_temp_lock);
+ /* Protects zone operation in the work function against hotplug removal */
+@@ -120,12 +120,12 @@ static int pkg_temp_debugfs_init(void)
+  *
+  * - Other callsites: Must hold pkg_temp_lock
+  */
+-static struct pkg_device *pkg_temp_thermal_get_dev(unsigned int cpu)
++static struct zone_device *pkg_temp_thermal_get_dev(unsigned int cpu)
+ {
+-	int pkgid = topology_logical_die_id(cpu);
++	int id = topology_logical_die_id(cpu);
+ 
+-	if (pkgid >= 0 && pkgid < max_packages)
+-		return packages[pkgid];
++	if (id >= 0 && id < max_id)
++		return zones[id];
+ 	return NULL;
+ }
+ 
+@@ -150,12 +150,13 @@ static int get_tj_max(int cpu, u32 *tj_max)
+ 
+ static int sys_get_curr_temp(struct thermal_zone_device *tzd, int *temp)
+ {
+-	struct pkg_device *pkgdev = tzd->devdata;
++	struct zone_device *zonedev = tzd->devdata;
+ 	u32 eax, edx;
+ 
+-	rdmsr_on_cpu(pkgdev->cpu, MSR_IA32_PACKAGE_THERM_STATUS, &eax, &edx);
++	rdmsr_on_cpu(zonedev->cpu, MSR_IA32_PACKAGE_THERM_STATUS,
++			&eax, &edx);
+ 	if (eax & 0x80000000) {
+-		*temp = pkgdev->tj_max - ((eax >> 16) & 0x7f) * 1000;
++		*temp = zonedev->tj_max - ((eax >> 16) & 0x7f) * 1000;
+ 		pr_debug("sys_get_curr_temp %d\n", *temp);
+ 		return 0;
+ 	}
+@@ -165,7 +166,7 @@ static int sys_get_curr_temp(struct thermal_zone_device *tzd, int *temp)
+ static int sys_get_trip_temp(struct thermal_zone_device *tzd,
+ 			     int trip, int *temp)
+ {
+-	struct pkg_device *pkgdev = tzd->devdata;
++	struct zone_device *zonedev = tzd->devdata;
+ 	unsigned long thres_reg_value;
+ 	u32 mask, shift, eax, edx;
+ 	int ret;
+@@ -181,14 +182,14 @@ static int sys_get_trip_temp(struct thermal_zone_device *tzd,
+ 		shift = THERM_SHIFT_THRESHOLD0;
+ 	}
+ 
+-	ret = rdmsr_on_cpu(pkgdev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
++	ret = rdmsr_on_cpu(zonedev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
+ 			   &eax, &edx);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	thres_reg_value = (eax & mask) >> shift;
+ 	if (thres_reg_value)
+-		*temp = pkgdev->tj_max - thres_reg_value * 1000;
++		*temp = zonedev->tj_max - thres_reg_value * 1000;
+ 	else
+ 		*temp = 0;
+ 	pr_debug("sys_get_trip_temp %d\n", *temp);
+@@ -199,14 +200,14 @@ static int sys_get_trip_temp(struct thermal_zone_device *tzd,
+ static int
+ sys_set_trip_temp(struct thermal_zone_device *tzd, int trip, int temp)
+ {
+-	struct pkg_device *pkgdev = tzd->devdata;
++	struct zone_device *zonedev = tzd->devdata;
+ 	u32 l, h, mask, shift, intr;
+ 	int ret;
+ 
+-	if (trip >= MAX_NUMBER_OF_TRIPS || temp >= pkgdev->tj_max)
++	if (trip >= MAX_NUMBER_OF_TRIPS || temp >= zonedev->tj_max)
+ 		return -EINVAL;
+ 
+-	ret = rdmsr_on_cpu(pkgdev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
++	ret = rdmsr_on_cpu(zonedev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
+ 			   &l, &h);
+ 	if (ret < 0)
+ 		return ret;
+@@ -228,11 +229,12 @@ sys_set_trip_temp(struct thermal_zone_device *tzd, int trip, int temp)
+ 	if (!temp) {
+ 		l &= ~intr;
  	} else {
- 		return -ENOENT;
+-		l |= (pkgdev->tj_max - temp)/1000 << shift;
++		l |= (zonedev->tj_max - temp)/1000 << shift;
+ 		l |= intr;
  	}
-@@ -385,7 +385,7 @@ static int cstate_cpu_exit(unsigned int cpu)
- 	if (has_cstate_pkg &&
- 	    cpumask_test_and_clear_cpu(cpu, &cstate_pkg_cpu_mask)) {
  
--		target = cpumask_any_but(topology_core_cpumask(cpu), cpu);
-+		target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
- 		/* Migrate events if there is a valid target */
- 		if (target < nr_cpu_ids) {
- 			cpumask_set_cpu(target, &cstate_pkg_cpu_mask);
-@@ -414,7 +414,7 @@ static int cstate_cpu_init(unsigned int cpu)
- 	 * in the package cpu mask as the designated reader.
+-	return wrmsr_on_cpu(pkgdev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT, l, h);
++	return wrmsr_on_cpu(zonedev->cpu, MSR_IA32_PACKAGE_THERM_INTERRUPT,
++			l, h);
+ }
+ 
+ static int sys_get_trip_type(struct thermal_zone_device *thermal, int trip,
+@@ -287,26 +289,26 @@ static void pkg_temp_thermal_threshold_work_fn(struct work_struct *work)
+ {
+ 	struct thermal_zone_device *tzone = NULL;
+ 	int cpu = smp_processor_id();
+-	struct pkg_device *pkgdev;
++	struct zone_device *zonedev;
+ 	u64 msr_val, wr_val;
+ 
+ 	mutex_lock(&thermal_zone_mutex);
+ 	spin_lock_irq(&pkg_temp_lock);
+ 	++pkg_work_cnt;
+ 
+-	pkgdev = pkg_temp_thermal_get_dev(cpu);
+-	if (!pkgdev) {
++	zonedev = pkg_temp_thermal_get_dev(cpu);
++	if (!zonedev) {
+ 		spin_unlock_irq(&pkg_temp_lock);
+ 		mutex_unlock(&thermal_zone_mutex);
+ 		return;
+ 	}
+-	pkgdev->work_scheduled = false;
++	zonedev->work_scheduled = false;
+ 
+ 	rdmsrl(MSR_IA32_PACKAGE_THERM_STATUS, msr_val);
+ 	wr_val = msr_val & ~(THERM_LOG_THRESHOLD0 | THERM_LOG_THRESHOLD1);
+ 	if (wr_val != msr_val) {
+ 		wrmsrl(MSR_IA32_PACKAGE_THERM_STATUS, wr_val);
+-		tzone = pkgdev->tzone;
++		tzone = zonedev->tzone;
+ 	}
+ 
+ 	enable_pkg_thres_interrupt();
+@@ -332,7 +334,7 @@ static void pkg_thermal_schedule_work(int cpu, struct delayed_work *work)
+ static int pkg_thermal_notify(u64 msr_val)
+ {
+ 	int cpu = smp_processor_id();
+-	struct pkg_device *pkgdev;
++	struct zone_device *zonedev;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&pkg_temp_lock, flags);
+@@ -341,10 +343,10 @@ static int pkg_thermal_notify(u64 msr_val)
+ 	disable_pkg_thres_interrupt();
+ 
+ 	/* Work is per package, so scheduling it once is enough. */
+-	pkgdev = pkg_temp_thermal_get_dev(cpu);
+-	if (pkgdev && !pkgdev->work_scheduled) {
+-		pkgdev->work_scheduled = true;
+-		pkg_thermal_schedule_work(pkgdev->cpu, &pkgdev->work);
++	zonedev = pkg_temp_thermal_get_dev(cpu);
++	if (zonedev && !zonedev->work_scheduled) {
++		zonedev->work_scheduled = true;
++		pkg_thermal_schedule_work(zonedev->cpu, &zonedev->work);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&pkg_temp_lock, flags);
+@@ -353,12 +355,12 @@ static int pkg_thermal_notify(u64 msr_val)
+ 
+ static int pkg_temp_thermal_device_add(unsigned int cpu)
+ {
+-	int pkgid = topology_logical_die_id(cpu);
++	int id = topology_logical_die_id(cpu);
+ 	u32 tj_max, eax, ebx, ecx, edx;
+-	struct pkg_device *pkgdev;
++	struct zone_device *zonedev;
+ 	int thres_count, err;
+ 
+-	if (pkgid >= max_packages)
++	if (id >= max_id)
+ 		return -ENOMEM;
+ 
+ 	cpuid(6, &eax, &ebx, &ecx, &edx);
+@@ -372,51 +374,51 @@ static int pkg_temp_thermal_device_add(unsigned int cpu)
+ 	if (err)
+ 		return err;
+ 
+-	pkgdev = kzalloc(sizeof(*pkgdev), GFP_KERNEL);
+-	if (!pkgdev)
++	zonedev = kzalloc(sizeof(*zonedev), GFP_KERNEL);
++	if (!zonedev)
+ 		return -ENOMEM;
+ 
+-	INIT_DELAYED_WORK(&pkgdev->work, pkg_temp_thermal_threshold_work_fn);
+-	pkgdev->cpu = cpu;
+-	pkgdev->tj_max = tj_max;
+-	pkgdev->tzone = thermal_zone_device_register("x86_pkg_temp",
++	INIT_DELAYED_WORK(&zonedev->work, pkg_temp_thermal_threshold_work_fn);
++	zonedev->cpu = cpu;
++	zonedev->tj_max = tj_max;
++	zonedev->tzone = thermal_zone_device_register("x86_pkg_temp",
+ 			thres_count,
+ 			(thres_count == MAX_NUMBER_OF_TRIPS) ? 0x03 : 0x01,
+-			pkgdev, &tzone_ops, &pkg_temp_tz_params, 0, 0);
+-	if (IS_ERR(pkgdev->tzone)) {
+-		err = PTR_ERR(pkgdev->tzone);
+-		kfree(pkgdev);
++			zonedev, &tzone_ops, &pkg_temp_tz_params, 0, 0);
++	if (IS_ERR(zonedev->tzone)) {
++		err = PTR_ERR(zonedev->tzone);
++		kfree(zonedev);
+ 		return err;
+ 	}
+ 	/* Store MSR value for package thermal interrupt, to restore at exit */
+-	rdmsr(MSR_IA32_PACKAGE_THERM_INTERRUPT, pkgdev->msr_pkg_therm_low,
+-	      pkgdev->msr_pkg_therm_high);
++	rdmsr(MSR_IA32_PACKAGE_THERM_INTERRUPT, zonedev->msr_pkg_therm_low,
++	      zonedev->msr_pkg_therm_high);
+ 
+-	cpumask_set_cpu(cpu, &pkgdev->cpumask);
++	cpumask_set_cpu(cpu, &zonedev->cpumask);
+ 	spin_lock_irq(&pkg_temp_lock);
+-	packages[pkgid] = pkgdev;
++	zones[id] = zonedev;
+ 	spin_unlock_irq(&pkg_temp_lock);
+ 	return 0;
+ }
+ 
+ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ {
+-	struct pkg_device *pkgdev = pkg_temp_thermal_get_dev(cpu);
++	struct zone_device *zonedev = pkg_temp_thermal_get_dev(cpu);
+ 	bool lastcpu, was_target;
+ 	int target;
+ 
+-	if (!pkgdev)
++	if (!zonedev)
+ 		return 0;
+ 
+-	target = cpumask_any_but(&pkgdev->cpumask, cpu);
+-	cpumask_clear_cpu(cpu, &pkgdev->cpumask);
++	target = cpumask_any_but(&zonedev->cpumask, cpu);
++	cpumask_clear_cpu(cpu, &zonedev->cpumask);
+ 	lastcpu = target >= nr_cpu_ids;
+ 	/*
+ 	 * Remove the sysfs files, if this is the last cpu in the package
+ 	 * before doing further cleanups.
  	 */
- 	target = cpumask_any_and(&cstate_pkg_cpu_mask,
--				 topology_core_cpumask(cpu));
-+				 topology_die_cpumask(cpu));
- 	if (has_cstate_pkg && target >= nr_cpu_ids)
- 		cpumask_set_cpu(cpu, &cstate_pkg_cpu_mask);
+ 	if (lastcpu) {
+-		struct thermal_zone_device *tzone = pkgdev->tzone;
++		struct thermal_zone_device *tzone = zonedev->tzone;
  
-@@ -661,7 +661,13 @@ static int __init cstate_init(void)
+ 		/*
+ 		 * We must protect against a work function calling
+@@ -425,7 +427,7 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ 		 * won't try to call.
+ 		 */
+ 		mutex_lock(&thermal_zone_mutex);
+-		pkgdev->tzone = NULL;
++		zonedev->tzone = NULL;
+ 		mutex_unlock(&thermal_zone_mutex);
+ 
+ 		thermal_zone_device_unregister(tzone);
+@@ -439,8 +441,8 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ 	 * one. When we drop the lock, then the interrupt notify function
+ 	 * will see the new target.
+ 	 */
+-	was_target = pkgdev->cpu == cpu;
+-	pkgdev->cpu = target;
++	was_target = zonedev->cpu == cpu;
++	zonedev->cpu = target;
+ 
+ 	/*
+ 	 * If this is the last CPU in the package remove the package
+@@ -449,23 +451,23 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ 	 * worker will see the package anymore.
+ 	 */
+ 	if (lastcpu) {
+-		packages[topology_logical_die_id(cpu)] = NULL;
++		zones[topology_logical_die_id(cpu)] = NULL;
+ 		/* After this point nothing touches the MSR anymore. */
+ 		wrmsr(MSR_IA32_PACKAGE_THERM_INTERRUPT,
+-		      pkgdev->msr_pkg_therm_low, pkgdev->msr_pkg_therm_high);
++		      zonedev->msr_pkg_therm_low, zonedev->msr_pkg_therm_high);
  	}
  
- 	if (has_cstate_pkg) {
--		err = perf_pmu_register(&cstate_pkg_pmu, cstate_pkg_pmu.name, -1);
-+		if (topology_max_die_per_package() > 1) {
-+			err = perf_pmu_register(&cstate_pkg_pmu,
-+						"cstate_die", -1);
-+		} else {
-+			err = perf_pmu_register(&cstate_pkg_pmu,
-+						cstate_pkg_pmu.name, -1);
-+		}
- 		if (err) {
- 			has_cstate_pkg = false;
- 			pr_info("Failed to register cstate pkg pmu\n");
+ 	/*
+ 	 * Check whether there is work scheduled and whether the work is
+ 	 * targeted at the outgoing CPU.
+ 	 */
+-	if (pkgdev->work_scheduled && was_target) {
++	if (zonedev->work_scheduled && was_target) {
+ 		/*
+ 		 * To cancel the work we need to drop the lock, otherwise
+ 		 * we might deadlock if the work needs to be flushed.
+ 		 */
+ 		spin_unlock_irq(&pkg_temp_lock);
+-		cancel_delayed_work_sync(&pkgdev->work);
++		cancel_delayed_work_sync(&zonedev->work);
+ 		spin_lock_irq(&pkg_temp_lock);
+ 		/*
+ 		 * If this is not the last cpu in the package and the work
+@@ -473,21 +475,21 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
+ 		 * need to reschedule the work, otherwise the interrupt
+ 		 * stays disabled forever.
+ 		 */
+-		if (!lastcpu && pkgdev->work_scheduled)
+-			pkg_thermal_schedule_work(target, &pkgdev->work);
++		if (!lastcpu && zonedev->work_scheduled)
++			pkg_thermal_schedule_work(target, &zonedev->work);
+ 	}
+ 
+ 	spin_unlock_irq(&pkg_temp_lock);
+ 
+ 	/* Final cleanup if this is the last cpu */
+ 	if (lastcpu)
+-		kfree(pkgdev);
++		kfree(zonedev);
+ 	return 0;
+ }
+ 
+ static int pkg_thermal_cpu_online(unsigned int cpu)
+ {
+-	struct pkg_device *pkgdev = pkg_temp_thermal_get_dev(cpu);
++	struct zone_device *zonedev = pkg_temp_thermal_get_dev(cpu);
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 
+ 	/* Paranoia check */
+@@ -495,8 +497,8 @@ static int pkg_thermal_cpu_online(unsigned int cpu)
+ 		return -ENODEV;
+ 
+ 	/* If the package exists, nothing to do */
+-	if (pkgdev) {
+-		cpumask_set_cpu(cpu, &pkgdev->cpumask);
++	if (zonedev) {
++		cpumask_set_cpu(cpu, &zonedev->cpumask);
+ 		return 0;
+ 	}
+ 	return pkg_temp_thermal_device_add(cpu);
+@@ -515,10 +517,10 @@ static int __init pkg_temp_thermal_init(void)
+ 	if (!x86_match_cpu(pkg_temp_thermal_ids))
+ 		return -ENODEV;
+ 
+-	max_packages = topology_max_packages() * topology_max_die_per_package();
+-	packages = kcalloc(max_packages, sizeof(struct pkg_device *),
++	max_id = topology_max_packages() * topology_max_die_per_package();
++	zones = kcalloc(max_id, sizeof(struct zone_device *),
+ 			   GFP_KERNEL);
+-	if (!packages)
++	if (!zones)
+ 		return -ENOMEM;
+ 
+ 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "thermal/x86_pkg:online",
+@@ -537,7 +539,7 @@ static int __init pkg_temp_thermal_init(void)
+ 	return 0;
+ 
+ err:
+-	kfree(packages);
++	kfree(zones);
+ 	return ret;
+ }
+ module_init(pkg_temp_thermal_init)
+@@ -549,7 +551,7 @@ static void __exit pkg_temp_thermal_exit(void)
+ 
+ 	cpuhp_remove_state(pkg_thermal_hp_state);
+ 	debugfs_remove_recursive(debugfs);
+-	kfree(packages);
++	kfree(zones);
+ }
+ module_exit(pkg_temp_thermal_exit)
+ 
 -- 
 2.18.0-rc0
 
