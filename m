@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF8214CB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E796E14CEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfEFOmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:42:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37898 "EHLO mail.kernel.org"
+        id S1728733AbfEFOpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:45:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727779AbfEFOmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:49 -0400
+        id S1726767AbfEFOpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:45:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D530C21479;
-        Mon,  6 May 2019 14:42:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED5D720C01;
+        Mon,  6 May 2019 14:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153769;
-        bh=l+vwBq8B0iCqSp7zzsk2DETMYixOA5pWhzYBakqzhJw=;
+        s=default; t=1557153937;
+        bh=Gfz5SuMiQYFQ9FCIzFIRVKwRpwoXaR0bKvkx1HYVjfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVfwM6nIqARxOGRxYYeqgNPaLVxFaF580F/sJcppxGIDK8itu+ItC1TNjSWd9O1Ze
-         GI+F7ZgqG9htDXkqTZWzBo+JuG41Knul/hc8JdLyMJVe7nsryhw3blErGuKRc0GjF+
-         7KUgGWCGt/7LwxVYt1fM/esYsZNI7Fv7xmLdd1XA=
+        b=O7Gk+dA2S9ot67QaC0yNsLCB//3+frclxJC/9+wjmArFIQajO+nch2sbkQqtJMdFI
+         F0ww9saJ65q15P8SSaqIHRNKVvAG30mxXIgiumRkouTxAQFhkZPvSuUMAkijTR2tN8
+         gsz7G2+e91x0yFZJ1J36XIRlIrIEY+wBAtvWPIL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 88/99] gpio: mxc: add check to return defer probe if clock tree NOT ready
+        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yufen Yu <yuyufen@huawei.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 53/75] hugetlbfs: fix memory leak for resv_map
 Date:   Mon,  6 May 2019 16:33:01 +0200
-Message-Id: <20190506143101.905965388@linuxfoundation.org>
+Message-Id: <20190506143058.043892554@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+[ Upstream commit 58b6e5e8f1addd44583d61b0a03c0f5519527e35 ]
 
-commit a329bbe707cee2cf8c660890ef2ad0d00ec7e8a3 upstream.
+When mknod is used to create a block special file in hugetlbfs, it will
+allocate an inode and kmalloc a 'struct resv_map' via resv_map_alloc().
+inode->i_mapping->private_data will point the newly allocated resv_map.
+However, when the device special file is opened bd_acquire() will set
+inode->i_mapping to bd_inode->i_mapping.  Thus the pointer to the
+allocated resv_map is lost and the structure is leaked.
 
-On i.MX8MQ platform, clock driver uses platform driver
-model and it is probed after GPIO driver, so when GPIO
-driver fails to get clock, it should check the error type
-to decide whether to return defer probe or just ignore
-the clock operation.
+Programs to reproduce:
+        mount -t hugetlbfs nodev hugetlbfs
+        mknod hugetlbfs/dev b 0 0
+        exec 30<> hugetlbfs/dev
+        umount hugetlbfs/
 
-Fixes: 2808801aab8a ("gpio: mxc: add clock operation")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+resv_map structures are only needed for inodes which can have associated
+page allocations.  To fix the leak, only allocate resv_map for those
+inodes which could possibly be associated with page allocations.
 
+Link: http://lkml.kernel.org/r/20190401213101.16476-1-mike.kravetz@oracle.com
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Reported-by: Yufen Yu <yuyufen@huawei.com>
+Suggested-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mxc.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/hugetlbfs/inode.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -438,8 +438,11 @@ static int mxc_gpio_probe(struct platfor
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index eb6f3de29f69..dd28a9b287da 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -730,11 +730,17 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
+ 					umode_t mode, dev_t dev)
+ {
+ 	struct inode *inode;
+-	struct resv_map *resv_map;
++	struct resv_map *resv_map = NULL;
  
- 	/* the controller clock is optional */
- 	port->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(port->clk))
-+	if (IS_ERR(port->clk)) {
-+		if (PTR_ERR(port->clk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
- 		port->clk = NULL;
+-	resv_map = resv_map_alloc();
+-	if (!resv_map)
+-		return NULL;
++	/*
++	 * Reserve maps are only needed for inodes that can have associated
++	 * page allocations.
++	 */
++	if (S_ISREG(mode) || S_ISLNK(mode)) {
++		resv_map = resv_map_alloc();
++		if (!resv_map)
++			return NULL;
 +	}
  
- 	err = clk_prepare_enable(port->clk);
- 	if (err) {
+ 	inode = new_inode(sb);
+ 	if (inode) {
+@@ -766,8 +772,10 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
+ 			break;
+ 		}
+ 		lockdep_annotate_inode_mutex_key(inode);
+-	} else
+-		kref_put(&resv_map->refs, resv_map_release);
++	} else {
++		if (resv_map)
++			kref_put(&resv_map->refs, resv_map_release);
++	}
+ 
+ 	return inode;
+ }
+-- 
+2.20.1
+
 
 
