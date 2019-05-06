@@ -2,53 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 914B114E1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB36514E30
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbfEFO6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:58:42 -0400
-Received: from relay.sw.ru ([185.231.240.75]:34356 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728202AbfEFO6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:58:41 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hNf4c-0004CF-P3; Mon, 06 May 2019 17:58:34 +0300
-Subject: Re: [PATCH 4.9 10/62] kasan: rework Kconfig settings
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
- <20190506143051.984481239@linuxfoundation.org>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <8bdd66ba-d6e8-ef65-47fd-cf18e18fcd3e@virtuozzo.com>
-Date:   Mon, 6 May 2019 17:58:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728118AbfEFO7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:59:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44408 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfEFO7g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:59:36 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d3so2492020plj.11;
+        Mon, 06 May 2019 07:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OLbPX/jc7tfPj8ZUy6gaQ1Cz5/GWVvpyc6+DIQ2G8xI=;
+        b=MFMrfz6rkhP6p/6Nr8Pc7iwkiKQzrtKzppdvsG5uSlWVW7hyK27q7GQUPwYEC8shL5
+         6Lh191M/iSZ3VtDPmsLWk4/1TL8oVNhPLRAytWzdrLHxt06Bf3Bvwd/u/0lBhSW4QgGA
+         O3lblGfOtFwK8rZCmIpgGVaUwBXHFMN5av2UUUUS9Uk5TNVv/NeCdbne+y+np0pg9JrB
+         fGIr9vC+YkSq+1vCXe8wROfljy5RL2VmetGcjCa1DqhQecdXfN/o4jjoWJUoJZxSyBcR
+         /hMvQOdIHVcvMAcqw2aE9XKsDfOKNpdeNbTNhaXWM0NbxPlogfwRjtMJpKvbs1KHiqip
+         bxwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OLbPX/jc7tfPj8ZUy6gaQ1Cz5/GWVvpyc6+DIQ2G8xI=;
+        b=pJgauNzeu6TVe+4sh1EgJNs6qe2YYrmjEu6vhNvzH0JYHf6ncIbbn4LSawmaZF/wcy
+         l99jNMXce4B9JPbnctZnNNyDelKct0zywX4RQPZ/UwJlg31//ZGUaUG+DGyp+hE9h6th
+         sSzuG4AelidXLWilCoxOQInuT4WKYtFhPVFXsI27DrZGEkn6GzPaC/3pXBkTZaPKRtz7
+         M+pObumXxZaGR+dYmTuSdN/D4aUSc5OxXgTCy8h4aotNQoX2Jc3r+QFDcQaFAqN6imCQ
+         +jCnxZp05qaAC4R+eE2zcvoGHnfUBW2I25GbAeOM9Sl2fV6lmrIgwojntsISLoploSb8
+         QYNw==
+X-Gm-Message-State: APjAAAW7y0VYOojWpveT9A4BJNGLVQbeLKgA10Sa5rv8oCWUt5RfSlNN
+        AC6XHuPm5fIBiA4pCKfBPKpHzmKzPIREHER+u2g=
+X-Google-Smtp-Source: APXvYqwzSMqo9crfo125Yxte4pN3tmzi3CJP3QdsNC5Pdax4AytdjIDg9svbewfAzG6RNN0bV71MCBLFPZSIh21F0+E=
+X-Received: by 2002:a17:902:758b:: with SMTP id j11mr33389919pll.87.1557154775857;
+ Mon, 06 May 2019 07:59:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190506143051.984481239@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190429150135.15070-1-hdegoede@redhat.com> <CAHp75VeE=88mCcgVx3Y3PQJPQ819Z7=3s=jRGz1y=t09phk=rA@mail.gmail.com>
+ <085c5b6e-d220-ebd1-38d2-def7efca24b8@redhat.com>
+In-Reply-To: <085c5b6e-d220-ebd1-38d2-def7efca24b8@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 6 May 2019 17:59:25 +0300
+Message-ID: <CAHp75Vfe9uK_b_V+uG29wb1L6J7u1hpbU+P4beXso9KNPM+8Rg@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to
+ critclk_systems DMI table
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Semyon Verchenko <semverchenko@factor-ts.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 6, 2019 at 5:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 06-05-19 14:38, Andy Shevchenko wrote:
+> > On Mon, Apr 29, 2019 at 6:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> >>
+> >> The Lex 3I380D industrial PC has 4 ethernet controllers on board
+> >> which need pmc_plt_clk0 - 3 to function, add it to the critclk_systems
+> >> DMI table, so that drivers/clk/x86/clk-pmc-atom.c will mark the clocks
+> >> as CLK_CRITICAL and they will not get turned off.
+> >>
+> >
+> > Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > supposedly to go via CLK tree.
+> >
+> > P.S. If you want it through PDx86, I need immutable branch / tag from CLK.
+>
+> Stephen added the patches this depends on to his fixes branch, so they
+> are in the 5.1 / Torvald's master branch, since we are now in the 5.2 merge
+> window, you should be able to cleanly apply this directly.
 
+We don't do back merges, so, our base is v5.1-rc1. Does it mean the
+commit in question is in v5.1-rc1?
+AFAICS it was appeared in v5.1-rc5.
 
-On 5/6/19 5:32 PM, Greg Kroah-Hartman wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
-> 
-
-This is a fix/workaround for the previous patch c5caf21ab0cf "kasan: turn on -fsanitize-address-use-after-scope"
-which shouldn't be in the -stable. So without c5caf21ab0cf we don't need this one.
+-- 
+With Best Regards,
+Andy Shevchenko
