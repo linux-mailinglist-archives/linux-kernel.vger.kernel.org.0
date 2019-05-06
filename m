@@ -2,146 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7D31441B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 06:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA2FF148F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbfEFEY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 00:24:28 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40443 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725710AbfEFEY1 (ORCPT
+        id S1726434AbfEFLaH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 07:30:07 -0400
+Received: from static.customer-201-144-31-24.uninet-ide.com.mx ([201.144.31.24]:58645
+        "EHLO mail.sesesp.col.gob.mx" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbfEFLaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 00:24:27 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id EBAE720F51;
-        Mon,  6 May 2019 00:24:23 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Mon, 06 May 2019 00:24:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm2; bh=vvpSEtd/71ILYVnxht0QzJ3t9KHpGOA
-        BdcYTEMQnFnY=; b=BvJ/3C+IsTJlE3JZt+akWqhUuurfqr85XWkuxTk6XWvc6Hv
-        I8HzRy+inMg56yezGMfICg/mgb3mqTkwZLPVony1rsYhtnP7FsMCYEJj/rQIOIxz
-        OT2H4eZY7JPqWWeUPGdjdscfM+rFkg0IXkPF8V5MAXpGWVzM9RW27pEE4BgOjPHN
-        E8VxiveMfbOiA8NdCMGfKpLddsSZQ3/Y1YfUQ61Zras2yLtv1BTs09Fq9PLs6lEb
-        VMmqnmisGj9al8vfqEM07fJkqzxx8VrATkxhXL69FVLU2Xla1Pmwak6li+seetqD
-        yx+efktSd04jw5c9MY9VS3JXIc70cQ0zmsizP+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vvpSEt
-        d/71ILYVnxht0QzJ3t9KHpGOABdcYTEMQnFnY=; b=d8zTvlnKIZ99YD0EcU/6CB
-        1YKJz0mMB4fMvN7y5nBCWVhKz6Ralyn8SlVkVmqZhbJZw0fiUXMxISgRHjkduc4a
-        8Y+7zl5c3MV8nQar/k/Mq0omEGBnpx7DioVlNLd/G25cV4EjT3r4R4Nwaan6FCbd
-        y69UD4gwAstyKz0nLp/K5OxO/qSfF7IQnBWmCLUIWJR48rERnCnTAP3tZky+EweK
-        c/B9sCW1PuHXZ9CJ92E9UpWsGWy5uSmjKIfDAtnyt67r7zm1DssWos9WW+8r3E7E
-        3uaK345q2GAUq+hBLsJIUL/tEoRg5aCH+tBeDeqv6YRl6jTM0QhIMIZ9ImCpOoug
-        ==
-X-ME-Sender: <xms:9bbPXDTXQERiByBN7ueIdBBWGKvLLTvpXXdEP1Cnvg_5Mg4PkSlylw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjeeigdekhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:9bbPXJowtklksSLCrnL19NWbqRExZANDMYdik5fxSZLkpyT_n-xOUQ>
-    <xmx:9bbPXBZWgZ_X03aerpo-O4DjS7RPwOeK7H_13mUcLdE11qyCFmEEkQ>
-    <xmx:9bbPXES6tGlFSKWnBE2VVcXNh8oo8zCxVotneQCYb4EwQ3L3nXTdTg>
-    <xmx:97bPXBrQC5vH8uH97yfNiXOmXjuTHF4XBvRWl6di87l-C-HnXC3_Lw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 66C437C6D9; Mon,  6 May 2019 00:24:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-449-gfb3fc5a-fmstable-20190430v1
-Mime-Version: 1.0
-Message-Id: <76491a70-01ca-4308-a09e-4f223ac49ebd@www.fastmail.com>
-In-Reply-To: <20190503181336.579877-1-vijaykhemka@fb.com>
-References: <20190503181336.579877-1-vijaykhemka@fb.com>
-Date:   Mon, 06 May 2019 00:24:13 -0400
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Vijay Khemka" <vijaykhemka@fb.com>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Joel Stanley" <joel@jms.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     sdasari@fb.com
-Subject: Re: [PATCH v2] misc: aspeed-lpc-ctrl: Correct return values
-Content-Type: text/plain
+        Mon, 6 May 2019 07:30:07 -0400
+X-Greylist: delayed 13524 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 07:30:07 EDT
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.sesesp.col.gob.mx (Postfix) with ESMTP id 00E0639B2EBD;
+        Sun,  5 May 2019 23:49:45 -0500 (CDT)
+Received: from mail.sesesp.col.gob.mx ([127.0.0.1])
+        by localhost (mail.sesesp.col.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Xf2h3T1IBf7U; Sun,  5 May 2019 23:49:39 -0500 (CDT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.sesesp.col.gob.mx (Postfix) with ESMTP id DC26239B2FD8;
+        Sun,  5 May 2019 23:43:06 -0500 (CDT)
+X-Virus-Scanned: amavisd-new at sesesp.col.gob.mx
+Received: from mail.sesesp.col.gob.mx ([127.0.0.1])
+        by localhost (mail.sesesp.col.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id MHiS1j7Wv6VX; Sun,  5 May 2019 23:43:06 -0500 (CDT)
+Received: from [192.168.43.155] (unknown [41.203.78.129])
+        by mail.sesesp.col.gob.mx (Postfix) with ESMTPSA id F0EA639B2B9F;
+        Sun,  5 May 2019 23:36:16 -0500 (CDT)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: REQUEST
+To:     Recipients <eguevara@sesesp.col.gob.mx>
+From:   "Johann Reimann" <eguevara@sesesp.col.gob.mx>
+Date:   Mon, 06 May 2019 05:30:48 +0100
+Reply-To: johannreimann44@gmail.com
+Message-Id: <20190506043616.F0EA639B2B9F@mail.sesesp.col.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Good day,
 
+My Name is Johann Reimann and i have something important to discuss with you but only with your permission i will proceed.
 
-On Sat, 4 May 2019, at 03:43, Vijay Khemka wrote:
-> Corrected some of return values with appropriate meanings and reported
-> relevant messages as debug information.
-> 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-
-Thanks for the fixes, this looks okay now. However, was there a reason for
-not squashing change into your previous patch that introduced the issues
-this fixes? That hasn't been applied yet either as far as I'm aware. I'd prefer
-we do that and submit a single, good patch if we can.
-
-Andrew
-
-> ---
->  drivers/misc/aspeed-lpc-ctrl.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/misc/aspeed-lpc-ctrl.c 
-> b/drivers/misc/aspeed-lpc-ctrl.c
-> index 332210e06e98..aca13779764a 100644
-> --- a/drivers/misc/aspeed-lpc-ctrl.c
-> +++ b/drivers/misc/aspeed-lpc-ctrl.c
-> @@ -93,8 +93,8 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, 
-> unsigned int cmd,
->  
->  		/* If memory-region is not described in device tree */
->  		if (!lpc_ctrl->mem_size) {
-> -			dev_err(dev, "Didn't find reserved memory\n");
-> -			return -EINVAL;
-> +			dev_dbg(dev, "Didn't find reserved memory\n");
-> +			return -ENXIO;
->  		}
->  
->  		map.size = lpc_ctrl->mem_size;
-> @@ -134,16 +134,16 @@ static long aspeed_lpc_ctrl_ioctl(struct file 
-> *file, unsigned int cmd,
->  
->  		if (map.window_type == ASPEED_LPC_CTRL_WINDOW_FLASH) {
->  			if (!lpc_ctrl->pnor_size) {
-> -				dev_err(dev, "Didn't find host pnor flash\n");
-> -				return -EINVAL;
-> +				dev_dbg(dev, "Didn't find host pnor flash\n");
-> +				return -ENXIO;
->  			}
->  			addr = lpc_ctrl->pnor_base;
->  			size = lpc_ctrl->pnor_size;
->  		} else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
->  			/* If memory-region is not described in device tree */
->  			if (!lpc_ctrl->mem_size) {
-> -				dev_err(dev, "Didn't find reserved memory\n");
-> -				return -EINVAL;
-> +				dev_dbg(dev, "Didn't find reserved memory\n");
-> +				return -ENXIO;
->  			}
->  			addr = lpc_ctrl->mem_base;
->  			size = lpc_ctrl->mem_size;
-> @@ -239,7 +239,7 @@ static int aspeed_lpc_ctrl_probe(struct 
-> platform_device *pdev)
->  		of_node_put(node);
->  		if (rc) {
->  			dev_err(dev, "Couldn't address to resource for reserved memory\n");
-> -			return -ENOMEM;
-> +			return -ENXIO;
->  		}
->  
->  		lpc_ctrl->mem_size = resource_size(&resm);
-> -- 
-> 2.17.1
-> 
->
+Regards
+J. Reimann
