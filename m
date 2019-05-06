@@ -2,97 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9982C154FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 22:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E488154FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 22:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfEFUkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 16:40:13 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:38351 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbfEFUkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 16:40:13 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 44yZP64SFtz9s6w;
-        Tue,  7 May 2019 06:40:10 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1557175210;
-        bh=UnBnDMtqaTMzpD60wTpxZ1W7LbEeYkgM1+66drzolYU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Dfv/PHCi7qC3G4m8hMZ9bmif4Ny2v/E01V2uHmyZkxNhns0wy6r3Q2DNKwCYVNN1M
-         L5AVEP+Losj/J2G1adWriNKIPFi5X4C3lrSTOI9/7eCuWyUCs70JBrSKRjhm7k2wks
-         FKIiFIUSjCBl1YuoboZvpgTUZBBhfubQntgBtELHFz9p9tAy3NtrCufFTtILIRhRVt
-         We9mHhANk5MQ3JGsZy4uUSwYlzaRcJVf8HPEEgt7A8S1z8rw/6gB3c8yGotfWSirXF
-         9z6A4GZlrcgI2bNpueVYpZ62OoRvPePER4NOmhi6HNPbjikJ4Rv69EFThLoAu0le/n
-         TZcdw0kz03rVw==
-Date:   Tue, 7 May 2019 06:40:08 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: linux-next: Fixes tags need some work in the mtd tree
-Message-ID: <20190507064008.1ecba58b@canb.auug.org.au>
+        id S1726621AbfEFUln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 16:41:43 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:52510 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726403AbfEFUlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 16:41:42 -0400
+Received: (qmail 5462 invoked by uid 2102); 6 May 2019 16:41:41 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 6 May 2019 16:41:41 -0400
+Date:   Mon, 6 May 2019 16:41:41 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+53f029db71c19a47325a@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <mchehab@kernel.org>, <syzkaller-bugs@googlegroups.com>,
+        <wen.yang99@zte.com.cn>
+Subject: Re: general protection fault in smsusb_init_device
+In-Reply-To: <0000000000008d89900586ccd37b@google.com>
+Message-ID: <Pine.LNX.4.44L0.1905061638380.1585-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EkRbAt_MV4yq25aod_a9qSo"; protocol="application/pgp-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EkRbAt_MV4yq25aod_a9qSo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 18 Apr 2019, syzbot wrote:
 
-Hi all,
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    d34f9519 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan/tree/usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=128ec3fd200000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c73d1bb5aeaeae20
+> dashboard link: https://syzkaller.appspot.com/bug?extid=53f029db71c19a47325a
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16138e67200000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128dddbf200000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+53f029db71c19a47325a@syzkaller.appspotmail.com
+> 
+> usb 1-1: config 0 descriptor??
+> usb 1-1: string descriptor 0 read error: -71
+> smsusb:smsusb_probe: board id=18, interface number 0
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN PTI
+> CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.1.0-rc5-319617-gd34f951 #4
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:smsusb_init_device+0x366/0x937  
+> drivers/media/usb/siano/smsusb.c:429
 
-In commit
+The driver assumes endpoint 1in exists, and doesn't check the existence 
+of the endpoints it uses.
 
-  d41970097f10 ("mtd: maps: Allow MTD_PHYSMAP with MTD_RAM")
+Alan Stern
 
-Fixes tag
 
-  Fixes: commit 642b1e8dbed7 ("mtd: maps: Merge physmap_of.c into physmap-c=
-ore.c")
+#syz test: https://github.com/google/kasan.git usb-fuzzer
 
-has these problem(s):
+ drivers/media/usb/siano/smsusb.c |   32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
-  - leading word 'commit' unexpected
+Index: usb-devel/drivers/media/usb/siano/smsusb.c
+===================================================================
+--- usb-devel.orig/drivers/media/usb/siano/smsusb.c
++++ usb-devel/drivers/media/usb/siano/smsusb.c
+@@ -400,6 +400,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsusb_device_t *dev;
+ 	void *mdev;
+ 	int i, rc;
++	int in_maxp;
+ 
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+@@ -411,6 +412,23 @@ static int smsusb_init_device(struct usb
+ 	dev->udev = interface_to_usbdev(intf);
+ 	dev->state = SMSUSB_DISCONNECTED;
+ 
++	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
++		struct usb_endpoint_descriptor *desc =
++				&intf->cur_altsetting->endpoint[i].desc;
++
++		if (desc->bEndpointAddress & USB_DIR_IN) {
++			dev->in_ep = desc->bEndpointAddress;
++			in_maxp = usb_endpoint_maxp(desc);
++		} else {
++			dev->out_ep = desc->bEndpointAddress;
++		}
++	}
++
++	pr_debug("in_ep = %02x, out_ep = %02x\n",
++		dev->in_ep, dev->out_ep);
++	if (!dev->in_ep || !dev->out_ep)	/* Missing endpoints? */
++		return -EINVAL;
++
+ 	params.device_type = sms_get_board(board_id)->type;
+ 
+ 	switch (params.device_type) {
+@@ -425,24 +443,12 @@ static int smsusb_init_device(struct usb
+ 		/* fall-thru */
+ 	default:
+ 		dev->buffer_size = USB2_BUFFER_SIZE;
+-		dev->response_alignment =
+-		    le16_to_cpu(dev->udev->ep_in[1]->desc.wMaxPacketSize) -
+-		    sizeof(struct sms_msg_hdr);
++		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+ 
+ 		params.flags |= SMS_DEVICE_FAMILY2;
+ 		break;
+ 	}
+ 
+-	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+-		if (intf->cur_altsetting->endpoint[i].desc. bEndpointAddress & USB_DIR_IN)
+-			dev->in_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+-		else
+-			dev->out_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+-	}
+-
+-	pr_debug("in_ep = %02x, out_ep = %02x\n",
+-		dev->in_ep, dev->out_ep);
+-
+ 	params.device = &dev->udev->dev;
+ 	params.usb_device = dev->udev;
+ 	params.buffer_size = dev->buffer_size;
 
-In commit
-
-  64d14c6fe040 ("mtd: maps: physmap: Store gpio_values correctly")
-
-Fixes tag
-
-  Fixes: commit ba32ce95cbd9 ("mtd: maps: Merge gpio-addr-flash.c into phys=
-map-core.c")
-
-has these problem(s):
-
-  - leading word 'commit' unexpected
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EkRbAt_MV4yq25aod_a9qSo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQm6gACgkQAVBC80lX
-0GyXhAgAjY0Dgi71yc8VrVFDZS+yiHBMuzyv3q/eJFXapTNgzlrjVdrA31kNYFwV
-XSHEcf/YLXNTlYXY9DUbTRrBSuO0c76E86Pq3h5T7yzfV5aVWrVoseLKTv85Rfhx
-PzqYcQZdNMpausx2RxiRvrvgZjbOHgTuiiKeuIERa72IXG2HAC2scaXKnz9suCss
-EWFtGMj4uEmG2yi34aeAFMcljR7ROlo4BeniAU/DEeDfLOzPRgkxkTgebwBWK3rv
-FUHpaTAM78Ue+BrbUTtN14npWIcPKwwtEPwtOGUiTnYWNXMyNC15O8IZViK4y4bQ
-U2qjRC46JkPpZND4OubDOeKNOT7Gkw==
-=cSHZ
------END PGP SIGNATURE-----
-
---Sig_/EkRbAt_MV4yq25aod_a9qSo--
