@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FFDA14CD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A92D14D20
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfEFOof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40858 "EHLO mail.kernel.org"
+        id S1729455AbfEFOsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:48:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbfEFOod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:44:33 -0400
+        id S1728367AbfEFOsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:48:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A073C214AE;
-        Mon,  6 May 2019 14:44:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E31552053B;
+        Mon,  6 May 2019 14:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153873;
-        bh=g3iyfsYRe4fyFJrL7Ypiv0BDUlg0xHMK1ccf3NZbu3o=;
+        s=default; t=1557154101;
+        bh=txl+pOcJ8y0DmWgo/HhjLt5TcsSdC5gnNePtFvzPUFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s/Y75ykF+tVGYhJh7L+f5lan2nbgZFg1r25akFg9MMX+YWwz3Dfb69jrTX9XY4i7Z
-         fAdVPkgtqHWfix/8/gTfv4mNroyV10hM51PwHZVOyQfsd7BPNoD/eIaDKW7VcXk1Ko
-         kJQghMCl76CCFI2eoYyDcAXtaFA3xhw3IvehcA2I=
+        b=ZjVhwLFtsWUnYOoD3CwTPGudUW96PFkQ4jXXREW8zXT8E4rOJUQh1cI1qWq3g3jjm
+         as0aiKj1joBwLB2U98+9jSE+X8q0K7ndO8X9iRoq9CYOD4cXXRIGbHTR4d1Y1VX3dC
+         U5Gns07aHs1eo2O2P/ama+b9O0Rt1/w28SWIVeCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/75] rtc: sh: Fix invalid alarm warning for non-enabled alarm
+        stable@vger.kernel.org, David Laight <David.Laight@aculab.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 05/62] packet: validate msg_namelen in send directly
 Date:   Mon,  6 May 2019 16:32:36 +0200
-Message-Id: <20190506143055.746685012@linuxfoundation.org>
+Message-Id: <20190506143051.563047079@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +44,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 15d82d22498784966df8e4696174a16b02cc1052 ]
+From: Willem de Bruijn <willemb@google.com>
 
-When no alarm has been programmed on RSK-RZA1, an error message is
-printed during boot:
+[ Upstream commit 486efdc8f6ce802b27e15921d2353cc740c55451 ]
 
-    rtc rtc0: invalid alarm value: 2019-03-14T255:255:255
+Packet sockets in datagram mode take a destination address. Verify its
+length before passing to dev_hard_header.
 
-sh_rtc_read_alarm_value() returns 0xff when querying a hardware alarm
-field that is not enabled.  __rtc_read_alarm() validates the received
-alarm values, and fills in missing fields when needed.
-While 0xff is handled fine for the year, month, and day fields, and
-corrected as considered being out-of-range, this is not the case for the
-hour, minute, and second fields, where -1 is expected for missing
-fields.
+Prior to 2.6.14-rc3, the send code ignored sll_halen. This is
+established behavior. Directly compare msg_namelen to dev->addr_len.
 
-Fix this by returning -1 instead, as this value is handled fine for all
-fields.
+Change v1->v2: initialize addr in all paths
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6b8d95f1795c4 ("packet: validate address length if non-zero")
+Suggested-by: David Laight <David.Laight@aculab.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-sh.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/packet/af_packet.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index 6c2d3989f967..9b6a927149a4 100644
---- a/drivers/rtc/rtc-sh.c
-+++ b/drivers/rtc/rtc-sh.c
-@@ -462,7 +462,7 @@ static int sh_rtc_set_time(struct device *dev, struct rtc_time *tm)
- static inline int sh_rtc_read_alarm_value(struct sh_rtc *rtc, int reg_off)
- {
- 	unsigned int byte;
--	int value = 0xff;	/* return 0xff for ignored values */
-+	int value = -1;			/* return -1 for ignored values */
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2638,8 +2638,8 @@ static int tpacket_snd(struct packet_soc
+ 	void *ph;
+ 	DECLARE_SOCKADDR(struct sockaddr_ll *, saddr, msg->msg_name);
+ 	bool need_wait = !(msg->msg_flags & MSG_DONTWAIT);
++	unsigned char *addr = NULL;
+ 	int tp_len, size_max;
+-	unsigned char *addr;
+ 	void *data;
+ 	int len_sum = 0;
+ 	int status = TP_STATUS_AVAILABLE;
+@@ -2650,7 +2650,6 @@ static int tpacket_snd(struct packet_soc
+ 	if (likely(saddr == NULL)) {
+ 		dev	= packet_cached_dev_get(po);
+ 		proto	= po->num;
+-		addr	= NULL;
+ 	} else {
+ 		err = -EINVAL;
+ 		if (msg->msg_namelen < sizeof(struct sockaddr_ll))
+@@ -2660,10 +2659,13 @@ static int tpacket_snd(struct packet_soc
+ 						sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
+-		if (addr && dev && saddr->sll_halen < dev->addr_len)
+-			goto out_put;
++		if (po->sk.sk_socket->type == SOCK_DGRAM) {
++			if (dev && msg->msg_namelen < dev->addr_len +
++				   offsetof(struct sockaddr_ll, sll_addr))
++				goto out_put;
++			addr = saddr->sll_addr;
++		}
+ 	}
  
- 	byte = readb(rtc->regbase + reg_off);
- 	if (byte & AR_ENB) {
--- 
-2.20.1
-
+ 	err = -ENXIO;
+@@ -2834,7 +2836,7 @@ static int packet_snd(struct socket *soc
+ 	struct sk_buff *skb;
+ 	struct net_device *dev;
+ 	__be16 proto;
+-	unsigned char *addr;
++	unsigned char *addr = NULL;
+ 	int err, reserve = 0;
+ 	struct sockcm_cookie sockc;
+ 	struct virtio_net_hdr vnet_hdr = { 0 };
+@@ -2851,7 +2853,6 @@ static int packet_snd(struct socket *soc
+ 	if (likely(saddr == NULL)) {
+ 		dev	= packet_cached_dev_get(po);
+ 		proto	= po->num;
+-		addr	= NULL;
+ 	} else {
+ 		err = -EINVAL;
+ 		if (msg->msg_namelen < sizeof(struct sockaddr_ll))
+@@ -2859,10 +2860,13 @@ static int packet_snd(struct socket *soc
+ 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
+ 			goto out;
+ 		proto	= saddr->sll_protocol;
+-		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
+ 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
+-		if (addr && dev && saddr->sll_halen < dev->addr_len)
+-			goto out_unlock;
++		if (sock->type == SOCK_DGRAM) {
++			if (dev && msg->msg_namelen < dev->addr_len +
++				   offsetof(struct sockaddr_ll, sll_addr))
++				goto out_unlock;
++			addr = saddr->sll_addr;
++		}
+ 	}
+ 
+ 	err = -ENXIO;
 
 
