@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D98C14F03
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0229F14C87
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfEFOhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:37:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57780 "EHLO mail.kernel.org"
+        id S1728196AbfEFOlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:41:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbfEFOhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:10 -0400
+        id S1727417AbfEFOlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:41:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C14B204EC;
-        Mon,  6 May 2019 14:37:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0566920449;
+        Mon,  6 May 2019 14:41:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153429;
-        bh=cesPmuFn1E7+vUXpum+7UtF2uIjj3w2YGFlHKhA2WNQ=;
+        s=default; t=1557153672;
+        bh=Xph91PTElbhPBg+/XmzDzojimsGgbX/H+wKp2q6B6tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ah2TQDtZKKDGZjrVSfTKDhPmHtk+BxcI2OkzJMMHgKtNOisfPas2lWxTNSH9GcxUX
-         jXrJnCopguXHkr6cfhCYJSOsn2nnaZPKeqs9CDO7d4K7xyCC1JL1a1lOqCbWo5iikD
-         bK8iPx6R/G+gJTJ9K7YsiZqHanunvtzWZMduSfH4=
+        b=FOu2mrmBpzSLg876fbw8QkL42F954aKJL7lgjhzrL2yy1eiGG1v9X4ww2LLQBYICU
+         oWb02tm8XSeOtjCoAh295y0MDqx/cvDj0IC2ILAd5/4DKWqz6cXI2ii5c3QQB26eUL
+         DnPQLPlrnLrDe6m/uwHSQny8w/NTj53w2onlLdfs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 5.0 086/122] clk: qcom: Add missing freq for usb30_master_clk on 8998
-Date:   Mon,  6 May 2019 16:32:24 +0200
-Message-Id: <20190506143102.471371865@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Long Li <longli@microsoft.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 52/99] scsi: storvsc: Fix calculation of sub-channel count
+Date:   Mon,  6 May 2019 16:32:25 +0200
+Message-Id: <20190506143058.787872410@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +46,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jhugo@codeaurora.org>
+[ Upstream commit 382e06d11e075a40b4094b6ef809f8d4bcc7ab2a ]
 
-commit 0c8ff62504e3a667387e87889a259632c3199a86 upstream.
+When the number of sub-channels offered by Hyper-V is >= the number of CPUs
+in the VM, calculate the correct number of sub-channels.  The current code
+produces one too many.
 
-The usb30_master_clk supports a 60Mhz frequency, but that is missing from
-the table of supported frequencies.  Add it.
+This scenario arises only when the number of CPUs is artificially
+restricted (for example, with maxcpus=<n> on the kernel boot line), because
+Hyper-V normally offers a sub-channel count < number of CPUs.  While the
+current code doesn't break, the extra sub-channel is unbalanced across the
+CPUs (for example, a total of 5 channels on a VM with 4 CPUs).
 
-Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Long Li <longli@microsoft.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8998.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/storvsc_drv.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -1112,6 +1112,7 @@ static struct clk_rcg2 ufs_axi_clk_src =
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index f03dc03a42c3..0c2ba075bc71 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -664,13 +664,22 @@ static void handle_sc_creation(struct vmbus_channel *new_sc)
+ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
+ {
+ 	struct storvsc_device *stor_device;
+-	int num_cpus = num_online_cpus();
+ 	int num_sc;
+ 	struct storvsc_cmd_request *request;
+ 	struct vstor_packet *vstor_packet;
+ 	int ret, t;
  
- static const struct freq_tbl ftbl_usb30_master_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
-+	F(60000000, P_GPLL0_OUT_MAIN, 10, 0, 0),
- 	F(120000000, P_GPLL0_OUT_MAIN, 5, 0, 0),
- 	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
- 	{ }
+-	num_sc = ((max_chns > num_cpus) ? num_cpus : max_chns);
++	/*
++	 * If the number of CPUs is artificially restricted, such as
++	 * with maxcpus=1 on the kernel boot line, Hyper-V could offer
++	 * sub-channels >= the number of CPUs. These sub-channels
++	 * should not be created. The primary channel is already created
++	 * and assigned to one CPU, so check against # CPUs - 1.
++	 */
++	num_sc = min((int)(num_online_cpus() - 1), max_chns);
++	if (!num_sc)
++		return;
++
+ 	stor_device = get_out_stor_device(device);
+ 	if (!stor_device)
+ 		return;
+-- 
+2.20.1
+
 
 
