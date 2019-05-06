@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4815014CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7717614D52
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfEFOng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:43:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39244 "EHLO mail.kernel.org"
+        id S1729225AbfEFOuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:50:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728674AbfEFOnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:43:33 -0400
+        id S1729597AbfEFOtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:49:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1B7220C01;
-        Mon,  6 May 2019 14:43:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0E0621530;
+        Mon,  6 May 2019 14:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153812;
-        bh=m8PUzezVg4mUsEUiPciQfr6l0rmMTKutw+jQ/sYN8D8=;
+        s=default; t=1557154179;
+        bh=Hnb7z3+7JBqf/LXbuVAtgRZVI934LRCWUyNEAg07ttQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uab24UkOsGv9WLGO/laCgQ9XQ76wdDprMJ3HlZfUga4KkMkO38ZEJ9lHAAkTEvcVL
-         mgUP286ZUNLNDr1PWNRgq/oZxWvMKInnKtd+ZXBsIa1//imiUonOn3OzdqdJlxtaPb
-         Au7sQN34SSUrhkvJ2l7Ey/0sFX+JuM5p16SWxnxM=
+        b=NAFf8ULk5aPoDrmm/RMZsHcbxDwIyRb20j4GBjXSLxjNX5wgr4hDA9BngI1pks2BS
+         3oKNei4pRsFsXc6SsZRbY1qKA+BQMCXRFm5tpV3IKaHkRUEk8878vLOopEEWJhGYbj
+         QxeJfEbBOWocv4BhqhWsUD6iANfqsfNLcFAgEfqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Le Bayon <nicolas.le.bayon@st.com>,
-        Bich Hemon <bich.hemon@st.com>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.19 98/99] i2c: i2c-stm32f7: Fix SDADEL minimum formula
-Date:   Mon,  6 May 2019 16:33:11 +0200
-Message-Id: <20190506143102.699671981@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 41/62] debugfs: fix use-after-free on symlink traversal
+Date:   Mon,  6 May 2019 16:33:12 +0200
+Message-Id: <20190506143054.696253573@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Le Bayon <nicolas.le.bayon@st.com>
+[ Upstream commit 93b919da64c15b90953f96a536e5e61df896ca57 ]
 
-commit c86da50cfd840edf223a242580913692acddbcf6 upstream.
+symlink body shouldn't be freed without an RCU delay.  Switch debugfs to
+->destroy_inode() and use of call_rcu(); free both the inode and symlink
+body in the callback.  Similar to solution for bpf, only here it's even
+more obvious that ->evict_inode() can be dropped.
 
-It conforms with Reference Manual I2C timing section.
-
-Fixes: aeb068c57214 ("i2c: i2c-stm32f7: add driver")
-Signed-off-by: Nicolas Le Bayon <nicolas.le.bayon@st.com>
-Signed-off-by: Bich Hemon <bich.hemon@st.com>
-Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-stm32f7.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/debugfs/inode.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -424,7 +424,7 @@ static int stm32f7_i2c_compute_timing(st
- 		 STM32F7_I2C_ANALOG_FILTER_DELAY_MAX : 0);
- 	dnf_delay = setup->dnf * i2cclk;
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 77e9cd7a0137..20ee612017bf 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -170,19 +170,24 @@ static int debugfs_show_options(struct seq_file *m, struct dentry *root)
+ 	return 0;
+ }
  
--	sdadel_min = setup->fall_time - i2c_specs[setup->speed].hddat_min -
-+	sdadel_min = i2c_specs[setup->speed].hddat_min + setup->fall_time -
- 		af_delay_min - (setup->dnf + 3) * i2cclk;
+-static void debugfs_evict_inode(struct inode *inode)
++static void debugfs_i_callback(struct rcu_head *head)
+ {
+-	truncate_inode_pages_final(&inode->i_data);
+-	clear_inode(inode);
++	struct inode *inode = container_of(head, struct inode, i_rcu);
+ 	if (S_ISLNK(inode->i_mode))
+ 		kfree(inode->i_link);
++	free_inode_nonrcu(inode);
++}
++
++static void debugfs_destroy_inode(struct inode *inode)
++{
++	call_rcu(&inode->i_rcu, debugfs_i_callback);
+ }
  
- 	sdadel_max = i2c_specs[setup->speed].vddat_max - setup->rise_time -
+ static const struct super_operations debugfs_super_operations = {
+ 	.statfs		= simple_statfs,
+ 	.remount_fs	= debugfs_remount,
+ 	.show_options	= debugfs_show_options,
+-	.evict_inode	= debugfs_evict_inode,
++	.destroy_inode	= debugfs_destroy_inode,
+ };
+ 
+ static struct vfsmount *debugfs_automount(struct path *path)
+-- 
+2.20.1
+
 
 
