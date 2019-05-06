@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1D514CE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2549B14E3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbfEFOpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42084 "EHLO mail.kernel.org"
+        id S1728076AbfEFOko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:40:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728939AbfEFOpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:21 -0400
+        id S1728052AbfEFOkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:40:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2946C2087F;
-        Mon,  6 May 2019 14:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 397E6206A3;
+        Mon,  6 May 2019 14:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153920;
-        bh=xtUdkNT/I6ZoDVHE1IWYKYHYiIpasaIIC4p+C1QzlGs=;
+        s=default; t=1557153640;
+        bh=kE/1oxJYgmNTL8Ovm9139oKe/JLOIehv6BCJ+0rIqKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c2HjSUAJxn5fOuEKH9e4zs8eFTXv9QAeOoJOg1mwoVL3jn0yrzuKJsG9eWSqGMoDG
-         8Rcp46M5UVLMBeX/K8II5ny2YZfeQ0Dgd1bUJVU5HkYIEUtpvzue2ZPdCUdYp9RUMW
-         RDkPHu3dSbSd/43nfbARywieQZqosNuBVQ1J0N1Q=
+        b=tQn86XPxl/DcEu1vLLVUp3OEqYESBX8pfsC803Zy70aNFjBDaitrneZoYA94jHnzP
+         UEkJS+vfB8LfwSid0puvuaF6lOeJIgNVk56tqQ4DNYVKgSdwVZNbdpvw4BKv2Lhj4P
+         AS/vhL14k0C4Ti6PkfKvKcpZUNdlkBu1IQCCFUy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Laight <David.Laight@aculab.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 06/75] packet: validate msg_namelen in send directly
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 41/99] net: stmmac: dont overwrite discard_frame status
 Date:   Mon,  6 May 2019 16:32:14 +0200
-Message-Id: <20190506143053.811171616@linuxfoundation.org>
+Message-Id: <20190506143057.683729949@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,97 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+[ Upstream commit 1b746ce8b397e58f9e40ce5c63b7198de6930482 ]
 
-[ Upstream commit 486efdc8f6ce802b27e15921d2353cc740c55451 ]
+If we have error bits set, the discard_frame status will get overwritten
+by checksum bit checks, which might set the status back to good one.
+Fix by checking the COE status only if the frame is good.
 
-Packet sockets in datagram mode take a destination address. Verify its
-length before passing to dev_hard_header.
-
-Prior to 2.6.14-rc3, the send code ignored sll_halen. This is
-established behavior. Directly compare msg_namelen to dev->addr_len.
-
-Change v1->v2: initialize addr in all paths
-
-Fixes: 6b8d95f1795c4 ("packet: validate address length if non-zero")
-Suggested-by: David Laight <David.Laight@aculab.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/packet/af_packet.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2641,8 +2641,8 @@ static int tpacket_snd(struct packet_soc
- 	void *ph;
- 	DECLARE_SOCKADDR(struct sockaddr_ll *, saddr, msg->msg_name);
- 	bool need_wait = !(msg->msg_flags & MSG_DONTWAIT);
-+	unsigned char *addr = NULL;
- 	int tp_len, size_max;
--	unsigned char *addr;
- 	void *data;
- 	int len_sum = 0;
- 	int status = TP_STATUS_AVAILABLE;
-@@ -2653,7 +2653,6 @@ static int tpacket_snd(struct packet_soc
- 	if (likely(saddr == NULL)) {
- 		dev	= packet_cached_dev_get(po);
- 		proto	= po->num;
--		addr	= NULL;
- 	} else {
- 		err = -EINVAL;
- 		if (msg->msg_namelen < sizeof(struct sockaddr_ll))
-@@ -2663,10 +2662,13 @@ static int tpacket_snd(struct packet_soc
- 						sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
--		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out_put;
-+		if (po->sk.sk_socket->type == SOCK_DGRAM) {
-+			if (dev && msg->msg_namelen < dev->addr_len +
-+				   offsetof(struct sockaddr_ll, sll_addr))
-+				goto out_put;
-+			addr = saddr->sll_addr;
-+		}
- 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index e8855e6adb48..c42ef6c729c0 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -231,9 +231,10 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ 	 * It doesn't match with the information reported into the databook.
+ 	 * At any rate, we need to understand if the CSUM hw computation is ok
+ 	 * and report this info to the upper layers. */
+-	ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
+-				 !!(rdes0 & RDES0_FRAME_TYPE),
+-				 !!(rdes0 & ERDES0_RX_MAC_ADDR));
++	if (likely(ret == good_frame))
++		ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
++					 !!(rdes0 & RDES0_FRAME_TYPE),
++					 !!(rdes0 & ERDES0_RX_MAC_ADDR));
  
- 	err = -ENXIO;
-@@ -2838,7 +2840,7 @@ static int packet_snd(struct socket *soc
- 	struct sk_buff *skb;
- 	struct net_device *dev;
- 	__be16 proto;
--	unsigned char *addr;
-+	unsigned char *addr = NULL;
- 	int err, reserve = 0;
- 	struct sockcm_cookie sockc;
- 	struct virtio_net_hdr vnet_hdr = { 0 };
-@@ -2855,7 +2857,6 @@ static int packet_snd(struct socket *soc
- 	if (likely(saddr == NULL)) {
- 		dev	= packet_cached_dev_get(po);
- 		proto	= po->num;
--		addr	= NULL;
- 	} else {
- 		err = -EINVAL;
- 		if (msg->msg_namelen < sizeof(struct sockaddr_ll))
-@@ -2863,10 +2864,13 @@ static int packet_snd(struct socket *soc
- 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
--		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out_unlock;
-+		if (sock->type == SOCK_DGRAM) {
-+			if (dev && msg->msg_namelen < dev->addr_len +
-+				   offsetof(struct sockaddr_ll, sll_addr))
-+				goto out_unlock;
-+			addr = saddr->sll_addr;
-+		}
- 	}
- 
- 	err = -ENXIO;
+ 	if (unlikely(rdes0 & RDES0_DRIBBLING))
+ 		x->dribbling_bit++;
+-- 
+2.20.1
+
 
 
