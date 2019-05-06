@@ -2,90 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE8F14569
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7829D143D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 06:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfEFHiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:38:15 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38894 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfEFHho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:37:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tzpXHk7pggK3a6IReCA75UnDglv4kzjtwAX41NwuIs4=; b=NjHcG+e5mciylrLgGpMM5XvoQ
-        xOog8IPCBf1UzwcpqaA6fQTHSG8iv9C6CvC2qOUWzWc1Idw1jS0qia5310WtllkAjfaM+7p5dv1QQ
-        FniGskOBWOn5W4M7Dick338AZbeW9tlV5ueQYGHR76aN7OvKeA+i2lFdJW9zctVOk0mJ4=;
-Received: from kd111239184067.au-net.ne.jp ([111.239.184.67] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hNYBt-0000s1-90; Mon, 06 May 2019 07:37:37 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 7342C441D41; Mon,  6 May 2019 04:53:45 +0100 (BST)
-Date:   Mon, 6 May 2019 12:53:45 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4] ASoC: fsl_esai: Add pm runtime function
-Message-ID: <20190506035345.GJ14916@sirena.org.uk>
-References: <VE1PR04MB64794DF2979F3AD350A9EB3DE3370@VE1PR04MB6479.eurprd04.prod.outlook.com>
+        id S1725855AbfEFEBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 00:01:53 -0400
+Received: from ozlabs.org ([203.11.71.1]:60797 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbfEFEBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 00:01:52 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44y8F822jhz9s9y;
+        Mon,  6 May 2019 14:01:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557115309;
+        bh=rgj1QEiHtv32sP/0bA6Oo89nP54c8y/a8Bke4LC1GuQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fQDIf4ooi7pE3dOtu1OJF04FUlFr+5b3JOOK44NQt4y8Lm6ApBGhs33pzQ3C8SGN6
+         /IPAEE0aS2TdHD8NTExLe91UZGFC6q4xiHDPN8M3m1ETJ7Cdx3smJ5hCG54Lwd+h9E
+         0ACyYLZQKm9SnoafxzJwRQgoNHOUjN9tm8W3V777ajCuPlIxSa+pFMpvdkXicQZYCr
+         SELt5oWUC52uG/1WNsl/eccNHJ/9EJckACDo8AApyZS1CeKFBxP5LDJcPZuB9Nflcn
+         aZr5hzRabYQGHvELLQwi3M7TfnyRJYBULTuYKVisZt8xNAYAPJSJF6ZCSClLbQv6IV
+         P3GUlfoQRTOVQ==
+Date:   Mon, 6 May 2019 14:01:47 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vu Pham <vuhuong@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Mark Bloch <markb@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
+ tree
+Message-ID: <20190506140147.23d41ac1@canb.auug.org.au>
+In-Reply-To: <20190430135846.0c17df6e@canb.auug.org.au>
+References: <20190430135846.0c17df6e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7e8BFhNxqpjiNKz7"
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB64794DF2979F3AD350A9EB3DE3370@VE1PR04MB6479.eurprd04.prod.outlook.com>
-X-Cookie: -- I have seen the FUN --
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vW/eo0iJa5WsE4O1KPNByGd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/vW/eo0iJa5WsE4O1KPNByGd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---7e8BFhNxqpjiNKz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-On Sun, May 05, 2019 at 03:28:59AM +0000, S.j. Wang wrote:
+On Tue, 30 Apr 2019 13:58:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Leon,
+>=20
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>=20
+>   drivers/infiniband/hw/mlx5/main.c
+>=20
+> between commit:
+>=20
+>   35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
+>=20
+> from the rdma tree and commit:
+>=20
+>   c42260f19545 ("net/mlx5: Separate and generalize dma device from pci de=
+vice")
+>=20
+> from the mlx5-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/infiniband/hw/mlx5/main.c
+> index 6135a0b285de,fae6a6a1fbea..000000000000
+> --- a/drivers/infiniband/hw/mlx5/main.c
+> +++ b/drivers/infiniband/hw/mlx5/main.c
+> @@@ -200,12 -172,18 +200,12 @@@ static int mlx5_netdev_event(struct not
+>  =20
+>   	switch (event) {
+>   	case NETDEV_REGISTER:
+>  +		/* Should already be registered during the load */
+>  +		if (ibdev->is_rep)
+>  +			break;
+>   		write_lock(&roce->netdev_lock);
+> - 		if (ndev->dev.parent =3D=3D &mdev->pdev->dev)
+>  -		if (ibdev->rep) {
+>  -			struct mlx5_eswitch *esw =3D ibdev->mdev->priv.eswitch;
+>  -			struct net_device *rep_ndev;
+>  -
+>  -			rep_ndev =3D mlx5_ib_get_rep_netdev(esw,
+>  -							  ibdev->rep->vport);
+>  -			if (rep_ndev =3D=3D ndev)
+>  -				roce->netdev =3D ndev;
+>  -		} else if (ndev->dev.parent =3D=3D mdev->device) {
+> ++		if (ndev->dev.parent =3D=3D mdev->device)
+>   			roce->netdev =3D ndev;
+>  -		}
+>   		write_unlock(&roce->netdev_lock);
+>   		break;
+>  =20
 
-> We find that maybe it is caused by the Transfer-Encoding format.
-> We sent the patch by the  --transfer-encoding=8bit, but in the receiver side
-> it shows:
-]
-> Content-Type: text/plain; charset="utf-8"
-> Content-Transfer-Encoding: base64
+This is now a conflict between the net-next tree and the rdma tree.
 
-> It may be caused by our company's mail server. We are checking...
+--=20
+Cheers,
+Stephen Rothwell
 
-Ah, that looks likely...  not sure I have any great suggestions for how
-to resolve it but at least it looks like progress on figuring out the
-cause, I haven't been able to see anything wrong locally.
-
---7e8BFhNxqpjiNKz7
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/vW/eo0iJa5WsE4O1KPNByGd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzPr8gACgkQJNaLcl1U
-h9DVeQf7ByKyqDU+F0dmHJsGDAll4nFkuDLq9wax+i1rjUCghvBhzq+0tNPf51Dk
-oJT0+OmCtKJcYIu4Z7OsLBDr75SiQE83YxdWnaAGik49IJUA7ggTXCtXfpLcs2Vy
-VtPc2H969t2crPjYI3AkUIJzYHB2GCwgsWvKmDeWS0c6Sb55eN5DptFsS6UuPcrI
-CCOhBJvO9P85bBNjkMRAla+SM6GV77Uq5DC4iV7ert68gwp8pRVdMY1sNTx9J7BZ
-soqk2U9xLPJtJUeZs89WKZy8mCW1BtFuvQAvt1W/mNJmkWWedc4FkAQgHV3b/pIn
-z4slaJ2AqBkaAIC0hq6wGq8dKSVecQ==
-=/QHA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzPsasACgkQAVBC80lX
+0GzZWgf/eqG/54nzJcLhDHl6eODVDtlhnjK246o4r1hZcOY9BPPCZzfnt7UhQeuZ
+bgrHLsNtf80Et97a6omcAWmIhsIthwgYj9TMet67FdHov8m81rPnOrcewGjoXVLZ
+t43y04hZRMdyrMAaPyHYl2O9O/aYRAgPvn7kWZYzpruvmLm/dRE4kNRO40PDA3mz
+3CaaFAbKgowu+T6W77q6NZeNhW6z5mi1lWIx8ODd2nGLrIawX4NtlXmZ7kNZRFZQ
+Ckerg8IawE08QNoj7f11Fe+DdOcQdbdS8gtzZvlQ09rUPA6MqtT4yFn//JnPlFcR
+PUreXiO2/oZ/+NKszPVhyG5n44X8bw==
+=wKty
 -----END PGP SIGNATURE-----
 
---7e8BFhNxqpjiNKz7--
+--Sig_/vW/eo0iJa5WsE4O1KPNByGd--
