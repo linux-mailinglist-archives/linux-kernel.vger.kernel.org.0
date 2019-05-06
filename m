@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B122A14D4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF86314E22
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbfEFOt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:49:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
+        id S1727911AbfEFOnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:43:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729617AbfEFOtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:49:50 -0400
+        id S1728620AbfEFOnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116DE205ED;
-        Mon,  6 May 2019 14:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B05C21479;
+        Mon,  6 May 2019 14:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154189;
-        bh=Ea4NEVL/9hflCxuATqbcHJbXEvm/SxyQpk8DoX9ueNI=;
+        s=default; t=1557153802;
+        bh=PfLeZyYVsYOyH47/cY4Cr0MKkIiL4NuQjQGlWyG1dHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pyvVh0G2sx9j3L4kJYgjR/wqT3hnVxs8f1aPbK9PEQdNO6Ev5UfStOEGw+LN09XK/
-         PC02V1b9WXoQxnD8pkyigCxHJOL40fWTYAwnL5SFRXMCIo2JMcQfmm/k6CK9+5+ea2
-         vmoVuJTRtGOfjKUOmHu8AXZJcWXANzS9IDt6N/To=
+        b=GFQtgGG2FAF+7nyxhVOCya3xEM6hBYWtIWhTreX/1hLSnox/aVekFGpeFaCbmCBaq
+         /VSOi+L5KpqclcEQ9PUgWo1/U12zEFUMOJvDn22/dWnAif5eaWBSoplpxCCyd9XuYn
+         kff9P+ajxbQ/EsrWZXxcp8n9ga0WlQqm9J3CK5mo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omri Kahalon <omrik@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 35/62] net/mlx5: E-Switch, Fix esw manager vport indication for more vport commands
-Date:   Mon,  6 May 2019 16:33:06 +0200
-Message-Id: <20190506143054.123478938@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?David=20M=C3=BCller?= <dave.mueller@gmx.ch>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.19 94/99] clk: x86: Add system specific quirk to mark clocks as critical
+Date:   Mon,  6 May 2019 16:33:07 +0200
+Message-Id: <20190506143102.369504329@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +46,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eca4a928585ac08147e5cc8e2111ecbc6279ee31 ]
+From: David Müller <dave.mueller@gmx.ch>
 
-Traditionally, the PF (Physical Function) which resides on vport 0 was
-the E-switch manager. Since the ECPF (Embedded CPU Physical Function),
-which resides on vport 0xfffe, was introduced as the E-Switch manager,
-the assumption that the E-switch manager is on vport 0 is incorrect.
+commit 7c2e07130090ae001a97a6b65597830d6815e93e upstream.
 
-Since the eswitch code already uses the actual vport value, all we
-need is to always set other_vport=1.
+Since commit 648e921888ad ("clk: x86: Stop marking clocks as
+CLK_IS_CRITICAL"), the pmc_plt_clocks of the Bay Trail SoC are
+unconditionally gated off. Unfortunately this will break systems where these
+clocks are used for external purposes beyond the kernel's knowledge. Fix it
+by implementing a system specific quirk to mark the necessary pmc_plt_clks as
+critical.
 
-Signed-off-by: Omri Kahalon <omrik@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: David Müller <dave.mueller@gmx.ch>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clk/x86/clk-pmc-atom.c                 |   14 +++++++++++---
+ drivers/platform/x86/pmc_atom.c                |   21 +++++++++++++++++++++
+ include/linux/platform_data/x86/clk-pmc-atom.h |    3 +++
+ 3 files changed, 35 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index da9246f6c31e..d1a3a35ba87b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -92,8 +92,7 @@ static int arm_vport_context_events_cmd(struct mlx5_core_dev *dev, u16 vport,
- 		 opcode, MLX5_CMD_OP_MODIFY_NIC_VPORT_CONTEXT);
- 	MLX5_SET(modify_nic_vport_context_in, in, field_select.change_event, 1);
- 	MLX5_SET(modify_nic_vport_context_in, in, vport_number, vport);
--	if (vport)
--		MLX5_SET(modify_nic_vport_context_in, in, other_vport, 1);
-+	MLX5_SET(modify_nic_vport_context_in, in, other_vport, 1);
- 	nic_vport_ctx = MLX5_ADDR_OF(modify_nic_vport_context_in,
- 				     in, nic_vport_context);
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -165,7 +165,7 @@ static const struct clk_ops plt_clk_ops
+ };
  
-@@ -121,8 +120,7 @@ static int modify_esw_vport_context_cmd(struct mlx5_core_dev *dev, u16 vport,
- 	MLX5_SET(modify_esw_vport_context_in, in, opcode,
- 		 MLX5_CMD_OP_MODIFY_ESW_VPORT_CONTEXT);
- 	MLX5_SET(modify_esw_vport_context_in, in, vport_number, vport);
--	if (vport)
--		MLX5_SET(modify_esw_vport_context_in, in, other_vport, 1);
-+	MLX5_SET(modify_esw_vport_context_in, in, other_vport, 1);
- 	return mlx5_cmd_exec(dev, in, inlen, out, sizeof(out));
+ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
+-					void __iomem *base,
++					const struct pmc_clk_data *pmc_data,
+ 					const char **parent_names,
+ 					int num_parents)
+ {
+@@ -184,9 +184,17 @@ static struct clk_plt *plt_clk_register(
+ 	init.num_parents = num_parents;
+ 
+ 	pclk->hw.init = &init;
+-	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
++	pclk->reg = pmc_data->base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
+ 	spin_lock_init(&pclk->lock);
+ 
++	/*
++	 * On some systems, the pmc_plt_clocks already enabled by the
++	 * firmware are being marked as critical to avoid them being
++	 * gated by the clock framework.
++	 */
++	if (pmc_data->critical && plt_clk_is_enabled(&pclk->hw))
++		init.flags |= CLK_IS_CRITICAL;
++
+ 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
+ 	if (ret) {
+ 		pclk = ERR_PTR(ret);
+@@ -332,7 +340,7 @@ static int plt_clk_probe(struct platform
+ 		return PTR_ERR(parent_names);
+ 
+ 	for (i = 0; i < PMC_CLK_NUM; i++) {
+-		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
++		data->clks[i] = plt_clk_register(pdev, i, pmc_data,
+ 						 parent_names, data->nparents);
+ 		if (IS_ERR(data->clks[i])) {
+ 			err = PTR_ERR(data->clks[i]);
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/x86/clk-pmc-atom.h>
+@@ -391,11 +392,27 @@ static int pmc_dbgfs_register(struct pmc
  }
+ #endif /* CONFIG_DEBUG_FS */
  
--- 
-2.20.1
-
++/*
++ * Some systems need one or more of their pmc_plt_clks to be
++ * marked as critical.
++ */
++static const struct dmi_system_id critclk_systems[] __initconst = {
++	{
++		.ident = "MPL CEC1x",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "MPL AG"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
++		},
++	},
++	{ /*sentinel*/ }
++};
++
+ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
+ 			  const struct pmc_data *pmc_data)
+ {
+ 	struct platform_device *clkdev;
+ 	struct pmc_clk_data *clk_data;
++	const struct dmi_system_id *d = dmi_first_match(critclk_systems);
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -403,6 +420,10 @@ static int pmc_setup_clks(struct pci_dev
+ 
+ 	clk_data->base = pmc_regmap; /* offset is added by client */
+ 	clk_data->clks = pmc_data->clks;
++	if (d) {
++		clk_data->critical = true;
++		pr_info("%s critclks quirk enabled\n", d->ident);
++	}
+ 
+ 	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
+ 					       PLATFORM_DEVID_NONE,
+--- a/include/linux/platform_data/x86/clk-pmc-atom.h
++++ b/include/linux/platform_data/x86/clk-pmc-atom.h
+@@ -35,10 +35,13 @@ struct pmc_clk {
+  *
+  * @base:	PMC clock register base offset
+  * @clks:	pointer to set of registered clocks, typically 0..5
++ * @critical:	flag to indicate if firmware enabled pmc_plt_clks
++ *		should be marked as critial or not
+  */
+ struct pmc_clk_data {
+ 	void __iomem *base;
+ 	const struct pmc_clk *clks;
++	bool critical;
+ };
+ 
+ #endif /* __PLATFORM_DATA_X86_CLK_PMC_ATOM_H */
 
 
