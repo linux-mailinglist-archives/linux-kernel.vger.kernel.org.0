@@ -2,38 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A67514EE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD04114D0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfEFPF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:05:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59306 "EHLO mail.kernel.org"
+        id S1729306AbfEFOr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:47:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727547AbfEFOiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:15 -0400
+        id S1728369AbfEFOr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:47:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A1920449;
-        Mon,  6 May 2019 14:38:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58A4020578;
+        Mon,  6 May 2019 14:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153495;
-        bh=l+vwBq8B0iCqSp7zzsk2DETMYixOA5pWhzYBakqzhJw=;
+        s=default; t=1557154045;
+        bh=/ZxRE3RAVL8mwAUldM3RlQTp0XqIDm8i6fAL3dQuQdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fx15v/a2L1xN4Da0l14LrWpD9CtQyRz4Twb3j883wqaOp5KnZgHTNd/pLOzMlO0gJ
-         ZcMVCzxUu1SKX5Zcn71V+TGwwlV1rJWwZpSasXu+8uqEMWWHF+t9Kg51/YymHXWmV+
-         Homu4gM4cql0m6PqqKrQgYOyVZQlOs81YooPHfmE=
+        b=bPdv6O/u1R/TMq4a4aapQWN9a7rzJz1dPNem7tCbgSbnqas54ERLIecfwuUuhdR/d
+         IZvyIksUAVgiBJhxlFYrFuiaOC9Kpc1Fk6plAN4VsovksXVK6F/8uTUTt3rvPS7sK2
+         nEX/wgvtu1xyLT0bPfchRAlwEvTog0P4ALAbbGgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5.0 111/122] gpio: mxc: add check to return defer probe if clock tree NOT ready
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 18/62] kasan: prevent compiler from optimizing away memset in tests
 Date:   Mon,  6 May 2019 16:32:49 +0200
-Message-Id: <20190506143104.441736734@linuxfoundation.org>
+Message-Id: <20190506143052.648187716@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +57,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-commit a329bbe707cee2cf8c660890ef2ad0d00ec7e8a3 upstream.
+commit 69ca372c100fba99c78ef826a1795aa86e4f01a8 upstream.
 
-On i.MX8MQ platform, clock driver uses platform driver
-model and it is probed after GPIO driver, so when GPIO
-driver fails to get clock, it should check the error type
-to decide whether to return defer probe or just ignore
-the clock operation.
+A compiler can optimize away memset calls by replacing them with mov
+instructions.  There are KASAN tests that specifically test that KASAN
+correctly handles memset calls so we don't want this optimization to
+happen.
 
-Fixes: 2808801aab8a ("gpio: mxc: add clock operation")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The solution is to add -fno-builtin flag to test_kasan.ko
+
+Link: http://lkml.kernel.org/r/105ec9a308b2abedb1a0d1fdced0c22d765e4732.1519924383.git.andreyknvl@google.com
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nick Terrell <terrelln@fb.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Jeff Layton <jlayton@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-mxc.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ lib/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -438,8 +438,11 @@ static int mxc_gpio_probe(struct platfor
- 
- 	/* the controller clock is optional */
- 	port->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(port->clk))
-+	if (IS_ERR(port->clk)) {
-+		if (PTR_ERR(port->clk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
- 		port->clk = NULL;
-+	}
- 
- 	err = clk_prepare_enable(port->clk);
- 	if (err) {
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -46,6 +46,7 @@ obj-$(CONFIG_TEST_BPF) += test_bpf.o
+ obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
+ obj-$(CONFIG_TEST_HASH) += test_hash.o
+ obj-$(CONFIG_TEST_KASAN) += test_kasan.o
++CFLAGS_test_kasan.o += -fno-builtin
+ obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
+ obj-$(CONFIG_TEST_LKM) += test_module.o
+ obj-$(CONFIG_TEST_RHASHTABLE) += test_rhashtable.o
 
 
