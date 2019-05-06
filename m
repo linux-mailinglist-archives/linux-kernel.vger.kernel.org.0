@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4E0714CF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A924014E16
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfEFOqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43736 "EHLO mail.kernel.org"
+        id S1728700AbfEFOnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:43:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728600AbfEFOqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:10 -0400
+        id S1727971AbfEFOng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14D792053B;
-        Mon,  6 May 2019 14:46:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 982E621479;
+        Mon,  6 May 2019 14:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153969;
-        bh=4fNEhUpTSk6ioQrT4WYstrl6DKNkYCRJBUW7GwlqANI=;
+        s=default; t=1557153815;
+        bh=8ouWa8sAEXd9Y+N7a4m1NSpyjsEb1Qcx/jrtP7u8oUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCMt0gX4nkBRa10jFbiRBYFGrVyMV0By/QLZuOIDIQDAW3+imGjrYTsrc71bqVRXU
-         vPZAkZMx+aM9CLPjbNjH9c8ZMSZpX/S/Qzav2azvsqu4T+NLpPBM5FT3pNI4jegx/u
-         seswzdqFzElIAsLadVe9YXQUtTP2M8prZ860jIb4=
+        b=jhHB39sAmIDR5UWAkiIxjbQmeTe4+Sa4LsYTzstF5ZD+bOgqgoieIIFdvsM18GYVp
+         dgXJDddbFE3tw7app6houk/dcAkcJw/cgfDtJF1zqRUmrWU4YDp3UoFiOMNa+vJnPl
+         JUQFk85a1JHK9jF/f1AVhjIRbtAnR+zi9VCFrtlg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 64/75] ASoC: stm32: fix sai driver name initialisation
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 99/99] media: v4l2: i2c: ov7670: Fix PLL bypass register values
 Date:   Mon,  6 May 2019 16:33:12 +0200
-Message-Id: <20190506143059.065468428@linuxfoundation.org>
+Message-Id: <20190506143102.774675709@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 17d3069ccf06970e2db3f7cbf4335f207524279e upstream.
+commit 61da76beef1e4f0b6ba7be4f8d0cf0dac7ce1f55 upstream.
 
-This patch fixes the sai driver structure overwriting which results in
-a cpu dai name equal NULL.
+The following commits:
+commit f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+commit 04ee6d92047e ("[media] media: ov7670: add possibility to bypass pll for ov7675")
+introduced the ability to bypass PLL multiplier and use input clock (xvclk)
+as pixel clock output frequency for ov7675 sensor.
 
-Fixes: 3e086ed ("ASoC: stm32: add SAI driver")
+PLL is bypassed using register DBLV[7:6], according to ov7670 and ov7675
+sensor manuals. Macros used to set DBLV register seem wrong in the
+driver, as their values do not match what reported in the datasheet.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fix by changing DBLV_* macros to use bits [7:6] and set bits [3:0] to
+default 0x0a reserved value (according to datasheets).
+
+While at there, remove a write to DBLV register in
+"ov7675_set_framerate()" that over-writes the previous one to the same
+register that takes "info->pll_bypass" flag into account instead of setting PLL
+multiplier to 4x unconditionally.
+
+And, while at there, since "info->pll_bypass" is only used in
+set/get_framerate() functions used by ov7675 only, it is not necessary
+to check for the device id at probe time to make sure that when using
+ov7670 "info->pll_bypass" is set to false.
+
+Fixes: f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/stm/stm32_sai_sub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov7670.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -873,7 +873,6 @@ static int stm32_sai_sub_dais_init(struc
- 	if (!sai->cpu_dai_drv)
- 		return -ENOMEM;
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -159,10 +159,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-
+ #define REG_GFIX	0x69	/* Fix gain control */
  
--	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
- 	if (STM_SAI_IS_PLAYBACK(sai)) {
- 		memcpy(sai->cpu_dai_drv, &stm32_sai_playback_dai,
- 		       sizeof(stm32_sai_playback_dai));
-@@ -883,6 +882,7 @@ static int stm32_sai_sub_dais_init(struc
- 		       sizeof(stm32_sai_capture_dai));
- 		sai->cpu_dai_drv->capture.stream_name = sai->cpu_dai_drv->name;
- 	}
-+	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
+ #define REG_DBLV	0x6b	/* PLL control an debugging */
+-#define   DBLV_BYPASS	  0x00	  /* Bypass PLL */
+-#define   DBLV_X4	  0x01	  /* clock x4 */
+-#define   DBLV_X6	  0x10	  /* clock x6 */
+-#define   DBLV_X8	  0x11	  /* clock x8 */
++#define   DBLV_BYPASS	  0x0a	  /* Bypass PLL */
++#define   DBLV_X4	  0x4a	  /* clock x4 */
++#define   DBLV_X6	  0x8a	  /* clock x6 */
++#define   DBLV_X8	  0xca	  /* clock x8 */
  
- 	return 0;
+ #define REG_SCALING_XSC	0x70	/* Test pattern and horizontal scale factor */
+ #define   TEST_PATTTERN_0 0x80
+@@ -862,7 +862,7 @@ static int ov7675_set_framerate(struct v
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return ov7670_write(sd, REG_DBLV, DBLV_X4);
++	return 0;
  }
+ 
+ static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
+@@ -1797,11 +1797,7 @@ static int ov7670_probe(struct i2c_clien
+ 		if (config->clock_speed)
+ 			info->clock_speed = config->clock_speed;
+ 
+-		/*
+-		 * It should be allowed for ov7670 too when it is migrated to
+-		 * the new frame rate formula.
+-		 */
+-		if (config->pll_bypass && id->driver_data != MODEL_OV7670)
++		if (config->pll_bypass)
+ 			info->pll_bypass = true;
+ 
+ 		if (config->pclk_hb_disable)
 
 
