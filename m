@@ -2,120 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F4015521
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 22:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147F91552D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 23:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfEFU6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 16:58:33 -0400
-Received: from mail-eopbgr80075.outbound.protection.outlook.com ([40.107.8.75]:34805
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726363AbfEFU6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 16:58:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=p1hq.onmicrosoft.com;
- s=selector1-phaseone-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3IRyLohPtFzcZDKVR3ivuyKULe5rrILs+UtovUaTDzQ=;
- b=R2hG9rL5TLqnjKBmFD7aXMlPLEEpp1Rlj9Rw1JZi0FmCtING5IiWs7EjtkKb0Ru+hnh36Zv1LyuouPfGWmOeUqxehWn80jyLHYEpZJTyGKL6P8OAXq8TT92VCjD27w3eF9N/1XTkV3dLs+WUlyM0x/A6WC1VW07Z94sEHjMdDIM=
-Received: from DB8PR01MB6027.eurprd01.prod.exchangelabs.com (10.255.18.203) by
- DB8PR01MB5930.eurprd01.prod.exchangelabs.com (10.255.17.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.10; Mon, 6 May 2019 20:58:28 +0000
-Received: from DB8PR01MB6027.eurprd01.prod.exchangelabs.com
- ([fe80::b938:19d5:d32c:61ff]) by DB8PR01MB6027.eurprd01.prod.exchangelabs.com
- ([fe80::b938:19d5:d32c:61ff%3]) with mapi id 15.20.1856.012; Mon, 6 May 2019
- 20:58:28 +0000
-From:   "Claus H. Stovgaard" <cst@phaseone.com>
-To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
-Subject: Re: [PATCH 3/3] usb: dwc3: gadget: Add support for disabling U1 and
- U2 entries
-Thread-Topic: [PATCH 3/3] usb: dwc3: gadget: Add support for disabling U1 and
- U2 entries
-Thread-Index: AQHVBE5z5fF2b2KOL0m3xowevYRPmg==
-Date:   Mon, 6 May 2019 20:58:27 +0000
-Message-ID: <1557176302.18203.20.camel@phaseone.com>
-References: <1556792423-4833-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-         <1556792423-4833-4-git-send-email-anurag.kumar.vulisha@xilinx.com>
-         <30102591E157244384E984126FC3CB4F639E7BA8@us01wembx1.internal.synopsys.com>
-In-Reply-To: <30102591E157244384E984126FC3CB4F639E7BA8@us01wembx1.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2.110.44.75]
-x-mailer: Evolution 3.24.6 
-x-clientproxiedby: HE1PR0202CA0031.eurprd02.prod.outlook.com
- (2603:10a6:3:e4::17) To DB8PR01MB6027.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:eb::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=cst@phaseone.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e5a19076-147c-4fe7-12ff-08d6d2659555
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DB8PR01MB5930;
-x-ms-traffictypediagnostic: DB8PR01MB5930:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <DB8PR01MB5930FF2522CB83D1E8F9DFF9DA300@DB8PR01MB5930.eurprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0029F17A3F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(39850400004)(136003)(376002)(189003)(199004)(6512007)(305945005)(966005)(478600001)(229853002)(81166006)(7736002)(52116002)(6306002)(99286004)(6246003)(5660300002)(68736007)(486006)(66946007)(66066001)(66476007)(25786009)(4326008)(53936002)(66556008)(64756008)(73956011)(256004)(66446008)(55236004)(386003)(6506007)(102836004)(103116003)(71190400001)(26005)(76176011)(50226002)(71200400001)(8676002)(6436002)(8936002)(81156014)(6486002)(110136005)(54906003)(316002)(14454004)(476003)(2616005)(86362001)(36756003)(446003)(11346002)(6116002)(186003)(3846002)(2906002)(7416002)(99106002)(6606295002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR01MB5930;H:DB8PR01MB6027.eurprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: phaseone.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: w7BAYoKNHD2eAhqTpcxqP/+DPVA9ptrVVgU7BPe/KgleNTILr+1OXRl1NYVNnyei/JzaICBQaURQHT8KnbK0vMfhtoSTkCDDuCdTxptEdcixw48CITklemG+PDyNYczIoMrgGuq12146H+O6MDVw73GwEEPTaI0QQp5ySs82NcaPjgTaniSwPduSqRBE8PC97cwGa4xb+19hv/TfmHDKj5Np6LQOeHcIH3vFiskJJXOfspqwkZBOCQepYDxQw2AVio8ACh9ylzkBkwtdDOUJtpu8Qy6ATSnnQ8ZVGaMo8SMOuaOszHqBO3sfNIXOlzUgpywAWcZ27swZZ0JSPlFfIPkLU7V2RXm1vi+jwA06QFidIkHv4/nTDxVSiVr2v9CpP0xr4u0N+usjrSSM7XD4/54EV7fVFoeAFkwZ4LB9sSk=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FEAA0156C49356438C41068A5B7ACC39@eurprd01.prod.exchangelabs.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: phaseone.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5a19076-147c-4fe7-12ff-08d6d2659555
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2019 20:58:28.4242
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: cbe5b4c6-877a-4fe4-be65-3be424dd0574
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR01MB5930
+        id S1726492AbfEFVAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 17:00:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47010 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726118AbfEFVAW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 17:00:22 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x46KvtIQ023358;
+        Mon, 6 May 2019 16:59:59 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2saudatjp4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 May 2019 16:59:59 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x46F3WXn024199;
+        Mon, 6 May 2019 15:04:04 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 2s92c3vkjh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 May 2019 15:04:04 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x46KwgtO35324140
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 May 2019 20:58:42 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0900AAC05E;
+        Mon,  6 May 2019 20:58:42 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DD0FAC05B;
+        Mon,  6 May 2019 20:58:41 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.3.116.186])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  6 May 2019 20:58:41 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, joel@jms.id.au, pmeerw@pmeerw.net,
+        lars@metafoo.de, knaack.h@gmx.de, jic23@kernel.org,
+        Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH 0/3] iio: Add driver for Infineon DPS310
+Date:   Mon,  6 May 2019 20:58:32 +0000
+Message-Id: <1557176315-29401-1-git-send-email-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-06_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=873 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905060165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVGhpbmggYW5kIEFudXJhZw0KDQpPbiBtYW4sIDIwMTktMDUtMDYgYXQgMTk6MjEgKzAwMDAs
-IFRoaW5oIE5ndXllbiB3cm90ZToNCg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9kd2Mz
-L2NvcmUuYyBiL2RyaXZlcnMvdXNiL2R3YzMvY29yZS5jDQo+ID4gaW5kZXggYTFiMTI2Zi4uNGYw
-OTEyYyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3VzYi9kd2MzL2NvcmUuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvdXNiL2R3YzMvY29yZS5jDQo+ID4gQEAgLTEyODUsNiArMTI4NSwxMCBAQCBzdGF0
-aWMgdm9pZCBkd2MzX2dldF9wcm9wZXJ0aWVzKHN0cnVjdCBkd2MzDQo+ID4gKmR3YykNCj4gPiAg
-CQkJCSJzbnBzLGRpc191Ml9zdXNwaHlfcXVpcmsiKTsNCj4gPiAgCWR3Yy0+ZGlzX2VuYmxzbHBt
-X3F1aXJrID0gZGV2aWNlX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYsDQo+ID4gIAkJCQkic25wcyxk
-aXNfZW5ibHNscG1fcXVpcmsiKTsNCj4gPiArCWR3Yy0+ZGlzX3UxX2VudHJ5X3F1aXJrID0gZGV2
-aWNlX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYsDQo+ID4gKwkJCQkic25wcyxkaXNfdTFfZW50cnlf
-cXVpcmsiKTsNCj4gPiArCWR3Yy0+ZGlzX3UyX2VudHJ5X3F1aXJrID0gZGV2aWNlX3Byb3BlcnR5
-X3JlYWRfYm9vbChkZXYsDQo+ID4gKwkJCQkic25wcyxkaXNfdTJfZW50cnlfcXVpcmsiKTsNCj4g
-DQo+IFBsZWFzZSB1c2UgIi0iIHJhdGhlciB0aGFuICJfIiBpbiB0aGUgcHJvcGVydHkgbmFtZXMu
-DQoNCkkgaGF2ZSB0aG91Z2h0IGFib3V0IHRoaXMgZmVhdHVyZSBvdmVyIHRoZSB3ZWVrZW5kLCBh
-bmQgdGhpbmsgdGhlDQpuYW1pbmcgc2hvdWxkIGJlIGNoYW5nZWQgdG8gc29tZXRoaW5nIGxpa2Ug
-InNucHMsYm9zLXUxLWV4aXQtbGF0LWluLXVzIiANCmFuZCBuYW1lZCB0aGUgc2FtZSBpbiB0aGUg
-Y29kZS4gQW5kIHRoZW4gYmUgdGhlIHZhbHVlIHVzZWQgYnkgdGhlDQpnZXRfY29uZmlnX3BhcmFt
-cy4gRS5nLiB0aGUgZGV2aWNlLXRyZWUgaXMgdXNlZCB0byBzZXQgdGhlIHZhbHVlcw0KZGlyZWN0
-bHkgdXNlZCBmb3IgYlV4ZGV2RXhpdExhdCBpbnN0ZWFkIG9mIG5hbWVkIHNvbWV0aGluZyBub3Qg
-cmVsYXRlZA0KdG8gZXhpdCBsYXRlbmN5Lg0KDQpXaXRoIHRoaXMgdGhlIG5hbWUgYW5kIGZ1bmN0
-aW9uIGlzIGEgMSB0byAxIG1hdGNoLCBhbmQgeW91IGNhbiBhbW9uZw0Kb3RoZXJzIHNldCBpdCB0
-byAwIGZvciBvcHRhaW5pbmcgd2hhdCBBbnVyYWcgd2FudHMuDQoNClJlZ2FyZGluZyB0aGUgZGlz
-YWJsaW5nIG9mIFUxIC8gVTIuIEkgc2VuZCB0aGlzIHRvIEFudXJhZw0KaHR0cHM6Ly9tYXJjLmlu
-Zm8vP2w9bGludXgtdXNiJm09MTU1NjgzMjk5MzExOTU0Jnc9Mg0KSGVyZSBpIGNyZWF0ZWQgYSBj
-b25maWdmcyBpbnRlcmZhY2Ugd2l0aCB0aGUgbmFtZXMgImxwbV9VMV9kaXNhYmxlIiBhbmQNCiJs
-cG1fVTJfZGlzYWJsZSIgZm9yIGNvbnRyb2xsaW5nIHRoZSBEVENMIG9mIGR3YzMsIGFuZCByZWpl
-Y3QNClNFVF9GRUFUVVJFKFUxL1UyKQ0KDQpXaWxsIHNlbmQgdGhpcyBpbiBzZXBlcmF0ZSBwYXRj
-aCB0b21vcnJvdywgaW4gdGhlIGhvcGUgdGhhdCBBbnVyYWdzDQpmZWF0dXJlIGNhbiBiZWNvbWUg
-YSB3YXkgZm9yIGNvbnRyb2xsaW5nIGV4aXQgbGF0ZW5jeSwgYW5kIG15IHBhdGNoDQpiZWNvbWUg
-YSB3YXkgZm9yIGRpc2FibGluZyBVMS9VMg0KDQpCUg0KQ2xhdXMNCg==
+The DPS310 is a temperature and pressure sensor. It can be accessed over i2c
+and SPI.
+
+The driver supports polled measurement of temperature and pressure over i2c
+only.
+
+Christopher Bostic (1):
+  iio: dps310: Temperature measurement errata
+
+Eddie James (1):
+  iio: dps310: Add pressure sensing capability
+
+Joel Stanley (1):
+  iio: Add driver for Infineon DPS310
+
+ MAINTAINERS                   |   6 +
+ drivers/iio/pressure/Kconfig  |  10 +
+ drivers/iio/pressure/Makefile |   1 +
+ drivers/iio/pressure/dps310.c | 753 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 770 insertions(+)
+ create mode 100644 drivers/iio/pressure/dps310.c
+
+-- 
+2.7.4
+
