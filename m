@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D12D314EDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA1A14C50
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfEFPFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59836 "EHLO mail.kernel.org"
+        id S1727196AbfEFOiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfEFOih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:37 -0400
+        id S1726679AbfEFOiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:38:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632B621479;
-        Mon,  6 May 2019 14:38:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7806720449;
+        Mon,  6 May 2019 14:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153516;
-        bh=3z1Fx/ysaX/9QBrtU064uvhtjuzLx7SX+k95KYaEq7s=;
+        s=default; t=1557153529;
+        bh=/s6rXOI8IV/DPvBnhM0ct5g2KPuwwczgCDOBFL9FudM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2JKd3VM5zf0jyJ+7YW+J8bDqMblUQwwJGBcGb4Mskv76rsqh8yU5QiOFR7UpLdJgw
-         1yBIxIopHtVoVTQDysbApclKuM4yEDP1/Vv4E0JOIa192JVxet9vDDqfGRmL0vtDTB
-         ZaVpcBdJMU2415dEEhKjoXEzsVCU424TRdHQKam0=
+        b=G8F40JcAl1m3X77wnEpE+OvJcQURU/OtCqcWUWEMwOi56LG8nt6llmq1S5R+9kGOQ
+         T3+oBDPWrBhLzbpNjFv1xSf8giOiFC0nC6XqMnCoT/eo3jcR1b0Va6IGXmgHN9sjSa
+         Q365uRv+jsKFkQivxsb+rB/0p17YRLGkQCpCzoow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        stable@vger.kernel.org, Yu Zhang <yu.c.zhang@linux.intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.0 101/122] KVM: nVMX: Remove a rogue "rax" clobber from nested_vmx_check_vmentry_hw()
-Date:   Mon,  6 May 2019 16:32:39 +0200
-Message-Id: <20190506143103.836917849@linuxfoundation.org>
+Subject: [PATCH 5.0 102/122] kvm: vmx: Fix typos in vmentry/vmexit control setting
+Date:   Mon,  6 May 2019 16:32:40 +0200
+Message-Id: <20190506143103.899030465@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
 References: <20190506143054.670334917@linuxfoundation.org>
@@ -44,33 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Yu Zhang <yu.c.zhang@linux.intel.com>
 
-commit 9ce0a07a6f49822238fd4357c02e0dba060a43cc upstream.
+commit d92935979adba274b1099e67b7f713f6d8413121 upstream.
 
-RAX is not touched by nested_vmx_check_vmentry_hw(), directly or
-indirectly (e.g. vmx_vmenter()).  Remove it from the clobber list.
+Previously, 'commit f99e3daf94ff ("KVM: x86: Add Intel PT
+virtualization work mode")' work mode' offered framework
+to support Intel PT virtualization. However, the patch has
+some typos in vmx_vmentry_ctrl() and vmx_vmexit_ctrl(), e.g.
+used wrong flags and wrong variable, which will cause the
+VM entry failure later.
 
-Fixes: 52017608da33 ("KVM: nVMX: add option to perform early consistency checks via H/W")
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Fixes: 'commit f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work mode")'
+Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx/nested.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/vmx/vmx.h |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2793,7 +2793,7 @@ static int nested_vmx_check_vmentry_hw(s
- 		[fail]"i"(offsetof(struct vcpu_vmx, fail)),
- 		[host_rsp]"i"(offsetof(struct vcpu_vmx, host_rsp)),
- 		[wordsize]"i"(sizeof(ulong))
--	      : "rax", "cc", "memory"
-+	      : "cc", "memory"
- 	);
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -444,7 +444,8 @@ static inline u32 vmx_vmentry_ctrl(void)
+ {
+ 	u32 vmentry_ctrl = vmcs_config.vmentry_ctrl;
+ 	if (pt_mode == PT_MODE_SYSTEM)
+-		vmentry_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP | VM_EXIT_CLEAR_IA32_RTIT_CTL);
++		vmentry_ctrl &= ~(VM_ENTRY_PT_CONCEAL_PIP |
++				  VM_ENTRY_LOAD_IA32_RTIT_CTL);
+ 	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
+ 	return vmentry_ctrl &
+ 		~(VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL | VM_ENTRY_LOAD_IA32_EFER);
+@@ -454,9 +455,10 @@ static inline u32 vmx_vmexit_ctrl(void)
+ {
+ 	u32 vmexit_ctrl = vmcs_config.vmexit_ctrl;
+ 	if (pt_mode == PT_MODE_SYSTEM)
+-		vmexit_ctrl &= ~(VM_ENTRY_PT_CONCEAL_PIP | VM_ENTRY_LOAD_IA32_RTIT_CTL);
++		vmexit_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP |
++				 VM_EXIT_CLEAR_IA32_RTIT_CTL);
+ 	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
+-	return vmcs_config.vmexit_ctrl &
++	return vmexit_ctrl &
+ 		~(VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL | VM_EXIT_LOAD_IA32_EFER);
+ }
  
- 	preempt_enable();
 
 
