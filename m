@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 368BE1444E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 07:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D96A91444C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 07:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfEFFtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 01:49:22 -0400
+        id S1726279AbfEFFtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 01:49:12 -0400
 Received: from ms01.santannapisa.it ([193.205.80.98]:57922 "EHLO
         mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfEFFtG (ORCPT
+        with ESMTP id S1726218AbfEFFtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 01:49:06 -0400
+        Mon, 6 May 2019 01:49:08 -0400
 X-Greylist: delayed 3600 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 01:48:55 EDT
 Received: from [151.41.47.232] (account l.abeni@santannapisa.it HELO sweethome.home-life.hub)
   by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 138841010; Mon, 06 May 2019 06:49:00 +0200
+  with ESMTPSA id 138841011; Mon, 06 May 2019 06:49:01 +0200
 From:   Luca Abeni <luca.abeni@santannapisa.it>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
         luca abeni <luca.abeni@santannapisa.it>
-Subject: [RFC PATCH 4/6] sched/dl: Improve capacity-aware wakeup
-Date:   Mon,  6 May 2019 06:48:34 +0200
-Message-Id: <20190506044836.2914-5-luca.abeni@santannapisa.it>
+Subject: [RFC PATCH 5/6] sched/dl: If the task does not fit anywhere, select the fastest core
+Date:   Mon,  6 May 2019 06:48:35 +0200
+Message-Id: <20190506044836.2914-6-luca.abeni@santannapisa.it>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190506044836.2914-1-luca.abeni@santannapisa.it>
 References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
@@ -48,36 +48,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: luca abeni <luca.abeni@santannapisa.it>
 
-Instead of considering the "static CPU bandwidth" allocated to
-a SCHED_DEADLINE task (ratio between its maximum runtime and
-reservation period), try to use the remaining runtime and time
-to scheduling deadline.
+When a task has a remaining runtime that cannot be served within the
+scheduling deadline by anyone of the idle cores, the task is doomed
+to miss its deadline (this can happen, because the admission control
+only guarantees a bounded tardiness, not the hard respect of all
+deadlines). In this case, try to select the fastest idle core, to
+minimize the tardiness.
 
 Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
 ---
- kernel/sched/cpudeadline.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/sched/cpudeadline.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-index d21f7905b9c1..111dd9ac837b 100644
+index 111dd9ac837b..2a4ac7b529b7 100644
 --- a/kernel/sched/cpudeadline.c
 +++ b/kernel/sched/cpudeadline.c
-@@ -114,8 +114,13 @@ static inline int dl_task_fit(const struct sched_dl_entity *dl_se,
- 			      int cpu, u64 *c)
- {
- 	u64 cap = (arch_scale_cpu_capacity(NULL, cpu) * arch_scale_freq_capacity(cpu)) >> SCHED_CAPACITY_SHIFT;
--	s64 rel_deadline = dl_se->dl_deadline;
--	u64 rem_runtime  = dl_se->dl_runtime;
-+	s64 rel_deadline = dl_se->deadline - sched_clock_cpu(smp_processor_id());
-+	u64 rem_runtime  = dl_se->runtime;
-+
-+	if ((rel_deadline < 0) || (rel_deadline * dl_se->dl_runtime < dl_se->dl_deadline * rem_runtime)) {
-+		rel_deadline = dl_se->dl_deadline;
-+		rem_runtime  = dl_se->dl_runtime;
-+	}
+@@ -123,7 +123,7 @@ static inline int dl_task_fit(const struct sched_dl_entity *dl_se,
+ 	}
  
  	if (c)
- 		*c = cap;
+-		*c = cap;
++		*c = arch_scale_cpu_capacity(NULL, cpu);
+ 
+ 	if ((rel_deadline * cap) >> SCHED_CAPACITY_SHIFT < rem_runtime)
+ 		return 0;
+@@ -146,14 +146,22 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+ 
+ 	if (later_mask &&
+ 	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_allowed)) {
+-		int cpu;
++		int cpu, max_cpu = -1;
++		u64 max_cap = 0;
+ 
+ 		for_each_cpu(cpu, later_mask) {
+ 			u64 cap;
+ 
+ 			if (!dl_task_fit(&p->dl, cpu, &cap))
+ 				cpumask_clear_cpu(cpu, later_mask);
++
++			if (cap > max_cap) {
++				max_cap = cap;
++				max_cpu = cpu;
++			}
+ 		}
++		if (cpumask_empty(later_mask) && max_cap)
++			cpumask_set_cpu(max_cpu, later_mask);
+ 
+ 		if (!cpumask_empty(later_mask))
+ 			return 1;
 -- 
 2.20.1
 
