@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFDA514E9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4E314CB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfEFOjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:39:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60506 "EHLO mail.kernel.org"
+        id S1728119AbfEFOnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:43:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfEFOjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:39:08 -0400
+        id S1727862AbfEFOnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD01220449;
-        Mon,  6 May 2019 14:39:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A67C21019;
+        Mon,  6 May 2019 14:43:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153548;
-        bh=LpPfRNmlyWgRKQpclZBkufT7CTTBKC7Z/rwV7dZGWR8=;
+        s=default; t=1557153785;
+        bh=ytfqBnHqYP60N8GffONt0227Pm/b+Gt+bZtPDt+d7I4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yvGj4tmUwkc/7Pp7tVAzdV0Tn1UVJGROU2MQ+hn1bxeG8ozLarxzvLSJQvPEHWZMB
-         KjHod5zeTR4mC4t8a9e47rnFAskWIDAHgWZBwjK/LkR/bjHnryX/NcR7TuMxIDFCwK
-         PID+eGw7EsgZAYPZjgAFJzublz1Z2dYQ6gyDPwAk=
+        b=OisGWg4xvmB/B6bSmSf1ge4k6VUezZUsVU7YavXWveMnZn7wMWjBrEa57wXgqK59S
+         P3Yx4Tvk1bknwq4qHkBLCJydFT44YcnI/8L86H8uHaZ2Em7sW4tori+T6LytnfOwDS
+         lKtkAioOuHbC4SVKUxUOtZBGNmxLb2JfV2THsYfY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.0 099/122] ASoC: stm32: fix sai driver name initialisation
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <lkp@intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 64/99] sh: fix multiple function definition build errors
 Date:   Mon,  6 May 2019 16:32:37 +0200
-Message-Id: <20190506143103.624590586@linuxfoundation.org>
+Message-Id: <20190506143059.925452525@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +49,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+[ Upstream commit acaf892ecbf5be7710ae05a61fd43c668f68ad95 ]
 
-commit 17d3069ccf06970e2db3f7cbf4335f207524279e upstream.
+Many of the sh CPU-types have their own plat_irq_setup() and
+arch_init_clk_ops() functions, so these same (empty) functions in
+arch/sh/boards/of-generic.c are not needed and cause build errors.
 
-This patch fixes the sai driver structure overwriting which results in
-a cpu dai name equal NULL.
+If there is some case where these empty functions are needed, they can
+be retained by marking them as "__weak" while at the same time making
+builds that do not need them succeed.
 
-Fixes: 3e086ed ("ASoC: stm32: add SAI driver")
+Fixes these build errors:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+arch/sh/boards/of-generic.o: In function `plat_irq_setup':
+(.init.text+0x134): multiple definition of `plat_irq_setup'
+arch/sh/kernel/cpu/sh2/setup-sh7619.o:(.init.text+0x30): first defined here
+arch/sh/boards/of-generic.o: In function `arch_init_clk_ops':
+(.init.text+0x118): multiple definition of `arch_init_clk_ops'
+arch/sh/kernel/cpu/sh2/clock-sh7619.o:(.init.text+0x0): first defined here
 
+Link: http://lkml.kernel.org/r/9ee4e0c5-f100-86a2-bd4d-1d3287ceab31@infradead.org
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/sh/boards/of-generic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1394,7 +1394,6 @@ static int stm32_sai_sub_dais_init(struc
- 	if (!sai->cpu_dai_drv)
- 		return -ENOMEM;
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index 26789ad28193..cb99df514a1c 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -175,10 +175,10 @@ static struct sh_machine_vector __initmv sh_of_generic_mv = {
  
--	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
- 	if (STM_SAI_IS_PLAYBACK(sai)) {
- 		memcpy(sai->cpu_dai_drv, &stm32_sai_playback_dai,
- 		       sizeof(stm32_sai_playback_dai));
-@@ -1404,6 +1403,7 @@ static int stm32_sai_sub_dais_init(struc
- 		       sizeof(stm32_sai_capture_dai));
- 		sai->cpu_dai_drv->capture.stream_name = sai->cpu_dai_drv->name;
- 	}
-+	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
+ struct sh_clk_ops;
  
- 	return 0;
+-void __init arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
++void __init __weak arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
+ {
  }
+ 
+-void __init plat_irq_setup(void)
++void __init __weak plat_irq_setup(void)
+ {
+ }
+-- 
+2.20.1
+
 
 
