@@ -2,89 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 937371438F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 04:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B63914388
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 04:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfEFCu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 5 May 2019 22:50:28 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58430 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbfEFCuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 May 2019 22:50:25 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A85A266489F02E471172;
-        Mon,  6 May 2019 10:50:23 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 6 May 2019 10:50:13 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <nhorman@redhat.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: use devm_kcalloc when allocating desc_cb
-Date:   Mon, 6 May 2019 10:48:52 +0800
-Message-ID: <1557110932-683-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557110932-683-1-git-send-email-tanhuazhong@huawei.com>
-References: <1557110932-683-1-git-send-email-tanhuazhong@huawei.com>
+        id S1726016AbfEFCuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 5 May 2019 22:50:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfEFCuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 May 2019 22:50:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SG/rqX2xe67P88isvEgP5AEb4JnGOKR0/Rffnrqoj/g=; b=WJA6/CXLEDQTYnpUBLJPsai+N
+        tCWHQkJK/nOPhgE2J9w19yZr4RUhQO7/0/IwTJLqgCuTfCQxH/eHVPJvP7h6oWfBgSnv94QCp/vi6
+        WJ6sBW/Rl/Xes4l/14jVYVmK2JA4L/i1D80nKfPHfqW4kC8N6waRFio0xrBSJWYq+hP9E/gFbmpbG
+        rHpJpHJHk4eJ/X9W2Y37xIWjIUWUg1eht2Nec79WPL8CbqrcG8xT1wpRBJrBJnbSs2SbFquvdTSKv
+        vyytHuXpCBy7svNsjBh0b+CuDVIdvLLpCXSrheUzo08JOd8t7aM0xWzJfIIMhfYt0GgkxPCEjKdRN
+        UA++FiZxA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hNThX-0000uE-3I; Mon, 06 May 2019 02:49:59 +0000
+Date:   Sun, 5 May 2019 19:49:58 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tamir Carmeli <carmeli.tamir@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Use list.h instead of file_system_type next
+Message-ID: <20190506024958.GC16963@bombadil.infradead.org>
+References: <20190504094549.10021-1-carmeli.tamir@gmail.com>
+ <20190504094549.10021-2-carmeli.tamir@gmail.com>
+ <20190504134503.GA16963@bombadil.infradead.org>
+ <CAKxm1-H9cgym_RQ-oLcZWEPpyUf5NrZPt_Zu3U=mpU=E38SbvQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKxm1-H9cgym_RQ-oLcZWEPpyUf5NrZPt_Zu3U=mpU=E38SbvQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+On Sun, May 05, 2019 at 09:25:21PM +0300, Tamir Carmeli wrote:
+> I just found it weird that there is a proprietary implementation of a
+> linked list while surely the kernel already offers well established
+> data structures.
 
-This patch uses devm_kcalloc instead of kcalloc when allocating
-ring->desc_cb, because devm_kcalloc not only ensure to free the
-memory when the dev is deallocted, but also allocate the memory
-from it's device memory node.
+It's a singly linked list rather than a doubly linked list.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> IMO, the current code is a bit hard to understand, especially the
+> addition of a new struct to the list in the line "*p = fs" after
+> find_filesystem returned the last member.
+> Correct, I'm not familiar with all the use cases of the code.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 65fb421..18711e0 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3478,8 +3478,8 @@ static int hns3_alloc_ring_memory(struct hns3_enet_ring *ring)
- 	if (ring->desc_num <= 0 || ring->buf_size <= 0)
- 		return -EINVAL;
- 
--	ring->desc_cb = kcalloc(ring->desc_num, sizeof(ring->desc_cb[0]),
--				GFP_KERNEL);
-+	ring->desc_cb = devm_kcalloc(ring_to_dev(ring), ring->desc_num,
-+				     sizeof(ring->desc_cb[0]), GFP_KERNEL);
- 	if (!ring->desc_cb) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -3500,7 +3500,7 @@ static int hns3_alloc_ring_memory(struct hns3_enet_ring *ring)
- out_with_desc:
- 	hns3_free_desc(ring);
- out_with_desc_cb:
--	kfree(ring->desc_cb);
-+	devm_kfree(ring_to_dev(ring), ring->desc_cb);
- 	ring->desc_cb = NULL;
- out:
- 	return ret;
-@@ -3509,7 +3509,7 @@ static int hns3_alloc_ring_memory(struct hns3_enet_ring *ring)
- static void hns3_fini_ring(struct hns3_enet_ring *ring)
- {
- 	hns3_free_desc(ring);
--	kfree(ring->desc_cb);
-+	devm_kfree(ring_to_dev(ring), ring->desc_cb);
- 	ring->desc_cb = NULL;
- 	ring->next_to_clean = 0;
- 	ring->next_to_use = 0;
--- 
-2.7.4
+It looks like a fairly standard implementation of a singly-linked 
+list in C to me.
+
+> I'm not sure that XArray is a good choice since there is no notion of
+> an index attached to the pointer, it's really just a linked list of
+> pointers.
+
+You don't need to attach an index to the pointer; you can just use
+xa_alloc() to store it at the first available index.
 
