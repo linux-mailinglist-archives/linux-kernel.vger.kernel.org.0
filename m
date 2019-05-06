@@ -2,57 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DACE148E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C169D148DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 13:24:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfEFL2a convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 07:28:30 -0400
-Received: from smtp.profeco.gob.mx ([201.144.226.30]:17357 "EHLO
-        owa.profeco.gob.mx" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726147AbfEFL2a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 07:28:30 -0400
-X-Greylist: delayed 321 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 07:28:29 EDT
-Received: from PFCOCEEXCH02.profeco.gob.mx (10.4.60.109) by
- PFCOCEEXCH03.profeco.gob.mx (10.4.60.108) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 6 May 2019 06:23:03 -0500
-Received: from coris.com (103.125.190.80) by PFCOCEEXCH02.profeco.gob.mx
- (10.4.60.123) with Microsoft SMTP Server id 14.3.408.0; Mon, 6 May 2019
- 06:22:54 -0500
-Reply-To: <kentpace@sina.com>
-From:   <derek@coris.com>
-To:     <linux-kernel@vger.kernel.org>
-Subject: Are you still alive
-Date:   Mon, 6 May 2019 04:23:08 -0700
-Message-ID: <20190506042307.5ECC75480A133482@coris.com>
+        id S1726255AbfEFLYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 07:24:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35158 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725883AbfEFLYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 07:24:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2C16AB6D;
+        Mon,  6 May 2019 11:24:48 +0000 (UTC)
+Date:   Mon, 6 May 2019 13:24:48 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RFC: console: hack up console_lock more v2
+Message-ID: <20190506112448.rng2oefmp2c262dq@pathway.suse.cz>
+References: <20190502141643.21080-1-daniel.vetter@ffwll.ch>
+ <20190506074553.21464-1-daniel.vetter@ffwll.ch>
+ <20190506081614.b7b22k4prodskbiy@pathway.suse.cz>
+ <20190506082628.wehkislebljxmk5d@pathway.suse.cz>
+ <20190506093812.GG17751@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506093812.GG17751@phenom.ffwll.local>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear, 
+On Mon 2019-05-06 11:38:13, Daniel Vetter wrote:
+> On Mon, May 06, 2019 at 10:26:28AM +0200, Petr Mladek wrote:
+> > On Mon 2019-05-06 10:16:14, Petr Mladek wrote:
+> > > On Mon 2019-05-06 09:45:53, Daniel Vetter wrote:
+> > > > console_trylock, called from within printk, can be called from pretty
+> > > > much anywhere. Including try_to_wake_up. Note that this isn't common,
+> > > > usually the box is in pretty bad shape at that point already. But it
+> > > > really doesn't help when then lockdep jumps in and spams the logs,
+> > > > potentially obscuring the real backtrace we're really interested in.
+> > > > One case I've seen (slightly simplified backtrace):
+> > > > 
+> > > >  Call Trace:
+> > > >   <IRQ>
+> > > >   console_trylock+0xe/0x60
+> > > >   vprintk_emit+0xf1/0x320
+> > > >   printk+0x4d/0x69
+> > > >   __warn_printk+0x46/0x90
+> > > >   native_smp_send_reschedule+0x2f/0x40
+> > > >   check_preempt_curr+0x81/0xa0
+> > > >   ttwu_do_wakeup+0x14/0x220
+> > > >   try_to_wake_up+0x218/0x5f0
+> > > 
+> > > try_to_wake_up() takes p->pi_lock. It could deadlock because it
+> > > can get called recursively from printk_safe_up().
+> > > 
+> > > And there are more locks taken from try_to_wake_up(), for example,
+> > > __task_rq_lock() taken from ttwu_remote().
+> > > 
+> > > IMHO, the most reliable solution would be do call the entire
+> > > up_console_sem() from printk deferred context. We could assign
+> > > few bytes for this context in the per-CPU printk_deferred
+> > > variable.
+> > 
+> > Ah, I was too fast and did the same mistake. This won't help because
+> > it would still call try_to_wake_up() recursively.
+> 
+> Uh :-/
+> 
+> > We need to call all printk's that can be called under locks
+> > taken in try_to_wake_up() path in printk deferred context.
+> > Unfortunately it is whack a mole approach.
+> 
+> Hm since it's whack-a-mole anyway, what about converting the WARN_ON into
+> a prinkt_deferred, like all the other scheduler related code? Feels a
+> notch more consistent to me than leaking the printk_context into areas it
+> wasn't really meant built for. Scheduler code already fully subscribed to
+> the whack-a-mole approach after all.
 
-Please confirm if you are still alive because two gentle men 
-walked into my office this morning to claim your inheritance 
-funds with our bank. They said that you are dead and that they 
-are your  representative. 
+I am not sure how exactly you mean the conversion.
 
-I got your email from the file of your relative 
-who is yet to be paid for the Contract he has executed before his 
-death several years ago.
+Anyway, we do not want to use printk_deferred() treewide. It reduces
+the chance that the messages reach consoles. Scheduler is an
+exception because of the possible deadlocks.
 
-You the beneficiary of this fund has 
-not been in contact with the bank to claim your fund. The 
-gentlemen submitted an address where they want your VISA DEBIT 
-ATM CARD sent. 
+A solution would be to define WARN_ON_DEFERRED() that would
+call normal WARN_ON() in printk deferred context and
+use in scheduler.
 
-If you are still alive, please indicate by sending your full 
-contact details within 7 day of receiving this message, faliure 
-to do so, I will send the card to the address submitted by your 
-representatives. 
-
-
-Regards
+Best Regards,
+Petr
