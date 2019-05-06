@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C89714CFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B8014CAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbfEFOqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
+        id S1728522AbfEFOmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:42:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728447AbfEFOqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:53 -0400
+        id S1728510AbfEFOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA32620449;
-        Mon,  6 May 2019 14:46:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60B4821479;
+        Mon,  6 May 2019 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154012;
-        bh=PfctUM6oIIxO1h4owGlyOr3ZDoVD2mBUki2EavE2GpQ=;
+        s=default; t=1557153757;
+        bh=6uI36CmgJ0/VrUNZlPf6wESC6TuMMxW77eB9pdUVEBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GND8Vwfly2znYlzu1uoV15F6a8/ZHi70kmzmv6RthrNn4dA4I5x/yZgAiALhKNitg
-         qSLQ036jVLoqgOAhQSY/EOiZKLJwSMtCpgTfUbARyQc7M0duB+oLZ4/0DgSYZJFVH6
-         fnI+NNW/TQtHnn6h8adg2QwsFn0hUESjLOOK/uCY=
+        b=JjP5Kk3R9mpZX1x/J3wg16ewNSy3nMKthLBr8vGdwXyVImFYSUTGjg6Z2jqHqRwJ8
+         972kMMbfXIrQQZKqp43L4RSt1Hxurfmjqs/Rg1NYGZvk/4C2khmWDLAh7RMBmSIxkv
+         qClsB223JzrxGRQ074byLfuqK/fbcUuysLGVTrJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 50/75] net: hns: fix ICMP6 neighbor solicitation messages discard problem
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Yuval Avnery <yuvalav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 85/99] IB/core: Destroy QP if XRC QP fails
 Date:   Mon,  6 May 2019 16:32:58 +0200
-Message-Id: <20190506143057.764149473@linuxfoundation.org>
+Message-Id: <20190506143101.688736872@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +46,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f058e46855dcbc28edb2ed4736f38a71fd19cadb ]
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-ICMP6 neighbor solicitation messages will be discard by the Hip06
-chips, because of not setting forwarding pool. Enable promisc mode
-has the same problem.
+commit 535005ca8e5e71918d64074032f4b9d4fef8981e upstream.
 
-This patch fix the wrong forwarding table configs for the multicast
-vague matching when enable promisc mode, and add forwarding pool
-for the forwarding table.
+The open-coded variant missed destroy of SELinux created QP, reuse already
+existing ib_detroy_qp() call and use this opportunity to clean
+ib_create_qp() from double prints and unclear exit paths.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Parav Pandit <parav@mellanox.com>
+Fixes: d291f1a65232 ("IB/core: Enforce PKey security on QPs")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 33 +++++++++++++++----
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ drivers/infiniband/core/verbs.c |   41 +++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index 7e82dfbb4340..7d0f3cd8a002 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -2743,6 +2743,17 @@ int hns_dsaf_get_regs_count(void)
- 	return DSAF_DUMP_REGS_NUM;
+--- a/drivers/infiniband/core/verbs.c
++++ b/drivers/infiniband/core/verbs.c
+@@ -1087,8 +1087,8 @@ struct ib_qp *ib_open_qp(struct ib_xrcd
+ }
+ EXPORT_SYMBOL(ib_open_qp);
+ 
+-static struct ib_qp *ib_create_xrc_qp(struct ib_qp *qp,
+-		struct ib_qp_init_attr *qp_init_attr)
++static struct ib_qp *create_xrc_qp(struct ib_qp *qp,
++				   struct ib_qp_init_attr *qp_init_attr)
+ {
+ 	struct ib_qp *real_qp = qp;
+ 
+@@ -1103,10 +1103,10 @@ static struct ib_qp *ib_create_xrc_qp(st
+ 
+ 	qp = __ib_open_qp(real_qp, qp_init_attr->event_handler,
+ 			  qp_init_attr->qp_context);
+-	if (!IS_ERR(qp))
+-		__ib_insert_xrcd_qp(qp_init_attr->xrcd, real_qp);
+-	else
+-		real_qp->device->destroy_qp(real_qp);
++	if (IS_ERR(qp))
++		return qp;
++
++	__ib_insert_xrcd_qp(qp_init_attr->xrcd, real_qp);
+ 	return qp;
  }
  
-+static int hns_dsaf_get_port_id(u8 port)
-+{
-+	if (port < DSAF_SERVICE_NW_NUM)
-+		return port;
-+
-+	if (port >= DSAF_BASE_INNER_PORT_NUM)
-+		return port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
-+
-+	return -EINVAL;
-+}
-+
- static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
- {
- 	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 1, 0, 0, 0x80};
-@@ -2808,23 +2819,33 @@ static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
- 	memset(&temp_key, 0x0, sizeof(temp_key));
- 	mask_entry.addr[0] = 0x01;
- 	hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
--			     port, mask_entry.addr);
-+			     0xf, mask_entry.addr);
- 	tbl_tcam_mcast.tbl_mcast_item_vld = 1;
- 	tbl_tcam_mcast.tbl_mcast_old_en = 0;
+@@ -1137,10 +1137,8 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 		return qp;
  
--	if (port < DSAF_SERVICE_NW_NUM) {
--		mskid = port;
--	} else if (port >= DSAF_BASE_INNER_PORT_NUM) {
--		mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
--	} else {
-+	/* set MAC port to handle multicast */
-+	mskid = hns_dsaf_get_port_id(port);
-+	if (mskid == -EINVAL) {
- 		dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
- 			dsaf_dev->ae_dev.name, port,
- 			mask_key.high.val, mask_key.low.val);
- 		return;
- 	}
-+	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
-+		     mskid % 32, 1);
+ 	ret = ib_create_qp_security(qp, device);
+-	if (ret) {
+-		ib_destroy_qp(qp);
+-		return ERR_PTR(ret);
+-	}
++	if (ret)
++		goto err;
  
-+	/* set pool bit map to handle multicast */
-+	mskid = hns_dsaf_get_port_id(port_num);
-+	if (mskid == -EINVAL) {
-+		dev_err(dsaf_dev->dev,
-+			"%s, pool bit map pnum(%d)error,key(%#x:%#x)\n",
-+			dsaf_dev->ae_dev.name, port_num,
-+			mask_key.high.val, mask_key.low.val);
-+		return;
+ 	qp->real_qp    = qp;
+ 	qp->qp_type    = qp_init_attr->qp_type;
+@@ -1153,8 +1151,15 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 	INIT_LIST_HEAD(&qp->sig_mrs);
+ 	qp->port = 0;
+ 
+-	if (qp_init_attr->qp_type == IB_QPT_XRC_TGT)
+-		return ib_create_xrc_qp(qp, qp_init_attr);
++	if (qp_init_attr->qp_type == IB_QPT_XRC_TGT) {
++		struct ib_qp *xrc_qp = create_xrc_qp(qp, qp_init_attr);
++
++		if (IS_ERR(xrc_qp)) {
++			ret = PTR_ERR(xrc_qp);
++			goto err;
++		}
++		return xrc_qp;
 +	}
- 	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
- 		     mskid % 32, 1);
+ 
+ 	qp->event_handler = qp_init_attr->event_handler;
+ 	qp->qp_context = qp_init_attr->qp_context;
+@@ -1181,11 +1186,8 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 
+ 	if (qp_init_attr->cap.max_rdma_ctxs) {
+ 		ret = rdma_rw_init_mrs(qp, qp_init_attr);
+-		if (ret) {
+-			pr_err("failed to init MR pool ret= %d\n", ret);
+-			ib_destroy_qp(qp);
+-			return ERR_PTR(ret);
+-		}
++		if (ret)
++			goto err;
+ 	}
+ 
+ 	/*
+@@ -1198,6 +1200,11 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 				 device->attrs.max_sge_rd);
+ 
+ 	return qp;
 +
- 	memcpy(&temp_key, &mask_key, sizeof(mask_key));
- 	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
- 				   (struct dsaf_tbl_tcam_data *)(&mask_key),
--- 
-2.20.1
-
++err:
++	ib_destroy_qp(qp);
++	return ERR_PTR(ret);
++
+ }
+ EXPORT_SYMBOL(ib_create_qp);
+ 
 
 
