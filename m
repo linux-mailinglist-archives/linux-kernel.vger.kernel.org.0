@@ -2,109 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C247714AC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 15:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E30C14AD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 15:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfEFNTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 09:19:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:46398 "EHLO mga12.intel.com"
+        id S1726349AbfEFNWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 09:22:04 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44333 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbfEFNTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 09:19:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 06:19:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="155548586"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 May 2019 06:19:18 -0700
-Subject: Re: [PATCH 1/2] usb: xhci: Make it possible to not have a secondary
- HCD (3.0)
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Hoan Tran <hoan@os.amperecomputing.com>
-References: <20190502045631.229386-1-drinkcat@chromium.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <6844539f-3d5e-e3ff-b498-390cdc731880@linux.intel.com>
-Date:   Mon, 6 May 2019 16:21:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1725773AbfEFNWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 09:22:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44yNgY75NTz9sBV;
+        Mon,  6 May 2019 23:22:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557148922;
+        bh=kfTLx+xXfJxD7LUn6+ixKHMZQDIcvXUReZ7bka84+Ng=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a4fF89IlRD6iogSJHzwcHP8BbSq+TZrdP+hGuzvyMf1V8xYRR99XfWGygmtK45Hiu
+         LYBW8C1sNrZARfqkD41rkiZuedxgL7pP+KluYGxxSY/PvUuUmzCtRg82TjiYqHh5Th
+         t+0BU1pGmTVR6Whi3dYQJ2NsxJwqYJD2/NefCOJ3o3a07FQFDPDBfB3t7hyqOj0ftH
+         Uc18M/g4b/ncgUKr3lNYumpafvUzck90CFVnOwKlRokAizAPkF1ZCiGZD+99gD02Aa
+         Oxa7L5VbqhH4e/iaJNyFl3Wt4t/oFV7kFCUt5kb840NeCFxaKkq+fFsWE5LcfuYKpC
+         MEPY4nOtcjpFw==
+Date:   Mon, 6 May 2019 23:22:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Message-ID: <20190506232200.1acfe572@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190502045631.229386-1-drinkcat@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/a28TwsnwpW9V5LZub9mSM0J"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2.5.2019 7.56, Nicolas Boichat wrote:
-> Some XHCI controllers may not have any USB 3.0 port, in this case, it
-> is not useful to create add hcd->shared_hcd, which has 2 main
-> downsides:
->   - A useless USB 3.0 root hub is created.
->   - A warning is thrown on boot:
-> hub 2-0:1.0: config failed, hub doesn't have any ports! (err -19)
-> 
-> The change is mostly about checking if hcd->shared_hcd is NULL before
-> accessing it. The one special case is in xhci_run, where we need to
-> call xhci_run_finished immediately, if there is no secondary hcd.
+--Sig_/a28TwsnwpW9V5LZub9mSM0J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-To me it looks like this creates an controller starting issue for
-xHC hardware that have both usb2 and usb3 ports.
+Hi all,
 
-When we have usb3 ports xhci->shared_hcd is not set yet when xhci_run is called
-the first time. We will end up starting the xHC before properly setting up the secondary hcd.
+Commit
 
-See further down for details
+  cc86bb923508 ("platform/x86: thinkpad_acpi: fix spelling mistake "capabil=
+ites" -> "capabilities"")
 
-> 
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> ---
-> 
-> This is a respin of https://lore.kernel.org/patchwork/patch/863993/,
-> hopefully addressing the comments there. Note that I dropped the change
-> in xhci-plat.c, as I do not have a device to test it, but made a
-> similar change in xhci-mtk.c, in the next patch.
-> 
-> (the @apm.com addresses seem to bounce, so I added some
-> @amperecomputing.com instead, if somebody there can track back the
-> original issue, I'm happy to provide a patch for xhci-plat.c as well)
-> 
-> drivers/usb/host/xhci-hub.c |  7 ++++--
->   drivers/usb/host/xhci.c     | 45 +++++++++++++++++++++++++++----------
->   2 files changed, 38 insertions(+), 14 deletions(-)
-> 
+is missing a Signed-off-by from its committer.
 
-...
+--=20
+Cheers,
+Stephen Rothwell
 
-> @@ -698,6 +703,10 @@ int xhci_run(struct usb_hcd *hcd)
->   
->   	xhci_debugfs_init(xhci);
->   
-> +	/* There is no secondary HCD, start the host controller immediately. */
-> +	if (!xhci->shared_hcd)
-> +		return xhci_run_finished(xhci);
-> +
+--Sig_/a28TwsnwpW9V5LZub9mSM0J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-PCI xHC controllers with both usb2 and usb3 ports will be started before usb3 parts are properly set up.
+-----BEGIN PGP SIGNATURE-----
 
-xhci_pci_probe()
-   usb_hcd_pci_probe()
-     usb_add_hcd()
-       hcd->driver->start(hcd)  // .start = xhci_run
-         xhci_run()
-           if (!xhci->shared_hcd)  // TRUE as xhci->shared_hcd is not yet set,
-	    return xhci_run_finished(xhci)  // starting controller too early here
-   xhci->shared_hcd = usb_create_shared_hcd()   // now xhci->shared_hcd is set.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQNPgACgkQAVBC80lX
+0GxjGgf7BC+Atj5DkaYwW7NFNib74ZqV5RzKo8nHvbcWVOhZe5ifPqe81PVIUCKp
+tfNS+JNDiFm9SgGqPwzWwTCHMYW3WrHo4vDhG/JC7U9D/symqURSs8Qc4Kw22tl5
+yOBJPOcYGSOi8pP9S+ZYQ/YMFr7hyxxZQM4YPyhGBumZopP7qqNZ4hW7FDdBNrI9
+oMmQyvGKVtW/X1NBzqE5QlluzPa9WbZi7a2DNT19WHTE03ba16G4oPloNgeBd02g
+z3zrxYOHQUk1Pxhv+hCJCEbpS7+dni+aQLGFim4klF3i7do6bMreqr2v5QfrFbvn
+xsWwBRkS80m3eLEgHHPHMFPvZAnJUQ==
+=h3pg
+-----END PGP SIGNATURE-----
 
--Mathias
+--Sig_/a28TwsnwpW9V5LZub9mSM0J--
