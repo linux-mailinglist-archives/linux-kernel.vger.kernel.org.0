@@ -2,42 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A1114E45
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B684C14E0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfEFOlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:41:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
+        id S1728569AbfEFO6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:58:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbfEFOk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:40:59 -0400
+        id S1728296AbfEFOnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9ED282087F;
-        Mon,  6 May 2019 14:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EADF2053B;
+        Mon,  6 May 2019 14:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153659;
-        bh=PP62qLmgfDJlZIPrBq8eayt1MJXDMqv4avsrry8kdIE=;
+        s=default; t=1557153831;
+        bh=4xYcLi0v/90g60aYbXadPiz+Amu7KqdU99q7SC1Cxl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=db+J6ys5FQf76tdqSuCKrhwodspuMi08k2WVt4yKV9N6GWgtImFGnYCD/WCnAmGnB
-         o2SI9igzBaWhmqHQ0lsMCrONn1AspM3Za2C06XhqZXprIz2ntCRcrrLMkP3tlJ4WOc
-         s0Fi2qREnPDf/rxatb6FYMByhQxUoHA1M6Yiqn5I=
+        b=UU9tnve7tTnDWVa4fU3NNQCnkLufrFWzRQt8vpf4TdgY1HXPxAxm16gEM4OkF+Vvm
+         +LNp9Ir5Y3e9Y7FcjsUVyrkUIpN+v9gNSBvHjGi7RpffW8VyEnvkOuWnGL/op2DtkD
+         LWTL5uhD2pJtSV5hS8v2dPsE9rUBzi/cuf6dGvss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 48/99] rtc: da9063: set uie_unsupported when relevant
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 13/75] kasan: prevent compiler from optimizing away memset in tests
 Date:   Mon,  6 May 2019 16:32:21 +0200
-Message-Id: <20190506143058.410177007@linuxfoundation.org>
+Message-Id: <20190506143054.399239912@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,42 +57,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 882c5e552ffd06856de42261460f46e18319d259 ]
+From: Andrey Konovalov <andreyknvl@google.com>
 
-The DA9063AD doesn't support alarms on any seconds and its granularity is
-the minute. Set uie_unsupported in that case.
+commit 69ca372c100fba99c78ef826a1795aa86e4f01a8 upstream.
 
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+A compiler can optimize away memset calls by replacing them with mov
+instructions.  There are KASAN tests that specifically test that KASAN
+correctly handles memset calls so we don't want this optimization to
+happen.
+
+The solution is to add -fno-builtin flag to test_kasan.ko
+
+Link: http://lkml.kernel.org/r/105ec9a308b2abedb1a0d1fdced0c22d765e4732.1519924383.git.andreyknvl@google.com
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nick Terrell <terrelln@fb.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Jeff Layton <jlayton@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/rtc/rtc-da9063.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ lib/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
-index b4e054c64bad..69b54e5556c0 100644
---- a/drivers/rtc/rtc-da9063.c
-+++ b/drivers/rtc/rtc-da9063.c
-@@ -480,6 +480,13 @@ static int da9063_rtc_probe(struct platform_device *pdev)
- 	da9063_data_to_tm(data, &rtc->alarm_time, rtc);
- 	rtc->rtc_sync = false;
- 
-+	/*
-+	 * TODO: some models have alarms on a minute boundary but still support
-+	 * real hardware interrupts. Add this once the core supports it.
-+	 */
-+	if (config->rtc_data_start != RTC_SEC)
-+		rtc->rtc_dev->uie_unsupported = 1;
-+
- 	irq_alarm = platform_get_irq_byname(pdev, "ALARM");
- 	ret = devm_request_threaded_irq(&pdev->dev, irq_alarm, NULL,
- 					da9063_alarm_event,
--- 
-2.20.1
-
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_TEST_FIRMWARE) += test_firm
+ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
+ obj-$(CONFIG_TEST_KASAN) += test_kasan.o
++CFLAGS_test_kasan.o += -fno-builtin
+ obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
+ obj-$(CONFIG_TEST_LIST_SORT) += test_list_sort.o
+ obj-$(CONFIG_TEST_LKM) += test_module.o
 
 
