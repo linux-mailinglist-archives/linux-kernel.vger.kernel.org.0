@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FB9814D80
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA31614DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:55:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfEFOvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:51:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:25432 "EHLO mga18.intel.com"
+        id S1728856AbfEFOzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:55:37 -0400
+Received: from relay.sw.ru ([185.231.240.75]:34188 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727127AbfEFOvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:51:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:51:38 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 06 May 2019 07:51:38 -0700
-Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
-        by linux.intel.com (Postfix) with ESMTP id D641258010A;
-        Mon,  6 May 2019 07:51:36 -0700 (PDT)
-Subject: Re: [alsa-devel] [RFC PATCH 7/7] soundwire: intel: add debugfs
- register dump
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-8-pierre-louis.bossart@linux.intel.com>
- <20190504070458.GG9770@kroah.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <b01b3d30-901a-f5dc-8526-32a6dad9afd0@linux.intel.com>
-Date:   Mon, 6 May 2019 09:51:36 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1728341AbfEFOze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:55:34 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hNf1e-0004AM-FZ; Mon, 06 May 2019 17:55:30 +0300
+Subject: Re: [PATCH 4.9 09/62] kasan: turn on
+ -fsanitize-address-use-after-scope
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
+ <20190506143051.888762392@linuxfoundation.org>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <6636d7cf-03fe-e253-f981-e07d75858b33@virtuozzo.com>
+Date:   Mon, 6 May 2019 17:55:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190504070458.GG9770@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190506143051.888762392@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,17 +42,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
->> +static void intel_debugfs_init(struct sdw_intel *sdw)
->> +{
->> +	struct dentry *root = sdw_bus_debugfs_get_root(sdw->cdns.bus.debugfs);
->> +
->> +	if (!root)
->> +		return;
->> +
->> +	sdw->fs = debugfs_create_dir("intel-sdw", root);
->> +	if (IS_ERR_OR_NULL(sdw->fs)) {
-> 
-> Again, you do not care, do not check this.
 
-yes will check all this.
-Thanks for all the comments, much appreciated.
+On 5/6/19 5:32 PM, Greg Kroah-Hartman wrote:
+> From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> 
+> commit c5caf21ab0cf884ef15b25af234f620e4a233139 upstream.
+> 
+> In the upcoming gcc7 release, the -fsanitize=kernel-address option at
+> first implied new -fsanitize-address-use-after-scope option.  This would
+> cause link errors on older kernels because they don't have two new
+> functions required for use-after-scope support.  Therefore, gcc7 changed
+> default to -fno-sanitize-address-use-after-scope.
+> 
+> Now the kernel has everything required for that feature since commit
+> 828347f8f9a5 ("kasan: support use-after-scope detection").  So, to make it
+> work, we just have to enable use-after-scope in CFLAGS.
+> 
+> Link: http://lkml.kernel.org/r/1481207977-28654-1-git-send-email-aryabinin@virtuozzo.com
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Acked-by: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Andrey Konovalov <andreyknvl@google.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  scripts/Makefile.kasan |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> --- a/scripts/Makefile.kasan
+> +++ b/scripts/Makefile.kasan
+> @@ -29,6 +29,8 @@ else
+>      endif
+>  endif
+>  
+> +CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
+> +
+>  CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+>  
+>  endif
+> 
+> 
+
+This shouldn't be in the -stable.
