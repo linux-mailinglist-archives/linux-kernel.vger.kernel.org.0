@@ -2,86 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA21615331
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 19:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A4F1533C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 20:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfEFR5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 13:57:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10127 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbfEFR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 13:57:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 10:57:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="297649416"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 06 May 2019 10:57:02 -0700
-Date:   Mon, 6 May 2019 10:59:51 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 08/19] ioasid: Add custom IOASID allocator
-Message-ID: <20190506105951.472ac4fd@jacob-builder>
-In-Reply-To: <20190426081903.164dcff3@jacob-builder>
-References: <1556062279-64135-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1556062279-64135-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <4ef22c62-0947-8de5-3288-2835ce5fa7a9@redhat.com>
-        <20190425142944.40661941@jacob-builder>
-        <01fe1710-4022-0bf2-b2ff-307b15b9fabb@redhat.com>
-        <20190426081903.164dcff3@jacob-builder>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726784AbfEFSB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 14:01:26 -0400
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:38714 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfEFSB0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 14:01:26 -0400
+Received: by mail-ot1-f48.google.com with SMTP id b1so12341463otp.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 11:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s1iYiXewvQHx5myE/g1Y4h4JHD9obTw48tmYZs0bXqI=;
+        b=Gesm1Mat5Nvdr9Z6ppAbheRkkXki5hmEJfki+aAZEgQWtXeZOTMMrgHdcrUMVJlQDM
+         EoFBqW0epQyBVW0aMfUQWMZnSCnDG8Y/vtE5zcyaAH6Zdl9pu/EraJnHe6FBYcMXyLyp
+         VZWggnrv7fI/MHQOhvLueK8w7k5e1LgXjHwFDufU47j2WbehxdNld3it11T/RfmzXJrP
+         ljgYCI7GsW9S1KDe1lCVZ4mK3cyWa3kT8S9i8NiXyvnLEBSmbjhWarFP7+6KuIOEkME3
+         7O9VFfUN9zNq29/cUxKNj4nEuJwTTMN48lYv1nIyegLPGtL2vWXAzQYZsJ+V1TQeTBnW
+         0sdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s1iYiXewvQHx5myE/g1Y4h4JHD9obTw48tmYZs0bXqI=;
+        b=N2/jQrSU98T/8re8Nd0X6RAH2BNn53sXpFZxoz+cFTIKhtD9SpQE15bjgW7Rs8tsfy
+         vWxMT2lwtbUCdwzmNwpCNpXliCAOj0c7nS77LvIoxKBTWRvrVm/G06HLUgt4aaP27xf6
+         HW20WrBlZELHjF7FfcC6OLLTbj4trsp8H+nZvj4qlxAWYz0rI3xyyxR/CfFrbYDGN6+T
+         q5G3ZBb3kuzUiQ4xlNLgK9gsqg0e7noEuiDPxxbFV5Bvbw8g9A0IMcvC/KvFeSaMPKLC
+         6FLZQ2ka2yPVaNUn1NspwH70QQSoZWzmrq5Ep1jcXa+RgPGSPnaws3TWpk8by4F4hrBg
+         Kz7g==
+X-Gm-Message-State: APjAAAUzRqXgrpqcHAemwpW9suuhN1zfk/n3nqdkMkaAQVOeJQ288GWM
+        werviiJaYVygjMJjfnzie39cX4m27p7I4l61QF939w==
+X-Google-Smtp-Source: APXvYqyX9nJzOdD3XQZPHP+tb9t4162dRKXqMf2zXk6saJvTjLay55UFP+hEuwJnc0ji6oilX5u1sKGnO6ke6FVIfL4=
+X-Received: by 2002:a9d:7ad1:: with SMTP id m17mr17304018otn.367.1557165685323;
+ Mon, 06 May 2019 11:01:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190502184337.20538-1-pasha.tatashin@soleen.com>
+ <20190502184337.20538-3-pasha.tatashin@soleen.com> <cac721ed-c404-19d1-71d1-37c66df9b2a8@intel.com>
+In-Reply-To: <cac721ed-c404-19d1-71d1-37c66df9b2a8@intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 6 May 2019 11:01:14 -0700
+Message-ID: <CAPcyv4greisKBSorzQWebcVOf2AqUH6DwbvNKMW0MQ5bCwYZrw@mail.gmail.com>
+Subject: Re: [v5 2/3] mm/hotplug: make remove_memory() interface useable
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Pavel Tatashin <pasha.tatashin@soleen.com>,
+        James Morris <jmorris@namei.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Apr 2019 08:19:03 -0700
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+On Mon, May 6, 2019 at 10:57 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> > -static inline void remove_memory(int nid, u64 start, u64 size) {}
+> > +static inline bool remove_memory(int nid, u64 start, u64 size)
+> > +{
+> > +     return -EBUSY;
+> > +}
+>
+> This seems like an appropriate place for a WARN_ONCE(), if someone
+> manages to call remove_memory() with hotplug disabled.
+>
+> BTW, I looked and can't think of a better errno, but -EBUSY probably
+> isn't the best error code, right?
+>
+> > -void remove_memory(int nid, u64 start, u64 size)
+> > +/**
+> > + * remove_memory
+> > + * @nid: the node ID
+> > + * @start: physical address of the region to remove
+> > + * @size: size of the region to remove
+> > + *
+> > + * NOTE: The caller must call lock_device_hotplug() to serialize hotplug
+> > + * and online/offline operations before this call, as required by
+> > + * try_offline_node().
+> > + */
+> > +void __remove_memory(int nid, u64 start, u64 size)
+> >  {
+> > +
+> > +     /*
+> > +      * trigger BUG() is some memory is not offlined prior to calling this
+> > +      * function
+> > +      */
+> > +     if (try_remove_memory(nid, start, size))
+> > +             BUG();
+> > +}
+>
+> Could we call this remove_offline_memory()?  That way, it makes _some_
+> sense why we would BUG() if the memory isn't offline.
 
-> > >>> +		default_allocator_used = 1;      
-> > >> shouldn't default_allocator_used be protected as well?    
-> >  [...]    
-> > >> wouldn't it be possible to integrate the default io asid
-> > >> allocator as any custom allocator, ie. implement an alloc
-> > >> callback using xa_alloc. Then the active io allocator could be
-> > >> either a custom or a default one.    
-> > > That is an interesting idea. I think it is possible.
-> > > But since default xa allocator is internal to ioasid
-> > > infrastructure, why implement it as a callback?    
-> > 
-> > I mean your could directly define a static const default_allocator
-> > in ioasid.c and assign it by default. Do I miss something?
-> >   
-> got it, seems cleaner. let me give it a try.
-
-Hi Eric,
-
-Just sent out v3 last week. I did look into this but could not find a
-clean way of making the default allocator as another custom allocator.
-The reason is that default allocator is not interchangeable with
-other custom allocators, XArray is shared. So it ends up having lots of
-special cases anyway. Feel free to change this.
-
-Thanks,
-
-Jacob
+Please WARN() instead of BUG() because failing to remove memory should
+not be system fatal.
