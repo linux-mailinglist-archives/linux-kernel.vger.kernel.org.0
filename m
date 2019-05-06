@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A318114C28
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7514B14C08
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfEFOhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:37:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
+        id S1726980AbfEFOfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:35:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727291AbfEFOhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:37:02 -0400
+        id S1726954AbfEFOfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:35:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47F49206A3;
-        Mon,  6 May 2019 14:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EA5720C01;
+        Mon,  6 May 2019 14:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153421;
-        bh=rLDf/z599L+TxF1cg/rwNNt0iqybU0xScUBZmXOil6A=;
+        s=default; t=1557153336;
+        bh=mvVg1JdDwMsN6OACj1AvgZ/teB7ua0sGC95Ru4jlzOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q5VXfRvNZhuykYh2ikc+ZKwpZ+Or7MkpIKsUMTQLlxKYW1Ry+EckhJGaP5tj+j/RM
-         AQYHKyqFohPRKfrHgO/iCYtJlawVvxnL8yub5GlvkTDdMLfmAY7rhPtqXBqVNbml9d
-         4pFkqfumNpbLizuQZvUpcdnq5ScDPjIaWotN1rh0=
+        b=GrkiGweUx5FJXw+gVjiKqPq94niJ0mN12JSZQilHnhllDowA2U0sL3o2l6F9yIfK1
+         +sYZrPllta4TVrjis8EuTCh0QtI5O5UGbYS9bFcUuXAkZ2sqvzerCbzob5bf6Y2RPS
+         CIK0Cj/Tw8P4oL8QGVNIkRN5B5wfWnKneZ+0u1pg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Assmann <sassmann@kpanic.de>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Alan Kao <alankao@andestech.com>,
+        Greentime Hu <greentime@andestech.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
         "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 5.0 042/122] i40e: fix WoL support check
-Date:   Mon,  6 May 2019 16:31:40 +0200
-Message-Id: <20190506143058.693436013@linuxfoundation.org>
+Subject: [PATCH 5.0 043/122] riscv: fix accessing 8-byte variable from RV32
+Date:   Mon,  6 May 2019 16:31:41 +0200
+Message-Id: <20190506143058.785457087@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
 References: <20190506143054.670334917@linuxfoundation.org>
@@ -44,34 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f669d24f3dd00beab452c0fc9257f6a942ffca9b ]
+[ Upstream commit dbee9c9c45846f003ec2f819710c2f4835630a6a ]
 
-The current check for WoL on i40e is broken. Code comment says only
-magic packet is supported, so only check for that.
+A memory save operation to 8-byte variable in RV32 is divided into
+two sw instructions in the put_user macro.  The current fixup returns
+execution flow to the second sw instead of the one after it.
 
-Fixes: 540a152da762 (i40e/ixgbe/igb: fail on new WoL flag setting WAKE_MAGICSECURE)
+This patch fixes this fixup code according to the load access part.
 
-Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Alan Kao<alankao@andestech.com>
+Cc: Greentime Hu <greentime@andestech.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/riscv/include/asm/uaccess.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-index a6bc7847346b..5d544e661445 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -2378,8 +2378,7 @@ static int i40e_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
- 		return -EOPNOTSUPP;
- 
- 	/* only magic packet is supported */
--	if (wol->wolopts && (wol->wolopts != WAKE_MAGIC)
--			  | (wol->wolopts != WAKE_FILTER))
-+	if (wol->wolopts & ~WAKE_MAGIC)
- 		return -EOPNOTSUPP;
- 
- 	/* is this a new value? */
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index 637b896894fc..aa82df30e38a 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -301,7 +301,7 @@ do {								\
+ 		"	.balign 4\n"				\
+ 		"4:\n"						\
+ 		"	li %0, %6\n"				\
+-		"	jump 2b, %1\n"				\
++		"	jump 3b, %1\n"				\
+ 		"	.previous\n"				\
+ 		"	.section __ex_table,\"a\"\n"		\
+ 		"	.balign " RISCV_SZPTR "\n"			\
 -- 
 2.20.1
 
