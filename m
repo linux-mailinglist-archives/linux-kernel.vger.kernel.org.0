@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8D014D97
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B6914C56
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:39:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfEFOrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:47:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46292 "EHLO mail.kernel.org"
+        id S1727745AbfEFOjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:39:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbfEFOrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:47:19 -0400
+        id S1727737AbfEFOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:39:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC8FC20449;
-        Mon,  6 May 2019 14:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26B4421479;
+        Mon,  6 May 2019 14:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154038;
-        bh=vbPwdDLTa7OrWI0SflkBBJ7iLeQtCJf62w+l948vi5U=;
+        s=default; t=1557153545;
+        bh=drJzGQRvPDLu2T3YjTdevjln3E4+BxvfPv+TvbHmfis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a9qkcwulZLKR6zNcFJBYvGoS9Xa56qiqjXrNsesEpaB3rmDEXXbl8KAXRluVy8hle
-         rO44TB43iCc3+OmsN3u+kvcHY1rn2isUbsVvM6ZP3QfOkBLl18dP5f9YeWvCG1LWx1
-         xf421H83RbfifHERmKsKj3kgKGX4nLlWCgRHL36s=
+        b=llPeup/CoeZED2Akx9I3RG1E6uFw0QV4Ri2ce778xy8JFGflDm6Tg5IWWNnSRzx22
+         /InYdGaVQrtvKD0TyH4yOrffxBed1KbVo1oCLW2MJdgj6RfXmeiGuHhwOeKiWYYinb
+         RLdItlN788UKIXr2iYmOI2SL+gImvBmHiDotL6WE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 4.9 15/62] kasan: avoid -Wmaybe-uninitialized warning
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Yuval Avnery <yuvalav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.0 108/122] IB/core: Destroy QP if XRC QP fails
 Date:   Mon,  6 May 2019 16:32:46 +0200
-Message-Id: <20190506143052.384495640@linuxfoundation.org>
+Message-Id: <20190506143104.265363973@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +46,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-commit e7701557bfdd81ff44cab13a80439319a735d8e2 upstream.
+commit 535005ca8e5e71918d64074032f4b9d4fef8981e upstream.
 
-gcc-7 produces this warning:
+The open-coded variant missed destroy of SELinux created QP, reuse already
+existing ib_detroy_qp() call and use this opportunity to clean
+ib_create_qp() from double prints and unclear exit paths.
 
-  mm/kasan/report.c: In function 'kasan_report':
-  mm/kasan/report.c:351:3: error: 'info.first_bad_addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-     print_shadow_for_address(info->first_bad_addr);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  mm/kasan/report.c:360:27: note: 'info.first_bad_addr' was declared here
-
-The code seems fine as we only print info.first_bad_addr when there is a
-shadow, and we always initialize it in that case, but this is relatively
-hard for gcc to figure out after the latest rework.
-
-Adding an intialization to the most likely value together with the other
-struct members shuts up that warning.
-
-Fixes: b235b9808664 ("kasan: unify report headers")
-Link: https://patchwork.kernel.org/patch/9641417/
-Link: http://lkml.kernel.org/r/20170725152739.4176967-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Alexander Potapenko <glider@google.com>
-Suggested-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Reported-by: Parav Pandit <parav@mellanox.com>
+Fixes: d291f1a65232 ("IB/core: Enforce PKey security on QPs")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/kasan/report.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/core/verbs.c |   41 +++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -302,6 +302,7 @@ void kasan_report(unsigned long addr, si
- 	disable_trace_on_warning();
+--- a/drivers/infiniband/core/verbs.c
++++ b/drivers/infiniband/core/verbs.c
+@@ -1106,8 +1106,8 @@ struct ib_qp *ib_open_qp(struct ib_xrcd
+ }
+ EXPORT_SYMBOL(ib_open_qp);
  
- 	info.access_addr = (void *)addr;
-+	info.first_bad_addr = (void *)addr;
- 	info.access_size = size;
- 	info.is_write = is_write;
- 	info.ip = ip;
+-static struct ib_qp *ib_create_xrc_qp(struct ib_qp *qp,
+-		struct ib_qp_init_attr *qp_init_attr)
++static struct ib_qp *create_xrc_qp(struct ib_qp *qp,
++				   struct ib_qp_init_attr *qp_init_attr)
+ {
+ 	struct ib_qp *real_qp = qp;
+ 
+@@ -1122,10 +1122,10 @@ static struct ib_qp *ib_create_xrc_qp(st
+ 
+ 	qp = __ib_open_qp(real_qp, qp_init_attr->event_handler,
+ 			  qp_init_attr->qp_context);
+-	if (!IS_ERR(qp))
+-		__ib_insert_xrcd_qp(qp_init_attr->xrcd, real_qp);
+-	else
+-		real_qp->device->ops.destroy_qp(real_qp);
++	if (IS_ERR(qp))
++		return qp;
++
++	__ib_insert_xrcd_qp(qp_init_attr->xrcd, real_qp);
+ 	return qp;
+ }
+ 
+@@ -1156,10 +1156,8 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 		return qp;
+ 
+ 	ret = ib_create_qp_security(qp, device);
+-	if (ret) {
+-		ib_destroy_qp(qp);
+-		return ERR_PTR(ret);
+-	}
++	if (ret)
++		goto err;
+ 
+ 	qp->real_qp    = qp;
+ 	qp->qp_type    = qp_init_attr->qp_type;
+@@ -1172,8 +1170,15 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 	INIT_LIST_HEAD(&qp->sig_mrs);
+ 	qp->port = 0;
+ 
+-	if (qp_init_attr->qp_type == IB_QPT_XRC_TGT)
+-		return ib_create_xrc_qp(qp, qp_init_attr);
++	if (qp_init_attr->qp_type == IB_QPT_XRC_TGT) {
++		struct ib_qp *xrc_qp = create_xrc_qp(qp, qp_init_attr);
++
++		if (IS_ERR(xrc_qp)) {
++			ret = PTR_ERR(xrc_qp);
++			goto err;
++		}
++		return xrc_qp;
++	}
+ 
+ 	qp->event_handler = qp_init_attr->event_handler;
+ 	qp->qp_context = qp_init_attr->qp_context;
+@@ -1200,11 +1205,8 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 
+ 	if (qp_init_attr->cap.max_rdma_ctxs) {
+ 		ret = rdma_rw_init_mrs(qp, qp_init_attr);
+-		if (ret) {
+-			pr_err("failed to init MR pool ret= %d\n", ret);
+-			ib_destroy_qp(qp);
+-			return ERR_PTR(ret);
+-		}
++		if (ret)
++			goto err;
+ 	}
+ 
+ 	/*
+@@ -1217,6 +1219,11 @@ struct ib_qp *ib_create_qp(struct ib_pd
+ 				 device->attrs.max_sge_rd);
+ 
+ 	return qp;
++
++err:
++	ib_destroy_qp(qp);
++	return ERR_PTR(ret);
++
+ }
+ EXPORT_SYMBOL(ib_create_qp);
+ 
 
 
