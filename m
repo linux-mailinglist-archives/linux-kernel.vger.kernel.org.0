@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4785814DCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0749214D84
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfEFOza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:55:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43072 "EHLO mail.kernel.org"
+        id S1729356AbfEFOwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:52:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbfEFOpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:53 -0400
+        id S1729049AbfEFOsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:48:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C33A2053B;
-        Mon,  6 May 2019 14:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEF8F20C01;
+        Mon,  6 May 2019 14:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153953;
-        bh=UukgufM9/vhDOz0WdQ0i3a4zD1CH0CaTiYFaHkKz0a0=;
+        s=default; t=1557154117;
+        bh=0sCxsk4ZhCr/cOB8EqI0wCflLdcv00pT061/03t1zBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gqRHk5pzU1/0oRxA1xWoRtIJR59vmOW+t2rSsmjnp2qKNaghmtrKWc0p2b1GEHC/R
-         9bms3BFw8L2+NIqQCoAtIe5BbeUUf2FJYuEwj1VAvaZ7vSaU35mzv7h7nncGdaoe45
-         VosjWsVorUVSOlznIQASShhsjxjH7j6nd2zCPKqI=
+        b=UCWk/B0/c4gPK2VE8WEae/a5bTI7Rp5rJP1Iq8H2icGqmCUerWZQ36bNmGCJS6q/H
+         Q4Iq1UtkQnUFla5XrWP+TH6PuxYO36uOH+Orp7Sps7LFssLaCX9IUL5eqVVSnu0rcO
+         xCLFe8ms+xkST7A0jsPFMsg92Fi1HO4g5LkaffwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 59/75] Bluetooth: btusb: request wake pin with NOAUTOEN
+        stable@vger.kernel.org,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 36/62] bonding: show full hw address in sysfs for slave entries
 Date:   Mon,  6 May 2019 16:33:07 +0200
-Message-Id: <20190506143058.626686512@linuxfoundation.org>
+Message-Id: <20190506143054.215161905@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+[ Upstream commit 18bebc6dd3281955240062655a4df35eef2c46b3 ]
 
-commit 771acc7e4a6e5dba779cb1a7fd851a164bc81033 upstream.
+Bond expects ethernet hwaddr for its slave, but it can be longer than 6
+bytes - infiniband interface for example.
 
-Badly-designed systems might have (for example) active-high wake pins
-that default to high (e.g., because of external pull ups) until they
-have an active firmware which starts driving it low.  This can cause an
-interrupt storm in the time between request_irq() and disable_irq().
+ # cat /sys/devices/<skipped>/net/ib0/address
+ 80:00:02:08:fe:80:00:00:00:00:00:00:7c:fe:90:03:00:be:5d:e1
 
-We don't support shared interrupts here, so let's just pre-configure the
-interrupt to avoid auto-enabling it.
+ # cat /sys/devices/<skipped>/net/ib0/bonding_slave/perm_hwaddr
+ 80:00:02:08:fe:80
 
-Fixes: fd913ef7ce61 ("Bluetooth: btusb: Add out-of-band wakeup support")
-Fixes: 5364a0b4f4be ("arm64: dts: rockchip: move QCA6174A wakeup pin into its USB node")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+So print full hwaddr in sysfs "bonding_slave/perm_hwaddr" as well.
 
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bonding/bond_sysfs_slave.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2893,6 +2893,7 @@ static int btusb_config_oob_wake(struct
- 		return 0;
- 	}
+diff --git a/drivers/net/bonding/bond_sysfs_slave.c b/drivers/net/bonding/bond_sysfs_slave.c
+index 7d16c51e6913..641a532b67cb 100644
+--- a/drivers/net/bonding/bond_sysfs_slave.c
++++ b/drivers/net/bonding/bond_sysfs_slave.c
+@@ -55,7 +55,9 @@ static SLAVE_ATTR_RO(link_failure_count);
  
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	ret = devm_request_irq(&hdev->dev, irq, btusb_oob_wake_handler,
- 			       0, "OOB Wake-on-BT", data);
- 	if (ret) {
-@@ -2907,7 +2908,6 @@ static int btusb_config_oob_wake(struct
- 	}
- 
- 	data->oob_wake_irq = irq;
--	disable_irq(irq);
- 	bt_dev_info(hdev, "OOB Wake-on-BT configured at IRQ %u", irq);
- 	return 0;
+ static ssize_t perm_hwaddr_show(struct slave *slave, char *buf)
+ {
+-	return sprintf(buf, "%pM\n", slave->perm_hwaddr);
++	return sprintf(buf, "%*phC\n",
++		       slave->dev->addr_len,
++		       slave->perm_hwaddr);
  }
+ static SLAVE_ATTR_RO(perm_hwaddr);
+ 
+-- 
+2.20.1
+
 
 
