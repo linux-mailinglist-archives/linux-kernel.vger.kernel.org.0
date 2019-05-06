@@ -2,62 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A46114E04
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 914B114E1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfEFO5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:57:51 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:52196 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727262AbfEFO5t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:57:49 -0400
-Received: (qmail 4141 invoked by uid 2102); 6 May 2019 10:57:48 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 6 May 2019 10:57:48 -0400
-Date:   Mon, 6 May 2019 10:57:48 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Jim Lin <jilin@nvidia.com>
-cc:     gregkh@linuxfoundation.org, <mathias.nyman@intel.com>,
-        <hminas@synopsys.com>, <kai.heng.feng@canonical.com>,
-        <drinkcat@chromium.org>, <prime.zeng@hisilicon.com>,
-        <malat@debian.org>, <nsaenzjulienne@suse.de>, <jflat@chromium.org>,
-        <linus.walleij@linaro.org>, <clabbe@baylibre.com>,
-        <colin.king@canonical.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] usb: xhci: Add Clear_TT_Buffer
-In-Reply-To: <1557153262-22972-1-git-send-email-jilin@nvidia.com>
-Message-ID: <Pine.LNX.4.44L0.1905061053550.1585-100000@iolanthe.rowland.org>
+        id S1728713AbfEFO6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:58:42 -0400
+Received: from relay.sw.ru ([185.231.240.75]:34356 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728202AbfEFO6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:58:41 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hNf4c-0004CF-P3; Mon, 06 May 2019 17:58:34 +0300
+Subject: Re: [PATCH 4.9 10/62] kasan: rework Kconfig settings
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
+ <20190506143051.984481239@linuxfoundation.org>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <8bdd66ba-d6e8-ef65-47fd-cf18e18fcd3e@virtuozzo.com>
+Date:   Mon, 6 May 2019 17:58:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20190506143051.984481239@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 May 2019, Jim Lin wrote:
 
-> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-> processing for full-/low-speed endpoints connected via a TT, the host
-> software must use the Clear_TT_Buffer request to the TT to ensure
-> that the buffer is not in the busy state".
+
+On 5/6/19 5:32 PM, Greg Kroah-Hartman wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> In our case, a full-speed speaker (ConferenceCam) is behind a high-
-> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-> request we may continue to get STALL with the folllowing requests,
-> like Set_Interface.
+> commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
 > 
-> Here we add Clear_TT_Buffer for the following Set_Interface requests
-> to get ACK successfully.
-> 
-> Originally usb_hub_clear_tt_buffer uses urb->dev->devnum as device
-> address while sending Clear_TT_Buffer command, but this doesn't work
-> for XHCI.
 
-Why doesn't it work for xHCI?  Clear-TT-Buffer is part of the USB 2.0 
-spec; it should work exactly the same for xHCI as for a USB-2.0 host 
-controller.
-
-Alan Stern
-
+This is a fix/workaround for the previous patch c5caf21ab0cf "kasan: turn on -fsanitize-address-use-after-scope"
+which shouldn't be in the -stable. So without c5caf21ab0cf we don't need this one.
