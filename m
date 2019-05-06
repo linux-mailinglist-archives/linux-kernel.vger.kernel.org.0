@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABC314EE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A9614CC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfEFPGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:06:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
+        id S1728735AbfEFOn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:43:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727507AbfEFOiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:02 -0400
+        id S1727165AbfEFOnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:43:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AE5B214AE;
-        Mon,  6 May 2019 14:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4895320C01;
+        Mon,  6 May 2019 14:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153482;
-        bh=sL3y0IG1KUINbFHeL51POgTm3rfkjbjchIH4oxMEPRs=;
+        s=default; t=1557153833;
+        bh=Anbqk/0kGfZhabFXywOM8sZ195ri9Pr7rlLUW3zeX7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G3tUtwo2DFXrFLozGkpfu9R+vxnnrX2sOvxzkedKyyrXVZtoZDliS5tWFpiexWzLe
-         ZUUnDsf9ibFo5fYYTfKz/oUaU1aDJB20/VnV8VABLlT/EHCaeTlZOhopOPfUQ3tJIH
-         eI4WiwMJtNtP4t2xgr3iUPbw5Azc/mYLHkzjiOgk=
+        b=F3Ik2cqTWl5TAAW15I9JGA+6iSe8NRzDr6/yOm9t6fXT41Nw4ksPZlFmHCKnni2yL
+         wmMZxNlggANeT1N00NXGe9Spq9jJDExcG8XK2Wf3TDep5k8HkUIgiNoIGFwg1TEXiS
+         l7oBE72UB8bJxbrNJFZruFCfOYyVKrHo57c/zc8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.0 084/122] Bluetooth: btusb: request wake pin with NOAUTOEN
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH 4.14 14/75] arm64: Fix single stepping in kernel traps
 Date:   Mon,  6 May 2019 16:32:22 +0200
-Message-Id: <20190506143102.306608149@linuxfoundation.org>
+Message-Id: <20190506143054.480275434@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +47,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Julien Thierry <julien.thierry@arm.com>
 
-commit 771acc7e4a6e5dba779cb1a7fd851a164bc81033 upstream.
+commit 6436beeee5721a8e906e9eabf866f12d04470437 upstream.
 
-Badly-designed systems might have (for example) active-high wake pins
-that default to high (e.g., because of external pull ups) until they
-have an active firmware which starts driving it low.  This can cause an
-interrupt storm in the time between request_irq() and disable_irq().
+Software Step exception is missing after stepping a trapped instruction.
 
-We don't support shared interrupts here, so let's just pre-configure the
-interrupt to avoid auto-enabling it.
+Ensure SPSR.SS gets set to 0 after emulating/skipping a trapped instruction
+before doing ERET.
 
-Fixes: fd913ef7ce61 ("Bluetooth: btusb: Add out-of-band wakeup support")
-Fixes: 5364a0b4f4be ("arm64: dts: rockchip: move QCA6174A wakeup pin into its USB node")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+[will: replaced AARCH32_INSN_SIZE with 4]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/traps.h       |    6 ++++++
+ arch/arm64/kernel/armv8_deprecated.c |    8 ++++----
+ arch/arm64/kernel/cpufeature.c       |    2 +-
+ arch/arm64/kernel/traps.c            |   21 ++++++++++++++++-----
+ 4 files changed, 27 insertions(+), 10 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2885,6 +2885,7 @@ static int btusb_config_oob_wake(struct
- 		return 0;
- 	}
+--- a/arch/arm64/include/asm/traps.h
++++ b/arch/arm64/include/asm/traps.h
+@@ -37,6 +37,12 @@ void unregister_undef_hook(struct undef_
  
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	ret = devm_request_irq(&hdev->dev, irq, btusb_oob_wake_handler,
- 			       0, "OOB Wake-on-BT", data);
- 	if (ret) {
-@@ -2899,7 +2900,6 @@ static int btusb_config_oob_wake(struct
- 	}
+ void arm64_notify_segfault(struct pt_regs *regs, unsigned long addr);
  
- 	data->oob_wake_irq = irq;
--	disable_irq(irq);
- 	bt_dev_info(hdev, "OOB Wake-on-BT configured at IRQ %u", irq);
++/*
++ * Move regs->pc to next instruction and do necessary setup before it
++ * is executed.
++ */
++void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size);
++
+ static inline int __in_irqentry_text(unsigned long ptr)
+ {
+ 	return ptr >= (unsigned long)&__irqentry_text_start &&
+--- a/arch/arm64/kernel/armv8_deprecated.c
++++ b/arch/arm64/kernel/armv8_deprecated.c
+@@ -431,7 +431,7 @@ ret:
+ 	pr_warn_ratelimited("\"%s\" (%ld) uses obsolete SWP{B} instruction at 0x%llx\n",
+ 			current->comm, (unsigned long)current->pid, regs->pc);
+ 
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, 4);
+ 	return 0;
+ 
+ fault:
+@@ -512,7 +512,7 @@ ret:
+ 	pr_warn_ratelimited("\"%s\" (%ld) uses deprecated CP15 Barrier instruction at 0x%llx\n",
+ 			current->comm, (unsigned long)current->pid, regs->pc);
+ 
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, 4);
  	return 0;
  }
+ 
+@@ -586,14 +586,14 @@ static int compat_setend_handler(struct
+ static int a32_setend_handler(struct pt_regs *regs, u32 instr)
+ {
+ 	int rc = compat_setend_handler(regs, (instr >> 9) & 1);
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, 4);
+ 	return rc;
+ }
+ 
+ static int t16_setend_handler(struct pt_regs *regs, u32 instr)
+ {
+ 	int rc = compat_setend_handler(regs, (instr >> 3) & 1);
+-	regs->pc += 2;
++	arm64_skip_faulting_instruction(regs, 2);
+ 	return rc;
+ }
+ 
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1398,7 +1398,7 @@ static int emulate_mrs(struct pt_regs *r
+ 	if (!rc) {
+ 		dst = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT, insn);
+ 		pt_regs_write_reg(regs, dst, val);
+-		regs->pc += 4;
++		arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ 	}
+ 
+ 	return rc;
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -296,6 +296,17 @@ void arm64_notify_die(const char *str, s
+ 	}
+ }
+ 
++void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
++{
++	regs->pc += size;
++
++	/*
++	 * If we were single stepping, we want to get the step exception after
++	 * we return from the trap.
++	 */
++	user_fastforward_single_step(current);
++}
++
+ static LIST_HEAD(undef_hook);
+ static DEFINE_RAW_SPINLOCK(undef_lock);
+ 
+@@ -483,7 +494,7 @@ static void user_cache_maint_handler(uns
+ 	if (ret)
+ 		arm64_notify_segfault(regs, address);
+ 	else
+-		regs->pc += 4;
++		arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ }
+ 
+ static void ctr_read_handler(unsigned int esr, struct pt_regs *regs)
+@@ -493,7 +504,7 @@ static void ctr_read_handler(unsigned in
+ 
+ 	pt_regs_write_reg(regs, rt, val);
+ 
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ }
+ 
+ static void cntvct_read_handler(unsigned int esr, struct pt_regs *regs)
+@@ -501,7 +512,7 @@ static void cntvct_read_handler(unsigned
+ 	int rt = (esr & ESR_ELx_SYS64_ISS_RT_MASK) >> ESR_ELx_SYS64_ISS_RT_SHIFT;
+ 
+ 	pt_regs_write_reg(regs, rt, arch_counter_get_cntvct());
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ }
+ 
+ static void cntfrq_read_handler(unsigned int esr, struct pt_regs *regs)
+@@ -509,7 +520,7 @@ static void cntfrq_read_handler(unsigned
+ 	int rt = (esr & ESR_ELx_SYS64_ISS_RT_MASK) >> ESR_ELx_SYS64_ISS_RT_SHIFT;
+ 
+ 	pt_regs_write_reg(regs, rt, arch_timer_get_rate());
+-	regs->pc += 4;
++	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ }
+ 
+ struct sys64_hook {
+@@ -756,7 +767,7 @@ static int bug_handler(struct pt_regs *r
+ 	}
+ 
+ 	/* If thread survives, skip over the BUG instruction and continue: */
+-	regs->pc += AARCH64_INSN_SIZE;	/* skip BRK and resume */
++	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ 	return DBG_HOOK_HANDLED;
+ }
+ 
 
 
