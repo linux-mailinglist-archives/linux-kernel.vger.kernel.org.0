@@ -2,118 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FC515477
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A6E71547B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 21:37:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbfEFTdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 15:33:17 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:56155 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfEFTdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 15:33:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=RHdPpckqPDyvdI9hgd3ivdy7BwlPmrYeJYGbEjPzhIQ=; b=iq6UXkezK/7BH2CDHnWD3aQ5XX
-        ss0J4xpEHOHbGyhUDCClE+O69DEIO63WhcoaAHzo85qoEaWdZfFn8sNfWzlnbquVGX/rNv8fbsAB6
-        V0pfgR8+0A21ihKwa5Fe7wkrlUF5Dy8Osx1qln/qxYTJsNTATDIhcIylvwzAUVGX4Uv8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hNjMH-0000Xf-9I; Mon, 06 May 2019 21:33:05 +0200
-Date:   Mon, 6 May 2019 21:33:05 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Ruslan Babayev <ruslan@babayev.com>
-Cc:     linux@armlinux.org.uk, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        mika.westerberg@linux.intel.com, wsa@the-dreams.de,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, xe-linux-external@cisco.com
-Subject: Re: [PATCH net-next 2/2] net: phy: sfp: enable i2c-bus detection on
- ACPI based systems
-Message-ID: <20190506193305.GA25013@lunn.ch>
-References: <20190505220524.37266-3-ruslan@babayev.com>
- <20190506125523.GA15291@lunn.ch>
- <87zhnztnby.fsf@babayev.com>
+        id S1726412AbfEFTh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 15:37:28 -0400
+Received: from sonic310-24.consmr.mail.ne1.yahoo.com ([66.163.186.205]:45611
+        "EHLO sonic310-24.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726190AbfEFTh1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 15:37:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1557171445; bh=rs873MWACCTdefYzwFEaFuDABnbgTg7DFdIrLwGs3bU=; h=Date:From:Reply-To:Subject:References:From:Subject; b=BBRe5Nk2yaLzKn/YsS677sAHdb8ieHzdFWTVvlpFInig+MG1em/tCEKzCbhJLcbGHdvAyphY7+F/+8CILy9ItR0aYj9z9LnHH/dEBPboToeIXXa8yXwIuw/bsyCTZzGaMxmMprUOnkDnopjsixYF5c7UfO73+6jzmhI1oTegbCNLYv52u5jBzV31ddyrTL7tj+od1yZvD/qpb24hPkFPkKHK7J5CNbGCW+Pu6TvFFJ3eU2QRcCZSsDSc3XZXnJfs8ZzmIw2L2NwldlFlE/FaW8sgdkL2VbBOqRrBIctMVoPoxCGGqBR56FkH8Sz1BgxRSyOxWoFQhagDvYYia3tS9w==
+X-YMail-OSG: qBJZ5coVM1nElHbtfKRm93YBPnj9V.v1UozeEGUbkDKMQlfFPmuOuM7R5bYMhz3
+ gDPB_Kkl_y1tbn9Dxg5ukZXfb.f8n0tbKHZlRvLeVFlpt03rFoJoMxQ8nWPH4IkpgFdiH9U_x17d
+ XaNTIv9ZO.7Mz.0MjNC8BZmNwIxJ2CnBrbNjLwJalGxDmcfLrHOKKylQesa_F7jqK2hzqqKGDexs
+ dKn4YXF6oAUgj7ww35u_hkaMkq8yuYQ5ymwtZttLL9xeMICObub566ghnbUVb5n7APsBPA0h..3H
+ 3.k71q7uIXc98N0xyjsJgWkOGokkidJe0dYSNICwBqoC2ZMCs1qn7XXQsdS_00cNvLlCXDLHJtQP
+ He00uzXsl98fg5t4btYrVE4pX2QcmL7Z3i9pmgFi.Zw6u7pni88S6MDPtG1WEeAfSmkOP2HSsrW8
+ xakaOJEjL8KO61rj0GaTae0CkcpRADutrylcYlBjPPjMhkFhH9F6TLR47YGW8yHUFS.an9S8v5zQ
+ AOtMYA6Kd6wYPn1WRjABXFqRPIC9KYRMK3JMSMQeO0mzK865qiIY30eWTsN.Kv6oZLKh1Y8ILo_h
+ aJrAoccQrbku1f73IrqHtJJBe0jV0UA_RnnztokhqLW7FBeZdZgiE5xkmajki.Awc6BlDF3wfJoY
+ xTSq.WOplpi45A5BLFTnaz2vcXOrC5C9cGqIb7ZktI0rWPEh6vVTU2LPGsikyiWCPRO1gLcdd5le
+ Q3ReUM9cfltMbJATs9q_DmrwAaDLdZAflZ6Hrk6QKIIWA76BWpjfw7Ug_9Ta0rThLEM14eCTBcMD
+ RY4wZqFfzdI2zKoI.yJ96oHe4urBrMwfPKC_Vcde25P0VDAOq6vX9v.DK5npQTS6YnfzFIzu4HvJ
+ LgAxhhixcEzm4WouNW9QGjEEwErUyABP03yES9R6QNIogP_MbxZ.71BM4d7Z3X13RgvNLjQdlBeB
+ ZZkB1NsZZQm3_VG734hLf4P8Bk_tKojZBXJYXdyx9K69w7Qt4P3PyFBJuB0znC7hJR6hUvTK3Ueu
+ edzDaEDkYZyEX6mue7hXukXNbM_PvhjNXBXW1pILYt2FjU6kFknOCYRb8DaiVj9VPnc0cqvSRBBH
+ JaO0BvpAFIDv0igoBHZx29rliNvJBYTMrs92C40jnAwTNENI2whVzOXMOF3ALgsTHAVvNManoJ9I
+ -
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 6 May 2019 19:37:25 +0000
+Date:   Mon, 6 May 2019 19:37:24 +0000 (UTC)
+From:   Elizabeth Edwards <mrselizabethedward1@gmail.com>
+Reply-To: Elizabeth Edwards <elisabeth1981@mail.com>
+Message-ID: <359686610.2163681.1557171444225@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhnztnby.fsf@babayev.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <359686610.2163681.1557171444225.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13583 YahooMailBasic Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi Andrew,
-> 
-> I had the GPIOs and the "maximum-power" property in my ACPI snippet initially,
-> but then decided to take it out thinking it was not relevant for the
-> current patch. I can add the missing pieces back in V2.
-> This is what it would like:
-> 
-> Device (SFP0)
-> {
->     Name (_HID, "PRP0001")
->     Name (_CRS, ResourceTemplate()
->     {
->         GpioIo(Exclusive, PullDefault, 0, 0, IoRestrictionNone,
->                "\\_SB.PCI0.RP01.GPIO", 0, ResourceConsumer)
->             { 0, 1, 2, 3, 4 }
->     })
->     Name (_DSD, Package ()
->     {
->         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->         Package () {
->             Package () { "compatible", "sff,sfp" },
->             Package () { "i2c-bus", \_SB.PCI0.RP01.I2C.MUX.CH0 },
->             Package () { "maximum-power-milliwatt", 1000 },
->             Package () { "tx-disable-gpios", Package () { ^SFP0, 0, 0, 1} },
->             Package () { "reset-gpio",       Package () { ^SFP0, 0, 1, 1} },
->             Package () { "mod-def0-gpios",   Package () { ^SFP0, 0, 2, 1} },
->             Package () { "tx-fault-gpios",   Package () { ^SFP0, 0, 3, 0} },
->             Package () { "los-gpios",        Package () { ^SFP0, 0, 4, 1} },
->         },
->     })
-> }
 
-Hi Ruslan
 
-I know approximately 0 about ACPI. But that at least lists all the
-properties we expect. Thanks.
+Dear Friend,
 
-> > Before accepting this patch, i would like to know more about the
-> > complete solution.
-> 
-> I haven't gotten that far yet, but for the Phylink I was thinking something along the
-> lines of:
-> 
-> Device (PHY0)
-> {
->     Name (_HID, "PRP0001")
->     Name (_DSD, Package ()
->     {
->         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->         Package () {
->             Package () { "compatible", "ethernet-phy-ieee802.3-c45" },
->             Package () { "sfp", \_SB.PCI0.RP01.SFP0 },
->         },
->     })
-> }
+Please forgive me for stressing you with my predicaments as I know that thi=
+s letter may come to you as big surprise. Actually, as my pastor advised me=
+ to reject earthly reward and thanks by handing the project to someone I ha=
+ve never seen or met for a greater reward in heaven awaits for whoever can =
+give such a costly donation. I came across your E-mail from my personal sea=
+rch, and I decided to email you directly believing that you will be honest =
+to fulfill my final wish before or after my death.
+ Meanwhile, I am Madam Elizabeth Edwards, 73 years, am from USA, still chil=
+dless. I am suffering from Adenocarcinoma Cancer of the lungs for the past =
+8 years and from all indication my condition is really deteriorating as my =
+doctors have confirmed and courageously advised me that I may not live beyo=
+nd 2 weeks from now for the reason that my tumor has reached a critical sta=
+ge which has defiled all forms of medical treatment.
 
-You probably also need managed = "in-band-status" and
-phy-mode = "sgmii";
+Since my days are numbered, I=E2=80=99ve decided willingly to fulfill my lo=
+ng-time vow to donate to the underprivileged the sum of Eighteen million fi=
+ve hundred thousand dollars ($18.5m) I deposited in a different account ove=
+r 8 years now because I have tried to handle this project by myself but I h=
+ave seen that my health could not allow me to do so anymore. My promise for=
+ the poor includes building of well-equipped charity foundation hospital an=
+d a technical school for their survival.
 
-armada-388-clearfog.dtsi is probably the best reference, much of the
-development work for Phylink and SFPs was done on that board.
+If you will be honest, kind and willing to assist me handle this charity pr=
+oject as I=E2=80=99ve mentioned here, I will like you to provide me your pe=
+rsonal data like. Contact me through this email address (elisabethe1981@mai=
+l.com) and also send me your private email address.
 
-> I don't have a complete solution working yet. With these patches
-> I was hoping to get some early feedback.
+(1) Your full name:
+(2) country:
+(3) phone number:
+(4) Age:
 
-Please post your patches as "RFC" in the subject line, if you are
-wanting early feedback.
-
-Thanks
-	Andrew
+Best Regards!
+Mrs. Elizabeth Edwards
