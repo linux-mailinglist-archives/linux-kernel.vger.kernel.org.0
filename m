@@ -2,46 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F7C114CF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88DF714CA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfEFOqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:46:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43468 "EHLO mail.kernel.org"
+        id S1728479AbfEFOm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:42:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729041AbfEFOqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:46:03 -0400
+        id S1727204AbfEFOmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5A4F20C01;
-        Mon,  6 May 2019 14:46:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 792E520449;
+        Mon,  6 May 2019 14:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153963;
-        bh=sGpXY24iwci7z2Am1+FUc6Df1OS59EPQzWtawjEGjzQ=;
+        s=default; t=1557153745;
+        bh=5EZNgEpUADmHXhL1ByEDZooKAI0poijVu6Mm7T2mV1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X8hZ4U8jFXk+78pB6GeOiWwhaeyQ8yZcg6ihZNKhRejqMMDx4XUz6hh6ECuNE2gck
-         Cth76/mAxCwAfA2dteTzB6+MYo+xXBqJrkakKFJ9A3Mj4Q55uYRy8Nw14S9hv8lb3E
-         jqfVjUtYfkFkQC6qUTj+3ZYdP5nxKnDRmsg154E0=
+        b=YroF7Qdl+BplzxDIbj7MXorZuMgYtosdQ7so6AGBfkxoQ1CEyCh5fdgKHedn6aYA9
+         oVtNhZAbl27kO2ApR9LC3+9q/NNGJKxpU/+e95uD6AeZP5V2oae3kDNutvyu3m5j8o
+         3qXeqpy5RXTpIK2/2i86kBTZMU0le6SGCjJuDknk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Wilck <mwilck@suse.com>,
-        Hannes Reinecke <hare@suse.de>,
-        NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
-        Christophe Varoqui <christophe.varoqui@opensvc.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        SCSI ML <linux-scsi@vger.kernel.org>,
-        DM ML <dm-devel@redhat.com>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 45/75] scsi: core: add new RDAC LENOVO/DE_Series device
+        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 80/99] ASoC: stm32: fix sai driver name initialisation
 Date:   Mon,  6 May 2019 16:32:53 +0200
-Message-Id: <20190506143057.279889325@linuxfoundation.org>
+Message-Id: <20190506143101.331595404@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,54 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1cb1d2c64e812928fe0a40b8f7e74523d0283dbe ]
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-Blacklist "Universal Xport" LUN. It's used for in-band storage array
-management.  Also add model to the rdac dh family.
+commit 17d3069ccf06970e2db3f7cbf4335f207524279e upstream.
 
-Cc: Martin Wilck <mwilck@suse.com>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
-Cc: Christophe Varoqui <christophe.varoqui@opensvc.com>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Cc: DM ML <dm-devel@redhat.com>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
-Reviewed-by: Martin Wilck <mwilck@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This patch fixes the sai driver structure overwriting which results in
+a cpu dai name equal NULL.
+
+Fixes: 3e086ed ("ASoC: stm32: add SAI driver")
+
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/scsi_devinfo.c | 1 +
- drivers/scsi/scsi_dh.c      | 1 +
- 2 files changed, 2 insertions(+)
+ sound/soc/stm/stm32_sai_sub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
-index 6b594bc7d94a..022fcd2e4702 100644
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -248,6 +248,7 @@ static struct {
- 	{"NETAPP", "Universal Xport", "*", BLIST_NO_ULD_ATTACH},
- 	{"LSI", "Universal Xport", "*", BLIST_NO_ULD_ATTACH},
- 	{"ENGENIO", "Universal Xport", "*", BLIST_NO_ULD_ATTACH},
-+	{"LENOVO", "Universal Xport", "*", BLIST_NO_ULD_ATTACH},
- 	{"SMSC", "USB 2 HS-CF", NULL, BLIST_SPARSELUN | BLIST_INQUIRY_36},
- 	{"SONY", "CD-ROM CDU-8001", NULL, BLIST_BORKEN},
- 	{"SONY", "TSL", NULL, BLIST_FORCELUN},		/* DDS3 & DDS4 autoloaders */
-diff --git a/drivers/scsi/scsi_dh.c b/drivers/scsi/scsi_dh.c
-index 375cede0c534..c9bc6f058424 100644
---- a/drivers/scsi/scsi_dh.c
-+++ b/drivers/scsi/scsi_dh.c
-@@ -75,6 +75,7 @@ static const struct scsi_dh_blist scsi_dh_blist[] = {
- 	{"NETAPP", "INF-01-00",		"rdac", },
- 	{"LSI", "INF-01-00",		"rdac", },
- 	{"ENGENIO", "INF-01-00",	"rdac", },
-+	{"LENOVO", "DE_Series",		"rdac", },
- 	{NULL, NULL,			NULL },
- };
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -1194,7 +1194,6 @@ static int stm32_sai_sub_dais_init(struc
+ 	if (!sai->cpu_dai_drv)
+ 		return -ENOMEM;
  
--- 
-2.20.1
-
+-	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
+ 	if (STM_SAI_IS_PLAYBACK(sai)) {
+ 		memcpy(sai->cpu_dai_drv, &stm32_sai_playback_dai,
+ 		       sizeof(stm32_sai_playback_dai));
+@@ -1204,6 +1203,7 @@ static int stm32_sai_sub_dais_init(struc
+ 		       sizeof(stm32_sai_capture_dai));
+ 		sai->cpu_dai_drv->capture.stream_name = sai->cpu_dai_drv->name;
+ 	}
++	sai->cpu_dai_drv->name = dev_name(&pdev->dev);
+ 
+ 	return 0;
+ }
 
 
