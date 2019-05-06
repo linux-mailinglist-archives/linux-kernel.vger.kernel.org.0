@@ -2,107 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C9815016
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 313B51502F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfEFPY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:24:56 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30792 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbfEFPYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:24:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 08:24:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
-   d="scan'208";a="344011094"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 06 May 2019 08:24:48 -0700
-Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
-        by linux.intel.com (Postfix) with ESMTP id 935FC58010A;
-        Mon,  6 May 2019 08:24:48 -0700 (PDT)
-Subject: Re: [PATCH] ASoC: Intel: bytcr_rt5651.c: remove string buffers
- 'byt_rt5651_cpu_dai_name' and 'byt_rt5651_cpu_dai_name'
-To:     Nariman <narimantos@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     hdegoede@redhat.com, liam.r.girdwood@linux.intel.com,
-        yang.jie@linux.intel.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        Jordy Ubink <jordyubink@hotmail.nl>
-References: <20190504151652.5213-1-user@elitebook-localhost>
- <20190504151652.5213-4-user@elitebook-localhost>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <ea3ac342-c3a2-6054-77f7-0f13d0e9d593@linux.intel.com>
-Date:   Mon, 6 May 2019 10:24:48 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1726875AbfEFP1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:27:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45292 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726414AbfEFP1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:27:32 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 60A73F152B13A524385D;
+        Mon,  6 May 2019 23:27:30 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 May 2019
+ 23:27:22 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <andrew@lunn.ch>,
+        <vivien.didelot@gmail.com>, <f.fainelli@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] net: dsa: Fix error cleanup path in dsa_init_module
+Date:   Mon, 6 May 2019 23:25:29 +0800
+Message-ID: <20190506152529.6292-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190504151652.5213-4-user@elitebook-localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/4/19 10:16 AM, Nariman wrote:
-> From: Jordy Ubink <jordyubink@hotmail.nl>
-> 
-> The snprintf calls filling byt_rt5651_cpu_dai_name / byt_rt5651_cpu_dai_name always fill them with the same string (ssp0-port" resp "rt5651-aif2"). So instead of keeping these buffers around and making the cpu_dai_name / codec_dai_name point to this, simply update the foo_dai_name pointers to directly point to a string constant containing the desired string.
-> 
-> Signed-off-by: Jordy Ubink <jordyubink@hotmail.nl>
-> ---
->   sound/soc/intel/boards/bytcr_rt5651.c | 24 ++++--------------------
->   1 file changed, 4 insertions(+), 20 deletions(-)
-> 
-> diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-> index e528995668b7..2e1bf43820d8 100644
-> --- a/sound/soc/intel/boards/bytcr_rt5651.c
-> +++ b/sound/soc/intel/boards/bytcr_rt5651.c
-> @@ -730,8 +730,6 @@ static struct snd_soc_dai_link byt_rt5651_dais[] = {
->   
->   /* SoC card */
->   static char byt_rt5651_codec_name[SND_ACPI_I2C_ID_LEN];
-> -static char byt_rt5651_codec_aif_name[12]; /*  = "rt5651-aif[1|2]" */
-> -static char byt_rt5651_cpu_dai_name[10]; /*  = "ssp[0|2]-port" */
->   static char byt_rt5651_long_name[50]; /* = "bytcr-rt5651-*-spk-*-mic[-swapped-hp]" */
->   
->   static int byt_rt5651_suspend(struct snd_soc_card *card)
-> @@ -1009,26 +1007,12 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
->   	log_quirks(&pdev->dev);
->   
->   	if ((byt_rt5651_quirk & BYT_RT5651_SSP2_AIF2) ||
-> -	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2)) {
-> -		/* fixup codec aif name */
-> -		snprintf(byt_rt5651_codec_aif_name,
-> -			sizeof(byt_rt5651_codec_aif_name),
-> -			"%s", "rt5651-aif2");
-> -
-> -		byt_rt5651_dais[dai_index].codec_dai_name =
-> -			byt_rt5651_codec_aif_name;
-> -	}
-> +	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2))
-> +		byt_rt5651_dais[dai_index].codec_dai_name = "rt5651-aif2";
->   
->   	if ((byt_rt5651_quirk & BYT_RT5651_SSP0_AIF1) ||
-> -	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2)) {
-> -		/* fixup cpu dai name name */
-> -		snprintf(byt_rt5651_cpu_dai_name,
-> -			sizeof(byt_rt5651_cpu_dai_name),
-> -			"%s", "ssp0-port");
-> -
-> -		byt_rt5651_dais[dai_index].cpu_dai_name =
-> -			byt_rt5651_cpu_dai_name;
-> -	}
-> +	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2))
-> +		byt_rt5651_dais[dai_index].cpu_dai_name = "ssp0-port";
+BUG: unable to handle kernel paging request at ffffffffa01c5430
+PGD 3270067 P4D 3270067 PUD 3271063 PMD 230bc5067 PTE 0
+Oops: 0000 [#1
+CPU: 0 PID: 6159 Comm: modprobe Not tainted 5.1.0+ #33
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:raw_notifier_chain_register+0x16/0x40
+Code: 63 f8 66 90 e9 5d ff ff ff 90 90 90 90 90 90 90 90 90 90 90 55 48 8b 07 48 89 e5 48 85 c0 74 1c 8b 56 10 3b 50 10 7e 07 eb 12 <39> 50 10 7c 0d 48 8d 78 08 48 8b 40 08 48 85 c0 75 ee 48 89 46 08
+RSP: 0018:ffffc90001c33c08 EFLAGS: 00010282
+RAX: ffffffffa01c5420 RBX: ffffffffa01db420 RCX: 4fcef45928070a8b
+RDX: 0000000000000000 RSI: ffffffffa01db420 RDI: ffffffffa01b0068
+RBP: ffffc90001c33c08 R08: 000000003e0a33d0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000094443661 R12: ffff88822c320700
+R13: ffff88823109be80 R14: 0000000000000000 R15: ffffc90001c33e78
+FS:  00007fab8bd08540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa01c5430 CR3: 00000002297ea000 CR4: 00000000000006f0
+Call Trace:
+ register_netdevice_notifier+0x43/0x250
+ ? 0xffffffffa01e0000
+ dsa_slave_register_notifier+0x13/0x70 [dsa_core
+ ? 0xffffffffa01e0000
+ dsa_init_module+0x2e/0x1000 [dsa_core
+ do_one_initcall+0x6c/0x3cc
+ ? do_init_module+0x22/0x1f1
+ ? rcu_read_lock_sched_held+0x97/0xb0
+ ? kmem_cache_alloc_trace+0x325/0x3b0
+ do_init_module+0x5b/0x1f1
+ load_module+0x1db1/0x2690
+ ? m_show+0x1d0/0x1d0
+ __do_sys_finit_module+0xc5/0xd0
+ __x64_sys_finit_module+0x15/0x20
+ do_syscall_64+0x6b/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-same issues with Signed-off-by and missing quirks.
+Cleanup allocated resourses if there are errors,
+otherwise it will trgger memleak.
 
->   
->   	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
->   		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
-> 
+Fixes: c9eb3e0f8701 ("net: dsa: Add support for learning FDB through notification")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/dsa/dsa.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
+index 36de4f2..cb080ef 100644
+--- a/net/dsa/dsa.c
++++ b/net/dsa/dsa.c
+@@ -344,15 +344,22 @@ static int __init dsa_init_module(void)
+ 
+ 	rc = dsa_slave_register_notifier();
+ 	if (rc)
+-		return rc;
++		goto register_notifier_fail;
+ 
+ 	rc = dsa_legacy_register();
+ 	if (rc)
+-		return rc;
++		goto legacy_register_fail;
+ 
+ 	dev_add_pack(&dsa_pack_type);
+ 
+ 	return 0;
++
++legacy_register_fail:
++	dsa_slave_unregister_notifier();
++register_notifier_fail:
++	destroy_workqueue(dsa_owq);
++
++	return rc;
+ }
+ module_init(dsa_init_module);
+ 
+-- 
+1.8.3.1
+
 
