@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4940214C45
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B03B514DD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfEFOiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:38:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59246 "EHLO mail.kernel.org"
+        id S1728650AbfEFOpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:45:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727527AbfEFOiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:38:13 -0400
+        id S1728263AbfEFOpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:45:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0596C206A3;
-        Mon,  6 May 2019 14:38:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D1CA20449;
+        Mon,  6 May 2019 14:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153492;
-        bh=b1+zedKg8zdeP7otKTiu/0hB8d4eiwI693m/aSnw4sM=;
+        s=default; t=1557153910;
+        bh=IrPcc57wj/qwVY+4g3/GgkDnOZM19Ur0TOOrKUMgLSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=186lQK+vZpFLosDEf54Tb0CSOdWSr0ra7vwHAZBRIFdNIQDEutcaurpOJnQmXYxwt
-         QFv5FljhVLGxsw0MsrtdWvtWwA9URHyRCgk9XI6BX8H3Zcz7j2mM7IpIUsFlHqKtPJ
-         tbUTJQaRGjsIq5ykfUpZMELi0L/mYgMld3HGibpQ=
+        b=DWFjGod2ILKm/mPiGM+yXVDMHG5yKX0luC7Xw3zXhRHcS6AdAif52u/ozbg7U7Y/T
+         2O4OqTbOeKPEDBeEYSUZenWaBlkzArFc0Zh1c4DrWQnkM6K9UOUxGvO5HeUbS9hEuM
+         Ey9+iOMb0ItXjYFM5MJNLO0HvvWSNCpzXOFFpIog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Shyti <andi@etezian.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.0 110/122] Input: stmfts - acknowledge that setting brightness is a blocking call
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 40/75] jffs2: fix use-after-free on symlink traversal
 Date:   Mon,  6 May 2019 16:32:48 +0200
-Message-Id: <20190506143104.376228859@linuxfoundation.org>
+Message-Id: <20190506143056.851664501@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
-References: <20190506143054.670334917@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[ Upstream commit 4fdcfab5b5537c21891e22e65996d4d0dd8ab4ca ]
 
-commit 937c4e552fd1174784045684740edfcea536159d upstream.
+free the symlink body after the same RCU delay we have for freeing the
+struct inode itself, so that traversal during RCU pathwalk wouldn't step
+into freed memory.
 
-We need to turn regulators on and off when switching brightness, and
-that may block, therefore we have to set stmfts_brightness_set() as
-LED's brightness_set_blocking() method.
-
-Fixes: 78bcac7b2ae1 ("Input: add support for the STMicroelectronics FingerTip touchscreen")
-Acked-by: Andi Shyti <andi@etezian.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/stmfts.c |   30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ fs/jffs2/readinode.c | 5 -----
+ fs/jffs2/super.c     | 5 ++++-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/input/touchscreen/stmfts.c
-+++ b/drivers/input/touchscreen/stmfts.c
-@@ -106,27 +106,29 @@ struct stmfts_data {
- 	bool running;
- };
+diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
+index 389ea53ea487..bccfc40b3a74 100644
+--- a/fs/jffs2/readinode.c
++++ b/fs/jffs2/readinode.c
+@@ -1414,11 +1414,6 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f)
  
--static void stmfts_brightness_set(struct led_classdev *led_cdev,
-+static int stmfts_brightness_set(struct led_classdev *led_cdev,
- 					enum led_brightness value)
- {
- 	struct stmfts_data *sdata = container_of(led_cdev,
- 					struct stmfts_data, led_cdev);
- 	int err;
+ 	jffs2_kill_fragtree(&f->fragtree, deleted?c:NULL);
  
--	if (value == sdata->led_status || !sdata->ledvdd)
--		return;
+-	if (f->target) {
+-		kfree(f->target);
+-		f->target = NULL;
+-	}
 -
--	if (!value) {
--		regulator_disable(sdata->ledvdd);
--	} else {
--		err = regulator_enable(sdata->ledvdd);
--		if (err)
--			dev_warn(&sdata->client->dev,
--				 "failed to disable ledvdd regulator: %d\n",
--				 err);
-+	if (value != sdata->led_status && sdata->ledvdd) {
-+		if (!value) {
-+			regulator_disable(sdata->ledvdd);
-+		} else {
-+			err = regulator_enable(sdata->ledvdd);
-+			if (err) {
-+				dev_warn(&sdata->client->dev,
-+					 "failed to disable ledvdd regulator: %d\n",
-+					 err);
-+				return err;
-+			}
-+		}
-+		sdata->led_status = value;
- 	}
- 
--	sdata->led_status = value;
-+	return 0;
+ 	fds = f->dents;
+ 	while(fds) {
+ 		fd = fds;
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 83340496645b..9a9f30eddbbb 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -47,7 +47,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+ static void jffs2_i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+-	kmem_cache_free(jffs2_inode_cachep, JFFS2_INODE_INFO(inode));
++	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
++
++	kfree(f->target);
++	kmem_cache_free(jffs2_inode_cachep, f);
  }
  
- static enum led_brightness stmfts_brightness_get(struct led_classdev *led_cdev)
-@@ -608,7 +610,7 @@ static int stmfts_enable_led(struct stmf
- 	sdata->led_cdev.name = STMFTS_DEV_NAME;
- 	sdata->led_cdev.max_brightness = LED_ON;
- 	sdata->led_cdev.brightness = LED_OFF;
--	sdata->led_cdev.brightness_set = stmfts_brightness_set;
-+	sdata->led_cdev.brightness_set_blocking = stmfts_brightness_set;
- 	sdata->led_cdev.brightness_get = stmfts_brightness_get;
- 
- 	err = devm_led_classdev_register(&sdata->client->dev, &sdata->led_cdev);
+ static void jffs2_destroy_inode(struct inode *inode)
+-- 
+2.20.1
+
 
 
