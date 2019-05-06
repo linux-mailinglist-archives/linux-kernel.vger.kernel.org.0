@@ -2,92 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AAF514EBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D8014EDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfEFPE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:04:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbfEFPEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:04:24 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 339E821530;
-        Mon,  6 May 2019 15:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557155063;
-        bh=GTU8OTjGtl5LOFT7cRg59KsW701NKsE0VzSWQUozfUE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Cvs5PHrbtmKdII0xM3nLCehc/8f272vJsChhVCWWGXtXnPy7j1H/KGXvY2kmKL2BW
-         ztsO2Cyzhz3QDyMR2bZxoONjXQdNpFbU42iJMQvfAsfgu9+xrUYnRYmd6+1vxUO5xT
-         aEepz0ihsx+ItjP/ZKs1EzwY1OQWrEXvEeWPn5E8=
-Received: by mail-qt1-f175.google.com with SMTP id a17so916220qth.3;
-        Mon, 06 May 2019 08:04:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAVnxHMPXMMnu0dzdtwns4A9qAT51tAzYWr2Hb9NvJRBrfgc42+P
-        tJYTEK87m7QrURWOyVvUY6DaKew3ViRfqkf+aA==
-X-Google-Smtp-Source: APXvYqwTGaTwpQhCxUNSWGGAJ6lrotLyqlbDqtumhudX19OwLFLZtjwpqmue9eoggzwpO7k4YQzf0M3Agg9uhmRbdSE=
-X-Received: by 2002:ac8:610f:: with SMTP id a15mr21088874qtm.257.1557155062365;
- Mon, 06 May 2019 08:04:22 -0700 (PDT)
+        id S1727425AbfEFPF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:05:56 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36982 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbfEFPFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 11:05:46 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w37so15661216edw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 08:05:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EG9y7f+OaOLQCxmo5YAdYV2d8wQYYdrdIyT2YfdhqrA=;
+        b=F+4/Jl6/lvGeT+SS7vPjh+1b/nWrFBsxvd5B0DDbfxbrSS/DXDDTUUdplsPBDkiU9b
+         eHfG880v3EXk5/Puc8CtNV/4iCqMvwle6VBUsAsEed+STfBUZBk+KFcnonnwNgU/J1k4
+         UQ/NUbdxENW3ZMoOQ6AMDUfK3bzFY2WhDwiaE02NZfgWUbosa6HvaUgDzB/AkSCODn0/
+         xMIQXIKa9HvlFwSNs2wh8Zm+OSvKzPbNyWdIDqQO80GKSowsoevKXiXQ9BL+4OKipJOj
+         Yp4FRY5CewaBdha6ZLVG0TsyOkCmss6twrF9fuK4y3lAprCz5RdXzJY6/7DdcMCBOcMJ
+         w/kw==
+X-Gm-Message-State: APjAAAUG1IaxOoO47HdCHj0aXKLeru1tQR0gwMV9x1X09Wnu988gRfam
+        PaEDpRDOeHpubL5Nx3ojLPmHUQ==
+X-Google-Smtp-Source: APXvYqwG7U8NKXeMCYsnsKEeNFfADW0dBrFnKXzISgYtUcSEK+XfEplGea/2X6qLq5ujIDfyCx/gVw==
+X-Received: by 2002:a50:9007:: with SMTP id b7mr25564744eda.194.1557155144500;
+        Mon, 06 May 2019 08:05:44 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id b42sm2996983edd.83.2019.05.06.08.05.43
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 08:05:43 -0700 (PDT)
+Subject: Re: [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to
+ critclk_systems DMI table
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Semyon Verchenko <semverchenko@factor-ts.ru>
+References: <20190429150135.15070-1-hdegoede@redhat.com>
+ <CAHp75VeE=88mCcgVx3Y3PQJPQ819Z7=3s=jRGz1y=t09phk=rA@mail.gmail.com>
+ <085c5b6e-d220-ebd1-38d2-def7efca24b8@redhat.com>
+ <CAHp75Vfe9uK_b_V+uG29wb1L6J7u1hpbU+P4beXso9KNPM+8Rg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <568ba27d-a6a5-b158-bab1-f22cd8ccb34e@redhat.com>
+Date:   Mon, 6 May 2019 17:05:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190501121448.3812-1-jagan@amarulasolutions.com>
- <20190501193429.GA9075@ravnborg.org> <CAMty3ZAfwVyvmAmenhrQHJcy3eq-Yb61a4WLop_8jS-7vM940A@mail.gmail.com>
-In-Reply-To: <CAMty3ZAfwVyvmAmenhrQHJcy3eq-Yb61a4WLop_8jS-7vM940A@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 6 May 2019 10:04:10 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+mYy1JF_cM7sD82aLuUSnZnwsSD6-Q-W1uTp+_oSdRmg@mail.gmail.com>
-Message-ID: <CAL_Jsq+mYy1JF_cM7sD82aLuUSnZnwsSD6-Q-W1uTp+_oSdRmg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/panel: simple: Add FriendlyELEC HD702E 800x1280
- LCD panel
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, Heiko Stuebner <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75Vfe9uK_b_V+uG29wb1L6J7u1hpbU+P4beXso9KNPM+8Rg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 4:56 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Hi Sam,
->
-> On Thu, May 2, 2019 at 1:04 AM Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > Hi Jagan
-> >
-> > On Wed, May 01, 2019 at 05:44:47PM +0530, Jagan Teki wrote:
-> > > HD702E lcd is FriendlyELEC developed eDP LCD panel with 800x1280
-> > > resolution. It has built in Goodix, GT9271 captive touchscreen
-> > > with backlight adjustable via PWM.
-> > >
-> > > Add support for it.
-> > >
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > > Cc: David Airlie <airlied@linux.ie>
-> > > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > > Cc: dri-devel@lists.freedesktop.org
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > Please submit the binding in a separate patch as per
-> > Documentation/devicetree/bindings/submitting-patches.txt
->
-> Hmm.. prepared like this initially but few of my patches were combined
-> earlier even-though I sent it separately. anyway let me separate it
-> again.
+Hi,
 
-For what subsystem? All the maintainers that I was aware of doing that
-have stopped.
+On 06-05-19 16:59, Andy Shevchenko wrote:
+> On Mon, May 6, 2019 at 5:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi,
+>>
+>> On 06-05-19 14:38, Andy Shevchenko wrote:
+>>> On Mon, Apr 29, 2019 at 6:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>
+>>>> The Lex 3I380D industrial PC has 4 ethernet controllers on board
+>>>> which need pmc_plt_clk0 - 3 to function, add it to the critclk_systems
+>>>> DMI table, so that drivers/clk/x86/clk-pmc-atom.c will mark the clocks
+>>>> as CLK_CRITICAL and they will not get turned off.
+>>>>
+>>>
+>>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>>> supposedly to go via CLK tree.
+>>>
+>>> P.S. If you want it through PDx86, I need immutable branch / tag from CLK.
+>>
+>> Stephen added the patches this depends on to his fixes branch, so they
+>> are in the 5.1 / Torvald's master branch, since we are now in the 5.2 merge
+>> window, you should be able to cleanly apply this directly.
+> 
+> We don't do back merges, so, our base is v5.1-rc1. Does it mean the
+> commit in question is in v5.1-rc1?
+> AFAICS it was appeared in v5.1-rc5.
 
-Rob
+Ah, I see, my bad.
+
+Stephen can you pick up this patch and the
+"[PATCH 1/1] Add several Beckhoff Automation boards to critclk_systems DMI table"
+patch then?
+
+Regards,
+
+Hans
+
