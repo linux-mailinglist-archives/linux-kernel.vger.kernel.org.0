@@ -2,244 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7123F1443E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 07:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4D014456
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 07:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725887AbfEFFQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 01:16:27 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34872 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbfEFFQ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 01:16:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w12so2029696wrp.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2019 22:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucsc.edu; s=ucsc-google-2018;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jCh6x+ORi5EWv/IlypawahbbvpnK5RHTjISz62KuNKg=;
-        b=O/PZC2uANw4749yGxquasq82LLBwHsDNYDcytpi8MLvw8XUUWK3lDggrfpWl+FsV8S
-         dNE8ALd6B+SRamBl6n6yaRzROVtPN6QRl7VO46g0bAmW+VBC7rBQ6TGbgOrLifoEBOiN
-         aRSWUOFgTXgqNsYEjgN+golZVOJBQmJY+/EvLNRTdOIfdxsYsmyv8XvdoZW/WNTlRKn8
-         mLs8j003f2pqKvF8mfTL/Ra55S8bp9iLinYFxkxzCN5htz+REXwUZ2wmhrmf3KQzzYO5
-         QNLo+eJRbPgU/clyxPb03HGxYzpQRmMb8ZuKCJPVjj9/Hme17ypQ7+IEuu6ZlidXCIu+
-         yNng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jCh6x+ORi5EWv/IlypawahbbvpnK5RHTjISz62KuNKg=;
-        b=AfeLOBaNP2fzPnZzrgE1O1AiqglqJJgHpcMnQekfL32ycvvTinewCJuy4fW8nOprc0
-         fcxDA2ETJZRY36Sse3UjVi8B1n+f5/bUZQ6/i1XAAiP+JYzbXo1hb5Xfx7qhAwytHBxz
-         zkDEDTSFCYeusLPGMhk6vkTZOfe/GSiQwbaFSiJ1SvjFYVVOf7XkIUpRhN7wJn1scsGa
-         N0M2hvCDFf+NHDDZpVOj4giGhZ6S+QDQ8FZHS+0HRLWftJVOVz1QXRKNb8wJNIqxRD1/
-         figZ87Z3uWv8djr6XjuZ+j4UcI6ptS6aarW9mTaiSMgIyzte8WAd7C7pOoZDUGwZo1Kj
-         TQFA==
-X-Gm-Message-State: APjAAAULXaaNJBTjCIO46aYmY1iItPALPSS7lQZCxGRi9vte+1AXpcUn
-        DgZ1tXI9RJHJ437wcpvWbtUCshZp7zjiKiFptCcUOg==
-X-Google-Smtp-Source: APXvYqyNBjTLPxpA6Ti+erKMILGxw3zCHWCnIs8szraaRWWeF0H22yGhvqPUwRnLS1VQrUjg0jMvJ6T198uU1y8ou64=
-X-Received: by 2002:adf:f9c5:: with SMTP id w5mr91669wrr.26.1557119784614;
- Sun, 05 May 2019 22:16:24 -0700 (PDT)
+        id S1725886AbfEFF53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 01:57:29 -0400
+Received: from mail-eopbgr60102.outbound.protection.outlook.com ([40.107.6.102]:37894
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725710AbfEFF52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 01:57:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RdAMUsQAje7nuEOzerj0HI1cqJxQd3u5hLxZI1wNhhY=;
+ b=PayFbe+Bh1DctS4cQju4N6B+DHIAMkniUo0jElnhV5KNY1jdne/HM4Nxt9RFmobrINrFCyAP13bqNj1OW9B/Gp+VagQAY9qPJ0ndh3fSsPJWNBiNLRxuHTn3h+U6w2cDkwPSKZg1IawU67iUuNXnLbmx+0+PTiIEwPyhfwgST8k=
+Received: from VI1PR10MB2672.EURPRD10.PROD.OUTLOOK.COM (20.178.126.212) by
+ VI1PR10MB2640.EURPRD10.PROD.OUTLOOK.COM (20.178.126.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Mon, 6 May 2019 05:57:11 +0000
+Received: from VI1PR10MB2672.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::48b8:9cff:182:f3d8]) by VI1PR10MB2672.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::48b8:9cff:182:f3d8%2]) with mapi id 15.20.1856.012; Mon, 6 May 2019
+ 05:57:11 +0000
+From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+To:     Vivien Didelot <vivien.didelot@gmail.com>
+CC:     Andrew Lunn <andrew@lunn.ch>, LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/5] net: dsa: mv88e6xxx: rename smi read/write
+ functions
+Thread-Topic: [RFC PATCH 2/5] net: dsa: mv88e6xxx: rename smi read/write
+ functions
+Thread-Index: AQHVAFSSX8ZksdA+AkirAMJMhwKcSqZZ9cEAgAOqqQA=
+Date:   Mon, 6 May 2019 05:57:11 +0000
+Message-ID: <8d14f3e0-4b95-900c-55f0-dfff30ae655f@prevas.dk>
+References: <20190501193126.19196-1-rasmus.villemoes@prevas.dk>
+ <20190501193126.19196-3-rasmus.villemoes@prevas.dk>
+ <20190503175732.GB4060@t480s.localdomain>
+In-Reply-To: <20190503175732.GB4060@t480s.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR05CA0359.eurprd05.prod.outlook.com
+ (2603:10a6:7:94::18) To VI1PR10MB2672.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:e3::20)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Rasmus.Villemoes@prevas.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [81.216.59.226]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 17392168-c6a2-4323-4ba3-08d6d1e7ae35
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:VI1PR10MB2640;
+x-ms-traffictypediagnostic: VI1PR10MB2640:
+x-microsoft-antispam-prvs: <VI1PR10MB2640B0747B106CE8CBB6C3CC8A300@VI1PR10MB2640.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
+x-forefront-prvs: 0029F17A3F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(346002)(376002)(136003)(366004)(396003)(199004)(189003)(25786009)(476003)(36756003)(53936002)(31686004)(6246003)(6512007)(4326008)(256004)(486006)(71190400001)(71200400001)(4744005)(74482002)(66946007)(7736002)(73956011)(66446008)(64756008)(66556008)(66476007)(305945005)(478600001)(81166006)(8976002)(8936002)(8676002)(81156014)(42882007)(72206003)(102836004)(6506007)(386003)(44832011)(11346002)(446003)(2616005)(31696002)(229853002)(186003)(68736007)(6916009)(66066001)(6486002)(6436002)(26005)(2906002)(6116002)(3846002)(316002)(76176011)(99286004)(14454004)(54906003)(5660300002)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR10MB2640;H:VI1PR10MB2672.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: prevas.se does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: xy4vVHdNSqjdIa2f4ut9cYa9PdO6R7CjGpasLWIhKWSOFQwDhsShjj8DWsWxIphmhMoi6PJBPJtdcQRR1O7cXhZGh0lPrY2rsyGojs3+7897tFDXCa2joRtZdftcJWOIM+LAHWXCyHfRi42V5SRBR7EIC1Vk6ZefdLrwm6b0H6Ix+bXBzD3jwIw8V8AP5sR0t8d3GV3/Wm/x5QcjklrX65MCb5DJ8/mmYm/niDO339GdCzjX25zzY9E+NYsKLFM5Qlgr4IG40Yf//2b6fP+ZasXHThxBIforb55znT7GEg/t/fpEpWa0LSkOnoewIljycOL6267YzXdGhOuNKl3vtdithRVXKlLPG5Qt8fLw2n7IF6q5KIgMCkSx6N//wy/kkynYfhEOvSElQe9FxKM9yoPIjoHPvnookhfnX+AGyZU=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6B17DFFB7F08C34CAE691E29C9D3C10D@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190425052152.6571-1-hlitz@ucsc.edu> <66434cc7-2bac-dd10-6edc-4560e6a0f89f@intel.com>
- <F305CAB7-F566-40D7-BC91-E88DE821520B@javigon.com> <a1df8967-2169-1c43-c55a-e2144fa53b9a@intel.com>
- <CAJbgVnWsHQRpEPkd77E6u0hoW5jKQaOGR-3dW9+drGNq_JYpfA@mail.gmail.com>
- <139AF16B-E69C-4AA5-A9AC-38576BB9BD4B@javigon.com> <CAJbgVnWTRWZB_Dc7F1cvtgWdYPCbJ_aJJ_mas01m51+8siHvHA@mail.gmail.com>
- <b7c03f26-90bb-ffd6-e744-6daf3bbe348d@intel.com>
-In-Reply-To: <b7c03f26-90bb-ffd6-e744-6daf3bbe348d@intel.com>
-From:   Heiner Litz <hlitz@ucsc.edu>
-Date:   Sun, 5 May 2019 22:16:13 -0700
-Message-ID: <CAJbgVnU3-ed42CBtPv7SWdtA=__bNcSPhiXwobuVKek2-BFBig@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: pblk: Introduce hot-cold data separation
-To:     Igor Konopko <igor.j.konopko@intel.com>
-Cc:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17392168-c6a2-4323-4ba3-08d6d1e7ae35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2019 05:57:11.2394
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2640
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Igor, Javier,
-
-both of you are right. Here is what I came up with after some more thinking=
-.
-
-We can avoid the races in 2. and 3. with the following two invariants:
-I1: If we have a GC line with seq_id X, only garbage collect from
-lines older than X (this addresses 2.)
-I2: Guarantee that the open GC line always has a smaller seq_id than
-all open user lines (this addresses 3)
-
-We can enforce I2 by adding a minor seq_id. The major sequence id is
-only incremented when allocating a user line. Whenever a GC line is
-allocated we read the current major seq_id (open user line) and
-increment the minor seq_id. This allows us to order all GC lines
-before the open user line during recovery.
-
-Problem with this approach:
-Consider the following example: There exist user lines U0, U1, U2
-(where 0,1,2 are seq_ids) and a non-empty GC5 line (with seq_id 5). If
-we now do only sequential writes all user lines will be overwritten
-without GC being required. As a result, data will now reside on U6,
-U7, U8. If we now need to GC we cannot because of I1.
-Solution: We cannot fast-forward the GC line's seq_id because it
-contains old data, so pad the GC line with zeros, close it and open a
-new GC9 line.
-
-Generality:
-This approach extends to schemes that use e.g. hot, warm, cold open
-lines (adding a minor_minor_seq_id)
-
-Heiner
-
-
-On Thu, May 2, 2019 at 2:08 AM Igor Konopko <igor.j.konopko@intel.com> wrot=
-e:
->
->
->
-> On 01.05.2019 22:20, Heiner Litz wrote:
-> > Javier, Igor,
-> > you are correct. The problem exists if we have a power loss and we
-> > have an open gc and an open user line and both contain the same LBA.
-> > In that case, I think we need to care about the 4 scenarios:
-> >
-> > 1. user_seq_id > gc_seq_id and user_write after gc_write: No issue
-> > 2. user_seq_id > gc_seq_id and gc_write > user_write: Cannot happen,
-> > open user lines are not gc'ed
->
-> Maybe it would be just a theoretical scenario, but I'm not seeing any
-> reason why this cannot happen in pblk implementation:
-> Let assume that user line X+1 is opened when GC line X is already open
-> and the user line is closed when GC line X is still in use. Then GC
-> quickly choose user line X+1 as a GC victim and we are hitting 2nd case.
->
-> > 3. gc_seq_id > user_seq_id and user_write after gc_write: RACE
-> > 4. gc_seq_id > user_seq_id and gc_write after user_write: No issue
-> >
-> > To address 3.) we can do the following:
-> > Whenever a gc line is opened, determine all open user lines and store
-> > them in a field of pblk_line. When choosing a victim for GC, ignore
-> > those lines.
->
-> Your solution sounds right, but I would extend this based on my previous
-> comment to 2nd case by sth like: during opening new user data also add
-> this line ID to this "blacklist" for the GC selection.
->
-> Igor
->
-> >
-> > Let me know if that sounds good and I will send a v2
-> > Heiner
-> >
-> > On Tue, Apr 30, 2019 at 11:19 PM Javier Gonz=C3=A1lez <javier@javigon.c=
-om> wrote:
-> >>
-> >>> On 26 Apr 2019, at 18.23, Heiner Litz <hlitz@ucsc.edu> wrote:
-> >>>
-> >>> Nice catch Igor, I hadn't thought of that.
-> >>>
-> >>> Nevertheless, here is what I think: In the absence of a flush we don'=
-t
-> >>> need to enforce ordering so we don't care about recovering the older
-> >>> gc'ed write. If we completed a flush after the user write, we should
-> >>> have already invalidated the gc mapping and hence will not recover it=
-.
-> >>> Let me know if I am missing something.
-> >>
-> >> I think that this problem is orthogonal to a flush on the user path. F=
-or example
-> >>
-> >>     - Write to LBA0 + completion to host
-> >>     - [=E2=80=A6]
-> >>     - GC LBA0
-> >>     - Write to LBA0 + completion to host
-> >>     - fsync() + completion
-> >>     - Power Failure
-> >>
-> >> When we power up and do recovery in the current implementation, you
-> >> might get the old LBA0 mapped correctly in the L2P table.
-> >>
-> >> If we enforce ID ordering for GC lines this problem goes away as we ca=
-n
-> >> continue ordering lines based on ID and then recovering sequentially.
-> >>
-> >> Thoughts?
-> >>
-> >> Thanks,
-> >> Javier
-> >>
-> >>>
-> >>> On Fri, Apr 26, 2019 at 6:46 AM Igor Konopko <igor.j.konopko@intel.co=
-m> wrote:
-> >>>> On 26.04.2019 12:04, Javier Gonz=C3=A1lez wrote:
-> >>>>>> On 26 Apr 2019, at 11.11, Igor Konopko <igor.j.konopko@intel.com> =
-wrote:
-> >>>>>>
-> >>>>>> On 25.04.2019 07:21, Heiner Litz wrote:
-> >>>>>>> Introduce the capability to manage multiple open lines. Maintain =
-one line
-> >>>>>>> for user writes (hot) and a second line for gc writes (cold). As =
-user and
-> >>>>>>> gc writes still utilize a shared ring buffer, in rare cases a mul=
-ti-sector
-> >>>>>>> write will contain both gc and user data. This is acceptable, as =
-on a
-> >>>>>>> tested SSD with minimum write size of 64KB, less than 1% of all w=
-rites
-> >>>>>>> contain both hot and cold sectors.
-> >>>>>>
-> >>>>>> Hi Heiner
-> >>>>>>
-> >>>>>> Generally I really like this changes, I was thinking about sth sim=
-ilar since a while, so it is very good to see that patch.
-> >>>>>>
-> >>>>>> I have a one question related to this patch, since it is not very =
-clear for me - how you ensure the data integrity in following scenarios:
-> >>>>>> -we have open line X for user data and line Y for GC
-> >>>>>> -GC writes LBA=3DN to line Y
-> >>>>>> -user writes LBA=3DN to line X
-> >>>>>> -we have power failure when both line X and Y were not written com=
-pletely
-> >>>>>> -during pblk creation we are executing OOB metadata recovery
-> >>>>>> And here is the question, how we distinguish whether LBA=3DN from =
-line Y or LBA=3DN from line X is the valid one?
-> >>>>>> Line X and Y might have seq_id either descending or ascending - th=
-is would create two possible scenarios too.
-> >>>>>>
-> >>>>>> Thanks
-> >>>>>> Igor
-> >>>>>
-> >>>>> You are right, I think this is possible in the current implementati=
-on.
-> >>>>>
-> >>>>> We need an extra constrain so that we only GC lines above the GC li=
-ne
-> >>>>> ID. This way, when we order lines on recovery, we can guarantee
-> >>>>> consistency. This means potentially that we would need several open
-> >>>>> lines for GC to avoid padding in case this constrain forces to choo=
-se a
-> >>>>> line with an ID higher than the GC line ID.
-> >>>>>
-> >>>>> What do you think?
-> >>>>
-> >>>> I'm not sure yet about your approach, I need to think and analyze th=
-is a
-> >>>> little more.
-> >>>>
-> >>>> I also believe that probably we need to ensure that current user dat=
-a
-> >>>> line seq_id is always above the current GC line seq_id or sth like t=
-hat.
-> >>>> We cannot also then GC any data from the lines which are still open,=
- but
-> >>>> I believe that this is a case even right now.
-> >>>>
-> >>>>> Thanks,
-> >>>>> Javier
+T24gMDMvMDUvMjAxOSAyMy41NywgVml2aWVuIERpZGVsb3Qgd3JvdGU6DQo+IEhpIFJhc211cywN
+Cj4gDQo+IE9uIFdlZCwgMSBNYXkgMjAxOSAxOTozMjoxMSArMDAwMCwgUmFzbXVzIFZpbGxlbW9l
+cyA8cmFzbXVzLnZpbGxlbW9lc0BwcmV2YXMuZGs+IHdyb3RlOg0KPiANCj4+IC1zdGF0aWMgaW50
+IG12ODhlNnh4eF9zbWlfc2luZ2xlX2NoaXBfcmVhZChzdHJ1Y3QgbXY4OGU2eHh4X2NoaXAgKmNo
+aXAsDQo+PiAtCQkJCQkgIGludCBhZGRyLCBpbnQgcmVnLCB1MTYgKnZhbCkNCj4+ICtzdGF0aWMg
+aW50IG12ODhlNnh4eF9zbWlfZGlyZWN0X3JlYWQoc3RydWN0IG12ODhlNnh4eF9jaGlwICpjaGlw
+LA0KPj4gKwkJCQkgICAgIGludCBhZGRyLCBpbnQgcmVnLCB1MTYgKnZhbCkNCj4gDQo+IEkgaGF2
+ZSBhIHByZXBhcmF0b3J5IHBhdGNoIHdoaWNoIGRvZXMgYWxtb3N0IGV4YWN0bHkgdGhhdC4gSSdt
+IHNlbmRpbmcgaXQNCj4gdG8gc2ltcGxpZnkgdGhpcyBwYXRjaHNldC4NCg0KT0ssIEknbGwgaG9s
+ZCBvZmYgc2VuZGluZyBhIHYyIHVudGlsIEkgc2VlIGhvdyAxLzUgYW5kIDIvNSBhcmUgb2Jzb2xl
+dGVkDQpieSB5b3VyIHBhdGNoKGVzKS4NCg0KPiBBbHNvIHBsZWFzZSB1c2UgbXkgR21haWwgYWRk
+cmVzcyBhcyBkZXNjcmliZWQgYnkgZ2V0X21haW50YWluZXIucGwgcGxlYXNlLg0KDQpTb3JyeSwg
+SSBtdXN0IGhhdmUgYmVlbiBydW5uaW5nICdnaXQgc2VuZC1lbWFpbCcgKHdoaWNoIGludm9rZXMN
+CmdldF9tYWludGFpbmVyIHZpYSBhIC0tdG8tY21kIHNjcmlwdCkgZnJvbSB0aGUgNC4xOSB0cmVl
+IEknbSBjdXJyZW50bHkNCnRhcmdldGluZy4gV2lsbCB0cnkgdG8gcmVtZW1iZXIuDQoNClRoYW5r
+cywNClJhc211cw0K
