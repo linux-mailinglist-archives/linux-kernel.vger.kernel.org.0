@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B7214618
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF355145FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 10:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfEFIVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 04:21:51 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34435 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfEFIUe (ORCPT
+        id S1726620AbfEFIUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 04:20:38 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38809 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726280AbfEFIUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 04:20:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b3so6362782pfd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:34 -0700 (PDT)
+        Mon, 6 May 2019 04:20:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id j26so6098092pgl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 01:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YR1uPUJkVk7yfuNsYEGBjpJtJTSenXj3xCLi83CgQCQ=;
-        b=mCNkBV4IgMyS5Odt2U30IIR20STOIrsRBiSP0iAHuqTxsIitdfPIOvgCVw3f0iThNg
-         xvF5SQslWgY7IEa8zcRl4Wo29ldvHS1Dx9QY6MLj3ZonHU10yagK+aTXNKOSIU33KJ3B
-         flLwkk8+h+BR3GN6GP2LrefuRfiK1Q/ZbksdJ7iTod7YYEZROV+ABgrS2JZYK1SvQwxB
-         WxvoEUq/v+BTwsEt/rcgpO/AeEjMQ1yQXEfcbtbSUpnhH8Wu6wBetMWlkQ9BJBgCzxlH
-         uA/1qJkYdiZlLiAaf+ApQDAooKfoda2a/wqoKcEsC6iucVOXkNS7g2Oxpr6t/MmhMn7G
-         lQsg==
+        bh=jncaqXpvY9xiIvXn8Y040qvm3yjppXEdYjg++AKhNVI=;
+        b=Bfhbj1w36mqYHvEtPxZ35+PNe5TwYdL2vKfcb/A07W10m/xbYsCuKyHA/yBVWzbW+L
+         q5XJ2gjjr/1KtCPv+kqyjdvkzmXGGFp/u364fSBV2o88zyo1f/oYtCRQDe21S9Bx4pvP
+         Z6o8vkMXnH6xBVkGka8dMdungtRKcpoQNfdtHsTi9yBI9fdMWgqbt+jqKdnfZOcYJy0D
+         yTraIc72PmejnyX6GUwODKqqKH6b0+HlRUmeqh/yPyA4TVHZjwJrKNGQs+ZjiYkm55M5
+         Zs9IJlNmSsxQNuvrMRlN8NzEwnTCpzMcW5GlW0shB4vFq6FHgLHow48/VQuqpqxijeUh
+         oUoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YR1uPUJkVk7yfuNsYEGBjpJtJTSenXj3xCLi83CgQCQ=;
-        b=aTCMPwI5+Tp+5+6t3ooK9Ja3SFDZtOdL7wdbBoyV0HWBdGyfADhQsG40+e4e+fgZEz
-         vChaqIkqltIl9nlTmPx9EbL/4XurJJRJQNuTnbr4q1PjDJpjfJkG8qFTNHxwfXaEi+rB
-         pkmredy4zcWTIqYfgsVcBuF3io2lX3es7Oex11bo4C4tDQT52pRvxnF85/5fynx5n4v8
-         Rr5B3GGKKXzow9JpeNa/KeFik7Ng0fHTTfjuSLqd8NUIv9+bTvDegQW/dr+OOYBNzJod
-         BYA7QsZWdr4u/8m5N8D9GUemkRhgzJBqy9Q30GlywHxlTvTgkjmLsXWiHVXYTBh86tT/
-         BNtg==
-X-Gm-Message-State: APjAAAViRUbvGPIZ3oKGLBr3FmNOMU16TLIagJcxJzZSOBaZq3eLGcS1
-        lEVmezxxGUoJmm5/+ID+HiQ=
-X-Google-Smtp-Source: APXvYqx93xvJxwyDr+5//OVD6EMB327ZWW4cnjR0XSTvrSzLBFUTEGM01bqdYhhZmu1vvEvml2CcXw==
-X-Received: by 2002:a63:7982:: with SMTP id u124mr30041388pgc.352.1557130833910;
-        Mon, 06 May 2019 01:20:33 -0700 (PDT)
+        bh=jncaqXpvY9xiIvXn8Y040qvm3yjppXEdYjg++AKhNVI=;
+        b=MPuK5nN5qX5UOdC35Tjh9n/cJTSLW0LSuEr9HJJqVinQ+C1BLNnxNS0dAAxmE2Ukon
+         o23shFsEUlExDJhjuAzZTGfFmtA39dJ9wgwxexxpyKhyIsB0iggLn6vtZuWSncdvpYMu
+         PS9DiVu37KjaDJ3zenTPEhSVcBe62r3NIQczIfFmMsh4LNM2BG6HY78RzLF9LdgCRKNZ
+         9mK+ZKmGoW0Qfatk5ws/M6e6Ie/9xP3rGuYOQIpjSXxiZ2VudC2vBDvNt4vRTtGOZXGm
+         qmG5T/dA0dlLxh9lur8nj+rF/aTv0GgBGsSJyIdxGBWEv6RG2rGS4EXFPb9R6w++AP8O
+         G9Mg==
+X-Gm-Message-State: APjAAAXOA1VwcDZFLlogAVhddH9Ee893NlyGrRMjHy/ehoQ8gTqn23/E
+        KnM37oVXNXNhI9ZPohQEdyc=
+X-Google-Smtp-Source: APXvYqxWkQNMHLBnpH3eJiUDEizEP9HHCxgWNoS1q08/qPpbX4VMVs4tFGzmrL/5plTfrqfhDtuSmw==
+X-Received: by 2002:a62:5a42:: with SMTP id o63mr33025957pfb.170.1557130837029;
+        Mon, 06 May 2019 01:20:37 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.30
+        by smtp.gmail.com with ESMTPSA id v19sm20958013pfa.138.2019.05.06.01.20.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 01:20:33 -0700 (PDT)
+        Mon, 06 May 2019 01:20:36 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v2 14/23] locking/lockdep: Avoid constant checks in __bfs by using offset reference
-Date:   Mon,  6 May 2019 16:19:30 +0800
-Message-Id: <20190506081939.74287-15-duyuyang@gmail.com>
+Subject: [PATCH v2 15/23] locking/lockdep: Update comments on dependency search
+Date:   Mon,  6 May 2019 16:19:31 +0800
+Message-Id: <20190506081939.74287-16-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190506081939.74287-1-duyuyang@gmail.com>
 References: <20190506081939.74287-1-duyuyang@gmail.com>
@@ -63,93 +63,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In search of a dependency in the lock graph, there is contant checks for
-forward or backward search. Directly reference the field offset of the
-struct that differentiates the type of search to avoid those checks.
-
-No functional change.
+The breadth-first search is implemented as flat-out non-recursive now, but
+the comments are still describing it as recursive, update the comments in
+that regard.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ kernel/locking/lockdep.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5a0c908f..15cf2ac 100644
+index 15cf2ac..7bd62e2 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -1362,11 +1362,25 @@ static inline int get_lock_depth(struct lock_list *child)
- 	return depth;
+@@ -1376,6 +1376,10 @@ static inline struct list_head *get_dep_list(struct lock_list *lock, int offset)
+ 	return lock_class + offset;
  }
  
 +/*
-+ * Return the forward or backward dependency list.
-+ *
-+ * @lock:   the lock_list to get its class's dependency list
-+ * @offset: the offset to struct lock_class to determine whether it is
-+ *          locks_after or locks_before
++ * Forward- or backward-dependency search, used for both circular dependency
++ * checking and hardirq-unsafe/softirq-unsafe checking.
 + */
-+static inline struct list_head *get_dep_list(struct lock_list *lock, int offset)
-+{
-+	void *lock_class = lock->class;
-+
-+	return lock_class + offset;
-+}
-+
  static int __bfs(struct lock_list *source_entry,
  		 void *data,
  		 int (*match)(struct lock_list *entry, void *data),
- 		 struct lock_list **target_entry,
--		 int forward)
-+		 int offset)
- {
- 	struct lock_list *entry;
- 	struct lock_list *lock;
-@@ -1380,11 +1394,7 @@ static int __bfs(struct lock_list *source_entry,
- 		goto exit;
- 	}
+@@ -1456,12 +1460,6 @@ static inline int __bfs_backwards(struct lock_list *src_entry,
  
--	if (forward)
--		head = &source_entry->class->locks_after;
--	else
--		head = &source_entry->class->locks_before;
+ }
+ 
+-/*
+- * Recursive, forwards-direction lock-dependency checking, used for
+- * both noncyclic checking and for hardirq-unsafe/softirq-unsafe
+- * checking.
+- */
 -
-+	head = get_dep_list(source_entry, offset);
- 	if (list_empty(head))
- 		goto exit;
- 
-@@ -1398,10 +1408,7 @@ static int __bfs(struct lock_list *source_entry,
- 			goto exit;
- 		}
- 
--		if (forward)
--			head = &lock->class->locks_after;
--		else
--			head = &lock->class->locks_before;
-+		head = get_dep_list(lock, offset);
- 
- 		DEBUG_LOCKS_WARN_ON(!irqs_disabled());
- 
-@@ -1434,7 +1441,8 @@ static inline int __bfs_forwards(struct lock_list *src_entry,
- 			int (*match)(struct lock_list *entry, void *data),
- 			struct lock_list **target_entry)
+ static void print_lock_trace(struct lock_trace *trace, unsigned int spaces)
  {
--	return __bfs(src_entry, data, match, target_entry, 1);
-+	return __bfs(src_entry, data, match, target_entry,
-+		     offsetof(struct lock_class, locks_after));
+ 	unsigned long *entries = stack_trace + trace->offset;
+@@ -2280,7 +2278,7 @@ static inline void inc_chains(void)
  
- }
- 
-@@ -1443,7 +1451,8 @@ static inline int __bfs_backwards(struct lock_list *src_entry,
- 			int (*match)(struct lock_list *entry, void *data),
- 			struct lock_list **target_entry)
- {
--	return __bfs(src_entry, data, match, target_entry, 0);
-+	return __bfs(src_entry, data, match, target_entry,
-+		     offsetof(struct lock_class, locks_before));
- 
- }
- 
+ /*
+  * There was a chain-cache miss, and we are about to add a new dependency
+- * to a previous lock. We recursively validate the following rules:
++ * to a previous lock. We validate the following rules:
+  *
+  *  - would the adding of the <prev> -> <next> dependency create a
+  *    circular dependency in the graph? [== circular deadlock]
+@@ -2330,11 +2328,12 @@ static inline void inc_chains(void)
+ 	/*
+ 	 * Prove that the new <prev> -> <next> dependency would not
+ 	 * create a circular dependency in the graph. (We do this by
+-	 * forward-recursing into the graph starting at <next>, and
+-	 * checking whether we can reach <prev>.)
++	 * a breadth-first search into the graph starting at <next>,
++	 * and check whether we can reach <prev>.)
+ 	 *
+-	 * We are using global variables to control the recursion, to
+-	 * keep the stackframe size of the recursive functions low:
++	 * The search is limited by the size of the circular queue (i.e.,
++	 * MAX_CIRCULAR_QUEUE_SIZE) which keeps track of a breadth of nodes
++	 * in the graph whose neighbours are to be checked.
+ 	 */
+ 	this.class = hlock_class(next);
+ 	this.parent = NULL;
 -- 
 1.8.3.1
 
