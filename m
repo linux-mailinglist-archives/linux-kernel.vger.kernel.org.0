@@ -2,210 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A97515638
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 00:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85CBB15642
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfEFW4p convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 6 May 2019 18:56:45 -0400
-Received: from mga04.intel.com ([192.55.52.120]:19501 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfEFW4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 18:56:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 15:56:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,439,1549958400"; 
-   d="scan'208";a="137572560"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga007.jf.intel.com with ESMTP; 06 May 2019 15:56:44 -0700
-Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 6 May 2019 15:56:44 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.116]) by
- CRSMSX103.amr.corp.intel.com ([169.254.4.184]) with mapi id 14.03.0415.000;
- Mon, 6 May 2019 16:56:41 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [RESEND PATCH v6 08/12] x86/fsgsbase/64: Use the per-CPU base
- as GSBASE at the paranoid_entry
-Thread-Topic: [RESEND PATCH v6 08/12] x86/fsgsbase/64: Use the per-CPU base
- as GSBASE at the paranoid_entry
-Thread-Index: AQHU22qy2YcgqOSDVkqDsKh+C1SMYaYcjFAAgELfX4A=
-Date:   Mon, 6 May 2019 22:56:41 +0000
-Message-ID: <4A00F484-CA9B-4A75-9E33-F38CFD8B9638@intel.com>
-References: <1552680405-5265-1-git-send-email-chang.seok.bae@intel.com>
- <1552680405-5265-9-git-send-email-chang.seok.bae@intel.com>
- <alpine.DEB.2.21.1903251003090.1798@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1903251003090.1798@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.153.227]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F71C7441BA58834E86A1B4B2F5CF212A@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1726394AbfEFXBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:01:14 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:44413 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726063AbfEFXBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 19:01:13 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 62C22148C8;
+        Mon,  6 May 2019 19:01:10 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 06 May 2019 19:01:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=xM4jzc9dPTg4gnuuWc7wADR0BLb
+        nKp4nVQ2UXDxHlno=; b=eecXp3dVsf21b/PePO+9dDTmHMKmNs/bczR0WgIq2VG
+        oRcW0wnHuFcwqgTLkBMWIcA4vmbfkCFDXcwxugn2eUFF4J9d6Z+AlRlfdgcsQJnN
+        t0oaRAkr8nUezQ9K9pwUg92YlLJT1o/oPm3G4C7ZxTv1xLefYcMgTOxGN8eGPa8K
+        yGmHEkK468uOfWS4WI8RKJbdXoTuMb3JM840VQuykkGX+W3dnFi3WqHKh4ykadrP
+        SXKgKwsZYWk27TuL7M08Umxghaz8zoLnR/YZgaOvcYdEhlvJQz0D/pzRFaTovEI9
+        hiM2n3i3QZflDkM4DucwObTdpYIxUCG09zyre/P0m+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=xM4jzc
+        9dPTg4gnuuWc7wADR0BLbnKp4nVQ2UXDxHlno=; b=DxAdKNqbMrpd1c/MEb2Mzz
+        nn25hafBJtjPs3+Tinc9xoNd1VYfIeBmB9EqTU3i2oQIko4Ok9RmxbNJvS+lX6N5
+        9ZW0HJHHacAKsuOb332WPdeRAz7p27Tm/4TQhHst0B3dMVcmv2AdpPIY6UB2Egs0
+        qQEfJVojB3ilByqTYIG/pIBeA652uTM5FCZnj3dwHVQTqQMOnVvCmxZHG3oTGVmb
+        rHXC6mfC7J09GnBYZX9OhpbYD5wrCqqHZtOMpoYpCaZY/QDz4RF0dCFCDFvjplYI
+        iAR3XcMFsQaqJanKkxogOUYbE8WacNkjacmAQZupxY8itmmTIpSL9si2V5nKXJFw
+        ==
+X-ME-Sender: <xms:tLzQXD10ZEomj0bVeUMzj6XLrdNFC0oL0Ek7j6IymvyP8FuOT30AXg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjeelgddukecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
+    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
+    hinhdrtggtqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvddurdeg
+    gedrudelkedrudegudenucfrrghrrghmpehmrghilhhfrhhomhepmhgvsehtohgsihhnrd
+    gttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:tLzQXEphdkpoC4t8paPfeEJWIV3_MYhQcks3J-y_Cjt0sGqtxmGIPA>
+    <xmx:tLzQXLCvZjaJsYGdN52lnTOinc7X84Q1Ho450kOQPqIlo2FEZyR7_g>
+    <xmx:tLzQXBG0wQBewtjvTIuiPLppZxhI1vyHqxfW1fEW7ybvfpeSGlfv-g>
+    <xmx:trzQXAJanD-b7_V4GWJSPP_KlaZgvoWD8kg4V3M9RsCVIK75ZxIkgw>
+Received: from localhost (ppp121-44-198-141.bras1.syd2.internode.on.net [121.44.198.141])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CD8FF1037C;
+        Mon,  6 May 2019 19:01:07 -0400 (EDT)
+Date:   Tue, 7 May 2019 09:00:35 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/5] kobject: Fix kernel-doc comment first line
+Message-ID: <20190506230035.GA29554@eros.localdomain>
+References: <20190502023142.20139-1-tobin@kernel.org>
+ <20190502023142.20139-4-tobin@kernel.org>
+ <20190502073823.GQ26546@localhost>
+ <20190502082539.GB18363@eros.localdomain>
+ <20190502083922.GR26546@localhost>
+ <20190503014015.GC7416@eros.localdomain>
+ <20190503075607.GC26546@localhost>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503075607.GC26546@localhost>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 03, 2019 at 09:56:07AM +0200, Johan Hovold wrote:
+> On Fri, May 03, 2019 at 11:40:15AM +1000, Tobin C. Harding wrote:
+> > On Thu, May 02, 2019 at 10:39:22AM +0200, Johan Hovold wrote:
+> > > On Thu, May 02, 2019 at 06:25:39PM +1000, Tobin C. Harding wrote: > Adding Jon to CC
+> > > > 
+> > > > On Thu, May 02, 2019 at 09:38:23AM +0200, Johan Hovold wrote:
+> > > > > On Thu, May 02, 2019 at 12:31:40PM +1000, Tobin C. Harding wrote:
+> > > > > > kernel-doc comments have a prescribed format.  This includes parenthesis
+> > > > > > on the function name.  To be _particularly_ correct we should also
+> > > > > > capitalise the brief description and terminate it with a period.
+> > > > > 
+> > > > > Why do think capitalisation and full stop is required for the function
+> > > > > description?
+> > > > > 
+> > > > > Sure, the example in the current doc happen to use that, but I'm not
+> > > > > sure that's intended as a prescription.
+> > > > > 
+> > > > > The old kernel-doc nano-HOWTO specifically did not use this:
+> > > > > 
+> > > > > 	https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+> > > > > 
+> > > > 
+> > > > Oh?  I was basing this on Documentation/doc-guide/kernel-doc.rst
+> > > > 
+> > > > 	Function documentation
+> > > > 	----------------------
+> > > > 
+> > > > 	The general format of a function and function-like macro kernel-doc comment is::
+> > > > 
+> > > > 	  /**
+> > > > 	   * function_name() - Brief description of function.
+> > > > 	   * @arg1: Describe the first argument.
+> > > > 	   * @arg2: Describe the second argument.
+> > > > 	   *        One can provide multiple line descriptions
+> > > > 	   *        for arguments.
+> > > > 
+> > > > I figured that was the canonical way to do kernel-doc function
+> > > > comments.  I have however refrained from capitalising and adding the
+> > > > period to argument strings to reduce code churn.  I figured if I'm
+> > > > touching the line to add parenthesis then I might as well make it
+> > > > perfect (if such a thing exists).
+> > >
+> > > I think you may have read too much into that example. Many of the
+> > > current function and parameter descriptions aren't even full sentences,
+> > > so sentence case and full stop doesn't really make any sense.
+> > >
+> > > Looks like we discussed this last fall as well:
+> > 
+> > Ha, this was funny.  By 'we' at first I thought you meant 'we the kernel
+> > community' but you actually meant we as in 'me and you'.  Clearly you
+> > failed to convince me last time :)
+> > 
+> > > 	https://lkml.kernel.org/r/20180912093116.GC1089@localhost
+> > 
+> > I am totally aware this is close to code churn and any discussion is
+> > bikeshedding ... for me just because loads of places don't do this it
+> > still looks nicer to my eyes
+> > 
+> > /**
+> > * sfn() - Super awesome function.
+> > 
+> > than
+> > 
+> > /**
+> > */ sfn() - super awesome function
+> > 
+> > I most likely will keep doing these changes if I am touching the
+> > kernel-doc comments for other reasons and then drop the changes if the
+> > subsystem maintainer thinks its code churn.
+> > 
+> > I defiantly won't do theses changes in GNSS, GREYBUS, or USB SERIAL.
+> 
+> This isn't about any particular subsystem, but more the tendency of
+> people to make up random rules and try to to force it on others. It's
+> churn, and also makes things like code forensics and backports harder
+> for no good reason.
 
+Points noted.
 
-> On Mar 25, 2019, at 02:44, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Both capitalisation styles are about as common for the function
+> description judging from a quick grep, but only 10% or so use a full
+> stop ('.'). And forcing the use of sentence case and full stop for
+> things like
 > 
-> On Fri, 15 Mar 2019, Chang S. Bae wrote:
+> 	/**
+> 	 * maar_init() - Initialise MAARs.
 > 
->> The FSGSBASE instructions allow fast accesses on GSBASE.  Now, at the
->> paranoid_entry, the per-CPU base value can be always copied to GSBASE.
->> And the original GSBASE value will be restored at the exit.
+> or
 > 
-> Again you are describing WHAT but not the WHY.
+> 	* @instr: Operational instruction.
 > 
->> So far, GSBASE modification has not been directly allowed from userspace.
->> So, swapping GSBASE has been conditionally executed according to the
->> kernel-enforced convention that a negative GSBASE indicates a kernel value.
->> But when FSGSBASE is enabled, userspace can put an arbitrary value in
->> GSBASE. The change will secure a correct GSBASE value with FSGSBASE.
-> 
-> So that's some WHY, but it should be explained _BEFORE_ explaining the
-> change. This changelog style is as bad as top posting. Why?
-> 
->  1) FSGSBASE is fast
-> 
->  2) Copy GSBASE always on paranoid exit and restore on entry
-> 
->  3) Explain the context
-> 
-> No. You want to explain context first and then explain why this needs a
-> change when FSGSBASE is enabled and how that change looks like at the
-> conceptual level.
-> 
->> Also, factor out the RDMSR-based GSBASE read into a new macro,
->> READ_MSR_GSBASE.
-> 
-> This new macro is related to this change in what way? None AFAICT. I'm fine
-> with the macro itself, but the benefit for a single usage site is dubious.
-> 
-> Adding this macro and using it should be done with a separate patch before
-> this one, so this patch becomes simpler to review.
-> 
->> 	/*
->> @@ -1178,9 +1185,38 @@ ENTRY(paranoid_entry)
->> 	 * This is also why CS (stashed in the "iret frame" by the
->> 	 * hardware at entry) can not be used: this may be a return
->> 	 * to kernel code, but with a user CR3 value.
->> +	 *
->> +	 * As long as this PTI macro doesn't depend on kernel GSBASE,
->> +	 * we can do it early. This is because FIND_PERCPU_BASE
->> +	 * references data in kernel space.
-> 
-> It's not about 'can do it early'. The FSGSBASE handling requires that the
-> kernel page tables are switched in.
-> 
-> And for review and bisectability sake moving the CR3 switch in front of the
-> GS handling should be done as a separate preparatory patch.
-> 
->> 	 */
->> 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
->> 
->> +	/*
->> +	 * Read GSBASE by RDGSBASE. Kernel GSBASE is found
->> +	 * from the per-CPU offset table with a CPU NR.
-> 
-> That CPU NR comes out of thin air, right? This code is complex enough by
-> itself and does not need further confusion by comments which need a crystal
-> ball for decoding.
-> 
->> +	 */
-> 
-> Sigh. I can't see how that comment explains the ALTERNATIVE jump.
-> 
->> +	ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase",	"",\
->> +		X86_FEATURE_FSGSBASE
-> 
-> Please separate the above from the below with a new line for readability
-> sake.
-> 
->> +	rdgsbase	%rbx
->> +	FIND_PERCPU_BASE	%rax
->> +	wrgsbase	%rax
-> 
-> So this really should be wrapped in a macro like:
-> 
->   	SAVE_AND_SET_GSBASE	%rbx, %rax
-> 
-> which makes it entirely clear what this is about.
-> 
->> +	ret
->> +
-> 
->> @@ -1194,12 +1230,21 @@ END(paranoid_entry)
->>  * be complicated.  Fortunately, we there's no good reason
->>  * to try to handle preemption here.
->>  *
->> - * On entry, ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
->> + * On entry,
->> + *	With FSGSBASE,
->> + *		%rbx is original GSBASE that needs to be restored on the exit
->> + *	Without that,
->> + * 		%ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
->>  */
->> ENTRY(paranoid_exit)
->> 	UNWIND_HINT_REGS
->> 	DISABLE_INTERRUPTS(CLBR_ANY)
->> 	TRACE_IRQS_OFF_DEBUG
->> +	ALTERNATIVE "jmp .Lparanoid_exit_no_fsgsbase",	"nop",\
->> +		X86_FEATURE_FSGSBASE
->> +	wrgsbase	%rbx
->> +	jmp	.Lparanoid_exit_no_swapgs;
-> 
-> Again. A few newlines would make it more readable.
-> 
-> This modifies the semantics of paranoid_entry and paranoid_exit. Looking at
-> the usage sites there is the following code in the nmi maze:
-> 
-> 	/*
-> 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
-> 	 * as we should not be calling schedule in NMI context.
-> 	 * Even with normal interrupts enabled. An NMI should not be
-> 	 * setting NEED_RESCHED or anything that normal interrupts and
-> 	 * exceptions might do.
-> 	 */
-> 	call	paranoid_entry
-> 	UNWIND_HINT_REGS
-> 
-> 	/* paranoidentry do_nmi, 0; without TRACE_IRQS_OFF */
-> 	movq	%rsp, %rdi
-> 	movq	$-1, %rsi
-> 	call	do_nmi
-> 
-> 	/* Always restore stashed CR3 value (see paranoid_entry) */
-> 	RESTORE_CR3 scratch_reg=%r15 save_reg=%r14
-> 
-> 	testl	%ebx, %ebx			/* swapgs needed? */
-> 	jnz	nmi_restore
-> nmi_swapgs:
-> 	SWAPGS_UNSAFE_STACK
-> nmi_restore:
-> 	POP_REGS
-> 
+> would be not just ugly, but wrong (as these are not independent
+> clauses).
 
-Oh!, almost miss this bit.  Will be terrifying if leave them like this way.
+You are correct here.
 
-> I might be missing something, but how is that supposed to work when
-> paranoid_entry uses FSGSBASE? I think it's broken, but if it's not then
-> there is a big fat comment missing explaining why.
-> 
+Thanks for taking the time to flesh out your argument Johan, I am now in
+agreement with you :)
 
-You will see a revision shortly. Thanks 
-
-Chang
+Cheers,
+Tobin.
