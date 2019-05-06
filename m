@@ -2,77 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C7C14E6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26FE314E6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfEFPAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:00:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:52768 "EHLO foss.arm.com"
+        id S1728466AbfEFPAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 11:00:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47362 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728391AbfEFOmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B88B4A78;
-        Mon,  6 May 2019 07:42:04 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E56F3F575;
-        Mon,  6 May 2019 07:42:03 -0700 (PDT)
-Date:   Mon, 6 May 2019 15:42:00 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 4/7] sched: Add sched_load_rq tracepoint
-Message-ID: <20190506144200.z4s63nm7untol2tr@e107158-lin.cambridge.arm.com>
-References: <20190505115732.9844-1-qais.yousef@arm.com>
- <20190505115732.9844-5-qais.yousef@arm.com>
- <20190506090859.GK2606@hirez.programming.kicks-ass.net>
- <20190506095239.08577b3e@gandalf.local.home>
+        id S1728506AbfEFOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:42:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:42:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
+   d="scan'208";a="137398978"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 06 May 2019 07:42:37 -0700
+Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
+        by linux.intel.com (Postfix) with ESMTP id 407C458010A;
+        Mon,  6 May 2019 07:42:36 -0700 (PDT)
+Subject: Re: [alsa-devel] [RFC PATCH 2/7] soundwire: add Slave sysfs support
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
+ <20190504010030.29233-3-pierre-louis.bossart@linux.intel.com>
+ <20190504065444.GC9770@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c675ea60-5bfa-2475-8878-c589b8d20b32@linux.intel.com>
+Date:   Mon, 6 May 2019 09:42:35 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190506095239.08577b3e@gandalf.local.home>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20190504065444.GC9770@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/19 09:52, Steven Rostedt wrote:
-> On Mon, 6 May 2019 11:08:59 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
+
+>> +static struct attribute_group sdw_slave_dev_attr_group = {
+>> +	.attrs	= slave_dev_attrs,
+>> +};
+>> +
+>> +const struct attribute_group *sdw_slave_dev_attr_groups[] = {
+>> +	&sdw_slave_dev_attr_group,
+>> +	NULL
+>> +};
 > 
-> > These functions really should be called trace_*()
-> > 
-> > Also; I _really_ hate how fat they are. Why can't we do simple straight
-> > forward things like:
-> > 
-> > 	trace_pelt_cfq(cfq);
-> > 	trace_pelt_rq(rq);
-> > 	trace_pelt_se(se);
-> > 
-> > And then have the thing attached to the event do the fat bits like
-> > extract the path and whatnot.
+> ATTRIBUTE_GROUP()?
+
+yes.
+
 > 
-> I'd like to avoid functions called "trace_*" that are not trace events.
-> It's getting confusing when I see a "trace_*()" function and then go
-> look for the corresponding TRACE_EVENT() just to find out that one does
-> not exist.
 > 
->  sched_trace_*()  maybe?
+>> +
+>> +int sdw_sysfs_slave_init(struct sdw_slave *slave)
+>> +{
+>> +	struct sdw_slave_sysfs *sysfs;
+>> +	unsigned int src_dpns, sink_dpns, i, j;
+>> +	int err;
+>> +
+>> +	if (slave->sysfs) {
+>> +		dev_err(&slave->dev, "SDW Slave sysfs is already initialized\n");
+>> +		err = -EIO;
+>> +		goto err_ret;
+>> +	}
+>> +
+>> +	sysfs = kzalloc(sizeof(*sysfs), GFP_KERNEL);
+> 
+> Same question as patch 1, why a new device?
 
-I can control that for the wrappers I'm introducing. But the actual tracepoint
-get the 'trace_' part prepended automatically by the macros.
+yes it's the same open. In this case, the slave devices are defined at a 
+different level so it's also confusing to create a device to represent 
+the slave properties. The code works but I am not sure the initial 
+directions are correct.
 
-ie DECLARE_TRACE(pelt_rq, ...) will automatically generate a function called
-trace_pelt_se(...)
-
-Or am I missing something?
-
-Thanks
-
---
-Qais Yousef
