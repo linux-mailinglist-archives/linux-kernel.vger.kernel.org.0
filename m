@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A2114F1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED8614C4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfEFPHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:07:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
+        id S1727686AbfEFOit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:38:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbfEFPHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 11:07:53 -0400
+        id S1726679AbfEFOir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:38:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0B362087F;
-        Mon,  6 May 2019 15:07:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C787421479;
+        Mon,  6 May 2019 14:38:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557155272;
-        bh=7TSZU9uuESChnQZl6Z/mt6OaAgpomEHBrYCg3HwUwV8=;
+        s=default; t=1557153527;
+        bh=uu0EMjhOToFcA+5jmlzRFDtcC1h61DsUoHuGmibseAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQUY8HkKXayixjYnRbS9dY8i7ZdNI6za/pRKKe7+29ahKIigUPaDsIHmQ4++ZH6pa
-         mlMIavWY+0fbxaErrFzK6pDeOam67+pFZL6++5LRMmjhhxCfFBRxv3LBj3zHdqHiK7
-         F1Ft80nYnBGwsJidolvupoO4ozQXDLgMo+hq2FZk=
+        b=Tp2THbaIpJ25MmAB23bkb5Pw68P4/cqFLSqA1uMvJCRn3DUnE11F8Y3UsS2rxTmRA
+         Z+nyOT88PMqkGLh16CfPpDtDbw9YWeT3+2nPZunF2NiXYyGnB4TXu7OyCaUYMp1bio
+         g83MRQkszaV5IeRNP/FUR4LliwUh58APw7DvQzb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "he, bo" <bo.he@intel.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>, Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 29/62] HID: debug: fix race condition with between rdesc_show() and device removal
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.0 122/122] media: v4l2: i2c: ov7670: Fix PLL bypass register values
 Date:   Mon,  6 May 2019 16:33:00 +0200
-Message-Id: <20190506143053.575546010@linuxfoundation.org>
+Message-Id: <20190506143105.263885603@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
-References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143054.670334917@linuxfoundation.org>
+References: <20190506143054.670334917@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cef0d4948cb0a02db37ebfdc320e127c77ab1637 ]
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-There is a race condition that could happen if hid_debug_rdesc_show()
-is running while hdev is in the process of going away (device removal,
-system suspend, etc) which could result in NULL pointer dereference:
+commit 61da76beef1e4f0b6ba7be4f8d0cf0dac7ce1f55 upstream.
 
-	 BUG: unable to handle kernel paging request at 0000000783316040
-	 CPU: 1 PID: 1512 Comm: getevent Tainted: G     U     O 4.19.20-quilt-2e5dc0ac-00029-gc455a447dd55 #1
-	 RIP: 0010:hid_dump_device+0x9b/0x160
-	 Call Trace:
-	  hid_debug_rdesc_show+0x72/0x1d0
-	  seq_read+0xe0/0x410
-	  full_proxy_read+0x5f/0x90
-	  __vfs_read+0x3a/0x170
-	  vfs_read+0xa0/0x150
-	  ksys_read+0x58/0xc0
-	  __x64_sys_read+0x1a/0x20
-	  do_syscall_64+0x55/0x110
-	  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+The following commits:
+commit f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+commit 04ee6d92047e ("[media] media: ov7670: add possibility to bypass pll for ov7675")
+introduced the ability to bypass PLL multiplier and use input clock (xvclk)
+as pixel clock output frequency for ov7675 sensor.
 
-Grab driver_input_lock to make sure the input device exists throughout the
-whole process of dumping the rdesc.
+PLL is bypassed using register DBLV[7:6], according to ov7670 and ov7675
+sensor manuals. Macros used to set DBLV register seem wrong in the
+driver, as their values do not match what reported in the datasheet.
 
-[jkosina@suse.cz: update changelog a bit]
-Signed-off-by: he, bo <bo.he@intel.com>
-Signed-off-by: "Zhang, Jun" <jun.zhang@intel.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix by changing DBLV_* macros to use bits [7:6] and set bits [3:0] to
+default 0x0a reserved value (according to datasheets).
+
+While at there, remove a write to DBLV register in
+"ov7675_set_framerate()" that over-writes the previous one to the same
+register that takes "info->pll_bypass" flag into account instead of setting PLL
+multiplier to 4x unconditionally.
+
+And, while at there, since "info->pll_bypass" is only used in
+set/get_framerate() functions used by ov7675 only, it is not necessary
+to check for the device id at probe time to make sure that when using
+ov7670 "info->pll_bypass" is set to false.
+
+Fixes: f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/hid-debug.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/i2c/ov7670.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index d7179dd3c9ef..3cafa1d28fed 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1058,10 +1058,15 @@ static int hid_debug_rdesc_show(struct seq_file *f, void *p)
- 	seq_printf(f, "\n\n");
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -160,10 +160,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-
+ #define REG_GFIX	0x69	/* Fix gain control */
  
- 	/* dump parsed data and input mappings */
-+	if (down_interruptible(&hdev->driver_input_lock))
-+		return 0;
-+
- 	hid_dump_device(hdev, f);
- 	seq_printf(f, "\n");
- 	hid_dump_input_mapping(hdev, f);
+ #define REG_DBLV	0x6b	/* PLL control an debugging */
+-#define   DBLV_BYPASS	  0x00	  /* Bypass PLL */
+-#define   DBLV_X4	  0x01	  /* clock x4 */
+-#define   DBLV_X6	  0x10	  /* clock x6 */
+-#define   DBLV_X8	  0x11	  /* clock x8 */
++#define   DBLV_BYPASS	  0x0a	  /* Bypass PLL */
++#define   DBLV_X4	  0x4a	  /* clock x4 */
++#define   DBLV_X6	  0x8a	  /* clock x6 */
++#define   DBLV_X8	  0xca	  /* clock x8 */
  
-+	up(&hdev->driver_input_lock);
-+
- 	return 0;
+ #define REG_SCALING_XSC	0x70	/* Test pattern and horizontal scale factor */
+ #define   TEST_PATTTERN_0 0x80
+@@ -863,7 +863,7 @@ static int ov7675_set_framerate(struct v
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return ov7670_write(sd, REG_DBLV, DBLV_X4);
++	return 0;
  }
  
--- 
-2.20.1
-
+ static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
+@@ -1801,11 +1801,7 @@ static int ov7670_probe(struct i2c_clien
+ 		if (config->clock_speed)
+ 			info->clock_speed = config->clock_speed;
+ 
+-		/*
+-		 * It should be allowed for ov7670 too when it is migrated to
+-		 * the new frame rate formula.
+-		 */
+-		if (config->pll_bypass && id->driver_data != MODEL_OV7670)
++		if (config->pll_bypass)
+ 			info->pll_bypass = true;
+ 
+ 		if (config->pclk_hb_disable)
 
 
