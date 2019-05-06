@@ -2,189 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C510F14515
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D181A1454D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 09:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfEFHUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 03:20:18 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36085 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfEFHUS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 03:20:18 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n25so182104wmi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 00:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=/grF58AXpzz9yvksa/HkvMQkIZ6mqEgNZDRk6V3fMV4=;
-        b=gVzKPfneDmP/7jhHy2YDOAlSVLFZnxWHYdv1Lz9zpBQDwoQrE1cEa3JbjXuFSB1v5a
-         bk5mjere84hC6YT4fYmE9IotDSMwQXDv+JjrsaMF6jL/j/ZXNvmA3dQ9LEM7FuyxJaYT
-         6muva72A9uWyMjIVDdRl5zp8tCHpX50N+OpcqeJF6Yzi1vVuq7cKYQHUw6Iuw7otWmhr
-         Oqfkmw2MqznOb90oBvFIaYpQJds1nEyb9x6qSqpX5iELSTYwk1/kyBzQCNyDdlfJOOL1
-         /6t0WIRu88X/wlWKEv2RwXzWlf8Rb4DQVSVjTnwxf3ndJBoIlG8YWkO7w56Jj01VMOIB
-         ORbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=/grF58AXpzz9yvksa/HkvMQkIZ6mqEgNZDRk6V3fMV4=;
-        b=FaiJXoV2DmnYsopgN5+A1qgSRYO/cpy2U1EXqaUbhDygHnBCwKJAGtzcbwh3jzFuWf
-         3TK/GqOa70Db1PMmPd8z5MU3VUUMVnENsl+xGCsvRkkzZJan8INmQnKYR5VyTyd4Je8y
-         TlFqqgPmht1E7ydmXE7dyr3LGctE24LuaFC56r8QVPrg9qPd+5yuC4rc4/ruf8/cUvvc
-         N+DoBSxTITQzZ0y5341dJJOSFoq23u+27NifDalZpbryQAClz2nx06H1Pv9S7hcB7Pia
-         83t1GEQq0XQk/OQ8AzwtF1WSUhe2JsXlu7Gaepwj2qBMNAYJgaGGQPJ2/KLaECc37v2n
-         Cjng==
-X-Gm-Message-State: APjAAAWOdgcAt3OCcHD0nWN7zGMEhpAAWa+e+AXM68yRznlhI3nwYssj
-        XQhWjbWbeYE4nXsJKmeeP50=
-X-Google-Smtp-Source: APXvYqzac3Xe7s0HbJoMo6W6sH9zt269qfBpyVlld4sa4IqCNcNLsw6HLomi8OxkRekscr8soRzK2Q==
-X-Received: by 2002:a1c:cb8f:: with SMTP id b137mr6920534wmg.64.1557127215697;
-        Mon, 06 May 2019 00:20:15 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y7sm23290283wrg.45.2019.05.06.00.20.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 00:20:14 -0700 (PDT)
-Date:   Mon, 6 May 2019 09:20:12 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] objtool changes for v5.2: Add build-time uaccess
- permissions and DF validation
-Message-ID: <20190506072012.GA33946@gmail.com>
+        id S1726495AbfEFH3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 03:29:23 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25096 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbfEFH3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 03:29:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 00:24:20 -0700
+X-ExtLoop1: 1
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
+  by orsmga002.jf.intel.com with ESMTP; 06 May 2019 00:24:15 -0700
+Subject: Re: [PATCH] mmc: block: Fix memory leak in blk-mq when cleaning up
+To:     Douglas Anderson <dianders@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-rockchip@lists.infradead.org, groeck@chromium.org,
+        mka@chromium.org, drinkcat@chromium.org,
+        Ming Lei <ming.lei@redhat.com>, linux-mmc@vger.kernel.org,
+        Hannes Reinecke <hare@suse.com>, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>
+References: <20190503233526.226272-1-dianders@chromium.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c7dde396-6536-bd9b-95af-9ed57fbebc86@intel.com>
+Date:   Mon, 6 May 2019 10:22:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190503233526.226272-1-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 4/05/19 2:35 AM, Douglas Anderson wrote:
+> If I run the following on rk3288-veyron-minnie (a 2GB machine)
+> 
+>   cd /sys/bus/platform/drivers/dwmmc_rockchip
+>   for i in $(seq 1 3000); do
+>     echo "========================" $i
+>     echo ff0f0000.dwmmc > unbind
+>     sleep .5
+>     echo ff0f0000.dwmmc > bind
+>     while true; do
+>       if [ -e /dev/mmcblk2 ]; then
+>         break;
+>       fi
+>       sleep .1
+>     done
+>   done
+> 
+> Then I start OOMing somewhere between iteration 200 and 250.  Using
+> kmemleak, I see reports like:
+> 
+> unreferenced object 0xe39c5580 (size 64):
+>   comm "kworker/1:0", pid 17, jiffies 4294821091 (age 96.952s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<ad19d10a>] __kmalloc+0x1ec/0x2dc
+>     [<a28614c3>] blk_mq_alloc_tag_set+0x27c/0x2bc
+>     [<0955ae01>] mmc_init_queue+0xa8/0x2a8
+>     [<5102b986>] mmc_blk_alloc_req+0xf8/0x2d4
+>     [<f1c2214f>] mmc_blk_probe+0x4a8/0x6c0
+>     [<0dfdd9d5>] mmc_bus_probe+0x24/0x28
+> 
+> It's pretty clear that we're missing a call to blk_mq_free_tag_set().
+> Let's add it.
+> 
+> Fixes: 81196976ed94 ("mmc: block: Add blk-mq support")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Please pull the latest core-objtool-for-linus git tree from:
+Same as:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-objtool-for-linus
+	https://lore.kernel.org/lkml/20190502190714.181664-1-rrangel@chromium.org/
 
-   # HEAD: 29da93fea3ea39ab9b12270cc6be1b70ef201c9e mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC versions
+> ---
+> 
+>  drivers/mmc/core/queue.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+> index 7c364a9c4eeb..09071e13282e 100644
+> --- a/drivers/mmc/core/queue.c
+> +++ b/drivers/mmc/core/queue.c
+> @@ -480,6 +480,8 @@ void mmc_cleanup_queue(struct mmc_queue *mq)
+>  	 */
+>  	flush_work(&mq->complete_work);
+>  
+> +	blk_mq_free_tag_set(&mq->tag_set);
+> +
+>  	mq->card = NULL;
+>  }
+>  
+> 
 
-This is a series from Peter Zijlstra that adds x86 build-time uaccess 
-validation of SMAP to objtool, which will detect and warn about the 
-following uaccess API usage bugs and weirdnesses:
-
-	call to %s() with UACCESS enabled
-	return with UACCESS enabled
-	return with UACCESS disabled from a UACCESS-safe function
-	recursive UACCESS enable
-	redundant UACCESS disable
-	UACCESS-safe disables UACCESS
-
-As it turns out not leaking uaccess permissions outside the intended 
-uaccess functionality is hard when the interfaces are complex and when 
-such bugs are mostly dormant.
-
-As a bonus we now also check the DF flag. We had at least one 
-high-profile bug in that area in the early days of Linux, and the 
-checking is fairly simple. The checks performed and warnings emitted are:
-
-	call to %s() with DF set
-	return with DF set
-	return with modified stack frame
-	recursive STD
-	redundant CLD
-
-It's all x86-only for now, but later on this can also be used for PAN on 
-ARM and objtool is fairly cross-platform in principle.
-
-While all warnings emitted by this new checking facility that got 
-reported to us were fixed, there might be GCC version dependent warnings 
-that were not reported yet - which we'll address, should they trigger.
-
-The warnings are non-fatal build warnings.
-
- Thanks,
-
-	Ingo
-
------------------->
-Josh Poimboeuf (1):
-      tracing: Improve "if" macro code generation
-
-Peter Zijlstra (26):
-      sched/x86: Save [ER]FLAGS on context switch
-      x86/ia32: Fix ia32_restore_sigcontext() AC leak
-      i915, uaccess: Fix redundant CLAC
-      x86/uaccess: Move copy_user_handle_tail() into asm
-      x86/uaccess: Fix up the fixup
-      x86/nospec, objtool: Introduce ANNOTATE_IGNORE_ALTERNATIVE
-      x86/uaccess, xen: Suppress SMAP warnings
-      x86/uaccess: Always inline user_access_begin()
-      x86/uaccess, signal: Fix AC=1 bloat
-      x86/uaccess: Introduce user_access_{save,restore}()
-      x86/smap: Ditch __stringify()
-      x86/uaccess, kasan: Fix KASAN vs SMAP
-      x86/uaccess, ubsan: Fix UBSAN vs. SMAP
-      x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP
-      x86/uaccess, kcov: Disable stack protector
-      objtool: Set insn->func for alternatives
-      objtool: Handle function aliases
-      objtool: Rewrite add_ignores()
-      objtool: Add --backtrace support
-      objtool: Rewrite alt->skip_orig
-      objtool: Fix sibling call detection
-      objtool: Add UACCESS validation
-      objtool: Add Direction Flag validation
-      sched/x86_64: Don't save flags on context switch
-      x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation
-      mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC versions
-
-
- arch/x86/entry/entry_32.S                  |   2 +
- arch/x86/ia32/ia32_signal.c                |  29 ++-
- arch/x86/include/asm/alternative-asm.h     |  11 +
- arch/x86/include/asm/alternative.h         |  10 +
- arch/x86/include/asm/asm.h                 |  24 --
- arch/x86/include/asm/nospec-branch.h       |  28 +-
- arch/x86/include/asm/smap.h                |  37 ++-
- arch/x86/include/asm/switch_to.h           |   1 +
- arch/x86/include/asm/uaccess.h             |  12 +-
- arch/x86/include/asm/uaccess_64.h          |   3 -
- arch/x86/include/asm/xen/hypercall.h       |  24 +-
- arch/x86/kernel/process_32.c               |   7 +
- arch/x86/kernel/process_64.c               |   1 +
- arch/x86/kernel/signal.c                   |  29 ++-
- arch/x86/lib/copy_user_64.S                |  48 ++++
- arch/x86/lib/memcpy_64.S                   |   3 +-
- arch/x86/lib/usercopy_64.c                 |  20 --
- drivers/gpu/drm/i915/i915_gem_execbuffer.c |   6 +-
- include/linux/compiler.h                   |   2 +-
- include/linux/uaccess.h                    |   2 +
- kernel/Makefile                            |   1 +
- kernel/trace/trace_branch.c                |   4 +
- lib/Makefile                               |   1 +
- lib/strncpy_from_user.c                    |   5 +-
- lib/strnlen_user.c                         |   4 +-
- lib/ubsan.c                                |   4 +
- mm/kasan/Makefile                          |   3 +
- mm/kasan/common.c                          |  10 +
- mm/kasan/report.c                          |   3 +-
- scripts/Makefile.build                     |   3 +
- tools/objtool/arch.h                       |   8 +-
- tools/objtool/arch/x86/decode.c            |  21 +-
- tools/objtool/builtin-check.c              |   4 +-
- tools/objtool/builtin.h                    |   2 +-
- tools/objtool/check.c                      | 400 ++++++++++++++++++++++-------
- tools/objtool/check.h                      |   4 +-
- tools/objtool/elf.c                        |  15 +-
- tools/objtool/elf.h                        |   3 +-
- tools/objtool/special.c                    |  18 ++
- tools/objtool/special.h                    |   1 +
- tools/objtool/warn.h                       |   8 +
- 41 files changed, 602 insertions(+), 219 deletions(-)
