@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D872814CF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 991E214D60
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbfEFOp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:45:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43186 "EHLO mail.kernel.org"
+        id S1729501AbfEFOvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:51:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729021AbfEFOp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:45:56 -0400
+        id S1729110AbfEFOtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:49:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22F1521479;
-        Mon,  6 May 2019 14:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53741205ED;
+        Mon,  6 May 2019 14:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153955;
-        bh=eyFQyilBY65uHC4KqCfyG7XQzSgs6BspptZVvJr2wYE=;
+        s=default; t=1557154146;
+        bh=cqIaOfcgyiYsBS0XcniD3JInDT//0vF3aZk2ET2r1Co=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y20+d2C/eyftRu+Y94UJUc+cbgky843rL/9HXG6O/QDwCbGp8VUd1CBH7XtGmD890
-         wcVmhM3eq3DreodLyIlRGPtACm9TEDwxDsq33uloIITz3ZY7WFzmgqKNRK9GVaOLX0
-         psoXNaxgM4fRjTny/IJK1QlXi1oqvZoza7tsI5Gk=
+        b=Avqv8nk/wwgV2x3QMNHeb+iHHnzIZ3sJ6cnTsh9iI+55ZGN2PKW15umhDtimIYeQU
+         SWE+/+vLUy+sYwKgfqvozQ9nM0ePBg93Q/ds2x6vnfrRQH95NsRENM7wzPNkMP3g9/
+         fPnTMQqwD0oX5kKImR4dMOg+S7o31CFJ9vKAxcsg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 60/75] staging: iio: adt7316: allow adt751x to use internal vref for all dacs
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 37/62] net: stmmac: dont overwrite discard_frame status
 Date:   Mon,  6 May 2019 16:33:08 +0200
-Message-Id: <20190506143058.724483627@linuxfoundation.org>
+Message-Id: <20190506143054.313271365@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
-References: <20190506143053.287515952@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+References: <20190506143051.102535767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+[ Upstream commit 1b746ce8b397e58f9e40ce5c63b7198de6930482 ]
 
-commit 10bfe7cc1739c22f0aa296b39e53f61e9e3f4d99 upstream.
+If we have error bits set, the discard_frame status will get overwritten
+by checksum bit checks, which might set the status back to good one.
+Fix by checking the COE status only if the frame is good.
 
-With adt7516/7/9, internal vref is available for dacs a and b, dacs c and
-d, or all dacs. The driver doesn't currently support internal vref for all
-dacs. Change the else if to an if so both bits are checked rather than
-just one or the other.
-
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/addac/adt7316.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -1086,7 +1086,7 @@ static ssize_t adt7316_store_DAC_interna
- 		ldac_config = chip->ldac_config & (~ADT7516_DAC_IN_VREF_MASK);
- 		if (data & 0x1)
- 			ldac_config |= ADT7516_DAC_AB_IN_VREF;
--		else if (data & 0x2)
-+		if (data & 0x2)
- 			ldac_config |= ADT7516_DAC_CD_IN_VREF;
- 	} else {
- 		ret = kstrtou8(buf, 16, &data);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index ce97e522566a..2c40cafa2619 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -235,9 +235,10 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ 	 * It doesn't match with the information reported into the databook.
+ 	 * At any rate, we need to understand if the CSUM hw computation is ok
+ 	 * and report this info to the upper layers. */
+-	ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
+-				 !!(rdes0 & RDES0_FRAME_TYPE),
+-				 !!(rdes0 & ERDES0_RX_MAC_ADDR));
++	if (likely(ret == good_frame))
++		ret = enh_desc_coe_rdes0(!!(rdes0 & RDES0_IPC_CSUM_ERROR),
++					 !!(rdes0 & RDES0_FRAME_TYPE),
++					 !!(rdes0 & ERDES0_RX_MAC_ADDR));
+ 
+ 	if (unlikely(rdes0 & RDES0_DRIBBLING))
+ 		x->dribbling_bit++;
+-- 
+2.20.1
+
 
 
