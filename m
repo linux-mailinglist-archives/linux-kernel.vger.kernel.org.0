@@ -2,128 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B19156B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B24A156C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 01:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfEFXxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 19:53:54 -0400
-Received: from ozlabs.org ([203.11.71.1]:48235 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726438AbfEFXxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 19:53:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 44yfhX2KZ5z9s4Y;
-        Tue,  7 May 2019 09:53:44 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1557186829;
-        bh=1ZkSqqhaWdar3DSYNSZygWd6BNjV3T2Rq82XDyUlWZY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qeg7CmE+B93GelVTK/EEjmDhlaPi60C+o10fljli7AWrvGk1kAuqC5Acere/uwcwc
-         37Sr23T7kXgaWWpTmISokB1TSDJEl71mapSMoJbqie0/wMYX6sFemkrCZnEFaIjNBv
-         SzVrJsSk0NraO8GlRhGiskb4+upQGUhj+4WwwhdnMutL0/tAvHQQuj8O4Eg4Lh9VSn
-         bupPpwARzv71FOzyy/uvJJUGNCbyoJjKEHebT7iqljbW6hlC8Sb1/t2Sk8eHlwkNjL
-         1Ny/UDXJPT+dhx3UeKzpwP7QcXdFH6ZPFbsyLifTppg87nWcbB+Kf98DMOt89u+7II
-         Xm0O/1rnMi6xQ==
-Date:   Tue, 7 May 2019 09:53:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        zhangliguang <zhangliguang@linux.alibaba.com>
-Subject: linux-next: manual merge of the vfs tree with the fuse tree
-Message-ID: <20190507095323.4ec2d3f7@canb.auug.org.au>
+        id S1726479AbfEFX6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 19:58:45 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39667 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfEFX6p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 19:58:45 -0400
+Received: by mail-vs1-f67.google.com with SMTP id g127so9251002vsd.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 16:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mx65sXO1r4vrgQ2kHviuuHpS6yfDT9JxVfsYUs6Yhno=;
+        b=XJNA4uFR67wlqSxbXVvJFANNEYgMlJH7KBPzpr3b7DMeji4eUc4UYf6iB8tdfjqLj2
+         77oM72iVyJUyg5ERdVepbiioCfuJrdGT64WpTPel7XkYiuWgcVFuRGXKqFaYf/alwG8G
+         nTnfmO7nurua4ICMHXTiKYOqKMonbeIU+6AIo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mx65sXO1r4vrgQ2kHviuuHpS6yfDT9JxVfsYUs6Yhno=;
+        b=gWHDKz84ZJa7/BGJg/zSGkyNPW56mkCIB81E93iE7fBxP/h7ixHR5GR02i8FDL6K1m
+         a6HyEktWevcQ4diQsJmA1LkJIC6rmzsWmxXlXkddpINjLWu+tsQZkPitUy1QxATGvqk2
+         nqyQ5bBOQX7ggN5FSC7idIOW386l4dCpO0MwHvVV2k8Z9X0vKC+qDhHvwJnxCUPLSElw
+         /2q5z4WCECucbOXYB3xe9+4O8Gu6Ds0m6Cq3LWEuTZ6OgSmYk48XKun/n86ytqHJLyyE
+         G9JpkdXRoLR3Ohor+Xor4YDZUUM9cC9kxSKuNXWa7QjwxCSSKbCb84HgToBuXMigJkws
+         dRpA==
+X-Gm-Message-State: APjAAAUm5InBTCuPhjEs6isx4htYMLkYYyI4g4wR42VMN+2rVCbFViqf
+        QAF/S1utEjpMOhDqE2d6vMTRO1B9Zi4=
+X-Google-Smtp-Source: APXvYqydYDTVYjl6p1jZTQmOu97kjpi8gcX9YfyxRUx7ivkMWj8hfduGJkuywgwag3sgo6ZycEuyxg==
+X-Received: by 2002:a67:c508:: with SMTP id e8mr15890339vsk.230.1557187124096;
+        Mon, 06 May 2019 16:58:44 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id g3sm1169499vkb.9.2019.05.06.16.58.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 16:58:43 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id z145so9265714vsc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 16:58:43 -0700 (PDT)
+X-Received: by 2002:a67:af10:: with SMTP id v16mr9106628vsl.149.1557187122785;
+ Mon, 06 May 2019 16:58:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I4aUjkWfSAsJYqYUG=XoBhP"; protocol="application/pgp-signature"
+References: <20190503174730.245762-1-dianders@chromium.org> <CAGXu5jL9cJ+8scZ+Cg9yqdc9+rb563xs-qVjXXuPRJYjNa4Y8w@mail.gmail.com>
+In-Reply-To: <CAGXu5jL9cJ+8scZ+Cg9yqdc9+rb563xs-qVjXXuPRJYjNa4Y8w@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 6 May 2019 16:58:29 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WcjfUwH62bHVELOmzViv7d329r6+HfPqAyXMjKCO7LeQ@mail.gmail.com>
+Message-ID: <CAD=FV=WcjfUwH62bHVELOmzViv7d329r6+HfPqAyXMjKCO7LeQ@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Improve backward compatibility with older Chromebooks
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rob Herring <robh@kernel.org>, Anton Vorontsov <anton@enomsg.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/I4aUjkWfSAsJYqYUG=XoBhP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On Mon, May 6, 2019 at 2:10 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> From: Douglas Anderson <dianders@chromium.org>
+> Date: Fri, May 3, 2019 at 10:48 AM
+> To: Kees Cook, Anton Vorontsov
+> Cc: <linux-rockchip@lists.infradead.org>, <jwerner@chromium.org>,
+> <groeck@chromium.org>, <mka@chromium.org>, <briannorris@chromium.org>,
+> Douglas Anderson, Colin Cross, Tony Luck,
+> <linux-kernel@vger.kernel.org>
+>
+> > When you try to run an upstream kernel on an old ARM-based Chromebook
+> > you'll find that console-ramoops doesn't work.
+> >
+> > Old ARM-based Chromebooks, before <https://crrev.com/c/439792>
+> > ("ramoops: support upstream {console,pmsg,ftrace}-size properties")
+> > used to create a "ramoops" node at the top level that looked like:
+> >
+> > / {
+> >   ramoops {
+> >     compatible = "ramoops";
+> >     reg = <...>;
+> >     record-size = <...>;
+> >     dump-oops;
+> >   };
+> > };
+> >
+> > ...and these Chromebooks assumed that the downstream kernel would make
+> > console_size / pmsg_size match the record size.  The above ramoops
+> > node was added by the firmware so it's not easy to make any changes.
+> >
+> > Let's match the expected behavior, but only for those using the old
+> > backward-compatible way of working where ramoops is right under the
+> > root node.
+> >
+> > NOTE: if there are some out-of-tree devices that had ramoops at the
+> > top level, left everything but the record size as 0, and somehow
+> > doesn't want this behavior, we can try to add more conditions here.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>
+> I like this; thanks! Rob is this okay by you? I just want to
+> double-check since it's part of the DT parsing logic.
+>
+> I'll pick it up and add a Cc: stable.
 
-Today's linux-next merge of the vfs tree got a conflict in:
+Hold off a second--I may need to send out a v2 but out of time for the
+day.  I think I need a #include file to fix errors on x86:
 
-  fs/fuse/inode.c
+> implicit declaration of function 'of_node_is_root' [-Werror,-Wimplicit-function-declaration
 
-between commit:
+I'm unfortunately out of time for now, but I'll post a v2 within the next day.
 
-  829f949b6e06 ("fuse: clean up fuse_alloc_inode")
 
-from the fuse tree and commit:
-
-  9baf28bbfea1 ("fuse: switch to ->free_inode()")
-
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/fuse/inode.c
-index bc02bad1be7c,f485d09d14df..000000000000
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@@ -102,25 -104,16 +102,16 @@@ static struct inode *fuse_alloc_inode(s
-  		return NULL;
-  	}
- =20
- -	return inode;
- +	return &fi->inode;
-  }
- =20
-- static void fuse_i_callback(struct rcu_head *head)
-- {
-- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
-- 	kmem_cache_free(fuse_inode_cachep, get_fuse_inode(inode));
-- }
--=20
-- static void fuse_destroy_inode(struct inode *inode)
-+ static void fuse_free_inode(struct inode *inode)
-  {
-  	struct fuse_inode *fi =3D get_fuse_inode(inode);
-- 	if (S_ISREG(inode->i_mode) && !is_bad_inode(inode)) {
-- 		WARN_ON(!list_empty(&fi->write_files));
-- 		WARN_ON(!list_empty(&fi->queued_writes));
-- 	}
-+=20
-  	mutex_destroy(&fi->mutex);
-  	kfree(fi->forget);
-- 	call_rcu(&inode->i_rcu, fuse_i_callback);
-+ 	kmem_cache_free(fuse_inode_cachep, fi);
-  }
- =20
-  static void fuse_evict_inode(struct inode *inode)
-
---Sig_/I4aUjkWfSAsJYqYUG=XoBhP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQyPMACgkQAVBC80lX
-0Gz67wf/T/vGJqlHvEO8LO6cCYEIVD/kUhvd4CgokwwnlFfi1xl49mT1TJmFF8yp
-qYVlD4u2+voT2x+6QxRpl6FmKj9UFpP6961xfgkYavGlwLvE/FhLfpkiVdXJdTAD
-ICcFlz94g8+g2g0rfJxwcBMPSN16T2IqOGaxEZjmjgKyPNL6FOUmLQdUekAUPP6p
-MqOz+lagWGvceW78ywEXGdABwo6Yi8FaCk+uYMBx8JRn4vTKmH0K42kLVGXHugz6
-ObE/UWoUvojKlrwT4ycuOgfqzvQmqTRf8FiJizUCPw3OU8Y/HTFIQEUKyE6rLxfO
-ho3C5GOHDPDlm/k8EAmIofkV/GwnkQ==
-=R/hD
------END PGP SIGNATURE-----
-
---Sig_/I4aUjkWfSAsJYqYUG=XoBhP--
+-Doug
