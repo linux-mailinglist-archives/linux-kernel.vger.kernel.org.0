@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D39714E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 17:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DF514CFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbfEFPAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 11:00:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37314 "EHLO mail.kernel.org"
+        id S1728882AbfEFOqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:46:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728463AbfEFOm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:42:28 -0400
+        id S1727489AbfEFOqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:46:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 243E821019;
-        Mon,  6 May 2019 14:42:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C7CB2087F;
+        Mon,  6 May 2019 14:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557153747;
-        bh=wdJHCb6eLGgZW6ZWOF9BARQq6nr5/scEFc8SspQFYfc=;
+        s=default; t=1557153993;
+        bh=jt2Wjvys7LVUP9B3WLdw1zC71qSfk0vFWyALeThIUho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CcEbNVtvv7f1S584nh7JjlvtZ5xX3jk2ehYijcyTZyxdyA6rkeoN75ZxJVuwUU842
-         vi29bHAMb9f//tJfNJ7uRsrO6sRefR4N1VCw1ybQcMH00+uEW2q8S/XsPxyWhmS5x/
-         3cwZiDuVslM0PrjOvJkEqG1HjbmoLNl57ftBGc7w=
+        b=H9vTBwzJCBRxLmi3SlUKt1NTyys+B4bzsLRKJI6lUHsArLrbtm4R+1refwjabWmqV
+         19VPh0ZVarGLJBzYWkgDXPwLy0+RxVYg0UZoSCH/vvVhowB/ZbAAFUEVWw4OoTlF+b
+         4C9zu5scacHFqT3d6DrfzPTHltcnK+5CCuQWrkL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.19 81/99] platform/x86: intel_pmc_core: Fix PCH IP name
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Long Li <longli@microsoft.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 46/75] scsi: storvsc: Fix calculation of sub-channel count
 Date:   Mon,  6 May 2019 16:32:54 +0200
-Message-Id: <20190506143101.396567680@linuxfoundation.org>
+Message-Id: <20190506143057.377252559@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
-References: <20190506143053.899356316@linuxfoundation.org>
+In-Reply-To: <20190506143053.287515952@linuxfoundation.org>
+References: <20190506143053.287515952@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +46,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+[ Upstream commit 382e06d11e075a40b4094b6ef809f8d4bcc7ab2a ]
 
-commit d6827015e671cd17871c9b7a0fabe06c044f7470 upstream.
+When the number of sub-channels offered by Hyper-V is >= the number of CPUs
+in the VM, calculate the correct number of sub-channels.  The current code
+produces one too many.
 
-For Cannonlake and Icelake, the IP name for Res_6 should be SPF i.e.
-South Port F. No functional change is intended other than just renaming
-the IP appropriately.
+This scenario arises only when the number of CPUs is artificially
+restricted (for example, with maxcpus=<n> on the kernel boot line), because
+Hyper-V normally offers a sub-channel count < number of CPUs.  While the
+current code doesn't break, the extra sub-channel is unbalanced across the
+CPUs (for example, a total of 5 channels on a VM with 4 CPUs).
 
-Cc: "David E. Box" <david.e.box@intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Fixes: 291101f6a735 ("platform/x86: intel_pmc_core: Add CannonLake PCH support")
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Long Li <longli@microsoft.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/storvsc_drv.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -185,7 +185,7 @@ static const struct pmc_bit_map cnp_pfea
- 	{"CNVI",                BIT(3)},
- 	{"UFS0",                BIT(4)},
- 	{"EMMC",                BIT(5)},
--	{"Res_6",               BIT(6)},
-+	{"SPF",			BIT(6)},
- 	{"SBR6",                BIT(7)},
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index beb585ddc07d..5adeb1e4b186 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -658,13 +658,22 @@ static void handle_sc_creation(struct vmbus_channel *new_sc)
+ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
+ {
+ 	struct storvsc_device *stor_device;
+-	int num_cpus = num_online_cpus();
+ 	int num_sc;
+ 	struct storvsc_cmd_request *request;
+ 	struct vstor_packet *vstor_packet;
+ 	int ret, t;
  
- 	{"SBR7",                BIT(0)},
+-	num_sc = ((max_chns > num_cpus) ? num_cpus : max_chns);
++	/*
++	 * If the number of CPUs is artificially restricted, such as
++	 * with maxcpus=1 on the kernel boot line, Hyper-V could offer
++	 * sub-channels >= the number of CPUs. These sub-channels
++	 * should not be created. The primary channel is already created
++	 * and assigned to one CPU, so check against # CPUs - 1.
++	 */
++	num_sc = min((int)(num_online_cpus() - 1), max_chns);
++	if (!num_sc)
++		return;
++
+ 	stor_device = get_out_stor_device(device);
+ 	if (!stor_device)
+ 		return;
+-- 
+2.20.1
+
 
 
