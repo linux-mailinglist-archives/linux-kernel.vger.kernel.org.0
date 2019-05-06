@@ -2,202 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E7314D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40E614D75
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2019 16:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfEFOsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 10:48:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47762 "EHLO mail.kernel.org"
+        id S1729491AbfEFOsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 10:48:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60780 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728610AbfEFOr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 10:47:59 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B09AF2087F;
-        Mon,  6 May 2019 14:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557154078;
-        bh=I3RuPUnsau3/9T4URycFeXmxeH3JbPXrTjlfIFBbXOg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DqUmgGisNw+/giG/ord66rkonSMoqSF91WC7wOTWyCgsJgOSov+m1vSLOqOSBKKCP
-         vDLYkj9L48KHbOS3Qi8WGDP12vZ7j49e5S7Zb8SQ86NZgkUg24H2BMf285zL9TVBjo
-         PXd56WG6upWC1grtw6tlaMl3VETTE9eTFQ7J7+NA=
-Date:   Mon, 6 May 2019 23:47:51 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Michal Gregorczyk <michalgr@live.com>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>,
-        Mohammad Husain <russoue@gmail.com>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        duyuchao <yuchao.du@unisoc.com>,
-        Manjo Raja Rao <linux@manojrajarao.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Tamir Carmeli <carmeli.tamir@gmail.com>,
-        Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Ziljstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@redhat.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC] bpf: Add support for reading user pointers
-Message-Id: <20190506234751.65c92139dccbfa025bdfe300@kernel.org>
-In-Reply-To: <20190502204958.7868-1-joel@joelfernandes.org>
-References: <20190502204958.7868-1-joel@joelfernandes.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1729476AbfEFOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 10:48:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 07:48:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,438,1549958400"; 
+   d="scan'208";a="343986368"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 06 May 2019 07:48:32 -0700
+Received: from slaugust-mobl.amr.corp.intel.com (unknown [10.254.21.102])
+        by linux.intel.com (Postfix) with ESMTP id 63339580238;
+        Mon,  6 May 2019 07:48:31 -0700 (PDT)
+Subject: Re: [alsa-devel] [RFC PATCH 5/7] soundwire: add debugfs support
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
+ <20190504010030.29233-6-pierre-louis.bossart@linux.intel.com>
+ <20190504070301.GD9770@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a9e1c3d2-fe29-1683-9253-b66034c62010@linux.intel.com>
+Date:   Mon, 6 May 2019 09:48:30 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190504070301.GD9770@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joel,
 
-On Thu,  2 May 2019 16:49:58 -0400
-"Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
-
-> The eBPF based opensnoop tool fails to read the file path string passed
-> to the do_sys_open function. This is because it is a pointer to
-> userspace address and causes an -EFAULT when read with
-> probe_kernel_read. This is not an issue when running the tool on x86 but
-> is an issue on arm64. This patch adds a new bpf function call based
-> which calls the recently proposed probe_user_read function [1].
-> Using this function call from opensnoop fixes the issue on arm64.
+>> @@ -136,6 +139,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
+>>   void sdw_delete_bus_master(struct sdw_bus *bus)
+>>   {
+>>   	sdw_sysfs_bus_exit(bus);
+>> +	if (bus->debugfs)
+>> +		sdw_bus_debugfs_exit(bus->debugfs);
 > 
-> [1] https://lore.kernel.org/patchwork/patch/1051588/
+> No need to check, just call it.
 
-Anyway, this series is still out-of-tree. We have to push this or similar
-update into kernel at first. I can resend v7 on the latest -tip tree including
-this patch if you update the description.
+That was on my todo list, will remove.
 
-Thank you,
+
+>> +struct sdw_bus_debugfs {
+>> +	struct sdw_bus *bus;
+> 
+> Why do you need to save this pointer?
+> 
+>> +	struct dentry *fs;
+> 
+> This really is all you need to have around, right?
+
+will check.
+
+>> +struct dentry *sdw_bus_debugfs_get_root(struct sdw_bus_debugfs *d)
+>> +{
+>> +	if (d)
+>> +		return d->fs;
+>> +	return NULL;
+>> +}
+>> +EXPORT_SYMBOL(sdw_bus_debugfs_get_root);
+> 
+> _GPL()?
+
+Oops, that's a big miss. will fix, thanks for spotting this.
 
 > 
-> Cc: Michal Gregorczyk <michalgr@live.com>
-> Cc: Adrian Ratiu <adrian.ratiu@collabora.com>
-> Cc: Mohammad Husain <russoue@gmail.com>
-> Cc: Qais Yousef <qais.yousef@arm.com>
-> Cc: Srinivas Ramana <sramana@codeaurora.org>
-> Cc: duyuchao <yuchao.du@unisoc.com>
-> Cc: Manjo Raja Rao <linux@manojrajarao.com>
-> Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
-> Cc: Tamir Carmeli <carmeli.tamir@gmail.com>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Ziljstra <peterz@infradead.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  include/uapi/linux/bpf.h       |  7 ++++++-
->  kernel/trace/bpf_trace.c       | 22 ++++++++++++++++++++++
->  tools/include/uapi/linux/bpf.h |  7 ++++++-
->  3 files changed, 34 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index e99e3e6f8b37..6fec701eaa46 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -539,6 +539,10 @@ union bpf_attr {
->   *     @mode: operation mode (enum bpf_adj_room_mode)
->   *     @flags: reserved for future use
->   *     Return: 0 on success or negative error code
-> + *
-> + * int bpf_probe_read_user(void *dst, int size, void *src)
-> + *     Read a userspace pointer safely.
-> + *     Return: 0 on success or negative error
->   */
->  #define __BPF_FUNC_MAPPER(FN)		\
->  	FN(unspec),			\
-> @@ -591,7 +595,8 @@ union bpf_attr {
->  	FN(get_socket_uid),		\
->  	FN(set_hash),			\
->  	FN(setsockopt),			\
-> -	FN(skb_adjust_room),
-> +	FN(skb_adjust_room),		\
-> +	FN(probe_read_user),
->  
->  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
->   * function eBPF program intends to call
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index dc498b605d5d..1e1a11d9faa8 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -81,6 +81,26 @@ static const struct bpf_func_proto bpf_probe_read_proto = {
->  	.arg3_type	= ARG_ANYTHING,
->  };
->  
-> +BPF_CALL_3(bpf_probe_read_user, void *, dst, u32, size, const void *, unsafe_ptr)
-> +{
-> +	int ret;
-> +
-> +	ret = probe_user_read(dst, unsafe_ptr, size);
-> +	if (unlikely(ret < 0))
-> +		memset(dst, 0, size);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct bpf_func_proto bpf_probe_read_user_proto = {
-> +	.func		= bpf_probe_read_user,
-> +	.gpl_only	= true,
-> +	.ret_type	= RET_INTEGER,
-> +	.arg1_type	= ARG_PTR_TO_UNINIT_MEM,
-> +	.arg2_type	= ARG_CONST_SIZE,
-> +	.arg3_type	= ARG_ANYTHING,
-> +};
-> +
->  BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
->  	   u32, size)
->  {
-> @@ -459,6 +479,8 @@ static const struct bpf_func_proto *tracing_func_proto(enum bpf_func_id func_id)
->  		return &bpf_map_delete_elem_proto;
->  	case BPF_FUNC_probe_read:
->  		return &bpf_probe_read_proto;
-> +	case BPF_FUNC_probe_read_user:
-> +		return &bpf_probe_read_user_proto;
->  	case BPF_FUNC_ktime_get_ns:
->  		return &bpf_ktime_get_ns_proto;
->  	case BPF_FUNC_tail_call:
-> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-> index e99e3e6f8b37..6fec701eaa46 100644
-> --- a/tools/include/uapi/linux/bpf.h
-> +++ b/tools/include/uapi/linux/bpf.h
-> @@ -539,6 +539,10 @@ union bpf_attr {
->   *     @mode: operation mode (enum bpf_adj_room_mode)
->   *     @flags: reserved for future use
->   *     Return: 0 on success or negative error code
-> + *
-> + * int bpf_probe_read_user(void *dst, int size, void *src)
-> + *     Read a userspace pointer safely.
-> + *     Return: 0 on success or negative error
->   */
->  #define __BPF_FUNC_MAPPER(FN)		\
->  	FN(unspec),			\
-> @@ -591,7 +595,8 @@ union bpf_attr {
->  	FN(get_socket_uid),		\
->  	FN(set_hash),			\
->  	FN(setsockopt),			\
-> -	FN(skb_adjust_room),
-> +	FN(skb_adjust_room),		\
-> +	FN(probe_read_user),
->  
->  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
->   * function eBPF program intends to call
-> -- 
-> 2.21.0.593.g511ec345e18-goog
-> 
+> But why is this exported at all?  No one calls this function.
 
+I will have to check.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> 
+>> +struct sdw_slave_debugfs {
+>> +	struct sdw_slave *slave;
+> 
+> Same question as above, why do you need this pointer?
+
+will check.
+
+> 
+> And meta-comment, if you _EVER_ save off a pointer to a reference
+> counted object (like this and the above one), you HAVE to grab a
+> reference to it, otherwise it can go away at any point in time as that
+> is the point of reference counted objects.
+> 
+> So even if you do need/want this, you have to properly handle the
+> reference count by incrementing/decrementing it as needed.
+
+good comment, thank you for the guidance.
+
+>> +struct sdw_slave_debugfs *sdw_slave_debugfs_init(struct sdw_slave *slave)
+>> +{
+>> +	struct sdw_bus_debugfs *master;
+>> +	struct sdw_slave_debugfs *d;
+>> +	char name[32];
+>> +
+>> +	master = slave->bus->debugfs;
+>> +	if (!master)
+>> +		return NULL;
+>> +
+>> +	d = kzalloc(sizeof(*d), GFP_KERNEL);
+>> +	if (!d)
+>> +		return NULL;
+>> +
+>> +	/* create the debugfs slave-name */
+>> +	snprintf(name, sizeof(name), "%s", dev_name(&slave->dev));
+>> +	d->fs = debugfs_create_dir(name, master->fs);
+>> +	if (IS_ERR_OR_NULL(d->fs)) {
+>> +		dev_err(&slave->dev, "slave debugfs root creation failed\n");
+>> +		goto err;
+>> +	}
+> 
+> You never care about the return value of a debugfs call.  I have a 100+
+> patch series stripping all of this out of the kernel, please don't force
+> me to add another one to it :)
+> 
+> Just call debugfs and move on, you can always put the return value of
+> one call into another one just fine, and your function logic should
+> never change if debugfs returns an error or not, you do not care.
+
+Yes, it's agreed that we should not depend on debugfs or fail here. will 
+fix, no worries.
+
+>
+>> +void sdw_debugfs_init(void)
+>> +{
+>> +	sdw_debugfs_root = debugfs_create_dir("soundwire", NULL);
+>> +	if (IS_ERR_OR_NULL(sdw_debugfs_root)) {
+>> +		pr_warn("SoundWire: Failed to create debugfs directory\n");
+>> +		sdw_debugfs_root = NULL;
+>> +		return;
+> 
+> Same here, just call the function and return.
+
+yep, will do.
