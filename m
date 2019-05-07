@@ -2,61 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6AE15807
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2C515809
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfEGDZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:25:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55208 "EHLO mail.kernel.org"
+        id S1726966AbfEGDZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfEGDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:25:04 -0400
-Subject: Re: [GIT] Crypto Update for 5.2
+        id S1726871AbfEGDZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 23:25:05 -0400
+Subject: Re: [GIT PULL] hwmon updates for hwmon-for-v5.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557199503;
-        bh=A5GABfHaZbrF7j5aDHnPitrUiAk9/KZEsOuCCMwR9AQ=;
+        s=default; t=1557199504;
+        bh=uM3lfyPLmhjp5BcCgs2DlhZ9Zy4Arr+2APa1wnqxNsk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=J+ztFMQOqVfeYWertxPkjoL3J/vkPR9cKeik+427L9NiF3uTN/MkJz2h4Vi9/sDhS
-         ozRLxf4LNrDMzORF/U1axGAVz8BsVoHAEnfyj+5wsxSIsOVwsRswcyD4ugtKQ/i4w8
-         Waxrg3dmiCRUu13boKIiJdndDvIvl5wsvzyPk/AY=
+        b=JOlWx/76OhvBtLeHXZyn/rJW0ICGXPBrWULh7KFzoViK6qhcwOLK0/qwwgG+DzdKo
+         dYFd16qOW/IzHmWp/3W0UgiKFQK/cTRssZ1egFBP6mt70aws7UtEmj01EXTnSBbbdE
+         bp0CdjFKM0v+7/50SRTD3QofJuSPiINd9F06UNqI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
-References: <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
- <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
- <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
- <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
- <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
- <20190305081155.7rpkydnc4ipm43o6@gondor.apana.org.au>
- <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
+In-Reply-To: <1557148847-18835-1-git-send-email-linux@roeck-us.net>
+References: <1557148847-18835-1-git-send-email-linux@roeck-us.net>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
-X-PR-Tracked-Commit-Id: e59f755ceb6d6f39f90899d2a4e39c3e05837e12
+X-PR-Tracked-Message-Id: <1557148847-18835-1-git-send-email-linux@roeck-us.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
+ hwmon-for-v5.2
+X-PR-Tracked-Commit-Id: 39abe9d88b30a51029b0b29a708a4f4459034565
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 81ff5d2cba4f86cd850b9ee4a530cd221ee45aa3
-Message-Id: <155719950316.20841.8532149559553493918.pr-tracker-bot@kernel.org>
-Date:   Tue, 07 May 2019 03:25:03 +0000
-To:     Herbert Xu <herbert@gondor.apana.org.au>
+X-PR-Merge-Commit-Id: 7aefd944f038c7469571adb37769cb6f3924ecfa
+Message-Id: <155719950467.20841.12333253076877928869.pr-tracker-bot@kernel.org>
+Date:   Tue, 07 May 2019 03:25:04 +0000
+To:     Guenter Roeck <linux@roeck-us.net>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 May 2019 11:29:38 +0800:
+The pull request you sent on Mon,  6 May 2019 06:20:47 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/81ff5d2cba4f86cd850b9ee4a530cd221ee45aa3
+https://git.kernel.org/torvalds/c/7aefd944f038c7469571adb37769cb6f3924ecfa
 
 Thank you!
 
