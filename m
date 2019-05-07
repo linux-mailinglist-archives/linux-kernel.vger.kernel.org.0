@@ -2,138 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A4916DC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F056316DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfEGXKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 19:10:20 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38407 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbfEGXKR (ORCPT
+        id S1726513AbfEGXJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 19:09:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42511 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfEGXJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 19:10:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id j26so9058169pgl.5;
-        Tue, 07 May 2019 16:10:16 -0700 (PDT)
+        Tue, 7 May 2019 19:09:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y10so9287549lji.9;
+        Tue, 07 May 2019 16:09:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jKMO64xZ/NLNKAqyiQNdSxQ5RK52UXZdK9wfMghWcTw=;
-        b=S6HCWjxdMhJXtpwtM6/5wElmUx+WcK79V76XMFaSdug+PAu+yyFKLenuOkNhRbUxmS
-         v3peC+1jROrGVnrXIO+nS9/OSVcDeZ0XUNanPKar19SXIlUGdEois0Y36nWjHYo55e+t
-         Apt2ZkWGfyiHwqu8+2TeAWya9gA+W3IanulvL9jEBzQBrfuBZUuOnqV3OycdOW45RDgQ
-         ietXGqmx6LdjfDE8N760ppa9EixmyUX/Mebgb4XYQjyT0pWlFOH+1RYHxeZ4g0fODrjV
-         /CdGuaj/I+JvyJ8z51L4ubjESbAmmGTB6BZWI1e/dlj5qk6WT+YUJNX/csrzSFx0fbAb
-         7keg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vk0G5/KAtP9NDw7LHnLsf8NsNY0KwtVtgkW1AKkGjKQ=;
+        b=u1CPd+tbyoZQI1gzBERndNqWsMbS3AKZU4SiYvB3NKDoyr+iQDI+S7eYiCP3LUFwUN
+         XHoIDcHXOLM2p9b9VoxLLfj9KtmvX9Y8iXkTG8GPZ4xyT59sad5tFTgF6RmJJwzA3Sm8
+         cIr+cOinLVxbBpm8dJaLh1dAoM8O6nKC3JmRnuuYaR5zKccd2VJqIP5r14JG5dHM5K7E
+         0Z6dLmXI0hDpyRpqGgjVeUvall8r5Bw1h03TqjklRbxHrtAh/XkikWBRQ41rm6v7ClIL
+         NpGVVOEkF3iFy2pgOdrTlehEih+Oy+/+KePA8fFJs7xwS3jeYPPsofP6gVgF+AhvYjiC
+         iu7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jKMO64xZ/NLNKAqyiQNdSxQ5RK52UXZdK9wfMghWcTw=;
-        b=EQ3HQERgeH6ToT89zscMxgaa2p9/HpXUDI6GHaij0EHa25lO5hEhPR0YdW9vaNOdNN
-         Q7jgvvUDbD7YywIWq4RPgCcZcpn/7l/KdwMi/Vryi+w31ofi/Ctt66rFQl7/EVWvSsxJ
-         qJG4NqJPFJ5K5Svt/SY6zBAWqLn1bHoM/spFgooM58lH3IBt3/FcOr9qutX+59PXtUky
-         3LQlpWnzeXaWVMoqN307jckziC+yUgl0CeYLQiD1Ry04ZKvnWvMek/1auMedTppGB+S4
-         4Y08Mns5njL2OKSJLR5B2Ahz82YSbPU2vVJvbMMCSx/71gTxCnHURCNFAfAeWQdewus/
-         M17A==
-X-Gm-Message-State: APjAAAVNEqQLYTwO5tanCTJP1RnUWGxQD2cxuMW/YsrH5B9lp6E0hNBN
-        Kn4czfxWDF2X99v0Znsohpf7PZoJ
-X-Google-Smtp-Source: APXvYqxwBYjE6jd3+l8NIjy4bYaiYCnr9KFnXMPOKo6jq8A3gHkYS7MaEekUk25FuV5XGUSfcQ+cjw==
-X-Received: by 2002:a63:e956:: with SMTP id q22mr43144036pgj.277.1557270616179;
-        Tue, 07 May 2019 16:10:16 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id w12sm7154742pfj.41.2019.05.07.16.10.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 16:10:15 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org (open list:HARDWARE MONITORING)
-Subject: [PATCH v3 2/2] hwmon: scmi: Scale values to target desired HWMON units
-Date:   Tue,  7 May 2019 16:09:17 -0700
-Message-Id: <20190507230917.21659-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190507230917.21659-1-f.fainelli@gmail.com>
-References: <20190507230917.21659-1-f.fainelli@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vk0G5/KAtP9NDw7LHnLsf8NsNY0KwtVtgkW1AKkGjKQ=;
+        b=PMIM1+CMoe7q1MfRORC1ZgI74ZDXxpEcytN2o3hN6Fs/IE7nb+66odm2MOOy2knYag
+         VITEc0h/yt9u+QTDqJpCvHQmdq0CwdRJ2VCMsWuqbF9zoNPUja5UdDQp6eW1AqK1wo7+
+         4uofcOP1+zNv+XJ+OynFJ2dqOjGpMyQs1Wp2Q0MyHC9Wxg/sPMbNncpri//+aXK0tT/U
+         2h421vo3/CwKhFHhyFKby1KgYwME1gKjSxGHz3M4Lnf3DHrDh1bi7agpcqtSCf9Jgvsq
+         6R5j/Um9Nft1ENOq/dYVogIWDUQjj62igvXoxfDENKUEXyrt2R5WWWgVkzxFLB5w16Fa
+         rU1w==
+X-Gm-Message-State: APjAAAXlhVM0mmv1UIWctF+Ds0TIsCsMtYfzToITWpTpuBmm6s3dWo4y
+        JNhnwDOoipeHRoxxRXoctSQ2RyZuV4HP2bJKUx4=
+X-Google-Smtp-Source: APXvYqxikcAzHK+93rRK0elQZX4vQRe2yPPmD/LRGFuhwj1hmj5kgDPmGBPnPCDqLM2nPxVZ6JJ0t10IsEa4a59y/kI=
+X-Received: by 2002:a2e:2b81:: with SMTP id r1mr4146671ljr.138.1557270592446;
+ Tue, 07 May 2019 16:09:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <1556190530-19541-1-git-send-email-liuk@cetca.net.cn>
+ <CAOMZO5BbA6oq8okTR-r800k4XY76XxxEdufd1mjcV6HdTpVotA@mail.gmail.com>
+ <AM0PR04MB421133A3F3C6B534B6ECEA7880370@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <VI1PR0402MB360058CE70AD60C116EE0634FF370@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB360058CE70AD60C116EE0634FF370@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 7 May 2019 20:09:58 -0300
+Message-ID: <CAOMZO5CSaRZEiaqxBTcBhaYjRLxMjb6Boyy0eO6OAEFBPv3_Kw@mail.gmail.com>
+Subject: Re: [PATCHv2 1/2] ARM: dts: imx6sx: Use MX6SX_CLK_ENET for fec 'ahb' clock
+To:     Andy Duan <fugang.duan@nxp.com>
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>, Kay-Liu <liuk@cetca.net.cn>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the SCMI firmware implementation is reporting values in a scale that
-is different from the HWMON units, we need to scale up or down the value
-according to how far appart they are.
+Hi Andy,
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/hwmon/scmi-hwmon.c | 43 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+On Sun, May 5, 2019 at 5:15 AM Andy Duan <fugang.duan@nxp.com> wrote:
 
-diff --git a/drivers/hwmon/scmi-hwmon.c b/drivers/hwmon/scmi-hwmon.c
-index a80183a488c5..7820854e5954 100644
---- a/drivers/hwmon/scmi-hwmon.c
-+++ b/drivers/hwmon/scmi-hwmon.c
-@@ -18,6 +18,47 @@ struct scmi_sensors {
- 	const struct scmi_sensor_info **info[hwmon_max];
- };
- 
-+static inline u64 __pow10(u8 x)
-+{
-+	u64 r = 1;
-+
-+	if (unlikely(x > 18))
-+		return r;
-+
-+	while (x--)
-+		r *= 10;
-+
-+	return r;
-+}
-+
-+static u64 scmi_hwmon_scale(const struct scmi_sensor_info *sensor, u64 value)
-+{
-+	s8 scale = sensor->scale;
-+	u64 f;
-+
-+	switch (sensor->type) {
-+	case TEMPERATURE_C:
-+	case VOLTAGE:
-+	case CURRENT:
-+		scale += 3;
-+		break;
-+	case POWER:
-+	case ENERGY:
-+		scale += 6;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	f = __pow10(abs(scale));
-+	if (scale > 0)
-+		value *= f;
-+	else
-+		value = div64_u64(value, f);
-+
-+        return value;
-+}
-+
- static int scmi_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
- 			   u32 attr, int channel, long *val)
- {
-@@ -30,7 +71,7 @@ static int scmi_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
- 	sensor = *(scmi_sensors->info[type] + channel);
- 	ret = h->sensor_ops->reading_get(h, sensor->id, false, &value);
- 	if (!ret)
--		*val = value;
-+		*val = scmi_hwmon_scale(sensor, value);
- 
- 	return ret;
- }
--- 
-2.17.1
+> Nack the patch !
+>
+> Firstly, i.MX6SX has ENET AHB bus clock for MAC, and currently it is set 200Mhz like clock tree:
+>         IMX6SX_CLK_ENET_PODF 200Mhz -> IMX6SX_CLK_ENET_SEL -> IMX6SX_CLK_ENET_AHB
+>
+> IMX6SX_CLK_ENET the clock is IPG clock for ENET IP ipg_clk_mac0_s/ipg_clk_s.
+> (Please check RM Table 18-3. System Clocks, Gating, and Override)
 
+Ok, but could you please show us where in the Reference Manual the
+IMX6SX_CLK_ENET_AHB is mentioned?
+
+I don't see ENET_AHB in imx6qdl Reference Manual either and we don't
+have a ENET_AHB the clk-imx6q driver and nor in the devicetree,
+
+> Secondly,  for your issue you caught, which was fixed by patch:
+> commit d7c3a206e6338e4ccdf030719dec028e26a521d5
+> Author: Andy Duan <fugang.duan@nxp.com>
+> Date:   Tue Apr 9 03:40:56 2019 +0000
+>
+>     net: fec: manage ahb clock in runtime pm
+
+Would this also fix the case where power management support is disabled?
+
+If I understand correctly the explanation from Kay-Liu he would still
+see a hang in the case when PM is disabled.
+
+Thanks
