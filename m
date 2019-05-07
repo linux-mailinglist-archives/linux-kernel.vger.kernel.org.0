@@ -2,124 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2BC16DF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8531816E07
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:10:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfEGXyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 19:54:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40570 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfEGXyH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 19:54:07 -0400
-Received: by mail-lf1-f66.google.com with SMTP id o16so13123811lfl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 16:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QNaGI2GD35FNHKpaisMd7Mb++bashXvi1hqDDOr6Y20=;
-        b=qTYA5JC2UtqQi1Puhr92FNgpB5llHarohMUSh7nKWbLR074m0i0U3ykD0Kimw8LIGJ
-         VHamCvN8DpC1iO2PQOOrSBVtRjytiIbz/aELoB/0QwATQu+SH8+OJk+t7C4ou4PFLySm
-         NADosKT1RWMXouX8XisFkCRonZ5QMDdjlknvP4EafRwA0ah3c7p9tCHU4DQgHtuo9Daz
-         cQMwpUFCRaFjqwoQPF76azpyL+5nAmPhwIrJ/Nj7lty0/YG6SauqQcElftx04XFUEjhc
-         G21iLOmF7nA9mjIwraqo9+n6tjrPeKg/BRjMkY8gHJVjhEiL0ZTPHchRSP4AeGrVI4ae
-         cVCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=QNaGI2GD35FNHKpaisMd7Mb++bashXvi1hqDDOr6Y20=;
-        b=TahY0F9YogIaZPfT6ONW4RkcipEtq7Qo2kmPMZiMXUn5cpKLFb4LMmsxWsbRBMlPpW
-         mDeukNiD66oE0ALSOl4F48VGZ2O9GB2Akxdt4KbDt/Dwi49eJz2uiFCjvaCSBXUHqQ32
-         9iqq+dkvXuB4tUSyRZftb1HN9awDmGZKrSC6sCvqczlbqmLboWA5PAS5PYms4MBAA76l
-         BRCE6/Kg6llyclvddWMAiyfciH+x6T85NoYifCj47YmhXIDX+tgcimez2FGQH8tR9mvo
-         KJ9MtR7f2/bcJkCt1mXmd32hFMF2sPswnOu7Q+Bb9nZwDtssXXm5XNAjdDBeQT+Kw6GO
-         rXZQ==
-X-Gm-Message-State: APjAAAUvpTFLfeUCUaCA8TZqKKSW0myjnCh4MqoYohdpWSxu33uy9QWT
-        CStBq5J9EAv5GptHgnHDRfntIw==
-X-Google-Smtp-Source: APXvYqydoAUVbppS2HV4ZpYsr3VsJCICRDmG0N4Q6P6HR2w9HSV1Zh4qeo5wt0jD10HXiGeF/TUbPw==
-X-Received: by 2002:a19:f243:: with SMTP id d3mr17540768lfk.168.1557273245412;
-        Tue, 07 May 2019 16:54:05 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id j19sm3594338lfj.52.2019.05.07.16.54.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 16:54:03 -0700 (PDT)
-From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Wed, 8 May 2019 01:54:03 +0200
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, horms+renesas@verge.net.au,
-        geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
-        marek.vasut+renesas@gmail.com, kuninori.morimoto.gx@renesas.com,
-        hien.dang.eb@renesas.com, fabrizio.castro@bp.renesas.com,
-        dien.pham.ry@renesas.com, biju.das@bp.renesas.com,
-        erosca@de.adit-jv.com, george_davis@mentor.com,
-        joshua_frkuska@mentor.com
-Subject: Re: [PATCH v4 0/2] thermal: rcar_gen3_thermal: fix IRQ issues
-Message-ID: <20190507235403.GA24112@bigcity.dyn.berto.se>
-References: <20190424051145.23072-1-jiada_wang@mentor.com>
+        id S1726533AbfEHAJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 20:09:47 -0400
+Received: from mga06.intel.com ([134.134.136.31]:9079 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbfEHAJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 20:09:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 May 2019 17:09:45 -0700
+X-ExtLoop1: 1
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga004.fm.intel.com with ESMTP; 07 May 2019 17:09:46 -0700
+Subject: [PATCH v2 0/6] mm/devm_memremap_pages: Fix page release race
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-mm@kvack.org
+Date:   Tue, 07 May 2019 16:55:59 -0700
+Message-ID: <155727335978.292046.12068191395005445711.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190424051145.23072-1-jiada_wang@mentor.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiada,
+Changes since v1 [1]:
+- Fix a NULL-pointer deref crash in pci_p2pdma_release() (Logan)
 
-Thanks for your patches.
+- Refresh the p2pdma patch headers to match the format of other p2pdma
+  patches (Bjorn)
 
-On 2019-04-24 14:11:43 +0900, Jiada Wang wrote:
-> There are issues with interrupt handling in rcar_gen3_thermal driver.
-> 
-> Currently IRQ is remain enabled after .remove, later if device is probed,
-> IRQ is requested before .thermal_init, this may cause IRQ function be
-> triggered but not able to clear IRQ status, thus cause system to hang.
-> 
-> Since the irq line isn't shared between different devices,
-> so the proper interrupt type flag should be IRQF_ONESHOT.
-> 
-> This patch-set fix these interrupt handling retated issues.
+- Collect Ira's reviewed-by
 
-I really like this series, nice work.
+[1]: https://lore.kernel.org/lkml/155387324370.2443841.574715745262628837.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
 
-> 
-> ---
-> v4: remove 'spinlock_t lock'
->     add Fixes tag in ("thermal: rcar_gen3_thermal: fix interrupt type")
->     fix typos in ("thermal: rcar_gen3_thermal: disable interrupt in .remove")
-> 
-> v3: fix to use correct code base
->     remove unused "flag" variable in rcar_gen3_thermal_irq
-> 
-> v2: use irq type IRQF_ONESHOT instead of IRQF_SHARED
->     disable interrupt in .remove
-> 
-> v1: initial version
-> 
-> Jiada Wang (2):
->   thermal: rcar_gen3_thermal: fix interrupt type
->   thermal: rcar_gen3_thermal: disable interrupt in .remove
-> 
->  drivers/thermal/rcar_gen3_thermal.c | 41 +++++++----------------------
->  1 file changed, 9 insertions(+), 32 deletions(-)
-> 
-> -- 
-> 2.19.2
-> 
+Logan audited the devm_memremap_pages() shutdown path and noticed that
+it was possible to proceed to arch_remove_memory() before all
+potential page references have been reaped.
 
--- 
-Regards,
-Niklas Söderlund
+Introduce a new ->cleanup() callback to do the work of waiting for any
+straggling page references and then perform the percpu_ref_exit() in
+devm_memremap_pages_release() context.
+
+For p2pdma this involves some deeper reworks to reference count
+resources on a per-instance basis rather than a per pci-device basis. A
+modified genalloc api is introduced to convey a driver-private pointer
+through gen_pool_{alloc,free}() interfaces. Also, a
+devm_memunmap_pages() api is introduced since p2pdma does not
+auto-release resources on a setup failure.
+
+The dax and pmem changes pass the nvdimm unit tests, and the p2pdma
+changes should now pass testing with the pci_p2pdma_release() fix.
+JÃ©rÃ´me, how does this look for HMM?
+
+In general, I think these patches / fixes are suitable for v5.2-rc1 or
+v5.2-rc2, and since they touch kernel/memremap.c, and other various
+pieces of the core, they should go through the -mm tree. These patches
+merge cleanly with the current state of -next, pass the nvdimm unit
+tests, and are exposed to the 0day robot with no issues reported
+(https://git.kernel.org/pub/scm/linux/kernel/git/djbw/nvdimm.git/log/?h=libnvdimm-pending).
+
+---
+
+Dan Williams (6):
+      drivers/base/devres: Introduce devm_release_action()
+      mm/devm_memremap_pages: Introduce devm_memunmap_pages
+      PCI/P2PDMA: Fix the gen_pool_add_virt() failure path
+      lib/genalloc: Introduce chunk owners
+      PCI/P2PDMA: Track pgmap references per resource, not globally
+      mm/devm_memremap_pages: Fix final page put race
+
+
+ drivers/base/devres.c             |   24 +++++++-
+ drivers/dax/device.c              |   13 +---
+ drivers/nvdimm/pmem.c             |   17 ++++-
+ drivers/pci/p2pdma.c              |  115 +++++++++++++++++++++++--------------
+ include/linux/device.h            |    1 
+ include/linux/genalloc.h          |   55 ++++++++++++++++--
+ include/linux/memremap.h          |    8 +++
+ kernel/memremap.c                 |   23 ++++++-
+ lib/genalloc.c                    |   51 ++++++++--------
+ mm/hmm.c                          |   14 +----
+ tools/testing/nvdimm/test/iomap.c |    2 +
+ 11 files changed, 217 insertions(+), 106 deletions(-)
