@@ -2,86 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A4315817
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CE71582A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfEGDfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:35:41 -0400
-Received: from namei.org ([65.99.196.166]:37834 "EHLO namei.org"
+        id S1727359AbfEGDpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:45:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbfEGDfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:35:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x473Zd9w005961;
-        Tue, 7 May 2019 03:35:39 GMT
-Date:   Tue, 7 May 2019 13:35:39 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Security subsystem: general updates for v5.2
-Message-ID: <alpine.LRH.2.21.1905071333580.5714@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726947AbfEGDpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 23:45:04 -0400
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.2-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557200703;
+        bh=qzNmPkgxKzzz2MIbG08Frik9CsTyw4jHKdomI3RJans=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Pv6/4e6jrosIs7MRcnk82yNXWFUH5ChAy2NhRkfQgjqH+KTfbsd4/2tx9cMhf+Hd4
+         OY/VEXFHRZdvx4kOz6/iMVg804B7vMotiUWqM+8gcgcwRLphyKLkWcu/v82hVoi/uK
+         ZEYSYQIa8aybGyviTguD17onwUaK0vXoSwDulaAM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
+References: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+ tags/linux-kselftest-5.2-rc1
+X-PR-Tracked-Commit-Id: d917fb876f6eaeeea8a2b620d2a266ce26372f4d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 71ae5fc87c34ecbdca293c2a5c563d6be2576558
+Message-Id: <155720070369.8669.2043992716703088377.pr-tracker-bot@kernel.org>
+Date:   Tue, 07 May 2019 03:45:03 +0000
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        shuah <shuah@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a few bugfixes and documentation updates.
+The pull request you sent on Mon, 6 May 2019 10:56:56 -0600:
 
-Please pull.
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.2-rc1
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/71ae5fc87c34ecbdca293c2a5c563d6be2576558
 
-The following changes since commit 8c2ffd9174779014c3fe1f96d9dc3641d9175f00:
+Thank you!
 
-  Linux 5.1-rc2 (2019-03-24 14:02:26 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
-for you to fetch changes up to 6beff00b79ca0b5caf0ce6fb8e11f57311bd95f8:
-
-  seccomp: fix up grammar in comment (2019-04-23 16:21:12 -0700)
-
-----------------------------------------------------------------
-Denis Efremov (11):
-      LSM: fix documentation for sb_copy_data hook
-      LSM: fix documentation for the syslog hook
-      LSM: fix documentation for the socket_post_create hook
-      LSM: fix documentation for the task_setscheduler hook
-      LSM: fix documentation for the socket_getpeersec_dgram hook
-      LSM: fix documentation for the path_chmod hook
-      LSM: fix documentation for the audit_* hooks
-      LSM: fix documentation for the msg_queue_* hooks
-      LSM: fix documentation for the sem_* hooks
-      LSM: fix documentation for the shm_* hooks
-      LSM: lsm_hooks.h: fix documentation format
-
-James Morris (2):
-      Merge tag 'v5.1-rc2' into next-general
-      Revert "security: inode: fix a missing check for securityfs_create_file"
-
-Jann Horn (3):
-      Yama: mark local symbols as static
-      security: don't use RCU accessors for cred->session_keyring
-      keys: safe concurrent user->{session,uid}_keyring access
-
-Kangjie Lu (1):
-      security: inode: fix a missing check for securityfs_create_file
-
-Mukesh Ojha (1):
-      Yama: mark function as static
-
-Tycho Andersen (1):
-      seccomp: fix up grammar in comment
-
- include/linux/cred.h         |   2 +-
- include/linux/lsm_hooks.h    | 170 +++++++++++++++++++++----------------------
- include/linux/sched/user.h   |   7 ++
- kernel/seccomp.c             |   2 +-
- security/keys/process_keys.c |  41 +++++------
- security/keys/request_key.c  |  14 ++--
- security/yama/yama_lsm.c     |   8 +-
- 7 files changed, 119 insertions(+), 125 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
