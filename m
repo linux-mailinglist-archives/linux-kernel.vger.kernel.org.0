@@ -2,124 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 232E815B80
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:55:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3553D1595B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfEGFiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:38:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58000 "EHLO mail.kernel.org"
+        id S1727962AbfEGFgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 01:36:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728561AbfEGFiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:38:14 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727921AbfEGFfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 01:35:53 -0400
+Received: from localhost (unknown [106.200.210.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7878216C8;
-        Tue,  7 May 2019 05:38:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BB9420C01;
+        Tue,  7 May 2019 05:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557207492;
-        bh=/QpqgiEvD892eM89UJqtzTQgYRMGKcjohAiPdZLZDMA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PG6Zu3SWs6DiFuidXIEtnPKLvL/4Ev3p4rfOooLDGmvsOTjYIqaAPezrkiHo2LGhK
-         9R3NsHAvBfvwbDFKAfvk7VRt/tItKcLtjn1Sa8dEPnxOSyHbo+y5UZI0dP7YXhkiaP
-         pCeHEvtxjxF3aSP305dJtMW08CkLTvWgzPYBoYhI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ido Schimmel <idosch@mellanox.com>,
-        Semion Lisyansky <semionl@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 75/81] mlxsw: core: Do not use WQ_MEM_RECLAIM for mlxsw ordered workqueue
-Date:   Tue,  7 May 2019 01:35:46 -0400
-Message-Id: <20190507053554.30848-75-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190507053554.30848-1-sashal@kernel.org>
-References: <20190507053554.30848-1-sashal@kernel.org>
+        s=default; t=1557207353;
+        bh=0L4usra1BWLLoQ6Ux30TjVYIwy8g90JNMEHJnbVW2bk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FqQwOTE8wHKh1em/Zw+yqD1h4HGq9lupWbgQrz3Bm+z+RBDstmOntfkEjUs9rx3Lm
+         1KMgqbvHgNrdG7Qw0Deeu4HAg+3I3eHQWYIDlxmcDAfcHhxl2UX6ZevSjoAg2Omf9z
+         miHgPFGSBqPcBwBljOKqFhXBWZSaec0HfYrARRfU=
+Date:   Tue, 7 May 2019 11:05:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, amit.kucheria@linaro.org,
+        jorge.ramirez-ortiz@linaro.org, lina.iyer@linaro.org,
+        ulf.hansson@linaro.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add PSCI cpuidle support
+Message-ID: <20190507053547.GE16052@vkoul-mobl>
+References: <20190506193115.20909-1-niklas.cassel@linaro.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506193115.20909-1-niklas.cassel@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+On 06-05-19, 21:31, Niklas Cassel wrote:
+> Add device bindings for CPUs to suspend using PSCI as the enable-method.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> index ffedf9640af7..f9db9f3ee10c 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -31,6 +31,7 @@
+>  			reg = <0x100>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&L2_0>;
+> +			cpu-idle-states = <&CPU_PC>;
+>  		};
+>  
+>  		CPU1: cpu@101 {
+> @@ -39,6 +40,7 @@
+>  			reg = <0x101>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&L2_0>;
+> +			cpu-idle-states = <&CPU_PC>;
+>  		};
+>  
+>  		CPU2: cpu@102 {
+> @@ -47,6 +49,7 @@
+>  			reg = <0x102>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&L2_0>;
+> +			cpu-idle-states = <&CPU_PC>;
+>  		};
+>  
+>  		CPU3: cpu@103 {
+> @@ -55,12 +58,24 @@
+>  			reg = <0x103>;
+>  			enable-method = "psci";
+>  			next-level-cache = <&L2_0>;
+> +			cpu-idle-states = <&CPU_PC>;
+>  		};
+>  
+>  		L2_0: l2-cache {
+>  			compatible = "cache";
+>  			cache-level = <2>;
+>  		};
+> +
+> +		idle-states {
 
-[ Upstream commit 4af0699782e2cc7d0d89db9eb6f8844dd3df82dc ]
+Since we are trying to sort the file per address and
+alphabetically, it would be great if this can be moved before l2-cache
+:)
 
-The ordered workqueue is used to offload various objects such as routes
-and neighbours in the order they are notified.
+Other than that this lgtm
+ 
+> +			CPU_PC: pc {
+> +				compatible = "arm,idle-state";
+> +				arm,psci-suspend-param = <0x40000003>;
+> +				entry-latency-us = <125>;
+> +				exit-latency-us = <180>;
+> +				min-residency-us = <595>;
+> +				local-timer-stop;
+> +			};
+> +		};
+>  	};
+>  
+>  	firmware {
+> -- 
+> 2.21.0
 
-It should not be called as part of memory reclaim path, so remove the
-WQ_MEM_RECLAIM flag. This can also result in a warning [1], if a worker
-tries to flush a non-WQ_MEM_RECLAIM workqueue.
-
-[1]
-[97703.542861] workqueue: WQ_MEM_RECLAIM mlxsw_core_ordered:mlxsw_sp_router_fib6_event_work [mlxsw_spectrum] is flushing !WQ_MEM_RECLAIM events:rht_deferred_worker
-[97703.542884] WARNING: CPU: 1 PID: 32492 at kernel/workqueue.c:2605 check_flush_dependency+0xb5/0x130
-...
-[97703.542988] Hardware name: Mellanox Technologies Ltd. MSN3700C/VMOD0008, BIOS 5.11 10/10/2018
-[97703.543049] Workqueue: mlxsw_core_ordered mlxsw_sp_router_fib6_event_work [mlxsw_spectrum]
-[97703.543061] RIP: 0010:check_flush_dependency+0xb5/0x130
-...
-[97703.543071] RSP: 0018:ffffb3f08137bc00 EFLAGS: 00010086
-[97703.543076] RAX: 0000000000000000 RBX: ffff96e07740ae00 RCX: 0000000000000000
-[97703.543080] RDX: 0000000000000094 RSI: ffffffff82dc1934 RDI: 0000000000000046
-[97703.543084] RBP: ffffb3f08137bc20 R08: ffffffff82dc18a0 R09: 00000000000225c0
-[97703.543087] R10: 0000000000000000 R11: 0000000000007eec R12: ffffffff816e4ee0
-[97703.543091] R13: ffff96e06f6a5c00 R14: ffff96e077ba7700 R15: ffffffff812ab0c0
-[97703.543097] FS: 0000000000000000(0000) GS:ffff96e077a80000(0000) knlGS:0000000000000000
-[97703.543101] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[97703.543104] CR2: 00007f8cd135b280 CR3: 00000001e860e003 CR4: 00000000003606e0
-[97703.543109] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[97703.543112] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[97703.543115] Call Trace:
-[97703.543129] __flush_work+0xbd/0x1e0
-[97703.543137] ? __cancel_work_timer+0x136/0x1b0
-[97703.543145] ? pwq_dec_nr_in_flight+0x49/0xa0
-[97703.543154] __cancel_work_timer+0x136/0x1b0
-[97703.543175] ? mlxsw_reg_trans_bulk_wait+0x145/0x400 [mlxsw_core]
-[97703.543184] cancel_work_sync+0x10/0x20
-[97703.543191] rhashtable_free_and_destroy+0x23/0x140
-[97703.543198] rhashtable_destroy+0xd/0x10
-[97703.543254] mlxsw_sp_fib_destroy+0xb1/0xf0 [mlxsw_spectrum]
-[97703.543310] mlxsw_sp_vr_put+0xa8/0xc0 [mlxsw_spectrum]
-[97703.543364] mlxsw_sp_fib_node_put+0xbf/0x140 [mlxsw_spectrum]
-[97703.543418] ? mlxsw_sp_fib6_entry_destroy+0xe8/0x110 [mlxsw_spectrum]
-[97703.543475] mlxsw_sp_router_fib6_event_work+0x6cd/0x7f0 [mlxsw_spectrum]
-[97703.543484] process_one_work+0x1fd/0x400
-[97703.543493] worker_thread+0x34/0x410
-[97703.543500] kthread+0x121/0x140
-[97703.543507] ? process_one_work+0x400/0x400
-[97703.543512] ? kthread_park+0x90/0x90
-[97703.543523] ret_from_fork+0x35/0x40
-
-Fixes: a3832b31898f ("mlxsw: core: Create an ordered workqueue for FIB offload")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Semion Lisyansky <semionl@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/ethernet/mellanox/mlxsw/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
-index 426aea8ad72c..7482db0767af 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
-@@ -1878,7 +1878,7 @@ static int __init mlxsw_core_module_init(void)
- 	mlxsw_wq = alloc_workqueue(mlxsw_core_driver_name, WQ_MEM_RECLAIM, 0);
- 	if (!mlxsw_wq)
- 		return -ENOMEM;
--	mlxsw_owq = alloc_ordered_workqueue("%s_ordered", WQ_MEM_RECLAIM,
-+	mlxsw_owq = alloc_ordered_workqueue("%s_ordered", 0,
- 					    mlxsw_core_driver_name);
- 	if (!mlxsw_owq) {
- 		err = -ENOMEM;
 -- 
-2.20.1
-
+~Vinod
