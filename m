@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230FE161D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0262161F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfEGKSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:18:54 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44114 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfEGKSy (ORCPT
+        id S1726723AbfEGK0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:26:54 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41081 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfEGK0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:18:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y13so8413038pfm.11;
-        Tue, 07 May 2019 03:18:54 -0700 (PDT)
+        Tue, 7 May 2019 06:26:54 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l132so3474881pfc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 03:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G8pBOHepmnJE1/KzU1bAO4V1FlfT0xpTPU7pMbXBSIs=;
-        b=YdndEbZRVbfd6JyBmK3pprG9Tj5uVoHj96dazYWHgaGCvSG9YackGco1b+A+QwJsbo
-         2IB2Aw7AFIlHUyQQC8OO/PyGaFsdl3a+Ui0i9jS+jmmybLAhKCrIMdroPMTkQ4BW4r1J
-         XSWyDl7hgLw/Es8QDdli57it39JXrJgf6xEww/UU0Hu1MQ8k/YIfVupnm/ShMrbpS40i
-         TKaQf3XBE204zQnuxlm1FjbqkYCb/c4oOboF9mZGIDj6wFWS3BAOXO7ZYcUzlP4MtSsH
-         wcYN7m+dzyRII4/Z/8oiuJ4u3KTWDHMSyqpYRZGyhveY3ro3kPT0yKrdQtrjvIXjMhrU
-         OYyg==
+        h=from:to:cc:subject:date:message-id;
+        bh=sLt8k/Ibit5MXW+2DcTy1x+/PaPOiRW0J72G+A/4PHY=;
+        b=OKmsmkpVX1GWo4n6EuuYNx3ev2lqwZzR/saFLgXL8WaxXKLuX/fHhBi4I9e3PUm0SW
+         x3j+ZL/4U2LSuDBvcXu1Yc+ISrlUjm598fdc+a68nCrvGGDyJlejuBmTa0bvHmzp2Bfu
+         t2y6ZPnLIO6eK+ZKzBUHbdxzzAfbv8oMQdMlEVQHinAXo3JI7d9yGKV8UekGXsWFs6p/
+         3XVqQz1gqkdPy+I3NMpt1FXyy7VQIHK3BejMQKrAfJpJKEv+lR5b+WZvHbgXexktnw6g
+         J/Dxf2zo++G8J89BNQ74cyDMSd3zHByeY8inkFGzVPyixM0zLfUQThhJkR8qx/zcinjC
+         FkhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G8pBOHepmnJE1/KzU1bAO4V1FlfT0xpTPU7pMbXBSIs=;
-        b=iUVvvjzOdMaLqNhgpuEYVxYlcY/A8gJ4b/9D0yQFli2InhXG2kM2hFioyDtyI7M29V
-         mzDmLwksFLtX+2TRDCriu51/uWZsU+Ahv7B6XgZ+DrME1qqhrJAkC1Xpq4vZ+CXHCSPX
-         EXI3Ot39TsEL3UnPUTTVfvx8Dn9RgZJfS1kvO7/oRgcNGrfZXVjQZJop6ZiU1mgXmUBY
-         rkL6lgBBM2ZMxyMWZIpw/A/pR8f2/LLmtIKG2A4DejsDUdjWqV4NVjlwh8J09hmCBYso
-         HOqQx1kHQOTc+JHdZFjhZi28Nc3gTJAC2DzWIZ2cpIemh866IPYWtxLzV3EgUULOmSwc
-         jFxA==
-X-Gm-Message-State: APjAAAXzfkVllIiNmthDuXKOZWEWcCTXa0ZZqC7PYFNQdyPgsloZaGXD
-        GwA6Q00YqEToKhWccqH/eXk=
-X-Google-Smtp-Source: APXvYqw0MpKiLCvqwe8N+6fugyXUfcfqbZxka1Z+eJC2FrcXxk4z1+/4iDtrJjM2rg8zYe1KAD/hYw==
-X-Received: by 2002:aa7:9ac4:: with SMTP id x4mr14324313pfp.43.1557224333621;
-        Tue, 07 May 2019 03:18:53 -0700 (PDT)
-Received: from icarus ([2001:268:c1c3:2283:c70:4af9:86e2:2])
-        by smtp.gmail.com with ESMTPSA id a6sm26288248pgd.67.2019.05.07.03.18.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 03:18:51 -0700 (PDT)
-Date:   Tue, 7 May 2019 19:18:29 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, fabrice.gasnier@st.com, alexandre.torgue@st.com,
-        linux-iio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IIO: stm32: Remove quadrature related functions from
- trigger driver
-Message-ID: <20190507101729.GA3420@icarus>
-References: <20190507091224.17781-1-benjamin.gaignard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190507091224.17781-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sLt8k/Ibit5MXW+2DcTy1x+/PaPOiRW0J72G+A/4PHY=;
+        b=esPM1BCMUzfZQwoo0peASyzeqwDhZoM7YbJYaxvCgPsHC2/ieILhMJ0vw/wc/Eb/I1
+         PTf+WSuV6+HNnkHN9toZeRXIvxh7plimdUKRt+T8e8AKceIBx8Bj13DIMmg5eMwgHLXG
+         a6NOlOIk/3XeUSYqWz94BRhNAmmV3cgyBqOdkxIO6Rg7wMq2e3UU3ww36p7NAcnpHUN6
+         wpiEfMI1uZODQDjrfoi4ol3qisf8Maee6f0iQfg9lkAb4irvCosXnodq38Q+tzoz72Rk
+         C+/kwf8eb6jy61nDhPZc4PMl6eGpDdMrfOGYoXV4fvaMG3AO3b6oPb5TLwKplZt45UG7
+         0z4A==
+X-Gm-Message-State: APjAAAXKfz2z7a3sYJ4DCa74NhiYiUXk0ZbpREazDWLbbWCLPKhsKuzY
+        /TAOr/+Mqxek8mX717rsndc=
+X-Google-Smtp-Source: APXvYqyp30i6Tlo5D4c9BcoBQCHXBNTyHMUqXt2iDVFysO6A3yCt9BbeBsRn4Bmd6F3usKLscraP1Q==
+X-Received: by 2002:a63:5c5f:: with SMTP id n31mr39262217pgm.325.1557224813794;
+        Tue, 07 May 2019 03:26:53 -0700 (PDT)
+Received: from app09.andestech.com (59-120-53-16.HINET-IP.hinet.net. [59.120.53.16])
+        by smtp.gmail.com with ESMTPSA id i75sm22993533pfj.80.2019.05.07.03.26.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 03:26:53 -0700 (PDT)
+From:   Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To:     greentime@andestech.com, linux-kernel@vger.kernel.org
+Cc:     green.hu@gmail.com
+Subject: [PATCH] MAINTAINERS: update nds32 git repo path
+Date:   Tue,  7 May 2019 18:22:25 +0800
+Message-Id: <20190507102225.4174-1-greentime@andestech.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 11:12:24AM +0200, Benjamin Gaignard wrote:
-> Quadrature feature is now hosted on it own framework.
-> Remove quadrature related code from stm32-trigger driver to avoid
-> code duplication and simplify the ABI.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+We use git.kernel.org to put nds32's latest code instead of github.
 
-Although this functionality is now provided by the Counter subsystem, we
-should keep the IIO Counter interface for this driver intact since
-existing user applications may depend on it; this is the same reason why
-the IIO Counter code in the 104-QUAD-8 device driver was not removed
-despite moving to the Counter subsystem.
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Once user applications have had enough time to migrate to the Generic
-Counter interface, we can consider removing the deprecated IIO Counter
-interface.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2c2fce72e694..967ac42d1a89 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -963,7 +963,7 @@ F:	drivers/staging/iio/*/ad*
+ ANDES ARCHITECTURE
+ M:	Greentime Hu <green.hu@gmail.com>
+ M:	Vincent Chen <deanbo422@gmail.com>
+-T:	git https://github.com/andestech/linux.git
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
+ S:	Supported
+ F:	arch/nds32/
+ F:	Documentation/devicetree/bindings/interrupt-controller/andestech,ativic32.txt
+-- 
+2.18.0
 
-William Breathitt Gray
