@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C539157A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 04:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D5E157AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 04:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfEGCbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 22:31:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49668 "EHLO
+        id S1726383AbfEGCdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 22:33:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53330 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfEGCbA (ORCPT
+        with ESMTP id S1726181AbfEGCdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 22:31:00 -0400
+        Mon, 6 May 2019 22:33:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ulGxU59+SHg0LveLVxFzfgXsIwZDWNfvFJ6byVaTrN4=; b=inpTcYnsbYBC
-        RXzSlqPMPbhywhoEEOZ12cSdNDZKetcVk2o8QMn/M1u89/Hw5qJq/LA+9y5mkpHPQkh9oiusUfErE
-        /5cLCWnlynFDjUm55jCmzNLd1GKiGHJcqVAsti5pPV58KqRQHi89y/+hnh8lqcpRv/QDHqKIbp8Ow
-        hW6dQ=;
+        List-Archive; bh=ulGxU59+SHg0LveLVxFzfgXsIwZDWNfvFJ6byVaTrN4=; b=L0/VEO+W2/21
+        51anoW1FdyyRxfq0q/AiTj/LsOLLjLPZIAyyasE52MezVB59pwN0OWpnqHuyDQR1LguB4AuLFneU6
+        RJPW1HEHVyp3xYfNGXI+FY3dETq3JV8wCsH+PVXcXQxF7hBILmw0cm2lyb4Z31feHXq/rJmbANf68
+        LCfNg=;
 Received: from kd111239185057.au-net.ne.jp ([111.239.185.57] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hNpsN-0003Sy-6i; Tue, 07 May 2019 02:30:40 +0000
+        id 1hNpuU-0003UI-A4; Tue, 07 May 2019 02:32:51 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id B7423440036; Tue,  7 May 2019 03:30:33 +0100 (BST)
+        id A64D7440017; Tue,  7 May 2019 03:32:46 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Olivier Moysan <olivier.moysan@st.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -41,8 +41,8 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
 Subject: Applied "ASoC: stm32: spdifrx: manage identification registers" to the asoc tree
 In-Reply-To: <1557146646-18150-4-git-send-email-olivier.moysan@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190507023033.B7423440036@finisterre.sirena.org.uk>
-Date:   Tue,  7 May 2019 03:30:33 +0100 (BST)
+Message-Id: <20190507023246.A64D7440017@finisterre.sirena.org.uk>
+Date:   Tue,  7 May 2019 03:32:46 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
