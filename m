@@ -2,97 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D8AF16A14
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 20:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4779616A1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 20:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfEGSYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 14:24:13 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.190]:39615 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726564AbfEGSYN (ORCPT
+        id S1727004AbfEGS0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 14:26:35 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37194 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfEGS0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 14:24:13 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 6474F8EE16
-        for <linux-kernel@vger.kernel.org>; Tue,  7 May 2019 13:24:12 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id O4lAhB03K4FKpO4lAhaKPy; Tue, 07 May 2019 13:24:12 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.119.7] (port=44628 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hO4l9-000Qgk-Ct; Tue, 07 May 2019 13:24:11 -0500
-Date:   Tue, 7 May 2019 13:24:09 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] Input: libps2 - mark expected switch fall-through
-Message-ID: <20190507182409.GA11027@embeddedor>
+        Tue, 7 May 2019 14:26:35 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g3so9080879pfi.4;
+        Tue, 07 May 2019 11:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Ka6LMhnLUqE6odqHoqHbUWiiXGVvr4B6Nmgf+rChy8c=;
+        b=cOcuYAIPrMY/Uq90XRPSi4cwB9on+DinYs/8giKSoraOxRpRFgcbT3A6dE4d2DKjUv
+         SXbOQOv+3PyvNj527v/E9s7lqOOovuVcSomj9Pfk8n8qBuRP+sr8URGGVUP1vgGE7etT
+         4x23lx6yYTZLM8N3lfTgLxgne1laMn1FFlf3cy/zl/CcfYbLF4qD6BrESasSNWvGvIeW
+         gWBxisQbxafoJQxI3sckzXNufldEjSrnUnistzYprsfX3iUmVdfPS0yJwgiSjESAhu+B
+         dtp6ip6P6bdUar1QCgOnYKw+6kyjsQSSaYnzCfw3aSc79sk+w4QoYNHVkBUk3MnSwkp8
+         8/yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=Ka6LMhnLUqE6odqHoqHbUWiiXGVvr4B6Nmgf+rChy8c=;
+        b=EJr8A0/YaK7+orKdv/LS0f14APZHluUGZhUWG8BHd/uXxb30Hp8zW0spGbAekV4Gqg
+         1lpt6Py0nCEbeus/Gpu+tgyXCUhdJlSx7FlEPOMXSK+VXIm/Ln6BSUsqmbGNgl5oob6t
+         n/L9rNQdfAASvE5hk71MpADXo88qrnrjdncu2IaTDcceMiZjV6Zk+Tyvcj403IAzx4x7
+         Aiiq2hN3qlChhZdkdpOQVyhR3QM60hEd/fGupUGFyw64n6OAWYVyh9lny2REJMM8WxSb
+         iZucDwcJJfz+p93/Hn4SonuNQOqfIRgto0+TrHcDGYRe0yZJcwjdl787nwO1mGzX0U2p
+         YhqA==
+X-Gm-Message-State: APjAAAWiSdfoKr9aV8SHkobcP2sto+La2It0kiPPSZ4IBxjYT8OmmlG/
+        8gjvRJXxXSV8ZQdyiKriUak=
+X-Google-Smtp-Source: APXvYqzb2/1UXpXeRyCSxRVpxZ155VBzZSFtSfXBZM1fiBmJtLpX7RPquqonlMC+TGl2KFDs/mKNZw==
+X-Received: by 2002:a63:f707:: with SMTP id x7mr40797735pgh.343.1557253594058;
+        Tue, 07 May 2019 11:26:34 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a80sm2725413pfj.105.2019.05.07.11.26.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 11:26:32 -0700 (PDT)
+Date:   Tue, 7 May 2019 11:26:31 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: scmi: Scale values to target desired HWMON
+ units
+Message-ID: <20190507182631.GA29510@roeck-us.net>
+References: <20190506224109.9357-1-f.fainelli@gmail.com>
+ <20190506224109.9357-3-f.fainelli@gmail.com>
+ <a4dd5f4f-af12-8783-c612-cf3e88a9b94f@roeck-us.net>
+ <e67efa2b-813c-c9f3-8f3d-b32c1b61ebc8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.7
-X-Source-L: No
-X-Exim-ID: 1hO4l9-000Qgk-Ct
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.7]:44628
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <e67efa2b-813c-c9f3-8f3d-b32c1b61ebc8@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Hi Florian,
 
-This patch fixes the following warning:
+On Tue, May 07, 2019 at 10:44:00AM -0700, Florian Fainelli wrote:
+> On 5/7/19 6:55 AM, Guenter Roeck wrote:
+> > Hi Florian,
+> > 
+> > On 5/6/19 3:41 PM, Florian Fainelli wrote:
+> >> If the SCMI firmware implementation is reporting values in a scale that
+> >> is different from the HWMON units, we need to scale up or down the value
+> >> according to how far appart they are.
+> >>
+> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> >> ---
+> >>   drivers/hwmon/scmi-hwmon.c | 55 +++++++++++++++++++++++++++++++-------
+> >>   1 file changed, 46 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/hwmon/scmi-hwmon.c b/drivers/hwmon/scmi-hwmon.c
+> >> index a80183a488c5..e9913509cb88 100644
+> >> --- a/drivers/hwmon/scmi-hwmon.c
+> >> +++ b/drivers/hwmon/scmi-hwmon.c
+> >> @@ -18,6 +18,51 @@ struct scmi_sensors {
+> >>       const struct scmi_sensor_info **info[hwmon_max];
+> >>   };
+> >>   +static enum hwmon_sensor_types scmi_types[] = {
+> >> +    [TEMPERATURE_C] = hwmon_temp,
+> >> +    [VOLTAGE] = hwmon_in,
+> >> +    [CURRENT] = hwmon_curr,
+> >> +    [POWER] = hwmon_power,
+> >> +    [ENERGY] = hwmon_energy,
+> >> +};
+> >> +
+> >> +static u64 scmi_hwmon_scale(const struct scmi_sensor_info *sensor,
+> >> u64 value)
+> >> +{
+> >> +    u64 scaled_value = value;
+> > 
+> > I don't think that variable is necessary.
+> > 
+> >> +    s8 desired_scale;
+> > 
+> > Just scale ? Also, you could assign scale here directly, and subtract
+> > the offset below. Then "n" would not be necessary.
+> > Such as
+> >     s8 scale = sensor->scale;    // assuming scale is s8
+> >     ...
+> >     case CURRENT:
+> >         scale += 3;
+> >     ...
+> > 
+> > That would also be less confusing, since it would avoid the double
+> > negation.
+> > 
+> >> +    int n, p;
+> > 
+> >> +
+> >> +    switch (sensor->type) {
+> >> +    case TEMPERATURE_C:
+> >> +    case VOLTAGE:
+> >> +    case CURRENT:
+> >> +        /* fall through */
+> > Unnecessary comment
+> 
+> Is not removing the comment going to upset gcc when using
+> -Wimplicit-fallthrough?
+> 
 
-drivers/input/serio/libps2.c: In function â€˜ps2_handle_ackâ€™:
-drivers/input/serio/libps2.c:407:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (ps2dev->flags & PS2_FLAG_NAK) {
-      ^
-drivers/input/serio/libps2.c:417:2: note: here
-  case 0x00:
-  ^~~~
+There is no implicit fallthrough, and the comment would have to be
+ahead of the previous case statement. Such as:
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+	case VOLTAGE:
+		scale++;
+		/* fall through */
+	case CURRENT:
+		scale++;
+		break;
+	...
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
+Two case statements together don't count as fall through.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/input/serio/libps2.c | 1 +
- 1 file changed, 1 insertion(+)
+Guenter
 
-diff --git a/drivers/input/serio/libps2.c b/drivers/input/serio/libps2.c
-index e6a07e68d1ff..22b8e05aa36c 100644
---- a/drivers/input/serio/libps2.c
-+++ b/drivers/input/serio/libps2.c
-@@ -409,6 +409,7 @@ bool ps2_handle_ack(struct ps2dev *ps2dev, u8 data)
- 			ps2dev->nak = PS2_RET_ERR;
- 			break;
- 		}
-+		/* Fall through */
- 
- 	/*
- 	 * Workaround for mice which don't ACK the Get ID command.
--- 
-2.21.0
-
+> > 
+> >> +        desired_scale = -3;
+> >> +        break;
+> >> +    case POWER:
+> >> +    case ENERGY:
+> >> +        /* fall through */
+> > Unnecessary comment.
+> > 
+> >> +        desired_scale = -6;
+> >> +        break;
+> >> +    default:
+> >> +        return scaled_value;
+> > 
+> > Here we presumably want a scale of 0. However, if the scale passed
+> > from SCMI is, say, -5 or +5, we return the original (unadjusted)
+> > value. Seems to me we would still want to adjust the value to match
+> > hwmon expectations. Am I missing something ?
+> 
+> You raise a valid point, not that could happen today because if the
+> sensor type has a value we don't recognize, we have not registered it,
+> so we would not even try to read rom it, but let's be future proof.
+> 
+> > 
+> >> +    }
+> >> +
+> >> +    n = (s8)sensor->scale - desired_scale;
+> >> +        if (n == 0)
+> > 
+> > Indentation seems off here.
+> > 
+> >> +                return scaled_value;
+> >> +
+> >> +    for (p = 0; p < abs(n); p++) {
+> >> +        /* Need to scale up from sensor to HWMON */
+> >> +        if (n > 0)
+> >> +            scaled_value *= 10;
+> >> +        else
+> >> +            do_div(scaled_value, 10);
+> >> +    }
+> > 
+> > Something like
+> > 
+> >     factor = pow10(abs(scale));
+> >     if (scale > 0)
+> >         value *= factor;
+> >     else
+> >         do_div(value, factor);
+> > 
+> > would avoid the repeated abs() and do_div(). Unfortunately there is
+> > no pow10() helper, so you would have to write that. Still, I think
+> > that would be much more efficient.
+> 
+> Sounds reasonable. Thanks for your feedback!
+> -- 
+> Florian
