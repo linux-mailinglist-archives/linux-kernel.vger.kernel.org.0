@@ -2,238 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E72616A81
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 20:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD7516A61
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 20:38:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfEGSix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 14:38:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47150 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbfEGSix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 14:38:53 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 103E33082E72;
-        Tue,  7 May 2019 18:38:52 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-95.ams2.redhat.com [10.36.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B29323D99;
-        Tue,  7 May 2019 18:38:47 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, akpm@linux-foundation.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
+        id S1727620AbfEGSiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 14:38:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:32956 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726634AbfEGSiO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 14:38:14 -0400
+Received: from [167.98.27.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hO4ye-0007Da-Sv; Tue, 07 May 2019 19:38:08 +0100
+Received: from ben by deadeye with local (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hO4ye-0003xw-Fr; Tue, 07 May 2019 19:38:08 +0100
+Message-ID: <55c963dce43d8cf614a5401a23750d3b30399e45.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 23/99] tty/ldsem: Wake up readers after timed out
+ down_write()
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Denis Kirjanov <kda@linux-powerpc.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Brown <broonie@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Oscar Salvador <osalvador@suse.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Arun KS <arunks@codeaurora.org>,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH v2 6/8] mm/memory_hotplug: Remove memory block devices before arch_remove_memory()
-Date:   Tue,  7 May 2019 20:38:02 +0200
-Message-Id: <20190507183804.5512-7-david@redhat.com>
-In-Reply-To: <20190507183804.5512-1-david@redhat.com>
-References: <20190507183804.5512-1-david@redhat.com>
+        Jiri Slaby <jslaby@suse.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Tue, 07 May 2019 19:38:03 +0100
+In-Reply-To: <2aa7996d-708a-b6b9-3197-94814b708881@gmail.com>
+References: <lsq.1554212307.17110877@decadent.org.uk>
+         <lsq.1554212307.770456214@decadent.org.uk>
+         <CAJwJo6ahUWWSMWfM+qk109YfzJAB0HBMKcrVFqK2wzdBv_OtGQ@mail.gmail.com>
+         <0fb333560ad4ed9d5c8bc0f71a46fee5b448f9e6.camel@decadent.org.uk>
+         <2aa7996d-708a-b6b9-3197-94814b708881@gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-fyFX1eJkFug4YCxhk3cw"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 07 May 2019 18:38:52 +0000 (UTC)
+X-SA-Exim-Connect-IP: 167.98.27.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's factor out removing of memory block devices, which is only
-necessary for memory added via add_memory() and friends that created
-memory block devices. Remove the devices before calling
-arch_remove_memory().
 
-This finishes factoring out memory block device handling from
-arch_add_memory() and arch_remove_memory().
+--=-fyFX1eJkFug4YCxhk3cw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrew Banman <andrew.banman@hpe.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Arun KS <arunks@codeaurora.org>
-Cc: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/base/memory.c  | 39 +++++++++++++++++++--------------------
- drivers/base/node.c    | 11 ++++++-----
- include/linux/memory.h |  2 +-
- include/linux/node.h   |  6 ++----
- mm/memory_hotplug.c    |  5 +++--
- 5 files changed, 31 insertions(+), 32 deletions(-)
+On Tue, 2019-04-02 at 15:39 +0100, Dmitry Safonov wrote:
+> On 4/2/19 3:32 PM, Ben Hutchings wrote:
+> > On Tue, 2019-04-02 at 15:22 +0100, Dmitry Safonov wrote:
+[...]
+> > > - "tty: Hold tty_ldisc_lock() during tty_reopen()" commit 83d817f4107=
+0
+> > >   with follow-up fixup "tty: Don't hold ldisc lock in tty_reopen() if
+> > > ldisc present"
+> > >   commit d3736d82e816
+> > [...]
+> >=20
+> > I will include these in a later update, unless you think they are
+> > really urgent and should be added to this one.
+>=20
+> Well, I thought worth to mention those patches, but in reality haven't
+> checked if they are applicable to v3.16.
+> It's just I remember "tty: Hold tty_ldisc_lock() during tty_reopen()"
+> was the main fix in the set, as many people suffered from issue under
+> it, so I thought strange that only a side-patch (which can lead to soft
+> lockup, so probably also important) is ported. But I managed to forget
+> that the code has changes since v3.16.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 862c202a18ca..47ff49058d1f 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -756,32 +756,31 @@ int hotplug_memory_register(unsigned long start, unsigned long size)
- 	return ret;
- }
- 
--static int remove_memory_section(struct mem_section *section)
-+/*
-+ * Remove memory block devices for the given memory area. Start and size
-+ * have to be aligned to memory block granularity. Memory block devices
-+ * have to be offline.
-+ */
-+void hotplug_memory_unregister(unsigned long start, unsigned long size)
- {
-+	unsigned long block_nr_pages = memory_block_size_bytes() >> PAGE_SHIFT;
-+	unsigned long start_pfn = PFN_DOWN(start);
-+	unsigned long end_pfn = start_pfn + (size >> PAGE_SHIFT);
- 	struct memory_block *mem;
-+	unsigned long pfn;
- 
--	if (WARN_ON_ONCE(!present_section(section)))
--		return;
-+	BUG_ON(!IS_ALIGNED(start, memory_block_size_bytes()));
-+	BUG_ON(!IS_ALIGNED(size, memory_block_size_bytes()));
- 
- 	mutex_lock(&mem_sysfs_mutex);
--
--	/*
--	 * Some users of the memory hotplug do not want/need memblock to
--	 * track all sections. Skip over those.
--	 */
--	mem = find_memory_block(section);
--	if (!mem)
--		goto out_unlock;
--
--	unregister_mem_sect_under_nodes(mem, __section_nr(section));
--
--	mem->section_count--;
--	if (mem->section_count == 0)
-+	for (pfn = start_pfn; pfn != end_pfn; pfn += block_nr_pages) {
-+		mem = find_memory_block(__pfn_to_section(pfn));
-+		if (!mem)
-+			continue;
-+		mem->section_count = 0;
-+		unregister_memory_block_under_nodes(mem);
- 		unregister_memory(mem);
--	else
--		put_device(&mem->dev);
--
--out_unlock:
-+	}
- 	mutex_unlock(&mem_sysfs_mutex);
- }
- 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 8598fcbd2a17..04fdfa99b8bc 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -801,9 +801,10 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, void *arg)
- 	return 0;
- }
- 
--/* unregister memory section under all nodes that it spans */
--int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
--				    unsigned long phys_index)
-+/*
-+ * Unregister memory block device under all nodes that it spans.
-+ */
-+int unregister_memory_block_under_nodes(struct memory_block *mem_blk)
- {
- 	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
- 	unsigned long pfn, sect_start_pfn, sect_end_pfn;
-@@ -816,8 +817,8 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
- 		return -ENOMEM;
- 	nodes_clear(*unlinked_nodes);
- 
--	sect_start_pfn = section_nr_to_pfn(phys_index);
--	sect_end_pfn = sect_start_pfn + PAGES_PER_SECTION - 1;
-+	sect_start_pfn = section_nr_to_pfn(mem_blk->start_section_nr);
-+	sect_end_pfn = section_nr_to_pfn(mem_blk->end_section_nr);
- 	for (pfn = sect_start_pfn; pfn <= sect_end_pfn; pfn++) {
- 		int nid;
- 
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 95505fbb5f85..aa236c2a0466 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -112,7 +112,7 @@ extern void unregister_memory_notifier(struct notifier_block *nb);
- extern int register_memory_isolate_notifier(struct notifier_block *nb);
- extern void unregister_memory_isolate_notifier(struct notifier_block *nb);
- int hotplug_memory_register(unsigned long start, unsigned long size);
--extern void unregister_memory_section(struct mem_section *);
-+void hotplug_memory_unregister(unsigned long start, unsigned long size);
- extern int memory_dev_init(void);
- extern int memory_notify(unsigned long val, void *v);
- extern int memory_isolate_notify(unsigned long val, void *v);
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 1a557c589ecb..02a29e71b175 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -139,8 +139,7 @@ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int register_mem_sect_under_node(struct memory_block *mem_blk,
- 						void *arg);
--extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
--					   unsigned long phys_index);
-+extern int unregister_memory_block_under_nodes(struct memory_block *mem_blk);
- 
- extern int register_memory_node_under_compute_node(unsigned int mem_nid,
- 						   unsigned int cpu_nid,
-@@ -176,8 +175,7 @@ static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
- {
- 	return 0;
- }
--static inline int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
--						  unsigned long phys_index)
-+static inline int unregister_memory_block_under_nodes(struct memory_block *mem_blk)
- {
- 	return 0;
- }
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 107f72952347..527fe4f9c620 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -519,8 +519,6 @@ static void __remove_section(struct zone *zone, struct mem_section *ms,
- 	if (WARN_ON_ONCE(!valid_section(ms)))
- 		return;
- 
--	unregister_memory_section(ms);
--
- 	scn_nr = __section_nr(ms);
- 	start_pfn = section_nr_to_pfn((unsigned long)scn_nr);
- 	__remove_zone(zone, start_pfn);
-@@ -1844,6 +1842,9 @@ void __ref __remove_memory(int nid, u64 start, u64 size)
- 	memblock_free(start, size);
- 	memblock_remove(start, size);
- 
-+	/* remove memory block devices before removing memory */
-+	hotplug_memory_unregister(start, size);
-+
- 	arch_remove_memory(nid, start, size, NULL);
- 	__release_memory_resource(start, size);
- 
--- 
-2.20.1
+I couldn't see how to apply these to 3.16, so you will need to send me
+backports if they are needed.  They are also missing from 3.18 and 4.4.
 
+Ben.
+
+--=20
+Ben Hutchings
+Teamwork is essential - it allows you to blame someone else.
+
+
+
+--=-fyFX1eJkFug4YCxhk3cw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlzR0IsACgkQ57/I7JWG
+EQndXBAAhp51IeuLn3MOsPrqYMJqn/E9ATZ/IK7LgZxrPNX5Pses/FdLwbn7pA+k
+JZgIdVeqqNcOn0hLC/63loyJkwi2cEfdfRcymCILgcJM72SJ4TdOEkY/BB7aUj9g
+x+/8yPm2w8HvIe/jFdkpFdfeKS7mtSaL+xJhIqmlS5xHMJKctujUV1Jo3wX94yDz
++JgfwStnJWme8N4hf/3Hcw3vipl6p6qBskeyds7tKhilDxCqRvJzeGs/Ah9VEJkX
+oATVckH7gK0bzvHXv/lyE2g1w1Fyc2QybylCzKMSBU28oIAXIsV2kk4/MRr7MuRZ
+p7n5pB9ZGYMzT4e4ZPFFq6fX6EdJunpQM6zKFZcLYCKC2YR6ry4rCtYREufWQ/yC
+KMq55Fy0+d+EI3i/o2UeA8nJQAESMoDkC/I5q7cRbx+Lui8GP9CqYSXLbxsNWEM0
+nzUVV93/xB5pgV8LYN01rvCSueQ5iiRMU8sebKiF3j1kUtzAVOeF4xM6VZXpmXf5
+7tNqv3vNo3ynBeJiYPFn++izsnvMmDw9ATHqYDJJccxD0MB4hP75Yot8507akslq
+1Xb5rih26+hAi6uZ55rFll4K2vy9A5oGUWL+v0HFh6XxctbHtw6yUundKRvn2RSz
+1p0LhZvtRSM6PX3k5G2XZHhSr8drtmnDGEsgsKvIEqivRRs3tcA=
+=6x9T
+-----END PGP SIGNATURE-----
+
+--=-fyFX1eJkFug4YCxhk3cw--
