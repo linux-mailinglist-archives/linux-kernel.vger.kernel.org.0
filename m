@@ -2,103 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 547CE162CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 13:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7B4162D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 13:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfEGL3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 07:29:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725843AbfEGL3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 07:29:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4D460ABF1;
-        Tue,  7 May 2019 11:29:51 +0000 (UTC)
-Date:   Tue, 7 May 2019 13:29:50 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        id S1726578AbfEGLcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 07:32:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38388 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfEGLcQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 07:32:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0G0Op7qzdUllIx217BDIX7hQDFmNR1hjBEmN3uH/wmM=; b=bv9hlo2+IqIluXyx1IyzYf4+2
+        XhumvYALMGJMgM81v5ZLGPqY5LRZT67zik8hBt/625x5jxWyUACHPwDUiRtMLRjyLFvSehE0YE9hA
+        WGGaAEm4Vl0gGDXvotmBnc3tECB82fSuKQ8Sex3m4R/NZ4WI2ti48nUQA8iUYzqb3GENub4IxQS9M
+        xUX1h7wMqORpAYUeAvaWgn5ss/K6KKU3WqkmIEqdjHnLl1vrosMXNaFZEhI6TOJsXytb/c3vdR6P3
+        dD4e/QeMf+TEl7i2H86GUAZAY5cVEe9letJOB7J9cES996O5TlJTAZ3VCmQ+UyU3Pmz+Q62/LWc8F
+        7dDh57edQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hNyJB-0006Sy-Su; Tue, 07 May 2019 11:30:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D03FC2063D744; Tue,  7 May 2019 13:30:50 +0200 (CEST)
+Date:   Tue, 7 May 2019 13:30:50 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
         Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
- reliable stacktrace support
-Message-ID: <20190507112950.wejw6nmfwzmm3vaf@pathway.suse.cz>
-References: <20190430091049.30413-1-pmladek@suse.com>
- <20190430091049.30413-2-pmladek@suse.com>
- <20190507004032.2fgddlsycyypqdsn@treble>
- <20190507014332.l5pmvjyfropaiui2@treble>
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+Message-ID: <20190507113050.GR2606@hirez.programming.kicks-ass.net>
+References: <20190502185225.0cdfc8bc@gandalf.local.home>
+ <20190502193129.664c5b2e@gandalf.local.home>
+ <20190502195052.0af473cf@gandalf.local.home>
+ <20190503092959.GB2623@hirez.programming.kicks-ass.net>
+ <20190503092247.20cc1ff0@gandalf.local.home>
+ <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net>
+ <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
+ <20190506081951.GJ2606@hirez.programming.kicks-ass.net>
+ <20190507085753.GO2606@hirez.programming.kicks-ass.net>
+ <b34aa38bdfe84263bc20b60761bf6005@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507014332.l5pmvjyfropaiui2@treble>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <b34aa38bdfe84263bc20b60761bf6005@AcuMS.aculab.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-05-06 20:43:32, Josh Poimboeuf wrote:
-> On Mon, May 06, 2019 at 07:40:32PM -0500, Josh Poimboeuf wrote:
-> > On Tue, Apr 30, 2019 at 11:10:48AM +0200, Petr Mladek wrote:
-> > > WARN_ON_ONCE() could not be called safely under rq lock because
-> > > of console deadlock issues. Fortunately, there is another check
-> > > for the reliable stacktrace support in klp_enable_patch().
-> > > 
-> > > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> > > ---
-> > >  kernel/livepatch/transition.c | 9 ++++++++-
-> > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-> > > index 9c89ae8b337a..8e0274075e75 100644
-> > > --- a/kernel/livepatch/transition.c
-> > > +++ b/kernel/livepatch/transition.c
-> > > @@ -263,8 +263,15 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
-> > >  	trace.nr_entries = 0;
-> > >  	trace.max_entries = MAX_STACK_ENTRIES;
-> > >  	trace.entries = entries;
-> > > +
-> > >  	ret = save_stack_trace_tsk_reliable(task, &trace);
-> > > -	WARN_ON_ONCE(ret == -ENOSYS);
-> > > +	/*
-> > > +	 * pr_warn() under task rq lock might cause a deadlock.
-> > > +	 * Fortunately, missing reliable stacktrace support has
-> > > +	 * already been handled when the livepatch was enabled.
-> > > +	 */
-> > > +	if (ret == -ENOSYS)
-> > > +		return ret;
-> > 
-> > I find the comment to be a bit wordy and confusing (and vague).
-
-Then please provide a better one. I have no idea what might make
-you happy and am not interested into an endless disputing.
-
-> > Also this check is effectively the same as the klp_have_reliable_stack()
-> > check which is done in kernel/livepatch/core.c.  So I think it would be
-> > clearer and more consistent if the same check is done here:
-> > 
-> > 	if (!klp_have_reliable_stack())
-> > 		return -ENOSYS;
-
-Huh, it smells with over engineering to me.
-
-> > 	ret = save_stack_trace_tsk_reliable(task, &trace);
-> > 
-> > 	[ no need to check ret for ENOSYS here ]
-> > 
-> > Then, IMO, no comment is needed.
+On Tue, May 07, 2019 at 09:18:51AM +0000, David Laight wrote:
+> From: Peter Zijlstra
+> > Sent: 07 May 2019 09:58
+> ...
+> > +	/*
+> > +	 * When we're here from kernel mode; the (exception) stack looks like:
+> > +	 *
+> > +	 * 4*4(%esp) - <previous context>
+> > +	 * 3*4(%esp) - flags
+> > +	 * 2*4(%esp) - cs
+> > +	 * 1*4(%esp) - ip
+> > +	 * 0*4(%esp) - orig_eax
 > 
-> BTW, if you agree with this approach then we can leave the
-> WARN_ON_ONCE() in save_stack_trace_tsk_reliable() after all.
+> Am I right in thinking that this is the only 'INT3' stack frame that
+> needs to be 'fiddled' with?
+> And that the 'emulate a call instruction' has verified that is the case??
+> So the %cs is always the kernel %cs.
 
-I really like the removal of the WARN_ON_ONCE(). I consider
-it an old fashioned way used when people are lazy to handle
-errors. It might make sense when the backtrace helps to locate
-the context but the context is well known here. Finally,
-WARN() should be used with care. It might cause reboot
-with panic_on_warn.
+Only the INT3 thing needs 'the gap', but the far bigger change here is
+that kernel frames now have a complete pt_regs set and all sorts of
+horrible crap can go away.
 
-Best Regards,
-Petr
+For 32bit 'the gap' happens naturally when building a 5 entry frame. Yes
+it is possible to build a 5 entry frame on top of the old 3 entry one,
+but why bother...
