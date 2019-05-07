@@ -2,88 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E09315EA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB62415EB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfEGHzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:55:02 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63656 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726103AbfEGHzB (ORCPT
+        id S1726996AbfEGH7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 03:59:16 -0400
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:44712 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfEGH7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:55:01 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x477jvb0032724;
-        Tue, 7 May 2019 09:54:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=AlqiG9FZWPVqrG1oTH9valNYZcTMSDs6ZUsTY9A5bUw=;
- b=Ti0HEmX/Gtmc7eCiXXBV2n0s7AmSiaiCChqHmOXaBN6wH1n1ZUQTt3mQjjK42gmhKBaj
- 8yvPTkc4uSNe/Z22Jm/bGrz2R9H+56hOXzzxcqZr6lWcIKVrVsiYkZjo8bW4+/npS2lp
- HWQwmH17XuvJPb+tXAr7iHHA+9jSsPtEYnYLNOVjw0LV31/tFEqwfEubmiXsZVvk114r
- Y3lwoLqp2HSfPbHd07xDPeeKNx81/2k5+cI64P9G8pudwSEWG+8KvG6MTzvT9aeSrEa/
- We4h2f1WHeHtlcOq4XWoc1bTZrTm98K3rno4T7vNn/yoktwGObaZUFrVj6J4nnd70oru LQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2s94cde0yv-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 07 May 2019 09:54:44 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F1BDD3F;
-        Tue,  7 May 2019 07:54:42 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A55561490;
-        Tue,  7 May 2019 07:54:42 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 7 May 2019
- 09:54:42 +0200
-Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 7 May 2019 09:54:42 +0200
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     <dmaengine@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH] dmaengine: stm32-dma: Fix redundant call to platform_get_irq
-Date:   Tue, 7 May 2019 09:54:41 +0200
-Message-ID: <1557215681-18541-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 7 May 2019 03:59:16 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id x477wKuY027108; Tue, 7 May 2019 16:58:20 +0900
+X-Iguazu-Qid: 2wHI0pXS3IUcaJjLn7
+X-Iguazu-QSIG: v=2; s=0; t=1557215900; q=2wHI0pXS3IUcaJjLn7; m=VD7dm5karpU23Jq4iN2T2Siy1/GaUeeEYAjr0nZDb48=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1112) id x477wGdw019508;
+        Tue, 7 May 2019 16:58:16 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id x477wC2N020685;
+        Tue, 7 May 2019 16:58:16 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id x477wBRe022866;
+        Tue, 7 May 2019 16:58:12 +0900
+Date:   Tue, 7 May 2019 16:58:09 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Qian Cai <cai@lca.pw>, Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Avi Kivity <avi@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 4.19 62/99] kmemleak: powerpc: skip scanning holes in the
+ .bss section
+X-TSB-HOP: ON
+Message-ID: <20190507071925.irtu4gpc7tijmpbw@toshiba.co.jp>
+References: <20190506143053.899356316@linuxfoundation.org>
+ <20190506143059.710412844@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506143059.710412844@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c6504be53972 ("dmaengine: stm32-dma: Fix unsigned variable compared
-with zero") duplicated the call to platform_get_irq.
-So remove the first call to platform_get_irq.
+Hi,
 
-Fixes: c6504be53972 ("dmaengine: stm32-dma: Fix unsigned variable compared with zero")
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- drivers/dma/stm32-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+On Mon, May 06, 2019 at 04:32:35PM +0200, Greg Kroah-Hartman wrote:
+> [ Upstream commit 298a32b132087550d3fa80641ca58323c5dfd4d9 ]
+> 
+> Commit 2d4f567103ff ("KVM: PPC: Introduce kvm_tmp framework") adds
+> kvm_tmp[] into the .bss section and then free the rest of unused spaces
+> back to the page allocator.
+> 
+> kernel_init
+>   kvm_guest_init
+>     kvm_free_tmp
+>       free_reserved_area
+>         free_unref_page
+>           free_unref_page_prepare
+> 
+> With DEBUG_PAGEALLOC=y, it will unmap those pages from kernel.  As the
+> result, kmemleak scan will trigger a panic when it scans the .bss
+> section with unmapped pages.
+> 
+> This patch creates dedicated kmemleak objects for the .data, .bss and
+> potentially .data..ro_after_init sections to allow partial freeing via
+> the kmemleak_free_part() in the powerpc kvm_free_tmp() function.
+> 
+> Link: http://lkml.kernel.org/r/20190321171917.62049-1-catalin.marinas@arm.com
+> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> Reported-by: Qian Cai <cai@lca.pw>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> Tested-by: Qian Cai <cai@lca.pw>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Avi Kivity <avi@redhat.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krcmar <rkrcmar@redhat.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  arch/powerpc/kernel/kvm.c |  7 +++++++
+>  mm/kmemleak.c             | 16 +++++++++++-----
+>  2 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index 88d9c6c..67fdd02 100644
---- a/drivers/dma/stm32-dma.c
-+++ b/drivers/dma/stm32-dma.c
-@@ -1366,7 +1366,6 @@ static int stm32_dma_probe(struct platform_device *pdev)
+This commit has other problems, so we also need the following commits:
+
+commit dce5b0bdeec61bdbee56121ceb1d014151d5cab1
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Thu Apr 18 17:50:48 2019 -0700
+
+    mm/kmemleak.c: fix unused-function warning
+
+    The only references outside of the #ifdef have been removed, so now we
+    get a warning in non-SMP configurations:
+
+      mm/kmemleak.c:1404:13: error: unused function 'scan_large_block' [-Werror,-Wunused-function]
+
+    Add a new #ifdef around it.
+
+    Link: http://lkml.kernel.org/r/20190416123148.3502045-1-arnd@arndb.de
+    Fixes: 298a32b13208 ("kmemleak: powerpc: skip scanning holes in the .bss section")
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+    Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+    Cc: Vincent Whitchurch <vincent.whitchurch@axis.com>
+    Cc: Michael Ellerman <mpe@ellerman.id.au>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+Please apply this commit.
+
+Best regards,
+  Nobuhiro
  
- 	for (i = 0; i < STM32_DMA_MAX_CHANNELS; i++) {
- 		chan = &dmadev->chan[i];
--		chan->irq = platform_get_irq(pdev, i);
- 		ret = platform_get_irq(pdev, i);
- 		if (ret < 0)  {
- 			if (ret != -EPROBE_DEFER)
--- 
-2.7.4
-
