@@ -2,102 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C250E16405
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 14:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B96B5163FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 14:51:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfEGMws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 08:52:48 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:46556 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfEGMws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 08:52:48 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x47Ci14h136728;
-        Tue, 7 May 2019 12:52:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=HJB6jyzrLVpXE0eF23Fp5tuwTCQ10Zf7366gUN/UEMk=;
- b=P0H0CNbK/dJxZxbyAcfx7c4I+kxbEYIgTy++Y/291NpZgdep1YGngVIGyR8p5duIPEhl
- /tpOcMkw0MGIPxrRGfhKXr9C0cb6qHCeY9PWaAquK0yhHD6tvf0l0ePtWjeqUwE4Agbm
- k5NpO+AsjhqSpzVCASgnvC2bAPES2BI1X0Had/oYfPwRO9z+ZAZRDZTw9lskc7pb3SG8
- fgjTYcPr+/OeiTpKAdfNUysVX7z8nwhxP6lj854BTBe5GOqW8/kKC8K/6OmqmWK7CAxy
- HzNVSmSwD1dDy4VX0MN81SsCg2eWbnrhd3oowX6HC9SCnEb/3vbAcTS3x1KuuNbYG4qF Sg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 2s94b5w0eu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 May 2019 12:52:38 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x47CnrQ4069032;
-        Tue, 7 May 2019 12:50:37 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2sagytwke2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 May 2019 12:50:37 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x47CoYeu029182;
-        Tue, 7 May 2019 12:50:34 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 07 May 2019 05:50:34 -0700
-Date:   Tue, 7 May 2019 15:50:27 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     alexander.shishkin@linux.intel.com, security@kernel.org,
-        sasha.levin@oracle.com, gregkh@linuxfoundation.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, trivial@kernel.org
-Subject: Re: stm class: Prevent user-controllable allocations
-Message-ID: <20190507125027.GV2239@kadam>
-References: <20190507124113.GA659@amd>
+        id S1726563AbfEGMvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 08:51:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfEGMvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 08:51:19 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B150320B7C;
+        Tue,  7 May 2019 12:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557233478;
+        bh=plKPpyV/E4D4/D+TdJMVNIec2isYvg2Gv8++6/gnW+M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DLTSD+JmSITP8Fj8SxlINMF6J+n7FpX2JIDLpBjtWhp541oHF5YwlSgV3tUxJrg4Z
+         bdlET2vshtjGBTcyQnElHBL+COm4Bx8f5ykkOVf8BIlqhyfJK449rRoqegevwbYfNt
+         BBjcu9wzd6bafwo2irc2K+KLzkf0JHVMdbhFvdAA=
+Date:   Tue, 7 May 2019 14:51:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Qian Cai <cai@lca.pw>, Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Avi Kivity <avi@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 4.19 62/99] kmemleak: powerpc: skip scanning holes in the
+ .bss section
+Message-ID: <20190507125115.GB10118@kroah.com>
+References: <20190506143053.899356316@linuxfoundation.org>
+ <20190506143059.710412844@linuxfoundation.org>
+ <20190507071925.irtu4gpc7tijmpbw@toshiba.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507124113.GA659@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905070083
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905070083
+In-Reply-To: <20190507071925.irtu4gpc7tijmpbw@toshiba.co.jp>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 02:41:13PM +0200, Pavel Machek wrote:
+On Tue, May 07, 2019 at 04:58:09PM +0900, Nobuhiro Iwamatsu wrote:
+> Hi,
 > 
-> It seems to me that we still allow overflow if count == ~0. We'll then
-> allocate 0 bytes but copy ~0 bytes. That does not sound healthy.
+> On Mon, May 06, 2019 at 04:32:35PM +0200, Greg Kroah-Hartman wrote:
+> > [ Upstream commit 298a32b132087550d3fa80641ca58323c5dfd4d9 ]
+> > 
+> > Commit 2d4f567103ff ("KVM: PPC: Introduce kvm_tmp framework") adds
+> > kvm_tmp[] into the .bss section and then free the rest of unused spaces
+> > back to the page allocator.
+> > 
+> > kernel_init
+> >   kvm_guest_init
+> >     kvm_free_tmp
+> >       free_reserved_area
+> >         free_unref_page
+> >           free_unref_page_prepare
+> > 
+> > With DEBUG_PAGEALLOC=y, it will unmap those pages from kernel.  As the
+> > result, kmemleak scan will trigger a panic when it scans the .bss
+> > section with unmapped pages.
+> > 
+> > This patch creates dedicated kmemleak objects for the .data, .bss and
+> > potentially .data..ro_after_init sections to allow partial freeing via
+> > the kmemleak_free_part() in the powerpc kvm_free_tmp() function.
+> > 
+> > Link: http://lkml.kernel.org/r/20190321171917.62049-1-catalin.marinas@arm.com
+> > Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Reported-by: Qian Cai <cai@lca.pw>
+> > Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> > Tested-by: Qian Cai <cai@lca.pw>
+> > Cc: Paul Mackerras <paulus@samba.org>
+> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Cc: Avi Kivity <avi@redhat.com>
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Krcmar <rkrcmar@redhat.com>
+> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  arch/powerpc/kernel/kvm.c |  7 +++++++
+> >  mm/kmemleak.c             | 16 +++++++++++-----
+> >  2 files changed, 18 insertions(+), 5 deletions(-)
 > 
-> Fixes: f08b18266c7116e2ec6885dd53a928f580060a71
+> This commit has other problems, so we also need the following commits:
 > 
-> Signed-off-by: Pavel Machek <pavel@denx.de>
+> commit dce5b0bdeec61bdbee56121ceb1d014151d5cab1
+> Author: Arnd Bergmann <arnd@arndb.de>
+> Date:   Thu Apr 18 17:50:48 2019 -0700
 > 
-> diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-> index c7ba8ac..8846fca 100644
-> --- a/drivers/hwtracing/stm/core.c
-> +++ b/drivers/hwtracing/stm/core.c
-> @@ -631,7 +631,7 @@ static ssize_t stm_char_write(struct file *file, const char __user *buf,
->  	char *kbuf;
->  	int err;
->  
-> -	if (count + 1 > PAGE_SIZE)
-> +	if (count > PAGE_SIZE - 1)
->  		count = PAGE_SIZE - 1;
+>     mm/kmemleak.c: fix unused-function warning
+> 
+>     The only references outside of the #ifdef have been removed, so now we
+>     get a warning in non-SMP configurations:
+> 
+>       mm/kmemleak.c:1404:13: error: unused function 'scan_large_block' [-Werror,-Wunused-function]
+> 
+>     Add a new #ifdef around it.
+> 
+>     Link: http://lkml.kernel.org/r/20190416123148.3502045-1-arnd@arndb.de
+>     Fixes: 298a32b13208 ("kmemleak: powerpc: skip scanning holes in the .bss section")
+>     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>     Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+>     Cc: Vincent Whitchurch <vincent.whitchurch@axis.com>
+>     Cc: Michael Ellerman <mpe@ellerman.id.au>
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> 
+> Please apply this commit.
 
-The "count" variable should all be checked in vfs_write().  count + off
-is checked in rw_verify_area() and count is capped at MAX_RW_COUNT.
+Now queued up, thanks!
 
-#define MAX_RW_COUNT (INT_MAX & PAGE_MASK)
-
-regards,
-dan carpenter
-
+greg k-h
