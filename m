@@ -2,128 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E8F15E65
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9B5515E71
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfEGHld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:41:33 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:30640 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726561AbfEGHlc (ORCPT
+        id S1726926AbfEGHnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 03:43:43 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60010 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726646AbfEGHnm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:41:32 -0400
-X-UUID: 5c8c42ba27db4e4e9655739fc1987802-20190507
-X-UUID: 5c8c42ba27db4e4e9655739fc1987802-20190507
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 601173642; Tue, 07 May 2019 15:41:29 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS33N1.mediatek.inc (172.27.4.75) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 7 May 2019 15:41:27 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 7 May 2019 15:41:27 +0800
-Message-ID: <1557214887.3498.7.camel@mtksdaap41>
-Subject: Re: [v3 3/3] drm/mediatek: add mt8183 dpi support
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        "Ajay Kumar" <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        "Rahul Sharma" <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King" <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <stonea168@163.com>
-Date:   Tue, 7 May 2019 15:41:27 +0800
-In-Reply-To: <20190416055242.75764-4-jitao.shi@mediatek.com>
-References: <20190416055242.75764-1-jitao.shi@mediatek.com>
-         <20190416055242.75764-4-jitao.shi@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 7 May 2019 03:43:42 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x477gQ0j009126
+        for <linux-kernel@vger.kernel.org>; Tue, 7 May 2019 00:43:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=HrriWwfar/cqZaaUGwGANAIElSRGz9DcwdSYi/eEil4=;
+ b=JLdg7pIQoJ/ZcRT7+RjkpopBQvOIKwRm0HDw9TVXI1gX4tpMDF0ZpZNSPS0H3vYzvnYU
+ jxHmilBasS+9YV7f9KVLBt2OnCo5F4+AREhS8VVpRSgcp7r3byGBVdb+Ri68nIrV/g+E
+ AkKvGEZvO8TFnN81HrXIWxtqjoZ4072ryVs= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sb2e80pr9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 00:43:41 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 7 May 2019 00:43:40 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 1A25C62E2FE0; Tue,  7 May 2019 00:43:34 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
+CC:     Song Liu <songliubraving@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] perf: allow non-privileged uprobe for user processes
+Date:   Tue, 7 May 2019 00:43:15 -0700
+Message-ID: <20190507074315.3337668-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905070051
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jitao:
+Currently, non-privileged user could only use uprobe with
 
-On Tue, 2019-04-16 at 13:52 +0800, Jitao Shi wrote:
+    kernel.perf_event_paranoid = -1
 
-I need the commit message. Even though the code is easy to understand,
-words for this patch is still necessary.
+However, setting perf_event_paranoid to -1 leaks other users' processes to
+non-privileged uprobes.
 
-Regards,
-CK
+To introduce proper permission control of uprobes, we are building the
+following system:
+  A daemon with CAP_SYS_ADMIN is in charge to create uprobes via tracefs;
+  Users asks the daemon to create uprobes;
+  Then user can attach uprobe only to processes owned by the user.
 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> index 66405159141a..fbb087218775 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -681,6 +681,16 @@ static unsigned int mt2701_calculate_factor(int clock)
->  		return 2;
->  }
->  
-> +static unsigned int mt8183_calculate_factor(int clock)
-> +{
-> +	if (clock <= 27000)
-> +		return 8;
-> +	else if (clock <= 167000)
-> +		return 4;
-> +	else
-> +		return 2;
-> +}
-> +
->  static const struct mtk_dpi_conf mt8173_conf = {
->  	.cal_factor = mt8173_calculate_factor,
->  	.reg_h_fre_con = 0xe0,
-> @@ -692,6 +702,12 @@ static const struct mtk_dpi_conf mt2701_conf = {
->  	.edge_sel_en = true,
->  };
->  
-> +static const struct mtk_dpi_conf mt8183_conf = {
-> +	.cal_factor = mt8183_calculate_factor,
-> +	.reg_h_fre_con = 0xe0,
-> +	.dual_edge = true,
-> +};
-> +
->  static int mtk_dpi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -787,6 +803,9 @@ static const struct of_device_id mtk_dpi_of_ids[] = {
->  	{ .compatible = "mediatek,mt8173-dpi",
->  	  .data = &mt8173_conf,
->  	},
-> +	{ .compatible = "mediatek,mt8183-dpi",
-> +	  .data = &mt8183_conf,
-> +	},
->  	{ },
->  };
->  
+This patch allows non-privileged user to attach uprobe to processes owned
+by the user.
 
+The following example shows how to use uprobe with non-privileged user.
+This is based on Brendan's blog post [1]
+
+1. Create uprobe with root:
+  sudo perf probe -x 'readline%return +0($retval):string'
+
+2. Then non-root user can use the uprobe as:
+  perf record -vvv -e probe_bash:readline__return -p <pid> sleep 20
+  perf script
+
+[1] http://www.brendangregg.com/blog/2015-06-28/linux-ftrace-uprobe.html
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+---
+ kernel/events/core.c        | 5 +++--
+ kernel/trace/trace_uprobe.c | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index abbd4b3b96c2..0508774d82e4 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8532,9 +8532,10 @@ static int perf_tp_event_match(struct perf_event *event,
+ 	if (event->hw.state & PERF_HES_STOPPED)
+ 		return 0;
+ 	/*
+-	 * All tracepoints are from kernel-space.
++	 * All tracepoints except uprobes are from kernel-space.
+ 	 */
+-	if (event->attr.exclude_kernel)
++	if (event->attr.exclude_kernel &&
++	    ((event->tp_event->flags & TRACE_EVENT_FL_UPROBE) == 0))
+ 		return 0;
+ 
+ 	if (!perf_tp_filter_match(event, data))
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index be78d99ee6bc..bfd3040b4cfb 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -1304,7 +1304,7 @@ static inline void init_trace_event_call(struct trace_uprobe *tu,
+ 	call->event.funcs = &uprobe_funcs;
+ 	call->class->define_fields = uprobe_event_define_fields;
+ 
+-	call->flags = TRACE_EVENT_FL_UPROBE;
++	call->flags = TRACE_EVENT_FL_UPROBE | TRACE_EVENT_FL_CAP_ANY;
+ 	call->class->reg = trace_uprobe_register;
+ 	call->data = tu;
+ }
+-- 
+2.17.1
 
