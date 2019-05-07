@@ -2,105 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD4616456
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 890801645E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfEGNOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 09:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEGNOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:14:07 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70D8B2053B;
-        Tue,  7 May 2019 13:14:04 +0000 (UTC)
-Date:   Tue, 7 May 2019 09:14:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Peter Zijlstra' <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Jiri Kosina" <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Joerg Roedel" <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call
- functions
-Message-ID: <20190507091403.556daba7@gandalf.local.home>
-In-Reply-To: <f55e3c951aee4b5686201aaf282cc62b@AcuMS.aculab.com>
-References: <20190502185225.0cdfc8bc@gandalf.local.home>
-        <20190502193129.664c5b2e@gandalf.local.home>
-        <20190502195052.0af473cf@gandalf.local.home>
-        <20190503092959.GB2623@hirez.programming.kicks-ass.net>
-        <20190503092247.20cc1ff0@gandalf.local.home>
-        <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net>
-        <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
-        <20190506081951.GJ2606@hirez.programming.kicks-ass.net>
-        <20190507085753.GO2606@hirez.programming.kicks-ass.net>
-        <b34aa38bdfe84263bc20b60761bf6005@AcuMS.aculab.com>
-        <20190507113050.GR2606@hirez.programming.kicks-ass.net>
-        <f55e3c951aee4b5686201aaf282cc62b@AcuMS.aculab.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726608AbfEGNQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:16:10 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45699 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfEGNQI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 09:16:08 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n22so4279362lfe.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 06:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MHPIqM7JCox7474Ql+xv/9Bn+cArjwrigJpmZBOlFYc=;
+        b=Cm6wvAFwgAxp/8D3CkSsBcbPu7kiNDKTuOPOjj7VgZexU4R3MuQVhAtBWxto2J3mkD
+         R5ilpzaX5NiHw5RM65X5ZS2DkJuQA7x+/Hp5Bj/Y3EJ5iS12D5vswADthPKpU8JlQtX/
+         +evJAeTS11J4tIUcoXBhWnOD404ANf2KNSE50/ynuFzUReJkCdsj0p72urrf5GyApTod
+         1p2j+DBuZtLzo0G3wpB9Dkn+us74hciQr/9q9l5MhPPR2rrRwHq9GwCHiN/OIhTB42lF
+         ekO9nOGnT2bD3xS7Fw5XfrJwzz1km3w0uXrPLjHG4I5LqG9YqonzZlEzFrqkL70EWiIs
+         Jacw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MHPIqM7JCox7474Ql+xv/9Bn+cArjwrigJpmZBOlFYc=;
+        b=HVPeJRg37klOqtxVXkacZipoPzft82rKy23i8lXTXC13aU/C7my8av+j3MvxI7B53H
+         i0xxshV59IiB6/0FNF4fB3ayrivHa2161Rcua5vf4S+tqUHT26fQpeWuH+x6+zxy304d
+         hM6YEr/6Q8rQ7WNoEZYSLv7bggj55N4LupBA0TwFIdxLb9a2/DjRRCoD2nk17QwqcIVt
+         ZqVmzThs3rJEe4+XqH1H+Y2p328exNaR0XS1oLfK+Z6p3KTY6yjRY454MBO8YVHOIyv6
+         C8HQYaYSa/Y8KagEZgoX6+AUNY7Upg/kz9rChcU9sAmOeUtiTt3zOxOl+UihujiBAjxT
+         bLPA==
+X-Gm-Message-State: APjAAAXbPzoCd54TginzYzlj6ekY52MUxYP68yJ/VOGAhpPqM/Zb98F/
+        Exr7X1MqCQ6qeWXTQotQOidS1PfdqMZSM4iBPvI=
+X-Google-Smtp-Source: APXvYqz8d9kZlmnP7W0YjChLPfOjnpt8Wn0ENZFruzEv4tpK/oiDqKaN1ndX881yL1autUWNqhijNjQCghEYOAXZjxQ=
+X-Received: by 2002:ac2:5495:: with SMTP id t21mr16592698lfk.3.1557234966713;
+ Tue, 07 May 2019 06:16:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190506232942.12623-1-rcampbell@nvidia.com> <20190506232942.12623-5-rcampbell@nvidia.com>
+In-Reply-To: <20190506232942.12623-5-rcampbell@nvidia.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 7 May 2019 18:45:54 +0530
+Message-ID: <CAFqt6zbhLQuw2N5-=Nma-vHz1BkWjviOttRsPXmde8U1Oocz0Q@mail.gmail.com>
+Subject: Re: [PATCH 4/5] mm/hmm: hmm_vma_fault() doesn't always call hmm_range_unregister()
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 12:57:15 +0000
-David Laight <David.Laight@ACULAB.COM> wrote:
+On Tue, May 7, 2019 at 5:00 AM <rcampbell@nvidia.com> wrote:
+>
+> From: Ralph Campbell <rcampbell@nvidia.com>
+>
+> The helper function hmm_vma_fault() calls hmm_range_register() but is
+> missing a call to hmm_range_unregister() in one of the error paths.
+> This leads to a reference count leak and ultimately a memory leak on
+> struct hmm.
+>
+> Always call hmm_range_unregister() if hmm_range_register() succeeded.
 
-> > Only the INT3 thing needs 'the gap', but the far bigger change here is
-> > that kernel frames now have a complete pt_regs set and all sorts of
-> > horrible crap can go away.  
-> 
-> I'm not doubting that generating the 'five register' interrupt stack frame
-> for faults in kernel space makes life simpler just suggesting that the
-> 'emulated call' can be done by emulating the 'iret' rather than generating
-> a gap in the stack.
+How about * Call hmm_range_unregister() in error path if
+hmm_range_register() succeeded* ?
 
-But how would the user put something on the stack? I don't see how
-emulating an iret helps here. Can you write some pseudo code to explain
-what you mean. I also believe the gap is only added for kernel->kernel
-entries.
+>
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Souptick Joarder <jrdr.linux@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  include/linux/hmm.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> index 35a429621e1e..fa0671d67269 100644
+> --- a/include/linux/hmm.h
+> +++ b/include/linux/hmm.h
+> @@ -559,6 +559,7 @@ static inline int hmm_vma_fault(struct hmm_range *range, bool block)
+>                 return (int)ret;
+>
+>         if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
+> +               hmm_range_unregister(range);
+>                 /*
+>                  * The mmap_sem was taken by driver we release it here and
+>                  * returns -EAGAIN which correspond to mmap_sem have been
+> @@ -570,13 +571,13 @@ static inline int hmm_vma_fault(struct hmm_range *range, bool block)
+>
+>         ret = hmm_range_fault(range, block);
+>         if (ret <= 0) {
+> +               hmm_range_unregister(range);
 
-> 
-> > For 32bit 'the gap' happens naturally when building a 5 entry frame. Yes
-> > it is possible to build a 5 entry frame on top of the old 3 entry one,
-> > but why bother...  
-> 
-> Presumably there is 'horrid' code to generate the gap in 64bit mode?
-> (less horrid than 32bit, but still horrid?)
-> Or does it copy the entire pt_regs into a local stack frame and use
-> that for the iret?
+what is the reason to moved it up ?
 
-On x86_64, the gap is only done for int3 and nothing else, thus it is
-much less horrid. That's because x86_64 has a sane pt_regs storage for
-all exceptions.
-
--- Steve
+>                 if (ret == -EBUSY || !ret) {
+>                         /* Same as above, drop mmap_sem to match old API. */
+>                         up_read(&range->vma->vm_mm->mmap_sem);
+>                         ret = -EBUSY;
+>                 } else if (ret == -EAGAIN)
+>                         ret = -EBUSY;
+> -               hmm_range_unregister(range);
+>                 return ret;
+>         }
+>         return 0;
+> --
+> 2.20.1
+>
