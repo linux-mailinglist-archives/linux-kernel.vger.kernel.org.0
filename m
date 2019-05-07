@@ -2,54 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B18E15808
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BD41580F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfEGDZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:25:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfEGDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:25:04 -0400
-Subject: Re: [GIT PULL] RAS updates for 5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557199504;
-        bh=iABvr0GxsU/P+5SEw4Lu96lUQz9vyVvQXaCofWRqjV0=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=u7oHL5tO4+Rsix5o/BC93bRh4XR+8rLfdjJ++R2yFQd6appVy9UScHEeJAlW9DO+R
-         3PMLxT1nyxv3ic4wyswcOFVPPrKODXQSkNXoAxz9DpnRs6aGIc68fDiKWvoyLR+TXp
-         4/+SPgsMOiNQaIfh10Mo/ptMRk2Rd/fUWFJNIxLE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190506114651.GG6094@zn.tnic>
-References: <20190506114651.GG6094@zn.tnic>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190506114651.GG6094@zn.tnic>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
-X-PR-Tracked-Commit-Id: 71a84402b93e5fbd8f817f40059c137e10171788
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ffa6f55eb6188ee73339cab710fabf30d13110a7
-Message-Id: <155719950433.20841.14404063553357728016.pr-tracker-bot@kernel.org>
-Date:   Tue, 07 May 2019 03:25:04 +0000
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+        id S1727213AbfEGD0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:26:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37612 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726866AbfEGD0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 23:26:09 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9B0F33BA8E3B6B52E5A6;
+        Tue,  7 May 2019 11:26:07 +0800 (CST)
+Received: from [127.0.0.1] (10.184.225.177) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 7 May 2019
+ 11:25:58 +0800
+Subject: Re: [PATCH v2] mm/hugetlb: Don't put_page in lock of hugetlb_lock
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     <mike.kravetz@oracle.com>, <shenkai8@huawei.com>,
+        <linfeilong@huawei.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <wangwang2@huawei.com>,
+        "Zhoukang (A)" <zhoukang7@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>, <agl@us.ibm.com>,
+        <nacc@us.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <12a693da-19c8-dd2c-ea6a-0a5dc9d2db27@huawei.com>
+ <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
+ <20190506142001.GC31017@dhcp22.suse.cz>
+ <d11fa51f-e976-ec33-4f5b-3b26ada64306@huawei.com>
+ <20190506190731.GE31017@dhcp22.suse.cz>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <32a63fc6-add1-5556-8174-517d41aa8a2a@huawei.com>
+Date:   Tue, 7 May 2019 11:25:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190506190731.GE31017@dhcp22.suse.cz>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.225.177]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 May 2019 13:46:51 +0200:
+> On Mon 06-05-19 23:22:08, Zhiqiang Liu wrote:
+> [...]
+>> Does adding Cc: stable mean adding Cc: <stable@vger.kernel.org>
+>> tag in the patch or Ccing stable@vger.kernel.org when sending the new mail?
+> 
+> The former. See Documentation/process/stable-kernel-rules.rst for more.
+> 
+> Thanks!
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+Thank you, Oscar Salvador and Mike Kravetz again.
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ffa6f55eb6188ee73339cab710fabf30d13110a7
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
