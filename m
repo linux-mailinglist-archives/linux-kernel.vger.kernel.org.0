@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E86F016256
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF6D11625D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfEGKyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:54:46 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44813 "EHLO
+        id S1727397AbfEGKzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:55:22 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35418 "EHLO
         mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbfEGKyX (ORCPT
+        with ESMTP id S1725994AbfEGKzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:54:23 -0400
-Received: by mail-lj1-f193.google.com with SMTP id c6so8460734lji.11;
-        Tue, 07 May 2019 03:54:23 -0700 (PDT)
+        Tue, 7 May 2019 06:55:20 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m20so4675733lji.2;
+        Tue, 07 May 2019 03:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=GCAhg11SRp6Hew9zFemJx8a1BnYPfIc90dC9LSkimJg=;
-        b=TjALlnw4nsc9u8UJAhsZ1uBY5MpOfYYFHDH9mn1SZIL22WxRUXNdnNDBKfloMxs27a
-         zkktcwu/Sx6rAtgYRy+jjbrFEiebWtpPakYRhHYSNwUjqg7hkjBxrywE0qdj+bs5mwqT
-         mAGORk3CLwMloH9BP4lzzaQuXR9JlzO+Kj8q69ccRd2MiUz3z35BBRqAAtUo4zi4smZI
-         MabzDOCr9zz3P4SlWcmyucv0ihFJpbiG3KUU5uh85AnttvSQVcs4Nu1Ynf9ze8oNrxGs
-         bmUy+Q8EEcR0F1vtMfz5/KTQoCKVgobaHPF78FJw1bkxm28K/RTEI8P+B2dIY2YPQEXE
-         KveQ==
+        bh=VXRQC0UsjauveYOiCa1HYIm6GnidpMCvjvUYDOoy8Kk=;
+        b=VYDBlMQM/nMdmQESkPNOIOO0h9ONTG/hgvDy8XsTml1o4qUTDLnhRfle9wOL/Zaklv
+         va6dq8w70Itj6U1a0GNuU53NVSeQs+Q9lAbDTHZiUh+C+h/TgpwHaZIBejQg3Qw7TqiJ
+         o0ISt0SNZCrwyBVZwDgyDHFTeGtQXJZmLvamAW0ayMpIs26LlnmNy7C4hivNW+Rq4Sdm
+         HzBc0KFQsIdMtAqpLaeadJXI0mSLZcJOFcmIIejiZZtn1YNFT/XUO9vCu2ckz5yrNVTZ
+         aqPylUWrfsjepkTy7Al4ppslefHU6G3Xu6BjPt/OyzO1KDl75KQip4qak1B1XeKUb4ep
+         qTaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GCAhg11SRp6Hew9zFemJx8a1BnYPfIc90dC9LSkimJg=;
-        b=UjTfRNP0bSxwd16ykzvWUM2gDEVu7Bd/P9qKzPynxqq3UPWFMZpIJjcN3Iai58yiej
-         QFgUFqSW6jWBuYx3MqghrLHhwJkd4p9oMcW22gyyAtl1MpyIbGCR3IjZOEQLdVmXU/xL
-         5TEYC831cpjyZKTa655CRMvCAQ0DhYwTmoNs7KzKWtBPeGD8l4/Ls+ZGcOAgFblUiUB4
-         jG8qT9SkRGd7O8RSafKB6YstykzbXncj2c0CKEDhf39v+QIjK4Zgl/h/tjaOGa5WGaoi
-         HEG8grlTQO6V63YdmBe/bh8F9PdFGvyxukZivCvetXLPEGtjWrQWEhgff/CB0l3XveHP
-         4feA==
-X-Gm-Message-State: APjAAAWZq9PSDd++ImkaYk8IE83xSq3b/76GXIFFpiF7JO5kl2puCg1B
-        br/0nnVrKr6/ay7eucC/g40PCvYP2+jz5U+0/pM=
-X-Google-Smtp-Source: APXvYqzra4CeE9doUIEh8YRPLjXBNgdVF2kc5zUdswNRrUeYL/COm0wsOIKOaERd5W+viBb0m/EIk30lew/cjlBl89s=
-X-Received: by 2002:a2e:97d8:: with SMTP id m24mr16824476ljj.192.1557226462187;
- Tue, 07 May 2019 03:54:22 -0700 (PDT)
+        bh=VXRQC0UsjauveYOiCa1HYIm6GnidpMCvjvUYDOoy8Kk=;
+        b=KhK47tB9ktGgPssfLoOufC83X8boXDEQEfdZs2Leg+HTjuX67lt6O+NIXmqqUuAsLm
+         lsZGuF/hhwIKdJoIRgqGyu+hcxFh8cvnCPhPBohgkHTRgzUuWvPVj7+QsfkypHCQ0K7T
+         yVR/R4m6pxS+XlSLMcyxOJFLt18xwOaWd5dPf2EeQerLYz+Fua1/NHUJBnXlQU9ULPud
+         msSNpOuCNqHOGo+Im6QhmnEdtn5asfq05A90F+EMD5veKUk7gIEfUlt0y91a4fF0P9JW
+         kAZ9bWnB7VBYm2CUHE9GKVVes2mQ34X/xVYc3FK5wipljw945kz4mFFbwLr6b5ygrME6
+         54cw==
+X-Gm-Message-State: APjAAAUpLmJBaYcoGV1qHwn7YiCg4kdnEW4t7ebSmvFt+Ot/M0QZ5dbr
+        mX/apRg9DNjs3xerFXlupExmzQlpTiJydjDO80M=
+X-Google-Smtp-Source: APXvYqzG7AIMRfvZsHfREXhwZ2Vicp5dmMb3CrEXJw5WkOuq4TRI1BSQoriBbA7VwVewocx0xBmOjkzmaCaPMCXnOmg=
+X-Received: by 2002:a2e:390c:: with SMTP id g12mr18105225lja.174.1557226518508;
+ Tue, 07 May 2019 03:55:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1557215047.git.agx@sigxcpu.org> <5817853945e1c707f641ae22458a0f27aa25949e.1557215047.git.agx@sigxcpu.org>
-In-Reply-To: <5817853945e1c707f641ae22458a0f27aa25949e.1557215047.git.agx@sigxcpu.org>
+References: <cover.1557215047.git.agx@sigxcpu.org> <299e28042e0a24c0cde593873bdfb15e18187a92.1557215047.git.agx@sigxcpu.org>
+In-Reply-To: <299e28042e0a24c0cde593873bdfb15e18187a92.1557215047.git.agx@sigxcpu.org>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 7 May 2019 07:54:27 -0300
-Message-ID: <CAOMZO5Dn7yHC-NEBd0egHtXu8R4Zg=GNrvXR-RoHH6t9pqq_rA@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] dt-bindings: phy: Add documentation for mixel dphy
+Date:   Tue, 7 May 2019 07:55:23 -0300
+Message-ID: <CAOMZO5CQXmmw50J3Pjy8wKOr+BBEo_-B9ChV32bq1Re4_0-4CQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] phy: Add driver for mixel mipi dphy found on
+ NXP's i.MX8 SoCs
 To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
 Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -81,10 +82,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, May 7, 2019 at 4:47 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
 >
-> Add support for the MIXEL DPHY IP as found on NXP's i.MX8MQ SoCs.
+> This adds support for the Mixel DPHY as found on i.MX8 CPUs but since
+> this is an IP core it will likely be found on others in the future. So
+> instead of adding this to the nwl host driver make it a generic PHY
+> driver.
+>
+> The driver supports the i.MX8MQ. Support for i.MX8QM and i.MX8QXP can be
+> added once the necessary system controller bits are in via
+> mixel_dphy_devdata.
 >
 > Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Co-developed-by: Robert Chiras <robert.chiras@nxp.com>
+> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 
 Reviewed-by: Fabio Estevam <festevam@gmail.com>
