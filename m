@@ -2,125 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E961815C2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 729CC15CBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfEGGB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 02:01:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41724 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfEGGBW (ORCPT
+        id S1727010AbfEGGGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:06:25 -0400
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:38702 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfEGGGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 02:01:22 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d9so7600029pls.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:01:21 -0700 (PDT)
+        Tue, 7 May 2019 02:06:23 -0400
+Received: by mail-ed1-f47.google.com with SMTP id w11so17545123edl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IoCMWJTQvR4GggXgHZA8O1rN2KIKna3QE6ynjptghSc=;
-        b=I2z3ioa/d/Bk3EBZbQ+y0PEKdPz97b1edC2v7ylI/CC6or7o1t9swjDovqjrCFbxXs
-         X4srAnyi4sgIZlhXd+YcAVUgqlEmrQvPNWOnsM2YWSDNDCAVPqRGaPBzZ47gM4nvUGlQ
-         POKJ/AQc44kU3/day+mrjSKYBhBFycA0TsNY+c8mKhdoBRZ2mjfLv4oNTWzRlL4YHYN5
-         r0kNAdXqEmf4wQia6qnHI037XROPQDAFYgl6NEMLYAQvrEF4Rt9PXQzXuqcG+Xuxn3Ip
-         lLiABQHtk+FEILnr6YDG8zEm+0HESQ37ElrFZVkcwujBC9Kq7GB9fiBKrS4Pg2zXUxbq
-         bnEg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QZm07w2nSCiVVM+WjYPWUvz7wW+nL7XT9qvn8eYdy3A=;
+        b=s8dO8RODm3uMkCQw7BIWmMyABI0C1pYr2apMhdPiSkFP6bbNhtgHKr3/jYpzpeh4JJ
+         qwhI+K6TykibR4CMsBrAXVJTbJKuBZJxieq+hk0SBdOWQh30lWltBeOlxCAYN3W3G5kf
+         lHJxVYgKUtWlZNbmP/kBOLWFozOI16ok5/HpgPqAspD1694ZK8lLWKY32QBFhOlFJ5Gb
+         Z5Gp7Uaf0qpz+W5mdgvizxUtiDNUVZP1LP2Du8LolUcjwpIkcJe0gm2itU6o2ojjsTz/
+         k52m2uroKyHEfQtmox/LagM79E84Bwt57rIT8sBl8XjO3UfftnHVGgavNSvDjJoN0lP5
+         5gzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IoCMWJTQvR4GggXgHZA8O1rN2KIKna3QE6ynjptghSc=;
-        b=UonliMpl0f/5LxjtJbuVMS9/m2jL9AvuskCWIWWmK2ytabJmCRbOEa0qmNX9Ir1UGt
-         bx1rbzTgnif9ZEWNm/Z8wL5j7nancsqvEjCXG2kqJxmKiKYxvw+cCkjNxghftU9s5rza
-         oEQqkrv8xRDK0d/2DTEtc8gaZ4P6l8fZ6AZEifByNhWanm01hrIpWMt9Tl/ofrPJ6iW/
-         6aLhcfmN8a0UsYzm9t0c36GSJ0G37LU7GBzTgdrb+IizdZqz7NfA/tGFfne8VDBFHVSe
-         LuSw2VqfzFTWlK1gatkSGgxOQxJMqc1AlymnWQcrhi7tbvdKiHuxuS3ioXOa1mqvYH+W
-         5GEA==
-X-Gm-Message-State: APjAAAVN8c5WRAT988RKRlA7Hp7nx3KQNk/PGPxzvMMWnkQNMhkptWOE
-        ecZiTj0PCzhK5Wjhnv2FWNV0PqQ=
-X-Google-Smtp-Source: APXvYqxJuU40Uy1gtqUu7ce9cVwa7CyzWFcWPiBKS9V3FJDE2o09dc2EWuNA0llIDlwJvPKHWSDQFA==
-X-Received: by 2002:a17:902:100c:: with SMTP id b12mr15110281pla.230.1557208881438;
-        Mon, 06 May 2019 23:01:21 -0700 (PDT)
-Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b18sm8997409pfp.32.2019.05.06.23.01.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 23:01:20 -0700 (PDT)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     x86@kernel.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] x86/boot: push console_init forward
-Date:   Tue,  7 May 2019 14:01:00 +0800
-Message-Id: <1557208860-12846-2-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557208860-12846-1-git-send-email-kernelfans@gmail.com>
-References: <1557208860-12846-1-git-send-email-kernelfans@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QZm07w2nSCiVVM+WjYPWUvz7wW+nL7XT9qvn8eYdy3A=;
+        b=FIa5T/Lw9UDTZQ9SM/ACk2fZ0pcaDSlGTtuRmaBlNXmLhipod6WuT45vudGoEyuZC+
+         WfxYLSLLECQjE+NXjCNGKY9W/yCXXA8pzwNOX7FwW1nA4aAhnfCXM+QrCeRu71ktSLdP
+         zgGp5he7OC/wkmeEgT7kJaS9pW3tujlZ20E7SXNFeK/tWEtNX3UsOsYcx2cU7pXZg0CH
+         FggZt3PRo012DBqTLedlWlHYuC8uxtdZcOQrC/xebtojCpIg3E+hvxbvD0I5wKLQADiz
+         DRzamvYuXXtPbkQx/NQyfXdEZZO748tBRqUK0GMt7YagpyFhDlrrD2iw8ozvIqU+qE7R
+         sRCg==
+X-Gm-Message-State: APjAAAU52GSEJuDwCbcoFs9PZn62g7uDDm1SWfe3u1vE4tnPXMBwykUR
+        Y0vKeuEv4+tPC4crasO5L/qNjUrQrtizXDwN9i8=
+X-Google-Smtp-Source: APXvYqwUTax6Nbe0rTjQMRruM2k63P6Yc2eck704d/9awNC5izroT9pbEMuhoHqfwRVTcq8tjZ9+yNcKWj5nNvgcVok=
+X-Received: by 2002:a17:906:1903:: with SMTP id a3mr22284151eje.37.1557209181270;
+ Mon, 06 May 2019 23:06:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <1556437474-25319-1-git-send-email-huangzhaoyang@gmail.com> <20190506145727.GA11505@cmpxchg.org>
+In-Reply-To: <20190506145727.GA11505@cmpxchg.org>
+From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date:   Tue, 7 May 2019 14:06:09 +0800
+Message-ID: <CAGWkznE0zsGLVHuCx-WGk+TOcFe6w0wJ-MXM8=cXJPZb-rQD-A@mail.gmail.com>
+Subject: Re: [[repost]RFC PATCH] mm/workingset : judge file page activity via timestamp
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        David Rientjes <rientjes@google.com>,
+        Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Roman Gushchin <guro@fb.com>, Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the very early boot stage, early console is badly needed. Push its
-initialization as early as possible, just after stack is ready.
-
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Jordan Borgner <mail@jordan-borgner.de>
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/boot/compressed/early_serial_console.c | 7 +++++++
- arch/x86/boot/compressed/head_64.S              | 4 ++++
- arch/x86/boot/compressed/misc.c                 | 1 -
- 3 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/boot/compressed/early_serial_console.c b/arch/x86/boot/compressed/early_serial_console.c
-index 624e334..223954a 100644
---- a/arch/x86/boot/compressed/early_serial_console.c
-+++ b/arch/x86/boot/compressed/early_serial_console.c
-@@ -3,3 +3,10 @@
- int early_serial_base = -1;
- 
- #include "../early_serial_console.c"
-+
-+void early_console_init(void *rmode)
-+{
-+	boot_params = rmode;
-+	console_init();
-+	debug_putstr("early console is ready\n");
-+}
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fafb75c..e4a25f9 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -323,6 +323,10 @@ ENTRY(startup_64)
- 	subq	$1b, %rdi
- 
- 	call	adjust_got
-+	pushq	%rsi
-+	movq	%rsi, %rdi
-+	call	early_console_init
-+	popq	%rsi
- 
- 	/*
- 	 * At this point we are in long mode with 4-level paging enabled,
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index cafc6aa..475a3c6 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -368,7 +368,6 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
- 	lines = boot_params->screen_info.orig_video_lines;
- 	cols = boot_params->screen_info.orig_video_cols;
- 
--	console_init();
- 	debug_putstr("early console in extract_kernel\n");
- 
- 	free_mem_ptr     = heap;	/* Heap */
--- 
-2.7.4
-
+On Mon, May 6, 2019 at 10:57 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Sun, Apr 28, 2019 at 03:44:34PM +0800, Zhaoyang Huang wrote:
+> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >
+> > this patch introduce timestamp into workingset's entry and judge if the page is
+> > active or inactive via active_file/refault_ratio instead of refault distance.
+> >
+> > The original thought is coming from the logs we got from trace_printk in this
+> > patch, we can find about 1/5 of the file pages' refault are under the
+> > scenario[1],which will be counted as inactive as they have a long refault distance
+> > in between access. However, we can also know from the time information that the
+> > page refault quickly as comparing to the average refault time which is calculated
+> > by the number of active file and refault ratio. We want to save these kinds of
+> > pages from evicted earlier as it used to be via setting it to ACTIVE instead.
+> > The refault ratio is the value which can reflect lru's average file access
+> > frequency in the past and provide the judge criteria for page's activation.
+> >
+> > The patch is tested on an android system and reduce 30% of page faults, while
+> > 60% of the pages remain the original status as (refault_distance < active_file)
+> > indicates. Pages status got from ftrace during the test can refer to [2].
+> >
+Hi Johannes,
+Thank you for your feedback. I have answer previous comments many
+times in different context. I don't expect you accept this patch but
+want to have you pay attention to the phenomenon reported in [1],
+which has a big refault distance but refaulted very quickly after
+evicted. Do you think if this kind of page should be set to INACTIVE?
+> > [1]
+> > system_server workingset_refault: WKST_ACT[0]:rft_dis 265976, act_file 34268 rft_ratio 3047 rft_time 0 avg_rft_time 11 refault 295592 eviction 29616 secs 97 pre_secs 97
+> > HwBinder:922  workingset_refault: WKST_ACT[0]:rft_dis 264478, act_file 35037 rft_ratio 3070 rft_time 2 avg_rft_time 11 refault 310078 eviction 45600 secs 101 pre_secs 99
+> >
+> > [2]
+> > WKST_ACT[0]:   original--INACTIVE  commit--ACTIVE
+> > WKST_ACT[1]:   original--ACTIVE    commit--ACTIVE
+> > WKST_INACT[0]: original--INACTIVE  commit--INACTIVE
+> > WKST_INACT[1]: original--ACTIVE    commit--INACTIVE
+> >
+> > Signed-off-by: Zhaoyang Huang <huangzhaoyang@gmail.com>
+>
+> Nacked-by: Johannes Weiner <hannes@cmpxchg.org>
+>
+> You haven't addressed any of the questions raised during previous
+> submissions.
