@@ -2,128 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E453168A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53EEF168A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfEGRCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:02:08 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60810 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725859AbfEGRCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:02:08 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x47Ggb7L005384
-        for <linux-kernel@vger.kernel.org>; Tue, 7 May 2019 10:02:07 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=vitOO7OwnftNXjnC+6jXyI8tHpXb/oZC9oEpjEzqAdk=;
- b=BMYzx8PoazQPk4IOcYhuSTYButTTsGfV9FSbP673WfL/6DT5VUy7desq17/9Xbpae6c8
- HC4w0RFnqe7SQJVarRZz28rnWDyboc2xHRtPP19xfyN6yyV7V7nX1UJFDYaz7k3rD6qt
- 20fETY3A9P3t2BAndyIqCzNUPX2LFM1znOo= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sbd0rra04-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:02:07 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 7 May 2019 10:02:04 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 982E311C213DA; Tue,  7 May 2019 10:02:03 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     Tejun Heo <tj@kernel.org>
-CC:     Jens Axboe <axboe@kernel.dk>, Song Liu <songliubraving@fb.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH 4/4] percpu_ref: release percpu memory early without PERCPU_REF_ALLOW_REINIT
-Date:   Tue, 7 May 2019 10:01:50 -0700
-Message-ID: <20190507170150.64051-4-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190507170150.64051-1-guro@fb.com>
-References: <20190507170150.64051-1-guro@fb.com>
-X-FB-Internal: Safe
+        id S1727345AbfEGRCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:02:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727179AbfEGRCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 13:02:10 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3030A205C9;
+        Tue,  7 May 2019 17:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557248529;
+        bh=+dH1dylfToIztT6tIsED1NzXkgisvmtolImG8/gDIeU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g67/5rAMyjMObT6TuHwzVVr5fhZH+BNj5IA+NG26oX7D7N4Az/RLsgF1Jc+jUk5c+
+         WAC9pINLyovaABMYNG69uAcI1Z1rL/PoxWrlPNd8yFEF2xS7eu0xqXW/90vGKpIwKR
+         2kZ9uGjgtwHlfzPHAQvgsHdgIpxzJRUuhzepGMCc=
+Date:   Tue, 7 May 2019 13:02:08 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH AUTOSEL 4.14 62/95] mm, memory_hotplug: initialize struct
+ pages for the full memory section
+Message-ID: <20190507170208.GF1747@sasha-vm>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-62-sashal@kernel.org>
+ <CAKgT0Uc8ywg8zrqyM9G+Ws==+yOfxbk6FOMHstO8qsizt8mqXA@mail.gmail.com>
+ <CAHk-=win03Q09XEpYmk51VTdoQJTitrr8ON9vgajrLxV8QHk2A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=536 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905070109
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAHk-=win03Q09XEpYmk51VTdoQJTitrr8ON9vgajrLxV8QHk2A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Release percpu memory after finishing the switch to the atomic mode
-if only PERCPU_REF_ALLOW_REINIT isn't set.
+On Tue, May 07, 2019 at 09:50:50AM -0700, Linus Torvalds wrote:
+>On Tue, May 7, 2019 at 9:31 AM Alexander Duyck
+><alexander.duyck@gmail.com> wrote:
+>>
+>> Wasn't this patch reverted in Linus's tree for causing a regression on
+>> some platforms? If so I'm not sure we should pull this in as a
+>> candidate for stable should we, or am I missing something?
+>
+>Good catch. It was reverted in commit 4aa9fc2a435a ("Revert "mm,
+>memory_hotplug: initialize struct pages for the full memory
+>section"").
+>
+>We ended up with efad4e475c31 ("mm, memory_hotplug:
+>is_mem_section_removable do not pass the end of a zone") instead (and
+>possibly others - this was just from looking for commit messages that
+>mentioned that reverted commit).
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
----
- include/linux/percpu-refcount.h |  1 +
- lib/percpu-refcount.c           | 13 +++++++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+I got it wrong then. I'll fix it up and get efad4e475c31 in instead.
+Thanks!
 
-diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
-index 0f0240af8520..7aef0abc194a 100644
---- a/include/linux/percpu-refcount.h
-+++ b/include/linux/percpu-refcount.h
-@@ -102,6 +102,7 @@ struct percpu_ref {
- 	percpu_ref_func_t	*release;
- 	percpu_ref_func_t	*confirm_switch;
- 	bool			force_atomic:1;
-+	bool			allow_reinit:1;
- 	struct rcu_head		rcu;
- };
- 
-diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
-index da54318d3b55..47f0aeb136c4 100644
---- a/lib/percpu-refcount.c
-+++ b/lib/percpu-refcount.c
-@@ -69,11 +69,14 @@ int percpu_ref_init(struct percpu_ref *ref, percpu_ref_func_t *release,
- 		return -ENOMEM;
- 
- 	ref->force_atomic = flags & PERCPU_REF_INIT_ATOMIC;
-+	ref->allow_reinit = flags & PERCPU_REF_ALLOW_REINIT;
- 
--	if (flags & (PERCPU_REF_INIT_ATOMIC | PERCPU_REF_INIT_DEAD))
-+	if (flags & (PERCPU_REF_INIT_ATOMIC | PERCPU_REF_INIT_DEAD)) {
- 		ref->percpu_count_ptr |= __PERCPU_REF_ATOMIC;
--	else
-+		ref->allow_reinit = true;
-+	} else {
- 		start_count += PERCPU_COUNT_BIAS;
-+	}
- 
- 	if (flags & PERCPU_REF_INIT_DEAD)
- 		ref->percpu_count_ptr |= __PERCPU_REF_DEAD;
-@@ -119,6 +122,9 @@ static void percpu_ref_call_confirm_rcu(struct rcu_head *rcu)
- 	ref->confirm_switch = NULL;
- 	wake_up_all(&percpu_ref_switch_waitq);
- 
-+	if (!ref->allow_reinit)
-+		percpu_ref_exit(ref);
-+
- 	/* drop ref from percpu_ref_switch_to_atomic() */
- 	percpu_ref_put(ref);
- }
-@@ -194,6 +200,9 @@ static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
- 	if (!(ref->percpu_count_ptr & __PERCPU_REF_ATOMIC))
- 		return;
- 
-+	if (WARN_ON_ONCE(!ref->allow_reinit))
-+		return;
-+
- 	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
- 
- 	/*
--- 
-2.20.1
-
+--
+Thanks,
+Sasha
