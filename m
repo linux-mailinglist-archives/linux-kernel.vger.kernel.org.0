@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C1C15F01
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7393415EF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfEGIOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:14:33 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41778 "EHLO
+        id S1727223AbfEGIOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:14:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59906 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727241AbfEGIOW (ORCPT
+        with ESMTP id S1727157AbfEGIOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:14:22 -0400
-X-UUID: bd959553276b45819cab7a4f5bd2ca19-20190507
-X-UUID: bd959553276b45819cab7a4f5bd2ca19-20190507
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Tue, 7 May 2019 04:14:06 -0400
+X-UUID: 08a9a21b1f3743a9b8640cb3d172fe0a-20190507
+X-UUID: 08a9a21b1f3743a9b8640cb3d172fe0a-20190507
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1933250245; Tue, 07 May 2019 16:14:00 +0800
+        with ESMTP id 948636124; Tue, 07 May 2019 16:14:00 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 7 May 2019 16:13:59 +0800
 Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -45,92 +45,56 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
         Frederic Chen <Frederic.Chen@mediatek.com>
-Subject: [PATCH v5 11/12] soc: mediatek: cmdq: add cmdq_dev_get_event function
-Date:   Tue, 7 May 2019 16:13:54 +0800
-Message-ID: <20190507081355.52630-12-bibby.hsieh@mediatek.com>
+Subject: [PATCH v5 12/12] arm64: dts: add gce node for mt8183
+Date:   Tue, 7 May 2019 16:13:55 +0800
+Message-ID: <20190507081355.52630-13-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
 References: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: D92EDB47A209A967D8D161E8C5204CD18762992545980573347E692AA8D164202000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When client ask gce to clear or wait for event,
-client need to pass event number to the API.
-We suggest client store the event information in device node,
-so we provide an API for client parse the event property.
+add gce device node for mt8183
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 28 ++++++++++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h  | 12 +++++++++++
- 2 files changed, 40 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 00636ec995e8..b44bce1f9159 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -52,6 +52,34 @@ struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx)
- }
- EXPORT_SYMBOL(cmdq_dev_get_subsys);
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index b36e37fcdfe3..d6d26fa32dd7 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/power/mt8183-power.h>
++#include <dt-bindings/gce/mt8183-gce.h>
+ #include "mt8183-pinfunc.h"
+ / {
+ 	compatible = "mediatek,mt8183";
+@@ -293,6 +294,16 @@
+ 			clock-names = "spi", "wrap";
+ 		};
  
-+s32 cmdq_dev_get_event(struct device *dev, const char *name)
-+{
-+	s32 index = 0;
-+	s32 result;
++		gce: gce@10238000 {
++			compatible = "mediatek,mt8183-gce";
++			reg = <0 0x10238000 0 0x4000>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
++			#mbox-cells = <3>;
++			#subsys-cells = <3>;
++			clocks = <&infracfg CLK_INFRA_GCE>;
++			clock-names = "gce";
++		};
 +
-+	if (!dev)
-+		return -EINVAL;
-+
-+	index = of_property_match_string(dev->of_node,
-+					 "mediatek,gce-event-names", name);
-+	if (index < 0) {
-+		dev_err(dev, "no gce-event-names property or no such event:%s",
-+			name);
-+
-+		return index;
-+	}
-+
-+	if (of_property_read_u32_index(dev->of_node, "mediatek,gce-events",
-+				       index, &result)) {
-+		dev_err(dev, "can't parse gce-events property");
-+
-+		return -ENODEV;
-+	}
-+
-+	return result;
-+}
-+EXPORT_SYMBOL(cmdq_dev_get_event);
-+
- static void cmdq_client_timeout(struct timer_list *t)
- {
- 	struct cmdq_client *client = from_timer(client, t, timer);
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 574006c5cd76..15884354af20 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -160,4 +160,16 @@ int cmdq_pkt_flush(struct cmdq_pkt *pkt);
-  */
- struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx);
- 
-+/**
-+ * cmdq_dev_get_event() - parse event from the device node of CMDQ client
-+ * @dev:	device of CMDQ mailbox client
-+ * @name:	the name of desired event
-+ *
-+ * Return: CMDQ event number
-+ *
-+ * Help CMDQ client pasing the event number
-+ * from the device node of CMDQ client.
-+ */
-+s32 cmdq_dev_get_event(struct device *dev, const char *name);
-+
- #endif	/* __MTK_CMDQ_H__ */
+ 		uart0: serial@11002000 {
+ 			compatible = "mediatek,mt8183-uart",
+ 				     "mediatek,mt6577-uart";
 -- 
 2.18.0
 
