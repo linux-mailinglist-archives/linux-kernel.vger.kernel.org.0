@@ -2,99 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7393415EF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6CB15F38
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfEGIOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:14:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:59906 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727157AbfEGIOG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:14:06 -0400
-X-UUID: 08a9a21b1f3743a9b8640cb3d172fe0a-20190507
-X-UUID: 08a9a21b1f3743a9b8640cb3d172fe0a-20190507
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 948636124; Tue, 07 May 2019 16:14:00 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 7 May 2019 16:13:59 +0800
-Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 7 May 2019 16:13:59 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
-        Frederic Chen <Frederic.Chen@mediatek.com>
-Subject: [PATCH v5 12/12] arm64: dts: add gce node for mt8183
-Date:   Tue, 7 May 2019 16:13:55 +0800
-Message-ID: <20190507081355.52630-13-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
-References: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
+        id S1727124AbfEGISD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:18:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbfEGISD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 04:18:03 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D9BDC3082A24;
+        Tue,  7 May 2019 08:18:02 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BA6131001DDE;
+        Tue,  7 May 2019 08:18:00 +0000 (UTC)
+Date:   Tue, 7 May 2019 10:18:00 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 10/12] perf script: Add --show-bpf-events to show eBPF
+ related events
+Message-ID: <20190507081759.GB17416@krava>
+References: <20190503081841.1908-1-jolsa@kernel.org>
+ <20190503081841.1908-11-jolsa@kernel.org>
+ <7A338906-850D-430B-A558-93C409A03842@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7A338906-850D-430B-A558-93C409A03842@fb.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 07 May 2019 08:18:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+On Mon, May 06, 2019 at 09:42:44PM +0000, Song Liu wrote:
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+SNIP
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index b36e37fcdfe3..d6d26fa32dd7 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/mt8183-power.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- #include "mt8183-pinfunc.h"
- / {
- 	compatible = "mediatek,mt8183";
-@@ -293,6 +294,16 @@
- 			clock-names = "spi", "wrap";
- 		};
- 
-+		gce: gce@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			#subsys-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
--- 
-2.18.0
+> > +static int
+> > +process_bpf_events(struct perf_tool *tool __maybe_unused,
+> > +		   union perf_event *event,
+> > +		   struct perf_sample *sample,
+> > +		   struct machine *machine)
+> > +{
+> > +	struct thread *thread;
+> > +	struct perf_script *script = container_of(tool, struct perf_script, tool);
+> > +	struct perf_session *session = script->session;
+> > +	struct perf_evsel *evsel = perf_evlist__id2evsel(session->evlist, sample->id);
+> > +
+> > +	if (machine__process_ksymbol(machine, event, sample) < 0)
+> > +		return -1;
+> > +
+> > +	if (!evsel->attr.sample_id_all) {
+> > +		perf_event__fprintf(event, stdout);
+> > +		return 0;
+> > +	}
+> > +
+> > +	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
+> > +	if (thread == NULL) {
+> > +		pr_debug("problem processing MMAP event, skipping it.\n");
+> > +		return -1;
+> > +	}
+> > +
+> > +	if (!filter_cpu(sample)) {
+> > +		perf_sample__fprintf_start(sample, thread, evsel,
+> > +					   event->header.type, stdout);
+> > +		perf_event__fprintf(event, stdout);
+> > +	}
+> > +
+> > +	thread__put(thread);
+> > +	return 0;
+> > +}
+> > +
+> > static void sig_handler(int sig __maybe_unused)
+> > {
+> > 	session_done = 1;
+> > @@ -2420,6 +2456,10 @@ static int __cmd_script(struct perf_script *script)
+> > 		script->tool.ordered_events = false;
+> > 		script->tool.finished_round = process_finished_round_event;
+> > 	}
+> > +	if (script->show_bpf_events) {
+> > +		script->tool.ksymbol   = process_bpf_events;
+> > +		script->tool.bpf_event = process_bpf_events;
+> 
+> Why do we need both set to process_bpf_events?
 
+--show-*-events option is there to display all the related events for given '*'
+
+we want to display both ksymbol and bpf_event in here,
+process_bpf_events takes care of it for both of them
+
+thanks,
+jirka
