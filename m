@@ -2,55 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9DD16B09
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B30116B2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfEGTSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 15:18:01 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:33084 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfEGTSA (ORCPT
+        id S1726683AbfEGTSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 15:18:32 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41378 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfEGTSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 15:18:00 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6C1A714B56316;
-        Tue,  7 May 2019 12:17:59 -0700 (PDT)
-Date:   Tue, 07 May 2019 12:17:58 -0700 (PDT)
-Message-Id: <20190507.121758.1374598572835036372.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     g.nault@alphalink.fr, jian.w.wen@oracle.com, edumazet@google.com,
-        kafai@fb.com, xiyou.wangcong@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] l2tp: Fix possible NULL pointer dereference
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190506144404.25220-1-yuehaibing@huawei.com>
-References: <20190506144404.25220-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 May 2019 12:17:59 -0700 (PDT)
+        Tue, 7 May 2019 15:18:23 -0400
+Received: by mail-lj1-f193.google.com with SMTP id k8so15334106lja.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 12:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FtF42CqL123SSRl10dCYLKTcv2hhlfrc0BUh3e4ZyQA=;
+        b=MDNkFF5/XrluyqCwIMfLlVttmyMxCjmI2wG7YwAycEXZCEOWsEc2x6MssI+Rlbi/iu
+         yQsVKdRqLbBtdsbUldIBJx0z/BfyC9QXVCs0johj7JFgnda+gRiZW//uOT35LvQueJfP
+         e5w65jeDG6ogGawBTKsmIemyIVj87dZWPIMVg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FtF42CqL123SSRl10dCYLKTcv2hhlfrc0BUh3e4ZyQA=;
+        b=rbGSGeK1GHprd1kQ8X/LBLS0ntNqDnmtzLEuBd7qe3W/19HxrzWSRr5uPD/A9kef9k
+         f9NuCouAvvDT6xWH48gyhhfEGgcNmDhwvmlLZo/LrebUVTpdRkj4xzU+h+oL0Gf85WDH
+         +WqXkS2VHkEcGuO1XIHWBcmlI6veumT9eOabSv2biXVbTNZfy9S8bDGLmxoaqOB1QY2h
+         E+o9y7UOpEtY1VbtBv6L9gnLuXmyBH1+sK7kIyMdSx6e9mzu5O56NpErzPtlRuJAsB7O
+         XtYd6nIJ1MXkbepA+rUcgHuUNEYJxbUon9YKe1+o+dZdF1BZoEJn1onN7jnUvDW0pMBi
+         1dpw==
+X-Gm-Message-State: APjAAAU71XYxO9xNKv0wKCVA6tiwaMhxYnXN2QAgyQuRFNa4/KXHoGIi
+        xHwr2NotN1Fjh8u9A34H920KrjSs8uM=
+X-Google-Smtp-Source: APXvYqygigNN+qGC8QLLdpZ4FE/dv77DwgnXlm+D0yJLHUu3IAmgbl5P4fUFHehwCmUVC/rsDIENgA==
+X-Received: by 2002:a2e:89c8:: with SMTP id c8mr18882082ljk.73.1557256700856;
+        Tue, 07 May 2019 12:18:20 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id g8sm3661958lfg.4.2019.05.07.12.18.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 12:18:20 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id u21so6219725lja.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 12:18:19 -0700 (PDT)
+X-Received: by 2002:a2e:9044:: with SMTP id n4mr3212578ljg.94.1557256699430;
+ Tue, 07 May 2019 12:18:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1557162679.git.kirr@nexedi.com> <CAHk-=wg1tFzcaX2v9Z91vPJiBR486ddW5MtgDL02-fOen2F0Aw@mail.gmail.com>
+ <20190507190939.GA12729@deco.navytux.spb.ru>
+In-Reply-To: <20190507190939.GA12729@deco.navytux.spb.ru>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 7 May 2019 12:18:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgWusqMfU25eBofgBHVSrQaVxr-EwCPCWcBaFMjzf_=Cg@mail.gmail.com>
+Message-ID: <CAHk-=wgWusqMfU25eBofgBHVSrQaVxr-EwCPCWcBaFMjzf_=Cg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] stream_open bits for Linux 5.2
+To:     Kirill Smelkov <kirr@nexedi.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@denx.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 6 May 2019 22:44:04 +0800
+On Tue, May 7, 2019 at 12:09 PM Kirill Smelkov <kirr@nexedi.com> wrote:
+>
+> I've pushed corresponding gpg-signed tag (stream_open-5.2) to my tree. I
+> did not go the gpg way initially because we do not have a gpg-trust
+> relation established and so I thought that signing was useless.
 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000128
- . ..
-> ---[ end trace 8322b2b8bf83f8e1
-> 
-> If alloc_workqueue fails in l2tp_init, l2tp_net_ops
-> is unregistered on failure path. Then l2tp_exit_net
-> is called which will flush NULL workqueue, this patch
-> add a NULL check to fix it.
-> 
-> Fixes: 67e04c29ec0d ("l2tp: unregister l2tp_net_ops on failure path")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Ok, since I hadn't pushed out my pull yet, I just re-did it with your
+signature, so that the key is visible in the git tree.
 
-Applied and queued up for -stable, thanks.
+                   Linus
