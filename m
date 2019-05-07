@@ -2,104 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 294DB1677F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49411678D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfEGQNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:13:40 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34552 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfEGQNg (ORCPT
+        id S1727171AbfEGQNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:13:48 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40358 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfEGQNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:13:36 -0400
-Received: by mail-pl1-f194.google.com with SMTP id ck18so8430350plb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:13:35 -0700 (PDT)
+        Tue, 7 May 2019 12:13:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b3so8415476plr.7;
+        Tue, 07 May 2019 09:13:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QA3HzzjjvBBxLzgrZcUsI/Ka76WXbPB2jGuemOph6Xg=;
-        b=EPXA/HhfhYmNIpyStTLIe0HkJknQfVtp7TmERucT0x6/R3/KPT7QKZ1j8HPBgPNCmH
-         PPj6gw/Sa78McVub6La5gCIYi1dmv7wK9IsmDDQvk1p6gCHAVy3tgJaXQoomkmjGWRSe
-         9ZlZyEgwZMCzML51PiaHKSel0UM2lPxW9HPDo=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PvouaYjN3Arp+88+2ukjI7BrrRf9lUz+IEKElaRnfEQ=;
+        b=QHZynWd2QYaXvolmJ2TVdMus1VL9YSL+KBfdl3oW1im3eGDEhHXcTHTPr5fHG5NHL1
+         P1tPTJQBEplq5W+TrTmNGLR3sSvXrZ50RNK8G1LnVoDz5qp8NgfpfahuxzbByan1+1pl
+         LoPJj8bmA6DTi50GOVFqXBA5053BgnXKVU7f3/+qfYOaQ5vlXWrqI4uIh1lhSR5qxe91
+         0CISQFBxXzuC4yVEIuLmLpx0leHBOfPA6iiH35PNgFMbqvVMeDw36h7Hfbpw6Hp1ZM+T
+         q12fZmmdaPk27jPyUqyyDXVRbIVNsT06SHTmIclL5L9eOR5+2l6jCXKmKSPs4VxFrB1H
+         BkTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QA3HzzjjvBBxLzgrZcUsI/Ka76WXbPB2jGuemOph6Xg=;
-        b=ZJJ+KuarkMQ9SurM7pJQfmg4/wj9TMlgLJ64D+wnzEXkmMck7ljRk9yYEqLG+cMoX/
-         JZTIxgglSkEa2rH5Pr3sB9komKF47oodIhA7sCqHltjMhw0AENK7Al0V0KmW+dXaWd98
-         Z9lzg+Y7UbJ8ZoTGnMWAK4sD0VLw00DdgHICPH+sRfGXxwN16fcvhWjaP8sXqv4fXnqH
-         AiSD6xkc9ljA8EVTnXSzQN4oWzbYk8loMhd1me4Fkk0wI4X/8wqo4bn/2Uuvphz0vMZW
-         F6CRO9PSP97inD1WL3LueLf0VQiBhVcNU3BWZW9r+7Sd940lzPzPKmycV0IVhFpiowO6
-         l6zw==
-X-Gm-Message-State: APjAAAWBSK1uVUR1gxXghPD5bb5n4rwNWlWzkdsULHTEZYdaFitA3Yqj
-        NpXe3zsJXThR/6ZGtqKx8I9kznIhaUE=
-X-Google-Smtp-Source: APXvYqyeW7D+sPyiZumGQOGNkqWQIR/WsqzmD/UtQYSmmk7rzstgyo+h1xm936mPXzVcBXe1ba+o9g==
-X-Received: by 2002:a17:902:b614:: with SMTP id b20mr4001088pls.200.1557245615448;
-        Tue, 07 May 2019 09:13:35 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s11sm25864557pga.36.2019.05.07.09.13.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 09:13:34 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>, Joao Moreira <jmoreira@suse.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v3 7/7] crypto: x86/glue_helper: Remove function prototype cast helpers
-Date:   Tue,  7 May 2019 09:13:21 -0700
-Message-Id: <20190507161321.34611-8-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190507161321.34611-1-keescook@chromium.org>
-References: <20190507161321.34611-1-keescook@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PvouaYjN3Arp+88+2ukjI7BrrRf9lUz+IEKElaRnfEQ=;
+        b=YGhFQHxZE8Zg83BYKWnJWPjeAkk+jQgCmQ4iFxI4W+Q9KaqtfyK6Yo4VQbpseO+taN
+         mOSDjryiHGO1eqxj4NysDDYWNHRdKT/nVO9jhM65/n9NqVr9N/80rNitn9RdZnevJjBH
+         jzjhNAbsGwxtWBqtdxuCwhqgVIP8Nw0/xqIGjQvAakdcan4Ymi6s4Y9gHvLLp4Evn1oE
+         e2ZSuQs2Sg15dss0MlXMHKugslnyfZWFAr2PsDIXetgcmueSDDhhFiaAifOUtQ8psPMI
+         gztSyzDWTRwMVwD6/pi9Y20Y4uNpUdCpKqwlKGTUTD5fnHoVmBRw2Jo/SiZiKDAQHmS5
+         cBmw==
+X-Gm-Message-State: APjAAAX2MgFMKb9eGWn3q1wu+63tIr/2vNvp+6SYdNDr88/frJR+/zUJ
+        6rGJNAUQcp8IrYF2sGt/Uhvxjh7ArX7XJdZgSf+nIQ==
+X-Google-Smtp-Source: APXvYqzwej+/HPo7Bs6aRyGls46/1CQgiFLznL8JZhUc7dAFJOuirFsxCA42mxNCF1VwIn1EexS6Nu9rkXYKvnNMuEk=
+X-Received: by 2002:a17:902:e00a:: with SMTP id ca10mr10539729plb.18.1557245626111;
+ Tue, 07 May 2019 09:13:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <1557242200-26194-1-git-send-email-kernel@probst.it>
+In-Reply-To: <1557242200-26194-1-git-send-email-kernel@probst.it>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 7 May 2019 11:13:34 -0500
+Message-ID: <CAH2r5mtqkHYbHJkf_LbAjhujnNRQP6Zmkmqhj1dUHomwsc3e=w@mail.gmail.com>
+Subject: Re: [PATCH v2] cifs: fix strcat buffer overflow and reduce raciness
+ in smb21_set_oplock_level()
+To:     Christoph Probst <kernel@probst.it>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all users of the function prototype casting helpers have been
-removed, this deletes the unused macros.
+merged into cifs-2.6.git for-next
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/x86/include/asm/crypto/glue_helper.h | 6 ------
- include/crypto/xts.h                      | 2 --
- 2 files changed, 8 deletions(-)
+On Tue, May 7, 2019 at 10:17 AM Christoph Probst via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> Change strcat to strncpy in the "None" case to fix a buffer overflow
+> when cinode->oplock is reset to 0 by another thread accessing the same
+> cinode. It is never valid to append "None" to any other message.
+>
+> Consolidate multiple writes to cinode->oplock to reduce raciness.
+>
+> Signed-off-by: Christoph Probst <kernel@probst.it>
+> ---
+>  fs/cifs/smb2ops.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index c36ff0d..aa61dcf 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -2917,26 +2917,28 @@ smb21_set_oplock_level(struct cifsInodeInfo *cinode, __u32 oplock,
+>                        unsigned int epoch, bool *purge_cache)
+>  {
+>         char message[5] = {0};
+> +       unsigned int new_oplock = 0;
+>
+>         oplock &= 0xFF;
+>         if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
+>                 return;
+>
+> -       cinode->oplock = 0;
+>         if (oplock & SMB2_LEASE_READ_CACHING_HE) {
+> -               cinode->oplock |= CIFS_CACHE_READ_FLG;
+> +               new_oplock |= CIFS_CACHE_READ_FLG;
+>                 strcat(message, "R");
+>         }
+>         if (oplock & SMB2_LEASE_HANDLE_CACHING_HE) {
+> -               cinode->oplock |= CIFS_CACHE_HANDLE_FLG;
+> +               new_oplock |= CIFS_CACHE_HANDLE_FLG;
+>                 strcat(message, "H");
+>         }
+>         if (oplock & SMB2_LEASE_WRITE_CACHING_HE) {
+> -               cinode->oplock |= CIFS_CACHE_WRITE_FLG;
+> +               new_oplock |= CIFS_CACHE_WRITE_FLG;
+>                 strcat(message, "W");
+>         }
+> -       if (!cinode->oplock)
+> -               strcat(message, "None");
+> +       if (!new_oplock)
+> +               strncpy(message, "None", sizeof(message));
+> +
+> +       cinode->oplock = new_oplock;
+>         cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
+>                  &cinode->vfs_inode);
+>  }
+> --
+> 2.1.4
+>
+>
 
-diff --git a/arch/x86/include/asm/crypto/glue_helper.h b/arch/x86/include/asm/crypto/glue_helper.h
-index 3b039d563809..2b2d8d4a5081 100644
---- a/arch/x86/include/asm/crypto/glue_helper.h
-+++ b/arch/x86/include/asm/crypto/glue_helper.h
-@@ -18,12 +18,6 @@ typedef void (*common_glue_ctr_func_t)(void *ctx, u128 *dst, const u128 *src,
- typedef void (*common_glue_xts_func_t)(void *ctx, u128 *dst, const u128 *src,
- 				       le128 *iv);
- 
--#define GLUE_FUNC_CAST(fn) ((common_glue_func_t)(fn))
--#define GLUE_CBC_FUNC_CAST(fn) ((common_glue_cbc_func_t)(fn))
--#define GLUE_CTR_FUNC_CAST(fn) ((common_glue_ctr_func_t)(fn))
--#define GLUE_XTS_FUNC_CAST(fn) ((common_glue_xts_func_t)(fn))
--
--
- #define GLUE_CAST(func, context)					\
- asmlinkage void func(struct context *ctx, u8 *dst, const u8 *src);	\
- asmlinkage static inline						\
-diff --git a/include/crypto/xts.h b/include/crypto/xts.h
-index 75fd96ff976b..15ae7fdc0478 100644
---- a/include/crypto/xts.h
-+++ b/include/crypto/xts.h
-@@ -8,8 +8,6 @@
- 
- #define XTS_BLOCK_SIZE 16
- 
--#define XTS_TWEAK_CAST(x) ((void (*)(void *, u8*, const u8*))(x))
--
- static inline int xts_check_key(struct crypto_tfm *tfm,
- 				const u8 *key, unsigned int keylen)
- {
+
 -- 
-2.17.1
+Thanks,
 
+Steve
