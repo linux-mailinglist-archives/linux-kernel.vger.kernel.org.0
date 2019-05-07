@@ -2,99 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D84D16876
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F0901685B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfEGQ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:56:20 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46480 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfEGQ4T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:56:19 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h21so14932687ljk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=esZbZU1pgP8duus3WEzDEySF+/YyqE39bcTa0BgZfHg=;
-        b=fvP0O3tZ7ZjnILeoVNXqpBW5oInlJpRKtMsHavAo8Xz6rGRg89S6GZWi4pGffqfCFg
-         oatIXFLAoC9CKwk1ym8unSGXwAYeKchgsJsEKUm2XnsjPb9LqnjMjeafzahNU3X/YERf
-         pCPdN8c31gCwwkI7LCI3zaZ1cxosDpm3CpW9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=esZbZU1pgP8duus3WEzDEySF+/YyqE39bcTa0BgZfHg=;
-        b=ZM49TvrxVp0fo7p1rpTGvIp49sWtbFGNgpCv45oMa4lukr75T7C8/aX0vtUfw3h8ak
-         TQfXKKcVqiuGoAUAePP0KtUfjY74cekAbQ4lTSa7MKObUDgCVUDhQ5MztLACLlfmaN2F
-         h0BNnRSf0HXhuZL5C8HUJMIvOF+PUa0S6YsC/Oxu066UGPISywvo55eQHM4xgaoaBJRx
-         YhzkIS1JOcZVHxYHqOeiWJenjKtTZAUHaJqiYttVnphiA6pg+j9ZUI+gIIMwn3U9ZqPA
-         PwbXFKXUVyOaVWJecgo5YpBxDmd9dyumGGeMC1PGMqzqx1QPTZXjkoM3SFlUkgH0w0ye
-         g2wA==
-X-Gm-Message-State: APjAAAWubI4B0fhyBhLomX+RMHZk06VnkHGwjP6h2IcDs4eqwNF3nbeD
-        8JdaSRYOHf1PM4QP7xOKlMxDPGVRrKw=
-X-Google-Smtp-Source: APXvYqyjTyZJ9aqAMxg5NK8qmc096hrVJYTZ0SiDoU4UhcV8+pO0itJeTJYFn2mbNW+2mq2jcrtSrA==
-X-Received: by 2002:a2e:3c06:: with SMTP id j6mr16326190lja.99.1557247694175;
-        Tue, 07 May 2019 09:48:14 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id j19sm3466097lfm.29.2019.05.07.09.48.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 09:48:12 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id d8so12344223lfb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:48:12 -0700 (PDT)
-X-Received: by 2002:ac2:54b7:: with SMTP id w23mr821657lfk.139.1557247692296;
- Tue, 07 May 2019 09:48:12 -0700 (PDT)
+        id S1726801AbfEGQuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:50:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbfEGQuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 12:50:50 -0400
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE30A20B7C;
+        Tue,  7 May 2019 16:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557247848;
+        bh=4tZewm4W45u/iRbwmWuTzyVbl39+IFYmFh6qEBuo2/Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Uqn/JtYS4kPRY76N+lJ+ylfSX3jhhKt8bpMbsPUAbhIPq7WbPOkwI7B+bzrRF+mtW
+         rr9fHN54+6u6esuv8V9WbtBn2fLQCuyF7SDLs4bATzuba3qo3XUrWi5tyIGjUg7cWf
+         ohL4+iQdMasZDjhJ/NdA27RT3khpi3Ok67A7e0sg=
+Received: by mail-qk1-f182.google.com with SMTP id c15so1403744qkl.2;
+        Tue, 07 May 2019 09:50:48 -0700 (PDT)
+X-Gm-Message-State: APjAAAWU/YvdochfhPJ65wvV2J/RL4XUBsq8SVnpfwMUF95E7Rekw30F
+        Fq7nxqolBxCAObeOF1tB7yWqEeSclDpRbk/xRw==
+X-Google-Smtp-Source: APXvYqwy91gBuwgIgFwBIlr7H7WziKK1/q+qve5xTg6xIcAxeG7XLdX/VKJhShfFBkFEzLxxQLOwWb8GHqYD7EgmNlA=
+X-Received: by 2002:a37:5c81:: with SMTP id q123mr23947855qkb.29.1557247848038;
+ Tue, 07 May 2019 09:50:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190503174730.245762-1-dianders@chromium.org>
- <CA+ASDXOkHxYumCBv-T0gxTjdMVTu-c=33Lk-0TUgJ3WGUn2DVQ@mail.gmail.com> <CAD=FV=UKTDFwq3PSdpPmShRcOtZaH1mU=2H-ynoG4VooV=rKVQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=UKTDFwq3PSdpPmShRcOtZaH1mU=2H-ynoG4VooV=rKVQ@mail.gmail.com>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Tue, 7 May 2019 09:48:00 -0700
-X-Gmail-Original-Message-ID: <CA+ASDXMOmD+Wp5wfWU_1m+eEKhGTz62Ru1TJhH7Cea_CKa9PHw@mail.gmail.com>
-Message-ID: <CA+ASDXMOmD+Wp5wfWU_1m+eEKhGTz62Ru1TJhH7Cea_CKa9PHw@mail.gmail.com>
-Subject: Re: [PATCH] pstore/ram: Improve backward compatibility with older Chromebooks
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
+ <CGME20190419134822eucas1p29c6eff0f500311749b33c4f556123cf0@eucas1p2.samsung.com>
+ <1555681688-19643-4-git-send-email-l.luba@partner.samsung.com>
+ <20190430223629.GA22317@bogus> <1fd44623-4a59-f014-1ae9-a7cc605ad30f@partner.samsung.com>
+ <CAL_JsqJcm9Z6vYFHGyAZ+h3-kmSv6e=3NtO-fjJn3-QT0JoX+w@mail.gmail.com>
+ <97277857-666d-7720-9d85-19120c977682@partner.samsung.com> <3d221027-292b-7d0d-2510-f230a81f4b52@partner.samsung.com>
+In-Reply-To: <3d221027-292b-7d0d-2510-f230a81f4b52@partner.samsung.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 7 May 2019 11:50:37 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+K-bdhTBnW5R4M0nDoikfFRdz-BeZf9Rf-hSmACj4B2w@mail.gmail.com>
+Message-ID: <CAL_Jsq+K-bdhTBnW5R4M0nDoikfFRdz-BeZf9Rf-hSmACj4B2w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] Documentation: devicetree: add PPMU events description
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, willy.mh.wolff.ml@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 7, 2019 at 9:25 AM Doug Anderson <dianders@chromium.org> wrote:
-> On Mon, May 6, 2019 at 2:40 PM Brian Norris <briannorris@chromium.org> wrote:
-> > The last part of the sentence technically isn't true -- the original
-> > bindings (notably, with no DT maintainer Reviewed-by) didn't specify
-> > where such a node should be found:
-> >
-> > 35da60941e44 pstore/ram: add Device Tree bindings
-> >
-> > so child-of-root used to be a valid location. But anyway, this code is
-> > just part of a heuristic for "old DT" (where later bindings clarified
-> > this), so it still seems valid.
+On Tue, May 7, 2019 at 4:05 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> I agree that it was unclear in the past, but it is true that being
-> under the root node is not according to the _current_ upstream
-> bindings, right?  ;-)
+> Hi Rob,
+>
+> On 5/6/19 12:29 PM, Lukasz Luba wrote:
+> > Hi Rob,
+> >
+> > On 5/2/19 10:24 PM, Rob Herring wrote:
+> >> On Thu, May 2, 2019 at 3:52 AM Lukasz Luba
+> >> <l.luba@partner.samsung.com> wrote:
+> >>>
+> >>> Hi Rob,
+> >>>
+> >>> On 5/1/19 12:36 AM, Rob Herring wrote:
+> >>>> On Fri, Apr 19, 2019 at 03:48:07PM +0200, Lukasz Luba wrote:
+> >>>>> Extend the documenation by events description with new
+> >>>>> 'event-data-type'
+> >>>>> field. Add example how the event might be defined in DT.
+> >>>>
+> >>>> Why do we need event types in DT? We don't do this for other h/w
+> >>>> such as
+> >>>> ARM PMU.
+> >>> In ARM PMU all the events are hard-coded into the driver code i.e. in v7
+> >>> arch/arm/kernel/perf_event_v7.c
+> >>> and are seen from perf. They are different type and for different
+> >>> purpose. The Ecynos PPMU events are not seen in perf, they are
+> >>> for internal monitoring and must not be reset by other actors like perf.
+> >>> They are used by the 'bus drivers' to made some heuristics and tune the
+> >>> internal settings, like frequency.
+> >>>
+> >>> Chanwoo has written PPMU driver which relies on DT definition.
+> >>> The DT events are used by other DT devices by phandle.
+> >>
+> >> How is that done? I don't see anything in the binding for that.
+> > Here are the DT devices and how they are pinned together:
+> > - declared devfreq events:
+> > https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
+> >
+> > - devfreq events pinned to the bus device:
+> > https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412-odroid-common.dtsi#L107
+> >
+> > - the bus device itself:
+> > https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412.dtsi#L457
+> >
+> >
+> > Regards,
+> > Lukasz
+> >
+> >>
+> >> Rob
+> >>
+> >>
+> Can I send the next version of the patch set, which has Chanwoo's
+> suggestions, or do you have some objections to this PPMU entries?
 
-Sure, I suppose. Although, given the general ABI policy around DT, it
-seems to me that something that was "according to" an old binding
-cannot really be made "no longer" according to the binding. It can be
-discouraged, and removed from new DTs, but it doesn't really become
-*wrong*.
+I think the existing binding which this is based on needs some
+changes, so it's pointless really for me to comment on additions.
 
-But our DT was definitely *not* according to even the (un-reviewed)
-merged binding. So I'm mostly mincing words here.
-
-Brian
+Rob
