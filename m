@@ -2,88 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88844163F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 14:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 331C7163FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 14:49:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfEGMtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 08:49:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35402 "EHLO mail.kernel.org"
+        id S1726744AbfEGMtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 08:49:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726159AbfEGMtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 08:49:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726000AbfEGMtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 08:49:51 -0400
+Received: from localhost (173-24-246-231.client.mchsi.com [173.24.246.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FAFD205C9;
-        Tue,  7 May 2019 12:49:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4787205C9;
+        Tue,  7 May 2019 12:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557233371;
-        bh=XdAjnHt4EB6PZ/2o9+t02PkKMJ9elm5fJFbn7IRzPm4=;
+        s=default; t=1557233391;
+        bh=ra7tqOS4f+DfaPqJyjodbcdGsIMeXh1kzglL7pZre8M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VBku6dTJ6/vky557fEKpwHtjeHJlfREJk0WNBZE7pCtr+3S6OfATQdhOR0zn2c2p0
-         AnhZGHFxL9Jd/ldP+yg9HXiYkgWEGFCThDcy/dC8ZZ2OxZjub820VPyiIWhDi6nRl8
-         JQAI2XWznaGPYzhpU87bdlMDfn9370j34AG5ZDBI=
-Date:   Tue, 7 May 2019 14:49:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4.19 79/99] ASoC: wm_adsp: Correct handling of compressed
- streams that restart
-Message-ID: <20190507124928.GA10118@kroah.com>
-References: <20190506143053.899356316@linuxfoundation.org>
- <20190506143101.240836871@linuxfoundation.org>
- <20190507174430.2e981704@fdyp522>
+        b=DERnMfiV/5F1i33PM1E2PdY9rxIepPd+xuFV70+do8LEyO53zDcitWILeCfAYZSLz
+         vTQtUao3vDB3wUcd4vY5Ek6kO5CYC6m57j3COVcilc9iR9O5550VGDTSYgtLwwxWVy
+         TJZVOU4J42Mp+opl6YYXio2Oxf4mf32uXHbROGvY=
+Date:   Tue, 7 May 2019 07:49:48 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     linux-pci@vger.kernel.org, "Chocron, Jonathan" <jonnyc@amazon.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Frederick Lawler <fred@fredlawl.com>
+Subject: Re: [PATCH v2 08/13] PCI/portdrv: Simplify PCIe feature permission
+ checking
+Message-ID: <20190507124948.GC156478@google.com>
+References: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152062203293.77693.8159909590216160503.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <0c7ed46e4a8cf4cea544a7e62c32428b31cdea4e.camel@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507174430.2e981704@fdyp522>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <0c7ed46e4a8cf4cea544a7e62c32428b31cdea4e.camel@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 05:44:30PM +0900, Nobuhiro Iwamatsu wrote:
-> Hi,
+On Tue, May 07, 2019 at 01:00:03PM +0100, David Woodhouse wrote:
+> On Fri, 2018-03-09 at 13:00 -0600, Bjorn Helgaas wrote:
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -540,6 +540,16 @@ struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
+> >         INIT_LIST_HEAD(&bridge->windows);
+> >         bridge->dev.release = pci_release_host_bridge_dev;
+> >  
+> > +       /*
+> > +        * We assume we can manage these PCIe features.  Some systems may
+> > +        * reserve these for use by the platform itself, e.g., an ACPI BIOS
+> > +        * may implement its own AER handling and use _OSC to prevent the
+> > +        * OS from interfering.
+> > +        */
+> > +       bridge->use_aer = 1;
+> > +       bridge->use_hotplug = 1;
+> > +       bridge->use_pme = 1;
+> > +
+> >         return bridge;
+> >  }
+> >  EXPORT_SYMBOL(pci_alloc_host_bridge);
 > 
-> On Mon, May 06, 2019 at 04:32:52PM +0200, Greg Kroah-Hartman wrote:
-> > From: Charles Keepax <ckeepax@opensource.cirrus.com>
-> >
-> > commit 639e5eb3c7d67e407f2a71fccd95323751398f6f upstream.
-> >
-> > Previously support was added to allow streams to be stopped and
-> > started again without the DSP being power cycled and this was done
-> > by clearing the buffer state in trigger start. Another supported
-> > use-case is using the DSP for a trigger event then opening the
-> > compressed stream later to receive the audio, unfortunately clearing
-> > the buffer state in trigger start destroys the data received
-> > from such a trigger. Correct this issue by moving the call to
-> > wm_adsp_buffer_clear to be in trigger stop instead.
-> >
-> > Fixes: 61fc060c40e6 ("ASoC: wm_adsp: Support streams which can start/stop with DSP active")
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This commit has other problems, and it is fixed by commit 43d147be5738a9ed6cfb25c285ac50d6dd5793be.
-> Please apply this commit too.
-> 
-> commit 43d147be5738a9ed6cfb25c285ac50d6dd5793be
-> Author: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Date:   Tue Apr 2 13:49:14 2019 +0100
-> 
->     ASoC: wm_adsp: Check for buffer in trigger stop
-> 
->     Trigger stop can be called in situations where trigger start failed
->     and as such it can't be assumed the buffer is already attached to
->     the compressed stream or a NULL pointer may be dereferenced.
-> 
->     Fixes: 639e5eb3c7d6 ("ASoC: wm_adsp: Correct handling of compressed streams that restart")
->     Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
->     Signed-off-by: Mark Brown <broonie@kernel.org>
+> Is there a good reason why you've done this only for
+> pci_alloc_host_bridge() and not also for devm_pci_alloc_host_bridge()? 
 
-Thank you, now queued up!
+No good reason; I just screwed up.  Should be fixed in v5.2 (and marked for
+stable):
 
-greg k-h
+https://lore.kernel.org/linux-pci/20190318160718.10925-1-jean-philippe.brucker@arm.com
+
+Sorry about that.
+
+Bjorn
