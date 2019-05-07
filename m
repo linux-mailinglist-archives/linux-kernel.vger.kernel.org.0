@@ -2,102 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A9015FF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1B315FF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfEGI7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:59:08 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43636 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfEGI7H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:59:07 -0400
-Received: by mail-qk1-f194.google.com with SMTP id z6so114972qkl.10
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 01:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3aU3KdevIyzgXbG781UoZs1Bb4vUUWKNcMK076foDGU=;
-        b=ON+p2hg7Pm2pamPArQ09UUBPZnXq1MgAYa2Q6ziX4dSU3Ex/qwkdxRfrmyQQKq4fo0
-         CzdRAKKzu2/TUUbDJOleTBxNvkUtNAbVv6BJ5B8EVOF6ygVEtUfE2cih/mGrjoausodv
-         pBx/sT84pXaXCG5QgM+6SgdQFHkYaLjmPAq9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3aU3KdevIyzgXbG781UoZs1Bb4vUUWKNcMK076foDGU=;
-        b=ZP2It8WJ/J2AHNrGMyvjcEYsJoj3mARRfj/Rq8Iw0Houj6ECFZcYB+t7b4KTTvaqoT
-         RQcpRjM5clNNiKOnQZ+nasLsvoatjQw3SqJDzUGyUPIZJZz8HOdXjGWkSczgkm5v0S6A
-         Y7w95+Zd8aoeO0r53MfTKceFB+ZAPTIniyckuUiWKiC9M6M57KAGEWq78dPB5Z27BEf1
-         E6u1ub0C1deuQep9Pi69DtaMBaf7UMVnD7xKMQ9UmjUsmq1EYo4oH5TXq4+8IHIYlUFY
-         hFYvo00zYuW9SaZ/tkCuoIERiBosgx5E6pJHTJQUZi5oTjACUqB+5JAzHm5eFH2ohQiU
-         zNZA==
-X-Gm-Message-State: APjAAAWrge7RMl+J0HuZkcQ6wi/7x9f9x77ZynUXsUbg+XxelfFjYb9q
-        P/BpP17bkQauFDSzRNvzagUo23evh36wMZIFefs5cw==
-X-Google-Smtp-Source: APXvYqwPpaxX5r4wI/jXxlXZQ/vWJkvg48WefXd+ah/jnuQKCFF2bVOLDxZdtW5Aili31vG0ozFXkzpJEG1lt+lr1Mk=
-X-Received: by 2002:a05:620a:1641:: with SMTP id c1mr236605qko.103.1557219546010;
- Tue, 07 May 2019 01:59:06 -0700 (PDT)
+        id S1726909AbfEGI64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:58:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44488 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726331AbfEGI6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 04:58:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 77065ABAC;
+        Tue,  7 May 2019 08:58:54 +0000 (UTC)
+Date:   Tue, 7 May 2019 10:58:53 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
+ reliable stacktrace support
+In-Reply-To: <20190507004032.2fgddlsycyypqdsn@treble>
+Message-ID: <alpine.LSU.2.21.1905071052570.7486@pobox.suse.cz>
+References: <20190430091049.30413-1-pmladek@suse.com> <20190430091049.30413-2-pmladek@suse.com> <20190507004032.2fgddlsycyypqdsn@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <1556793795-25204-1-git-send-email-michael.kao@mediatek.com> <1556793795-25204-7-git-send-email-michael.kao@mediatek.com>
-In-Reply-To: <1556793795-25204-7-git-send-email-michael.kao@mediatek.com>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Tue, 7 May 2019 16:58:40 +0800
-Message-ID: <CAJMQK-i6oZ1dTbTXV2_nX+mGfZ7JcafRMKbb81YgPk67Gdbjbg@mail.gmail.com>
-Subject: Re: [PATCH 6/8] thermal: mediatek: mt8183: fix bank number settings
-To:     "michael.kao" <michael.kao@mediatek.com>
-Cc:     fan.chen@mediatek.com, jamesjj.liao@mediatek.com,
-        dawei.chien@mediatek.com, louis.yu@mediatek.com,
-        roger.lu@mediatek.com, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 10:43 AM michael.kao <michael.kao@mediatek.com> wrote:
->
-> From: Michael Kao <michael.kao@mediatek.com>
->
-> MT8183_NUM_ZONES should be set to 1
-> because MT8183 doesn't have multiple banks.
->
-> Fixes: a4ffe6b52d27 ("thermal: mediatek: add support for MT8183")
-> Signed-off-by: Michael Kao <Michael.Kao@mediatek.com>
-> ---
->  drivers/thermal/mtk_thermal.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-> index 5c07a61..cb41e46 100644
-> --- a/drivers/thermal/mtk_thermal.c
-> +++ b/drivers/thermal/mtk_thermal.c
-> @@ -216,6 +216,9 @@ enum {
->  /* The total number of temperature sensors in the MT8183 */
->  #define MT8183_NUM_SENSORS     6
->
-> +/* The number of banks in the MT8183 */
-> +#define MT8183_NUM_ZONES               1
-> +
->  /* The number of sensing points per bank */
->  #define MT8183_NUM_SENSORS_PER_ZONE     6
->
-> @@ -503,7 +506,7 @@ struct mtk_thermal {
->
->  static const struct mtk_thermal_data mt8183_thermal_data = {
->         .auxadc_channel = MT8183_TEMP_AUXADC_CHANNEL,
-> -       .num_banks = MT8183_NUM_SENSORS_PER_ZONE,
-> +       .num_banks = MT8183_NUM_ZONES,
->         .num_sensors = MT8183_NUM_SENSORS,
->         .vts_index = mt8183_vts_index,
->         .cali_val = MT8183_CALIBRATION,
+On Mon, 6 May 2019, Josh Poimboeuf wrote:
 
-Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> On Tue, Apr 30, 2019 at 11:10:48AM +0200, Petr Mladek wrote:
+> > WARN_ON_ONCE() could not be called safely under rq lock because
+> > of console deadlock issues. Fortunately, there is another check
+> > for the reliable stacktrace support in klp_enable_patch().
+> > 
+> > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  kernel/livepatch/transition.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> > index 9c89ae8b337a..8e0274075e75 100644
+> > --- a/kernel/livepatch/transition.c
+> > +++ b/kernel/livepatch/transition.c
+> > @@ -263,8 +263,15 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
+> >  	trace.nr_entries = 0;
+> >  	trace.max_entries = MAX_STACK_ENTRIES;
+> >  	trace.entries = entries;
+> > +
+> >  	ret = save_stack_trace_tsk_reliable(task, &trace);
+> > -	WARN_ON_ONCE(ret == -ENOSYS);
+> > +	/*
+> > +	 * pr_warn() under task rq lock might cause a deadlock.
+> > +	 * Fortunately, missing reliable stacktrace support has
+> > +	 * already been handled when the livepatch was enabled.
+> > +	 */
+> > +	if (ret == -ENOSYS)
+> > +		return ret;
+> 
+> I find the comment to be a bit wordy and confusing (and vague).
+> 
+> Also this check is effectively the same as the klp_have_reliable_stack()
+> check which is done in kernel/livepatch/core.c.  So I think it would be
+> clearer and more consistent if the same check is done here:
+> 
+> 	if (!klp_have_reliable_stack())
+> 		return -ENOSYS;
+
+We removed it in 1d98a69e5cef ("livepatch: Remove reliable stacktrace 
+check in klp_try_switch_task()") and I do think it does not belong here. 
+We can check for the facility right at the beginning in klp_enable_patch() 
+and it is not necessary to do it every time klp_check_stack() is called.
+
+But it is nothing I could not live with, so if you decide it is better, I 
+will not object.
+
+Miroslav
