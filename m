@@ -2,99 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3324B160B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0459E160C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfEGJUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:20:50 -0400
-Received: from mx.socionext.com ([202.248.49.38]:3523 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfEGJUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:20:49 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 07 May 2019 18:20:47 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 07BFC6117D;
-        Tue,  7 May 2019 18:20:48 +0900 (JST)
-Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Tue, 7 May 2019 18:20:48 +0900
-Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
- SOC-EX03V.e01.socionext.com (10.213.24.23) with Microsoft SMTP Server (TLS)
- id 15.0.995.29; Tue, 7 May 2019 18:20:47 +0900
-Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
- SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
- Tue, 7 May 2019 18:20:47 +0900
-From:   <orito.takao@socionext.com>
-To:     <robh@kernel.org>
-CC:     <ulf.hansson@linaro.org>, <mark.rutland@arm.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
-        <jaswinder.singh@linaro.org>, <sugaya.taichi@socionext.com>,
-        <kasai.kazuhiro@socionext.com>, <kanematsu.shinji@socionext.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
- controller
-Thread-Topic: [PATCH 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
- controller
-Thread-Index: AQHU+9RXOLUG4XsvaU+oK6YWULWxq6ZWcdUAgAhr8AA=
-Date:   Tue, 7 May 2019 09:20:46 +0000
-Message-ID: <20190507182039.9D78.F0D17A80@socionext.com>
-References: <1556244392-15822-1-git-send-email-orito.takao@socionext.com>
- <20190502004422.GA2242@bogus>
-In-Reply-To: <20190502004422.GA2242@bogus>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Becky! ver. 2.74.02 [ja] (Unregistered)
-x-originating-ip: [10.213.24.1]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <CB4FF968706BD5458AC0FE498EB10D30@socionext.com>
-Content-Transfer-Encoding: base64
+        id S1726708AbfEGJXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:23:09 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53644 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbfEGJXJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 05:23:09 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 198so1623040wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:23:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GWMFFy2F73uQioGzc/atPqbskzKfI+KjLLT2AD39XqM=;
+        b=OX5vvZ87LB8cDTHYamz6ligqfmQhsZ90tAaUfhW/IEsC6KHMHK+E9vGdNRRy6BOkyX
+         6+cj0giqIw4AHdBAi8vmxMODUJn8lXbsDTJIH/fbvp54BZTW7/eJVi8hBs2V2a+/dRgz
+         P4AZcCq8siWWa1i1ZdA0WHsf86YolUA/v7aAUzexizy/0jj+PSLWAog22NrW0arYjkmv
+         kq83vOOTR/Ni78BW71QcFHgrj8o/uLFJZcXwHiHC/ena89R4f6NGoe5b5mOJdN3cflqT
+         2U9wPrMk67OSqdM6fU70ReShJTHFD+EqYPj2V2+Im6rhBoBLG/ppiYktnrAuaSEMarHA
+         MqZQ==
+X-Gm-Message-State: APjAAAX4xe4fon1ydvgy6fwbyXBTZVA7zrRrnWyfAg9qAqUutqE9g6eS
+        zIXPXC8DmtyXqyPCtlnGg35JsA==
+X-Google-Smtp-Source: APXvYqznSrFaB6uyOHVbt0B0t1ukse7n+r+sBjTzNFN1gJDrpzuanPf8ms1kehTEDJTT1MzX9RHvpg==
+X-Received: by 2002:a1c:4c09:: with SMTP id z9mr19795673wmf.87.1557220987708;
+        Tue, 07 May 2019 02:23:07 -0700 (PDT)
+Received: from linux.home (2a01cb05850ddf00045dd60e6368f84b.ipv6.abo.wanadoo.fr. [2a01:cb05:850d:df00:45d:d60e:6368:f84b])
+        by smtp.gmail.com with ESMTPSA id s3sm26161021wre.97.2019.05.07.02.23.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 May 2019 02:23:07 -0700 (PDT)
+Date:   Tue, 7 May 2019 11:23:05 +0200
+From:   Guillaume Nault <gnault@redhat.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     davem@davemloft.net, g.nault@alphalink.fr, jian.w.wen@oracle.com,
+        edumazet@google.com, kafai@fb.com, xiyou.wangcong@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] l2tp: Fix possible NULL pointer dereference
+Message-ID: <20190507092304.GA12570@linux.home>
+References: <20190506144404.25220-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506144404.25220-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmsgeW91IGZvciByZXZpZXdpbmcgbXkgcGF0Y2hlcy4NClNvcnJ5IGZvciBteSBsYXRlIHJl
-cGx5LiBKYXBhbiB3YXMgaW4gU3ByaW5nIFZhY2F0aW9uLg0KDQo+IE9uIEZyaSwgQXByIDI2LCAy
-MDE5IGF0IDExOjA2OjMyQU0gKzA5MDAsIFRha2FvIE9yaXRvIHdyb3RlOg0KPiANCj4gTmVlZHMg
-YSBjb21taXQgbXNnLg0KDQpJIHNlZS4gSSB3aWxsIGFkZCBtZXNzYWdlLg0KDQo+IA0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFRha2FvIE9yaXRvIDxvcml0by50YWthb0Bzb2Npb25leHQuY29tPg0KPiA+
-IC0tLQ0KPiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvc2RoY2ktbWlsYmVhdXQudHh0
-ICAgICB8IDM1ICsrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDM1
-IGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9tbWMvc2RoY2ktbWlsYmVhdXQudHh0DQo+ID4gDQo+ID4gZGlmZiAt
-LWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvc2RoY2ktbWlsYmVh
-dXQudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9zZGhjaS1taWxi
-ZWF1dC50eHQNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAuLjcw
-MDg0NjINCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21tYy9zZGhjaS1taWxiZWF1dC50eHQNCj4gPiBAQCAtMCwwICsxLDM1IEBA
-DQo+ID4gKyogU09DSU9ORVhUIFNESENJIGNvbnRyb2xsZXINCj4gPiArDQo+ID4gK1RoaXMgZmls
-ZSBkb2N1bWVudHMgZGlmZmVyZW5jZXMgYmV0d2VlbiB0aGUgY29yZSBwcm9wZXJ0aWVzIGluIG1t
-Yy50eHQNCj4gPiArYW5kIHRoZSBwcm9wZXJ0aWVzIHVzZWQgYnkgdGhlIHNkaGNpX21pbGJlYXV0
-IGRyaXZlci4NCj4gPiArDQo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gKy0gY29tcGF0
-aWJsZTogInNvY2lvbmV4dCxtaWxiZWF1dC1tMTB2LXNkaGNpLTMuMCINCj4gPiArLSBjbG9ja3M6
-IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiBjbG9jay1uYW1lcy4gSXQg
-aXMgYQ0KPiA+ICsgIGxpc3Qgb2YgcGhhbmRsZXMgYW5kIGNsb2NrLXNwZWNpZmllciBwYWlycy4N
-Cj4gPiArICBTZWUgLi4vY2xvY2tzL2Nsb2NrLWJpbmRpbmdzLnR4dCBmb3IgZGV0YWlscy4NCj4g
-PiArLSBjbG9jay1uYW1lczogU2hvdWxkIGNvbnRhaW4gdGhlIGZvbGxvd2luZyB0d28gZW50cmll
-czoNCj4gPiArCSJpZmFjZSIgLSBjbG9jayB1c2VkIGZvciBzZGhjaSBpbnRlcmZhY2UNCj4gPiAr
-CSJjb3JlIiAgLSBjb3JlIGNsb2NrIGZvciBzZGhjaSBjb250cm9sbGVyDQo+ID4gKw0KPiA+ICtP
-cHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICstIHZxbW1jLXN1cHBseTogcGhhbmRsZSB0byB0aGUg
-cmVndWxhdG9yIGRldmljZSB0cmVlIG5vZGUsIG1lbnRpb25lZA0KPiA+ICsgIGFzIHRoZSBWQ0NR
-L1ZERF9JTyBzdXBwbHkgaW4gdGhlIGVNTUMvU0Qgc3BlY3MuDQo+ID4gKy0gZnVqaXRzdSxjbWQt
-ZGF0LWRlbGF5LXNlbGVjdDogYm9vbGVhbiBwcm9wZXJ0eSBpbmRpY2F0aW5nIHRoYXQgdGhpcyBo
-b3N0DQo+ID4gKyAgcmVxdWlyZXMgdGhlIENNRF9EQVRfREVMQVkgY29udHJvbCB0byBiZSBlbmFi
-bGVkLg0KPiA+ICstIHNuaSxtbWMtcG93ZXItZ3Bpbzogc2V0IHByb3BlcnR5IGluZGljYXRpbmcg
-dGhhdCBwb3dlciBvbiBvciBvZmYgbmVlZHMNCj4gPiArICBjb250cm9sIG9mIGdwaW9zLg0KPiA+
-ICsNCj4gPiArRXhhbXBsZToNCj4gPiArCXNkaGNpMzogbW1jQDFiMDEwMDAwIHsNCj4gPiArCQlj
-b21wYXRpYmxlID0gInNvY2lvbmV4dCxtaWxiZWF1dC1tMTB2LXNkaGNpLTMuMCI7DQo+ID4gKwkJ
-cmVnID0gPDB4MWIwMTAwMDAgMHgxMDAwMD47DQo+ID4gKwkJaW50ZXJydXB0cyA9IDwwIDI2NSAw
-eDQ+Ow0KPiA+ICsJCXZvbHRhZ2UtcmFuZ2VzID0gPDMzMDAgMzMwMD47DQo+ID4gKwkJYnVzLXdp
-ZHRoID0gPDQ+Ow0KPiA+ICsJCWNsb2NrcyA9IDwmY2xrIDc+LCA8JmFoYl9jbGs+Ow0KPiA+ICsJ
-CWNsb2NrLW5hbWVzID0gImNvcmUiLCAiaWZhY2UiOw0KPiA+ICsJCWNhcC1zZGlvLWlycTsNCj4g
-PiArCQlzbmksbW1jLXBvd2VyLWdwaW8gPSA8JnBpbmN0cmwgNTMgR1BJT19BQ1RJVkVfSElHSD47
-DQo+ID4gKwkJCWZ1aml0c3UsY21kLWRhdC1kZWxheS1zZWxlY3Q7DQo+IA0KPiBXaGl0ZXNwYWNl
-IHByb2JsZW0uDQoNClNvcnJ5LCBJIHdpbGwgZml4Lg0KDQpUaGFua3MNCk9yaXRvDQoNCj4gDQo+
-ID4gKwl9Ow0KPiA+IC0tIA0KPiA+IDEuOS4xDQo+ID4gDQo+ID4gDQoNCi0tIA0KVGFrYW8gT3Jp
-dG8gPG9yaXRvLnRha2FvQHNvY2lvbmV4dC5jb20+DQo=
+On Mon, May 06, 2019 at 10:44:04PM +0800, YueHaibing wrote:
+> If alloc_workqueue fails in l2tp_init, l2tp_net_ops
+> is unregistered on failure path. Then l2tp_exit_net
+> is called which will flush NULL workqueue, this patch
+> add a NULL check to fix it.
+> 
+Thanks!
+
+Acked-by: Guillaume Nault <gnault@redhat.com>
