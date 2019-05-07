@@ -2,88 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA55165A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A1D165B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfEGO3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 10:29:34 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:51752 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726353AbfEGO3e (ORCPT
+        id S1726871AbfEGOcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 10:32:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726340AbfEGOcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 10:29:34 -0400
-Received: (qmail 1841 invoked by uid 2102); 7 May 2019 10:29:33 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 7 May 2019 10:29:33 -0400
-Date:   Tue, 7 May 2019 10:29:33 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>
-cc:     Jim Lin <jilin@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <mathias.nyman@intel.com>, <hminas@synopsys.com>,
-        <kai.heng.feng@canonical.com>, <drinkcat@chromium.org>,
-        <prime.zeng@hisilicon.com>, <malat@debian.org>,
-        <nsaenzjulienne@suse.de>, <jflat@chromium.org>,
-        <linus.walleij@linaro.org>, <clabbe@baylibre.com>,
-        <colin.king@canonical.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] usb: xhci: Add Clear_TT_Buffer
-In-Reply-To: <9ea9fd3e-cf1a-9015-6d21-377c2fd41e66@linux.intel.com>
-Message-ID: <Pine.LNX.4.44L0.1905071022140.1632-100000@iolanthe.rowland.org>
+        Tue, 7 May 2019 10:32:12 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x47EToQR003230
+        for <linux-kernel@vger.kernel.org>; Tue, 7 May 2019 10:32:11 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sb9tcp00k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:32:06 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
+        Tue, 7 May 2019 15:30:05 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 7 May 2019 15:30:00 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x47ETxx346596170
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 May 2019 14:29:59 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3EFC420B0;
+        Tue,  7 May 2019 14:29:59 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CA2FE42081;
+        Tue,  7 May 2019 14:29:57 +0000 (GMT)
+Received: from JAVRIS.in.ibm.com (unknown [9.102.0.77])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  7 May 2019 14:29:57 +0000 (GMT)
+Date:   Tue, 7 May 2019 19:59:51 +0530
+From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     jikos@kernel.org, jpoimboe@redhat.com, pmladek@suse.com,
+        joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] livepatch: Remove stale kobj_added entries from
+ kernel-doc descriptions
+References: <20190507130815.17685-1-mbenes@suse.cz>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190507130815.17685-1-mbenes@suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-TM-AS-GCONF: 00
+x-cbid: 19050714-0008-0000-0000-000002E431E2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050714-0009-0000-0000-00002250AF46
+Message-Id: <20190507142951.GA8038@JAVRIS.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=802 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905070094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019, Mathias Nyman wrote:
-
-> On 6.5.2019 17.57, Alan Stern wrote:
-> > On Mon, 6 May 2019, Jim Lin wrote:
-> > 
-> >> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-> >> processing for full-/low-speed endpoints connected via a TT, the host
-> >> software must use the Clear_TT_Buffer request to the TT to ensure
-> >> that the buffer is not in the busy state".
-> >>
-> >> In our case, a full-speed speaker (ConferenceCam) is behind a high-
-> >> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-> >> request we may continue to get STALL with the folllowing requests,
-> >> like Set_Interface.
-> >>
-> >> Here we add Clear_TT_Buffer for the following Set_Interface requests
-> >> to get ACK successfully.
-> >>
-> >> Originally usb_hub_clear_tt_buffer uses urb->dev->devnum as device
-> >> address while sending Clear_TT_Buffer command, but this doesn't work
-> >> for XHCI.
-> > 
-> > Why doesn't it work for xHCI?  Clear-TT-Buffer is part of the USB 2.0
-> > spec; it should work exactly the same for xHCI as for a USB-2.0 host
-> > controller.
-> > 
-> > Alan Stern
-> > 
+On Tue, May 07, 2019 at 03:08:14PM +0200, Miroslav Benes wrote:
+> Commit 4d141ab3416d ("livepatch: Remove custom kobject state handling")
+> removed kobj_added members of klp_func, klp_object and klp_patch
+> structures. kernel-doc descriptions were omitted by accident. Remove
+> them.
 > 
-> For other host controllers udev->devnum is the same as the address of the
-> usb device, chosen and set by usb core.
-> 
-> With xHC the controller hardware assigns the address, and won't be the same as
-> devnum.
-> 
-> The Clear-TT-Buffer request sent to the hub includes the address of the LS/FS
-> child device in wValue field. usb_hub_clear_tt_buffer() uses udev->devnum to set the
-> address wValue. This won't work for devices connected to xHC
+> Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
 
-I see.  Thanks for the explanation; it makes sense now.  The patch
-description should explain this too.
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
-Wouldn't it be better to add a field containing the device address to
-struct usb_device?  And also export it, either in sysfs or debugfs?  
-It seems like the kind of thing that might be important for debugging.  
-If we did this then the usb_hub_clear_tt_buffer API wouldn't need to be
-changed.
-
-Alan Stern
+-- 
+Kamalesh
 
