@@ -2,93 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FB016DC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B47316DCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfEGXM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 19:12:29 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41561 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfEGXM2 (ORCPT
+        id S1726460AbfEGXVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 19:21:07 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34577 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfEGXVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 19:12:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3so5352566pgp.8;
-        Tue, 07 May 2019 16:12:28 -0700 (PDT)
+        Tue, 7 May 2019 19:21:06 -0400
+Received: by mail-pl1-f193.google.com with SMTP id ck18so8929218plb.1;
+        Tue, 07 May 2019 16:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=t+991fJXyuKUQQwkL0XKlpY3wv/FZAEDqC4Kot14BtA=;
-        b=DhWdNayWQ0DUYtDPLP/TGT0af+Nm0QhDBmfY67WSbKdeX1UWpHwzh/Q7P+uDYe4EcN
-         AkbuklBVS7UoRbi8wyfzD7g/mZEYeFLosQkDS26rr/aI2zw2g2dhfoT8u2ga1oq6CG3G
-         TKtXYk0EPormBR8yK1Te15uGGGT+yDZPL3+zy8kQ4K8KMjZ5omfyg6wrBfvYlgpvUA2l
-         +W4bL/vkTAUfXn8oy9/L085ZD0NbKoAViQG3CChuyI8xq/EwnTsEyd+HYcE3xN1ZMjpR
-         ArniJr6hfneg5BwNq6x3meiQFDuuLrW8rSFNL9S90XBoDKvfyppnnEj1Eqo5ICGDt2Wp
-         QhBQ==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+gKSlDLnDf/+lOEDDP2Iyq5/Ag+VeBN4xDo4/a6mcWE=;
+        b=Xbkzd+ahKjnjPuFAeJ37rdP601/YT/yiEItlz9avQ/dyh/XWESKqPiRwDStmiiMvOB
+         yIbAu0kjJffnXj83mXIhvtoAvPuBeDL21aBao0UMDM6GwGxMg6pxXEai8S5jTy87lCOy
+         lTjsmDHTpCxdOAwy0O1gSpsX7pqajG+2dsaKCHBE60KaiGL0qGelg+ndUkbEW7gbuAdF
+         cRC3CyIckZrtNlcgBvirZER8mKrAb2eUPtIM6feMx6wHd5BbQMYf4YL0+m0X/t4+JccH
+         7Y4GE6iRpuhUkhoJpThYZPslQnXvaKYKfWxTT6rCbvQkXdzeqzpt5w2kdNRNMdkKfLK1
+         PFyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=t+991fJXyuKUQQwkL0XKlpY3wv/FZAEDqC4Kot14BtA=;
-        b=RABut2IEtidVFgtZDUQ1uLvoFYNNmq+U9RWx/5TCy22YNCtOfNtz0lmkOpqpDaSH/z
-         qW7FI1+NUuwI/OfVKeQYHbgiRHEVkjoNX/RePDOntE+1t/VyFFFt19veoYb7EMf2peWQ
-         XLd4PImVMIUaHAY5v2AQgUI+mdXUeBRCxKEEibCMmdg6op4Ws26ZGVcc8Mg1wQ2bvfA+
-         zXO81ld5+3jMuUngB/VBMb9fwNnDVegYhHjDt0wvs7w14z61dT0E1Uao1zd6UDtlEURI
-         iDffYQNV+ajzeQhSzDToc7SmwNXDmuMVfAa5HIlu8b6ofSdchU4Zaafpahg+k/EXx87P
-         F7vA==
-X-Gm-Message-State: APjAAAXbtwg3T5Hu4qGZRvhcLeCgxWRdvfi+6tpCftj0ba3eXtOpsNuN
-        RkhgbvTN1RrfqS74U6j7RBw=
-X-Google-Smtp-Source: APXvYqxZav9qC16/BhRJT1Au4atYI1Nu0VhHUa7WgJn7qnTJqapYofDdsZAOgx99FuOgI5WHp/bxxA==
-X-Received: by 2002:a63:5c1a:: with SMTP id q26mr31172530pgb.73.1557270747924;
-        Tue, 07 May 2019 16:12:27 -0700 (PDT)
-Received: from ip-172-31-29-54.us-west-2.compute.internal (ec2-34-219-153-187.us-west-2.compute.amazonaws.com. [34.219.153.187])
-        by smtp.gmail.com with ESMTPSA id v14sm18171723pfm.95.2019.05.07.16.12.25
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+gKSlDLnDf/+lOEDDP2Iyq5/Ag+VeBN4xDo4/a6mcWE=;
+        b=jTzZPtR2/JBPYHUoWv8sp0DZM5ajA+rx4BtMjI/h2m+sTjTGZtXJQcsN2AtBXihYtR
+         ZT5GHS/oW+HrtFH0YLUgL0bGNzgcSBCoSg0JBGwfAu6TjRzAZ993X9GBdEINwEBkFM+N
+         LMKTgBC6a0nIQBDftNB0O1+VWKuBguXyuEBMq4L8fBmQz5GFtYfSNbXQ/fPxs6UL6PTb
+         z/CK43CMryjnP67882HBdogRj4nlehg87UM9C2RYRVt9rdV2r/cT80ccslGOdXahGOmp
+         IkH/18oezreC/9/3KeCg9hBndWttttMsxPECSgOJ078HqdlXqQZFOu474caBvIWMw61h
+         OJbw==
+X-Gm-Message-State: APjAAAUk9LIkXxO3uB5k+o+RwSpn5o/Mm45VbPFYIhtPBeuISoxXfemG
+        U11MCvTAHdPP9SYEClQkTnZahL2/
+X-Google-Smtp-Source: APXvYqz93rUWqPle/G8Op3EXe4WndFHGalqvrnzO565qJxS6Yp9F+7od8crkk6C0Mm0UtjfR6LV7rA==
+X-Received: by 2002:a17:902:b40b:: with SMTP id x11mr44424746plr.265.1557271265376;
+        Tue, 07 May 2019 16:21:05 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g128sm20055716pfb.131.2019.05.07.16.21.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 16:12:26 -0700 (PDT)
-Date:   Tue, 7 May 2019 23:12:24 +0000
-From:   Alakesh Haloi <alakesh.haloi@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/bpf: Fix compile warning in bpf selftest
-Message-ID: <20190507231224.GA3787@ip-172-31-29-54.us-west-2.compute.internal>
+        Tue, 07 May 2019 16:21:03 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] kernel: Provide a __pow10() function
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20190507193504.28248-1-f.fainelli@gmail.com>
+ <20190507193504.28248-2-f.fainelli@gmail.com>
+ <20190507210654.GA4951@roeck-us.net>
+ <b3c4fdd3-0c91-9681-e471-a9ddbbd256c8@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <9c9d44ea-1cd2-0705-5d0f-b05af0682f90@roeck-us.net>
+Date:   Tue, 7 May 2019 16:21:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b3c4fdd3-0c91-9681-e471-a9ddbbd256c8@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the following compile time warning
+On 5/7/19 2:49 PM, Florian Fainelli wrote:
+> On 5/7/19 2:06 PM, Guenter Roeck wrote:
+>> On Tue, May 07, 2019 at 12:35:02PM -0700, Florian Fainelli wrote:
+>>> Provide a simple macro that can return the value of 10 raised to a
+>>> positive integer. We are going to use this in order to scale units from
+>>> firmware to HWMON.
+>>>
+>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>>> ---
+>>>   include/linux/kernel.h | 11 +++++++++++
+>>>   1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+>>> index 2d14e21c16c0..62fc8bd84bc9 100644
+>>> --- a/include/linux/kernel.h
+>>> +++ b/include/linux/kernel.h
+>>> @@ -294,6 +294,17 @@ static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
+>>>   	return (u32)(((u64) val * ep_ro) >> 32);
+>>>   }
+>>>   
+>>> +/* Return in f the value of 10 raise to the power x */
+>>> +#define __pow10(x, f)(					\
+>>> +{							\
+>>> +	typeof(x) __x = abs(x);				\
+>>> +	f = 1;						\
+>>> +	while (__x--)					\
+>>> +		f *= 10;				\
+>>> +	f;						\
+>>> +}							\
+>>> +)
+>>
+>> Kind of unusual. I would have expected to use this like
+>> 	f = __pow10(x);
+>> ie without having to provide f as parameter. That would be much less
+>> confusing. I assume this is to make the result type independent, but
+>> I am not sure if that is worth the trouble.
+> 
+> Correct, that was the intent here.
+> 
+>>
+>> Are there users outside the hwmon code ? If not, it might be simpler
+>> to keep it there for now.
+> 
+> There appears to be a few outside actually:
+> 
+> drivers/acpi/sbs.c::battery_scale
+> drivers/iio/common/hid-sensors/hid-sensor-attributes.c::pow_10
+> 
+> There could be others but those two came out as obvious candidates.
+> 
+> Would you be okay with a local pow10 function within scmi-hwmon.c and a
+> subsequent patch series providing a common function?
+> 
 
-flow_dissector_load.c: In function ‘detach_program’:
-flow_dissector_load.c:55:19: warning: format not a string literal and no format arguments [-Wformat-security]
-   error(1, errno, command);
-                   ^~~~~~~
-Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
----
- tools/testing/selftests/bpf/flow_dissector_load.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would prefer that, actually, to reduce dependencies.
 
-diff --git a/tools/testing/selftests/bpf/flow_dissector_load.c b/tools/testing/selftests/bpf/flow_dissector_load.c
-index 77cafa66d048..7136ab9ffa73 100644
---- a/tools/testing/selftests/bpf/flow_dissector_load.c
-+++ b/tools/testing/selftests/bpf/flow_dissector_load.c
-@@ -52,7 +52,7 @@ static void detach_program(void)
- 	sprintf(command, "rm -r %s", cfg_pin_path);
- 	ret = system(command);
- 	if (ret)
--		error(1, errno, command);
-+		error(1, errno, "%s", command);
- }
- 
- static void parse_opts(int argc, char **argv)
--- 
-2.17.1
-
+Thanks,
+Guenter
