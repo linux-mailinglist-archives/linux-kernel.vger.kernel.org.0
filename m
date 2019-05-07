@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6A71688A
+	by mail.lfdr.de (Postfix) with ESMTP id E8FA31688B
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfEGQ6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:58:50 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44914 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbfEGQ6u (ORCPT
+        id S1727278AbfEGQ6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:58:54 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35182 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbfEGQ6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:58:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y13so8951789pfm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:58:49 -0700 (PDT)
+        Tue, 7 May 2019 12:58:53 -0400
+Received: by mail-pg1-f194.google.com with SMTP id h1so8616527pgs.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=F24W/VQdFijjB1XGiNkd+uOp8FfAnZYn7ACk/HniCPU=;
-        b=Y3Zmc4Ma29TBsmGOUgwg/jPSIzCpH5JEVkNVRIChv+DGVQRwMrPtv4fU/OV5Zdqg9f
-         FcehhvuCbJIP6W7xn1UQf2RtbFurlNLSOfo3waSOoI+iEzAhS4wVBuUDBGw6EE1qs1s9
-         npyy0aEHaXXEASHaz9KQnjcDzqfp/6zt7R3RfSmuCrWlT1/jxrf5HKdPj6xkST6pOWeG
-         SBc2d/bOIDuYHF0tItNJenK6BszLfEBCVBmMIP0prNNeLj9FBjlKD9wO+j/teKWtt7ko
-         4KdClyUwrPURGOmeyinrZyvb1wTKNHdl4XLw5WynCm/dfPtgQ+dLTLXsrGA3xN5D/eaD
-         zfVQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yCv8sSMR6ScKjEy1rfKWXGO+DU+5zcc2adHgmKc5Xg8=;
+        b=MbQxKye7rA//CkI9bEGuRwPAFkJISCOT4QAqjGufCOelreGxFdXLEZcRtwrcr/bvmn
+         5F8SCUFRLBYgFUOndqdEsgbFiQCyk3BAF+glzr8cWI49YTy12LnWHKErN20OhtXqlOTK
+         jUPUYtC31fYoW8RLeI9pWHBT+kN1iMHh/Qh/nBkCTNfNTyD0ZBDTE9v5swEddHPAiBp5
+         fTyMkrRmy2KlbWlaGSKuE88RQGhhaCYQg4yDvsKRfjrh1ANSoheFZ3uExna2UEn5jxyy
+         OstuX6uCMHAxWF7VTPw776bKcU5k+SpegZh+Pa8Une6s9XSM4f54lWCsOBpF9iv1lXMD
+         xgCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=F24W/VQdFijjB1XGiNkd+uOp8FfAnZYn7ACk/HniCPU=;
-        b=LgR4saq/1aLUJVsfTmporExJJQUQBCU8OBcm4TWTMPb749LViVLDOpPO06JkGVC7l8
-         kfesGyBPfZ+M+TaFXayKt8Nr+0HVPBnEKRmW1tyTeDn2Wnzq3Q5V3ML/iert+SQo2bPK
-         MpDcD1cytT5UGtDoN2iUnx1be4xtM/VQh4BBocqJ0QhkPx2pM6BtXGJ4ZyrPvLIjLIaL
-         22frhSzsy1m6Ovf4OpXgrphTG8Di/PkqkjMzMpRNr/okMDnfoTPe/z5hh7teT6g0kCDn
-         bPapkoDOLymH+A/twFbNvGzahd+sb+J9yPifsh1Zf0rAfNXT89OJsTNZCRXw/+rTA8gW
-         MOXA==
-X-Gm-Message-State: APjAAAWNDUb8sOXGSBXDGJy9/fk5WC5B8iKrgyMUF5VTQao12fe5kZ+q
-        7b3OuoajEIX5+sDx+ibxqh0=
-X-Google-Smtp-Source: APXvYqyIg1w1Fe7zxUiHrffJfT0aPJd66Jea9lk8GVdzXmRZC1nVbx0EGEdiR0579yTPC1RZ60b+LQ==
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr39874187pgh.86.1557248329585;
-        Tue, 07 May 2019 09:58:49 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yCv8sSMR6ScKjEy1rfKWXGO+DU+5zcc2adHgmKc5Xg8=;
+        b=ZAeFNfwpWkaoOnNNoE3N3BvIcrgOWJJS52Wv5e1TELr+fWtDHahATWQPU/bk9z3WxO
+         n0jO24OnYaMbktE6ds2tNobt3Z6InXm7bmyLWbjvpml3Za9Y9T140GfEAnxBwiKeJ6X3
+         fejwp25Ish/M3Hs/Y30I7BExKzMKeELa4uPxDfa9Fee7kPVtVmvAkiJTIBw72kJqXc5g
+         7L8nr+ORAIj5R8QMbsZ/BxkFZbfog+wLldxBcWnjr/8ABck6qHHFGx4AOUjxlRqJobnQ
+         Y3y9KdFStvHRLZO8eqM5hP+4B71BGlPsNKqqQQZ2QZvqWtKQaEuGzke4O0c/9imrRXjH
+         8lYQ==
+X-Gm-Message-State: APjAAAUMHb7+BQmzy+O6M8uE8DCBpGZsajRBJSgrJXwAgd/el6cgCMwM
+        8F/5z7Kah1J/ocuRdJ3iqhBk5rW+
+X-Google-Smtp-Source: APXvYqy3RvniSsGhL6GQuYhBIGPKuJeK5+qo9p8zgaZO6UBphnwJmO5t/7I7TYPdO3EnicMp8ubK7A==
+X-Received: by 2002:a63:2d41:: with SMTP id t62mr41260420pgt.113.1557248332851;
+        Tue, 07 May 2019 09:58:52 -0700 (PDT)
 Received: from mita-MS-7A45.lan ([240f:34:212d:1:1b24:991b:df50:ea3f])
-        by smtp.gmail.com with ESMTPSA id r12sm18140093pfn.144.2019.05.07.09.58.46
+        by smtp.gmail.com with ESMTPSA id r12sm18140093pfn.144.2019.05.07.09.58.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 07 May 2019 09:58:48 -0700 (PDT)
+        Tue, 07 May 2019 09:58:52 -0700 (PDT)
 From:   Akinobu Mita <akinobu.mita@gmail.com>
 To:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
@@ -51,65 +52,18 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Christoph Hellwig <hch@lst.de>,
         Sagi Grimberg <sagi@grimberg.me>,
         Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: [PATCH v2 0/7] nvme-pci: support device coredump
-Date:   Wed,  8 May 2019 01:58:27 +0900
-Message-Id: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
+Subject: [PATCH v2 1/7] devcoredump: use memory_read_from_buffer
+Date:   Wed,  8 May 2019 01:58:28 +0900
+Message-Id: <1557248314-4238-2-git-send-email-akinobu.mita@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
+References: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables to capture snapshot of controller information via device
-coredump machanism, and it helps diagnose and debug issues.
-
-The nvme device coredump is triggered when command timeout occurs, and
-creates the following coredump files.
-
- - regs: NVMe controller registers (00h to 4Fh)
- - sq<qid>: Submission queue
- - cq<qid>: Completion queue
- - telemetry-ctrl-log: Telemetry controller-initiated log (if available)
- - data: Empty
-
-(I don't have the NVMe device that supports telemetry log page for now, so
-capturing telemetry log is untested.)
-
-The device coredump mechanism currently allows drivers to create only a
-single coredump file, so this also provides a new function that allows
-drivers to create several device coredump files in one crashed device.
-
-* v2
-- Add Reviewed-by tag.
-- Add patch to fix typo in comment
-- Remove unneeded braces.
-- Allocate device_entry followed by an array of devcd_file elements.
-- Add telemetry log page definisions
-- Add facility to check log page attributes
-- Exclude the doorbell registers from register dump.
-- Save controller registers in a binary format instead of a text format.
-- Create an empty 'data' file in the device coredump.
-- Save telemetry controller-initiated log if available
-- Make coredump procedure into two phases (before resetting controller and
-  after resetting as soon as admin queue is available).
-
-Akinobu Mita (7):
-  devcoredump: use memory_read_from_buffer
-  devcoredump: fix typo in comment
-  devcoredump: allow to create several coredump files in one device
-  nvme.h: add telemetry log page definisions
-  nvme: add facility to check log page attributes
-  nvme-pci: add device coredump support
-  nvme-pci: trigger device coredump on command timeout
-
- drivers/base/devcoredump.c  | 168 ++++++++++------
- drivers/nvme/host/Kconfig   |   1 +
- drivers/nvme/host/core.c    |   2 +
- drivers/nvme/host/nvme.h    |   1 +
- drivers/nvme/host/pci.c     | 460 ++++++++++++++++++++++++++++++++++++++++++--
- include/linux/devcoredump.h |  33 ++++
- include/linux/nvme.h        |  25 +++
- 7 files changed, 617 insertions(+), 73 deletions(-)
+Use memory_read_from_buffer() to simplify devcd_readv().
 
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Cc: Keith Busch <keith.busch@intel.com>
@@ -117,6 +71,37 @@ Cc: Jens Axboe <axboe@fb.com>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Sagi Grimberg <sagi@grimberg.me>
 Cc: Minwoo Im <minwoo.im.dev@gmail.com>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+---
+* v2
+- Add Reviewed-by tag.
+
+ drivers/base/devcoredump.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
+index f1a3353..3c960a6 100644
+--- a/drivers/base/devcoredump.c
++++ b/drivers/base/devcoredump.c
+@@ -164,16 +164,7 @@ static struct class devcd_class = {
+ static ssize_t devcd_readv(char *buffer, loff_t offset, size_t count,
+ 			   void *data, size_t datalen)
+ {
+-	if (offset > datalen)
+-		return -EINVAL;
+-
+-	if (offset + count > datalen)
+-		count = datalen - offset;
+-
+-	if (count)
+-		memcpy(buffer, ((u8 *)data) + offset, count);
+-
+-	return count;
++	return memory_read_from_buffer(buffer, count, &offset, data, datalen);
+ }
+ 
+ static void devcd_freev(void *data)
 -- 
 2.7.4
 
