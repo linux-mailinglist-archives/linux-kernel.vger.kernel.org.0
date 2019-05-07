@@ -2,129 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE5F16653
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 17:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F81B1665B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 17:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfEGPMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 11:12:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbfEGPMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 11:12:32 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 126A7205ED;
-        Tue,  7 May 2019 15:12:28 +0000 (UTC)
-Date:   Tue, 7 May 2019 11:12:27 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call
- functions
-Message-ID: <20190507111227.1d4268d7@gandalf.local.home>
-In-Reply-To: <CAHk-=wg2_okyU8mpkGCUrudgfg8YmNetSD8=scNbOkN+imqZdQ@mail.gmail.com>
-References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
-        <20190506145745.17c59596@gandalf.local.home>
-        <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
-        <20190506162915.380993f9@gandalf.local.home>
-        <CAHk-=wi5KBWUOvM94aTOPnoJ5L_aQG=vgLQ4SxxZDeQD0pF2tQ@mail.gmail.com>
-        <20190506174511.2f8b696b@gandalf.local.home>
-        <CAHk-=wj3R_s0RTJOmTBNaUPhu4fz2shNBUr4M6Ej65UYSNCs-g@mail.gmail.com>
-        <20190506210416.2489a659@oasis.local.home>
-        <CAHk-=whZwqzbu-=1r_j_cXfd=ta1q7RFCuneqBZfQQhS_P-BmQ@mail.gmail.com>
-        <20190506215353.14a8ef78@oasis.local.home>
-        <CAHk-=wjLXmOn=Cp=uOfO4gE01eN_-UcOUyrMTTw5-f_OfPO48Q@mail.gmail.com>
-        <20190506225819.11756974@oasis.local.home>
-        <CAHk-=wh4FCNBLe8OyDZt2Tr+k9JhhTsg3H8R4b55peKcf0b6eQ@mail.gmail.com>
-        <20190506232158.13c9123b@oasis.local.home>
-        <CAHk-=wi4vPg4pu6RvxQrUuBL4Vgwd2G2iaEJVVumny+cBOWMZw@mail.gmail.com>
-        <CAHk-=wg2_okyU8mpkGCUrudgfg8YmNetSD8=scNbOkN+imqZdQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726567AbfEGPPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 11:15:30 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33153 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfEGPP3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 11:15:29 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h17so2488358pgv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 08:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:from:to:subject:date:message-id;
+        bh=jxvbr3KCxGuFA0UUCE0tn2m+gj1lVeJv2p0ZckpwEOo=;
+        b=godi/eRqc9u1IGuhM6qD/GD01ckleD8wICQ7/wytewi8a7HBbzkII3459Dcb5M+5sy
+         SFVxVOPrh7oEqVmF4uK8oXWesB2bHmyIkIDNTNkIiFE6aVDQAuMrT+Lhyc7dZjrVGUz3
+         OYxlsQzH8MWBzSPmXLdIQNiSbw2MXf7hEu7OfDrD/NCs0oNCRXmxFjIiJhNeiDiPuNi3
+         WPOv5roEbMkZgK8sd3IbMVL6LZW1FMNM5rqNKdKe625cMdK66Qm1aU5VhWd0NQHg5Ra3
+         0XZSzk+0CYdxAWjOaclyJKyw53FQhY5XIYz5khKa4DFmlAxxdg66yLH1zv2d6LR1LfWo
+         kvgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=mime-version:x-gm-message-state:from:to:subject:date:message-id;
+        bh=jxvbr3KCxGuFA0UUCE0tn2m+gj1lVeJv2p0ZckpwEOo=;
+        b=YILXGZHmlEf4iVQMsP1Vg8SeWjBMA0Y12gtmU/D0HRsGup4ap1zd1HuWW11jugMy5U
+         N8l0xlkCeiwvNENrfyRSCOqjkRSckQAQ1FpLABva34UR1Wa8h/ua080H81MYi7i/E4zc
+         CqxNYeQCEgyHH1mR5VcH4mOEi3bRPMwly7Xdll9wG5mC6e/hnouBu2rEFC2QdROX5Zzk
+         AmNvTStqqreKKooiWy67UvedUZd8v1bHCbjVlSlHd9Ls8V2gCCYysTLfaY6cc3LQiPEQ
+         QeIcq1FOr2wXFjctJty656/dMxajH/+KJmYiPhV6zXwF1TzOiItzQXDPLyl11C3kqTq9
+         BMtw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Gm-Message-State: APjAAAXKs2cm9sN+CDnEO2hB9y2W+d149kRZPu7WrtE3gY3xQ4+kr70D
+        52eK4FyZqp92b5tM48RBEvtQUWVShEJ8tlYJAY+gHb+xaYvG3tid+mmkICs0GRc4BrfBo46y/tn
+        BowjR1tGmK/KM8GdLxg==
+X-Google-Smtp-Source: APXvYqzrXRe5boGKu4+E5H+iFQtt2WKa8IE844ytrYjmvDo2sjKQXZGEQiX+PPyG3XVys162mtMbAQ==
+X-Received: by 2002:a65:4649:: with SMTP id k9mr16750621pgr.239.1557242128887;
+        Tue, 07 May 2019 08:15:28 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id 2sm5397398pgc.49.2019.05.07.08.15.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 07 May 2019 08:15:28 -0700 (PDT)
+From:   Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
+        andrew@lunn.ch, palmer@sifive.com, paul.walmsley@sifive.com,
+        sagar.kadam@sifive.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 v2 0/3] Extend dt bindings to support I2C on sifive devices and a fix broken IRQ in polling mode.
+Date:   Tue,  7 May 2019 20:45:05 +0530
+Message-Id: <1557242108-13580-1-git-send-email-sagar.kadam@sifive.com>
+X-Mailer: git-send-email 1.9.1
+Content-Type: text/plain; charset="US-ASCII"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 07:54:53 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+The patch is based on mainline v5.1 and extends DT-bindings for Opencore based I2C device in FU540 
+SoC, available on HiFive unleashed board (Rev A00), and also provides a workaround for broken IRQ
+which affect I2C polling mode interface on FU540 chipsets. 
 
-> And honestly, I absolutely despise PeterZ's patch. The notion that we
-> should suddenly say that "oh, the i386 kernel stack is odd" after 28
-> years of having that standard i386 stack is just crazy. And this:
-> 
->  arch/x86/entry/entry_32.S            | 136 ++++++++++++++++++++++++++++-------
-> ...
->  12 files changed, 323 insertions(+), 140 deletions(-)
-> 
-> 
-> vs this:
-> 
->  arch/x86/entry/entry_32.S            |  7 +++-
-> ...
->  6 files changed, 120 insertions(+), 13 deletions(-)
-> 
-> is still pretty damn conclusive. Not to mention that the simple
-> approach had a truly mindbogglingly simple solution with no actual
-> subtle changes anywhere else.
-> 
-> So I still claim that we should do my patch. Because it is SIMPLE.
-> It's straightforward, and I can explain every single line in it. Even
-> if I spent *way* too long until I realized that the "trivial"
-> memmove() wasn't so trivial.
+The polling mode workaround patch fixes the CPU stall issue, when-ever i2c transfer are initiated.
 
-Yes, band-aids are usually simpler than a proper fix. We have 28 years
-of hacks built on hacks. There's a lot of hacks in the C code to handle
-the differences between the crappy way x86_32 does pt_regs and the
-proper way x86_64 does them.
+This workaround checks if it's a FU540 chipset based on device tree information, and check's for open
+core's IF(interrupt flag) and TIP flags to break from the polling loop upon completion of transfer.
 
-If the goal was just to add another band-aid to this, we now have one
-more subtle work around caused by two different methods being handled
-by a single code base.
+To test the patch, a PMOD-AD2 sensor is connected to HiFive Unleashed board over J1 connector, and 
+appropriate device node is added into board specific device tree as per the information provided in 
+dt-bindings in Documentation/devicetree/bindings/i2c/i2c-sifive.txt.
+Without this workaround, the CPU stall's infinitely.
 
-I don't look at Peter's patch and think "this is the solution for int3
-emulate calls". I see Peter's patch as "Thanks God, we are finally
-getting rid of the cause of all theses work around hacks all over the
-place! and oh by the way, we can easily implement int3 call emulation
-because of it".
+Busybox i2c utilities used to verify workaround : i2cdetect, i2cdump, i2cset, i2cget
 
-To implement your way, we need to change how the int3 handler works.
-It will be the only exception handler having to return regs, otherwise
-it will crash.
 
-Sure, it's an easily solution for the one off change of emulating
-calls, but it's just another complex work around that nobody is going
-to understand in 5 years.
+Patch History:
 
--- Steve
+V0<->V1:
+-Incorporate review comments from Andrew
+-Extend dt bindings into i2c-ocores.txt instead of adding new file
+-Rename SIFIVE_FLAG_POLL to OCORES_FLAG_BROKEN_IRQ
+
+V0:
+-Update dt bindings for sifive i2c devices
+-Fix broken IRQ affecting i2c polling mode interface.
+
+
+Sagar Shrikant Kadam (3):
+  dt-bindings: i2c: extend existing opencore bindings.
+  i2c-ocore: sifive: add support for i2c device on FU540-c000 SoC.
+  i2c-ocores: sifive: add polling mode workaround for FU540-C000 SoC.
+
+ .../devicetree/bindings/i2c/i2c-ocores.txt         | 20 +++++++++++++
+ drivers/i2c/busses/i2c-ocores.c                    | 33 +++++++++++++++++++---
+ 2 files changed, 49 insertions(+), 4 deletions(-)
+
+-- 
+1.9.1
+
+
+-- 
+The information transmitted is intended only for the person or entity to 
+which it is addressed and may contain confidential and/or privileged 
+material. If you are not the intended recipient of this message please do 
+not read, copy, use or disclose this communication and notify the sender 
+immediately. It should be noted that any review, retransmission, 
+dissemination or other use of, or taking action or reliance upon, this 
+information by persons or entities other than the intended recipient is 
+prohibited.
