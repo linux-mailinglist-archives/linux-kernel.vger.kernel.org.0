@@ -2,94 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A25F1659B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F30165A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfEGO0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 10:26:06 -0400
-Received: from mail.santannapisa.it ([193.205.80.98]:64096 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfEGO0G (ORCPT
+        id S1726735AbfEGO2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 10:28:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59240 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726353AbfEGO2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 10:26:06 -0400
-Received: from [83.43.182.198] (account l.abeni@santannapisa.it HELO nowhere)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 138898608; Tue, 07 May 2019 16:26:03 +0200
-Date:   Tue, 7 May 2019 16:25:23 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC PATCH 1/6] sched/dl: Improve deadline admission control
- for asymmetric CPU capacities
-Message-ID: <20190507162523.6a405d48@nowhere>
-In-Reply-To: <20190507134850.yreebscc3zigfmtd@queper01-lin>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
-        <20190506044836.2914-2-luca.abeni@santannapisa.it>
-        <20190507134850.yreebscc3zigfmtd@queper01-lin>
-Organization: Scuola Superiore S.Anna
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 7 May 2019 10:28:25 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x47ENFhh177712
+        for <linux-kernel@vger.kernel.org>; Tue, 7 May 2019 10:28:24 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sb9tcnx82-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:28:23 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
+        Tue, 7 May 2019 15:28:20 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 7 May 2019 15:28:18 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x47ESHQ937486628
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 May 2019 14:28:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3755BA4A33;
+        Tue,  7 May 2019 14:28:17 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EDFF3A4A2C;
+        Tue,  7 May 2019 14:28:16 +0000 (GMT)
+Received: from localhost (unknown [9.152.212.229])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  7 May 2019 14:28:16 +0000 (GMT)
+Date:   Tue, 7 May 2019 16:28:15 +0200
+From:   Vasily Gorbik <gor@linux.ibm.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Emese Revfy <re.emese@gmail.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] latent_entropy: avoid build error when plugin cflags are not
+ set
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+x-cbid: 19050714-0012-0000-0000-00000319364F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050714-0013-0000-0000-00002151B41F
+Message-Id: <patch.git-0d8ac0206ebb.your-ad-here.call-01557238927-ext-2525@work.hours>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905070093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 14:48:52 +0100
-Quentin Perret <quentin.perret@arm.com> wrote:
+Some architectures set up CFLAGS for linux decompressor phase from
+scratch and do not include GCC_PLUGINS_CFLAGS. Since "latent_entropy"
+variable declaration is generated by the plugin code itself including
+linux/random.h in decompressor code then would cause a build
+error. E.g. on s390:
 
-> Hi Luca,
-> 
-> On Monday 06 May 2019 at 06:48:31 (+0200), Luca Abeni wrote:
-> > diff --git a/drivers/base/arch_topology.c
-> > b/drivers/base/arch_topology.c index edfcf8d982e4..646d6d349d53
-> > 100644 --- a/drivers/base/arch_topology.c
-> > +++ b/drivers/base/arch_topology.c
-> > @@ -36,6 +36,7 @@ DEFINE_PER_CPU(unsigned long, cpu_scale) =
-> > SCHED_CAPACITY_SCALE; 
-> >  void topology_set_cpu_scale(unsigned int cpu, unsigned long
-> > capacity) {
-> > +	topology_update_cpu_capacity(cpu, per_cpu(cpu_scale, cpu),
-> > capacity);  
-> 
-> Why is that one needed ? Don't you end up re-building the sched
-> domains after this anyways ?
+In file included from ./include/linux/net.h:22,
+                 from ./include/linux/skbuff.h:29,
+                 from ./include/linux/if_ether.h:23,
+                 from ./arch/s390/include/asm/diag.h:12,
+                 from arch/s390/boot/startup.c:8:
+./include/linux/random.h: In function 'add_latent_entropy':
+./include/linux/random.h:26:39: error: 'latent_entropy' undeclared
+(first use in this function); did you mean 'add_latent_entropy'?
+   26 |  add_device_randomness((const void *)&latent_entropy,
+      |                                       ^~~~~~~~~~~~~~
+      |                                       add_latent_entropy
+./include/linux/random.h:26:39: note: each undeclared identifier is
+reported only once for each function it appears in
 
-If I remember correctly, this function was called at boot time when the
-capacities are assigned to the CPU cores.
+The build error is triggered by commit a80313ff91ab ("s390/kernel:
+introduce .dma sections") which made it into 5.2 merge window.
 
-I do not remember if the sched domain was re-built after this call, but
-I admit I do not know this part of the kernel very well...
+To address that avoid using CONFIG_GCC_PLUGIN_LATENT_ENTROPY in
+favour of LATENT_ENTROPY_PLUGIN definition which is defined as a
+part of gcc plugins cflags and hence reflect more accurately when gcc
+plugin is active. Besides that it is also used for similar purpose in
+linux/compiler-gcc.h for latent_entropy attribute definition.
 
-This achieved the effect of correctly setting up the "rd_capacity"
-field, but I do not know if there is a better/simpler way to achieve
-the same result :)
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+---
+ include/linux/random.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-			Thanks,
-				Luca
-
-
-
-> 
-> >  	per_cpu(cpu_scale, cpu) = capacity;
-> >  }  
-> 
-> Thanks,
-> Quentin
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 445a0ea4ff49..d4eb9b3789ad 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -20,7 +20,7 @@ struct random_ready_callback {
+ 
+ extern void add_device_randomness(const void *, unsigned int);
+ 
+-#if defined(CONFIG_GCC_PLUGIN_LATENT_ENTROPY) && !defined(__CHECKER__)
++#if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
+ static inline void add_latent_entropy(void)
+ {
+ 	add_device_randomness((const void *)&latent_entropy,
+-- 
+2.18.0.13.gd42ae10
 
