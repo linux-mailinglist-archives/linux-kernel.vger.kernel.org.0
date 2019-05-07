@@ -2,185 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60EA016D2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9764616D36
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbfEGV1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 17:27:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43416 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbfEGV1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 17:27:23 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16D37308793B;
-        Tue,  7 May 2019 21:27:22 +0000 (UTC)
-Received: from [10.36.116.95] (ovpn-116-95.ams2.redhat.com [10.36.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5781A1001DDC;
-        Tue,  7 May 2019 21:27:18 +0000 (UTC)
-Subject: Re: [PATCH v2 4/8] mm/memory_hotplug: Create memory block devices
- after arch_add_memory()
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh <linux-sh@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1728614AbfEGV3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 17:29:05 -0400
+Received: from mail-eopbgr40080.outbound.protection.outlook.com ([40.107.4.80]:34023
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726650AbfEGV3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 17:29:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=p1hq.onmicrosoft.com;
+ s=selector1-phaseone-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YtCyHlAiOyN2Ma6ZABI2NLZIZKEn6jnAdNz1Yzufof8=;
+ b=jxwFK5oz5J7HqQBMiWkSuLt7146rpyCxJ5L0/cyNT4ZHngeofAmLMvLn++vVs81I0B90THBrGqN5YtkRzHQG3itfC2Ye+pQrSYUSDnSr+AroXmHXm6G3dv+zWg0J3WRhWFtK81ApDX6rypnpeekpNzFRnwTOl2qC8izSLmnwVAE=
+Received: from AM0PR01MB6019.eurprd01.prod.exchangelabs.com (10.255.30.76) by
+ AM0PR01MB4371.eurprd01.prod.exchangelabs.com (52.135.146.146) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Tue, 7 May 2019 21:28:59 +0000
+Received: from AM0PR01MB6019.eurprd01.prod.exchangelabs.com
+ ([fe80::f817:7fb7:3744:632e]) by AM0PR01MB6019.eurprd01.prod.exchangelabs.com
+ ([fe80::f817:7fb7:3744:632e%2]) with mapi id 15.20.1856.012; Tue, 7 May 2019
+ 21:28:59 +0000
+From:   "Claus H. Stovgaard" <cst@phaseone.com>
+To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+CC:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Qian Cai <cai@lca.pw>, Wei Yang <richard.weiyang@gmail.com>,
-        Arun KS <arunks@codeaurora.org>,
-        Mathieu Malaterre <malat@debian.org>
-References: <20190507183804.5512-1-david@redhat.com>
- <20190507183804.5512-5-david@redhat.com>
- <CAPcyv4jiVyaPbUrQwSiy65xk=EegJwuGSDKkVYWkGiTJz847gg@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <a41438f2-6bac-a2ad-96ec-234762c1cd37@redhat.com>
-Date:   Tue, 7 May 2019 23:27:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jiVyaPbUrQwSiy65xk=EegJwuGSDKkVYWkGiTJz847gg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+Subject: Re: [PATCH] usb: gadget: configfs: Add lpm_Ux_disable
+Thread-Topic: [PATCH] usb: gadget: configfs: Add lpm_Ux_disable
+Thread-Index: AQHVBLXEtmccm2+6b0C9UsHMCwwNFKZgLlWA
+Date:   Tue, 7 May 2019 21:28:59 +0000
+Message-ID: <1557264537.26527.14.camel@phaseone.com>
+References: <1557220655-123090-1-git-send-email-cst@phaseone.com>
+         <1557221830.114189.8.camel@phaseone.com>
+         <30102591E157244384E984126FC3CB4F639E9057@us01wembx1.internal.synopsys.com>
+In-Reply-To: <30102591E157244384E984126FC3CB4F639E9057@us01wembx1.internal.synopsys.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 07 May 2019 21:27:22 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2.110.44.75]
+x-mailer: Evolution 3.24.6 
+x-clientproxiedby: HE1PR09CA0076.eurprd09.prod.outlook.com
+ (2603:10a6:7:3d::20) To AM0PR01MB6019.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:160::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=cst@phaseone.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b0baa6ca-2367-44b8-eef7-08d6d33304a0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:AM0PR01MB4371;
+x-ms-traffictypediagnostic: AM0PR01MB4371:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM0PR01MB437107DD6749D6531F11E3E6DA310@AM0PR01MB4371.eurprd01.prod.exchangelabs.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2512;
+x-forefront-prvs: 0030839EEE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(39850400004)(396003)(199004)(189003)(71200400001)(6512007)(6306002)(54906003)(53936002)(73956011)(66476007)(305945005)(66946007)(6486002)(316002)(103116003)(229853002)(64756008)(68736007)(26005)(66556008)(6436002)(7736002)(66446008)(99286004)(2906002)(186003)(6246003)(55236004)(66066001)(19627235002)(102836004)(4326008)(76176011)(52116002)(50226002)(386003)(2501003)(8936002)(36756003)(81166006)(81156014)(86362001)(8676002)(71190400001)(6506007)(110136005)(6116002)(14454004)(2616005)(486006)(3846002)(446003)(11346002)(256004)(5660300002)(478600001)(476003)(966005)(25786009)(99106002)(6606295002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR01MB4371;H:AM0PR01MB6019.eurprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: phaseone.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 8qUVu3b4qevJZAWZ59AuSxDgAyrUeQ3O4zcqMs+U7n8zRRIamXwlVCMNhviJI8sZIEu+s9EAuqJHVMyVSRwfjzvIGdEjheQIDQ2IFqRPGpOXtgn1AJaEISufgWpOPlM6+BPL+LxTaAaAuCJVOPd8Irn5oWbkjtHcCXZDtBQaB5OTQAxijz3bPqsybZ03rqrR04kkm2f4XYZO4rUI0s/3L58fl57jUgEsDjrEDGQXzv1EYo6JrZNDPldc4EPVlArOMIsgzJkhT5gJAv2OvvmmUwF/nBLSH/p5OwnGyh+df2VEADR9OtQdnKhDTHwR/DtVRu9HNuG9OR2tDOtRjwETmQj47ptyAKojY2PP/IMeeoi0HrRyQ3XXsAAUa3v8oF8gL/Z+P3t4cFVaLMZhasdh+aYscyPu/IxSha+fHMToBwE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B66DF6DC137248429519E075D6AE925C@eurprd01.prod.exchangelabs.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: phaseone.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0baa6ca-2367-44b8-eef7-08d6d33304a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 21:28:59.7270
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: cbe5b4c6-877a-4fe4-be65-3be424dd0574
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR01MB4371
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> +static void unregister_memory(struct memory_block *memory)
->> +{
->> +       BUG_ON(memory->dev.bus != &memory_subsys);
-> 
-> Given this should never happen and only a future kernel developer
-> might trip over it, do we really need to kill that developer's
-> machine? I.e. s/BUG/WARN/? I guess an argument can be made to move
-> such a change that to a follow-on patch since you're just preserving
-> existing behavior, but I figure might as well address these as the
-> code is refactored.
-
-I assume only
-
-if (WARN ...)
-	return;
-
-makes sense then, right?
-
-> 
->> +
->> +       /* drop the ref. we got via find_memory_block() */
->> +       put_device(&memory->dev);
->> +       device_unregister(&memory->dev);
->> +}
->> +
->>  /*
->> - * need an interface for the VM to add new memory regions,
->> - * but without onlining it.
->> + * Create memory block devices for the given memory area. Start and size
->> + * have to be aligned to memory block granularity. Memory block devices
->> + * will be initialized as offline.
->>   */
->> -int hotplug_memory_register(int nid, struct mem_section *section)
->> +int hotplug_memory_register(unsigned long start, unsigned long size)
->>  {
->> -       int ret = 0;
->> +       unsigned long block_nr_pages = memory_block_size_bytes() >> PAGE_SHIFT;
->> +       unsigned long start_pfn = PFN_DOWN(start);
->> +       unsigned long end_pfn = start_pfn + (size >> PAGE_SHIFT);
->> +       unsigned long pfn;
->>         struct memory_block *mem;
->> +       int ret = 0;
->>
->> -       mutex_lock(&mem_sysfs_mutex);
->> +       BUG_ON(!IS_ALIGNED(start, memory_block_size_bytes()));
->> +       BUG_ON(!IS_ALIGNED(size, memory_block_size_bytes()));
-> 
-> Perhaps:
-> 
->     if (WARN_ON(...))
->         return -EINVAL;
-> 
-
-Yes, guess this souldn't hurt.
-
->>
->> -       mem = find_memory_block(section);
->> -       if (mem) {
->> -               mem->section_count++;
->> -               put_device(&mem->dev);
->> -       } else {
->> -               ret = init_memory_block(&mem, section, MEM_OFFLINE);
->> +       mutex_lock(&mem_sysfs_mutex);
->> +       for (pfn = start_pfn; pfn != end_pfn; pfn += block_nr_pages) {
->> +               mem = find_memory_block(__pfn_to_section(pfn));
->> +               if (mem) {
->> +                       WARN_ON_ONCE(false);
-> 
-> ?? Isn't that a nop?
-
-Yes, that makes no sense :)
-
-Thanks!
-
--- 
-
-Thanks,
-
-David / dhildenb
+SGkgVGhpbmgNCg0KT24gdGlyLCAyMDE5LTA1LTA3IGF0IDE4OjUzICswMDAwLCBUaGluaCBOZ3V5
+ZW4gd3JvdGU6DQo+IENsYXVzIEguIFN0b3ZnYWFyZCB3cm90ZToNCj4gPiANCj4gPiBXaGVyZSBB
+bnVyYWdzIHBhdGNoIGZvY3VzIG9uIHNldHRpbmcgVTEvVTIgbGF0ZW5jeSBpbiB0aGUgQk9TDQo+
+ID4gZGVzY3JpcHRvciBmcm9tIHRoZSBkZXZpY2V0cmVlLCB0aGlzIHBhdGNoIGZvY3VzZXMgb24g
+aGF2aW5nIGENCj4gPiBjb25maWdmcw0KPiA+IGludGVyZmFjZSBmb3IgZm9yY2luZyB0aGUgVURD
+IChoZXJlIHRoZSBkd2MzKSB0byBub3QgZW5hYmxlIFUxL1UyDQo+ID4gYW5kDQo+ID4gcmVqZWN0
+IHRoZSBTRVRfU0VMKFUxL1UyKS4NCj4gPiANCj4gPiBMb29raW5nIGZvcndhcmQgdG8gaW5wdXQu
+DQo+ID4gDQo+ID4gWzFdIGh0dHBzOi8vdXJsZGVmZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91cmw/
+dT1odHRwcy0zQV9fd3d3LnNwaW5pYw0KPiA+IHMubmV0X2xpc3RzX2xpbnV4LQ0KPiA+IDJEdXNi
+X21zZzE3OTczMi5odG1sJmQ9RHdJRGFRJmM9RFBMNl9YXzZKa1hGeDdBWFdxQjB0ZyZyPXU5Rllv
+eEt0eWgNCj4gPiBqckdGY3lpeEZZcVRqdzFaWDBWc0cyZDhGQ216a1RZLQ0KPiA+IHcmbT13S2R5
+V21ZcGJXNzkxTEFtN3JZd3ZGWXg1RTBiakVOeVhaekh2SzR2eUZvJnM9ZXM3a2tpNml1TEpVcDJy
+Sm4NCj4gPiB6UDlhbFhLeWZKUE5TZnl4VFZDS0tEZF9yUSZlPQ0KPiA+IFsyXSBodHRwczovL3Vy
+bGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0cHMtM0FfX3d3dy5zcGluaWMNCj4g
+PiBzLm5ldF9saXN0c19saW51eC0NCj4gPiAyRHVzYl9tc2cxNzkzOTMuaHRtbCZkPUR3SURhUSZj
+PURQTDZfWF82SmtYRng3QVhXcUIwdGcmcj11OUZZb3hLdHloDQo+ID4ganJHRmN5aXhGWXFUancx
+WlgwVnNHMmQ4RkNtemtUWS0NCj4gPiB3Jm09d0tkeVdtWXBiVzc5MUxBbTdyWXd2Rll4NUUwYmpF
+TnlYWnpIdks0dnlGbyZzPWNGVG1POXdQZjdiNlRaeEZVDQo+ID4gQUFJSk0wWl93TTF0dE5JYzFy
+Y3QwdVI2Y28mZT0NCj4gPiANCj4gPiANCj4gDQo+IEknbSBub3Qgc3VyZSB3aG8gd2lsbCBzdWJt
+aXQgdGhlIHBhdGNoIHRvIG1ha2UgY2hhbmdlIHRvIERXQzMgZm9yDQo+IGRpc2FibGluZyBVMS9V
+MiAoQW51cmFnIG9yIHlvdSksIGJ1dCBjYW4geW91IHNwbGl0IHlvdXIgcGF0Y2ggYmV0d2Vlbg0K
+PiBkd2MzIGFuZCBjb25maWdmcy4NCg0KSGF2ZSBqdXN0IHdyaXR0ZW4gd2l0aCBBbnVyYWcsIGFu
+ZCBoZSB3aWxsIHN1Ym1pdCBhIG5ldyBwYXRjaCBzZXQsDQp3aGVyZSBoZSBoYXMgdGFrZW4gdGhl
+IGNvbnRyb2wgaW4gZXAwLmMgZnJvbSBteSBwYXRjaCwgYW5kIGNvbWJpbmVkDQp3aXRoIGhpcyBk
+ZXZpY2V0cmVlIGJpbmRpbmdzLiBTbyB0aGUgcGxhbiBpcyB0byBkcm9wIHRoZSBjb25maWdmcw0K
+aW50ZXJmYWNlIGNvbXBsZXRlbHksIGtlZXAgdGhlIGRldmljZXRyZWUgYmluZGluZyBuYW1lcyAo
+ZGlzLXUxLWVudHJ5LQ0KcXVpcmspIGFuZCBsZXQgaXQgZG8gMyB0aGluZ3MuDQoqU2V0cyB0aGUg
+bGF0ZW5jeSB0byAwIGluIHRoZSBCT1MNCipEaXNhYmxlIFUxL1UyIGFjY2VwdGVuY2UNCipEaXNh
+YmxlIFUxL1UyIGluaXRpYXRpbmcNClRoaXMgYWxzbyBpbmNsdWRlIHJlamVjdGluZyBTRVRfU0VM
+Lg0KDQpXZSB0aGluayB0aGlzIGlzIHRoZSBiZXN0IG9wdGlvbiwgYW5kIHRoZW4gZHJvcHBpbmcg
+dGhpcyBwYXRjaCBhcyBpdA0KaXMuDQoNCkkgd2lsbCBqdXN0IHNlbmQgYW5kIGVtYWlsIGxhdGVy
+IG9uIHRoaXMgdGhyZWFkLCB3aGVuIHRoZSBwYXRjaCBpcw0KYXZhaWxhYmxlIG9uIG1hcmMuaW5m
+byBhcyBhIGxpbmsgZm9yIHJlZmVyZW5jZSB0byB0aGUgZnV0dXJlLg0KDQpUaGFua3MNCkNsYXVz
+DQo=
