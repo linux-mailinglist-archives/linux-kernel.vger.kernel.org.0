@@ -2,118 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E5F15811
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7EE15818
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfEGD3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:29:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34273 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbfEGD3O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:29:14 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s7so7504301ljh.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 20:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R/noB65+Fd0EtB5jindlqg68zm1kIzE0gEKXXHcvn94=;
-        b=DG2xlulfe4TTtjwKg5Jp1xduUBYvL0FZXB9N1jpK7TAE6uYF4tpucaXoUi8R5d9l/+
-         KytcIWEKsvMcy0fp+OpEeYKcHIMZN9WN7rp9vnbGoWccBQuAPieF3W305wOTrvjQbR3o
-         QSx3rkOQMZZZvtBKSjpN+Rv+b8+W+G1Cxk73Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R/noB65+Fd0EtB5jindlqg68zm1kIzE0gEKXXHcvn94=;
-        b=nC0HO786jdtAKvL+M25z4qZL1ai37O/RHzgDAIp2n6Nio6clmWvBJbrnS16EjNNabi
-         Z65+EzNKhz0SUWrlY+lvQKaT0xnnBdsj/Vqwn88Af9xi28Gw1kvxN3thXoBgszJHakbx
-         +QnoU6SJZxtD6+biO5esquT+9IhLka4h1Um9sRmnXU0wDa7L3uSGtFkM0tSJ9SATT7Q6
-         MAq3do0X6Vg8M96QX3Co5pf28nXFpfhqqoPUS3dPCxU9//Jc6mpRF8o6BevM3MWkIEiJ
-         LMr4AACfJhG8sObWmDhUlxfTTiNToHa5Cz18AsmG06urCC8Oktc8I8SsJ7Mqr1XJEbAQ
-         rrCg==
-X-Gm-Message-State: APjAAAXsYPFanlwPxBlRA5i8IqN3y8FNep1alNnI/N4xaX4e4NEmC3h/
-        T+6IweaMctWrYFXAqeMUU/sjzaVSSZg=
-X-Google-Smtp-Source: APXvYqxPVbRxwZ/gwPhHP3WFHujJALXdQgoiRaHJq54ON84IjMpp8SQcqnEOl6g1hzgnnYwLz3ZYaA==
-X-Received: by 2002:a2e:7e0a:: with SMTP id z10mr733754ljc.9.1557199752582;
-        Mon, 06 May 2019 20:29:12 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id r25sm1308113ljc.79.2019.05.06.20.29.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 20:29:10 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id q10so12930732ljc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 20:29:09 -0700 (PDT)
-X-Received: by 2002:a2e:9644:: with SMTP id z4mr116194ljh.22.1557199749357;
- Mon, 06 May 2019 20:29:09 -0700 (PDT)
+        id S1727353AbfEGDhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:37:09 -0400
+Received: from mga06.intel.com ([134.134.136.31]:2344 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726601AbfEGDhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 23:37:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 20:34:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,440,1549958400"; 
+   d="scan'208";a="344609157"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga006.fm.intel.com with ESMTP; 06 May 2019 20:34:06 -0700
+Received: from fmsmsx125.amr.corp.intel.com (10.18.125.40) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 6 May 2019 20:34:06 -0700
+Received: from BGSMSX108.gar.corp.intel.com (10.223.4.192) by
+ FMSMSX125.amr.corp.intel.com (10.18.125.40) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 6 May 2019 20:34:05 -0700
+Received: from BGSMSX107.gar.corp.intel.com ([169.254.9.125]) by
+ BGSMSX108.gar.corp.intel.com ([169.254.8.150]) with mapi id 14.03.0415.000;
+ Tue, 7 May 2019 09:04:02 +0530
+From:   "M R, Sathya Prakash" <sathya.prakash.m.r@intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Evan Green <evgreen@chromium.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Mark Brown" <broonie@kernel.org>
+CC:     "M, Naveen" <naveen.m@intel.com>, Ben Zhang <benzh@chromium.org>,
+        "Rajat Jain" <rajatja@chromium.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: RE: [PATCH v1 1/2] ASoC: SOF: Add Comet Lake PCI ID
+Thread-Topic: [PATCH v1 1/2] ASoC: SOF: Add Comet Lake PCI ID
+Thread-Index: AQHVBF66kVtld5KEb06yyEGKrvv3D6Zeht+AgAB5C1A=
+Date:   Tue, 7 May 2019 03:34:02 +0000
+Message-ID: <64FD1F8348A3A14CA3CB4D4C9EB1D15F30A7C756@BGSMSX107.gar.corp.intel.com>
+References: <20190506225321.74100-1-evgreen@chromium.org>
+ <20190506225321.74100-2-evgreen@chromium.org>
+ <74e8cfcd-b99f-7f66-48ce-44d60eb2bbca@linux.intel.com>
+In-Reply-To: <74e8cfcd-b99f-7f66-48ce-44d60eb2bbca@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.223.10.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
- <20190506095631.6f71ad7c@gandalf.local.home> <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
- <20190506130643.62c35eeb@gandalf.local.home> <CAHk-=whesas+GDtHZks62wqXWXe4d_g3XJ359GX81qj=Fgs6qQ@mail.gmail.com>
- <20190506145745.17c59596@gandalf.local.home> <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
- <20190506162915.380993f9@gandalf.local.home> <CAHk-=wi5KBWUOvM94aTOPnoJ5L_aQG=vgLQ4SxxZDeQD0pF2tQ@mail.gmail.com>
- <20190506174511.2f8b696b@gandalf.local.home> <CAHk-=wj3R_s0RTJOmTBNaUPhu4fz2shNBUr4M6Ej65UYSNCs-g@mail.gmail.com>
- <20190506210416.2489a659@oasis.local.home> <CAHk-=whZwqzbu-=1r_j_cXfd=ta1q7RFCuneqBZfQQhS_P-BmQ@mail.gmail.com>
- <20190506215353.14a8ef78@oasis.local.home> <CAHk-=wjLXmOn=Cp=uOfO4gE01eN_-UcOUyrMTTw5-f_OfPO48Q@mail.gmail.com>
- <20190506225819.11756974@oasis.local.home> <CAHk-=wh4FCNBLe8OyDZt2Tr+k9JhhTsg3H8R4b55peKcf0b6eQ@mail.gmail.com>
- <20190506232158.13c9123b@oasis.local.home>
-In-Reply-To: <20190506232158.13c9123b@oasis.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 May 2019 20:28:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi4vPg4pu6RvxQrUuBL4Vgwd2G2iaEJVVumny+cBOWMZw@mail.gmail.com>
-Message-ID: <CAHk-=wi4vPg4pu6RvxQrUuBL4Vgwd2G2iaEJVVumny+cBOWMZw@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 8:22 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> But still, we need to emulate the call, which requires pushing the
-> return code back onto the stack. I believe that part is the part we are
-> struggling with.
-
-Yes. But I was looking at the ftrace parts because I didn't see the
-bug in the low-level x86 side, so...
-
-The x86 int3 faulting code itself looks so *trivially* simple, and it
-does work for the trivial test-case too. Which was what made me go
-"Hmm, maybe there's timing or something".
-
-But it could obviously also be that the trivial test-case is just too
-trivial, and doesn't involve nmi etc etc.
-
-               Linus
+DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBQaWVycmUtTG91aXMgQm9zc2Fy
+dCBbbWFpbHRvOnBpZXJyZS1sb3Vpcy5ib3NzYXJ0QGxpbnV4LmludGVsLmNvbV0gDQpTZW50OiBU
+dWVzZGF5LCBNYXkgNywgMjAxOSA3OjExIEFNDQpUbzogRXZhbiBHcmVlbiA8ZXZncmVlbkBjaHJv
+bWl1bS5vcmc+OyBMaWFtIEdpcmR3b29kIDxsaWFtLnIuZ2lyZHdvb2RAbGludXguaW50ZWwuY29t
+PjsgTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPg0KQ2M6IE0sIE5hdmVlbiA8bmF2ZWVu
+Lm1AaW50ZWwuY29tPjsgTSBSLCBTYXRoeWEgUHJha2FzaCA8c2F0aHlhLnByYWthc2gubS5yQGlu
+dGVsLmNvbT47IEJlbiBaaGFuZyA8YmVuemhAY2hyb21pdW0ub3JnPjsgUmFqYXQgSmFpbiA8cmFq
+YXRqYUBjaHJvbWl1bS5vcmc+OyBKYXJvc2xhdiBLeXNlbGEgPHBlcmV4QHBlcmV4LmN6PjsgYWxz
+YS1kZXZlbEBhbHNhLXByb2plY3Qub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBU
+YWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuY29tPjsgTGlhbSBHaXJkd29vZCA8bGdpcmR3b29kQGdt
+YWlsLmNvbT4NClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMS8yXSBBU29DOiBTT0Y6IEFkZCBDb21l
+dCBMYWtlIFBDSSBJRA0KDQoNCg0KT24gNS82LzE5IDU6NTMgUE0sIEV2YW4gR3JlZW4gd3JvdGU6
+DQo+PiBBZGQgc3VwcG9ydCBmb3IgSW50ZWwgQ29tZXQgTGFrZSBwbGF0Zm9ybXMgYnkgYWRkaW5n
+IGEgbmV3IEtjb25maWcgZm9yIA0KPj4gQ29tZXRMYWtlIGFuZCB0aGUgYXBwcm9wcmlhdGUgUENJ
+IElELg0KDQo+VGhpcyBpcyBvZGQuIEkgY2hlY2tlZCBpbnRlcm5hbGx5IGEgZmV3IHdlZWtzIGJh
+Y2sgYW5kIHRoZSBDTUwgUENJIElEIHdhcyA5ZGM4LCBzYW1lIGFzIFdITCBhbmQgQ05MLCBzbyB3
+ZSBkaWQgbm90IGFkZCBhIFBDSSBJRCBvbiBwdXJwb3NlLiBUbyB0aGUgYmVzdCBvZiBteSBrbm93
+bGVkZ2UgU09GIHByb2JlcyBmaW5lIG9uIENNTCBhbmQgdGhlIGtub3duIGlzc3VlcyBjYW4gYmUg
+Zm91bmQgb24gdGhlIFNPRiBnaXRodWIgWzFdLg0KDQpUaGUgUENJIElEIGNoYW5nZSBpcyBzZWVu
+IG9uIGxhdGVyIHByb2R1Y3Rpb24gU2kgdmVyc2lvbnMuIFRoZSBQQ0kgSUQgaXMgMDJjOC4NCg0K
+PkNhcmUgdG8gc2VuZCB0aGUgbG9nIG9mIHN1ZG8gbHNwY2kgLXMgMDoxZi4zIC12biA/DQoNCkhl
+cmUgeW91IGdvOg0KbG9jYWxob3N0IH4gIyBzdWRvIGxzcGNpIC1zIDA6MWYuMyAtdm4NCjAwOjFm
+LjMgMDQwMTogODA4NjowMmM4DQogICAgICAgIFN1YnN5c3RlbTogODA4Njo3MjcwDQogICAgICAg
+IEZsYWdzOiBmYXN0IGRldnNlbCwgSVJRIDExDQogICAgICAgIE1lbW9yeSBhdCBkMTExNDAwMCAo
+NjQtYml0LCBub24tcHJlZmV0Y2hhYmxlKSBbc2l6ZT0xNktdDQogICAgICAgIE1lbW9yeSBhdCBk
+MTAwMDAwMCAoNjQtYml0LCBub24tcHJlZmV0Y2hhYmxlKSBbc2l6ZT0xTV0NCiAgICAgICAgQ2Fw
+YWJpbGl0aWVzOiBbNTBdIFBvd2VyIE1hbmFnZW1lbnQgdmVyc2lvbiAzDQogICAgICAgIENhcGFi
+aWxpdGllczogWzgwXSBWZW5kb3IgU3BlY2lmaWMgSW5mb3JtYXRpb246IExlbj0xNCA8Pz4NCiAg
+ICAgICAgQ2FwYWJpbGl0aWVzOiBbNjBdIE1TSTogRW5hYmxlLSBDb3VudD0xLzEgTWFza2FibGUt
+IDY0Yml0Kw0KDQoNClsxXQ0KaHR0cHM6Ly9naXRodWIuY29tL3RoZXNvZnByb2plY3Qvc29mL2lz
+c3Vlcz9xPWlzJTNBb3BlbitpcyUzQWlzc3VlK2xhYmVsJTNBQ01MDQo+IA0KPiBTaWduZWQtb2Zm
+LWJ5OiBFdmFuIEdyZWVuIDxldmdyZWVuQGNocm9taXVtLm9yZz4NCj4gLS0tDQo+IA0KPiAgIHNv
+dW5kL3NvYy9zb2YvaW50ZWwvS2NvbmZpZyB8IDE2ICsrKysrKysrKysrKysrKysNCj4gICBzb3Vu
+ZC9zb2Mvc29mL3NvZi1wY2ktZGV2LmMgfCAgNCArKysrDQo+ICAgMiBmaWxlcyBjaGFuZ2VkLCAy
+MCBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3NvZi9pbnRlbC9L
+Y29uZmlnIGIvc291bmQvc29jL3NvZi9pbnRlbC9LY29uZmlnIA0KPiBpbmRleCAzMmVlMGZhYmFi
+OTIuLjBiNjE2ZDAyNWYwNSAxMDA2NDQNCj4gLS0tIGEvc291bmQvc29jL3NvZi9pbnRlbC9LY29u
+ZmlnDQo+ICsrKyBiL3NvdW5kL3NvYy9zb2YvaW50ZWwvS2NvbmZpZw0KPiBAQCAtMjQsNiArMjQs
+NyBAQCBjb25maWcgU05EX1NPQ19TT0ZfSU5URUxfUENJDQo+ICAgCXNlbGVjdCBTTkRfU09DX1NP
+Rl9DQU5OT05MQUtFICBpZiBTTkRfU09DX1NPRl9DQU5OT05MQUtFX1NVUFBPUlQNCj4gICAJc2Vs
+ZWN0IFNORF9TT0NfU09GX0NPRkZFRUxBS0UgIGlmIFNORF9TT0NfU09GX0NPRkZFRUxBS0VfU1VQ
+UE9SVA0KPiAgIAlzZWxlY3QgU05EX1NPQ19TT0ZfSUNFTEFLRSAgICAgaWYgU05EX1NPQ19TT0Zf
+SUNFTEFLRV9TVVBQT1JUDQo+ICsJc2VsZWN0IFNORF9TT0NfU09GX0NPTUVUTEFLRSAgIGlmIFNO
+RF9TT0NfU09GX0NPTUVUTEFLRV9TVVBQT1JUDQo+ICAgCWhlbHANCj4gICAJICBUaGlzIG9wdGlv
+biBpcyBub3QgdXNlci1zZWxlY3RhYmxlIGJ1dCBhdXRvbWFnaWNhbGx5IGhhbmRsZWQgYnkNCj4g
+ICAJICAnc2VsZWN0JyBzdGF0ZW1lbnRzIGF0IGEgaGlnaGVyIGxldmVsIEBAIC0xNzksNiArMTgw
+LDIxIEBAIGNvbmZpZyANCj4gU05EX1NPQ19TT0ZfSUNFTEFLRQ0KPiAgIAkgIFRoaXMgb3B0aW9u
+IGlzIG5vdCB1c2VyLXNlbGVjdGFibGUgYnV0IGF1dG9tYWdpY2FsbHkgaGFuZGxlZCBieQ0KPiAg
+IAkgICdzZWxlY3QnIHN0YXRlbWVudHMgYXQgYSBoaWdoZXIgbGV2ZWwNCj4gICANCj4gK2NvbmZp
+ZyBTTkRfU09DX1NPRl9DT01FVExBS0UNCj4gKwl0cmlzdGF0ZQ0KPiArCXNlbGVjdCBTTkRfU09D
+X1NPRl9DQU5OT05MQUtFDQo+ICsJaGVscA0KPiArCSAgVGhpcyBvcHRpb24gaXMgbm90IHVzZXIt
+c2VsZWN0YWJsZSBidXQgYXV0b21hZ2ljYWxseSBoYW5kbGVkIGJ5DQo+ICsJICAnc2VsZWN0JyBz
+dGF0ZW1lbnRzIGF0IGEgaGlnaGVyIGxldmVsDQo+ICsNCj4gK2NvbmZpZyBTTkRfU09DX1NPRl9D
+T01FVExBS0VfU1VQUE9SVA0KPiArCWJvb2wgIlNPRiBzdXBwb3J0IGZvciBDb21ldExha2UiDQo+
+ICsJaGVscA0KPiArCSAgVGhpcyBhZGRzIHN1cHBvcnQgZm9yIFNvdW5kIE9wZW4gRmlybXdhcmUg
+Zm9yIEludGVsKFIpIHBsYXRmb3Jtcw0KPiArCSAgdXNpbmcgdGhlIENvbWV0bGFrZSBwcm9jZXNz
+b3JzLg0KPiArCSAgU2F5IFkgaWYgeW91IGhhdmUgc3VjaCBhIGRldmljZS4NCj4gKwkgIElmIHVu
+c3VyZSBzZWxlY3QgIk4iLg0KPiArDQo+ICAgY29uZmlnIFNORF9TT0NfU09GX0hEQV9DT01NT04N
+Cj4gICAJdHJpc3RhdGUNCj4gICAJc2VsZWN0IFNORF9TT0NfU09GX0lOVEVMX0NPTU1PTg0KPiBk
+aWZmIC0tZ2l0IGEvc291bmQvc29jL3NvZi9zb2YtcGNpLWRldi5jIGIvc291bmQvc29jL3NvZi9z
+b2YtcGNpLWRldi5jIA0KPiBpbmRleCBiNzc4ZGZmYjJkMjUuLjVmMDEyODMzN2U0MCAxMDA2NDQN
+Cj4gLS0tIGEvc291bmQvc29jL3NvZi9zb2YtcGNpLWRldi5jDQo+ICsrKyBiL3NvdW5kL3NvYy9z
+b2Yvc29mLXBjaS1kZXYuYw0KPiBAQCAtMzUzLDYgKzM1MywxMCBAQCBzdGF0aWMgY29uc3Qgc3Ry
+dWN0IHBjaV9kZXZpY2VfaWQgc29mX3BjaV9pZHNbXSA9IHsNCj4gICAjaWYgSVNfRU5BQkxFRChD
+T05GSUdfU05EX1NPQ19TT0ZfSUNFTEFLRSkNCj4gICAJeyBQQ0lfREVWSUNFKDB4ODA4NiwgMHgz
+NEM4KSwNCj4gICAJCS5kcml2ZXJfZGF0YSA9ICh1bnNpZ25lZCBsb25nKSZpY2xfZGVzY30sDQo+
+ICsjZW5kaWYNCj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19TTkRfU09DX1NPRl9DT01FVExBS0Up
+DQo+ICsJeyBQQ0lfREVWSUNFKDB4ODA4NiwgMHgwMmM4KSwNCj4gKwkJLmRyaXZlcl9kYXRhID0g
+KHVuc2lnbmVkIGxvbmcpJmNubF9kZXNjfSwNCj4gICAjZW5kaWYNCj4gICAJeyAwLCB9DQo+ICAg
+fTsNCj4gDQo=
