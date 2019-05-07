@@ -2,78 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C09A1696F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E15016972
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:44:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfEGRnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:43:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57854 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726607AbfEGRni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:43:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9CE04AF7C;
-        Tue,  7 May 2019 17:43:37 +0000 (UTC)
-Date:   Tue, 7 May 2019 19:43:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH AUTOSEL 4.14 62/95] mm, memory_hotplug: initialize struct
- pages for the full memory section
-Message-ID: <20190507174336.GU31017@dhcp22.suse.cz>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-62-sashal@kernel.org>
- <CAKgT0Uc8ywg8zrqyM9G+Ws==+yOfxbk6FOMHstO8qsizt8mqXA@mail.gmail.com>
- <CAHk-=win03Q09XEpYmk51VTdoQJTitrr8ON9vgajrLxV8QHk2A@mail.gmail.com>
- <20190507170208.GF1747@sasha-vm>
- <CAHk-=wi5M-CC3CUhmQZOvQE2xJgfBgrgyAxp+tE=1n3DaNocSg@mail.gmail.com>
- <20190507171806.GG1747@sasha-vm>
- <20190507173224.GS31017@dhcp22.suse.cz>
- <20190507173655.GA1403@bombadil.infradead.org>
+        id S1727511AbfEGRn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:43:59 -0400
+Received: from mga17.intel.com ([192.55.52.151]:4467 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726522AbfEGRn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 13:43:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 May 2019 10:43:58 -0700
+Received: from unknown (HELO [10.232.112.171]) ([10.232.112.171])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 07 May 2019 10:43:57 -0700
+Subject: Re: [PATCH v2 0/7] nvme-pci: support device coredump
+To:     Akinobu Mita <akinobu.mita@gmail.com>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Christoph Hellwig <hch@lst.de>
+References: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
+From:   "Heitke, Kenneth" <kenneth.heitke@intel.com>
+Message-ID: <99ac233a-e8d6-495b-5ec9-f7067fa40c4b@intel.com>
+Date:   Tue, 7 May 2019 11:43:56 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507173655.GA1403@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-05-19 10:36:55, Matthew Wilcox wrote:
-> On Tue, May 07, 2019 at 07:32:24PM +0200, Michal Hocko wrote:
-> > On Tue 07-05-19 13:18:06, Sasha Levin wrote:
-> > > Michal, is there a testcase I can plug into kselftests to make sure we
-> > > got this right (and don't regress)? We care a lot about memory hotplug
-> > > working right.
-> > 
-> > As said in other email. The memory hotplug tends to work usually. It
-> > takes unexpected memory layouts which trigger corner cases. This makes
-> > testing really hard.
+
+
+On 5/7/2019 10:58 AM, Akinobu Mita wrote:
+> This enables to capture snapshot of controller information via device
+> coredump machanism, and it helps diagnose and debug issues.
+
+s/machanism/mechanism/
 > 
-> Can we do something with qemu?  Is it flexible enough to hotplug memory
-> at the right boundaries?
-
-No idea. But I have tried to describe those layouts in the changelog so
-if somebody can come up with a way to reproduce them under kvm/qemu I
-would really appreciate that.
-
--- 
-Michal Hocko
-SUSE Labs
+> The nvme device coredump is triggered when command timeout occurs, and
+> creates the following coredump files.
+> 
+>   - regs: NVMe controller registers (00h to 4Fh)
+>   - sq<qid>: Submission queue
+>   - cq<qid>: Completion queue
+>   - telemetry-ctrl-log: Telemetry controller-initiated log (if available)
+>   - data: Empty
