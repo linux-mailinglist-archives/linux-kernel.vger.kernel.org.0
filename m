@@ -2,48 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DBCC16B4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09CB116B4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:27:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfEGTZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 15:25:17 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:33232 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfEGTZQ (ORCPT
+        id S1726558AbfEGT1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 15:27:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44947 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbfEGT1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 15:25:16 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1DBDC14B76673;
-        Tue,  7 May 2019 12:25:16 -0700 (PDT)
-Date:   Tue, 07 May 2019 12:25:15 -0700 (PDT)
-Message-Id: <20190507.122515.1580564811216048550.davem@davemloft.net>
-To:     esben@geanix.com
-Cc:     netdev@vger.kernel.org, michal.simek@xilinx.com, andrew@lunn.ch,
-        yuehaibing@huawei.com, yang.wei9@zte.com.cn, mcgrof@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ll_temac: Improve error message on error IRQ
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190507064258.2790-1-esben@geanix.com>
-References: <20190507064258.2790-1-esben@geanix.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 May 2019 12:25:16 -0700 (PDT)
+        Tue, 7 May 2019 15:27:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c5so23854830wrs.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 12:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=Snv7TyoiGAcKNv0tuFYq8gStYoAzEsMX1pXAbixEywg=;
+        b=ahJR6LhOZaw/AKX3XQShai5q5fKGZgezH1HRW7PZg3qTUvHODj7PancgoKDpf4eYPB
+         8D+Uk08/K8w+BrDtXi6T4G9b09r8Kbu9s8wTJj7MIAxUlmRL1EBFpjHqsd5JNvRfafOz
+         kHsorRt2Xb8o/9e3re4j+yL86uYXjqwuzOrloBvDdpS43qYZ4RKQBhoCnqOH8Qzf8Jc+
+         fndMpElNwdLnxC/P69a+zezMCKhmIhVhsyn82/kBAQ9juGgU9CImIvSJSRkmEPEoVc/q
+         rPe0w9yF6gSoj5g5W0sc1z4UeOiWTzVADhhK4NDDjn/AZaEsh4rYXWW6vx8lBy2Nc9ED
+         xMPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=Snv7TyoiGAcKNv0tuFYq8gStYoAzEsMX1pXAbixEywg=;
+        b=HoU28wOphygesys8ZdKj1edhIlny2jfXxx9pSRAqvY8q/OHpJgJYDUIOrr2gX4FIfm
+         QYs/ksh+hld0ZdCMyxI1ix6GqBYNnDw7VpxjHE5LYs9gRYHAkbwFxHNYhKfeF5IBu6oh
+         YICdTNGFkurpkRgP3MSb6qh2N+JwWGHjN6q8bsebN9TYhmu37z6V8jU/jOqfbpKJ5h1x
+         xcppG/cZ+DjuPMbY7h5/hVV52OFmf2VaGios9soH5KFbwomo06kuVIC/Q+NesjVy7Kis
+         wS2PwlzvxzNc6Ii2kUXPoJ3OvSA5j8QK6rMArL5HNe+QLZpV7JLsrgIwXpX0gDQLW93q
+         JwjA==
+X-Gm-Message-State: APjAAAVfUu/OMqcxS2C5rVdJxPpvFxU7T5JyJQzJXV4BKuYv9RIkCI0N
+        pY5q3rmOIKjV5Habr2VZ8gcJ2g==
+X-Google-Smtp-Source: APXvYqwZvey4kdE6QfjZ1FMDGUpTasFbSeF/gxEF+fQQVuag6wSWUDqY0OMwS8/kJ0hMrFB3Ovu46g==
+X-Received: by 2002:a05:6000:3:: with SMTP id h3mr23305782wrx.314.1557257221363;
+        Tue, 07 May 2019 12:27:01 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id m25sm14465583wmi.45.2019.05.07.12.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 12:27:00 -0700 (PDT)
+Message-ID: <5cd1dc04.1c69fb81.7a4ca.ab0f@mx.google.com>
+Date:   Tue, 07 May 2019 12:27:00 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.19.y
+X-Kernelci-Kernel: v4.19.40-100-gf897c76a347c
+In-Reply-To: <20190506143053.899356316@linuxfoundation.org>
+References: <20190506143053.899356316@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 00/99] 4.19.41-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue,  7 May 2019 08:42:57 +0200
+stable-rc/linux-4.19.y boot: 54 boots: 0 failed, 53 passed with 1 untried/u=
+nknown (v4.19.40-100-gf897c76a347c)
 
-> The channel status register value can be very helpful when debugging
-> SDMA problems.
-> 
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.19.y/kernel/v4.19.40-100-gf897c76a347c/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
+y/kernel/v4.19.40-100-gf897c76a347c/
 
-Applied.
+Tree: stable-rc
+Branch: linux-4.19.y
+Git Describe: v4.19.40-100-gf897c76a347c
+Git Commit: f897c76a347c330cca7fc03afaa64164eda545f7
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 24 unique boards, 11 SoC families, 10 builds out of 206
+
+---
+For more info write to <info@kernelci.org>
