@@ -2,84 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDE516481
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5386416489
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfEGNYw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 May 2019 09:24:52 -0400
-Received: from unicorn.mansr.com ([81.2.72.234]:57168 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEGNYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:24:51 -0400
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id C494E14180; Tue,  7 May 2019 14:24:49 +0100 (BST)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] usb: core: verify devicetree nodes for disabled interfaces
-References: <CGME20190507125630eucas1p1c5fd171a8dc2a6b8eb9dd317fe245f0c@eucas1p1.samsung.com>
-        <20190507125615.9381-1-m.szyprowski@samsung.com>
-Date:   Tue, 07 May 2019 14:24:49 +0100
-In-Reply-To: <20190507125615.9381-1-m.szyprowski@samsung.com> (Marek
-        Szyprowski's message of "Tue, 07 May 2019 14:56:15 +0200")
-Message-ID: <yw1xy33iv1lq.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1726495AbfEGN0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:26:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38144 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726321AbfEGN0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 09:26:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7384DADF0;
+        Tue,  7 May 2019 13:26:38 +0000 (UTC)
+Date:   Tue, 7 May 2019 15:26:32 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86 FPU changes for 5.2
+Message-ID: <20190507132632.GB26655@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
+Hi Linus,
 
-> Commit 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
-> add support for disabling given USB device interface by adding nodes to
-> the USB host controller device. The mentioned commit however identifies
-> the given USB interface node only by the 'reg' property in the host
-> controller children nodes and then checks for their the 'status'. The USB
-> device interface nodes however also has to have a 'compatible' property as
-> described in Documentation/devicetree/bindings/usb/usb-device.txt. This is
-> important, because USB host controller might have child-nodes for other
-> purposes. For example, Exynos EHCI and OHCI drivers already define
-> child-nodes for each physical root hub port and assigns respective PHY
-> controller and parameters for them. This conflicts with the proposed
-> approach and verifying for the presence of the compatible property fixes
-> this issue without changing the devicetree bindings and the way the PHY
-> controllers are handled by Exynos EHCI/OHCI drivers.
->
-> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-> Fixes: 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/usb/core/message.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-> index 82239f27c4cc..cd455c4add25 100644
-> --- a/drivers/usb/core/message.c
-> +++ b/drivers/usb/core/message.c
-> @@ -2007,6 +2007,7 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
->  		struct usb_interface *intf = cp->interface[i];
->
->  		if (intf->dev.of_node &&
-> +		    of_device_is_compatible(intf->dev.of_node, NULL) &&
->  		    !of_device_is_available(intf->dev.of_node)) {
->  			dev_info(&dev->dev, "skipping disabled interface %d\n",
->  				 intf->cur_altsetting->desc.bInterfaceNumber);
-> -- 
+please pull the latest x86-fpu-for-linus tree from:
 
-This doesn't look right.  of_device_is_compatible() with a NULL compat
-argument always returns zero.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-fpu-for-linus
 
-There also seems to be a broader incompatibility between the generic USB
-bindings and the use of child nodes in the Exynos bindings.
+This branch contains work started by Rik van Riel and brought to
+fruition by Sebastian Andrzej Siewior with the main goal to optimize
+when to load FPU registers: only when returning to userspace and not on
+every context switch (while the task remains in the kernel).
+
+In addition, this optimization makes kernel_fpu_begin() cheaper by
+requiring registers saving only on the first invocation and skipping
+that in following ones.
+
+What is more, this series cleans up and streamlines many aspects of the
+already complex FPU code, hopefully making it more palatable for future
+improvements and simplifications.
+
+Finally, there's a __user annotations fix from Jann Horn.
+
+Thx.
+
+---
+The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
+
+  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-fpu-for-linus
+
+for you to fetch changes up to d9c9ce34ed5c892323cbf5b4f9a4c498e036316a:
+
+  x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails (2019-05-06 09:49:40 +0200)
+
+----------------------------------------------------------------
+Jann Horn (1):
+      x86/fpu: Fix __user annotations
+
+Rik van Riel (5):
+      x86/fpu: Add an __fpregs_load_activate() internal helper
+      x86/fpu: Eager switch PKRU state
+      x86/fpu: Always store the registers in copy_fpstate_to_sigframe()
+      x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD
+      x86/fpu: Defer FPU state load until return to userspace
+
+Sebastian Andrzej Siewior (23):
+      x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
+      x86/fpu: Remove fpu__restore()
+      x86/fpu: Remove preempt_disable() in fpu__clear()
+      x86/fpu: Always init the state in fpu__clear()
+      x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
+      x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()
+      x86/fpu: Remove fpu->initialized
+      x86/fpu: Remove user_fpu_begin()
+      x86/fpu: Make __raw_xsave_addr() use a feature number instead of mask
+      x86/fpu: Use a feature number instead of mask in two more helpers
+      x86/pkeys: Provide *pkru() helpers
+      x86/fpu: Only write PKRU if it is different from current
+      x86/pkeys: Don't check if PKRU is zero before writing it
+      x86/entry: Add TIF_NEED_FPU_LOAD
+      x86/fpu: Update xstate's PKRU value on write_pkru()
+      x86/fpu: Inline copy_user_to_fpregs_zeroing()
+      x86/fpu: Restore from kernel memory on the 64-bit path too
+      x86/fpu: Merge the two code paths in __fpu__restore_sig()
+      x86/fpu: Add a fastpath to __fpu__restore_sig()
+      x86/fpu: Add a fastpath to copy_fpstate_to_sigframe()
+      x86/fpu: Restore regs in copy_fpstate_to_sigframe() in order to use the fastpath
+      x86/pkeys: Add PKRU value to init_fpstate
+      x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails
+
+ Documentation/preempt-locking.txt    |   1 -
+ arch/x86/entry/common.c              |  10 +-
+ arch/x86/ia32/ia32_signal.c          |  17 ++-
+ arch/x86/include/asm/fpu/api.h       |  31 ++++++
+ arch/x86/include/asm/fpu/internal.h  | 133 +++++++++++++++++------
+ arch/x86/include/asm/fpu/signal.h    |   2 +-
+ arch/x86/include/asm/fpu/types.h     |   9 --
+ arch/x86/include/asm/fpu/xstate.h    |   8 +-
+ arch/x86/include/asm/pgtable.h       |  29 ++++-
+ arch/x86/include/asm/special_insns.h |  19 +++-
+ arch/x86/include/asm/thread_info.h   |   2 +
+ arch/x86/include/asm/trace/fpu.h     |  13 +--
+ arch/x86/kernel/cpu/common.c         |   5 +
+ arch/x86/kernel/fpu/core.c           | 195 ++++++++++++++++-----------------
+ arch/x86/kernel/fpu/init.c           |   2 -
+ arch/x86/kernel/fpu/regset.c         |  24 ++---
+ arch/x86/kernel/fpu/signal.c         | 202 ++++++++++++++++++++++-------------
+ arch/x86/kernel/fpu/xstate.c         |  42 ++++----
+ arch/x86/kernel/process.c            |   2 +-
+ arch/x86/kernel/process_32.c         |  11 +-
+ arch/x86/kernel/process_64.c         |  11 +-
+ arch/x86/kernel/signal.c             |  21 ++--
+ arch/x86/kernel/traps.c              |   2 +-
+ arch/x86/kvm/vmx/vmx.c               |   2 +-
+ arch/x86/kvm/x86.c                   |  48 +++++----
+ arch/x86/math-emu/fpu_entry.c        |   3 -
+ arch/x86/mm/mpx.c                    |   6 +-
+ arch/x86/mm/pkeys.c                  |  21 ++--
+ 28 files changed, 512 insertions(+), 359 deletions(-)
 
 -- 
-Måns Rullgård
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix ImendÃ¶rffer, Mary Higgins, Sri Rasiah, HRB 21284 (AG NÃ¼rnberg)
