@@ -2,142 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A028316276
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 468AB16288
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 13:02:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfEGK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:58:32 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41573 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfEGK6b (ORCPT
+        id S1726744AbfEGLCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 07:02:37 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43521 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbfEGLCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:58:31 -0400
-Received: by mail-ed1-f66.google.com with SMTP id m4so18296060edd.8
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 03:58:30 -0700 (PDT)
+        Tue, 7 May 2019 07:02:37 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z5so8801619lji.10
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 04:02:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1HC/MUgf456zJfRJXUVVgg6o0d0M1B+L7QMi6llJ2Bo=;
-        b=E+YVKccV3crljzyzQRgZ+qVmjGAxpSmba/m9j8r8NgrA34RUFop5bvNMjUbDwOuRNB
-         b32+Jl/qjNWnlvTDYyTs/KeVx58V71F7zbu28ARzlDJFrza6g9g8Zi8OL55OmDTkgfSl
-         1BGDJtAmk2ERpdEdX2xDcrPZ80zvjefZo+oei1Mm2khGrth/UBL1A1VFwvbheFqAlcQ8
-         9JSttdgh0BDB+Z/aTtQZkNW6+cetIuH9iCeGfDRIqCOLydg98GdTqe6LAdP4iTh2ppDw
-         LsM9hKBQMNpP2ECL1fjkX6fYcURKheF5cqWjXseRus2cycqTaunLSVR2osQqCa3I6n/H
-         lrLw==
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2EUu6Mnu44He2lWLLhgCEFkjsFkbhrlsReIpHL53zlc=;
+        b=UEgMBfHkaLJK9vCowpe3BLuKl5J2UKHObPCuuSv/qaGx2Da93VxAe5Dj1SGZrQfwbY
+         8TUgGK1QUznMXwBPdOy7ZThVhp3ERP6K6FnYHQvH3l+U64+pZV9p/xQtv4cvvl3J9222
+         CGI0Zs2B8BIs1XC+fYBlOeUj+9PI/FMftXubnu8RBIpZC9vYg3MwCqZkTFD2a8ZhCxVY
+         5JSRcOl36cZbnq2eMBMkuXpZDNNGMudPyH8uSnA9H18fl3cKfhaeiM4zAbYbyMKCIDMv
+         XhDysh1BugLRHZwI8MHUhR+AQ7akp/rr4mrpuc/MA6KvB160hkprdSRo/Ew9qRUyqouU
+         VV1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1HC/MUgf456zJfRJXUVVgg6o0d0M1B+L7QMi6llJ2Bo=;
-        b=gv+gh3k7NK0cmBJGFAzud/Lo/uJrrETjZf6Z+M4uP/NBKRl9FTJwnu3MJVB61EGpaK
-         hGEVqYr1ZUOjY1SkffZsOTJ2BMDByjRCwIUGb6uH9DiB/MJVg6RjUQowSfAjGb4HBv6n
-         zyXUCe4UfFalju1IiQCx2mgQ+QZqGD4fe51oqBksuWovam9NHQi4rwpJvlAL3d/JMAn0
-         uEhLK7BjKWJf3iW9TIhBTjwcnRNYaommgg6Jp+yeEeQFreuLk+7MzoC6Lj+f1CQCpe1I
-         g8BKw/6IvzitrNYRlprL6rd1qyF/1w2Lj/Vl4r35T+y3JJFXld/qwu2DP6ELgqVLXSC9
-         4u7A==
-X-Gm-Message-State: APjAAAVoKjD60kao1abd1jkIzrRcQw4JShbnStUWKmjMjob37rBfLZ40
-        HxKRXYo3hs0L3bl7EOwZ4ftSHw==
-X-Google-Smtp-Source: APXvYqyHqFTcJpvyTuty9Yn2Sc9cm+BuGmLDrYq55IuT9aIRo5DWhxH0xy9+mtPoGye/4Y6Cby05tA==
-X-Received: by 2002:a50:885b:: with SMTP id c27mr31844820edc.155.1557226709457;
-        Tue, 07 May 2019 03:58:29 -0700 (PDT)
-Received: from brauner.io ([178.19.218.101])
-        by smtp.gmail.com with ESMTPSA id w14sm4048277eda.18.2019.05.07.03.58.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 07 May 2019 03:58:28 -0700 (PDT)
-Date:   Tue, 7 May 2019 12:58:27 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Sultan Alsawaf <sultan@kerneltoast.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Daniel Colascione <dancol@google.com>,
-        Todd Kjos <tkjos@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Martijn Coenen <maco@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        kernel-team <kernel-team@android.com>
-Subject: Re: [RFC] simple_lmk: Introduce Simple Low Memory Killer for Android
-Message-ID: <20190507105826.oi6vah6x5brt257h@brauner.io>
-References: <20190318235052.GA65315@google.com>
- <20190319221415.baov7x6zoz7hvsno@brauner.io>
- <CAKOZuessqcjrZ4rfGLgrnOhrLnsVYiVJzOj4Aa=o3ZuZ013d0g@mail.gmail.com>
- <20190319231020.tdcttojlbmx57gke@brauner.io>
- <20190320015249.GC129907@google.com>
- <20190507021622.GA27300@sultan-box.localdomain>
- <20190507070430.GA24150@kroah.com>
- <20190507072721.GA4364@sultan-box.localdomain>
- <20190507074334.GB26478@kroah.com>
- <20190507081236.GA1531@sultan-box.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2EUu6Mnu44He2lWLLhgCEFkjsFkbhrlsReIpHL53zlc=;
+        b=tvXACv3I84adux2Jc04Vbj53aqSCbWKCmPdKaMIf58w6+LGg4wYOq5wWikX0Sc6TxF
+         0wtoQKXwcaN8QiFMNpVklP9oFBN7IUqmq8nUQ1EBganeD2k+Pbyw7vvTHNyCaWTa6tdD
+         4o751fjVQKAG874/jMsT6x1ZLZaUKgYl2nO6BSGT0TXGjKQxRD85V3kFgBbq+YcsDya2
+         SxLbR2y1IASG7kAP7rZzCvhSRcoBnfFtPH4Auxsp288m6cvn3ffdhpGv+WzGMTySsl6h
+         RsLD4wcrWTiR3EVHUwKxbdPN3CiAhm9uwxMuH9u3CZrD+gQ4R5M2XFnfP3+iM+P3b8WV
+         BbYg==
+X-Gm-Message-State: APjAAAWgembn9Wru6wiFsCqx1Kuf005HiuorSlosLn1PIKE7Qf9CIc8N
+        z39J+6eFju+NNIfrquTfFEsny5NK+05r8QUULP3YPbM0htFPaBJkDpYdHf4bQ2L52gRm+AAADV2
+        GoZ1s48zZ1QSSjVX2h6VD7L3LY0LVQZxcVA==
+X-Google-Smtp-Source: APXvYqx68N5jhHa7laODn/CQo4UzVADN8Md1na029xCAPAlTBaRQwWHs89c0lpBgg+yKBskHLkfyka0YUBiDmNZdooE=
+X-Received: by 2002:a2e:9d0a:: with SMTP id t10mr1967057lji.95.1557226955058;
+ Tue, 07 May 2019 04:02:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190507081236.GA1531@sultan-box.localdomain>
-User-Agent: NeoMutt/20180716
+References: <1553508779-9685-1-git-send-email-yash.shah@sifive.com>
+ <mvmbm1zueya.fsf@suse.de> <mvmpnqcsn6u.fsf@suse.de> <CAJ2_jOFu-yCZV_A4B48_fLq7h7UA6LUWhgpxr0uuh7vhW9Q8pA@mail.gmail.com>
+ <mvmlfzisiwc.fsf@suse.de>
+In-Reply-To: <mvmlfzisiwc.fsf@suse.de>
+From:   Yash Shah <yash.shah@sifive.com>
+Date:   Tue, 7 May 2019 16:31:58 +0530
+Message-ID: <CAJ2_jOG2M03aLBgUOgGjWH9CUxq2aTG97eSX70=UaSbGCMMF_g@mail.gmail.com>
+Subject: Re: [PATCH v11 0/2] PWM support for HiFive Unleashed
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 01:12:36AM -0700, Sultan Alsawaf wrote:
-> On Tue, May 07, 2019 at 09:43:34AM +0200, Greg Kroah-Hartman wrote:
-> > Given that any "new" android device that gets shipped "soon" should be
-> > using 4.9.y or newer, is this a real issue?
-> 
-> It's certainly a real issue for those who can't buy brand new Android devices
-> without software bugs every six months :)
-> 
-> > And if it is, I'm sure that asking for those patches to be backported to
-> > 4.4.y would be just fine, have you asked?
-> >
-> > Note that I know of Android Go devices, running 3.18.y kernels, do NOT
-> > use the in-kernel memory killer, but instead use the userspace solution
-> > today.  So trying to get another in-kernel memory killer solution added
-> > anywhere seems quite odd.
-> 
-> It's even more odd that although a userspace solution is touted as the proper
-> way to go on LKML, almost no Android OEMs are using it, and even in that commit
+Hi Andreas,
+On Tue, May 7, 2019 at 3:09 PM Andreas Schwab <schwab@suse.de> wrote:
+>
+> On Mai 02 2019, Yash Shah <yash.shah@sifive.com> wrote:
+>
+> > The PWM default output state is high (When duty cycle is 0), So I
+> > guess leds will remain on by default.
+>
+> So that's the bug that needs to be fixed.
 
-That's probably because without proper kernel changes this is rather
-tricky to use safely (see below).
+Sorry I didn't probably get you before. I now understood the scenario.
 
-> I linked in the previous message, Google made a rather large set of
-> modifications to the supposedly-defunct lowmemorykiller.c not one month ago.
-> What's going on?
-> 
-> Qualcomm still uses lowmemorykiller.c [1] on the Snapdragon 845. If PSI were
-> backported to 4.4, or even 3.18, would it really be used? I don't really
-> understand the aversion to an in-kernel memory killer on LKML despite the rest
-> of the industry's attraction to it. Perhaps there's some inherently great cost
-> in using the userspace solution that I'm unaware of?
-> 
-> Regardless, even if PSI were backported, a full-fledged LMKD using it has yet to
-> be made, so it wouldn't be of much use now.
+Leds on HiFive Unleashed are wired to supply instead of ground.
+And as per ./Documentation/devicetree/bindings/leds/leds-pwm.txt, you
+need to provide additional property "active-low" in such case.
 
-This is work that is ongoing and requires kernel changes to make it
-feasible. One of the things that I have been working on for quite a
-while is the whole file descriptor for processes thing that is important
-for LMKD (Even though I never thought about this use-case when I started
-pitching this.). Joel and Daniel have joined in and are working on
-making LMKD possible.
-What I find odd is that every couple of weeks different solutions to the
-low memory problem are pitched. There is simple_lkml, there is LMKD, and
-there was a patchset that wanted to speed up memory reclaim at process
-kill-time by adding a new flag to the new pidfd_send_signal() syscall.
-That all seems - though related - rather uncoordinated. Now granted,
-coordinated is usually not how kernel development necessarily works but
-it would probably be good to have some sort of direction and from what I
-have seen LMKD seems to be the most coordinated effort. But that might
-just be my impression.
+- active-low : (optional) For PWMs where the LED is wired to supply
+rather than ground.
 
-Christian
+The leds will remain off by default when you add the "active-low"
+property under the pwm-leds subnode in your DT file. So, this isn't a
+bug in the driver code.
+For DT file change, you may refer
+https://github.com/yashshah7/riscv-linux/commit/dd55057a26150e50525643a423b20e07b72617b5
+
+Can you test this at your end and confirm?
+
+- Yash
+>
+> Andreas.
+>
+> --
+> Andreas Schwab, SUSE Labs, schwab@suse.de
+> GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+> "And now for something completely different."
+
+-- 
+The information transmitted is intended only for the person or entity to 
+which it is addressed and may contain confidential and/or privileged 
+material. If you are not the intended recipient of this message please do 
+not read, copy, use or disclose this communication and notify the sender 
+immediately. It should be noted that any review, retransmission, 
+dissemination or other use of, or taking action or reliance upon, this 
+information by persons or entities other than the intended recipient is 
+prohibited.
