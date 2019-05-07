@@ -2,144 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F6F515DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7039915E5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfEGHBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:01:48 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36504 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfEGHBr (ORCPT
+        id S1726985AbfEGHjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 03:39:12 -0400
+Received: from 9.mo178.mail-out.ovh.net ([46.105.75.45]:54574 "EHLO
+        9.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbfEGHjJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:01:47 -0400
-Received: by mail-ot1-f68.google.com with SMTP id b18so13917053otq.3;
-        Tue, 07 May 2019 00:01:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zKMbIttCgzcVVkRNu5fztyhWx+BL/3mOVoqyvi0NAEI=;
-        b=INSgcKv8O9yM65+VKqHoMOrNHbmlcEnHOVbaCQOGmt0PIZC9v+jY+T8l/YedGA5NA/
-         Tz+qZPZ6yZNqFT/CK02u6QG74NWhUgkOr+nAw/XnxufPoizP/znYNYR6UvgAoH6RSot3
-         Qtnkr2Gu+NlLSZkbT1vC0qUNTcyBWXp0alwHZ0xOETpG2m5UoJaUs5b3siE7wEY2C44A
-         /VEzhFCZ/DsDN2t1bOfBmP3N1MOOvUF/3QZSD0OfwmuF2Gfz4gE/9nbeMkakfGUF+AVn
-         KjV97vEHwb4/wwI88lcpGfze914MRqPgIEf4fZsZGDYq2o3gzCIkEq/Z+usY809PiwxL
-         fA/g==
-X-Gm-Message-State: APjAAAWjshv6yrOs7FjIStrYJZnaE7Mu+mxWsg5RK/0NvCvpYmGmH3he
-        i5ztm6LkBFBO4cALu3OnYbeUbyxpo+gnkRebga8=
-X-Google-Smtp-Source: APXvYqx5HZyzDhKKw/pMsuceYuNU8AOS/SQGy+9vmSPw9U4np+bboCTLUqSXmY0Nhp2RD3+3Fq6+UQEkP8tUjoPf56M=
-X-Received: by 2002:a05:6830:1251:: with SMTP id s17mr17144503otp.186.1557212506581;
- Tue, 07 May 2019 00:01:46 -0700 (PDT)
+        Tue, 7 May 2019 03:39:09 -0400
+X-Greylist: delayed 1200 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 May 2019 03:39:09 EDT
+Received: from player796.ha.ovh.net (unknown [10.108.35.27])
+        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 666135E9E0
+        for <linux-kernel@vger.kernel.org>; Tue,  7 May 2019 09:01:51 +0200 (CEST)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id 65F0A561F73C;
+        Tue,  7 May 2019 07:01:46 +0000 (UTC)
+Date:   Tue, 7 May 2019 09:01:45 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Sam Bobroff <sbobroff@linux.ibm.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio-pci/nvlink2: Fix potential VMA leak
+Message-ID: <20190507090145.4be12c82@bahia.lan>
+In-Reply-To: <20190507014915.GA10274@tungsten.ozlabs.ibm.com>
+References: <155568823785.601037.2151744205292679252.stgit@bahia.lan>
+        <20190506155845.70f3b01d@x1.home>
+        <20190507014915.GA10274@tungsten.ozlabs.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <CAEJqkgh-eh0F0rNBChhurH0LWTLFP0DyfFzKj66p4Z2d1kM2gw@mail.gmail.com>
-In-Reply-To: <CAEJqkgh-eh0F0rNBChhurH0LWTLFP0DyfFzKj66p4Z2d1kM2gw@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 7 May 2019 09:01:34 +0200
-Message-ID: <CAJZ5v0gRWEL1shQE3im0VxiPRBYat86o=R_NVQbc3JgOX8uT6w@mail.gmail.com>
-Subject: Re: [Kernel 5.1] ACPI_DEBUG messages without CONFIG_ACPI_DEBUG being set
-To:     Gabriel C <nix.or.die@gmail.com>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/40jBTFpoOsFSSaNoBPfpNLC"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 3269331857217132982
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrjeelgdduudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Erik
+--Sig_/40jBTFpoOsFSSaNoBPfpNLC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2019 at 1:33 AM Gabriel C <nix.or.die@gmail.com> wrote:
->
-> Hello,
->
-> while testing kernel-5.1 I get on one of my Lenovo Laptops very
-> strange 'ACPI Debug:' messages.
->
-> After some grepping I realized these are Debug messages from DSDT ,
-> however my kernel does
-> not have ACPI_DEBUG enabled.
->
-> I found out the module triggering this, on this Laptop is
-> ideapad_laptop , but looking at the code
-> I cannot see what would causes that.
->
-> Also on the same Laptop with any 5.0.X kernels I cannot see these.
->
->
-> ~$ grep -i ACPI_DEBUG /boot/config-5.1-fw1
-> # CONFIG_ACPI_DEBUGGER is not set
-> # CONFIG_ACPI_DEBUG is not set
-> # CONFIG_THINKPAD_ACPI_DEBUGFACILITIES is not set
-> # CONFIG_THINKPAD_ACPI_DEBUG is not set
->
-> .. dmesg ..
-> ...
-> [   68.020812] calling  ideapad_acpi_driver_init+0x0/0x1000
-> [ideapad_laptop] @ 1322
-> [   68.026708] input: Ideapad extra buttons as
-> /devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/input/input16
-> [   68.038236] ACPI Debug:  "=====QUERY_64====="
-> [   68.050232] ACPI Debug:  "=====QUERY_65====="
-> [   68.060218] ACPI Debug:  "=====QUERY_64====="
-> [   68.092216] probe of VPC2004:00 returned 1 after 71386 usecs
-> [   68.092245] initcall ideapad_acpi_driver_init+0x0/0x1000
-> [ideapad_laptop] returned 0 after 69751 usecssg
->
-> ...
->
-> These =====QUERY_XX===== messages are from DSDT:
->
-> ~/acpi$ grep QUERY dsdt.dsl
->                Debug = "=====QUERY_11====="
->                Debug = "=====QUERY_12====="
->                Debug = "=====QUERY_24====="
->                Debug = "=====QUERY_25====="
->                Debug = "=====QUERY_37====="
->                Debug = "=====QUERY_38====="
->                Debug = "=====QUERY_64====="
->                Debug = "=====QUERY_65====="
->
-> Also this is the code from DSDT for QUERY 64 and 65:
->
-> ...
->             Method (_Q64, 0, NotSerialized)  // _Qxx: EC Query
->            {
->                Debug = "=====QUERY_64====="
->                If ((OSYS == 0x07D9))
->                {
->                    If (((WLEX == One) & (WLAT == One)))
->                    {
->                        SGOV (0x02040005, One)
->                    }
->                    Else
->                    {
->                        SGOV (0x02040005, Zero)
->                    }
->                }
->            }
->
->            Method (_Q65, 0, NotSerialized)  // _Qxx: EC Query
->            {
->                Debug = "=====QUERY_65====="
->                If ((OSYS == 0x07D9))
->                {
->                    If (((BTEX == One) & (BTAT == One)))
->                    {
->                        SGOV (0x0202000B, One)
->                    }
->                    Else
->                    {
->                        SGOV (0x0202000B, Zero)
->                    }
->                }
->            }
->
-> ...
->
->
-> Any idea what would cause this ?
->
-> BR,
->
-> Gabriel C
+On Tue, 7 May 2019 11:52:44 +1000
+Sam Bobroff <sbobroff@linux.ibm.com> wrote:
+
+> On Mon, May 06, 2019 at 03:58:45PM -0600, Alex Williamson wrote:
+> > On Fri, 19 Apr 2019 17:37:17 +0200
+> > Greg Kurz <groug@kaod.org> wrote:
+> >  =20
+> > > If vfio_pci_register_dev_region() fails then we should rollback
+> > > previous changes, ie. unmap the ATSD registers.
+> > >=20
+> > > Signed-off-by: Greg Kurz <groug@kaod.org>
+> > > --- =20
+> >=20
+> > Applied to vfio next branch for v5.2 with Alexey's R-b.  Thanks!
+> >=20
+> > Alex =20
+>=20
+> Should this have a fixes tag? e.g.:
+> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subd=
+river")
+>=20
+
+Oops... you're right.
+
+Alex, can you add the above tag ?
+
+> > >  drivers/vfio/pci/vfio_pci_nvlink2.c |    2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/v=
+fio_pci_nvlink2.c
+> > > index 32f695ffe128..50fe3c4f7feb 100644
+> > > --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
+> > > +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> > > @@ -472,6 +472,8 @@ int vfio_pci_ibm_npu2_init(struct vfio_pci_device=
+ *vdev)
+> > >  	return 0;
+> > > =20
+> > >  free_exit:
+> > > +	if (data->base)
+> > > +		memunmap(data->base);
+> > >  	kfree(data);
+> > > =20
+> > >  	return ret;
+> > >  =20
+> >  =20
+
+
+--Sig_/40jBTFpoOsFSSaNoBPfpNLC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEtIKLr5QxQM7yo0kQcdTV5YIvc9YFAlzRLVkACgkQcdTV5YIv
+c9ZGkA/+JZ5PaOPO7i+B9OrZ2lo2PBoFGqJDKD/7eIZh5y6gFUSxEq9SgINn+8gx
+MyCzhiLHvVf0BXgkOqEuopploTNUxjQR1bg4JN6RigS1p29g4btDcpkUxcYVIm0E
+pHoFxeOFMkTzVuBKY0x4qG0exONoCfWgdZOl1gK8dqudX6h9Emg7fcaJ1O94toOZ
+PV2AQ0byBJn5L02oCCdCZOAaRJTKU3LoT0pZlYBtXXFxj/oFewEoGj2bYQBF00fR
+NTUMhmU+TDJCIog3hcarH4xI28f42oOmpwWpDLWptPN2Pm0sIUHEkprrag5/jpI+
+p9XfxNsCPGK1Y2yDyb38xFAmoDpUkI6P4rKUfgVm2YjzkLFzTSS1pSEE2A4hYDdE
+IXTWFwzMz70wJLA4nlLd4vQYdJ03YH8X2vv8B0niH0jtvij3HIJSFYdn9t3T9dMd
+3F60y15qKVoM8EYTarlRMDl0nX/5999A/FiWEaj/Kxjh2Fy8U4bdfPAZyvertETL
+HIwJbSISfG0Rno53ROXeLR34L1sOkLran70bZYkr+eURURGAEzOaXvfxZcGLa2Km
++e/B9/1ymLIEPLqFURKu7mHqWw8AbUZfgnGdkJUttDRTh+RAbhUEmUT93JtSSl+J
+H7s7qa8dFe6Y9v5nc1YglHJpkeSTJs8k8YJlhlvmCNfGPHxpLdE=
+=x3tB
+-----END PGP SIGNATURE-----
+
+--Sig_/40jBTFpoOsFSSaNoBPfpNLC--
