@@ -2,204 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B396A1686F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D84D16876
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfEGQzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:55:19 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45428 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfEGQzS (ORCPT
+        id S1727211AbfEGQ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:56:20 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46480 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfEGQ4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:55:18 -0400
-Received: by mail-io1-f66.google.com with SMTP id b3so9098925iob.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:55:18 -0700 (PDT)
+        Tue, 7 May 2019 12:56:19 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h21so14932687ljk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vWTcC3K3Nu/SMUmuigxcpBE1n1Srz3+InaoHGAS0US0=;
-        b=ZAgBKk0c5qL5FHQqkjp7nmToPCYYtI7Zf2AAgdCa6fkexw7TAFbxpwf3A1DWC1FFUW
-         xk667tBcqeee4P5HGHfWRJ7hC/FxM8umoC3nz0lRjkCe7ReT09URoeYT0eQ6FbLY9iV3
-         bYxmicA5E6e7r0eKMJGqZxGkWuJ6cAV7DhmTk=
+        bh=esZbZU1pgP8duus3WEzDEySF+/YyqE39bcTa0BgZfHg=;
+        b=fvP0O3tZ7ZjnILeoVNXqpBW5oInlJpRKtMsHavAo8Xz6rGRg89S6GZWi4pGffqfCFg
+         oatIXFLAoC9CKwk1ym8unSGXwAYeKchgsJsEKUm2XnsjPb9LqnjMjeafzahNU3X/YERf
+         pCPdN8c31gCwwkI7LCI3zaZ1cxosDpm3CpW9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vWTcC3K3Nu/SMUmuigxcpBE1n1Srz3+InaoHGAS0US0=;
-        b=X3WjAPdHdQKCsVc0vbKSYlAhTN7N9F/Pecgf0cHe5R1mDHm32VbJEE/EmU9Lofe6Bp
-         YDsSIgUea4V39Q+V/WL5Cdq1A7DjYjzFMPlR5bU3iyBGX6FPIKkZPaFkoquwEpj0ugjA
-         pASvn1mJq89qJ9k2LOd92Z5t1/zel/sZyl989qNGva6t2tLCBE738r1WP6uZ1hIsalbN
-         T1sqMghykhITEJydwebnmvcjHKFuzu2tXwaguflwalX/VB2cnIj/2Vb6WFKaF17oEzVa
-         6PDd5pMdQjr5aGiKd1zT7b0L0wPhjvqZScWRckpGZbRdkF3AGWhGKLO5keEkszcPucXR
-         5pKg==
-X-Gm-Message-State: APjAAAXF6ScV5ycjzLNBGsfc42puE50mWxRpq3BHuDjUnI0RNhlt8XZq
-        sjCG/fGKKM8lL9SJ31HA/WWNZxX/vbsMMuJ8Ai7WxA==
-X-Google-Smtp-Source: APXvYqw5tayKkhD9cFzQVv3H/x0RxPTbOFxHnGnENXVN5L3H0wc8b8VbmbfjUH7CId9yNQ49Rj1AVDrtLaG0WWZSxyA=
-X-Received: by 2002:a5d:8b42:: with SMTP id c2mr15118561iot.192.1557247641118;
- Tue, 07 May 2019 09:47:21 -0700 (PDT)
+        bh=esZbZU1pgP8duus3WEzDEySF+/YyqE39bcTa0BgZfHg=;
+        b=ZM49TvrxVp0fo7p1rpTGvIp49sWtbFGNgpCv45oMa4lukr75T7C8/aX0vtUfw3h8ak
+         TQfXKKcVqiuGoAUAePP0KtUfjY74cekAbQ4lTSa7MKObUDgCVUDhQ5MztLACLlfmaN2F
+         h0BNnRSf0HXhuZL5C8HUJMIvOF+PUa0S6YsC/Oxu066UGPISywvo55eQHM4xgaoaBJRx
+         YhzkIS1JOcZVHxYHqOeiWJenjKtTZAUHaJqiYttVnphiA6pg+j9ZUI+gIIMwn3U9ZqPA
+         PwbXFKXUVyOaVWJecgo5YpBxDmd9dyumGGeMC1PGMqzqx1QPTZXjkoM3SFlUkgH0w0ye
+         g2wA==
+X-Gm-Message-State: APjAAAWubI4B0fhyBhLomX+RMHZk06VnkHGwjP6h2IcDs4eqwNF3nbeD
+        8JdaSRYOHf1PM4QP7xOKlMxDPGVRrKw=
+X-Google-Smtp-Source: APXvYqyjTyZJ9aqAMxg5NK8qmc096hrVJYTZ0SiDoU4UhcV8+pO0itJeTJYFn2mbNW+2mq2jcrtSrA==
+X-Received: by 2002:a2e:3c06:: with SMTP id j6mr16326190lja.99.1557247694175;
+        Tue, 07 May 2019 09:48:14 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id j19sm3466097lfm.29.2019.05.07.09.48.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 09:48:12 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id d8so12344223lfb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:48:12 -0700 (PDT)
+X-Received: by 2002:ac2:54b7:: with SMTP id w23mr821657lfk.139.1557247692296;
+ Tue, 07 May 2019 09:48:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190506182736.21064-1-evgreen@chromium.org> <20190506182736.21064-3-evgreen@chromium.org>
-In-Reply-To: <20190506182736.21064-3-evgreen@chromium.org>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Tue, 7 May 2019 09:47:09 -0700
-Message-ID: <CAPUE2uuGM_JgD8CFkQcjMeVk_q17sO3Jfpr8OO-N9h6aNUwqBA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] loop: Better discard support for block devices
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Martin K Petersen <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Alexis Savery <asavery@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20190503174730.245762-1-dianders@chromium.org>
+ <CA+ASDXOkHxYumCBv-T0gxTjdMVTu-c=33Lk-0TUgJ3WGUn2DVQ@mail.gmail.com> <CAD=FV=UKTDFwq3PSdpPmShRcOtZaH1mU=2H-ynoG4VooV=rKVQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=UKTDFwq3PSdpPmShRcOtZaH1mU=2H-ynoG4VooV=rKVQ@mail.gmail.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 7 May 2019 09:48:00 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXMOmD+Wp5wfWU_1m+eEKhGTz62Ru1TJhH7Cea_CKa9PHw@mail.gmail.com>
+Message-ID: <CA+ASDXMOmD+Wp5wfWU_1m+eEKhGTz62Ru1TJhH7Cea_CKa9PHw@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Improve backward compatibility with older Chromebooks
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+On Tue, May 7, 2019 at 9:25 AM Doug Anderson <dianders@chromium.org> wrote:
+> On Mon, May 6, 2019 at 2:40 PM Brian Norris <briannorris@chromium.org> wrote:
+> > The last part of the sentence technically isn't true -- the original
+> > bindings (notably, with no DT maintainer Reviewed-by) didn't specify
+> > where such a node should be found:
+> >
+> > 35da60941e44 pstore/ram: add Device Tree bindings
+> >
+> > so child-of-root used to be a valid location. But anyway, this code is
+> > just part of a heuristic for "old DT" (where later bindings clarified
+> > this), so it still seems valid.
+>
+> I agree that it was unclear in the past, but it is true that being
+> under the root node is not according to the _current_ upstream
+> bindings, right?  ;-)
 
-On Mon, May 6, 2019 at 11:30 AM Evan Green <evgreen@chromium.org> wrote:
->
-> If the backing device for a loop device is a block device,
-> then mirror the "write zeroes" capabilities of the underlying
-> block device into the loop device. Copy this capability into both
-> max_write_zeroes_sectors and max_discard_sectors of the loop device.
->
-> The reason for this is that REQ_OP_DISCARD on a loop device translates
-> into blkdev_issue_zeroout(), rather than blkdev_issue_discard(). This
-> presents a consistent interface for loop devices (that discarded data
-> is zeroed), regardless of the backing device type of the loop device.
-> There should be no behavior change for loop devices backed by regular
-> files.
->
-> While in there, differentiate between REQ_OP_DISCARD and
-> REQ_OP_WRITE_ZEROES, which are different for block devices,
-> but which the loop device had just been lumping together, since
-> they're largely the same for files.
->
-> This change fixes blktest block/003, and removes an extraneous
-> error print in block/013 when testing on a loop device backed
-> by a block device that does not support discard.
->
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
->
-> Changes in v5:
-> - Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
->
-> Changes in v4:
-> - Mirror blkdev's write_zeroes into loopdev's discard_sectors.
->
-> Changes in v3:
-> - Updated commit description
->
-> Changes in v2: None
->
->  drivers/block/loop.c | 57 ++++++++++++++++++++++++++++----------------
->  1 file changed, 37 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index bbf21ebeccd3..a147210ed009 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
->         return ret;
->  }
->
-> -static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-> +static int lo_discard(struct loop_device *lo, struct request *rq,
-> +               int mode, loff_t pos)
->  {
-> -       /*
-> -        * We use punch hole to reclaim the free space used by the
-> -        * image a.k.a. discard. However we do not support discard if
-> -        * encryption is enabled, because it may give an attacker
-> -        * useful information.
-> -        */
->         struct file *file = lo->lo_backing_file;
-> -       int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-> +       struct request_queue *q = lo->lo_queue;
->         int ret;
->
-> -       if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> +       if (!blk_queue_discard(q)) {
->                 ret = -EOPNOTSUPP;
->                 goto out;
->         }
-> @@ -599,8 +594,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
->         case REQ_OP_FLUSH:
->                 return lo_req_flush(lo, rq);
->         case REQ_OP_DISCARD:
-> +               return lo_discard(lo, rq,
-> +                       FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-> +
->         case REQ_OP_WRITE_ZEROES:
-> -               return lo_discard(lo, rq, pos);
-> +               return lo_discard(lo, rq,
-> +                       FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-> +
->         case REQ_OP_WRITE:
->                 if (lo->transfer)
->                         return lo_write_transfer(lo, rq, pos);
-> @@ -854,6 +854,21 @@ static void loop_config_discard(struct loop_device *lo)
->         struct file *file = lo->lo_backing_file;
->         struct inode *inode = file->f_mapping->host;
->         struct request_queue *q = lo->lo_queue;
-> +       struct request_queue *backingq;
-> +
-> +       /*
-> +        * If the backing device is a block device, mirror its zeroing
-> +        * capability. REQ_OP_DISCARD translates to a zero-out even when backed
-> +        * by block devices to keep consistent behavior with file-backed loop
-> +        * devices.
-> +        */
-> +       if (S_ISBLK(inode->i_mode) && !lo->lo_encrypt_key_size) {
-> +               backingq = bdev_get_queue(inode->i_bdev);
-> +               blk_queue_max_discard_sectors(q,
-> +                       backingq->limits.max_write_zeroes_sectors);
-> +
-> +               blk_queue_max_write_zeroes_sectors(q,
-> +                       backingq->limits.max_write_zeroes_sectors);
->
->         /*
->          * We use punch hole to reclaim the free space used by the
-> @@ -861,22 +876,24 @@ static void loop_config_discard(struct loop_device *lo)
->          * encryption is enabled, because it may give an attacker
->          * useful information.
->          */
-> -       if ((!file->f_op->fallocate) ||
-> -           lo->lo_encrypt_key_size) {
-> +       } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
->                 q->limits.discard_granularity = 0;
->                 q->limits.discard_alignment = 0;
->                 blk_queue_max_discard_sectors(q, 0);
->                 blk_queue_max_write_zeroes_sectors(q, 0);
-> -               blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> -               return;
-> -       }
->
-> -       q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> -       q->limits.discard_alignment = 0;
-> +       } else {
-> +               q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> +               q->limits.discard_alignment = 0;
-> +
-> +               blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> +               blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> +       }
->
-> -       blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> -       blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> -       blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> +       if (q->limits.max_write_zeroes_sectors)
-> +               blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> +       else
-> +               blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
->  }
->
->  static void loop_unprepare_queue(struct loop_device *lo)
-> --
-> 2.20.1
->
+Sure, I suppose. Although, given the general ABI policy around DT, it
+seems to me that something that was "according to" an old binding
+cannot really be made "no longer" according to the binding. It can be
+discouraged, and removed from new DTs, but it doesn't really become
+*wrong*.
+
+But our DT was definitely *not* according to even the (un-reviewed)
+merged binding. So I'm mostly mincing words here.
+
+Brian
