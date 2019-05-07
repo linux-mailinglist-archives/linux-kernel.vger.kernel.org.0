@@ -2,63 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F4D21694A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2435A1694F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfEGRfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:35:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61243 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726378AbfEGRfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:35:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 May 2019 10:35:29 -0700
-Received: from unknown (HELO [10.232.112.171]) ([10.232.112.171])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 07 May 2019 10:35:28 -0700
-Subject: Re: [PATCH v2 3/7] devcoredump: allow to create several coredump
- files in one device
-To:     Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christoph Hellwig <hch@lst.de>
-References: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
- <1557248314-4238-4-git-send-email-akinobu.mita@gmail.com>
-From:   "Heitke, Kenneth" <kenneth.heitke@intel.com>
-Message-ID: <aced1953-4ea2-c8b1-9ee9-068e92ae1f8a@intel.com>
-Date:   Tue, 7 May 2019 11:35:28 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727445AbfEGRg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:36:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47702 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbfEGRg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 13:36:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=clVmOpDd5LzvkH+bJWwETDAH6oZsPTXJW+h72BQ3YmA=; b=Lv9eHU/YCnEEcZbzOeCcafBMF
+        OswjYy2ZYStFugMU0UuKCzCEoJL1SeV8aIwcRB9okQqJ9hF87xa9smgAI1nlogUPWbQt2/csogLsh
+        klr5i5nLmuZlcA3EdxtfOlQsI/rKdwxGZAQBVMngU6fNViPjUE0ZjFowgSXAg8QafQF6y/1aUavH0
+        DUg3anwUIkMdltSZOAIXMEjLKzAr+mCBhyHfLIPctmeSOWVj0/hAbr7k51DT5uC3RrDFnyzw4TvKi
+        S0nHugtqx5JMKIFWALxBGRckiMkHDJtdM0Xq80o6t5HYCsbAMDW/hJD8IlHtxEyO7TF0+zvLtkShr
+        WlE47EP3Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hO41Q-0000Zl-4S; Tue, 07 May 2019 17:36:56 +0000
+Date:   Tue, 7 May 2019 10:36:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH AUTOSEL 4.14 62/95] mm, memory_hotplug: initialize struct
+ pages for the full memory section
+Message-ID: <20190507173655.GA1403@bombadil.infradead.org>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-62-sashal@kernel.org>
+ <CAKgT0Uc8ywg8zrqyM9G+Ws==+yOfxbk6FOMHstO8qsizt8mqXA@mail.gmail.com>
+ <CAHk-=win03Q09XEpYmk51VTdoQJTitrr8ON9vgajrLxV8QHk2A@mail.gmail.com>
+ <20190507170208.GF1747@sasha-vm>
+ <CAHk-=wi5M-CC3CUhmQZOvQE2xJgfBgrgyAxp+tE=1n3DaNocSg@mail.gmail.com>
+ <20190507171806.GG1747@sasha-vm>
+ <20190507173224.GS31017@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1557248314-4238-4-git-send-email-akinobu.mita@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190507173224.GS31017@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 07, 2019 at 07:32:24PM +0200, Michal Hocko wrote:
+> On Tue 07-05-19 13:18:06, Sasha Levin wrote:
+> > Michal, is there a testcase I can plug into kselftests to make sure we
+> > got this right (and don't regress)? We care a lot about memory hotplug
+> > working right.
+> 
+> As said in other email. The memory hotplug tends to work usually. It
+> takes unexpected memory layouts which trigger corner cases. This makes
+> testing really hard.
 
-
-On 5/7/2019 10:58 AM, Akinobu Mita wrote:
-> @@ -292,6 +309,12 @@ void dev_coredumpm(struct device *dev, struct module *owner,
->   	if (device_add(&devcd->devcd_dev))
->   		goto put_device;
->   
-> +	for (i = 0; i < devcd->num_files; i++) {
-> +		if (device_create_bin_file(&devcd->devcd_dev,
-> +					   &devcd->files[i].bin_attr))
-> +			/* nothing - some files will be missing */;
-
-Is the conditional necessary if you aren't going to do anything?
-
-> +	}
-> +
->   	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
->   			      "failing_device"))
->   		/* nothing - symlink will be missing */;
+Can we do something with qemu?  Is it flexible enough to hotplug memory
+at the right boundaries?
