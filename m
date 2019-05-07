@@ -2,80 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0262161F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 134A6161DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfEGK0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:26:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41081 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEGK0y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:26:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l132so3474881pfc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 03:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sLt8k/Ibit5MXW+2DcTy1x+/PaPOiRW0J72G+A/4PHY=;
-        b=OKmsmkpVX1GWo4n6EuuYNx3ev2lqwZzR/saFLgXL8WaxXKLuX/fHhBi4I9e3PUm0SW
-         x3j+ZL/4U2LSuDBvcXu1Yc+ISrlUjm598fdc+a68nCrvGGDyJlejuBmTa0bvHmzp2Bfu
-         t2y6ZPnLIO6eK+ZKzBUHbdxzzAfbv8oMQdMlEVQHinAXo3JI7d9yGKV8UekGXsWFs6p/
-         3XVqQz1gqkdPy+I3NMpt1FXyy7VQIHK3BejMQKrAfJpJKEv+lR5b+WZvHbgXexktnw6g
-         J/Dxf2zo++G8J89BNQ74cyDMSd3zHByeY8inkFGzVPyixM0zLfUQThhJkR8qx/zcinjC
-         FkhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sLt8k/Ibit5MXW+2DcTy1x+/PaPOiRW0J72G+A/4PHY=;
-        b=esPM1BCMUzfZQwoo0peASyzeqwDhZoM7YbJYaxvCgPsHC2/ieILhMJ0vw/wc/Eb/I1
-         PTf+WSuV6+HNnkHN9toZeRXIvxh7plimdUKRt+T8e8AKceIBx8Bj13DIMmg5eMwgHLXG
-         a6NOlOIk/3XeUSYqWz94BRhNAmmV3cgyBqOdkxIO6Rg7wMq2e3UU3ww36p7NAcnpHUN6
-         wpiEfMI1uZODQDjrfoi4ol3qisf8Maee6f0iQfg9lkAb4irvCosXnodq38Q+tzoz72Rk
-         C+/kwf8eb6jy61nDhPZc4PMl6eGpDdMrfOGYoXV4fvaMG3AO3b6oPb5TLwKplZt45UG7
-         0z4A==
-X-Gm-Message-State: APjAAAXKfz2z7a3sYJ4DCa74NhiYiUXk0ZbpREazDWLbbWCLPKhsKuzY
-        /TAOr/+Mqxek8mX717rsndc=
-X-Google-Smtp-Source: APXvYqyp30i6Tlo5D4c9BcoBQCHXBNTyHMUqXt2iDVFysO6A3yCt9BbeBsRn4Bmd6F3usKLscraP1Q==
-X-Received: by 2002:a63:5c5f:: with SMTP id n31mr39262217pgm.325.1557224813794;
-        Tue, 07 May 2019 03:26:53 -0700 (PDT)
-Received: from app09.andestech.com (59-120-53-16.HINET-IP.hinet.net. [59.120.53.16])
-        by smtp.gmail.com with ESMTPSA id i75sm22993533pfj.80.2019.05.07.03.26.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 03:26:53 -0700 (PDT)
-From:   Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To:     greentime@andestech.com, linux-kernel@vger.kernel.org
-Cc:     green.hu@gmail.com
-Subject: [PATCH] MAINTAINERS: update nds32 git repo path
-Date:   Tue,  7 May 2019 18:22:25 +0800
-Message-Id: <20190507102225.4174-1-greentime@andestech.com>
-X-Mailer: git-send-email 2.18.0
+        id S1726700AbfEGKXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:23:14 -0400
+Received: from mx01-fr.bfs.de ([193.174.231.67]:62102 "EHLO mx01-fr.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbfEGKXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 06:23:13 -0400
+Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
+        by mx01-fr.bfs.de (Postfix) with ESMTPS id C114020318;
+        Tue,  7 May 2019 12:23:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1557224586; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X50mZEtUkHu4nljd78CE48MvDSsDCx/W93Ql/G26gDU=;
+        b=GYtjTSvDK62O2hrHSDE8J7WErMELUFgL3GCh4rG1v6eUG8wO7kGt+JTDrPBq4nkZuVp8cv
+        Afjho3CWCppoZdGchhQbetX4AAOseIHV8tpDmutdULDdGkaTZl6sm99MKnnmz+8bSCIVG7
+        90Jiu3JjyCnXcrmMurOdEDQkcnRhNKU346CN+ReEDTeDmFCtvvA/9x7+xfttW3jIb+rkRq
+        XByeiu5rA3NDKK50tOM8zS9kHDEB/QQRA0mzEapNy/utdw9cDE50u2SeI/r1tJ4EOXzDuv
+        w2mdWayA1JW0460n2oRff20hV0DfrdJf/OwQI82yBxMxN8dUbYMulE7SVq9A3Q==
+Received: from [134.92.181.33] (unknown [134.92.181.33])
+        by mail-fr.bfs.de (Postfix) with ESMTPS id 3299BBEEBD;
+        Tue,  7 May 2019 12:23:05 +0200 (CEST)
+Message-ID: <5CD15C87.3040006@bfs.de>
+Date:   Tue, 07 May 2019 12:23:03 +0200
+From:   walter harms <wharms@bfs.de>
+Reply-To: wharms@bfs.de
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
+MIME-Version: 1.0
+To:     Colin Ian King <colin.king@canonical.com>
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: sja1105: fix comparisons against uninitialized
+ status fields
+References: <20190507084458.22520-1-colin.king@canonical.com> <20190507092012.GL2269@kadam> <a8931feb-c11a-3833-0a14-2585e70c9114@canonical.com>
+In-Reply-To: <a8931feb-c11a-3833-0a14-2585e70c9114@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.10
+Authentication-Results: mx01-fr.bfs.de
+X-Spamd-Result: default: False [-3.10 / 7.00];
+         ARC_NA(0.00)[];
+         HAS_REPLYTO(0.00)[wharms@bfs.de];
+         BAYES_HAM(-3.00)[100.00%];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         REPLYTO_ADDR_EQ_FROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We use git.kernel.org to put nds32's latest code instead of github.
 
-Signed-off-by: Greentime Hu <greentime@andestech.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2c2fce72e694..967ac42d1a89 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -963,7 +963,7 @@ F:	drivers/staging/iio/*/ad*
- ANDES ARCHITECTURE
- M:	Greentime Hu <green.hu@gmail.com>
- M:	Vincent Chen <deanbo422@gmail.com>
--T:	git https://github.com/andestech/linux.git
-+T:	git https://git.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
- S:	Supported
- F:	arch/nds32/
- F:	Documentation/devicetree/bindings/interrupt-controller/andestech,ativic32.txt
--- 
-2.18.0
+Am 07.05.2019 11:29, schrieb Colin Ian King:
+> On 07/05/2019 10:20, Dan Carpenter wrote:
+>> On Tue, May 07, 2019 at 09:44:58AM +0100, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> The call to sja1105_status_get to set various fields in the status
+>>> structure can potentially be skipped in a while-loop because of a couple
+>>> of prior continuation jump paths. This can potientially lead to checking
+>>> be checking against an uninitialized fields in the structure which may
+>>> lead to unexpected results.  Fix this by ensuring all the fields in status
+>>> are initialized to zero to be safe.
+>>>
+>>> Addresses-Coverity: ("Uninitialized scalar variable")
+>>> Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch")
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>  drivers/net/dsa/sja1105/sja1105_spi.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
+>>> index 244a94ccfc18..76f6a51e10d9 100644
+>>> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
+>>> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
+>>> @@ -394,7 +394,7 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
+>>>  	struct sja1105_static_config *config = &priv->static_config;
+>>>  	const struct sja1105_regs *regs = priv->info->regs;
+>>>  	struct device *dev = &priv->spidev->dev;
+>>> -	struct sja1105_status status;
+>>> +	struct sja1105_status status = {};
+>>
+>> The exit condition isn't right.  It should continue if ret is negative
+>> or the CRC stuff is invalid but right now it's ignoring ret.  It would
+>> be better could just add a break statement at the very end and remove
+>> the status checks.  Like so:
+>>
+>> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
+>> index 244a94ccfc18..3af3b0f3cc44 100644
+>> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
+>> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
+>> @@ -466,8 +466,9 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
+>>  				"invalid, retrying...\n");
+>>  			continue;
+>>  		}
+>> -	} while (--retries && (status.crcchkl == 1 || status.crcchkg == 1 ||
+>> -		 status.configs == 0 || status.ids == 1));
+>> +		/* Success! */
+>> +		break;
+>> +	} while (--retries);
+> 
+> Good point, I'll send a V2 for that. Thanks Dan for your keen eyes.
+> 
 
+please do not put everything into the while condition.
+It make that hard to read, just add if () break to detangle that.
+
+re,
+ wh
+
+> Colin
+> 
+>>  
+>>  	if (!retries) {
+>>  		rc = -EIO;
+>>
+> 
+> 
