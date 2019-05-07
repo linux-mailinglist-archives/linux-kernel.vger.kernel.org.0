@@ -2,202 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D915216947
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E58B01694C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfEGRfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:35:03 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36316 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbfEGRfD (ORCPT
+        id S1727477AbfEGRfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:35:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34387 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbfEGRfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:35:03 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d21so1034859plr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:35:02 -0700 (PDT)
+        Tue, 7 May 2019 13:35:45 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s7so9662103ljh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ffMscuu3PUeSeZb5tEXYoJU5cfVCzk2YToQl4OvjLZo=;
+        b=H36Gpb50r9djkhKtwQe3VJpRaLJw/NGSVDsmjM54fy8tMa/SUIs7pLVJp581T7Ys20
+         8jaYXH5Sh569s93/hVFiq5rZNQH56hFJ256xdH0tmNKP7Bczg/VWm64TU4aXNw+s8jYx
+         QPwg4iTwOqo5JQRRyAhG7MhENuqZqg3/ZjtCY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8nR0aBKJfoopZPS6ewbt3+ta+1QzOCPH60SuweQRd3Y=;
-        b=RnJmX2C44HcMPHeRkHwKBvgKoIkp7svdbldqkF06KWLsy8sjYp4ZQMI4nFgnmphmsf
-         nE6U7PVH524d9W8mAUTTv+H2AzC1pADlIWCMvFRA6cO4kWiH/cD9/BywpDl9z12AGKYK
-         /YNFDHw7lzIFMm7sW0wwPNVC5J48gIrdpKOEnCfAokjLafhEcnzat3Nw4p/QRnatnLoV
-         FOWz3Cp4qb0P1sIXfnK47sWPQZDvDuiGS4a7oZ566lIitFXJr/2PToDqX2/sU20HLiSo
-         s3qMAz/TH1K1V3ELn6U+flHVTSMKMLzEC5omdChkNrZt3FVPlsC3hepB69XEvYoOrtBh
-         NApA==
-X-Gm-Message-State: APjAAAX2hTZLxub6QbeB62csY5fsN6ILPf4Pos+8SHIKQeODvoIrxcdI
-        JSUC/CZZHoPU3oEA16ZyiEMshw==
-X-Google-Smtp-Source: APXvYqyA2RTx+hWbofW4Twpnmba6QN/uD0h5Fwuc26nA0nUrnqArxgPKPaiMdotoAMxTrGMgEdjfkw==
-X-Received: by 2002:a17:902:a614:: with SMTP id u20mr41499062plq.117.1557250501946;
-        Tue, 07 May 2019 10:35:01 -0700 (PDT)
-Received: from localhost ([2601:647:4700:2953:ec49:968:583:9f8])
-        by smtp.gmail.com with ESMTPSA id d4sm6008914pgt.14.2019.05.07.10.35.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 10:35:01 -0700 (PDT)
-Date:   Tue, 7 May 2019 10:35:00 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v2 07/18] fpga: dfl: pci: enable SRIOV support.
-Message-ID: <20190507173500.GD26690@archbox>
-References: <1556528151-17221-1-git-send-email-hao.wu@intel.com>
- <1556528151-17221-8-git-send-email-hao.wu@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ffMscuu3PUeSeZb5tEXYoJU5cfVCzk2YToQl4OvjLZo=;
+        b=avoNHA8uhHsme46qtZNDJqubeUWlcYtKDXP5vXpfKMhn8xXrQ1zk98+3UAjbtSMQNJ
+         /VNV88i1IZeWVD7r1744jiyEMa6/dS3wZouzpZ/l18Su52ZOVWzXi72/NBE0hD0MFLQg
+         Ck7+gl23bzuQ+uchjBOc0ED4wd74BcNnLLUHU+Wl8TDdpZ/+r8xgRn5kpESWPRpTaP9s
+         sj/eRQe/PSl2YldGZtRjlkps695ZjW9HC214ogXxXmMtSB957QjbeEebzOHHIT4Pj4HU
+         ycE0PziYJzgMGKgP4wJVGjDFNYTHWv56rEesGN+ShTTcMZnfJ3vTkyv4gPQlyk+lDMib
+         pIzg==
+X-Gm-Message-State: APjAAAUguZsQg4bkHafTkhYgKEcYWKyfthChkSHoQ6vyA2d/WvQeDia+
+        fR0lfPdqEvxdiCJqbDT91i/dPV3S5gI=
+X-Google-Smtp-Source: APXvYqwFJpJXFt96v/SD14kBNrxVfKAZLRK1VmtiPPnMg+AnbG9Y4epOcpzSkLsERghqOkMKe6tTBA==
+X-Received: by 2002:a2e:9d12:: with SMTP id t18mr18474297lji.163.1557250543289;
+        Tue, 07 May 2019 10:35:43 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id a6sm538720lfi.89.2019.05.07.10.35.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 10:35:42 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id d8so12449469lfb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:35:42 -0700 (PDT)
+X-Received: by 2002:ac2:43cf:: with SMTP id u15mr17155883lfl.67.1557250541931;
+ Tue, 07 May 2019 10:35:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556528151-17221-8-git-send-email-hao.wu@intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190507132632.GB26655@zn.tnic>
+In-Reply-To: <20190507132632.GB26655@zn.tnic>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 7 May 2019 10:35:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh4Cjb1qDj_VRW9W4d4n9WLksgMKF-roG8eCk_O0ZaEEg@mail.gmail.com>
+Message-ID: <CAHk-=wh4Cjb1qDj_VRW9W4d4n9WLksgMKF-roG8eCk_O0ZaEEg@mail.gmail.com>
+Subject: Re: [GIT PULL] x86 FPU changes for 5.2
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 04:55:40PM +0800, Wu Hao wrote:
-> This patch enables the standard sriov support. It allows user to
-> enable SRIOV (and VFs), then user could pass through accelerators
-> (VFs) into virtual machine or use VFs directly in host.
-> 
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@intel.com>
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  drivers/fpga/dfl-pci.c | 40 ++++++++++++++++++++++++++++++++++++++++
->  drivers/fpga/dfl.c     | 41 +++++++++++++++++++++++++++++++++++++++++
->  drivers/fpga/dfl.h     |  1 +
->  3 files changed, 82 insertions(+)
-> 
-> diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
-> index 66b5720..2fa571b 100644
-> --- a/drivers/fpga/dfl-pci.c
-> +++ b/drivers/fpga/dfl-pci.c
-> @@ -223,8 +223,46 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
->  	return ret;
->  }
->  
-> +static int cci_pci_sriov_configure(struct pci_dev *pcidev, int num_vfs)
-> +{
-> +	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
-> +	struct dfl_fpga_cdev *cdev = drvdata->cdev;
-> +	int ret = 0;
-> +
-> +	mutex_lock(&cdev->lock);
-> +
-> +	if (!num_vfs) {
-> +		/*
-> +		 * disable SRIOV and then put released ports back to default
-> +		 * PF access mode.
-> +		 */
-> +		pci_disable_sriov(pcidev);
-> +
-> +		__dfl_fpga_cdev_config_port_vf(cdev, false);
-> +
-> +	} else if (cdev->released_port_num == num_vfs) {
-> +		/*
-> +		 * only enable SRIOV if cdev has matched released ports, put
-> +		 * released ports into VF access mode firstly.
-> +		 */
-> +		__dfl_fpga_cdev_config_port_vf(cdev, true);
-> +
-> +		ret = pci_enable_sriov(pcidev, num_vfs);
-> +		if (ret)
-> +			__dfl_fpga_cdev_config_port_vf(cdev, false);
-> +	} else {
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	mutex_unlock(&cdev->lock);
-> +	return ret;
-> +}
-> +
->  static void cci_pci_remove(struct pci_dev *pcidev)
->  {
-> +	if (dev_is_pf(&pcidev->dev))
-> +		cci_pci_sriov_configure(pcidev, 0);
-> +
->  	cci_remove_feature_devs(pcidev);
->  	pci_disable_pcie_error_reporting(pcidev);
->  }
-> @@ -234,6 +272,7 @@ static void cci_pci_remove(struct pci_dev *pcidev)
->  	.id_table = cci_pcie_id_tbl,
->  	.probe = cci_pci_probe,
->  	.remove = cci_pci_remove,
-> +	.sriov_configure = cci_pci_sriov_configure,
->  };
->  
->  module_pci_driver(cci_pci_driver);
-> @@ -241,3 +280,4 @@ static void cci_pci_remove(struct pci_dev *pcidev)
->  MODULE_DESCRIPTION("FPGA DFL PCIe Device Driver");
->  MODULE_AUTHOR("Intel Corporation");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_VERSION(DRV_VERSION);
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index a6b6d38..c5aa287 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -1098,6 +1098,47 @@ int dfl_fpga_cdev_config_port(struct dfl_fpga_cdev *cdev,
->  }
->  EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_port);
->  
-> +static void config_port_vf(struct device *fme_dev, int port_id, bool is_vf)
-> +{
-> +	void __iomem *base;
-> +	u64 v;
-> +
-> +	base = dfl_get_feature_ioaddr_by_id(fme_dev, FME_FEATURE_ID_HEADER);
-> +
-> +	v = readq(base + FME_HDR_PORT_OFST(port_id));
-> +
-> +	v &= ~FME_PORT_OFST_ACC_CTRL;
-> +	v |= FIELD_PREP(FME_PORT_OFST_ACC_CTRL,
-> +			is_vf ? FME_PORT_OFST_ACC_VF : FME_PORT_OFST_ACC_PF);
-> +
-> +	writeq(v, base + FME_HDR_PORT_OFST(port_id));
-> +}
-> +
-> +/**
-> + * __dfl_fpga_cdev_config_port_vf - configure port to VF access mode
-> + *
-> + * @cdev: parent container device.
-> + * @if_vf: true for VF access mode, and false for PF access mode
-> + *
-> + * Return: 0 on success, negative error code otherwise.
-> + *
-> + * This function is needed in sriov configuration routine. It could be used to
-> + * configures the released ports access mode to VF or PF.
-> + * The caller needs to hold lock for protection.
-> + */
-> +void __dfl_fpga_cdev_config_port_vf(struct dfl_fpga_cdev *cdev, bool is_vf)
-> +{
-> +	struct dfl_feature_platform_data *pdata;
-> +
-> +	list_for_each_entry(pdata, &cdev->port_dev_list, node) {
-> +		if (device_is_registered(&pdata->dev->dev))
-> +			continue;
-> +
-> +		config_port_vf(cdev->fme_dev, pdata->id, is_vf);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(__dfl_fpga_cdev_config_port_vf);
-> +
->  static int __init dfl_fpga_init(void)
->  {
->  	int ret;
-> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-> index 63f39ab..1350e8e 100644
-> --- a/drivers/fpga/dfl.h
-> +++ b/drivers/fpga/dfl.h
-> @@ -421,5 +421,6 @@ struct platform_device *
->  
->  int dfl_fpga_cdev_config_port(struct dfl_fpga_cdev *cdev,
->  			      u32 port_id, bool release);
-> +void __dfl_fpga_cdev_config_port_vf(struct dfl_fpga_cdev *cdev, bool is_vf);
->  
->  #endif /* __FPGA_DFL_H */
-> -- 
-> 1.8.3.1
-> 
+On Tue, May 7, 2019 at 6:26 AM Borislav Petkov <bp@suse.de> wrote:
+>
+> This branch contains work started by Rik van Riel and brought to
+> fruition by Sebastian Andrzej Siewior with the main goal to optimize
+> when to load FPU registers: only when returning to userspace and not on
+> every context switch (while the task remains in the kernel).
+
+I love this and we should have done it long ago, but I also worry that
+every time we've messed with the FP state, we've had interesting bugs.
+Which is obviously why we didn't do this long ago.
+
+Has this gone through lots of testing, particularly with things like
+FP signal handling and old machines that don't necessarily have
+anything but the most basic FP state (ie Pentium class etc)?
+
+I've pulled it, but I'd still like to feel safer about it after-the-fact ;)
+
+               Linus
