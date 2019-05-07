@@ -2,23 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBAE15756
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 03:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE04A1575E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 03:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfEGBe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 21:34:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbfEGBe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 21:34:26 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64B4C20835;
-        Tue,  7 May 2019 01:34:22 +0000 (UTC)
-Date:   Mon, 6 May 2019 21:34:20 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        id S1726652AbfEGBlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 21:41:46 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45067 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbfEGBlq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 21:41:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n22so3006044lfe.12
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 18:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6H70OYCWqWNzJ1zGHNlYsHEsCgxXv8c0o/4c1a8H4TM=;
+        b=dpFgNSCaKcwRzOTxc2CRA45EB/B/5baFN6H/ywJJjn2iC4DVw0z3j37EPur3kF2BcM
+         gR5dH5TJcCt0L08AcgiCY39z5fIt5og+cl6z+Q6Orik7/B2A+FvQSQtx6uaVPo9r5nWT
+         BpDf9SS2XWqZ2zgNFN0ahQyv31mOBnC8Onm0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6H70OYCWqWNzJ1zGHNlYsHEsCgxXv8c0o/4c1a8H4TM=;
+        b=Bx0TeM1O007mDlnOZU6ybzIZqIl2NVIk7TzlqDpEFH68/kbU7KnV2cblXPlZBDm0ZV
+         gT+b3Fe7jwC6PP+4QXHhikpbuPEbfuTZ0/JBQD8U5aUe4+G85H1YcpTu1/p12faPwPGl
+         VkoaEtm2GaUUwXH4q/vxJfLT0E1oDjrzVcQF3MBRc0YxIUaUFYoCbdFyjY54LjRGucVo
+         NtRYL0Tlc6sISXYvhQF9mBT5In+VB05AJL+/GshJFloeskka3qb+U0PX8bXJrNILFtuh
+         gN0DlhGIN9hvpVjNbF5UZYYRbYiXGp4ztqetD4d+a1+EgAQQW0GF8qpVuBjT2WLh7tN2
+         ifKQ==
+X-Gm-Message-State: APjAAAX9I2A8PmOpPcECyBb6DQjTdJtwJ3eero4ErIOFD7lfUnaQmoqZ
+        2v4idOp50KFTMF5pUP6aon3pcxI2esY=
+X-Google-Smtp-Source: APXvYqx0j6cT0FfjvePJ9DnIx9dKW3IP2T//lW6PmYrVypQbAGyhkccCAnpiddOIt+OBpv74l6X6iw==
+X-Received: by 2002:a19:97c8:: with SMTP id z191mr14340744lfd.167.1557193304273;
+        Mon, 06 May 2019 18:41:44 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id p18sm3199628ljc.54.2019.05.06.18.41.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 18:41:44 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id n134so8716011lfn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 18:41:43 -0700 (PDT)
+X-Received: by 2002:a19:2952:: with SMTP id p79mr5995097lfp.166.1557192915891;
+ Mon, 06 May 2019 18:35:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
+ <20190502195052.0af473cf@gandalf.local.home> <20190503092959.GB2623@hirez.programming.kicks-ass.net>
+ <20190503092247.20cc1ff0@gandalf.local.home> <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net>
+ <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
+ <20190506081951.GJ2606@hirez.programming.kicks-ass.net> <20190506095631.6f71ad7c@gandalf.local.home>
+ <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
+ <20190506130643.62c35eeb@gandalf.local.home> <CAHk-=whesas+GDtHZks62wqXWXe4d_g3XJ359GX81qj=Fgs6qQ@mail.gmail.com>
+ <20190506145745.17c59596@gandalf.local.home> <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
+ <20190506162915.380993f9@gandalf.local.home> <CAHk-=wi5KBWUOvM94aTOPnoJ5L_aQG=vgLQ4SxxZDeQD0pF2tQ@mail.gmail.com>
+ <20190506174511.2f8b696b@gandalf.local.home> <CAHk-=wj3R_s0RTJOmTBNaUPhu4fz2shNBUr4M6Ej65UYSNCs-g@mail.gmail.com>
+ <20190506210416.2489a659@oasis.local.home>
+In-Reply-To: <20190506210416.2489a659@oasis.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 May 2019 18:34:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whZwqzbu-=1r_j_cXfd=ta1q7RFCuneqBZfQQhS_P-BmQ@mail.gmail.com>
+Message-ID: <CAHk-=whZwqzbu-=1r_j_cXfd=ta1q7RFCuneqBZfQQhS_P-BmQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
+To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
@@ -48,72 +95,26 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call
- functions
-Message-ID: <20190506213420.62357f23@oasis.local.home>
-In-Reply-To: <20190506210416.2489a659@oasis.local.home>
-References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
-        <20190503092959.GB2623@hirez.programming.kicks-ass.net>
-        <20190503092247.20cc1ff0@gandalf.local.home>
-        <2045370D-38D8-406C-9E94-C1D483E232C9@amacapital.net>
-        <CAHk-=wjrOLqBG1qe9C3T=fLN0m=78FgNOGOEL22gU=+Pw6Mu9Q@mail.gmail.com>
-        <20190506081951.GJ2606@hirez.programming.kicks-ass.net>
-        <20190506095631.6f71ad7c@gandalf.local.home>
-        <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
-        <20190506130643.62c35eeb@gandalf.local.home>
-        <CAHk-=whesas+GDtHZks62wqXWXe4d_g3XJ359GX81qj=Fgs6qQ@mail.gmail.com>
-        <20190506145745.17c59596@gandalf.local.home>
-        <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
-        <20190506162915.380993f9@gandalf.local.home>
-        <CAHk-=wi5KBWUOvM94aTOPnoJ5L_aQG=vgLQ4SxxZDeQD0pF2tQ@mail.gmail.com>
-        <20190506174511.2f8b696b@gandalf.local.home>
-        <CAHk-=wj3R_s0RTJOmTBNaUPhu4fz2shNBUr4M6Ej65UYSNCs-g@mail.gmail.com>
-        <20190506210416.2489a659@oasis.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 May 2019 21:04:16 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, May 6, 2019 at 6:04 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> That iterator does something special for each individual record. All
+> 40,000 of them.
 
-> static int add_breakpoints(struct dyn_ftrace *rec, int enable)
-> {
-> 	unsigned long ftrace_addr;
-> 	int ret;
-> 
-> 	ftrace_addr = ftrace_get_addr_curr(rec);
-> 
-> 	ret = ftrace_test_record(rec, enable);
-> 
-> 	switch (ret) {
-> 	case FTRACE_UPDATE_IGNORE:
-> 		return 0;
-> 
-> 	case FTRACE_UPDATE_MAKE_CALL:
-> 		/* converting nop to call */
-> 		return add_brk_on_nop(rec);
-> 
-> 	case FTRACE_UPDATE_MODIFY_CALL:
+.. yes, but the 'int3' only happens for *one* of them at a time.
 
-The FTRACE_UPDATE_MODIFY_CALL is the case where we switch from calling
-one trampoline to calling another. As you can plainly see from this
-switch statement, we treat it the same as converting to a nop. That's
-the bug we are trying to fix. It shouldn't be treated as a nop. It
-should be treated as a call to the old or new function. Either is fine,
-but it must be one or the other, not a nop.
+Why would it bother with the other 39,999 calls?
 
--- Steve
+You could easily just look up the record at the int3 time, and just
+use the record. Exactly the same way you use the one-at-a-time ones.
 
+Instead, you emulate a fake call to a function that *wouldn't* get
+called, which now does the lookup there. That's the part I don't get.
+Why are you emulating something else than what you'd be rewriting?
 
-> 	case FTRACE_UPDATE_MAKE_NOP:
-> 		/* converting a call to a nop */
-> 		return add_brk_on_call(rec, ftrace_addr);
-> 	}
-> 	return 0;
-> }
-
+             Linus
