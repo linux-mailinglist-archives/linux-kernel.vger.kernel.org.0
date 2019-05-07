@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153A115BBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 252DA15C29
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbfEGF5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:57:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43390 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727539AbfEGF5F (ORCPT
+        id S1726878AbfEGGBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:01:23 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41654 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbfEGGBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:57:05 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z5so8033172lji.10
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 22:57:04 -0700 (PDT)
+        Tue, 7 May 2019 02:01:17 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z3so4012531pgp.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:01:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C7TwO1vjbNHfMqbAxi9vlDVvmDYxhZ6ib+epFPKTheM=;
-        b=TDEjJvzcgnurW1FPZtCH9rYP2rDymIZeqdMqRdGI15WUsXRAn3v7+lnmyZ0fdZGIeF
-         Pc5D+zhVmkFbz3l3w4gfKZ2EnMZd+l84USSuNcl+9kMp8kUMYmIHDBt8nJJyKVkqp9N6
-         bfTxje9VGE12bymK8hn65n+jfWRpU1o46JJJI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UdlhNmncQt68SNh9Q/6nsPN42unpZnH30BwmpVsaWqg=;
+        b=K4n96ez51FxYMSjV3AwWRVwu6aK7Sv3T3F40tH9NH8ExfkH6Y0pSeyuAX2ulXGiXgZ
+         ddqJ9y2IvS73rx/MJg9VBNfVn7m+ohjwG1KX+KSIQ+0d2GIwN3MP6LqgxfOW3eA8YO8X
+         d5LyIpElXCazVoF7i1pRb0ZVBUFZhwhz09mZzCIEhnQVhWbR6H4gd0F+zAUqWh6PqRVz
+         opyGTK6m5aFIfxcNn8ZlhO73Ug16Jt5bRMNUeMCGUmZ3CmuVEpqk0tihpLSOFSGmBwaj
+         +mB09oPvNhoKVigRS9fpicLYHpf28UFfQkeubRYepnjbqLI0cu0TWjZBygrfUdr96wxN
+         KzZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C7TwO1vjbNHfMqbAxi9vlDVvmDYxhZ6ib+epFPKTheM=;
-        b=Z0gsu2fcxjADZJ0+LfUkysv+/18/YYAIll+1hEjZsw6PeuBxgH3QYJD663eJbYYfA8
-         rtyrdTzJK53NSduHHwtS8XjfxFSpWbFA8JyAilAPeY8n21PZU8eYD0DUPEjlhdYOTBRH
-         MaYfniGgQuSEVRibO1bnfaYMNzFIQGBjNHNTNoAIn46ydFYkluntED0buC9ScXPqWQR3
-         UDSUdcUbGU+/8L99UTQuDw0SyL7xiAZz//H1o60XNgxWDev78eW1FMO8kfJrXbhuO3cO
-         sFajMsWyyt9JA4sJgKLwGvk3XC1jWiDbwkTxqxYgzO2hPrXxOK3lK2v/PbgUkF5Dkhj3
-         uFCw==
-X-Gm-Message-State: APjAAAXOQvJNAPJ/KTlWOdd9D2+IWik0aGb8+CVNI8tiGkAuys62VlYH
-        UWzoKvXvPmKxE8GZXOeYznnNZQ==
-X-Google-Smtp-Source: APXvYqwERnjT55opTEsv307+a6frciS871V94u2tJ9NDGTgJXKuYC1Zj43Kpzyifcos6RVOT/S+r2A==
-X-Received: by 2002:a2e:84ca:: with SMTP id q10mr2535264ljh.117.1557208623493;
-        Mon, 06 May 2019 22:57:03 -0700 (PDT)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id s17sm1889372lfb.66.2019.05.06.22.57.02
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UdlhNmncQt68SNh9Q/6nsPN42unpZnH30BwmpVsaWqg=;
+        b=c0Fag87wWtAE6W6KZM4+UzumuwBSWDkpIbvB6ENyrOFtaHoWRDwjfA9n/1OLqMORyE
+         8ij5bFaaEm1172d26fFqJTPHYLlBjczJ8DMBb8yrDmFcUV3rXFEy2r5Gk2kay3yoQpQB
+         gkpN1Kkc2hBOAhC8rCtw2jyLXkMYedUujQH6vq75AFu4A3nT02Vl1LQmXwxEtS1Pinrd
+         iCzuRJ5flcZnomW1H3jLiZ3+W20098DW/5Ukkk9ESrVq4LLEeF3rA0uJbXfI5/N4npvx
+         YPVgQ+AzIFGGAMYQSO0ECaqk5eBYQohd897VKTFZVWG+o8OdgGT4LxsgbqWLLtKS78a0
+         NBfA==
+X-Gm-Message-State: APjAAAVAGJ90r2nDZKDcUeP3S3G4+13uYiSvVah1lGPWzo/U5ZNb1qgH
+        BgNf6x/cMRk8h0NvI/ByuA==
+X-Google-Smtp-Source: APXvYqxkSRBG5Y+LBRYnfawHEhwPlKbopAjaFHdRmODBvET7Q/5U3ABNq51poGlBhwo+tU9oEj19Xw==
+X-Received: by 2002:a63:2cc9:: with SMTP id s192mr33552150pgs.24.1557208877228;
+        Mon, 06 May 2019 23:01:17 -0700 (PDT)
+Received: from mylaptop.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id b18sm8997409pfp.32.2019.05.06.23.01.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 22:57:02 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 4.14 79/95] x86/asm: Remove dead __GNUC__
- conditionals
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-79-sashal@kernel.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <d18bba8c-0d2c-03bd-0098-5f39ad726b01@rasmusvillemoes.dk>
-Date:   Tue, 7 May 2019 07:57:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190507053826.31622-79-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 06 May 2019 23:01:16 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     x86@kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] x86/boot: move early_serial_base to .data section
+Date:   Tue,  7 May 2019 14:00:59 +0800
+Message-Id: <1557208860-12846-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2019 07.38, Sasha Levin wrote:
-> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> 
-> [ Upstream commit 88ca66d8540ca26119b1428cddb96b37925bdf01 ]
-> 
-> The minimum supported gcc version is >= 4.6, so these can be removed.
+arch/x86/boot/compressed/head_64.S clears BSS after relocated. If early
+serial is set up before clearing BSS, the early_serial_base will be reset
+to 0.
 
-Eh, that bump happened for the 4.19 kernel, so this is not true for the
-4.14 branch. Has cafa0010cd51fb711fdcb50fc55f394c5f167a0a been applied
-to 4.14.y? Otherwise I don't think this is appropriate.
+Initializing early_serial_base as -1 to push it to .data section.
 
-Rasmus
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Jordan Borgner <mail@jordan-borgner.de>
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/boot/compressed/early_serial_console.c | 2 +-
+ arch/x86/boot/early_serial_console.c            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/early_serial_console.c b/arch/x86/boot/compressed/early_serial_console.c
+index 261e81f..624e334 100644
+--- a/arch/x86/boot/compressed/early_serial_console.c
++++ b/arch/x86/boot/compressed/early_serial_console.c
+@@ -1,5 +1,5 @@
+ #include "misc.h"
+ 
+-int early_serial_base;
++int early_serial_base = -1;
+ 
+ #include "../early_serial_console.c"
+diff --git a/arch/x86/boot/early_serial_console.c b/arch/x86/boot/early_serial_console.c
+index 023bf1c..d8de15a 100644
+--- a/arch/x86/boot/early_serial_console.c
++++ b/arch/x86/boot/early_serial_console.c
+@@ -149,6 +149,6 @@ void console_init(void)
+ {
+ 	parse_earlyprintk();
+ 
+-	if (!early_serial_base)
++	if (early_serial_base <= 0)
+ 		parse_console_uart8250();
+ }
+-- 
+2.7.4
+
