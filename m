@@ -2,68 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2877A15E4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EE015E46
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfEGHgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:36:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56868 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726449AbfEGHgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:36:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83F24AD17;
-        Tue,  7 May 2019 07:36:46 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     linux-riscv@lists.infradead.org
-Subject: [PATCH] riscv: fix locking violation in page fault handler
-CC:     linux-kernel@vger.kernel.org
-X-Yow:  I'm rated PG-34!!
-Date:   Tue, 07 May 2019 09:36:46 +0200
-Message-ID: <mvm5zqmu35d.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1726762AbfEGHfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 03:35:32 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:43709 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbfEGHfc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 03:35:32 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190507073528epoutp01143369c42359f2482970f68eb2ffa9f6~cVlz4p-ae0503705037epoutp01g
+        for <linux-kernel@vger.kernel.org>; Tue,  7 May 2019 07:35:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190507073528epoutp01143369c42359f2482970f68eb2ffa9f6~cVlz4p-ae0503705037epoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1557214528;
+        bh=FYl5euwdsPPChv+/efoMBPph1L1YgFkS2vAGuXunfFQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=cxWAMWq2M/AmkIyrnwUPCh7Qawr1xeZVDhFqyiPKTWMO1FVkyPdIfd4DLzYBbuJ+c
+         LEIZFjkprrDcfywUF/NjwysffPohzoN39cBlugA6F1d9vEvZc953c/funFOizVX/xK
+         OAkvaEzg34GiFrZCDboUlzV7+EIP4hnx+sT581YM=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190507073525epcas1p29ade2ba4a25f0272b8c0a0e3b34bd3ed~cVlxIu9Xm1903619036epcas1p2O;
+        Tue,  7 May 2019 07:35:25 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A2.D5.04143.D3531DC5; Tue,  7 May 2019 16:35:25 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190507073524epcas1p198f3608c10098e2e270c9392b302622f~cVlwgQVs71535215352epcas1p1V;
+        Tue,  7 May 2019 07:35:24 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190507073524epsmtrp2f5d59f52c51bd3e01489ff281025c441~cVlwdyvmE0559305593epsmtrp26;
+        Tue,  7 May 2019 07:35:24 +0000 (GMT)
+X-AuditID: b6c32a37-f31ff7000000102f-13-5cd1353ded4d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C9.68.03662.C3531DC5; Tue,  7 May 2019 16:35:24 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190507073524epsmtip2156111aa2fcaed3035b1ad7ba65ac495~cVlwMz6W22664026640epsmtip26;
+        Tue,  7 May 2019 07:35:24 +0000 (GMT)
+Subject: Re: [PATCH v7 03/13] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <1db8ffb8-1038-edbc-81b5-689f8a4c3c6b@samsung.com>
+Date:   Tue, 7 May 2019 16:36:50 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1557155521-30949-4-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJsWRmVeSWpSXmKPExsWy7bCmvq6t6cUYg5Zn4hYbZ6xntZh/5Byr
+        xeqPjxktJp+ay2RxpjvXov/xa2aL8+c3sFucbXrDbnGrQcbi8q45bBafe48wWsw4v4/JYu2R
+        u+wWtxtXsFkcftPOarH/ipfF7d98Ft9OPGJ0EPL49nUSi8fshossHjtn3WX32LSqk82jt/kd
+        m8fBd3uYPPq2rGL02Hy62uPzJrkAzqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNL
+        C3MlhbzE3FRbJRefAF23zBygZ5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYF
+        esWJucWleel6yfm5VoYGBkamQIUJ2Rk7T/xiKvgtWNE/cy9jA2MLfxcjJ4eEgInEzbkf2boY
+        uTiEBHYwSpz7t5IRwvnEKNG5aTeU841R4s7rm+wwLRse9DFBJPYySszqWQTV/55R4tilDlaQ
+        KmGBUIkdfzYzgyREBJYzSuybehdsFrPAaiaJP1/XglWxCWhJ7H9xgw3E5hdQlLj64zEjiM0r
+        YCexe8F3oDgHB4uAisSuSfogYVGBCIn7xzawQpQISpyc+YQFxOYU8JY4uqYJ7DxmAXGJW0/m
+        M0HY8hLNW2eDHSEhcI9dYuaZ7YwQP7hIHN10mw3CFpZ4dXwL1G9SEp/f7YWKV0usPHmEDaK5
+        g1Fiy/4LrBAJY4n9SyczgRzHLKApsX6XPsQyPol3X3tYQcISArwSHW1CENXKEpcf3GWCsCUl
+        Frd3Qo33kNi9aiX7BEbFWUjemYXkhVlIXpiFsGwBI8sqRrHUguLc9NRiwwJj5PjexAhO6lrm
+        Oxg3nPM5xCjAwajEw/vA9kKMEGtiWXFl7iFGCQ5mJRHexGfnYoR4UxIrq1KL8uOLSnNSiw8x
+        mgIDeyKzlGhyPjDj5JXEG5oaGRsbW5gYmpkaGiqJ8653cI4REkhPLEnNTk0tSC2C6WPi4JRq
+        YOQ96fT51YGbzeLTdRK+xyQq73pVcDq5qeWOwNalZxJ0TmZFTI/cF3L+WscezdDHixdVL0ic
+        pW7eL3HjsmfvhfuGwokZrmezn6dIfN9zi6nn9/zJU0RF5LaEuEmvm+tr2f/KlXc349bYadPj
+        Jz5jZ3y0zMg29/3RSq1yw3/iPCdLJxxdsPrl/iglluKMREMt5qLiRABgx4SiAAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsWy7bCSvK6N6cUYg5+ntSw2zljPajH/yDlW
+        i9UfHzNaTD41l8niTHeuRf/j18wW589vYLc42/SG3eJWg4zF5V1z2Cw+9x5htJhxfh+Txdoj
+        d9ktbjeuYLM4/Kad1WL/FS+L27/5LL6deMToIOTx7eskFo/ZDRdZPHbOusvusWlVJ5tHb/M7
+        No+D7/YwefRtWcXosfl0tcfnTXIBnFFcNimpOZllqUX6dglcGTtP/GIq+C1Y0T9zL2MDYwt/
+        FyMnh4SAicSGB31MXYxcHEICuxklXl36wwSRkJSYdvEocxcjB5AtLHH4cDFEzVtGiSUNF8Bq
+        hAVCJXb82cwMkhARWM4oMffvUhYQh1lgNZPEpI9b2CBa7jNKnGv4xgrSwiagJbH/xQ02EJtf
+        QFHi6o/HjCA2r4CdxO4F39lA1rEIqEjsmqQPEhYViJA4834FC0SJoMTJmU/AbE4Bb4mja5rY
+        QWxmAXWJP/MuMUPY4hK3nsxngrDlJZq3zmaewCg8C0n7LCQts5C0zELSsoCRZRWjZGpBcW56
+        brFhgVFearlecWJucWleul5yfu4mRnB0a2ntYDxxIv4QowAHoxIPb4f1hRgh1sSy4srcQ4wS
+        HMxKIryJz87FCPGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl4uCU
+        amCcobb88p3fdzcyiBTMan7DMtWwleWucuS51x6L5M0/rGpj2h9rw1C67MjTF/P3BTGYXLjq
+        f+tYqZU9zwnBFYYvfA4FJ0UUGBT5r9ku9ebPPo1Sw3/rfme80172u6zjsrM+X33J5gI/5nPG
+        yxSnxgfrz/rSeyT24sHEjc2XnDpm8z5bZ16aEtyixFKckWioxVxUnAgASH8NyeoCAAA=
+X-CMS-MailID: 20190507073524epcas1p198f3608c10098e2e270c9392b302622f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190506151212eucas1p24110f75fa6ed945f9ae7614fbb8aa13d
+References: <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190506151212eucas1p24110f75fa6ed945f9ae7614fbb8aa13d@eucas1p2.samsung.com>
+        <1557155521-30949-4-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a user mode process accesses an address in the vmalloc area
-do_page_fault tries to unlock the mmap semaphore when it isn't locked.
+Hi Lukasz,
 
-Signed-off-by: Andreas Schwab <schwab@suse.de>
----
- arch/riscv/mm/fault.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 19. 5. 7. 오전 12:11, Lukasz Luba wrote:
+> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+> Controller frequencies for driver's DRAM timings.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index af62b6d..23c60a5 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1335,6 +1335,17 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>  	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>  };
+>  
+> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+> +	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+> +};
+> +
+>  static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>  	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>  	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+> @@ -1477,9 +1488,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> -		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  	}
+>  
+> +	if (soc == EXYNOS5420)
+> +		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +	else
+> +		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+> +
+>  	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+>  					reg_base);
+>  	samsung_clk_register_fixed_rate(ctx, exynos5x_fixed_rate_clks,
+> 
 
-diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-index 88401d5125bc..c51878e5a66a 100644
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -181,6 +181,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
- 	up_read(&mm->mmap_sem);
- 	/* User mode accesses just cause a SIGSEGV */
- 	if (user_mode(regs)) {
-+bad_area_do_trap:
- 		do_trap(regs, SIGSEGV, code, addr, tsk);
- 		return;
- 	}
-@@ -230,7 +231,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
- 		int index;
- 
- 		if (user_mode(regs))
--			goto bad_area;
-+			goto bad_area_do_trap;
- 
- 		/*
- 		 * Synchronize this task's top level page-table
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.21.0
-
-
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
