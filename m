@@ -2,268 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCEC1614F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A7016155
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfEGJqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:46:38 -0400
-Received: from mail-eopbgr680049.outbound.protection.outlook.com ([40.107.68.49]:15589
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726249AbfEGJqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:46:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vS1FBy1HfvICv2oRhWVwoE/nFMY0TxpJ7XumOWqO7UM=;
- b=GMDgcfRdrVxo1MVTTVSmHOzsyl5k8gsyEOrBMsMJBL/81V+FpvK3u6o9mWhG3W2YRwxfYYHWDRyMrJBBnKznKnANNIOrZ+qEq9U1c/8q/Lh+cxpt1NxrMGISHVWNRcXkaQ68C3p9AgT90bkspRu1hLsy8hN9DWG2HpnuZZpftiU=
-Received: from BYAPR02MB5591.namprd02.prod.outlook.com (20.177.230.89) by
- BYAPR02MB5656.namprd02.prod.outlook.com (20.177.230.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.12; Tue, 7 May 2019 09:46:33 +0000
-Received: from BYAPR02MB5591.namprd02.prod.outlook.com
- ([fe80::4158:f3a1:5e61:54a2]) by BYAPR02MB5591.namprd02.prod.outlook.com
- ([fe80::4158:f3a1:5e61:54a2%2]) with mapi id 15.20.1856.012; Tue, 7 May 2019
- 09:46:33 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "Claus H. Stovgaard" <cst@phaseone.com>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
-Subject: RE: [PATCH 3/3] usb: dwc3: gadget: Add support for disabling U1 and
- U2 entries
-Thread-Topic: [PATCH 3/3] usb: dwc3: gadget: Add support for disabling U1 and
- U2 entries
-Thread-Index: AQHVANDAIuHRsUnR3UyEXTsOibIOSaZfRnRg
-Date:   Tue, 7 May 2019 09:46:33 +0000
-Message-ID: <BYAPR02MB5591A7858831136D1C2DA618A7310@BYAPR02MB5591.namprd02.prod.outlook.com>
-References: <1556792423-4833-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1556792423-4833-4-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <30102591E157244384E984126FC3CB4F639E7BA8@us01wembx1.internal.synopsys.com>
-In-Reply-To: <30102591E157244384E984126FC3CB4F639E7BA8@us01wembx1.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: effe28a9-90ed-4042-edfd-08d6d2d0e3e5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:BYAPR02MB5656;
-x-ms-traffictypediagnostic: BYAPR02MB5656:
-x-ms-exchange-purlcount: 1
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BYAPR02MB5656DA8246B718B200F9FF78A7310@BYAPR02MB5656.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0030839EEE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(346002)(396003)(376002)(13464003)(189003)(199004)(7696005)(5660300002)(6436002)(71200400001)(71190400001)(76176011)(81156014)(81166006)(52536014)(8676002)(86362001)(486006)(7736002)(64756008)(476003)(305945005)(66476007)(73956011)(76116006)(110136005)(66446008)(66556008)(54906003)(66946007)(33656002)(68736007)(99286004)(7416002)(316002)(66066001)(53936002)(14444005)(74316002)(256004)(26005)(8936002)(446003)(3846002)(229853002)(102836004)(478600001)(11346002)(186003)(6306002)(6116002)(14454004)(55016002)(6246003)(9686003)(25786009)(4326008)(6506007)(2906002)(6606295002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5656;H:BYAPR02MB5591.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: N/U3i09CaIRuZnD8oeYaEoOnTLS+L39Sn7BRAusHo5Dd/FypkKqGfVTI+GeDbLHoMPXAhMBXVRCnMreKULSkDGbMizCrXI+wC4x1BAEug8/awbHo81DBaljgc9rQSDf2HgIHdLjqkTLMO0Ruzp6ZDpVIdcY5YmYmcXxb5V/unr0k+MVb6YqcmHU9N0ysoRYmdHgk633W47BAX0LQfWICbzoyFYkE9WJR4pKrhZ9d+XtELlKfZDiPypoX/X+sbiLI1WylHysRHPi6+vFwQ0qNMFLUOx32P1gRyAwkSNbyD+oR9OH8bRkokCo38XYPq06Os7HswvnsVK1ewKDSSB7N/fBmMwNOJc8afJ8KSowbSJZuv1kWYpjl/EVEm0Fq9oL/u3/ZFHRLY2fmZBRvFQp15vzKH8SqNrfVl7OODs9Tvhk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726954AbfEGJrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:47:13 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:39162 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfEGJrI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 05:47:08 -0400
+Received: by mail-it1-f200.google.com with SMTP id z125so14161731itf.4
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:47:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=3oIQ/axrwaPl/lQ6Bw4C9U12ijTMz2r5vR/r27S1hVI=;
+        b=UGL+iIutB6+Ton/h2iKyQHWC5+sAeVLWMETvhoZ7wjlC8Q7ZiEuYv7/83jHBM82AFI
+         CrW031zRTTfPdt39D3wwaS+Ckyx0+ugk9lBzmod7G7ZaYZrszfeZmmq8aiw5O4Ks+llr
+         BgY6ep/zcufCCe+j26d6Db4QPupzneOJd5K58deJLZNdZgVoULDGlzVl91Ww4dwnhxrk
+         geBhg6cjpfcHzbeWEpv+m+dW1qYth1VI/cc3sO7XC7Bbu+q0XK2jPQdKdao/D/SS6h8m
+         rZnG+uGbytwYj/O2BG8+s7lzGuDqdz6K++LJLpsWZ3xy4wQOqPcgoRS1+nIT+d9HZOS0
+         y5bg==
+X-Gm-Message-State: APjAAAV9n/2wCqLZaoCgYnEmrtjDNRuDot+qOEDZ8h3W2jrQ81JDK9J5
+        yyiOC0EbI9NAxMjtMJ8EgrLGsWXcYs0t79vel8ABiUjN2JX5
+X-Google-Smtp-Source: APXvYqynaCrllFXrpp1849mgB2TbZ4GJFpRB0hRhSDplz6oKeuFXJK5LMjhEjVn6h7AArynXyEBMKUgEIVL7hMl+7Gw5ZvxClu/T
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: effe28a9-90ed-4042-edfd-08d6d2d0e3e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 09:46:33.6049
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5656
+X-Received: by 2002:a24:fc46:: with SMTP id b67mr21307311ith.4.1557222426279;
+ Tue, 07 May 2019 02:47:06 -0700 (PDT)
+Date:   Tue, 07 May 2019 02:47:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008e076b0588491997@google.com>
+Subject: KASAN: use-after-free Read in page_get_anon_vma
+From:   syzbot <syzbot+6a309df008e9bd6f5075@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, borntraeger@de.ibm.com,
+        hughd@google.com, jglisse@redhat.com,
+        kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com,
+        sean.j.christopherson@intel.com, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thinh,
+Hello,
 
->-----Original Message-----
->From: Thinh Nguyen [mailto:Thinh.Nguyen@synopsys.com]
->Sent: Tuesday, May 07, 2019 12:51 AM
->To: Anurag Kumar Vulisha <anuragku@xilinx.com>; Greg Kroah-Hartman
-><gregkh@linuxfoundation.org>; Rob Herring <robh+dt@kernel.org>; Mark Rutla=
-nd
-><mark.rutland@arm.com>; Felipe Balbi <balbi@kernel.org>
->Cc: linux-usb@vger.kernel.org; devicetree@vger.kernel.org; linux-
->kernel@vger.kernel.org; v.anuragkumar@gmail.com
->Subject: Re: [PATCH 3/3] usb: dwc3: gadget: Add support for disabling U1 a=
-nd U2
->entries
->
->Hi Anurag,
->
->Anurag Kumar Vulisha wrote:
->> Gadget applications may have a requirement to disable the U1 and U2
->> entry based on the usecase. For example, when performing performance
->> benchmarking on mass storage gadget the U1 and U2 entries can be disable=
-d.
->> Another example is when periodic transfers like ISOC transfers are
->> used with bInterval of 1 which doesn't require the link to enter into
->> U1 or U2 state (since ping is issued from host for every uframe
->> interval). In this case the U1 and U2 entry can be disabled. This can
->> be done by setting U1DevExitLat and U2DevExitLat values to 0 in the
->> BOS descriptor. Host on seeing 0 value for U1DevExitLat and
->> U2DevExitLat, it doesn't send SET_SEL commands to the gadget. Thus entry=
- of U1
->and U2 states can be avioded.
->> This patch updates the same
->
->I don't think we should assume that's the case for every host driver.
+syzbot found the following crash on:
 
-I agree with you, as Claus already mentioned, observed that windows 10
-issues SET_SEL commands even after UxDevExitLat are zero.=20
- =20
->
->>
->> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
->> ---
->>  drivers/usb/dwc3/core.c   |  4 ++++
->>  drivers/usb/dwc3/core.h   |  4 ++++
->>  drivers/usb/dwc3/gadget.c | 19 +++++++++++++++++++
->> drivers/usb/dwc3/gadget.h |  6 ++++++
->>  4 files changed, 33 insertions(+)
->>
->> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c index
->> a1b126f..4f0912c 100644
->> --- a/drivers/usb/dwc3/core.c
->> +++ b/drivers/usb/dwc3/core.c
->> @@ -1285,6 +1285,10 @@ static void dwc3_get_properties(struct dwc3 *dwc)
->>  				"snps,dis_u2_susphy_quirk");
->>  	dwc->dis_enblslpm_quirk =3D device_property_read_bool(dev,
->>  				"snps,dis_enblslpm_quirk");
->> +	dwc->dis_u1_entry_quirk =3D device_property_read_bool(dev,
->> +				"snps,dis_u1_entry_quirk");
->> +	dwc->dis_u2_entry_quirk =3D device_property_read_bool(dev,
->> +				"snps,dis_u2_entry_quirk");
->
->Please use "-" rather than "_" in the property names.
->
+HEAD commit:    771acc7e Bluetooth: btusb: request wake pin with NOAUTOEN
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ac0abf200000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fb64439e07a1ec0
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a309df008e9bd6f5075
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Okay , will change this
+Unfortunately, I don't have any reproducer for this crash yet.
 
->>  	dwc->dis_rxdet_inp3_quirk =3D device_property_read_bool(dev,
->>  				"snps,dis_rxdet_inp3_quirk");
->>  	dwc->dis_u2_freeclk_exists_quirk =3D device_property_read_bool(dev,
->> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h index
->> 1528d39..fa398e2 100644
->> --- a/drivers/usb/dwc3/core.h
->> +++ b/drivers/usb/dwc3/core.h
->> @@ -1015,6 +1015,8 @@ struct dwc3_scratchpad_array {
->>   * @dis_u2_susphy_quirk: set if we disable usb2 suspend phy
->>   * @dis_enblslpm_quirk: set if we clear enblslpm in GUSB2PHYCFG,
->>   *                      disabling the suspend signal to the PHY.
->> + * @dis_u1_entry_quirk: set if link entering into U1 state needs to be =
-disabled.
->> + * @dis_u2_entry_quirk: set if link entering into U2 state needs to be =
-disabled.
->>   * @dis_rxdet_inp3_quirk: set if we disable Rx.Detect in P3
->>   * @dis_u2_freeclk_exists_quirk : set if we clear u2_freeclk_exists
->>   *			in GUSB2PHYCFG, specify that USB2 PHY doesn't
->> @@ -1206,6 +1208,8 @@ struct dwc3 {
->>  	unsigned		dis_u3_susphy_quirk:1;
->>  	unsigned		dis_u2_susphy_quirk:1;
->>  	unsigned		dis_enblslpm_quirk:1;
->> +	unsigned		dis_u1_entry_quirk:1;
->> +	unsigned		dis_u2_entry_quirk:1;
->>  	unsigned		dis_rxdet_inp3_quirk:1;
->>  	unsigned		dis_u2_freeclk_exists_quirk:1;
->>  	unsigned		dis_del_phy_power_chg_quirk:1;
->> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->> index e293400..f2d3112 100644
->> --- a/drivers/usb/dwc3/gadget.c
->> +++ b/drivers/usb/dwc3/gadget.c
->> @@ -2073,6 +2073,24 @@ static int dwc3_gadget_stop(struct usb_gadget *g)
->>  	return 0;
->>  }
->>
->> +static void dwc3_gadget_config_params(struct usb_gadget *g,
->> +				      struct usb_dcd_config_params *params) {
->> +	struct dwc3		*dwc =3D gadget_to_dwc(g);
->> +
->> +	/* U1 Device exit Latency */
->> +	if (dwc->dis_u1_entry_quirk)
->> +		params->bU1devExitLat =3D 0;
->> +	else
->> +		params->bU1devExitLat =3D DWC3_DEFAULT_U1_DEV_EXIT_LAT;
->> +
->> +	/* U2 Device exit Latency */
->> +	if (dwc->dis_u2_entry_quirk)
->> +		params->bU2DevExitLat =3D 0;
->> +	else
->> +		params->bU2DevExitLat =3D DWC3_DEFAULT_U2_DEV_EXIT_LAT; }
->> +
->>  static void dwc3_gadget_set_speed(struct usb_gadget *g,
->>  				  enum usb_device_speed speed)
->>  {
->> @@ -2142,6 +2160,7 @@ static const struct usb_gadget_ops dwc3_gadget_ops=
- =3D {
->>  	.udc_start		=3D dwc3_gadget_start,
->>  	.udc_stop		=3D dwc3_gadget_stop,
->>  	.udc_set_speed		=3D dwc3_gadget_set_speed,
->> +	.get_config_params	=3D dwc3_gadget_config_params,
->>  };
->>
->>  /*
->> ----------------------------------------------------------------------
->> ---- */ diff --git a/drivers/usb/dwc3/gadget.h
->> b/drivers/usb/dwc3/gadget.h index 3ed738e..5faf4d1 100644
->> --- a/drivers/usb/dwc3/gadget.h
->> +++ b/drivers/usb/dwc3/gadget.h
->> @@ -48,6 +48,12 @@ struct dwc3;
->>  /* DEPXFERCFG parameter 0 */
->>  #define DWC3_DEPXFERCFG_NUM_XFER_RES(n)	((n) & 0xffff)
->>
->> +/* U1 Device exit Latency */
->> +#define DWC3_DEFAULT_U1_DEV_EXIT_LAT	0x0A	/* Less then 10 microsec */
->> +
->> +/* U2 Device exit Latency */
->> +#define DWC3_DEFAULT_U2_DEV_EXIT_LAT	0x1FF	/* Less then 511 microsec
->*/
->> +
->>  /*
->> ----------------------------------------------------------------------
->> ---- */
->>
->>  #define to_dwc3_request(r)	(container_of(r, struct dwc3_request, reques=
-t))
->
->Setting the exit latency for U1/U2 to 0 to prevent U1/U2 entry looks more =
-like a
->workaround than actually disabling U1/U2. There are DCTL.INITU1/2ENA and
->DCTL.ACCEPTU1/2ENA for that.
->
->Also, if these properties are set, then the device should rejects
->SET_FEATURE(U1/U2) requests.
->
->You can review Felipe's little code snippet from here to disable U1/U2:
->https://marc.info/?l=3Dlinux-usb&m=3D155419284426942&w=3D2
->
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6a309df008e9bd6f5075@syzkaller.appspotmail.com
 
-As there are some host platforms (like windows 10) which initiates U1/U2 st=
-ates
-even after sending zero in UxExitLat of BOS descriptor, I agree with you th=
-at the
-dwc3 controller should reject the U1/U2 requests from host by configuring D=
-CTL.
-Along with DCTL changes, I think the changes required for sending zero valu=
-e in
-UxExitLat field reported in the BOSDescriptor are also required (there is n=
-o point
-in sending non-zero exit latencies when U1/U2 state entries are disabled). =
-So, this
-patch changes should be added along with the changes reported by Claus.
-Please provide your suggestion on this
+==================================================================
+BUG: KASAN: use-after-free in atomic_read  
+include/asm-generic/atomic-instrumented.h:26 [inline]
+BUG: KASAN: use-after-free in atomic_fetch_add_unless  
+include/linux/atomic-fallback.h:1086 [inline]
+BUG: KASAN: use-after-free in atomic_add_unless  
+include/linux/atomic-fallback.h:1111 [inline]
+BUG: KASAN: use-after-free in atomic_inc_not_zero  
+include/linux/atomic-fallback.h:1127 [inline]
+BUG: KASAN: use-after-free in page_get_anon_vma+0x24b/0x4b0 mm/rmap.c:477
+Read of size 4 at addr ffff88809f2398f0 by task kswapd0/1553
 
-Thanks,
-Anurag Kumar Vulisha
+CPU: 0 PID: 1553 Comm: kswapd0 Not tainted 5.1.0-rc4+ #61
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+  kasan_check_read+0x11/0x20 mm/kasan/common.c:102
+  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
+  atomic_fetch_add_unless include/linux/atomic-fallback.h:1086 [inline]
+  atomic_add_unless include/linux/atomic-fallback.h:1111 [inline]
+  atomic_inc_not_zero include/linux/atomic-fallback.h:1127 [inline]
+  page_get_anon_vma+0x24b/0x4b0 mm/rmap.c:477
+  split_huge_page_to_list+0x58a/0x2de0 mm/huge_memory.c:2675
+  split_huge_page include/linux/huge_mm.h:148 [inline]
+  deferred_split_scan+0x64b/0xa60 mm/huge_memory.c:2853
+  do_shrink_slab+0x400/0xa80 mm/vmscan.c:551
+  shrink_slab mm/vmscan.c:700 [inline]
+  shrink_slab+0x4be/0x5e0 mm/vmscan.c:680
+  shrink_node+0x552/0x1570 mm/vmscan.c:2724
+  kswapd_shrink_node mm/vmscan.c:3482 [inline]
+  balance_pgdat+0x56c/0xe80 mm/vmscan.c:3640
+  kswapd+0x615/0x1010 mm/vmscan.c:3895
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 11425:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_kmalloc mm/kasan/common.c:497 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:470
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:505
+  slab_post_alloc_hook mm/slab.h:437 [inline]
+  slab_alloc mm/slab.c:3394 [inline]
+  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3556
+  kmem_cache_zalloc include/linux/slab.h:732 [inline]
+  __alloc_file+0x27/0x300 fs/file_table.c:100
+  alloc_empty_file+0x72/0x170 fs/file_table.c:150
+  path_openat+0xef/0x46e0 fs/namei.c:3522
+  do_filp_open+0x1a1/0x280 fs/namei.c:3563
+  do_sys_open+0x3fe/0x5d0 fs/open.c:1069
+  __do_sys_open fs/open.c:1087 [inline]
+  __se_sys_open fs/open.c:1082 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1082
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 11435:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:459
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:467
+  __cache_free mm/slab.c:3500 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3766
+  file_free_rcu+0x98/0xe0 fs/file_table.c:49
+  __rcu_reclaim kernel/rcu/rcu.h:227 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2475 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2788 [inline]
+  rcu_core+0x928/0x1390 kernel/rcu/tree.c:2769
+  __do_softirq+0x266/0x95a kernel/softirq.c:293
+
+The buggy address belongs to the object at ffff88809f2397c0
+  which belongs to the cache filp of size 456
+The buggy address is located 304 bytes inside of
+  456-byte region [ffff88809f2397c0, ffff88809f239988)
+The buggy address belongs to the page:
+page:ffffea00027c8e40 count:1 mapcount:0 mapping:ffff88821bc45380 index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00025571c8 ffffea000235d288 ffff88821bc45380
+raw: 0000000000000000 ffff88809f239040 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809f239780: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+  ffff88809f239800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88809f239880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                              ^
+  ffff88809f239900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809f239980: fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
