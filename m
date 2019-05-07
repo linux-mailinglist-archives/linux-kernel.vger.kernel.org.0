@@ -2,105 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1615316534
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC2216532
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfEGNzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 09:55:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45456 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfEGNzv (ORCPT
+        id S1726879AbfEGNzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:55:45 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40243 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfEGNzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:55:51 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r76so3352622lja.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 06:55:49 -0700 (PDT)
+        Tue, 7 May 2019 09:55:45 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b3so8232578plr.7;
+        Tue, 07 May 2019 06:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GL4GdceTvSBDxGp9W+MspMxjOoV99Lda4j4e4jx38nI=;
-        b=llFcOTK+JkPns+fb4NcOVv0q5GX/MkbEvLVrRcmQmQuLjeReEygm2oo4TQK2ESIoeC
-         qpk+7qDr4E2vZHh/7r5kzvVev7KuXcBa94RdAlDSZP2KJ1Gt9mKrytjoRTEWRABSm1fZ
-         2M02NrzjG4ijQ3/UySGQh39ERffrUwLnuy1nIvh+Q7uRXxsht53qaV3OwxnySPLs1LXb
-         VG7PrdYlT+fKUQ2qDmc491dlWBX/1kNkD0W7E4VaZjRKEnDoKkCF8F3X+M3FU6bhgOvq
-         MU8xYZ9sk/52vBJFW7GguZBMYBs6u4/tgJQqvutUuyLjJfmy3b2nMc0CGdCqbUtaVsII
-         jd3A==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=W9mmQAVmk1/1WRGRy8uFuq4PJRvCk5WRbIKsqF6QNjM=;
+        b=P6ybAWNQyD1YpEGOcJiN5tx6vzTMqtcdSSwpC5VGv2sLVtDQjlpFqlB/UyjWAGbIS3
+         QqqTZjJ+rXRg8xHgpgWaBiGnlTSPjmTD2x6Wl8rzL/QJJm9DLlNZovO2J27QSCXZ6vaf
+         W6eL6mA9KD0MNSdHxWTchPpnEWfbNE0WPQSNrURfG1ECr31fNfaUEL/DDv0wIDFdiYOK
+         Bv9kJs5EtZ6LYGeYtnkvmdy8r1BQDZETrkP9TEPrpka7I4Gv4hDbjdiliTi26uOJyB3i
+         hUWfKcryJFZCqW+OutKd3L+/2N/d39FAb/0PBKuzKfD/fs0MpZsA4uB1OjDp3pGDayua
+         XApA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GL4GdceTvSBDxGp9W+MspMxjOoV99Lda4j4e4jx38nI=;
-        b=Sm+kV54U5xyxqAbeIdhLAYmTJOLbuMYf3lXvmKRSxHiRvteX3E3zQqmCwQdt6gN4v6
-         ssZAa4rvMxCEnG0r3OpsNfur8evqwmVxxqtbK+mBB/7nY5tehWjFEVVA9QF6T31EGD/W
-         KgDV7O680/Ns+KQvY3imnRGHu0bNzgmZjwtbxjWu+mWwRkbc9k1fDct0hSg3+Q62aMX8
-         0IhawcmAwOmkd9uxajfhHFCpLiRGRThf1398++LJXzwCKdWp7Bia2+47eWT3NbMh4O9z
-         9M5mc8Gd0PB7rZQ9l0xuFTKZtLf/bUk/5OMyeP3VCa/LL71gX8T4Dl7NjPu70OqXhGpU
-         STog==
-X-Gm-Message-State: APjAAAXT2Jt2A/yq3kokqGuivNxWLTA6bs9q3QlXwFQlwu1lkV0NsiC6
-        DagbUq3Hz7fmEfl8zr/JSwHscbFQAcvSIUeectsugC7x7BI=
-X-Google-Smtp-Source: APXvYqygTLTj7reqA2P0us3hcnaMnc/IWqpf8ylWxz0boCKxN0gY34MsJLpkYv35ahJhmIuRv+P6GjuHd0tle4CILho=
-X-Received: by 2002:a2e:d1a:: with SMTP id 26mr17526393ljn.147.1557237348745;
- Tue, 07 May 2019 06:55:48 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W9mmQAVmk1/1WRGRy8uFuq4PJRvCk5WRbIKsqF6QNjM=;
+        b=nRQ1ehujhFNuYcnlkYCwMY7BmEGNZLcrPCIj7UcmX+iI8ejyvKxSM8qwJPx8b0q8Ol
+         GxB71i7Y96IMlWtWLy8Xw46cpRkaTZq4q5m/R+IYo5SssQLcw0FxUCa3jRrDd23JMuBY
+         ly6PB7+j8l0L8mAXaaHh/qp9dvIAQ7xGV+5wpdHFr6Y8HmcopW5aDRVzVzGEykJPkwdN
+         qiZUqoZCw7WnZvt8OF/OJb5K1YDHnQfTbZEghA4xdXRsAtP0Hz1SyW7cTi+xJHOZB8Yp
+         1AfBL6rn+VHUOpCzVbE2ssGurbnmEpucgzAiFxI9gTHLq3q+fPDIrJ65BMZn90KGG68X
+         XkhQ==
+X-Gm-Message-State: APjAAAX+B9ctIhmBGDfbIgEIMyHnl7UQfNX988sx9ZQQPGxgkYdP4N2y
+        OD0jy7/jrUhrJmgvgmGZ2eVlduSn
+X-Google-Smtp-Source: APXvYqz/Zkrl14vnslnQR8IBibK0hvVcuftBry4tRHN1LUOlfPu5i8kFvuS53+UxvCxZ2gPSRkKVkw==
+X-Received: by 2002:a17:902:5c6:: with SMTP id f64mr26385253plf.208.1557237343851;
+        Tue, 07 May 2019 06:55:43 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i75sm24693400pfj.80.2019.05.07.06.55.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 06:55:42 -0700 (PDT)
+Subject: Re: [PATCH 2/2] hwmon: scmi: Scale values to target desired HWMON
+ units
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>
+References: <20190506224109.9357-1-f.fainelli@gmail.com>
+ <20190506224109.9357-3-f.fainelli@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <a4dd5f4f-af12-8783-c612-cf3e88a9b94f@roeck-us.net>
+Date:   Tue, 7 May 2019 06:55:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
- <20190506044836.2914-2-luca.abeni@santannapisa.it> <20190507134850.yreebscc3zigfmtd@queper01-lin>
-In-Reply-To: <20190507134850.yreebscc3zigfmtd@queper01-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 7 May 2019 15:55:37 +0200
-Message-ID: <CAKfTPtAmekVR59pvBZO-Xp57=qHoxYkvmQwc2fWVa1x4U2_pNg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/6] sched/dl: Improve deadline admission control for
- asymmetric CPU capacities
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Luca Abeni <luca.abeni@santannapisa.it>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190506224109.9357-3-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 at 15:48, Quentin Perret <quentin.perret@arm.com> wrote:
->
-> Hi Luca,
->
-> On Monday 06 May 2019 at 06:48:31 (+0200), Luca Abeni wrote:
-> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> > index edfcf8d982e4..646d6d349d53 100644
-> > --- a/drivers/base/arch_topology.c
-> > +++ b/drivers/base/arch_topology.c
-> > @@ -36,6 +36,7 @@ DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE;
-> >
-> >  void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity)
-> >  {
-> > +     topology_update_cpu_capacity(cpu, per_cpu(cpu_scale, cpu), capacity);
->
-> Why is that one needed ? Don't you end up re-building the sched domains
-> after this anyways ?
+Hi Florian,
 
-I was looking at the same point.
-Also this doesn't take into account if the cpu is offline
+On 5/6/19 3:41 PM, Florian Fainelli wrote:
+> If the SCMI firmware implementation is reporting values in a scale that
+> is different from the HWMON units, we need to scale up or down the value
+> according to how far appart they are.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>   drivers/hwmon/scmi-hwmon.c | 55 +++++++++++++++++++++++++++++++-------
+>   1 file changed, 46 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/hwmon/scmi-hwmon.c b/drivers/hwmon/scmi-hwmon.c
+> index a80183a488c5..e9913509cb88 100644
+> --- a/drivers/hwmon/scmi-hwmon.c
+> +++ b/drivers/hwmon/scmi-hwmon.c
+> @@ -18,6 +18,51 @@ struct scmi_sensors {
+>   	const struct scmi_sensor_info **info[hwmon_max];
+>   };
+>   
+> +static enum hwmon_sensor_types scmi_types[] = {
+> +	[TEMPERATURE_C] = hwmon_temp,
+> +	[VOLTAGE] = hwmon_in,
+> +	[CURRENT] = hwmon_curr,
+> +	[POWER] = hwmon_power,
+> +	[ENERGY] = hwmon_energy,
+> +};
+> +
+> +static u64 scmi_hwmon_scale(const struct scmi_sensor_info *sensor, u64 value)
+> +{
+> +	u64 scaled_value = value;
 
-Do we also need of the line below in set_rq_online
-+               rq->rd->rd_capacity += arch_scale_cpu_capacity(NULL,
-cpu_of(rq));
+I don't think that variable is necessary.
 
-building the sched_domain seems a better place to set rq->rd->rd_capacity
+> +	s8 desired_scale;
 
->
-> >       per_cpu(cpu_scale, cpu) = capacity;
-> >  }
->
-> Thanks,
-> Quentin
+Just scale ? Also, you could assign scale here directly, and subtract
+the offset below. Then "n" would not be necessary.
+Such as
+	s8 scale = sensor->scale;	// assuming scale is s8
+	...
+	case CURRENT:
+		scale += 3;
+	...
+
+That would also be less confusing, since it would avoid the double
+negation.
+
+> +	int n, p;
+
+> +
+> +	switch (sensor->type) {
+> +	case TEMPERATURE_C:
+> +	case VOLTAGE:
+> +	case CURRENT:
+> +		/* fall through */
+Unnecessary comment
+
+> +		desired_scale = -3;
+> +		break;
+> +	case POWER:
+> +	case ENERGY:
+> +		/* fall through */
+Unnecessary comment.
+
+> +		desired_scale = -6;
+> +		break;
+> +	default:
+> +		return scaled_value;
+
+Here we presumably want a scale of 0. However, if the scale passed
+from SCMI is, say, -5 or +5, we return the original (unadjusted)
+value. Seems to me we would still want to adjust the value to match
+hwmon expectations. Am I missing something ?
+
+> +	}
+> +
+> +	n = (s8)sensor->scale - desired_scale;
+> +        if (n == 0)
+
+Indentation seems off here.
+
+> +                return scaled_value;
+> +
+> +	for (p = 0; p < abs(n); p++) {
+> +		/* Need to scale up from sensor to HWMON */
+> +		if (n > 0)
+> +			scaled_value *= 10;
+> +		else
+> +			do_div(scaled_value, 10);
+> +	}
+
+Something like
+
+	factor = pow10(abs(scale));
+	if (scale > 0)
+		value *= factor;
+	else
+		do_div(value, factor);
+
+would avoid the repeated abs() and do_div(). Unfortunately there is
+no pow10() helper, so you would have to write that. Still, I think
+that would be much more efficient.
+
+Thanks,
+Guenter
+
+> +
+> +        return scaled_value;
+> +}
+> +
+>   static int scmi_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+>   			   u32 attr, int channel, long *val)
+>   {
+> @@ -30,7 +75,7 @@ static int scmi_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+>   	sensor = *(scmi_sensors->info[type] + channel);
+>   	ret = h->sensor_ops->reading_get(h, sensor->id, false, &value);
+>   	if (!ret)
+> -		*val = value;
+> +		*val = scmi_hwmon_scale(sensor, value);
+>   
+>   	return ret;
+>   }
+> @@ -91,14 +136,6 @@ static int scmi_hwmon_add_chan_info(struct hwmon_channel_info *scmi_hwmon_chan,
+>   	return 0;
+>   }
+>   
+> -static enum hwmon_sensor_types scmi_types[] = {
+> -	[TEMPERATURE_C] = hwmon_temp,
+> -	[VOLTAGE] = hwmon_in,
+> -	[CURRENT] = hwmon_curr,
+> -	[POWER] = hwmon_power,
+> -	[ENERGY] = hwmon_energy,
+> -};
+> -
+>   static u32 hwmon_attributes[] = {
+>   	[hwmon_chip] = HWMON_C_REGISTER_TZ,
+>   	[hwmon_temp] = HWMON_T_INPUT | HWMON_T_LABEL,
+> 
+
