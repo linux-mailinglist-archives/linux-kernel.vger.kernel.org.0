@@ -2,90 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B3416CAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 22:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A0216CAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 22:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfEGUwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 16:52:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44377 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfEGUwe (ORCPT
+        id S1727669AbfEGUxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 16:53:21 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52278 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbfEGUxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 16:52:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z16so8891871pgv.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 13:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FZCsu76ETp0rZ0rXi+vAgG1DHkuU4ZJZHgq+GTX/TeU=;
-        b=YAPiArlNMJBDkaS6R4dyKdz6IW6HPGijvrYEY77nrpT0RtiYVI/ag+5Pu2wgUGwo42
-         Dt62ElIE2Cj70zDg5l5U2dA3F8NwPho09EZ5kMdemAVcRAkryb8UIgjiSoQtTrodY6wS
-         pB8y1FCEB+FaYbuySFo7uKAwbJlOzBIbrWgtjrvXpsvWxIZ+x/s9o+qedboWmJrnvhE0
-         sTh++leHrUsJiCUPsLhrIpADXMoMdIr7AmGKE1hdhAQDfrLfMyx+qwGbfvu8AzTqav4C
-         Co2wU+rVb5/IzT2tJ95tS+CzpzS95zpLpFaa2i+ieZj+0XV7oL6YJPPpR9ViZMAhZEBN
-         WjHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FZCsu76ETp0rZ0rXi+vAgG1DHkuU4ZJZHgq+GTX/TeU=;
-        b=ew1DBOL1lzjFGrNa4FslV8lqxZNmM6ZPWpohObj44LLr1x6Og2bvSZQaJAWx77bRrc
-         8UIFSLxVmv7QqENDRRkyv7wREwKPTW8WUzQ7kCay1Yhr48U0dKIeSw4s/YCZTUoDWo6B
-         gaksZ7rS3tWxPUL0pTFjBRoLxXtlVOjYaHlLyXCOKtiYRZjSgc/9xv3Nb3HtlSx6Dl4S
-         cP1nx1LLOVsocoEA/PJWcjv9PtdIitSCgJ8W+Qsn66CnfMOUgSWUXtoPGT8FW/O8cVD/
-         kXtekwHqcIoB9sN1KyodOh0wqcaHYc6MDcKm9Bvry8HM8rtXkxx/ghkCZ3RPd+Yvr0jn
-         UL+A==
-X-Gm-Message-State: APjAAAVDIwX9CUxC6PbsEjbknf6XG8/NZpOCz3MLvNWcncTnJrsZzwHF
-        TEYC/jWFXmTuCmdYmGRL90A=
-X-Google-Smtp-Source: APXvYqwWbLNioOJ3VoiOYrPTtL15jPigps8VxBp1q1jIpMmqAM8LVIWhwtY4EDHxbahQvfobdasYwQ==
-X-Received: by 2002:a65:5181:: with SMTP id h1mr42672849pgq.167.1557262353965;
-        Tue, 07 May 2019 13:52:33 -0700 (PDT)
-Received: from localhost ([2601:640:2:82fb:19d3:11c4:475e:3daa])
-        by smtp.gmail.com with ESMTPSA id n184sm13459640pfn.21.2019.05.07.13.52.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 13:52:32 -0700 (PDT)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Yury Norov <ynorov@marvell.com>, Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH] arm64: don't trash config with compat symbol if COMPAT is disabled
-Date:   Tue,  7 May 2019 13:52:28 -0700
-Message-Id: <20190507205228.8186-1-ynorov@marvell.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 7 May 2019 16:53:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hO75T-0000aP-6S; Tue, 07 May 2019 20:53:19 +0000
+Date:   Tue, 7 May 2019 21:53:19 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] vfs.git misc pieces
+Message-ID: <20190507205319.GN23075@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yury Norov <ynorov@marvell.com>
+	Assorted stuff, with no common topic whatsoever...
 
-ARCH_WANT_COMPAT_IPC_PARSE_VERSION is selected unconditionally. It
-makes little sense if kernel is compiled without COMPAT support.
-Fix it.
+The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
 
-This patch makes no functional changes since all existing code which
-is guarded with ARCH_WANT_COMPAT_IPC_PARSE_VERSION is also guarded
-with COMPAT.
+  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
 
-Signed-off-by: Yury Norov <ynorov@marvell.com>
----
- arch/arm64/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+are available in the git repository at:
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 305b50f8f791..38e6dc6a50c8 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -65,7 +65,7 @@ config ARM64
- 	select ARCH_SUPPORTS_ATOMIC_RMW
- 	select ARCH_SUPPORTS_INT128 if GCC_VERSION >= 50000 || CC_IS_CLANG
- 	select ARCH_SUPPORTS_NUMA_BALANCING
--	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
-+	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
- 	select ARCH_WANT_FRAME_POINTERS
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARM_AMBA
--- 
-2.17.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
 
+for you to fetch changes up to 6ee9706aa22e026f438caabb2982e5f78de2c82c:
+
+  libfs: document simple_get_link() (2019-04-30 23:59:25 -0400)
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      fs: use timespec64 in relatime_need_update
+
+Chengguang Xu (1):
+      fs/block_dev.c: remove unused include
+
+Eric Biggers (4):
+      Documentation/filesystems/vfs.txt: remove bogus "Last updated" date
+      Documentation/filesystems/vfs.txt: document how ->i_link works
+      Documentation/filesystems/Locking: fix ->get_link() prototype
+      libfs: document simple_get_link()
+
+ Documentation/filesystems/Locking |  2 +-
+ Documentation/filesystems/vfs.txt |  8 ++++++--
+ fs/block_dev.c                    |  1 -
+ fs/inode.c                        |  4 ++--
+ fs/libfs.c                        | 14 ++++++++++++++
+ 5 files changed, 23 insertions(+), 6 deletions(-)
