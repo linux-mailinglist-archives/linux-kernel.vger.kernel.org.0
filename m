@@ -2,140 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A70E1647B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6EF316483
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfEGNXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 09:23:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbfEGNXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:23:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 756B6AEBF;
-        Tue,  7 May 2019 13:23:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 097871E3C5A; Tue,  7 May 2019 15:23:30 +0200 (CEST)
-Date:   Tue, 7 May 2019 15:23:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.14 50/95] fsnotify: generalize handling of
- extra event flags
-Message-ID: <20190507132330.GB4635@quack2.suse.cz>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-50-sashal@kernel.org>
+        id S1726711AbfEGNYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:24:55 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59428 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfEGNYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 09:24:55 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190507132446euoutp02c8ce8d7f6fecc2c873e7994d8b690c24~caWy_EQT60769007690euoutp02k
+        for <linux-kernel@vger.kernel.org>; Tue,  7 May 2019 13:24:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190507132446euoutp02c8ce8d7f6fecc2c873e7994d8b690c24~caWy_EQT60769007690euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1557235486;
+        bh=HePsI2obF6bYrams1J31uq3qDheNx0jPg7cbk18CcCo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=gVNh+gdZP8JjL6KEk/sofaf92S2jaBESPYs7IhzM7dlD+BgqGGsb3lpSkmfsZavBP
+         OweODdkZt3q69D1IKxStAYeBcoJZHk5yQ6iKWlrJmcg4MBtplp/MMefhwmRv9lHSfE
+         cBa8Uu9eftmkrlqa7CHJ0Xxvd3qOW7+KTntymA3c=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190507132446eucas1p276c1b2db5552552d991f368747316488~caWyKfuMs1887718877eucas1p21;
+        Tue,  7 May 2019 13:24:46 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F5.3A.04377.D1781DC5; Tue,  7
+        May 2019 14:24:45 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190507132445eucas1p12fed4a0cdc75e8f5343b450bf1893c54~caWxVbC6C1246812468eucas1p11;
+        Tue,  7 May 2019 13:24:45 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190507132444eusmtrp17aa7a507c83e6e2dfe5747c7b1b08091~caWxHRTcE2518525185eusmtrp1Z;
+        Tue,  7 May 2019 13:24:44 +0000 (GMT)
+X-AuditID: cbfec7f4-12dff70000001119-01-5cd1871d0c78
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4A.BA.04140.C1781DC5; Tue,  7
+        May 2019 14:24:44 +0100 (BST)
+Received: from amdc2143 (unknown [106.120.51.59]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20190507132444eusmtip102380f308f9d3546384b476e83d2801e~caWwssKF41198511985eusmtip16;
+        Tue,  7 May 2019 13:24:44 +0000 (GMT)
+Message-ID: <d071578df35b11b858752f014f4ae5923b61be49.camel@samsung.com>
+Subject: Re: [PATCH] extensions: libxt_owner: Add complementary groups
+ option
+From:   Lukasz Pawelczyk <l.pawelczyk@samsung.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukasz Pawelczyk <havner@gmail.com>
+Date:   Tue, 07 May 2019 15:24:43 +0200
+In-Reply-To: <20190505225930.w4bcrlsgzq7cipvg@salvia>
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507053826.31622-50-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djP87qy7RdjDC6dNbD4u7Od2WLO+RYW
+        i229qxkt/r/WsbjcN43Z4vKuOWwWxxaIWUxYd4rFYvqbq8wOnB6nmzayeGxZeZPJY+esu+we
+        b3+fYPI49H0Bq8fnTXIBbFFcNimpOZllqUX6dglcGVu/rmUvaGCtWPwnroHxF3MXIyeHhICJ
+        xM7pz9m7GLk4hARWMEp8/bOTFcL5wijxdsdkJpAqIYHPjBLrZ4vBdKy8PpEFomg5o8SV+Y2M
+        EM4zRol16/6BzeUV8JB4On85WLewgL9E6+kjYHE2AQOJ7xf2gtkiAtoS7TdawSYxC0xnkrhz
+        q50NJMEioCrxoP8CK4jNKWAq8evTN7AGUQFdiRsbnrFBLBCUODnzCQuIzSwgL7H97RxmkEES
+        AtvYJWbO2soGcauLxOwPlxghbGGJV8e3sEPYMhKnJ/cANXMA2dUSJ89UQPR2MEpsfDEbqt5a
+        4vOkLcwgNcwCmhLrd+lDhB0lpvadYYVo5ZO48VYQ4gQ+iUnbpjNDhHklOtqEIKpVJV7vgRko
+        LfHxz16oAzwkek4dYJzAqDgLyTOzkDwzC2HvAkbmVYziqaXFuempxUZ5qeV6xYm5xaV56XrJ
+        +bmbGIEp6PS/4192MO76k3SIUYCDUYmH90XBxRgh1sSy4srcQ4wSHMxKIryJz87FCPGmJFZW
+        pRblxxeV5qQWH2KU5mBREuetZngQLSSQnliSmp2aWpBaBJNl4uCUamCMbvVtrthXYPVHc+/6
+        k8Uc/n+mPYp6K7h9++uElG3rvGoZJbNX1Nn3H7A3uKF1T95lMVt+lWcg+/+scK8bn9x//zz3
+        JWXHhf+8Rzk1omct9HV0dVyb+aF1Znv1w6US03/p9La0n/JYrGv5wlp5155X9tnK6dVq6W+V
+        /KLn6i73vuv179+Tx8lKLMUZiYZazEXFiQCCSFnPPQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xu7oy7RdjDL5eMrf4u7Od2WLO+RYW
+        i229qxkt/r/WsbjcN43Z4vKuOWwWxxaIWUxYd4rFYvqbq8wOnB6nmzayeGxZeZPJY+esu+we
+        b3+fYPI49H0Bq8fnTXIBbFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
+        NimpOZllqUX6dgl6GVu/rmUvaGCtWPwnroHxF3MXIyeHhICJxMrrE1m6GLk4hASWMkq8W3OL
+        FSIhLXH8wEIoW1jiz7UuNoiiJ4wSiyfNYAFJ8Ap4SDydv5wJxBYW8JXYM/8/WJxNwEDi+4W9
+        YBtEBLQl2m+0gm1gFpjOJHFmznawIhYBVYkH/RfANnAKmEr8+vSNGWLDfkaJS+tesoMkmAU0
+        JVq3/wazRQV0JW5seMYGsVlQ4uTMJywQNfIS29/OYZ7AKDgLScssJGWzkJQtYGRexSiSWlqc
+        m55bbKRXnJhbXJqXrpecn7uJERhh24793LKDsetd8CFGAQ5GJR7eFwUXY4RYE8uKK3MPMUpw
+        MCuJ8CY+OxcjxJuSWFmVWpQfX1Sak1p8iNEU6KOJzFKiyfnA6M8riTc0NTS3sDQ0NzY3NrNQ
+        EuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cB4ZIme4QYbuRVtLJx+1yJvtMgevb87xbJBIVv9
+        9DTnhL33FgkJc27azH/27sF9s3lF2NxVj7NoS8+0s3DYsIcz+lC0aJGB5tYQzzy1o9kPMyfd
+        Obs+OHDxpbk392t25nFENYTGaTmxHlnTI/WVK61/1sIq49e9C/98X5G5v+HNr9LOHf/5npQp
+        sRRnJBpqMRcVJwIAoFjKicYCAAA=
+X-CMS-MailID: 20190507132445eucas1p12fed4a0cdc75e8f5343b450bf1893c54
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190426160306eucas1p1a0c8ec9783cc78db7381582a70d6de10
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190426160306eucas1p1a0c8ec9783cc78db7381582a70d6de10
+References: <CGME20190426160306eucas1p1a0c8ec9783cc78db7381582a70d6de10@eucas1p1.samsung.com>
+        <20190426160257.4139-1-l.pawelczyk@samsung.com>
+        <20190505225930.w4bcrlsgzq7cipvg@salvia>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-05-19 01:37:39, Sasha Levin wrote:
-> From: Amir Goldstein <amir73il@gmail.com>
+On Mon, 2019-05-06 at 00:59 +0200, Pablo Neira Ayuso wrote:
+> On Fri, Apr 26, 2019 at 06:02:57PM +0200, Lukasz Pawelczyk wrote:
+> > The --compl-groups option causes GIDs specified with --gid-owner to
+> > be
+> > also checked in the complementary groups of a process.
 > 
-> [ Upstream commit 007d1e8395eaa59b0e7ad9eb2b53a40859446a88 ]
-> 
-> FS_EVENT_ON_CHILD gets a special treatment in fsnotify() because it is
-> not a flag specifying an event type, but rather an extra flags that may
-> be reported along with another event and control the handling of the
-> event by the backend.
-> 
-> FS_ISDIR is also an "extra flag" and not an "event type" and therefore
-> desrves the same treatment. With inotify/dnotify backends it was never
-> possible to set FS_ISDIR in mark masks, so it did not matter.
-> With fanotify backend, mark adding code jumps through hoops to avoid
-> setting the FS_ISDIR in the commulative object mask.
-> 
-> Separate the constant ALL_FSNOTIFY_EVENTS to ALL_FSNOTIFY_FLAGS and
-> ALL_FSNOTIFY_EVENTS, so the latter can be used to test for specific
-> event types.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Please, could you also update manpage?
 
-Sasha, why did you select this patch? It is just a cleanup with no user
-visible effect and was done mostly to simplify implementing following
-features...
+Will do. iptables-extensions(8) I presume? Anything else?
 
-								Honza
+> BTW, I think you refer to _supplementary_ groups, right? Existing
+> documentation uses this term.
 
-> ---
->  fs/notify/fsnotify.c             | 7 +++----
->  include/linux/fsnotify_backend.h | 9 +++++++--
->  2 files changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 506da82ff3f1..dc080c642dd0 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -192,7 +192,7 @@ static int send_to_group(struct inode *to_tell,
->  			 struct fsnotify_iter_info *iter_info)
->  {
->  	struct fsnotify_group *group = NULL;
-> -	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-> +	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
->  	__u32 marks_mask = 0;
->  	__u32 marks_ignored_mask = 0;
->  
-> @@ -256,8 +256,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
->  	struct fsnotify_iter_info iter_info;
->  	struct mount *mnt;
->  	int ret = 0;
-> -	/* global tests shouldn't care about events on child only the specific event */
-> -	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-> +	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
->  
->  	if (data_is == FSNOTIFY_EVENT_PATH)
->  		mnt = real_mount(((const struct path *)data)->mnt);
-> @@ -380,7 +379,7 @@ static __init int fsnotify_init(void)
->  {
->  	int ret;
->  
-> -	BUG_ON(hweight32(ALL_FSNOTIFY_EVENTS) != 23);
-> +	BUG_ON(hweight32(ALL_FSNOTIFY_BITS) != 23);
->  
->  	ret = init_srcu_struct(&fsnotify_mark_srcu);
->  	if (ret)
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index ce74278a454a..81052313adeb 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -67,15 +67,20 @@
->  
->  #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM)
->  
-> +/* Events that can be reported to backends */
->  #define ALL_FSNOTIFY_EVENTS (FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
->  			     FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | FS_OPEN | \
->  			     FS_MOVED_FROM | FS_MOVED_TO | FS_CREATE | \
->  			     FS_DELETE | FS_DELETE_SELF | FS_MOVE_SELF | \
->  			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
-> -			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_EXCL_UNLINK | \
-> -			     FS_ISDIR | FS_IN_ONESHOT | FS_DN_RENAME | \
-> +			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_DN_RENAME)
-> +
-> +/* Extra flags that may be reported with event or control handling of events */
-> +#define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
->  			     FS_DN_MULTISHOT | FS_EVENT_ON_CHILD)
->  
-> +#define ALL_FSNOTIFY_BITS   (ALL_FSNOTIFY_EVENTS | ALL_FSNOTIFY_FLAGS)
-> +
->  struct fsnotify_group;
->  struct fsnotify_event;
->  struct fsnotify_mark;
-> -- 
-> 2.20.1
-> 
+Yes, that's correct, my bad. I'll send the updated patches.
+
+Thanks.
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lukasz Pawelczyk
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+
