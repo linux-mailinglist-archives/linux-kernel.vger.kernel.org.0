@@ -2,120 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7039915E5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9F915DCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfEGHjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:39:12 -0400
-Received: from 9.mo178.mail-out.ovh.net ([46.105.75.45]:54574 "EHLO
-        9.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726940AbfEGHjJ (ORCPT
+        id S1726708AbfEGHEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 03:04:23 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:53150 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726253AbfEGHEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:39:09 -0400
-X-Greylist: delayed 1200 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 May 2019 03:39:09 EDT
-Received: from player796.ha.ovh.net (unknown [10.108.35.27])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 666135E9E0
-        for <linux-kernel@vger.kernel.org>; Tue,  7 May 2019 09:01:51 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player796.ha.ovh.net (Postfix) with ESMTPSA id 65F0A561F73C;
-        Tue,  7 May 2019 07:01:46 +0000 (UTC)
-Date:   Tue, 7 May 2019 09:01:45 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Sam Bobroff <sbobroff@linux.ibm.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio-pci/nvlink2: Fix potential VMA leak
-Message-ID: <20190507090145.4be12c82@bahia.lan>
-In-Reply-To: <20190507014915.GA10274@tungsten.ozlabs.ibm.com>
-References: <155568823785.601037.2151744205292679252.stgit@bahia.lan>
-        <20190506155845.70f3b01d@x1.home>
-        <20190507014915.GA10274@tungsten.ozlabs.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 7 May 2019 03:04:22 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9E1BAC01EB;
+        Tue,  7 May 2019 07:04:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1557212656; bh=EgwbqrIDlOKeOpANBxfoAqWMx9vfzjNf1QWR72jjXzg=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=b2JJ0uEZpxwV/ZjimVefsw3vtZg+1oHCx6CFwFOjKCqnX0hLIBj4+P1+e1jcvrI2D
+         VHmYbSe+CfQIsHuolJC7IArw9+mBIEACwZN1oM7h2Io/0ZnKGiWYkIVjfxYb/I/Qgm
+         4txVHCjqylH3NA7+w/8ZAQ7+piyWJnp+BjJYJO9o9BlY9FOJfcVNooPhOSXi0sk9xi
+         lik5E1IunEivBu8O8haYnFuL9mJZ5zYfpWV5q/azWx/wWdb/gqSzKGSqn3KP/uIoCQ
+         2aJWBxLlubPiDY8i/eEz0aucBqlopgc1V/7L6RRg3M5lMCtIPe2iVzz6IoPvh1ZOKs
+         eppF4ZH5vDICA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 77429A005D;
+        Tue,  7 May 2019 07:04:18 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 7 May 2019 00:04:18 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 7 May 2019 00:04:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=coMxPQlhqRphxm2/E3dz+12hZDp8AK8mRhYjpV2DRM8=;
+ b=qG5cIp18MbjoTMhIBvWXfOqjdtiNIUvOUM5I+M6k+orJZFhDvSQirz4PNYjANH51oE0EliEfMkbT2aMViL6CXg/PZDPQS+9RJSEXoXr562cyXVTtI3VDA6r3U2sdd4MRmFZViWQBEmgvrBQM87B/4ljd4emexaBK7VAniJbLoPU=
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com (10.172.78.14) by
+ CY4PR1201MB0071.namprd12.prod.outlook.com (10.172.79.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Tue, 7 May 2019 07:04:14 +0000
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::ac77:1c39:d9eb:ee9a]) by CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::ac77:1c39:d9eb:ee9a%4]) with mapi id 15.20.1856.012; Tue, 7 May 2019
+ 07:04:14 +0000
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@aculab.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: RE: [PATCH AUTOSEL 4.14 72/95] devres: Align data[] to
+ ARCH_KMALLOC_MINALIGN
+Thread-Topic: [PATCH AUTOSEL 4.14 72/95] devres: Align data[] to
+ ARCH_KMALLOC_MINALIGN
+Thread-Index: AQHVBJd3onwrWwkS2UueAl57c5ZJEaZfKNsAgAATBJA=
+Date:   Tue, 7 May 2019 07:04:13 +0000
+Message-ID: <CY4PR1201MB01200B5B52E39A88D8D3FDDDA1310@CY4PR1201MB0120.namprd12.prod.outlook.com>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-72-sashal@kernel.org>
+ <20190507055214.GA17986@kroah.com>
+In-Reply-To: <20190507055214.GA17986@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abrodkin@synopsys.com; 
+x-originating-ip: [198.182.37.200]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6d4e5240-4851-49f8-6bb1-08d6d2ba369d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:CY4PR1201MB0071;
+x-ms-traffictypediagnostic: CY4PR1201MB0071:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <CY4PR1201MB0071D44CC32E9AE1A23DD977A1310@CY4PR1201MB0071.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:126;
+x-forefront-prvs: 0030839EEE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39850400004)(346002)(136003)(396003)(13464003)(189003)(199004)(6306002)(6436002)(76176011)(66556008)(66476007)(66446008)(66946007)(14454004)(53936002)(256004)(102836004)(64756008)(26005)(229853002)(66066001)(14444005)(4326008)(561944003)(6246003)(9686003)(33656002)(55016002)(53546011)(186003)(7736002)(74316002)(305945005)(6506007)(7696005)(86362001)(446003)(7416002)(73956011)(3846002)(76116006)(6116002)(71190400001)(2906002)(8676002)(81156014)(8936002)(81166006)(54906003)(68736007)(316002)(110136005)(25786009)(966005)(478600001)(476003)(99286004)(11346002)(71200400001)(52536014)(486006)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB0071;H:CY4PR1201MB0120.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CJgi+3NK0BxPX1lgwrovb2wieQILsxdeB+q4gDn49HWQuGlIputy7eaHmpiwnPClHWTm2q67wxDbAB+CcWhFdurxV9e2HOGjEmoEoEjfc/mvmkx3OtnPt00A2LsVpw/NEBdb9aSzAVHBcUqfIy7pmzCU10QjH/95cXTDj0DL/W1y7vapMguLuRyyI6NV5E1+l+gG1Gs5MhsBYPjsexq3hgP3hUmIpqgtrwaDjrJZG1dvDF7qKFStoWn+UKI3rH0/BU10hlmtyXVdKGm8BRJ29FWBXAUhoTINoeUOkCR88/zEmUOubZMK1r7ZC9sEDh2q1pkjbjtnaPMrv5IEc55Ij6AB/s08sHX4TtEdM0AGHJSPCb9u86bRB5nBtfU1iXHzts0CjSF0xds9RBknl0SBYA0HDhcDGqN0nYOL6Bem8JY=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/40jBTFpoOsFSSaNoBPfpNLC"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 3269331857217132982
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrjeelgdduudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d4e5240-4851-49f8-6bb1-08d6d2ba369d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 07:04:14.0039
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0071
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/40jBTFpoOsFSSaNoBPfpNLC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-On Tue, 7 May 2019 11:52:44 +1000
-Sam Bobroff <sbobroff@linux.ibm.com> wrote:
-
-> On Mon, May 06, 2019 at 03:58:45PM -0600, Alex Williamson wrote:
-> > On Fri, 19 Apr 2019 17:37:17 +0200
-> > Greg Kurz <groug@kaod.org> wrote:
-> >  =20
-> > > If vfio_pci_register_dev_region() fails then we should rollback
-> > > previous changes, ie. unmap the ATSD registers.
-> > >=20
-> > > Signed-off-by: Greg Kurz <groug@kaod.org>
-> > > --- =20
-> >=20
-> > Applied to vfio next branch for v5.2 with Alexey's R-b.  Thanks!
-> >=20
-> > Alex =20
+> -----Original Message-----
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Sent: Tuesday, May 7, 2019 8:52 AM
+> To: Sasha Levin <sashal@kernel.org>
+> Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Alexey Brodkin =
+<abrodkin@synopsys.com>;
+> Alexey Brodkin <abrodkin@synopsys.com>; Geert Uytterhoeven <geert@linux-m=
+68k.org>; David Laight
+> <David.Laight@aculab.com>; Peter Zijlstra <peterz@infradead.org>; Thomas =
+Gleixner
+> <tglx@linutronix.de>; Vineet Gupta <vgupta@synopsys.com>; Will Deacon <wi=
+ll.deacon@arm.com>; Sasha
+> Levin <alexander.levin@microsoft.com>
+> Subject: Re: [PATCH AUTOSEL 4.14 72/95] devres: Align data[] to ARCH_KMAL=
+LOC_MINALIGN
 >=20
-> Should this have a fixes tag? e.g.:
-> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subd=
-river")
+> On Tue, May 07, 2019 at 01:38:01AM -0400, Sasha Levin wrote:
+> > From: Alexey Brodkin <alexey.brodkin@synopsys.com>
+> >
+> > [ Upstream commit a66d972465d15b1d89281258805eb8b47d66bd36 ]
+> >
+> > Initially we bumped into problem with 32-bit aligned atomic64_t
+> > on ARC, see [1]. And then during quite lengthly discussion Peter Z.
+> > mentioned ARCH_KMALLOC_MINALIGN which IMHO makes perfect sense.
+> > If allocation is done by plain kmalloc() obtained buffer will be
+> > ARCH_KMALLOC_MINALIGN aligned and then why buffer obtained via
+> > devm_kmalloc() should have any other alignment?
+> >
+> > This way we at least get the same behavior for both types of
+> > allocation.
+> >
+> > [1] https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infrade=
+ad.org_pipermail_linux-2Dsnps-
+> 2Darc_2018-
+> 2DJuly_004009.html&d=3DDwIBAg&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3DlqdeeSSEes0G=
+FDDl656eViXO7breS55ytWkhpk5R81I&m=3DA
+> YtkWKU38pzVfJMBuK0lUwxRyKT6dDfHoD3yO6OIB5k&s=3De7e2sXKcjHDQdGSrKWM0jmpSOf=
+he0MFk4-nMZJe9En8&e=3D
+> > [2] https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infrade=
+ad.org_pipermail_linux-2Dsnps-
+> 2Darc_2018-
+> 2DJuly_004036.html&d=3DDwIBAg&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3DlqdeeSSEes0G=
+FDDl656eViXO7breS55ytWkhpk5R81I&m=3DA
+> YtkWKU38pzVfJMBuK0lUwxRyKT6dDfHoD3yO6OIB5k&s=3DL23zrl8rf2MmReUI8rT3FQpMiZ=
+U9H3Xjh9uVxJQe8dw&e=3D
+> >
+> > Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: David Laight <David.Laight@ACULAB.COM>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Vineet Gupta <vgupta@synopsys.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: Greg KH <greg@kroah.com>
+> > Cc: <stable@vger.kernel.org> # 4.8+
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> > ---
+> >  drivers/base/devres.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> > index 71d577025285..e43a04a495a3 100644
+> > --- a/drivers/base/devres.c
+> > +++ b/drivers/base/devres.c
+> > @@ -25,8 +25,14 @@ struct devres_node {
+> >
+> >  struct devres {
+> >  	struct devres_node		node;
+> > -	/* -- 3 pointers */
+> > -	unsigned long long		data[];	/* guarantee ull alignment */
+> > +	/*
+> > +	 * Some archs want to perform DMA into kmalloc caches
+> > +	 * and need a guaranteed alignment larger than
+> > +	 * the alignment of a 64-bit integer.
+> > +	 * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
+> > +	 * buffer alignment as if it was allocated by plain kmalloc().
+> > +	 */
+> > +	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
+> >  };
+> >
+> >  struct devres_group {
 >=20
+> This is not needed in any of the older kernels, despite what the stable@
+> line said, as it ends up taking a lot of memory up for all other arches.
+> That's why I only applied it to the one kernel version.  I'm betting
+> that it will be eventually reverted when people notice it as well :)
 
-Oops... you're right.
+That very well might become the case but then we're back to the initial pro=
+blem,
+right? So maybe some other more future-proof solution should be implemented=
+?
 
-Alex, can you add the above tag ?
+See initially we discussed simple explicit 8-byte alignment which won't cha=
+nge
+data layout for most of arches while fixing our issue on ARC but for some r=
+eason
+people were not happy with that proposal and that's how we ended-up with wh=
+at we
+discuss here now.
 
-> > >  drivers/vfio/pci/vfio_pci_nvlink2.c |    2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >=20
-> > > diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/v=
-fio_pci_nvlink2.c
-> > > index 32f695ffe128..50fe3c4f7feb 100644
-> > > --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
-> > > +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
-> > > @@ -472,6 +472,8 @@ int vfio_pci_ibm_npu2_init(struct vfio_pci_device=
- *vdev)
-> > >  	return 0;
-> > > =20
-> > >  free_exit:
-> > > +	if (data->base)
-> > > +		memunmap(data->base);
-> > >  	kfree(data);
-> > > =20
-> > >  	return ret;
-> > >  =20
-> >  =20
-
-
---Sig_/40jBTFpoOsFSSaNoBPfpNLC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEtIKLr5QxQM7yo0kQcdTV5YIvc9YFAlzRLVkACgkQcdTV5YIv
-c9ZGkA/+JZ5PaOPO7i+B9OrZ2lo2PBoFGqJDKD/7eIZh5y6gFUSxEq9SgINn+8gx
-MyCzhiLHvVf0BXgkOqEuopploTNUxjQR1bg4JN6RigS1p29g4btDcpkUxcYVIm0E
-pHoFxeOFMkTzVuBKY0x4qG0exONoCfWgdZOl1gK8dqudX6h9Emg7fcaJ1O94toOZ
-PV2AQ0byBJn5L02oCCdCZOAaRJTKU3LoT0pZlYBtXXFxj/oFewEoGj2bYQBF00fR
-NTUMhmU+TDJCIog3hcarH4xI28f42oOmpwWpDLWptPN2Pm0sIUHEkprrag5/jpI+
-p9XfxNsCPGK1Y2yDyb38xFAmoDpUkI6P4rKUfgVm2YjzkLFzTSS1pSEE2A4hYDdE
-IXTWFwzMz70wJLA4nlLd4vQYdJ03YH8X2vv8B0niH0jtvij3HIJSFYdn9t3T9dMd
-3F60y15qKVoM8EYTarlRMDl0nX/5999A/FiWEaj/Kxjh2Fy8U4bdfPAZyvertETL
-HIwJbSISfG0Rno53ROXeLR34L1sOkLran70bZYkr+eURURGAEzOaXvfxZcGLa2Km
-+e/B9/1ymLIEPLqFURKu7mHqWw8AbUZfgnGdkJUttDRTh+RAbhUEmUT93JtSSl+J
-H7s7qa8dFe6Y9v5nc1YglHJpkeSTJs8k8YJlhlvmCNfGPHxpLdE=
-=x3tB
------END PGP SIGNATURE-----
-
---Sig_/40jBTFpoOsFSSaNoBPfpNLC--
+-Alexey
