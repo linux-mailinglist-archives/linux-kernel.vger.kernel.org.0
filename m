@@ -2,58 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B50316D32
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3AB16D17
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfEGV2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 17:28:16 -0400
-Received: from mga14.intel.com ([192.55.52.115]:52636 "EHLO mga14.intel.com"
+        id S1727588AbfEGVYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 17:24:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfEGV2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 17:28:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 May 2019 14:28:15 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 07 May 2019 14:28:14 -0700
-Date:   Tue, 7 May 2019 15:22:41 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     "Heitke, Kenneth" <kenneth.heitke@intel.com>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 6/7] nvme-pci: add device coredump support
-Message-ID: <20190507212241.GA7113@localhost.localdomain>
-References: <1557248314-4238-1-git-send-email-akinobu.mita@gmail.com>
- <1557248314-4238-7-git-send-email-akinobu.mita@gmail.com>
- <a4ec2c1a-1ff7-52fe-07bd-179613411536@intel.com>
+        id S1726811AbfEGVYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 17:24:23 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E57320656;
+        Tue,  7 May 2019 21:24:20 +0000 (UTC)
+Date:   Tue, 7 May 2019 17:24:18 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call
+ functions
+Message-ID: <20190507172418.67ef6fc3@gandalf.local.home>
+In-Reply-To: <20190507172159.5t3bm3mjkwagvite@treble>
+References: <CAHk-=wjLXmOn=Cp=uOfO4gE01eN_-UcOUyrMTTw5-f_OfPO48Q@mail.gmail.com>
+        <20190506225819.11756974@oasis.local.home>
+        <CAHk-=wh4FCNBLe8OyDZt2Tr+k9JhhTsg3H8R4b55peKcf0b6eQ@mail.gmail.com>
+        <20190506232158.13c9123b@oasis.local.home>
+        <CAHk-=wi4vPg4pu6RvxQrUuBL4Vgwd2G2iaEJVVumny+cBOWMZw@mail.gmail.com>
+        <CAHk-=wg2_okyU8mpkGCUrudgfg8YmNetSD8=scNbOkN+imqZdQ@mail.gmail.com>
+        <20190507111227.1d4268d7@gandalf.local.home>
+        <CAHk-=wjYdj+vvV8uUA8eaUSxOhu=xuQxdo-dtM927j0-3hSkEw@mail.gmail.com>
+        <20190507163440.GV2606@hirez.programming.kicks-ass.net>
+        <CAHk-=wiuue37opWK5QaQ9f6twqDZuSratdP-1bK6kD9-Az5WnA@mail.gmail.com>
+        <20190507172159.5t3bm3mjkwagvite@treble>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4ec2c1a-1ff7-52fe-07bd-179613411536@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 02:31:41PM -0600, Heitke, Kenneth wrote:
-> On 5/7/2019 10:58 AM, Akinobu Mita wrote:
-> > +
-> > +static int nvme_get_telemetry_log_blocks(struct nvme_ctrl *ctrl, void *buf,
-> > +					 size_t bytes, loff_t offset)
-> > +{
-> > +	const size_t chunk_size = ctrl->max_hw_sectors * ctrl->page_size;
-> 
-> Just curious if chunk_size is correct since page size and block size can
-> be different.
+On Tue, 7 May 2019 12:21:59 -0500
+Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-They're always different. ctrl->page_size is hard-coded to 4k, while
-sectors are always 512b.
+> regs->sp is *undefined* on x86-32.  We're damning our future selves to
+> have to always remember to use that darn kernel_stack_pointer() helper
+> for eternity just because of x86-32.
+
+And there's been several times I forget that regs->sp can not be read
+directly. Especially most of my bug reports are for x86_64 these days.
+But when I had that seldom x86_32 one, and go debugging, I would print
+out "regs->sp" and then the system would crash. And I spend some time
+wondering why?
+
+It's been a bane of mine for some time.
+
+
+-- Steve
