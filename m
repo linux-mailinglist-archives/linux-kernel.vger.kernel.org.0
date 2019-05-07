@@ -2,82 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C9715EAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 09:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5870915EB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:01:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfEGH6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 03:58:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:8399 "EHLO mga02.intel.com"
+        id S1726970AbfEGIBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:01:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbfEGH6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 03:58:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 May 2019 00:58:04 -0700
-X-ExtLoop1: 1
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 May 2019 00:57:59 -0700
-Subject: Re: [PATCH v4 1/1] usb: xhci: Add Clear_TT_Buffer
-To:     Alan Stern <stern@rowland.harvard.edu>, Jim Lin <jilin@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, mathias.nyman@intel.com,
-        hminas@synopsys.com, kai.heng.feng@canonical.com,
-        drinkcat@chromium.org, prime.zeng@hisilicon.com, malat@debian.org,
-        nsaenzjulienne@suse.de, jflat@chromium.org,
-        linus.walleij@linaro.org, clabbe@baylibre.com,
-        colin.king@canonical.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <Pine.LNX.4.44L0.1905061053550.1585-100000@iolanthe.rowland.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <9ea9fd3e-cf1a-9015-6d21-377c2fd41e66@linux.intel.com>
-Date:   Tue, 7 May 2019 11:00:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726085AbfEGIBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 04:01:23 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6057820B7C;
+        Tue,  7 May 2019 08:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557216081;
+        bh=QzyiMEIgGcOHF7/0RhAcYYAteXaKFmx6V5mlxAloU/E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JYZnGuH3Pbk4yrhdCzdKoMJOLOSIlgRBPlakGO9b31IdpbGDZVFQSkxHJZke5YiqF
+         kLlxf+8LdYwPSAUw422OvFILYSfk5W9idQInw+r9Pj1esrAbnpH/5dYqp76eoeqJjE
+         y7EgY8L7QWLFChBoIcI/eDpJ/HS6IYXXX+xBrQeg=
+Date:   Tue, 7 May 2019 10:01:19 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190507080119.GB28121@kroah.com>
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1905061053550.1585-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6.5.2019 17.57, Alan Stern wrote:
-> On Mon, 6 May 2019, Jim Lin wrote:
+On Mon, May 06, 2019 at 08:14:12PM -0700, Frank Rowand wrote:
+> On 5/1/19 4:01 PM, Brendan Higgins wrote:
+> > ## TLDR
+> > 
+> > I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
+> > 5.2.
+> > 
+> > Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
+> > we would merge through your tree when the time came? Am I remembering
+> > correctly?
+> > 
+> > ## Background
+> > 
+> > This patch set proposes KUnit, a lightweight unit testing and mocking
+> > framework for the Linux kernel.
+> > 
+> > Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> > it does not require installing the kernel on a test machine or in a VM
+> > and does not require tests to be written in userspace running on a host
+> > kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> > can run several dozen tests in under a second. Currently, the entire
+> > KUnit test suite for KUnit runs in under a second from the initial
+> > invocation (build time excluded).
+> > 
+> > KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> > Googletest/Googlemock for C++. KUnit provides facilities for defining
+> > unit test cases, grouping related test cases into test suites, providing
+> > common infrastructure for running tests, mocking, spying, and much more.
 > 
->> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
->> processing for full-/low-speed endpoints connected via a TT, the host
->> software must use the Clear_TT_Buffer request to the TT to ensure
->> that the buffer is not in the busy state".
->>
->> In our case, a full-speed speaker (ConferenceCam) is behind a high-
->> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
->> request we may continue to get STALL with the folllowing requests,
->> like Set_Interface.
->>
->> Here we add Clear_TT_Buffer for the following Set_Interface requests
->> to get ACK successfully.
->>
->> Originally usb_hub_clear_tt_buffer uses urb->dev->devnum as device
->> address while sending Clear_TT_Buffer command, but this doesn't work
->> for XHCI.
+> As a result of the emails replying to this patch thread, I am now
+> starting to look at kselftest.  My level of understanding is based
+> on some slide presentations, an LWN article, https://kselftest.wiki.kernel.org/
+> and a _tiny_ bit of looking at kselftest code.
 > 
-> Why doesn't it work for xHCI?  Clear-TT-Buffer is part of the USB 2.0
-> spec; it should work exactly the same for xHCI as for a USB-2.0 host
-> controller.
+> tl;dr; I don't really understand kselftest yet.
 > 
-> Alan Stern
 > 
+> (1) why KUnit exists
+> 
+> > ## What's so special about unit testing?
+> > 
+> > A unit test is supposed to test a single unit of code in isolation,
+> > hence the name. There should be no dependencies outside the control of
+> > the test; this means no external dependencies, which makes tests orders
+> > of magnitudes faster. Likewise, since there are no external dependencies,
+> > there are no hoops to jump through to run the tests. Additionally, this
+> > makes unit tests deterministic: a failing unit test always indicates a
+> > problem. Finally, because unit tests necessarily have finer granularity,
+> > they are able to test all code paths easily solving the classic problem
+> > of difficulty in exercising error handling code.
+> 
+> (2) KUnit is not meant to replace kselftest
+> 
+> > ## Is KUnit trying to replace other testing frameworks for the kernel?
+> > 
+> > No. Most existing tests for the Linux kernel are end-to-end tests, which
+> > have their place. A well tested system has lots of unit tests, a
+> > reasonable number of integration tests, and some end-to-end tests. KUnit
+> > is just trying to address the unit test space which is currently not
+> > being addressed.
+> 
+> My understanding is that the intent of KUnit is to avoid booting a kernel on
+> real hardware or in a virtual machine.  That seems to be a matter of semantics
+> to me because isn't invoking a UML Linux just running the Linux kernel in
+> a different form of virtualization?
+> 
+> So I do not understand why KUnit is an improvement over kselftest.
+> 
+> It seems to me that KUnit is just another piece of infrastructure that I
+> am going to have to be familiar with as a kernel developer.  More overhead,
+> more information to stuff into my tiny little brain.
+> 
+> I would guess that some developers will focus on just one of the two test
+> environments (and some will focus on both), splitting the development
+> resources instead of pooling them on a common infrastructure.
+> 
+> What am I missing?
 
-For other host controllers udev->devnum is the same as the address of the
-usb device, chosen and set by usb core.
+kselftest provides no in-kernel framework for testing kernel code
+specifically.  That should be what kunit provides, an "easy" way to
+write in-kernel tests for things.
 
-With xHC the controller hardware assigns the address, and won't be the same as
-devnum.
+Brendan, did I get it right?
 
-The Clear-TT-Buffer request sent to the hub includes the address of the LS/FS
-child device in wValue field. usb_hub_clear_tt_buffer() uses udev->devnum to set the
-address wValue. This won't work for devices connected to xHC
-    
--Mathias
+thanks,
+
+greg k-h
