@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226AB16262
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A042116237
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbfEGK4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:56:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:50140 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726969AbfEGKxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:53:54 -0400
+        id S1727041AbfEGKx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:53:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50150 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726976AbfEGKxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 06:53:55 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E39141688;
-        Tue,  7 May 2019 03:53:53 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F1EF15AD;
+        Tue,  7 May 2019 03:53:55 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B098B3F5AF;
-        Tue,  7 May 2019 03:53:52 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C1EF3F5AF;
+        Tue,  7 May 2019 03:53:54 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
         rjw@rjwysocki.net, mathieu.poirier@linaro.org,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 09/30] coresight: Use coresight device names for sinks in PMU attribute
-Date:   Tue,  7 May 2019 11:52:36 +0100
-Message-Id: <1557226378-10131-10-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v3 10/30] coresight: Rename of_coresight to coresight-platform
+Date:   Tue,  7 May 2019 11:52:37 +0100
+Message-Id: <1557226378-10131-11-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557226378-10131-1-git-send-email-suzuki.poulose@arm.com>
 References: <1557226378-10131-1-git-send-email-suzuki.poulose@arm.com>
@@ -33,49 +33,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Rename the firmware handling file to a more generic
+name, in preparation for adding ACPI support. Right now
+we only support DT and we have all the platform handling
+code in of_coresight.c. Let us rename the file to
+coresight-platform.c in order to keep the platform handling
+in a single place for DT and the upcoming ACPI support.
 
-Move to using the coresight device name instead of the parent
-device name for SINK attribute for PMU.
-
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/hwtracing/coresight/Makefile                                 | 3 +--
+ drivers/hwtracing/coresight/{of_coresight.c => coresight-platform.c} | 3 ++-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ rename drivers/hwtracing/coresight/{of_coresight.c => coresight-platform.c} (99%)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 3c62944..5c1ca0d 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -523,7 +523,7 @@ int etm_perf_add_symlink_sink(struct coresight_device *csdev)
- 	unsigned long hash;
- 	const char *name;
- 	struct device *pmu_dev = etm_pmu.dev;
--	struct device *pdev = csdev->dev.parent;
-+	struct device *dev = &csdev->dev;
- 	struct dev_ext_attribute *ea;
+diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+index 3b435aa..3c0ac42 100644
+--- a/drivers/hwtracing/coresight/Makefile
++++ b/drivers/hwtracing/coresight/Makefile
+@@ -2,8 +2,7 @@
+ #
+ # Makefile for CoreSight drivers.
+ #
+-obj-$(CONFIG_CORESIGHT) += coresight.o coresight-etm-perf.o
+-obj-$(CONFIG_OF) += of_coresight.o
++obj-$(CONFIG_CORESIGHT) += coresight.o coresight-etm-perf.o coresight-platform.o
+ obj-$(CONFIG_CORESIGHT_LINK_AND_SINK_TMC) += coresight-tmc.o \
+ 					     coresight-tmc-etf.o \
+ 					     coresight-tmc-etr.o
+diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/coresight-platform.c
+similarity index 99%
+rename from drivers/hwtracing/coresight/of_coresight.c
+rename to drivers/hwtracing/coresight/coresight-platform.c
+index 7045930..514cc2b 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/coresight-platform.c
+@@ -17,7 +17,7 @@
+ #include <linux/cpumask.h>
+ #include <asm/smp_plat.h>
  
- 	if (csdev->type != CORESIGHT_DEV_TYPE_SINK &&
-@@ -536,15 +536,15 @@ int etm_perf_add_symlink_sink(struct coresight_device *csdev)
- 	if (!etm_perf_up)
- 		return -EPROBE_DEFER;
- 
--	ea = devm_kzalloc(pdev, sizeof(*ea), GFP_KERNEL);
-+	ea = devm_kzalloc(dev, sizeof(*ea), GFP_KERNEL);
- 	if (!ea)
- 		return -ENOMEM;
- 
--	name = dev_name(pdev);
-+	name = dev_name(dev);
- 	/* See function coresight_get_sink_by_id() to know where this is used */
- 	hash = hashlen_hash(hashlen_string(NULL, name));
- 
--	ea->attr.attr.name = devm_kstrdup(pdev, name, GFP_KERNEL);
-+	ea->attr.attr.name = devm_kstrdup(dev, name, GFP_KERNEL);
- 	if (!ea->attr.attr.name)
- 		return -ENOMEM;
- 
+-
++#ifdef CONFIG_OF
+ static int of_dev_node_match(struct device *dev, void *data)
+ {
+ 	return dev->of_node == data;
+@@ -295,3 +295,4 @@ of_get_coresight_platform_data(struct device *dev,
+ 	return pdata;
+ }
+ EXPORT_SYMBOL_GPL(of_get_coresight_platform_data);
++#endif
 -- 
 2.7.4
 
