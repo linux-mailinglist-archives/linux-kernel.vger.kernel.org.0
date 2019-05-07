@@ -2,221 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4100F15A4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA2F159C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729392AbfEGFo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:44:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26955 "EHLO mga05.intel.com"
+        id S1728897AbfEGFjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 01:39:33 -0400
+Received: from mx.socionext.com ([202.248.49.38]:58579 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727503AbfEGFoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:44:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 22:44:55 -0700
-X-ExtLoop1: 1
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
-  by fmsmga005.fm.intel.com with ESMTP; 06 May 2019 22:44:50 -0700
-Date:   Tue, 7 May 2019 01:39:13 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "eskultet@redhat.com" <eskultet@redhat.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>
-Subject: Re: [PATCH 1/2] vfio/mdev: add version field as mandatory attribute
- for mdev device
-Message-ID: <20190507053913.GA14284@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20190419083258.19580-1-yan.y.zhao@intel.com>
- <20190419083505.19654-1-yan.y.zhao@intel.com>
- <20190423115932.42619422.cohuck@redhat.com>
- <20190424031036.GB26247@joy-OptiPlex-7040>
- <20190424095624.0ce97328.cohuck@redhat.com>
- <20190424081558.GE26247@joy-OptiPlex-7040>
- <20190430172908.2ae77fa9.cohuck@redhat.com>
+        id S1727562AbfEGFj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 01:39:27 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 07 May 2019 14:39:25 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id A12B16117D;
+        Tue,  7 May 2019 14:39:25 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 7 May 2019 14:39:25 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 7B19A1A04E0;
+        Tue,  7 May 2019 14:39:25 +0900 (JST)
+Received: from localhost (unknown [10.213.234.103])
+        by yuzu.css.socionext.com (Postfix) with ESMTPS id 656A7121B6C;
+        Tue,  7 May 2019 14:39:25 +0900 (JST)
+Date:   Tue, 7 May 2019 14:39:24 +0900
+From:   Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        orito.takao@socionext.com, sugaya.taichi@socionext.com,
+        kanematsu.shinji@socionext.com, jaswinder.singh@linaro.org,
+        masami.hiramatsu@linaro.org, linux-kernel@vger.kernel.org,
+        kasai.kazuhiro@socionext.com
+Subject: Re: [PATCH 2/2] dmaengine: milbeaut: Add Milbeaut AXI DMA controller
+Message-ID: <20190507053924.GA3359@ubuntu>
+References: <1553487314-9185-1-git-send-email-kasai.kazuhiro@socionext.com>
+ <1553487314-9185-3-git-send-email-kasai.kazuhiro@socionext.com>
+ <20190426114629.GU28103@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190430172908.2ae77fa9.cohuck@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190426114629.GU28103@vkoul-mobl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 11:29:08PM +0800, Cornelia Huck wrote:
-> On Wed, 24 Apr 2019 04:15:58 -0400
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > On Wed, Apr 24, 2019 at 03:56:24PM +0800, Cornelia Huck wrote:
-> > > On Tue, 23 Apr 2019 23:10:37 -0400
-> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > >
-> > > > On Tue, Apr 23, 2019 at 05:59:32PM +0800, Cornelia Huck wrote:
-> > > > > On Fri, 19 Apr 2019 04:35:04 -0400
-> > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > > > > > @@ -225,6 +228,8 @@ Directories and files under the sysfs for Each Physical Device
-> > > > > >    [<type-id>], device_api, and available_instances are mandatory attributes
-> > > > > >    that should be provided by vendor driver.
-> > > > > >
-> > > > > > +  version is a mandatory attribute if a mdev device supports live migration.
-> > > > >
-> > > > > What about "An mdev device wishing to support live migration must
-> > > > > provide the version attribute."?
-> > > > yes, I just want to keep consistent with the line above it
-> > > > " [<type-id>], device_api, and available_instances are mandatory attributes
-> > > >   that should be provided by vendor driver."
-> > > > what about below one?
-> > > >   "version is a mandatory attribute if a mdev device wishing to support live
-> > > >   migration."
-> > >
-> > > My point is that an attribute is not mandatory if it can be left out :)
-> > > (I'm not a native speaker, though; maybe this makes perfect sense
-> > > after all?)
-> > >
-> > > Maybe "version is a required attribute if live migration is supported
-> > > for an mdev device"?
-> > >
-> > you are right, "mandatory" may bring some confusion.
-> > Maybe
-> > "vendor driver must provide version attribute for an mdev device wishing to
-> > support live migration." ?
-> > based on your first version :)
-> 
-> "The vendor driver must provide the version attribute for any mdev
-> device it wishes to support live migration for." ?
-> 
-> >
-> > > >
-> > > >
-> > > > > > +
-> > > > > >  * [<type-id>]
-> > > > > >
-> > > > > >    The [<type-id>] name is created by adding the device driver string as a prefix
-> > > > > > @@ -246,6 +251,35 @@ Directories and files under the sysfs for Each Physical Device
-> > > > > >    This attribute should show the number of devices of type <type-id> that can be
-> > > > > >    created.
-> > > > > >
-> > > > > > +* version
-> > > > > > +
-> > > > > > +  This attribute is rw. It is used to check whether two devices are compatible
-> > > > > > +  for live migration. If this attribute is missing, then the corresponding mdev
-> > > > > > +  device is regarded as not supporting live migration.
-> > > > > > +
-> > > > > > +  It consists of two parts: common part and vendor proprietary part.
-> > > > > > +  common part: 32 bit. lower 16 bits is vendor id and higher 16 bits identifies
-> > > > > > +               device type. e.g., for pci device, it is
-> > > > > > +               "pci vendor id" | (VFIO_DEVICE_FLAGS_PCI << 16).
-> > > > > > +  vendor proprietary part: this part is varied in length. vendor driver can
-> > > > > > +               specify any string to identify a device.
-> > > > > > +
-> > > > > > +  When reading this attribute, it should show device version string of the device
-> > > > > > +  of type <type-id>. If a device does not support live migration, it should
-> > > > > > +  return errno.
-> > > > > > +  When writing a string to this attribute, it returns errno for incompatibility
-> > > > > > +  or returns written string length in compatibility case. If a device does not
-> > > > > > +  support live migration, it always returns errno.
-> > > > >
-> > > > > I'm not sure whether a device that does not support live migration
-> > > > > should expose this attribute in the first place. Or is that to cover
-> > > > > cases where a driver supports live migration only for some of the
-> > > > > devices it supports?
-> > > > yes, driver returning error code is to cover the cases where only part of devices it
-> > > > supports can be migrated.
-> > > >
-> > > >
-> > > > > Also, I'm not sure if a string that has to be parsed is a good idea...
-> > > > > is this 'version' attribute supposed to convey some human-readable
-> > > > > information as well? The procedure you describe for compatibility
-> > > > > checking does the checking within the vendor driver which I would
-> > > > > expect to have a table/rules for that anyway.
-> > > > right. if a vendor driver has the confidence to migrate between devices of
-> > > > diffent platform or mdev types, it can maintain a compatibility table for that
-> > > > purpose. That's the reason why we would leave the compatibility check to vendor
-> > > > driver. vendor driver can freely choose its own complicated way to decide
-> > > > which device is migratable to which device.
-> > >
-> > > I think there are two scenarios here:
-> > > - Migrating between different device types, which is unlikely to work,
-> > >   except in special cases.
-> > > - Migrating between different versions of the same device type, which
-> > >   may work for some drivers/devices (and at least migrating to a newer
-> > >   version looks quite reasonable).
-> > >
-> > > But both should be something that is decided by the individual driver;
-> > > I hope we don't want to support migration between different drivers :-O
-> > >
-> > > Can we make this a driver-defined format?
-> > >
-> > yes, this is indeed driver-defined format.
-> > Actually we define it into two parts: common part and vendor proprietary part.
-> > common part: 32 bit. lower 16 bits is vendor id and higher 16 bits
-> >              identifies device type. e.g., for pci device, it is
-> >              "pci vendor id" | (VFIO_DEVICE_FLAGS_PCI << 16).
-> > vendor proprietary part: this part is varied in length. vendor driver can
-> >              specify any string to identify a device.
-> >
-> > vendor proprietary part is defined by vendor driver. vendor driver can
-> > define any format it wishes to use. Also it is its own responsibility to
-> > ensure backward compatibility if it wants to update format definition in this
-> > part.
-> >
-> > So user space only needs to get source side's version string, and asks
-> > target side whether the two are compatible. The decision maker is the
-> > vendor driver:)
-> 
-> If I followed the discussion correctly, I think you plan to drop this
-> format, don't you? I'd be happy if a vendor driver can use a simple
-> number without any prefixes if it so chooses.
-> 
-> I also like the idea of renaming this "migration_version" so that it is
-> clear we're dealing with versioning of the migration capability (and
-> not a version of the device or so).
-hi Cornelia,
-sorry I just saw this mail after sending v2 of this patch set...
-yes, I dropped the common part and vendor driver now can define whatever it
-wishes to identify a device version.
-However, I don't agree to rename it to "migration_version", as it still may
-bring some kind of confusing with the migration version a vendor driver is
-using, e.g. vendor driver changes migration code and increases that migration
-version.
-In fact, what info we want to get from this attribute is whether this mdev
-device is compatible with another mdev device, which is tied to device, and not
-necessarily bound to migration.
 
-do you think so?
+Thank you very much for reviewing my patch.
+Sorry for my late reply. Japan was in Spring Vacation.
 
-Thanks
-Yan
-> _______________________________________________
-> intel-gvt-dev mailing list
-> intel-gvt-dev@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
+On Fri, Apr 26, 2019 at 17:16 +0530, Vinod Koul wrote:
+> On 25-03-19, 13:15, Kazuhiro Kasai wrote:
+> > Add Milbeaut AXI DMA controller. This DMA controller has
+> > only capable of memory to memory transfer.
+>
+> Have you tested this with dmatest?
+Yes, I have tested this with dmatest.
+
+I use dmatest with the following parameter.
+>echo 10 > iterations
+>echo "" > channel
+>echo 1 > run
+
+And I got the below report from dmatest.
+[11675.231268] dmatest: dma0chan0-copy0: summary 10 tests, 0 failures 6910.84 iops 67035 KB/s (0)
+[ 5646.689234] dmatest: dma0chan1-copy0: summary 10 tests, 0 failures 7949.12 iops 59618 KB/s (0)
+[12487.712996] dmatest: dma0chan2-copy0: summary 10 tests, 0 failures 1493.87 iops 15088 KB/s (0)
+[12487.733932] dmatest: dma1chan0-copy0: summary 10 tests, 0 failures 490.98 iops 3142 KB/s (0)
+[11675.282428] dmatest: dma1chan2-copy0: summary 10 tests, 0 failures 7112.37 iops 56187 KB/s (0)
+[ 5646.754230] dmatest: dma1chan3-copy0: summary 10 tests, 0 failures 6609.38 iops 61467 KB/s (0)
+[ 5043.009255] dmatest: dma0chan3-copy0: summary 10 tests, 0 failures 498.08 iops 4183 KB/s (0)
+[ 5043.018385] dmatest: dma1chan1-copy0: summary 10 tests, 0 failures 350.62 iops 3155 KB/s (0)
+
+>
+> > +struct m10v_dma_chan {
+> > +	struct dma_chan chan;
+> > +	struct m10v_dma_device *mdmac;
+> > +	void __iomem *regs;
+> > +	int irq;
+> > +	struct m10v_dma_desc mdesc;
+>
+> So there is a *single* descriptor? Not a list??
+
+Yes, single descriptor.
+
+>
+> > +static void m10v_xdmac_disable_dma(struct m10v_dma_device *mdmac)
+> > +{
+> > +	unsigned int val;
+> > +
+> > +	val = readl(mdmac->regs + M10V_XDACS);
+> > +	val &= ~M10V_XDACS_XE;
+> > +	val |= FIELD_PREP(M10V_XDACS_XE, 0);
+> > +	writel(val, mdmac->regs + M10V_XDACS);
+>
+> Why not create a modifyl() macro and use it here
+
+Thank you for advise, I will creat modifyl() macro and use it in next version.
+
+>
+> > +static void m10v_xdmac_issue_pending(struct dma_chan *chan)
+> > +{
+> > +	struct m10v_dma_chan *mchan = to_m10v_dma_chan(chan);
+> > +
+> > +	m10v_xdmac_config_chan(mchan);
+> > +
+> > +	m10v_xdmac_enable_chan(mchan);
+>
+> You dont check if anything is already running or not?
+
+Yes, I think I don't need check if dma is running or not.
+Because there's a single descriptor.
+
+>
+> > +static dma_cookie_t m10v_xdmac_tx_submit(struct dma_async_tx_descriptor *txd)
+> > +{
+> > +	struct m10v_dma_chan *mchan = to_m10v_dma_chan(txd->chan);
+> > +	dma_cookie_t cookie;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&mchan->lock, flags);
+> > +	cookie = dma_cookie_assign(txd);
+> > +	spin_unlock_irqrestore(&mchan->lock, flags);
+> > +
+> > +	return cookie;
+>
+> sounds like vchan_tx_submit() i think you can use virt-dma layer and then
+> get rid of artificial limit in driver and be able to queue up the txn on
+> dmaengine.
+
+OK, I will try to use virt-dma layer in next version.
+
+>
+> > +static struct dma_async_tx_descriptor *
+> > +m10v_xdmac_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+> > +			   dma_addr_t src, size_t len, unsigned long flags)
+> > +{
+> > +	struct m10v_dma_chan *mchan = to_m10v_dma_chan(chan);
+> > +
+> > +	dma_async_tx_descriptor_init(&mchan->mdesc.txd, chan);
+> > +	mchan->mdesc.txd.tx_submit = m10v_xdmac_tx_submit;
+> > +	mchan->mdesc.txd.callback = NULL;
+> > +	mchan->mdesc.txd.flags = flags;
+> > +	mchan->mdesc.txd.cookie = -EBUSY;
+> > +
+> > +	mchan->mdesc.len = len;
+> > +	mchan->mdesc.src = src;
+> > +	mchan->mdesc.dst = dst;
+> > +
+> > +	return &mchan->mdesc.txd;
+>
+> So you support single descriptor and dont check if this has been already
+> configured. So I guess this has been tested by doing txn one at a time
+> and not submitted bunch of txn and wait for them to complete. Please fix
+> that to really enable dmaengine capabilities.
+
+Thank you for advice. I want to fix it and I have 2 questions.
+
+1. Does virt-dma layer help to fix this?
+2. Can dmatest test that dmaengine capabilities?
+
+>
+> > +static int m10v_xdmac_remove(struct platform_device *pdev)
+> > +{
+> > +	struct m10v_dma_chan *mchan;
+> > +	struct m10v_dma_device *mdmac = platform_get_drvdata(pdev);
+> > +	int i;
+> > +
+> > +	m10v_xdmac_disable_dma(mdmac);
+> > +
+> > +	for (i = 0; i < mdmac->channels; i++) {
+> > +		mchan = &mdmac->mchan[i];
+> > +		devm_free_irq(&pdev->dev, mchan->irq, mchan);
+> > +	}
+>
+> No call to dma_async_device_unregister()?
+
+Thank you, I will call dma_async_device_unregister in next version.
+
+Thanks,
+Kasai
+
