@@ -2,71 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F00169A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CE0169A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfEGRyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:54:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59646 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726378AbfEGRyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:54:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B223CAB91;
-        Tue,  7 May 2019 17:54:20 +0000 (UTC)
-Date:   Tue, 7 May 2019 19:54:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
+        id S1727572AbfEGRzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:55:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726378AbfEGRzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 13:55:04 -0400
+Subject: Re: [GIT PULL] ktest: Updates for 5.2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557251703;
+        bh=Y1LA9D+kG+wN2ClShGRqO+2LDd+9PEchv/ivXPGwT6s=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=YkQl4Wx5ctNQz1m0BldPV1DkpK2MV9UafrzIe6vK9VuS+SgX3Yi4ujmQhspSjNgZU
+         8lDlFQE216/RsAesOpGSNvfdtBaHmf0IsD2JArVR+IVN5a+dp89Y7UBX1t5fau3+Ez
+         pC8SkKxHw9RyUMu3dhotaddtYJRPl3iirhguQlYI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190506133837.55832171@gandalf.local.home>
+References: <20190506133837.55832171@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190506133837.55832171@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+ ktest-v5.1
+X-PR-Tracked-Commit-Id: 37e1677330bdc2e96e70f18701e589876f054c67
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 68253e718c2778427db451e39a8366aa49982b71
+Message-Id: <155725170376.24816.6389425639250250116.pr-tracker-bot@kernel.org>
+Date:   Tue, 07 May 2019 17:55:03 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH AUTOSEL 4.14 62/95] mm, memory_hotplug: initialize struct
- pages for the full memory section
-Message-ID: <20190507175419.GW31017@dhcp22.suse.cz>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-62-sashal@kernel.org>
- <CAKgT0Uc8ywg8zrqyM9G+Ws==+yOfxbk6FOMHstO8qsizt8mqXA@mail.gmail.com>
- <CAHk-=win03Q09XEpYmk51VTdoQJTitrr8ON9vgajrLxV8QHk2A@mail.gmail.com>
- <20190507170208.GF1747@sasha-vm>
- <CAHk-=wi5M-CC3CUhmQZOvQE2xJgfBgrgyAxp+tE=1n3DaNocSg@mail.gmail.com>
- <20190507171806.GG1747@sasha-vm>
- <20190507173224.GS31017@dhcp22.suse.cz>
- <20190507173655.GA1403@bombadil.infradead.org>
- <20190507174514.GI1747@sasha-vm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507174514.GI1747@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        John 'Warthog9' Hawley <warthog9@kernel.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-05-19 13:45:14, Sasha Levin wrote:
-[...]
-> We're going to have (quite a) large amount of systems with "weird"
-> memory layouts that do memory hotplug quite frequently in production, so
-> this whole "tends to work usually" thing kinda scares me.
+The pull request you sent on Mon, 6 May 2019 13:38:37 -0400:
 
-Memory hotplug is simply not production ready for those cases,
-unfortunately. It tends to work just fine with properly section
-aligned systems with memory being in the movable zones or for zone
-device. Everything beyond that is kinda long way to get there...
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v5.1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/68253e718c2778427db451e39a8366aa49982b71
+
+Thank you!
+
 -- 
-Michal Hocko
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
