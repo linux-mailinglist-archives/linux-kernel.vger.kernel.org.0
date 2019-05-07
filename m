@@ -2,200 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 131AC16153
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A03A1615D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfEGJrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:47:09 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:48375 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbfEGJrI (ORCPT
+        id S1726268AbfEGJrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:47:45 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34452 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfEGJro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:47:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id l6so4785037ioc.15
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:47:07 -0700 (PDT)
+        Tue, 7 May 2019 05:47:44 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b3so8384237pfd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XAPkXFEJd/9+U7LZM5RTHwLX5SfNQT4uABRWDf3e59U=;
+        b=wkcJ5IULORPol9Ta9jcdQPInjjpcxx2iGSzhbZ7uuBV7xoF7dl3Vy6MmlvysAw/Eqx
+         dZv/7YvXxLRA4xMYaq5vMQvnjq+2pRGGpfpdknVG8mcV+b1I0zwMQo9hwKV/Z+xupRHC
+         W0INIqcGPApsGsSO+eRNhJ/rPEw9aWUlmIZo0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=l0D8gQvxKh7Z3h8wbBtEpumYKF//fhR75fm+NzGuohs=;
-        b=gF30690oyAz5v5+KFA2LtbmQ6AqHdXTU10QJcWB0wxetX6niNsKPtHSSqwPXCVpd7Q
-         qUK78l94GyfPDR0N0+kwriRyQvJdgZS7/+oqqLFCk7PkG3iYk7Zje+zjXr7KqDUDHQBz
-         gb+P7IhuzMus6bpvYO4bppi3J8Rl8HrjgHb/Rit1BWRavv/15SoGLMP8fZk0BOJ7Rukp
-         JLRX5cPO/EQ5WTq6sJB1nkjh5+vytywnKihjACG24YU1UZkefzW4YlxyXw7g/m/+xJ0u
-         WsJs2V+E0oxGXtBg47dBgXoBHtaicTPEEuh9Bvcc71G5P7ypXbz3QzF7RtYh0HP7t8NB
-         Ms0A==
-X-Gm-Message-State: APjAAAUfKgwAFhVyB4MJu15tkv/LCHp/VgaUB/svuOX62N3zt6cWGVU5
-        IrKQtgXKDZSaxIp6ymUb229KiN1Q4eoLSp6Jl3+KXYaa9z3X
-X-Google-Smtp-Source: APXvYqx/lUtNcp9NDktcPEFhaOuhXF0e5SMHREQ0TaJWZp505PDe7VQcaZfbq39jhv9QWKJgCWKQSY/qGEh6zQdNHkFJwlwAkEsq
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XAPkXFEJd/9+U7LZM5RTHwLX5SfNQT4uABRWDf3e59U=;
+        b=XP4HhF2ATS0pUj/k+ENfpKVZEkBmohbWF+z2xeSyYFJAoy8exVuwqcvzhms4IpFE1d
+         8iKhZinwk3MpN3fFroASthbq3SNgMd5acyPErP5B73H7KmVpoAGee6oGg6vsuBvsWLpR
+         kvqhepSqPhhKXrnQvIk1QVo8eSqhU8MYqK6AvcAp0keplxX6DiGrqZVGUtFZviZaReFb
+         lvytk555owwwvPocBAgMM2V0QC5i5fcntvvBJqpFX3NshetDqWNpx1ifeCQuf3fKQmZW
+         diofhNd9tHTrXZPdiG2Lh9nKd/4Q04ry+ZqJoDWb5ZLklEwgYhtqTGmFspCmIJ6+FPFl
+         RKXg==
+X-Gm-Message-State: APjAAAXMTK1nGxohJwXFTn69M4VfeFIsdOqU7WvwI+2DZHHh/p1ojTJl
+        YItVyxmSSlvS0qhneH/teBnmtQ==
+X-Google-Smtp-Source: APXvYqxrmDTSHMsIWIJBNFG8bjwDyhOO5uL54BAU4eO3LAqCumsmrCHXMblrqJ9Xv+92YnI61//AtA==
+X-Received: by 2002:a62:30c2:: with SMTP id w185mr40348063pfw.175.1557222463942;
+        Tue, 07 May 2019 02:47:43 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id j16sm15765973pfi.58.2019.05.07.02.47.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 May 2019 02:47:42 -0700 (PDT)
+Date:   Tue, 7 May 2019 05:47:41 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Michal Gregorczyk <michalgr@live.com>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Mohammad Husain <russoue@gmail.com>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        duyuchao <yuchao.du@unisoc.com>,
+        Manjo Raja Rao <linux@manojrajarao.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Tamir Carmeli <carmeli.tamir@gmail.com>,
+        Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Ziljstra <peterz@infradead.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        bpf@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Martin KaFai Lau <kafai@fb.com>, netdev@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>
+Subject: Re: [PATCH v2 1/4] bpf: Add support for reading user pointers
+Message-ID: <20190507094741.GA6659@google.com>
+References: <20190506183116.33014-1-joel@joelfernandes.org>
+ <3c6b312c-5763-0d9c-7c2c-436ee41f9be1@iogearbox.net>
+ <20190506195711.GA48323@google.com>
+ <7e0d07af-79ad-5ff3-74ce-c12b0b9b78cd@iogearbox.net>
 MIME-Version: 1.0
-X-Received: by 2002:a24:c242:: with SMTP id i63mr1145675itg.89.1557222426056;
- Tue, 07 May 2019 02:47:06 -0700 (PDT)
-Date:   Tue, 07 May 2019 02:47:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008aa0e4058849190e@google.com>
-Subject: KASAN: slab-out-of-bounds Read in page_get_anon_vma
-From:   syzbot <syzbot+ed3e5c9a6a1e30a1bd2a@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, borntraeger@de.ibm.com,
-        hughd@google.com, jglisse@redhat.com,
-        kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com,
-        sean.j.christopherson@intel.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e0d07af-79ad-5ff3-74ce-c12b0b9b78cd@iogearbox.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, May 07, 2019 at 01:10:45AM +0200, Daniel Borkmann wrote:
+> On 05/06/2019 09:57 PM, Joel Fernandes wrote:
+> > On Mon, May 06, 2019 at 09:11:19PM +0200, Daniel Borkmann wrote:
+> >> On 05/06/2019 08:31 PM, Joel Fernandes (Google) wrote:
+> >>> The eBPF based opensnoop tool fails to read the file path string passed
+> >>> to the do_sys_open function. This is because it is a pointer to
+> >>> userspace address and causes an -EFAULT when read with
+> >>> probe_kernel_read. This is not an issue when running the tool on x86 but
+> >>> is an issue on arm64. This patch adds a new bpf function call based
+> >>> which calls the recently proposed probe_user_read function [1].
+> >>> Using this function call from opensnoop fixes the issue on arm64.
+> >>>
+> >>> [1] https://lore.kernel.org/patchwork/patch/1051588/
+> >>>
+> >>> Cc: Michal Gregorczyk <michalgr@live.com>
+> >>> Cc: Adrian Ratiu <adrian.ratiu@collabora.com>
+> >>> Cc: Mohammad Husain <russoue@gmail.com>
+> >>> Cc: Qais Yousef <qais.yousef@arm.com>
+> >>> Cc: Srinivas Ramana <sramana@codeaurora.org>
+> >>> Cc: duyuchao <yuchao.du@unisoc.com>
+> >>> Cc: Manjo Raja Rao <linux@manojrajarao.com>
+> >>> Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
+> >>> Cc: Tamir Carmeli <carmeli.tamir@gmail.com>
+> >>> Cc: Yonghong Song <yhs@fb.com>
+> >>> Cc: Alexei Starovoitov <ast@kernel.org>
+> >>> Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+> >>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> >>> Cc: Peter Ziljstra <peterz@infradead.org>
+> >>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> >>> Cc: Steven Rostedt <rostedt@goodmis.org>
+> >>> Cc: Kees Cook <keescook@chromium.org>
+> >>> Cc: kernel-team@android.com
+> >>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> >>> ---
+> >>> Masami, could you carry these patches in the series where are you add
+> >>> probe_user_read function?
+> >>>
+> >>> Previous submissions is here:
+> >>> https://lore.kernel.org/patchwork/patch/1069552/
+> >>> v1->v2: split tools uapi sync into separate commit, added deprecation
+> >>> warning for old bpf_probe_read function.
+> >>
+> >> Please properly submit this series to bpf tree once the base
+> >> infrastructure from Masami is upstream.
+> > 
+> > Could you clarify what do you mean by "properly submit this series to bpf
+> > tree" mean? bpf@vger.kernel.org is CC'd.
+> 
+> Yeah, send the BPF series to bpf@vger.kernel.org once Masami's patches have
+> hit mainline, and we'll then route yours as fixes the usual path through
+> bpf tree.
 
-syzbot found the following crash on:
+Sounds great to me, thanks!
 
-HEAD commit:    444fe991 Merge tag 'riscv-for-linus-5.1-rc6' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15771dd3200000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
-dashboard link: https://syzkaller.appspot.com/bug?extid=ed3e5c9a6a1e30a1bd2a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ed3e5c9a6a1e30a1bd2a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in atomic_read  
-include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: slab-out-of-bounds in atomic_fetch_add_unless  
-include/linux/atomic-fallback.h:1086 [inline]
-BUG: KASAN: slab-out-of-bounds in atomic_add_unless  
-include/linux/atomic-fallback.h:1111 [inline]
-BUG: KASAN: slab-out-of-bounds in atomic_inc_not_zero  
-include/linux/atomic-fallback.h:1127 [inline]
-BUG: KASAN: slab-out-of-bounds in page_get_anon_vma+0x24b/0x4b0  
-mm/rmap.c:477
-Read of size 4 at addr ffff8880a06d0f08 by task kswapd0/1552
-
-CPU: 1 PID: 1552 Comm: kswapd0 Not tainted 5.1.0-rc5+ #73
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
-  kasan_check_read+0x11/0x20 mm/kasan/common.c:102
-  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-  atomic_fetch_add_unless include/linux/atomic-fallback.h:1086 [inline]
-  atomic_add_unless include/linux/atomic-fallback.h:1111 [inline]
-  atomic_inc_not_zero include/linux/atomic-fallback.h:1127 [inline]
-  page_get_anon_vma+0x24b/0x4b0 mm/rmap.c:477
-  split_huge_page_to_list+0x58a/0x2de0 mm/huge_memory.c:2675
-  split_huge_page include/linux/huge_mm.h:148 [inline]
-  deferred_split_scan+0x64b/0xa60 mm/huge_memory.c:2853
-  do_shrink_slab+0x400/0xa80 mm/vmscan.c:551
-  shrink_slab mm/vmscan.c:700 [inline]
-  shrink_slab+0x4be/0x5e0 mm/vmscan.c:680
-  shrink_node+0x552/0x1570 mm/vmscan.c:2724
-  kswapd_shrink_node mm/vmscan.c:3482 [inline]
-  balance_pgdat+0x56c/0xe80 mm/vmscan.c:3640
-  kswapd+0x5f4/0xfd0 mm/vmscan.c:3895
-  kthread+0x357/0x430 kernel/kthread.c:253
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-Allocated by task 988:
-  save_stack+0x45/0xd0 mm/kasan/common.c:75
-  set_track mm/kasan/common.c:87 [inline]
-  __kasan_kmalloc mm/kasan/common.c:497 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:470
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:511
-  __do_kmalloc_node mm/slab.c:3688 [inline]
-  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3702
-  __kmalloc_reserve.isra.0+0x40/0xf0 net/core/skbuff.c:140
-  __alloc_skb+0x10b/0x5e0 net/core/skbuff.c:208
-  alloc_skb include/linux/skbuff.h:1058 [inline]
-  alloc_skb_with_frags+0x93/0x580 net/core/skbuff.c:5287
-  sock_alloc_send_pskb+0x72d/0x8a0 net/core/sock.c:2220
-  sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2237
-  __ip6_append_data.isra.0+0x2144/0x3600 net/ipv6/ip6_output.c:1451
-  ip6_make_skb+0x32f/0x570 net/ipv6/ip6_output.c:1814
-  udpv6_sendmsg+0x2191/0x28d0 net/ipv6/udp.c:1470
-  inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:651 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:661
-  ___sys_sendmsg+0x3e2/0x930 net/socket.c:2260
-  __sys_sendmmsg+0x1bf/0x4d0 net/socket.c:2355
-  __do_sys_sendmmsg net/socket.c:2384 [inline]
-  __se_sys_sendmmsg net/socket.c:2381 [inline]
-  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2381
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 988:
-  save_stack+0x45/0xd0 mm/kasan/common.c:75
-  set_track mm/kasan/common.c:87 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:459
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:467
-  __cache_free mm/slab.c:3500 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3823
-  skb_free_head+0x93/0xb0 net/core/skbuff.c:557
-  skb_release_data+0x576/0x7a0 net/core/skbuff.c:577
-  skb_release_all+0x4d/0x60 net/core/skbuff.c:631
-  __kfree_skb net/core/skbuff.c:645 [inline]
-  kfree_skb net/core/skbuff.c:663 [inline]
-  kfree_skb+0xe8/0x390 net/core/skbuff.c:657
-  __udpv6_queue_rcv_skb net/ipv6/udp.c:598 [inline]
-  udpv6_queue_rcv_one_skb+0x1002/0x1440 net/ipv6/udp.c:684
-  udpv6_queue_rcv_skb+0x128/0x730 net/ipv6/udp.c:701
-  udp6_unicast_rcv_skb.isra.0+0x151/0x2f0 net/ipv6/udp.c:845
-  __udp6_lib_rcv+0x9a6/0x2cc0 net/ipv6/udp.c:926
-  udplitev6_rcv+0x22/0x30 net/ipv6/udplite.c:20
-  ip6_protocol_deliver_rcu+0x303/0x16c0 net/ipv6/ip6_input.c:394
-  ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ip6_input+0xe4/0x3f0 net/ipv6/ip6_input.c:443
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x1e7/0x320 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ipv6_rcv+0x10e/0x420 net/ipv6/ip6_input.c:272
-  __netif_receive_skb_one_core+0x115/0x1a0 net/core/dev.c:4973
-  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5085
-  process_backlog+0x206/0x750 net/core/dev.c:5925
-  napi_poll net/core/dev.c:6348 [inline]
-  net_rx_action+0x4fa/0x1070 net/core/dev.c:6414
-  __do_softirq+0x266/0x95a kernel/softirq.c:293
-
-The buggy address belongs to the object at ffff8880a06d0cc0
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 72 bytes to the right of
-  512-byte region [ffff8880a06d0cc0, ffff8880a06d0ec0)
-The buggy address belongs to the page:
-page:ffffea000281b400 count:1 mapcount:0 mapping:ffff88812c3f0940  
-index:0xffff8880a06d0a40
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea0000ec7b88 ffffea00015bb688 ffff88812c3f0940
-raw: ffff8880a06d0a40 ffff8880a06d0040 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880a06d0e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8880a06d0e80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ffff8880a06d0f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                       ^
-  ffff8880a06d0f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8880a06d1000: fb fb fb fb fb fb fb fb fb fb fc fc fc fc fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ - Joel
