@@ -2,103 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C458D157DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A879157DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfEGDCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:02:40 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:58979 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbfEGDCk (ORCPT
+        id S1726923AbfEGDCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:02:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46904 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfEGDCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:02:40 -0400
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x4732XTi030985;
-        Tue, 7 May 2019 12:02:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x4732XTi030985
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557198154;
-        bh=UOVlLy/wVLqCQ3IZ+Xag1tGC9ICcteYP+5Dq8Jc65YI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qnU27xfl2yzx44U8NaR8OU7ABPcGyNqa7uFJGGZjX9cXCokLckUcXX9ZuDz//UxXN
-         GOE+EqtXEFxSinlaoVXqcYz3BxOzUAVwRjFqi+71qtK1ykNrrU2/2px/kd7rAQZk5a
-         cGVPc4u5sQn97E4BHufZBrNvAvMHoN/aTEd2RP8iT7qGrLY3GOalcyX5+Q+5+m7I4i
-         Ciqcg93DefrJEPE+kqoOatuYoxYfOqa3dl0Bfa+EQXj8uH9fAsOkDjJZBmS3nNUSDq
-         thuQiTpbPA3RTc1Mw3Lurq09bPBvSTWKLc4HAGtWAC391uBYOZJ5pdEvOSntRCuch6
-         VnKPqTXdVqTqQ==
-X-Nifty-SrcIP: [209.85.221.172]
-Received: by mail-vk1-f172.google.com with SMTP id s80so3686018vke.6;
-        Mon, 06 May 2019 20:02:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAXEN7lThhOqdEBEK60RCocds4BkqIZKURmp88mUaleCPmLzsTmg
-        jrwVMMW9RQtE6mhDddHi4LCbgRRqj31MYWENHSA=
-X-Google-Smtp-Source: APXvYqwZFmp6rx95CPF6ap2Yd8GVckWMHJtSP4IT1kInt+74f9qNDrEMuC5mHVSMzYfllgArBDaTWG+xaTomfNEtkuA=
-X-Received: by 2002:a1f:b297:: with SMTP id b145mr15295623vkf.74.1557198152590;
- Mon, 06 May 2019 20:02:32 -0700 (PDT)
+        Mon, 6 May 2019 23:02:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4paIWQmsel3Y1u+b/28Ss2581piDqiZSgAIYtUzM7Pk=; b=s6DSX818nzoQCucd5HWaqY88g
+        +dyKQqwL3AM1G5pImJIJRiAc2F3EtGfdza1YdjhucvIrYo+6ah2Tgl6DjZUjKEjAWYwabWvCZFfPX
+        Fk2j7Eg+mkLHEeQDkcQtbKpOby4BwPWu7cWY/mVfzbVCDgpl6uuZAa7AmS3mJsF1dMsPo=;
+Received: from [2001:268:c0e6:658d:8f3d:d90b:c4e4:2fdf] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hNqNW-0003Xx-GD; Tue, 07 May 2019 03:02:50 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 7898244000C; Tue,  7 May 2019 04:02:41 +0100 (BST)
+Date:   Tue, 7 May 2019 12:02:41 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] spi updates for v5.2
+Message-ID: <20190507030241.GC14916@sirena.org.uk>
+References: <20190506143301.GU14916@sirena.org.uk>
+ <CAADWXX_MqtZ6RxS2zEVmHtKrjqigiNzdSe5qVwBVvfVU6dxJRQ@mail.gmail.com>
+ <20190507021853.GY14916@sirena.org.uk>
 MIME-Version: 1.0
-References: <1552234395-7699-1-git-send-email-yamada.masahiro@socionext.com> <84db9131-5498-d2d5-a984-11079e3c2a6e@gmail.com>
-In-Reply-To: <84db9131-5498-d2d5-a984-11079e3c2a6e@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 7 May 2019 12:01:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARLOvginNm-YCUtqju4J=oqU5TTjt0GxPh+Y-KV-jV-PA@mail.gmail.com>
-Message-ID: <CAK7LNARLOvginNm-YCUtqju4J=oqU5TTjt0GxPh+Y-KV-jV-PA@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: fix 'Save As' menu of xconfig
-To:     Robert Gadsdon <rhgadsdon@gmail.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sAD49wDt4u2G8n56"
+Content-Disposition: inline
+In-Reply-To: <20190507021853.GY14916@sirena.org.uk>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 7, 2019 at 4:10 AM Robert Gadsdon <rhgadsdon@gmail.com> wrote:
->
-> On 03/10/2019 09:13 AM, Masahiro Yamada wrote:
-> > The 'Save As' menu of xconfig is not working; it always saves the
-> > kernel configuration into the default file irrespective of the file
-> > chosen in the dialog box.
-> >
-> > The 'Save' menu always writes into the default file, but it would
-> > make more sense to write into the file previously chosen by 'Load'
-> > or 'Save As'.
-> >
-> > Signed-off-by: Masahiro Yamada<yamada.masahiro@socionext.com>
-> > ---
->
-> The 'save as' may be used for out-of-tree kernel config saves, but the
-> default 'save' should always save to the in-tree .config file, as before
-> (and for the past 10+ years..)  If the kernel config was loaded from an
-> out-of-tree location, it now saves back to that out-of-tree location,
-> which is useless for the kernel compile..
 
+--sAD49wDt4u2G8n56
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think it is quite natural that
-"save" overwrites the file being edited.
+On Tue, May 07, 2019 at 11:18:53AM +0900, Mark Brown wrote:
 
-And, that is how the 'save' of menuconfig/nconfig works.
+> Possibly it's not actually anything to do with the DKIM and it's just
+> upset that I'm travelling and so the mail was injected from a mobile
+> broadband IP in Japan which doesn't match up with the .uk domain.
 
+I've tried sending equivalent mail to one of my own Google accounts and
+it gets delivered, though I do see the dmarc=fail bit in the headers.
+The full header there is for a newer spec called ARC that builds even
+more stuff on top of DKIM and SPF.
 
-> I have always kept my hardware/system-specific kernel configs
-> out-of-tree, and then applied them in-tree before compiling.
->
-> Now, I have to use 'save as' and type in the entire in-tree path
-> (/usr/src/linux-5.1/.config) each time, in order to apply the specific
-> config to the kernel, ready for compilation.
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=gYHUGKmm;
+       spf=pass (google.com: best guess record for domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 
+which suggests it's adding some guesswork in there on top of what's
+explicitly in there for SPF (though that's not causing trouble as it
+worked out that the mail is OK).  The fact that this got through OK and
+all the NONEs there suggest that they are to at least some extent doing
+the right thing with the lack of any advertised policies for kernel.org,
+either something else about the message or your incoming mail is causing
+the spam filtering.
 
-It is easy to do it without using xconfig.
+Unfortunately I can't immediately see any exim stuff for ARC (and I
+don't know that there's anything there that could really help) and I
+can't do DKIM for kernel.org (for good reasons), the only thing I can
+think of is to disable signing of the From: and hope Google just stop
+trying to validate it but that doesn't seem ideal.  Everything I'm
+seeing is saying that Google just isn't enthusiastic about domains like
+kernel.org which is going an issue.
 
-cp /your/custom/config .config
+Not really sure what I can do here...
 
+--sAD49wDt4u2G8n56
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzQ9VAACgkQJNaLcl1U
+h9BOEQf/XUeAJbQXmzLfhaLbUCZgEuFkUF7T9cjQr+zWPMTXqNgX3iOEJ4IXeHYL
+YvFV9hTskDTB7ARMObAWb0cLtsVrHLs57xNabk9kAb096s3T7YhGede479XCa92M
+6aBWrfTlg//NeRIRKSoQWaGO14CAlSaK9/R/zzoOS5gdehx67fjQmGGP0wHTprdK
+8NxYWNQP2+Cu/u49mNTdfcz3mcAm6HcVO4Ir6ta2EWW+ZwvcytwWuoZ7LYQWtJHz
+RanYDzDCqUs+preuymnOWIpyM9RLdi6AWv6CH8wx6Luw/HhPcOq+tik1vKWK2B7U
+CTKgkKREbUWPj+FDW/VfaX/CBeut/A==
+=VDXp
+-----END PGP SIGNATURE-----
 
-> Robert Gadsdon.
-> rglinuxtech.com
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--sAD49wDt4u2G8n56--
