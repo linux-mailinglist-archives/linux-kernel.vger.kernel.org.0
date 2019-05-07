@@ -2,54 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A30C15776
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 03:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 700CD15779
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 03:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfEGBzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 21:55:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58588 "EHLO mail.kernel.org"
+        id S1726255AbfEGB6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 21:58:23 -0400
+Received: from mga01.intel.com ([192.55.52.88]:7351 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbfEGBzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 21:55:05 -0400
-Subject: Re: [GIT PULL] mmiowb() removal for 5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557194105;
-        bh=ak++OY8/sVhxOWDDo22YQ++yB4kXNOSUdu84bJGkv9M=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=cEYmX7HQY8AQwU8waoJylDI4Ho1RCng9d7Lzn0BlvB1aTsKBBaOA5T8dzRPMaAYbM
-         4t/kzERDA6pEUq+R708wgU7B582F4NWdGXNbMPAYRqtryLkFKyZFwZBAcjMC+3ZQcz
-         LRaEzMCWLD0JvyDZRr8LKU/Ii+thXkak+cmCu3a4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190506181110.GB2875@brain-police>
-References: <20190506181110.GB2875@brain-police>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190506181110.GB2875@brain-police>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-mmiowb
-X-PR-Tracked-Commit-Id: 9726840d9cf0d42377e1591263d7c1d9ae0988ac
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dd4e5d6106b2380e2c1238406d26df8b2fe1c42c
-Message-Id: <155719410527.3542.630416167347402929.pr-tracker-bot@kernel.org>
-Date:   Tue, 07 May 2019 01:55:05 +0000
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        paulmck@linux.ibm.com, benh@kernel.crashing.org,
-        macro@linux-mips.org, mingo@kernel.org, npiggin@gmail.com
+        id S1726037AbfEGB6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 21:58:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 May 2019 18:58:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,440,1549958400"; 
+   d="scan'208";a="149039980"
+Received: from speesari-mobl.amr.corp.intel.com (HELO [10.251.22.59]) ([10.251.22.59])
+  by orsmga003.jf.intel.com with ESMTP; 06 May 2019 18:58:21 -0700
+Subject: Re: [PATCH 2/8] soundwire: mipi_disco: fix master/link error
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org,
+        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
+        srinivas.kandagatla@linaro.org,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
+ <20190504002926.28815-3-pierre-louis.bossart@linux.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <42f30108-6870-d97b-7766-ce7a7f17ccf8@linux.intel.com>
+Date:   Mon, 6 May 2019 20:58:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190504002926.28815-3-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 May 2019 19:11:11 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-mmiowb
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dd4e5d6106b2380e2c1238406d26df8b2fe1c42c
+On 5/3/19 7:29 PM, Pierre-Louis Bossart wrote:
+> The MIPI DisCo specification for SoundWire defines the
+> "mipi-sdw-link-N-subproperties", not the master-N properties. Fix to
+> parse firmware information.
 
-Thank you!
+Please ignore this patch for now, there is a confusion in the spec 
+itself that needs to be addressed by MIPI... Either there will be an 
+errata issued, or we'll have to try both master- and link-N-properties 
+to reconcile spec and actual implementations.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>   drivers/soundwire/mipi_disco.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
+> index c1f51d6a23d2..6df68584c963 100644
+> --- a/drivers/soundwire/mipi_disco.c
+> +++ b/drivers/soundwire/mipi_disco.c
+> @@ -40,7 +40,7 @@ int sdw_master_read_prop(struct sdw_bus *bus)
+>   
+>   	/* Find master handle */
+>   	snprintf(name, sizeof(name),
+> -		 "mipi-sdw-master-%d-subproperties", bus->link_id);
+> +		 "mipi-sdw-link-%d-subproperties", bus->link_id);
+>   
+>   	link = device_get_named_child_node(bus->dev, name);
+>   	if (!link) {
+> 
