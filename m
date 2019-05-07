@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895F015EF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA7E15EFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfEGIOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:14:04 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50319 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727156AbfEGIOE (ORCPT
+        id S1727256AbfEGIOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:14:24 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:14539 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727050AbfEGIOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:14:04 -0400
-X-UUID: 56351adddde6404da1a3b792d4f8b3c9-20190507
-X-UUID: 56351adddde6404da1a3b792d4f8b3c9-20190507
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        Tue, 7 May 2019 04:14:21 -0400
+X-UUID: 04992e17ccc64cfeb6089c96b7bf7eb1-20190507
+X-UUID: 04992e17ccc64cfeb6089c96b7bf7eb1-20190507
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 269816017; Tue, 07 May 2019 16:13:59 +0800
+        with ESMTP id 1162610776; Tue, 07 May 2019 16:14:04 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 7 May 2019 16:13:57 +0800
 Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -34,7 +34,7 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Bibby Hsieh <bibby.hsieh@mediatek.com>,
@@ -45,75 +45,56 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
         Frederic Chen <Frederic.Chen@mediatek.com>
-Subject: [PATCH v5 03/12] dt-binding: gce: add binding for gce subsys property
-Date:   Tue, 7 May 2019 16:13:46 +0800
-Message-ID: <20190507081355.52630-4-bibby.hsieh@mediatek.com>
+Subject: [PATCH v5 04/12] dt-binding: gce: add binding for gce event property
+Date:   Tue, 7 May 2019 16:13:47 +0800
+Message-ID: <20190507081355.52630-5-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
 References: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: C5CD6023E3C97A2B7B934A16ACA2A5B10C32D75747F077478A3FB4E92B04A3DF2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcmdq driver provide a function that get the relationship
-of sub system number from device node for client.
-add specification for #subsys-cells, mediatek,gce-subsys.
+Client hardware would send event to GCE hardware,
+mediatek,gce-event-names and mediatek,gce-events
+can be used to present the event.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 ---
- .../devicetree/bindings/mailbox/mtk-gce.txt       | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/mailbox/mtk-gce.txt | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-index 1f7f8f2a3f49..8fd9479bc9f6 100644
+index 8fd9479bc9f6..76491f194c56 100644
 --- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
 +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-@@ -21,11 +21,19 @@ Required properties:
- 	priority: Priority of GCE thread.
- 	atomic_exec: GCE processing continuous packets of commands in atomic
- 		way.
-+- #subsys-cells: Should be 3.
-+	<&phandle subsys_number start_offset size>
-+	phandle: Label name of a gce node.
-+	subsys_number: specify the sub-system id which is corresponding
-+		       to the register address.
-+	start_offset: the start offset of register address that GCE can access.
-+	size: the total size of register address that GCE can access.
- 
- Required properties for a client device:
- - mboxes: Client use mailbox to communicate with GCE, it should have this
-   property and list of phandle, mailbox specifiers.
--- mediatek,gce-subsys: u32, specify the sub-system id which is corresponding
-+Optional propertier for a client device:
-+- mediatek,gce-client-reg: u32, specify the sub-system id which is corresponding
+@@ -35,6 +35,9 @@ Required properties for a client device:
+ Optional propertier for a client device:
+ - mediatek,gce-client-reg: u32, specify the sub-system id which is corresponding
    to the register address.
++- mediatek,gce-event-names: the event name can be defined by user.
++- mediatek,gce-events: u32, the event number defined in
++  'dt-bindings/gce/mt8173-gce.h' or 'dt-binding/gce/mt8183-gce.h'.
  
  Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
-@@ -40,6 +48,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_GCE>;
- 		clock-names = "gce";
- 		#mbox-cells = <3>;
-+		#subsys-cells = <3>;
- 	};
- 
- Example for a client device:
-@@ -48,9 +57,9 @@ Example for a client device:
+ or 'dt-binding/gce/mt8183-gce.h'. Such as sub-system ids, thread priority, event ids.
+@@ -57,8 +60,10 @@ Example for a client device:
  		compatible = "mediatek,mt8173-mmsys";
  		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
  			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
--		mediatek,gce-subsys = <SUBSYS_1400XXXX>;
- 		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
- 				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
--
-+		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
-+					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
+-		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
+-				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
++		mediatek,gce-event-names = "rdma0_sof",
++					   "rsz0_sof";
++		mediatek,gce-events = <CMDQ_EVENT_MDP_RDMA0_SOF>,
++				      <CMDQ_EVENT_MDP_RSZ0_SOF>;
+ 		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
+ 					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
  		...
- 	};
 -- 
 2.18.0
 
