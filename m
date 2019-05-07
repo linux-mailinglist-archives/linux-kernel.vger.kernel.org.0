@@ -2,85 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF18616537
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F93916547
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfEGN4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 09:56:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57436 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbfEGN4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:56:07 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54AF5205C9;
-        Tue,  7 May 2019 13:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557237366;
-        bh=Sv73nYWGhZw1cOvFhxh3v968yU9VwS0c9hkb5H6C49o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p37yYl5Vv8wb6Q9xWjcVQnSRffvZ8HLfLPF1U27nrLMz4waYgrkTjkYq4KrRmqwCr
-         6f5+90RrekblphPiprBeAN58xP/RR7JjLYQ+p/jJIFP31LFIwJYOEhiVB3WKVP8IrH
-         qwLHeld1nV98hwAwaxED8Mg/nquLzqy1ocOoAZNg=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] tracing: probeevent: Fix to make the type of $comm string
-Date:   Tue,  7 May 2019 22:56:02 +0900
-Message-Id: <155723736241.9149.14582064184468574539.stgit@devnote2>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <155723732200.9149.10482668315693777743.stgit@devnote2>
-References: <155723732200.9149.10482668315693777743.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        id S1726835AbfEGN7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:59:24 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43247 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfEGN7X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 09:59:23 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w33so16490926edb.10;
+        Tue, 07 May 2019 06:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c4qUAvfECC+5XnnozAJrEygXcMh19erkY9Z8c0W8zz4=;
+        b=LiCljLFxU+I+ROMxt+Drpvlt9cCT3G4Fx5na1wBOG54AsZXFm/nrhOKzcoHFBnm2mO
+         DOfqpzOqNkaFkjz59+OqLjk8w7K8/h/80dUgrSRraXySbx21wgjnMYwi6m2ss5qIBADs
+         1Dy5nupzlgCfouz8KqIv87vpIYhdkPfktQregqQInYjTRMbmJudYQYDjxubv5EX5FMvt
+         K7ZAuzIy2szKl51EthtG9j+3E+eUfDLjVa7hv4d0F30Ffh2OJvzO7b82NFHMBxLAjiq3
+         HjlfgEW8crnISA1k1kN2IJ7FF6nXvit73f7RmyRv75YggtLQ4LGMSte71ianYpK3/PCe
+         gQaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c4qUAvfECC+5XnnozAJrEygXcMh19erkY9Z8c0W8zz4=;
+        b=NcXZnjmYR2eGlE7Jy0SKAFXrfvl51NYY6z5D7eEVT0bgiG8NstgAmhvjtQy+Z2jzut
+         qRTA39ZTBnT5mKoDn7t5NPoRU5fQvasVFRsKTeHVhezrdiVLCDIPmW8pYMnTehcUW50U
+         GN1KInquwP+4fKT9oBaMLrW4XsiiO+s22Xiy+8zFizQM/9UHjGRhEN72IDsGC/iTgWE/
+         bseb1sArSbQftmTovy1GNhR2+Cdxeh6IDTx09fCnlJvzJE16qX3oltnMlNuS00AkuyGg
+         Ic9N8NmhOE5DDqsoIjVKoTYDSYm8kbEg/11qCL2G8NEUAB/I5j9aqz0KtkP7go6ktOBH
+         m6MA==
+X-Gm-Message-State: APjAAAWgjVRnKYEVyCoQh0In+pxFPJnmVo6wjH63nu5oaOP1o0bhnMgU
+        BPGFTB9zpZCAbz1Cim83+NAGh/wv67GRrpvXEX8=
+X-Google-Smtp-Source: APXvYqxH4Q4BwOE6qyChi1eCxJOf+jcHtJWG150h5jBaAvMYs9tpbxLhKMxGNhR0giXV2aIBTMPFS9EpL44SwVwIBwg=
+X-Received: by 2002:a17:906:6410:: with SMTP id d16mr24647031ejm.75.1557237561209;
+ Tue, 07 May 2019 06:59:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20190507103434.16174-1-colin.king@canonical.com>
+In-Reply-To: <20190507103434.16174-1-colin.king@canonical.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Tue, 7 May 2019 16:59:10 +0300
+Message-ID: <CA+h21hoEVYKTeGxSxPi0E1bWp1rBE=sG5T8MzGOBkranpdGhjQ@mail.gmail.com>
+Subject: Re: [PATCH][next] net: dsa: sja1105: fix check on while loop exit
+To:     Colin King <colin.king@canonical.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to make the type of $comm "string".
-If we set the other type to $comm argument, it shows
-meaningless value or wrong data. Currently probe events
-allow us to set string array type (e.g. ":string[2]"), or
-other digit types like x8 on $comm. But since clearly
-$comm is just a string data, it should not be fetched
-by other types including array.
+On Tue, 7 May 2019 at 13:34, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The while-loop exit condition check is not correct; the
+> loop should continue if the returns from the function calls are
+> negative or the CRC status returns are invalid.  Currently it
+> is ignoring the returns from the function calls.  Fix this by
+> removing the status return checks and only break from the loop
+> at the very end when we know that all the success condtions have
+> been met.
+>
+> Kudos to Dan Carpenter for describing the correct fix.
+>
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>
+> V2: Discard my broken origina fix. Use correct fix as described by
+>     Dan Carpenter.
+> ---
+>  drivers/net/dsa/sja1105/sja1105_spi.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
+> index 244a94ccfc18..40ac696adf63 100644
+> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
+> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
+> @@ -465,9 +465,11 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
+>                         dev_err(dev, "Switch reported that configuration is "
+>                                 "invalid, retrying...\n");
+>                         continue;
+> +
+>                 }
+> -       } while (--retries && (status.crcchkl == 1 || status.crcchkg == 1 ||
+> -                status.configs == 0 || status.ids == 1));
+> +               /* Success! */
+> +               break;
+> +       } while (--retries);
+>
+>         if (!retries) {
+>                 rc = -EIO;
+> --
+> 2.20.1
+>
 
-Fixes: 35abb67de744 ("tracing: expose current->comm to [ku]probe events")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
----
- kernel/trace/trace_probe.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Hi Colin, Dan,
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 4cc2d467d34c..e0d1d5353464 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -533,13 +533,14 @@ static int traceprobe_parse_probe_arg_body(char *arg, ssize_t *size,
- 			}
- 		}
- 	}
--	/*
--	 * The default type of $comm should be "string", and it can't be
--	 * dereferenced.
--	 */
--	if (!t && strcmp(arg, "$comm") == 0)
-+
-+	/* Since $comm can not be dereferred, we can find $comm by strcmp */
-+	if (strcmp(arg, "$comm") == 0) {
-+		/* The type of $comm must be "string", and not an array. */
-+		if (parg->count || (t && strcmp(t, "string")))
-+			return -EINVAL;
- 		parg->type = find_fetch_type("string");
--	else
-+	} else
- 		parg->type = find_fetch_type(t);
- 	if (!parg->type) {
- 		trace_probe_log_err(offset + (t ? (t - arg) : 0), BAD_TYPE);
+Thanks for the fix.
+This portion below needs to be changed as well: "else if (retries !=
+RETRIES - 1)" should become "else if (retries != RETRIES)" because on
+success, it now does not decrement retries due to the early break.
+Otherwise this message gets printed: "Succeeded after 0 tried" which
+was not the original intention.
+Please also remove the extraneous newline introduced at 468.
 
+Tested-by: Vladimir Oltean <olteanv@gmail.com>
+
+-Vladimir
