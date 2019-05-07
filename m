@@ -2,297 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2153161E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412C7161F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:28:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfEGKZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:25:17 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17720 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfEGKZQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:25:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd15ce70001>; Tue, 07 May 2019 03:24:39 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 May 2019 03:25:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 May 2019 03:25:14 -0700
-Received: from [10.25.73.250] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 May
- 2019 10:25:08 +0000
-Subject: Re: [PATCH V5 14/16] phy: tegra: Add PCIe PIPE2UPHY support
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <jonathanh@nvidia.com>, <kishon@ti.com>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <mperttunen@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-15-vidyas@nvidia.com> <20190503113558.GH32400@ulmo>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <11cf6543-46c0-f95a-d23d-059aeef807ac@nvidia.com>
-Date:   Tue, 7 May 2019 15:55:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        id S1726687AbfEGK22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:28:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:49510 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726302AbfEGK22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 06:28:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8428374;
+        Tue,  7 May 2019 03:28:27 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B4703F5AF;
+        Tue,  7 May 2019 03:28:26 -0700 (PDT)
+Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain
+ type
+To:     Tom Murphy <tmurphy@arista.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-2-baolu.lu@linux.intel.com>
+ <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <bba1f327-21b7-ed3c-8fd4-217ad97a6a7c@arm.com>
+Date:   Tue, 7 May 2019 11:28:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190503113558.GH32400@ulmo>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
+In-Reply-To: <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557224679; bh=BOABvpH1oxJXKgemW+XeH/LQSarKXw3t6a6SIta4LAQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=q87w5cOdVbN7Lw0+BoqF7OyKYTdp52C4oht1PNzd+X4fyWO79R+hDxiRxgfO8isJo
-         jcsUgNyYhu0KgRfBMo6Nosie0qtRK38dpbwdpDE5oEBLgR4SjYzWFKF7iZN/LIriIy
-         v/mZhSEaBSpg6OU+hEDp0/4ByYuwqHs9Qd3oiQWbBjwHuPXh3RvPdvzh/75uFcGlzK
-         FsEcekp+bw0KUYMe+AvdvZjNp19mpJmqRecVcSwOxwgSw3rNEtIJSI9IukPzOfhJAL
-         nYPuMftanyBln7tnv4PMFo2Ny451WIe9IzE2mD2lKloGuxcfczgPR4JinwX5B8RbVR
-         gmEAf3nI19asg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/3/2019 5:05 PM, Thierry Reding wrote:
-> On Wed, Apr 24, 2019 at 10:50:02AM +0530, Vidya Sagar wrote:
->> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
->> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
->> For each PCIe lane of a controller, there is a P2U unit instantiated at
->> hardware level. This driver provides support for the programming required
->> for each P2U that is going to be used for a PCIe controller.
+On 06/05/2019 16:32, Tom Murphy via iommu wrote:
+> The AMD driver already solves this problem and uses the generic
+> iommu_request_dm_for_dev function. It seems like both drivers have the
+> same problem and could use the same solution. Is there any reason we
+> can't have use the same solution for the intel and amd driver?
+> 
+> Could we just  copy the implementation of the AMD driver? It would be
+> nice to have the same behavior across both drivers especially as we
+> move to make both drivers use more generic code.
+
+TBH I don't think the API really needs to be involved at all here. 
+Drivers can already not provide the requested default domain type if 
+they don't support it, so as long as the driver can ensure that the 
+device ends up with IOMMU or direct DMA ops as appropriate, I don't see 
+any great problem with drivers just returning a passthrough domain when 
+a DMA domain was requested, or vice versa (and logging a message that 
+the requested type was overridden). The only type that we really do have 
+to honour strictly is non-default (i.e. unmanaged) domains.
+
+Robin.
+
+> On Mon, Apr 29, 2019 at 3:16 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
 >>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> This adds an optional ops entry to query the default domain
+>> types supported by the iommu driver for  a specific device.
+>> This is necessary in cases where the iommu driver can only
+>> support a specific type of default domain for a device. In
+>> normal cases, this ops will return IOMMU_DOMAIN_ANY which
+>> indicates that the iommu driver supports both IOMMU_DOMAIN_DMA
+>> and IOMMU_DOMAIN_IDENTITY, hence the static default domain
+>> type will be used.
+>>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 >> ---
->> Changes since [v4]:
->> * None
+>>   drivers/iommu/iommu.c | 13 ++++++++++---
+>>   include/linux/iommu.h | 11 +++++++++++
+>>   2 files changed, 21 insertions(+), 3 deletions(-)
 >>
->> Changes since [v3]:
->> * Rebased on top of linux-next top of the tree
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index acd6830e6e9b..1ad9a1f2e078 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1097,15 +1097,22 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
+>>           * IOMMU driver.
+>>           */
+>>          if (!group->default_domain) {
+>> +               unsigned int domain_type = IOMMU_DOMAIN_ANY;
+>>                  struct iommu_domain *dom;
 >>
->> Changes since [v2]:
->> * Replaced spaces with tabs in Kconfig file
->> * Sorted header file inclusion alphabetically
+>> -               dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
+>> -               if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
+>> +               if (ops->def_domain_type)
+>> +                       domain_type = ops->def_domain_type(dev);
+>> +
+>> +               if (domain_type == IOMMU_DOMAIN_ANY)
+>> +                       domain_type = iommu_def_domain_type;
+>> +
+>> +               dom = __iommu_domain_alloc(dev->bus, domain_type);
+>> +               if (!dom && domain_type != IOMMU_DOMAIN_DMA) {
+>>                          dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
+>>                          if (dom) {
+>>                                  dev_warn(dev,
+>>                                           "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
+>> -                                        iommu_def_domain_type);
+>> +                                        domain_type);
+>>                          }
+>>                  }
 >>
->> Changes since [v1]:
->> * Added COMPILE_TEST in Kconfig
->> * Removed empty phy_ops implementations
->> * Modified code according to DT documentation file modifications
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 8239ece9fdfc..ba9a5b996a63 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -79,12 +79,16 @@ struct iommu_domain_geometry {
+>>    *     IOMMU_DOMAIN_DMA        - Internally used for DMA-API implementations.
+>>    *                               This flag allows IOMMU drivers to implement
+>>    *                               certain optimizations for these domains
+>> + *     IOMMU_DOMAIN_ANY        - All domain types defined here
+>>    */
+>>   #define IOMMU_DOMAIN_BLOCKED   (0U)
+>>   #define IOMMU_DOMAIN_IDENTITY  (__IOMMU_DOMAIN_PT)
+>>   #define IOMMU_DOMAIN_UNMANAGED (__IOMMU_DOMAIN_PAGING)
+>>   #define IOMMU_DOMAIN_DMA       (__IOMMU_DOMAIN_PAGING |        \
+>>                                   __IOMMU_DOMAIN_DMA_API)
+>> +#define IOMMU_DOMAIN_ANY       (IOMMU_DOMAIN_IDENTITY |        \
+>> +                                IOMMU_DOMAIN_UNMANAGED |       \
+>> +                                IOMMU_DOMAIN_DMA)
 >>
->>   drivers/phy/tegra/Kconfig             |   7 ++
->>   drivers/phy/tegra/Makefile            |   1 +
->>   drivers/phy/tegra/pcie-p2u-tegra194.c | 120 ++++++++++++++++++++++++++
->>   3 files changed, 128 insertions(+)
->>   create mode 100644 drivers/phy/tegra/pcie-p2u-tegra194.c
+>>   struct iommu_domain {
+>>          unsigned type;
+>> @@ -196,6 +200,11 @@ enum iommu_dev_features {
+>>    * @dev_feat_enabled: check enabled feature
+>>    * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
+>>    * @aux_get_pasid: get the pasid given an aux-domain
+>> + * @def_domain_type: get per-device default domain type that the IOMMU
+>> + *             driver is able to support. Valid returns values:
+>> + *             - IOMMU_DOMAIN_DMA: only suports non-identity domain
+>> + *             - IOMMU_DOMAIN_IDENTITY: only supports identity domain
+>> + *             - IOMMU_DOMAIN_ANY: supports all
+>>    * @pgsize_bitmap: bitmap of all possible supported page sizes
+>>    */
+>>   struct iommu_ops {
+>> @@ -251,6 +260,8 @@ struct iommu_ops {
+>>          void (*aux_detach_dev)(struct iommu_domain *domain, struct device *dev);
+>>          int (*aux_get_pasid)(struct iommu_domain *domain, struct device *dev);
 >>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index a3b1de953fb7..06d423fa85b4 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -6,3 +6,10 @@ config PHY_TEGRA_XUSB
->>   
->>   	  To compile this driver as a module, choose M here: the module will
->>   	  be called phy-tegra-xusb.
+>> +       int (*def_domain_type)(struct device *dev);
 >> +
->> +config PHY_TEGRA194_PCIE_P2U
->> +	tristate "NVIDIA Tegra P2U PHY Driver"
->> +	depends on ARCH_TEGRA || COMPILE_TEST
->> +	select GENERIC_PHY
->> +	help
->> +	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
->> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
->> index a93cd9a499b2..1aaca794f40c 100644
->> --- a/drivers/phy/tegra/Makefile
->> +++ b/drivers/phy/tegra/Makefile
->> @@ -5,3 +5,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
->>   phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
->> +obj-$(CONFIG_PHY_TEGRA194_PCIE_P2U) += pcie-p2u-tegra194.o
->> diff --git a/drivers/phy/tegra/pcie-p2u-tegra194.c b/drivers/phy/tegra/pcie-p2u-tegra194.c
->> new file mode 100644
->> index 000000000000..a5d85e411088
->> --- /dev/null
->> +++ b/drivers/phy/tegra/pcie-p2u-tegra194.c
->> @@ -0,0 +1,120 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * P2U (PIPE to UPHY) driver for Tegra T194 SoC
->> + *
->> + * Copyright (C) 2019 NVIDIA Corporation.
->> + *
->> + * Author: Vidya Sagar <vidyas@nvidia.com>
->> + */
->> +
->> +#include <linux/delay.h>
->> +#include <linux/err.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/platform_device.h>
->> +#include <soc/tegra/bpmp-abi.h>
-> 
-> Looks to me like not all of the above are actually needed. I don't see
-> anything from delay.h used, and you certainly aren't using anything from
-> soc/tegra/bpmp-abi.h either.
-Done.
-
-> 
->> +
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3	0xc0
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN		BIT(0)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4	0xc4
->> +#define P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
->> +
->> +#define P2U_RX_DEBOUNCE_TIME				0xa4
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK	0xffff
->> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL		160
->> +
->> +struct tegra_p2u {
->> +	void __iomem *base;
->> +};
->> +
->> +static int tegra_p2u_power_on(struct phy *x)
->> +{
->> +	struct tegra_p2u *phy = phy_get_drvdata(x);
->> +	u32 val;
->> +
->> +	val = readl(phy->base + P2U_PERIODIC_EQ_CTRL_GEN3);
->> +	val &= ~P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN;
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN;
->> +	writel(val, phy->base + P2U_PERIODIC_EQ_CTRL_GEN3);
->> +
->> +	val = readl(phy->base + P2U_PERIODIC_EQ_CTRL_GEN4);
->> +	val |= P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN;
->> +	writel(val, phy->base + P2U_PERIODIC_EQ_CTRL_GEN4);
->> +
->> +	val = readl(phy->base + P2U_RX_DEBOUNCE_TIME);
->> +	val &= ~P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK;
->> +	val |= P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL;
->> +	writel(val, phy->base + P2U_RX_DEBOUNCE_TIME);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct phy_ops ops = {
->> +	.power_on	= tegra_p2u_power_on,
->> +	.owner		= THIS_MODULE,
-> 
-> I think it's perhaps best to just stick with single spaces around the =
-> instead of trying to arbitrarily align these. See below for why I think
-> so.
-Done.
-
-> 
->> +};
->> +
->> +static int tegra_p2u_probe(struct platform_device *pdev)
->> +{
->> +	struct phy_provider *phy_provider;
->> +	struct device *dev = &pdev->dev;
->> +	struct phy *generic_phy;
->> +	struct tegra_p2u *phy;
->> +	struct resource *res;
->> +
->> +	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
->> +	if (!phy)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctl");
->> +	phy->base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(phy->base))
->> +		return PTR_ERR_OR_ZERO(phy->base);
->> +
->> +	platform_set_drvdata(pdev, phy);
-> 
-> You could use dev_set_drvdata() here since you already use dev (instead
-> of pdev) everywhere else.
-Since this is a platform driver, wouldn't it make more sense to use platform_set_drvdata()
-instead of dev_set_drvdata()?
-
-> 
->> +
->> +	generic_phy = devm_phy_create(dev, NULL, &ops);
->> +	if (IS_ERR(generic_phy))
->> +		return PTR_ERR_OR_ZERO(generic_phy);
->> +
->> +	phy_set_drvdata(generic_phy, phy);
->> +
->> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->> +	if (IS_ERR(phy_provider))
->> +		return PTR_ERR_OR_ZERO(phy_provider);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_p2u_remove(struct platform_device *pdev)
->> +{
->> +	return 0;
->> +}
-> 
-> I thought it had already been mentioned that you don't need to implement
-> this if it's empty?
-Done.
-
-> 
->> +
->> +static const struct of_device_id tegra_p2u_id_table[] = {
->> +	{
->> +		.compatible = "nvidia,tegra194-p2u",
->> +	},
->> +	{}
->> +};
->> +MODULE_DEVICE_TABLE(of, tegra_p2u_id_table);
->> +
->> +static struct platform_driver tegra_p2u_driver = {
->> +	.probe		= tegra_p2u_probe,
->> +	.remove		= tegra_p2u_remove,
->> +	.driver		= {
->> +		.name	= "tegra194-p2u",
->> +		.of_match_table = tegra_p2u_id_table,
-> 
-> Again, I don't think the artificial padding does this any good. For
-> example, the .driver.name's assignment operator is padded to the same
-> column as members of the parent structure, so that's confusing to read.
-> Also, .of_match_table is not padded at all, so it's inconsistent. Just
-> use single spaces around =. That's easy to keep consistent and really
-> doesn't read that bad.
-Done.
-
-> 
->> +	},
->> +};
->> +
->> +module_platform_driver(tegra_p2u_driver);
-> 
-> It's customary to have no blank line between the closing "};" and the
-> module_platform_driver() macro.
-Done.
-
-> 
-> Thierry
-> 
->> +
->> +MODULE_AUTHOR("Vidya Sagar <vidyas@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra PIPE2UPHY PHY driver");
->> +MODULE_LICENSE("GPL v2");
->> -- 
+>>          unsigned long pgsize_bitmap;
+>>   };
+>>
+>> --
 >> 2.17.1
 >>
-
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
