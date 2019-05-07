@@ -2,54 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EEC616BC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A3016BD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfEGTzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 15:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53074 "EHLO mail.kernel.org"
+        id S1727014AbfEGT6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 15:58:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726706AbfEGTzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 15:55:15 -0400
-Subject: Re: [GIT PULL] xfs: new features for 5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557258915;
-        bh=XzCqZnL3HN5KGhwuaOlL2x8iE8dcCN9mo/yUtriWIhk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=L8rkaXFzBD49+xPy1guliprNDW4mbr52IaOdJ9liaoBvJej6Uocij2s87KgxTkv+I
-         qTwBHP8i1f1Wyny6fGeUcodlJGmLriADd3mR/A5rO5vL7clx8TEw0gezhEpI7v0ljj
-         nKNGE5Pz8yf1glf9akN8wj8Q0X6fdCh1JnsvSwbo=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190507154635.GT5207@magnolia>
-References: <20190507154635.GT5207@magnolia>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190507154635.GT5207@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/xfs-5.2-merge-4
-X-PR-Tracked-Commit-Id: 910832697cf85536c7fe26edb8bc6f830c4b9bb6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: aa26690fab1380735442e027ce4b17849a24493f
-Message-Id: <155725891523.4809.3872123512989253384.pr-tracker-bot@kernel.org>
-Date:   Tue, 07 May 2019 19:55:15 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     torvalds@linux-foundation.org, Dave Chinner <david@fromorbit.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        id S1726658AbfEGT6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 15:58:22 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C41208C4;
+        Tue,  7 May 2019 19:58:18 +0000 (UTC)
+Date:   Tue, 7 May 2019 15:58:17 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [RFC][PATCH 2/3] x86_64: Allow breakpoints to emulate call
+ functions
+Message-ID: <20190507155817.2d08d0eb@gandalf.local.home>
+In-Reply-To: <20190507194925.qndvv67rinrmbefj@treble>
+References: <20190507174227.673261270@goodmis.org>
+        <20190507174400.219947724@goodmis.org>
+        <20190507175342.fskdj2qidpao65qi@treble>
+        <20190507150153.7a5d376d@gandalf.local.home>
+        <20190507191412.n4uhoyfwagagyfwi@treble>
+        <20190507152016.77f7a3af@gandalf.local.home>
+        <20190507194925.qndvv67rinrmbefj@treble>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 7 May 2019 08:46:35 -0700:
+On Tue, 7 May 2019 14:49:25 -0500
+Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.2-merge-4
+> > New version:
+> > 
+> >     x86_64: Allow breakpoints to emulate call functions
+> >     
+> >     In order to allow breakpoints to emulate call functions, they need to push  
+> 
+> Sorry to keep nitpicking, but "call functions" -> "function calls" would
+> sound more accurate to me (in both subject and description).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/aa26690fab1380735442e027ce4b17849a24493f
+I disagree ;-)
 
-Thank you!
+Matters how you look at it. I look at it as emulating the "call"
+function, not a function call. Like emulating an "addl" function, or a
+"jmp" function.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+See?
+
+To remove the ambiguity, I could replace "function" with "instruction".
+
+> 
+> Otherwise it looks good.
+
+Thanks!
+
+-- Steve
