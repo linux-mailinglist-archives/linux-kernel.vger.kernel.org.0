@@ -2,75 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB2C1691F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 464E916924
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 19:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbfEGR0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 13:26:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50166 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbfEGR0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 13:26:00 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 743FB36887;
-        Tue,  7 May 2019 17:26:00 +0000 (UTC)
-Received: from x1.home (ovpn-117-92.phx2.redhat.com [10.3.117.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D766E171AD;
-        Tue,  7 May 2019 17:25:59 +0000 (UTC)
-Date:   Tue, 7 May 2019 11:25:59 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio-pci/nvlink2: Fix potential VMA leak
-Message-ID: <20190507112559.2022645c@x1.home>
-In-Reply-To: <20190507090145.4be12c82@bahia.lan>
-References: <155568823785.601037.2151744205292679252.stgit@bahia.lan>
-        <20190506155845.70f3b01d@x1.home>
-        <20190507014915.GA10274@tungsten.ozlabs.ibm.com>
-        <20190507090145.4be12c82@bahia.lan>
-Organization: Red Hat
+        id S1727501AbfEGR00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 13:26:26 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55293 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbfEGR00 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 13:26:26 -0400
+Received: by mail-it1-f195.google.com with SMTP id a190so27787017ite.4;
+        Tue, 07 May 2019 10:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GunWRoLds4jiLtAh6LLE2TsXCUmGwtbfVmLe2bjqlyk=;
+        b=SneKo/eRyNH8XD4OOXcGl+oZeg2o4H7Hs6UoMjV02arVdpGkIcC+hKDMEk/lkgnswF
+         Fo2ycvV456u0Uudr86kAys098Zr8pe4NbmlbK21DGdkNrcZqyzmB1b+Pedtb6RHXAdwe
+         u79do2mly/Ld5n6j2sZjeTMJgBeL94+rQPTuqFo2+ItFSROp1CE9Ta71fQxUqjMhEqf+
+         xP7YxZ4rCoM2Oggw/Yj0jIQqQK7fFOJQQCQtUA0MCPrDc1/JK3gKQS+JPbF3mTwDt3ms
+         EYEV6yVQIlhz8YTDZXUlbb5/BMQUHp4p9B5aBp62OCI8Av5zvpWQaGHbvEGVwByCaj78
+         EYqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GunWRoLds4jiLtAh6LLE2TsXCUmGwtbfVmLe2bjqlyk=;
+        b=SpiPEHQQrQ5YpCmwKsbMWQtAkXOmHVoq+QryPW29RObIubhl5yrRD+NvAOs/JzedET
+         Nq4xRHInlIw2+6brp0OMSiFPOvP80dr8PxVK+2TEQcRC5F5R8RLE/nwNfUX60kGvaXE5
+         AAJSuPks+XaRprOmDQ0ac/BAhZl0jaqRTNBgINdGCrw+0QH901bnkAo1CLatjxDt2Lky
+         C1y3werCNkkTdeOh/AhfH34nlqmnhpj6W9e+MxTJOOAfJ1qGp+8v3+23ow/e2lRy7fXF
+         HcP4WBmKXY1O9ESYB6ub8bx+z+UJmTn0zQhJdrRPAPxpSkUA20t278B+WU7wU+yczvsL
+         jUSg==
+X-Gm-Message-State: APjAAAUhOZ/GRyaFk1Uxcha/ERDv7aiBYYwb/BgFYBKtCkwGNinmLzIY
+        aeWxauH+Ncuoy6NZHnWbC8U3aZkB7gVRRMIl780=
+X-Google-Smtp-Source: APXvYqxyfWuptXTPdDd0CtFSwzhshxh5ikNJRvy2cALACSmI84A7Mb1Y0WbL7yYrhBbR/N/OOJmIKGRGEoCQ6Fd7YJc=
+X-Received: by 2002:a24:c455:: with SMTP id v82mr25128040itf.143.1557249984946;
+ Tue, 07 May 2019 10:26:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 07 May 2019 17:26:00 +0000 (UTC)
+References: <20181221011752.25627-1-sre@kernel.org> <4f47f7f2-3abb-856c-4db5-675caf8057c7@xs4all.nl>
+ <20190319133154.7tbfafy7pguzw2tk@earth.universe>
+In-Reply-To: <20190319133154.7tbfafy7pguzw2tk@earth.universe>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 7 May 2019 12:26:11 -0500
+Message-ID: <CAHCN7xLZFLs=ed539bwuT6s-n6SDof-um7B3AeErQ2ChztC26A@mail.gmail.com>
+Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-media@vger.kernel.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 09:01:45 +0200
-Greg Kurz <groug@kaod.org> wrote:
+On Tue, Mar 19, 2019 at 8:33 AM Sebastian Reichel <sre@kernel.org> wrote:
+>
+> Hi Hans,
+>
+> On Thu, Mar 14, 2019 at 09:20:10AM +0100, Hans Verkuil wrote:
+> > On 12/21/18 2:17 AM, Sebastian Reichel wrote:
+> > > This moves all remaining users of the legacy TI_ST driver to hcill (patches
+> > > 1-3). Then patches 4-7 convert wl128x-radio driver to a standard platform
+> > > device driver with support for multiple instances. Patch 7 will result in
+> > > (userless) TI_ST driver no longer supporting radio at runtime. Patch 8-11 do
+> > > some cleanups in the wl128x-radio driver. Finally patch 12 removes the TI_ST
+> > > specific parts from wl128x-radio and adds the required infrastructure to use it
+> > > with the serdev hcill driver instead. The remaining patches 13 and 14 remove
+> > > the old TI_ST code.
+> > >
+> > > The new code has been tested on the Motorola Droid 4. For testing the audio
+> > > should be configured to route Ext to Speaker or Headphone. Then you need to
+> > > plug headphone, since its cable is used as antenna. For testing there is a
+> > > 'radio' utility packages in Debian. When you start the utility you need to
+> > > specify a frequency, since initial get_frequency returns an error:
+> >
+> > What is the status of this series?
+> >
+> > Based on some of the replies (from Adam Ford in particular) it appears that
+> > this isn't ready to be merged, so is a v2 planned?
+>
+> Yes, a v2 is planned, but I'm super busy at the moment. I don't
+> expect to send something for this merge window. Neither LogicPD
+> nor IGEP use FM radio, so I can just remove FM support from the
+> TI_ST framework. Converting those platforms to hci_ll can be done
+> in a different patchset.
+>
+> If that was the only issue there would be a v2 already. But Marcel
+> Holtmann suggested to pass the custom packet data through the BT
+> subsystem, which is non-trivial (at least for me) :)
 
-> On Tue, 7 May 2019 11:52:44 +1000
-> Sam Bobroff <sbobroff@linux.ibm.com> wrote:
-> 
-> > On Mon, May 06, 2019 at 03:58:45PM -0600, Alex Williamson wrote:  
-> > > On Fri, 19 Apr 2019 17:37:17 +0200
-> > > Greg Kurz <groug@kaod.org> wrote:
-> > >     
-> > > > If vfio_pci_register_dev_region() fails then we should rollback
-> > > > previous changes, ie. unmap the ATSD registers.
-> > > > 
-> > > > Signed-off-by: Greg Kurz <groug@kaod.org>
-> > > > ---    
-> > > 
-> > > Applied to vfio next branch for v5.2 with Alexey's R-b.  Thanks!
-> > > 
-> > > Alex    
-> > 
-> > Should this have a fixes tag? e.g.:
-> > Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
-> >   
-> 
-> Oops... you're right.
-> 
-> Alex, can you add the above tag ?
+I am running some tests today on the wl1283-st on the Logic PD Torpedo
+board.  Tony had suggested a few options, so I'm going to try those.
+Looking at those today.  If/when you have a V2, please CC me on it. If
+it's been posted, can you send me a link?  I would really like to see
+the st-kim driver go away so I'd like to resolve the issues with the
+torpedo board.
 
-Added.  Thanks,
+thanks
 
-Alex
+adam
+>
+> -- Sebastian
