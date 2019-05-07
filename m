@@ -2,116 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4136E1673D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 17:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD9316746
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 17:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfEGP5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 11:57:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58270 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726438AbfEGP5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 11:57:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8898A374;
-        Tue,  7 May 2019 08:57:38 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08F583F5AF;
-        Tue,  7 May 2019 08:57:35 -0700 (PDT)
-Date:   Tue, 7 May 2019 16:57:34 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Luca Abeni <luca.abeni@santannapisa.it>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC PATCH 6/6] sched/dl: Try not to select a too fast core
-Message-ID: <20190507155732.7ravrnld54rb6k5a@queper01-lin>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
- <20190506044836.2914-7-luca.abeni@santannapisa.it>
+        id S1726780AbfEGP7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 11:59:50 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44338 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEGP7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 11:59:50 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d3so4381847plj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 08:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:from:to:cc:subject:date:message-id;
+        bh=Jk4l4aIhsSS1QaMGb/xfaCHwS6DqaTwgoIuoYji1K5w=;
+        b=MIaRFN3fv3+GWWwZnBAErq1T33G8rzvbl422n5Qc2yFfjz++rNY//jxFv5G8+cbVGQ
+         qyeY4WCPn7hxzv86c9HWZEWHxzzxQoHAFjjxfZE+1aEcjFLFH4mN/wDg4dw9MM3CQItK
+         vZzfjNK5gcbQ8n+9E5LUpqiywcxxVNOOSihLlQd1KqJQt6Iaem9CcHh3nbMXqsIfxXkI
+         t5IxN7pdYihTH8VdxjCB4Ckeyma451Dmjhvdq7V86U/X4I4ZXAIiYG0O5Vc3G0dJPFy7
+         eTEgNQSBRY4U0BofW4a6Me1G3BmxKOEr5do0Qog9ddXygfCoU8OIYYuQqz+wCjKEBzw0
+         QO6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=mime-version:x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Jk4l4aIhsSS1QaMGb/xfaCHwS6DqaTwgoIuoYji1K5w=;
+        b=Qp9VoIC3ly0pc3YrB9dcFqCjugAv6a8IVvDu+LSC5LTGYKALvLDkfXoKzhwmwTJH2A
+         wsTmLMLudfQCLpt68utdIvGEBI72nUUeuQ8J96zBaf18Wry6irJ5rRLXGiohjmMrPWxw
+         4c4r0zcY+vBIuNGU9gR86BSZhXDdTfj99F9s2aeclxUdb7oAe8y18Mfnbw+wgZEdH7II
+         Q0sa2ewtInu8IduZskAProqvtmyxZKEba5q6KHyki7Ddj+zI9ubtew9osFF4jnNdVbYW
+         pPE33HUSdOFvZUnZH/FP/w0jgE8k0EzTIPKZ0Pbj31ALVcwQrjpmpml44Quse6IKmC7g
+         Oyyw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190506044836.2914-7-luca.abeni@santannapisa.it>
-User-Agent: NeoMutt/20171215
+X-Gm-Message-State: APjAAAXdfVPui3ag59vSq2sVvs6N1OZpoHsSfa+EPvC7ED3ZtaXsTWbd
+        e7WDijIexwuezg+f4AJh3y5pa8eCT5xXmFZM9YfVU26jc94PuTujexkjNSPFAvQDJ6pha6wcKAx
+        rtx206jwHSHtHazy6/Q==
+X-Google-Smtp-Source: APXvYqzjuXzlJfYmm6OQjWmSFkfZp7p5+/RBKtyuW9GmAw6VaX33RD5pvt2FRSYs/l0C4jzCq+840g==
+X-Received: by 2002:a17:902:9a03:: with SMTP id v3mr42085296plp.27.1557244789768;
+        Tue, 07 May 2019 08:59:49 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id h187sm22543540pfc.52.2019.05.07.08.59.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 07 May 2019 08:59:49 -0700 (PDT)
+From:   Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+To:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        bbrezillon@kernel.org, richard@nod.at, palmer@sifive.com,
+        aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+Subject: [PATCH v3 v3 1/3] mtd: spi-nor: add support for is25wp256
+Date:   Tue,  7 May 2019 21:29:33 +0530
+Message-Id: <1557244775-14206-1-git-send-email-sagar.kadam@sifive.com>
+X-Mailer: git-send-email 1.9.1
+Content-Type: text/plain; charset="US-ASCII"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 06 May 2019 at 06:48:36 (+0200), Luca Abeni wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
-> 
-> When a task can fit on multiple CPU cores, try to select the slowest
-> core that is able to properly serve the task. This avoids useless
-> future migrations, leaving the "fast cores" idle for more heavyweight
-> tasks.
+Update spi_nor_id table for is25wp256 (32MB)device from ISSI,
+present on HiFive Unleashed dev board (Rev: A00).
 
-But only if the _current_ capacity of big CPUs (at the current freq) is
-higher than the current capacity of the littles, is that right ? So we
-don't really have a guarantee to pack small tasks on little cores ...
+Set method to enable quad mode for ISSI device in flash parameters
+table.
 
-What is the rationale for looking at the current freq in dl_task_fit() ?
-Energy reasons ? If so, I'd argue you should look at the energy model to
-break the tie between CPU candidates ... ;)
+Based on code originally written by Wesley Terpstra <wesley@sifive.com>
+and/or Palmer Dabbelt <palmer@sifive.com>
+https://github.com/riscv/riscv-linux/commit/c94e267766d62bc9a669611c3d0c8ed5ea26569b
 
-And in the mean time, you could just look at arch_scale_cpu_capacity()
-to check if a task fits ?
+Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 10 +++++++++-
+ include/linux/mtd/spi-nor.h   |  1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> ---
->  kernel/sched/cpudeadline.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-> index 2a4ac7b529b7..897ed71af515 100644
-> --- a/kernel/sched/cpudeadline.c
-> +++ b/kernel/sched/cpudeadline.c
-> @@ -143,17 +143,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
->  	       struct cpumask *later_mask)
->  {
->  	const struct sched_dl_entity *dl_se = &p->dl;
-> +	struct cpumask tmp_mask;
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index fae1474..c5408ed 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1834,6 +1834,10 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "is25wp128",  INFO(0x9d7018, 0, 64 * 1024, 256,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "is25wp256", INFO(0x9d7019, 0, 64 * 1024, 1024,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_4B_OPCODES)
++	},
+ 
+ 	/* Macronix */
+ 	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
+@@ -3650,6 +3654,10 @@ static int spi_nor_init_params(struct spi_nor *nor,
+ 		case SNOR_MFR_MACRONIX:
+ 			params->quad_enable = macronix_quad_enable;
+ 			break;
++		case SNOR_MFR_ISSI:
++			params->quad_enable = macronix_quad_enable;
++			break;
++
+ 
+ 		case SNOR_MFR_ST:
+ 		case SNOR_MFR_MICRON:
+@@ -4127,7 +4135,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (nor->addr_width) {
++	if (nor->addr_width && JEDEC_MFR(info) != SNOR_MFR_ISSI) {
+ 		/* already configured from SFDP */
+ 	} else if (info->addr_width) {
+ 		nor->addr_width = info->addr_width;
+diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+index b3d360b..ff13297 100644
+--- a/include/linux/mtd/spi-nor.h
++++ b/include/linux/mtd/spi-nor.h
+@@ -19,6 +19,7 @@
+ #define SNOR_MFR_ATMEL		CFI_MFR_ATMEL
+ #define SNOR_MFR_GIGADEVICE	0xc8
+ #define SNOR_MFR_INTEL		CFI_MFR_INTEL
++#define SNOR_MFR_ISSI		0x9d		/* ISSI */
+ #define SNOR_MFR_ST		CFI_MFR_ST	/* ST Micro */
+ #define SNOR_MFR_MICRON		CFI_MFR_MICRON	/* Micron */
+ #define SNOR_MFR_MACRONIX	CFI_MFR_MACRONIX
+-- 
+1.9.1
 
-Hmm, these can get pretty big, so not sure about having one on the stack ...
 
->  
->  	if (later_mask &&
-> -	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_allowed)) {
-> +	    cpumask_and(&tmp_mask, cp->free_cpus, &p->cpus_allowed)) {
->  		int cpu, max_cpu = -1;
-> -		u64 max_cap = 0;
-> +		u64 max_cap = 0, min_cap = SCHED_CAPACITY_SCALE * SCHED_CAPACITY_SCALE;
->  
-> -		for_each_cpu(cpu, later_mask) {
-> +		cpumask_clear(later_mask);
-> +		for_each_cpu(cpu, &tmp_mask) {
->  			u64 cap;
->  
-> -			if (!dl_task_fit(&p->dl, cpu, &cap))
-> -				cpumask_clear_cpu(cpu, later_mask);
-> +			if (dl_task_fit(&p->dl, cpu, &cap) && (cap <= min_cap)) {
-> +				if (cap < min_cap) {
-> +					min_cap = cap;
-> +					cpumask_clear(later_mask);
-> +				}
-> +				cpumask_set_cpu(cpu, later_mask);
-> +			}
->  
->  			if (cap > max_cap) {
->  				max_cap = cap;
-> -- 
-> 2.20.1
-> 
-
-Thanks,
-Quentin
+-- 
+The information transmitted is intended only for the person or entity to 
+which it is addressed and may contain confidential and/or privileged 
+material. If you are not the intended recipient of this message please do 
+not read, copy, use or disclose this communication and notify the sender 
+immediately. It should be noted that any review, retransmission, 
+dissemination or other use of, or taking action or reliance upon, this 
+information by persons or entities other than the intended recipient is 
+prohibited.
