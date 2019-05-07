@@ -2,119 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE5E15DB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E95AD15DC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfEGGtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 02:49:46 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:37879 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfEGGtp (ORCPT
+        id S1726752AbfEGGzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:55:49 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7291 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbfEGGzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 02:49:45 -0400
-Received: by mail-qk1-f194.google.com with SMTP id c1so231509qkk.4;
-        Mon, 06 May 2019 23:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pa7Box1aR7yFtR1LX1WDnV3kRpU7SqZCsbjs49Q3I5I=;
-        b=MbpgTNQuafLtAS2Dly735CRfwi2rTUQf2u2v4oGvQgQgSYIdnRpg7VCLomPpMzIscG
-         QaTnC9SQ9ku6gzFOzq1s9XrRaJmYor/1LFKrkhizBLNXIXufH7ZYafVfUTi/hxmPPuHk
-         B/SkK/YRJGmYzfaQ1xghtxinwaerdxpRKizUfkuezccasVKNLUKgHxlEEtCQzs7jj3xl
-         zQkJPXfNNvA3TqInSISCOxmMnYUjkdAFYUZlvI0ouvwsL+dfg4OFY2WIgIiVzRvRisWc
-         5DS8N2wLUkGet8qbU+i0bfGDKHxX5peC2gXK9w9E6zQg9z2uNJlAWgMxSlSz/L/CQjSl
-         IVaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pa7Box1aR7yFtR1LX1WDnV3kRpU7SqZCsbjs49Q3I5I=;
-        b=dgpuLZ7Sxs70cd6gfm8S4JBhVsVHVCaxSQnsxQQbHLpj6sAyMOkbFdtkrrSh363qfE
-         SqKVi9BdHAPY+jdqIYwfM+6MAdjZz00uLaaCpylF3GpKSEGAiHaxTGM4nO4YMYIMMZYX
-         DDcYvhLJIfAbKwcnPFP0IcuDMGIAdy6UmHchuR1nEZapUUk8AfNsiB/gP1OcVGO+6a9/
-         I2we6KVblntwp0ZXsHsiiuv96qRZqTiGYXhYmzsvr7rT+WMMzUY6zTAXX0d5UHNHoGvz
-         66dGNXxIT7n127CaN7edP7HtnYQtnLd1o1+WPrDJgEPehN0fkOdA2jCddlpVeHvdIfSQ
-         24kw==
-X-Gm-Message-State: APjAAAVM93RuASodQymRZFilQ/dHOFT8eFhzpoCfqwDwp4+Gx8hCbR2o
-        qpJxz6jk056gefIIni33AnTcemXyaltduTXD2HI=
-X-Google-Smtp-Source: APXvYqzuoQEtPiGnZXwYeWTvh/tWnA2kNb3EmE2Gn3p8SIpj/ShNUcDydJeqXgxDTOHN1axGtXmE2eyXjqUTKs09l0U=
-X-Received: by 2002:a05:620a:1012:: with SMTP id z18mr1671111qkj.205.1557211784520;
- Mon, 06 May 2019 23:49:44 -0700 (PDT)
+        Tue, 7 May 2019 02:55:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cd12bef0000>; Mon, 06 May 2019 23:55:43 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 06 May 2019 23:55:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 06 May 2019 23:55:46 -0700
+Received: from [10.25.73.250] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 May
+ 2019 06:55:42 +0000
+Subject: Re: [PATCH V4 1/2] PCI: dwc: Add API support to de-initialize host
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <Jisheng.Zhang@synaptics.com>,
+        <thierry.reding@gmail.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20190502170426.28688-1-vidyas@nvidia.com>
+ <20190503112338.GA25649@e121166-lin.cambridge.arm.com>
+ <dec5ecb2-863e-a1db-10c9-2d91f860a2c6@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <37697830-5a94-0f8e-a5cf-3347bc4850cb@nvidia.com>
+Date:   Tue, 7 May 2019 12:25:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1556810922-20248-1-git-send-email-rppt@linux.ibm.com> <1556810922-20248-10-git-send-email-rppt@linux.ibm.com>
-In-Reply-To: <1556810922-20248-10-git-send-email-rppt@linux.ibm.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Tue, 7 May 2019 14:49:08 +0800
-Message-ID: <CAEbi=3d=HN0NagdZRu7qYE1KCWGnnGGwyhWKPp31XbzT7JunBQ@mail.gmail.com>
-Subject: Re: [PATCH 09/15] nds32: switch to generic version of pte allocation
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
-        Helge Deller <deller@gmx.de>, Ley Foon Tan <lftan@altera.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Sam Creasey <sammy@sammy.net>, x86@kernel.org,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org, linux-um@lists.infradead.org,
-        nios2-dev@lists.rocketboards.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <dec5ecb2-863e-a1db-10c9-2d91f860a2c6@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1557212143; bh=H5u/1BKLyxssA+63bikg6ujCCLeHpqFPUgQ9O7l5OC4=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Ly5IINPQChix81HYPqzLWBMjTtWko+rcENjQVytAELt0g7R1nH0YPf8qFkEU5WXNQ
+         5pjESc/9zg2z4Ex2toy1E2QsRTi3JBFtfp8bx5l0ynHc+rIIB/yYP9Cqe5+f+s2nih
+         5vSGdPXrv5a4jjsCvN0qiLK3a7UHTKCxJKH8DT0mFeMMCHggbI6dW5vihAMk8w6eN8
+         hYHcZV145htKZYNHRvW9wShW5f5HNNZEX+WT0rfSr7UdyU0QQFhadrtQCQ0GUZgDzu
+         ZkJClOOI1DcR3+wn2Iks3igoqhK10luCCaE2/p3z3vZKtmawVPhYuJw/jbjmvXoCge
+         kkkU70RiPgZiQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+On 5/7/2019 11:19 AM, Vidya Sagar wrote:
+> On 5/3/2019 4:53 PM, Lorenzo Pieralisi wrote:
+>> On Thu, May 02, 2019 at 10:34:25PM +0530, Vidya Sagar wrote:
+>>> Add an API to group all the tasks to be done to de-initialize host whic=
+h
+>>> can then be called by any DesignWare core based driver implementations
+>>> while adding .remove() support in their respective drivers.
+>>>
+>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>> ---
+>>> Changes from v3:
+>>> * Added check if (pci_msi_enabled() && !pp->ops->msi_host_init) before =
+calling
+>>> =C2=A0=C2=A0 dw_pcie_free_msi() API to mimic init path
+>>>
+>>> Changes from v2:
+>>> * Rebased on top of linux-next top of the tree branch
+>>>
+>>> Changes from v1:
+>>> * s/Designware/DesignWare
+>>>
+>>> =C2=A0 drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
+>>> =C2=A0 drivers/pci/controller/dwc/pcie-designware.h=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 5 +++++
+>>> =C2=A0 2 files changed, 13 insertions(+)
+>>
+>> Series doesn't apply to v5.1-rc1, what's based on ? I suspect
+>> there is a dependency on pci/keystone, given the tight timeline
+>> for the merge window, would you mind postponing it to v5.3 ?
+>>
+>> I do not think it is urgent, I am happy to create a branch
+>> for it as soon as v5.2-rc1 is released.
+> I rebased my changes on top of linux-next. I see that they have conflicts
+> on top of v5.1-rc1. Do you want me to rebase them on top of v5.1-rc1 inst=
+ead
+> of linux-next?
+> I'm fine with v5.2-rc1 as well.I forgot to mention that these changes are=
+ made on top of Jisheng's patches
+FWIW, Jisheng's patches are approved and applied to pci/dwc for v5.2
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1968324.html
 
-Mike Rapoport <rppt@linux.ibm.com> =E6=96=BC 2019=E5=B9=B45=E6=9C=882=E6=97=
-=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:30=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> The nds32 implementation of pte_alloc_one_kernel() differs from the gener=
-ic
-> in the use of __GFP_RETRY_MAYFAIL flag, which is removed after the
-> conversion.
->
-> The nds32 version of pte_alloc_one() missed the call to pgtable_page_ctor=
-()
-> and also used __GFP_RETRY_MAYFAIL. Switching it to use generic
-> __pte_alloc_one() for the PTE page allocation ensures that page table
-> constructor is run and the user page tables are allocated with
-> __GFP_ACCOUNT.
->
-> The conversion to the generic version of pte_free_kernel() removes the NU=
-LL
-> check for pte.
->
-> The pte_free() version on nds32 is identical to the generic one and can b=
-e
-> simply dropped.
->
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->  arch/nds32/include/asm/pgalloc.h | 31 ++++---------------------------
->  1 file changed, 4 insertions(+), 27 deletions(-)
+>=20
+>>
+>> Thanks,
+>> Lorenzo
+>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/driver=
+s/pci/controller/dwc/pcie-designware-host.c
+>>> index 77db32529319..d069e4290180 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> @@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>>> =C2=A0 }
+>>> +void dw_pcie_host_deinit(struct pcie_port *pp)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 pci_stop_root_bus(pp->root_bus);
+>>> +=C2=A0=C2=A0=C2=A0 pci_remove_root_bus(pp->root_bus);
+>>> +=C2=A0=C2=A0=C2=A0 if (pci_msi_enabled() && !pp->ops->msi_host_init)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_free_msi(pp);
+>>> +}
+>>> +
+>>> =C2=A0 static int dw_pcie_access_other_conf(struct pcie_port *pp, struc=
+t pci_bus *bus,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 devfn, =
+int where, int size, u32 *val,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool write)
+>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci=
+/controller/dwc/pcie-designware.h
+>>> index deab426affd3..4f48ec78c7b9 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>>> @@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
+>>> =C2=A0 void dw_pcie_free_msi(struct pcie_port *pp);
+>>> =C2=A0 void dw_pcie_setup_rc(struct pcie_port *pp);
+>>> =C2=A0 int dw_pcie_host_init(struct pcie_port *pp);
+>>> +void dw_pcie_host_deinit(struct pcie_port *pp);
+>>> =C2=A0 int dw_pcie_allocate_domains(struct pcie_port *pp);
+>>> =C2=A0 #else
+>>> =C2=A0 static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp=
+)
+>>> @@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_po=
+rt *pp)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> =C2=A0 }
+>>> +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
+>>> +{
+>>> +}
+>>> +
+>>> =C2=A0 static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
+>>> =C2=A0 {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> --=20
+>>> 2.17.1
+>>>
+>=20
 
-Thanks for your patch.
-I'm assuming this is going in along with the rest of the patches, so I'm no=
-t
-going to add it to my tree.
-
-Acked-by: Greentime Hu <greentime@andestech.com>
