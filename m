@@ -2,155 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B1115DC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7A715DCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfEGGzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 02:55:44 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43490 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfEGGzn (ORCPT
+        id S1726789AbfEGG4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:56:40 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:32809 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfEGG4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 02:55:43 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c6so2934792pfa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UWFGclreBqK14SYbMq2K7ZoXoM7JUPH8rO1VMNdVVW0=;
-        b=UMMLnWG4abHWBIpK7s91J324jWLx2vrsbjmPXim3igk7jRFo6ZQ6n83CALMKI/Axly
-         G/lx7wzLrE1D6ZHk5aduEeg7Ts7VJ1bwcjIVQBeuDEQkToewjrcaKw5g6vdZegdTlHgJ
-         Gpq9PbYgFW9jTYuH6aDEAA9dW846q6LtRdFtVJtKezkkZ4oCMgeIRAOilSme0DwHcMSV
-         RAKHSSY2OGD6HuRts/594cqDzKi7gunoDuaj9UGMy8ZqL08qwVMWgzRj3cnWkHdyB8mG
-         tyFWFZnXf45cfFlfISFcdEhVphX3J1C3zaJehPhyg16GBclqcHLzaOk694cHCZROZrC9
-         w9bQ==
+        Tue, 7 May 2019 02:56:40 -0400
+Received: by mail-vk1-f195.google.com with SMTP id r195so3796876vke.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:56:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UWFGclreBqK14SYbMq2K7ZoXoM7JUPH8rO1VMNdVVW0=;
-        b=i+2DLtgX1Wc6kMBiSjRvXMe9sDwkh11lG/pX3Zp3yaafuE5oxxS13VL6ItvV52Id68
-         5hVHMZ3h1/eFs0+4ONFVpuJ/RQcksDa2pI3eoF95NMYFCLWvnfY2h79XTmRO8pDBegc5
-         w5NaKRAVqNclvxvzLeby7kvzb7cLSzLC9fTcgrdqHH39aKdFZHpSAzupxG06E3lrlhUe
-         bVJBEDYYNofG6+c2VQQdoApj67HVtKmvmAlUiaWHbbJieZGRICr2le2n1Rgr6iATG7zZ
-         Yj6jiWPgQNC9l+hopkUjw1/fZthp0hqki3rRn2dK8erldBlMx4yOo+3MM/jD5l121U/h
-         8MzQ==
-X-Gm-Message-State: APjAAAVs78ndV5DMO95raDjTE5umNJ297LwiVLVU9YGwvBI6Jfhfve9X
-        v6sbxXTn4QXE7jeSVG6ORQe7EQ==
-X-Google-Smtp-Source: APXvYqwxmniIrwLxpXqEa123LJPdEDrKUmBTX9fYCqxmAL0CYOX5G+VVDnPBt11tDpN3zMNqOydAUA==
-X-Received: by 2002:a65:624f:: with SMTP id q15mr21964539pgv.436.1557212142702;
-        Mon, 06 May 2019 23:55:42 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o10sm19920594pfh.168.2019.05.06.23.55.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 May 2019 23:55:41 -0700 (PDT)
-Date:   Mon, 6 May 2019 23:55:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, amit.kucheria@linaro.org,
-        jorge.ramirez-ortiz@linaro.org, lina.iyer@linaro.org,
-        ulf.hansson@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add PSCI cpuidle support
-Message-ID: <20190507065555.GB2085@tuxbook-pro>
-References: <20190506193115.20909-1-niklas.cassel@linaro.org>
- <20190507053547.GE16052@vkoul-mobl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=G9/9K0rq5nGHfHISp2XHAr4LKBOhZnBOjj4ANxEXHd8=;
+        b=QAMruxhtzDMgQWxPrJfx3Y8ip/AOCuaRZAf3x9/cr0/jQseU/Z/LSOomg52s8teX5v
+         PYr+xk5Zfzo7yjU5HC04ArfodQDuv7nYJBjuTC/nmlrNh0+lKr6GccXePeouroI7XMXx
+         zd3SJvqHeW19uynb4bBTQlH5DRdU/PJwv1+BtIq5C/7fNzkvzv+bi1FU7p1gzVo75p7Q
+         +n5fI5n15l9ZnhbcbCAAegwzDCLIlMVGoj0g69THFMqL6Tskzv3ySGB1kvsTD3lpJAUo
+         j15+pEprW6DTK8zR/EmpitO15a+vIN/OUjV2+Xpc8BPMTAz9375k2JOy5G+Qd0eSSYap
+         rQGg==
+X-Gm-Message-State: APjAAAU8xwGB+GxJmnNdT/Y62yJUu8QDYSQtIVqcP+wZ6V9nJq9O6l5x
+        z9qdSLDHFXy7VQCoG9J9clzIu0B2nOpy1m0N0Qta7w==
+X-Google-Smtp-Source: APXvYqxPX4jCpcW+866IjucNuww+AIBVfUXXNEHeuKZnq9czOWVGOvioeoeHuNfw54cRxR4EemPbUsAPfgmNtGEaw3k=
+X-Received: by 2002:a1f:c2c1:: with SMTP id s184mr6275483vkf.65.1557212198471;
+ Mon, 06 May 2019 23:56:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507053547.GE16052@vkoul-mobl>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190507064844.15299-1-geert@linux-m68k.org>
+In-Reply-To: <20190507064844.15299-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 7 May 2019 08:56:26 +0200
+Message-ID: <CAMuHMdXC+bPCCbLKGQvV+nan_r1j+Sm-yUprDYOKHXOBzCCfTw@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v5.1
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 06 May 22:35 PDT 2019, Vinod Koul wrote:
+On Tue, May 7, 2019 at 8:49 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v5.1[1] compared to v5.0[2].
+>
+> Summarized:
+>   - build errors: +1/-1
+>   - build warnings: +126/-105
+>
+> JFYI, when comparing v5.1[1] to v5.1-rc7[3], the summaries are:
+>   - build errors: +0/-1
+>   - build warnings: +102/-61
 
-> On 06-05-19, 21:31, Niklas Cassel wrote:
-> > Add device bindings for CPUs to suspend using PSCI as the enable-method.
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/qcs404.dtsi | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > index ffedf9640af7..f9db9f3ee10c 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > @@ -31,6 +31,7 @@
-> >  			reg = <0x100>;
-> >  			enable-method = "psci";
-> >  			next-level-cache = <&L2_0>;
-> > +			cpu-idle-states = <&CPU_PC>;
-> >  		};
-> >  
-> >  		CPU1: cpu@101 {
-> > @@ -39,6 +40,7 @@
-> >  			reg = <0x101>;
-> >  			enable-method = "psci";
-> >  			next-level-cache = <&L2_0>;
-> > +			cpu-idle-states = <&CPU_PC>;
-> >  		};
-> >  
-> >  		CPU2: cpu@102 {
-> > @@ -47,6 +49,7 @@
-> >  			reg = <0x102>;
-> >  			enable-method = "psci";
-> >  			next-level-cache = <&L2_0>;
-> > +			cpu-idle-states = <&CPU_PC>;
-> >  		};
-> >  
-> >  		CPU3: cpu@103 {
-> > @@ -55,12 +58,24 @@
-> >  			reg = <0x103>;
-> >  			enable-method = "psci";
-> >  			next-level-cache = <&L2_0>;
-> > +			cpu-idle-states = <&CPU_PC>;
-> >  		};
-> >  
-> >  		L2_0: l2-cache {
-> >  			compatible = "cache";
-> >  			cache-level = <2>;
-> >  		};
-> > +
-> > +		idle-states {
-> 
-> Since we are trying to sort the file per address and
-> alphabetically, it would be great if this can be moved before l2-cache
-> :)
-> 
+The warning regressions look a bit excessive to me, for a final
+v5.1 release...
 
-Picked up, with the order adjusted.
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd/ (all 236 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/1c163f4c7b3f621efff9b28a47abb36f7378d783/ (all 236 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/37624b58542fb9f2d9a70e6ea006ef8a5f66c30b/ (all 236 configs)
 
-> Other than that this lgtm
->  
+Gr{oetje,eeting}s,
 
-I presume that lgtm == Reviewed-by...
+                        Geert
 
-Thanks,
-Bjorn
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> > +			CPU_PC: pc {
-> > +				compatible = "arm,idle-state";
-> > +				arm,psci-suspend-param = <0x40000003>;
-> > +				entry-latency-us = <125>;
-> > +				exit-latency-us = <180>;
-> > +				min-residency-us = <595>;
-> > +				local-timer-stop;
-> > +			};
-> > +		};
-> >  	};
-> >  
-> >  	firmware {
-> > -- 
-> > 2.21.0
-> 
-> -- 
-> ~Vinod
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
