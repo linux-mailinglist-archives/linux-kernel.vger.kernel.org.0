@@ -2,153 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AC316C4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 22:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87CD16C5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 22:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfEGUfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 16:35:52 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37298 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfEGUfw (ORCPT
+        id S1726824AbfEGUkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 16:40:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52634 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbfEGUkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 16:35:52 -0400
-Received: by mail-qt1-f195.google.com with SMTP id o7so8734897qtp.4;
-        Tue, 07 May 2019 13:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O6gYEqTbmv77FQYhVi46xNiLmwAMPiLYwUgMBGFBieA=;
-        b=DP4a2KW5qtKsIGNZTbytzYP7dwD1YeVKxt5nKVusb5m2B9WbYuR5Jf/HLcnroDEl3F
-         ZDZSYuCplS0pSppqUPkpUzCv3/Y3T9WdzWUkVqjmKRy00gSOLHRjUTqlmmKPPrwndkLu
-         ifcBifvdYmBG40jasDnyuJpDXu01VtHRtHk86MiHT9yI8jFdciqilPFn86X6QMaGz1AO
-         AKk1rBcVS8JJ5z7/AQvUtbkChQBnSFNwnV7jzbz4ulZlNPy9bfZ7b2O8xF/e2M0ltQUt
-         IdKjGtG154Pj1mRvnRxyFKI9bqSQp/QEs3//JYoI7aZPq0KIJqdwNa0yKJuXhBvqR6eq
-         bKNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O6gYEqTbmv77FQYhVi46xNiLmwAMPiLYwUgMBGFBieA=;
-        b=T9OTGnWxgKayN61SNvKUA/YNhjw0Imjout8qJeBudCFSDpETiGTksX2ze/aGctMIYG
-         nsUvhJhi/fBUNMyGmIFw57Mk2vGgOPbJxQdygoZOdUQpvOIKJ78eMDc/p3ei2cvTZkn5
-         MeLQojWoHHEyTcTZLngs7aXMnloxt0wT7aDP3y7NnRtAyN1zg6EK82PcZMtFh4kQ7m7A
-         qSCGelONyLzHzkp5MVUrAYEXagusQNAtefobco3H00aeSztOtn0wgWaDzYmIA+BvJTpO
-         OPzA1tt7lQL4VANtiRMKLVW19xw2SORYjlnkelYjDSbV49n9w3VPGFPLkTxTYq6DvAwg
-         Lyxg==
-X-Gm-Message-State: APjAAAUSDbQYsPa74PlTE8NTf4drULHWjhjSG4WTWtTXfUs7WIR1VWAI
-        nRPdARrzvGMyQcuQpHXRhCE=
-X-Google-Smtp-Source: APXvYqzosXvm/SegHMlT/UBeJMN/OuZyRFk1+Vu46ooovqfZMwVzQXDxBuUoSQWqKDxd1jpJ0eQf1Q==
-X-Received: by 2002:ac8:222f:: with SMTP id o44mr29115731qto.198.1557261351365;
-        Tue, 07 May 2019 13:35:51 -0700 (PDT)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id j25sm9197094qtc.24.2019.05.07.13.35.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 07 May 2019 13:35:49 -0700 (PDT)
-From:   Melissa Wen <melissa.srw@gmail.com>
-X-Google-Original-From: Melissa Wen <melissa.srw>
-Date:   Tue, 7 May 2019 17:35:43 -0300
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Barry Song <21cnbao@gmail.com>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH 0/4] staging: iio: ad7150: improve driver readability
-Message-ID: <20190507203543.dpold6kx5j2pjar2@smtp.gmail.com>
-References: <cover.1556919363.git.melissa.srw@gmail.com>
- <CA+U=DsqiRBAdGK0aqp5Chv-AtuL8W47tu+Bq6O_Pc97HYbewkQ@mail.gmail.com>
- <20190505140510.62b42abe@archlinux>
+        Tue, 7 May 2019 16:40:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C904160A24; Tue,  7 May 2019 20:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557261650;
+        bh=stcg8CzvSafuMT/P1RIQCG/y6ujXCmqbponKtEXZm8Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pJmy6g7EwedqarmCGBv4Q4MbLuCLcnAb2ncrlgtnSiMCqp5o9XpsQe+M9Dg4NCXFd
+         08LX8MlIKdKAUT/DCZ6XDkN4pKkhZHCy3A2RIMkfZcRDSCima7jUYg1OWQo0Thh1Xf
+         /VhaGNGYuxHksenYJRFHon8o56Nt3GKl+SFH0NYs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 22A43605A2;
+        Tue,  7 May 2019 20:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557261650;
+        bh=stcg8CzvSafuMT/P1RIQCG/y6ujXCmqbponKtEXZm8Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pJmy6g7EwedqarmCGBv4Q4MbLuCLcnAb2ncrlgtnSiMCqp5o9XpsQe+M9Dg4NCXFd
+         08LX8MlIKdKAUT/DCZ6XDkN4pKkhZHCy3A2RIMkfZcRDSCima7jUYg1OWQo0Thh1Xf
+         /VhaGNGYuxHksenYJRFHon8o56Nt3GKl+SFH0NYs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22A43605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
+        linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
+        bjorn.andersson@linaro.org, dianders@chromium.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v5 00/11] Support wakeup capable GPIOs
+Date:   Tue,  7 May 2019 14:37:38 -0600
+Message-Id: <20190507203749.3384-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190505140510.62b42abe@archlinux>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/05, Jonathan Cameron wrote:
-> On Sat, 4 May 2019 14:12:22 +0300
-> Alexandru Ardelean <ardeleanalex@gmail.com> wrote:
-> 
-> > On Sat, May 4, 2019 at 1:24 AM Melissa Wen <melissa.srw@gmail.com> wrote:
-> > >
-> > > This patchset solves readability issues in AD7150 code, such as clarify
-> > > register and mask definition, fashion improvement of mask uses, reduce
-> > > tedious operation and useless comments.
-> > >  
-> > 
-> > Hey,
-> > 
-> > Two patches seem a bit noisy/un-needed.
-> > The other 2 are fine from me.
-> > 
-> > This driver does need some work to move it out of staging.
-> > I am not sure what would be a big blocker for it, other than maybe it
-> > needs a device-tree binding doc (in YAML format).
-> > Maybe Jonathan remembers.
-> > 
-> > Some other low-hanging-fruit ideas would be:
-> > 1) remove the code for platform_data ; that one seems forgotten from
-> > some other time; the interrupts should be coming from device-tree,
-> > from the i2c bindings
-> > 2) you could do a AD7150_EVENT_SPEC() macro (similar to
-> > AD7150_TIMEOUT() macro) and use it in the ad7150_events[] list; that
-> > would reduce a few lines
-> > 3) similar to 2), you could do a AD7150_CHANNEL(x) macro ;
-> > 4) in ad7150_event_handler() the checks could be wrapped into a macro,
-> > or maybe some function ; i am referring to "(int_status &
-> > AD7150_STATUS_OUT1) && (chip->old_state & AD7150_STATUS_OUT1)" checks
-> > ; those seem to be repeated
-> > 5) add of_match_table to the driver
-> > 
-> > I (now) suspect that the reason this driver is still in staging is this comment:
-> > /* Timeouts not currently handled by core */
-> > 
-> > I wonder if things changed since then ?
-> > If not, it would be interesting to implement it in core.
-> Hmm. Timeouts are 'unusual' to put it lightly.
-> I'm thinking the ABI needs to perhaps be more specific but not sure what
-> a good naming is.
-> 
-> Otherwise, I just took a quick look and can't see anything much else
-> that needs doing.  Obviously something might come up in a thorough
-> review prior to moving it though!
-> 
-> Jonathan
-> > 
-> > Thanks
-> > Alex
-> > 
+Hi all,
 
-Hi Alexandru and Jonathan,
+This is a re-spin of the wakeup capable GPIO support for QCOM SoCs.
+The earlier version of the patch revision 4, was published [1] and had
+some good discussions. The comments from the review have also been
+addressed and the code rebased on top of 5.1 in this spin. There a few
+changes in this spin:
+	- Review comments from Stephen, Marc
+	- Bug fixes in irqdomain-map
+	- Fix invalid interrupt case
+	- Update documentation
+	- Attempt generalizing gpiochip_to_irq() for hierarchical domain
 
-Thank you for your help! Soon I will send a v2 with the fixes pointed out.
-I'm also including the ideas above in the work plan for this driver.
+In patch v4, we were discussing about the IRQ type of GPIO defaulting to
+IRQ_TYPE_NONE (as is was the custom for older implementation). In the
+SDM845 SoC select GPIOs are routed to an always-on interrupt controller
+called the PDC and then to the GIC.
 
-P.s.: Sorry for having previously sent an email with HTML.
+Wakeup capabable:
+	GPIO  --->  PDC  ------>  GIC
 
-Melissa
-> > 
-> > > Melissa Wen (4):
-> > >   staging: iio: ad7150: organize registers definition
-> > >   staging: iio: ad7150: use FIELD_GET and GENMASK
-> > >   staging: iio: ad7150: simplify i2c SMBus return treatment
-> > >   staging: iio: ad7150: clean up of comments
-> > >
-> > >  drivers/staging/iio/cdc/ad7150.c | 102 ++++++++++++++-----------------
-> > >  1 file changed, 47 insertions(+), 55 deletions(-)
-> > >
-> > > --
-> > > 2.20.1
-> > >  
-> 
+Requesting a GPIO as an interrupt through the gpio_to_irq() call would
+setup an interrupt hierarchy as above and return the linux interrupt
+number. However, since the trigger type of the GPIO is unknown at this
+time, gpiolib defaults to IRQ_TYPE_NONE. This triggers a warning at the
+GIC, which expects a valid trigger type be set correctly in the fwspec.
+The solution to this problem is still at large and I would like to
+solicit feedback on this.
+
+Appreciate your time.
+
+Thanks,
+Lina
+
+[1]. https://patchwork.kernel.org/cover/10851807/
+
+Lina Iyer (9):
+  gpio: allow gpio_to_irq to use OF variants for gpiochips
+  irqdomain: add bus token DOMAIN_BUS_WAKEUP
+  of: irq: document properties for wakeup interrupt parent
+  drivers: irqchip: add PDC irqdomain for wakeup capable GPIOs
+  dt-bindings: sdm845-pinctrl: add wakeup interrupt parent for GPIO
+  drivers: pinctrl: msm: setup GPIO irqchip hierarchy
+  arm64: dts: qcom: add PDC interrupt controller for SDM845
+  arm64: defconfig: enable PDC interrupt controller for Qualcomm SDM845
+  arm64: dts: qcom: setup PDC as wakeup parent for GPIOs for SDM845
+
+Stephen Boyd (1):
+  of: irq: add helper to remap interrupts to another irqdomain
+
+Thierry Reding (1):
+  gpio: Add support for hierarchical IRQ domains
+
+ .../interrupt-controller/interrupts.txt       |  54 +++++++
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.txt  |  79 +++++++++-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  88 +++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/gpio/gpiolib.c                        |  28 +++-
+ drivers/irqchip/qcom-pdc.c                    |  98 +++++++++++--
+ drivers/of/irq.c                              | 129 +++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.c            | 137 +++++++++++++++---
+ include/linux/gpio/driver.h                   |   6 +
+ include/linux/irqdomain.h                     |   1 +
+ include/linux/of_irq.h                        |   1 +
+ include/linux/soc/qcom/irq.h                  |  25 ++++
+ 12 files changed, 610 insertions(+), 37 deletions(-)
+ create mode 100644 include/linux/soc/qcom/irq.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
