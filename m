@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05641674A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28EF816754
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbfEGQAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:00:42 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34184 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEGQAl (ORCPT
+        id S1726956AbfEGQCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:02:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45396 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfEGQCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:00:41 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c13so8542749pgt.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:00:41 -0700 (PDT)
+        Tue, 7 May 2019 12:02:24 -0400
+Received: by mail-pf1-f193.google.com with SMTP id e24so8872578pfi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:02:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=mime-version:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4KM0y+VsDRDq1QBsQrOgSVGYr46K10+xwnmF6uVSq4g=;
-        b=NU62BZrN5KCzZX1XVTU3IVHwSAdjJbIyQg4VeugCYGDvtd77Z/gP3F4OUlaR4krlgS
-         o+11XHW0v8kPcVAoScYskKkc+MjQrl0vsScZ73N6pvEcuj8HxFgNDRBLxty7GmXNCwfq
-         2iJ8x42frxfAT8uV/B3a5kp5QFVhV+yA1MPi+rCejY8Mv1n6HKeW5WkxwkKgtLSEr3Ht
-         mZdGBeuU7a4fbOhLaT5GfGypqZhijSaNbl7f1rYq3I4zNRW4GAnH8lusIdUETxOPJocw
-         4BHGlYCozYX+kT2gE4i7Kjf/HUnwn+Elr89RC531EOnyNxGdbBN9hT/I85OAyDkqj6wi
-         5nBA==
+        bh=oVg9jhszQTOKPX1D60R98eWmwxuEwcGgeC32BmiCC7A=;
+        b=jCllPuGG8CrK7CTMwCkPKJYL8zWr7vbjz1mIx6XznvK5UfqWJ+oGbQwQ7BrGMxrZdR
+         EMskKWRZWvyoLeA0ZHjTBMw4Ezwyb1li4pFRfnJNzc3Rw9lHnZZMQvT1n72ndA34inD5
+         rK36vY68JHuoh3mG4Sjo9j1fYBLFwhTB9bvgtVqA/n8zqeMcKFi/esIQxprmjjyg69k1
+         FLWWsD5XNk2baGjknlh6l96sRSsJ6GTQ8vcfyT/vtJmprBC5zB7GeMn8woGr3+NCdJcf
+         8rQnyVPK1SqZh42lawjJFYBpMOnwDMNmxamehqpzlhUInJWqRqO9lfzmUA+dTY0AeWKg
+         M5Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=4KM0y+VsDRDq1QBsQrOgSVGYr46K10+xwnmF6uVSq4g=;
-        b=dW3rCsKwmfjIGtWdDmM6ATn5nigU3TQrCcMw7/L8R585XNtEIEUfNwt62tSci89to/
-         W2jVAsQauRTDT1Q6u884X9vYtc9wa15d5Ua4DF5YfETSCwlrMGrmDmAAwrLzl1l70eaz
-         WROm1t2uhYAbwpsZfuja2+iBli8ebARgyQzSQpZXwLmZt2Ws+/LOPJR7s4c5EERkmvZ7
-         Ilj2tCZ+CYTtdywIO6ZYy0ed7/4CW/1wpfQuIOSTZpsVkIOyuDX1GmKBAJw3Yep08sDP
-         xz2EpVmZN+xwKucVd+Ui8sZHK/7JmpWOYy6udUJJAVLfhy/rVFK3iDseEXSnof1BZwil
-         MMbw==
+        bh=oVg9jhszQTOKPX1D60R98eWmwxuEwcGgeC32BmiCC7A=;
+        b=Ua8RTCASfG1+WzBnT5Phi10vRovzPwV4tgi0i9lZ00ADKsPIq7fq2Er9R49Gor4RvI
+         XBvAAx/umr41tnXZvnqCG0j049OLAML0V5XlUjm3PEP2lz3Fm2ff8fQhyWDcJOCAG0Uw
+         Yd6sjuFmDhMVQGmk6QDw4fsopNwx58moNETCO3LcEnc/9hhgkPPvjtZlcsnBVO2YH8qd
+         714mXTxUZwdRyc+c+52ZlF5jyRkTZaeqBaS9i8nVqIcBtFod81+K+GqNeRWqtwCtKdRq
+         ec6TF5LGjDztGa8WsNgUF9C0ja7dOblcueCNAixEBkTW9XvFf93CzWi6XWOqC4LGjtvj
+         r5YQ==
 MIME-Version: 1.0
-X-Gm-Message-State: APjAAAUhFE/fQ9TxhAnU81gcQWTEwOvAC39UOwPmhsDdb17sO+xDGoA+
-        2Lwk/Cxjg4yDgbIgNnqGTyyyf0rJ2WQ64OccHYq/hIZIDLBVw1o2B09sA1VHPb/6wrtTvp+bd0I
-        Eicjh4voru27+DHuo6w==
-X-Google-Smtp-Source: APXvYqxPnAEc2G3zRVZf6L/0Kdp2TrKypPq94MbRDW4FheSYN1WrKPt1O7GwwpXDKr3U6SEFcuigZw==
-X-Received: by 2002:a63:3e47:: with SMTP id l68mr40030636pga.85.1557244840952;
-        Tue, 07 May 2019 09:00:40 -0700 (PDT)
+X-Gm-Message-State: APjAAAVvFncqGGX3ey3VSbo2uPafN+Nvf6RNnP3sWtFFANuy8QpyICqA
+        oN5lUVYkIN26iciXhxrHrKtvt1bFUZEUrrc7pDUrjDn1dS120L/A/Zut56lIVv5nbInW/VdBe5x
+        COXMfdf6lRFINm1/5dg==
+X-Google-Smtp-Source: APXvYqxvTAzllwIFd/OziGSwstlA9MxwXjvNPS8YISEepDqnYpycNRekLcN8eZHCxxqH0o+kb7b26Q==
+X-Received: by 2002:a63:1cf:: with SMTP id 198mr32137329pgb.155.1557244943756;
+        Tue, 07 May 2019 09:02:23 -0700 (PDT)
 Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id h187sm22543540pfc.52.2019.05.07.09.00.35
+        by smtp.googlemail.com with ESMTPSA id h187sm22543540pfc.52.2019.05.07.09.02.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 07 May 2019 09:00:40 -0700 (PDT)
+        Tue, 07 May 2019 09:02:22 -0700 (PDT)
 From:   Sagar Shrikant Kadam <sagar.kadam@sifive.com>
 To:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
         dwmw2@infradead.org, computersforpeace@gmail.com,
@@ -55,9 +55,9 @@ To:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
 Cc:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-Subject: [PATCH v3 v3 2/3] mtd: spi-nor: add support to unlock flash device.
-Date:   Tue,  7 May 2019 21:29:34 +0530
-Message-Id: <1557244775-14206-2-git-send-email-sagar.kadam@sifive.com>
+Subject: [PATCH v3 v3 3/3] mtd: spi-nor: add locking support for is25xxxxx device
+Date:   Tue,  7 May 2019 21:29:35 +0530
+Message-Id: <1557244775-14206-3-git-send-email-sagar.kadam@sifive.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1557244775-14206-1-git-send-email-sagar.kadam@sifive.com>
 References: <1557244775-14206-1-git-send-email-sagar.kadam@sifive.com>
@@ -67,110 +67,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nor device (is25wp256 mounted on HiFive unleashed Rev A00 board) from ISSI
-have memory blocks guarded by block protection bits BP[0,1,2,3].
+Implement a basic locking scheme for ISSI devices similar to that of
+stm_lock mechanism. The is25xxxxx  devices have 4 bits for selecting
+the range of blocks to be locked/protected from erase/write.
 
-Clearing block protection bits,unlocks the flash memory regions
-The unlock scheme is registered during nor scans.
-
-Based on code developed by Wesley Terpstra <wesley@sifive.com>
-and/or Palmer Dabbelt <palmer@sifive.com>.
-https://github.com/riscv/riscv-linux/commit/c94e267766d62bc9a669611c3d0c8ed5ea26569b
+The current implementation enables block protection as per the table
+defined into datasheet for is25wp256d device.
 
 Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 51 ++++++++++++++++++++++++++++++++++++++++++-
- include/linux/mtd/spi-nor.h   |  1 +
- 2 files changed, 51 insertions(+), 1 deletion(-)
+ drivers/mtd/spi-nor/spi-nor.c | 51 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
 diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index c5408ed..3942b26 100644
+index 3942b26..5986260 100644
 --- a/drivers/mtd/spi-nor/spi-nor.c
 +++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1461,6 +1461,49 @@ static int macronix_quad_enable(struct spi_nor *nor)
- }
+@@ -1459,6 +1459,56 @@ static int macronix_quad_enable(struct spi_nor *nor)
  
- /**
-+ * issi_unlock() - clear BP[0123] write-protection.
+ 	return 0;
+ }
++/**
++ * issi_lock() - set BP[0123] write-protection.
 + * @nor: pointer to a 'struct spi_nor'.
-+ * @ofs: offset from which to unlock memory.
++ * @ofs: offset from which to lock memory.
 + * @len: number of bytes to unlock.
 + *
-+ * Bits [2345] of the Status Register are BP[0123].
-+ * ISSI chips use a different block protection scheme than other chips.
-+ * Just disable the write-protect unilaterally.
++ * Lock a region of the flash.Implementation is based on stm_lock
++ * Supports the block protection bits BP{0,1,2,3} in the status register
 + *
 + * Return: 0 on success, -errno otherwise.
 + */
-+static int issi_unlock(struct spi_nor *nor, loff_t ofs, uint64_t len)
++static int issi_lock(struct spi_nor *nor, loff_t ofs, uint64_t len)
 +{
-+	int ret, val;
-+	u8 mask = SR_BP0 | SR_BP1 | SR_BP2 | SR_BP3;
++	int status_old, status_new, blk_prot;
++	u8 mask = SR_BP3 | SR_BP2 | SR_BP1 | SR_BP0;
++	u8 shift = ffs(mask) - 1;
++	u8 pow;
++	loff_t num_blks;
 +
-+	val = read_sr(nor);
-+	if (val < 0)
-+		return val;
-+	if (!(val & mask))
++	status_old = read_sr(nor);
++
++	/* if status reg is Write protected don't update bit protection */
++	if (status_old & SR_SRWD) {
++		dev_err(nor->dev,
++			"Status register is Write Protected, can't lock bit
++			protection bits...\n");
++		return -EINVAL;
++	}
++	num_blks = len / nor->info->sector_size;
++
++	pow = order_base_2(num_blks);
++
++	blk_prot = mask & (((pow+1) & 0xf)<<shift);
++
++	/*
++	 * Return if older protected blocks include the new requested block's
++	 */
++	if (((status_old >> shift) & 0x0f) > blk_prot) {
++		dev_info(nor->dev, "newly requested blocks are
++				already protected ");
++		return 0;
++	}
++
++	status_new = status_old | blk_prot;
++
++	if (status_old == status_new)
 +		return 0;
 +
-+	write_enable(nor);
-+
-+	write_sr(nor, val & ~mask);
-+
-+	ret = spi_nor_wait_till_ready(nor);
-+	if (ret)
-+		return ret;
-+
-+	ret = read_sr(nor);
-+	if (ret > 0 && !(ret & mask)) {
-+		dev_info(nor->dev,
-+			"ISSI Block Protection Bits cleared SR=0x%x", ret);
-+		ret = 0;
-+	} else {
-+		dev_err(nor->dev, "ISSI Block Protection Bits not cleared\n");
-+		ret = -EINVAL;
-+	}
-+	return ret;
++	return write_sr_and_check(nor, status_new, mask);
 +}
-+
-+/**
-  * spansion_quad_enable() - set QE bit in Configuraiton Register.
-  * @nor:	pointer to a 'struct spi_nor'
-  *
-@@ -1836,7 +1879,7 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25wp256", INFO(0x9d7019, 0, 64 * 1024, 1024,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
--			SPI_NOR_4B_OPCODES)
-+			SPI_NOR_4B_OPCODES | SPI_NOR_HAS_LOCK)
- 	},
  
- 	/* Macronix */
-@@ -4078,6 +4121,12 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
- 		nor->flash_is_locked = stm_is_locked;
+ /**
+  * issi_unlock() - clear BP[0123] write-protection.
+@@ -4124,6 +4174,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+ 	/* NOR protection support for ISSI chips */
+ 	if (JEDEC_MFR(info) == SNOR_MFR_ISSI ||
+ 	    info->flags & SPI_NOR_HAS_LOCK) {
++		nor->flash_lock = issi_lock;
+ 		nor->flash_unlock = issi_unlock;
+ 
  	}
- 
-+	/* NOR protection support for ISSI chips */
-+	if (JEDEC_MFR(info) == SNOR_MFR_ISSI ||
-+	    info->flags & SPI_NOR_HAS_LOCK) {
-+		nor->flash_unlock = issi_unlock;
-+
-+	}
- 	if (nor->flash_lock && nor->flash_unlock && nor->flash_is_locked) {
- 		mtd->_lock = spi_nor_lock;
- 		mtd->_unlock = spi_nor_unlock;
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index ff13297..9a7d719 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -127,6 +127,7 @@
- #define SR_BP0			BIT(2)	/* Block protect 0 */
- #define SR_BP1			BIT(3)	/* Block protect 1 */
- #define SR_BP2			BIT(4)	/* Block protect 2 */
-+#define SR_BP3			BIT(5)	/* Block protect 3 for ISSI device*/
- #define SR_TB			BIT(5)	/* Top/Bottom protect */
- #define SR_SRWD			BIT(7)	/* SR write protect */
- /* Spansion/Cypress specific status bits */
 -- 
 1.9.1
 
