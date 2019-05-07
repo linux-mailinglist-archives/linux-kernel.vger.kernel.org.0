@@ -2,78 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF5D1652F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1615316534
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 15:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfEGNzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 09:55:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726295AbfEGNzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 09:55:36 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4EF3205C9;
-        Tue,  7 May 2019 13:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557237336;
-        bh=vDzTqlXITUzg3T8pnIDpoEHrO2yG9pk+pTAcWYM3+PE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aGlY/D2ES1sUi4/uuCnYQvFI3EzqEWySUE1xbryQMnVnXXAxkESE+iRnPSCXvp2/J
-         yTE1V6CpDo6kmn50a4C7jeAxwHnFfk8sRt0c1mLHY0RQoaurYLWW7RxvFIVVOBsydx
-         ALVEO9SFqxDkMcDwDMO4x2/MTWW3G899ZeGkP0NE=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] tracing: probeevent: Fix probe argument parser and handler
-Date:   Tue,  7 May 2019 22:55:22 +0900
-Message-Id: <155723732200.9149.10482668315693777743.stgit@devnote2>
-X-Mailer: git-send-email 2.17.1
-User-Agent: StGit/0.17.1-dirty
+        id S1726916AbfEGNzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 09:55:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45456 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbfEGNzv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 09:55:51 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r76so3352622lja.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 06:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GL4GdceTvSBDxGp9W+MspMxjOoV99Lda4j4e4jx38nI=;
+        b=llFcOTK+JkPns+fb4NcOVv0q5GX/MkbEvLVrRcmQmQuLjeReEygm2oo4TQK2ESIoeC
+         qpk+7qDr4E2vZHh/7r5kzvVev7KuXcBa94RdAlDSZP2KJ1Gt9mKrytjoRTEWRABSm1fZ
+         2M02NrzjG4ijQ3/UySGQh39ERffrUwLnuy1nIvh+Q7uRXxsht53qaV3OwxnySPLs1LXb
+         VG7PrdYlT+fKUQ2qDmc491dlWBX/1kNkD0W7E4VaZjRKEnDoKkCF8F3X+M3FU6bhgOvq
+         MU8xYZ9sk/52vBJFW7GguZBMYBs6u4/tgJQqvutUuyLjJfmy3b2nMc0CGdCqbUtaVsII
+         jd3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GL4GdceTvSBDxGp9W+MspMxjOoV99Lda4j4e4jx38nI=;
+        b=Sm+kV54U5xyxqAbeIdhLAYmTJOLbuMYf3lXvmKRSxHiRvteX3E3zQqmCwQdt6gN4v6
+         ssZAa4rvMxCEnG0r3OpsNfur8evqwmVxxqtbK+mBB/7nY5tehWjFEVVA9QF6T31EGD/W
+         KgDV7O680/Ns+KQvY3imnRGHu0bNzgmZjwtbxjWu+mWwRkbc9k1fDct0hSg3+Q62aMX8
+         0IhawcmAwOmkd9uxajfhHFCpLiRGRThf1398++LJXzwCKdWp7Bia2+47eWT3NbMh4O9z
+         9M5mc8Gd0PB7rZQ9l0xuFTKZtLf/bUk/5OMyeP3VCa/LL71gX8T4Dl7NjPu70OqXhGpU
+         STog==
+X-Gm-Message-State: APjAAAXT2Jt2A/yq3kokqGuivNxWLTA6bs9q3QlXwFQlwu1lkV0NsiC6
+        DagbUq3Hz7fmEfl8zr/JSwHscbFQAcvSIUeectsugC7x7BI=
+X-Google-Smtp-Source: APXvYqygTLTj7reqA2P0us3hcnaMnc/IWqpf8ylWxz0boCKxN0gY34MsJLpkYv35ahJhmIuRv+P6GjuHd0tle4CILho=
+X-Received: by 2002:a2e:d1a:: with SMTP id 26mr17526393ljn.147.1557237348745;
+ Tue, 07 May 2019 06:55:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-2-luca.abeni@santannapisa.it> <20190507134850.yreebscc3zigfmtd@queper01-lin>
+In-Reply-To: <20190507134850.yreebscc3zigfmtd@queper01-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 7 May 2019 15:55:37 +0200
+Message-ID: <CAKfTPtAmekVR59pvBZO-Xp57=qHoxYkvmQwc2fWVa1x4U2_pNg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] sched/dl: Improve deadline admission control for
+ asymmetric CPU capacities
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Luca Abeni <luca.abeni@santannapisa.it>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 7 May 2019 at 15:48, Quentin Perret <quentin.perret@arm.com> wrote:
+>
+> Hi Luca,
+>
+> On Monday 06 May 2019 at 06:48:31 (+0200), Luca Abeni wrote:
+> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> > index edfcf8d982e4..646d6d349d53 100644
+> > --- a/drivers/base/arch_topology.c
+> > +++ b/drivers/base/arch_topology.c
+> > @@ -36,6 +36,7 @@ DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE;
+> >
+> >  void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity)
+> >  {
+> > +     topology_update_cpu_capacity(cpu, per_cpu(cpu_scale, cpu), capacity);
+>
+> Why is that one needed ? Don't you end up re-building the sched domains
+> after this anyways ?
 
-Here is the 3rd version of series to fix several bugs in probe event
-argument parser and handler routines.
+I was looking at the same point.
+Also this doesn't take into account if the cpu is offline
 
-In this version I updated patch [1/3] according to Steve's comment.
+Do we also need of the line below in set_rq_online
++               rq->rd->rd_capacity += arch_scale_cpu_capacity(NULL,
+cpu_of(rq));
 
+building the sched_domain seems a better place to set rq->rd->rd_capacity
 
-I got 2 issues reported by Andreas, see
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1899098.html
-
-One issue is already fixed by Andreas (Thanks!) but $comm handling
-issue still exists on uprobe event. [1/3] fixes it.
-And I found other issues around that, [2/3] is just a trivial cleanup,
-[3/3] fixes $comm type issue which occurs not only uprobe events but
-also on kprobe events. Anyway, after this series applied, $comm must
-be "string" type and not be an array.
-
-Thank you,
-
----
-
-Masami Hiramatsu (3):
-      tracing: uprobes: Re-enable $comm support for uprobe events
-      tracing: probeevent: Do not accumulate on ret variable
-      tracing: probeevent: Fix to make the type of $comm string
-
-
- kernel/trace/trace_probe.c      |   13 +++++++------
- kernel/trace/trace_probe.h      |    1 +
- kernel/trace/trace_probe_tmpl.h |    2 +-
- kernel/trace/trace_uprobe.c     |   13 +++++++++++--
- 4 files changed, 20 insertions(+), 9 deletions(-)
-
---
-Masami Hiramatsu <mhiramat@kernel.org>
+>
+> >       per_cpu(cpu_scale, cpu) = capacity;
+> >  }
+>
+> Thanks,
+> Quentin
