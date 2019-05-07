@@ -2,51 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56951580D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6AE15807
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfEGDZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:25:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbfEGDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726935AbfEGDZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 6 May 2019 23:25:04 -0400
-Subject: Re: [GIT PULL] EDAC pile for 5.2
+Received: from mail.kernel.org ([198.145.29.99]:55208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726863AbfEGDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 23:25:04 -0400
+Subject: Re: [GIT] Crypto Update for 5.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1557199503;
-        bh=agyJXpORaqnO7sWm0VEpzZlUM0VHrPGkECLl9eYIWBA=;
+        bh=A5GABfHaZbrF7j5aDHnPitrUiAk9/KZEsOuCCMwR9AQ=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=X9Eu1ezTN8VLnCSzQkK60rYCWJhyi52GAoNpHr459kRDGVVBp40Py0n8OuqzSwc34
-         D3tyet7yzXOOFIhKV+GASoexUVpHpKQD0uO4/a0vBbiM2iWG4nni8f6XifV3CBQIJJ
-         ilycvGCMpLRiApjd6Hdws/4QmU/pD/8HN2PcH2h8=
+        b=J+ztFMQOqVfeYWertxPkjoL3J/vkPR9cKeik+427L9NiF3uTN/MkJz2h4Vi9/sDhS
+         ozRLxf4LNrDMzORF/U1axGAVz8BsVoHAEnfyj+5wsxSIsOVwsRswcyD4ugtKQ/i4w8
+         Waxrg3dmiCRUu13boKIiJdndDvIvl5wsvzyPk/AY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190506083732.GB6094@zn.tnic>
-References: <20190506083732.GB6094@zn.tnic>
+In-Reply-To: <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
+References: <20180212031702.GA26153@gondor.apana.org.au>
+ <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
+ <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+ <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
+ <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
+ <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
+ <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
+ <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
+ <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
+ <20190305081155.7rpkydnc4ipm43o6@gondor.apana.org.au>
+ <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190506083732.GB6094@zn.tnic>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git
- tags/edac_for_5.2
-X-PR-Tracked-Commit-Id: 8de9930a4618811edfaebc4981a9fafff2af9170
+X-PR-Tracked-Message-Id: <20190506032938.fgyw2qupyktvsx7w@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+X-PR-Tracked-Commit-Id: e59f755ceb6d6f39f90899d2a4e39c3e05837e12
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 275b103a26e218b3d739e5ab15be6b40303a1428
-Message-Id: <155719950375.20841.17232583243112373429.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 81ff5d2cba4f86cd850b9ee4a530cd221ee45aa3
+Message-Id: <155719950316.20841.8532149559553493918.pr-tracker-bot@kernel.org>
 Date:   Tue, 07 May 2019 03:25:03 +0000
-To:     Borislav Petkov <bp@suse.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 6 May 2019 10:37:32 +0200:
+The pull request you sent on Mon, 6 May 2019 11:29:38 +0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_for_5.2
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/275b103a26e218b3d739e5ab15be6b40303a1428
+https://git.kernel.org/torvalds/c/81ff5d2cba4f86cd850b9ee4a530cd221ee45aa3
 
 Thank you!
 
