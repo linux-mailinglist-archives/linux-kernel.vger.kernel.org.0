@@ -2,353 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D26DC16242
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E86F016256
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfEGKyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:54:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50406 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbfEGKy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:54:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 611711A25;
-        Tue,  7 May 2019 03:54:26 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E5393F5AF;
-        Tue,  7 May 2019 03:54:25 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        rjw@rjwysocki.net, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [TEST PATCH 31/30][EDK2] edk2-platform: juno: Update ACPI CoreSight Bindings
-Date:   Tue,  7 May 2019 11:52:58 +0100
-Message-Id: <1557226378-10131-32-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557226378-10131-1-git-send-email-suzuki.poulose@arm.com>
-References: <1557226378-10131-1-git-send-email-suzuki.poulose@arm.com>
+        id S1727343AbfEGKyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:54:46 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44813 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbfEGKyX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 06:54:23 -0400
+Received: by mail-lj1-f193.google.com with SMTP id c6so8460734lji.11;
+        Tue, 07 May 2019 03:54:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GCAhg11SRp6Hew9zFemJx8a1BnYPfIc90dC9LSkimJg=;
+        b=TjALlnw4nsc9u8UJAhsZ1uBY5MpOfYYFHDH9mn1SZIL22WxRUXNdnNDBKfloMxs27a
+         zkktcwu/Sx6rAtgYRy+jjbrFEiebWtpPakYRhHYSNwUjqg7hkjBxrywE0qdj+bs5mwqT
+         mAGORk3CLwMloH9BP4lzzaQuXR9JlzO+Kj8q69ccRd2MiUz3z35BBRqAAtUo4zi4smZI
+         MabzDOCr9zz3P4SlWcmyucv0ihFJpbiG3KUU5uh85AnttvSQVcs4Nu1Ynf9ze8oNrxGs
+         bmUy+Q8EEcR0F1vtMfz5/KTQoCKVgobaHPF78FJw1bkxm28K/RTEI8P+B2dIY2YPQEXE
+         KveQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GCAhg11SRp6Hew9zFemJx8a1BnYPfIc90dC9LSkimJg=;
+        b=UjTfRNP0bSxwd16ykzvWUM2gDEVu7Bd/P9qKzPynxqq3UPWFMZpIJjcN3Iai58yiej
+         QFgUFqSW6jWBuYx3MqghrLHhwJkd4p9oMcW22gyyAtl1MpyIbGCR3IjZOEQLdVmXU/xL
+         5TEYC831cpjyZKTa655CRMvCAQ0DhYwTmoNs7KzKWtBPeGD8l4/Ls+ZGcOAgFblUiUB4
+         jG8qT9SkRGd7O8RSafKB6YstykzbXncj2c0CKEDhf39v+QIjK4Zgl/h/tjaOGa5WGaoi
+         HEG8grlTQO6V63YdmBe/bh8F9PdFGvyxukZivCvetXLPEGtjWrQWEhgff/CB0l3XveHP
+         4feA==
+X-Gm-Message-State: APjAAAWZq9PSDd++ImkaYk8IE83xSq3b/76GXIFFpiF7JO5kl2puCg1B
+        br/0nnVrKr6/ay7eucC/g40PCvYP2+jz5U+0/pM=
+X-Google-Smtp-Source: APXvYqzra4CeE9doUIEh8YRPLjXBNgdVF2kc5zUdswNRrUeYL/COm0wsOIKOaERd5W+viBb0m/EIk30lew/cjlBl89s=
+X-Received: by 2002:a2e:97d8:: with SMTP id m24mr16824476ljj.192.1557226462187;
+ Tue, 07 May 2019 03:54:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1557215047.git.agx@sigxcpu.org> <5817853945e1c707f641ae22458a0f27aa25949e.1557215047.git.agx@sigxcpu.org>
+In-Reply-To: <5817853945e1c707f641ae22458a0f27aa25949e.1557215047.git.agx@sigxcpu.org>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 7 May 2019 07:54:27 -0300
+Message-ID: <CAOMZO5Dn7yHC-NEBd0egHtXu8R4Zg=GNrvXR-RoHH6t9pqq_rA@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] dt-bindings: phy: Add documentation for mixel dphy
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI bindings for CoreSight components on the Juno-r0 board.
-Please note that the bindings apply only for the juno-r0.
-The layout on r1 and r2 are slightly different and will need
-dynamic ACPI table support to be able to use a single UEFI
-image.
+On Tue, May 7, 2019 at 4:47 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
+>
+> Add support for the MIXEL DPHY IP as found on NXP's i.MX8MQ SoCs.
+>
+> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- Platform/ARM/JunoPkg/AcpiTables/Dsdt.asl | 241 +++++++++++++++++++++++++++++++
- 1 file changed, 241 insertions(+)
-
-diff --git a/Platform/ARM/JunoPkg/AcpiTables/Dsdt.asl b/Platform/ARM/JunoPkg/AcpiTables/Dsdt.asl
-index 702b057..c70e8ac 100644
---- a/Platform/ARM/JunoPkg/AcpiTables/Dsdt.asl
-+++ b/Platform/ARM/JunoPkg/AcpiTables/Dsdt.asl
-@@ -14,6 +14,51 @@
- 
- #include "ArmPlatform.h"
- 
-+#define ACPI_GRAPH_REV		0
-+#define ACPI_GRAPH_UUID		"ab02a46b-74c7-45a2-bd68-f7d344ef2153"
-+
-+#define CORESIGHT_GRAPH_UUID	"3ecbc8b6-1d0e-4fb3-8107-e627f805c6cd"
-+
-+#define CS_LINK_MASTER		1
-+#define CS_LINK_SLAVE		0
-+
-+
-+#define DSD_CS_GRAPH_BEGIN(_nports)			\
-+        Package () {					\
-+          1,		// GraphID			\
-+          ToUUID(CORESIGHT_GRAPH_UUID),			\
-+          _nports,
-+
-+#define DSD_CS_GRAPH_END				\
-+	}
-+
-+#define DSD_GRAPH_BEGIN(_nports)			\
-+     ToUUID(ACPI_GRAPH_UUID),				\
-+     Package() {					\
-+       ACPI_GRAPH_REV,					\
-+       1,						\
-+       DSD_CS_GRAPH_BEGIN(_nports)
-+
-+#define DSD_GRAPH_END					\
-+       DSD_CS_GRAPH_END					\
-+     }
-+
-+#define DSD_PORTS_BEGIN(_nports)			\
-+   Name (_DSD,  Package () {				\
-+     DSD_GRAPH_BEGIN(_nports)
-+
-+#define DSD_PORTS_END					\
-+   DSD_GRAPH_END					\
-+  })
-+
-+#define CS_PORT(_port, _rport, _rphandle, _dir)		\
-+    Package () { _port, _rport, _rphandle, _dir}
-+
-+#define CS_INPUT_PORT(_port, _rport, _rphandle)		\
-+    CS_PORT(_port, _rport, _rphandle, CS_LINK_SLAVE)
-+#define CS_OUTPUT_PORT(_port, _rport, _rphandle)		\
-+    CS_PORT(_port, _rport, _rphandle, CS_LINK_MASTER)
-+
- DefinitionBlock("DsdtTable.aml", "DSDT", 1, "ARMLTD", "ARM-JUNO", EFI_ACPI_ARM_OEM_REVISION) {
-   Scope(_SB) {
-     //
-@@ -122,15 +167,56 @@ DefinitionBlock("DsdtTable.aml", "DSDT", 1, "ARMLTD", "ARM-JUNO", EFI_ACPI_ARM_O
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+
-+        Device(ETM0) { // ETM on Cluster0 CPU0
-+          Name (_HID, "ARMHC500")
-+          Name (_CID, "ARMHC500")
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x22040000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 0, \_SB_.CLU0.FUN0)
-+          DSD_PORTS_END
-+
-+        } // ETM0
-       }
-+
-       Device(CPU1) { // A57-1: Cluster 0, Cpu 1
-         Name(_HID, "ACPI0007")
-         Name(_UID, 5)
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+        Device(ETM1) { // ETM on Cluster0 CPU1
-+          Name (_HID, "ARMHC500")
-+          Name (_CID, "ARMHC500")
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x22140000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 1, \_SB_.CLU0.FUN0)
-+          DSD_PORTS_END
-+
-+        } // ETM1
-       }
-+
-+      Device(FUN0) {
-+        Name(_HID, "ARMHC9FF")
-+        Name(_CID, "ARMHC9FF")
-+        Name(_CRS, ResourceTemplate() {
-+          Memory32Fixed(ReadWrite, 0x220c0000, 0x1000)
-+        })
-+
-+        DSD_PORTS_BEGIN(3)
-+        CS_OUTPUT_PORT(0, 0, \_SB_.MFUN),
-+        CS_INPUT_PORT(0, 0, \_SB_.CLU0.CPU0.ETM0),
-+        CS_INPUT_PORT(1, 0, \_SB_.CLU0.CPU1.ETM1)
-+        DSD_PORTS_END
-+      } // CL0.FUN0
-     }
-+
-     Device (CLU1) { // Cluster1 state
-       Name(_HID, "ACPI0010")
-       Name(_UID, 2)
-@@ -208,19 +294,45 @@ DefinitionBlock("DsdtTable.aml", "DSDT", 1, "ARMLTD", "ARM-JUNO", EFI_ACPI_ARM_O
-           "CorePwrDn"
-         },
-       })
-+
-       Device(CPU2) { // A53-0: Cluster 1, Cpu 0
-         Name(_HID, "ACPI0007")
-         Name(_UID, 0)
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+        Device(ETM2) { // ETM on Cluster1, CPU0
-+          Name (_HID, "ARMHC500")
-+          Name (_CID, "ARMHC500")
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x23040000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 0, \_SB_.CLU1.FUN1)
-+          DSD_PORTS_END
-+
-+        } // ETM2
-       }
-+
-       Device(CPU3) { // A53-1: Cluster 1, Cpu 1
-         Name(_HID, "ACPI0007")
-         Name(_UID, 1)
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+        Device(ETM3) { // ETM on Cluster1, CPU1
-+          Name (_HID, "ARMHC500")
-+          Name (_CID, "ARMHC500")
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x23140000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 1, \_SB_.CLU1.FUN1)
-+          DSD_PORTS_END
-+
-+        } // ETM3
-       }
-       Device(CPU4) { // A53-2: Cluster 1, Cpu 2
-         Name(_HID, "ACPI0007")
-@@ -228,6 +340,18 @@ DefinitionBlock("DsdtTable.aml", "DSDT", 1, "ARMLTD", "ARM-JUNO", EFI_ACPI_ARM_O
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+        Device(ETM4) { // ETM on Cluster1, CPU2
-+          Name (_HID, "ARMHC500")	// ETM
-+          Name (_CID, "ARMHC500")	// ETM
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x23240000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 2, \_SB_.CLU1.FUN1)
-+          DSD_PORTS_END
-+
-+        } // ETM4
-       }
-       Device(CPU5) { // A53-3: Cluster 1, Cpu 3
-         Name(_HID, "ACPI0007")
-@@ -235,9 +359,126 @@ DefinitionBlock("DsdtTable.aml", "DSDT", 1, "ARMLTD", "ARM-JUNO", EFI_ACPI_ARM_O
-         Method (_LPI, 0, NotSerialized) {
-           return(PLPI)
-         }
-+        Device(ETM5) { // ETM on Cluster1, CPU3
-+          Name (_HID, "ARMHC500")	// ETM
-+          Name (_CID, "ARMHC500")	// ETM
-+          Name (_CRS, ResourceTemplate() {
-+            Memory32Fixed(ReadWrite, 0x23340000, 0x1000)
-+          })
-+
-+          DSD_PORTS_BEGIN(1)
-+          CS_OUTPUT_PORT(0, 3, \_SB_.CLU1.FUN1)
-+          DSD_PORTS_END
-+        } // ETM5
-       }
-+      Device(FUN1) {
-+        Name(_HID, "ARMHC9FF")
-+        Name(_CID, "ARMHC9FF")
-+        Name(_CRS, ResourceTemplate() {
-+          Memory32Fixed(ReadWrite, 0x230c0000, 0x1000)
-+        })
-+
-+        DSD_PORTS_BEGIN(5)
-+        CS_OUTPUT_PORT(0, 1, \_SB_.MFUN),
-+        CS_INPUT_PORT(0, 0, \_SB_.CLU1.CPU2.ETM2),
-+        CS_INPUT_PORT(1, 0, \_SB_.CLU1.CPU3.ETM3),
-+        CS_INPUT_PORT(2, 0, \_SB_.CLU1.CPU4.ETM4),
-+        CS_INPUT_PORT(3, 0, \_SB_.CLU1.CPU5.ETM5)
-+        DSD_PORTS_END
-+      } // CL1.FUN1
-     }
- 
-+    Device(STM0) {
-+      Name(_HID, "ARMHC502")	// STM
-+      Name(_CID, "ARMHC502")
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20100000, 0x1000)
-+        Memory32Fixed(ReadWrite, 0x28000000, 0x1000000)
-+      })
-+      DSD_PORTS_BEGIN(1)
-+      CS_OUTPUT_PORT(0, 2, \_SB_.MFUN)
-+      DSD_PORTS_END
-+    }
-+
-+    Device(MFUN) {
-+      Name(_HID, "ARMHC9FF")	// Funnel
-+      Name(_CID, "ARMHC9FF")	// Funnel
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20040000, 0x1000)
-+      })
-+
-+      DSD_PORTS_BEGIN(4)
-+      CS_OUTPUT_PORT(0, 0, \_SB_.ETF0),
-+      CS_INPUT_PORT(0, 0, \_SB_.CLU0.FUN0),
-+      CS_INPUT_PORT(1, 0, \_SB_.CLU1.FUN1),
-+      CS_INPUT_PORT(2, 0, \_SB_.STM0)
-+      DSD_PORTS_END
-+
-+    } // MFUN-nel
-+
-+    Device(ETF0) {
-+      Name(_HID, "ARMHC97C")	// TMC
-+      Name(_CID, "ARMHC97C")	// TMC
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20010000, 0x1000)
-+      })
-+
-+      DSD_PORTS_BEGIN(2)
-+      CS_OUTPUT_PORT(0, 1, \_SB_.RPL),
-+      CS_INPUT_PORT(0, 0, \_SB_.MFUN)
-+      DSD_PORTS_END
-+
-+    } // ETF0
-+
-+    Device(RPL) {
-+      Name(_HID, "ARMHC98D")	// Replicator
-+      Name(_CID, "ARMHC98D")	// Replicator
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20120000, 0x1000)
-+      })
-+
-+      DSD_PORTS_BEGIN(3)
-+      CS_OUTPUT_PORT(0, 0, \_SB_.TPIU),
-+      CS_OUTPUT_PORT(1, 0, \_SB_.ETR),
-+      CS_INPUT_PORT(0, 0, \_SB_.ETF0)
-+      DSD_PORTS_END
-+
-+    } // RPL
-+
-+    Device(ETR) {
-+      Name(_HID, "ARMHC97C")	// TMC
-+      Name(_CID, "ARMHC97C")	// TMC
-+      Name(_CCA, 0) // The ETR on this platform is not coherent
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20070000, 0x1000)
-+      })
-+
-+      Name(_DSD, Package() {
-+         DSD_GRAPH_BEGIN(1)
-+         CS_INPUT_PORT(0, 1, \_SB_.RPL)
-+         DSD_GRAPH_END,
-+
-+         ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+         Package() {
-+            Package(2) {"arm,scatter-gather", 1}
-+         }
-+      })
-+
-+    } // ETR
-+
-+    Device(TPIU) {
-+      Name(_HID, "ARMHC979")	// TPIU
-+      Name(_CID, "ARMHC979")	// TPIU
-+      Name(_CRS, ResourceTemplate() {
-+        Memory32Fixed(ReadWrite, 0x20030000, 0x1000)
-+      })
-+
-+      DSD_PORTS_BEGIN(1)
-+      CS_INPUT_PORT(0, 0, \_SB_.RPL)
-+      DSD_PORTS_END
-+
-+    } // TPIU
-+
-     //
-     // Keyboard and Mouse
-     //
--- 
-2.7.4
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
