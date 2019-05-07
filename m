@@ -2,281 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548B416D43
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0478C16D48
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 23:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfEGVh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 17:37:57 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40597 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbfEGVh4 (ORCPT
+        id S1727913AbfEGVtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 17:49:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46859 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbfEGVtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 17:37:56 -0400
-Received: by mail-lf1-f67.google.com with SMTP id o16so12940358lfl.7;
-        Tue, 07 May 2019 14:37:54 -0700 (PDT)
+        Tue, 7 May 2019 17:49:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t187so4844842pgb.13;
+        Tue, 07 May 2019 14:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c2AE0M9uKxK1GU3dXIY+HrWBQ1aPXALof+/VlxHoO1M=;
-        b=DbNXzgMpRyh83SvjTc5fgop9liZROTeCkrJGrIMAKnH2aSH/LcjlunA9HTEQgF+rul
-         fVxaDKk7NMt9d6pbHZBJzW5ng7rRKuykuwsuBittWxi+JRaxuAxvPpAn4q/FjOo1yfoT
-         rwmLbWRldEEy6U6vrxyKPVpA2gSly1lNMmXbH5XKQjbd+rJTRhPY03YWyqEcxuJGDDsy
-         ORZVda2Rdjm9HP6Vw+wX+WE7ZIvr2g3DUY5F8KOvIcdIoUtPnsScpb1T6NBfSnpOem3F
-         y6hDn5TVggVc14Fdk4eCrk5RSrMgd9YWfBGkK0Jgf/tUduV4OnBlu7alxcXegoxpXiDm
-         J1uQ==
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MNXmqOJQAJof0zhxXE2E8ZtY5vE7SIeApoOEVP2KIPY=;
+        b=IJ/47BT5wjxuMrJmS+QSbjNZtDkACxB9ZcOlVVQqttJFn8uYJzB/NddnJzVGVRxJPV
+         nPFbYJUgFaO/jgGoa+5j80l6GwRpuVEsyeG+rFIwZnxT25xtSgmYG7U371DnhD3VpmYB
+         U6UD2fA65peILKjpKCCKGV8yGRWzTDpiUG0l8AIwCdl7XvMHguJlEP0Orq17UhDl1uYS
+         3gBnR/otf+WTOdMMeJJbnrdxnhuDdt9ob5UgBfsiRvFOrLB52vZkU1/xLiy1SNIvz2a6
+         j/wR5RMzrg8BIr8++nDS0MpSJxa1Amdb6re+uxc++eLN6itVY6xcEvpGZfBur1nKNg7c
+         Ozww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c2AE0M9uKxK1GU3dXIY+HrWBQ1aPXALof+/VlxHoO1M=;
-        b=R1JkDsMrPya4xu3DLCDDYIk4hH8dbSjOzGByG+ve6J4+pe+1MiPfiOxWRrbUtif1X/
-         4ntK3FU4Ga4VgITPRDX8IoPgpqtwotTWjbVoIjFtd48C5CdHz7f9vV6QVMLN8wnsyrOX
-         LEL8D5SmNSM5Dyrjv9lU3c5q7WmbpuVIUYS2DIu08w+5vKRITJKEo0JCtL1eCOwkCqMd
-         7/3/Q3TOn6H4PS102UZwm3sMtx0o3MqdaocfaJBAJPCVEWIplPcqk+R6NentWeAxkKds
-         +eqNQHHFn5ETgr/5p0/aWwhqiQfScPPsMP9L6LPj3rToJ+82SYBwCeavL93l6dGIUeey
-         0hQA==
-X-Gm-Message-State: APjAAAXNqV/P99wR8OQxxOgp0UoRHT7lQbJS02Yql2DRFD9NZd/NVZcI
-        r4+uz/W8uXoUl+ZO3Wb76Z739uVdcVIeiyRd2g==
-X-Google-Smtp-Source: APXvYqwGEIJQDKGUklBybOb13P03Jr/Opb2A6gTJ5xcjl3Z1hLJsdqb8cp455ZXZTFghgckkxPAIIzgwj/K6ua1Kvuk=
-X-Received: by 2002:ac2:53ad:: with SMTP id j13mr4458442lfh.14.1557265074026;
- Tue, 07 May 2019 14:37:54 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=MNXmqOJQAJof0zhxXE2E8ZtY5vE7SIeApoOEVP2KIPY=;
+        b=TLe+QsPrsYljSBhBWSRWP0mrddK/q8XLZnWdWCIbklhWeKzh6rvKm47zgyCQWU3Wlv
+         WkEXz5xwFVGBPNkylx/rpujQHi/o/NmO4M+D8TI1fmp7oWozVKsfwzRR5tKr9RZDyEoq
+         XhJl37OLkF3hCUkAbOJ9taER+Uyfm8+gZrbfUGeuEjNFyXIk+MBjxVi3+GnwN02K3TY5
+         ffN/7UPFfEo7XD0UmyQCLFwBi2TZojDZxrMqXLtBG+1wbuLlSepYE1XXkwgEBxFIopic
+         6zd1QpeNNS+8JQmZqC+uD1FJX5gQx3dJ95itjEsKjfPL9hojnkQRHW+wZddaIqfrHNhr
+         PZYg==
+X-Gm-Message-State: APjAAAWZ0LD3eOv9uxYs7Clh9jPPBt4n51+AUGodhKorE77bWsz43lQs
+        rvJ/qWrSOVOnzdao1dB8zsY=
+X-Google-Smtp-Source: APXvYqzE57ZUjJkVB4qLXv2F66a+UyTqqHVYCsSU1YS6xKgymKOIWxGT3r7/xLadpclo1kykJMgH4w==
+X-Received: by 2002:a65:49c7:: with SMTP id t7mr19051626pgs.324.1557265759006;
+        Tue, 07 May 2019 14:49:19 -0700 (PDT)
+Received: from [10.67.49.27] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id i129sm18472897pfc.163.2019.05.07.14.49.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 14:49:17 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] kernel: Provide a __pow10() function
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20190507193504.28248-1-f.fainelli@gmail.com>
+ <20190507193504.28248-2-f.fainelli@gmail.com>
+ <20190507210654.GA4951@roeck-us.net>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <b3c4fdd3-0c91-9681-e471-a9ddbbd256c8@gmail.com>
+Date:   Tue, 7 May 2019 14:49:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <CAEJqkgh-eh0F0rNBChhurH0LWTLFP0DyfFzKj66p4Z2d1kM2gw@mail.gmail.com>
- <CAJZ5v0gRWEL1shQE3im0VxiPRBYat86o=R_NVQbc3JgOX8uT6w@mail.gmail.com>
- <CAEJqkgiNYXwsJaT0d3JyMW-2yJ2DV53FHPV5-iAy7b-NbAEAcw@mail.gmail.com>
- <CAJZ5v0ghNMPMdc03T-is-=-k11rZ8K5O9Av+TnbBY_2mNr-eug@mail.gmail.com>
- <CAEJqkgiB7woieNZ-vVm7x-GzVrqGpJWLXOM9JpSUgPgE7eA6gA@mail.gmail.com>
- <CF6A88132359CE47947DB4C6E1709ED53C5A9EBD@ORSMSX122.amr.corp.intel.com>
- <CAEJqkggvtYobXNjFbvqjajMcbZ_+3PrQJC-9kK+nn5cgXgOyWg@mail.gmail.com> <CF6A88132359CE47947DB4C6E1709ED53C5A9F1C@ORSMSX122.amr.corp.intel.com>
-In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53C5A9F1C@ORSMSX122.amr.corp.intel.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Tue, 7 May 2019 23:39:13 +0200
-Message-ID: <CAEJqkgiTRo0K9YTAK6VaYoHKqae4Oz6q4pxboRMt+s99A=gG3w@mail.gmail.com>
-Subject: Re: [Kernel 5.1] ACPI_DEBUG messages without CONFIG_ACPI_DEBUG being set
-To:     "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Moore, Robert" <robert.moore@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190507210654.GA4951@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Di., 7. Mai 2019 um 22:17 Uhr schrieb Schmauss, Erik
-<erik.schmauss@intel.com>:
->
->
->
-> > -----Original Message-----
-> > From: Gabriel C [mailto:nix.or.die@gmail.com]
-> > Sent: Tuesday, May 7, 2019 12:06 PM
-> > To: Schmauss, Erik <erik.schmauss@intel.com>
-> > Cc: Rafael J. Wysocki <rafael@kernel.org>; ACPI Devel Maling List <linux-
-> > acpi@vger.kernel.org>; LKML <linux-kernel@vger.kernel.org>; Moore,
-> > Robert <robert.moore@intel.com>
-> > Subject: Re: [Kernel 5.1] ACPI_DEBUG messages without
-> > CONFIG_ACPI_DEBUG being set
-> >
-> > Am Di., 7. Mai 2019 um 20:46 Uhr schrieb Schmauss, Erik
-> > <erik.schmauss@intel.com>:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Gabriel C [mailto:nix.or.die@gmail.com]
-> > > > Sent: Tuesday, May 7, 2019 2:33 AM
-> > > > To: Rafael J. Wysocki <rafael@kernel.org>
-> > > > Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>; LKML
-> > > > <linux- kernel@vger.kernel.org>; Schmauss, Erik
-> > > > <erik.schmauss@intel.com>
-> > > > Subject: Re: [Kernel 5.1] ACPI_DEBUG messages without
-> > > > CONFIG_ACPI_DEBUG being set
-> > > >
-> > > > Am Di., 7. Mai 2019 um 10:35 Uhr schrieb Rafael J. Wysocki
-> > > > <rafael@kernel.org>:
-> > > > >
-> > > > > On Tue, May 7, 2019 at 9:31 AM Gabriel C <nix.or.die@gmail.com>
-> > wrote:
-> > > > > >
-> > > > > > Am Di., 7. Mai 2019 um 09:01 Uhr schrieb Rafael J. Wysocki
-> > > > <rafael@kernel.org>:
-> > > > > > >
-> > > > > >  Hello Rafael ,  Erik
-> > > > > >
-> > > > > > > +Erik
-> > > > > > >
-> > > > > > > On Tue, May 7, 2019 at 1:33 AM Gabriel C
-> > > > > > > <nix.or.die@gmail.com>
-> > > > wrote:
-> > > > > > > >
-> > > > > > > > Hello,
-> > > > > > > >
-> > > > > > > > while testing kernel-5.1 I get on one of my Lenovo Laptops
-> > > > > > > > very strange 'ACPI Debug:' messages.
-> > > > > > > >
-> > > > > > > > After some grepping I realized these are Debug messages from
-> > > > > > > > DSDT , however my kernel does not have ACPI_DEBUG enabled.
-> > > > > > > >
-> > > > > > > > I found out the module triggering this, on this Laptop is
-> > > > > > > > ideapad_laptop , but looking at the code I cannot see what
-> > > > > > > > would causes that.
-> > > > > > > >
-> > > > > > > > Also on the same Laptop with any 5.0.X kernels I cannot see these.
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > ~$ grep -i ACPI_DEBUG /boot/config-5.1-fw1 #
-> > > > > > > > CONFIG_ACPI_DEBUGGER is not set # CONFIG_ACPI_DEBUG is
-> > not
-> > > > set #
-> > > > > > > > CONFIG_THINKPAD_ACPI_DEBUGFACILITIES is not set #
-> > > > > > > > CONFIG_THINKPAD_ACPI_DEBUG is not set
-> > > > > > > >
-> > > > > > > > .. dmesg ..
-> > > > > > > > ...
-> > > > > > > > [   68.020812] calling  ideapad_acpi_driver_init+0x0/0x1000
-> > > > > > > > [ideapad_laptop] @ 1322
-> > > > > > > > [   68.026708] input: Ideapad extra buttons as
-> > > > > > > >
-> > > > /devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/input/input16
-> > > > > > > > [   68.038236] ACPI Debug:  "=====QUERY_64====="
-> > > > > > > > [   68.050232] ACPI Debug:  "=====QUERY_65====="
-> > > > > > > > [   68.060218] ACPI Debug:  "=====QUERY_64====="
-> > > > > > > > [   68.092216] probe of VPC2004:00 returned 1 after 71386 usecs
-> > > > > > > > [   68.092245] initcall ideapad_acpi_driver_init+0x0/0x1000
-> > > > > > > > [ideapad_laptop] returned 0 after 69751 usecssg
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >
-> > > > > > > > These =====QUERY_XX===== messages are from DSDT:
-> > > > > > > >
-> > > > > > > > ~/acpi$ grep QUERY dsdt.dsl
-> > > > > > > >                Debug = "=====QUERY_11====="
-> > > > > > > >                Debug = "=====QUERY_12====="
-> > > > > > > >                Debug = "=====QUERY_24====="
-> > > > > > > >                Debug = "=====QUERY_25====="
-> > > > > > > >                Debug = "=====QUERY_37====="
-> > > > > > > >                Debug = "=====QUERY_38====="
-> > > > > > > >                Debug = "=====QUERY_64====="
-> > > > > > > >                Debug = "=====QUERY_65====="
-> > > > > > > >
-> > > > > > > > Also this is the code from DSDT for QUERY 64 and 65:
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >             Method (_Q64, 0, NotSerialized)  // _Qxx: EC Query
-> > > > > > > >            {
-> > > > > > > >                Debug = "=====QUERY_64====="
-> > > > > > > >                If ((OSYS == 0x07D9))
-> > > > > > > >                {
-> > > > > > > >                    If (((WLEX == One) & (WLAT == One)))
-> > > > > > > >                    {
-> > > > > > > >                        SGOV (0x02040005, One)
-> > > > > > > >                    }
-> > > > > > > >                    Else
-> > > > > > > >                    {
-> > > > > > > >                        SGOV (0x02040005, Zero)
-> > > > > > > >                    }
-> > > > > > > >                }
-> > > > > > > >            }
-> > > > > > > >
-> > > > > > > >            Method (_Q65, 0, NotSerialized)  // _Qxx: EC Query
-> > > > > > > >            {
-> > > > > > > >                Debug = "=====QUERY_65====="
-> > > > > > > >                If ((OSYS == 0x07D9))
-> > > > > > > >                {
-> > > > > > > >                    If (((BTEX == One) & (BTAT == One)))
-> > > > > > > >                    {
-> > > > > > > >                        SGOV (0x0202000B, One)
-> > > > > > > >                    }
-> > > > > > > >                    Else
-> > > > > > > >                    {
-> > > > > > > >                        SGOV (0x0202000B, Zero)
-> > > > > > > >                    }
-> > > > > > > >                }
-> > > > > > > >            }
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > Any idea what would cause this ?
-> > > > > >
-> > > > > > I think I found what is causing that.
-> > > > > >
-> > > > > > Commit aa9aaa4d61c0048d3faad056893cd7860bbc084c is moving
-> > > > definition
-> > > > > > of Linux's  ACPI_DEBUG_DEFAULT to incude/acpi/platform/aclinux.h
-> > > > > > , however include/acpi/acpi.h didn't got updated and
-> > > > > > ACPI_DEBUG_DEFAULT now being always defined as  (ACPI_LV_INIT
-> > |
-> > > > > > ACPI_LV_DEBUG_OBJECT | ACPI_LV_EVALUATION |
-> > ACPI_LV_REPAIR)
-> > > > >
-> > > > > I'm not sure what you mean by this.
-> > > > >
-> > > > > include/acpi/acpi.h should get the right definitions through
-> > > > > include/acpi/platform/acenv.h and include/acpi/acoutput.h that are
-> > > > > included by it.
-> > > > >
-> > > >
-> > > > Hmm yes should , I missed that include. However it does not work.
-> > > >
-> > > > I've just put back old code back into drivers/acpi/bus.c to test and
-> > > > all working now fine without any other changes.
-> > > >
-> > > > > It looks like incude/acpi/platform/aclinux.h has not been included
-> > > > > by include/acpi/platform/acenv.h for some reason when building
-> > > > > this module.
-> > > >
-> > > > If this one getting it wrong all will do so , they all just include
-> > <linux/acpi.h>.
-> > > >
-> > > > Probably not so much users will notice that , I just did because my
-> > > > BIOS vendor forgot DEBUG around.
-> > >
-> > > Do you still get this issue after doing make clean and rebuilding your
-> > kernel?
-> >
-> > A clean build from tarball has this issue for me. I don't think is a building
-> > problem , any <5.1 kernel is fine , kernel 5.1 with your commit reverted is fine
-> > too , kernel 5.1 with your commit in but the removed hunk in bus.c re-added
-> > is fine also.
->
-> I took a closer look. This was an obvious mistake on my part. Thanks for catching it.
->
-> The following should fix it:
->
+On 5/7/19 2:06 PM, Guenter Roeck wrote:
+> On Tue, May 07, 2019 at 12:35:02PM -0700, Florian Fainelli wrote:
+>> Provide a simple macro that can return the value of 10 raised to a
+>> positive integer. We are going to use this in order to scale units from
+>> firmware to HWMON.
+>>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>> ---
+>>  include/linux/kernel.h | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+>> index 2d14e21c16c0..62fc8bd84bc9 100644
+>> --- a/include/linux/kernel.h
+>> +++ b/include/linux/kernel.h
+>> @@ -294,6 +294,17 @@ static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
+>>  	return (u32)(((u64) val * ep_ro) >> 32);
+>>  }
+>>  
+>> +/* Return in f the value of 10 raise to the power x */
+>> +#define __pow10(x, f)(					\
+>> +{							\
+>> +	typeof(x) __x = abs(x);				\
+>> +	f = 1;						\
+>> +	while (__x--)					\
+>> +		f *= 10;				\
+>> +	f;						\
+>> +}							\
+>> +)
+> 
+> Kind of unusual. I would have expected to use this like
+> 	f = __pow10(x);
+> ie without having to provide f as parameter. That would be much less
+> confusing. I assume this is to make the result type independent, but
+> I am not sure if that is worth the trouble.
 
-I can confirm it does fix the bug , thx.
+Correct, that was the intent here.
 
+> 
+> Are there users outside the hwmon code ? If not, it might be simpler
+> to keep it there for now.
 
-> diff --git a/include/acpi/platform/aclinux.h b/include/acpi/platform/aclinux.h
-> index 624b90b34085..70b55b8fe48b 100644
-> --- a/include/acpi/platform/aclinux.h
-> +++ b/include/acpi/platform/aclinux.h
-> @@ -66,6 +66,12 @@
->
->  #define ACPI_INIT_FUNCTION __init
->
-> +
-> +/* Use a specific bugging default separate from ACPICA */
-> +
-> +#undef ACPI_DEBUG_DEFAULT
-> +#define ACPI_DEBUG_DEFAULT          (ACPI_LV_INFO | ACPI_LV_REPAIR)
-> +
->  #ifndef CONFIG_ACPI
->
->  /* External globals for __KERNEL__, stubs is needed */
-> @@ -82,11 +88,6 @@
->  #define ACPI_NO_ERROR_MESSAGES
->  #undef ACPI_DEBUG_OUTPUT
->
-> -/* Use a specific bugging default separate from ACPICA */
-> -
-> -#undef ACPI_DEBUG_DEFAULT
-> -#define ACPI_DEBUG_DEFAULT          (ACPI_LV_INFO | ACPI_LV_REPAIR)
-> -
->  /* External interface for __KERNEL__, stub is needed */
->
->  #define ACPI_EXTERNAL_RETURN_STATUS(prototype) \
+There appears to be a few outside actually:
+
+drivers/acpi/sbs.c::battery_scale
+drivers/iio/common/hid-sensors/hid-sensor-attributes.c::pow_10
+
+There could be others but those two came out as obvious candidates.
+
+Would you be okay with a local pow10 function within scmi-hwmon.c and a
+subsequent patch series providing a common function?
+-- 
+Florian
