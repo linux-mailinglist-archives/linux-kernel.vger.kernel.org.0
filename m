@@ -2,209 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D42F15ED8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E6C15EE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:12:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfEGIKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:10:52 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:26552 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbfEGIKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:10:51 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 4160247459E102E887A2;
-        Tue,  7 May 2019 16:10:49 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x478AhC4054488;
-        Tue, 7 May 2019 16:10:43 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019050716105055-10087609 ;
-          Tue, 7 May 2019 16:10:50 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        cocci@systeme.lip6.fr
-Subject: [PATCH] coccinelle: semantic patch for missing of_node_put
-Date:   Tue, 7 May 2019 16:12:24 +0800
-Message-Id: <1557216744-25339-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-05-07 16:10:50,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-05-07 16:10:37,
-        Serialize complete at 2019-05-07 16:10:37
-X-MAIL: mse-fl2.zte.com.cn x478AhC4054488
+        id S1727144AbfEGIMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:12:50 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44054 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfEGIMu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 04:12:50 -0400
+Received: by mail-lj1-f195.google.com with SMTP id c6so8030921lji.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 01:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3hq9FSGG02VY06FlEFLrIkkrfLPXKNPAfTz/bP6Jco8=;
+        b=dmxNIGNrK286lTwLeNhvSglENwlRHGAUuMY7NMTexs5jIQmgcP4QFfDbaerm46jT33
+         j/5cAT2yGKZUvNjqWt1YCoOisGXwegMPYPqsz83NlKForf9OuHlsO4gew3nUZE84cPuG
+         KoI7MtZZ27ER876p8ZAMqWs6hniSq4XiLOTD0LJKk4H87VhypXP3LhJlfRndK1emedSl
+         +eoH9QsQmeXqRvTiniNtNjSubZWax0bE4b0xb05MKO3TiYCdnxrBGyH5hhqb4ssuHDb0
+         5pbbDbDxELxK2Pr8dZ5EGjS7LYJdYDIedLbUzqqvYJBrQ2uCLYiuY88/EUjta8KLjfoC
+         gmmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3hq9FSGG02VY06FlEFLrIkkrfLPXKNPAfTz/bP6Jco8=;
+        b=L1i3m+ZQCdmYRwQOlzNjXcXxZya0QSrv2Qr+tUy9FCjSHj3Z34I7LromzH300p5R2l
+         1UndPzhuhsiqEaGmgxp+vP3RKJ+4B49OsG+Sl5rl+N8aMnH+kMs/W39ufIR0tnnTlLvD
+         Fv3h6zYxv2Zuw4Gzw6EaHnQxi1kdsVl1jo4RzsYvcftYItL9BEegNYZbkDAq/IclnFox
+         aUdy6h6hfQFbtf5y7nMq/vNUYqSkB11U71uBwElGOkWxxgYqHpf96trvhh/U+lQDBKdl
+         07yp3+pUHEEPAvnOejSDFJQgUxJh2mU37gdXOqs1Z6ZL/9ww1K1jNXFsJ1YGWDz5FflT
+         zYGg==
+X-Gm-Message-State: APjAAAXFt5JdIAghgBPKclAJzRNBm6WnAn6D1Jta03dKSL65hzvhE1mD
+        78R/m4P1K5b9wcYrdTzg1ynX61b7QZ2twgKc5vhVNA==
+X-Google-Smtp-Source: APXvYqxh7UgOnP5AIFKlhkZ26FDOZnUL6zYLVAbc2rh5hj9GhsDGTp2ikFlg4LlDgqc/zkvcNfhMvwR4F4Gs1Tu2R6Y=
+X-Received: by 2002:a2e:1311:: with SMTP id 17mr16088273ljt.75.1557216768150;
+ Tue, 07 May 2019 01:12:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190506143051.102535767@linuxfoundation.org>
+In-Reply-To: <20190506143051.102535767@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 7 May 2019 13:42:36 +0530
+Message-ID: <CA+G9fYveekDik6yESocHSA46poeLKKVExjx0KkMyLin_Cvf7-Q@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/62] 4.9.174-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_parse_phandle()/of_find_node_by_name() ... returns a node
-pointer with refcount incremented thus it must be explicitly decremented
-after the last usage.
+On Mon, 6 May 2019 at 20:18, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.174 release.
+> There are 62 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed 08 May 2019 02:29:15 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.174-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This SmPL is also looking for places where there is an of_node_put on
-some path but not on others.
+The results from 4.9.174-rc2,
 
-Suggested-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>
-Cc: Nicolas Palix <nicolas.palix@imag.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: cocci@systeme.lip6.fr
----
- scripts/coccinelle/free/of_node_put.cocci | 133 ++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 scripts/coccinelle/free/of_node_put.cocci
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/scripts/coccinelle/free/of_node_put.cocci b/scripts/coccinelle/free/of_node_put.cocci
-new file mode 100644
-index 0000000..304293c
---- /dev/null
-+++ b/scripts/coccinelle/free/of_node_put.cocci
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Find missing of_node_put
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2018-2019 Wen Yang, ZTE.
-+// Comments:
-+// Options: --no-includes --include-headers
-+
-+virtual report
-+virtual org
-+
-+@initialize:python@
-+@@
-+
-+msg_prefix = "ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line "
-+msg_suffix = ", but without a corresponding object release within this function."
-+
-+seen = set()
-+
-+def add_if_not_present (p1, p2):
-+    if (p1, p2) not in seen:
-+        seen.add((p1, p2))
-+        return True
-+    return False
-+
-+@r1 exists@
-+local idexpression struct device_node *x;
-+expression e, e1;
-+position p1, p2;
-+identifier f;
-+statement S;
-+type T;
-+@@
-+
-+(
-+x = f@p1(...);
-+... when != e = (T)x
-+    when any
-+    when != true x == NULL
-+    when != of_node_put(x)
-+    when != of_get_next_parent(x)
-+    when != of_find_matching_node(x, ...)
-+    when != if (x) { ... of_node_put(x) ... }
-+    when != if (x) { ... return x; }
-+    when != v4l2_async_notifier_add_fwnode_subdev(<...x...>)
-+    when != e1 = of_fwnode_handle(x)
-+(
-+if (x) { ... when forall
-+         of_node_put(x) ... }
-+|
-+return x;
-+|
-+return of_fwnode_handle(x);
-+|
-+return@p2 ...;
-+)
-+&
-+x = f(...)
-+...
-+if (<+...x...+>) S
-+...
-+of_node_put(x);
-+)
-+
-+@script:python depends on report && r1@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+if(add_if_not_present(p1[0].line, p2[0].line)):
-+  coccilib.report.print_report(p2[0], msg_prefix + p1[0].line + msg_suffix)
-+
-+@script:python depends on org && r1@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+cocci.print_main("acquired a node pointer with refcount incremented", p1)
-+cocci.print_secs("needed of_node_put", p2)
-+
-+@r2 exists@
-+local idexpression struct device_node *x;
-+expression e, e1;
-+position p1, p2;
-+statement S;
-+type T;
-+@@
-+
-+x = @p1\(of_find_compatible_node\|of_find_node_by_name\|of_parse_phandle\|
-+    of_find_node_by_type\|of_find_node_by_name\|of_find_all_nodes\|
-+    of_get_cpu_node\|of_get_parent\|of_get_next_parent\|
-+    of_get_next_child\|of_get_next_available_child\|of_get_next_cpu_node\|
-+    of_get_compatible_child\|of_get_child_by_name\|of_find_node_opts_by_path\|
-+    of_find_node_with_property\|of_find_matching_node_and_match\|of_find_node_by_phandle\|
-+    of_parse_phandle\)(...);
-+...
-+if (x == NULL || ...) S
-+... when != e = (T)x
-+    when any
-+    when != true x == NULL
-+    when != of_node_put(x)
-+    when != of_get_next_parent(x)
-+    when != of_find_matching_node(x, ...)
-+    when != if (x) { ... of_node_put(x) ... }
-+    when != if (x) { ... return x; }
-+    when != v4l2_async_notifier_add_fwnode_subdev(<...x...>)
-+    when != e1 = of_fwnode_handle(x)
-+(
-+if (x) { ... when forall
-+         of_node_put(x) ... }
-+|
-+return x;
-+|
-+return of_fwnode_handle(x);
-+|
-+return@p2 ...;
-+)
-+
-+@script:python depends on report && r2@
-+p1 << r2.p1;
-+p2 << r2.p2;
-+@@
-+
-+if(add_if_not_present(p1[0].line, p2[0].line)):
-+  coccilib.report.print_report(p2[0], msg_prefix + p1[0].line + msg_suffix)
-+
-+@script:python depends on org && r2@
-+p1 << r2.p1;
-+p2 << r2.p2;
-+@@
-+
-+cocci.print_main("acquired a node pointer with refcount incremented", p1)
-+cocci.print_secs("needed of_node_put", p2)
--- 
-2.9.5
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.9.174-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 43d95ffd279c80b33fcc2c0b327c1195e3331185
+git describe: v4.9.173-61-g43d95ffd279c
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.173-61-g43d95ffd279c
+
+No regressions (compared to build v4.9.173)
+
+No fixes (compared to build v4.9.173)
+
+Ran 23406 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* kvm-unit-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
