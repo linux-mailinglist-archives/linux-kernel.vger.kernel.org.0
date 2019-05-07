@@ -2,81 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6010116DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2562216DD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 01:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfEGXcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726513AbfEGXcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 19:32:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfEGXcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 7 May 2019 19:32:13 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:42137 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726276AbfEGXcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 19:32:12 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x47NW8Nx014155
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 May 2019 19:32:09 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 1CE9A420024; Tue,  7 May 2019 19:32:08 -0400 (EDT)
-Date:   Tue, 7 May 2019 19:32:08 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] random changes for 5.2
-Message-ID: <20190507233208.GA28817@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3DE7204FD;
+        Tue,  7 May 2019 23:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557271932;
+        bh=L7g4Lilcm1/YGr3V/gsofl8sG/YJE+vd1ca/w3DLfsA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Go474YudmVWHyYGAo8j2S+CHmWKPwqetHfQcqT4vGQxdvo/V7AcNmkkHB3WKMMoxN
+         Xmg90IGH7g7triujtfpHN4mVOMKd8QzGWdmXXGJFFbm0ArcsdcO7R2ghNxAoRyqoOZ
+         TVlZ25/iEL2nE/mVlRM3GWrTB/lb4JJVKOX7NCx0=
+Date:   Tue, 7 May 2019 18:32:10 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>
+Subject: Re: [PATCH v5 0/5] PCI: Patch series to support Thunderbolt without
+ any BIOS support
+Message-ID: <20190507233209.GH156478@google.com>
+References: <PS2P216MB064229018EE9B0CE03EE274380370@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <PS2P216MB064229018EE9B0CE03EE274380370@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit dc4060a5dc2557e6b5aa813bf5b73677299d62d2:
+On Sun, May 05, 2019 at 02:40:20PM +0000, Nicholas Johnson wrote:
+> Since PATCH v4:
+> 
+> I have added some of the evidence and bug reports into the applicable
+> patches.
+> 
+> Users of pci=hpmemsize should not notice any changes in functionality
+> with this patch series when upgrading the kernel. I realised I could
+> make the variable to achieve this reside in pci_setup, rather than
+> globally.
+> 
+> Please let me know if anything else needs changing.
+> 
+> Nicholas Johnson (5):
+>   PCI: Consider alignment of hot-added bridges when distributing
+>     resources
+>   PCI: Modify extend_bridge_window() to set resource size directly
+>   PCI: Fix bug resulting in double hpmemsize being assigned to MMIO
+>     window
+>   PCI: Add pci=hpmemprefsize parameter to set MMIO_PREF size
+>     independently
 
-  Linux 5.1-rc5 (2019-04-14 15:17:41 -0700)
+I didn't have time to go through the actual important stuff above,
 
-are available in the Git repository at:
+>   PCI: Cleanup block comments in setup-bus.c to match kernel style
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git tags/random_for_linus
+but I applied this one to pci/trivial for v5.2 to get it out of the
+way for the next cycle.
 
-for you to fetch changes up to b7d5dc21072cda7124d13eae2aefb7343ef94197:
+I also have patches from Logan and Mika in the same area, so I'll have
+to look at all of these together.
 
-  random: add a spinlock_t to struct batched_entropy (2019-04-20 00:09:56 -0400)
-
-----------------------------------------------------------------
-Initialize the random driver earler; fix CRNG initialization when we
-trust the CPU's RNG on NUMA systems; other miscellaneous cleanups and
-fixes.
-
-----------------------------------------------------------------
-George Spelvin (1):
-      random: document get_random_int() family
-
-Jon DeVree (1):
-      random: fix CRNG initialization when random.trust_cpu=1
-
-Kees Cook (1):
-      random: move rand_initialize() earlier
-
-Rasmus Villemoes (3):
-      drivers/char/random.c: constify poolinfo_table
-      drivers/char/random.c: remove unused stuct poolinfo::poolbits
-      drivers/char/random.c: make primary_crng static
-
-Sebastian Andrzej Siewior (1):
-      random: add a spinlock_t to struct batched_entropy
-
-Theodore Ts'o (1):
-      random: only read from /dev/random after its pool has received 128 bits
-
- drivers/char/random.c         | 199 +++++++++++++++++++++++++++++++++++++++++++++---------------------
- include/linux/random.h        |   1 +
- include/trace/events/random.h |  13 ++---
- init/main.c                   |  21 ++++---
- 4 files changed, 156 insertions(+), 78 deletions(-)
+>  .../admin-guide/kernel-parameters.txt         |   7 +-
+>  drivers/pci/pci.c                             |  18 +-
+>  drivers/pci/setup-bus.c                       | 568 +++++++++---------
+>  include/linux/pci.h                           |   3 +-
+>  4 files changed, 317 insertions(+), 279 deletions(-)
+> 
+> -- 
+> 2.19.1
+> 
