@@ -2,220 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60451609F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C18A21602F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfEGJSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:18:04 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:55720 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726505AbfEGJSD (ORCPT
+        id S1726496AbfEGJKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:10:07 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:40320 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbfEGJKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:18:03 -0400
-Received: from [85.158.142.200] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-3.bemta.az-b.eu-central-1.aws.symcld.net id BB/A7-24742-84D41DC5; Tue, 07 May 2019 09:18:00 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRWlGSWpSXmKPExsUyo1hfUtfd92K
-  MwYEpBhbH2p6wWzQvXs9mcXnXHDaLRctamR1YPDat6mTz2D93DbvH501yAcxRrJl5SfkVCawZ
-  Z7dNYyw4qVXx7dpJpgbGpSpdjFwcQgJrGCU2vX/L2sXIwcEmoCvRdce0i5GTQ0RAXmLW24uMI
-  DXMAvMZJY41djCDJIQFrCT6n21gB7FZBFQkfp78zQhi8wo4Six9tBusRkJATuLmuU5miLigxM
-  mZT1hAbGYBCYmDL14wg+wSEpCVOHopFqJcQeLslomMExh5ZiHpmIWkYwEj0ypGi6SizPSMktz
-  EzBxdQwMDXUNDY11TXWNjvcQq3SS91FLd5NS8kqJEoKReYnmxXnFlbnJOil5easkmRmDQpRSy
-  Ku5gnLM8/RCjJAeTkiiviP3FGCG+pPyUyozE4oz4otKc1OJDjDIcHEoSvHXeQDnBotT01Iq0z
-  Bxg+MOkJTh4lER440HSvMUFibnFmekQqVOMilLivNwgCQGQREZpHlwbLOYuMcpKCfMyMjAwCP
-  EUpBblZpagyr9iFOdgVBLmrQKZwpOZVwI3/RXQYiagxfM6zoEsLklESEk1MMrX7an8zrRCQeH
-  TYp1r0n62wQ3fRJ7d3TfRzO7uTM5OFUX/0v5Vy0/xeb4Kzjz13Oj3BX1xh1/ypi8scvWXWE89
-  Ys2bZ3HcbXFC/bmgzkMN3feuGG9RMn7PcCIjR+mB7fJAwdtvyl0OyLin6ZcrrJ8ruVCQizfh/
-  bzgR0/99u3edszk03N/byWW4oxEQy3mouJEANHTAp60AgAA
-X-Env-Sender: cst@phaseone.com
-X-Msg-Ref: server-22.tower-245.messagelabs.com!1557220679!5904377!1
-X-Originating-IP: [152.115.47.25]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 978 invoked from network); 7 May 2019 09:17:59 -0000
-Received: from unknown (HELO Exchange2.phaseone.com) (152.115.47.25)
-  by server-22.tower-245.messagelabs.com with AES256-SHA encrypted SMTP; 7 May 2019 09:17:59 -0000
-Received: from cstu16.phaseone.com (172.16.2.207) by Exchange2.phaseone.com
- (172.16.1.180) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 7 May
- 2019 11:17:58 +0200
-From:   "Claus H. Stovgaard" <cst@phaseone.com>
-To:     <linux-usb@vger.kernel.org>
-CC:     "Claus H. Stovgaard" <cst@phaseone.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] usb: gadget: configfs: Add lpm_Ux_disable
-Date:   Tue, 7 May 2019 11:09:43 +0200
-Message-ID: <1557220655-123090-1-git-send-email-cst@phaseone.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 7 May 2019 05:10:07 -0400
+Received: by mail-it1-f199.google.com with SMTP id d12so693580itl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:10:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=wGj8QD5gKJW43OuUYpH6pO7J5gHO+g1GMqUge+gSVCw=;
+        b=irwaotWyBI4H0FoZPJ9qvq+74T8LcH8X3ZqRCZfQbiqVkUpmQFLh26W31Xl7H/Bx41
+         /hta7yBPEKt4q0rXg+PXjsuNlBKMMzp3BYiUtm6DQ+zl/ZYykWsDaim61YUAzW3jSgD7
+         MLJTRWSag/+356prDctobZUGed7a7gsXZsRw80UY9hEQ0GfFZCbMgKaImUJsCdieG2Gv
+         EFaCwhOm7/8K0HWbvKR8A5Qad5J4az7YLo3cJC7RMFbyd+0f341Nf8Xy+KNtEv3m6qJE
+         lZylKVzoTWAOrEoPpo+3sFAC0Tdfi4tVpf1n0TjjDGhMBI+1i0nj4jNKPKvf5J/Sn3gN
+         VHmQ==
+X-Gm-Message-State: APjAAAW29M3LEjKRX7rp/BHEIbd2aEGmoqhHE5FW+rOW7+78MoW5hUeM
+        dvUYm/63VVYv2ez7qhCzQGLe1yQFWJs5lkfUD4q1C0dkLR2v
+X-Google-Smtp-Source: APXvYqxDW5QCZU/EC3UQeUBZbnYC491FuIKbQhdZyD6oz6ReScipKY22VF2GVnlNUccnTQrfJH2EAiIxRFO/ATvrnpwvlaT00zLt
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.2.207]
+X-Received: by 2002:a24:7595:: with SMTP id y143mr7969814itc.42.1557220205903;
+ Tue, 07 May 2019 02:10:05 -0700 (PDT)
+Date:   Tue, 07 May 2019 02:10:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000035c756058848954a@google.com>
+Subject: KASAN: use-after-free Read in hci_cmd_timeout
+From:   syzbot <syzbot+19a9f729f05272857487@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marcel@holtmann.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When combining dwc3 with an redriver for a USB Type-C device solution, it
-sometimes have problems with leaving U1/U2 for certain hosts, resulting in
-link training errors and reconnects. This create an interface via
-configfs for disabling U1/U2, enabling a workaround for devices based on
-dwc3.
+Hello,
 
-Signed-off-by: Claus H. Stovgaard <cst@phaseone.com>
+syzbot found the following crash on:
+
+HEAD commit:    83a50840 Merge tag 'seccomp-v5.1-rc8' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b99b60a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ef1b87b455c397cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=19a9f729f05272857487
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+19a9f729f05272857487@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in hci_cmd_timeout+0x212/0x220  
+net/bluetooth/hci_core.c:2617
+Read of size 2 at addr ffff88809fa9ca08 by task kworker/1:1/22
+
+CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.1.0-rc7+ #94
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events hci_cmd_timeout
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load_n_noabort+0xf/0x20 mm/kasan/generic_report.c:142
+  hci_cmd_timeout+0x212/0x220 net/bluetooth/hci_core.c:2617
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 8319:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_kmalloc mm/kasan/common.c:497 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:470
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:511
+  __do_kmalloc_node mm/slab.c:3687 [inline]
+  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3701
+  __kmalloc_reserve.isra.0+0x40/0xf0 net/core/skbuff.c:140
+  __alloc_skb+0x10b/0x5e0 net/core/skbuff.c:208
+  alloc_skb include/linux/skbuff.h:1058 [inline]
+  bt_skb_alloc include/net/bluetooth/bluetooth.h:339 [inline]
+  hci_prepare_cmd+0x30/0x230 net/bluetooth/hci_request.c:287
+  hci_req_add_ev+0xb0/0x210 net/bluetooth/hci_request.c:321
+  __hci_cmd_sync_ev+0xfc/0x1c0 net/bluetooth/hci_request.c:133
+  __hci_cmd_sync+0x37/0x50 net/bluetooth/hci_request.c:182
+  btintel_enter_mfg+0x2e/0x90 drivers/bluetooth/btintel.c:82
+  ag6xx_setup+0x106/0x820 drivers/bluetooth/hci_ag6xx.c:180
+  hci_uart_setup+0x1c4/0x490 drivers/bluetooth/hci_ldisc.c:418
+  hci_dev_do_open+0x78c/0x1780 net/bluetooth/hci_core.c:1450
+  hci_power_on+0x10d/0x580 net/bluetooth/hci_core.c:2173
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Freed by task 8319:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:459
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:467
+  __cache_free mm/slab.c:3499 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3822
+  skb_free_head+0x93/0xb0 net/core/skbuff.c:557
+  skb_release_data+0x576/0x7a0 net/core/skbuff.c:577
+  skb_release_all+0x4d/0x60 net/core/skbuff.c:631
+  __kfree_skb net/core/skbuff.c:645 [inline]
+  kfree_skb net/core/skbuff.c:663 [inline]
+  kfree_skb+0xe8/0x390 net/core/skbuff.c:657
+  hci_dev_do_open+0xb2b/0x1780 net/bluetooth/hci_core.c:1552
+  hci_power_on+0x10d/0x580 net/bluetooth/hci_core.c:2173
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff88809fa9ca00
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 8 bytes inside of
+  512-byte region [ffff88809fa9ca00, ffff88809fa9cc00)
+The buggy address belongs to the page:
+page:ffffea00027ea700 count:1 mapcount:0 mapping:ffff8880aa400940 index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00023039c8 ffffea00026f9488 ffff8880aa400940
+raw: 0000000000000000 ffff88809fa9c000 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809fa9c900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809fa9c980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88809fa9ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                       ^
+  ffff88809fa9ca80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809fa9cb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/usb/dwc3/ep0.c        |  9 ++++++-
- drivers/usb/gadget/configfs.c | 56 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/usb/gadget.h    |  6 ++++-
- 3 files changed, 69 insertions(+), 2 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
-index 8efde17..5b2d26b 100644
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@ -379,6 +379,8 @@ static int dwc3_ep0_handle_u1(struct dwc3 *dwc, enum usb_device_state state,
- 	if ((dwc->speed != DWC3_DSTS_SUPERSPEED) &&
- 			(dwc->speed != DWC3_DSTS_SUPERSPEED_PLUS))
- 		return -EINVAL;
-+	if (dwc->gadget_driver->lpm_U1_disable)
-+		return -EINVAL;
- 
- 	reg = dwc3_readl(dwc->regs, DWC3_DCTL);
- 	if (set)
-@@ -401,6 +403,8 @@ static int dwc3_ep0_handle_u2(struct dwc3 *dwc, enum usb_device_state state,
- 	if ((dwc->speed != DWC3_DSTS_SUPERSPEED) &&
- 			(dwc->speed != DWC3_DSTS_SUPERSPEED_PLUS))
- 		return -EINVAL;
-+	if (dwc->gadget_driver->lpm_U2_disable)
-+		return -EINVAL;
- 
- 	reg = dwc3_readl(dwc->regs, DWC3_DCTL);
- 	if (set)
-@@ -626,7 +630,10 @@ static int dwc3_ep0_set_config(struct dwc3 *dwc, struct usb_ctrlrequest *ctrl)
- 			 * nothing is pending from application.
- 			 */
- 			reg = dwc3_readl(dwc->regs, DWC3_DCTL);
--			reg |= (DWC3_DCTL_ACCEPTU1ENA | DWC3_DCTL_ACCEPTU2ENA);
-+			if (!dwc->gadget_driver->lpm_U1_disable)
-+				reg |= DWC3_DCTL_ACCEPTU1ENA;
-+			if (!dwc->gadget_driver->lpm_U2_disable)
-+				reg |= DWC3_DCTL_ACCEPTU2ENA;
- 			dwc3_writel(dwc->regs, DWC3_DCTL, reg);
- 		}
- 		break;
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 0251299..2ee9d10 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -229,6 +229,56 @@ static ssize_t gadget_dev_desc_bcdUSB_store(struct config_item *item,
- 	return len;
- }
- 
-+static ssize_t gadget_dev_desc_lpm_U1_disable_show(struct config_item *item,
-+		char *page)
-+{
-+	struct gadget_info *gi = to_gadget_info(item);
-+
-+	return sprintf(page, "%d\n",
-+		       gi->composite.gadget_driver.lpm_U1_disable);
-+}
-+
-+static ssize_t gadget_dev_desc_lpm_U1_disable_store(struct config_item *item,
-+		const char *page, size_t len)
-+{
-+	struct gadget_info *gi = to_gadget_info(item);
-+	bool disable;
-+	int ret;
-+
-+	ret = strtobool(page, &disable);
-+	if (!ret) {
-+		gi->composite.gadget_driver.lpm_U1_disable = disable;
-+		ret = len;
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t gadget_dev_desc_lpm_U2_disable_show(struct config_item *item,
-+		char *page)
-+{
-+	struct gadget_info *gi = to_gadget_info(item);
-+
-+	return sprintf(page, "%d\n",
-+		       gi->composite.gadget_driver.lpm_U2_disable);
-+}
-+
-+static ssize_t gadget_dev_desc_lpm_U2_disable_store(struct config_item *item,
-+		const char *page, size_t len)
-+{
-+	struct gadget_info *gi = to_gadget_info(item);
-+	bool disable;
-+	int ret;
-+
-+	ret = strtobool(page, &disable);
-+	if (!ret) {
-+		gi->composite.gadget_driver.lpm_U2_disable = disable;
-+		ret = len;
-+	}
-+
-+	return ret;
-+}
-+
- static ssize_t gadget_dev_desc_UDC_show(struct config_item *item, char *page)
- {
- 	char *udc_name = to_gadget_info(item)->composite.gadget_driver.udc_name;
-@@ -299,6 +349,8 @@ CONFIGFS_ATTR(gadget_dev_desc_, idVendor);
- CONFIGFS_ATTR(gadget_dev_desc_, idProduct);
- CONFIGFS_ATTR(gadget_dev_desc_, bcdDevice);
- CONFIGFS_ATTR(gadget_dev_desc_, bcdUSB);
-+CONFIGFS_ATTR(gadget_dev_desc_, lpm_U1_disable);
-+CONFIGFS_ATTR(gadget_dev_desc_, lpm_U2_disable);
- CONFIGFS_ATTR(gadget_dev_desc_, UDC);
- 
- static struct configfs_attribute *gadget_root_attrs[] = {
-@@ -310,6 +362,8 @@ static struct configfs_attribute *gadget_root_attrs[] = {
- 	&gadget_dev_desc_attr_idProduct,
- 	&gadget_dev_desc_attr_bcdDevice,
- 	&gadget_dev_desc_attr_bcdUSB,
-+	&gadget_dev_desc_attr_lpm_U1_disable,
-+	&gadget_dev_desc_attr_lpm_U2_disable,
- 	&gadget_dev_desc_attr_UDC,
- 	NULL,
- };
-@@ -1408,6 +1462,8 @@ static const struct usb_gadget_driver configfs_driver_template = {
- 		.name		= "configfs-gadget",
- 	},
- 	.match_existing_only = 1,
-+	.lpm_U1_disable = 0,
-+	.lpm_U2_disable = 0,
- };
- 
- static struct config_group *gadgets_make(
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 7595056..25fe72b 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -619,7 +619,9 @@ static inline int usb_gadget_activate(struct usb_gadget *gadget)
-  *	this driver will be bound to any available UDC.
-  * @pending: UDC core private data used for deferred probe of this driver.
-  * @match_existing_only: If udc is not found, return an error and don't add this
-- *      gadget driver to list of pending driver
-+ *      gadget driver to list of pending driver.
-+ * @lpm_U1_disable: Instruct the UDC to disable U1 if possible.
-+ * @lpm_U2_disable: Instruct the UDC to disable U2 if possible.
-  *
-  * Devices are disabled till a gadget driver successfully bind()s, which
-  * means the driver will handle setup() requests needed to enumerate (and
-@@ -684,6 +686,8 @@ struct usb_gadget_driver {
- 	char			*udc_name;
- 	struct list_head	pending;
- 	unsigned                match_existing_only:1;
-+	unsigned		lpm_U1_disable:1;
-+	unsigned		lpm_U2_disable:1;
- };
- 
- 
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
