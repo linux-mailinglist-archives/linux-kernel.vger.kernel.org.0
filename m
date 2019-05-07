@@ -2,352 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0577316845
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3755F16823
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfEGQoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:44:39 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:36094 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbfEGQoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:44:38 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id A3289A10AF;
-        Tue,  7 May 2019 18:44:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id hJ64cGgf98uT; Tue,  7 May 2019 18:44:29 +0200 (CEST)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S1727169AbfEGQnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:43:52 -0400
+Received: from mail-eopbgr730061.outbound.protection.outlook.com ([40.107.73.61]:6061
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726399AbfEGQnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 12:43:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M6VFbky3ymyVMrcNdfwd/tdxQTzdcc3pSaBPWG3vy6A=;
+ b=HjfFqM3UsXrd+Qok5En8MfdyZFNJ8bFZ/ag7iiAfSDoMlfaD2HVd8/vk2e886DFRBtJ+TT3XpBuvCWBJJa6jui9ZWygx9dU0JxWxGtJbUwcCiT+3Wj2iSHV0mYir9iaE8nwBWblnb2Bx71JtVjg1/XOjlANN7eigqBFyYAGn6gM=
+Received: from BYAPR12MB3176.namprd12.prod.outlook.com (20.179.92.82) by
+ BYAPR12MB3544.namprd12.prod.outlook.com (20.179.94.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Tue, 7 May 2019 16:43:44 +0000
+Received: from BYAPR12MB3176.namprd12.prod.outlook.com
+ ([fe80::9118:73f2:809c:22c7]) by BYAPR12MB3176.namprd12.prod.outlook.com
+ ([fe80::9118:73f2:809c:22c7%4]) with mapi id 15.20.1856.012; Tue, 7 May 2019
+ 16:43:44 +0000
+From:   "Kuehling, Felix" <Felix.Kuehling@amd.com>
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH v7 5/5] namei: resolveat(2) syscall
-Date:   Wed,  8 May 2019 02:43:17 +1000
-Message-Id: <20190507164317.13562-6-cyphar@cyphar.com>
-In-Reply-To: <20190507164317.13562-1-cyphar@cyphar.com>
-References: <20190507164317.13562-1-cyphar@cyphar.com>
+        Yishai Hadas <yishaih@mellanox.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        "Kuehling@google.com" <Kuehling@google.com>
+Subject: Re: [PATCH v15 11/17] drm/amdgpu, arm64: untag user pointers
+Thread-Topic: [PATCH v15 11/17] drm/amdgpu, arm64: untag user pointers
+Thread-Index: AQHVBCkwhlWrfC6yEUGolKUQ2UvD0qZf37iA
+Date:   Tue, 7 May 2019 16:43:44 +0000
+Message-ID: <f452d003-157d-c307-3a27-fe5c3394e34e@amd.com>
+References: <cover.1557160186.git.andreyknvl@google.com>
+ <84676a97cec129eb7a10559ceae2bec526160ad6.1557160186.git.andreyknvl@google.com>
+In-Reply-To: <84676a97cec129eb7a10559ceae2bec526160ad6.1557160186.git.andreyknvl@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [165.204.55.251]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+x-clientproxiedby: YTXPR0101CA0068.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b00:1::45) To BYAPR12MB3176.namprd12.prod.outlook.com
+ (2603:10b6:a03:133::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Felix.Kuehling@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 09e7b200-0034-47ca-9971-08d6d30b2b1a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:BYAPR12MB3544;
+x-ms-traffictypediagnostic: BYAPR12MB3544:
+x-microsoft-antispam-prvs: <BYAPR12MB3544ED1AEDC3F608873090EF92310@BYAPR12MB3544.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0030839EEE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(346002)(136003)(39860400002)(189003)(199004)(72206003)(71190400001)(2501003)(316002)(76176011)(386003)(36756003)(81166006)(53546011)(66066001)(476003)(81156014)(6506007)(14454004)(8936002)(478600001)(52116002)(102836004)(486006)(2906002)(8676002)(65956001)(31696002)(65806001)(68736007)(25786009)(5660300002)(186003)(2616005)(6116002)(6246003)(66446008)(73956011)(11346002)(86362001)(446003)(66476007)(64756008)(2201001)(66946007)(26005)(4326008)(31686004)(71200400001)(6512007)(66556008)(53936002)(229853002)(64126003)(58126008)(54906003)(305945005)(6486002)(7406005)(7416002)(256004)(14444005)(99286004)(65826007)(7736002)(110136005)(6436002)(3846002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3544;H:BYAPR12MB3176.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fHcoZnbq9hf2cYkyJCy1IaiD/PM1Vj0DJH3jKfi+aVbuz0nKby+qIya9Jvj61fxNkWgd6wJ2TZFhOMWgIRoBLMBanxM859JGflQ59K+s8RFNIct8hJsIwJ6VE53EniVRTEiOJ71+THdgKc4UuaglK/w1gwDkEDO7Sz49xcdNMo+B6a1Kwr99TuQBUx3qSeFHEqTixIo1etZTz3A69eG9Ssn5u7UWxbSNv847Lm/d0RBKzL7aXwFTQKty6oCOW3GeQJo76qimZ4rrx1r9hK9R4O+yyTEBt8IJttn3Qr0DA58jGDFXtmL/ImI4mjiXUDqyGS6xQ/i5qRjq1gb0r/8PxTNgenUEyN8djedX6sU93fV22s1Ch5Wxi6pvsOW9dF1SwO5fO/xjwavNzjJfY3hmjA==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D2B88B58BE4D1C41BB18133F73BDE5B9@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09e7b200-0034-47ca-9971-08d6d30b2b1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 16:43:44.3320
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3544
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The most obvious syscall to add support for the new LOOKUP_* scoping
-flags would be openat(2) (along with the required execveat(2) change
-included in this series). However, there are a few reasons to not do
-this:
-
- * The new LOOKUP_* flags are intended to be security features, and
-   openat(2) will silently ignore all unknown flags. This means that
-   users would need to avoid foot-gunning themselves constantly when
-   using this interface if it were part of openat(2).
-
- * Resolution scoping feels like a different operation to the existing
-   O_* flags. And since openat(2) has limited flag space, it seems to be
-   quite wasteful to clutter it with 5 flags that are all
-   resolution-related. Arguably O_NOFOLLOw is also a resolution flag but
-   its entire purpose is to error out if you encounter a trailing
-   symlink not to scope resolution.
-
- * Other systems would be able to reimplement this syscall allowing for
-   cross-OS standardisation rather than being hidden amongst O_* flags
-   which may result in it not being used by all the parties that might
-   want to use it (file servers, web servers, container runtimes, etc).
-
- * It gives us the opportunity to iterate on the O_PATH interface in the
-   future. There are some potential security improvements that can be
-   made to O_PATH (handling /proc/self/fd re-opening of file descriptors
-   much more sanely) which could be made even better with some other
-   bits (such as ACC_MODE bits which work for O_PATH).
-
-To this end, we introduce the resolveat(2) syscall. At the moment it's
-effectively another way of getting a bog-standard O_PATH descriptor but
-with the ability to use the new LOOKUP_* flags.
-
-Because resolveat(2) only provides the ability to get O_PATH
-descriptors, users will need to get creative with /proc/self/fd in order
-to get a usable file descriptor for other uses. However, in future we
-can add O_EMPTYPATH support to openat(2) which would allow for
-re-opening without procfs (though as mentioned above there are some
-security improvements that should be made to the interfaces).
-
-NOTE: This patch adds the syscall to all architectures using the new
-      unified syscall numbering, but several architectures are missing
-      newer (nr > 423) syscalls -- hence the uneven gaps in the syscall
-      tables.
-
-Cc: Christian Brauner <christian@brauner.io>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
- arch/arm/tools/syscall.tbl                  |  1 +
- arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
- arch/s390/kernel/syscalls/syscall.tbl       |  1 +
- arch/sh/kernel/syscalls/syscall.tbl         |  1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
- fs/namei.c                                  | 46 +++++++++++++++++++++
- include/uapi/linux/fcntl.h                  | 13 ++++++
- 18 files changed, 75 insertions(+)
-
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 63ed39cbd3bd..72f431b1dc9c 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -461,5 +461,6 @@
- 530	common	getegid				sys_getegid
- 531	common	geteuid				sys_geteuid
- 532	common	getppid				sys_getppid
-+533	common	resolveat			sys_resolveat
- # all other architectures have common numbers for new syscall, alpha
- # is the exception.
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 9016f4081bb9..1bc0282a67f7 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -437,3 +437,4 @@
- 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
- 422	common	futex_time64			sys_futex
- 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index ab9cda5f6136..d3ae73ffaf48 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -344,3 +344,4 @@
- 332	common	pkey_free			sys_pkey_free
- 333	common	rseq				sys_rseq
- # 334 through 423 are reserved to sync up with other architectures
-+428	common	resolveat			sys_resolveat
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 125c14178979..81b7389e9e58 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -423,3 +423,4 @@
- 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
- 422	common	futex_time64			sys_futex
- 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 8ee3a8c18498..626aed10e2b5 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -429,3 +429,4 @@
- 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
- 422	common	futex_time64			sys_futex
- 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 15f4117900ee..8cbd6032d6bf 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -362,3 +362,4 @@
- 421	n32	rt_sigtimedwait_time64		compat_sys_rt_sigtimedwait_time64
- 422	n32	futex_time64			sys_futex
- 423	n32	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	n32	resolveat			sys_resolveat
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index c85502e67b44..234923a1fc88 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -338,3 +338,4 @@
- 327	n64	rseq				sys_rseq
- 328	n64	io_pgetevents			sys_io_pgetevents
- # 329 through 423 are reserved to sync up with other architectures
-+428	n64	resolveat			sys_resolveat
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 2e063d0f837e..7b4586acf35d 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -411,3 +411,4 @@
- 421	o32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
- 422	o32	futex_time64			sys_futex			sys_futex
- 423	o32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-+428	o32	resolveat			sys_resolveat			sys_resolveat
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index b26766c6647d..19a9a92dc5f8 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -420,3 +420,4 @@
- 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
- 422	32	futex_time64			sys_futex			sys_futex
- 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat			sys_resolveat
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index b18abb0c3dae..bfcd75b928de 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -505,3 +505,4 @@
- 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
- 422	32	futex_time64			sys_futex			sys_futex
- 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat			sys_resolveat
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 02579f95f391..084e51f02e65 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -426,3 +426,4 @@
- 421	32	rt_sigtimedwait_time64	-				compat_sys_rt_sigtimedwait_time64
- 422	32	futex_time64		-				sys_futex
- 423	32	sched_rr_get_interval_time64	-			sys_sched_rr_get_interval
-+428	common	resolveat		sys_resolveat			-
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index bfda678576e4..e9115c5cec72 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -426,3 +426,4 @@
- 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
- 422	common	futex_time64			sys_futex
- 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index b9a5a04b2d2c..2d3fdd913d89 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -469,3 +469,4 @@
- 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
- 422	32	futex_time64			sys_futex			sys_futex
- 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat			sys_resolveat
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 4cd5f982b1e5..101feef22473 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -438,3 +438,4 @@
- 425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
- 426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
- 427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
-+428	i386	resolveat		sys_resolveat			__ia32_sys_resolveat
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 64ca0d06259a..c7c197bf07bc 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -355,6 +355,7 @@
- 425	common	io_uring_setup		__x64_sys_io_uring_setup
- 426	common	io_uring_enter		__x64_sys_io_uring_enter
- 427	common	io_uring_register	__x64_sys_io_uring_register
-+428	common	resolveat		__x64_sys_resolveat
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 6af49929de85..86c44f15dfa4 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -394,3 +394,4 @@
- 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
- 422	common	futex_time64			sys_futex
- 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
-+428	common	resolveat			sys_resolveat
-diff --git a/fs/namei.c b/fs/namei.c
-index 2b6a1bf4e745..2cc5b171f6ec 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3656,6 +3656,52 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
- 	return filp;
- }
- 
-+SYSCALL_DEFINE3(resolveat, int, dfd, const char __user *, path,
-+		unsigned long, flags)
-+{
-+	int fd;
-+	struct filename *tmp;
-+	struct open_flags op = {
-+		.open_flag = O_PATH,
-+	};
-+
-+	if (flags & ~VALID_RESOLVE_FLAGS)
-+		return -EINVAL;
-+
-+	if (flags & RESOLVE_CLOEXEC)
-+		op.open_flag |= O_CLOEXEC;
-+	if (!(flags & RESOLVE_NOFOLLOW))
-+		op.lookup_flags |= LOOKUP_FOLLOW;
-+	if (flags & RESOLVE_BENEATH)
-+		op.lookup_flags |= LOOKUP_BENEATH;
-+	if (flags & RESOLVE_XDEV)
-+		op.lookup_flags |= LOOKUP_XDEV;
-+	if (flags & RESOLVE_NO_MAGICLINKS)
-+		op.lookup_flags |= LOOKUP_NO_MAGICLINKS;
-+	if (flags & RESOLVE_NO_SYMLINKS)
-+		op.lookup_flags |= LOOKUP_NO_SYMLINKS;
-+	if (flags & RESOLVE_IN_ROOT)
-+		op.lookup_flags |= LOOKUP_IN_ROOT;
-+
-+	tmp = getname(path);
-+	if (IS_ERR(tmp))
-+		return PTR_ERR(tmp);
-+
-+	fd = get_unused_fd_flags(op.open_flag);
-+	if (fd >= 0) {
-+		struct file *f = do_filp_open(dfd, tmp, &op);
-+		if (IS_ERR(f)) {
-+			put_unused_fd(fd);
-+			fd = PTR_ERR(f);
-+		} else {
-+			fsnotify_open(f);
-+			fd_install(fd, f);
-+		}
-+	}
-+	putname(tmp);
-+	return fd;
-+}
-+
- struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- 		const char *name, const struct open_flags *op)
- {
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 1d338357df8a..c57245a21281 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -94,4 +94,17 @@
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
- 
- 
-+/* Bottom 3 bits of RESOLVE_* are reserved for future ACC_MODE extensions. */
-+#define RESOLVE_CLOEXEC		0x008 /* Set O_CLOEXEC on the returned fd. */
-+#define RESOLVE_NOFOLLOW	0x010 /* Don't follow trailing symlinks. */
-+
-+#define RESOLVE_RESOLUTION_TYPE	0x3E0 /* Type of path-resolution scoping we are applying. */
-+#define RESOLVE_BENEATH		0x020 /* - Block "lexical" trickery like "..", symlinks, absolute paths, etc. */
-+#define RESOLVE_XDEV		0x040 /* - Block mount-point crossings (includes bind-mounts). */
-+#define RESOLVE_NO_MAGICLINKS	0x080 /* - Block procfs-style "magic" symlinks. */
-+#define RESOLVE_NO_SYMLINKS	0x100 /* - Block all symlinks (implies AT_NO_MAGICLINKS). */
-+#define RESOLVE_IN_ROOT		0x200 /* - Scope ".." resolution to dirfd (like chroot(2)). */
-+
-+#define VALID_RESOLVE_FLAGS	(RESOLVE_CLOEXEC | RESOLVE_NOFOLLOW | RESOLVE_RESOLUTION_TYPE)
-+
- #endif /* _UAPI_LINUX_FCNTL_H */
--- 
-2.21.0
-
+T24gMjAxOS0wNS0wNiAxMjozMCBwLm0uLCBBbmRyZXkgS29ub3ZhbG92IHdyb3RlOg0KPiBbQ0FV
+VElPTjogRXh0ZXJuYWwgRW1haWxdDQo+DQo+IFRoaXMgcGF0Y2ggaXMgYSBwYXJ0IG9mIGEgc2Vy
+aWVzIHRoYXQgZXh0ZW5kcyBhcm02NCBrZXJuZWwgQUJJIHRvIGFsbG93IHRvDQo+IHBhc3MgdGFn
+Z2VkIHVzZXIgcG9pbnRlcnMgKHdpdGggdGhlIHRvcCBieXRlIHNldCB0byBzb21ldGhpbmcgZWxz
+ZSBvdGhlcg0KPiB0aGFuIDB4MDApIGFzIHN5c2NhbGwgYXJndW1lbnRzLg0KPg0KPiBJbiBhbWRn
+cHVfZ2VtX3VzZXJwdHJfaW9jdGwoKSBhbmQgYW1kZ3B1X2FtZGtmZF9ncHV2bS5jL2luaXRfdXNl
+cl9wYWdlcygpDQo+IGFuIE1NVSBub3RpZmllciBpcyBzZXQgdXAgd2l0aCBhICh0YWdnZWQpIHVz
+ZXJzcGFjZSBwb2ludGVyLiBUaGUgdW50YWdnZWQNCj4gYWRkcmVzcyBzaG91bGQgYmUgdXNlZCBz
+byB0aGF0IE1NVSBub3RpZmllcnMgZm9yIHRoZSB1bnRhZ2dlZCBhZGRyZXNzIGdldA0KPiBjb3Jy
+ZWN0bHkgbWF0Y2hlZCB1cCB3aXRoIHRoZSByaWdodCBCTy4gVGhpcyBwYXRjaCB1bnRhZyB1c2Vy
+IHBvaW50ZXJzIGluDQo+IGFtZGdwdV9nZW1fdXNlcnB0cl9pb2N0bCgpIGZvciB0aGUgR0VNIGNh
+c2UgYW5kIGluIGFtZGdwdV9hbWRrZmRfZ3B1dm1fDQo+IGFsbG9jX21lbW9yeV9vZl9ncHUoKSBm
+b3IgdGhlIEtGRCBjYXNlLiBUaGlzIGFsc28gbWFrZXMgc3VyZSB0aGF0IGFuDQo+IHVudGFnZ2Vk
+IHBvaW50ZXIgaXMgcGFzc2VkIHRvIGFtZGdwdV90dG1fdHRfZ2V0X3VzZXJfcGFnZXMoKSwgd2hp
+Y2ggdXNlcw0KPiBpdCBmb3Igdm1hIGxvb2t1cHMuDQo+DQo+IFN1Z2dlc3RlZC1ieTogS3VlaGxp
+bmcsIEZlbGl4IDxGZWxpeC5LdWVobGluZ0BhbWQuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbmRy
+ZXkgS29ub3ZhbG92IDxhbmRyZXlrbnZsQGdvb2dsZS5jb20+DQoNCkFja2VkLWJ5OiBGZWxpeCBL
+dWVobGluZyA8RmVsaXguS3VlaGxpbmdAYW1kLmNvbT4NCg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMv
+Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYyB8IDIgKy0NCj4gICBkcml2
+ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZ2VtLmMgICAgICAgICAgfCAyICsrDQo+ICAg
+MiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0u
+YyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYw0KPiBp
+bmRleCAxOTIxZGVjM2RmN2EuLjIwY2FjNDRlZDQ0OSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2FtZGtmZF9ncHV2bS5jDQo+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYw0KPiBAQCAtMTEyMSw3ICsx
+MTIxLDcgQEAgaW50IGFtZGdwdV9hbWRrZmRfZ3B1dm1fYWxsb2NfbWVtb3J5X29mX2dwdSgNCj4g
+ICAgICAgICAgICAgICAgICBhbGxvY19mbGFncyA9IDA7DQo+ICAgICAgICAgICAgICAgICAgaWYg
+KCFvZmZzZXQgfHwgISpvZmZzZXQpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
+LUVJTlZBTDsNCj4gLSAgICAgICAgICAgICAgIHVzZXJfYWRkciA9ICpvZmZzZXQ7DQo+ICsgICAg
+ICAgICAgICAgICB1c2VyX2FkZHIgPSB1bnRhZ2dlZF9hZGRyKCpvZmZzZXQpOw0KPiAgICAgICAg
+ICB9IGVsc2UgaWYgKGZsYWdzICYgQUxMT0NfTUVNX0ZMQUdTX0RPT1JCRUxMKSB7DQo+ICAgICAg
+ICAgICAgICAgICAgZG9tYWluID0gQU1ER1BVX0dFTV9ET01BSU5fR1RUOw0KPiAgICAgICAgICAg
+ICAgICAgIGFsbG9jX2RvbWFpbiA9IEFNREdQVV9HRU1fRE9NQUlOX0NQVTsNCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9nZW0uYyBiL2RyaXZlcnMvZ3B1
+L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9nZW0uYw0KPiBpbmRleCBkMjFkZDJmMzY5ZGEuLjk4NWNi
+ODJiMmFhNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
+X2dlbS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9nZW0uYw0K
+PiBAQCAtMjg2LDYgKzI4Niw4IEBAIGludCBhbWRncHVfZ2VtX3VzZXJwdHJfaW9jdGwoc3RydWN0
+IGRybV9kZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwNCj4gICAgICAgICAgdWludDMyX3QgaGFuZGxl
+Ow0KPiAgICAgICAgICBpbnQgcjsNCj4NCj4gKyAgICAgICBhcmdzLT5hZGRyID0gdW50YWdnZWRf
+YWRkcihhcmdzLT5hZGRyKTsNCj4gKw0KPiAgICAgICAgICBpZiAob2Zmc2V0X2luX3BhZ2UoYXJn
+cy0+YWRkciB8IGFyZ3MtPnNpemUpKQ0KPiAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
+Ow0KPg0KPiAtLQ0KPiAyLjIxLjAuMTAyMC5nZjI4MjBjZjAxYS1nb29nDQo+DQo=
