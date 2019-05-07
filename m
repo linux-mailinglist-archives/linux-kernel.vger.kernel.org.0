@@ -2,237 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D43EE160CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA43B16040
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfEGJZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:25:07 -0400
-Received: from [195.159.176.226] ([195.159.176.226]:35302 "EHLO
-        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfEGJZH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:25:07 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.89)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1hNwLO-000iAi-DL
-        for linux-kernel@vger.kernel.org; Tue, 07 May 2019 11:25:02 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Subject: Re: [PATCH 3/3] block/diskstats: more accurate approximation of
- io_ticks for slow disks
-Date:   Tue, 7 May 2019 10:13:57 +0100
-Message-ID: <d5d39e1c-59f2-b5d8-0189-020efaed4ce8@gmail.com>
-References: <155413438394.3201.15211440151043943989.stgit@buzz>
- <155413438824.3201.15254568091182734151.stgit@buzz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-X-Mozilla-News-Host: news://nntp.gmane.org
-In-Reply-To: <155413438824.3201.15254568091182734151.stgit@buzz>
-Content-Language: en-GB
-Cc:     linux-block@vger.kernel.org
+        id S1726562AbfEGJOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:14:51 -0400
+Received: from mx.socionext.com ([202.248.49.38]:3463 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbfEGJOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 05:14:50 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 07 May 2019 18:14:48 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 1ACBF180B47;
+        Tue,  7 May 2019 18:14:49 +0900 (JST)
+Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Tue, 7 May 2019 18:14:49 +0900
+Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
+ SOC-EX03V.e01.socionext.com (10.213.24.23) with Microsoft SMTP Server (TLS)
+ id 15.0.995.29; Tue, 7 May 2019 18:14:48 +0900
+Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
+ SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
+ Tue, 7 May 2019 18:14:48 +0900
+From:   <orito.takao@socionext.com>
+To:     <ulf.hansson@linaro.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
+        <jaswinder.singh@linaro.org>, <sugaya.taichi@socionext.com>,
+        <kasai.kazuhiro@socionext.com>, <kanematsu.shinji@socionext.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
+ controller
+Thread-Topic: [PATCH 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
+ controller
+Thread-Index: AQHU+9RXOLUG4XsvaU+oK6YWULWxq6ZSXNwAgAx/PYA=
+Date:   Tue, 7 May 2019 09:14:47 +0000
+Message-ID: <20190507181439.9D74.F0D17A80@socionext.com>
+References: <1556244392-15822-1-git-send-email-orito.takao@socionext.com>
+ <CAPDyKFouv1MDJXwDryqhC=X4mLycoAigB3x6Xee09U+QNGTa-Q@mail.gmail.com>
+In-Reply-To: <CAPDyKFouv1MDJXwDryqhC=X4mLycoAigB3x6Xee09U+QNGTa-Q@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Becky! ver. 2.74.02 [ja] (Unregistered)
+x-originating-ip: [10.213.24.1]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <4B9D2BC15922934897589C9947C4EF2C@socionext.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/04/2019 16:59, Konstantin Khlebnikov wrote:
-> Currently io_ticks is approximated by adding one at each
-> start and end of requests if jiffies has changed.
-> This works perfectly for requests shorter than a jiffy.
-> 
-> Fix for slow requests is simple: at the end of request add
-> count of jiffies passed since last update.
-> 
-> Fixes: 5b18b5a73760 ("block: delete part_round_stats and switch to less precise counting")
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-
-Thanks for working on this!  I noticed the problem behaviour using the 
-Fedora 29 kernel [1].  I wasn't sure how it could be fixed.  Now I found 
-this patch series, but I still have some questions :-).
-
-[1] 
-https://unix.stackexchange.com/questions/517132/dd-is-running-at-full-speed-but-i-only-see-20-disk-utilization-why
-
-With these patches, `atopsar -d 2` shows about 100% "busy" when running 
-a simple `dd` command, instead of 20 or 35%.  So that looked promising.
-
-I saw some samples showing 112, 113, and 114% utilization. 
-Unfortunately I'm not sure exactly how to reproduce that.  I think it 
-happened during filesystem buffered writes (i.e. `dd` without 
-`oflag=direct`), with the IO scheduler set to "none", on my SATA HDD.
-
-Getting some "101% busy" samples seemed fairly easy to trigger, but I am 
-not sure whether that is just a rounding error in `atopsar` :-(.
-
-
-Q1)
-
- > Fix for slow requests is simple: at the end of request add
- > count of jiffies passed since last update.
-
-Even considering the simple case of a single CPU, the approximation may 
-be "less accurate" when requests complete out of order.  Is that right?
-
-  t        1      10     20   30
-  io1      start              end
-  io2             start  end
-  io_ticks 1      2      11   21
-
-            ^^^^^^
-               \
-                 9 ticks not accounted as "busy"
-
-
-At least, I found something fun happens if I run `dd if=/dev/urandom 
-of=~/t bs=1M oflag=direct` at the same time as `dd if=/dev/sda 
-of=/dev/null bs=1M oflag=direct` .  With scheduler=none, it reduces 
-"busy" from 100%, down to 97%.  With scheduler=mq-deadline, it reduces 
-"busy" from 100% to 60% :-).  Even though the system "iowait" is about 
-100% (equivalent to one CPU).
-
-(Environment: My /dev/sda max read speed is about 150MB/s.  My 
-/dev/urandom read speed is about 140 MB/s.  I have 4 logical CPUs).
-
-It feels like it should be possible to improve io_ticks, by basically 
-changing the condition in your fix, from (end==true), to (inflight>0). 
-Would that make sense?
-
-
-Q2) But what most confuses me, is that I think `io_ticks` is defined as 
-a per-cpu field.  And the per-cpu fields are summed into one value, 
-which is reported to userspace.
-
-I have tried playing with a couple `dd iflag=direct` readers, using 
-`taskset` to pin them to different CPUs, but I only got 98-102% "busy". 
-It did not rise to 200% :-).
-
-i) Is it possible to see 200% "busy", due to per-cpu ioticks?
-
-ii) If so, then can per-cpu ioticks also cause us to see 100% "busy", 
-when IO's were only inflight for 50% of the time (but on two different 
-CPUs)?
-
-     If it is possible to trigger both of these cases, this metric seems 
-very difficult to trust and use in any reliable way.  It seems 
-preferable to disable it altogether and force people to use more 
-trustworthy metrics.  E.g. system-wide "iowait", and iostat field 11 
-"weighted # of milliseconds spent doing I/Os" which `iostat` uses to 
-show "average queue length".
-
-     Or the "special pleading" approach?  Should ioticks accounted at 
-the level of the hardware queue, and be disabled if the device has is 
-using more than one hardware queue?
-
-
-Q3) In case I am mistaken in some way, and Q2 is not an issue at all:
-
-I still think reporting over 100% utilization is something new.  At 
-least the comments I see were removed in the "Fixes" commit seem to 
-agree.  That one error of 14% ("114% busy") that I saw, seems fairly big 
-:-).
-
-I wonder if we can better explain how much of a rough approximation this 
-metric is now, e.g. in Documentation/iostats.txt ?
-
-So far I don't know what the real description and limitations would be...
-
-I think it would be understandable e.g. if we were able to say "busy%" 
-should show around 100% when the device is used around 100% of the time, 
-and definitely 0% when it is idle, but is probably not as accurate as 
-"iowait". ("iowait" reported by the CPU scheduler.  Not to say these are 
-the same or equivalent.  And I understand "iowait" is another ball of 
-approximations and confusion.)
-
-
-Regards
-Alan
-
-
-> ---
->   block/bio.c           |    8 ++++----
->   block/blk-core.c      |    4 ++--
->   include/linux/genhd.h |    2 +-
->   3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index c0a60f3e9b7b..245056797999 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1729,14 +1729,14 @@ void bio_check_pages_dirty(struct bio *bio)
->   	schedule_work(&bio_dirty_work);
->   }
->   
-> -void update_io_ticks(struct hd_struct *part, unsigned long now)
-> +void update_io_ticks(struct hd_struct *part, unsigned long now, bool end)
->   {
->   	unsigned long stamp;
->   again:
->   	stamp = READ_ONCE(part->stamp);
->   	if (unlikely(stamp != now)) {
->   		if (likely(cmpxchg(&part->stamp, stamp, now) == stamp)) {
-> -			__part_stat_add(part, io_ticks, 1);
-> +			__part_stat_add(part, io_ticks, end ? now - stamp : 1);
->   		}
->   	}
->   	if (part->partno) {
-> @@ -1752,7 +1752,7 @@ void generic_start_io_acct(struct request_queue *q, int op,
->   
->   	part_stat_lock();
->   
-> -	update_io_ticks(part, jiffies);
-> +	update_io_ticks(part, jiffies, false);
->   	part_stat_inc(part, ios[sgrp]);
->   	part_stat_add(part, sectors[sgrp], sectors);
->   	part_inc_in_flight(q, part, op_is_write(op));
-> @@ -1770,7 +1770,7 @@ void generic_end_io_acct(struct request_queue *q, int req_op,
->   
->   	part_stat_lock();
->   
-> -	update_io_ticks(part, now);
-> +	update_io_ticks(part, now, true);
->   	part_stat_add(part, nsecs[sgrp], jiffies_to_nsecs(duration));
->   	part_dec_in_flight(q, part, op_is_write(req_op));
->   
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index d89168b167e9..6e8f0b9e7731 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -1334,7 +1334,7 @@ void blk_account_io_done(struct request *req, u64 now)
->   		part_stat_lock();
->   		part = req->part;
->   
-> -		update_io_ticks(part, jiffies);
-> +		update_io_ticks(part, jiffies, true);
->   		part_stat_inc(part, ios[sgrp]);
->   		part_stat_add(part, nsecs[sgrp], now - req->start_time_ns);
->   		part_dec_in_flight(req->q, part, rq_data_dir(req));
-> @@ -1375,7 +1375,7 @@ void blk_account_io_start(struct request *rq, bool new_io)
->   		rq->part = part;
->   	}
->   
-> -	update_io_ticks(part, jiffies);
-> +	update_io_ticks(part, jiffies, false);
->   
->   	part_stat_unlock();
->   }
-> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> index 2f5a9ed7e86e..8ece8e02c609 100644
-> --- a/include/linux/genhd.h
-> +++ b/include/linux/genhd.h
-> @@ -410,7 +410,7 @@ static inline void free_part_info(struct hd_struct *part)
->   	kfree(part->info);
->   }
->   
-> -void update_io_ticks(struct hd_struct *part, unsigned long now);
-> +void update_io_ticks(struct hd_struct *part, unsigned long now, bool end);
->   
->   /* block/genhd.c */
->   extern void device_add_disk(struct device *parent, struct gendisk *disk,
-> 
-> 
-
-
+DQpUaGFuayB5b3UgZm9yIHJldmlld2luZyBteSBwYXRjaGVzLg0KU29ycnkgZm9yIG15IGxhdGUg
+cmVwbHkuIEphcGFuIHdhcyBpbiBTcHJpbmcgVmFjYXRpb24uDQoNCj4gT24gRnJpLCAyNiBBcHIg
+MjAxOSBhdCAwNDowNCwgVGFrYW8gT3JpdG8gPG9yaXRvLnRha2FvQHNvY2lvbmV4dC5jb20+IHdy
+b3RlOg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogVGFrYW8gT3JpdG8gPG9yaXRvLnRha2FvQHNv
+Y2lvbmV4dC5jb20+DQo+ID4gLS0tDQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9z
+ZGhjaS1taWxiZWF1dC50eHQgICAgIHwgMzUgKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAx
+IGZpbGUgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9zZGhjaS1taWxiZWF1dC50eHQN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bW1jL3NkaGNpLW1pbGJlYXV0LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9tbWMvc2RoY2ktbWlsYmVhdXQudHh0DQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBp
+bmRleCAwMDAwMDAwLi43MDA4NDYyDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvc2RoY2ktbWlsYmVhdXQudHh0DQo+ID4g
+QEAgLTAsMCArMSwzNSBAQA0KPiA+ICsqIFNPQ0lPTkVYVCBTREhDSSBjb250cm9sbGVyDQo+ID4g
+Kw0KPiA+ICtUaGlzIGZpbGUgZG9jdW1lbnRzIGRpZmZlcmVuY2VzIGJldHdlZW4gdGhlIGNvcmUg
+cHJvcGVydGllcyBpbiBtbWMudHh0DQo+ID4gK2FuZCB0aGUgcHJvcGVydGllcyB1c2VkIGJ5IHRo
+ZSBzZGhjaV9taWxiZWF1dCBkcml2ZXIuDQo+ID4gKw0KPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVz
+Og0KPiA+ICstIGNvbXBhdGlibGU6ICJzb2Npb25leHQsbWlsYmVhdXQtbTEwdi1zZGhjaS0zLjAi
+DQo+ID4gKy0gY2xvY2tzOiBNdXN0IGNvbnRhaW4gYW4gZW50cnkgZm9yIGVhY2ggZW50cnkgaW4g
+Y2xvY2stbmFtZXMuIEl0IGlzIGENCj4gPiArICBsaXN0IG9mIHBoYW5kbGVzIGFuZCBjbG9jay1z
+cGVjaWZpZXIgcGFpcnMuDQo+ID4gKyAgU2VlIC4uL2Nsb2Nrcy9jbG9jay1iaW5kaW5ncy50eHQg
+Zm9yIGRldGFpbHMuDQo+ID4gKy0gY2xvY2stbmFtZXM6IFNob3VsZCBjb250YWluIHRoZSBmb2xs
+b3dpbmcgdHdvIGVudHJpZXM6DQo+ID4gKyAgICAgICAiaWZhY2UiIC0gY2xvY2sgdXNlZCBmb3Ig
+c2RoY2kgaW50ZXJmYWNlDQo+ID4gKyAgICAgICAiY29yZSIgIC0gY29yZSBjbG9jayBmb3Igc2Ro
+Y2kgY29udHJvbGxlcg0KPiA+ICsNCj4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiArLSB2
+cW1tYy1zdXBwbHk6IHBoYW5kbGUgdG8gdGhlIHJlZ3VsYXRvciBkZXZpY2UgdHJlZSBub2RlLCBt
+ZW50aW9uZWQNCj4gPiArICBhcyB0aGUgVkNDUS9WRERfSU8gc3VwcGx5IGluIHRoZSBlTU1DL1NE
+IHNwZWNzLg0KPiA+ICstIGZ1aml0c3UsY21kLWRhdC1kZWxheS1zZWxlY3Q6IGJvb2xlYW4gcHJv
+cGVydHkgaW5kaWNhdGluZyB0aGF0IHRoaXMgaG9zdA0KPiA+ICsgIHJlcXVpcmVzIHRoZSBDTURf
+REFUX0RFTEFZIGNvbnRyb2wgdG8gYmUgZW5hYmxlZC4NCj4gPiArLSBzbmksbW1jLXBvd2VyLWdw
+aW86IHNldCBwcm9wZXJ0eSBpbmRpY2F0aW5nIHRoYXQgcG93ZXIgb24gb3Igb2ZmIG5lZWRzDQo+
+ID4gKyAgY29udHJvbCBvZiBncGlvcy4NCj4gDQo+IFBsZWFzZSB1c2UgYSB2bW1jLXN1cHBseSBp
+bnN0ZWFkIG9mICJwb3dlci1ncGlvIiAod2hpY2ggbWVhbnMgeW91IG5lZWQNCj4gdG8gbW9kZWwg
+dGhpcyBhcyBhIGZpeGVkIEdQSU8gcmVndWxhdG9yKS4NCg0KT0ssIEkgd2lsbCBzdHVkeSBhYm91
+dCByZWd1bGF0b3Ivdm1tYy1zdXBwbHkgYW5kIGNoYW5nZSB0byB1c2UgaXQuDQoNClRoYW5rcw0K
+T3JpdG8NCg0KPiANCj4gPiArDQo+ID4gK0V4YW1wbGU6DQo+ID4gKyAgICAgICBzZGhjaTM6IG1t
+Y0AxYjAxMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic29jaW9uZXh0
+LG1pbGJlYXV0LW0xMHYtc2RoY2ktMy4wIjsNCj4gPiArICAgICAgICAgICAgICAgcmVnID0gPDB4
+MWIwMTAwMDAgMHgxMDAwMD47DQo+ID4gKyAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MCAy
+NjUgMHg0PjsNCj4gPiArICAgICAgICAgICAgICAgdm9sdGFnZS1yYW5nZXMgPSA8MzMwMCAzMzAw
+PjsNCj4gPiArICAgICAgICAgICAgICAgYnVzLXdpZHRoID0gPDQ+Ow0KPiA+ICsgICAgICAgICAg
+ICAgICBjbG9ja3MgPSA8JmNsayA3PiwgPCZhaGJfY2xrPjsNCj4gPiArICAgICAgICAgICAgICAg
+Y2xvY2stbmFtZXMgPSAiY29yZSIsICJpZmFjZSI7DQo+ID4gKyAgICAgICAgICAgICAgIGNhcC1z
+ZGlvLWlycTsNCj4gPiArICAgICAgICAgICAgICAgc25pLG1tYy1wb3dlci1ncGlvID0gPCZwaW5j
+dHJsIDUzIEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGZ1
+aml0c3UsY21kLWRhdC1kZWxheS1zZWxlY3Q7DQo+ID4gKyAgICAgICB9Ow0KPiA+IC0tDQo+ID4g
+MS45LjENCj4gPg0KPiA+DQo+IA0KPiBLaW5kIHJlZ2FyZHMNCj4gVWZmZQ0KDQotLSANClRha2Fv
+IE9yaXRvIDxvcml0by50YWthb0Bzb2Npb25leHQuY29tPg0K
