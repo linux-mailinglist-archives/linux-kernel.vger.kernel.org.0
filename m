@@ -2,125 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 827C916BAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FBC16BB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbfEGTtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 15:49:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEGTte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 15:49:34 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8FE3D3082B4D;
-        Tue,  7 May 2019 19:49:33 +0000 (UTC)
-Received: from treble (ovpn-123-166.rdu2.redhat.com [10.10.123.166])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E8741001DCC;
-        Tue,  7 May 2019 19:49:27 +0000 (UTC)
-Date:   Tue, 7 May 2019 14:49:25 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [RFC][PATCH 2/3] x86_64: Allow breakpoints to emulate call
- functions
-Message-ID: <20190507194925.qndvv67rinrmbefj@treble>
-References: <20190507174227.673261270@goodmis.org>
- <20190507174400.219947724@goodmis.org>
- <20190507175342.fskdj2qidpao65qi@treble>
- <20190507150153.7a5d376d@gandalf.local.home>
- <20190507191412.n4uhoyfwagagyfwi@treble>
- <20190507152016.77f7a3af@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190507152016.77f7a3af@gandalf.local.home>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 07 May 2019 19:49:34 +0000 (UTC)
+        id S1726563AbfEGTx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 15:53:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39057 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfEGTx6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 15:53:58 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w22so7524286pgi.6;
+        Tue, 07 May 2019 12:53:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Cj+ea2ryBJNh6qXEQ4f5WItA9NMUT7wCyvk5yPZ6xUA=;
+        b=hxl/JVOfbduSun1MHcThyx5YHh0l4V/VxmVCB0Eb6/e+P5FgJINp7Sd0VHSbt8uEy/
+         1i5vH1wFXUOJ0OFZz25Ztd1ce2FT3fU3wFHhjVACD5TUf+jBebsN32sx71OvF9yF2T14
+         7+xlw4ZDTxTuh1OQAeCGmW1pbeDDdp2GfV854ndaWTcSo2r0+xIiHTJezTYt73etHzhK
+         j35jsrv0DBmwHt0YwOBwzq2rNeQM+ad4RyFRuiu87L9txCJ4EofshXlQkOaBrBqIVJjP
+         VZfyx8AwIrOo8K/jkyF1eX1iW5roWSREG3I91Ph6IT95GpS6Ul1fSAoVoPWDuRl5AA3C
+         mIXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Cj+ea2ryBJNh6qXEQ4f5WItA9NMUT7wCyvk5yPZ6xUA=;
+        b=GbCg7NaviqtBodwnq2bhQeKFCpQ/+zaQIR9w3QfxsM2bOHUw2PUsxFwMPNPqljjywv
+         pn58Cf98QMatNqk67wyvIJVZRLL6qcOg788yJjvhT2nfGPTiZT5Cs52wN8fPvKkbBMXH
+         z7UF3FV7ihP9RNp3F6eMG4JvFu8S2uzAxOU/JGClanM5Pxn9i9v7xslRtBRXR/a5vB46
+         c8xFCf0zIz9W8Kuu95G7LeLzlQZOjc6Qhv05wXMzVpkQ7MSaJNlIKoRTnDYbz8hNR0CU
+         ydX2TAzMacRDkS0NeiN4gbfYyCI+pQN+ntmxyMkyRaEtTWMJt1OUZ8xTEp9qOgqF0/OD
+         u1tw==
+X-Gm-Message-State: APjAAAVf13YUGkmjI/TmQ21dTVn3i4yc1R51y5wWCJDRMkMpqebDyzSI
+        UE/Yy8x2V1u5IKKzkIR/nWU=
+X-Google-Smtp-Source: APXvYqxP40uxXfgsZAfE0SOl6Epsu7U43qMRlPsIMxBInAI/t4RsjFn8hUwZvCaxtzS4v2iN7P1SoQ==
+X-Received: by 2002:a63:8a4a:: with SMTP id y71mr42195505pgd.270.1557258837219;
+        Tue, 07 May 2019 12:53:57 -0700 (PDT)
+Received: from localhost.localdomain ([203.192.210.149])
+        by smtp.gmail.com with ESMTPSA id i15sm19756130pfr.8.2019.05.07.12.53.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 07 May 2019 12:53:56 -0700 (PDT)
+From:   Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Mike Lockwood <lockwood@android.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Gustavo A . R . Silva" <garsilva@embeddedor.com>,
+        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+Subject: [PATCH] mmc: android-goldfish: Drop pointer to mmc_host from goldfish_mmc_host
+Date:   Wed,  8 May 2019 01:22:29 +0530
+Message-Id: <1557258749-29009-1-git-send-email-kamlesh.gurudasani@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 03:20:16PM -0400, Steven Rostedt wrote:
-> On Tue, 7 May 2019 14:14:12 -0500
-> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> > On Tue, May 07, 2019 at 03:01:53PM -0400, Steven Rostedt wrote:
-> > > How's this?
-> > > 
-> > > -- Steve
-> > > 
-> > > From d29dc2e9e0275c9857932b80cebc01551b669efb Mon Sep 17 00:00:00 2001
-> > > From: Peter Zijlstra <peterz@infradead.org>
-> > > Date: Wed, 1 May 2019 15:11:17 +0200
-> > > Subject: [PATCH] x86_64: Allow breakpoints to emulate call functions
-> > > 
-> > > In order to allow breakpoints to emulate call functions, they need to push
-> > > the return address onto the stack. But because the breakpoint exception
-> > > frame is added to the stack when the breakpoint is hit, there's no room to
-> > > add the address onto the stack and return to the address of the emulated
-> > > called funtion.  
-> > 
-> > The 2nd sentence can probably be removed since it's technically no
-> > longer true, thanks to the previous patch.
-> > 
-> > > This helper functions are added:  
-> > 
-> > "These"
-> 
-> New version:
-> 
->     x86_64: Allow breakpoints to emulate call functions
->     
->     In order to allow breakpoints to emulate call functions, they need to push
+The driver for android-goldfish uses a pointer to get from the private
+goldfish_mmc_host structure to the generic mmc_host structure.
+However the latter is always immediately preceding the former in
+memory, so compute its address with a subtraction (which is cheaper than a
+dereference) and drop the superfluous pointer.
 
-Sorry to keep nitpicking, but "call functions" -> "function calls" would
-sound more accurate to me (in both subject and description).
+No functional change intended.
 
-Otherwise it looks good.
+Signed-off-by: Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+---
+ drivers/mmc/host/android-goldfish.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
->     the return address onto the stack. The x86_64 int3 handler adds a small gap
->     to allow the stack to grow some. Use this gap to add the return address to
->     be able to emulate a call instruction at the breakpoint location.
->     
->     These helper functions are added:
->     
->       int3_emulate_jmp(): changes the location of the regs->ip to return there.
->     
->      (The next two are only for x86_64)
->       int3_emulate_push(): to push the address onto the gap in the stack
->       int3_emulate_call(): push the return address and change regs->ip
-
+diff --git a/drivers/mmc/host/android-goldfish.c b/drivers/mmc/host/android-goldfish.c
+index 61e4e2a..f6334c2 100644
+--- a/drivers/mmc/host/android-goldfish.c
++++ b/drivers/mmc/host/android-goldfish.c
+@@ -113,7 +113,6 @@ struct goldfish_mmc_host {
+ 	struct mmc_request	*mrq;
+ 	struct mmc_command	*cmd;
+ 	struct mmc_data		*data;
+-	struct mmc_host		*mmc;
+ 	struct device		*dev;
+ 	unsigned char		id; /* 16xx chips have 2 MMC blocks */
+ 	void			*virt_base;
+@@ -175,7 +174,7 @@ goldfish_mmc_start_command(struct goldfish_mmc_host *host, struct mmc_command *c
+ 		resptype = 3;
+ 		break;
+ 	default:
+-		dev_err(mmc_dev(host->mmc),
++		dev_err(mmc_dev(mmc_from_priv(host)),
+ 			"Invalid response type: %04x\n", mmc_resp_type(cmd));
+ 		break;
+ 	}
+@@ -221,8 +220,8 @@ static void goldfish_mmc_xfer_done(struct goldfish_mmc_host *host,
+ 					data->sg->length);
+ 		}
+ 		host->data->bytes_xfered += data->sg->length;
+-		dma_unmap_sg(mmc_dev(host->mmc), data->sg, host->sg_len,
+-			     dma_data_dir);
++		dma_unmap_sg(mmc_dev(mmc_from_priv(host)), data->sg,
++			     host->sg_len, dma_data_dir);
+ 	}
+ 
+ 	host->data = NULL;
+@@ -236,7 +235,7 @@ static void goldfish_mmc_xfer_done(struct goldfish_mmc_host *host,
+ 
+ 	if (!data->stop) {
+ 		host->mrq = NULL;
+-		mmc_request_done(host->mmc, data->mrq);
++		mmc_request_done(mmc_from_priv(host), data->mrq);
+ 		return;
+ 	}
+ 
+@@ -278,7 +277,7 @@ static void goldfish_mmc_cmd_done(struct goldfish_mmc_host *host,
+ 
+ 	if (host->data == NULL || cmd->error) {
+ 		host->mrq = NULL;
+-		mmc_request_done(host->mmc, cmd->mrq);
++		mmc_request_done(mmc_from_priv(host), cmd->mrq);
+ 	}
+ }
+ 
+@@ -313,7 +312,7 @@ static irqreturn_t goldfish_mmc_irq(int irq, void *dev_id)
+ 		struct mmc_request *mrq = host->mrq;
+ 		mrq->cmd->error = -ETIMEDOUT;
+ 		host->mrq = NULL;
+-		mmc_request_done(host->mmc, mrq);
++		mmc_request_done(mmc_from_priv(host), mrq);
+ 	}
+ 
+ 	if (end_command)
+@@ -339,12 +338,13 @@ static irqreturn_t goldfish_mmc_irq(int irq, void *dev_id)
+ 		u32 state = GOLDFISH_MMC_READ(host, MMC_STATE);
+ 		pr_info("%s: Card detect now %d\n", __func__,
+ 			(state & MMC_STATE_INSERTED));
+-		mmc_detect_change(host->mmc, 0);
++		mmc_detect_change(mmc_from_priv(host), 0);
+ 	}
+ 
+ 	if (!end_command && !end_transfer && !state_changed && !cmd_timeout) {
+ 		status = GOLDFISH_MMC_READ(host, MMC_INT_STATUS);
+-		dev_info(mmc_dev(host->mmc),"spurious irq 0x%04x\n", status);
++		dev_info(mmc_dev(mmc_from_priv(host)), "spurious irq 0x%04x\n",
++			 status);
+ 		if (status != 0) {
+ 			GOLDFISH_MMC_WRITE(host, MMC_INT_STATUS, status);
+ 			GOLDFISH_MMC_WRITE(host, MMC_INT_ENABLE, 0);
+@@ -383,7 +383,7 @@ static void goldfish_mmc_prepare_data(struct goldfish_mmc_host *host,
+ 
+ 	dma_data_dir = mmc_get_dma_dir(data);
+ 
+-	host->sg_len = dma_map_sg(mmc_dev(host->mmc), data->sg,
++	host->sg_len = dma_map_sg(mmc_dev(mmc_from_priv(host)), data->sg,
+ 				  sg_len, dma_data_dir);
+ 	host->dma_done = 0;
+ 	host->dma_in_use = 1;
+@@ -461,7 +461,6 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	host = mmc_priv(mmc);
+-	host->mmc = mmc;
+ 
+ 	pr_err("mmc: Mapping %lX to %lX\n", (long)res->start, (long)res->end);
+ 	host->reg_base = ioremap(res->start, resource_size(res));
+@@ -508,8 +507,7 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
+ 
+ 	ret = device_create_file(&pdev->dev, &dev_attr_cover_switch);
+ 	if (ret)
+-		dev_warn(mmc_dev(host->mmc),
+-			 "Unable to create sysfs attributes\n");
++		dev_warn(mmc_dev(mmc), "Unable to create sysfs attributes\n");
+ 
+ 	GOLDFISH_MMC_WRITE(host, MMC_SET_BUFFER, host->phys_base);
+ 	GOLDFISH_MMC_WRITE(host, MMC_INT_ENABLE,
+@@ -525,7 +523,7 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
+ dma_alloc_failed:
+ 	iounmap(host->reg_base);
+ ioremap_failed:
+-	mmc_free_host(host->mmc);
++	mmc_free_host(mmc);
+ err_alloc_host_failed:
+ 	return ret;
+ }
+@@ -533,14 +531,15 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
+ static int goldfish_mmc_remove(struct platform_device *pdev)
+ {
+ 	struct goldfish_mmc_host *host = platform_get_drvdata(pdev);
++	struct mmc_host *mmc = mmc_from_priv(host);
+ 
+ 	BUG_ON(host == NULL);
+ 
+-	mmc_remove_host(host->mmc);
++	mmc_remove_host(mmc);
+ 	free_irq(host->irq, host);
+ 	dma_free_coherent(&pdev->dev, BUFFER_SIZE, host->virt_base, host->phys_base);
+ 	iounmap(host->reg_base);
+-	mmc_free_host(host->mmc);
++	mmc_free_host(mmc);
+ 	return 0;
+ }
+ 
 -- 
-Josh
+2.7.4
+
