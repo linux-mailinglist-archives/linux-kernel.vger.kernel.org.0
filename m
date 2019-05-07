@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D397016851
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BA71686E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 18:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfEGQqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 12:46:01 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40134 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfEGQqB (ORCPT
+        id S1726967AbfEGQzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 12:55:10 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36021 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfEGQzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 12:46:01 -0400
-Received: by mail-lj1-f194.google.com with SMTP id d15so14948124ljc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:45:59 -0700 (PDT)
+        Tue, 7 May 2019 12:55:10 -0400
+Received: by mail-it1-f196.google.com with SMTP id o190so9767094itc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 09:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2SaL00iV1UNCyLI8qSrWSgzywNwyxR2ABU4F6/Mpj/U=;
-        b=sLgqz+8svFVJmInlU2NbYaBgK2Ey1bgZIzqFKNG0JA/5OyJk9eEFhuyDRfJDszjWlS
-         F8ow0umJbkd4e9k0aYeb2+755cafzxshd7aEW79MeUiz+SxQ8RganQcARZk9ynPVRKZR
-         e7GB2NwjLqTU4/nFZrtEURZtVpEj9EKmXi9kLyhF9xP2PQquT9Hl8naPjreNZ+XbsNe+
-         08M8gsI21EOCC5qPgWrDxMb+MtXL4JZulTbteqGu4uG229VP4TTN0Igqngb80YYgGy9d
-         visSw/BBSsAYG9brRGCUaBptxuDjpPMplLJgVcyd4+H/YGCkx34exTLZhluw5kDTKvv+
-         Yg3A==
+        bh=ItNUzKiQktZ8tRatFK3EANWC6VYaqJXLrYpbccD+kyg=;
+        b=OHGTsQ3xW+AeuFa3i/yt5q6LQHW/sLQPH7o2eGd7aSRSbmVeJiabwQjwY1JJR8K2ES
+         fq6R+/cpFFMR5gKzerEGUiMhv1uVe5u4T6HhlMK7Arw+4c9j5o7NXSrN1pEclW993OcN
+         wcskeVgwDuHn4H/uLAcsMIGG8qblNv+OJ0Tqc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2SaL00iV1UNCyLI8qSrWSgzywNwyxR2ABU4F6/Mpj/U=;
-        b=H9qDrPM2VOrSh/JI60D+0mNjb3Euttd7Y8IEyOn5hZEK+LCoppG6R6IymG0qMhON+I
-         rnAhetEPGy9e0m8ZlWUM+wDgG89Wtn4J871oj64/r7/vInGi9sBFP1CuZSVrO3inQrUY
-         abj1DWM9aQ4WLvx7D4IHE0+6nyTkBTDutNmJWhZfRKWGfCzt5UmGYTyRWxrGAhtAXalt
-         PZH4Iki2yInnHY/+mqJUaWiUuq9d2+tzV0dyhlvLojGqme/0bvhd4hCv+UsLwIi9k75T
-         3ok/936NOzYAFvCcxjqtRVwDzlzoY0J6YsM5bA3qKRSrCjMUSERQqRY2ZfDCdiFnYt1D
-         3gBw==
-X-Gm-Message-State: APjAAAXxyIIAQBjlFlQCKluemktjuESug5ABYNMthsSD5J2Y8ySkJAtp
-        /s6ltYnvUK6R3SyYEdXPnciX7yTowcrD3yVtGtg=
-X-Google-Smtp-Source: APXvYqxfTK0z2SDdzOJd/69D8yC9FUzlfkY52RfEl/daX8tPGy7hCHERgk4xHwuJ9fnOkuHuJj8uQ6aATsFhFuSoLpw=
-X-Received: by 2002:a2e:3c06:: with SMTP id j6mr16320744lja.99.1557247558995;
- Tue, 07 May 2019 09:45:58 -0700 (PDT)
+        bh=ItNUzKiQktZ8tRatFK3EANWC6VYaqJXLrYpbccD+kyg=;
+        b=fmONmGv4LyXdANscHrsP+CcL0SsY21L2wg3APF+1F4jg86CznY0HPdcbNg7zf5i3NC
+         w5ax+oYOGzW6DV9VZ2M8jfVw6mJPzRsH0rnfBaYYiOwoh8Bh3EHfdXa6lrszyDF5UOlV
+         Kadj+9kaLq0m9StpF5OgRtjSvIS3s2YyUzy9B5iCzQYehiMRfS0P2cywfBN6p7D35A+N
+         AhY4mnYAYhTme4ySr6Plqe6Nq6Eh5H/SKqQWGsNLgXUnDFUEC6c4Ug4uPsngFVIsC7+y
+         caqGn7qe5PSqXO02mVn0UnrjTV++W+A5Dz80Yij4RFrcGd+AE0609fLSW4I1mwfcYdY1
+         LtAQ==
+X-Gm-Message-State: APjAAAVuDk/rEIc5pYgekzyQIAhP+I6h/tq222RkHVQVun8VnYIy8zdj
+        PUyZ078r6BhzDBsuAT+jDKH6x71Hkx/YojIHar/5sQ==
+X-Google-Smtp-Source: APXvYqyq65GxMEAgdu0nfbFID23F8qPQmyxacCisKRD6UI64kiPDsyvRApQTomOFzIDkZYUwgk2e2se761+mN8NT9Ag=
+X-Received: by 2002:a24:90f:: with SMTP id 15mr22727243itm.100.1557247624916;
+ Tue, 07 May 2019 09:47:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190422162652.15483-1-kasong@redhat.com> <20190423113501.GN11158@hirez.programming.kicks-ass.net>
- <CACPcB9f8JuALCw1i-V2N01GuTQRfjrCya6esOTM8dGwvf+oT7w@mail.gmail.com> <20190424125212.GN12232@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190424125212.GN12232@hirez.programming.kicks-ass.net>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 7 May 2019 09:45:47 -0700
-Message-ID: <CAADnVQJLLCQJoV8Qg+0D4_-mE8hLmrEYz91Jy0kT2Qgkb1evtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4] perf/x86: make perf callchain work without CONFIG_FRAME_POINTER
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kairui Song <kasong@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Dave Young <dyoung@redhat.com>
+References: <20190506182736.21064-1-evgreen@chromium.org> <20190506182736.21064-2-evgreen@chromium.org>
+In-Reply-To: <20190506182736.21064-2-evgreen@chromium.org>
+From:   Gwendal Grignou <gwendal@chromium.org>
+Date:   Tue, 7 May 2019 09:46:53 -0700
+Message-ID: <CAPUE2utMUPmOntOsgV5+dOeQtVPu_LJ4vJCHD=G6L=h3cgakvA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] loop: Report EOPNOTSUPP properly
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Alexis Savery <asavery@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 5:52 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Apr 24, 2019 at 08:42:40AM -0400, Kairui Song wrote:
->
-> > Sure, the updated comments looks much better. Will the maintainer
-> > squash the comment update or should I send a V5?
->
-> I've squashed it, I've just not gotten around to stuffing it a git tree
-> yet. Should happen 'soon'.
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
 
-Was it applied and on the way to Linus yet ?
+On Mon, May 6, 2019 at 11:30 AM Evan Green <evgreen@chromium.org> wrote:
+>
+> Properly plumb out EOPNOTSUPP from loop driver operations, which may
+> get returned when for instance a discard operation is attempted but not
+> supported by the underlying block device. Before this change, everything
+> was reported in the log as an I/O error, which is scary and not
+> helpful in debugging.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> ---
+>
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3:
+> - Updated tags
+>
+> Changes in v2:
+> - Unnested error if statement (Bart)
+>
+>  drivers/block/loop.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index bf1c61cab8eb..bbf21ebeccd3 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -458,7 +458,9 @@ static void lo_complete_rq(struct request *rq)
+>
+>         if (!cmd->use_aio || cmd->ret < 0 || cmd->ret == blk_rq_bytes(rq) ||
+>             req_op(rq) != REQ_OP_READ) {
+> -               if (cmd->ret < 0)
+> +               if (cmd->ret == -EOPNOTSUPP)
+> +                       ret = BLK_STS_NOTSUPP;
+> +               else if (cmd->ret < 0)
+>                         ret = BLK_STS_IOERR;
+>                 goto end_io;
+>         }
+> @@ -1892,7 +1894,10 @@ static void loop_handle_cmd(struct loop_cmd *cmd)
+>   failed:
+>         /* complete non-aio request */
+>         if (!cmd->use_aio || ret) {
+> -               cmd->ret = ret ? -EIO : 0;
+> +               if (ret == -EOPNOTSUPP)
+> +                       cmd->ret = ret;
+> +               else
+> +                       cmd->ret = ret ? -EIO : 0;
+>                 blk_mq_complete_request(rq);
+>         }
+>  }
+> --
+> 2.20.1
+>
