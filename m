@@ -2,110 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 729CC15CBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C76D215D18
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfEGGGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 02:06:25 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:38702 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfEGGGX (ORCPT
+        id S1726642AbfEGGKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:10:08 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39751 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfEGGKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 02:06:23 -0400
-Received: by mail-ed1-f47.google.com with SMTP id w11so17545123edl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:06:21 -0700 (PDT)
+        Tue, 7 May 2019 02:10:07 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g9so201252plm.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 23:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QZm07w2nSCiVVM+WjYPWUvz7wW+nL7XT9qvn8eYdy3A=;
-        b=s8dO8RODm3uMkCQw7BIWmMyABI0C1pYr2apMhdPiSkFP6bbNhtgHKr3/jYpzpeh4JJ
-         qwhI+K6TykibR4CMsBrAXVJTbJKuBZJxieq+hk0SBdOWQh30lWltBeOlxCAYN3W3G5kf
-         lHJxVYgKUtWlZNbmP/kBOLWFozOI16ok5/HpgPqAspD1694ZK8lLWKY32QBFhOlFJ5Gb
-         Z5Gp7Uaf0qpz+W5mdgvizxUtiDNUVZP1LP2Du8LolUcjwpIkcJe0gm2itU6o2ojjsTz/
-         k52m2uroKyHEfQtmox/LagM79E84Bwt57rIT8sBl8XjO3UfftnHVGgavNSvDjJoN0lP5
-         5gzA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=F2rlrgjaiJp1NZ6RM4VM9hD4Rmd/jUUVurwXpw2zOD0=;
+        b=Dl5JgfjZLUNAedfPuQQEAtFakRXAUtWL3Qc7a0Ko7nRreVMr5QXRF9ELOhpMzYIXEF
+         M+uqiTbjF/ZOFb9Sy+fVQzLBwvmpryBUYQ/+FdjbY6Hn5tU95O3/0by2Hv5r5CaTSk9U
+         a9ISQUlkFaTyzuMtX1+uVWLFQZAsUKnaI5jGOPi1EbiB3yaPKy75oW0BPNMZMsdRBw2O
+         +xUO/mmPVEm418F9q7Aclbkl5PTgkOdagQsrzNnQdQK3bbq5zfJrduth/X3I7ZpcKkXd
+         tCRFsqKB1xW66ic0/V8jaC1kGEWwhP7tYUHaJVsMVtBAwISXMYtJ/YAdq2dTVyVrPtwg
+         mafw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QZm07w2nSCiVVM+WjYPWUvz7wW+nL7XT9qvn8eYdy3A=;
-        b=FIa5T/Lw9UDTZQ9SM/ACk2fZ0pcaDSlGTtuRmaBlNXmLhipod6WuT45vudGoEyuZC+
-         WfxYLSLLECQjE+NXjCNGKY9W/yCXXA8pzwNOX7FwW1nA4aAhnfCXM+QrCeRu71ktSLdP
-         zgGp5he7OC/wkmeEgT7kJaS9pW3tujlZ20E7SXNFeK/tWEtNX3UsOsYcx2cU7pXZg0CH
-         FggZt3PRo012DBqTLedlWlHYuC8uxtdZcOQrC/xebtojCpIg3E+hvxbvD0I5wKLQADiz
-         DRzamvYuXXtPbkQx/NQyfXdEZZO748tBRqUK0GMt7YagpyFhDlrrD2iw8ozvIqU+qE7R
-         sRCg==
-X-Gm-Message-State: APjAAAU52GSEJuDwCbcoFs9PZn62g7uDDm1SWfe3u1vE4tnPXMBwykUR
-        Y0vKeuEv4+tPC4crasO5L/qNjUrQrtizXDwN9i8=
-X-Google-Smtp-Source: APXvYqwUTax6Nbe0rTjQMRruM2k63P6Yc2eck704d/9awNC5izroT9pbEMuhoHqfwRVTcq8tjZ9+yNcKWj5nNvgcVok=
-X-Received: by 2002:a17:906:1903:: with SMTP id a3mr22284151eje.37.1557209181270;
- Mon, 06 May 2019 23:06:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <1556437474-25319-1-git-send-email-huangzhaoyang@gmail.com> <20190506145727.GA11505@cmpxchg.org>
-In-Reply-To: <20190506145727.GA11505@cmpxchg.org>
-From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date:   Tue, 7 May 2019 14:06:09 +0800
-Message-ID: <CAGWkznE0zsGLVHuCx-WGk+TOcFe6w0wJ-MXM8=cXJPZb-rQD-A@mail.gmail.com>
-Subject: Re: [[repost]RFC PATCH] mm/workingset : judge file page activity via timestamp
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-        Roman Gushchin <guro@fb.com>, Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=F2rlrgjaiJp1NZ6RM4VM9hD4Rmd/jUUVurwXpw2zOD0=;
+        b=FvFhVsQdHHDScgbg3/LGNhU5KUweWi64NKs6Cf/Qs1ZQ7yJeu0BwTpfrkQJvRdTJP4
+         G8NGudqcro4UAjrJlmdstqvwTDBr5H6ctwu3mKIzrr8JArbPZx/tcV2DxqH3ZS7dpaHS
+         GviIeZ/K/8e/xKrOxJ4R3NbxiZpzu3Bn9JneOoXTDO5wxjNcavKJgFJaQtkNJpbsLcd+
+         sZSakjBP5yNOJQPOgMiKJVHbYWjUM+RGOdHoHtAoBAgKqvWNpiz5lW3dy7lRq0DCclXI
+         lxlnM5iehEGW0Hj47yaSmSfPRnyTxBhUwYewYRecA+AlhDLatJCyh29qZCZV6Fz5/AC9
+         INxA==
+X-Gm-Message-State: APjAAAVY4XZfpywtoHH46nnvYpgK2a+yYroP+/l9fSRGOGZJH445I+NO
+        cYpRN01IWq6gOiTzgAq1U8RF6g==
+X-Google-Smtp-Source: APXvYqyFxErSKOJGlANeP4eMybnknfCs0uOocek9g5tx0HVX9gFqZV9fJIv0GNvM6WxbwVQ6k420WQ==
+X-Received: by 2002:a17:902:9a0c:: with SMTP id v12mr38439694plp.184.1557209406749;
+        Mon, 06 May 2019 23:10:06 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id e184sm30786325pfc.102.2019.05.06.23.10.01
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 06 May 2019 23:10:06 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     dan.j.williams@intel.com, vkoul@kernel.org
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, Zubair.Kakakhel@imgtec.com,
+        wsa+renesas@sang-engineering.com, jroedel@suse.de,
+        vincent.guittot@linaro.org, baolin.wang@linaro.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/8] Add matching device node validation in DMA engine core
+Date:   Tue,  7 May 2019 14:09:37 +0800
+Message-Id: <cover.1557206859.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 10:57 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Sun, Apr 28, 2019 at 03:44:34PM +0800, Zhaoyang Huang wrote:
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> > this patch introduce timestamp into workingset's entry and judge if the page is
-> > active or inactive via active_file/refault_ratio instead of refault distance.
-> >
-> > The original thought is coming from the logs we got from trace_printk in this
-> > patch, we can find about 1/5 of the file pages' refault are under the
-> > scenario[1],which will be counted as inactive as they have a long refault distance
-> > in between access. However, we can also know from the time information that the
-> > page refault quickly as comparing to the average refault time which is calculated
-> > by the number of active file and refault ratio. We want to save these kinds of
-> > pages from evicted earlier as it used to be via setting it to ACTIVE instead.
-> > The refault ratio is the value which can reflect lru's average file access
-> > frequency in the past and provide the judge criteria for page's activation.
-> >
-> > The patch is tested on an android system and reduce 30% of page faults, while
-> > 60% of the pages remain the original status as (refault_distance < active_file)
-> > indicates. Pages status got from ftrace during the test can refer to [2].
-> >
-Hi Johannes,
-Thank you for your feedback. I have answer previous comments many
-times in different context. I don't expect you accept this patch but
-want to have you pay attention to the phenomenon reported in [1],
-which has a big refault distance but refaulted very quickly after
-evicted. Do you think if this kind of page should be set to INACTIVE?
-> > [1]
-> > system_server workingset_refault: WKST_ACT[0]:rft_dis 265976, act_file 34268 rft_ratio 3047 rft_time 0 avg_rft_time 11 refault 295592 eviction 29616 secs 97 pre_secs 97
-> > HwBinder:922  workingset_refault: WKST_ACT[0]:rft_dis 264478, act_file 35037 rft_ratio 3070 rft_time 2 avg_rft_time 11 refault 310078 eviction 45600 secs 101 pre_secs 99
-> >
-> > [2]
-> > WKST_ACT[0]:   original--INACTIVE  commit--ACTIVE
-> > WKST_ACT[1]:   original--ACTIVE    commit--ACTIVE
-> > WKST_INACT[0]: original--INACTIVE  commit--INACTIVE
-> > WKST_INACT[1]: original--ACTIVE    commit--INACTIVE
-> >
-> > Signed-off-by: Zhaoyang Huang <huangzhaoyang@gmail.com>
->
-> Nacked-by: Johannes Weiner <hannes@cmpxchg.org>
->
-> You haven't addressed any of the questions raised during previous
-> submissions.
+Hi,
+
+This patch set adds a device node validation in DMA engine core, that will
+help some drivers to remove the duplicate device node validation in each
+driver.
+
+Any comments are welcome. Thanks.
+
+Baolin Wang (8):
+  dmaengine: Add matching device node validation in
+    __dma_request_channel()
+  soc: tegra: fuse: Change to the correct __dma_request_channel()
+    prototype
+  dmaengine: imx-sdma: Let the core do the device node validation
+  dmaengine: dma-jz4780: Let the core do the device node validation
+  dmaengine: mmp_tdma: Let the core do the device node validation
+  dmaengine: mxs-dma: Let the core do the device node validation
+  dmaengine: sh: rcar-dmac: Let the core do the device node validation
+  dmaengine: sh: usb-dmac: Let the core do the device node validation
+
+ drivers/dma/dma-jz4780.c              |    7 ++-----
+ drivers/dma/dmaengine.c               |   10 ++++++++--
+ drivers/dma/imx-sdma.c                |    9 ++-------
+ drivers/dma/mmp_tdma.c                |   10 ++--------
+ drivers/dma/mxs-dma.c                 |    8 ++------
+ drivers/dma/of-dma.c                  |    4 ++--
+ drivers/dma/sh/rcar-dmac.c            |    6 +++---
+ drivers/dma/sh/usb-dmac.c             |    6 ++----
+ drivers/soc/tegra/fuse/fuse-tegra20.c |    2 +-
+ include/linux/dmaengine.h             |   12 ++++++++----
+ include/linux/platform_data/dma-imx.h |    1 -
+ 11 files changed, 32 insertions(+), 43 deletions(-)
+
+-- 
+1.7.9.5
+
