@@ -2,57 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E461415BA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 153A115BBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:57:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfEGF4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:56:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727334AbfEGF4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:56:11 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A92B7205ED;
-        Tue,  7 May 2019 05:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557208571;
-        bh=t1e6qR30XoBlOonZc+HmloDE9SesZNKua7dzCp++aG0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cS1hFIOnRvtfqQN3aLt7ozfE6Nuiq9UTnTOQrVkeHauYc1jvYJAkxhbMj00JJ/kq8
-         odLH6j1FQmphq7y78OZj13oyaZILigDagMpaWuM4iWulZY7DlG5US2/tuOgbrvKwiT
-         99ZYJ1DTzPkw+U5sEkwJV99kJJSajOReiixmSaOo=
-Date:   Tue, 7 May 2019 07:56:08 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 5/7] soundwire: add debugfs support
-Message-ID: <20190507055608.GC17986@kroah.com>
-References: <20190504010030.29233-1-pierre-louis.bossart@linux.intel.com>
- <20190504010030.29233-6-pierre-louis.bossart@linux.intel.com>
- <20190504070301.GD9770@kroah.com>
- <a9e1c3d2-fe29-1683-9253-b66034c62010@linux.intel.com>
- <20190506163810.GK3845@vkoul-mobl.Dlink>
+        id S1728656AbfEGF5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 01:57:07 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43390 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbfEGF5F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 01:57:05 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z5so8033172lji.10
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 22:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=C7TwO1vjbNHfMqbAxi9vlDVvmDYxhZ6ib+epFPKTheM=;
+        b=TDEjJvzcgnurW1FPZtCH9rYP2rDymIZeqdMqRdGI15WUsXRAn3v7+lnmyZ0fdZGIeF
+         Pc5D+zhVmkFbz3l3w4gfKZ2EnMZd+l84USSuNcl+9kMp8kUMYmIHDBt8nJJyKVkqp9N6
+         bfTxje9VGE12bymK8hn65n+jfWRpU1o46JJJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=C7TwO1vjbNHfMqbAxi9vlDVvmDYxhZ6ib+epFPKTheM=;
+        b=Z0gsu2fcxjADZJ0+LfUkysv+/18/YYAIll+1hEjZsw6PeuBxgH3QYJD663eJbYYfA8
+         rtyrdTzJK53NSduHHwtS8XjfxFSpWbFA8JyAilAPeY8n21PZU8eYD0DUPEjlhdYOTBRH
+         MaYfniGgQuSEVRibO1bnfaYMNzFIQGBjNHNTNoAIn46ydFYkluntED0buC9ScXPqWQR3
+         UDSUdcUbGU+/8L99UTQuDw0SyL7xiAZz//H1o60XNgxWDev78eW1FMO8kfJrXbhuO3cO
+         sFajMsWyyt9JA4sJgKLwGvk3XC1jWiDbwkTxqxYgzO2hPrXxOK3lK2v/PbgUkF5Dkhj3
+         uFCw==
+X-Gm-Message-State: APjAAAXOQvJNAPJ/KTlWOdd9D2+IWik0aGb8+CVNI8tiGkAuys62VlYH
+        UWzoKvXvPmKxE8GZXOeYznnNZQ==
+X-Google-Smtp-Source: APXvYqwERnjT55opTEsv307+a6frciS871V94u2tJ9NDGTgJXKuYC1Zj43Kpzyifcos6RVOT/S+r2A==
+X-Received: by 2002:a2e:84ca:: with SMTP id q10mr2535264ljh.117.1557208623493;
+        Mon, 06 May 2019 22:57:03 -0700 (PDT)
+Received: from [172.16.11.26] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id s17sm1889372lfb.66.2019.05.06.22.57.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 22:57:02 -0700 (PDT)
+Subject: Re: [PATCH AUTOSEL 4.14 79/95] x86/asm: Remove dead __GNUC__
+ conditionals
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-79-sashal@kernel.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <d18bba8c-0d2c-03bd-0098-5f39ad726b01@rasmusvillemoes.dk>
+Date:   Tue, 7 May 2019 07:57:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190506163810.GK3845@vkoul-mobl.Dlink>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190507053826.31622-79-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 10:08:10PM +0530, Vinod Koul wrote:
-> Yes, but then device exit routine is supposed to do debugfs cleanup as
-> well, so that would ensure these references are dropped at that point of
-> time. Greg should that not take care of it or we *should* always do
-> refcounting.
+On 07/05/2019 07.38, Sasha Levin wrote:
+> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> 
+> [ Upstream commit 88ca66d8540ca26119b1428cddb96b37925bdf01 ]
+> 
+> The minimum supported gcc version is >= 4.6, so these can be removed.
 
-Always do refcounting.  How else can you "guarantee" that it is safe?
+Eh, that bump happened for the 4.19 kernel, so this is not true for the
+4.14 branch. Has cafa0010cd51fb711fdcb50fc55f394c5f167a0a been applied
+to 4.14.y? Otherwise I don't think this is appropriate.
+
+Rasmus
