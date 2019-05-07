@@ -2,118 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDC815B2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6C715B89
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbfEGFwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:52:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbfEGFwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:52:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7D5B205ED;
-        Tue,  7 May 2019 05:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557208336;
-        bh=N26NT472AJl64Ye593vKGyraTKV6QYnsEVPtsPUDgS8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RjCEr5aCMT4Uk9yNqIWCCL//2hkpSqXtp7E46ssLuyMCdjwXaf/KlsSxWnBWpiGo8
-         I95XOQDzgMx15QM+/qeZ93Wv+tITASZOVFMtU3sbNl+b+lCl1P9xO/fJtGOedFHaIe
-         psw9yA4amrorbJPSVfl31q+MqIMeGMI+31IesEdc=
-Date:   Tue, 7 May 2019 07:52:14 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        David Laight <David.Laight@aculab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH AUTOSEL 4.14 72/95] devres: Align data[] to
- ARCH_KMALLOC_MINALIGN
-Message-ID: <20190507055214.GA17986@kroah.com>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-72-sashal@kernel.org>
+        id S1729128AbfEGFyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 01:54:50 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:45758 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727715AbfEGFyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 01:54:43 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x475mn5F173525;
+        Tue, 7 May 2019 05:54:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=kJQobYwWo6iFFg61xydLrFO2gb+vbqflfGMqytbSt44=;
+ b=FoFGdqOSsVcD9mQe/DscR5O60zlk+Ejev9fOw62vKLZlEilOZD1+sMk5dUblc/KEJOfL
+ +gAf1RItHcleauKg8kOyPEhPKJerXL4YpKj/z56S1pfkASQdhdwV3m6o6vI1yVB6Twm9
+ X+L6RH7zj2d+oSQ80CjvBjDwLBi/ZO176zo6vHpIgbo/Ik93nbkN0kYmkWT1pBrgtBxJ
+ 8OkVEYbfw6E9bmI2erg5nm8bcTIFk0LXJFNLpunYT6zh2j9w3TCQRNzqyfaTTp8yrWDK
+ PG9QTzBNjJv2e9BjeQW7TYxEbBn4zUeTeyH8wQ+sxlnny+1WjTPeOWagb64rYsO5Y5SN jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2s94b5tpe7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 May 2019 05:54:20 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x475qxmF127046;
+        Tue, 7 May 2019 05:54:20 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2s94b99m85-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 May 2019 05:54:20 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x475sDut019063;
+        Tue, 7 May 2019 05:54:13 GMT
+Received: from kadam (/196.109.148.118)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 May 2019 22:54:12 -0700
+Date:   Tue, 7 May 2019 08:54:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-kernel@vger.kernel.org, stefan.wahren@i2se.com,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        phil@raspberrypi.org, Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] staging: vchiq: revert "switch to
+ wait_for_completion_killable"
+Message-ID: <20190507055405.GI2269@kadam>
+References: <20190506144030.29056-1-nsaenzjulienne@suse.de>
+ <20190506144030.29056-3-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507053826.31622-72-sashal@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190506144030.29056-3-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905070039
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9249 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905070039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 01:38:01AM -0400, Sasha Levin wrote:
-> From: Alexey Brodkin <alexey.brodkin@synopsys.com>
+On Mon, May 06, 2019 at 04:40:29PM +0200, Nicolas Saenz Julienne wrote:
+> The killable version of wait_for_completion() is meant to be used on
+> situations where it should not fail at all costs, but still have the
+> convenience of being able to kill it if really necessary. VCHIQ doesn't
+> fit this criteria, as it's mainly used as an interface to V4L2 and ALSA
+> devices.
 > 
-> [ Upstream commit a66d972465d15b1d89281258805eb8b47d66bd36 ]
+> Fixes: a772f116702e ("staging: vchiq: switch to wait_for_completion_killable")
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > 
-> Initially we bumped into problem with 32-bit aligned atomic64_t
-> on ARC, see [1]. And then during quite lengthly discussion Peter Z.
-> mentioned ARCH_KMALLOC_MINALIGN which IMHO makes perfect sense.
-> If allocation is done by plain kmalloc() obtained buffer will be
-> ARCH_KMALLOC_MINALIGN aligned and then why buffer obtained via
-> devm_kmalloc() should have any other alignment?
-> 
-> This way we at least get the same behavior for both types of
-> allocation.
-> 
-> [1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004009.html
-> [2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004036.html
-> 
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: David Laight <David.Laight@ACULAB.COM>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Greg KH <greg@kroah.com>
-> Cc: <stable@vger.kernel.org> # 4.8+
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> This reverts commit a772f116702e3f0afdd7e6acadc1b8fb3b20b9ff.
 > ---
->  drivers/base/devres.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index 71d577025285..e43a04a495a3 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -25,8 +25,14 @@ struct devres_node {
->  
->  struct devres {
->  	struct devres_node		node;
-> -	/* -- 3 pointers */
-> -	unsigned long long		data[];	/* guarantee ull alignment */
-> +	/*
-> +	 * Some archs want to perform DMA into kmalloc caches
-> +	 * and need a guaranteed alignment larger than
-> +	 * the alignment of a 64-bit integer.
-> +	 * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
-> +	 * buffer alignment as if it was allocated by plain kmalloc().
-> +	 */
-> +	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
->  };
->  
->  struct devres_group {
 
-This is not needed in any of the older kernels, despite what the stable@
-line said, as it ends up taking a lot of memory up for all other arches.
-That's why I only applied it to the one kernel version.  I'm betting
-that it will be eventually reverted when people notice it as well :)
+Git just sets you up for failure with its revert.  That code was from
+when git was really new and now everyone gets annoyed when they see a
+raw git hash without a human readable subject.  Just say at the start of
+the commit message:
 
-So can you please drop it from all of your trees?
+This reverts commit a772f116702e ("staging: vchiq: switch to
+wait_for_completion_killable").
 
-thanks,
+The killable version of wait_for_completion() is meant to be used on
+situations where it should not fail at all costs, but still have the
+convenience of being able to kill it if really necessary. VCHIQ doesn't
+fit this criteria, as it's mainly used as an interface to V4L2 and ALSA
+devices.
 
-greg k-h
+Fixes: a772f116702e ("staging: vchiq: switch to wait_for_completion_killable")
+
+regards,
+dan carpenter
+
