@@ -2,145 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6208D15EEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF49415EF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfEGIN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:13:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbfEGINz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:13:55 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07B7F36887;
-        Tue,  7 May 2019 08:13:54 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 74E795D9D6;
-        Tue,  7 May 2019 08:13:51 +0000 (UTC)
-Date:   Tue, 7 May 2019 10:13:50 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 07/12] perf script: Pad dso name for --call-trace
-Message-ID: <20190507081350.GA17416@krava>
-References: <20190503081841.1908-1-jolsa@kernel.org>
- <20190503081841.1908-8-jolsa@kernel.org>
- <8385E7AF-756B-4113-9388-BD81D0F58374@fb.com>
+        id S1727235AbfEGION (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:14:13 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29187 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726085AbfEGIOK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 04:14:10 -0400
+X-UUID: 51426ea3c00246cf81d155f0798e3358-20190507
+X-UUID: 51426ea3c00246cf81d155f0798e3358-20190507
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 515348795; Tue, 07 May 2019 16:14:00 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 7 May 2019 16:13:58 +0800
+Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 7 May 2019 16:13:58 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
+        Frederic Chen <Frederic.Chen@mediatek.com>
+Subject: [PATCH v5 07/12] soc: mediatek: cmdq: clear the event in cmdq initial flow
+Date:   Tue, 7 May 2019 16:13:50 +0800
+Message-ID: <20190507081355.52630-8-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
+References: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8385E7AF-756B-4113-9388-BD81D0F58374@fb.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 07 May 2019 08:13:54 +0000 (UTC)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 4587B7BEF816A485484CD50075762EAAAF633E369DDC2A20B5F619A77579D66C2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 09:38:55PM +0000, Song Liu wrote:
+GCE hardware stored event information in own internal sysram,
+if the initial value in those sysram is not zero value
+it will cause a situation that gce can wait the event immediately
+after client ask gce to wait event but not really trigger the
+corresponding hardware.
 
-SNIP
+In order to make sure that the wait event function is
+exactly correct, we need to clear the sysram value in
+cmdq initial flow.
 
-> > 
-> > Link: http://lkml.kernel.org/n/tip-99g9rg4p20a1o99vr0nkjhq8@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> > tools/include/linux/kernel.h  |  1 +
-> > tools/lib/vsprintf.c          | 19 +++++++++++++++++++
-> > tools/perf/builtin-script.c   |  1 +
-> > tools/perf/util/map.c         |  6 ++++++
-> > tools/perf/util/symbol_conf.h |  1 +
-> > 5 files changed, 28 insertions(+)
-> > 
-> > diff --git a/tools/include/linux/kernel.h b/tools/include/linux/kernel.h
-> > index 857d9e22826e..cba226948a0c 100644
-> > --- a/tools/include/linux/kernel.h
-> > +++ b/tools/include/linux/kernel.h
-> > @@ -102,6 +102,7 @@
-> > 
-> > int vscnprintf(char *buf, size_t size, const char *fmt, va_list args);
-> > int scnprintf(char * buf, size_t size, const char * fmt, ...);
-> > +int scnprintf_pad(char * buf, size_t size, const char * fmt, ...);
-> > 
-> > #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-> > 
-> > diff --git a/tools/lib/vsprintf.c b/tools/lib/vsprintf.c
-> > index e08ee147eab4..149a15013b23 100644
-> > --- a/tools/lib/vsprintf.c
-> > +++ b/tools/lib/vsprintf.c
-> > @@ -23,3 +23,22 @@ int scnprintf(char * buf, size_t size, const char * fmt, ...)
-> > 
-> >        return (i >= ssize) ? (ssize - 1) : i;
-> > }
-> > +
-> > +int scnprintf_pad(char * buf, size_t size, const char * fmt, ...)
-> > +{
-> > +	ssize_t ssize = size;
-> > +	va_list args;
-> > +	int i;
-> 
-> nit: I guess we can avoid mixing int, ssize_t and size_t here?
+Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
 
-I copied that from scnprintf ;-)
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
+---
+ drivers/mailbox/mtk-cmdq-mailbox.c       | 5 +++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h | 2 ++
+ include/linux/soc/mediatek/mtk-cmdq.h    | 3 ---
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
-the thing is that at the end we call vsnprintf, which takes size_t
-as size param and returns int, so there will be casting at some
-point in any case..
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 6db1e2dd2dea..2c1b80d82c3a 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -20,6 +20,7 @@
+ #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
+ 
+ #define CMDQ_CURR_IRQ_STATUS		0x10
++#define CMDQ_SYNC_TOKEN_UPDATE		0x68
+ #define CMDQ_THR_SLOT_CYCLES		0x30
+ #define CMDQ_THR_BASE			0x100
+ #define CMDQ_THR_SIZE			0x80
+@@ -103,8 +104,12 @@ static void cmdq_thread_resume(struct cmdq_thread *thread)
+ 
+ static void cmdq_init(struct cmdq *cmdq)
+ {
++	int i;
++
+ 	WARN_ON(clk_enable(cmdq->clock) < 0);
+ 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
++	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
++		writel(i, cmdq->base + CMDQ_SYNC_TOKEN_UPDATE);
+ 	clk_disable(cmdq->clock);
+ }
+ 
+diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
+index ccb73422c2fa..911475da7a53 100644
+--- a/include/linux/mailbox/mtk-cmdq-mailbox.h
++++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
+@@ -19,6 +19,8 @@
+ #define CMDQ_WFE_UPDATE			BIT(31)
+ #define CMDQ_WFE_WAIT			BIT(15)
+ #define CMDQ_WFE_WAIT_VALUE		0x1
++/** cmdq event maximum */
++#define CMDQ_MAX_EVENT			0x3ff
+ 
+ /*
+  * CMDQ_CODE_MASK:
+diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+index 54ade13a9b15..4e8899972db4 100644
+--- a/include/linux/soc/mediatek/mtk-cmdq.h
++++ b/include/linux/soc/mediatek/mtk-cmdq.h
+@@ -13,9 +13,6 @@
+ 
+ #define CMDQ_NO_TIMEOUT		0xffffffffu
+ 
+-/** cmdq event maximum */
+-#define CMDQ_MAX_EVENT				0x3ff
+-
+ struct cmdq_pkt;
+ 
+ struct cmdq_client {
+-- 
+2.18.0
 
-I guess the ssize_t was introduced to compare the size_t value with int
-
-> 
-> 
-> > +
-> > +	va_start(args, fmt);
-> > +	i = vsnprintf(buf, size, fmt, args);
-> > +	va_end(args);
-> > +
-> > +	if (i < (int) size) {
-> > +		for (; i < (int) size; i++)
-> > +			buf[i] = ' ';
-> > +		buf[i] = 0x0;
-> > +	}
-> > +
-> > +	return (i >= ssize) ? (ssize - 1) : i;
-> > +}
-> > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> > index 61cfd8f70989..7adaa6c63a0b 100644
-> > --- a/tools/perf/builtin-script.c
-> > +++ b/tools/perf/builtin-script.c
-> > @@ -3297,6 +3297,7 @@ static int parse_call_trace(const struct option *opt __maybe_unused,
-> > 	parse_output_fields(NULL, "-ip,-addr,-event,-period,+callindent", 0);
-> > 	itrace_parse_synth_opts(opt, "cewp", 0);
-> > 	symbol_conf.nanosecs = true;
-> > +	symbol_conf.pad_output_len_dso = 50;
-> > 	return 0;
-> > }
-> > 
-> > diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-> > index ee71efb9db62..c3fbd6e556b0 100644
-> > --- a/tools/perf/util/map.c
-> > +++ b/tools/perf/util/map.c
-> > @@ -405,6 +405,7 @@ size_t map__fprintf(struct map *map, FILE *fp)
-> > 
-> > size_t map__fprintf_dsoname(struct map *map, FILE *fp)
-> > {
-> > +	char buf[PATH_MAX];
-> 
-> nit: PATH_MAX vs. 50 is a little weird. 
-
-right, the "staying on the safe side" is too big here, will change 
-
-thanks,
-jirka
