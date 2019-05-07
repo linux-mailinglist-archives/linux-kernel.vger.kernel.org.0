@@ -2,113 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4052415EE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F0A15EFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 10:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfEGIMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 04:12:42 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42420 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfEGIMl (ORCPT
+        id S1727282AbfEGIO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 04:14:29 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41778 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727150AbfEGIOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 04:12:41 -0400
-Received: by mail-ot1-f66.google.com with SMTP id f23so14042078otl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 01:12:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NQ6dv2i93HZ0YYfKZpbV9MkWY21B58FCrXMAN8Dpx2E=;
-        b=dZIlEjfY4liPM3W2qTMdmD+JxskOfa9Bul07lgqcCrnp45rYhbjJ6QWCFBgD08ai4a
-         JtbbnHwz4yZ8jQV7Eb+Ryc94rylxIInI1RoCR2xyKGMS35F5CnSsiNv9oO+zVBwBpf4t
-         ELFgHhxyYHttctizB6mPVsGOCLkElyEAvStY+vtmO37BDBV1+v66gPnXzahl8fyxGxLr
-         +exUYA/p/NswjW9QCqqZyjKcigYRS0OiZYDNiqNLgkOhAeFKegZmw1E/veMTzHSsenjl
-         XskfmfkwldNk7N3TijO/N7Fv+V+VjmLyIEZDvzYnxbJwM9oR+i4nmyfSA/fXbU9MAjUx
-         TS9w==
-X-Gm-Message-State: APjAAAUTZigACLwZoLg1Tj8yOStVCqbo7B+24J+MM1uJcHB2DhHv8ISI
-        wVeDtD2ksLlr+12vDh8aYwI=
-X-Google-Smtp-Source: APXvYqxazZcvVgW8B8Abx61RE3d6GpWO8pSjTz4Bl2xHSbS/zPSIG/vaJXjunEVO9ubN+ITWd3WpFw==
-X-Received: by 2002:a9d:6d19:: with SMTP id o25mr3196049otp.151.1557216760884;
-        Tue, 07 May 2019 01:12:40 -0700 (PDT)
-Received: from sultan-box.localdomain ([107.193.118.89])
-        by smtp.gmail.com with ESMTPSA id k60sm5643992otc.42.2019.05.07.01.12.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 01:12:40 -0700 (PDT)
-Date:   Tue, 7 May 2019 01:12:36 -0700
-From:   Sultan Alsawaf <sultan@kerneltoast.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Daniel Colascione <dancol@google.com>,
-        Todd Kjos <tkjos@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Martijn Coenen <maco@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        kernel-team <kernel-team@android.com>,
-        Christian Brauner <christian@brauner.io>
-Subject: Re: [RFC] simple_lmk: Introduce Simple Low Memory Killer for Android
-Message-ID: <20190507081236.GA1531@sultan-box.localdomain>
-References: <20190318002949.mqknisgt7cmjmt7n@brauner.io>
- <20190318235052.GA65315@google.com>
- <20190319221415.baov7x6zoz7hvsno@brauner.io>
- <CAKOZuessqcjrZ4rfGLgrnOhrLnsVYiVJzOj4Aa=o3ZuZ013d0g@mail.gmail.com>
- <20190319231020.tdcttojlbmx57gke@brauner.io>
- <20190320015249.GC129907@google.com>
- <20190507021622.GA27300@sultan-box.localdomain>
- <20190507070430.GA24150@kroah.com>
- <20190507072721.GA4364@sultan-box.localdomain>
- <20190507074334.GB26478@kroah.com>
+        Tue, 7 May 2019 04:14:21 -0400
+X-UUID: f765446abbcb407a9f38b6bec9387b48-20190507
+X-UUID: f765446abbcb407a9f38b6bec9387b48-20190507
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 726903544; Tue, 07 May 2019 16:14:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 7 May 2019 16:13:56 +0800
+Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 7 May 2019 16:13:57 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
+        Frederic Chen <Frederic.Chen@mediatek.com>
+Subject: [PATCH v5 00/14] support gce on mt8183 platform
+Date:   Tue, 7 May 2019 16:13:43 +0800
+Message-ID: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507074334.GB26478@kroah.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 09:43:34AM +0200, Greg Kroah-Hartman wrote:
-> Given that any "new" android device that gets shipped "soon" should be
-> using 4.9.y or newer, is this a real issue?
+Changes since v4:
+ - refine the architecture of the packet encoder function
+ - refine the gce enevt property
+ - change the patch's title
 
-It's certainly a real issue for those who can't buy brand new Android devices
-without software bugs every six months :)
+Changes since v3:
+ - fix a typo in dt-binding and dtsi
+ - cast the return value to right format
 
-> And if it is, I'm sure that asking for those patches to be backported to
-> 4.4.y would be just fine, have you asked?
->
-> Note that I know of Android Go devices, running 3.18.y kernels, do NOT
-> use the in-kernel memory killer, but instead use the userspace solution
-> today.  So trying to get another in-kernel memory killer solution added
-> anywhere seems quite odd.
+Changes since v2:
+ - according to CK's review comment, change the property name and
+   refine the parameter
+ - change the patch's title
+ - remove unused property from dt-binding and dts
 
-It's even more odd that although a userspace solution is touted as the proper
-way to go on LKML, almost no Android OEMs are using it, and even in that commit
-I linked in the previous message, Google made a rather large set of
-modifications to the supposedly-defunct lowmemorykiller.c not one month ago.
-What's going on?
+Changes since v1:
+ - add prefix "cmdq" in the commit subject
+ - add dt-binding document for get event and subsys function
+ - add fix up tag in fixup patch
+ - fix up some coding style (alignment)
 
-Qualcomm still uses lowmemorykiller.c [1] on the Snapdragon 845. If PSI were
-backported to 4.4, or even 3.18, would it really be used? I don't really
-understand the aversion to an in-kernel memory killer on LKML despite the rest
-of the industry's attraction to it. Perhaps there's some inherently great cost
-in using the userspace solution that I'm unaware of?
+MTK will support gce function on mt8183 platform.
+  dt-binding: gce: add gce header file for mt8183
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  arm64: dts: add gce node for mt8183
 
-Regardless, even if PSI were backported, a full-fledged LMKD using it has yet to
-be made, so it wouldn't be of much use now.
+Besides above patches, we refine gce driver on those patches.
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
 
-Thanks,
-Sultan
+In order to enhance the convenience of gce usage, we add new helper
+functions and refine the method of instruction combining.
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add binding for gce subsys property
+  dt-binding: gce: add binding for gce event property
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_subsys function
+  soc: mediatek: cmdq: add cmdq_dev_get_event function
 
-[1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/arch/arm64/configs/sdm845_defconfig?h=LA.UM.7.3.r1-07400-sdm845.0#n492
+Bibby Hsieh (12):
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add gce header file for mt8183
+  dt-binding: gce: add binding for gce subsys property
+  dt-binding: gce: add binding for gce event property
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_subsys function
+  soc: mediatek: cmdq: add cmdq_dev_get_event function
+  arm64: dts: add gce node for mt8183
+
+ .../devicetree/bindings/mailbox/mtk-gce.txt   |  31 ++-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  11 +
+ drivers/mailbox/mtk-cmdq-mailbox.c            |  18 +-
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 195 ++++++++++++++----
+ include/dt-bindings/gce/mt8183-gce.h          | 177 ++++++++++++++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |   5 +
+ include/linux/soc/mediatek/mtk-cmdq.h         |  62 +++++-
+ 7 files changed, 437 insertions(+), 62 deletions(-)
+ create mode 100644 include/dt-bindings/gce/mt8183-gce.h
+
+-- 
+2.18.0
+
