@@ -2,64 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0F715D14
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B6915D3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 08:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbfEGGJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 02:09:43 -0400
-Received: from mx1.chost.de ([5.175.28.52]:33198 "EHLO mx1.chost.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbfEGGJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 02:09:42 -0400
-Received: from vm002.chost.de ([::ffff:192.168.122.102])
-  by mx1.chost.de with SMTP; Tue, 07 May 2019 08:10:28 +0200
-  id 000000000133ACB4.000000005CD12154.00006711
-Received: by vm002.chost.de (sSMTP sendmail emulation); Tue, 07 May 2019 08:10:28 +0200
-Date:   Tue, 7 May 2019 08:10:28 +0200
-From:   Christoph Probst <kernel@probst.it>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Pavel Shilovsky <pavel.shilovsky@gmail.com>,
-        Jeremy Allison <jra@samba.org>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cifs: fix strcat buffer overflow in
- smb21_set_oplock_level()
-Message-ID: <20190507061028.GP28577@netzpunkt.org>
-References: <1557155792-2703-1-git-send-email-kernel@probst.it>
- <CAH2r5mtdpOvcE25P2UuNFpOwsNyFiBWRQELQFui+FJGVOOBV8w@mail.gmail.com>
- <20190506165658.GA168433@jra4>
- <CAH2r5msK6yNNm_QbdsFZuB5uS0iNRuqe8gSDKvVAiR0N6E3MWg@mail.gmail.com>
- <CAKywueR6DcfkzGcZUgydV4n6F4MKDEOvtCaM-gQSonX02tA9tg@mail.gmail.com>
- <CAH2r5ms+RAoe_1c=dUYL=yCs3KWAvqoB00-T4SEpyTjRKiwA6A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S1726469AbfEGGPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 02:15:16 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:58495 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726253AbfEGGPP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 02:15:15 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 341441601A;
+        Tue,  7 May 2019 02:15:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 07 May 2019 02:15:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=rUkopSZotbELjC7owtPyRjHNKJ3
+        xdDhDqSCz9ET9utg=; b=AS1BO+QbYPt06V80kSVUyssGF4Ba2f9z0Yh9quhHxX7
+        zrTPAu78fNvUrbRquynL/OWR/4IEEMzcBsbZpmAu/T4N0OQWXP2TbpaZL/67OAhQ
+        AMamKUBgCjwff5oVKKTOEy6EwglIpjt3hdXh9xMBRCkVveX7JxHP6YYZsqz+B7yJ
+        /AulUBJNufJAwBfc1oRE1bbq/iVhrAXm2F2mxOyJ86zthq+zNVT6L7PBGqcM3XDA
+        yLpCCiHazFsBS6/rBZ9253l7AbuuRSLqZUDSY38j0Cm7YKPDX8d7WnnOEwd3Zsp4
+        H0iMIUQe9hopOSO2NoJT8PcIXgNSVkduzqx39088lJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=rUkopS
+        ZotbELjC7owtPyRjHNKJ3xdDhDqSCz9ET9utg=; b=i7ncgJF/yfrNdTLwnNSNGZ
+        uPVA6ji2AnBVDI9n0r1y8pCK2yJNpSm7dQviwp0p4pawb8AQa9Vbho1pjtq0d9w6
+        SthRziw6x+GHcMq7GS4kSzIn2isTqgz2I+FZYAL17RIsTws3jDF0qX4BU8Vw2DuY
+        vrtCY+9WMmoOVmqv0UNVszGHh3+7HZxrUemQS8arYvwnDGndOxPKYPyxdBAX0NA2
+        dVQzxz6Kebs3eu/f1S4gDNexxDJNCUv0wNXPIxfSqq1NkF/SBe99LBCL2fPaM/jE
+        qMqjvpS1OMdgFqqsG41aexJD8oPWgSd8N1d+1k/8U7Y6puDsF2Nol6M61BfKJMGg
+        ==
+X-ME-Sender: <xms:byLRXO9BhqWoYOI1nD7awYSzoJh7Ykz-O04r0agOBB0_KZ-4c4GSZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjeelgddutdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:byLRXC_C38TiyAvlCphEyaoBx2a4x19dVVLKoPi8hI9gDTgiZuWEJQ>
+    <xmx:byLRXPDUumKl0Lwt1Ff01r_ny4oSa8EB8q_pjjZs5b1ZPEYEG9Tv4w>
+    <xmx:byLRXKxTG2F7U2_wTmi4XGEK9Ymk8EJh6XiN7LmdDQAI7h7c_5Z2kQ>
+    <xmx:cCLRXDVh-v28OmP-Eopnv_AALi3F7RfEzPEvMJkEHBXZMavn-R0Dwg>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 813DDE4693;
+        Tue,  7 May 2019 02:15:10 -0400 (EDT)
+Date:   Tue, 7 May 2019 08:15:03 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH AUTOSEL 4.14 79/95] x86/asm: Remove dead __GNUC__
+ conditionals
+Message-ID: <20190507061503.GA20385@kroah.com>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-79-sashal@kernel.org>
+ <d18bba8c-0d2c-03bd-0098-5f39ad726b01@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2r5ms+RAoe_1c=dUYL=yCs3KWAvqoB00-T4SEpyTjRKiwA6A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <d18bba8c-0d2c-03bd-0098-5f39ad726b01@rasmusvillemoes.dk>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Steve French schrieb am 06.05.2019 um 23:18 Uhr:
-
-> On Mon, May 6, 2019 at 2:03 PM Pavel Shilovsky
-> <pavel.shilovsky@gmail.com> wrote:
-> >
-> > The patch itself is fine but I think we have a bigger problem here:
+On Tue, May 07, 2019 at 07:57:01AM +0200, Rasmus Villemoes wrote:
+> On 07/05/2019 07.38, Sasha Levin wrote:
+> > From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > 
+> > [ Upstream commit 88ca66d8540ca26119b1428cddb96b37925bdf01 ]
+> > 
+> > The minimum supported gcc version is >= 4.6, so these can be removed.
 > 
-> Good point.  Perhaps make update to the same patch to include both changes
+> Eh, that bump happened for the 4.19 kernel, so this is not true for the
+> 4.14 branch. Has cafa0010cd51fb711fdcb50fc55f394c5f167a0a been applied
+> to 4.14.y? Otherwise I don't think this is appropriate.
 
-I'll update my patch to implement the change suggested by Pavel.
+No, that commit is not in 4.14, so we still have to "support" older
+versions of gcc there :(
 
-I'll also switch the strcat to strncat and use strncpy in the "None"-case.
+Sasha, can you drop this?
 
-Regards,
-Christoph
+thanks,
 
-
-
+greg k-h
