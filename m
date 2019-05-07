@@ -2,97 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6D11625D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A028316276
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 12:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfEGKzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 06:55:22 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35418 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfEGKzU (ORCPT
+        id S1726810AbfEGK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 06:58:32 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41573 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfEGK6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 06:55:20 -0400
-Received: by mail-lj1-f193.google.com with SMTP id m20so4675733lji.2;
-        Tue, 07 May 2019 03:55:19 -0700 (PDT)
+        Tue, 7 May 2019 06:58:31 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m4so18296060edd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 03:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VXRQC0UsjauveYOiCa1HYIm6GnidpMCvjvUYDOoy8Kk=;
-        b=VYDBlMQM/nMdmQESkPNOIOO0h9ONTG/hgvDy8XsTml1o4qUTDLnhRfle9wOL/Zaklv
-         va6dq8w70Itj6U1a0GNuU53NVSeQs+Q9lAbDTHZiUh+C+h/TgpwHaZIBejQg3Qw7TqiJ
-         o0ISt0SNZCrwyBVZwDgyDHFTeGtQXJZmLvamAW0ayMpIs26LlnmNy7C4hivNW+Rq4Sdm
-         HzBc0KFQsIdMtAqpLaeadJXI0mSLZcJOFcmIIejiZZtn1YNFT/XUO9vCu2ckz5yrNVTZ
-         aqPylUWrfsjepkTy7Al4ppslefHU6G3Xu6BjPt/OyzO1KDl75KQip4qak1B1XeKUb4ep
-         qTaw==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1HC/MUgf456zJfRJXUVVgg6o0d0M1B+L7QMi6llJ2Bo=;
+        b=E+YVKccV3crljzyzQRgZ+qVmjGAxpSmba/m9j8r8NgrA34RUFop5bvNMjUbDwOuRNB
+         b32+Jl/qjNWnlvTDYyTs/KeVx58V71F7zbu28ARzlDJFrza6g9g8Zi8OL55OmDTkgfSl
+         1BGDJtAmk2ERpdEdX2xDcrPZ80zvjefZo+oei1Mm2khGrth/UBL1A1VFwvbheFqAlcQ8
+         9JSttdgh0BDB+Z/aTtQZkNW6+cetIuH9iCeGfDRIqCOLydg98GdTqe6LAdP4iTh2ppDw
+         LsM9hKBQMNpP2ECL1fjkX6fYcURKheF5cqWjXseRus2cycqTaunLSVR2osQqCa3I6n/H
+         lrLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VXRQC0UsjauveYOiCa1HYIm6GnidpMCvjvUYDOoy8Kk=;
-        b=KhK47tB9ktGgPssfLoOufC83X8boXDEQEfdZs2Leg+HTjuX67lt6O+NIXmqqUuAsLm
-         lsZGuF/hhwIKdJoIRgqGyu+hcxFh8cvnCPhPBohgkHTRgzUuWvPVj7+QsfkypHCQ0K7T
-         yVR/R4m6pxS+XlSLMcyxOJFLt18xwOaWd5dPf2EeQerLYz+Fua1/NHUJBnXlQU9ULPud
-         msSNpOuCNqHOGo+Im6QhmnEdtn5asfq05A90F+EMD5veKUk7gIEfUlt0y91a4fF0P9JW
-         kAZ9bWnB7VBYm2CUHE9GKVVes2mQ34X/xVYc3FK5wipljw945kz4mFFbwLr6b5ygrME6
-         54cw==
-X-Gm-Message-State: APjAAAUpLmJBaYcoGV1qHwn7YiCg4kdnEW4t7ebSmvFt+Ot/M0QZ5dbr
-        mX/apRg9DNjs3xerFXlupExmzQlpTiJydjDO80M=
-X-Google-Smtp-Source: APXvYqzG7AIMRfvZsHfREXhwZ2Vicp5dmMb3CrEXJw5WkOuq4TRI1BSQoriBbA7VwVewocx0xBmOjkzmaCaPMCXnOmg=
-X-Received: by 2002:a2e:390c:: with SMTP id g12mr18105225lja.174.1557226518508;
- Tue, 07 May 2019 03:55:18 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1HC/MUgf456zJfRJXUVVgg6o0d0M1B+L7QMi6llJ2Bo=;
+        b=gv+gh3k7NK0cmBJGFAzud/Lo/uJrrETjZf6Z+M4uP/NBKRl9FTJwnu3MJVB61EGpaK
+         hGEVqYr1ZUOjY1SkffZsOTJ2BMDByjRCwIUGb6uH9DiB/MJVg6RjUQowSfAjGb4HBv6n
+         zyXUCe4UfFalju1IiQCx2mgQ+QZqGD4fe51oqBksuWovam9NHQi4rwpJvlAL3d/JMAn0
+         uEhLK7BjKWJf3iW9TIhBTjwcnRNYaommgg6Jp+yeEeQFreuLk+7MzoC6Lj+f1CQCpe1I
+         g8BKw/6IvzitrNYRlprL6rd1qyF/1w2Lj/Vl4r35T+y3JJFXld/qwu2DP6ELgqVLXSC9
+         4u7A==
+X-Gm-Message-State: APjAAAVoKjD60kao1abd1jkIzrRcQw4JShbnStUWKmjMjob37rBfLZ40
+        HxKRXYo3hs0L3bl7EOwZ4ftSHw==
+X-Google-Smtp-Source: APXvYqyHqFTcJpvyTuty9Yn2Sc9cm+BuGmLDrYq55IuT9aIRo5DWhxH0xy9+mtPoGye/4Y6Cby05tA==
+X-Received: by 2002:a50:885b:: with SMTP id c27mr31844820edc.155.1557226709457;
+        Tue, 07 May 2019 03:58:29 -0700 (PDT)
+Received: from brauner.io ([178.19.218.101])
+        by smtp.gmail.com with ESMTPSA id w14sm4048277eda.18.2019.05.07.03.58.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 07 May 2019 03:58:28 -0700 (PDT)
+Date:   Tue, 7 May 2019 12:58:27 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Daniel Colascione <dancol@google.com>,
+        Todd Kjos <tkjos@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Martijn Coenen <maco@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [RFC] simple_lmk: Introduce Simple Low Memory Killer for Android
+Message-ID: <20190507105826.oi6vah6x5brt257h@brauner.io>
+References: <20190318235052.GA65315@google.com>
+ <20190319221415.baov7x6zoz7hvsno@brauner.io>
+ <CAKOZuessqcjrZ4rfGLgrnOhrLnsVYiVJzOj4Aa=o3ZuZ013d0g@mail.gmail.com>
+ <20190319231020.tdcttojlbmx57gke@brauner.io>
+ <20190320015249.GC129907@google.com>
+ <20190507021622.GA27300@sultan-box.localdomain>
+ <20190507070430.GA24150@kroah.com>
+ <20190507072721.GA4364@sultan-box.localdomain>
+ <20190507074334.GB26478@kroah.com>
+ <20190507081236.GA1531@sultan-box.localdomain>
 MIME-Version: 1.0
-References: <cover.1557215047.git.agx@sigxcpu.org> <299e28042e0a24c0cde593873bdfb15e18187a92.1557215047.git.agx@sigxcpu.org>
-In-Reply-To: <299e28042e0a24c0cde593873bdfb15e18187a92.1557215047.git.agx@sigxcpu.org>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 7 May 2019 07:55:23 -0300
-Message-ID: <CAOMZO5CQXmmw50J3Pjy8wKOr+BBEo_-B9ChV32bq1Re4_0-4CQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] phy: Add driver for mixel mipi dphy found on
- NXP's i.MX8 SoCs
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Johan Hovold <johan@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190507081236.GA1531@sultan-box.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 7, 2019 at 4:47 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
->
-> This adds support for the Mixel DPHY as found on i.MX8 CPUs but since
-> this is an IP core it will likely be found on others in the future. So
-> instead of adding this to the nwl host driver make it a generic PHY
-> driver.
->
-> The driver supports the i.MX8MQ. Support for i.MX8QM and i.MX8QXP can be
-> added once the necessary system controller bits are in via
-> mixel_dphy_devdata.
->
-> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
-> Co-developed-by: Robert Chiras <robert.chiras@nxp.com>
-> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+On Tue, May 07, 2019 at 01:12:36AM -0700, Sultan Alsawaf wrote:
+> On Tue, May 07, 2019 at 09:43:34AM +0200, Greg Kroah-Hartman wrote:
+> > Given that any "new" android device that gets shipped "soon" should be
+> > using 4.9.y or newer, is this a real issue?
+> 
+> It's certainly a real issue for those who can't buy brand new Android devices
+> without software bugs every six months :)
+> 
+> > And if it is, I'm sure that asking for those patches to be backported to
+> > 4.4.y would be just fine, have you asked?
+> >
+> > Note that I know of Android Go devices, running 3.18.y kernels, do NOT
+> > use the in-kernel memory killer, but instead use the userspace solution
+> > today.  So trying to get another in-kernel memory killer solution added
+> > anywhere seems quite odd.
+> 
+> It's even more odd that although a userspace solution is touted as the proper
+> way to go on LKML, almost no Android OEMs are using it, and even in that commit
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+That's probably because without proper kernel changes this is rather
+tricky to use safely (see below).
+
+> I linked in the previous message, Google made a rather large set of
+> modifications to the supposedly-defunct lowmemorykiller.c not one month ago.
+> What's going on?
+> 
+> Qualcomm still uses lowmemorykiller.c [1] on the Snapdragon 845. If PSI were
+> backported to 4.4, or even 3.18, would it really be used? I don't really
+> understand the aversion to an in-kernel memory killer on LKML despite the rest
+> of the industry's attraction to it. Perhaps there's some inherently great cost
+> in using the userspace solution that I'm unaware of?
+> 
+> Regardless, even if PSI were backported, a full-fledged LMKD using it has yet to
+> be made, so it wouldn't be of much use now.
+
+This is work that is ongoing and requires kernel changes to make it
+feasible. One of the things that I have been working on for quite a
+while is the whole file descriptor for processes thing that is important
+for LMKD (Even though I never thought about this use-case when I started
+pitching this.). Joel and Daniel have joined in and are working on
+making LMKD possible.
+What I find odd is that every couple of weeks different solutions to the
+low memory problem are pitched. There is simple_lkml, there is LMKD, and
+there was a patchset that wanted to speed up memory reclaim at process
+kill-time by adding a new flag to the new pidfd_send_signal() syscall.
+That all seems - though related - rather uncoordinated. Now granted,
+coordinated is usually not how kernel development necessarily works but
+it would probably be good to have some sort of direction and from what I
+have seen LMKD seems to be the most coordinated effort. But that might
+just be my impression.
+
+Christian
