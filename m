@@ -2,138 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB2C16B74
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8903816B77
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 21:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbfEGTew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 15:34:52 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:56332 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfEGTev (ORCPT
+        id S1726554AbfEGTiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 15:38:15 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32791 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfEGTiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 15:34:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1557257688; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VwOd1vHk2caupJwTyK7JV6vMq+wzdAQFWVN9AKB37ls=;
-        b=VaeSnH40VcHq8kXxQKdYCnDVUKrCUmsSuTPJ/boMHF/GWNFtrlDX7Ss6f0m3KQPJI0vnnd
-        q5bw4VXT6+mxFC0D1neOewzBRfn83uMVOnmReEsa1SMy+sgNm7QNPEKdT6r0ZNv5AUf4MT
-        FplYnFCuhDrtHH1w+OKv2VudKxk9elE=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     od@zcrc.me, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 5/5] MIPS: Remove dead code
-Date:   Tue,  7 May 2019 21:34:21 +0200
-Message-Id: <20190507193421.12260-5-paul@crapouillou.net>
-In-Reply-To: <20190507193421.12260-1-paul@crapouillou.net>
-References: <20190507193421.12260-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 7 May 2019 15:38:15 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z28so9187713pfk.0;
+        Tue, 07 May 2019 12:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sC/+NY9vNRdIe9N8awakKaLNDu11yUQCUMakYQMWUBk=;
+        b=edCfTr60W9kD+WVkXBcM19S0e2usB7m+SrxnRi1Qi+/QHbw6c5vE75E4uK0zW9FJ3u
+         hscskKOYoBfaGOf2pGnIigDj8CjnnOK6VpfQUYFDz56BOlujpguZUhLVtnKhRujUde9q
+         onWgRfe3beZ+enpnR8U901oLW15LyzB4HDBMlf+4Cuo9e/ZRr7WMFSjIdNlJRPxxQ7XJ
+         y3JU6v3vuM5+vh2uJqGmAbybj3BkfZwbgFEFixMtcgq7K8MWlHgBm5N+HepbThduYXUN
+         iTWMPLIgg2+t28s5ghdrSLcTR/sPHGYMwkYJVbsDZUtUKs/Qzx4VJuNDfONTXNuYD5Rf
+         G6Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sC/+NY9vNRdIe9N8awakKaLNDu11yUQCUMakYQMWUBk=;
+        b=MR3k5V9NBmebwx5DmX9XrhChts6EzTHZliYAxrX4TmAgFY5RC9zQezBlOW74Qm990W
+         64NSVoZwRuaVfILuSelbVZk+jdsDEuAN3q7tLDScFvjl0r8xWy7pcXSt4dFKeLHwk8Qw
+         nv0PUpEwcvTpG3w9lrZ9rH7R4VwAk4/kiK9+JErxutgWsI6Pc8FJYJ2Egeo98a5LqAUv
+         NIroHOBJgSjCJ9MTomI8cgqa2iG9fEiXtQ5ZceZGXqd1f2pSCrQjesKI0SWiBdOq7reI
+         vngJgAp1Qjp+NFoiuF8vMdEcMdMtis8845XKCR6rQ60ZtKVJSwfs38SmapE5RyYfSxlt
+         O4UA==
+X-Gm-Message-State: APjAAAWswBye4dpNuARk0Aj9twNDID3S2cexj0LMmAAorEWMXJeQnq/b
+        4WnAedNlI5OMk5SNdUAv+FfTqlJN
+X-Google-Smtp-Source: APXvYqxwRJZ7Dy7UxedXvqeozShpNdo8JgcXtCXvnqrOfuid/1+Qr8Kk+wFyhVz0N7aIPSx6FwcSjA==
+X-Received: by 2002:a63:2ac5:: with SMTP id q188mr32742805pgq.388.1557257894294;
+        Tue, 07 May 2019 12:38:14 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id l21sm5964658pff.40.2019.05.07.12.38.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 12:38:13 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hwmon@vger.kernel.org (open list:HARDWARE MONITORING),
+        bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v2 0/3] hwmon: scmi: Scale values to target desired HWMON units
+Date:   Tue,  7 May 2019 12:35:01 -0700
+Message-Id: <20190507193504.28248-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused <asm/mach-jz4740/clock.h> include.
+Hi Sudeep, Guenter,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/include/asm/mach-jz4740/clock.h | 31 -----------------------
- arch/mips/jz4740/board-qi_lb60.c          |  2 --
- arch/mips/jz4740/platform.c               |  2 --
- arch/mips/jz4740/time.c                   |  3 ---
- 4 files changed, 38 deletions(-)
- delete mode 100644 arch/mips/include/asm/mach-jz4740/clock.h
+This patch series adds support for scaling SCMI sensor values read from
+firmware. Sudeep, let me know if you think we should be treating scale
+== 0 as a special value to preserve some firmware compatibility (not
+that this would be desired).
 
-diff --git a/arch/mips/include/asm/mach-jz4740/clock.h b/arch/mips/include/asm/mach-jz4740/clock.h
-deleted file mode 100644
-index 104d2dfe1e36..000000000000
---- a/arch/mips/include/asm/mach-jz4740/clock.h
-+++ /dev/null
-@@ -1,31 +0,0 @@
--/*
-- *  Copyright (C) 2010, Lars-Peter Clausen <lars@metafoo.de>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under  the terms of the GNU General	 Public License as published by the
-- *  Free Software Foundation;  either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-- */
--
--#ifndef __ASM_JZ4740_CLOCK_H__
--#define __ASM_JZ4740_CLOCK_H__
--
--enum jz4740_wait_mode {
--	JZ4740_WAIT_MODE_IDLE,
--	JZ4740_WAIT_MODE_SLEEP,
--};
--
--void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode);
--
--void jz4740_clock_suspend(void);
--void jz4740_clock_resume(void);
--
--void jz4740_clock_udc_enable_auto_suspend(void);
--void jz4740_clock_udc_disable_auto_suspend(void);
--
--#endif
-diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
-index 6718efb400f4..b418b23ff1d1 100644
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -40,8 +40,6 @@
- 
- #include <asm/mach-jz4740/platform.h>
- 
--#include "clock.h"
--
- /* GPIOs */
- #define QI_LB60_GPIO_KEYOUT(x)		(JZ_GPIO_PORTC(10) + (x))
- #define QI_LB60_GPIO_KEYIN(x)		(JZ_GPIO_PORTD(18) + (x))
-diff --git a/arch/mips/jz4740/platform.c b/arch/mips/jz4740/platform.c
-index cbc5f8e87230..cf9c66031199 100644
---- a/arch/mips/jz4740/platform.c
-+++ b/arch/mips/jz4740/platform.c
-@@ -30,8 +30,6 @@
- #include <linux/serial_core.h>
- #include <linux/serial_8250.h>
- 
--#include "clock.h"
--
- /* USB Device Controller */
- struct platform_device jz4740_udc_xceiv_device = {
- 	.name = "usb_phy_generic",
-diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
-index 2ca9160f642a..32cdde0cad01 100644
---- a/arch/mips/jz4740/time.c
-+++ b/arch/mips/jz4740/time.c
-@@ -22,13 +22,10 @@
- #include <linux/clockchips.h>
- #include <linux/sched_clock.h>
- 
--#include <asm/mach-jz4740/clock.h>
- #include <asm/mach-jz4740/irq.h>
- #include <asm/mach-jz4740/timer.h>
- #include <asm/time.h>
- 
--#include "clock.h"
--
- #define TIMER_CLOCKEVENT 0
- #define TIMER_CLOCKSOURCE 1
- 
+Changes in v2:
+
+- added a helper function in kernel.h: __pow10()
+- made the scale in scmi_sensor_info an s8 type, added defines for
+  checking the sign bit and sign extending with a mask
+- simplify computations in hwmon driver
+
+Florian Fainelli (3):
+  kernel: Provide a __pow10() function
+  firmware: arm_scmi: Fetch and store sensor scale
+  hwmon: scmi: Scale values to target desired HWMON units
+
+ drivers/firmware/arm_scmi/sensors.c |  6 ++++++
+ drivers/hwmon/scmi-hwmon.c          | 30 ++++++++++++++++++++++++++++-
+ include/linux/kernel.h              | 11 +++++++++++
+ include/linux/scmi_protocol.h       |  1 +
+ 4 files changed, 47 insertions(+), 1 deletion(-)
+
 -- 
-2.21.0.593.g511ec345e18
+2.17.1
 
