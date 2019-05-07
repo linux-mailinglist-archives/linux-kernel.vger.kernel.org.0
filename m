@@ -2,139 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003A6157E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09119157E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 05:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfEGDLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 23:11:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38475 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbfEGDLp (ORCPT
+        id S1726885AbfEGDJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 23:09:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57808 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfEGDJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 23:11:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u21so3775334lja.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 20:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1vPH9I5PWr2TI7X5PE+d7W4anLeW7LWz/OE4YpqPd8k=;
-        b=eMRYbWYFmPHyc8hLoVhhlUEKgGTDjH5U4y4GUjFL0QRJ8UTmZq4UYf25wlrtMiMJOo
-         aZaKmEpFAHwSky6xN0UwF6xEVDQDS7lUnQRo2Ewz4hbjzvKaF1XxCm25cBfHKnpnn8L1
-         SHmoa9QAiN9pzOrwoTZhfnY5bu9mini6zfThg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1vPH9I5PWr2TI7X5PE+d7W4anLeW7LWz/OE4YpqPd8k=;
-        b=q8I7HfjnJVrA7tCN+erhOd9GHiN4Xb8Ml/Ufs1GIy4ajJF7QjJ8+bQYNMyvmH18UyJ
-         nMHoXVafeNJ7gBDBuvpeEXSC63ZubmN6LNP7JMcsCILpfngspI8bNhFnnCTKZQYpp4wl
-         TC1SRpAdNKiSmq4gU2e54KVG8x0/9sum/PaZb+6hd+d5OqbvgFsh2YinOFuEDewbkBzj
-         5inU3ppdpxkNtuAvo7LIwuwpthaq2LGXLO9Jm2+MUoqfUOfc5IGs5rBhb4i60p6K8cUh
-         Z2wIbTGbI9HOzYpcewVQHXkOsRUA2SVnYPQFYIdq+EgAWtEWHoIpL0Unum95JfRijz/m
-         7hjw==
-X-Gm-Message-State: APjAAAUCxu2NB8u3wUNg0z8DKsHDO627Q5mLxka7Jl4jHnQ3DCBteyTu
-        7o2+NjI+PuUSMVbtKCvL1z8Jp0wb/UE=
-X-Google-Smtp-Source: APXvYqx6ZehjVntA3JhxLpbia2gq/Pr31eV69RjEWwTDymD8QUupDfbhpTj293d7XtDeQn42R0G3+Q==
-X-Received: by 2002:a05:651c:155:: with SMTP id c21mr15862816ljd.10.1557198702431;
-        Mon, 06 May 2019 20:11:42 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id n1sm2776963ljg.84.2019.05.06.20.11.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 20:11:42 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id k8so12884397lja.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2019 20:11:42 -0700 (PDT)
-X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr14197859ljj.79.1557198341113;
- Mon, 06 May 2019 20:05:41 -0700 (PDT)
+        Mon, 6 May 2019 23:09:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=khFxpRl02USJUzpyMLkUGZ+tc4b4r8QmCyQqy6hkspo=; b=E3Vwwn1yM8pqViPhHCCH5xb44
+        EtiTUyEI+VnmPBbDvA/Fe9PrP4LtTf54h0Zb1KZUDpXNITavN6UIBuU10JHjTuH3divp8d4JFUdOr
+        w00hFhLr8Fw8YHs50x5LNrh4f14X5zyg30ibyArpmw3QuivY6oVCJTWSjEKpt7JJQW+qU=;
+Received: from [2001:268:c0e6:658d:8f3d:d90b:c4e4:2fdf] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hNqTp-0003Yx-1P; Tue, 07 May 2019 03:09:21 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 2127C44000C; Tue,  7 May 2019 04:09:17 +0100 (BST)
+Date:   Tue, 7 May 2019 12:09:17 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] spi updates for v5.2
+Message-ID: <20190507030917.GE14916@sirena.org.uk>
+References: <20190506143301.GU14916@sirena.org.uk>
+ <CAADWXX_MqtZ6RxS2zEVmHtKrjqigiNzdSe5qVwBVvfVU6dxJRQ@mail.gmail.com>
+ <20190507021853.GY14916@sirena.org.uk>
+ <CAHk-=whLZMe5kNpNMnhh5oVHFKNv7Um4tBS+rH=kLvM+CWzzxw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190502181811.GY2623@hirez.programming.kicks-ass.net>
- <20190506081951.GJ2606@hirez.programming.kicks-ass.net> <20190506095631.6f71ad7c@gandalf.local.home>
- <CAHk-=wgw_Jmn1iJWanoSFb1QZn3mbTD_JEoMsWcWj5QPeyHZHA@mail.gmail.com>
- <20190506130643.62c35eeb@gandalf.local.home> <CAHk-=whesas+GDtHZks62wqXWXe4d_g3XJ359GX81qj=Fgs6qQ@mail.gmail.com>
- <20190506145745.17c59596@gandalf.local.home> <CAHk-=witfFBW2O5v6g--FmqnAFsMkKNLosTFfWyaoJ7euQF8kQ@mail.gmail.com>
- <20190506162915.380993f9@gandalf.local.home> <CAHk-=wi5KBWUOvM94aTOPnoJ5L_aQG=vgLQ4SxxZDeQD0pF2tQ@mail.gmail.com>
- <20190506174511.2f8b696b@gandalf.local.home> <CAHk-=wj3R_s0RTJOmTBNaUPhu4fz2shNBUr4M6Ej65UYSNCs-g@mail.gmail.com>
- <20190506210416.2489a659@oasis.local.home> <CAHk-=whZwqzbu-=1r_j_cXfd=ta1q7RFCuneqBZfQQhS_P-BmQ@mail.gmail.com>
- <20190506215353.14a8ef78@oasis.local.home> <CAHk-=wjLXmOn=Cp=uOfO4gE01eN_-UcOUyrMTTw5-f_OfPO48Q@mail.gmail.com>
- <20190506225819.11756974@oasis.local.home>
-In-Reply-To: <20190506225819.11756974@oasis.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 May 2019 20:05:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh4FCNBLe8OyDZt2Tr+k9JhhTsg3H8R4b55peKcf0b6eQ@mail.gmail.com>
-Message-ID: <CAHk-=wh4FCNBLe8OyDZt2Tr+k9JhhTsg3H8R4b55peKcf0b6eQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] x86: Allow breakpoints to emulate call functions
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lXp6bW3Dj4tVIRc6"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whLZMe5kNpNMnhh5oVHFKNv7Um4tBS+rH=kLvM+CWzzxw@mail.gmail.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 7:58 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> > Notice? We'd not even have to look up any values.  We'd literally just
-> > do something like
-> >
-> >         int offset = locked_atomic_read(ip+1);
-> >         return int3_emulate_call(ip, ip+5+offset);
-> >
-> > and it would be *atomic* with respect to whatever other user that
-> > updates the instruction, as long as they update the offset with a
-> > "xchg" instruction.
->
-> Honestly, I'm not really sure what you are trying to do here.
->
-> Are you talking about making the update to the code in the int3
-> handler?
 
-No. The above would be pretty much the entirely of the the ftrace_int3_handler.
+--lXp6bW3Dj4tVIRc6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It would emulate the call that has had its first byte overwritten by
-'int3'. Without doing any lookups of what it was supposed to change
-the call to, because it simply depends on what the rewriting code is
-doing on another CPU (or on the same CPU - it wouldn't care).
+On Mon, May 06, 2019 at 07:34:29PM -0700, Linus Torvalds wrote:
 
-So no need to look up anything, not at int3 time, and not at return
-time. It would just emulate the instruction atomically, with no state,
-and no need to look up what the 'ip' instruction is at the time.
+> So I think it's just google that still doesn't like sirena.org.uk.
+> Iirc, that's happened before, no?
 
-It could literally just use a single flag: "is ftrace updating call
-instructions". Add another flag for the "I'm nop'ing out call
-instructions" so that it knows to emulate a jump-over instead. That's
-it.
+In the past that always looked like it was triggered by some of the
+blacklists that basically seem to have a business model that involves
+at least partly charging people money for whitelisting and so are
+perhaps a little trigger happy when it comes to listing servers.  This
+time around I'm not seeing any signs of that happening but I might've
+missed some, I don't know if Google stopped using those blacklists or
+something.
 
-Because all the actual *values* would be entirely be determined by the
-actual rewriting that is going on independently of the 'int3'
-exception.
+--lXp6bW3Dj4tVIRc6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                   Linus
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzQ9twACgkQJNaLcl1U
+h9DlmAf+PS8WuSqYd3RRA49FxQqSRt+Bp5GM5C0z2IJfoqh0YnlayPl0Eqc2O95h
+IiTKzDfw4odLeEzdtFz1gUXK8EXE+22Lv1IhOmu9AZ+/yQKWh1LJNn5XqHMWFY9K
+NhPgP+HE9wcr5DRSbjxCiZiUpGyz+guCcXGU2LUOpyWKWO6wMvqiDar8h7GYWtsC
+oH+ttNsgHSvIQtSHG74JhykgPcWuHgEDngMtUnteCcvEcQvvO3QbX/hPBYqnTjvG
+it6bKiu1FOkBeWKA9xgBzFC7/rjcrOeQPePWkn/Y1lBXo0ep89OpM1Y8kaWJ5pFR
+GvyswI4qHc+povDf88hk5ETcW1ux7A==
+=NvuY
+-----END PGP SIGNATURE-----
+
+--lXp6bW3Dj4tVIRc6--
