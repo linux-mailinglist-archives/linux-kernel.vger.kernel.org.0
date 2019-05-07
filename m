@@ -2,167 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BF0156F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 02:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF4115707
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 02:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfEGAhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 6 May 2019 20:37:50 -0400
-Received: from alln-iport-2.cisco.com ([173.37.142.89]:50779 "EHLO
-        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfEGAhu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 May 2019 20:37:50 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DtAgB90tBc/5JdJa1lHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBZYIRgW0oshmBZxCEbQKCEyM4EwEDAQEEAQECAQJtKIVLBidSEFFXBxK?=
- =?us-ascii?q?DIoILrVIzhTeDOoFFFIEehniEVheBf4ERg1CEKAWFeQSSQIENk28JggtWkWc?=
- =?us-ascii?q?nbpRijB+VGYFmIYFWMxoIGxWCCIEfgkaOKx8DMJJaAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,439,1549929600"; 
-   d="scan'208";a="270222088"
-Received: from rcdn-core-10.cisco.com ([173.37.93.146])
-  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 07 May 2019 00:37:48 +0000
-Received: from tusi.cisco.com (tusi.cisco.com [172.24.98.27])
-        by rcdn-core-10.cisco.com (8.15.2/8.15.2) with ESMTP id x470bjOH019352;
-        Tue, 7 May 2019 00:37:47 GMT
-From:   Ruslan Babayev <ruslan@babayev.com>
-To:     linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, mika.westerberg@linux.intel.com,
-        wsa@the-dreams.de
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH RFC v2 net-next 2/2] net: phy: sfp: enable i2c-bus detection on ACPI based systems
-Date:   Mon,  6 May 2019 17:35:57 -0700
-Message-Id: <20190507003557.40648-3-ruslan@babayev.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190505220524.37266-2-ruslan@babayev.com>
-References: <20190505220524.37266-2-ruslan@babayev.com>
-Reply-To: 20190505220524.37266-2-ruslan@babayev.com
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 172.24.98.27, tusi.cisco.com
-X-Outbound-Node: rcdn-core-10.cisco.com
+        id S1726512AbfEGAkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 6 May 2019 20:40:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48104 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfEGAkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 May 2019 20:40:39 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F02F859468;
+        Tue,  7 May 2019 00:40:38 +0000 (UTC)
+Received: from treble (ovpn-123-166.rdu2.redhat.com [10.10.123.166])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 403B1611CF;
+        Tue,  7 May 2019 00:40:34 +0000 (UTC)
+Date:   Mon, 6 May 2019 19:40:32 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
+ reliable stacktrace support
+Message-ID: <20190507004032.2fgddlsycyypqdsn@treble>
+References: <20190430091049.30413-1-pmladek@suse.com>
+ <20190430091049.30413-2-pmladek@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190430091049.30413-2-pmladek@suse.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 07 May 2019 00:40:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lookup I2C adapter using the "i2c-bus" device property on ACPI based
-systems similar to how it's done with DT.
+On Tue, Apr 30, 2019 at 11:10:48AM +0200, Petr Mladek wrote:
+> WARN_ON_ONCE() could not be called safely under rq lock because
+> of console deadlock issues. Fortunately, there is another check
+> for the reliable stacktrace support in klp_enable_patch().
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/livepatch/transition.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> index 9c89ae8b337a..8e0274075e75 100644
+> --- a/kernel/livepatch/transition.c
+> +++ b/kernel/livepatch/transition.c
+> @@ -263,8 +263,15 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
+>  	trace.nr_entries = 0;
+>  	trace.max_entries = MAX_STACK_ENTRIES;
+>  	trace.entries = entries;
+> +
+>  	ret = save_stack_trace_tsk_reliable(task, &trace);
+> -	WARN_ON_ONCE(ret == -ENOSYS);
+> +	/*
+> +	 * pr_warn() under task rq lock might cause a deadlock.
+> +	 * Fortunately, missing reliable stacktrace support has
+> +	 * already been handled when the livepatch was enabled.
+> +	 */
+> +	if (ret == -ENOSYS)
+> +		return ret;
 
-An example DSD describing an SFP on an ACPI based system:
+I find the comment to be a bit wordy and confusing (and vague).
 
-Device (SFP0)
-{
-    Name (_HID, "PRP0001")
-    Name (_CRS, ResourceTemplate()
-    {
-        GpioIo(Exclusive, PullDefault, 0, 0, IoRestrictionNone,
-               "\\_SB.PCI0.RP01.GPIO", 0, ResourceConsumer)
-            { 0, 1, 2, 3, 4 }
-    })
-    Name (_DSD, Package ()
-    {
-        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-            Package () { "compatible", "sff,sfp" },
-            Package () { "i2c-bus", \_SB.PCI0.RP01.I2C.MUX.CH0 },
-            Package () { "maximum-power-milliwatt", 1000 },
-            Package () { "tx-disable-gpios", Package () { ^SFP0, 0, 0, 1} },
-            Package () { "reset-gpio",       Package () { ^SFP0, 0, 1, 1} },
-            Package () { "mod-def0-gpios",   Package () { ^SFP0, 0, 2, 1} },
-            Package () { "tx-fault-gpios",   Package () { ^SFP0, 0, 3, 0} },
-            Package () { "los-gpios",        Package () { ^SFP0, 0, 4, 1} },
-        },
-    })
-}
+Also this check is effectively the same as the klp_have_reliable_stack()
+check which is done in kernel/livepatch/core.c.  So I think it would be
+clearer and more consistent if the same check is done here:
 
-Device (PHY0)
-{
-    Name (_HID, "PRP0001")
-    Name (_DSD, Package ()
-    {
-        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-            Package () { "compatible", "ethernet-phy-ieee802.3-c45" },
-            Package () { "sfp", \_SB.PCI0.RP01.SFP0 },
-            Package () { "managed", "in-band-status" },
-            Package () { "phy-mode", "sgmii" },
-        },
-    })
-}
+	if (!klp_have_reliable_stack())
+		return -ENOSYS;
 
-Signed-off-by: Ruslan Babayev <ruslan@babayev.com>
-Cc: xe-linux-external@cisco.com
----
- drivers/net/phy/sfp.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+	ret = save_stack_trace_tsk_reliable(task, &trace);
 
-diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-index d4635c2178d1..7a6c8df8899b 100644
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/acpi.h>
- #include <linux/phy.h>
- #include <linux/platform_device.h>
- #include <linux/rtnetlink.h>
-@@ -1783,6 +1784,7 @@ static int sfp_probe(struct platform_device *pdev)
- {
- 	const struct sff_data *sff;
- 	struct sfp *sfp;
-+	struct i2c_adapter *i2c = NULL;
- 	bool poll = false;
- 	int irq, err, i;
- 
-@@ -1801,7 +1803,6 @@ static int sfp_probe(struct platform_device *pdev)
- 	if (pdev->dev.of_node) {
- 		struct device_node *node = pdev->dev.of_node;
- 		const struct of_device_id *id;
--		struct i2c_adapter *i2c;
- 		struct device_node *np;
- 
- 		id = of_match_node(sfp_of_match, node);
-@@ -1818,14 +1819,30 @@ static int sfp_probe(struct platform_device *pdev)
- 
- 		i2c = of_find_i2c_adapter_by_node(np);
- 		of_node_put(np);
--		if (!i2c)
--			return -EPROBE_DEFER;
--
--		err = sfp_i2c_configure(sfp, i2c);
--		if (err < 0) {
--			i2c_put_adapter(i2c);
--			return err;
-+	} else if (ACPI_COMPANION(&pdev->dev)) {
-+		struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+		struct fwnode_handle *fw = acpi_fwnode_handle(adev);
-+		struct fwnode_reference_args args;
-+		struct acpi_handle *acpi_handle;
-+		int ret;
-+
-+		ret = acpi_node_get_property_reference(fw, "i2c-bus", 0, &args);
-+		if (ACPI_FAILURE(ret) || !is_acpi_device_node(args.fwnode)) {
-+			dev_err(&pdev->dev, "missing 'i2c-bus' property\n");
-+			return -ENODEV;
- 		}
-+
-+		acpi_handle = ACPI_HANDLE_FWNODE(args.fwnode);
-+		i2c = i2c_acpi_find_adapter_by_handle(acpi_handle);
-+	}
-+
-+	if (!i2c)
-+		return -EPROBE_DEFER;
-+
-+	err = sfp_i2c_configure(sfp, i2c);
-+	if (err < 0) {
-+		i2c_put_adapter(i2c);
-+		return err;
- 	}
- 
- 	for (i = 0; i < GPIO_MAX; i++)
+	[ no need to check ret for ENOSYS here ]
+
+Then, IMO, no comment is needed.
+
 -- 
-2.17.1
-
+Josh
