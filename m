@@ -2,146 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D17C515ADF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EDC815B2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 07:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbfEGFth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 01:49:37 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3565 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728741AbfEGFtd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 01:49:33 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd11c660000>; Mon, 06 May 2019 22:49:26 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 06 May 2019 22:49:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 06 May 2019 22:49:30 -0700
-Received: from [10.25.73.250] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 May
- 2019 05:49:26 +0000
-Subject: Re: [PATCH V4 1/2] PCI: dwc: Add API support to de-initialize host
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <Jisheng.Zhang@synaptics.com>,
-        <thierry.reding@gmail.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190502170426.28688-1-vidyas@nvidia.com>
- <20190503112338.GA25649@e121166-lin.cambridge.arm.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <dec5ecb2-863e-a1db-10c9-2d91f860a2c6@nvidia.com>
-Date:   Tue, 7 May 2019 11:19:23 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729074AbfEGFwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 01:52:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728896AbfEGFwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 01:52:17 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7D5B205ED;
+        Tue,  7 May 2019 05:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557208336;
+        bh=N26NT472AJl64Ye593vKGyraTKV6QYnsEVPtsPUDgS8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RjCEr5aCMT4Uk9yNqIWCCL//2hkpSqXtp7E46ssLuyMCdjwXaf/KlsSxWnBWpiGo8
+         I95XOQDzgMx15QM+/qeZ93Wv+tITASZOVFMtU3sbNl+b+lCl1P9xO/fJtGOedFHaIe
+         psw9yA4amrorbJPSVfl31q+MqIMeGMI+31IesEdc=
+Date:   Tue, 7 May 2019 07:52:14 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@aculab.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH AUTOSEL 4.14 72/95] devres: Align data[] to
+ ARCH_KMALLOC_MINALIGN
+Message-ID: <20190507055214.GA17986@kroah.com>
+References: <20190507053826.31622-1-sashal@kernel.org>
+ <20190507053826.31622-72-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190503112338.GA25649@e121166-lin.cambridge.arm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557208166; bh=h4y5AspHzpR5hMnPnArQaBrOHd071Amx3x9LkcnbiH0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=oLchWHAf8WWeQD6Xf0dnnznFCwCOsZRN3ZAkaaARmNEhUuul77v2/Zdm6b6twwK0Z
-         BLQ3GJ/8jMeCTrQVjQZ/GpeE6axHnesUZGbSMyfuHzd4InJXji+PkgCTqgIEh1cbT0
-         R2xln7zEdjesaxzgA6HmJVKgWX1s8/1FAPKXbGwUXtN1MvdezPXx1LK94OtkQG93mM
-         onP6dEEAwqehc0fu/wKjMMmdx0XDZ7TPRysOrz9FVMQDRsdJHNcq2ahLxK/QjyYKqe
-         HNXLwYTs1o/sGUPXkjz+bTNRyfZDzSWbqcvC82L/GqGlaScMC2O7kGV3ZLwooEz7x0
-         KLB0ZXb5R43aQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190507053826.31622-72-sashal@kernel.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/3/2019 4:53 PM, Lorenzo Pieralisi wrote:
-> On Thu, May 02, 2019 at 10:34:25PM +0530, Vidya Sagar wrote:
->> Add an API to group all the tasks to be done to de-initialize host which
->> can then be called by any DesignWare core based driver implementations
->> while adding .remove() support in their respective drivers.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->> Changes from v3:
->> * Added check if (pci_msi_enabled() && !pp->ops->msi_host_init) before calling
->>    dw_pcie_free_msi() API to mimic init path
->>
->> Changes from v2:
->> * Rebased on top of linux-next top of the tree branch
->>
->> Changes from v1:
->> * s/Designware/DesignWare
->>
->>   drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
->>   drivers/pci/controller/dwc/pcie-designware.h      | 5 +++++
->>   2 files changed, 13 insertions(+)
+On Tue, May 07, 2019 at 01:38:01AM -0400, Sasha Levin wrote:
+> From: Alexey Brodkin <alexey.brodkin@synopsys.com>
 > 
-> Series doesn't apply to v5.1-rc1, what's based on ? I suspect
-> there is a dependency on pci/keystone, given the tight timeline
-> for the merge window, would you mind postponing it to v5.3 ?
+> [ Upstream commit a66d972465d15b1d89281258805eb8b47d66bd36 ]
 > 
-> I do not think it is urgent, I am happy to create a branch
-> for it as soon as v5.2-rc1 is released.
-I rebased my changes on top of linux-next. I see that they have conflicts
-on top of v5.1-rc1. Do you want me to rebase them on top of v5.1-rc1 instead
-of linux-next?
-I'm fine with v5.2-rc1 as well.
+> Initially we bumped into problem with 32-bit aligned atomic64_t
+> on ARC, see [1]. And then during quite lengthly discussion Peter Z.
+> mentioned ARCH_KMALLOC_MINALIGN which IMHO makes perfect sense.
+> If allocation is done by plain kmalloc() obtained buffer will be
+> ARCH_KMALLOC_MINALIGN aligned and then why buffer obtained via
+> devm_kmalloc() should have any other alignment?
+> 
+> This way we at least get the same behavior for both types of
+> allocation.
+> 
+> [1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004009.html
+> [2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-July/004036.html
+> 
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: David Laight <David.Laight@ACULAB.COM>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vineet Gupta <vgupta@synopsys.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg KH <greg@kroah.com>
+> Cc: <stable@vger.kernel.org> # 4.8+
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> ---
+>  drivers/base/devres.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index 71d577025285..e43a04a495a3 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -25,8 +25,14 @@ struct devres_node {
+>  
+>  struct devres {
+>  	struct devres_node		node;
+> -	/* -- 3 pointers */
+> -	unsigned long long		data[];	/* guarantee ull alignment */
+> +	/*
+> +	 * Some archs want to perform DMA into kmalloc caches
+> +	 * and need a guaranteed alignment larger than
+> +	 * the alignment of a 64-bit integer.
+> +	 * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
+> +	 * buffer alignment as if it was allocated by plain kmalloc().
+> +	 */
+> +	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
+>  };
+>  
+>  struct devres_group {
 
-> 
-> Thanks,
-> Lorenzo
-> 
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
->> index 77db32529319..d069e4290180 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->> @@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
->>   	return ret;
->>   }
->>   
->> +void dw_pcie_host_deinit(struct pcie_port *pp)
->> +{
->> +	pci_stop_root_bus(pp->root_bus);
->> +	pci_remove_root_bus(pp->root_bus);
->> +	if (pci_msi_enabled() && !pp->ops->msi_host_init)
->> +		dw_pcie_free_msi(pp);
->> +}
->> +
->>   static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->>   				     u32 devfn, int where, int size, u32 *val,
->>   				     bool write)
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index deab426affd3..4f48ec78c7b9 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
->>   void dw_pcie_free_msi(struct pcie_port *pp);
->>   void dw_pcie_setup_rc(struct pcie_port *pp);
->>   int dw_pcie_host_init(struct pcie_port *pp);
->> +void dw_pcie_host_deinit(struct pcie_port *pp);
->>   int dw_pcie_allocate_domains(struct pcie_port *pp);
->>   #else
->>   static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
->> @@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
->>   	return 0;
->>   }
->>   
->> +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
->> +{
->> +}
->> +
->>   static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
->>   {
->>   	return 0;
->> -- 
->> 2.17.1
->>
+This is not needed in any of the older kernels, despite what the stable@
+line said, as it ends up taking a lot of memory up for all other arches.
+That's why I only applied it to the one kernel version.  I'm betting
+that it will be eventually reverted when people notice it as well :)
 
+So can you please drop it from all of your trees?
+
+thanks,
+
+greg k-h
