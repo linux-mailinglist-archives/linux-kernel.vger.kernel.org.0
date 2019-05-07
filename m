@@ -2,191 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E54E160F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:31:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7F6160FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 11:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfEGJbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 05:31:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43177 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfEGJbp (ORCPT
+        id S1726880AbfEGJdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 05:33:09 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:47158 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbfEGJdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 05:31:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z5so8559326lji.10;
-        Tue, 07 May 2019 02:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UugU8bcqRlU6fUtnSXsie58MePyLeanBGjIGYAFl8bk=;
-        b=vDCyn5CxNnPUPCEqRgPPlKFIwkGh/ugk6h4gCIIv1s1wr1Lel0KufmmwTeWRK6cFDT
-         h2ti7rwxjv1O4yhQZ02PvNEutBCvkvaq7h/wJdxO2cz/XL0qz9d9/HTSRvsDOdBzlocn
-         iWQh0CS8vqZVsb+nXhX2CYGUxEWTs6bCS82HjQVVirqa7/XfDz97RjhVJKMVWLEmxPeW
-         Rmlz66GyZI1vX5/Tc12EhrsLodCCTcjncx4/2iAN5psrKBFrK1b/TrYrH0zYgiZK3R3t
-         omo7CMkoX1Rr1hZj8fbMT6i9rpk0cIrSy1MIFs+MVbmreVQE7EngxF2+uHyx6KbvFOfB
-         roYg==
+        Tue, 7 May 2019 05:33:06 -0400
+Received: by mail-io1-f71.google.com with SMTP id d22so7124597ioh.14
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 02:33:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UugU8bcqRlU6fUtnSXsie58MePyLeanBGjIGYAFl8bk=;
-        b=Gl6dvSeqHw3CwFqFdzNMc8dDwChqk7VlaCexrPN2/JFRUgJRGe686qURx3Jo3klU0m
-         9j5QF3ZjL5XxzNNdj0XW0/H/SVcm343BOmppuB7I0SvfvES0CDFWM3cwyDd7iP7YcGys
-         nRoG1KL4LNFwuCygsQ0SkR8PWMh+aGTNZdRxq+M5ov8uJ1srlRnLQ76hsFotDsvOwMAf
-         63WdZJGb4JBjM0PG8yEYZWufU2ISMeC1fv6CNs4LBIDU6VOFDb1QPkYBJkHyPEK97lmm
-         z++t6QCRWYk9DK0dW7jzvniFkbpfiPwhgAXCQFKVRmH3pZVMQx930I7OiySRGNfYaECs
-         bo7w==
-X-Gm-Message-State: APjAAAVveesWlvPt1dnTeMLyvEFcoItUd4hSL+5AmoXWBPFu8JiDDBn4
-        g2p+UDItiTt9LqRqCRcCPEFsqcsecHYeP9sB58mwTr446g==
-X-Google-Smtp-Source: APXvYqzsrvWHDsBC8hJz1bIApGfTaiO6V5Ia64cqo9Y/K1NUL41UYcprH8OmSozcsgbmqxm93LCrYpQjYbNdgC8Oj1k=
-X-Received: by 2002:a2e:9d4c:: with SMTP id y12mr16436600ljj.132.1557221502347;
- Tue, 07 May 2019 02:31:42 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=aOR6yJjOP+TsGwh0EcqAzW/3dMWPFOD9UXD0P5D61LU=;
+        b=MRCqB2rT/rCOXNllfFJLfMXoUtqM5Kyp36Kj/5jqM+gYgz2n8Fsu7EUFNzwmE/fsI8
+         Us/OZgykzclEln/PbEaIJRqybOUi4R31D2WlNazYBTDYeYmUdQzr4jYbs9fZZzPX8gub
+         Uia1jSNw/j8js678Cs1torh0mAW2ku0yXw8m7Mc5lbrXagsZI6bJLGKNuqGARDtYrHkn
+         eB4DjpO+PzUSDN6PaObVBL1YkypjrfdCC6HBP6vIwUOsgSqhGcTjtQaW359bPWWA+wyD
+         xIDTf1HP/M2JO6z+Nc8uWzcWRBwXHWtNdqy5w22F8x+DmDtdHreQwiO+BTWUAKeAUrHz
+         0tgg==
+X-Gm-Message-State: APjAAAUEZErlBDqONtnZ1ypxGQ86FkhDhpO81UyyB2dv64/Q9YyECD57
+        gp9qzpaRTNHSstGMa37+WitTl93liWyKJvgAVxDAeKXzDme9
+X-Google-Smtp-Source: APXvYqwPklXVVpHJNFLLY+OM48bKJ/DEGhmo5SL4yvySc+LrPCuBt5Tzi693BEoHwFHaEJKs1u161NO6xioxZVrzLdSZ++9PNpEZ
 MIME-Version: 1.0
-References: <CAEJqkgh-eh0F0rNBChhurH0LWTLFP0DyfFzKj66p4Z2d1kM2gw@mail.gmail.com>
- <CAJZ5v0gRWEL1shQE3im0VxiPRBYat86o=R_NVQbc3JgOX8uT6w@mail.gmail.com>
- <CAEJqkgiNYXwsJaT0d3JyMW-2yJ2DV53FHPV5-iAy7b-NbAEAcw@mail.gmail.com> <CAJZ5v0ghNMPMdc03T-is-=-k11rZ8K5O9Av+TnbBY_2mNr-eug@mail.gmail.com>
-In-Reply-To: <CAJZ5v0ghNMPMdc03T-is-=-k11rZ8K5O9Av+TnbBY_2mNr-eug@mail.gmail.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Tue, 7 May 2019 11:33:01 +0200
-Message-ID: <CAEJqkgiB7woieNZ-vVm7x-GzVrqGpJWLXOM9JpSUgPgE7eA6gA@mail.gmail.com>
-Subject: Re: [Kernel 5.1] ACPI_DEBUG messages without CONFIG_ACPI_DEBUG being set
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:8b49:: with SMTP id n70mr2330626iod.198.1557221585818;
+ Tue, 07 May 2019 02:33:05 -0700 (PDT)
+Date:   Tue, 07 May 2019 02:33:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000759a89058848e747@google.com>
+Subject: WARNING in __static_key_slow_dec_cpuslocked
+From:   syzbot <syzbot+a65e6ce239e4afe6c5e7@syzkaller.appspotmail.com>
+To:     ard.biesheuvel@linaro.org, bp@suse.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        netdev@vger.kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        yamada.masahiro@socionext.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Di., 7. Mai 2019 um 10:35 Uhr schrieb Rafael J. Wysocki <rafael@kernel.org>:
->
-> On Tue, May 7, 2019 at 9:31 AM Gabriel C <nix.or.die@gmail.com> wrote:
-> >
-> > Am Di., 7. Mai 2019 um 09:01 Uhr schrieb Rafael J. Wysocki <rafael@kernel.org>:
-> > >
-> >  Hello Rafael ,  Erik
-> >
-> > > +Erik
-> > >
-> > > On Tue, May 7, 2019 at 1:33 AM Gabriel C <nix.or.die@gmail.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > while testing kernel-5.1 I get on one of my Lenovo Laptops very
-> > > > strange 'ACPI Debug:' messages.
-> > > >
-> > > > After some grepping I realized these are Debug messages from DSDT ,
-> > > > however my kernel does
-> > > > not have ACPI_DEBUG enabled.
-> > > >
-> > > > I found out the module triggering this, on this Laptop is
-> > > > ideapad_laptop , but looking at the code
-> > > > I cannot see what would causes that.
-> > > >
-> > > > Also on the same Laptop with any 5.0.X kernels I cannot see these.
-> > > >
-> > > >
-> > > > ~$ grep -i ACPI_DEBUG /boot/config-5.1-fw1
-> > > > # CONFIG_ACPI_DEBUGGER is not set
-> > > > # CONFIG_ACPI_DEBUG is not set
-> > > > # CONFIG_THINKPAD_ACPI_DEBUGFACILITIES is not set
-> > > > # CONFIG_THINKPAD_ACPI_DEBUG is not set
-> > > >
-> > > > .. dmesg ..
-> > > > ...
-> > > > [   68.020812] calling  ideapad_acpi_driver_init+0x0/0x1000
-> > > > [ideapad_laptop] @ 1322
-> > > > [   68.026708] input: Ideapad extra buttons as
-> > > > /devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/input/input16
-> > > > [   68.038236] ACPI Debug:  "=====QUERY_64====="
-> > > > [   68.050232] ACPI Debug:  "=====QUERY_65====="
-> > > > [   68.060218] ACPI Debug:  "=====QUERY_64====="
-> > > > [   68.092216] probe of VPC2004:00 returned 1 after 71386 usecs
-> > > > [   68.092245] initcall ideapad_acpi_driver_init+0x0/0x1000
-> > > > [ideapad_laptop] returned 0 after 69751 usecssg
-> > > >
-> > > > ...
-> > > >
-> > > > These =====QUERY_XX===== messages are from DSDT:
-> > > >
-> > > > ~/acpi$ grep QUERY dsdt.dsl
-> > > >                Debug = "=====QUERY_11====="
-> > > >                Debug = "=====QUERY_12====="
-> > > >                Debug = "=====QUERY_24====="
-> > > >                Debug = "=====QUERY_25====="
-> > > >                Debug = "=====QUERY_37====="
-> > > >                Debug = "=====QUERY_38====="
-> > > >                Debug = "=====QUERY_64====="
-> > > >                Debug = "=====QUERY_65====="
-> > > >
-> > > > Also this is the code from DSDT for QUERY 64 and 65:
-> > > >
-> > > > ...
-> > > >             Method (_Q64, 0, NotSerialized)  // _Qxx: EC Query
-> > > >            {
-> > > >                Debug = "=====QUERY_64====="
-> > > >                If ((OSYS == 0x07D9))
-> > > >                {
-> > > >                    If (((WLEX == One) & (WLAT == One)))
-> > > >                    {
-> > > >                        SGOV (0x02040005, One)
-> > > >                    }
-> > > >                    Else
-> > > >                    {
-> > > >                        SGOV (0x02040005, Zero)
-> > > >                    }
-> > > >                }
-> > > >            }
-> > > >
-> > > >            Method (_Q65, 0, NotSerialized)  // _Qxx: EC Query
-> > > >            {
-> > > >                Debug = "=====QUERY_65====="
-> > > >                If ((OSYS == 0x07D9))
-> > > >                {
-> > > >                    If (((BTEX == One) & (BTAT == One)))
-> > > >                    {
-> > > >                        SGOV (0x0202000B, One)
-> > > >                    }
-> > > >                    Else
-> > > >                    {
-> > > >                        SGOV (0x0202000B, Zero)
-> > > >                    }
-> > > >                }
-> > > >            }
-> > > >
-> > > > ...
-> > > >
-> > > >
-> > > > Any idea what would cause this ?
-> >
-> > I think I found what is causing that.
-> >
-> > Commit aa9aaa4d61c0048d3faad056893cd7860bbc084c is moving
-> > definition of Linux's  ACPI_DEBUG_DEFAULT to incude/acpi/platform/aclinux.h ,
-> > however include/acpi/acpi.h didn't got updated and  ACPI_DEBUG_DEFAULT now
-> > being always defined as  (ACPI_LV_INIT | ACPI_LV_DEBUG_OBJECT |
-> > ACPI_LV_EVALUATION | ACPI_LV_REPAIR)
->
-> I'm not sure what you mean by this.
->
-> include/acpi/acpi.h should get the right definitions through
-> include/acpi/platform/acenv.h and include/acpi/acoutput.h that are
-> included by it.
->
+Hello,
 
-Hmm yes should , I missed that include. However it does not work.
+syzbot found the following crash on:
 
-I've just put back old code back into drivers/acpi/bus.c to test
-and all working now fine without any other changes.
+HEAD commit:    a734d1f4 net: openvswitch: return an error instead of doin..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11467d84a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bcf30bdc781fc378
+dashboard link: https://syzkaller.appspot.com/bug?extid=a65e6ce239e4afe6c5e7
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-> It looks like incude/acpi/platform/aclinux.h has not been included by
-> include/acpi/platform/acenv.h for some reason when building this
-> module.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-If this one getting it wrong all will do so , they all just include
-<linux/acpi.h>.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a65e6ce239e4afe6c5e7@syzkaller.appspotmail.com
 
-Probably not so much users will notice that , I just did because my
-BIOS vendor forgot DEBUG around.
+------------[ cut here ]------------
+jump label: negative count!
+WARNING: CPU: 0 PID: 16038 at kernel/jump_label.c:219  
+__static_key_slow_dec_cpuslocked+0x12d/0x150 kernel/jump_label.c:219
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 16038 Comm: syz-executor.1 Not tainted 5.1.0-rc7+ #167
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x45 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:__static_key_slow_dec_cpuslocked+0x12d/0x150  
+kernel/jump_label.c:219
+Code: 84 d2 75 2d 41 8b 1c 24 31 ff 89 de e8 bc 18 e6 ff 85 db 0f 89 56 ff  
+ff ff e8 2f 17 e6 ff 48 c7 c7 00 aa 71 87 e8 01 c5 b8 ff <0f> 0b e9 3e ff  
+ff ff 4c 89 e7 e8 a4 a5 1e 00 eb c9 48 c7 c7 78 d6
+RSP: 0018:ffff88808ed07910 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 00000000ffffffff RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815afcc6 RDI: ffffed1011da0f14
+RBP: ffff88808ed07930 R08: ffff8880964bc080 R09: ffffed1015d05011
+R10: ffffed1015d05010 R11: ffff8880ae828087 R12: ffffffff8b14f560
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  __static_key_slow_dec kernel/jump_label.c:238 [inline]
+  static_key_slow_dec+0x60/0xa0 kernel/jump_label.c:252
+  udp_destroy_sock net/ipv4/udp.c:2494 [inline]
+  udp_destroy_sock+0x152/0x220 net/ipv4/udp.c:2480
+  sk_common_release+0x6d/0x330 net/core/sock.c:3151
+  udp_lib_close+0x16/0x20 include/net/udp.h:206
+  inet_release+0x105/0x1f0 net/ipv4/af_inet.c:432
+  __sock_release+0xd3/0x2b0 net/socket.c:599
+  sock_close+0x1b/0x30 net/socket.c:1267
+  __fput+0x2e5/0x8d0 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x90a/0x2fa0 kernel/exit.c:876
+  do_group_exit+0x135/0x370 kernel/exit.c:980
+  get_signal+0x399/0x1d50 kernel/signal.c:2577
+  do_signal+0x87/0x1940 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x244/0x2c0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458da9
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f05c42b4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000458da9
+RDX: 0000000020000040 RSI: 0000000000008914 RDI: 0000000000000006
+RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f05c42b56d4
+R13: 00000000004c4635 R14: 00000000004d7ec8 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
