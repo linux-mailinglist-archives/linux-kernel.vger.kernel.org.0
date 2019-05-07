@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A1D165B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C326B165B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2019 16:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfEGOcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 10:32:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50842 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726340AbfEGOcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 10:32:12 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x47EToQR003230
-        for <linux-kernel@vger.kernel.org>; Tue, 7 May 2019 10:32:11 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2sb9tcp00k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 10:32:06 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Tue, 7 May 2019 15:30:05 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 May 2019 15:30:00 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x47ETxx346596170
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 May 2019 14:29:59 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3EFC420B0;
-        Tue,  7 May 2019 14:29:59 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CA2FE42081;
-        Tue,  7 May 2019 14:29:57 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.102.0.77])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  7 May 2019 14:29:57 +0000 (GMT)
-Date:   Tue, 7 May 2019 19:59:51 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     jikos@kernel.org, jpoimboe@redhat.com, pmladek@suse.com,
-        joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Remove stale kobj_added entries from
- kernel-doc descriptions
-References: <20190507130815.17685-1-mbenes@suse.cz>
+        id S1726798AbfEGOa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 10:30:59 -0400
+Received: from mail-eopbgr10089.outbound.protection.outlook.com ([40.107.1.89]:20390
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726486AbfEGOa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 10:30:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lcdTtV4/0P6asI0qpvDWF/8dw22r1KZHYyB5RTRVHIk=;
+ b=XmdKw5pgBxBz0hpj2Dl6ulhkqjgFFskqwoFU83QXvVfYyqowngYoJwrdzqhMwtZQyWDobUDC6mrjY3IrBvekLRwuLob+i4BmtQeNafRDUEETpp7dXCHsLFp0nViEVyECjxzpsGnZQa88tfb/Mpa1boFqUSgTPNzb51U1Trkafac=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2767.eurprd04.prod.outlook.com (10.172.255.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Tue, 7 May 2019 14:30:54 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::484c:ab68:81c4:51be]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::484c:ab68:81c4:51be%5]) with mapi id 15.20.1856.012; Tue, 7 May 2019
+ 14:30:54 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] crypto: caam: fix caam_dump_sg that iterates through
+ scatterlist
+Thread-Topic: [PATCH] crypto: caam: fix caam_dump_sg that iterates through
+ scatterlist
+Thread-Index: AQHVBNn6GEV29oSxMECW3IgR0b6OeQ==
+Date:   Tue, 7 May 2019 14:30:54 +0000
+Message-ID: <VI1PR0402MB34850C42222FF3339BF010D598310@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1557236223-31492-1-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f95abf46-1ed5-4c8b-3d3a-08d6d2f89cf0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB2767;
+x-ms-traffictypediagnostic: VI1PR0402MB2767:
+x-microsoft-antispam-prvs: <VI1PR0402MB27677136BA3CCA2A3CAF39E398310@VI1PR0402MB2767.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 0030839EEE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(366004)(39860400002)(199004)(189003)(8676002)(229853002)(305945005)(7736002)(71200400001)(71190400001)(478600001)(110136005)(66946007)(44832011)(53936002)(66066001)(74316002)(4326008)(8936002)(64756008)(66476007)(66556008)(66446008)(9686003)(54906003)(81156014)(6436002)(25786009)(55016002)(558084003)(86362001)(2906002)(81166006)(52536014)(73956011)(3846002)(6116002)(76176011)(76116006)(102836004)(446003)(256004)(14454004)(68736007)(26005)(5660300002)(186003)(6506007)(476003)(33656002)(6246003)(486006)(53546011)(316002)(7696005)(99286004)(6636002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2767;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: C7UmxV1O8yfey3mDkJrjH9LP5ub+QutwFvgvexdTe27MlYu/ojKYHVXBZyZUro+riRr1ioAYmq42AOo28EZf81NjyPl5kIi7FXlcLUdDH5zAp9XdxTFObE5H2tb0JM8/rr8pw18OaCU7KctV56g5iaZsDt+HeAkUFCbClOPDSt2lDUs5iLC9f1BzvwjgY7moNwe90kojXJHWDtEq34zr7oIVuZoFjE867X+0WlJwcvPR5tSP4tNZlQIVqG9W0G75OndAjPuJElpMWS3zy9MvF7kCxtp1kmHqFhK/86y7FRsWHZarVbbGoO66HfVnc0mLVFPeEbO3WwhkOni4xBOl4ru2g2buqgruWRjJrGfVGKlHN5icvafkTKQ48nqHlcPHHdv9IYXzQony0yhHI1vay628ZgTTEWNqsO+5lEhwTtI=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507130815.17685-1-mbenes@suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-TM-AS-GCONF: 00
-x-cbid: 19050714-0008-0000-0000-000002E431E2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050714-0009-0000-0000-00002250AF46
-Message-Id: <20190507142951.GA8038@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=802 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905070094
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f95abf46-1ed5-4c8b-3d3a-08d6d2f89cf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 14:30:54.4444
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2767
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 03:08:14PM +0200, Miroslav Benes wrote:
-> Commit 4d141ab3416d ("livepatch: Remove custom kobject state handling")
-> removed kobj_added members of klp_func, klp_object and klp_patch
-> structures. kernel-doc descriptions were omitted by accident. Remove
-> them.
-> 
-> Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-
--- 
-Kamalesh
-
+On 5/7/2019 4:37 PM, Iuliana Prodan wrote:=0A=
+> Fix caam_dump_sg by correctly determining the next scatterlist=0A=
+> entry in the list.=0A=
+> =0A=
+> Fixes: 5ecf8ef9103c ("crypto: caam - fix sg dump")=0A=
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
