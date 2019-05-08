@@ -2,88 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583D817191
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1D6170D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfEHG3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 02:29:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42426 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbfEHG3B (ORCPT
+        id S1727059AbfEHGNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 02:13:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46736 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfEHGNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 02:29:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mIyxU7VnNV8jDbGTYSn2QuAAnMlpGNdTTNr/w7EuXoo=; b=LI15PkuFSDAwbSF9sshVlzmJX
-        QALNE7xOrNA6nuZRUucLtQg4wVYxMeP61ahRZ3LFT0wPTskjpQU+6+ZzCN7LEJkgfYpaQgz9n3JkK
-        +ERpQ0L4huR0X72bzTE89TxViqK81uX0ZHf5wS+6/KUmYerW1t3vbvmcOMCVOalm2CvTA=;
-Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hOG4Y-00077p-FD; Wed, 08 May 2019 06:28:58 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id D462C440017; Wed,  8 May 2019 07:11:36 +0100 (BST)
-Date:   Wed, 8 May 2019 15:11:36 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] spi updates for v5.2
-Message-ID: <20190508061136.GI14916@sirena.org.uk>
-References: <20190506143301.GU14916@sirena.org.uk>
- <CAADWXX_k_D7=SPd=bi-=3EtBjeG6fe0EaTb4U4ZZgoOoRSub-Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BX5bBAwwbKvz0cyO"
-Content-Disposition: inline
-In-Reply-To: <CAADWXX_k_D7=SPd=bi-=3EtBjeG6fe0EaTb4U4ZZgoOoRSub-Q@mail.gmail.com>
-X-Cookie: -- I have seen the FUN --
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 8 May 2019 02:13:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3452760779; Wed,  8 May 2019 06:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557296024;
+        bh=6JF1Wj9rmKFTxA+ck/bXWL6AFxtAP0AJGAAq9KaA1bU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GvRmc3UDU6h23XQcy1351x+WxIxy3U5tBLP6nWf13GDw25uvmuPi1n3XZRJl04KHa
+         Ct0UxvJw4cPu/Xlx0btssTOcSyySeUZfzL2cvXRAeC1xWnJForTyJYNaPR5nbs2Q1q
+         otAZWBrqptTg5YJYwAqtjiLg0c8t/nbd15eX59Iw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CBFBA60779;
+        Wed,  8 May 2019 06:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557296023;
+        bh=6JF1Wj9rmKFTxA+ck/bXWL6AFxtAP0AJGAAq9KaA1bU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jhZxQGupSaxx8wMvNJ4B9wqgIL/OosUUPGfEqgfS0x1LGwnb5m9HZj9QQix3Ec8jb
+         Dbr/2oRXREm9BMbVfN77VPRq3NsNaAHSryU0jxcLolPaNIbHDt3L3JR0J88d0rOhB6
+         pp2lIyKZon/h7AP4b3L6HphthxRWzCbKG3u9P28o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CBFBA60779
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH] ext4: fix use-after-free in dx_release()
+Date:   Wed,  8 May 2019 11:43:17 +0530
+Message-Id: <1557295997-13377-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The buffer_head (frames[0].bh) and it's corresping page can be
+potentially free'd once brelse() is done inside the for loop
+but before the for loop exits in dx_release(). It can be free'd
+in another context, when the page cache is flushed via
+drop_caches_sysctl_handler(). This results into below data abort
+when accessing info->indirect_levels in dx_release().
 
---BX5bBAwwbKvz0cyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Unable to handle kernel paging request at virtual address ffffffc17ac3e01e
+Call trace:
+ dx_release+0x70/0x90
+ ext4_htree_fill_tree+0x2d4/0x300
+ ext4_readdir+0x244/0x6f8
+ iterate_dir+0xbc/0x160
+ SyS_getdents64+0x94/0x174
 
-On Tue, May 07, 2019 at 08:08:50AM -0700, Linus Torvalds wrote:
-> On Mon, May 6, 2019 at 7:33 AM Mark Brown <broonie@kernel.org> wrote:
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/ext4/namei.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> > spi: Updates for v5.2
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 4181c9c..7e6c298 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -871,12 +871,14 @@ static void dx_release(struct dx_frame *frames)
+ {
+ 	struct dx_root_info *info;
+ 	int i;
++	unsigned int indirect_levels;
+ 
+ 	if (frames[0].bh == NULL)
+ 		return;
+ 
+ 	info = &((struct dx_root *)frames[0].bh->b_data)->info;
+-	for (i = 0; i <= info->indirect_levels; i++) {
++	indirect_levels = info->indirect_levels;
++	for (i = 0; i <= indirect_levels; i++) {
+ 		if (frames[i].bh == NULL)
+ 			break;
+ 		brelse(frames[i].bh);
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-> Hmm. Please be more careful. Commit 1dfbf334f123 ("spi: ep93xx:
-> Convert to use CS GPIO descriptors") caused a new warning because it
-> removed a "for ()" loop, but left the now unused variable 'i' around.
-
-> I fixed it up in the merge, because I hate warnings that may hide real
-> problems. But I also expect maintainers to check their warnings,
-> exactly because the normal build is supposed to have none. So a new
-> warning does stand out.
-
-Sorry, I've actually got a fix for that queued but obviously didn't
-manage to make sure it made it all the way through the process to the
-pull request.
-
---BX5bBAwwbKvz0cyO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzScxgACgkQJNaLcl1U
-h9CnJwf/eKpzIkTbhVcC7J2Bb3sJsMXD6vuBkkbnkgLlu4ajKp9FJx+eTtd4eETY
-NobQp2PD84TpU62FmkQxvxvCMNezwtGN+IcttLV0o7I6MvJKbFU6vJwKTBztXawA
-pcd43PWu9rI9KearSLkkGdVGAQAbY6CurPPJNeG3/JElOHkUgoEt04PW2DE6OoyX
-lSHkynrdR+R+EmYtDXj9ZJO2Hd8ebDodBd/XB2Ay+VQubqzFY7rHiHI/q+zRDD6V
-LLRkDphcmwVOnurHYGeYNoi56XYidEmvTN9dkjP+Jzu5l5K03kXf1Q2xo7LQPhZk
-s96tTYvAn0pM7gu2JM7zy8m1BR9pOg==
-=VZ8j
------END PGP SIGNATURE-----
-
---BX5bBAwwbKvz0cyO--
