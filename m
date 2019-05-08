@@ -2,118 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C2D182AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 01:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3041829B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 01:16:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbfEHXWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 19:22:02 -0400
-Received: from alln-iport-2.cisco.com ([173.37.142.89]:8895 "EHLO
-        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfEHXWC (ORCPT
+        id S1728018AbfEHXQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 19:16:02 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39171 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbfEHXQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 19:22:02 -0400
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 19:22:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1960; q=dns/txt; s=iport;
-  t=1557357721; x=1558567321;
-  h=from:to:cc:subject:date:message-id;
-  bh=xFoLKN7z00P1NlIEUkNeHdy5RdIl62U+exCN+0sxos0=;
-  b=IAhDrj6TSwPopSgNc3bSk+x5oJu4HqMnAIEuAUrDzCTxZ8RFtRF4UrmJ
-   DhBUa0BMTVuUcLMZRpI6SGpe+kNa2HqXHVylmLYQxn13SclImM/A0Jzbl
-   AuvMwISWZ+vkZeOqjckzabNRrqc0FFhOuYQGeOTx5RiGtrjeS1Mbz52dc
-   A=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AnAACFYtNc/5pdJa1kHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUQcBAQsBghCBOgEyKIwtpVSBewkJL4Q/ggojNAkOAQMBAQQBAQIBBG0?=
- =?us-ascii?q?ohXhSgT4TgyKCC655M4hmgUYUgR4BhneEVheBQD+EYYomBJJDlH8JgguSTwI?=
- =?us-ascii?q?ZlVYBoUKBTziBVjMaCBsVgyeQUT8DMI14K4IlAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,447,1549929600"; 
-   d="scan'208";a="271168730"
-Received: from rcdn-core-3.cisco.com ([173.37.93.154])
-  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 08 May 2019 23:14:30 +0000
-Received: from sjc-ads-4850.cisco.com (sjc-ads-4850.cisco.com [10.28.39.114])
-        by rcdn-core-3.cisco.com (8.15.2/8.15.2) with ESMTP id x48NEUx3009602;
-        Wed, 8 May 2019 23:14:30 GMT
-From:   Nikunj Kela <nkela@cisco.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc:     xe-linux-external@cisco.com,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] igb: add parameter to ignore nvm checksum validation
-Date:   Wed,  8 May 2019 23:14:29 +0000
-Message-Id: <1557357269-9498-1-git-send-email-nkela@cisco.com>
-X-Mailer: git-send-email 2.5.0
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.28.39.114, sjc-ads-4850.cisco.com
-X-Outbound-Node: rcdn-core-3.cisco.com
+        Wed, 8 May 2019 19:16:01 -0400
+Received: by mail-lj1-f195.google.com with SMTP id q10so353436ljc.6
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 16:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rx0y6PQtDWpMB7dE4WTzT3yISSxb8pJ6fS91KAAE2fs=;
+        b=X5NQ6RaS8EC1nu4gRLBpTlEsIT2tkLIDGg4XxjwiydTb8snqc62j9xFF8wCOh7pkB0
+         9BLcr+9EcmSb2RPI6aO3m0J4z/WywXTZFadApdwuBPXBNXC32ndqwy65kQcXzxbNWIg6
+         6nyUBMNH5r/JOXk6cfeXzR/SnqvmaXFwclvSn5sM9unSletf/hXLnY/pDo5ImF3IcWg5
+         CTy/QJL8Xb2681vVVWGR94h8Q836lCuFMG8o/04E0Du+4E3DpecfA269C60AW1i1Vr1R
+         osMDUJkl2oh5fOAI2uHQhu5iIDzMxz9Zzk2TB8CAgLhVtJwVcZbTQq8vA8YNv+kB8ZLT
+         59oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rx0y6PQtDWpMB7dE4WTzT3yISSxb8pJ6fS91KAAE2fs=;
+        b=p27GWFtoDl74aVKuabEfBpux1JFRTOP+DxVQK0n63BCocqSek863BHLzk2P5CDHNPu
+         YBr2yqJGGG3eJ5fCGZT5Tkb5/aBJBfHKWWFVSQLljeP6Vdrvk1LxiQHNqivyflS4orUD
+         GjaO+XA8iZJc+AxoMCgwzbUR0+mraIjY17FMo0hcz1tnVuhmf5SYOUzKM6lM7SRDmSjT
+         fdBiG8QqK7KthAGX9rlrm2o74hn6vmnMhra6bb41+2pLc9IvNeaNeJgbZ+2kl+qswhOd
+         8C7ukMveE54Xh9tj2nvvaSvaTcSvLLDx7mkZrWeEvgftwFUDVeItqtt+Oxn4FWVFvOwi
+         +cdA==
+X-Gm-Message-State: APjAAAXwCXKYdgiYEmEgArcVlrwR2+UJm53LHIjsHLWDxS8wZvGYkGul
+        BMF0lSEhGvAgGpQW3iFCUBmMPFvzD0bDnytCp5ZV0Q==
+X-Google-Smtp-Source: APXvYqwZdNmKqMgi/4nybYZl5Ciq1NCyMxq91349TSdCaOjV7hPZdrVfPjRjB1apQm5mL4vL/Yt2N2sG5ISkiDHeyVA=
+X-Received: by 2002:a2e:8583:: with SMTP id b3mr267032lji.136.1557357358357;
+ Wed, 08 May 2019 16:15:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190508173403.6088d0db@canb.auug.org.au> <fa0e68b2-b839-b187-150c-13391c197b99@infradead.org>
+ <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
+In-Reply-To: <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Wed, 8 May 2019 16:15:21 -0700
+Message-ID: <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com>
+Subject: Re: linux-next: Tree for May 8 (drivers/platform/x86/intel_pmc_core_plat_drv.c)
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the broken NICs don't have EEPROM programmed correctly. It results
-in probe to fail. This change adds a module parameter that can be used to
-ignore nvm checksum validation.
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, May 8, 2019 at 2:22 PM
+To: Randy Dunlap
+Cc: Stephen Rothwell, Linux Next Mailing List, Linux Kernel Mailing
+List, Rajat Jain, Platform Driver, Rajneesh Bhardwaj, Vishwanath
+Somayaji
 
-Cc: xe-linux-external@cisco.com
-Signed-off-by: Nikunj Kela <nkela@cisco.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+> On Wed, May 8, 2019 at 11:45 PM Randy Dunlap <rdunlap@infradead.org> wrot=
+e:
+> >
+> > On 5/8/19 12:34 AM, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Changes since 20190507:
+> > >
+> > > The ubifs tree gained a conflict against Linus' tree.
+> > >
+> >
+> > on i386 or x86_64:
+>
+> Thank you for report. Can you provide what is the config option for
+> this module? I suppose it's built-in.
+> Rajat, I will drop this from the repo, because I don't see it would
+> have a chance to be tested in time.
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 39f33af..0ae1324 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -247,6 +247,11 @@ static int debug = -1;
- module_param(debug, int, 0);
- MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
- 
-+static bool ignore_nvm_checksum;
-+module_param(ignore_nvm_checksum, bool, 0);
-+MODULE_PARM_DESC(ignore_nvm_checksum,
-+		"Set to ignore nvm checksum validation (defaults N)");
-+
- struct igb_reg_info {
- 	u32 ofs;
- 	char *name;
-@@ -3191,18 +3196,29 @@ static int igb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	case e1000_i211:
- 		if (igb_get_flash_presence_i210(hw)) {
- 			if (hw->nvm.ops.validate(hw) < 0) {
--				dev_err(&pdev->dev,
-+				if (ignore_nvm_checksum) {
-+					dev_warn(&pdev->dev,
- 					"The NVM Checksum Is Not Valid\n");
--				err = -EIO;
--				goto err_eeprom;
-+				} else {
-+					dev_err(&pdev->dev,
-+					"The NVM Checksum Is Not Valid\n");
-+					err = -EIO;
-+					goto err_eeprom;
-+				}
- 			}
- 		}
- 		break;
- 	default:
- 		if (hw->nvm.ops.validate(hw) < 0) {
--			dev_err(&pdev->dev, "The NVM Checksum Is Not Valid\n");
--			err = -EIO;
--			goto err_eeprom;
-+			if (ignore_nvm_checksum) {
-+				dev_warn(&pdev->dev,
-+					"The NVM Checksum Is Not Valid\n");
-+			} else {
-+				dev_err(&pdev->dev,
-+					"The NVM Checksum Is Not Valid\n");
-+				err = -EIO;
-+				goto err_eeprom;
-+			}
- 		}
- 		break;
- 	}
--- 
-2.5.0
 
+OK, NP. Just to be sure I understand,
+
+1) Please let me know if I should send in a fix (it would be
+#include/linux/module.h and also add MODULE_LICENSE() I believe)?
+2) Would this be lined up for next version though?
+
+Thanks,
+Rajat
+
+
+>
+>
+> >
+> >
+> >   CC      drivers/platform/x86/intel_pmc_core_plat_drv.o
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: warning: data d=
+efinition has no type or storage class [enabled by default]
+> >  MODULE_DEVICE_TABLE(x86cpu, intel_pmc_core_platform_ids);
+> >  ^
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: error: type def=
+aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98MODULE_DEVICE_TAB=
+LE=E2=80=99 [-Werror=3Dimplicit-int]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: warning: parame=
+ter names (without types) in function declaration [enabled by default]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: warning: data d=
+efinition has no type or storage class [enabled by default]
+> >  module_init(pmc_core_platform_init);
+> >  ^
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: error: type def=
+aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98module_init=E2=80=
+=99 [-Werror=3Dimplicit-int]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: warning: parame=
+ter names (without types) in function declaration [enabled by default]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: warning: data d=
+efinition has no type or storage class [enabled by default]
+> >  module_exit(pmc_core_platform_exit);
+> >  ^
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: error: type def=
+aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98module_exit=E2=80=
+=99 [-Werror=3Dimplicit-int]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: warning: parame=
+ter names (without types) in function declaration [enabled by default]
+> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:42:19: warning: =E2=
+=80=98pmc_core_platform_init=E2=80=99 defined but not used [-Wunused-functi=
+on]
+> >  static int __init pmc_core_platform_init(void)
+> >                    ^
+> >
+> > and
+> > WARNING: modpost: missing MODULE_LICENSE() in drivers/platform/x86/inte=
+l_pmc_core_plat_drv.o
+> >
+> > --
+> > ~Randy
+>
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
