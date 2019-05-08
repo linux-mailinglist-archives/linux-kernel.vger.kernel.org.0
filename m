@@ -2,138 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B56CA17CAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A1217CB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 17:01:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfEHO6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 10:58:31 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35555 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbfEHO6a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:58:30 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t87so10060203pfa.2;
-        Wed, 08 May 2019 07:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yEQ3QDmG4J4aCqR8TE4zPyewDF8Wu8jUX8cEw4gcVRM=;
-        b=rDQOPtuMVcCa51KDjmVzZagDYZSJ7KpqkKLxG2aJAO67+Y2O0k/47H5A71Q4eOMDOj
-         /cpoNEZB5y+nLbzQ07zHdoyiBOAkA0U5Ku6iUXF+Sb5JCO0w984LdjQ9M8Ll42tq04jO
-         V2TBLFo54V07e8iPelizoBjbldJxs81qzR+m+bhy+VzckVkvLaWWqMjqBtBFRP5nPfCr
-         LZk90P0U2vNIInaVJ2nLlrUB+QRgarTVeisfP2uvlnmohAdiLzuM2sennX9t9qoHCOAn
-         268/ABq1HO20belSNgZGHvJE8WMCbzTtmBv/1bMzHZYDLal/IdAQjJx1N1GUcrt5uCqP
-         ck6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yEQ3QDmG4J4aCqR8TE4zPyewDF8Wu8jUX8cEw4gcVRM=;
-        b=sWtzw0cg/rsbzoKgxmbl6DpzAJAIRiSIh5R0HDFkE7B1Pspih4xF2DSJcZkO0qPqFR
-         zZ3dCFZVKzQlp1WywTjYFEs12glq64eXtIwq4IytSW6KoxZFPPtS2Bad11/0IgY3TkGN
-         +qREnmen+8gw2ZAubsCfWogTIYhPMJcwPgz6mhjueuSvuLhirZe3dlUxqcrviTICGaU+
-         24TtQto1zNcSaYQUB4r28ALw2oLCZDolNj+xW8CH31dGA3nrzCxkeJ5PdpwtWb13OzgZ
-         de2tUwYNIomwXnXyHjxxGqdesTIOKw9NeY+7OA7JDnSBUt7b/NL4AfwdHiFSrjQglcs/
-         uk2Q==
-X-Gm-Message-State: APjAAAWtnfxNxPKAqDhe47Nuxkj7ZAv1LT/tofLZ5XbK98m/nRjoM4HV
-        GspPHw2oFUW4nwpPZuGJFhc=
-X-Google-Smtp-Source: APXvYqzX9tfEM2lwPbl+tJ2jnH/8uKb0388ddWRDbaD3EtJA24j7l+BR6W/1NtQSeMBgWSe/SSUWEw==
-X-Received: by 2002:a63:2b0d:: with SMTP id r13mr47971764pgr.400.1557327510091;
-        Wed, 08 May 2019 07:58:30 -0700 (PDT)
-Received: from [192.168.84.92] (207.sub-166-167-102.myvzw.com. [166.167.102.207])
-        by smtp.gmail.com with ESMTPSA id h6sm11452931pfk.188.2019.05.08.07.58.27
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 07:58:29 -0700 (PDT)
-Subject: Re: [PATCH v2] netfilter: xt_owner: Add supplementary groups option
-To:     Lukasz Pawelczyk <l.pawelczyk@samsung.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lukasz Pawelczyk <havner@gmail.com>
-References: <CGME20190508141219eucas1p1e5a899714747b497499976113ea9681f@eucas1p1.samsung.com>
- <20190508141211.4191-1-l.pawelczyk@samsung.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <98f71c64-3887-b715-effb-894224a71ef9@gmail.com>
-Date:   Wed, 8 May 2019 07:58:25 -0700
+        id S1727287AbfEHPBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 11:01:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37402 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726163AbfEHPBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 11:01:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BBEFA78;
+        Wed,  8 May 2019 08:01:20 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 744F03F238;
+        Wed,  8 May 2019 08:01:16 -0700 (PDT)
+Subject: Re: [PATCH v7 14/23] iommu/smmuv3: Implement cache_invalidate
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org,
+        vincent.stehle@arm.com
+References: <20190408121911.24103-1-eric.auger@redhat.com>
+ <20190408121911.24103-15-eric.auger@redhat.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a53d72f5-c8a2-a9e9-eb0b-2fac65964caf@arm.com>
+Date:   Wed, 8 May 2019 16:01:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190508141211.4191-1-l.pawelczyk@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190408121911.24103-15-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/8/19 10:12 AM, Lukasz Pawelczyk wrote:
-> The XT_SUPPL_GROUPS flag causes GIDs specified with XT_OWNER_GID to
-> be also checked in the supplementary groups of a process.
+On 08/04/2019 13:19, Eric Auger wrote:
+> Implement domain-selective and page-selective IOTLB invalidations.
 > 
-> Signed-off-by: Lukasz Pawelczyk <l.pawelczyk@samsung.com>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
 > ---
->  include/uapi/linux/netfilter/xt_owner.h |  1 +
->  net/netfilter/xt_owner.c                | 23 ++++++++++++++++++++---
->  2 files changed, 21 insertions(+), 3 deletions(-)
+> v6 -> v7
+> - check the uapi version
 > 
-> diff --git a/include/uapi/linux/netfilter/xt_owner.h b/include/uapi/linux/netfilter/xt_owner.h
-> index fa3ad84957d5..d646f0dc3466 100644
-> --- a/include/uapi/linux/netfilter/xt_owner.h
-> +++ b/include/uapi/linux/netfilter/xt_owner.h
-> @@ -8,6 +8,7 @@ enum {
->  	XT_OWNER_UID    = 1 << 0,
->  	XT_OWNER_GID    = 1 << 1,
->  	XT_OWNER_SOCKET = 1 << 2,
-> +	XT_SUPPL_GROUPS = 1 << 3,
->  };
->  
->  struct xt_owner_match_info {
-> diff --git a/net/netfilter/xt_owner.c b/net/netfilter/xt_owner.c
-> index 46686fb73784..283a1fb5cc52 100644
-> --- a/net/netfilter/xt_owner.c
-> +++ b/net/netfilter/xt_owner.c
-> @@ -91,11 +91,28 @@ owner_mt(const struct sk_buff *skb, struct xt_action_param *par)
->  	}
->  
->  	if (info->match & XT_OWNER_GID) {
-> +		unsigned int i, match = false;
->  		kgid_t gid_min = make_kgid(net->user_ns, info->gid_min);
->  		kgid_t gid_max = make_kgid(net->user_ns, info->gid_max);
-> -		if ((gid_gte(filp->f_cred->fsgid, gid_min) &&
-> -		     gid_lte(filp->f_cred->fsgid, gid_max)) ^
-> -		    !(info->invert & XT_OWNER_GID))
-> +		struct group_info *gi = filp->f_cred->group_info;
+> v3 -> v4:
+> - adapt to changes in the uapi
+> - add support for leaf parameter
+> - do not use arm_smmu_tlb_inv_range_nosync or arm_smmu_tlb_inv_context
+>    anymore
+> 
+> v2 -> v3:
+> - replace __arm_smmu_tlb_sync by arm_smmu_cmdq_issue_sync
+> 
+> v1 -> v2:
+> - properly pass the asid
+> ---
+>   drivers/iommu/arm-smmu-v3.c | 60 +++++++++++++++++++++++++++++++++++++
+>   1 file changed, 60 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 1486baf53425..4366921d8318 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -2326,6 +2326,65 @@ static void arm_smmu_detach_pasid_table(struct iommu_domain *domain)
+>   	mutex_unlock(&smmu_domain->init_mutex);
+>   }
+>   
+> +static int
+> +arm_smmu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
+> +			  struct iommu_cache_invalidate_info *inv_info)
+> +{
+> +	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
 > +
-> +		if (gid_gte(filp->f_cred->fsgid, gid_min) &&
-> +		    gid_lte(filp->f_cred->fsgid, gid_max))
-> +			match = true;
+> +	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
+> +		return -EINVAL;
 > +
-> +		if (!match && (info->match & XT_SUPPL_GROUPS) && gi) {
-> +			for (i = 0; i < gi->ngroups; ++i) {
-> +				kgid_t group = gi->gid[i];
+> +	if (!smmu)
+> +		return -EINVAL;
 > +
-> +				if (gid_gte(group, gid_min) &&
-> +				    gid_lte(group, gid_max)) {
-> +					match = true;
-> +					break;
-> +				}
-> +			}
+> +	if (inv_info->version != IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
+> +		return -EINVAL;
+> +
+> +	if (inv_info->cache & IOMMU_CACHE_INV_TYPE_IOTLB) {
+> +		if (inv_info->granularity == IOMMU_INV_GRANU_PASID) {
+> +			struct arm_smmu_cmdq_ent cmd = {
+> +				.opcode = CMDQ_OP_TLBI_NH_ASID,
+> +				.tlbi = {
+> +					.vmid = smmu_domain->s2_cfg.vmid,
+> +					.asid = inv_info->pasid,
+> +				},
+> +			};
+> +
+> +			arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+> +			arm_smmu_cmdq_issue_sync(smmu);
+
+I'd much rather make arm_smmu_tlb_inv_context() understand nested 
+domains than open-code commands all over the place.
+
+> +
+> +		} else if (inv_info->granularity == IOMMU_INV_GRANU_ADDR) {
+> +			struct iommu_inv_addr_info *info = &inv_info->addr_info;
+> +			size_t size = info->nb_granules * info->granule_size;
+> +			bool leaf = info->flags & IOMMU_INV_ADDR_FLAGS_LEAF;
+> +			struct arm_smmu_cmdq_ent cmd = {
+> +				.opcode = CMDQ_OP_TLBI_NH_VA,
+> +				.tlbi = {
+> +					.addr = info->addr,
+> +					.vmid = smmu_domain->s2_cfg.vmid,
+> +					.asid = info->pasid,
+> +					.leaf = leaf,
+> +				},
+> +			};
+> +
+> +			do {
+> +				arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+> +				cmd.tlbi.addr += info->granule_size;
+> +			} while (size -= info->granule_size);
+> +			arm_smmu_cmdq_issue_sync(smmu);
+
+An this in particular I would really like to go all the way through 
+io_pgtable_tlb_add_flush()/io_pgtable_sync() if at all possible. Hooking 
+up range-based invalidations is going to be a massive headache if the 
+abstraction isn't solid.
+
+Robin.
+
+> +		} else {
+> +			return -EINVAL;
 > +		}
+> +	}
+> +	if (inv_info->cache & IOMMU_CACHE_INV_TYPE_PASID ||
+> +	    inv_info->cache & IOMMU_CACHE_INV_TYPE_DEV_IOTLB) {
+> +		return -ENOENT;
+> +	}
+> +	return 0;
+> +}
 > +
-> +		if (match ^ !(info->invert & XT_OWNER_GID))
->  			return false;
->  	}
->  
+>   static struct iommu_ops arm_smmu_ops = {
+>   	.capable		= arm_smmu_capable,
+>   	.domain_alloc		= arm_smmu_domain_alloc,
+> @@ -2346,6 +2405,7 @@ static struct iommu_ops arm_smmu_ops = {
+>   	.put_resv_regions	= arm_smmu_put_resv_regions,
+>   	.attach_pasid_table	= arm_smmu_attach_pasid_table,
+>   	.detach_pasid_table	= arm_smmu_detach_pasid_table,
+> +	.cache_invalidate	= arm_smmu_cache_invalidate,
+>   	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+>   };
+>   
 > 
-
-How can this be safe on SMP ?
-
-
