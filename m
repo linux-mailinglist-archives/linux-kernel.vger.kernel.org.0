@@ -2,89 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C01178AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33270178B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbfEHLqf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 07:46:35 -0400
-Received: from unicorn.mansr.com ([81.2.72.234]:35024 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbfEHLqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:46:35 -0400
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id 2C80F149B7; Wed,  8 May 2019 12:46:33 +0100 (BST)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] usb: core: verify devicetree nodes for disabled interfaces
-References: <106fc58c-1a4f-6605-41d7-b6031c5751a3@samsung.com>
-        <CGME20190508104442eucas1p2ebdffa348465f2c28177601014614853@eucas1p2.samsung.com>
-        <20190508104434.3409-1-m.szyprowski@samsung.com>
-Date:   Wed, 08 May 2019 12:46:33 +0100
-In-Reply-To: <20190508104434.3409-1-m.szyprowski@samsung.com> (Marek
-        Szyprowski's message of "Wed, 08 May 2019 12:44:34 +0200")
-Message-ID: <yw1xtve5uq1y.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1728279AbfEHLqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:46:50 -0400
+Received: from mail-eopbgr60058.outbound.protection.outlook.com ([40.107.6.58]:29189
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728249AbfEHLqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:46:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d+aYzL8R9Ti1Otp9XhkSYfswvWsS3AIMU4dzrM5TW2Y=;
+ b=DPlDJ7l/vOcYe2XEqI+jfwdPY8+iWN4AEb5Dtsz3JqpsM9dc1h/wvhxLptGqpmmy3Jf5Brz+ARxs2vSfEmYclE/5hdIoOIaKPjT6Rp7pWqxXRBO1cmFD74iAHnkTOXognBx/pJF5xPHM/blHiZ4ub3KLbyP2pMI2qVpCD4guw/o=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB4868.eurprd04.prod.outlook.com (20.177.40.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.12; Wed, 8 May 2019 11:46:45 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c415:3cab:a042:2e13]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c415:3cab:a042:2e13%6]) with mapi id 15.20.1856.012; Wed, 8 May 2019
+ 11:46:45 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: RE: [PATCH V2 2/4] nvmem: imx: add i.MX8 nvmem driver
+Thread-Topic: [PATCH V2 2/4] nvmem: imx: add i.MX8 nvmem driver
+Thread-Index: AQHVBUmVDC6itOTi5ECUsPpT5wBgxaZhFqGw
+Date:   Wed, 8 May 2019 11:46:45 +0000
+Message-ID: <AM0PR04MB4211796D47D5AB4A2F98102F80320@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190508030927.16668-1-peng.fan@nxp.com>
+ <20190508030927.16668-2-peng.fan@nxp.com>
+In-Reply-To: <20190508030927.16668-2-peng.fan@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6c4b134f-3056-4dd7-39ce-08d6d3aad8da
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4868;
+x-ms-traffictypediagnostic: AM0PR04MB4868:
+x-microsoft-antispam-prvs: <AM0PR04MB486818776EE29B5633B71B6C80320@AM0PR04MB4868.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 0031A0FFAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(39860400002)(346002)(366004)(189003)(199004)(53936002)(7736002)(8676002)(33656002)(99286004)(81166006)(305945005)(110136005)(54906003)(6506007)(6116002)(3846002)(6246003)(74316002)(6436002)(229853002)(2201001)(2501003)(76116006)(66476007)(2906002)(64756008)(66556008)(186003)(86362001)(66946007)(102836004)(73956011)(44832011)(71190400001)(71200400001)(66066001)(9686003)(316002)(478600001)(52536014)(66446008)(76176011)(55016002)(25786009)(68736007)(5660300002)(81156014)(14454004)(14444005)(26005)(256004)(486006)(8936002)(7416002)(11346002)(476003)(7696005)(446003)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4868;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: P/YLP/TZs9zsmLQsdeQCIIEi2CupNM/xxfx1xfsV8P1pwae8jr3CVsMA28cAqSeIaW3svVUpn0b+rzYdNLrVN6IExs0KhE9/khve6kgTDAeOziBMhLjSDiEcogkWnGT9cT9/oqZW8MLLqKYzqSPef3f7fPtSGc+znhkaKIzeSD9VrNtLUPWiunVUrAH5OnscF3ueWlnI6ICp6vNLDn4waZQZkxX5LchnWSwaC9WfVKyi96dMrI763MWacTxIaR3AQYMb87sO9hoe+LlvTvbZp8nwiZ8PVp87AsNFHQk0arY4LGr19nY6mR9acFosvRfBYzvwJM171/ThG8OZORvDfxzm4lJCBZpe9xNOR8pUCpiAdMDt5sik5UyI6LgjdjRa6vE6FEN7n4W96v2RL4GwmIp819FeifJMA5ilsp6VSaA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c4b134f-3056-4dd7-39ce-08d6d3aad8da
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 11:46:45.4955
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4868
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
-
-> Commit 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
-> add support for disabling given USB device interface by adding nodes to
-> the USB host controller device. The mentioned commit however identifies
-> the given USB interface node only by the 'reg' property in the host
-> controller children nodes and then checks for their the 'status'. The USB
-> device interface nodes however also has to have a 'compatible' property as
-> described in Documentation/devicetree/bindings/usb/usb-device.txt. This is
-> important, because USB host controller might have child-nodes for other
-> purposes. For example, Exynos EHCI and OHCI drivers already define
-> child-nodes for each physical root hub port and assigns respective PHY
-> controller and parameters for them. This conflicts with the proposed
-> approach and verifying for the presence of the compatible property fixes
-> this issue without changing the bindings and the way the PHY controllers
-> are handled by Exynos EHCI/OHCI drivers.
->
-> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-> Fixes: 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/usb/core/message.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-> index e844bb7b5676..6f7d047392bd 100644
-> --- a/drivers/usb/core/message.c
-> +++ b/drivers/usb/core/message.c
-> @@ -2009,6 +2009,7 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
->  		struct usb_interface *intf = cp->interface[i];
->
->  		if (intf->dev.of_node &&
-> +		    of_find_property(intf->dev.of_node, "compatible", NULL) &&
->  		    !of_device_is_available(intf->dev.of_node)) {
->  			dev_info(&dev->dev, "skipping disabled interface %d\n",
->  				 intf->cur_altsetting->desc.bInterfaceNumber);
-> -- 
-
-I don't think this is the right approach.  We don't want to be adding
-such checks everywhere the of_node is used.  A better way might be to
-not set of_node at all in the absence of a proper "compatible" string.
-
-Then there's the problem of how to resolve the incompatibility between
-the generic USB and Exynos bindings.  One possible fix could be to use
-a child node of the controller node to represent the root hub.  Since
-the driver currently doesn't work at all if a devicetree has nodes for
-USB devices, there should be no compatibility concerns.
-
--- 
-Måns Rullgård
+PiBGcm9tOiBQZW5nIEZhbg0KPiBTZW50OiBXZWRuZXNkYXksIE1heSA4LCAyMDE5IDEwOjU2IEFN
+DQo+IA0KPiBUaGlzIHBhdGNoIGFkZHMgaS5NWDggbnZtZW0gb2NvdHAgZHJpdmVyIHRvIGFjY2Vz
+cyBmdXNlIHZpYSBSUEMgdG8gaS5NWDgNCj4gc3lzdGVtIGNvbnRyb2xsZXIuDQo+IA0KPiBDYzog
+U3Jpbml2YXMgS2FuZGFnYXRsYSA8c3Jpbml2YXMua2FuZGFnYXRsYUBsaW5hcm8ub3JnPg0KPiBD
+YzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPg0KPiBDYzogU2FzY2hhIEhhdWVyIDxz
+LmhhdWVyQHBlbmd1dHJvbml4LmRlPg0KPiBDYzogUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0gPGtl
+cm5lbEBwZW5ndXRyb25peC5kZT4NCj4gQ2M6IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWls
+LmNvbT4NCj4gQ2M6IE5YUCBMaW51eCBUZWFtIDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gQ2M6IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTaWduZWQtb2ZmLWJ5OiBQZW5n
+IEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gLS0tDQo+IA0KPiBWMjoNCj4gIEFkZCAic2N1IiBv
+ciAiU0NVIiwgQWRkIGlteF9zY19taXNjX290cF9mdXNlX3JlYWQsIG1pbm9yIGZpeGVzDQo+IA0K
+PiAgZHJpdmVycy9udm1lbS9LY29uZmlnICAgICAgICAgfCAgIDcgKysNCj4gIGRyaXZlcnMvbnZt
+ZW0vTWFrZWZpbGUgICAgICAgIHwgICAyICsNCj4gIGRyaXZlcnMvbnZtZW0vaW14LW9jb3RwLXNj
+dS5jIHwgMTcwDQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0K
+PiAgMyBmaWxlcyBjaGFuZ2VkLCAxNzkgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAw
+NjQ0IGRyaXZlcnMvbnZtZW0vaW14LW9jb3RwLXNjdS5jDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9udm1lbS9LY29uZmlnIGIvZHJpdmVycy9udm1lbS9LY29uZmlnIGluZGV4DQo+IDUzMGQ1
+NzA3MjRjOS4uNzlhZmU0NDE5NWExIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL252bWVtL0tjb25m
+aWcNCj4gKysrIGIvZHJpdmVycy9udm1lbS9LY29uZmlnDQo+IEBAIC0zNiw2ICszNiwxMyBAQCBj
+b25maWcgTlZNRU1fSU1YX09DT1RQDQo+ICAJICBUaGlzIGRyaXZlciBjYW4gYWxzbyBiZSBidWls
+dCBhcyBhIG1vZHVsZS4gSWYgc28sIHRoZSBtb2R1bGUNCj4gIAkgIHdpbGwgYmUgY2FsbGVkIG52
+bWVtLWlteC1vY290cC4NCj4gDQo+ICtjb25maWcgTlZNRU1fSU1YX09DT1RQX1NDVQ0KPiArCXRy
+aXN0YXRlICJpLk1YOCBTQ1UgT24tQ2hpcCBPVFAgQ29udHJvbGxlciBzdXBwb3J0Ig0KPiArCWRl
+cGVuZHMgb24gSU1YX1NDVQ0KPiArCWhlbHANCj4gKwkgIFRoaXMgaXMgYSBkcml2ZXIgZm9yIHRo
+ZSBTQ1UgT24tQ2hpcCBPVFAgQ29udHJvbGxlciAoT0NPVFApDQo+ICsJICBhdmFpbGFibGUgb24g
+aS5NWDggU29Dcy4NCj4gKw0KPiAgY29uZmlnIE5WTUVNX0xQQzE4WFhfRUVQUk9NDQo+ICAJdHJp
+c3RhdGUgIk5YUCBMUEMxOFhYIEVFUFJPTSBNZW1vcnkgU3VwcG9ydCINCj4gIAlkZXBlbmRzIG9u
+IEFSQ0hfTFBDMThYWCB8fCBDT01QSUxFX1RFU1QgZGlmZiAtLWdpdA0KPiBhL2RyaXZlcnMvbnZt
+ZW0vTWFrZWZpbGUgYi9kcml2ZXJzL252bWVtL01ha2VmaWxlIGluZGV4DQo+IDJlY2U4ZmZmZmRk
+YS4uMzBkNjUzZDM0ZTU3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL252bWVtL01ha2VmaWxlDQo+
+ICsrKyBiL2RyaXZlcnMvbnZtZW0vTWFrZWZpbGUNCj4gQEAgLTEzLDYgKzEzLDggQEAgb2JqLSQo
+Q09ORklHX05WTUVNX0lNWF9JSU0pCSs9DQo+IG52bWVtLWlteC1paW0ubw0KPiAgbnZtZW0taW14
+LWlpbS15CQkJOj0gaW14LWlpbS5vDQo+ICBvYmotJChDT05GSUdfTlZNRU1fSU1YX09DT1RQKQkr
+PSBudm1lbS1pbXgtb2NvdHAubw0KPiAgbnZtZW0taW14LW9jb3RwLXkJCTo9IGlteC1vY290cC5v
+DQo+ICtvYmotJChDT05GSUdfTlZNRU1fSU1YX09DT1RQX1NDVSkJKz0gbnZtZW0taW14LW9jb3Rw
+LXNjdS5vDQo+ICtudm1lbS1pbXgtb2NvdHAtc2N1LXkJCTo9IGlteC1vY290cC1zY3Uubw0KPiAg
+b2JqLSQoQ09ORklHX05WTUVNX0xQQzE4WFhfRUVQUk9NKQkrPQ0KPiBudm1lbV9scGMxOHh4X2Vl
+cHJvbS5vDQo+ICBudm1lbV9scGMxOHh4X2VlcHJvbS15CTo9IGxwYzE4eHhfZWVwcm9tLm8NCj4g
+IG9iai0kKENPTkZJR19OVk1FTV9MUEMxOFhYX09UUCkJKz0gbnZtZW1fbHBjMTh4eF9vdHAubw0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9udm1lbS9pbXgtb2NvdHAtc2N1LmMgYi9kcml2ZXJzL252
+bWVtL2lteC1vY290cC1zY3UuYw0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAwMDAwMDAw
+MDAwMDAuLjAzOGU3NDRjODU4OA0KPiAtLS0gL2Rldi9udWxsDQo+ICsrKyBiL2RyaXZlcnMvbnZt
+ZW0vaW14LW9jb3RwLXNjdS5jDQo+IEBAIC0wLDAgKzEsMTcwIEBADQo+ICsvLyBTUERYLUxpY2Vu
+c2UtSWRlbnRpZmllcjogR1BMLTIuMCsNCj4gKy8qDQo+ICsgKiBpLk1YOCBPQ09UUCBmdXNlYm94
+IGRyaXZlcg0KPiArICoNCj4gKyAqIENvcHlyaWdodCAyMDE5IE5YUA0KPiArICoNCj4gKyAqIFBl
+bmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiArICovDQo+ICsNCj4gKyNpbmNsdWRlIDxsaW51
+eC9maXJtd2FyZS9pbXgvc2NpLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQo+ICsj
+aW5jbHVkZSA8bGludXgvbnZtZW0tcHJvdmlkZXIuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9vZl9k
+ZXZpY2UuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gKyNpbmNs
+dWRlIDxsaW51eC9zbGFiLmg+DQo+ICsNCj4gK2VudW0gb2NvdHBfZGV2dHlwZSB7DQo+ICsJSU1Y
+OFFYUCwNCj4gK307DQo+ICsNCj4gK3N0cnVjdCBvY290cF9kZXZ0eXBlX2RhdGEgew0KPiArCWlu
+dCBkZXZ0eXBlOw0KPiArCWludCBucmVnczsNCj4gK307DQo+ICsNCj4gK3N0cnVjdCBvY290cF9w
+cml2IHsNCj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+ICsJY29uc3Qgc3RydWN0IG9jb3RwX2Rl
+dnR5cGVfZGF0YSAqZGF0YTsNCj4gKwlzdHJ1Y3QgaW14X3NjX2lwYyAqbnZtZW1faXBjOw0KPiAr
+fTsNCj4gKw0KPiArc3RydWN0IGlteF9zY19tc2dfcmVxX21pc2NfZnVzZV9yZWFkIHsNCj4gKwlz
+dHJ1Y3QgaW14X3NjX3JwY19tc2cgaGRyOw0KPiArCXUzMiB3b3JkOw0KPiArfSBfX3BhY2tlZDsN
+Cj4gKw0KPiArc3RydWN0IGlteF9zY19tc2dfcmVzcF9taXNjX2Z1c2VfcmVhZCB7DQo+ICsJc3Ry
+dWN0IGlteF9zY19ycGNfbXNnIGhkcjsNCj4gKwl1MzIgdmFsOw0KPiArfSBfX3BhY2tlZDsNCj4g
+Kw0KDQpIb3cgYWJvdXQNCnN0cnVjdCBpbXhfc2NfbXNnX21pc2NfZnVzZV9yZWFkIHsNCglzdHJ1
+Y3QgaW14X3NjX3JwY19tc2cgaGRyOw0KCXVuaW9uIHsNCgkJdTMyIHdvcmQ7DQoJCXUzMiB2YWw7
+DQoJfSBkYXRhOw0KfSBfX3BhY2tlZDsNCg0KVGhlbiB3ZSBjYW4gc2F2ZSBvbmUgc3RydWN0IGFu
+ZCBjb252ZXJ0Lg0KDQo+ICtzdGF0aWMgc3RydWN0IG9jb3RwX2RldnR5cGVfZGF0YSBpbXg4cXhw
+X2RhdGEgPSB7DQo+ICsJLmRldnR5cGUgPSBJTVg4UVhQLA0KPiArCS5ucmVncyA9IDgwMCwNCj4g
+K307DQo+ICsNCj4gK3N0YXRpYyBpbnQgaW14X3NjX21pc2Nfb3RwX2Z1c2VfcmVhZChzdHJ1Y3Qg
+aW14X3NjX2lwYyAqaXBjLCB1MzIgd29yZCwNCj4gKwkJCQkgICAgIHUzMiAqdmFsKQ0KPiArew0K
+PiArCXN0cnVjdCBpbXhfc2NfbXNnX3JlcV9taXNjX2Z1c2VfcmVhZCBtc2c7DQo+ICsJc3RydWN0
+IGlteF9zY19tc2dfcmVzcF9taXNjX2Z1c2VfcmVhZCAqcmVzcDsNCj4gKwlzdHJ1Y3QgaW14X3Nj
+X3JwY19tc2cgKmhkciA9ICZtc2cuaGRyOw0KPiArCWludCByZXQ7DQo+ICsNCj4gKwloZHItPnZl
+ciA9IElNWF9TQ19SUENfVkVSU0lPTjsNCj4gKwloZHItPnN2YyA9ICh1aW50OF90KUlNWF9TQ19S
+UENfU1ZDX01JU0M7DQo+ICsJaGRyLT5mdW5jID0gKHVpbnQ4X3QpSU1YX1NDX01JU0NfRlVOQ19P
+VFBfRlVTRV9SRUFEOw0KDQpQbHMgZHJvcCB0aGUgdW5uZWNlc3NhcnkgdHlwZSBjb252ZXJzaW9u
+Lg0KDQo+ICsJaGRyLT5zaXplID0gMjsNCj4gKw0KPiArCW1zZy53b3JkID0gd29yZDsNCj4gKw0K
+PiArCXJldCA9IGlteF9zY3VfY2FsbF9ycGMoaXBjLCAmbXNnLCB0cnVlKTsNCj4gKwlpZiAocmV0
+KQ0KPiArCQlyZXR1cm4gcmV0Ow0KPiArDQo+ICsJcmVzcCA9IChzdHJ1Y3QgaW14X3NjX21zZ19y
+ZXNwX21pc2NfZnVzZV9yZWFkICopJm1zZzsNCj4gKwlpZiAodmFsICE9IE5VTEwpDQoNCkRyb3Ag
+dGhpcyB1bm5lY2Vzc2FyeSBjaGVjaw0KDQo+ICsJCSp2YWwgPSByZXNwLT52YWw7DQo+ICsNCj4g
+KwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBpbXhfc2N1X29jb3RwX3JlYWQo
+dm9pZCAqY29udGV4dCwgdW5zaWduZWQgaW50IG9mZnNldCwNCj4gKwkJCSAgICAgIHZvaWQgKnZh
+bCwgc2l6ZV90IGJ5dGVzKQ0KPiArew0KPiArCXN0cnVjdCBvY290cF9wcml2ICpwcml2ID0gY29u
+dGV4dDsNCj4gKwl1MzIgY291bnQsIGluZGV4LCBudW1fYnl0ZXM7DQo+ICsJdTMyICpidWY7DQo+
+ICsJdm9pZCAqcDsNCj4gKwlpbnQgaSwgcmV0Ow0KPiArDQo+ICsJaW5kZXggPSBvZmZzZXQgPj4g
+MjsNCj4gKwludW1fYnl0ZXMgPSByb3VuZF91cCgob2Zmc2V0ICUgNCkgKyBieXRlcywgNCk7DQo+
+ICsJY291bnQgPSBudW1fYnl0ZXMgPj4gMjsNCj4gKw0KPiArCWlmIChjb3VudCA+IChwcml2LT5k
+YXRhLT5ucmVncyAtIGluZGV4KSkNCj4gKwkJY291bnQgPSBwcml2LT5kYXRhLT5ucmVncyAtIGlu
+ZGV4Ow0KPiArDQo+ICsJcCA9IGt6YWxsb2MobnVtX2J5dGVzLCBHRlBfS0VSTkVMKTsNCj4gKwlp
+ZiAoIXApDQo+ICsJCXJldHVybiAtRU5PTUVNOw0KPiArDQo+ICsJYnVmID0gcDsNCj4gKw0KPiAr
+CWZvciAoaSA9IGluZGV4OyBpIDwgKGluZGV4ICsgY291bnQpOyBpKyspIHsNCj4gKwkJaWYgKHBy
+aXYtPmRhdGEtPmRldnR5cGUgPT0gSU1YOFFYUCkgew0KPiArCQkJaWYgKChpID4gMjcxKSAmJiAo
+aSA8IDU0NCkpIHsNCj4gKwkJCQkqKHUzMiAqKWJ1ZiA9IDA7DQoNClN0aWxsIG5lZWQgY29udmVy
+dD8NCg0KPiArCQkJCWJ1ZiArPSA0Ow0KDQpJJ20gbm90IHN1cmUgdGhpcyBpcyByaWdodA0KU2hv
+dWxkbid0IGl0IGJlIGJ1ZisrID8NCg0KPiArCQkJCWNvbnRpbnVlOw0KPiArCQkJfQ0KPiArCQl9
+DQo+ICsNCj4gKwkJcmV0ID0gaW14X3NjX21pc2Nfb3RwX2Z1c2VfcmVhZChwcml2LT5udm1lbV9p
+cGMsIGksIGJ1Zik7DQo+ICsJCWlmIChyZXQpIHsNCj4gKwkJCWtmcmVlKHApOw0KPiArCQkJcmV0
+dXJuIHJldDsNCj4gKwkJfQ0KPiArCQlidWYrKzsNCj4gKwl9DQo+ICsNCj4gKwltZW1jcHkodmFs
+LCBwICsgb2Zmc2V0ICUgNCwgYnl0ZXMpOw0KDQpJcyB0aGVyZSBhIGJ1aWxkIHdhcm5pbmc/DQpJ
+IHdvbmRlciBhIG1vcmUgc2FmZSB3YXkgbWF5YmU6DQptZW1jcHkodmFsLCAodTggKilwICsgb2Zm
+c2V0ICUgNCwgYnlwdGVzKTsNCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQoNCj4gKw0KPiArCWtm
+cmVlKHApOw0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3Qg
+bnZtZW1fY29uZmlnIGlteF9zY3Vfb2NvdHBfbnZtZW1fY29uZmlnID0gew0KPiArCS5uYW1lID0g
+ImlteC1zY3Utb2NvdHAiLA0KPiArCS5yZWFkX29ubHkgPSB0cnVlLA0KPiArCS53b3JkX3NpemUg
+PSA0LA0KPiArCS5zdHJpZGUgPSAxLA0KPiArCS5vd25lciA9IFRISVNfTU9EVUxFLA0KPiArCS5y
+ZWdfcmVhZCA9IGlteF9zY3Vfb2NvdHBfcmVhZCwNCj4gK307DQo+ICsNCj4gK3N0YXRpYyBjb25z
+dCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGlteF9zY3Vfb2NvdHBfZHRfaWRzW10gPSB7DQo+ICsJeyAu
+Y29tcGF0aWJsZSA9ICJmc2wsaW14OHF4cC1zY3Utb2NvdHAiLCAodm9pZCAqKSZpbXg4cXhwX2Rh
+dGEgfSwNCj4gKwl7IH0sDQo+ICt9Ow0KPiArTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgaW14X3Nj
+dV9vY290cF9kdF9pZHMpOw0KPiArDQo+ICtzdGF0aWMgaW50IGlteF9zY3Vfb2NvdHBfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0KPiArCXN0cnVjdCBkZXZpY2UgKmRldiA9
+ICZwZGV2LT5kZXY7DQo+ICsJc3RydWN0IG9jb3RwX3ByaXYgKnByaXY7DQo+ICsJc3RydWN0IG52
+bWVtX2RldmljZSAqbnZtZW07DQo+ICsJaW50IHJldDsNCj4gKw0KPiArCXByaXYgPSBkZXZtX2t6
+YWxsb2MoZGV2LCBzaXplb2YoKnByaXYpLCBHRlBfS0VSTkVMKTsNCj4gKwlpZiAoIXByaXYpDQo+
+ICsJCXJldHVybiAtRU5PTUVNOw0KPiArDQo+ICsJcmV0ID0gaW14X3NjdV9nZXRfaGFuZGxlKCZw
+cml2LT5udm1lbV9pcGMpOw0KPiArCWlmIChyZXQpDQo+ICsJCXJldHVybiByZXQ7DQo+ICsNCj4g
+Kwlwcml2LT5kYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7DQo+ICsJcHJpdi0+
+ZGV2ID0gZGV2Ow0KPiArCWlteF9zY3Vfb2NvdHBfbnZtZW1fY29uZmlnLnNpemUgPSA0ICogcHJp
+di0+ZGF0YS0+bnJlZ3M7DQo+ICsJaW14X3NjdV9vY290cF9udm1lbV9jb25maWcuZGV2ID0gZGV2
+Ow0KPiArCWlteF9zY3Vfb2NvdHBfbnZtZW1fY29uZmlnLnByaXYgPSBwcml2Ow0KPiArCW52bWVt
+ID0gZGV2bV9udm1lbV9yZWdpc3RlcihkZXYsICZpbXhfc2N1X29jb3RwX252bWVtX2NvbmZpZyk7
+DQo+ICsNCj4gKwlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKG52bWVtKTsNCj4gK30NCj4gKw0KPiAr
+c3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgaW14X3NjdV9vY290cF9kcml2ZXIgPSB7DQo+
+ICsJLnByb2JlCT0gaW14X3NjdV9vY290cF9wcm9iZSwNCj4gKwkuZHJpdmVyID0gew0KPiArCQku
+bmFtZQk9ICJpbXhfc2N1X29jb3RwIiwNCj4gKwkJLm9mX21hdGNoX3RhYmxlID0gaW14X3NjdV9v
+Y290cF9kdF9pZHMsDQo+ICsJfSwNCj4gK307DQo+ICttb2R1bGVfcGxhdGZvcm1fZHJpdmVyKGlt
+eF9zY3Vfb2NvdHBfZHJpdmVyKTsNCj4gKw0KPiArTU9EVUxFX0FVVEhPUigiUGVuZyBGYW4gPHBl
+bmcuZmFuQG54cC5jb20+Iik7DQo+ICtNT0RVTEVfREVTQ1JJUFRJT04oImkuTVg4IFNDVSBPQ09U
+UCBmdXNlIGJveCBkcml2ZXIiKTsNCj4gK01PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsNCj4gLS0N
+Cj4gMi4xNi40DQoNCg==
