@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D07717E93
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E0217E8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:53:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfEHQxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:53:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34321 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728886AbfEHQxt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:53:49 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w7so1182410plz.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8XEq0BBQxSVWW0G1qgBZYBxdgD+WG/sDOfIGEb9+WEA=;
-        b=HsIyd9cnKrmei8aeAdo987X7BR9t6gawxO6jcbTDiuMzXC03Y75Gw/PEWqpdD8V8ji
-         S4FmLdswIRS7fcALbNcqw3PxfvdqJkolDph0QsjIBw+aO9VsQpQy8Lkp9mVmrQxcVIFH
-         CoZCgT81FC6gwi963hOK2YrEsImLYh8PFi5jAA3diBcBy1+fnFG8KbD9K4MW/Rp+dZPr
-         +YdP5HPlIlSeKvJLJch5LAqPEEYGX5hBtaCOnELAkyiN5Hx7Hg8mcxEprk2jaXGAqT3I
-         zGrN/UkE5C3zfeIguY7oF33+cQxM7HGlzdYDTAipeqTGIK7FAitZrEfm4fNw8t6uab8S
-         1Vfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8XEq0BBQxSVWW0G1qgBZYBxdgD+WG/sDOfIGEb9+WEA=;
-        b=PNsmiJyodhC8J1N/VyCKic+FEIX2N1qXZhTKuh2H2uPOT9lD0mUy3s4TMCx0u8ziMP
-         fS0o078v9N8u8lgvEr1dx43DARlVHgW3Q5y0zd/tLl8nlVjJCYTwCphJWX0ZUxWlx473
-         S61KLcPc4+t/2wRkutPvZ7ipmtQeSqmxittDnrAp94vCy7Ku8Tjpot4nHHdJxjJC8zVm
-         b8PWhDHybG6AOgle5J9N5ArZzyUlQBXXAvIZAfXhiEVAK2erPrd+bTH+j9J98cQwWiW7
-         5984AFgpsPw44b5LtxIaV4RdVBBAtDPwtt0GdrbImC/LNNA8XJ49fcNFlkBvyGgdlWAE
-         oVyg==
-X-Gm-Message-State: APjAAAV42sycmqeSGd6jKd0f5Gq2acFPLqZaM1QycOkk1Xw00yLUkXWr
-        iwxriLFmz807wKDCzJoQm9tl
-X-Google-Smtp-Source: APXvYqzsIAlPZ+GSgEQWxDteyNmQjXIfdpBO3Lv8XpkqttzH3VntoMJ/btZTYD6RzFDAXZqQ+qcp+g==
-X-Received: by 2002:a17:902:7892:: with SMTP id q18mr48743439pll.163.1557334428841;
-        Wed, 08 May 2019 09:53:48 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:6000:7ab1:cd79:1ccc:df38:79c0])
-        by smtp.gmail.com with ESMTPSA id m2sm25180676pfi.24.2019.05.08.09.53.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 09:53:48 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 4/4] reset: Switch to SPDX license identifier for reset-simple
-Date:   Wed,  8 May 2019 22:23:19 +0530
-Message-Id: <20190508165319.19822-5-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190508165319.19822-1-manivannan.sadhasivam@linaro.org>
-References: <20190508165319.19822-1-manivannan.sadhasivam@linaro.org>
+        id S1728827AbfEHQxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:53:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728679AbfEHQxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 12:53:39 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3E6A20850;
+        Wed,  8 May 2019 16:53:38 +0000 (UTC)
+Date:   Wed, 8 May 2019 12:53:37 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "chengjian (D)" <cj.chengjian@huawei.com>
+Cc:     <linux-kernel@vger.kernel.org>, <huawei.libin@huawei.com>,
+        <xiexiuqi@huawei.com>, <mingo@redhat.com>,
+        <bobo.shaobowang@huawei.com>
+Subject: Re: [PATCH] ftrace: enable trampoline when rec count decrement to
+ one
+Message-ID: <20190508125337.37777a2f@gandalf.local.home>
+In-Reply-To: <e45dec40-d068-be47-7cbb-1b897e48c306@huawei.com>
+References: <1556969979-111047-1-git-send-email-cj.chengjian@huawei.com>
+        <20190505153447.594d4eab@oasis.local.home>
+        <e45dec40-d068-be47-7cbb-1b897e48c306@huawei.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to SPDX license identifier for reset-simple driver.
+On Wed, 8 May 2019 23:02:33 +0800
+"chengjian (D)" <cj.chengjian@huawei.com> wrote:
 
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/reset/reset-simple.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> function tracer uses ftrace_caller() and livepatch uses 
+> ftrace_regs_caller().
+> 
+> I can modify my testcase to trigger this race condition.
+> 
+> 
+> #enable livepatch
+> insmod klp_unshare_files.ko
+> cat /sys/kernel/debug/tracing/enabled_functions
+>          unshare_files (1) R I	tramp: 0xffffffffc0008000 (klp_ftrace_handler+0x0/0xa0) ->ftrace_ops_assist_func+0x0/0xf0
+> [NOW, the rec caller is ftracer_regs_caller TRAMPOLINE]
+> 
+> #function tracer
+> echo unshare_files > /sys/kernel/debug/tracing/set_ftrace_filter
+> echo function > /sys/kernel/debug/tracing/current_tracer
+> cat /sys/kernel/debug/tracing/enabled_functions
+>          unshare_files (2) R I ->ftrace_ops_list_func+0x0/0x170
+> [NOW, the rec caller is ftracer_regs_caller]
+> 
+> 
+> # disable livepatch
+> echo 0 > /sys/kernel/livepatch/klp_unshare_files/enabled
+> rmmod klp_unshare_files
+> 
+> 
+> cat /sys/kernel/debug/tracing/enabled_functions
+>          unshare_files (1)    	tramp: 0xffffffffc0005000 (function_trace_call+0x0/0x120) ->function_trace_call+0x0/0x120
+> [NOW, the rec caller is ftrace_caller TRAMPOLINE]
+> 
+> So, the caller switch from regs caller back to non regs caller
+> when disable the livepatch. Could this testcase cause the race
+> condition ? BUT, Nothing happened here.
+> 
+> What will happen when the race triggers ? What can I do.
+> 
 
-diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
-index 5e8c86470e6b..8043ba48a30a 100644
---- a/drivers/reset/reset-simple.c
-+++ b/drivers/reset/reset-simple.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Simple Reset Controller Driver
-  *
-@@ -8,11 +9,6 @@
-  * Copyright 2013 Maxime Ripard
-  *
-  * Maxime Ripard <maxime.ripard@free-electrons.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/device.h>
--- 
-2.17.1
+I still can't think of it. But since the merge window already opened,
+I'd like to have this patch sit in linux-next for a bit. That is, I
+would wait to pull it in for the next merge window, and not this one.
 
+-- Steve
