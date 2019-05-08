@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608941731C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D18D1731E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfEHIEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:04:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbfEHIEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:04:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3797681DE5;
-        Wed,  8 May 2019 08:04:24 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 23F2462671;
-        Wed,  8 May 2019 08:04:20 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-        hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        keescook@chromium.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v4] x86/mm/KASLR: Fix the size of vmemmap section
-Date:   Wed,  8 May 2019 16:04:17 +0800
-Message-Id: <20190508080417.15074-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 08 May 2019 08:04:24 +0000 (UTC)
+        id S1726936AbfEHIEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:04:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35973 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfEHIEl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:04:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o4so25907680wra.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:04:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9quD3rUlId3s9xE5WQ9qfoKtV1iDyOxaETbvD2qMUps=;
+        b=ptAXye10M1bTT8akY8EXX5jtyYLwORy6rwfrSlsTJzqZ7GHUn9wO+9SKoI1CKY45IV
+         JtOmzO0R+UVVEiJ5+IvGEZzgqz+9NjVh7UZd1b2Po/ucAUXK1QSfw4Y1OrHi8eEQhd0j
+         b0ZvyxOut/TqonmqGKZWwKZTjyVTlswqRxHL9g0rGKDwKi+88UMLyTIs6mZY858BUwmM
+         XcbICoRe16IpBB117JvRxknvJHxYaYvQAdK26xT1k85DeBmbaXghNlijPZKszMLIhC+k
+         VEB2njJWBudSTZiEQ3PQ2Mu9sDb36lORdUSZtN9qm6LTaupO1lxkqvcSaaTCUB4vLEKQ
+         F+oA==
+X-Gm-Message-State: APjAAAXHsJdFKisAqPKHHYCUxVHCUTilvU24CAmS6WcRA3rYjpwT/6dW
+        gwGXdDXKbePA6/M6dBjHyXpLQQ==
+X-Google-Smtp-Source: APXvYqzAEwmmUYMoGs4NEbM6WU7pAt/xG2XWKvEyTFAozN1NCDztWyNXuGXYGqCVLdIj3/dOobUUZA==
+X-Received: by 2002:adf:f803:: with SMTP id s3mr5103478wrp.153.1557302679450;
+        Wed, 08 May 2019 01:04:39 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.174.33])
+        by smtp.gmail.com with ESMTPSA id t15sm1407934wmt.2.2019.05.08.01.04.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 01:04:38 -0700 (PDT)
+Date:   Wed, 8 May 2019 10:04:36 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Luca Abeni <luca.abeni@santannapisa.it>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC PATCH 2/6] sched/dl: Capacity-aware migrations
+Message-ID: <20190508080436.GF6551@localhost.localdomain>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-3-luca.abeni@santannapisa.it>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506044836.2914-3-luca.abeni@santannapisa.it>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel_randomize_memory() hardcodes the size of vmemmap section as 1 TB,
-to support the maximum amount of system RAM in 4-level paging mode, 64 TB.
+Hi Luca,
 
-However, 1 TB is not enough for vmemmap in 5-level paging mode. Assuming
-the size of struct page is 64 Bytes, to support 4 PB system RAM in 5-level,
-64 TB of vmemmap area is needed. The wrong hardcoding may cause vmemmap
-stamping into the following cpu_entry_area section, if KASLR puts vmemmap
-very close to cpu_entry_area , and the actual area of vmemmap is much
-bigger than 1 TB.
+On 06/05/19 06:48, Luca Abeni wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> Currently, the SCHED_DEADLINE scheduler uses a global EDF scheduling
+> algorithm, migrating tasks to CPU cores without considering the core
+> capacity and the task utilization. This works well on homogeneous
+> systems (SCHED_DEADLINE tasks are guaranteed to have a bounded
+> tardiness), but presents some issues on heterogeneous systems. For
+> example, a SCHED_DEADLINE task might be migrated on a core that has not
+> enough processing capacity to correctly serve the task (think about a
+> task with runtime 70ms and period 100ms migrated to a core with
+> processing capacity 0.5)
+> 
+> This commit is a first step to address the issue: When a task wakes
+> up or migrates away from a CPU core, the scheduler tries to find an
+> idle core having enough processing capacity to serve the task.
+> 
+> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
+> ---
+>  kernel/sched/cpudeadline.c | 31 +++++++++++++++++++++++++++++--
+>  kernel/sched/deadline.c    |  8 ++++++--
+>  kernel/sched/sched.h       |  7 ++++++-
+>  3 files changed, 41 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+> index 50316455ea66..d21f7905b9c1 100644
+> --- a/kernel/sched/cpudeadline.c
+> +++ b/kernel/sched/cpudeadline.c
+> @@ -110,6 +110,22 @@ static inline int cpudl_maximum(struct cpudl *cp)
+>  	return cp->elements[0].cpu;
+>  }
+>  
+> +static inline int dl_task_fit(const struct sched_dl_entity *dl_se,
+> +			      int cpu, u64 *c)
+> +{
+> +	u64 cap = (arch_scale_cpu_capacity(NULL, cpu) * arch_scale_freq_capacity(cpu)) >> SCHED_CAPACITY_SHIFT;
+> +	s64 rel_deadline = dl_se->dl_deadline;
+> +	u64 rem_runtime  = dl_se->dl_runtime;
 
-So here calculate the actual size of vmemmap region, then align up to 1 TB
-boundary. In 4-level it's always 1 TB. In 5-level it's adjusted on demand.
-The current code reserves 0.5 PB for vmemmap in 5-level. In this new way,
-the left space can be saved to join randomization to increase the entropy.
+This is not the dynamic remaining one, is it?
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Acked-by: Kirill A. Shutemov <kirill@linux.intel.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
-v3->v4:
-  Fix the incorrect style of code comment;
-  Add ack tags from Kirill and Kees.
-v3 discussion is here:
-  http://lkml.kernel.org/r/20190422091045.GB3584@localhost.localdomain
+I see however 4/6.. lemme better look at that.
 
- arch/x86/mm/kaslr.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Best,
 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index dc3f058bdf9b..c0eedb85a92f 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -52,7 +52,7 @@ static __initdata struct kaslr_memory_region {
- } kaslr_regions[] = {
- 	{ &page_offset_base, 0 },
- 	{ &vmalloc_base, 0 },
--	{ &vmemmap_base, 1 },
-+	{ &vmemmap_base, 0 },
- };
- 
- /* Get size in bytes used by the memory region */
-@@ -78,6 +78,7 @@ void __init kernel_randomize_memory(void)
- 	unsigned long rand, memory_tb;
- 	struct rnd_state rand_state;
- 	unsigned long remain_entropy;
-+	unsigned long vmemmap_size;
- 
- 	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
- 	vaddr = vaddr_start;
-@@ -109,6 +110,14 @@ void __init kernel_randomize_memory(void)
- 	if (memory_tb < kaslr_regions[0].size_tb)
- 		kaslr_regions[0].size_tb = memory_tb;
- 
-+	/*
-+	 * Calculate how many TB vmemmap region needs, and aligned to
-+	 * 1TB boundary.
-+	 */
-+	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-+		sizeof(struct page);
-+	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
-+
- 	/* Calculate entropy available between regions */
- 	remain_entropy = vaddr_end - vaddr_start;
- 	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
--- 
-2.17.2
-
+- Juri
