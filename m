@@ -2,36 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF3D17DF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DBA717E0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfEHQS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45638 "EHLO mail.kernel.org"
+        id S1727786AbfEHQZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:25:15 -0400
+Received: from mga07.intel.com ([134.134.136.100]:39707 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfEHQS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:18:57 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0657620644;
-        Wed,  8 May 2019 16:18:55 +0000 (UTC)
-Date:   Wed, 8 May 2019 12:18:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        linux-trace-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2] Documentation/trace: Add clarification how histogram
- onmatch works
-Message-ID: <20190508121854.2bf6340b@gandalf.local.home>
-In-Reply-To: <1557321326.2167.5.camel@kernel.org>
-References: <20190507144946.7998-1-tstoyanov@vmware.com>
-        <20190507201157.2673f2de@gandalf.local.home>
-        <1557321326.2167.5.camel@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725889AbfEHQZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 12:25:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 09:20:13 -0700
+X-ExtLoop1: 1
+Received: from mayalewx-mobl1.amr.corp.intel.com (HELO [10.255.230.159]) ([10.255.230.159])
+  by fmsmga006.fm.intel.com with ESMTP; 08 May 2019 09:20:10 -0700
+Subject: Re: [PATCH 1/8] soundwire: intel: filter SoundWire controller device
+ search
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        liam.r.girdwood@linux.intel.com, jank@cadence.com, joe@perches.com,
+        srinivas.kandagatla@linaro.org,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190504002926.28815-1-pierre-louis.bossart@linux.intel.com>
+ <20190504002926.28815-2-pierre-louis.bossart@linux.intel.com>
+ <20190507122651.GO16052@vkoul-mobl>
+ <47fd3ca6-6910-f101-9b63-f653cd1443f9@linux.intel.com>
+ <20190508050853.GT16052@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a6b3f1d1-c815-3c6b-7f35-ac5cc98960b2@linux.intel.com>
+Date:   Wed, 8 May 2019 11:20:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190508050853.GT16052@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -39,107 +47,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Jon,
-
-Can you take this patch in your tree?
-
-Tom,
-
-Thanks for the review!
-
--- Steve
-
-
-On Wed, 08 May 2019 08:15:26 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> Hi Steve,
+>>>> +	/*
+>>>> +	 * On some Intel platforms, multiple children of the HDAS
+>>>> +	 * device can be found, but only one of them is the SoundWire
+>>>> +	 * controller. The SNDW device is always exposed with
+>>>> +	 * Name(_ADR, 0x40000000) so filter accordingly
+>>>> +	 */
+>>>> +	if (adr != 0x40000000)
+>>>
+>>> I do not recall if 4 corresponds to the links you have or soundwire
+>>> device type, is this number documented somewhere is HDA specs?
+>>
+>> I thought it was a magic number, but I did check and for once it's
+>> documented and the values match the spec :-)
+>> I see in the ACPI docs bits 31..28 set to 4 indicate a SoundWire Link Type
+>> and bits 3..0 indicate the SoundWire controller instance, the rest is
+>> reserved to zero.
 > 
-> On Tue, 2019-05-07 at 20:11 -0400, Steven Rostedt wrote:
-> > Tom,
-> > 
-> > Can you review this patch.
-> >   
-> 
-> Sure.
-> 
-> > Jon,
-> > 
-> > After Tom gives his review, can you take this in your tree?
-> > 
-> > Thanks!
-> > 
-> > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> >   
-> 
-> Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Thanks,
-> 
-> Tom
-> 
-> > -- Steve
-> > 
-> > 
-> > On Tue,  7 May 2019 17:49:46 +0300
-> > Tzvetomir Stoyanov <tstoyanov@vmware.com> wrote:
-> >   
-> > > The current trace documentation, the section describing histogram's
-> > > "onmatch"
-> > > is not straightforward enough about how this action is applied. It
-> > > is not
-> > > clear what criteria are used to "match" both events. A short note
-> > > is added,
-> > > describing what exactly is compared in order to match the events.
-> > > 
-> > > Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-> > > ---
-> > >  Documentation/trace/histogram.txt | 12 ++++++++----
-> > >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/Documentation/trace/histogram.txt
-> > > b/Documentation/trace/histogram.txt
-> > > index 7ffea6aa22e3..d97f0530a731 100644
-> > > --- a/Documentation/trace/histogram.txt
-> > > +++ b/Documentation/trace/histogram.txt
-> > > @@ -1863,7 +1863,10 @@ hist trigger specification.
-> > >  
-> > >      The 'matching.event' specification is simply the fully
-> > > qualified
-> > >      event name of the event that matches the target event for the
-> > > -    onmatch() functionality, in the form 'system.event_name'.
-> > > +    onmatch() functionality, in the form 'system.event_name'.
-> > > Histogram
-> > > +    keys of both events are compared to find if events match. In
-> > > the case
-> > > +    multiple histogram keys are used, both events must have the
-> > > same
-> > > +    number of keys, and the keys must match in the same order.
-> > >  
-> > >      Finally, the number and type of variables/fields in the 'param
-> > >      list' must match the number and types of the fields in the
-> > > @@ -1920,9 +1923,10 @@ hist trigger specification.
-> > >  	    /sys/kernel/debug/tracing/events/sched/sched_waking/tr
-> > > igger
-> > >  
-> > >      Then, when the corresponding thread is actually scheduled onto
-> > > the
-> > > -    CPU by a sched_switch event, calculate the latency and use
-> > > that
-> > > -    along with another variable and an event field to generate a
-> > > -    wakeup_latency synthetic event:
-> > > +    CPU by a sched_switch event (where the sched_waking key	
-> > > "saved_pid"
-> > > +    matches the sched_switch key "next_pid"), calculate the
-> > > latency and
-> > > +    use that along with another variable and an event field to
-> > > generate
-> > > +    a wakeup_latency synthetic event:
-> > >  
-> > >      # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-
-> > > $ts0:\
-> > >              onmatch(sched.sched_waking).wakeup_latency($wakeup_lat
-> > > ,\  
-> > 
-> >   
+> So in that case we should mask with bits 31..28 and match, who knows you
+> may have multiple controller instances in future
 
+yes, I was planning on only using the link type.
+
+> I had a vague recollection that this was documented in the spec, glad
+> that in turned out to be the case.
+> 
+> Btw was the update to HDA spec made public?
+
+Not that I know of. The previous NHLT public doc has actually 
+disappeared from the Intel site and I can't find it any longer, so 
+currently the amount of public documentation is trending to zero :-(
+
+> 
+>>> Also it might good to create a define for this
+>>
+>> I will respin this one to add the documentation above, and only filter on
+>> the 4 ms-bits. Thanks for forcing me to RTFM :-)
+> 
