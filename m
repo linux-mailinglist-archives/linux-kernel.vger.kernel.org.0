@@ -2,86 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D0217F68
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0C117F6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfEHR46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:56:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36661 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbfEHR46 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 13:56:58 -0400
-Received: by mail-it1-f194.google.com with SMTP id o190so5402186itc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 10:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vhHKTz8mMoSCnbDCtBRD8sjKIRg9nf6n5gxFy6aVPmk=;
-        b=mnbXHvPTJVuUQuoWXvkL+9wvd75xxvsse7tZ/Ecxz+gwOxUmAPh3CLNfyI7m1r0A2y
-         SyN3/X7R+K+RYjnC0dVycmKkkHsI/y88ffDNRp1lnvATqX7PE2pIM54euZmg/7WhaQVa
-         fU1tHBKxNmRZR/+l7hC9n6iXNa+O4/T+c+36xD8yf82EFy4Lh6C7Jx+t33CwfBtid1jA
-         TM2iTtelB+hslen66V73HX2/+1PDbqv6c9PQ5LJswTBWBVXE9ofrIQ1Wzp2Mtcl/Y+4w
-         SgLgAp1xWh8iUne/CWL9LPP/8MpnlKDImNfmG4IqUcjWAzn4vM+Z39SAJ+WyVwfJVD02
-         pfEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vhHKTz8mMoSCnbDCtBRD8sjKIRg9nf6n5gxFy6aVPmk=;
-        b=YPmYWi9IUcDVn+LA0SkqcinsFHbOcLNhI2G7fxFOR9Pg0N2JBnoqnmegDj5vEvFCey
-         +HCqKfs/1XE8ZNam3z9uKX05NWX6UcROqFJ6jOQYQtGw3j26L/31IzFjEQqgRiOkpZpb
-         kih3K0tFPaR/EBVgUsHk7bEC1daf2fXfOVMUMbWCRtMxpbzFn56PgkClmcsis3dnKKYa
-         7dny7X+qn0ZFdry8WZs+nIJ34GH7m2eUPMJ6PlT6Bnkpmvnh7unN5T1A6CvnOgD+pfoG
-         10I5mKAmONAW5ejInPgiTbf0VaBSsJMBzmUuNba3uPtgXbS/rRiN/+Rj98b3yA4PtKTM
-         krCg==
-X-Gm-Message-State: APjAAAVPaCexqeDQKEmBrqlwXTftbrK78vnaMHXNFk3TwYgYKN7X6JTR
-        LQrMxe453wngMBGLQ+ZZ5GcOFKmIaF/Q0Ep+pWItjB1DvZf/sd8Q
-X-Google-Smtp-Source: APXvYqwwbrSrH8bWql7TsXpdIPRUme76bef88udigyRsDUu+naQnXu4Dyz0DOtKTnPLkIkmFquNG95C6SuAuxBHfAiI=
-X-Received: by 2002:a24:9d0d:: with SMTP id f13mr4995215itd.162.1557338217593;
- Wed, 08 May 2019 10:56:57 -0700 (PDT)
+        id S1727516AbfEHR7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:59:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbfEHR7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 13:59:37 -0400
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 625E4216C4;
+        Wed,  8 May 2019 17:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557338376;
+        bh=b5K64YXT7/sSRzaEq78fChRqJJ4XU1m70tof6WpAG0w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rWmn8Mr+YPTa3635iOLHVkNMUruBEji6pJ6mseb6pKa9/D199fcFhEezGXV3fJiM2
+         HzlrDLrDTX0EQvnnv1OVfu+I21ukIHtvNcNr4jSrOXpA7J5kyNd+tdHpE4If5xl3Q7
+         hyR4jVEoI7159KcfDjLkPxxz0aqAOuM0cFpU+HLQ=
+Received: by mail-ed1-f47.google.com with SMTP id n17so22922230edb.0;
+        Wed, 08 May 2019 10:59:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAUMz/RtV/QVLrcsI+BsBJse/sDFVGzF0ZvKTHBfvfEbjqD+MRBc
+        6D7JQsUX7PJyZHo0b5A8JScCessWSN1IixjHnRc=
+X-Google-Smtp-Source: APXvYqxiCprp37hvq0CcehqS2sfXkAO7NXuzCP2m2lJotPqwABvFcdB9HmD3dH/r3gKHsAcxuymbZoeaUyx82vUVYqo=
+X-Received: by 2002:a50:8803:: with SMTP id b3mr41531239edb.153.1557338375023;
+ Wed, 08 May 2019 10:59:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190409140347.GA11524@lst.de> <CAPoiz9wwMCRkzM5FWm18kecC1=kt+5qPNHmQ7eUFhH=3ZNAqYw@mail.gmail.com>
- <20190508175219.GA32030@lst.de>
-In-Reply-To: <20190508175219.GA32030@lst.de>
-From:   Jon Mason <jdmason@kudzu.us>
-Date:   Wed, 8 May 2019 18:56:46 +0100
-Message-ID: <CAPoiz9zQuJ0-9wJBNo=Wvi9qquyid9vjmHODy=VJad_PE=cgdA@mail.gmail.com>
-Subject: Re: status of the calgary iommu driver
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Muli Ben-Yehuda <mulix@mulix.org>, x86@kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1556528151-17221-1-git-send-email-hao.wu@intel.com>
+ <1556528151-17221-3-git-send-email-hao.wu@intel.com> <20190507172545.GA26690@archbox>
+In-Reply-To: <20190507172545.GA26690@archbox>
+From:   Alan Tull <atull@kernel.org>
+Date:   Wed, 8 May 2019 12:58:59 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQW-BhHgaYkvYKU3tHRiFvj9_O3xteTh9cmfna2JKYauQ@mail.gmail.com>
+Message-ID: <CANk1AXQW-BhHgaYkvYKU3tHRiFvj9_O3xteTh9cmfna2JKYauQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/18] fpga: dfl: fme: remove copy_to_user() in ioctl
+ for PR
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Wu Hao <hao.wu@intel.com>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Xu Yilun <yilun.xu@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 6:52 PM Christoph Hellwig <hch@lst.de> wrote:
+On Tue, May 7, 2019 at 12:26 PM Moritz Fischer <mdf@kernel.org> wrote:
 >
-> On Wed, May 08, 2019 at 06:42:39PM +0100, Jon Mason wrote:
-> > These systems were plentiful for 2-4 years after the original series
-> > made it in.  After that, the Intel and AMD IOMMUs should were shipped
-> > and were superior to this chip.  So, even in systems where these might
-> > be present, the AMD/Intel ones should be used (unknown if they were
-> > shipped on the same ones, as both Muli and I have left IBM).
+> On Mon, Apr 29, 2019 at 04:55:35PM +0800, Wu Hao wrote:
+> > This patch removes copy_to_user() code in partial reconfiguration
+> > ioctl, as it's useless as user never needs to read the data
+> > structure after ioctl.
 > >
-> > You thinking about removing the code?
->
-> I'm wondering if we could remove it.  I've been done lots of
-> maintainance on various dma mapping and iommu drivers, and the calgary
-> one seems like it didn't get a whole lot of love, and I've not seen
-> any recent users, so I mostly wonder if I should bother at all.
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Acked-by: Moritz Fischer <mdf@kernel.org>
 
+Acked-by: Alan Tull <atull@kernel.org>
 
-I do have a system.  So, it could be tested.  However given the age of
-the HW, I would say it is not worth the effort to update and it would
-be best to remove it from the kernel.
+Alan
 
-I can send a patch to do this, unless you would prefer to do it (or
-already have something handy).
-
-Thanks,
-Jon
+> > ---
+> > v2: clean up code split from patch 2 in v1 patchset.
+> > ---
+> >  drivers/fpga/dfl-fme-pr.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/fpga/dfl-fme-pr.c b/drivers/fpga/dfl-fme-pr.c
+> > index d9ca955..6ec0f09 100644
+> > --- a/drivers/fpga/dfl-fme-pr.c
+> > +++ b/drivers/fpga/dfl-fme-pr.c
+> > @@ -159,9 +159,6 @@ static int fme_pr(struct platform_device *pdev, unsigned long arg)
+> >       mutex_unlock(&pdata->lock);
+> >  free_exit:
+> >       vfree(buf);
+> > -     if (copy_to_user((void __user *)arg, &port_pr, minsz))
+> > -             return -EFAULT;
+> > -
+> >       return ret;
+> >  }
+> >
+> > --
+> > 1.8.3.1
+> >
