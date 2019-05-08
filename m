@@ -2,115 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282E4172D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693AF17318
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfEHHsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 03:48:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35676 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfEHHsk (ORCPT
+        id S1726760AbfEHIEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:04:10 -0400
+Received: from HC210-202-87-179.vdslpro.static.apol.com.tw ([210.202.87.179]:47246
+        "EHLO ironport.ite.com.tw" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725842AbfEHIEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 03:48:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so3314307edr.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 00:48:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FO0gLsxYIO+RwffbAYVeceY7yV7ZX7wepiF9XqqZUxg=;
-        b=QPQfdQUXzhrg3wTFW0xgaIwVLLSZGUVRBsMYBPQFwXJ0uMR4VlAjc3SJoTKPPTpxGd
-         qIqF8MPsk28P4nJDPs8Xt6tRqikAP6Rkq5kBicTTUc8ZlEZ13WxZ1Mxn9GdfotUTSIM8
-         CnMbdELVu9zT55aaUNf6sQgkPbiE23og9FUw8UmZ2S4LsuP+ce2RXzlfXG6R+Qrcu/DD
-         qVWz5NIclwKhLIP//iE7iN021fhhhPllh4WhzTAsXcqzgyjjuX0iW8r+los9WHJYorVb
-         fhMvkmQA3bUSHwK0vLLB6GGLqH9PGk/I55gIfmjof5Sc8TkvMYKznoO9kIvcBciUmVzb
-         mDjQ==
-X-Gm-Message-State: APjAAAUEP9ZjziyugfcLR26ndzTrg8mUt2tqCn/M0OH992tLGWFii9Lh
-        S0o8rTVRl5+LVALM2fEKxFJUO45FHPw=
-X-Google-Smtp-Source: APXvYqzvjRZtwwqIXkc4q8CpZL23B9fxxI4nKeCTlQGfR7gLQB6QFnbi8yyscmSfZXR62tKUCmK2kg==
-X-Received: by 2002:a50:d519:: with SMTP id u25mr38638071edi.185.1557301718884;
-        Wed, 08 May 2019 00:48:38 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id j18sm4814399edf.72.2019.05.08.00.48.37
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 00:48:37 -0700 (PDT)
-Subject: Re: [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to
- critclk_systems DMI table
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Semyon Verchenko <semverchenko@factor-ts.ru>
-References: <20190429150135.15070-1-hdegoede@redhat.com>
- <CAHp75VeE=88mCcgVx3Y3PQJPQ819Z7=3s=jRGz1y=t09phk=rA@mail.gmail.com>
- <085c5b6e-d220-ebd1-38d2-def7efca24b8@redhat.com>
- <CAHp75Vfe9uK_b_V+uG29wb1L6J7u1hpbU+P4beXso9KNPM+8Rg@mail.gmail.com>
- <568ba27d-a6a5-b158-bab1-f22cd8ccb34e@redhat.com>
- <155726027056.14659.1724431433952718602@swboyd.mtv.corp.google.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <10c8864c-6ee7-4dfd-6274-b1996e767653@redhat.com>
-Date:   Wed, 8 May 2019 09:48:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 8 May 2019 04:04:10 -0400
+X-Greylist: delayed 588 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 04:04:09 EDT
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 08 May 2019 15:54:20 +0800
+Received: from csbcas.internal.ite.com.tw (csbcas1.internal.ite.com.tw [192.168.65.46])
+        by mse.ite.com.tw with ESMTP id x487sFOA075568;
+        Wed, 8 May 2019 15:54:15 +0800 (GMT-8)
+        (envelope-from allen.chen@ite.com.tw)
+Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
+ csbcas1.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
+ id 14.3.352.0; Wed, 8 May 2019 15:54:15 +0800
+From:   allen <allen.chen@ite.com.tw>
+CC:     Allen Chen <allen.chen@ite.com.tw>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/3] dt-bindings: Add binding for IT6505.
+Date:   Wed, 8 May 2019 15:48:40 +0800
+Message-ID: <1557301722-20827-2-git-send-email-allen.chen@ite.com.tw>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1557301722-20827-1-git-send-email-allen.chen@ite.com.tw>
+References: <1557301722-20827-1-git-send-email-allen.chen@ite.com.tw>
 MIME-Version: 1.0
-In-Reply-To: <155726027056.14659.1724431433952718602@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.70.14]
+X-MAIL: mse.ite.com.tw x487sFOA075568
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Allen Chen <allen.chen@ite.com.tw>
 
-On 07-05-19 22:17, Stephen Boyd wrote:
-> Quoting Hans de Goede (2019-05-06 08:05:42)
->> Hi,
->>
->> On 06-05-19 16:59, Andy Shevchenko wrote:
->>> On Mon, May 6, 2019 at 5:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 06-05-19 14:38, Andy Shevchenko wrote:
->>>>> On Mon, Apr 29, 2019 at 6:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>>>>>
->>>>>> The Lex 3I380D industrial PC has 4 ethernet controllers on board
->>>>>> which need pmc_plt_clk0 - 3 to function, add it to the critclk_systems
->>>>>> DMI table, so that drivers/clk/x86/clk-pmc-atom.c will mark the clocks
->>>>>> as CLK_CRITICAL and they will not get turned off.
->>>>>>
->>>>>
->>>>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>>>> supposedly to go via CLK tree.
->>>>>
->>>>> P.S. If you want it through PDx86, I need immutable branch / tag from CLK.
->>>>
->>>> Stephen added the patches this depends on to his fixes branch, so they
->>>> are in the 5.1 / Torvald's master branch, since we are now in the 5.2 merge
->>>> window, you should be able to cleanly apply this directly.
->>>
->>> We don't do back merges, so, our base is v5.1-rc1. Does it mean the
->>> commit in question is in v5.1-rc1?
->>> AFAICS it was appeared in v5.1-rc5.
->>
->> Ah, I see, my bad.
->>
->> Stephen can you pick up this patch and the
->> "[PATCH 1/1] Add several Beckhoff Automation boards to critclk_systems DMI table"
->> patch then?
->>
-> 
-> I guess this is urgent?
+Add a DT binding documentation for IT6505.
 
-Somewhat, getting this into e.g. rc2 would be fine too, waiting till 5.3
-would be bad.
+Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
 
-Regards,
+---
+ .../bindings/display/bridge/ite,it6505.txt         | 30 ++++++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+ 2 files changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
 
-Hans
+diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+new file mode 100644
+index 0000000..c3506ac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+@@ -0,0 +1,30 @@
++iTE it6505 DP bridge bindings
++
++Required properties:
++        - compatible: "ite,it6505"
++        - reg: i2c address of the bridge
++        - ovdd-supply: I/O voltage
++        - pwr18-supply: Core voltage
++        - interrupts: interrupt specifier of INT pin
++        - reset-gpios: gpio specifier of RESET pin
++
++Example:
++	it6505dptx: it6505dptx@5c {
++                compatible = "ite,it6505";
++                status = "okay";
++                interrupt-parent = <&pio>;
++                interrupts = <152 IRQ_TYPE_EDGE_RISING 152 0>;
++                reg = <0x5c>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&it6505_pins>;
++                ovdd-supply = <&mt6358_vsim1_reg>;
++                pwr18-supply = <&it6505_pp18_reg>;
++                reset-gpios = <&pio 179 1>;
++                hpd-gpios = <&pio 9 0>;
++                extcon = <&usbc_extcon>;
++                port {
++                        it6505_in: endpoint {
++                                remote-endpoint = <&dpi_out>;
++                        };
++                };
++        };
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc51..c088646 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -184,6 +184,7 @@ iom	Iomega Corporation
+ isee	ISEE 2007 S.L.
+ isil	Intersil
+ issi	Integrated Silicon Solutions Inc.
++ite	iTE Tech. Inc.
+ itead	ITEAD Intelligent Systems Co.Ltd
+ iwave  iWave Systems Technologies Pvt. Ltd.
+ jdi	Japan Display Inc.
+-- 
+1.9.1
+
