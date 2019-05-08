@@ -2,81 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBC8175DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B974D175D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfEHKUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:20:48 -0400
-Received: from onstation.org ([52.200.56.107]:54298 "EHLO onstation.org"
+        id S1727023AbfEHKSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 06:18:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:3477 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbfEHKUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:20:47 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 610443E941;
-        Wed,  8 May 2019 10:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1557310846;
-        bh=GQMfiDCH+yPuPYxmkr3rVNJiGPHx3JJy8lKsx/Svqk4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RCduyU6kHTTTdGkLVgNg48NGethGwiEZa+Os/9cU/btdu1k09pKeqPLBcFrTFnqZi
-         gSQsKHFt7TmyOvd7Ui6zrplzj/60nk8rhrxOgS7Kgu0/2ARXPTQACAcd38izUrgcUV
-         xvrOYjFChA4XemKLTx92uZ4Bmw5nQt4HOJkh6bpA=
-Date:   Wed, 8 May 2019 06:20:46 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] spi updates for v5.2
-Message-ID: <20190508102046.GA18635@basecamp>
-References: <20190506143301.GU14916@sirena.org.uk>
- <CAADWXX_MqtZ6RxS2zEVmHtKrjqigiNzdSe5qVwBVvfVU6dxJRQ@mail.gmail.com>
- <20190507021853.GY14916@sirena.org.uk>
- <20190507030241.GC14916@sirena.org.uk>
- <CAHk-=wi4EJQLoMNd4ptiiZvLy8ZW49pcCy0VQwZt4xhDDqSOjw@mail.gmail.com>
- <20190507110345.GF14916@sirena.org.uk>
- <20190507120730.5ylk6v4yvzxuzqld@earth.universe>
- <20190508060936.GH14916@sirena.org.uk>
+        id S1726755AbfEHKSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 06:18:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 03:18:31 -0700
+X-ExtLoop1: 1
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 May 2019 03:18:28 -0700
+Subject: Re: [PATCH v4 1/1] usb: xhci: Add Clear_TT_Buffer
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Jim Lin <jilin@nvidia.com>, gregkh@linuxfoundation.org,
+        mathias.nyman@intel.com, hminas@synopsys.com,
+        kai.heng.feng@canonical.com, drinkcat@chromium.org,
+        prime.zeng@hisilicon.com, malat@debian.org, nsaenzjulienne@suse.de,
+        jflat@chromium.org, linus.walleij@linaro.org, clabbe@baylibre.com,
+        colin.king@canonical.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <Pine.LNX.4.44L0.1905071022140.1632-100000@iolanthe.rowland.org>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <6164e645-dce7-27a8-70b0-5e37a540f288@linux.intel.com>
+Date:   Wed, 8 May 2019 13:21:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508060936.GH14916@sirena.org.uk>
+In-Reply-To: <Pine.LNX.4.44L0.1905071022140.1632-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 03:09:36PM +0900, Mark Brown wrote:
-> On Tue, May 07, 2019 at 02:07:30PM +0200, Sebastian Reichel wrote:
+On 7.5.2019 17.29, Alan Stern wrote:
+> On Tue, 7 May 2019, Mathias Nyman wrote:
 > 
-> > FWIW, I send out kernel.org mails via mail.kernel.org. Konstantin
-> > added that service in 2014. You can get a password with
+>> On 6.5.2019 17.57, Alan Stern wrote:
+>>> On Mon, 6 May 2019, Jim Lin wrote:
+>>>
+>>>> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
+>>>> processing for full-/low-speed endpoints connected via a TT, the host
+>>>> software must use the Clear_TT_Buffer request to the TT to ensure
+>>>> that the buffer is not in the busy state".
+>>>>
+>>>> In our case, a full-speed speaker (ConferenceCam) is behind a high-
+>>>> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
+>>>> request we may continue to get STALL with the folllowing requests,
+>>>> like Set_Interface.
+>>>>
+>>>> Here we add Clear_TT_Buffer for the following Set_Interface requests
+>>>> to get ACK successfully.
+>>>>
+>>>> Originally usb_hub_clear_tt_buffer uses urb->dev->devnum as device
+>>>> address while sending Clear_TT_Buffer command, but this doesn't work
+>>>> for XHCI.
+>>>
+>>> Why doesn't it work for xHCI?  Clear-TT-Buffer is part of the USB 2.0
+>>> spec; it should work exactly the same for xHCI as for a USB-2.0 host
+>>> controller.
+>>>
+>>> Alan Stern
+>>>
+>>
+>> For other host controllers udev->devnum is the same as the address of the
+>> usb device, chosen and set by usb core.
+>>
+>> With xHC the controller hardware assigns the address, and won't be the same as
+>> devnum.
+>>
+>> The Clear-TT-Buffer request sent to the hub includes the address of the LS/FS
+>> child device in wValue field. usb_hub_clear_tt_buffer() uses udev->devnum to set the
+>> address wValue. This won't work for devices connected to xHC
 > 
-> > ssh git@gitolite.kernel.org getsmtppass
-> > 
-> > and then use the following settings for (example for git):
+> I see.  Thanks for the explanation; it makes sense now.  The patch
+> description should explain this too.
 > 
-> I'd have to send all mail out via kernel.org to do that, or persuade a
-> MTA to route mail differently based on contents which seems interesting
-> - I inject most of my mail via /usr/sbin/sendmail rather than SMTP
-> (including a bunch of scripts).
+> Wouldn't it be better to add a field containing the device address to
+> struct usb_device?  And also export it, either in sysfs or debugfs?
+> It seems like the kind of thing that might be important for debugging.
+> If we did this then the usb_hub_clear_tt_buffer API wouldn't need to be
+> changed.
+> 
 
-I use a program called msmtp (https://marlam.de/msmtp/) to route email
-to different SMTP servers based on my sender address. Once you have your
-accounts configured, replace the call to the sendmail binary in your MUA
-with msmtp and it'll route the email differently for you. It's included
-in the package repositories for most major Linux distributions. Here's
-two resources I found that show how to configure mutt and git send-email
-to use msmtp:
+Agree, adding address to struct usb_device sounds better.
 
-https://hostpresto.com/community/tutorials/how-to-send-email-from-the-command-line-with-msmtp-and-mutt/
-https://jordonwu.github.io/blog/2015/12/01/git-send-email-and-msmtp-config/
+-Mathias
 
-Once you have msmtp setup, send test emails from each of your accounts
-to check-auth@verifier.port25.com to have a bot verify that your email
-is setup properly (DKIM, SPF, reverse DNS, etc).
-
-Brian
