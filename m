@@ -2,117 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88BF7172BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 715EB17355
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfEHHke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 03:40:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42778 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbfEHHke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 03:40:34 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5E6BA300398D;
-        Wed,  8 May 2019 07:40:33 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0AC4C5D9C8;
-        Wed,  8 May 2019 07:40:30 +0000 (UTC)
-Date:   Wed, 8 May 2019 09:40:30 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 07/12] perf script: Pad dso name for --call-trace
-Message-ID: <20190508074030.GG17416@krava>
-References: <20190503081841.1908-1-jolsa@kernel.org>
- <20190503081841.1908-8-jolsa@kernel.org>
- <8385E7AF-756B-4113-9388-BD81D0F58374@fb.com>
- <20190507081350.GA17416@krava>
- <37A033AF-567C-47F5-8FBB-DBD26ED1BD13@fb.com>
+        id S1726930AbfEHILC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:11:02 -0400
+Received: from mail133-31.atl131.mandrillapp.com ([198.2.133.31]:47199 "EHLO
+        mail133-31.atl131.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726082AbfEHILB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:11:01 -0400
+X-Greylist: delayed 1801 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 04:11:00 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=k6xxt/3kcIYL7oHUmKqKRsF4bdAZAtMRpKsnmgM5468=;
+ b=IW+d8qjEwQLiRgF1R0fpdH+E0syL0FeSIXjYIdGcoqsXvBqswEsnEONUtBbhrc4mz2GrLcQEM+55
+   89sVT7w9PSq3rS+fPc9nsZLkv8H5MVr+h6UYBbaxBeFAjK3jfR6DrK+jQst7yanxBNpG/bTrL5zz
+   fqXgxqyy8GyD+VHDR2o=
+Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-31.atl131.mandrillapp.com id hqa7h81sar8r for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 07:40:58 +0000 (envelope-from <bounce-md_31050260.5cd2880a.v1-f2b1a75a65bd42d4b7976fd4d60cb28b@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1557301258; h=From : 
+ Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=k6xxt/3kcIYL7oHUmKqKRsF4bdAZAtMRpKsnmgM5468=; 
+ b=QjPuaOYmbFNdd3rQYgdgpjdY/b5tnKtpVWuncfR7KaxxD9/3MyIa/+68WW8FGWDsbn6T5T
+ 2tUc+nxAKjVsef8d5jWvrK6tRZIapMWA9U/AEyRrjWk76eyRheLwPIJoxmZUB1TqFofcD/A5
+ 6Gn2oW9jUw1l9HY2UHlS1+ppKoPuA=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: Re: [PATCH 0/3] stream_open bits for Linux 5.2
+Received: from [87.98.221.171] by mandrillapp.com id f2b1a75a65bd42d4b7976fd4d60cb28b; Wed, 08 May 2019 07:40:58 +0000
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@denx.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Message-Id: <20190508074048.GA2907@deco.navytux.spb.ru>
+References: <cover.1557162679.git.kirr@nexedi.com> <CAHk-=wg1tFzcaX2v9Z91vPJiBR486ddW5MtgDL02-fOen2F0Aw@mail.gmail.com> <20190507190939.GA12729@deco.navytux.spb.ru> <CAHk-=wgWusqMfU25eBofgBHVSrQaVxr-EwCPCWcBaFMjzf_=Cg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgWusqMfU25eBofgBHVSrQaVxr-EwCPCWcBaFMjzf_=Cg@mail.gmail.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.f2b1a75a65bd42d4b7976fd4d60cb28b
+X-Mandrill-User: md_31050260
+Date:   Wed, 08 May 2019 07:40:58 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37A033AF-567C-47F5-8FBB-DBD26ED1BD13@fb.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 08 May 2019 07:40:33 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 06:29:07PM +0000, Song Liu wrote:
+On Tue, May 07, 2019 at 12:18:03PM -0700, Linus Torvalds wrote:
+> On Tue, May 7, 2019 at 12:09 PM Kirill Smelkov <kirr@nexedi.com> wrote:
+> >
+> > I've pushed corresponding gpg-signed tag (stream_open-5.2) to my tree. I
+> > did not go the gpg way initially because we do not have a gpg-trust
+> > relation established and so I thought that signing was useless.
 > 
-> 
-> > On May 7, 2019, at 1:13 AM, Jiri Olsa <jolsa@redhat.com> wrote:
-> > 
-> > On Mon, May 06, 2019 at 09:38:55PM +0000, Song Liu wrote:
-> > 
-> > SNIP
-> > 
-> >>> 
-> >>> Link: http://lkml.kernel.org/n/tip-99g9rg4p20a1o99vr0nkjhq8@git.kernel.org
-> >>> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> >>> ---
-> >>> tools/include/linux/kernel.h  |  1 +
-> >>> tools/lib/vsprintf.c          | 19 +++++++++++++++++++
-> >>> tools/perf/builtin-script.c   |  1 +
-> >>> tools/perf/util/map.c         |  6 ++++++
-> >>> tools/perf/util/symbol_conf.h |  1 +
-> >>> 5 files changed, 28 insertions(+)
-> >>> 
-> >>> diff --git a/tools/include/linux/kernel.h b/tools/include/linux/kernel.h
-> >>> index 857d9e22826e..cba226948a0c 100644
-> >>> --- a/tools/include/linux/kernel.h
-> >>> +++ b/tools/include/linux/kernel.h
-> >>> @@ -102,6 +102,7 @@
-> >>> 
-> >>> int vscnprintf(char *buf, size_t size, const char *fmt, va_list args);
-> >>> int scnprintf(char * buf, size_t size, const char * fmt, ...);
-> >>> +int scnprintf_pad(char * buf, size_t size, const char * fmt, ...);
-> >>> 
-> >>> #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-> >>> 
-> >>> diff --git a/tools/lib/vsprintf.c b/tools/lib/vsprintf.c
-> >>> index e08ee147eab4..149a15013b23 100644
-> >>> --- a/tools/lib/vsprintf.c
-> >>> +++ b/tools/lib/vsprintf.c
-> >>> @@ -23,3 +23,22 @@ int scnprintf(char * buf, size_t size, const char * fmt, ...)
-> >>> 
-> >>>       return (i >= ssize) ? (ssize - 1) : i;
-> >>> }
-> >>> +
-> >>> +int scnprintf_pad(char * buf, size_t size, const char * fmt, ...)
-> >>> +{
-> >>> +	ssize_t ssize = size;
-> >>> +	va_list args;
-> >>> +	int i;
-> >> 
-> >> nit: I guess we can avoid mixing int, ssize_t and size_t here?
-> > 
-> > I copied that from scnprintf ;-)
-> > 
-> > the thing is that at the end we call vsnprintf, which takes size_t
-> > as size param and returns int, so there will be casting at some
-> > point in any case..
-> > 
-> > I guess the ssize_t was introduced to compare the size_t value with int
-> > 
-> 
-> Interesting. Given scnprintf works fine, I think we can keep the patch
-> as-is. 
+> Ok, since I hadn't pushed out my pull yet, I just re-did it with your
+> signature, so that the key is visible in the git tree.
 
-I actualy found off by one issue in here.. I'll send new version
-
-thanks,
-jirka
+Thanks.
