@@ -2,81 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5EB117F86
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 20:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7CE17F8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 20:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfEHSIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 14:08:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36691 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbfEHSIx (ORCPT
+        id S1727810AbfEHSKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 14:10:25 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40190 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726544AbfEHSKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 14:08:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v80so10897960pfa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 11:08:53 -0700 (PDT)
+        Wed, 8 May 2019 14:10:25 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b3so10290522plr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 11:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SpJ2lO7Hf4iICB+8shwVOVK2JdSr+6WkoIZrngdYYfc=;
-        b=bi42Ip2KB/9QJqCJ/YywdUnb+eotERAzeKeK3YLtu1ohUfov8nW+o0etGa5bqPh6hh
-         Q1fQ+/yJFTaqIfh5FEOorb5R5m04I9qQ5cIUxLsjUUQmuOAop/HwItWzB1fS012irdy7
-         6/ir2T2oTgy2IiwVOmYA90AlS3T3qHlIt5yYxTooqaSxFgPA4UAJKkQ3VSyxeRzNgFyF
-         bYGAlJM2qpHImqCkCXgcEhj1E4M7kzi+tpyo3Dksp9C22I/m/qmZYu3cC/zVaZ729eZh
-         1J9RWW/V6yruYJQPhnIOjnTHrglHdNoBHFL+qqrnUY2Yz9U6R4Ylpn9UzcL9qaALW0pK
-         CNIQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5zLWZfJCoIg5TeUT0Jt2rwSpfAhD7R9q7eCYI7YHf40=;
+        b=Tm2N3nQ5R4MhS+8rDGVu/boYYfOVT9eIZUs60lgVugsa12xyjFshqIWhczZyFQwzYF
+         Ym9H3mmMhQzLUib+TUxO5mS0LpNapV2Zy81WXsYoFwNV+rdA6rOEnixV+TXKtAggW5lK
+         QDSEMsjaxPVnY6u3e/z7047pG6rP96Ay9RL1uwxSRF/22zO+7kd1MqxLXfdrrhPThSRA
+         mY7VHAWoPNgVv22UCIzmgaNRexxreIebf/jobba8vTVTF9A1vGdOTUvINtIZ8Ly5Xsib
+         JDr4j9KfbpUyW4/2fktvOOqSl8/YIGfpKUC/87WCEwPw7Dh3+HZrmyWQrHn3UotZRAP4
+         vOjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SpJ2lO7Hf4iICB+8shwVOVK2JdSr+6WkoIZrngdYYfc=;
-        b=qaFHPrJIhch1iVtyfnqMuu+nchV5WF7m/YSnhNMX1ax7fSCcj7C3fO5ZwlYtaVLlrT
-         +vSrlp0qzsgykGVauhtKjF5Pza1ktYtIyE8wdB7BUJtioIendgz4bVDPxniLbQunTT4u
-         EhYQgjX1CJUXMmKovb1qiVBpnDWa/x0afcwkgL8ZPx0tnO0YYI96nw1KgnaMHEjjGax4
-         MV049ZSq710VjPm2+rnhskZJl1AGwI54HmcQJv7URHuygeGOmXmB7XITqB1NhCDLjp1m
-         3z+DpRnV7JRPfKksFPpv23oTrgMzh0myduhu42F4xelFOu837Luh13bdhWl7aNLD9Amd
-         jivw==
-X-Gm-Message-State: APjAAAW4UNZC5GZtwDan1QPtd6wUAr4GbvQMnzL1G/mTXycgcm634Ow0
-        b48SoQDUrhtF2KSJMB/0gRM2RM+SQ5nWdA==
-X-Google-Smtp-Source: APXvYqyiWsv0c9g/811cwhhQ6P+9MZqtJz91kVqI15fyVl6DavQbYFkTph9ScT+pVpl9sjhjQLTzpA==
-X-Received: by 2002:aa7:8ec6:: with SMTP id b6mr22796874pfr.234.1557338932043;
-        Wed, 08 May 2019 11:08:52 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id 15sm21831988pfy.88.2019.05.08.11.08.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 11:08:50 -0700 (PDT)
-Subject: Re: [PATCH] ide: officially deprecated the legacy IDE driver
-To:     Christoph Hellwig <hch@lst.de>, davem@davemloft.net
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190508180140.12364-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c0332901-27ac-7d8c-7bee-a1d7616627f8@kernel.dk>
-Date:   Wed, 8 May 2019 12:08:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5zLWZfJCoIg5TeUT0Jt2rwSpfAhD7R9q7eCYI7YHf40=;
+        b=aN6ohe+t1x9moigQaBv+E/fugIPLYeCg3gxEcmHQCPgeNkkVk9wNEZP1IrGjntZ35g
+         wrXvJ09o1PEtCJZT5WjVTtUGpUGSa+7j3DIS5weiScopYECIo+nfuU23h1G8m2SU/18+
+         pC02vPlPOH9o2/Z2fuYtUsRU1xj0zReKHDTEhV8wLzVzQM9p27oIVaGOiGutaV9siao1
+         4x4n97aGVhbvmXogercfTXUJgqeux0ePesClHYOYk1R6VSKCpK+QEpci53zFJZKR7g0U
+         TYCGZxKQXyicBbcJrn5XLwwAqshWaeGIFcTEizNZ9wlsd692WBiA2E38o02TzqcKiUVf
+         Dklg==
+X-Gm-Message-State: APjAAAU0Vva1l+I3ffosaRI7fN7WRVPMDiGPtT2aR4vvacCKlrNmVJwu
+        7a604VoKm7cv2uRbU7h37/k=
+X-Google-Smtp-Source: APXvYqx2Wb4CB0KCpVy419mUcctEXRtv9dVAdNA+TWZj7LlWHc7EV1/KC6TAZsJVn2A5r991XqqT8A==
+X-Received: by 2002:a17:902:5ac9:: with SMTP id g9mr14087995plm.134.1557339023983;
+        Wed, 08 May 2019 11:10:23 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id j189sm31400665pfc.72.2019.05.08.11.10.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 11:10:23 -0700 (PDT)
+Date:   Wed, 8 May 2019 11:08:53 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     robin.murphy@arm.com, m.szyprowski@samsung.com, vdumpa@nvidia.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
+Subject: Re: [PATCH v2 0/2] Optimize dma_*_from_contiguous calls
+Message-ID: <20190508180852.GA2298@Asurada-Nvidia.nvidia.com>
+References: <20190506223334.1834-1-nicoleotsuka@gmail.com>
+ <20190508125254.GA26785@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190508180140.12364-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508125254.GA26785@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/19 12:01 PM, Christoph Hellwig wrote:
-> After a recent chat with Dave we agreed to try to finally kill off the
-> legacy IDE code base.  Set a two year grace period in which we try
-> to move everyone over.  There are a few pieces of hardware not
-> supported by libata yet, but for many of them we aren't even sure
-> if there are any users.  For those that have users we have usually
-> found a volunteer to add libata support.
+On Wed, May 08, 2019 at 02:52:54PM +0200, Christoph Hellwig wrote:
+> modulo a trivial comment typo I found this looks fine to me.  I plan
+> to apply it with that fixed up around -rc2 time when I open the
+> dma mapping tree opens for the the 5.3 merge window, unless someone
+> finds an issue until then.
 
-I fully support this.
-
-Acked-by: Jens Axboe <axboe@kernel.dk>
-
--- 
-Jens Axboe
-
+Thanks for the help all the way.
