@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96AC617408
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D182C17416
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfEHIkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:40:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35869 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfEHIkg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:40:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id o4so26048091wra.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5iV39oc7txFj1z14zStSzaic9qElbV7eM3bDdq2xNNs=;
-        b=xJVgfbskTFpOrVO5RDoCGZrBXAQvJ7kr9yPJqSZVrEPUOuf48XOQL0xxm2Vx46zXbc
-         +hG2kyg6u1/4yWPAwHu9AAnlGLSET2uQbA64QFgbNe4FBMqYbP5QWgmCgoHNOcWDNpFX
-         hB9h3Kv5A/1bl6F8REG+lJSe/guSxnIZ73zrYHp8tENPVnROsePUZiVVjK7rcc+m70DK
-         J/tTuiQTJdo11FqR5+F31zeGdMzTbQKOVEyQx7lku6gVFKzVTB9CloBBDQEEtR6iuUef
-         E93Sd8aWp+Of26Z7kvQhkX8KwKy6Y+brLkL5Edua8zQhB8rV41ic3lyIpi4vvHnsFBDz
-         gl9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5iV39oc7txFj1z14zStSzaic9qElbV7eM3bDdq2xNNs=;
-        b=bqzE8xDbbFLPGRHGycV++pbeT+cEYsw7oSRPonqHlBlGaIVUmYVo2WNDzGAQ2axrjT
-         SQAbwH56bVSbq+lUKXCQaoK9clXSnW+bnhYRy6klpXhzMPbcX5wQZSlnjaqu6Tx38hT7
-         rRituWwNwVYDbfkYuvywqg9cY8+Sn5KRd+M/nV/0Q73wiYuCE3XvMyuQuVZepxRX5z4h
-         qmYVwcP4NkAWKeBXlg22nn2RSoE3tdqP2/XVSrH1kF/ayom6HBfEwisjfpXAan6pa72K
-         2DcfNHDDJZyCfB3/HYoSY9xem+97zXCpjTDbUwgaKnNUoBa+fAQqXxZpNjoK2SyzIbOd
-         v49Q==
-X-Gm-Message-State: APjAAAUR9FuZt0ZQegnfpwRBWtdJct17OhOVPGH0J3IAvnA7VAfzbTS+
-        qhJEF/5uu4pUk+qOsf+o/ANmZw==
-X-Google-Smtp-Source: APXvYqxT+p0H0/0rz0V5Jy4z/rmjEc/g5TciAjBtClxe3ObnYCxgA/8wzzmEJYlDAKpAIRAW1Pb3vw==
-X-Received: by 2002:adf:f508:: with SMTP id q8mr7952043wro.225.1557304834919;
-        Wed, 08 May 2019 01:40:34 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id i9sm2526835wmb.4.2019.05.08.01.40.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 01:40:34 -0700 (PDT)
-Date:   Wed, 8 May 2019 09:40:32 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: sun6i-prcm: fix build warning for non-OF
- configurations
-Message-ID: <20190508084032.GF3995@dell>
-References: <20190416122506.3180853-1-arnd@arndb.de>
+        id S1726930AbfEHIl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:41:58 -0400
+Received: from smtp-out.xnet.cz ([178.217.244.18]:59492 "EHLO smtp-out.xnet.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726387AbfEHIl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:41:58 -0400
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id DD9AC47A7;
+        Wed,  8 May 2019 10:41:53 +0200 (CEST)
+Received: from localhost (meh.true.cz [local])
+        by meh.true.cz (OpenSMTPD) with ESMTPA id a0fd15e7;
+        Wed, 8 May 2019 10:41:52 +0200 (CEST)
+Date:   Wed, 8 May 2019 10:41:52 +0200
+From:   Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v4 02/10] dt-bindings: doc: reflect new NVMEM
+ of_get_mac_address behaviour
+Message-ID: <20190508084152.GM81826@meh.true.cz>
+Reply-To: Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+References: <1556893635-18549-1-git-send-email-ynezz@true.cz>
+ <1556893635-18549-3-git-send-email-ynezz@true.cz>
+ <CAL_JsqLt6UFU_6bmh3Pc0taXUgMtAEV7kL7eZU13cLOjoakf=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190416122506.3180853-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAL_JsqLt6UFU_6bmh3Pc0taXUgMtAEV7kL7eZU13cLOjoakf=Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Apr 2019, Arnd Bergmann wrote:
+Rob Herring <robh+dt@kernel.org> [2019-05-07 11:44:57]:
 
-> When CONFIG_OF is disabled, we get a harmless warning about an
-> unused variable:
-> 
-> drivers/mfd/sun6i-prcm.c: In function 'sun6i_prcm_probe':
-> drivers/mfd/sun6i-prcm.c:151:22: error: unused variable 'np' [-Werror=unused-variable]
-> 
-> Remove the variable and open-code the value in the only place
-> it is used, so it can get left out as well without CONFIG_OF.
-> 
-> Fixes: a05a2e7998ab ("mfd: sun6i-prcm: Allow to compile with COMPILE_TEST")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/mfd/sun6i-prcm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Hi,
 
-Applied, thanks.
+> > -- local-mac-address:   the driver is designed to use the of_get_mac_address api
+> > -                       only if efuse-mac is 0. When efuse-mac is 0, the MAC
+> > -                       address is obtained from local-mac-address. If this
+> > -                       attribute is not present, then the driver will use a
+> > -                       random MAC address.
+> >  - "netcp-device label":        phandle to the device specification for each of NetCP
+> >                         sub-module attached to this interface.
+> >
+> > +The MAC address will be determined using the optional properties defined in
+> > +ethernet.txt, as provided by the of_get_mac_address API and only if efuse-mac
+> 
+> Don't make references to Linux in bindings. You can talk about
+> expectations of client programs (e.g Linux, u-boot, BSD, etc.) though.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I've just tried to reword what was already there, anyway, did I understood
+your remark properly, would this be more appropriate?
+
+ The MAC address will be determined using the optional properties defined in
+ ethernet.txt and only if efuse-mac is set to 0. If any of the optional MAC
+ address properties are not present, then the driver will use random MAC
+ address.
+
+Thanks!
+
+-- ynezz
