@@ -2,66 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A37C017EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3D817EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbfEHRCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:02:50 -0400
-Received: from smtprelay0087.hostedemail.com ([216.40.44.87]:48850 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728351AbfEHRCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 13:02:50 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id AC1F5180A887B;
-        Wed,  8 May 2019 17:02:48 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:3874:4250:4321:5007:8603:10004:10400:10848:11232:11658:11914:12294:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21627:30029:30034:30054:30083:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: wall32_8c725d4b2633f
-X-Filterd-Recvd-Size: 1823
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  8 May 2019 17:02:44 +0000 (UTC)
-Message-ID: <49e0fb2cd3b0a80848f67212167fdbab4b5b8a97.camel@perches.com>
-Subject: Re: [PATCH 4/4] checkpatch: replace magic value for TAB size
-From:   Joe Perches <joe@perches.com>
-To:     Antonio Borneo <borneo.antonio@gmail.com>
-Cc:     Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org
-Date:   Wed, 08 May 2019 10:02:42 -0700
-In-Reply-To: <CAAj6DX3LahQK_t0paVzcTfTsavANXnatgc_vX_1VLPJ9RhsdHQ@mail.gmail.com>
-References: <20190508122721.7513-1-borneo.antonio@gmail.com>
-         <20190508122721.7513-4-borneo.antonio@gmail.com>
-         <73a79b49d0183468a63876b170d1318d38c78d73.camel@perches.com>
-         <CAAj6DX3LahQK_t0paVzcTfTsavANXnatgc_vX_1VLPJ9RhsdHQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728908AbfEHRC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:02:59 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:53066 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728351AbfEHRC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 13:02:58 -0400
+Received: from zn.tnic (p200300EC2F0F5800A4469260603C8E24.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:5800:a446:9260:603c:8e24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6C4361EC05E1;
+        Wed,  8 May 2019 19:02:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1557334976;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=QsH1WRMJgZkl2tX1i0OToAGG8BFivK5Xbifm/yUt7oA=;
+        b=REDLYE51XtLVWUDWWulI3/3wY8CRHmaZfrJAI0z2dO8K9UeEGfN8pKnrY6LPE4lC6AvZvS
+        wJkPbBz3kfHRDhLZXOqNC3b9YFq7k4UsitR5cnZ7DNvd49/lS+tLLJDvjj6a8TMr/Y1DN+
+        gcX9bYoyvndsu8ooPpOH2WDIiXfISuk=
+From:   Borislav Petkov <bp@alien8.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        kvm@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org
+Subject: [PATCH] x86/kvm/pmu: Set AMD's virt PMU version to 1
+Date:   Wed,  8 May 2019 19:02:48 +0200
+Message-Id: <20190508170248.15271-1-bp@alien8.de>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-08 at 17:32 +0200, Antonio Borneo wrote:
-> On Wed, May 8, 2019 at 4:52 PM Joe Perches <joe@perches.com> wrote:
-> ...
-> > > In these cases the script will be probably modified and adapted,
-> > > so there is no need (at least for the moment) to expose this
-> > > setting on the script's command line.
-> > 
-> > Disagree.  Probably getter to add a --tabsize=<foo> option now.
-> 
-> Ok, will send a V2 including the command line option.
-> Exposing TAB size, makes the option name relevant; should I keep
-> "--tabsize" or is "--tab-stop" more appropriate?
+From: Borislav Petkov <bp@suse.de>
 
---tabsize is probably more appropriate as tab stops are not
-always a multiple of a single number.
+After commit:
 
-Unless you really want to get funky and support something like
---tab-stops=7,13,17,...
+  672ff6cff80c ("KVM: x86: Raise #GP when guest vCPU do not support PMU")
 
-I don't suggest that.
+my AMD guests started #GPing like this:
 
+  general protection fault: 0000 [#1] PREEMPT SMP
+  CPU: 1 PID: 4355 Comm: bash Not tainted 5.1.0-rc6+ #3
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+  RIP: 0010:x86_perf_event_update+0x3b/0xa0
+
+with Code: pointing to RDPMC. It is RDPMC because the guest has the
+hardware watchdog CONFIG_HARDLOCKUP_DETECTOR_PERF enabled which uses
+perf. Instrumenting kvm_pmu_rdpmc() some, showed that it fails due to:
+
+  if (!pmu->version)
+  	return 1;
+
+which the above commit added. Since AMD's PMU leaves the version at 0,
+that causes the #GP injection into the guest.
+
+Set pmu->version arbitrarily to 1 and move it above the non-applicable
+struct kvm_pmu members.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: Liran Alon <liran.alon@oracle.com>
+Cc: Mihai Carabas <mihai.carabas@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: x86@kernel.org
+---
+ arch/x86/kvm/pmu_amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/pmu_amd.c b/arch/x86/kvm/pmu_amd.c
+index 1495a735b38e..50fa9450fcf1 100644
+--- a/arch/x86/kvm/pmu_amd.c
++++ b/arch/x86/kvm/pmu_amd.c
+@@ -269,10 +269,10 @@ static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
+ 
+ 	pmu->counter_bitmask[KVM_PMC_GP] = ((u64)1 << 48) - 1;
+ 	pmu->reserved_bits = 0xffffffff00200000ull;
++	pmu->version = 1;
+ 	/* not applicable to AMD; but clean them to prevent any fall out */
+ 	pmu->counter_bitmask[KVM_PMC_FIXED] = 0;
+ 	pmu->nr_arch_fixed_counters = 0;
+-	pmu->version = 0;
+ 	pmu->global_status = 0;
+ }
+ 
+-- 
+2.21.0
 
