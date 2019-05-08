@@ -2,135 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6EF81748B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A34DC17495
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:08:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfEHJGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:06:18 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:32912 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfEHJGS (ORCPT
+        id S1726706AbfEHJIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 05:08:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56136 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfEHJIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:06:18 -0400
-Received: by mail-ed1-f67.google.com with SMTP id n17so21401843edb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 02:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ZCByRjUdoltM6JQS2wK/k1Vsg/2ECYjryZKrL53UB1A=;
-        b=cAzcttZx8IOcmQDqtJutN0W3TZIg84Kt+H8yqc/dtHNn73Y2pzR4uGqqCerk+xxpRK
-         kCgJj/0Cr/9osHXLk0jMGb0DbsYQmdwOxkCRSgnYBTOS4elaRx1CcurT+vvHJOsLuOZf
-         kJPxniGaN7IRwAIl1yJA3kUC4nDvoPbGXpO0o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ZCByRjUdoltM6JQS2wK/k1Vsg/2ECYjryZKrL53UB1A=;
-        b=trpePSBYr4jGUPL3ChPYgfK2sG9H1AyzaBLWCQcw3CZ9uqfW7sHWuNWRm0tSAwYRBA
-         M5OgpVrkwgUDinJTgkmdB/JUBNtzorg6tUIW7FKtPKwXuaEfdmWLvzaMhjGObpWweg0R
-         R6v5XNaR5f//UEaMc2b+wpU2vKjclgGNjr8btzprtoGoMuI9DScIJxiM+pDVfzbce1z7
-         ASkT4JV4LG/jJkUlNH5t2dVem3f+Ew1qaPREohfoxYxjlSdA0Gj/K4Jf1UEvCQ+n5hoZ
-         0w4VkgHIpVG8+zwoGcMDovTxduWQ+QWieCN+QOoNR4fsWEJVFy5zltMuboEA1XQEsL1z
-         hghw==
-X-Gm-Message-State: APjAAAUirEKNipQInDyV4DrWmC8TAj+0nOGpA130EuUjmPCScwHvBvbo
-        oYIhPxVXkO3jpRdfyqOb8a0uvQ==
-X-Google-Smtp-Source: APXvYqyhIyJzQJ2/WQmKoGSeee8pS6Iu8b2u59hMI6uOyjAOYUPnEY7pFFD0PgsSnAjiyZEjRhbMSQ==
-X-Received: by 2002:a17:906:a48:: with SMTP id x8mr3642206ejf.247.1557306376650;
-        Wed, 08 May 2019 02:06:16 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id f44sm4982723eda.73.2019.05.08.02.06.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 02:06:15 -0700 (PDT)
-Date:   Wed, 8 May 2019 11:06:12 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        stable <stable@vger.kernel.org>,
-        =?iso-8859-1?Q?S=E9bastien?= Szymanski 
-        <sebastien.szymanski@armadeus.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH RE-RESEND 1/2] drm/panel: Add support for Armadeus ST0700
- Adapt
-Message-ID: <20190508090612.GT17751@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        stable <stable@vger.kernel.org>,
-        =?iso-8859-1?Q?S=E9bastien?= Szymanski <sebastien.szymanski@armadeus.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-References: <20190507152713.27494-1-sebastien.szymanski@armadeus.com>
- <CAOMZO5B2nMsVNO6O_D+YTSjux=-DjNPGxhkEi3AQquOZVODumA@mail.gmail.com>
- <20190507161950.GA24879@ravnborg.org>
- <20190508083303.GR17751@phenom.ffwll.local>
+        Wed, 8 May 2019 05:08:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8Aib6HTiLuLq3IOQEcLw5qxrpTVa/aIw58NppbNDNzU=; b=Mfclx3ovQKJk5LB9wMJbRMZPY
+        vQdOOMJbXKNQAqsBlgHOkOFw5aO6gdCR8qVWhf5R4nEYHiVRtxkn0lWmOm2RcYCM81y5nylHXXO16
+        22aa/t1UOmAuPxOEvryBR2UuNsDXcD5mm4E+vsHUUwZxITuYK1o2PiU7ztkAQ9ZJv9kbE=;
+Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hOIYh-0007fu-GV; Wed, 08 May 2019 09:08:17 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 978A9440010; Wed,  8 May 2019 10:07:44 +0100 (BST)
+Date:   Wed, 8 May 2019 18:07:44 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH] sound: soc-acpi: fix implicit header use of
+ module.h/export.h
+Message-ID: <20190508090744.GH14916@sirena.org.uk>
+References: <1555168518-15287-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tWM9UXbZ96wBxVrF"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190508083303.GR17751@phenom.ffwll.local>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
+In-Reply-To: <1555168518-15287-1-git-send-email-paul.gortmaker@windriver.com>
+X-Cookie: -- I have seen the FUN --
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 10:33:03AM +0200, Daniel Vetter wrote:
-> On Tue, May 07, 2019 at 06:19:50PM +0200, Sam Ravnborg wrote:
-> > Hi Fabio
-> > 
-> > On Tue, May 07, 2019 at 12:33:39PM -0300, Fabio Estevam wrote:
-> > > [Adding Sam, who is helping to review/collect panel-simple patches]
-> > > 
-> > > On Tue, May 7, 2019 at 12:27 PM Sébastien Szymanski
-> > > <sebastien.szymanski@armadeus.com> wrote:
-> > > >
-> > > > This patch adds support for the Armadeus ST0700 Adapt. It comes with a
-> > > > Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT and an adapter board so
-> > > > that it can be connected on the TFT header of Armadeus Dev boards.
-> > > >
-> > > > Cc: stable@vger.kernel.org # v4.19
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
-> > Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> > 
-> > If you wil lresend the patch I can apply it.
-> > I have lost the original mail.
-> 
-> Usually patchwork should have it already (and you can pipe the raw
-> patchwork mbox into dim apply), but somehow it's not there either.
-> Not sure why, sometimes this is because mails are stuck in moderation,
-> sometimes because people do interesting things with their mails (e.g. smtp
-> servers mangling formatting).
 
-patchwork was just a bit slow, it's there now:
+--tWM9UXbZ96wBxVrF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://patchwork.freedesktop.org/series/60408/
+On Sat, Apr 13, 2019 at 11:15:18AM -0400, Paul Gortmaker wrote:
+> This file is implicitly relying on an instance of including
+> module.h from <linux/acpi.h>.
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
+
+--tWM9UXbZ96wBxVrF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSnF8ACgkQJNaLcl1U
+h9CcZwf/SJDxYk/RhEeQvuk6luA2tLFhaUGBULpMDQGXhLfUZxlIvxdj+0jPLOCf
+EgUPL5dsbxgCINxlOh364cUO+2cWkcnaOofIxyqxeRClje6weZv6KNaoy2cUA/Ki
+yUXKV2NRGRU8aVAtCEyzFsQkMRAlub6HTG+reEg2lpOnsj0+vIMah+MuEayAH62H
+cM4jRVhKZ181zgi8P5Njzd5e4XRRRHUwaZqoV0SrrscBzPN2jK1bGJCC3e7EDDLz
+fEImdwhFWkV9yiPbo6rcC2wF49cEMsT10ZTQuC2LNtLq+I9n0TCyJpnCbxY7O6qO
+mZ4shgw9xL0Yyk9GlNV5St278WWiuA==
+=1Sdv
+-----END PGP SIGNATURE-----
+
+--tWM9UXbZ96wBxVrF--
