@@ -2,88 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9E41798E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46EA17991
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbfEHMjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 08:39:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40093 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728599AbfEHMjW (ORCPT
+        id S1728599AbfEHMk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 08:40:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48540 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfEHMk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 08:39:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h4so7749487wre.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 05:39:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4Rmas8gcFMGufmlR3c5DQmI8ZQrCroMRQQbwgTv6K0o=;
-        b=DVjJI9GLM0wGMGsW8NcrWxaNTRSWQUQT/e2HemxV6gKKszBdt71XgKMcsPAQWygPf7
-         94aouo1wkHPxev0xOu8X/pZu8Ut268zcYV3wVE7giNpDBw6oajvEj1jFy3jXPzR3Oag7
-         FNhM5+XhhI/r0lbFR4uf/tzoZ9CjgfvzDCVhKRvVsboM3k1ZQxt/Yzv9y5xbdmJqUuc8
-         zxVte/v+qKcUESpHMks+PQ4Lp84DWNd95IWbWcvIkTjrTQdpSFA+/TO/ENNYDmflQ3yt
-         8OKHXbix+B3g4J3NlRhk8OlA7kL23wkG4g0WWFTbYmTMMOyQdpPp0CVTMrQQKkIzdPgY
-         dPWA==
-X-Gm-Message-State: APjAAAXQMHCz8ygOv26aKQf4Kwskpet0xMhX/PGqKcUfYocxA/arzgQs
-        9QHuUBGnPqiZmByWnFM0OmuT0w==
-X-Google-Smtp-Source: APXvYqwuyoFh7G+bUNBJPQbUYqVHJhmvLVup6b4hVfQDP/ku/Jv9N/UUoJIUxNspRHbGoU418ffKdw==
-X-Received: by 2002:adf:dc8a:: with SMTP id r10mr10988770wrj.15.1557319160335;
-        Wed, 08 May 2019 05:39:20 -0700 (PDT)
-Received: from [10.201.49.229] (nat-pool-mxp-u.redhat.com. [149.6.153.187])
-        by smtp.gmail.com with ESMTPSA id a9sm2110131wmm.48.2019.05.08.05.39.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 05:39:19 -0700 (PDT)
-Subject: Re: [PATCH v2 00/10] RFC: NVME MDEV
-To:     Christoph Hellwig <hch@lst.de>,
-        Maxim Levitsky <mlevitsk@redhat.com>
-Cc:     Fam Zheng <fam@euphon.net>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, kvm@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liang Cunming <cunming.liang@intel.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@fb.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Liu Changpeng <changpeng.liu@intel.com>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Amnon Ilan <ailan@redhat.com>, John Ferlan <jferlan@redhat.com>
-References: <20190502114801.23116-1-mlevitsk@redhat.com>
- <20190503121838.GA21041@lst.de>
- <e8f6981863bdbba89adcba1c430083e68546ac1a.camel@redhat.com>
- <20190506125752.GA5288@lst.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <a789d935-e665-c339-d7ae-3d23997b92d9@redhat.com>
-Date:   Wed, 8 May 2019 14:39:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 8 May 2019 08:40:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LYKoqpJMlMO57vcE4nAKzPxnDzGZFaIp9M1SEgLNgCw=; b=rHfMNiUq+0Mt899oc+tcdryYT
+        sZmOi0MTs73jiU1Hyr32wPvXQaQRHSTDj9rQI2KyeinVpYvaMeST8vyH74hi9RIbEkBuJM1v9qXmj
+        U+EDlzUm5fSyrtZex0IIZTUBwoe9thV83JGvs+qcYfbY9MjRwv0xoWdY/mALkD+vPyUDQ7qUaD/rg
+        GszAEYwEuExk+h5vfd3euSGKVlko0+Lya5ikG+hf0rDtA5xHroA7PvyoUGtPaQkujYp4iLu1+S6lH
+        0OWhZWP0EUiVYeU2BkysUroFycGANvd76JCz6yhPzQ6RGD879O4lhwUWRdDBClcdFTHnRjbX86CTG
+        A1jGot0TQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOLrh-0007Ad-AI; Wed, 08 May 2019 12:40:05 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9BD062029F87A; Wed,  8 May 2019 14:40:02 +0200 (CEST)
+Date:   Wed, 8 May 2019 14:40:02 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 2/4] x86/kprobes: Fix frame pointer annotations
+Message-ID: <20190508124002.GJ2650@hirez.programming.kicks-ass.net>
+References: <20190508074901.982470324@infradead.org>
+ <20190508080612.721269814@infradead.org>
+ <20190508115416.nblx7c2kocidpytm@treble>
+ <20190508120416.GL2589@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20190506125752.GA5288@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508120416.GL2589@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/19 07:57, Christoph Hellwig wrote:
+On Wed, May 08, 2019 at 02:04:16PM +0200, Peter Zijlstra wrote:
+> On Wed, May 08, 2019 at 06:54:16AM -0500, Josh Poimboeuf wrote:
+
+> > We should put these macros in a header file somewhere (including
+> > stringified versions).
 > 
-> Or to put it into another way:  unless your paravirt interface requires
-> zero specific changes to the core nvme code it is not acceptable at all.
+> Probably a good idea. I'll frob them into asm/frame.h.
 
-I'm not sure it's possible to attain that goal, however I agree that
-putting the control plane in the kernel is probably not a good idea, so
-the vhost model is better than mdev for this usecase.
+---
+Subject: x86: Move ENCODE_FRAME_POINTER to asm/frame.h
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed May 8 14:30:48 CEST 2019
 
-In addition, unless it is possible for the driver to pass the queue
-directly to the guests, there probably isn't much advantage in putting
-the driver in the kernel at all.  Maxim, do you have numbers for 1) QEMU
-with aio 2) QEMU with VFIO-based userspace nvme driver 3) nvme-mdev?
+In preparation for wider use, move the ENCODE_FRAME_POINTER macros to
+a common header and provide inline asm versions.
 
-Paolo
+These macros are used to encode a pt_regs frame for the unwinder; see
+unwind_frame.c:decode_frame_pointer().
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/entry/calling.h     |   15 --------------
+ arch/x86/entry/entry_32.S    |   16 --------------
+ arch/x86/include/asm/frame.h |   46 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+), 31 deletions(-)
+
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -172,21 +172,6 @@ For 32-bit we have the following convent
+ 	.endif
+ .endm
+ 
+-/*
+- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+- * is just setting the LSB, which makes it an invalid stack address and is also
+- * a signal to the unwinder that it's a pt_regs pointer in disguise.
+- *
+- * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
+- * the original rbp.
+- */
+-.macro ENCODE_FRAME_POINTER ptregs_offset=0
+-#ifdef CONFIG_FRAME_POINTER
+-	leaq 1+\ptregs_offset(%rsp), %rbp
+-#endif
+-.endm
+-
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 
+ /*
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -246,22 +246,6 @@
+ .Lend_\@:
+ .endm
+ 
+-/*
+- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+- * is just clearing the MSB, which makes it an invalid stack address and is also
+- * a signal to the unwinder that it's a pt_regs pointer in disguise.
+- *
+- * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
+- * original rbp.
+- */
+-.macro ENCODE_FRAME_POINTER
+-#ifdef CONFIG_FRAME_POINTER
+-	mov %esp, %ebp
+-	andl $0x7fffffff, %ebp
+-#endif
+-.endm
+-
+ .macro RESTORE_INT_REGS
+ 	popl	%ebx
+ 	popl	%ecx
+--- a/arch/x86/include/asm/frame.h
++++ b/arch/x86/include/asm/frame.h
+@@ -22,6 +22,39 @@
+ 	pop %_ASM_BP
+ .endm
+ 
++#ifdef CONFIG_X86_64
++/*
++ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
++ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
++ * is just setting the LSB, which makes it an invalid stack address and is also
++ * a signal to the unwinder that it's a pt_regs pointer in disguise.
++ *
++ * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
++ * the original rbp.
++ */
++.macro ENCODE_FRAME_POINTER ptregs_offset=0
++#ifdef CONFIG_FRAME_POINTER
++	leaq 1+\ptregs_offset(%rsp), %rbp
++#endif
++.endm
++#else /* !CONFIG_X86_64 */
++/*
++ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
++ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
++ * is just clearing the MSB, which makes it an invalid stack address and is also
++ * a signal to the unwinder that it's a pt_regs pointer in disguise.
++ *
++ * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
++ * original ebp.
++ */
++.macro ENCODE_FRAME_POINTER
++#ifdef CONFIG_FRAME_POINTER
++	mov %esp, %ebp
++	andl $0x7fffffff, %ebp
++#endif
++.endm
++#endif /* CONFIG_X86_64 */
++
+ #else /* !__ASSEMBLY__ */
+ 
+ #define FRAME_BEGIN				\
+@@ -30,6 +63,19 @@
+ 
+ #define FRAME_END "pop %" _ASM_BP "\n"
+ 
++#ifdef CONFIG_FRAME_POINTER
++#ifdef CONFIG_X86_64
++#define ENCODE_FRAME_POINTER			\
++	"lea 1(%rsp), %rbp\n\t"
++#else /* !CONFIG_X86_64 */
++#define ENCODE_FRAME_POINTER			\
++	"movl %esp, %ebp\n\t"			\
++	"andl $0x7fffffff, %ebp\n\t"
++#endif /* CONFIG_X86_64 */
++#else /* CONFIG_FRAME_POINTER */
++#define ENCODE_FRAME_POINTER
++#endif /* CONFIG_FRAME_POINTER */
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #define FRAME_OFFSET __ASM_SEL(4, 8)
