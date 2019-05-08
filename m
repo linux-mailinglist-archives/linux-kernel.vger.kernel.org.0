@@ -2,95 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF108178BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8411178C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfEHLs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:48:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45233 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbfEHLs1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:48:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s15so26767169wra.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=D4Jo/XXXOC25kVFpYwybJdxL1MfdXCcgejboptGVtec=;
-        b=keOshBDoBv1ga5JLsBEUcLmNcujufn/CqoX0gVvR+CT5/TflWfm4FTfw+hKVwHQxnB
-         FJPFwVgdANIoLoWAFjWx7MBzTykx/kqvHL9hDccWUafAPiFCIYNoGG/N2NZXh5rst7Ge
-         aUunvK0asgzzZUb80Ke/vQrkFSYZu7mPcN7Y42r10j71qdvbLCKbQp0EAggtSwcuP4qO
-         3OH8oFfPNA0J9MEKwzQykvbUs43wpnkTVMg/nxjD7HSWZHduooFJ0LL40btDPgf7Enki
-         GM2rNXNmgD/wFit3ujmUrbntm9wrJaTCUw5fKcDd+T81DqtesT303ge2Y8O9dQC6wNJa
-         1ALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=D4Jo/XXXOC25kVFpYwybJdxL1MfdXCcgejboptGVtec=;
-        b=DHAkA5ui6m6n06E88LzGr5kakRUgXKVeEGAC1BPK1fEg8fWVzcs49CfEKDjv3vHJt7
-         1embSaTNq3ItECBrbTLnHmviDEth6JAY5PGD8gUZI7jeseXZyCkrLE7bSUE9+ThKhObG
-         waelomR9d7xgC361j1G2mR3o+Kig9fEAZsXWlp3+Uu/B+wDXU3HgR9Cs4mc2xn1uMHE/
-         nHW1w3CAQvH6mV+dDpbNTJKVIMwmlChjqOCteP6aG/BE6c0773cBjF18Q64LDu/xFloZ
-         0W+Pu5sThs/Mc1LXL2okSq8RQkWcU010XiquuYpP/yAA3QTljg7aiUQsnd4OzV2oBz9j
-         KLrA==
-X-Gm-Message-State: APjAAAWe/quV/tnawh+o9vgXSPFAttR/MSSzxQhj5kX4pPr7XkgWYvvc
-        M2c5MJ/4OkqG4G/sR2n/xwDV2w==
-X-Google-Smtp-Source: APXvYqxQAfWGC5LW1oPICeT2TShfePBZh77cJn/03Sn/YejS8bHJX6kLK73yWaNFGUQdRMk7amwhAA==
-X-Received: by 2002:adf:e288:: with SMTP id v8mr25780499wri.7.1557316106230;
-        Wed, 08 May 2019 04:48:26 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id j3sm17999261wrg.72.2019.05.08.04.48.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 04:48:25 -0700 (PDT)
-Date:   Wed, 8 May 2019 12:48:23 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        id S1728352AbfEHLtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:49:14 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:58456 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727728AbfEHLtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:49:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=cHXDOAI/sb7qYnc/OEjR9OhWCqVE0yCfcRGxBY6Z0kM=; b=h8uS09r9tHqr1dIZuU0P8ieTGe
+        Ay1aINmssQ22D65almIb0CMh4ccZ/IMgFRgo9OQ6OYSW99xZIJ0fo2q/z0cPr91eBvnC1lYJOCvWq
+        WOW8e5cl83tFaLwLbOJNROmkMjhu94vfmmL/MW+c5/reEcIyC7Luq/WWsrG1aWDhTAp4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hOL46-0000iQ-Vo; Wed, 08 May 2019 13:48:50 +0200
+Date:   Wed, 8 May 2019 13:48:50 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>, netdev <netdev@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mallikarjun Kasoju <mkasoju@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] mfd: max77620: Provide system power-off
- functionality
-Message-ID: <20190508114823.GL31645@dell>
-References: <20190505154325.30026-1-digetx@gmail.com>
- <20190505154325.30026-6-digetx@gmail.com>
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v4 02/10] dt-bindings: doc: reflect new NVMEM
+ of_get_mac_address behaviour
+Message-ID: <20190508114850.GC30557@lunn.ch>
+References: <1556893635-18549-1-git-send-email-ynezz@true.cz>
+ <1556893635-18549-3-git-send-email-ynezz@true.cz>
+ <CAL_JsqLt6UFU_6bmh3Pc0taXUgMtAEV7kL7eZU13cLOjoakf=Q@mail.gmail.com>
+ <20190508084152.GM81826@meh.true.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190505154325.30026-6-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190508084152.GM81826@meh.true.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 05 May 2019, Dmitry Osipenko wrote:
-
-> Provide system power-off functionality that allows to turn off machine
-> gracefully.
+> I've just tried to reword what was already there, anyway, did I understood
+> your remark properly, would this be more appropriate?
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/mfd/max77620.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  The MAC address will be determined using the optional properties defined in
+>  ethernet.txt and only if efuse-mac is set to 0. If any of the optional MAC
+>  address properties are not present, then the driver will use random MAC
+>  address.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+If _all_ of the optional ...
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+   Andrew
