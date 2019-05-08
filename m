@@ -2,145 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB77178C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7B7178D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbfEHLtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:49:08 -0400
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:38122 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbfEHLtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:49:08 -0400
-Received: by mail-oi1-f170.google.com with SMTP id u199so6927619oie.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:49:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=UiE/dtL+DxzJlyZjaLoLZA2ogaq5/eux+wRF3qdxndo=;
-        b=jiMjonzIjrgNe7EAzkLk/4nVT/pqOXjT2WiGo6TPXEvlfnhvMBmJ+igDdeLA5VEWnb
-         lsmnRjUQAB0I9dQaVSeFWzBgOmybXGlUh9Cqp4XaJN2lC9GtrbcpcafaKd84OUz3FzFi
-         WMFP7/coUZ07Y5b2pSSJn7rR+TFfQPuOxY82LeZXdUi59PrN3dtU8m0HwRMWDwgUDWEz
-         C3JU6CvEPeKgSoWMMS3LfjfrD1Ahui0ZfBomLRDd0W3AOKLIJ9D3uFBUmZVJDFRl5mZ7
-         xWbxf5KQUWexu5uOHveOXl1bobX+5HKJEi6RlVd405ZgL4YNdgu9PuxWShvD50G8r/Uv
-         w7gQ==
-X-Gm-Message-State: APjAAAVB0XoASkmsp5tJqxEPnDQ/1BC8SLGCt66k/V1W9SWXWWxQHgpL
-        HvO08MM5j9vrRLH6YYOCx4hzKQATqfmRf4v3N6tshg==
-X-Google-Smtp-Source: APXvYqxluCoCeUr0XTO0miGV4Vy0BPUjHo8v1sjoZvLpTNp1hAZYGq6eM2jOpvAoF/P55Rr+c9MuiQ/KP2SrGhcbsNk=
-X-Received: by 2002:a54:4f02:: with SMTP id e2mr1834383oiy.10.1557316147176;
- Wed, 08 May 2019 04:49:07 -0700 (PDT)
+        id S1728370AbfEHLtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:49:17 -0400
+Received: from mail-eopbgr50052.outbound.protection.outlook.com ([40.107.5.52]:42306
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728341AbfEHLtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:49:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1tfYvloir+yRrmJ7bbXzzhF+As7jjb3W+G5yqlLikRk=;
+ b=cP2HXhe/aOo005Ak8pZCKpxEqCVlLB3dljfYlFO8vzKH0KjfXd5y+jmBflQa0PKUDKFyEJG1HnxuKGqVd8RZi2WmBb/k2c4rldTrAtglX3GPEtGH4dfMk+2VeVEg3nAllR5etVcnju+V0F8y00tNvO1VCouG7ppHMQBQdmszsg0=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB4945.eurprd04.prod.outlook.com (20.176.215.218) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Wed, 8 May 2019 11:49:06 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c415:3cab:a042:2e13]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c415:3cab:a042:2e13%6]) with mapi id 15.20.1856.012; Wed, 8 May 2019
+ 11:49:06 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: RE: [PATCH V2 4/4] arm64: dts: imx: add i.MX8QXP ocotp support
+Thread-Topic: [PATCH V2 4/4] arm64: dts: imx: add i.MX8QXP ocotp support
+Thread-Index: AQHVBUmcX4GOGcsPv0ihTPWps1XlRqZhHPxg
+Date:   Wed, 8 May 2019 11:49:06 +0000
+Message-ID: <AM0PR04MB4211A76AA2D65894CCB0F39A80320@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190508030927.16668-1-peng.fan@nxp.com>
+ <20190508030927.16668-4-peng.fan@nxp.com>
+In-Reply-To: <20190508030927.16668-4-peng.fan@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 605cb25b-6a5f-438e-8567-08d6d3ab2cc3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4945;
+x-ms-traffictypediagnostic: AM0PR04MB4945:
+x-microsoft-antispam-prvs: <AM0PR04MB4945E8A5D780556B4FC275DB80320@AM0PR04MB4945.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:160;
+x-forefront-prvs: 0031A0FFAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(366004)(39860400002)(189003)(199004)(2906002)(9686003)(6506007)(2501003)(99286004)(305945005)(102836004)(74316002)(7416002)(186003)(26005)(7736002)(6246003)(55016002)(33656002)(4326008)(25786009)(6436002)(6116002)(3846002)(53936002)(66066001)(68736007)(256004)(229853002)(52536014)(2201001)(8676002)(81156014)(81166006)(71190400001)(71200400001)(66446008)(86362001)(316002)(54906003)(14454004)(110136005)(66946007)(66556008)(64756008)(66476007)(76116006)(73956011)(7696005)(478600001)(76176011)(486006)(476003)(5660300002)(11346002)(446003)(4744005)(8936002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4945;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: T7GG+qacRiBWo5XQRaZOAKYqknefD0as8osnqaRid6frXZ8L6Wd+z3piKKXGkBVzUo6jPFsPCyNn0Bc1pmsC2QPmkbzDLQ8YoSjfxQv/ObvELwtMIuA8R0GMkpEPZcNceM+oYujD/z7iwPXOma1/pxB3yeDPNJ8o6MbYTtNDpoziU8s4lX0MKSCii0s0Ykbm5vj9pgE7kF5UkufkGaz+zMa9ej43dzfq+8bv7RdQuDjjZ5dI5uZrlstuIu7mKzRZf0F0Ifr/o/2rv7C4zdkVrx1dspsxPDm3IckxfU2XK/HQrqSpQ+SFTMMajfw6+ivHmH7fWeaijf/4+40kIGTCYnpzXbhH+KIxWkPrM8PmXgriTdZ8HdllM8EhZkG5adkShivG95FpJAOlD/hSqCztI6E9lhLW8tU5WXHTVSHnfmc=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 8 May 2019 13:48:56 +0200
-Message-ID: <CAHc6FU5Yd9EVju+kY8228n-Ccm7F2ZBRJUbesT-HYsy2YjKc_w@mail.gmail.com>
-Subject: GFS2: Pull Request
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     cluster-devel <cluster-devel@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 605cb25b-6a5f-438e-8567-08d6d3ab2cc3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 11:49:06.2653
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4945
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-please consider pulling the following changes for the GFS2 file system.
-
-There was a conflict with commit 2b070cfe582b ("block: remove the i
-argument to bio_for_each_segment_all") on Jens's block layer changes
-which you've already merged. I've resolved that by merging those block
-layer changes; please let me know if you want this done differently.
-
-Thanks,
-Andreas
-
-The following changes since commit b4b52b881cf08e13d110eac811d4becc0775abbf:
-
-  Merge tag 'Wimplicit-fallthrough-5.2-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux
-(2019-05-07 12:48:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
-tags/gfs2-for-5.2
-
-for you to fetch changes up to dd665ce42728aa985ec4c7002ffe8690cde74c54:
-
-  Merge tag 'for-5.2/block-20190507' of
-git://git.kernel.dk/linux-block (2019-05-08 10:30:57 +0200)
-
-----------------------------------------------------------------
-We've got the following patches ready for this merge window:
-
-"gfs2: Fix loop in gfs2_rbm_find (v2)"
-
-  A rework of a fix we ended up reverting in 5.0 because of an iozone
-  performance regression.
-
-"gfs2: read journal in large chunks" and
-"gfs2: fix race between gfs2_freeze_func and unmount"
-
-  An improved version of a commit we also ended up reverting in 5.0
-  because of a regression in xfstest generic/311.  It turns out that the
-  journal changes were mostly innocent and that unfreeze didn't wait for
-  the freeze to complete, which caused the filesystem to be unmounted
-  before it was actually idle.
-
-"gfs2: Fix occasional glock use-after-free"
-"gfs2: Fix iomap write page reclaim deadlock"
-"gfs2: Fix lru_count going negative"
-
-  Fixes for various problems reported and partially fixed by Citrix
-  engineers.  Thank you very much.
-
-"gfs2: clean_journal improperly set sd_log_flush_head"
-
-  Another fix from Bob.
-
-A few other minor cleanups.
-
-----------------------------------------------------------------
-Abhi Das (2):
-      gfs2: fix race between gfs2_freeze_func and unmount
-      gfs2: read journal in large chunks
-
-Andreas Gruenbacher (8):
-      gfs2: Fix loop in gfs2_rbm_find (v2)
-      gfs2: Fix occasional glock use-after-free
-      gfs2: Remove misleading comments in gfs2_evict_inode
-      gfs2: Remove unnecessary extern declarations
-      gfs2: Rename sd_log_le_{revoke,ordered}
-      gfs2: Rename gfs2_trans_{add_unrevoke => remove_revoke}
-      gfs2: Fix iomap write page reclaim deadlock
-      Merge tag 'for-5.2/block-20190507' of git://git.kernel.dk/linux-block
-
-Bob Peterson (2):
-      gfs2: clean_journal improperly set sd_log_flush_head
-      gfs2: Replace gl_revokes with a GLF flag
-
-Ross Lagerwall (1):
-      gfs2: Fix lru_count going negative
-
- fs/gfs2/aops.c       |  14 ++-
- fs/gfs2/bmap.c       | 118 ++++++++++++++---------
- fs/gfs2/bmap.h       |   1 +
- fs/gfs2/dir.c        |   2 +-
- fs/gfs2/glock.c      |  25 +++--
- fs/gfs2/glops.c      |   3 +-
- fs/gfs2/incore.h     |   9 +-
- fs/gfs2/log.c        |  47 ++++++----
- fs/gfs2/log.h        |   5 +-
- fs/gfs2/lops.c       | 260 ++++++++++++++++++++++++++++++++++++++++++++++-----
- fs/gfs2/lops.h       |  11 +--
- fs/gfs2/main.c       |   1 -
- fs/gfs2/ops_fstype.c |   7 +-
- fs/gfs2/recovery.c   | 135 ++------------------------
- fs/gfs2/recovery.h   |   4 +-
- fs/gfs2/rgrp.c       |  56 ++++++-----
- fs/gfs2/super.c      |  20 ++--
- fs/gfs2/trans.c      |   4 +-
- fs/gfs2/trans.h      |   2 +-
- fs/gfs2/xattr.c      |   6 +-
- 20 files changed, 437 insertions(+), 293 deletions(-)
+PiBGcm9tOiBQZW5nIEZhbg0KPiBTZW50OiBXZWRuZXNkYXksIE1heSA4LCAyMDE5IDEwOjU2IEFN
+DQo+IA0KPiBBZGQgaS5NWDhRWFAgb2NvdHAgbm9kZQ0KPiANCj4gQ2M6IFJvYiBIZXJyaW5nIDxy
+b2JoK2R0QGtlcm5lbC5vcmc+DQo+IENjOiBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0u
+Y29tPg0KPiBDYzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPg0KPiBDYzogU2FzY2hh
+IEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPg0KPiBDYzogUGVuZ3V0cm9uaXggS2VybmVs
+IFRlYW0gPGtlcm5lbEBwZW5ndXRyb25peC5kZT4NCj4gQ2M6IEZhYmlvIEVzdGV2YW0gPGZlc3Rl
+dmFtQGdtYWlsLmNvbT4NCj4gQ2M6IE5YUCBMaW51eCBUZWFtIDxsaW51eC1pbXhAbnhwLmNvbT4N
+Cj4gQ2M6IEFpc2hlbmcgRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQo+IENjOiBBbnNvbiBI
+dWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IERhbmllbCBCYWx1dGEgPGRhbmllbC5i
+YWx1dGFAbnhwLmNvbT4NCj4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+IENjOiBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gU2lnbmVkLW9mZi1ieTogUGVu
+ZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQoNClJldmlld2VkLWJ5OiBEb25nIEFpc2hlbmcgPGFp
+c2hlbmcuZG9uZ0BueHAuY29tPg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
