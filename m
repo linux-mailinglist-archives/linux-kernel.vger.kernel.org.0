@@ -2,231 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D60DC17E7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B2517E83
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbfEHQvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:51:35 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41466 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbfEHQvf (ORCPT
+        id S1728769AbfEHQwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:52:03 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:54432 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbfEHQwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:51:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l132so1303904pfc.8;
-        Wed, 08 May 2019 09:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7Jk8aznOiVhdbAYmpI97ZVHkdkGLp8aJ27lp2F/63Go=;
-        b=DAWmzM3M21vmzVVwN393ese8B4BtxTPlF5G9biRIvJFj9GG1ndHp15DxKe5XdIeski
-         DJtbPYSNR4vR2E5sac41ocfLgeycTpOIGhzRzvNxJhs/rVeIgwIMIxCLjR1LNV5EbVDK
-         1lgSw/EiW6WiHuuDzpbB8ajtLeadE4PeN3HISOQ/TWx67zh6ifC08GmuTiDmP05pne9w
-         YOihYL8k0kPTSL2HKS+HVpX1Pvtom+6vPkUeVijcGa+6ktkzJbLO1xsgKBeLX8ldaNv1
-         fyoNy2fVrYYFKLXTPnSw3ltuU8s2uf8lFq3Jf4bn7VQi+frWtaCt4nVe1L/5VYsL2MBJ
-         b3XQ==
+        Wed, 8 May 2019 12:52:01 -0400
+Received: by mail-it1-f200.google.com with SMTP id w1so2683655itk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:52:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=7Jk8aznOiVhdbAYmpI97ZVHkdkGLp8aJ27lp2F/63Go=;
-        b=I7QOOLjanc8kWpJj0F88HSpiwJefFbCSqh6943HN3pRNJohTgo1iyeszU70tNRjejD
-         4fgsx7Tcvi5dMMlbHVhDMORryGwfJim+B2FpK1+U4F7z65rBuJ1Dq78INVjqoszaIDs3
-         two+Co9KJSTzHmGya9f9Rh+6zRL8hyd5+hfan39ZfhQeLfJFJnfMwbtTyUzjfVJxqxQl
-         kLEWu9OcyCCJm5fisEr/CYiBjVVL13o+8M0mv16U6dqJt447PLgEbQ1NA3vwY7hykinb
-         btA8ybRXug+B7XRS6XfwFZVJUH7xISgEngScvseQoXaYUuplVr/ZDgyGu4iKA03Gn1z4
-         mLOw==
-X-Gm-Message-State: APjAAAU1UL2U+uatZkg2Pp03ZGB+lyNUCf2DXsFt/z5PryUn1JOA1WXZ
-        LSwzeDRZbb/RLlyXsYPJMjQ=
-X-Google-Smtp-Source: APXvYqwoFp+viCfu9mN4g6RNXBwAwxhF8uJGFipFQFnwDr4oHtDgpnY4MFQk8XkKNEvQljyt/y6j6A==
-X-Received: by 2002:a65:5588:: with SMTP id j8mr30497876pgs.306.1557334293491;
-        Wed, 08 May 2019 09:51:33 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j10sm20749488pfa.37.2019.05.08.09.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 09:51:32 -0700 (PDT)
-Date:   Wed, 8 May 2019 09:51:31 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Angus Ainslie <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck7@gmail.com>, linux-imx@nxp.com
-Subject: Re: [PATCH v2 1/1] usb: typec: tcpci: Clear the fault status register
-Message-ID: <20190508165131.GA7234@roeck-us.net>
-References: <20190508002749.14816-1-angus@akkea.ca>
- <20190508002749.14816-2-angus@akkea.ca>
- <aed487a4-3f7c-55e8-9c84-feaa1c7f583d@roeck-us.net>
- <3fd046562f3bea2cb85354f8d3c420fc@www.akkea.ca>
- <3918f78b-15ec-9204-b2fc-f371157bc29c@roeck-us.net>
- <b1e568714632bc3be89f1452299873d2@www.akkea.ca>
- <20190508162211.GA5495@roeck-us.net>
- <1ba8244c4cfe5723c601c5e0416d6ffc@www.akkea.ca>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=0mythnzPfhPVWyHlhf2vS5jhrjHuHUNNfUDlg+aYw9A=;
+        b=eSDsfN4JkFHLdvt0HpYNhY/0HbaACSddfmaXFjr7Uod0nI3hI6TJYIXpNYb8nKbMd2
+         eUMdGNawAmXbzVMfuvbCbBGkkChRdxMJyDSxhuJl1jLwQbQIOdY8jTX7de7iSONsXcc7
+         htKfUeYH1qOIby3JYgX/oZJfyj95c6HBvnGUvWhNPWAE+hLopkJoNiX1oh7bZNL0P9/W
+         95Qpe7gVZhTTCo96mfM8uFe6JkHiENkAFPnRAsGGjSYM2tx+t4vTzui0mG0HXkrWuh+T
+         S2tUULNDZqmj3BjGQLDREpCaZ/If4jaYNIA0KEF5P3GePWBv2kxYgXE7zwETLlTVnFmr
+         IlPA==
+X-Gm-Message-State: APjAAAVg2kfiOyAHx9JEDST1CszMoHdNl+gJVlyqg8goHoT9HSckFPhy
+        +ATBFj/puL3yHVxUIr5vlH5KBf/mzthLiUA3D+bJTJ+qL3tL
+X-Google-Smtp-Source: APXvYqzn8EGCMk5VzujP7HVqRUmMSRCGOcAA/AZcz33of0OiGm4u2Q+CbAdIyc3cECPxBabsd8wQ6BLVyHwoK22/ZFtvHA6zWcpP
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ba8244c4cfe5723c601c5e0416d6ffc@www.akkea.ca>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Received: by 2002:a02:b088:: with SMTP id v8mr30068575jah.21.1557334320874;
+ Wed, 08 May 2019 09:52:00 -0700 (PDT)
+Date:   Wed, 08 May 2019 09:52:00 -0700
+In-Reply-To: <000000000000a573da058858083c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fe103805886326ea@google.com>
+Subject: Re: WARNING in cgroup_exit
+From:   syzbot <syzbot+f14868630901fc6151d3@syzkaller.appspotmail.com>
+To:     alexander.h.duyck@intel.com, amritha.nambiar@intel.com,
+        andriy.shevchenko@linux.intel.com, ast@kernel.org,
+        bpf@vger.kernel.org, cgroups@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, dmitry.torokhov@gmail.com,
+        f.fainelli@gmail.com, guro@fb.com, hannes@cmpxchg.org,
+        idosch@mellanox.com, kafai@fb.com, linux-kernel@vger.kernel.org,
+        lizefan@huawei.com, netdev@vger.kernel.org, sfr@canb.auug.org.au,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org, tyhicks@canonical.com, wanghai26@huawei.com,
+        yhs@fb.com, yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 10:33:22AM -0600, Angus Ainslie wrote:
-> On 2019-05-08 10:22, Guenter Roeck wrote:
-> >On Wed, May 08, 2019 at 07:48:43AM -0600, Angus Ainslie wrote:
-> >>Hi Guenter
-> >>
-> >>On 2019-05-07 23:18, Guenter Roeck wrote:
-> >>>On 5/7/19 7:49 PM, Angus Ainslie wrote:
-> >>>>On 2019-05-07 20:03, Guenter Roeck wrote:
-> >>>>>On 5/7/19 5:27 PM, Angus Ainslie (Purism) wrote:
-> >>>>>>If the fault status register doesn't get cleared then
-> >>>>>>the ptn5110 interrupt gets stuck on. As the fault register gets
-> >>>>>>set everytime the ptn5110 powers on the interrupt is always stuck.
-> >>>>>>
-> >>>>>>Fixes: fault status register stuck
-> >>>>>>Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> >>>>>>---
-> >>>>>>  drivers/usb/typec/tcpm/tcpci.c | 11 +++++++++++
-> >>>>>>  1 file changed, 11 insertions(+)
-> >>>>>>
-> >>>>>>diff --git a/drivers/usb/typec/tcpm/tcpci.c
-> >>>>>>b/drivers/usb/typec/tcpm/tcpci.c
-> >>>>>>index c1f7073a56de..a5746657b190 100644
-> >>>>>>--- a/drivers/usb/typec/tcpm/tcpci.c
-> >>>>>>+++ b/drivers/usb/typec/tcpm/tcpci.c
-> >>>>>>@@ -463,6 +463,17 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
-> >>>>>>      else if (status & TCPC_ALERT_TX_FAILED)
-> >>>>>>          tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
-> >>>>>>  +    if (status & TCPC_ALERT_FAULT) {
-> >>>>>
-> >>>>>Wait - the driver doesn't set TCPC_ALERT_FAULT in the alert mask
-> >>>>>register. How can the chip report it if fault alerts are not enabled ?
-> >>>>
-> >>>>Well that I didn't check. But I know this code gets executed so
-> >>>>something must be turning it on.
-> >>>>
-> >>>>Also if I don't clear it I get an unlimited number of interrupts.
-> >>>>
-> >>>>>What am I missing here ?
-> >>>>
-> >>>>Can the power on fault be masked ?
-> >>>>
-> >>>
-> >>>There is a TCPC_ALERT_FAULT mask bit, so I would think so.
-> >>>Can you dump register contents in the irq function and at the end of
-> >>>tcpci_init() ?
-> >>>
-> >>
-> >>Ok so this seems to be related to imx8mq errata e7805:
-> >>
-> >>I2C: When the I2C clock speed is configured for 400 kHz, the SCL low
-> >>period
-> >>violates the I2C spec of
-> >>1.3 uS min
-> >>
-> >>The work around suggested by NXP is to set the clock to 384 kHz so that
-> >>is
-> >>what I did and this is the output:
-> >>
-> >>[    4.091512] device: 'tcpm-source-psy-0-0052': device_add
-> >>[    4.091581] PM: Adding info for No Bus:tcpm-source-psy-0-0052
-> >>[    4.091596] device: 'tcpm-source-psy-0-0052': dev_uevent: class
-> >>uevent()
-> >>returned -11
-> >>[    4.094774] tcpci 0-0052: ALERT MASK 0x7f
-> >>[    4.107869] driver: 'tcpci': driver_bound: bound to device '0-0052'
-> >>[    4.107935] bus: 'i2c': really_probe: bound device 0-0052 to driver
-> >>tcpci
-> >>[    4.110994] tcpci 0-0052: ALERT MASK 0x7f
-> >>[    4.115511] tcpci 0-0052: FAULT ALERT status 0x80
-> >>[    4.126332] tcpci 0-0052: ALERT MASK 0x7f
-> >>[    4.130784] tcpci 0-0052: FAULT ALERT status 0x0
-> >>
-> >>The first "ALERT MASK" is in the init function immediately after setting
-> >>
-> >>        reg = TCPC_ALERT_TX_SUCCESS | TCPC_ALERT_TX_FAILED |
-> >>                TCPC_ALERT_TX_DISCARDED | TCPC_ALERT_RX_STATUS |
-> >>                TCPC_ALERT_RX_HARD_RST | TCPC_ALERT_CC_STATUS;
-> >>        if (tcpci->controls_vbus)
-> >>                reg |= TCPC_ALERT_POWER_STATUS;
-> >>        ret = tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
-> >>
-> >>
-> >>So it looks like the register is correct but the fault interrupt still
-> >>fires. At 200 kHz I get the following output.
-> >>
-> >>[    4.136845] device: 'tcpm-source-psy-0-0052': device_add
-> >>[    4.136943] PM: Adding info for No Bus:tcpm-source-psy-0-0052
-> >>[    4.136966] device: 'tcpm-source-psy-0-0052': dev_uevent: class
-> >>uevent()
-> >>returned -11
-> >>[    4.178510] tcpci 0-0052: ALERT MASK 0x7f
-> >>[    4.217197] driver: 'tcpci': driver_bound: bound to device '0-0052'
-> >>[    4.217371] bus: 'i2c': really_probe: bound device 0-0052 to driver
-> >>tcpci
-> >>
-> >>So this is what is expected no fault interrupt.
-> >>
-> >>Maybe errata e7805 needs an update.
-> >>
-> >>Sorry for the noise.
-> >>
-> >
-> >Let's not jump to conclusions; I don't think this is noise. It is more
-> >likely that the i2c problem uncovers a race condition in tcpci_init().
-> >
-> >In tcpci_init(), we first clear TCPC_ALERT by writing 0xffff into it.
-> >Subsequently, we set TCPC_ALERT_MASK. I suspect what may happen is
-> >that the chip has FAULT_ALERT enabled, and that a fault was logged.
-> >We don't clear the FAULT_STATUS register in tcpci_init(), thus
-> >FAULT_ALERT is immediately set again, before we clear the FAULT_ALERT
-> >mask bit.
-> >
-> 
-> Ok but wouldn't slowing down the bus speed make this more likely to happen
-> than less ?
-> 
-No, I don't think so. After all, FAULT_ALERT should be set again immediately
-if FAULT_STATUS was not cleared. I think the speed problem by itself may
-trigger a fault, and we see the secondary impact of that. Is FAULT_STATUS
-bit 0 (I2C Interface Error Interrupt) set, by any chance ?
+syzbot has bisected this bug to:
 
-Plus, you don't see a fault in the first place with the lower speed, or
-did I miss something ?
+commit e42940e8559c8bbffa8286cc78067c75eb42b374
+Author: Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Tue May 7 01:03:30 2019 +0000
 
-> >The standard says that the alert pin shall not be set if the respective
-> >interrupt is masked, but maybe the chip doesn't follow that. Either case,
-> >the standard does say that masked alerts are still reported in the status
-> >registers, so it is not surprising that the fault status is reported.
-> >
-> >What we should probably do in tcpci_init() is to change the register
-> >initialization order, and to clear the fault status register.
-> >
-> >- Set TCPC_ALERT_MASK
-> >- Set FAULT_STATUS_MASK (to 0)
-> >- Clear TCPC_FAULT_STATUS
-> >- Clear TCPC_ALERT
-> >
-> >I suspect that will fix your problem.
-> >
-> 
-> I'll try and get time to give that a shot.
-> 
-> >Another question is if TCPC_ALERT_FAULT (together with appropriate
-> >FAULT_STATUS_MASK bits) should be enabled, and if faults should be
-> >logged. But that would be a separate patch or patch series.
-> >
-> 
-> I was thinking this too but it also falls into the if I can find time
-> category.
-> 
-Seems like we all have the same problem ...
+     Merge remote-tracking branch 'rdma/for-next'
 
-Thanks,
-Guenter
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1746b4e8a00000
+start commit:   00c3bc00 Add linux-next specific files for 20190507
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=14c6b4e8a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c6b4e8a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=63cd766601c6c9fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=f14868630901fc6151d3
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10fcf758a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1202ffa4a00000
+
+Reported-by: syzbot+f14868630901fc6151d3@syzkaller.appspotmail.com
+Fixes: e42940e8559c ("Merge remote-tracking branch 'rdma/for-next'")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
