@@ -2,149 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4021833F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF66F1811B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 22:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfEIBjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 21:39:40 -0400
-Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:52986 "EHLO
-        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725842AbfEIBjj (ORCPT
+        id S1728001AbfEHUee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 16:34:34 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55542 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726526AbfEHUed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 21:39:39 -0400
-X-Greylist: delayed 18665 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 21:39:38 EDT
-Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
-        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48KF0Mb019738
-        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 16:28:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=NBQDuoaJ1XrW6ALy4NvQGygfurvfzPp5iKN3XvrAFHM=;
- b=tkB1ce0/PlIyySHQi8pc9xhgf6WspqE+kR1rWxurx0p7T1Q4dMEhooftbSuduiLnUIR5
- TFHtcL8u51Y8ZyCVAV+o0SQN3KUY4B++ioNpVX2g/iIRBP2IJP5gv9Z685WCe2LBZELY
- x758QDI96ABHk28dT+kJKnDH+OJH8veV6DhOnsWHk3TlPSceP+iXSG103imIkA6WNFQ2
- C8Rf7xgcCWfV9Zx9IoUyacPsVu8YNG9szHAjPqYyMw92bfTitKPidLmySwwudN/zLU4R
- JWi6+DbCs+6LhPtrvn6s8LSo6Qf9Co42/o/VXyjdUhrf/WLY6gIkT8TiIAj5RNH1ujmj GA== 
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-        by mx0b-00154904.pphosted.com with ESMTP id 2sbe014xgx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 16:28:33 -0400
-Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48KCfvI094764
-        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 16:28:33 -0400
-Received: from ausxippc101.us.dell.com (ausxippc101.us.dell.com [143.166.85.207])
-        by mx0b-00154901.pphosted.com with ESMTP id 2sc32qjtac-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 16:28:32 -0400
-X-LoopCount0: from 10.166.132.128
-X-IronPort-AV: E=Sophos;i="5.60,346,1549951200"; 
-   d="scan'208";a="1233298866"
-From:   <Mario.Limonciello@dell.com>
-To:     <hch@lst.de>
-CC:     <kai.heng.feng@canonical.com>, <kbusch@kernel.org>,
-        <keith.busch@intel.com>, <axboe@fb.com>, <sagi@grimberg.me>,
-        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] nvme-pci: Use non-operational power state instead of D3
- on Suspend-to-Idle
-Thread-Topic: [PATCH] nvme-pci: Use non-operational power state instead of D3
- on Suspend-to-Idle
-Thread-Index: AQHVBdBS/xizqbOjGUOY5SKUREVH6KZh7T4AgAAD4gD//6zksIAAWSuA//+yBvA=
-Date:   Wed, 8 May 2019 20:28:30 +0000
-Message-ID: <b43f2c0078f245398101fa9a40cfc2dc@AUSX13MPC105.AMER.DELL.COM>
-References: <20190508185955.11406-1-kai.heng.feng@canonical.com>
- <20190508191624.GA8365@localhost.localdomain>
- <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
- <f8a043b00909418bad6adcdb62d16e6e@AUSX13MPC105.AMER.DELL.COM>
- <20190508195159.GA1530@lst.de>
-In-Reply-To: <20190508195159.GA1530@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 8 May 2019 16:34:33 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48KCiGj013909
+        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 13:34:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=Qt+4ylLnsNwTDXffLjsnqCa0p2J66ZSO/dTW7jmxMrs=;
+ b=i5gP1jg6fN0KMm6q0bZqZ+iYGFQKj0c1t9mvLuNSGFkqNUhXD1/9xqDcid3Su183xR0L
+ aT5aKwIUhe+VVOfxuoJDmj0XAwJABxHxSUhVPok4tmhvHssnapi4ZzB/z7iCZiJiOp/d
+ I2FVUglTsKu4EHrLYKwDzgrZVZWpwgYebGg= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sc05qshuu-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 13:34:32 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Wed, 8 May 2019 13:34:31 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id E81D811CDD2A0; Wed,  8 May 2019 13:34:30 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Tejun Heo <tj@kernel.org>
+CC:     Oleg Nesterov <oleg@redhat.com>, <kernel-team@fb.com>,
+        <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Qian Cai <cai@lca.pw>, Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] cgroup: never call do_group_exit() with task->frozen bit set
+Date:   Wed, 8 May 2019 13:34:20 -0700
+Message-ID: <20190508203420.580163-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_11:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=624 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905080124
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=711 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905080124
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Christoph Hellwig <hch@lst.de>
-> Sent: Wednesday, May 8, 2019 2:52 PM
-> To: Limonciello, Mario
-> Cc: kai.heng.feng@canonical.com; kbusch@kernel.org; keith.busch@intel.com=
-;
-> axboe@fb.com; hch@lst.de; sagi@grimberg.me; linux-nvme@lists.infradead.or=
-g;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of=
- D3 on
-> Suspend-to-Idle
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Wed, May 08, 2019 at 07:38:50PM +0000, Mario.Limonciello@dell.com wrot=
-e:
-> > The existing routines have an implied assumption that firmware will com=
-e
-> swinging
-> > with a hammer to control the rails the SSD sits on.
-> > With S2I everything needs to come from the driver side and it really is=
- a
-> > different paradigm.
->=20
-> And that is why is this patch is fundamentally broken.
->=20
-> When using the simple pm ops suspend the pm core expects the device
-> to be powered off.  If fancy suspend doesn't want that we need to
-> communicate what to do to the device in another way, as the whole
-> thing is a platform decision.  There probabl is one (or five) methods
-> in dev_pm_ops that do the right thing, but please coordinate this
-> with the PM maintainers to make sure it does the right thing and
-> doesn't for example break either hibernate where we really don't
-> expect just a lower power state, or=20
+I've got two independent reports that cgroup_task_frozen() check
+in cgroup_exit() has been triggered by lkp libhugetlbfs-test and
+LTP ptrace01 tests.
 
-You might think this would be adding runtime_suspend/runtime_resume
-callbacks, but those also get called actually at runtime which is not
-the goal here.  At runtime, these types of disks should rely on APST which
-should calculate the appropriate latencies around the different power state=
-s.
+For example:
+[   44.576072] WARNING: CPU: 1 PID: 3028 at kernel/cgroup/cgroup.c:5932 cgroup_exit+0x148/0x160
+[   44.577724] Modules linked in: crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sr_mod cdrom
+bochs_drm sg ttm ata_generic pata_acpi ppdev drm_kms_helper snd_pcm syscopyarea aesni_intel snd_timer
+sysfillrect sysimgblt snd crypto_simd cryptd glue_helper soundcore fb_sys_fops joydev drm serio_raw pcspkr
+ata_piix libata i2c_piix4 floppy parport_pc parport ip_tables
+[   44.583106] CPU: 1 PID: 3028 Comm: ptrace-write-hu Not tainted 5.1.0-rc3-00053-g9262503 #5
+[   44.584600] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[   44.586116] RIP: 0010:cgroup_exit+0x148/0x160
+[   44.587135] Code: 0f 84 50 ff ff ff 48 8b 85 c8 0c 00 00 48 8b 78 70 e8 ec 2e 00 00 e9 3b ff ff ff f0 ff 43 60
+0f 88 72 21 89 00 e9 48 ff ff ff <0f> 0b e9 1b ff ff ff e8 3c 73 f4 ff 66 90 66 2e 0f 1f 84 00 00 00
+[   44.590113] RSP: 0018:ffffb25702dcfd30 EFLAGS: 00010002
+[   44.591167] RAX: ffff96a7fee32410 RBX: ffff96a7ff1d6000 RCX: dead000000000200
+[   44.592446] RDX: ffff96a7ff1d6080 RSI: ffff96a7fec75290 RDI: ffff96a7fec75290
+[   44.593715] RBP: ffff96a7fec745c0 R08: ffff96a7fec74658 R09: 0000000000000000
+[   44.594985] R10: 0000000000000000 R11: 0000000000000001 R12: ffff96a7fec75101
+[   44.596266] R13: ffff96a7fec745c0 R14: ffff96a7ff3bde30 R15: ffff96a7fec75130
+[   44.597550] FS:  0000000000000000(0000) GS:ffff96a7dd700000(0000) knlGS:0000000000000000
+[   44.598950] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+[   44.600098] CR2: 00000000f7a00000 CR3: 000000000d20e000 CR4: 00000000000406e0
+[   44.601417] Call Trace:
+[   44.602777]  do_exit+0x337/0xc40
+[   44.603677]  do_group_exit+0x3a/0xa0
+[   44.604610]  get_signal+0x12e/0x8d0
+[   44.605533]  ? __switch_to_asm+0x40/0x70
+[   44.606503]  do_signal+0x36/0x650
+[   44.607409]  ? __switch_to_asm+0x40/0x70
+[   44.608383]  ? __schedule+0x267/0x860
+[   44.609329]  exit_to_usermode_loop+0x89/0xf0
+[   44.610349]  do_fast_syscall_32+0x251/0x2e3
+[   44.611357]  entry_SYSENTER_compat+0x7f/0x91
+[   44.612376] ---[ end trace e4ca5cfc4b7f7964 ]---
 
-This code path is only applicable in the suspend to idle state, which /does=
-/
-call suspend/resume functions associated with dev_pm_ops.  There isn't
-a dedicated function in there for use only in suspend to idle, which is
-why pm_suspend_via_s2idle() needs to get called.
+The problem is caused by the ptrace_signal() call in the for loop
+in get_signal(). There is a cgroup_enter_frozen() call inside
+ptrace_signal(), so after exit from ptrace_signal() the task->frozen
+bit might be set. In this case do_group_exit() can be called with the
+task->frozen bit set and trigger the warning. This is only place where
+we can leave the loop with the task->frozen bit set and without
+setting JOBCTL_TRAP_FREEZE and TIF_SIGPENDING.
 
-SIMPLE_DEV_PM_OPS normally sets the same function for suspend and
-freeze (hibernate), so to avoid any changes to the hibernate case it seems
-to me that there needs to be a new nvme_freeze() that calls into the existi=
-ng
-nvme_dev_disable for the freeze pm op and nvme_thaw() that calls into the
-existing nvme_reset_ctrl for the thaw pm op.
+To resolve this problem, let's move cgroup_leave_frozen(true) call to
+just after the fatal label. If the task is going to die, the frozen
+bit must be cleared no matter how we get into this point.
 
-> enterprise class NVMe devices
-> that don't do APST and don't really do different power states at
-> all in many cases.
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Reported-by: Qian Cai <cai@lca.pw>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Roman Gushchin <guro@fb.com>
+---
+ kernel/signal.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Enterprise class NVMe devices that don't do APST - do they typically
-have a non-zero value for ndev->ctrl.npss?
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 16b72f4f14df..8607b11ff936 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2483,10 +2483,6 @@ bool get_signal(struct ksignal *ksig)
+ 		ksig->info.si_signo = signr = SIGKILL;
+ 		sigdelset(&current->pending.signal, SIGKILL);
+ 		recalc_sigpending();
+-		current->jobctl &= ~JOBCTL_TRAP_FREEZE;
+-		spin_unlock_irq(&sighand->siglock);
+-		if (unlikely(cgroup_task_frozen(current)))
+-			cgroup_leave_frozen(true);
+ 		goto fatal;
+ 	}
+ 
+@@ -2608,8 +2604,10 @@ bool get_signal(struct ksignal *ksig)
+ 			continue;
+ 		}
+ 
+-		spin_unlock_irq(&sighand->siglock);
+ 	fatal:
++		spin_unlock_irq(&sighand->siglock);
++		if (unlikely(cgroup_task_frozen(current)))
++			cgroup_leave_frozen(true);
+ 
+ 		/*
+ 		 * Anything else is fatal, maybe with a core dump.
+-- 
+2.20.1
 
-If not, they wouldn't enter this new codepath even if the server entered in=
-to S2I.
