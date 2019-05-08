@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD3817ED1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BFB817ED3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfEHREc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:04:32 -0400
-Received: from mga02.intel.com ([134.134.136.20]:30024 "EHLO mga02.intel.com"
+        id S1728927AbfEHRFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:05:54 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:59494 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728935AbfEHREa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 13:04:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:04:29 -0700
-X-ExtLoop1: 1
-Received: from mayalewx-mobl1.amr.corp.intel.com (HELO [10.255.230.159]) ([10.255.230.159])
-  by fmsmga006.fm.intel.com with ESMTP; 08 May 2019 10:04:27 -0700
-Subject: Re: [PATCH v2 2/2] ASoC: Intel: Skylake: Add Cometlake PCI IDs
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Naveen M <naveen.m@intel.com>,
-        Sathya Prakash <sathya.prakash.m.r@intel.com>,
-        Ben Zhang <benzh@chromium.org>,
-        Rajat Jain <rajatja@chromium.org>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Yu Zhao <yuzhao@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Jenny TC <jenny.tc@intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>
-References: <20190507215359.113378-1-evgreen@chromium.org>
- <20190507215359.113378-3-evgreen@chromium.org>
- <866afac2-e457-375b-d745-88952b11d75e@linux.intel.com>
- <CAE=gft4sDo1cLeU8Cm1CRZu2PzVG0iu-b7UaWxWVrsUeZ=SYhQ@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <6fd9ca2b-dcf6-801f-209e-11eba59203fe@linux.intel.com>
-Date:   Wed, 8 May 2019 12:04:27 -0500
+        id S1728702AbfEHRFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 13:05:53 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.141])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hOQ0s-0001ya-OA; Wed, 08 May 2019 11:05:51 -0600
+To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-mm@kvack.org
+References: <155727335978.292046.12068191395005445711.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <059859ca-3cc8-e3ff-f797-1b386931c41e@deltatee.com>
+Date:   Wed, 8 May 2019 11:05:46 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft4sDo1cLeU8Cm1CRZu2PzVG0iu-b7UaWxWVrsUeZ=SYhQ@mail.gmail.com>
+In-Reply-To: <155727335978.292046.12068191395005445711.stgit@dwillia2-desk3.amr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, rafael@kernel.org, gregkh@linuxfoundation.org, jglisse@redhat.com, hch@lst.de, bhelgaas@google.com, ira.weiny@intel.com, akpm@linux-foundation.org, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v2 0/6] mm/devm_memremap_pages: Fix page release race
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,38 +53,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 5/8/19 11:51 AM, Evan Green wrote:
-> On Tue, May 7, 2019 at 3:31 PM Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
->>
->> On 5/7/19 4:53 PM, Evan Green wrote:
->>> Add PCI IDs for Intel CometLake platforms, which from a software
->>> point of view are extremely similar to Cannonlake platforms.
->>
->> Humm, I have mixed feelings here.
->>
->> Yes the hardware is nearly identical, with the exception of one detail
->> that's not visible to the kernel, but there is no support for DMICs with
->> the Skylake driver w/ HDaudio, and Chrome platforms are only going with
->> SOF, so is it wise to add these two CometLake platforms to the default
->> SND_SOC_INTEL_SKYLAKE selector, which is used by a number of distributions?
->>
->> I don't mind if we add those PCI IDs and people use this driver if they
->> wish to, but it may be time for an explicit opt-in? The
->> SND_SOC_INTEL_SKYLAKE definition should even be pruned to mean SKL, APL,
->> KBL and GLK, and we can add DMI-based quirks for e.g. the Up2 board and
->> GLK Chromebooks which work with SOF.
+On 2019-05-07 5:55 p.m., Dan Williams wrote:
+> Changes since v1 [1]:
+> - Fix a NULL-pointer deref crash in pci_p2pdma_release() (Logan)
 > 
-> I don't have the context here, so feel free to ignore me. But it seems
-> like such a tiny amount of extra bits to add to make Cometlake work,
-> and then there's no hassle for the distributions when Cometlake
-> devices start showing up in the wild. So while things are more or less
-> the same, why not continue piggypacking off the default?
-> Or are you saying that the lack of DMIC support means the default
-> should be to use a different driver?
+> - Refresh the p2pdma patch headers to match the format of other p2pdma
+>    patches (Bjorn)
+> 
+> - Collect Ira's reviewed-by
+> 
+> [1]: https://lore.kernel.org/lkml/155387324370.2443841.574715745262628837.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-Yes, it's the latter case, SOF will be the only driver supporting DMICs 
-on CometLake, so it'd be better to avoid creating a conflict with SOF or 
-enabling a configuration by default which is known to have restrictions. 
-It's fine to add the CML IDs, but better avoid adding CML under the 
-SKYLAKE all-you-can-eat selector.
+This series looks good to me:
+
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+
+However, I haven't tested it yet but I intend to later this week.
+
+Thanks,
+
+Logan
