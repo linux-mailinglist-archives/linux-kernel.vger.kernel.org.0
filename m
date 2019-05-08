@@ -2,140 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7960A17895
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B5D1788D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbfEHLpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:45:36 -0400
-Received: from mail-eopbgr70043.outbound.protection.outlook.com ([40.107.7.43]:35296
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727516AbfEHLpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:45:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W+TPNrzvi/1820Qpxi3wFI+Ele0govb6yjqQQxOjmkE=;
- b=QDEQAXHLVWEh+fU5i/qvxuUD3Ner9H3W0l5idlK7gJC2pGdpGqPWLVJ1tQQoxGI+wTVODie2St2oGK4mERarDEvKaJvaiCSP/aW23Xn7mw1fMmrlazLVU1Acodyu335Lsh14huym/1MyvSzyYvz1fAsIRv1KFnjjtew3GuYTmjA=
-Received: from AM0PR04MB4353.eurprd04.prod.outlook.com (52.134.125.146) by
- AM0PR04MB4900.eurprd04.prod.outlook.com (20.176.215.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.11; Wed, 8 May 2019 11:44:50 +0000
-Received: from AM0PR04MB4353.eurprd04.prod.outlook.com
- ([fe80::e4fe:fbdc:448b:c8a6]) by AM0PR04MB4353.eurprd04.prod.outlook.com
- ([fe80::e4fe:fbdc:448b:c8a6%7]) with mapi id 15.20.1856.012; Wed, 8 May 2019
- 11:44:50 +0000
-From:   Chuanhua Han <chuanhua.han@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "eha@deif.com" <eha@deif.com>,
-        "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        Sumit Batra <sumit.batra@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "peda@axentia.se" <peda@axentia.se>
-Subject: RE: [EXT] Re: [PATCH 1/3] dt-bindings: i2c: add optional mul-value
- property to binding
-Thread-Topic: [EXT] Re: [PATCH 1/3] dt-bindings: i2c: add optional mul-value
- property to binding
-Thread-Index: AQHU/w2TnpxPP+I5F0qza5MEhbqLjaZYVaGAgAjSSRA=
-Date:   Wed, 8 May 2019 11:44:50 +0000
-Message-ID: <AM0PR04MB43537B281229FA847CE6F2B897320@AM0PR04MB4353.eurprd04.prod.outlook.com>
-References: <20190430043242.29687-1-chuanhua.han@nxp.com>
- <20190502205901.GA24224@bogus>
-In-Reply-To: <20190502205901.GA24224@bogus>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=chuanhua.han@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 23cc3d6f-e9fd-4bd2-5f0e-08d6d3aa9469
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4900;
-x-ms-traffictypediagnostic: AM0PR04MB4900:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <AM0PR04MB4900F9D38DF0061A5F94B19997320@AM0PR04MB4900.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0031A0FFAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(396003)(366004)(346002)(13464003)(199004)(189003)(26005)(6506007)(229853002)(53546011)(6116002)(68736007)(186003)(6246003)(52536014)(3846002)(102836004)(44832011)(76116006)(53936002)(73956011)(66476007)(66946007)(66556008)(64756008)(5660300002)(99286004)(33656002)(66446008)(54906003)(76176011)(7696005)(6916009)(4326008)(476003)(6436002)(81166006)(8936002)(8676002)(81156014)(86362001)(74316002)(316002)(25786009)(305945005)(256004)(14454004)(11346002)(486006)(7736002)(55016002)(71190400001)(478600001)(7416002)(2906002)(446003)(9686003)(66066001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4900;H:AM0PR04MB4353.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gNtAN+HISg0AeBlQlH2qKuKbAv9iCxy3QfLV1KyxHBlBLQgaKl0fOvWL1nbyZtHCoWrMONHx60WxNZibSNRFDNAi33AeRs1Ey/4mvNacdLihoOaLRi0XtEodeI+5A4gVoGupaRTtl21aNqZiLvHSciQjclfXrl67NhRFS5i5Fh7s+DC+HVT6EoPHoDkkXzs63KQERT+l8NxweuM9vmwubcugyZ9I9JwQF2Xi4hQCKBN9zJbthG2VzSe/cqqvO7DVkbzoXpwBGHnGkGtUFrbdCvEx1Aa6yclHw1lioZ5P/NQF4PQGaivmmrFrxxjgLfqaGUGfl4jRWTdnMowSLdkg3nh4QjXrwdo3ynbOGd4RV9WrR1L0MQfpfOoj6zGO6JJgGiGS3/+nLlZdokx7ScPnd4dHXcbG+fPF0XA7pajstNk=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1727872AbfEHLpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:45:02 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50231 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfEHLpB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:45:01 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p21so2880224wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=l3GvcY7+LxbIORg1GuBtuIu7AC5wBX2cmnXnWgsKaLM=;
+        b=gomqhzozH1rPJo3UJO0LZmi16/eDaOhei9FnFZbmPkMw+Ae+GpcAXhcWY/fbEQ7Mcd
+         jfm+RSPSYQH+M2R/mAdCvtQ2z7hEmftDMLlfvH1EQhWzs/Y9dAEcQ0zrv/WMy2Jz/bVI
+         s8gRF2XMt7TNmzxX9sRGkt/DlL97XTbncGL8s1KPNtiR4SKKtALPOzi6BQVgtgLyvpdL
+         gGO8tvk6um9LyLYMLIV0uOffPgRE0mlHJm+VaQiSUaSiMC149so0mcLKfzNW2Nu54BV9
+         ezygmQAuvEgCeK3CrKIz0EqNqgcgwWbLODiLXKjl0ZwSYyRpWJS+esOiqDdy6r5XNqIF
+         tDNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=l3GvcY7+LxbIORg1GuBtuIu7AC5wBX2cmnXnWgsKaLM=;
+        b=lg6/ialFxbi/KVil47ARos0VLeWu3AWdWKYGwnA6ZI/CL0ZKjGxBgdASftvTVy0Z7x
+         NMCU3yAOvMytsvrBtJhT1/lV9E4b7JuxJhceUE8LgWY+IK08MCLXnWLgifMjIag8x22I
+         YucjtxXUNG++BXgBrotNNzAs/+tetnTf7qG/8FOej19jZK7z13PiV9vINJMO6qhwrV3T
+         biVK2y/duoRKiwsyrm8l+PWdIjirlEHoTXWF2JYMjMSMEZ55m3NBe7B7cm3ONLgu01wH
+         /u/aA/oJA40qI0oQlyuTImSteFvxs2mQWdWzJOR87A4kbYbMmpl8zSvD7HVOPUEW0TU1
+         G8oA==
+X-Gm-Message-State: APjAAAWxb0rLTyiLQ7JV3ynmX22kYRZhjhbW/35ACSfQM4VNyYH7+44j
+        /8seKyXD03pZSruty3ULoVdYpQ==
+X-Google-Smtp-Source: APXvYqzbsOXVFvnhQCKFgeir9JCHCmFZIU6UKosT98os4blSJ2GmkYH6+ek8sOTv5dGFKfg8zfirIg==
+X-Received: by 2002:a7b:c3c3:: with SMTP id t3mr2714770wmj.88.1557315899750;
+        Wed, 08 May 2019 04:44:59 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id m8sm28373099wrg.18.2019.05.08.04.44.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 04:44:58 -0700 (PDT)
+Date:   Wed, 8 May 2019 12:44:56 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 5/7] dt-bindings: mfd: Add H6 GPADC binding
+Message-ID: <20190508114456.GF31645@dell>
+References: <20190503072813.2719-1-tiny.windzz@gmail.com>
+ <20190503072813.2719-6-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23cc3d6f-e9fd-4bd2-5f0e-08d6d3aa9469
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 11:44:50.6009
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4900
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190503072813.2719-6-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgPHJv
-YmhAa2VybmVsLm9yZz4NCj4gU2VudDogMjAxOcTqNdTCM8jVIDQ6NTkNCj4gVG86IENodWFuaHVh
-IEhhbiA8Y2h1YW5odWEuaGFuQG54cC5jb20+DQo+IENjOiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsg
-c2hhd25ndW9Aa2VybmVsLm9yZzsgcy5oYXVlckBwZW5ndXRyb25peC5kZTsNCj4gTGVvIExpIDxs
-ZW95YW5nLmxpQG54cC5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZp
-Y2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOw0KPiBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7
-IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyBmZXN0ZXZhbUBnbWFpbC5jb207
-DQo+IHdzYStyZW5lc2FzQHNhbmctZW5naW5lZXJpbmcuY29tOyB1LmtsZWluZS1rb2VuaWdAcGVu
-Z3V0cm9uaXguZGU7DQo+IGVoYUBkZWlmLmNvbTsgbGludXhAcmVtcGVsLXByaXZhdC5kZTsgU3Vt
-aXQgQmF0cmEgPHN1bWl0LmJhdHJhQG54cC5jb20+Ow0KPiBsLnN0YWNoQHBlbmd1dHJvbml4LmRl
-OyBwZWRhQGF4ZW50aWEuc2UNCj4gU3ViamVjdDogW0VYVF0gUmU6IFtQQVRDSCAxLzNdIGR0LWJp
-bmRpbmdzOiBpMmM6IGFkZCBvcHRpb25hbCBtdWwtdmFsdWUNCj4gcHJvcGVydHkgdG8gYmluZGlu
-Zw0KPiANCj4gQ2F1dGlvbjogRVhUIEVtYWlsDQo+IA0KPiBPbiBUdWUsIEFwciAzMCwgMjAxOSBh
-dCAxMjozMjo0MFBNICswODAwLCBDaHVhbmh1YSBIYW4gd3JvdGU6DQo+ID4gTlhQIExheWVyc2Nh
-cGUgU29DIGhhdmUgdXAgdG8gdGhyZWUgTVVMIG9wdGlvbnMgYXZhaWxhYmxlIGZvciBhbGwNCj4g
-PiBkaXZpZGVyIHZhbHVlcywgd2UgY2hvaWNlIG9mIE1VTCBkZXRlcm1pbmVzIHRoZSBpbnRlcm5h
-bCBtb25pdG9yIHJhdGUNCj4gPiBvZiB0aGUgSTJDIGJ1cyAoU0NMIGFuZCBTREEgc2lnbmFscyk6
-DQo+ID4gQSBsb3dlciBNVUwgdmFsdWUgcmVzdWx0cyBpbiBhIGhpZ2hlciBzYW1wbGluZyByYXRl
-IG9mIHRoZSBJMkMgc2lnbmFscy4NCj4gPiBBIGhpZ2hlciBNVUwgdmFsdWUgcmVzdWx0cyBpbiBh
-IGxvd2VyIHNhbXBsaW5nIHJhdGUgb2YgdGhlIEkyQyBzaWduYWxzLg0KPiA+DQo+ID4gU28gaW4g
-T3B0aW9uYWwgcHJvcGVydGllcyB3ZSBhZGRlZCBvdXIgY3VzdG9tIG11bC12YWx1ZSBwcm9wZXJ0
-eSBpbg0KPiA+IHRoZSBiaW5kaW5nIHRvIHNlbGVjdCB3aGljaCBtdWwgb3B0aW9uIGZvciB0aGUg
-ZGV2aWNlIHRyZWUgaTJjDQo+ID4gY29udHJvbGxlciBub2RlLg0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogQ2h1YW5odWEgSGFuIDxjaHVhbmh1YS5oYW5AbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMtaW14LnR4dCB8IDMgKysr
-DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1pbXgudHh0DQo+
-ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1pbXgudHh0DQo+
-ID4gaW5kZXggYjk2NzU0NDU5MGU4Li5iYThlN2I3YjNmYTggMTAwNjQ0DQo+ID4gLS0tIGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMtaW14LnR4dA0KPiA+ICsrKyBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLWlteC50eHQNCj4gPiBA
-QCAtMTgsNiArMTgsOSBAQCBPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICAtIHNkYS1ncGlvczog
-c3BlY2lmeSB0aGUgZ3BpbyByZWxhdGVkIHRvIFNEQSBwaW4NCj4gPiAgLSBwaW5jdHJsOiBhZGQg
-ZXh0cmEgcGluY3RybCB0byBjb25maWd1cmUgaTJjIHBpbnMgdG8gZ3BpbyBmdW5jdGlvbiBmb3Ig
-aTJjDQo+ID4gICAgYnVzIHJlY292ZXJ5LCBjYWxsIGl0ICJncGlvIiBzdGF0ZQ0KPiA+ICstIG11
-bC12YWx1ZTogTlhQIExheWVyc2NhcGUgU29DIGhhdmUgdXAgdG8gdGhyZWUgTVVMIG9wdGlvbnMN
-Cj4gPiArYXZhaWxhYmxlIGZvciBhbGwgSTJDIGRpdmlkZXIgdmFsdWVzLCBpdCBkZXNjcmliZXMg
-d2hpY2ggTVVMIHdlDQo+ID4gK2Nob29zZSB0byB1c2UgZm9yIHRoZSBkcml2ZXIsIHRoZSB2YWx1
-ZXMgc2hvdWxkIGJlIDEsMiw0Lg0KPiANCj4gTmVlZHMgYSB2ZW5kb3IgcHJlZml4LiBJIGRvbid0
-IGZpbmQgJ3ZhbHVlJyB0byBhZGQgYW55dGhpbmcgbm9yIGRvIEkgdW5kZXJzdGFuZA0KPiB3aGF0
-IE1VTCBpcy4NClllcyx5b3UgYXJlIHJpZ2h0IQ0KPiANCj4gSWYgaXQgaXMgZGV0ZXJtaW5lZCBi
-eSBTb0MgcmF0aGVyIHRoYW4gYm9hcmQsIHRoZW4gaXQgc2hvdWxkIHBlcmhhcHMgYmUgaW1wbGll
-ZA0KPiBieSBjb21wYXRpYmxlLg0KVGhpcyBpcyBkZXRlcm1pbmVkIGJ5IHRoZSBTT0MsIGJ1dCBp
-dCBoYXMgdGhyZWUgb3B0aW9ucyB0byBjaG9vc2UgZnJvbSwgDQpzbyBJIHRoaW5rIGl0J3MgYmV0
-dGVyIHRvIHVzZSB0aGUgb3B0aW9uYWwgb3B0aW9uIGluc3RlYWQgb2YgY29tcGF0aWJsZQ0KDQo+
-IA0KPiBSb2INCg==
+On Fri, 03 May 2019, Yangtao Li wrote:
+
+> This patch adds documentation for the H6 GPADC binding.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/sun4i-gpadc.txt   | 27 +++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/sun4i-gpadc.txt b/Documentation/devicetree/bindings/mfd/sun4i-gpadc.txt
+> index 86dd8191b04c..eeaf27eb8abd 100644
+> --- a/Documentation/devicetree/bindings/mfd/sun4i-gpadc.txt
+> +++ b/Documentation/devicetree/bindings/mfd/sun4i-gpadc.txt
+> @@ -5,11 +5,22 @@ and sometimes as a touchscreen controller.
+>  
+>  Required properties:
+>    - compatible: "allwinner,sun8i-a33-ths",
+> +		"allwinner,sun50i-h6-ths",
+>    - reg: mmio address range of the chip,
+> -  - #thermal-sensor-cells: shall be 0,
+> +  - #thermal-sensor-cells: shall be 0 for sun8i-a33-ths,
+> +			   shall be 1 for sun50i-h6-ths,
+>    - #io-channel-cells: shall be 0,
+>  
+> -Example:
+> +Optional properties:
+> +  - clocks: Must contain an entry for each entry in clock-names.
+> +	    See common clock-bindings.txt for details.
+
+Nit: This should be a relative path, like the reset.txt below.
+
+> +  - clock-names: A list of clock names. For sun50i-h6-ths, it must contain
+> +		 "bus".
+> +  - resets: Must contain an entry for each entry in reset-names.
+> +	    See ../reset/reset.txt for details.
+> +  - reset-names: For sun50i-h6-ths, it must contain "bus".
+> +
+> +Example1:
+>  	ths: ths@1c25000 {
+>  		compatible = "allwinner,sun8i-a33-ths";
+>  		reg = <0x01c25000 0x100>;
+> @@ -17,6 +28,18 @@ Example:
+>  		#io-channel-cells = <0>;
+>  	};
+>  
+> +Example2:
+> +	ths: ths@1c25000 {
+> +		compatible = "allwinner,sun50i-h6-ths";
+> +		reg = <0x05070400 0x100>;
+> +		clocks = <&ccu CLK_BUS_THS>;
+> +		clock-names = "bus";
+> +		resets = <&ccu RST_BUS_THS>;
+> +		reset-names = "bus";
+> +		#thermal-sensor-cells = <1>;
+> +		#io-channel-cells = <0>;
+> +       };
+> +
+>  sun4i, sun5i and sun6i SoCs are also supported via the older binding:
+>  
+>  sun4i resistive touchscreen controller
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
