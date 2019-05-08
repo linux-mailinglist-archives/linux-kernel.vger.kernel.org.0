@@ -2,129 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E58517303
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1FF61736A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:14:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfEHHzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 03:55:44 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39130 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfEHHzo (ORCPT
+        id S1727082AbfEHION (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:14:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49522 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbfEHIOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 03:55:44 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n25so1928117wmk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 00:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0Gr0Qy8GhHQL5FDN6Sb65QrZiaFId6NzqBnXh3CcKJw=;
-        b=sBELBBhLVs7gRIbzZOArljmnDmVyCYZOrbVTmb6+H+zDz3EI8ApUbljXjh/Q+/4SEd
-         dH9nXvnWtB3Xhih2sDlwyRHIVT3Lnq5D8NcwbD/KuGmz/ZEFEbjUTbiBtq/8xB9MSOD5
-         CSiZuYIrWu1pzT/4RC2lzphjcF5bBZMFD+fv+YGCArfdziG3iOfbxLPjuACu78tg6MWV
-         ZGS7Iz+mYFYYXwOv9dgDUjXHk7Fink4Pg2IjroIrjf+RlY2U4HRMEmuR0USQ9Sgt828f
-         4gfQcQotWiZYTgWCWSX402U30CZ41iA4a0dAn6EmRAy3kjHdbBvmHo8EJX6m5ArbGq2r
-         tZGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0Gr0Qy8GhHQL5FDN6Sb65QrZiaFId6NzqBnXh3CcKJw=;
-        b=IwUT5fVDKE+PjHkci5NbjOIxNS0mPBi8pTkldb9tmrZDkOOP+mKyir+XzJXxqhlaVH
-         xaKRg8lNqu2aeDCTJLFpOfGz75WgocXvo0hNwH33Gt6u/mhqRzf+hWN93RcA27CQ6jpH
-         ossO9OdKUuLdA+1FNtyFK9LKJgjRkChTtENVh5B0SgQwxmHpSMhDwkBE6FLnErWkePZu
-         Az+eNEdd8YhW4K7/trqDCfRBitc2VZwRKTrFaE1AVfK0CdskCE5EJB52NhMKN0Eb4swV
-         9ejCBE4lZyp1+7iGNSE/j9sARyBleUEXGyfOeRWsOSOANwWu1H5eRL6GnUnRjQcK8QZQ
-         UzWQ==
-X-Gm-Message-State: APjAAAWZtwLexVDVqNsE/yBXve1MR1mgeuV3vdp8PoRUzrM+Us44Z4YA
-        B+yZ4nJOVh7VfPIJHPMO7eq4Uw==
-X-Google-Smtp-Source: APXvYqzzmCqA4/VUYubcXHP6qXo6VDxF15/Tsx0HAz5ycflpFzihsH4TO+R9oY3ivo6jDPtIAHMWxg==
-X-Received: by 2002:a1c:e912:: with SMTP id q18mr1864181wmc.137.1557302142489;
-        Wed, 08 May 2019 00:55:42 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id g12sm2739646wmh.17.2019.05.08.00.55.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 00:55:41 -0700 (PDT)
-Date:   Wed, 8 May 2019 08:55:40 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, bleung@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, dtor@chromium.org,
-        Vincent Palatin <vpalatin@chromium.org>
-Subject: Re: [PATCH] mfd: cros_ec_dev: Add a poll handler to receive MKBP
- events
-Message-ID: <20190508075540.GA3995@dell>
-References: <20190308123659.16101-1-enric.balletbo@collabora.com>
- <20190402040647.GM4187@dell>
- <c6cd7740-c3aa-6420-a789-735179ba59b4@collabora.com>
+        Wed, 8 May 2019 04:14:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l5Y5i3eRCqYRgt3e1Ma9Hecy5GcV6/iBwz5+8XPfAXM=; b=RBJSH9tCVR6Huv/cwWA7spPeB
+        EDt69CjtM1i/9zs8MbFr5smH25c6mQofGkh5xnp6wcU7NduqNkRdkHWRqs+B5QXh+f3xTcq9A9G6d
+        C0ttZlj7Q20bYzHVfeqXhLxfm2Y3HtP+gGiUNYsfJRgCXy9WSPF1peP3HLRb8Fi9AyOaE=;
+Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hOHiE-0007RY-TF; Wed, 08 May 2019 08:14:03 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id E7DE144000C; Wed,  8 May 2019 08:55:42 +0100 (BST)
+Date:   Wed, 8 May 2019 16:55:42 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/6] regulator: core: Introduce API for
+ machine-specific regulators coupling
+Message-ID: <20190508075542.GV14916@sirena.org.uk>
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Pv0wy+ojp4n+t/Vq"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c6cd7740-c3aa-6420-a789-735179ba59b4@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190414175939.12368-2-digetx@gmail.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 08 Apr 2019, Enric Balletbo i Serra wrote:
 
-> Hi Lee,
-> 
-> On 2/4/19 6:06, Lee Jones wrote:
-> > On Fri, 08 Mar 2019, Enric Balletbo i Serra wrote:
-> > 
-> >> From: Vincent Palatin <vpalatin@chromium.org>
-> >>
-> >> Allow to poll on the cros_ec device to receive the MKBP events.
-> >>
-> >> The /dev/cros_[ec|fp|..] file operations now implements the poll
-> >> operation. The userspace can now receive specific MKBP events by doing the
-> >> following:
-> >> - Open the /dev/cros_XX file.
-> >> - Call the CROS_EC_DEV_IOCEVENTMASK ioctl with the bitmap of the MKBP
-> >>   events it wishes to receive as argument.
-> >> - Poll on the file descriptor.
-> >> - When it gets POLLIN, do a read on the file descriptor, the first
-> >>   queued event will be returned (using the struct
-> >>   ec_response_get_next_event format: one byte of event type, then
-> >>   the payload).
-> >>
-> >> The read() operation returns at most one event even if there are several
-> >> queued, and it might be truncated if the buffer is smaller than the
-> >> event (but the caller should know the maximum size of the events it is
-> >> reading).
-> >>
-> >> read() used to return the EC version string, it still does it when no
-> >> event mask or an empty event is set for backward compatibility (despite
-> >> nobody really using this feature).
-> >>
-> >> This will be used, for example, by the userspace daemon to receive and
-> >> treat the EC_MKBP_EVENT_FINGERPRINT sent by the FP MCU.
-> > 
-> > MFD does not seem like the correct place for this.  Maybe this is a
-> > good candidate for drivers/platform/chrome/* where the rest of your
-> > platform empire now resides.
-> > 
-> 
-> The patch itself can't be moved without moving other parts, this would imply
-> move all the file_operations and the chardev, those already resides in MFD, and
-> some event handling. Is this what you're suggesting?
+--Pv0wy+ojp4n+t/Vq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-That would make the most sense, yes.
+On Sun, Apr 14, 2019 at 08:59:34PM +0300, Dmitry Osipenko wrote:
+> Right now regulator core supports only one type of regulators coupling,
+> the "voltage max-spread" which keeps voltages of coupled regulators in a
+> given range. A more sophisticated coupling may be required in practice,
+> one example is the NVIDIA Tegra SoC's which besides the max-spreading
+> have other restrictions that must be adhered. Introduce API that allow
+> platforms to provide their own custom coupling algorithms.
 
-This whole Embedded Controller thing far extends the bounds of what
-MFD was designed to do.  Hence why a great deal of it has already been
-moved out to drivers/platform.
+This is really concerning since it's jumping straight to open coding the
+algorithm in platform specific code which isn't great, especially since
+that platform specific code is now going to have to handle all possible
+board specific restrictions that might be found on that platform.  Why
+is it not possible to express the rules that exist in a more general
+fashion which can be encoded in drivers?  I'm not thrilled about later
+patches that export core functionality for platform specific use either.
 
-> If that's the case I need to look in more detail.
+--Pv0wy+ojp4n+t/Vq
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSi34ACgkQJNaLcl1U
+h9D1UAf/UAwJK/b/t/+xtrLdSj2q7XnjDc+jt0JG8fzPdnxULJenEbdnDLSPd+S0
+VNe0KuOFhyWYAaY9E12iBe8Z3akZ3z5DviE5KODSYlmU9mf4wRgzuC828Ho3Z8Nz
+ffbbBWmVu8/3F1OJktrfiuX1e52z25LmXT0c9XNa/EFi1XeMISR9Ghi/Q3sfG45u
+1w4eeq2pVflE13N5vtu20vqOpjo3Z8glftnxFN1htIEDAhuhaKSTnmotr9dqQyML
+lujag20oYDVKTtb18ZiFnJSEdfYeHqDdiz6BwvOyGwmupyIqS62xe0/h+nyjgMyM
+jK5+9dcG0cRbL3BRsuekodVatgxo1A==
+=R/Xh
+-----END PGP SIGNATURE-----
+
+--Pv0wy+ojp4n+t/Vq--
