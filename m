@@ -2,98 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E08317364
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282251736B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfEHINX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:13:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48244 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfEHINW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:13:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pkLrRM8WwERKArH5Dv/+tMtKVp5mCK9iWIXDavXWmDQ=; b=hE7eLT+9OnW9jXDsqOAzlbnaq
-        UxB75RtNBP5JXBawrzP51jpflo7rSj2vVrhYlBF3OQZVoQ3UulYCHI/qAgA0TEaF0dvLk+AAMZKr9
-        WICI1mezyowfhM6Bwwaj6my6T8djibMVhareRgZ1LKmY45IvORgSOt4fj9n2ZLBSoUBWc=;
-Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hOHh1-0007RG-IF; Wed, 08 May 2019 08:12:48 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 6ECD7440034; Wed,  8 May 2019 09:12:40 +0100 (BST)
-Date:   Wed, 8 May 2019 17:12:40 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "brian.austin@cirrus.com" <brian.austin@cirrus.com>,
-        "Paul.Handrigan@cirrus.com" <Paul.Handrigan@cirrus.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: cs42xx8: Add reset gpio handling
-Message-ID: <20190508081240.GA14916@sirena.org.uk>
-References: <1556534756-15630-1-git-send-email-shengjiu.wang@nxp.com>
+        id S1727099AbfEHIOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:14:24 -0400
+Received: from mail.sssup.it ([193.205.80.98]:59616 "EHLO mail.santannapisa.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726834AbfEHIOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:14:23 -0400
+Received: from [83.43.182.198] (account l.abeni@santannapisa.it HELO nowhere)
+  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
+  with ESMTPSA id 138918671; Wed, 08 May 2019 10:14:21 +0200
+Date:   Wed, 8 May 2019 10:14:14 +0200
+From:   luca abeni <luca.abeni@santannapisa.it>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC PATCH 3/6] sched/dl: Try better placement even for
+ deadline tasks that do not block
+Message-ID: <20190508101414.1c968810@nowhere>
+In-Reply-To: <20190508080116.GE6551@localhost.localdomain>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+        <20190506044836.2914-4-luca.abeni@santannapisa.it>
+        <20190508080116.GE6551@localhost.localdomain>
+Organization: Scuola Superiore S.Anna
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H6fQM4Loq/u8aogQ"
-Content-Disposition: inline
-In-Reply-To: <1556534756-15630-1-git-send-email-shengjiu.wang@nxp.com>
-X-Cookie: -- I have seen the FUN --
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Juri,
 
---H6fQM4Loq/u8aogQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 8 May 2019 10:01:16 +0200
+Juri Lelli <juri.lelli@redhat.com> wrote:
 
-On Mon, Apr 29, 2019 at 10:46:03AM +0000, S.j. Wang wrote:
+> Hi Luca,
+> 
+> On 06/05/19 06:48, Luca Abeni wrote:
+> > From: luca abeni <luca.abeni@santannapisa.it>
+> > 
+> > Currently, the scheduler tries to find a proper placement for
+> > SCHED_DEADLINE tasks when they are pushed out of a core or when
+> > they wake up. Hence, if there is a single SCHED_DEADLINE task
+> > that never blocks and wakes up, such a task is never migrated to
+> > an appropriate CPU core, but continues to execute on its original
+> > core.
+> > 
+> > This commit addresses the issue by trying to migrate a
+> > SCHED_DEADLINE task (searching for an appropriate CPU core) the
+> > first time it is throttled.  
+> 
+> Why we failed to put the task on a CPU with enough (max) capacity
+> right after it passed admission control? The very first time the task
+> was scheduled I mean.
 
-> +	cs42xx8->gpio_reset =3D of_get_named_gpio(dev->of_node, "gpio-reset", 0=
-);
-> +	if (gpio_is_valid(cs42xx8->gpio_reset)) {
-> +		ret =3D devm_gpio_request_one(dev, cs42xx8->gpio_reset,
-> +				GPIOF_OUT_INIT_LOW, "cs42xx8 reset");
+I think the currently executing task cannot be pushed out of a
+CPU/core, right?
 
-You should just be able to request the GPIO by name without going
-through of_get_named_gpio() using devm_gpio_get().
+So, if a task switches from SCHED_OTHER to SCHED_DEADLINE while it is
+executing on a fast core, the only way to migrate it would be to
+preempt it (by using the stop_sched_class, I think), no?
+(the typical situation here is a "cpu hog" task that switches from
+SCHED_OTHER to SCHED_DEADLINE, and it is the only SCHED_DEADLINE
+task... The task never blocks, so push/pull functions are never invoked)
 
-> @@ -559,6 +577,7 @@ static int cs42xx8_runtime_resume(struct device *dev)
-> =20
->  	regcache_cache_only(cs42xx8->regmap, false);
-> =20
-> +	regcache_mark_dirty(cs42xx8->regmap);
->  	ret =3D regcache_sync(cs42xx8->regmap);
->  	if (ret) {
->  		dev_err(dev, "failed to sync regmap: %d\n", ret);
+Or am I missing something?
 
-This looks like an unrelated bugfix.
 
---H6fQM4Loq/u8aogQ
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSj3cACgkQJNaLcl1U
-h9DXlAf+NZvbXIKXu1i3ZnsLWQy9duLtWvd5Tqm52AG4yzPuCM4MW7+jUxPLDQz/
-TX/C3cXHNDXdERXQbOBIUli6xRFu/4Nom56dXbLPbWiA77RNwAC5LuX+BEJJc5xa
-mEUtDpoXFU3/+V5y9iSYRTwWW0JVq06LI/lFfhC0DfB8aHVzBJAVzWGMMt4uh1fA
-IZxiKXGNU53fqM9SMtb1FJ8t5lZHwqRK1Ra/2fe0yivHq3+m71ZQXkCfy5DYDlnX
-m3iew6+A0bDr+z0cdJmA8jgIAGyy6Po/+iYIASerYPGH3kJoFMytubH+fB+uVieP
-QZCtbRlG+JJtBuBBHjivJk2UQvyWlQ==
-=nWb3
------END PGP SIGNATURE-----
-
---H6fQM4Loq/u8aogQ--
+			Thanks,
+				Luca
