@@ -2,75 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96EEE17A33
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A98117B29
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbfEHNRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 09:17:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:42061 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727506AbfEHNRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 09:17:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 06:17:52 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga001.fm.intel.com with ESMTP; 08 May 2019 06:17:50 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hOMSD-0000ml-Sq; Wed, 08 May 2019 16:17:49 +0300
-Date:   Wed, 8 May 2019 16:17:49 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-scsi@vger.kernel.org, gregkh@linuxfoundation.org,
-        jic23@kernel.org, lars@metafoo.de
-Subject: Re: [PATCH 3/3][V3] iio: Handle enumerated properties with gaps
-Message-ID: <20190508131749.GM9224@smile.fi.intel.com>
-References: <20190508111913.7276-1-alexandru.ardelean@analog.com>
- <20190508111913.7276-3-alexandru.ardelean@analog.com>
+        id S1727304AbfEHN7O convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 09:59:14 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:34585
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726481AbfEHN7O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 09:59:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id C501EB5354F;
+        Wed,  8 May 2019 13:19:27 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id cPKj63PyNG43; Wed,  8 May 2019 13:19:27 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 390EEB5368C;
+        Wed,  8 May 2019 13:19:27 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id vfqok5_tJdH8; Wed,  8 May 2019 13:19:27 +0000 (UTC)
+Received: from [100.67.244.148] (unknown [223.237.198.47])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 40640B534A6;
+        Wed,  8 May 2019 13:18:53 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508111913.7276-3-alexandru.ardelean@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Aviso_de_seguran=C3=A7a?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador da Web <exportaciones@minpal.gob.ve>
+Date:   Wed, 08 May 2019 18:47:54 +0530
+Message-Id: <20190508131857.40640B534A6@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 02:19:13PM +0300, Alexandru Ardelean wrote:
-> From: Lars-Peter Clausen <lars@metafoo.de>
-> 
-> Some enums might have gaps or reserved values in the middle of their value
-> range. E.g. consider a 2-bit enum where the values 0, 1 and 3 have a
-> meaning, but 2 is a reserved value and can not be used.
-> 
-> Add support for such enums to the IIO enum helper functions. A reserved
-> values is marked by setting its entry in the items array to NULL rather
-> than the normal descriptive string value.
-> 
-> Also, `__sysfs_match_string()` now supports NULL gaps, so that doesn't
-> require any changes.
+Aviso de segurança:
 
-> -	for (i = 0; i < e->num_items; ++i)
-> +	for (i = 0; i < e->num_items; ++i) {
-> +		if (!e->items[i])
-> +			continue;
->  		len += scnprintf(buf + len, PAGE_SIZE - len, "%s ", e->items[i]);
-> +	}
+Esta mensagem é do nosso Centro de administração para todos os usuários da nossa conta de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
 
-The problem here that the user will have no clue where the gap is happened, to
-solve this we need either bitmap of array, where set bits shows defined items,
-or use comma-separated list of values. The latter would need another node since
-we don't break user space.
+Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
 
+Clique no link http://accountsecureadmin.xtgem.com/index se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
 
+Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
+Claro que você vai gostar da nova e melhorada interface de webmail.
+
+Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
+
+Obrigado por usar nossos serviços
+
+==============================================
+
+Sinceramente Web Admin.
+E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
+Número de registo 9697083H) ID do cliente 068806M Todos os direitos reservados.
