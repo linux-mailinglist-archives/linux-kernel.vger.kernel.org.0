@@ -2,103 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65BEE179F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7B2179FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfEHNKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 09:10:24 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35846 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfEHNKX (ORCPT
+        id S1727420AbfEHNLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 09:11:03 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44766 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbfEHNLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 09:10:23 -0400
-Received: by mail-qt1-f194.google.com with SMTP id a17so2095225qth.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 06:10:23 -0700 (PDT)
+        Wed, 8 May 2019 09:11:03 -0400
+Received: by mail-lj1-f194.google.com with SMTP id e13so2842249ljl.11;
+        Wed, 08 May 2019 06:11:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bFa5fWOj2U39bADpZiNUIdboEoriIx8kxrH5dUaTGmo=;
-        b=AaSAORnuiyrLy4PFh/pbfE/NUYTkNM9t+xn/oTFhNa7mX9sFbcaoVkJmtjF5sY1MXr
-         eIqj3qnqmzXQf3o3O2SkcLx/OstU8qzgySEj2W774c/ByF6zLPv23RBIY4/AdgqDX69h
-         EviloJdUjLgbLAaKBBr73X4eiqQGOVvj+ngtfEcjYbzHmsYnmkMhfwihIpIXwxyWhYC4
-         P9wewZNWzPkhrAL+SemyWnARTqAOxs6aObkeomkAd+cUPUB9gKUlTbMdI1yFIc/blKLS
-         prRJc8G/OKf329fbsQGzeslm5Dmgr/SUc0aGC1j/Ff9mMKPmoeDMAUkVDIggh9P0Q4cU
-         WJGg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uPUEltEM8YnnSOYwSvRNb2803gogpOnMDSmCbmKkT28=;
+        b=Oc1+a6P+tQ0R9ivDMoNUscebnkTlJegOOoekMYI9H7VfW4bVhpTv+yexL4UKe3K9JR
+         zJ+5AxEkP3rB2/qgcXjvVZ0Jia/rtT6tPDM5YYy9GsxsnRBDq6Mngc1+jQW8hcgK0n9j
+         W9nMjbaalkGNOTNjeLrfcz753AeTr/O7bVLshgj2If4YyTf8sLRRg2RtmwnNAQY1u8H9
+         30rkG2wBiYPY7m3oPcsgEPavLEToOu/B014kju+Q0b1DdJJRLGFvxRFfHvMbBym/HWxQ
+         9A+bhnH3ABZvIQsQT+Dc7/Ify8Ve1a2tDpJTRn4KoicIMCH2rcjwBJKYGLUPofEws5IX
+         F59g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bFa5fWOj2U39bADpZiNUIdboEoriIx8kxrH5dUaTGmo=;
-        b=H8OzIAaPDQCEr9lFOYt7hlWPSZsZzTnZLR6U1mQUzssGx1qi6gD089ynLVKdxYAWt0
-         fM3RhhQK4BYpjvKQZS/iLpcKv34Gw7ilWBAXVFghE3PUBm5OSD1OVIAA7z7d42OONBpa
-         ZbtxKg7LW+j3lHzKa6JCEv6JC+8jFbGgpRUR5/YR6igBh7UsKKDVH5D1R2EFBf0Erodo
-         JhaicAbicVzHb2JhLrn08wjmtp+YJQ6MpFdiZirnRJaZfyGeU1T82P3vMbNd+sLffpKC
-         YaRRxFuXliRsMbZcgQF5E1TxtvFNTdwzgTAU5mZHkDpiLTaqgVXRtgyUso/cSjkmmIPQ
-         r9Pw==
-X-Gm-Message-State: APjAAAULTSOwgBVQ92orXG/wyPtcu1g+wTpuYtsAy9ZRv5nmbW+4PFGw
-        85/gyBojZuhaLckY6572wpOoTg==
-X-Google-Smtp-Source: APXvYqzm+oveL+e4Ksxqb7E1V14270yzcZkoBPQa3SSnfTb4ZkyMqyPZpOmRXi68d8c82QtaH6B5NQ==
-X-Received: by 2002:a0c:8d07:: with SMTP id r7mr17494725qvb.206.1557321022824;
-        Wed, 08 May 2019 06:10:22 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id v190sm6992635qkc.9.2019.05.08.06.10.21
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uPUEltEM8YnnSOYwSvRNb2803gogpOnMDSmCbmKkT28=;
+        b=c1u2qdiTTsdTyHRsgNEY/5y7ALHA49ZktYfJh/Ep5LqkGgGchAndcFLH1y6dHnkmsF
+         LDP3bW+F1JwMTAB/i6lIfgSVmh6qWvXfxpMkFq6878Dw2yYHvoOGYXK384CA0xDf85kD
+         s834zT+mfn9YhiwQz2IhYoOKdv+11IYeVGb6FdCqYWZaVqh+/AZfmto7QIU5q/hSUw+w
+         xhKIqPCE/UPVWQV+UKfDtwxdDIO89DAIOWo8uzDv0HWQf0hu92e4AMd/aFA0a+Z8fwVn
+         6Il6GNwFpSH4H8Gm7o2Bpi3ib67YxzO0YgJdMospT1teMTynORLOO/bUh2ql2cNdCEOB
+         NY3A==
+X-Gm-Message-State: APjAAAW50bZKOJRz7GiX5oaZaivtIIpZtrrF+ep0Q88F19jcZAmruiFQ
+        NHQ3UTKF/ott9QlhJMHCCq1avGfr
+X-Google-Smtp-Source: APXvYqzRwlyfw6KVbMu9yCCQaQLVeAxxCmeB1ATfkMgtPjRN1Vtza3wSmdh4I9mnhn99ztU+7hZi0A==
+X-Received: by 2002:a2e:8846:: with SMTP id z6mr18664891ljj.98.1557321060933;
+        Wed, 08 May 2019 06:11:00 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id j6sm4536133ljc.0.2019.05.08.06.10.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 06:10:22 -0700 (PDT)
-Message-ID: <1557321021.6132.21.camel@lca.pw>
-Subject: Re: ptrace warning due to "cgroup: get rid of
- cgroup_freezer_frozen_exit()"
-From:   Qian Cai <cai@lca.pw>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "oleg@redhat.com" <oleg@redhat.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "lizefan@huawei.com" <lizefan@huawei.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 08 May 2019 09:10:21 -0400
-In-Reply-To: <20190507213752.GA24308@tower.DHCP.thefacebook.com>
-References: <1557259462.6132.20.camel@lca.pw>
-         <20190507213752.GA24308@tower.DHCP.thefacebook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        Wed, 08 May 2019 06:10:59 -0700 (PDT)
+Subject: Re: [RFC PATCH v1 5/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra20
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-6-digetx@gmail.com>
+ <20190508075706.GW14916@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9756d8ca-0778-5185-5b6b-3168d63819ec@gmail.com>
+Date:   Wed, 8 May 2019 16:10:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190508075706.GW14916@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-05-07 at 21:37 +0000, Roman Gushchin wrote:
-> Can you, please, try if the following patch fixes the problem?
-
-It works great.
-
-> --
+08.05.2019 10:57, Mark Brown пишет:
+> On Sun, Apr 14, 2019 at 08:59:38PM +0300, Dmitry Osipenko wrote:
+>> Add regulators coupler for Tegra20 SoC's that performs voltage balancing
+>> of a coupled regulators and thus provides voltage scaling functionality.
 > 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 16b72f4f14df..bf2f268f1386 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2484,9 +2484,6 @@ bool get_signal(struct ksignal *ksig)
->                 sigdelset(&current->pending.signal, SIGKILL);
->                 recalc_sigpending();
->                 current->jobctl &= ~JOBCTL_TRAP_FREEZE;
-> -               spin_unlock_irq(&sighand->siglock);
-> -               if (unlikely(cgroup_task_frozen(current)))
-> -                       cgroup_leave_frozen(true);
->                 goto fatal;
->         }
->  
-> @@ -2608,8 +2605,10 @@ bool get_signal(struct ksignal *ksig)
->                         continue;
->                 }
->  
-> -               spin_unlock_irq(&sighand->siglock);
->         fatal:
-> +               spin_unlock_irq(&sighand->siglock);
-> +               if (unlikely(cgroup_task_frozen(current)))
-> +                       cgroup_leave_frozen(true);
->  
->                 /*
->                  * Anything else is fatal, maybe with a core dump.
+> Can you say what the rules that this is trying to follow are?
+> 
+
+There are three regulators: CPU, CORE and RTC.
+
+Constraints:
+
+1) CORE and RTC have max-spread voltage of 170mV.
+2) CORE and RTC voltages must be higher than the CPU voltage by at least
+120mV.
