@@ -2,108 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C66FD1806F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE1618062
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbfEHTWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:22:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45323 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfEHTWv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:22:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s11so672496pfm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 12:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3g2bi8DoerOy6DCDToROZG2X91/sOCzGiRgK/q+dCis=;
-        b=U6CBJ1LRLdPb3Cf3s1bn+pdqH+7H4s+pmJmwohKBFS8talsVMMM1XqTMw4/RcK1x6L
-         +SZjTZQgjcJgbiH2XlWuiFr9eSvMmhMWdhrYa8trwijvhpkRvelG+CfaO51m4CWEERqk
-         6J16ik7c42IhnOpPMBLhP8ivWUda2bPJb3wMM1kDyCre2Jlkra7waJcNPwvFAsa3PEVQ
-         6EOZsgEesM6q6LCd+N5PUwc8l6Me60lY2ngewHEwqo59oniRyhZnkpARqFtJuicA2GoD
-         5O2i5fQiykvipeYCnNnfD3pbwpaSTtFhpx2u6PEx9r64IJE5yKIGJOee+ChRaC6IMJST
-         azUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3g2bi8DoerOy6DCDToROZG2X91/sOCzGiRgK/q+dCis=;
-        b=W1lEVvR/nlzGEdTPaubqK5/EOemWm6pAmdTaltCZv1C3mniPhf/sn9Cikxw8ZwIAHT
-         MNA5B/u3zH5RDeF+rNM9QCzFMowvu618MeCSNTGX/rWsBxZOFVfsyHzRIdmKF91hR7Ie
-         JonYRIhsaNYaQ5LG9PizwmssrT/OjXpzpjm8rqMC1BCM9EOSTx/JiMLZIPu1lNeJCxHF
-         P+JLf7fAmROzy9NsBXDLAbdNJdMHP47jCeJyPINtB/Xqa0X42k5WsYAFzoGWmkTRfRyS
-         gKGLvUfP0Fp4edsQTmWuhIO+HxG0+iF0GT12DskJQp82urBbfAjnPgp7NHbhZW+bEkuQ
-         Eg1g==
-X-Gm-Message-State: APjAAAVXI1zDJbmQkixwYb7koa85Bzq9MLW6KlWkLM4tQyH87Jqu62+8
-        54bVXWolfgktHupUYkN9KNKshzAKLilwwys7ARhd9Q==
-X-Google-Smtp-Source: APXvYqw3BVt0fAl5bCwCS7AsCC+DFIQEahWkR5yAcgLO4mlm3JstHoA5kquAVbg6bd97XLzbvP3eYNLX03uzO7C20E4=
-X-Received: by 2002:a63:441c:: with SMTP id r28mr30973408pga.255.1557343370469;
- Wed, 08 May 2019 12:22:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190423204821.241925-1-ndesaulniers@google.com> <CAKwvOd=ws1D95ydQjGtK0U0KQ-5poyj8Oek5Yka6-cvtCdpJ-g@mail.gmail.com>
-In-Reply-To: <CAKwvOd=ws1D95ydQjGtK0U0KQ-5poyj8Oek5Yka6-cvtCdpJ-g@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 8 May 2019 12:22:39 -0700
-Message-ID: <CAKwvOd=tA3-i65B_92QHaJrpEREzBB91QkkqgRANncwfb2d-Kg@mail.gmail.com>
-Subject: Re: [PATCH] ia64: require -Wl,--hash-style=sysv
-To:     tony.luck@intel.com, fenghua.yu@intel.com
-Cc:     clang-built-linux <clang-built-linux@googlegroups.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727287AbfEHTT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:19:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27842 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbfEHTT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 15:19:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 12:19:58 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 08 May 2019 12:19:57 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     Raj Ashok <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH] iommu/vt-d: Fix bind svm with multiple devices
+Date:   Wed,  8 May 2019 12:22:46 -0700
+Message-Id: <1557343366-18686-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bumping for review, as the merge window is now open.
+If multiple devices try to bind to the same mm/PASID, we need to
+set up first level PASID entries for all the devices. The current
+code does not consider this case which results in failed DMA for
+devices after the first bind.
 
-On Tue, Apr 30, 2019 at 1:24 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Tue, Apr 23, 2019 at 1:48 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > Towards the goal of removing cc-ldoption, it seems that --hash-style=
-> > was added to binutils 2.17.50.0.2 in 2006. The minimal required version
-> > of binutils for the kernel according to
-> > Documentation/process/changes.rst is 2.20.
-> >
-> > Link: https://gcc.gnu.org/ml/gcc/2007-01/msg01141.html
-> > Cc: clang-built-linux@googlegroups.com
-> > Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> >  arch/ia64/kernel/Makefile.gate | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/ia64/kernel/Makefile.gate b/arch/ia64/kernel/Makefile.gate
-> > index f53faf48b7ce..846867bff6d6 100644
-> > --- a/arch/ia64/kernel/Makefile.gate
-> > +++ b/arch/ia64/kernel/Makefile.gate
-> > @@ -11,7 +11,7 @@ quiet_cmd_gate = GATE    $@
-> >        cmd_gate = $(CC) -nostdlib $(GATECFLAGS_$(@F)) -Wl,-T,$(filter-out FORCE,$^) -o $@
-> >
-> >  GATECFLAGS_gate.so = -shared -s -Wl,-soname=linux-gate.so.1 \
-> > -                    $(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
-> > +                    -Wl,--hash-style=sysv
-> >  $(obj)/gate.so: $(obj)/gate.lds $(obj)/gate.o FORCE
-> >         $(call if_changed,gate)
-> >
-> > --
-> > 2.21.0.593.g511ec345e18-goog
-> >
->
-> bumping for review
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Reported-by: Mike Campin <mike.campin@intel.com>
+---
+ drivers/iommu/intel-svm.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-
-
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 3a4b09a..f3d59d1 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -357,6 +357,21 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		}
+ 
+ 		list_add_tail(&svm->list, &global_svm_list);
++	} else {
++		/*
++		 * Binding a new device with existing PASID, need to setup
++		 * the PASID entry.
++		 */
++		spin_lock(&iommu->lock);
++		ret = intel_pasid_setup_first_level(iommu, dev,
++						mm ? mm->pgd : init_mm.pgd,
++						svm->pasid, FLPT_DEFAULT_DID,
++						mm ? 0 : PASID_FLAG_SUPERVISOR_MODE);
++		spin_unlock(&iommu->lock);
++		if (ret) {
++			kfree(sdev);
++			goto out;
++		}
+ 	}
+ 	list_add_rcu(&sdev->list, &svm->devs);
+ 
 -- 
-Thanks,
-~Nick Desaulniers
+2.7.4
+
