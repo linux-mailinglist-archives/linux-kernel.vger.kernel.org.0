@@ -2,99 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 646BD176C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1587D176CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfEHLZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:25:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34691 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfEHLZK (ORCPT
+        id S1727558AbfEHL0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:26:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36575 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbfEHL0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:25:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id m20so1697548wmg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:25:09 -0700 (PDT)
+        Wed, 8 May 2019 07:26:25 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o4so26726487wra.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=nHpH5BJT4ukjqZLM4x5WXkpHa9unxL5O+4Tbg9kVipM=;
-        b=dgnO15oJXiu0un1tNiOF9+URBOhLf0lNoJGXZ4lUfKgyz2D3LLQpC4JpibRI6dA5Ge
-         3BrAJ7xVgqKvKA4JJAMx4BChrFwO9n8LmMHnDIsmaO0Ydgt4teedjZDIsOH5VNV84D3n
-         tjHEbTv1OUnIzA+39WPDjozckAhqXiJ9KS1KU18p9fSsE8doq0iIQW1X1YrOoqNMJi58
-         0DAHMZL0TO3lpIJ7TYlmC9LqsK9Y29CD5N3VwtHlNu5XCdxJpBMasFuvc79SglUgfPP2
-         l+NuwekRXO1Xg9Vc3iv+tRhmY/XBMZSZfu/jRsbogtKUq5vcNZcXMOo+EwYQWEf/L2qT
-         k96A==
+        bh=S0qOD/dRlBV6N/0vrEIWcihFKCIIXXbBX2yJx7XCiQM=;
+        b=VYYjzH35tO/H40j6zelv8gEoHoQ8oIRkjay/VS8EA6SvcGUn9o1NfvIA3WF9O5GKwW
+         //hHHH3OIF88FSXysJCjFk1IfpON6Oo9qlmh8LFEhZnsEAKD0YXxqc0oDcDG8Lq/hfct
+         289osFew12Da70n86PY51N3LIeOSVMyGm53LPZlUh3003TAZWf4XI9raFUXNA4tom+M0
+         sWv9+QLPJEgs+S4+Zn4IPP0HjIWvlVcXEPbh3XLq4wCSgKhyc4v1yJ1PHkbmBoM3alrY
+         16jiJqCjzPqZmTdWelloYAOsQ6rs/7MIQ8F0w0MTY4W9yVQ/B5jLxIplFEyz3LVtdbjr
+         DTig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=nHpH5BJT4ukjqZLM4x5WXkpHa9unxL5O+4Tbg9kVipM=;
-        b=SycDd32J8ZtsTM3P07Ry7T0NES3WEXtKe9olp7QBGnQpnhOJawx7OAzlSp4CN9S1xa
-         PWYY0i/zBt5g8fbopBarQ7qnzt9pB3z2JJW8+1mbrrTXsAVFrMaJB2frGVVPGj5U2a2w
-         KvBn8hGrv6nJ2922hnfB3blzNq0W0pPXYmAXycJFWAugcrqsgtX8jFU8BhUkG+C3YI43
-         SgkvZBoQp3ieAup1UV7EyKD6cvxXt/r5W3wr+ujTi7/uD2BvvWsnTdRddV/5SiidRoh7
-         mdSvHnpGsPU/rg8iQ3USPr5jN+AS1rHgmgwlTPerF/0KmALBvgceo9aFM3kmzDezO6gs
-         I2QA==
-X-Gm-Message-State: APjAAAUlLE06DRhCIy8eA9nvBLUJFlWlF0HymnVbWxCByXN1vtqBR7vr
-        vHh+Hx/Z6kifCui/1NmVbOgs0A==
-X-Google-Smtp-Source: APXvYqxgR0a3KAApIHOtMFlYhCjZPTnoZ3wDQ0TcrIoUeLJlXNX6+9pGL1pYuIhUlc2JIJbWw+Wk/A==
-X-Received: by 2002:a1c:a914:: with SMTP id s20mr2738339wme.55.1557314709078;
-        Wed, 08 May 2019 04:25:09 -0700 (PDT)
+        bh=S0qOD/dRlBV6N/0vrEIWcihFKCIIXXbBX2yJx7XCiQM=;
+        b=VAmKKvGlBwu2s8T68D2q+FwSjm1M61DCwXUx6eUImOgIbiXUsVw+28umlIIQvfxThE
+         9uzjWqvFXGHT0UglhzdRr9haztu9ugUDCjWlOyYjNROBMp8wUMpXYbfKMDSCqKM9SQfM
+         zs4qG4jVdcoVvGB/9kzpRC/iUHg6Mwk3w1OpH/P/cDL7vx2rRd6/SC4QWLVaIoOtD1mu
+         9dhgphiDymh74/0ZC0At4/cq4+CUJh80mimvM8t5eYJC+aAgsmxMioxlImaRipP+M3hP
+         PBKTwdXVejSt2wnL+j+WVA+Ss+6NHYdt0jeyDptK4b0AmpK+D5ac2R+MP9ea7M7Nzx2Q
+         8RxQ==
+X-Gm-Message-State: APjAAAV6BiynUK6fFs8Lpp7L/K++VIckKfsrINCXFwUsTmAgWa6rAkML
+        ffsBUZpjU4+QvN3ONfQlwyqusQ==
+X-Google-Smtp-Source: APXvYqy1jPgGrWuGM/LzibbEPRUUPdDHj3BXrU4f8DLjFMLaP1xchN8lc7M8BRBArjNL0ulCxPNtXw==
+X-Received: by 2002:adf:e8c4:: with SMTP id k4mr28179578wrn.9.1557314783927;
+        Wed, 08 May 2019 04:26:23 -0700 (PDT)
 Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id c20sm19431364wre.28.2019.05.08.04.25.07
+        by smtp.gmail.com with ESMTPSA id v189sm4051781wma.3.2019.05.08.04.26.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 04:25:08 -0700 (PDT)
-Date:   Wed, 8 May 2019 12:25:06 +0100
+        Wed, 08 May 2019 04:26:23 -0700 (PDT)
+Date:   Wed, 8 May 2019 12:26:21 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH v14 4/8] dt-bindings: mfd: Document first ROHM BD70528
- bindings
-Message-ID: <20190508112506.GV3995@dell>
-References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
- <37014b510628fbb5cfb9bbd3481d02005d98ba0b.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v2] mfd: intel-lpss: Add Intel Comet Lake PCI IDs
+Message-ID: <20190508112621.GW3995@dell>
+References: <20190430165626.31639-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <37014b510628fbb5cfb9bbd3481d02005d98ba0b.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20190430165626.31639-1-andriy.shevchenko@linux.intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 02 May 2019, Matti Vaittinen wrote:
+On Tue, 30 Apr 2019, Andy Shevchenko wrote:
 
-> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> drivers) and 4 GPIO pins which can be configured for I/O or
-> as interrupt sources withe configurable trigger levels.
+> Intel Comet Lake has the same LPSS than Intel Cannon Lake.
+> Add the new IDs to the list of supported devices.
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> - update i2c info
+>  drivers/mfd/intel-lpss-pci.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
