@@ -2,212 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A696C17DB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2966017DCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfEHQH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:07:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50004 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727560AbfEHQH7 (ORCPT
+        id S1728009AbfEHQJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:09:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41448 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727930AbfEHQJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:07:59 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48G2lmK147224
-        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 12:07:58 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sc20195sc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 12:07:57 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 8 May 2019 17:07:55 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 May 2019 17:07:53 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x48G7pRH60686470
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 May 2019 16:07:51 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B940542045;
-        Wed,  8 May 2019 16:07:51 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1CBA542047;
-        Wed,  8 May 2019 16:07:51 +0000 (GMT)
-Received: from [9.145.42.10] (unknown [9.145.42.10])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  8 May 2019 16:07:51 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v8 1/4] s390: ap: kvm: add PQAP interception for AQIC
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1556818451-1806-1-git-send-email-pmorel@linux.ibm.com>
- <1556818451-1806-2-git-send-email-pmorel@linux.ibm.com>
- <ab120d0f-2eb4-a95c-503b-edf6de283519@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 8 May 2019 18:07:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 8 May 2019 12:09:29 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d12so7473241wrm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MfOB7GbrkVZQCFgD0TA7DzG1OYHj9B/YynSp6vT8HYg=;
+        b=TxlQ7LnDi5z67Seonj7PKYAYmrQO64ZkA4yU/l7nOZnnysOHCUzQtw9DKvoHaVSsDC
+         iqbKcnXtCpyph553a+nKcbwW4Q6ywTKBwSd8KGGkYnz3iys/qBQ+9WY67/RHTO+vpK4z
+         Xjl9En5YRuddyiAo2dtSY3qy0kV8yBoh2tmOQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MfOB7GbrkVZQCFgD0TA7DzG1OYHj9B/YynSp6vT8HYg=;
+        b=jDzmBE4FYGiw8unz8smw1TDZNDSmh9ETajtu+LA0FV6c4Sk+dMBsFp7fD7rBEYlLAs
+         Cae4FA+WP1ZtU5beoi6SZyINKcttbHzixNpZzU7NjGmVQ01vSG3Q6L3V08gyex+4Em81
+         m5BGmQV2T4QyFNaBBCzQ6GEvdnWF+R/sRDuLWhAGlcLPL54ZZq0myr+Ut6FmoSv5jJRq
+         ht/ZfAHzCIjAJ0MUjzhA4N2+jtJ2zadKtKAJOvNnU2Dx3f5TrcWe47Oa4Dynxxbj8Ysh
+         8vcHK34WAOijQkq1wCTUcUiDN3UI4TyApePu2Nuf/DaOOX6Swkbf0KXm0jXoYC5i+QSy
+         +9+A==
+X-Gm-Message-State: APjAAAVmy22DRvnfQ0reZHLt/WDXtrpl/KCsBf/wnDO22uJioy3CVWQm
+        qTawId/aTUnwmQnNcCk3sKXA4w==
+X-Google-Smtp-Source: APXvYqzgHU7/QFy+kUEadXwmue5yL6Xg92QjTGn320/Urf+QNinCxeLGYLo//3BTARwBgfRGmOvOcQ==
+X-Received: by 2002:a05:6000:c2:: with SMTP id q2mr16616288wrx.324.1557331767708;
+        Wed, 08 May 2019 09:09:27 -0700 (PDT)
+Received: from localhost.localdomain (ip5f5aea19.dynamic.kabel-deutschland.de. [95.90.234.25])
+        by smtp.gmail.com with ESMTPSA id r2sm3235756wmh.31.2019.05.08.09.09.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 09:09:26 -0700 (PDT)
+From:   Krzesimir Nowak <krzesimir@kinvolk.io>
+To:     bpf@vger.kernel.org
+Cc:     Krzesimir Nowak <krzesimir@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>,
+        Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH bpf v1] bpf: Fix undefined behavior in narrow load handling
+Date:   Wed,  8 May 2019 18:08:58 +0200
+Message-Id: <20190508160859.4380-1-krzesimir@kinvolk.io>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <ab120d0f-2eb4-a95c-503b-edf6de283519@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19050816-4275-0000-0000-00000332B1EC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050816-4276-0000-0000-0000384221BF
-Message-Id: <b946b5ee-26d6-08fa-c0de-1d8c841b3a03@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905080099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/2019 17:48, Tony Krowiak wrote:
-> On 5/2/19 1:34 PM, Pierre Morel wrote:
->> We prepare the interception of the PQAP/AQIC instruction for
->> the case the AQIC facility is enabled in the guest.
->>
->> First of all we do not want to change existing behavior when
->> intercepting AP instructions without the SIE allowing the guest
->> to use AP instructions.
->>
->> In this patch we only handle the AQIC interception allowed by
->> facility 65 which will be enabled when the complete interception
->> infrastructure will be present.
->>
->> We add a callback inside the KVM arch structure for s390 for
->> a VFIO driver to handle a specific response to the PQAP
->> instruction with the AQIC command and only this command.
->>
->> But we want to be able to return a correct answer to the guest
->> even there is no VFIO AP driver in the kernel.
->> Therefor, we inject the correct exceptions from inside KVM for the
->> case the callback is not initialized, which happens when the vfio_ap
->> driver is not loaded.
->>
->> We do consider the responsability of the driver to always initialize
->> the PQAP callback if it defines queues by initializing the CRYCB for
->> a guest.
->> If the callback has been setup we call it.
->> If not we setup an answer considering that no queue is available
->> for the guest when no callback has been setup.
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h      |  7 +++
->>   arch/s390/kvm/priv.c                  | 86 
->> +++++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |  2 +
->>   3 files changed, 95 insertions(+)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h 
->> b/arch/s390/include/asm/kvm_host.h
->> index 9fff9ab..af10a11 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -18,6 +18,7 @@
->>   #include <linux/kvm_host.h>
->>   #include <linux/kvm.h>
->>   #include <linux/seqlock.h>
->> +#include <linux/module.h>
->>   #include <asm/debug.h>
->>   #include <asm/cpu.h>
->>   #include <asm/fpu/api.h>
->> @@ -722,8 +723,14 @@ struct kvm_s390_cpu_model {
->>       unsigned short ibc;
->>   };
->> +struct kvm_s390_module_hook {
->> +    int (*hook)(struct kvm_vcpu *vcpu);
->> +    struct module *owner;
->> +};
->> +
->>   struct kvm_s390_crypto {
->>       struct kvm_s390_crypto_cb *crycb;
->> +    struct kvm_s390_module_hook *pqap_hook;
->>       __u32 crycbd;
->>       __u8 aes_kw;
->>       __u8 dea_kw;
->> diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
->> index 8679bd7..a9be84f 100644
->> --- a/arch/s390/kvm/priv.c
->> +++ b/arch/s390/kvm/priv.c
->> @@ -27,6 +27,7 @@
->>   #include <asm/io.h>
->>   #include <asm/ptrace.h>
->>   #include <asm/sclp.h>
->> +#include <asm/ap.h>
->>   #include "gaccess.h"
->>   #include "kvm-s390.h"
->>   #include "trace.h"
->> @@ -592,6 +593,89 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
->>       }
->>   }
->> +/*
->> + * handle_pqap: Handling pqap interception
->> + * @vcpu: the vcpu having issue the pqap instruction
->> + *
->> + * We now support PQAP/AQIC instructions and we need to correctly
->> + * answer the guest even if no dedicated driver's hook is available.
->> + *
->> + * The intercepting code calls a dedicated callback for this instruction
->> + * if a driver did register one in the CRYPTO satellite of the
->> + * SIE block.
->> + *
->> + * If no callback is available, the queues are not available, return 
->> this
->> + * response code to the caller and set CC to 3.
->> + * Else return the response code returned by the callback.
->> + */
->> +static int handle_pqap(struct kvm_vcpu *vcpu)
->> +{
->> +    struct ap_queue_status status = {};
->> +    unsigned long reg0;
->> +    int ret;
->> +    uint8_t fc;
->> +
->> +    /* Verify that the AP instruction are available */
->> +    if (!ap_instructions_available())
->> +        return -EOPNOTSUPP;
->> +    /* Verify that the guest is allowed to use AP instructions */
->> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
->> +        return -EOPNOTSUPP;
->> +    /*
->> +     * The only possibly intercepted functions when AP instructions are
->> +     * available for the guest are AQIC and TAPQ with the t bit set
->> +     * since we do not set IC.3 (FIII) we currently will only intercept
->> +     * the AQIC function code.
->> +     */
->> +    reg0 = vcpu->run->s.regs.gprs[0];
->> +    fc = reg0 >> 24;
-> 
-> Should you also mask off bits 0-32 in case they might not be zeroes?
+Commit 31fd85816dbe ("bpf: permits narrower load from bpf program
+context fields") made the verifier add AND instructions to clear the
+unwanted bits with a mask when doing a narrow load. The mask is
+computed with
 
-Yes I will.
+(1 << size * 8) - 1
 
-> 
-> Other than this, r-b
-> 
+where "size" is the size of the narrow load. When doing a 4 byte load
+of a an 8 byte field the verifier shifts the literal 1 by 32 places to
+the left. This results in an overflow of a signed integer, which is an
+undefined behavior. Typically the computed mask was zero, so the
+result of the narrow load ended up being zero too.
 
-Thanks,
+Cast the literal to long long to avoid overflows. Note that narrow
+load of the 4 byte fields does not have the undefined behavior,
+because the load size can only be either 1 or 2 bytes, so shifting 1
+by 8 or 16 places will not overflow it. And reading 4 bytes would not
+be a narrow load of a 4 bytes field.
 
-Pierre
+Reviewed-by: Alban Crequy <alban@kinvolk.io>
+Reviewed-by: Iago López Galeiras <iago@kinvolk.io>
+Fixes: 31fd85816dbe ("bpf: permits narrower load from bpf program context fields")
+Cc: Yonghong Song <yhs@fb.com>
+Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+---
+ kernel/bpf/verifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 09d5d972c9ff..950fac024fbb 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7296,7 +7296,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 									insn->dst_reg,
+ 									shift);
+ 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
+-								(1 << size * 8) - 1);
++								(1ULL << size * 8) - 1);
+ 			}
+ 		}
+ 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+2.20.1
 
