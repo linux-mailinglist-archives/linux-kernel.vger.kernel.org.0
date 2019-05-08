@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E00F817ECE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E1217ECF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfEHREV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:04:21 -0400
-Received: from mga03.intel.com ([134.134.136.65]:5319 "EHLO mga03.intel.com"
+        id S1729179AbfEHREW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:04:22 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5321 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728351AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728953AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 May 2019 13:03:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,7 +17,7 @@ Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:02 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,446,1549958400"; 
-   d="scan'208";a="169697543"
+   d="scan'208";a="169697546"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.171])
   by fmsmga002.fm.intel.com with ESMTP; 08 May 2019 10:03:02 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -28,76 +28,124 @@ To:     Andy Lutomirski <luto@kernel.org>,
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 00/18] x86: Enable FSGSBASE instructions
-Date:   Wed,  8 May 2019 03:02:15 -0700
-Message-Id: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v7 01/18] x86/fsgsbase/64: Fix ARCH_SET_FS/GS behaviors for a remote task
+Date:   Wed,  8 May 2019 03:02:16 -0700
+Message-Id: <1557309753-24073-2-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
+References: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updates from v6 [6]:
-* Fix ptracer-induced FS/GSBASE write behavior (Andy)
-* Fix GSBASE handling in the NMI path
-* Remove local_irq_save/restore() from switch_to()
-* Separate things into new patches (from 12th to 9th and 10th)
-* Add GSBASE handling in the documentation
-* Add more comments for entry changes
-* Edit changelog (multiple patches)
-(all points by Thomas if not mentioned)
+When a ptracer writes to a ptracee's FS/GSBASE with a different value,
+the selector is also cleared. This behavior is not straightforward.
 
-Previous versions: [1-5]
+The change will make the behavior simple and sensible, as it will
+(only) update the base when requested. Also, the condition check for
+comparing the base is removed to make more simple. It might save a few
+cycles, but this path is not performance critical.
 
-[1] Version 1: https://lore.kernel.org/patchwork/cover/934843
-[2] Version 2: https://lore.kernel.org/patchwork/cover/912063
-[3] Version 3: https://lore.kernel.org/patchwork/cover/1002725
-[4] Version 4: https://lore.kernel.org/patchwork/cover/1032799
-[5] Version 5: https://lore.kernel.org/patchwork/cover/1038035
-[6] Version 6: https://lore.kernel.org/patchwork/cover/1051240
+The only recognizable downside of this change is when writing the base
+if the selector is already nonzero. The base will be reloaded according
+to the selector. But the case is highly unexpected in real usages.
 
-Andi Kleen (3):
-  x86/fsgsbase/64: Add intrinsics for FSGSBASE instructions
-  x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
-  x86/fsgsbase/64: Add documentation for FSGSBASE
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+---
+ arch/x86/kernel/process_64.c | 21 +++++++++------------
+ arch/x86/kernel/ptrace.c     | 14 ++------------
+ 2 files changed, 11 insertions(+), 24 deletions(-)
 
-Andy Lutomirski (4):
-  x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
-  x86/fsgsbase/64: Preserve FS/GS state in __switch_to() if FSGSBASE is
-    on
-  selftests/x86/fsgsbase: Test WRGSBASE
-  x86/fsgsbase/64: Enable FSGSBASE by default and add a chicken bit
-
-Chang S. Bae (11):
-  x86/fsgsbase/64: Fix ARCH_SET_FS/GS behaviors for a remote task
-  selftests/x86/fsgsbase: Test ptracer-induced GSBASE write
-  kbuild: Raise the minimum required binutils version to 2.21
-  x86/fsgsbase/64: Enable FSGSBASE instructions in the helper functions
-  x86/fsgsbase/64: When copying a thread, use the FSGSBASE instructions
-  x86/entry/64: Add the READ_MSR_GSBASE macro
-  x86/entry/64: Switch CR3 before SWAPGS on the paranoid entry
-  x86/fsgsbase/64: Introduce the FIND_PERCPU_BASE macro
-  x86/fsgsbase/64: GSBASE handling with FSGSBASE in the paranoid path
-  x86/fsgsbase/64: Document GSBASE handling in the paranoid path
-  selftests/x86/fsgsbase: Test ptracer-induced GSBASE write with
-    FSGSBASE
-
- Documentation/admin-guide/kernel-parameters.txt |   2 +
- Documentation/process/changes.rst               |   6 +-
- Documentation/x86/entry_64.txt                  |  17 +++
- Documentation/x86/fsgs.txt                      | 103 ++++++++++++++
- arch/x86/entry/calling.h                        |  49 +++++++
- arch/x86/entry/entry_64.S                       | 142 ++++++++++++++++---
- arch/x86/include/asm/fsgsbase.h                 |  45 ++++--
- arch/x86/include/asm/inst.h                     |  15 ++
- arch/x86/include/uapi/asm/hwcap2.h              |   3 +
- arch/x86/kernel/cpu/common.c                    |  22 +++
- arch/x86/kernel/process_64.c                    | 132 +++++++++++++----
- arch/x86/kernel/ptrace.c                        |  14 +-
- tools/testing/selftests/x86/fsgsbase.c          | 179 +++++++++++++++++++++++-
- 13 files changed, 660 insertions(+), 69 deletions(-)
- create mode 100644 Documentation/x86/fsgs.txt
-
---
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index f8e1af3..32d12c6 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -719,13 +719,13 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 			return -EPERM;
+ 
+ 		preempt_disable();
+-		/*
+-		 * ARCH_SET_GS has always overwritten the index
+-		 * and the base. Zero is the most sensible value
+-		 * to put in the index, and is the only value that
+-		 * makes any sense if FSGSBASE is unavailable.
+-		 */
+ 		if (task == current) {
++			/*
++			 * For the request to set the current task's base,
++			 * first to load with zero selector, then write
++			 * the base value to be effective on a non-FSGSBASE
++			 * system.
++			 */
+ 			loadseg(GS, 0);
+ 			x86_gsbase_write_cpu_inactive(arg2);
+ 
+@@ -736,7 +736,6 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 			task->thread.gsbase = arg2;
+ 
+ 		} else {
+-			task->thread.gsindex = 0;
+ 			x86_gsbase_write_task(task, arg2);
+ 		}
+ 		preempt_enable();
+@@ -751,11 +750,10 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 			return -EPERM;
+ 
+ 		preempt_disable();
+-		/*
+-		 * Set the selector to 0 for the same reason
+-		 * as %gs above.
+-		 */
+ 		if (task == current) {
++			/*
++			 * Same here as %gs handling above
++			 */
+ 			loadseg(FS, 0);
+ 			x86_fsbase_write_cpu(arg2);
+ 
+@@ -765,7 +763,6 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 			 */
+ 			task->thread.fsbase = arg2;
+ 		} else {
+-			task->thread.fsindex = 0;
+ 			x86_fsbase_write_task(task, arg2);
+ 		}
+ 		preempt_enable();
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 4b8ee05..3309cfe 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -396,22 +396,12 @@ static int putreg(struct task_struct *child,
+ 	case offsetof(struct user_regs_struct,fs_base):
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+-		/*
+-		 * When changing the FS base, use do_arch_prctl_64()
+-		 * to set the index to zero and to set the base
+-		 * as requested.
+-		 */
+-		if (child->thread.fsbase != value)
+-			return do_arch_prctl_64(child, ARCH_SET_FS, value);
++		x86_fsbase_write_cpu(child, value);
+ 		return 0;
+ 	case offsetof(struct user_regs_struct,gs_base):
+-		/*
+-		 * Exactly the same here as the %fs handling above.
+-		 */
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+-		if (child->thread.gsbase != value)
+-			return do_arch_prctl_64(child, ARCH_SET_GS, value);
++		x86_gsbase_write_cpu(child, value);
+ 		return 0;
+ #endif
+ 	}
+-- 
 2.7.4
 
