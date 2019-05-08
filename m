@@ -2,125 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA7017735
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD15917717
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfEHLbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:31:00 -0400
-Received: from mail-eopbgr810070.outbound.protection.outlook.com ([40.107.81.70]:64128
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728076AbfEHLax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:30:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BLP6T3LmL+xu1pWFiHVPh/xRUsA/EQBeKdqIkqvb8tM=;
- b=Mou+jErBJvl2+qbFwKpdjFrX8nTbxuMm9kAbp3zHsAZA2Yu/30Qn/WM6TRbbZNSO3b9THY/Eb/sEps9xXwDLMCKhkT2e6gE563qV3pa7GK6VRH3DCP3ZsKscgA/XT3bvkTHMyfFdjW8irkfZ8FepYUe+nSBapiK9qv/M4/AWiaI=
-Received: from CY1PR03CA0020.namprd03.prod.outlook.com (2603:10b6:600::30) by
- DM5PR03MB3131.namprd03.prod.outlook.com (2603:10b6:4:3c::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.20; Wed, 8 May 2019 11:30:48 +0000
-Received: from BL2NAM02FT016.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::201) by CY1PR03CA0020.outlook.office365.com
- (2603:10b6:600::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1878.20 via Frontend
- Transport; Wed, 8 May 2019 11:30:48 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; lists.freedesktop.org; dkim=none (message not
- signed) header.d=none;lists.freedesktop.org; dmarc=bestguesspass action=none
- header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- BL2NAM02FT016.mail.protection.outlook.com (10.152.77.171) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1856.11
- via Frontend Transport; Wed, 8 May 2019 11:30:48 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x48BUlYi023920
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 8 May 2019 04:30:47 -0700
-Received: from saturn.analog.com (10.50.1.244) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Wed, 8 May 2019
- 07:30:47 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-ide@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <linux-omap@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-usb@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <alsa-devel@alsa-project.org>
-CC:     <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 16/16] sched: debug: use new match_string() helper/macro
-Date:   Wed, 8 May 2019 14:28:42 +0300
-Message-ID: <20190508112842.11654-18-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190508112842.11654-1-alexandru.ardelean@analog.com>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
+        id S1727969AbfEHLa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:30:26 -0400
+Received: from mga09.intel.com ([134.134.136.24]:53036 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727935AbfEHLaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:30:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 04:30:21 -0700
+X-ExtLoop1: 1
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 08 May 2019 04:30:17 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 May 2019 14:30:17 +0300
+Date:   Wed, 8 May 2019 14:30:17 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 11/13] platform/x86: intel_cht_int33fe: Provide fwnode
+ for the USB connector
+Message-ID: <20190508113017.GC19816@kuha.fi.intel.com>
+References: <20190412134122.82903-1-heikki.krogerus@linux.intel.com>
+ <20190412134122.82903-12-heikki.krogerus@linux.intel.com>
+ <daed3557-7595-86c5-fde1-6ec048b0935d@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(346002)(376002)(396003)(39860400002)(136003)(2980300002)(199004)(189003)(50226002)(246002)(8936002)(8676002)(5660300002)(70586007)(70206006)(14444005)(76176011)(426003)(336012)(51416003)(7696005)(4744005)(356004)(6666004)(1076003)(44832011)(476003)(2616005)(11346002)(446003)(126002)(486006)(16586007)(316002)(106002)(54906003)(110136005)(77096007)(26005)(186003)(86362001)(50466002)(478600001)(2201001)(47776003)(7416002)(305945005)(7636002)(48376002)(2441003)(53416004)(4326008)(36756003)(107886003)(2906002)(921003)(2101003)(83996005)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3131;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4f9efdca-1ab7-457f-8e86-08d6d3a89e43
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4709054)(2017052603328);SRVR:DM5PR03MB3131;
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3131:
-X-Microsoft-Antispam-PRVS: <DM5PR03MB3131EB1D4A0233D6F2CF2FE9F9320@DM5PR03MB3131.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:883;
-X-Forefront-PRVS: 0031A0FFAF
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: y8JtZs2HotEuJXogFzCnWR8K541Bt2KfbZWELew5MD4nlAPku+wmdwLi/TmhK+Wakt+fvbaRFSoxotZgnMV2hufk93HL+wHu08VeIYZzAB8IoqoQv2Dvs3lnVRZh37jPq6JDJZ09fXCNHxrzaMP2dKCDMykwclc7f8Vhdsv9Hmgt6QzYljQnwVIuzcGFye7kiyk0f3KKDWznos08NxFijPl+LUMHPWnvzQlXV/iO2H1CI51TvTwttNaST8OKKWnz5OXJBqxgbJS4Kly1RQeBnhEZ3a2yJ66lTxZm6OcLmRETP89L/aXGIMwvdEBcgXHdYhM7+eUMfrZ8P6irgud1tsflo5a0tQjULWcYbJoGX3011swPClTsa1cpteMxSluefGhuVRdEo64cyvpiEdovYVJn9rugc71z/Ws3tZEK/Xg=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2019 11:30:48.0826
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f9efdca-1ab7-457f-8e86-08d6d3a89e43
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3131
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <daed3557-7595-86c5-fde1-6ec048b0935d@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The `sched_feat_names` array is a static array of strings.
-Using match_string() (which computes the array size via ARRAY_SIZE())
-is possible.
+On Wed, Apr 17, 2019 at 11:52:00AM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 12-04-19 15:41, Heikki Krogerus wrote:
+> > In ACPI, and now also in DT, the USB connectors usually have
+> > their own device nodes. In case of USB Type-C, those
+> > connector (port) nodes are child nodes of the controller or
+> > PHY device, in our case the fusb302. The software fwnodes
+> > allow us to create a similar child node for fusb302 that
+> > represents the connector also on Intel CHT.
+> > 
+> > This makes it possible replace the fusb302 specific device
+> > properties which were deprecated with the common USB
+> > connector properties that tcpm.c is able to use directly.
+> > 
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > ---
+> >   drivers/platform/x86/intel_cht_int33fe.c | 37 ++++++++++++++++++++++--
+> >   1 file changed, 34 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+> > index 863a792d9282..eff5990322ff 100644
+> > --- a/drivers/platform/x86/intel_cht_int33fe.c
+> > +++ b/drivers/platform/x86/intel_cht_int33fe.c
+> > @@ -24,6 +24,7 @@
+> >   #include <linux/platform_device.h>
+> >   #include <linux/regulator/consumer.h>
+> >   #include <linux/slab.h>
+> > +#include <linux/usb/pd.h>
+> >   #define EXPECTED_PTYPE		4
+> > @@ -31,6 +32,7 @@ enum {
+> >   	INT33FE_NODE_FUSB302,
+> >   	INT33FE_NODE_MAX17047,
+> >   	INT33FE_NODE_PI3USB30532,
+> > +	INT33FE_NODE_USB_CONNECTOR,
+> >   	INT33FE_NODE_MAX,
+> >   };
+> > @@ -111,9 +113,29 @@ cht_int33fe_register_max17047(struct device *dev, struct cht_int33fe_data *data)
+> >   static const struct property_entry fusb302_props[] = {
+> >   	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
+> > -	PROPERTY_ENTRY_U32("fcs,max-sink-microvolt", 12000000),
+> > -	PROPERTY_ENTRY_U32("fcs,max-sink-microamp",   3000000),
+> > -	PROPERTY_ENTRY_U32("fcs,max-sink-microwatt", 36000000),
+> 
+> Note that the 36000000 value being removed here is max-sink-microwatt,
+> esp. the _max_ part is important. And recent versions of the fusb302
+> code ignore this entirely.
+> 
+> > +	{ }
+> > +};
+> > +
+> > +#define PDO_FIXED_FLAGS \
+> > +	(PDO_FIXED_DUAL_ROLE | PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)
+> > +
+> > +static const u32 src_pdo[] = {
+> > +	PDO_FIXED(5000, 1500, PDO_FIXED_FLAGS),
+> > +};
+> > +
+> > +static const u32 snk_pdo[] = {
+> > +	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
+> > +	PDO_VAR(5000, 12000, 3000),
+> > +};
+> > +
+> > +static const struct property_entry usb_connector_props[] = {
+> > +	PROPERTY_ENTRY_STRING("name", "connector"),
+> > +	PROPERTY_ENTRY_STRING("data-role", "dual"),
+> > +	PROPERTY_ENTRY_STRING("power-role", "dual"),
+> > +	PROPERTY_ENTRY_STRING("try-power-role", "sink"),
+> > +	PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
+> > +	PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
+> > +	PROPERTY_ENTRY_U32("op-sink-microwatt", 36000000),
+> 
+> Where as "op-sink-microwatt" is more interpreted as a minimum
+> value for non PPS supplies not being able to deliver this causes
+> the Capability Mismatch to get set. But for PPS supplies if I'm
+> reading the code correctly, the entire PPS negotiation is failed
+> by tcpm.c if this cannot be matched. I guess / hope that there
+> is a fallback to none PPS PDOs then but I'm not sure.
 
-The change is mostly cosmetic.
-No functionality change.
+OK. I'll change that to the current default value, 2500000.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- kernel/sched/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Anyways the charger the GPD-win ships with is a non PD capable
+> 5V/2A charger and the GPD-pocket ships with a charger which does
+> max 12V/2A. The device itself will work fine on around 10W and
+> even charge at that level (albeit slowly). So I believe that 10W
+> would be a better value for "op-sink-microwatt" (the dt-binding
+> says it is mandatory so we cannot just leave it out).
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index b0efc5fe641e..6d5f370bdfde 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -111,7 +111,7 @@ static int sched_feat_set(char *cmp)
- 		cmp += 3;
- 	}
- 
--	i = __match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-+	i = match_string(sched_feat_names, cmp);
- 	if (i < 0)
- 		return i;
- 
+I have no objections. If you prefer, I can include a separate patch
+where I change the value to 10W.
+
+thanks,
+
 -- 
-2.17.1
-
+heikki
