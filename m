@@ -2,166 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B89B180B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 899A917EA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfEHTwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:52:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51160 "EHLO mail.kernel.org"
+        id S1728834AbfEHRAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfEHTwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:52:43 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728616AbfEHRAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 13:00:08 -0400
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 389EC214AF;
-        Wed,  8 May 2019 19:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AF3421530;
+        Wed,  8 May 2019 17:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557345161;
-        bh=WvqlE0zoyG0HaDjphQsaFq6mRxNdKTiq1F02ec0+6Bo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rmfX5vc3on/JzT6wUcFitavY0RbtRsD+JW/PFXruSyUpQmR07wgSrqVDy6GaoSa/F
-         pFtRYcbBqQgrIni09uMAjm/TAa5viZhb4GBCgTjtFi6S5/nyxhv/n88lXjXuFVEns7
-         V3lpZWZvYKJu2emVGDK049Uw1XD8Q1tb7UeYtFcM=
-Date:   Wed, 8 May 2019 18:59:45 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org,
-        tiwai@suse.de, linux-kernel@vger.kernel.org,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 1/7] soundwire: Add sysfs support for
- master(s)
-Message-ID: <20190508165945.GC6157@kroah.com>
-References: <20190504065242.GA9770@kroah.com>
- <b0059709-027e-26c4-25a1-bd55df7c507f@linux.intel.com>
- <20190507052732.GD16052@vkoul-mobl>
- <20190507055432.GB17986@kroah.com>
- <20190507110331.GL16052@vkoul-mobl>
- <20190507111956.GB1092@kroah.com>
- <10fef156-7b01-7a08-77b4-ae3153eaaabc@linux.intel.com>
- <20190508074606.GV16052@vkoul-mobl>
- <20190508091628.GB1858@kroah.com>
- <c0161db3-69d7-0a76-f4bd-d5feb3529128@linux.intel.com>
+        s=default; t=1557334807;
+        bh=uHAW0/o+g55YDVcmOd6JTnlBsp1XalPYNPR1umKx9o0=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=rT40VyCj79Hd+00Cx7RENkzjM0uBHarbGEU9vXMneMP/7Hn2E06wPch0sWI1CG3eS
+         b2+E5k6XRzyntrobMs0+qD0hi+EUeh3fxuQO1QNLqJjFz8PkJKlZE/IifAdKGr5Vq+
+         ePrUiNWpC5h8UY6xmJaOEFHB2yQLh2XzgpVdiP4I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0161db3-69d7-0a76-f4bd-d5feb3529128@linux.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190508112842.11654-4-alexandru.ardelean@analog.com>
+References: <20190508112842.11654-1-alexandru.ardelean@analog.com> <20190508112842.11654-4-alexandru.ardelean@analog.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 02/16] treewide: rename match_string() -> __match_string()
+Cc:     gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Heiko Stuebner <heiko@sntech.de>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <155733480678.14659.15999974975874060801@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Wed, 08 May 2019 10:00:06 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 11:42:15AM -0500, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 5/8/19 4:16 AM, Greg KH wrote:
-> > On Wed, May 08, 2019 at 01:16:06PM +0530, Vinod Koul wrote:
-> > > On 07-05-19, 17:49, Pierre-Louis Bossart wrote:
-> > > > 
-> > > > > > The model here is that Master device is PCI or Platform device and then
-> > > > > > creates a bus instance which has soundwire slave devices.
-> > > > > > 
-> > > > > > So for any attribute on Master device (which has properties as well and
-> > > > > > representation in sysfs), device specfic struct (PCI/platfrom doesn't
-> > > > > > help). For slave that is not a problem as sdw_slave structure takes care
-> > > > > > if that.
-> > > > > > 
-> > > > > > So, the solution was to create the psedo sdw_master device for the
-> > > > > > representation and have device-specific structure.
-> > > > > 
-> > > > > Ok, much like the "USB host controller" type device.  That's fine, make
-> > > > > such a device, add it to your bus, and set the type correctly.  And keep
-> > > > > a pointer to that structure in your device-specific structure if you
-> > > > > really need to get to anything in it.
-> > > > 
-> > > > humm, you lost me on the last sentence. Did you mean using
-> > > > set_drv/platform_data during the init and retrieving the bus information
-> > > > with get_drv/platform_data as needed later? Or something else I badly need
-> > > > to learn?
-> > > 
-> > > IIUC Greg meant we should represent a soundwire master device type and
-> > > use that here. Just like we have soundwire slave device type. Something
-> > > like:
-> > > 
-> > > struct sdw_master {
-> > >          struct device dev;
-> > >          struct sdw_master_prop *prop;
-> > >          ...
-> > > };
-> > > 
-> > > In show function you get master from dev (container of) and then use
-> > > that to access the master properties. So int.sdw.0 can be of this type.
-> > 
-> > Yes, you need to represent the master device type if you are going to be
-> > having an internal representation of it.
-> 
-> Humm, confused...In the existing code bus and master are synonyms, see e.g.
-> following code excerpts:
-> 
->  * sdw_add_bus_master() - add a bus Master instance
->  * @bus: bus instance
->  *
->  * Initializes the bus instance, read properties and create child
->  * devices.
-> 
-> struct sdw_bus {
-> 	struct device *dev; <<< pointer here
+(Trimming the lists but keeping lkml)
 
-That's the pointer to what?  The device that the bus is "attached to"
-(i.e. parent, like a platform device or a pci device)?
+Quoting Alexandru Ardelean (2019-05-08 04:28:28)
+> This change does a rename of match_string() -> __match_string().
+>=20
+> There are a few parts to the intention here (with this change):
+> 1. Align with sysfs_match_string()/__sysfs_match_string()
+> 2. This helps to group users of `match_string()` into simple users:
+>    a. those that use ARRAY_SIZE(_a) to specify the number of elements
+>    b. those that use -1 to pass a NULL terminated array of strings
+>    c. special users, which (after eliminating 1 & 2) are not that many
+> 3. The final intent is to fix match_string()/__match_string() which is
+>    slightly broken, in the sense that passing -1 or a positive value does
+>    not make any difference: the iteration will stop at the first NULL
+>    element.
+>=20
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+[...]
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 96053a96fe2f..0b6c3d300411 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2305,8 +2305,8 @@ bool clk_has_parent(struct clk *clk, struct clk *pa=
+rent)
+>         if (core->parent =3D=3D parent_core)
+>                 return true;
+> =20
+> -       return match_string(core->parent_names, core->num_parents,
+> -                           parent_core->name) >=3D 0;
+> +       return __match_string(core->parent_names, core->num_parents,
+> +                             parent_core->name) >=3D 0;
 
-Why isn't this a "real" device in itself?
+This is essentially ARRAY_SIZE(core->parent_names) so it should be fine
+to put this back to match_string() later in the series.
 
-I thought I asked that a long time ago when first reviewing these
-patches...
+>  }
+>  EXPORT_SYMBOL_GPL(clk_has_parent);
+> =20
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index c3ad92965823..373f13e9cd83 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -276,8 +276,8 @@ static struct clk *rockchip_clk_register_frac_branch(
+>                 struct clk *mux_clk;
+>                 int ret;
+> =20
+> -               frac->mux_frac_idx =3D match_string(child->parent_names,
+> -                                                 child->num_parents, nam=
+e);
+> +               frac->mux_frac_idx =3D __match_string(child->parent_names,
+> +                                                   child->num_parents, n=
+ame);
 
-> 	unsigned int link_id;
-> 	struct list_head slaves;
-> 	DECLARE_BITMAP(assigned, SDW_MAX_DEVICES);
-> 	struct mutex bus_lock;
-> 	struct mutex msg_lock;
-> 	const struct sdw_master_ops *ops;
-> 	const struct sdw_master_port_ops *port_ops;
-> 	struct sdw_bus_params params;
-> 	struct sdw_master_prop prop;
-> 
-> The existing code creates a platform_device in
-> drivers/soundwire/intel_init.c, and it's assigned by the following code:
+I suspect this is the same as above, but Heiko can ack/confirm.
 
-The core creates a platform device, don't assume you can "take it over"
-:)
-
-That platform device lives on the platform bus, you need a "master"
-device that lives on your soundbus bus.
-
-Again, look at how USB does this.  Or better yet, greybus, as that code
-is a lot smaller and simpler.
-
-> 
-> static int intel_probe(struct platform_device *pdev)
-> {
-> 	struct sdw_cdns_stream_config config;
-> 	struct sdw_intel *sdw;
-> 	int ret;
-> 
-> 	sdw = devm_kzalloc(&pdev->dev, sizeof(*sdw), GFP_KERNEL);
-> [snip]
-> 	sdw->cdns.dev = &pdev->dev;
-> 	sdw->cdns.bus.dev = &pdev->dev;
-
-Gotta love the lack of reference counting :(
-
-> I really don't see what you are hinting at, sorry, unless we are talking
-> about major surgery in the code.
-
-It sounds like you need a device on your bus that represents the master,
-as you have attributes associated with it, and other things.  You can't
-put attributes on a random pci or platform device, as you do not "own"
-that device.
-
-does that help?
-
-greg k-h
+>                 frac->mux_ops =3D &clk_mux_ops;
+>                 frac->clk_nb.notifier_call =3D rockchip_clk_frac_notifier=
+_cb;
+> =20
