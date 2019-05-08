@@ -2,114 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677F217394
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6126417398
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfEHIYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:24:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60560 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfEHIYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:24:22 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 55ACB308620F;
-        Wed,  8 May 2019 08:24:22 +0000 (UTC)
-Received: from localhost (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AE0F6600D4;
-        Wed,  8 May 2019 08:24:21 +0000 (UTC)
-Date:   Wed, 8 May 2019 16:24:18 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     x86@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-        hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        keescook@chromium.org
-Subject: Re: [PATCH v4] x86/mm/KASLR: Fix the size of vmemmap section
-Message-ID: <20190508082418.GC24922@MiWiFi-R3L-srv>
-References: <20190508080417.15074-1-bhe@redhat.com>
+        id S1727097AbfEHIYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:24:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33469 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfEHIYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:24:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id z28so10117446pfk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iC6daHVC1NjMNGNI2NQyqVsJzQK+nooSjenlYkW2TAs=;
+        b=LotEC8sC4S7OHW3lyc/DZgBDExW5f8NYUNxF+UL7csOiDFo0e7S7DuLAj/kBNS8nK5
+         fNs18GG3nzobAm179wPW3ldJT71IhNB+zALy0X4Pu97IZugwWwKZ3UrWqsMIqK+NNdRi
+         8QIy96WeKuqpX09N6gxHn4AAI2FlvZJNfl/x5ypn9f0rYe4MWeNXUelYzIxky5VYe/rQ
+         90P0eRCMBUodgnnZ5TdJawgxrh4jJeiX26IKbIlCySs7P/zpdY6JWPXELKyCENCnZhnn
+         t9dPbA2bRu6xl+m0O1UmQyl5ecqV5ljKgCPUlXwrOriaJTOigmRXWnXeTMaJXUNOsWgT
+         +Wzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iC6daHVC1NjMNGNI2NQyqVsJzQK+nooSjenlYkW2TAs=;
+        b=hrHslQf7ZI3Lkf915NhmRESgcthKK3Q0Y761WQn7voIkLuzQjRZQ5q85bniQg+JiPP
+         tM72Ecg6GS6uMYriqsnA82ytvoFCXmW9hkl3UQK2Qe1gQ7ZjBbmJnIpYRh4eMH2jxC3l
+         ar8NUOe5T8iGLUE70UsXHi4TpYZl1Vn+cCjtR3Puq5voytjEC6nvZfglKqJgnUAW4rMf
+         IZxEgVYxi27qFdn55UHxdrn5DbZ224L1y7+t5xyg2RPYvuhMtauyliWE89NaKWvT240g
+         h+QFCYPn/TwMIZdQRqXhht4Tnq3VDw0IDwvFtO5AZGAAZY2/TkmsZT3FRbmXUFLLUaI4
+         Eirg==
+X-Gm-Message-State: APjAAAVXqsoJGE6db2WEOFFSc3HC9YgZNPl7voPcWI4eAudkaLBgulyl
+        CKO45wStS/M6znkRAwWEoow=
+X-Google-Smtp-Source: APXvYqyYfBf1RTyexTFlq2oWjBFattsYJaqLo/svM/xoIyftGy6bk1B1kKSVwC4upWQHDvoP1QeYpg==
+X-Received: by 2002:a63:2a89:: with SMTP id q131mr6147801pgq.359.1557303875912;
+        Wed, 08 May 2019 01:24:35 -0700 (PDT)
+Received: from localhost ([175.223.21.172])
+        by smtp.gmail.com with ESMTPSA id 10sm27569688pft.100.2019.05.08.01.24.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 01:24:34 -0700 (PDT)
+Date:   Wed, 8 May 2019 17:24:31 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] RFC: x86/smp: use printk_deferred in
+ native_smp_send_reschedule
+Message-ID: <20190508082431.GA21654@jagdpanzerIV>
+References: <20190507173329.17031-1-daniel.vetter@ffwll.ch>
+ <20190508074420.GB15704@jagdpanzerIV>
+ <20190508075302.GC15704@jagdpanzerIV>
+ <CAKMK7uFeRmSGkqFj-xmdebwKok9+z1pyDZWUMNXfzTT4H2=-fA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190508080417.15074-1-bhe@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 08 May 2019 08:24:22 +0000 (UTC)
+In-Reply-To: <CAKMK7uFeRmSGkqFj-xmdebwKok9+z1pyDZWUMNXfzTT4H2=-fA@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/19 at 04:04pm, Baoquan He wrote:
-> kernel_randomize_memory() hardcodes the size of vmemmap section as 1 TB,
-> to support the maximum amount of system RAM in 4-level paging mode, 64 TB.
+On (05/08/19 10:06), Daniel Vetter wrote:
+[..]
+> > Any printk-related patch in this area will make PeterZ really-really
+> > angry :)
 > 
-> However, 1 TB is not enough for vmemmap in 5-level paging mode. Assuming
-> the size of struct page is 64 Bytes, to support 4 PB system RAM in 5-level,
-> 64 TB of vmemmap area is needed. The wrong hardcoding may cause vmemmap
-> stamping into the following cpu_entry_area section, if KASLR puts vmemmap
-> very close to cpu_entry_area , and the actual area of vmemmap is much
-> bigger than 1 TB.
-> 
-> So here calculate the actual size of vmemmap region, then align up to 1 TB
-> boundary. In 4-level it's always 1 TB. In 5-level it's adjusted on demand.
-> The current code reserves 0.5 PB for vmemmap in 5-level. In this new way,
-> the left space can be saved to join randomization to increase the entropy.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Acked-by: Kirill A. Shutemov <kirill@linux.intel.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Hm any more context for someone with no clue about this? Just that the
+> dependencies are already terribly complex and it's not going to get
+> better, or something more specific?
 
-I think this's worth noticing stable tree:
+The main problem is that it's a deferred error-reporting, so such
+a report has chances to never be reported. It's not like 'normal'
+printk() is always guaranteed to immediately start printing; sometimes
+it will, sometimes it won't, and sometimes it never will, for instance
+when console_sem was locked by offline-ed CPU.
 
-Cc: stable@vger.kernel.org
+An example of PeterZ's opinion on printk_deferred()
+/* message ID: 20181122101606.GP2131@hirez.programming.kicks-ass.net */
 
-> ---
-> v3->v4:
->   Fix the incorrect style of code comment;
->   Add ack tags from Kirill and Kees.
-> v3 discussion is here:
->   http://lkml.kernel.org/r/20190422091045.GB3584@localhost.localdomain
+  | No, printk_deferred() is a disease, it needs to be eradicated, not
+  | spread around.
+
+> > printk_deferred(), just like prinkt_safe(), depends on IRQ work;
+> > printk_safe(), however, can redirect multiple lines, unlike
+> > printk_deferred(). So if you want to keep the backtrace, you may
+> > do something like
+> >
+> >         if (unlikely(cpu_is_offline(cpu))) {
+> >                 printk_safe_enter(...);
+> >                 WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n",
+> >                          cpu);
+> >                 printk_safe_exit(...);
+> >                 return;
+> >         }
+> >
+> > I think, in this case John's reworked-printk can do better than
+> > printk_safe/printk_deferred.
 > 
->  arch/x86/mm/kaslr.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index dc3f058bdf9b..c0eedb85a92f 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -52,7 +52,7 @@ static __initdata struct kaslr_memory_region {
->  } kaslr_regions[] = {
->  	{ &page_offset_base, 0 },
->  	{ &vmalloc_base, 0 },
-> -	{ &vmemmap_base, 1 },
-> +	{ &vmemmap_base, 0 },
->  };
->  
->  /* Get size in bytes used by the memory region */
-> @@ -78,6 +78,7 @@ void __init kernel_randomize_memory(void)
->  	unsigned long rand, memory_tb;
->  	struct rnd_state rand_state;
->  	unsigned long remain_entropy;
-> +	unsigned long vmemmap_size;
->  
->  	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
->  	vaddr = vaddr_start;
-> @@ -109,6 +110,14 @@ void __init kernel_randomize_memory(void)
->  	if (memory_tb < kaslr_regions[0].size_tb)
->  		kaslr_regions[0].size_tb = memory_tb;
->  
-> +	/*
-> +	 * Calculate how many TB vmemmap region needs, and aligned to
-> +	 * 1TB boundary.
-> +	 */
-> +	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-> +		sizeof(struct page);
-> +	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
-> +
->  	/* Calculate entropy available between regions */
->  	remain_entropy = vaddr_end - vaddr_start;
->  	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
-> -- 
-> 2.17.2
-> 
+> Hm I think this is what Petr was suggesting, but somehow I didn't find
+> the printk_safe_* functions and didn't connect the dots.
+
+These are in kernel/printk/printk_safe.c as of now.
+
+> Needs the _irqsave variants I guess, I'll respin a v2 of this.
+
+Let's wait a bit before respin.
+
+	-ss
