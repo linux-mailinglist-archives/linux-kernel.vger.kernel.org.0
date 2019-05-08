@@ -2,179 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B50181C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0775181C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfEHVrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 17:47:47 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38145 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfEHVrr (ORCPT
+        id S1728381AbfEHVr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 17:47:56 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46433 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbfEHVr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 17:47:47 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y19so21153lfy.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 14:47:45 -0700 (PDT)
+        Wed, 8 May 2019 17:47:56 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bi2so29701plb.13;
+        Wed, 08 May 2019 14:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4KWdBpehfU7fGp6F4+EMfaZWNMBJ4N9LIgc0IJ8YlaU=;
-        b=sQJcSsgVBpUiW9/dp2EhnC5IE90kh9KPTg1JLy9lqJRX55/Z2YssPoM2ZGpqgaeTGX
-         iM6XoWZOSPHbDMXPCb0rDCbG4bOYNAS5AsOEhP1/o/HP+aV8ayi+WR4SKt/9ST7gMOm1
-         wBQC4hfR3izU2GcqMMgCQDQaonDwRMY9yuEGrDqlbDNLM/ibIw3wjPzcGpmnzxIo1QzH
-         t/my2JstqfAoXG+liGRmO8ZwKP50QAdV101d1KV8eDz28mJREDdq5Wwac8jRIwdM9JsN
-         gSf8Bf11Kb6F5tnO65fEEeMD1XAdpHSbQrk2hrxUo0AaTUuV5aSRgNPh+YXRyp98qN4G
-         ek3Q==
+        bh=5bNHEZyoMBk+M3klI9aU53M2aRLAmC1Bv+JFzOfGHa0=;
+        b=pBlRZGaLwQVLu6p7WDopNzOsjrEGhrlO/Y573oVOa0V1JmJhiKJX7YKDURJpbhWIfh
+         p7Pmn+fT58/zf0jzExbvDtqLLvCG33F+IqblJJSkAIHEWVrb+0dGx4Ht2fruP1duuFAO
+         lICxbo4B0JTwANqsBnhW/FNlAyKrxSwn9bn8fowc/TSTzd7O4/WR1OzQoQ6ftdDzjwCG
+         0rgiMmMf7zN4+SIP6dzG9PoM40O+4YCUG+05j0eC9zQEryfct5+tFjIizEajdI/xcicX
+         Yc8sgGy5gKVjaEz91MYZr2C6pAam2vrBmnFoEGbEGNlueLj8a2HYZhn6e5un5lRMhBdR
+         X9Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4KWdBpehfU7fGp6F4+EMfaZWNMBJ4N9LIgc0IJ8YlaU=;
-        b=pZHkZtNXVhO5SLemJfczCKhvhW0cobHeCv/CejQmdLtV/mWk4tVF+eqySpts0F4JsZ
-         j5hNHCxLnbQTQXJXrpuFYwJw4pg4D8Pm8MHca8P4bguYsTZomP+ThghiXvraqXWNrvcQ
-         ckEHiJMNHnxRDD07qyqD3eD1pQKKZ9AsjSlVBudwpJl+rTP5JJX3mEUv4mHmAwlRfnR4
-         Ddeshzu213JjOzHYNplIujOQcI7yrKtrGCJWbn5rSm9At26cxpMzt9JNn46BrT60Tvlv
-         HN0iCdLuUTRdCQGMO7mqaHyFSEvHzAruenud0mlEjlb0sQ6g1uuAgMEEaVtIOJqh/Ngq
-         wfkQ==
-X-Gm-Message-State: APjAAAUU4dmmH2X7oVyllExLenQgU2qNFLezCc9cdwUJM7qOuyhxCpbg
-        jcCN5FFIJ3S4goUPGlgpVUBwD8d6Sliao9rpulgB
-X-Google-Smtp-Source: APXvYqwfHTN7jF0fpqil4BUeasee8e1nJ5DufZ7FCjbREONvZg+rbKNJIG03NSaQbVwXMLivzdL7FfQ3i7yPLDwGdNs=
-X-Received: by 2002:a19:9e47:: with SMTP id h68mr188400lfe.91.1557352064142;
- Wed, 08 May 2019 14:47:44 -0700 (PDT)
+        bh=5bNHEZyoMBk+M3klI9aU53M2aRLAmC1Bv+JFzOfGHa0=;
+        b=nzGKJ9DGkfK2cG5+lh4YgqjJ1EBZOSmRSGEvyXHhWi0JxiI4trIQoSEHaSpX1ILm7u
+         +5fZr78hBLeExkACy+D0iy7Q3boiVgQ2XwJCDTMMwHpIMSQf0oeLacFertoieu39Dt1r
+         3IYApzBi9sBBGPR4S+Je32qdwXOqTP7vxIJP2BXwGQn0qINFRCWa9mI1GpUg1/zXnF0c
+         hp92lj1QKTAJsC1I00z0JDRyFvOUpTkQ59sXnvlN74LxVEYklI70T820aJMJg094rzVl
+         HnV/41SQuQW1CgEkGmTCwrl8LqumECIINddz/dl32PhF4WDIEhViFaDfdvk7Kj+d7vnH
+         a+zA==
+X-Gm-Message-State: APjAAAUudpQL1Q1ZI9WuU0NiPJ+mdsuT1Qu1jdPyZFwrVSUZ+8bZR4OF
+        0rhGQjIrJfxWyAt95d6xZwHKIZ6qjc5RL2OHfhBcZA==
+X-Google-Smtp-Source: APXvYqxZh9GqHMV6SQwteGF/JoL1z9bDQTTi2v9t2Ry5aUK/J9uIr86FN0DdFGdCrfU9nIkUusb604Ppp8Z18reiUVg=
+X-Received: by 2002:a17:902:b105:: with SMTP id q5mr190268plr.290.1557352074726;
+ Wed, 08 May 2019 14:47:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <1557296477-4694-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1557296477-4694-1-git-send-email-hofrat@osadl.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 8 May 2019 17:47:32 -0400
-Message-ID: <CAHC9VhSU7pzWby78gHkYKm3t1LopSCoHBfmp=uBc+mF234K8mg@mail.gmail.com>
-Subject: Re: [PATCH RFC] selinux: provide __le variables explicitly
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        peter enderborg <peter.enderborg@sony.com>,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAH2r5mv=4JsaF-8v=U4JR3jrOyPfhtUsJPogNudLejDh09xGSA@mail.gmail.com>
+ <CAHk-=wiKoePP_9CM0fn_Vv1bYom7iB5N=ULaLLz7yOST3K+k5g@mail.gmail.com>
+In-Reply-To: <CAHk-=wiKoePP_9CM0fn_Vv1bYom7iB5N=ULaLLz7yOST3K+k5g@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 8 May 2019 16:47:43 -0500
+Message-ID: <CAH2r5mu2tsupGjLQPK0z7va-FPdWb_WT0DKTYjZw-SW4=DCaRQ@mail.gmail.com>
+Subject: Re: [GIT PULL] CIFS/SMB3 fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 2:27 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
-> While the endiannes is being handled properly sparse was unable to verify
-> this due to type inconsistency. So introduce an additional __le32
-> respectively _le64 variable to be passed to le32/64_to_cpu() to allow
-> sparse to verify proper typing. Note that this patch does not change
-> the generated binary on little-endian systems - on 32bit powerpc it
-> does change the binary.
+On Wed, May 8, 2019 at 3:37 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> ---
+> On Wed, May 8, 2019 at 11:32 AM Steve French <smfrench@gmail.com> wrote:
+> >
+> >    [..] Our
+> > build verification tests passed (and continue to be extended to
+> > include more tests).  See e.g. our 'buildbot' results at:
+> > http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/199
 >
-> Problem located by an experimental coccinelle script to locate
-> patters that make sparse unhappy (false positives):
+> Still, is there any reason for that very late rebase?
 >
-> sparse complaints on different architectures fixed by this patch are:
->
-> ppc6xx_defconfig
->   CHECK   security/selinux/ss/ebitmap.c
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
->
-> Little-endian systems:
->
-> loongson3_defconfig
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
->
-> x86_64_defconfig
-> security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-> security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
->
-> Patch was compile-tested with: x86_64_defconfig,loongson3_defconfig (both
-> little-endian) and ppc603_defconfig (big-endian).
->
-> On little-endian systems the patch has no impact on the generated binary
-> (which is expected) but on the 32bit powerpc it does change the binary
-> which is not expected but since I'm not able to generate the .lst files
-> in security/selinux/ss/ due to the lack of a Makefile it is not clear
-> if this is an unexpected side-effect or due only to the introduction of
-> the additional variables. From my understanding the patch does not change
-> the program logic so if the code was correct on big-endian systems before
-> it should still be correct now.
+> Why are all the commits so recent?
 
-This is a bit worrisome, but I tend to agree that this patch *should*
-be correct.  I'm thinking you're probably right in that the resulting
-binary difference could be due to the extra variable.  Have you tried
-any other big-endian arches?
+Most of the commits were from April, three from March, only a few more
+recent. I rebased
+yesterday (bad idea it seems based on your note) simply to avoid any potential
+merge conflict with the two broad VFS changes (unrelated to my PR)
+that hit cifs code yesterday (albeit they turned out to be very small).
 
-> Patch is against 5.1 (localversion-next is next-20190506)
->
->  security/selinux/ss/ebitmap.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-> index 8f624f8..09929fc 100644
-> --- a/security/selinux/ss/ebitmap.c
-> +++ b/security/selinux/ss/ebitmap.c
-> @@ -347,7 +347,9 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->  {
->         struct ebitmap_node *n = NULL;
->         u32 mapunit, count, startbit, index;
-> +       __le32 ebitmap_start;
->         u64 map;
-> +       __le64 mapbits;
->         __le32 buf[3];
->         int rc, i;
->
-> @@ -381,12 +383,12 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->                 goto bad;
->
->         for (i = 0; i < count; i++) {
-> -               rc = next_entry(&startbit, fp, sizeof(u32));
-> +               rc = next_entry(&ebitmap_start, fp, sizeof(u32));
->                 if (rc < 0) {
->                         pr_err("SELinux: ebitmap: truncated map\n");
->                         goto bad;
->                 }
-> -               startbit = le32_to_cpu(startbit);
-> +               startbit = le32_to_cpu(ebitmap_start);
->
->                 if (startbit & (mapunit - 1)) {
->                         pr_err("SELinux: ebitmap start bit (%d) is "
-> @@ -423,12 +425,12 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->                         goto bad;
->                 }
->
-> -               rc = next_entry(&map, fp, sizeof(u64));
-> +               rc = next_entry(&mapbits, fp, sizeof(u64));
->                 if (rc < 0) {
->                         pr_err("SELinux: ebitmap: truncated map\n");
->                         goto bad;
->                 }
-> -               map = le64_to_cpu(map);
-> +               map = le64_to_cpu(mapbits);
->
->                 index = (startbit - n->startbit) / EBITMAP_UNIT_SIZE;
->                 while (map) {
-> --
-> 2.1.4
->
+> And perhaps even more importantly, why is the base for that rebase is
+> some completely random and inappropriate commit in the middle of the
+> merge window?
+
+Understood. I had originally based it on v5.1 tag, but changed that
+for testing after
+I saw two other PR's hit I wanted to run the regression tests on
+'current' mainline
+with the changes in for-next code just in case (very unlikely) the other two
+changes that I hadn't seen that hit cifs since 5.1 broke anything or
+caused conflicts.
+
+> So don't do the whole "rebase the day before" in the first place, but
+> *DEFINITELY* don't do it when you then pick a random and bad point to
+> rebase things on top of!
+
+Understood - will do the rebase for our verification testing only
+(e.g. to spot any
+regressions in recent global or VFS changes) but not for
+sending to you.   So for future, will try to send with base as that of
+mainline kernel
+as of he last cifs PR  merge or new kernel version or rc (e.g.
+v5.2-rc1 or v5.1 etc)
+whichever is more recent.  Is that ok?
+
 
 
 -- 
-paul moore
-www.paul-moore.com
+Thanks,
+
+Steve
