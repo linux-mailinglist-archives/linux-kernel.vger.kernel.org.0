@@ -2,111 +2,407 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8151749C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA875174AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfEHJJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:09:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35144 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbfEHJJA (ORCPT
+        id S1727097AbfEHJJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 05:09:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58436 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfEHJJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:09:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y197so2247177wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 02:08:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=78s6BKgtcqTpXSDR87S8iwsLLYq7TFH1AkHESOn6xdQ=;
-        b=ZyukzDvS7PWuP4WgsDsDU7PMxT5xaOC70mAhTrRmf2vFiu3aIj+FIrM0Ge69MZY7oB
-         qXqm6G6R5xWFviVQnNTm3gma7puNduE8/kI93t1gXewtnu5J7OzfSHzg7lvnP5woGV6X
-         USRCQSk/bJXOTDi/Uc3FTHcaXXs/maDgZtuGiqbLiCnJC9LZ5noi0lPIOpqaxCD3Lt7U
-         LxDTpcdtbyuTokHPYWr3/ut268yHe4YYBaQyW28hW0c7QwPb7oGqwv2RmJZ3lu0bTqv5
-         hZ0NU2G1BK1rQzsDMHrTpNQAE4bitcpdjmrB7f2pxgXOfnksg313FzDnD0q5cmrSuAmi
-         GaCA==
-X-Gm-Message-State: APjAAAXWy3HQD3yhpWdyovf8BNq9o9woxbvwtP7b0baRnLREWTNVd4PP
-        0lvBqOXGteQyj5IydeZQn3nLkw==
-X-Google-Smtp-Source: APXvYqxrc+/Fp3gQOFmiOvxTQ3d8Lhs3ICeo+L9TySIt0NQkplmBF99E6iZaPTTYTh4YXt3wpaFwcw==
-X-Received: by 2002:a7b:ce03:: with SMTP id m3mr2013588wmc.99.1557306538566;
-        Wed, 08 May 2019 02:08:58 -0700 (PDT)
-Received: from localhost.localdomain ([151.29.174.33])
-        by smtp.gmail.com with ESMTPSA id o4sm1417936wmc.38.2019.05.08.02.08.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 02:08:57 -0700 (PDT)
-Date:   Wed, 8 May 2019 11:08:55 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Luca Abeni <luca.abeni@santannapisa.it>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC PATCH 4/6] sched/dl: Improve capacity-aware wakeup
-Message-ID: <20190508090855.GG6551@localhost.localdomain>
-References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
- <20190506044836.2914-5-luca.abeni@santannapisa.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190506044836.2914-5-luca.abeni@santannapisa.it>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Wed, 8 May 2019 05:09:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=d5tlZR4YPrfOV1eJw5fAEi0JNHKIwg4JXLInXGrtSQY=; b=JYWjRhMTnybW
+        UvPtCE0jBpP4wGAsRCAXF+MYiZDq/Tqi03TUaCGLsgS3jf1w7IT+MQC8ISeEyLHPNWwgpOV3a6PIT
+        +FDx/7i8xCI0T2yJPrlBnCiFfH46xWRP7QaObSBmuEmUiZOclC2z3GjDj9f3XJakNMBDiEeybzsNL
+        r3Jms=;
+Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hOIZe-0007gT-14; Wed, 08 May 2019 09:09:17 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 1B5D444003B; Wed,  8 May 2019 10:08:57 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Applied "spi: at91-usart: add DMA support" to the spi tree
+In-Reply-To: <20190505180646.1442-3-radu_nicolae.pirea@upb.ro>
+X-Patchwork-Hint: ignore
+Message-Id: <20190508090857.1B5D444003B@finisterre.sirena.org.uk>
+Date:   Wed,  8 May 2019 10:08:57 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/19 06:48, Luca Abeni wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
-> 
-> Instead of considering the "static CPU bandwidth" allocated to
-> a SCHED_DEADLINE task (ratio between its maximum runtime and
-> reservation period), try to use the remaining runtime and time
-> to scheduling deadline.
-> 
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> ---
->  kernel/sched/cpudeadline.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-> index d21f7905b9c1..111dd9ac837b 100644
-> --- a/kernel/sched/cpudeadline.c
-> +++ b/kernel/sched/cpudeadline.c
-> @@ -114,8 +114,13 @@ static inline int dl_task_fit(const struct sched_dl_entity *dl_se,
->  			      int cpu, u64 *c)
->  {
->  	u64 cap = (arch_scale_cpu_capacity(NULL, cpu) * arch_scale_freq_capacity(cpu)) >> SCHED_CAPACITY_SHIFT;
-> -	s64 rel_deadline = dl_se->dl_deadline;
-> -	u64 rem_runtime  = dl_se->dl_runtime;
-> +	s64 rel_deadline = dl_se->deadline - sched_clock_cpu(smp_processor_id());
-> +	u64 rem_runtime  = dl_se->runtime;
-> +
-> +	if ((rel_deadline < 0) || (rel_deadline * dl_se->dl_runtime < dl_se->dl_deadline * rem_runtime)) {
-> +		rel_deadline = dl_se->dl_deadline;
-> +		rem_runtime  = dl_se->dl_runtime;
-> +	}
+The patch
 
-So, are you basically checking if current remaining bw can be consumed
-safely?
+   spi: at91-usart: add DMA support
 
-I'm not actually sure if looking at dynamic values is what we need to do
-at this stage. By considering static values we fix admission control
-(and scheduling). Aren't dynamic values more to do with energy tradeoffs
-(and so to be introduced when starting to look at the energy model)?
+has been applied to the spi tree at
 
-Another pair of hands maybe is to look at the dynamic spare bw of CPUs
-(to check that we don't overload CPUs).
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-- Juri
+From c3fdefc2d79e38d20e955d2d3ad48261d99c2936 Mon Sep 17 00:00:00 2001
+From: Radu Pirea <radu_nicolae.pirea@upb.ro>
+Date: Sun, 5 May 2019 21:06:46 +0300
+Subject: [PATCH] spi: at91-usart: add DMA support
+
+This patch adds support for DMA. Transfers are done with dma only if
+they are longer than 16 bytes in order to achieve a better performance.
+DMA setup introduces a little overhead and for transfers shorter than 16
+bytes there is no performance improvement.
+
+Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-at91-usart.c | 221 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 219 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index f763e14bdf12..a40bb2ef89dc 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -8,9 +8,12 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/dmaengine.h>
++#include <linux/dma-direction.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of_platform.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+@@ -59,6 +62,8 @@
+ 
+ #define US_INIT \
+ 	(US_MR_SPI_MASTER | US_MR_CHRL | US_MR_CLKO | US_MR_WRDBT)
++#define US_DMA_MIN_BYTES       16
++#define US_DMA_TIMEOUT         (msecs_to_jiffies(1000))
+ 
+ /* Register access macros */
+ #define at91_usart_spi_readl(port, reg) \
+@@ -72,14 +77,19 @@
+ 	writeb_relaxed((value), (port)->regs + US_##reg)
+ 
+ struct at91_usart_spi {
++	struct platform_device  *mpdev;
+ 	struct spi_transfer	*current_transfer;
+ 	void __iomem		*regs;
+ 	struct device		*dev;
+ 	struct clk		*clk;
+ 
++	struct completion	xfer_completion;
++
+ 	/*used in interrupt to protect data reading*/
+ 	spinlock_t		lock;
+ 
++	phys_addr_t		phybase;
++
+ 	int			irq;
+ 	unsigned int		current_tx_remaining_bytes;
+ 	unsigned int		current_rx_remaining_bytes;
+@@ -88,8 +98,182 @@ struct at91_usart_spi {
+ 	u32			status;
+ 
+ 	bool			xfer_failed;
++	bool			use_dma;
+ };
+ 
++static void dma_callback(void *data)
++{
++	struct spi_controller   *ctlr = data;
++	struct at91_usart_spi   *aus = spi_master_get_devdata(ctlr);
++
++	at91_usart_spi_writel(aus, IER, US_IR_RXRDY);
++	aus->current_rx_remaining_bytes = 0;
++	complete(&aus->xfer_completion);
++}
++
++static bool at91_usart_spi_can_dma(struct spi_controller *ctrl,
++				   struct spi_device *spi,
++				   struct spi_transfer *xfer)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctrl);
++
++	return aus->use_dma && xfer->len >= US_DMA_MIN_BYTES;
++}
++
++static int at91_usart_spi_configure_dma(struct spi_controller *ctlr,
++					struct at91_usart_spi *aus)
++{
++	struct dma_slave_config slave_config;
++	struct device *dev = &aus->mpdev->dev;
++	phys_addr_t phybase = aus->phybase;
++	dma_cap_mask_t mask;
++	int err = 0;
++
++	dma_cap_zero(mask);
++	dma_cap_set(DMA_SLAVE, mask);
++
++	ctlr->dma_tx = dma_request_slave_channel_reason(dev, "tx");
++	if (IS_ERR_OR_NULL(ctlr->dma_tx)) {
++		if (IS_ERR(ctlr->dma_tx)) {
++			err = PTR_ERR(ctlr->dma_tx);
++			goto at91_usart_spi_error_clear;
++		}
++
++		dev_dbg(dev,
++			"DMA TX channel not available, SPI unable to use DMA\n");
++		err = -EBUSY;
++		goto at91_usart_spi_error_clear;
++	}
++
++	ctlr->dma_rx = dma_request_slave_channel_reason(dev, "rx");
++	if (IS_ERR_OR_NULL(ctlr->dma_rx)) {
++		if (IS_ERR(ctlr->dma_rx)) {
++			err = PTR_ERR(ctlr->dma_rx);
++			goto at91_usart_spi_error;
++		}
++
++		dev_dbg(dev,
++			"DMA RX channel not available, SPI unable to use DMA\n");
++		err = -EBUSY;
++		goto at91_usart_spi_error;
++	}
++
++	slave_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++	slave_config.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++	slave_config.dst_addr = (dma_addr_t)phybase + US_THR;
++	slave_config.src_addr = (dma_addr_t)phybase + US_RHR;
++	slave_config.src_maxburst = 1;
++	slave_config.dst_maxburst = 1;
++	slave_config.device_fc = false;
++
++	slave_config.direction = DMA_DEV_TO_MEM;
++	if (dmaengine_slave_config(ctlr->dma_rx, &slave_config)) {
++		dev_err(&ctlr->dev,
++			"failed to configure rx dma channel\n");
++		err = -EINVAL;
++		goto at91_usart_spi_error;
++	}
++
++	slave_config.direction = DMA_MEM_TO_DEV;
++	if (dmaengine_slave_config(ctlr->dma_tx, &slave_config)) {
++		dev_err(&ctlr->dev,
++			"failed to configure tx dma channel\n");
++		err = -EINVAL;
++		goto at91_usart_spi_error;
++	}
++
++	aus->use_dma = true;
++	return 0;
++
++at91_usart_spi_error:
++	if (!IS_ERR_OR_NULL(ctlr->dma_tx))
++		dma_release_channel(ctlr->dma_tx);
++	if (!IS_ERR_OR_NULL(ctlr->dma_rx))
++		dma_release_channel(ctlr->dma_rx);
++	ctlr->dma_tx = NULL;
++	ctlr->dma_rx = NULL;
++
++at91_usart_spi_error_clear:
++	return err;
++}
++
++static void at91_usart_spi_release_dma(struct spi_controller *ctlr)
++{
++	if (ctlr->dma_rx)
++		dma_release_channel(ctlr->dma_rx);
++	if (ctlr->dma_tx)
++		dma_release_channel(ctlr->dma_tx);
++}
++
++static void at91_usart_spi_stop_dma(struct spi_controller *ctlr)
++{
++	if (ctlr->dma_rx)
++		dmaengine_terminate_all(ctlr->dma_rx);
++	if (ctlr->dma_tx)
++		dmaengine_terminate_all(ctlr->dma_tx);
++}
++
++static int at91_usart_spi_dma_transfer(struct spi_controller *ctlr,
++				       struct spi_transfer *xfer)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++	struct dma_chan	 *rxchan = ctlr->dma_rx;
++	struct dma_chan *txchan = ctlr->dma_tx;
++	struct dma_async_tx_descriptor *rxdesc;
++	struct dma_async_tx_descriptor *txdesc;
++	dma_cookie_t cookie;
++
++	/* Disable RX interrupt */
++	at91_usart_spi_writel(aus, IDR, US_IR_RXRDY);
++
++	rxdesc = dmaengine_prep_slave_sg(rxchan,
++					 xfer->rx_sg.sgl,
++					 xfer->rx_sg.nents,
++					 DMA_DEV_TO_MEM,
++					 DMA_PREP_INTERRUPT |
++					 DMA_CTRL_ACK);
++	if (!rxdesc)
++		goto at91_usart_spi_err_dma;
++
++	txdesc = dmaengine_prep_slave_sg(txchan,
++					 xfer->tx_sg.sgl,
++					 xfer->tx_sg.nents,
++					 DMA_MEM_TO_DEV,
++					 DMA_PREP_INTERRUPT |
++					 DMA_CTRL_ACK);
++	if (!txdesc)
++		goto at91_usart_spi_err_dma;
++
++	rxdesc->callback = dma_callback;
++	rxdesc->callback_param = ctlr;
++
++	cookie = rxdesc->tx_submit(rxdesc);
++	if (dma_submit_error(cookie))
++		goto at91_usart_spi_err_dma;
++
++	cookie = txdesc->tx_submit(txdesc);
++	if (dma_submit_error(cookie))
++		goto at91_usart_spi_err_dma;
++
++	rxchan->device->device_issue_pending(rxchan);
++	txchan->device->device_issue_pending(txchan);
++
++	return 0;
++
++at91_usart_spi_err_dma:
++	/* Enable RX interrupt if something fails and fallback to PIO */
++	at91_usart_spi_writel(aus, IER, US_IR_RXRDY);
++	at91_usart_spi_stop_dma(ctlr);
++
++	return -ENOMEM;
++}
++
++static unsigned long at91_usart_spi_dma_timeout(struct at91_usart_spi *aus)
++{
++	return wait_for_completion_timeout(&aus->xfer_completion,
++					   US_DMA_TIMEOUT);
++}
++
+ static inline u32 at91_usart_spi_tx_ready(struct at91_usart_spi *aus)
+ {
+ 	return aus->status & US_IR_TXRDY;
+@@ -216,6 +400,8 @@ static int at91_usart_spi_transfer_one(struct spi_controller *ctlr,
+ 				       struct spi_transfer *xfer)
+ {
+ 	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++	unsigned long dma_timeout = 0;
++	int ret = 0;
+ 
+ 	at91_usart_spi_set_xfer_speed(aus, xfer);
+ 	aus->xfer_failed = false;
+@@ -225,8 +411,25 @@ static int at91_usart_spi_transfer_one(struct spi_controller *ctlr,
+ 
+ 	while ((aus->current_tx_remaining_bytes ||
+ 		aus->current_rx_remaining_bytes) && !aus->xfer_failed) {
+-		at91_usart_spi_read_status(aus);
+-		at91_usart_spi_tx(aus);
++		reinit_completion(&aus->xfer_completion);
++		if (at91_usart_spi_can_dma(ctlr, spi, xfer) &&
++		    !ret) {
++			ret = at91_usart_spi_dma_transfer(ctlr, xfer);
++			if (ret)
++				continue;
++
++			dma_timeout = at91_usart_spi_dma_timeout(aus);
++
++			if (WARN_ON(dma_timeout == 0)) {
++				dev_err(&spi->dev, "DMA transfer timeout\n");
++				return -EIO;
++			}
++			aus->current_tx_remaining_bytes = 0;
++		} else {
++			at91_usart_spi_read_status(aus);
++			at91_usart_spi_tx(aus);
++		}
++
+ 		cpu_relax();
+ 	}
+ 
+@@ -345,6 +548,7 @@ static int at91_usart_spi_probe(struct platform_device *pdev)
+ 	controller->transfer_one = at91_usart_spi_transfer_one;
+ 	controller->prepare_message = at91_usart_spi_prepare_message;
+ 	controller->unprepare_message = at91_usart_spi_unprepare_message;
++	controller->can_dma = at91_usart_spi_can_dma;
+ 	controller->cleanup = at91_usart_spi_cleanup;
+ 	controller->max_speed_hz = DIV_ROUND_UP(clk_get_rate(clk),
+ 						US_MIN_CLK_DIV);
+@@ -376,7 +580,17 @@ static int at91_usart_spi_probe(struct platform_device *pdev)
+ 	aus->spi_clk = clk_get_rate(clk);
+ 	at91_usart_spi_init(aus);
+ 
++	aus->phybase = regs->start;
++
++	aus->mpdev = to_platform_device(pdev->dev.parent);
++
++	ret = at91_usart_spi_configure_dma(controller, aus);
++	if (ret)
++		goto at91_usart_fail_dma;
++
+ 	spin_lock_init(&aus->lock);
++	init_completion(&aus->xfer_completion);
++
+ 	ret = devm_spi_register_master(&pdev->dev, controller);
+ 	if (ret)
+ 		goto at91_usart_fail_register_master;
+@@ -389,6 +603,8 @@ static int at91_usart_spi_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ at91_usart_fail_register_master:
++	at91_usart_spi_release_dma(controller);
++at91_usart_fail_dma:
+ 	clk_disable_unprepare(clk);
+ at91_usart_spi_probe_fail:
+ 	spi_master_put(controller);
+@@ -453,6 +669,7 @@ static int at91_usart_spi_remove(struct platform_device *pdev)
+ 	struct spi_controller *ctlr = platform_get_drvdata(pdev);
+ 	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
+ 
++	at91_usart_spi_release_dma(ctlr);
+ 	clk_disable_unprepare(aus->clk);
+ 
+ 	return 0;
+-- 
+2.20.1
+
