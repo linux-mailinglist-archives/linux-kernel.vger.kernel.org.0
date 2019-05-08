@@ -2,201 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC4817891
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20FC1787F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbfEHLpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:45:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49957 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbfEHLpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:45:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 04:40:13 -0700
-X-ExtLoop1: 1
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 08 May 2019 04:40:10 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 May 2019 14:40:09 +0300
-Date:   Wed, 8 May 2019 14:40:09 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 13/13] platform/x86: intel_cht_int33fe: Replacing the
- old connections with references
-Message-ID: <20190508114009.GD19816@kuha.fi.intel.com>
-References: <20190412134122.82903-1-heikki.krogerus@linux.intel.com>
- <20190412134122.82903-14-heikki.krogerus@linux.intel.com>
- <a91a1d75-f224-9c9d-873a-f80467d2fb0c@redhat.com>
- <20190417063918.GI1747@kuha.fi.intel.com>
- <76d9ab79-a1d0-f3cd-ba5d-2325740c72ff@redhat.com>
- <6f08b4b6-8303-5dc9-eb9e-30196bd95692@redhat.com>
+        id S1727797AbfEHLld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:41:33 -0400
+Received: from [66.55.73.32] ([66.55.73.32]:39688 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727516AbfEHLld (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:41:33 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id DDDBC2DC005C;
+        Wed,  8 May 2019 07:41:31 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1557315692;
+        bh=qGJ1gft/kRGbomR5Gk2AnhkGNE1jEj5BAJb5oyv/unk=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=D+zmQJifkhs/X6hPId/5NOett9ofrnDtUcWmjqgDQKc3MmGh9k5veKFfjfUsCtBRf
+         FZFf+wE05oyytQb7I5QSxpb8YxDDNMe6ras9l+lOOdI2I4wiVfcvVdJcxhmp074fZd
+         eRfG22Mm+p4YPGTk3H20/tVbabqxfxaCBFrcWbKEadAx4wluAml+keUbhh37xxzXH1
+         jtnTkpsPpKimyEG7DXFY/jeFQeaJwfUkTK4Y4DMRUEvIV24VAnYN4wKYIXpQo7fIGQ
+         VGyU0Ocndb2O+pHLhMLiHTXnhHlfJTLiOr/fkcrymF6eMLuTxDHq2RU1TzLj/TXOk3
+         0DHxjm3K4DlaD2QfxJxOwBDRpmGvsUA8eIUifWm1Sn5HQZJb+LlRhYErwP2ZYDV3+C
+         49RUeWCn3gF4iQu8ftb0irqDnHSyUrWFqyq4nWWgrsBOv2CSo+ZX1rkDkY6YAan0OZ
+         R5UsEzcVLiOBK726gA7kr8p0v149w9/LtDfcs4XWO4JVXsDJSNWwTjckKovyK9ONYa
+         5CpWuRo7c7nrXNmuqkuBSzsJddB0icDr3C5q9J7R5hsEiM6ZjPf1kRCxaGMNO/56Lw
+         6LX/sDBs5uEivJwatqdQjgbEIoWnyCHietGWGP4y8wVI8SHGxaoZVonCIdFTE8Jl3v
+         W7xdnNfZrPNxEU3wwX3/F4u4=
+Received: from Hawking (ntp.lan [10.0.1.1])
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x48BfEeD017421
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 8 May 2019 21:41:15 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     "'David Laight'" <David.Laight@ACULAB.COM>,
+        "'Alastair D'Silva'" <alastair@au1.ibm.com>
+Cc:     "'Jani Nikula'" <jani.nikula@linux.intel.com>,
+        "'Joonas Lahtinen'" <joonas.lahtinen@linux.intel.com>,
+        "'Rodrigo Vivi'" <rodrigo.vivi@intel.com>,
+        "'David Airlie'" <airlied@linux.ie>,
+        "'Daniel Vetter'" <daniel@ffwll.ch>,
+        "'Dan Carpenter'" <dan.carpenter@oracle.com>,
+        "'Karsten Keil'" <isdn@linux-pingi.de>,
+        "'Jassi Brar'" <jassisinghbrar@gmail.com>,
+        "'Tom Lendacky'" <thomas.lendacky@amd.com>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        "'Jose Abreu'" <Jose.Abreu@synopsys.com>,
+        "'Kalle Valo'" <kvalo@codeaurora.org>,
+        "'Stanislaw Gruszka'" <sgruszka@redhat.com>,
+        "'Benson Leung'" <bleung@chromium.org>,
+        "'Enric Balletbo i Serra'" <enric.balletbo@collabora.com>,
+        "'James E.J. Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Alexander Viro'" <viro@zeniv.linux.org.uk>,
+        "'Petr Mladek'" <pmladek@suse.com>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Steven Rostedt'" <rostedt@goodmis.org>,
+        "'Andrew Morton'" <akpm@linux-foundation.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20190508070148.23130-1-alastair@au1.ibm.com> <20190508070148.23130-5-alastair@au1.ibm.com> <c98a499a4e824bcd824d5ad53d037c67@AcuMS.aculab.com>
+In-Reply-To: <c98a499a4e824bcd824d5ad53d037c67@AcuMS.aculab.com>
+Subject: RE: [PATCH v2 4/7] lib/hexdump.c: Replace ascii bool in hex_dump_to_buffer with flags
+Date:   Wed, 8 May 2019 21:41:15 +1000
+Message-ID: <0a1c01d50592$f90f6f00$eb2e4d00$@d-silva.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f08b4b6-8303-5dc9-eb9e-30196bd95692@redhat.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGz7QD7bMLLz3XdMyQiMIIzLY+D4AHts+RHAcfZVGymhZij0A==
+Content-Language: en-au
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 08 May 2019 21:41:26 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 17, 2019 at 11:14:19PM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 17-04-19 11:19, Hans de Goede wrote:
-> > Note that another problem with this series which I noticed while testing
-> > is that the usb-role-switch is not being found at all anymore after
-> > this ("Replacing the old connections with references") patch. I still need
-> > start debugging that.
-> 
-> Ok, I've just finished debugging this and I'm attaching 2 FIXUP
-> patches (to be squased) and a new patch, which those 3 small fixes
-> added the problem of tcpm.c being unable to get the role-switch
-> goes away.
-> 
-> The second FIXUP patch might be a bit controversial; and we may
-> need another solution for the problem it fixes. I've tried to
-> explain it in more detail in the commit msg.
+> -----Original Message-----
+> From: David Laight <David.Laight@ACULAB.COM>
+> Sent: Wednesday, 8 May 2019 7:20 PM
+> To: 'Alastair D'Silva' <alastair@au1.ibm.com>; alastair@d-silva.org
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>; Joonas Lahtinen
+> <joonas.lahtinen@linux.intel.com>; Rodrigo Vivi =
+<rodrigo.vivi@intel.com>;
+> David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Dan
+> Carpenter <dan.carpenter@oracle.com>; Karsten Keil <isdn@linux-
+> pingi.de>; Jassi Brar <jassisinghbrar@gmail.com>; Tom Lendacky
+> <thomas.lendacky@amd.com>; David S. Miller <davem@davemloft.net>;
+> Jose Abreu <Jose.Abreu@synopsys.com>; Kalle Valo
+> <kvalo@codeaurora.org>; Stanislaw Gruszka <sgruszka@redhat.com>;
+> Benson Leung <bleung@chromium.org>; Enric Balletbo i Serra
+> <enric.balletbo@collabora.com>; James E.J. Bottomley
+> <jejb@linux.ibm.com>; Martin K. Petersen <martin.petersen@oracle.com>;
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Alexander Viro
+> <viro@zeniv.linux.org.uk>; Petr Mladek <pmladek@suse.com>; Sergey
+> Senozhatsky <sergey.senozhatsky@gmail.com>; Steven Rostedt
+> <rostedt@goodmis.org>; Andrew Morton <akpm@linux-foundation.org>;
+> intel-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; =
+linux-
+> kernel@vger.kernel.org; netdev@vger.kernel.org;
+> ath10k@lists.infradead.org; linux-wireless@vger.kernel.org; linux-
+> scsi@vger.kernel.org; linux-fbdev@vger.kernel.org;
+> devel@driverdev.osuosl.org; linux-fsdevel@vger.kernel.org
+> Subject: RE: [PATCH v2 4/7] lib/hexdump.c: Replace ascii bool in
+> hex_dump_to_buffer with flags
+>=20
+> From: Alastair D'Silva
+> > Sent: 08 May 2019 08:02
+> > To: alastair@d-silva.org
+> ...
+> > --- a/include/linux/printk.h
+> > +++ b/include/linux/printk.h
+> > @@ -480,13 +480,13 @@ enum {
+> >  	DUMP_PREFIX_OFFSET
+> >  };
+> >
+> > -extern int hex_dump_to_buffer(const void *buf, size_t len, int =
+rowsize,
+> > -			      int groupsize, char *linebuf, size_t linebuflen,
+> > -			      bool ascii);
+> > -
+> >  #define HEXDUMP_ASCII			(1 << 0)
+> >  #define HEXDUMP_SUPPRESS_REPEATED	(1 << 1)
+>=20
+> These ought to be BIT(0) and BIT(1)
 
-Thanks. I'll go over those, and probable squash them in. I'll think
-about the second patch.
+Thanks, I'll address that.
 
-I'm going to first split the series in two so that I'll first
-introduce all the other changes, and then in a separate series the
-node reference stuff. I think it makes sense, since there are really
-to major changes here: firstly starting to use the software nodes with
-the connector fwnode and others, and secondly introducing the software
-node references.
+>=20
+> > +extern int hex_dump_to_buffer(const void *buf, size_t len, int =
+rowsize,
+> > +			      int groupsize, char *linebuf, size_t linebuflen,
+> > +			      u64 flags);
+>=20
+> Why 'u64 flags' ?
+> How many flags do you envisage ??
+> Your HEXDUMP_ASCII (etc) flags are currently signed values and might =
+get
+> sign extended causing grief.
+> 'unsigned int flags' is probably sufficient.
 
-I'll send you an RFC of the first patches soon. Hope you have time to
-check and test it.
+I was trying to avoid having to change the prototype again in the =
+future, but it's not a big deal, if enough work goes in to require more =
+than 32 bits, it can be updated at that point.
 
-> >From 3a2e047608a53caaefe8364eceb7e315ec413698 Mon Sep 17 00:00:00 2001
-> From: Hans de Goede <hdegoede@redhat.com>
-> Date: Wed, 17 Apr 2019 22:54:47 +0200
-> Subject: [PATCH v2 1/3] FIXUP: "platform/x86: intel_cht_int33fe: Link with
->  external dependencies using fwnodes"
-> 
-> In the else path of: if (dev->fwnode) ... else ..., we should set
-> dev->fwnode to our own fwnode not to dev->fwnode, which is NULL as we
-> just tested.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/platform/x86/intel_cht_int33fe.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index e6a1ea7f33af..07bf92ece6cd 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -189,7 +189,7 @@ static int cht_int33fe_setup_mux(struct cht_int33fe_data *data)
->  		data->node[INT33FE_NODE_ROLE_SWITCH] = dev->fwnode;
->  	} else {
->  		/* The node can be tied to the lifetime of the device. */
-> -		dev->fwnode = fwnode_handle_get(dev->fwnode);
-> +		dev->fwnode = fwnode_handle_get(fwnode);
->  	}
->  
->  	put_device(dev);
-> -- 
-> 2.21.0
-> 
+>=20
+> I've not really looked at the code, it seems OTT in places though.
 
-> >From 5133467f116dff6e111d4bc0610ccbcedb397f1d Mon Sep 17 00:00:00 2001
-> From: Hans de Goede <hdegoede@redhat.com>
-> Date: Wed, 17 Apr 2019 23:00:59 +0200
-> Subject: [PATCH v2 2/3] FIXUP: "device connection: Find connections also by
->  checking the references"
-> 
-> The reference we are looking for might be in a child node, rather then
-> directly in the device's own fwnode. A typical example of this is a
-> usb connector node with references to various muxes / switches.
-> 
-> Note that we do not hit this problem for the device_connection_find_match
-> calls in typec_switch_get and typec_mux_get because these get called
-> from typec_register_port and typec_register_port creates a new device
-> with its fwnode pointing to the usb-connector fwnode and that new
-> device (rather then the parent) is passed to typec_switch/mux_get and
-> thus to device_connection_find_match.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/base/devcon.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-> index 4cdf95532b63..6f6f870c21eb 100644
-> --- a/drivers/base/devcon.c
-> +++ b/drivers/base/devcon.c
-> @@ -76,7 +76,7 @@ fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
->  void *device_connection_find_match(struct device *dev, const char *con_id,
->  				   void *data, devcon_match_fn_t match)
->  {
-> -	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> +	struct fwnode_handle *child, *fwnode = dev_fwnode(dev);
->  	const char *devname = dev_name(dev);
->  	struct device_connection *con;
->  	void *ret = NULL;
-> @@ -93,6 +93,12 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
->  		ret = fwnode_devcon_match(fwnode, con_id, data, match);
->  		if (ret)
->  			return ret;
-> +
-> +		fwnode_for_each_child_node(fwnode, child) {
-> +			ret = fwnode_devcon_match(child, con_id, data, match);
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
->  
->  	mutex_lock(&devcon_lock);
-> -- 
-> 2.21.0
-> 
+I'll wait for more concrete criticisms here, this it a bit too vague to =
+take any action on.
 
-> >From a69f76993dfe5f43d3e6c4b2bcfbaacf2c247d6e Mon Sep 17 00:00:00 2001
-> From: Hans de Goede <hdegoede@redhat.com>
-> Date: Wed, 17 Apr 2019 22:57:00 +0200
-> Subject: [PATCH v2 3/3] usb: roles: Check for NULL con_id
-> 
-> When usb_role_switch_match gets called by device_connection_find_match
-> because of a fwnode_reference matching the con_id passed to
-> device_connection_find_match, then con->id will be NULL and in this
-> case we do not need to check it since our caller has already checked it.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/usb/roles/class.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-> index f45d8df5cfb8..86defca6623e 100644
-> --- a/drivers/usb/roles/class.c
-> +++ b/drivers/usb/roles/class.c
-> @@ -101,7 +101,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
->  	struct device *dev;
->  
->  	if (con->fwnode) {
-> -		if (!fwnode_property_present(con->fwnode, con->id))
-> +		if (con->id && !fwnode_property_present(con->fwnode, con->id))
->  			return NULL;
->  
->  		dev = class_find_device(role_class, NULL, con->fwnode,
-> -- 
-> 2.21.0
-> 
+> If someone copies it somewhere where the performance matters (I've =
+user
+> space code which is dominated by its tracing!) then you don't want all =
+the
+> function calls and conditionals even if you want some of the =
+functionality.
 
-thanks,
+Calling hexdump (even in it's unaltered form) in performance critical =
+code is always going to suck. As you mentioned before, it's all based =
+around printf. A performance conscious user would be better off building =
+their code around hex_asc_hi/lo instead (see lib/vsprintf.c:hex_string).
 
--- 
-heikki
+--=20
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva     msn: alastair@d-silva.org
+blog: http://alastair.d-silva.org    Twitter: @EvilDeece
+
+
+
