@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 507D817E8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E88D017E99
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfEHQxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:53:36 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33099 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728679AbfEHQxg (ORCPT
+        id S1728913AbfEHQyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:54:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39435 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728808AbfEHQxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:53:36 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y3so10216156plp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:53:35 -0700 (PDT)
+        Wed, 8 May 2019 12:53:40 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w22so9078377pgi.6
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EINhzSK1TIKKHSccJ8597OGCeqJGeGH5R+zkRVceiWE=;
-        b=nKKvrwlnksxxPvIwkEAEsZD7WkJNVGKgp86vtl+W9YfAV9LFqyoUMvlyou17f43gOv
-         F5emed0wQ5JxviBGX27bMsvv8cneFeMCNyTDok/CFdQCkV/yToQDGvkcJ/B5JBAHowSS
-         qFI1BoS+aQZeAcjc791HgdxH6ZIombGUqjLD5eF9AWqUVAX0iG7O5XTCjXYZszmonAJ0
-         wVn2KjAKe2oPalNlhgkA6nIsyTlVr/nC+DQB2DjwPKYqE26B82orGprAcnscfHNaS8pZ
-         diY9TmBrfqqKAzFWYmmxdqkPWkIysgjEGsNwClCrMp6S1GZ3croiKvKnlKlQ8qs94K7T
-         vRTg==
+        bh=rryjEKnmXLSanss7IlocYKHWgRAPzviP483T/WAfnlk=;
+        b=k5zj7OpVLHB6FkCHu5bgHvJmVAY2Fm5kbUxukWoHkbWSg7+NSTxwpn13m1tjSxlP2v
+         WG0ewAXGS7GpfSwn3v5qlPMTCNpjytjEs9V2XtoBrLXxnUe7dELh0yhX6SpM2JOfY1tN
+         O2NQ0JwnFAXxm22Z49KOLosW4T2IXbAsFu+swmsySIXs79e4vSCwAC73TdytrKUkczhF
+         /2O4eSPaTNs40AfsWNfa50HjQrPrsVqrx3U9azCKmchBd6aV1FCr0KgzeHNpRHiWgzht
+         QzVIb52x9ReAp+ro1VYtthU9hZs4pYtoBKvVN5pCwIlvZKRO51MIhD6C2Zc0aW2CZjrO
+         eYtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EINhzSK1TIKKHSccJ8597OGCeqJGeGH5R+zkRVceiWE=;
-        b=DziWZvCd7sg1DDDyS8sTr2gvTyV9qMtMg/Dp+/N7BeY93PmxB/kv+1gOK0zmVYhuTQ
-         82PIH20xNkZgrNnioBNVQGhoe6pPtNdOG0I7WZJU2akqdlaGPv8ITn6XsM87WQqTCBG9
-         Ubc0aWLxgOKANbSqGGWBWqXLvaDwNeBA9ClyNQzwTUcwqhaqe2+CcqSvxmV5KPc+s9xf
-         wuC5mMgJC5pgjxqQEo5wNge6xRQSkZItaT4Vx825MwhM3GHyG6Qs1vTw8v67TqQ71jVC
-         ftHM35L7JLI7ruHfdbFQXWi9Tg6wsJYSEMWQ8IqPHDX30As62+YKCNVqhy/q7vBPO0mU
-         jWKg==
-X-Gm-Message-State: APjAAAWKc9PxiO8PynQ6m5kD+UMAmsKhvs4Qxd7TDKikXkE5T4iUm5ys
-        FzrBn7cG3bME5Jir+tJzVUuV
-X-Google-Smtp-Source: APXvYqyVEW/wse7wDY3onzNieYIAVnOTcgEz/EASoGAjdURYUHnxIPch+2JKtwC2CJpljW06JvPJSQ==
-X-Received: by 2002:a17:902:9693:: with SMTP id n19mr48271204plp.92.1557334414722;
-        Wed, 08 May 2019 09:53:34 -0700 (PDT)
+        bh=rryjEKnmXLSanss7IlocYKHWgRAPzviP483T/WAfnlk=;
+        b=uUMwcrkqhBFrHwFhzJb1pXVCxBRnxij909v2UHReGPqF766rxKWgyBGORfq9q5NfRl
+         6TCZ3FcSwDbgj5cArvaV8hBPc+i3cM3l1XJVG5BH/S3eVxvE5LDYrLSo1LXUF5iymEK1
+         Uhtsd/R/yd7n13zvUclev+OpgZJN/jD0+XnyqCjAbsN8Of27p4rL7qxSqm46zUUvgieJ
+         1K79UYYMYU7AHajlp6rXDEoob6SY/08lMw/1VaFEADHJGXFwKIxhCZnN2jfBdPxR5JQa
+         GMrcFY0sJ1jtF684PUqu0duPPSnobV9KUuGguuXkemPpaeC0oNVTYxMzAg1X/nEVjFZn
+         ulvA==
+X-Gm-Message-State: APjAAAWqE85TC+AM39WNJNUivKDERnNveJNhoWutonD5Hyq/RfQgJ9cF
+        a04o6q+oUvaqYQJG/zroLz/r
+X-Google-Smtp-Source: APXvYqyZuJF54O/JQ1Y+OS1fouLyTx2afjh5rMr6KsiYEj7BKNzIGXSc5e6v3oGSPymxHCVaKlEViQ==
+X-Received: by 2002:a63:a449:: with SMTP id c9mr2726591pgp.149.1557334419602;
+        Wed, 08 May 2019 09:53:39 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:6000:7ab1:cd79:1ccc:df38:79c0])
-        by smtp.gmail.com with ESMTPSA id m2sm25180676pfi.24.2019.05.08.09.53.30
+        by smtp.gmail.com with ESMTPSA id m2sm25180676pfi.24.2019.05.08.09.53.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 09:53:33 -0700 (PDT)
+        Wed, 08 May 2019 09:53:38 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     p.zabel@pengutronix.de, robh+dt@kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         haitao.suo@bitmain.com, darren.tsao@bitmain.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/4] dt-bindings: reset: Add devicetree binding for BM1880 reset controller
-Date:   Wed,  8 May 2019 22:23:16 +0530
-Message-Id: <20190508165319.19822-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/4] arm64: dts: bitmain: Add reset controller support for BM1880 SoC
+Date:   Wed,  8 May 2019 22:23:17 +0530
+Message-Id: <20190508165319.19822-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190508165319.19822-1-manivannan.sadhasivam@linaro.org>
 References: <20190508165319.19822-1-manivannan.sadhasivam@linaro.org>
@@ -60,155 +60,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree binding for Bitmain BM1880 SoC reset controller. This SoC
-has two reset controllers each controlling reset lines of different
-peripherals.
+Add reset controller support for Bitmain BM1880 SoC. This SoC has two
+reset controllers, each controlling reset lines of different peripherals.
+This commit also adds reset support to UART peripherals.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- .../bindings/reset/bitmain,bm1880-reset.txt   |  18 +++
- .../dt-bindings/reset/bitmain,bm1880-reset.h  | 106 ++++++++++++++++++
- 2 files changed, 124 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/bitmain,bm1880-reset.txt
- create mode 100644 include/dt-bindings/reset/bitmain,bm1880-reset.h
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/bitmain,bm1880-reset.txt b/Documentation/devicetree/bindings/reset/bitmain,bm1880-reset.txt
-new file mode 100644
-index 000000000000..0674ae904b19
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/bitmain,bm1880-reset.txt
-@@ -0,0 +1,18 @@
-+Bitmain BM1880 SoC Reset Controller
-+===================================
+diff --git a/arch/arm64/boot/dts/bitmain/bm1880.dtsi b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+index fdfdc65d29ef..37ecb760a2d2 100644
+--- a/arch/arm64/boot/dts/bitmain/bm1880.dtsi
++++ b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/bitmain,bm1880-reset.h>
+ 
+ / {
+ 	compatible = "bitmain,bm1880";
+@@ -92,6 +93,18 @@
+ 				compatible = "bitmain,bm1880-pinctrl";
+ 				reg = <0x50 0x4B0>;
+ 			};
 +
-+Please also refer to reset.txt in this directory for common reset
-+controller binding usage.
++			clk_rst: reset-controller@800 {
++				compatible = "bitmain,bm1880-reset";
++				reg = <0x800 0x8>;
++				#reset-cells = <1>;
++			};
 +
-+Required properties:
-+- compatible:   Should be "bitmain,bm1880-reset"
-+- reg:          Offset and length of reset controller space in SCTRL.
-+- #reset-cells: Must be 1.
-+
-+Example:
-+
-+        reset: reset-controller@800 {
-+                compatible = "bitmain,bm1880-reset";
-+                reg = <0x800 0x8>;
-+                #reset-cells = <1>;
-+        };
-diff --git a/include/dt-bindings/reset/bitmain,bm1880-reset.h b/include/dt-bindings/reset/bitmain,bm1880-reset.h
-new file mode 100644
-index 000000000000..e8103ce6f4d6
---- /dev/null
-+++ b/include/dt-bindings/reset/bitmain,bm1880-reset.h
-@@ -0,0 +1,106 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (c) 2018 Bitmain Ltd.
-+ * Copyright (c) 2019 Linaro Ltd.
-+ */
-+
-+#ifndef _DT_BINDINGS_BM1880_RESET_H
-+#define _DT_BINDINGS_BM1880_RESET_H
-+
-+#define BM1880_RST_MAIN_AP		0
-+#define BM1880_RST_SECOND_AP		1
-+#define BM1880_RST_DDR			2
-+#define BM1880_RST_VIDEO		3
-+#define BM1880_RST_JPEG			4
-+#define BM1880_RST_VPP			5
-+#define BM1880_RST_GDMA			6
-+#define BM1880_RST_AXI_SRAM		7
-+#define BM1880_RST_TPU			8
-+#define BM1880_RST_USB			9
-+#define BM1880_RST_ETH0			10
-+#define BM1880_RST_ETH1			11
-+#define BM1880_RST_NAND			12
-+#define BM1880_RST_EMMC			13
-+#define BM1880_RST_SD			14
-+#define BM1880_RST_SDMA			15
-+#define BM1880_RST_I2S0			16
-+#define BM1880_RST_I2S1			17
-+#define BM1880_RST_UART0_1_CLK		18
-+#define BM1880_RST_UART0_1_ACLK		19
-+#define BM1880_RST_UART2_3_CLK		20
-+#define BM1880_RST_UART2_3_ACLK		21
-+#define BM1880_RST_MINER		22
-+#define BM1880_RST_I2C0			23
-+#define BM1880_RST_I2C1			24
-+#define BM1880_RST_I2C2			25
-+#define BM1880_RST_I2C3			26
-+#define BM1880_RST_I2C4			27
-+#define BM1880_RST_PWM0			28
-+#define BM1880_RST_PWM1			29
-+#define BM1880_RST_PWM2			30
-+#define BM1880_RST_PWM3			31
-+#define BM1880_RST_SPI			32
-+#define BM1880_RST_GPIO0		33
-+#define BM1880_RST_GPIO1		34
-+#define BM1880_RST_GPIO2		35
-+#define BM1880_RST_EFUSE		36
-+#define BM1880_RST_WDT			37
-+#define BM1880_RST_AHB_ROM		38
-+#define BM1880_RST_SPIC			39
-+
-+#define BM1880_CLK_RST_A53		0
-+#define BM1880_CLK_RST_50M_A53		1
-+#define BM1880_CLK_RST_AHB_ROM		2
-+#define BM1880_CLK_RST_AXI_SRAM		3
-+#define BM1880_CLK_RST_DDR_AXI		4
-+#define BM1880_CLK_RST_EFUSE		5
-+#define BM1880_CLK_RST_APB_EFUSE	6
-+#define BM1880_CLK_RST_AXI_EMMC		7
-+#define BM1880_CLK_RST_EMMC		8
-+#define BM1880_CLK_RST_100K_EMMC	9
-+#define BM1880_CLK_RST_AXI_SD		10
-+#define BM1880_CLK_RST_SD		11
-+#define BM1880_CLK_RST_100K_SD		12
-+#define BM1880_CLK_RST_500M_ETH0	13
-+#define BM1880_CLK_RST_AXI_ETH0		14
-+#define BM1880_CLK_RST_500M_ETH1	15
-+#define BM1880_CLK_RST_AXI_ETH1		16
-+#define BM1880_CLK_RST_AXI_GDMA		17
-+#define BM1880_CLK_RST_APB_GPIO		18
-+#define BM1880_CLK_RST_APB_GPIO_INTR	19
-+#define BM1880_CLK_RST_GPIO_DB		20
-+#define BM1880_CLK_RST_AXI_MINER	21
-+#define BM1880_CLK_RST_AHB_SF		22
-+#define BM1880_CLK_RST_SDMA_AXI		23
-+#define BM1880_CLK_RST_SDMA_AUD		24
-+#define BM1880_CLK_RST_APB_I2C		25
-+#define BM1880_CLK_RST_APB_WDT		26
-+#define BM1880_CLK_RST_APB_JPEG		27
-+#define BM1880_CLK_RST_JPEG_AXI		28
-+#define BM1880_CLK_RST_AXI_NF		29
-+#define BM1880_CLK_RST_APB_NF		30
-+#define BM1880_CLK_RST_NF		31
-+#define BM1880_CLK_RST_APB_PWM		32
-+#define BM1880_CLK_RST_RV		33
-+#define BM1880_CLK_RST_APB_SPI		34
-+#define BM1880_CLK_RST_TPU_AXI		35
-+#define BM1880_CLK_RST_UART_500M	36
-+#define BM1880_CLK_RST_APB_UART		37
-+#define BM1880_CLK_RST_APB_I2S		38
-+#define BM1880_CLK_RST_AXI_USB		39
-+#define BM1880_CLK_RST_APB_USB		40
-+#define BM1880_CLK_RST_125M_USB		41
-+#define BM1880_CLK_RST_33K_USB		42
-+#define BM1880_CLK_RST_12M_USB		43
-+#define BM1880_CLK_RST_APB_VIDEO	44
-+#define BM1880_CLK_RST_VIDEO_AXI	45
-+#define BM1880_CLK_RST_VPP_AXI		46
-+#define BM1880_CLK_RST_APB_VPP		47
-+#define BM1880_CLK_RST_AXI1		48
-+#define BM1880_CLK_RST_AXI2		49
-+#define BM1880_CLK_RST_AXI3		50
-+#define BM1880_CLK_RST_AXI4		51
-+#define BM1880_CLK_RST_AXI5		52
-+#define BM1880_CLK_RST_AXI6		53
-+
-+#endif /* _DT_BINDINGS_BM1880_RESET_H */
++			rst: reset-controller@C00 {
++				compatible = "bitmain,bm1880-reset";
++				reg = <0xC00 0x8>;
++				#reset-cells = <1>;
++			};
+ 		};
+ 
+ 		uart0: serial@58018000 {
+@@ -100,6 +113,7 @@
+ 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
++			resets = <&rst BM1880_RST_UART0_1_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -109,6 +123,7 @@
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
++			resets = <&rst BM1880_RST_UART0_1_ACLK>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -118,6 +133,7 @@
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
++			resets = <&rst BM1880_RST_UART2_3_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -127,6 +143,7 @@
+ 			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
++			resets = <&rst BM1880_RST_UART2_3_ACLK>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.17.1
 
