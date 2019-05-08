@@ -2,69 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F74180F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 22:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EB11810D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 22:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbfEHUZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 16:25:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35116 "EHLO mail.kernel.org"
+        id S1729602AbfEHU0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 16:26:55 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54802 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728851AbfEHUYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 16:24:55 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1729016AbfEHU0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 16:26:55 -0400
+Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF7BF217D6;
-        Wed,  8 May 2019 20:24:54 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hOT7V-0007kg-VJ; Wed, 08 May 2019 16:24:53 -0400
-Message-Id: <20190508202453.865843951@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 08 May 2019 16:24:40 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
-Subject: [for-next][PATCH 13/13] tracing: Fix documentation about disabling options using
- trace_options
-References: <20190508202427.252736423@goodmis.org>
+        by ms.lwn.net (Postfix) with ESMTPSA id C53587DC;
+        Wed,  8 May 2019 20:26:54 +0000 (UTC)
+Date:   Wed, 8 May 2019 14:26:53 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] doc:it_IT: align documentation after licenses patches
+Message-ID: <20190508142653.67f72702@lwn.net>
+In-Reply-To: <20190507220525.23189-1-federico.vaga@vaga.pv.it>
+References: <20190507220525.23189-1-federico.vaga@vaga.pv.it>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
+On Wed,  8 May 2019 00:05:25 +0200
+Federico Vaga <federico.vaga@vaga.pv.it> wrote:
 
-To disable a tracing option using the trace_options file, the option
-name needs to be prefixed with 'no', and not suffixed, as the README
-states. Fix it.
+> This patch translates in Italian the following updates
+> 
+> 62be257e986d LICENSES: Rename other to deprecated
+> 8ea8814fcdcb LICENSES: Clearly mark dual license only licenses
+> 6132c37ca543 docs: Don't reference the ZLib license in license-rules.rst
+> 
+> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 
-Link: http://lkml.kernel.org/r/154872690031.47356.5739053380942044586.stgit@srivatsa-ubuntu
+Applied, thanks.
 
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4269af5905e4..a3a6945a7732 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4755,7 +4755,7 @@ static const char readme_msg[] =
- 	"  instances\t\t- Make sub-buffers with: mkdir instances/foo\n"
- 	"\t\t\t  Remove sub-buffer with rmdir\n"
- 	"  trace_options\t\t- Set format or modify how tracing happens\n"
--	"\t\t\t  Disable an option by adding a suffix 'no' to the\n"
-+	"\t\t\t  Disable an option by prefixing 'no' to the\n"
- 	"\t\t\t  option name\n"
- 	"  saved_cmdlines_size\t- echo command number in here to store comm-pid list\n"
- #ifdef CONFIG_DYNAMIC_FTRACE
--- 
-2.20.1
-
-
+jon
