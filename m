@@ -2,99 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C7F171B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 809F7171B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfEHGfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 02:35:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbfEHGfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 02:35:54 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A71F521019;
-        Wed,  8 May 2019 06:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557297353;
-        bh=sWVpp/CJFMDokqdQ+85Irw1Hg3zdyDOw5QYwGEIADSQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YmWCwLMindKbYT60YXOnwSJTIp8N/2STq/iAkVM7acQPRj2RRwciDfS88Xb26kbLB
-         U1jBb96f32oZQWcjrr4D4Grmtj/S04SpXfToH6Gqp2bY15+kayD28Gnygs0r/yAI+4
-         R+tyaoncN3r/o7GZdY7w7y8BRaNuxLAkbzsqznpU=
-Date:   Wed, 8 May 2019 08:35:50 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 38/99] net: stmmac: use correct DMA buffer size in
- the RX descriptor
-Message-ID: <20190508063550.GA28651@kroah.com>
-References: <20190506143053.899356316@linuxfoundation.org>
- <20190506143057.399914447@linuxfoundation.org>
- <20190508001014.hlemsaqvir3umv2i@toshiba.co.jp>
+        id S1726687AbfEHGgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 02:36:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54660 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbfEHGgS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 02:36:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OYCNy7tkPY7Q7/D7L/X6WuduwJJrhyZwHhYAzjXd5sM=; b=eo4CINxuY5v3bG3LULC/w5Qmc
+        Grs313C71BNmpRVgbFTGnz9pHbSO7fSixPkCbShlt5jrgNGt5yKUqwjpdUUchAc+ys5E/o23sR1us
+        6I/spAkXxWgwHoIqx4uDOPzqk2C7X97BybbJM1IyYokgbgL85qpGfFhtxMzFyN9kFza5w=;
+Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hOGBU-000795-Pm; Wed, 08 May 2019 06:36:09 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id E0C2A44000C; Wed,  8 May 2019 07:35:58 +0100 (BST)
+Date:   Wed, 8 May 2019 15:35:58 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Curtis Malainey <cujomalainey@chromium.org>
+Cc:     Fletcher Woodruff <fletcherw@chromium.org>,
+        linux-kernel@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>,
+        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ben Zhang <benzh@chromium.org>
+Subject: Re: [alsa-devel] [PATCH v4 1/3] ASoC: rt5677: allow multiple
+ interrupt sources
+Message-ID: <20190508063558.GM14916@sirena.org.uk>
+References: <20190503230751.168403-1-fletcherw@chromium.org>
+ <20190503230751.168403-2-fletcherw@chromium.org>
+ <CAJ77E19K7ukNzvhOx1Jh_E6A69fqc6OMJ1aEgR6QjFmM0d=ePw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yf+QnTYkcH7pT0Mu"
 Content-Disposition: inline
-In-Reply-To: <20190508001014.hlemsaqvir3umv2i@toshiba.co.jp>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CAJ77E19K7ukNzvhOx1Jh_E6A69fqc6OMJ1aEgR6QjFmM0d=ePw@mail.gmail.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 09:10:14AM +0900, Nobuhiro Iwamatsu wrote:
-> Hi,
-> 
-> On Mon, May 06, 2019 at 04:32:11PM +0200, Greg Kroah-Hartman wrote:
-> > [ Upstream commit 583e6361414903c5206258a30e5bd88cb03c0254 ]
-> > 
-> > We always program the maximum DMA buffer size into the receive descriptor,
-> > although the allocated size may be less. E.g. with the default MTU size
-> > we allocate only 1536 bytes. If somebody sends us a bigger frame, then
-> > memory may get corrupted.
-> > 
-> > Fix by using exact buffer sizes.
-> > 
-> > Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-> > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  .../net/ethernet/stmicro/stmmac/descs_com.h   | 22 ++++++++++++-------
-> >  .../ethernet/stmicro/stmmac/dwmac4_descs.c    |  2 +-
-> >  .../ethernet/stmicro/stmmac/dwxgmac2_descs.c  |  2 +-
-> >  .../net/ethernet/stmicro/stmmac/enh_desc.c    | 10 ++++++---
-> >  drivers/net/ethernet/stmicro/stmmac/hwif.h    |  2 +-
-> >  .../net/ethernet/stmicro/stmmac/norm_desc.c   | 10 ++++++---
-> >  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++--
-> 
-> This commit is incomplete and we need the following commit:
-> 
-> commit f87db4dbd52f2f8a170a2b51cb0926221ca7c9e2
-> Author: YueHaibing <yuehaibing@huawei.com>
-> Date:   Wed Apr 17 09:49:39 2019 +0800
-> 
->     net: stmmac: Use bfsize1 in ndesc_init_rx_desc
-> 
->     gcc warn this:
-> 
->     drivers/net/ethernet/stmicro/stmmac/norm_desc.c: In function ndesc_init_rx_desc:
->     drivers/net/ethernet/stmicro/stmmac/norm_desc.c:138:6: warning: variable 'bfsize1' set but not used [-Wunused-but-set-variable]
-> 
->     Like enh_desc_init_rx_desc, we should use bfsize1
->     in ndesc_init_rx_desc to calculate 'p->des1'
-> 
->     Fixes: 583e63614149 ("net: stmmac: use correct DMA buffer size in the RX descriptor")
->     Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->     Reviewed-by: Aaro Koskinen <aaro.koskinen@nokia.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
-> 
-> And this fix is also needed for 5.0.14-rc.
-> Please apply this commit to 4.19.y-rc and 5.0.y-rc.
 
-Thanks, now queued up.
+--yf+QnTYkcH7pT0Mu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Tue, May 07, 2019 at 02:10:26PM -0700, Curtis Malainey wrote:
+> On Fri, May 3, 2019 at 4:10 PM Fletcher Woodruff <fletcherw@chromium.org>
+> wrote:
+>=20
+> > From: Ben Zhang <benzh@chromium.org>
+> >
+> > This patch allows headphone plug detect and mic present
+> > detect to be enabled at the same time. This patch implements
+> > an irq_chip with irq_domain directly instead of using
+> > regmap-irq, so that interrupt source line polarities can
+> > be flipped to support irq sharing.
+> >
+
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+--yf+QnTYkcH7pT0Mu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSeM4ACgkQJNaLcl1U
+h9BylAf+Nv/ilS/5+jTsgqLELyIU1qpJcPHRC012pUfUyxBH8YSDpyPfqOOCGXoI
+O9V67lf67LEVCYsUXgSfpcALi084m38vQfXGJppyPniYWEczD90yZOkm2faA46o4
+QKeDeVGTwtbZ5phTrqOx9YsBE8k8XfBmzcy3u1b0ZmHMUqAM1b33QO4rCFJs5iZD
+at95vkcj9Adm092gyGgmcY32xIAMR2Y0CGlKAAGd9Gk77mtPL7gVhrPXGQu266Cb
+XKrDI44ZX79Ob00wMMoJUaVKAAbGwcl71VOXQFpI5tnDgnV5jCq+1k+00b6xlwiC
+sE+rE+1f4uGwLBJt04QQa8kW8dA0xA==
+=mlaw
+-----END PGP SIGNATURE-----
+
+--yf+QnTYkcH7pT0Mu--
