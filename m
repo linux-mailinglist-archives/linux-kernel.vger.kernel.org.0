@@ -2,100 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 779F21779D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70DA0177BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbfEHLcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:32:17 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727487AbfEHLcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:32:16 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5982ABEEDEE367A789E0;
-        Wed,  8 May 2019 19:32:13 +0800 (CST)
-Received: from [127.0.0.1] (10.184.225.177) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 May 2019
- 19:32:06 +0800
-Subject: Re: [PATCH v2] mm/hugetlb: Don't put_page in lock of hugetlb_lock
-To:     Mike Kravetz <mike.kravetz@oracle.com>, <mhocko@suse.com>,
-        <shenkai8@huawei.com>, <linfeilong@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <wangwang2@huawei.com>, "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, <agl@us.ibm.com>,
-        <nacc@us.ibm.co>
-References: <12a693da-19c8-dd2c-ea6a-0a5dc9d2db27@huawei.com>
- <b8ade452-2d6b-0372-32c2-703644032b47@huawei.com>
- <9405fcd5-a5a7-db4a-d613-acf2872f6e62@oracle.com>
-From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Message-ID: <21971d7f-aec7-bc38-7f9b-08c1bf96be9e@huawei.com>
-Date:   Wed, 8 May 2019 19:31:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1728282AbfEHLcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:32:45 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:36343 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbfEHLco (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:32:44 -0400
+Received: by mail-wm1-f50.google.com with SMTP id j187so2819964wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IMVKRPD91r9MIGHIcHDIHWSb1J68VUuJeZtvfzj/19g=;
+        b=I10wVl1CdPh7kWFokwuyovaZ+UmagWP7YD/Dhe10KeZFPR0qRjqJeYYC86o1Xjjs4L
+         9yy8m7YhmNeK8rSM2gYAZQAxMjOda8oY/PPBrFxi6QI4J3LLfM0QJ2paFmkFh6kCfAbc
+         ehdgU1WtY17SjggNXUZkhKRGCo7ulImbzxVCBbB5hFHNt6g55qyYId9LkGrYORDt/VVO
+         Rb83SKJ3OHckwj2Vl5NeTcTymjgI0SGTeRAHkejU/Pg9jvEKAurI1tkOfYhlunywwZgY
+         UsTc2WZVXYDowmBZH9Laz1c6jJsyjMdZqsz8ACixPGjqUml9VHlOrSg6IIS3BtsoxfQL
+         d02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IMVKRPD91r9MIGHIcHDIHWSb1J68VUuJeZtvfzj/19g=;
+        b=aScstWvVF/dmrL+xHP7R+zEcTmUBFTHX4S0KsCR1qk+ypXE+gQuBRgUhH6XR7Xw95p
+         VdMSb9XDU8f+PkshftlhCdZEoWtHH0QVMhH5VNBPN6m+2GPAsXeGWARGCP1oYO9z4nLV
+         4od7fq8CN73M4+xyLabaV09RXK8/QrYRnwgevVEP68h5ZXX/kaokAR6tOEP5YkO1Tg0o
+         uBL5xsPoFmfbQsvRMFnoitidgmx6cEF/WMjuXFZiHAYXWCEBktz+YEXgs09sRAc4OyIs
+         23V74Npz1PBgPYg9jRTks4oNIEWExp7amkm8j4xnLpmS3zadoajDzy8HjpLjadgQWyZo
+         HILA==
+X-Gm-Message-State: APjAAAXi5TLbBcBShNgQetHp14QKWKb8H0oSznwAQ0UPh4a+dlhQuVAV
+        qCSuBZu6BuBU69E5p6jTmOI=
+X-Google-Smtp-Source: APXvYqw2LBPCAHYIqpNhHHo5kr+IpuYVL75X2TT63GOSjrSZFBZo/7nAvyTEDfLPhBaeOsJ/3J0icg==
+X-Received: by 2002:a1c:9ec7:: with SMTP id h190mr2868289wme.105.1557315162937;
+        Wed, 08 May 2019 04:32:42 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id m6sm2926767wmc.32.2019.05.08.04.32.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 04:32:42 -0700 (PDT)
+Date:   Wed, 8 May 2019 13:32:39 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+Message-ID: <20190508113239.GA33324@gmail.com>
+References: <303fc4ee5ac04e4fac104df1188952e8@AcuMS.aculab.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C6C2C3@IRSMSX102.ger.corp.intel.com>
+ <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
+ <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
+ <20190502150853.GA16779@gmail.com>
+ <d64b3562d179430f9bdd8712999ff98a@AcuMS.aculab.com>
+ <20190502164524.GB115950@gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C6F523@IRSMSX102.ger.corp.intel.com>
+ <e4fbad8c51284a0583b98c52de4a207d@AcuMS.aculab.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C760A7@IRSMSX102.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <9405fcd5-a5a7-db4a-d613-acf2872f6e62@oracle.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.225.177]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4C760A7@IRSMSX102.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 5/6/19 7:06 AM, Zhiqiang Liu wrote:
->> From: Kai Shen <shenkai8@huawei.com>
->>
->> spinlock recursion happened when do LTP test:
->> #!/bin/bash
->> ./runltp -p -f hugetlb &
->> ./runltp -p -f hugetlb &
->> ./runltp -p -f hugetlb &
->> ./runltp -p -f hugetlb &
->> ./runltp -p -f hugetlb &
->>
->> The dtor returned by get_compound_page_dtor in __put_compound_page
->> may be the function of free_huge_page which will lock the hugetlb_lock,
->> so don't put_page in lock of hugetlb_lock.
->>
->>  BUG: spinlock recursion on CPU#0, hugemmap05/1079
->>   lock: hugetlb_lock+0x0/0x18, .magic: dead4ead, .owner: hugemmap05/1079, .owner_cpu: 0
->>  Call trace:
->>   dump_backtrace+0x0/0x198
->>   show_stack+0x24/0x30
->>   dump_stack+0xa4/0xcc
->>   spin_dump+0x84/0xa8
->>   do_raw_spin_lock+0xd0/0x108
->>   _raw_spin_lock+0x20/0x30
->>   free_huge_page+0x9c/0x260
->>   __put_compound_page+0x44/0x50
->>   __put_page+0x2c/0x60
->>   alloc_surplus_huge_page.constprop.19+0xf0/0x140
->>   hugetlb_acct_memory+0x104/0x378
->>   hugetlb_reserve_pages+0xe0/0x250
->>   hugetlbfs_file_mmap+0xc0/0x140
->>   mmap_region+0x3e8/0x5b0
->>   do_mmap+0x280/0x460
->>   vm_mmap_pgoff+0xf4/0x128
->>   ksys_mmap_pgoff+0xb4/0x258
->>   __arm64_sys_mmap+0x34/0x48
->>   el0_svc_common+0x78/0x130
->>   el0_svc_handler+0x38/0x78
->>   el0_svc+0x8/0xc
->>
->> Fixes: 9980d744a0 ("mm, hugetlb: get rid of surplus page accounting tricks")
->> Signed-off-by: Kai Shen <shenkai8@huawei.com>
->> Signed-off-by: Feilong Lin <linfeilong@huawei.com>
->> Reported-by: Wang Wang <wangwang2@huawei.com>
->> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Good catch.  Sorry, for the late reply.
-> 
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-> 
 
-Thank your for the reply.
-Friendly ping ...
+* Reshetova, Elena <elena.reshetova@intel.com> wrote:
 
+> CONFIG_PAGE_TABLE_ISOLATION=n:
+> 
+> base:                                  Simple syscall: 0.0510 microseconds
+> get_random_bytes(4096 bytes buffer):   Simple syscall: 0.0597 microseconds
+> 
+> So, pure speed wise get_random_bytes() with 1 page per-cpu buffer wins. 
 
+It still adds +17% overhead to the system call path, which is sad.
+Why is it so expensive?
+
+Thanks,
+
+	Ingo
