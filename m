@@ -2,143 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05F0174AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFEF91749B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfEHJJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:09:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58348 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbfEHJJj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:09:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DXt5IntGctC+H7tmN7EBvL0ioZYMHBlAhEaJOHxOk2M=; b=QripnkRtQHYP
-        1MfCqvkWjIjF3ZxOPKirO+fKlNxWj81QKDx5JRCVqQF5UK07eADTWpy8uMv8yW2BTfBWtvLajWO1u
-        rND8Pl20qN9DfjbWtXvCcCi5luE/BldIqfXVopiaJa+lGkJkDMNpwVDUDFcjA8JBErXU2b++/wnRd
-        AGkaI=;
-Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hOIZl-0007gS-A6; Wed, 08 May 2019 09:09:24 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id B7CB344003F; Wed,  8 May 2019 10:08:57 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "dt-bindings: mfd: atmel-usart: add DMA bindings for USART in SPI mode" to the spi tree
-In-Reply-To: <20190505180646.1442-2-radu_nicolae.pirea@upb.ro>
-X-Patchwork-Hint: ignore
-Message-Id: <20190508090857.B7CB344003F@finisterre.sirena.org.uk>
-Date:   Wed,  8 May 2019 10:08:57 +0100 (BST)
+        id S1727029AbfEHJJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 05:09:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbfEHJJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 05:09:08 -0400
+Received: from localhost.localdomain (unknown [60.186.222.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F18C2053B;
+        Wed,  8 May 2019 09:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557306547;
+        bh=GHCYT1XmP+24pyTq9CjTLCpwc20T3v0y/2xfhCR/8Ao=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Wrhimn8yCreLExGiBUkIfzXMP53Zlb4V4jxlTrJWAsBWWaQCy9eCCUe9ISaUkacbF
+         mScFSOV4T05aV3fpLx96TFAX3f8IsaewodD9W/9NdI/qYjJicxTRv5FnK1z5M6zkBl
+         KjyAlw0aodthuAaVyeHgMR3o90zfsFbY9j4wbd1k=
+From:   guoren@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, ren_guo@c-sky.com
+Subject: [GIT PULL] csky changes for v5.2-rc1
+Date:   Wed,  8 May 2019 17:09:01 +0800
+Message-Id: <1557306541-12814-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
 
-   dt-bindings: mfd: atmel-usart: add DMA bindings for USART in SPI mode
+  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
 
-has been applied to the spi tree at
+are available in the git repository at:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+  https://github.com/c-sky/csky-linux.git tags/csky-for-linus-5.2-rc1
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+for you to fetch changes up to a691f3334d58b833e41d56de1b9820e687edcd78:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+  csky/syscall_trace: Fixup return processing flow (2019-04-22 15:55:28 +0800)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+----------------------------------------------------------------
+arch/csky patches for 5.2-rc1
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Here are the patches which made on 5.1-rc6 and all are tested in our
+buildroot gitlab CI:
+https://gitlab.com/c-sky/buildroot/pipelines/57892579
 
-Thanks,
-Mark
+ - Fixup vdsp&fpu issues in kernel
+ - Add dynamic function tracer
+ - Use in_syscall & forget_syscall instead of r11_sig
+ - Reconstruct signal processing
+ - Support dynamic start physical address
+ - Fixup wrong update_mmu_cache implementation
+ - Support vmlinux bootup with MMU off
+ - Use va_pa_offset instead of phys_offset
+ - Fixup syscall_trace return processing flow
+ - Add perf callchain support
+ - Add perf_arch_fetch_caller_regs support
+ - Add page fault perf event support
+ - Add support for perf registers sampling
 
-From f7b99e5948e6be8b850eecbb2de1986d26a76b36 Mon Sep 17 00:00:00 2001
-From: Radu Pirea <radu_nicolae.pirea@upb.ro>
-Date: Sun, 5 May 2019 21:06:45 +0300
-Subject: [PATCH] dt-bindings: mfd: atmel-usart: add DMA bindings for USART in
- SPI mode
+----------------------------------------------------------------
+Guo Ren (12):
+      csky: Fixup vdsp&fpu issues in kernel
+      csky/ftrace: Add dynamic function tracer (include graph tracer)
+      csky: Update syscall_trace_enter/exit implementation
+      csky: Add non-uapi asm/ptrace.h namespace
+      csky: Use in_syscall & forget_syscall instead of r11_sig
+      csky: Reconstruct signal processing
+      csky: Support dynamic start physical address
+      csky: Fixup wrong update_mmu_cache implementation
+      csky: Support vmlinux bootup with MMU off
+      csky: Use va_pa_offset instead of phys_offset
+      csky: Fixup compile warning
+      csky/syscall_trace: Fixup return processing flow
 
-The bindings for DMA are now common for both drivers of the USART
-IP.
+Jagadeesh Pagadala (1):
+      csky: mm/fault.c: Remove duplicate header
 
-The node given as an example for USART in SPI mode has been updated in
-order to include DMA bindings.
+Mao Han (4):
+      csky: Add perf callchain support
+      csky: Add perf_arch_fetch_caller_regs support
+      csky: add page fault perf event support
+      csky: Add support for perf registers sampling
 
-Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/mfd/atmel-usart.txt   | 20 ++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+Masahiro Yamada (1):
+      csky: remove redundant generic-y
 
-diff --git a/Documentation/devicetree/bindings/mfd/atmel-usart.txt b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-index 7f0cd72f47d2..699fd3c9ace8 100644
---- a/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-+++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-@@ -17,17 +17,24 @@ Required properties for USART in SPI mode:
- - cs-gpios: chipselects (internal cs not supported)
- - atmel,usart-mode : Must be <AT91_USART_MODE_SPI> (found in dt-bindings/mfd/at91-usart.h)
- 
-+Optional properties in serial and SPI mode:
-+- dma bindings for dma transfer:
-+	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
-+		memory peripheral interface and USART DMA channel ID, FIFO configuration.
-+		The order of DMA channels is fixed. The first DMA channel must be TX
-+		associated channel and the second one must be RX associated channel.
-+		Refer to dma.txt and atmel-dma.txt for details.
-+	- dma-names: "tx" for TX channel.
-+		     "rx" for RX channel.
-+		     The order of dma-names is also fixed. The first name must be "tx"
-+		     and the second one must be "rx" as in the examples below.
-+
- Optional properties in serial mode:
- - atmel,use-dma-rx: use of PDC or DMA for receiving data
- - atmel,use-dma-tx: use of PDC or DMA for transmitting data
- - {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD line respectively.
-   It will use specified PIO instead of the peripheral function pin for the USART feature.
-   If unsure, don't specify this property.
--- add dma bindings for dma transfer:
--	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
--		memory peripheral interface and USART DMA channel ID, FIFO configuration.
--		Refer to dma.txt and atmel-dma.txt for details.
--	- dma-names: "rx" for RX channel, "tx" for TX channel.
- - atmel,fifo-size: maximum number of data the RX and TX FIFOs can store for FIFO
-   capable USARTs.
- - rs485-rts-delay, rs485-rx-during-tx, linux,rs485-enabled-at-boot-time: see rs485.txt
-@@ -81,5 +88,8 @@ Example:
- 		interrupts = <12 IRQ_TYPE_LEVEL_HIGH 5>;
- 		clocks = <&usart0_clk>;
- 		clock-names = "usart";
-+		dmas = <&dma0 2 AT91_DMA_CFG_PER_ID(3)>,
-+		       <&dma0 2 (AT91_DMA_CFG_PER_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
-+		dma-names = "tx", "rx";
- 		cs-gpios = <&pioB 3 0>;
- 	};
--- 
-2.20.1
-
+ arch/csky/Kconfig                      |   7 +-
+ arch/csky/Makefile                     |   2 +-
+ arch/csky/abiv1/inc/abi/ckmmu.h        |  24 ++-
+ arch/csky/abiv1/inc/abi/entry.h        |  41 ++--
+ arch/csky/abiv1/inc/abi/regdef.h       |   5 +-
+ arch/csky/abiv2/cacheflush.c           |  13 +-
+ arch/csky/abiv2/inc/abi/ckmmu.h        |  34 +++-
+ arch/csky/abiv2/inc/abi/entry.h        |  87 +++++++--
+ arch/csky/abiv2/inc/abi/regdef.h       |   5 +-
+ arch/csky/abiv2/mcount.S               |  39 +++-
+ arch/csky/abiv2/memmove.S              |   6 +-
+ arch/csky/include/asm/Kbuild           |   1 -
+ arch/csky/include/asm/ftrace.h         |  18 +-
+ arch/csky/include/asm/mmu_context.h    |  17 +-
+ arch/csky/include/asm/page.h           |  39 ++--
+ arch/csky/include/asm/perf_event.h     |   8 +
+ arch/csky/include/asm/ptrace.h         |  41 ++++
+ arch/csky/include/asm/syscall.h        |   9 +
+ arch/csky/include/asm/thread_info.h    |  27 ++-
+ arch/csky/include/asm/unistd.h         |   2 +
+ arch/csky/include/uapi/asm/perf_regs.h |  51 +++++
+ arch/csky/include/uapi/asm/ptrace.h    |  15 --
+ arch/csky/kernel/Makefile              |   2 +
+ arch/csky/kernel/atomic.S              |  26 +--
+ arch/csky/kernel/entry.S               |  77 +++-----
+ arch/csky/kernel/ftrace.c              | 148 +++++++++++++-
+ arch/csky/kernel/head.S                |  60 +-----
+ arch/csky/kernel/perf_callchain.c      | 119 +++++++++++
+ arch/csky/kernel/perf_regs.c           |  40 ++++
+ arch/csky/kernel/ptrace.c              |  51 +++--
+ arch/csky/kernel/setup.c               |  12 +-
+ arch/csky/kernel/signal.c              | 348 +++++++++++++--------------------
+ arch/csky/mm/fault.c                   |  15 +-
+ scripts/recordmcount.pl                |   3 +
+ 34 files changed, 890 insertions(+), 502 deletions(-)
+ create mode 100644 arch/csky/include/asm/ptrace.h
+ create mode 100644 arch/csky/include/uapi/asm/perf_regs.h
+ create mode 100644 arch/csky/kernel/perf_callchain.c
+ create mode 100644 arch/csky/kernel/perf_regs.c
