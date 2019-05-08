@@ -2,164 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380FC16F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 05:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D059B16F99
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 05:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfEHDn0 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 7 May 2019 23:43:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45134 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbfEHDnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 23:43:25 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94D853087944;
-        Wed,  8 May 2019 03:43:25 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82EFC60C4E;
-        Wed,  8 May 2019 03:43:25 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 28F5E65D13;
-        Wed,  8 May 2019 03:43:25 +0000 (UTC)
-Date:   Tue, 7 May 2019 23:43:24 -0400 (EDT)
-From:   Jason Wang <jasowang@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>
-Message-ID: <1430527294.27174562.1557287004441.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190507154753.GA8809@infradead.org>
-References: <20190507154753.GA8809@infradead.org>
-Subject: Re: [PATCH RFC] vhost: don't use kmap() to log dirty pages
+        id S1727079AbfEHDod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 23:44:33 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:55088 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfEHDoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 23:44:32 -0400
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x483iAfQ000467;
+        Wed, 8 May 2019 12:44:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x483iAfQ000467
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557287051;
+        bh=GtYEji5+EE71+LZjKDY0sxmohdZ0g+Z5/jFvjX0CHzk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1ZESEjZOrbdTa5+bMjMIxX7JKfYmQ/Y+dVySrIFat/BgQw0mbSCMDzXGSvjMWFz/n
+         avfYjmfH7jmGaI5QdsMqFVxzcZu8izw/LpK1K5OCkgm8I5KWmyRvu9UHOa8gxKoDZt
+         m+aRszBtUwNrViHlN1ejn9NLZd5sBn8LipsbVhKP/EmJklWC8d0SClpntEUdswPbO0
+         uxHDUcYmEs99d3dEYaGWHtzJe4sW3DhiZbWvfKF+a3i+oGn774ldgNtYyHqsLu0LUi
+         wdmGRah9iOVXGv/gkE0XnKA1+0cx7FHv6uxS86y+Yf+qd+CK0/DwFFePzuMXVm07lT
+         NS2Z5t8WpH/UA==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id g127so11777172vsd.6;
+        Tue, 07 May 2019 20:44:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAUR3AuX3SmgwdBFiodM0SXGkP8nbnBJI942Jhx3gtbPtTPGtQfc
+        gQJhKeLMYD4sno69/A9o8/2bWOLvuRdWYJQxHWE=
+X-Google-Smtp-Source: APXvYqz4ub6AwdOUIv3IBI3Jv6hdIY2r3aV/UeyA9Lf21f53omFZix/UHdWvee9kuR48UmUZmxkT6DyZqggTTN2/rBA=
+X-Received: by 2002:a67:fd89:: with SMTP id k9mr7071343vsq.54.1557287050111;
+ Tue, 07 May 2019 20:44:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.68.5.20, 10.4.195.23]
-Thread-Topic: vhost: don't use kmap() to log dirty pages
-Thread-Index: K7z0d3UL1bhTV/QW5Sb3gPqIWKhUvg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 08 May 2019 03:43:25 +0000 (UTC)
+References: <20190506013456.86061-1-joel@joelfernandes.org>
+In-Reply-To: <20190506013456.86061-1-joel@joelfernandes.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 8 May 2019 12:43:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQesyT-vspoGKdgRqycZfhtJm5Upx2T6ij-yB5i4Nx5nw@mail.gmail.com>
+Message-ID: <CAK7LNAQesyT-vspoGKdgRqycZfhtJm5Upx2T6ij-yB5i4Nx5nw@mail.gmail.com>
+Subject: Re: [PATCH v3] kheaders: Move from proc to sysfs
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        atish patra <atishp04@gmail.com>, bpf@vger.kernel.org,
+        Brendan Gregg <bgregg@netflix.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        duyuchao <yuchao.du@unisoc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        Manjo Raja Rao <linux@manojrajarao.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        =?UTF-8?Q?Micha=C5=82_Gregorczyk?= <michalgr@fb.com>,
+        Michal Gregorczyk <michalgr@live.com>,
+        Mohammad Husain <russoue@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        Tamir Carmeli <carmeli.tamir@gmail.com>,
+        Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/5/7 下午11:47, Christoph Hellwig wrote:
-> On Mon, May 06, 2019 at 10:23:29PM -0400, Jason Wang wrote:
->> Note: there're archs (few non popular ones) that don't implement
->> futex helper, we can't log dirty pages. We can fix them on top or
->> simply disable LOG_ALL features of vhost.
+On Mon, May 6, 2019 at 10:37 AM Joel Fernandes (Google)
+<joel@joelfernandes.org> wrote:
 >
-> That means vhost now has to depend on HAVE_FUTEX_CMPXCHG to make
-> sure we have a working implementation.
-
-I found HAVE_FUTEX_CMPXCHG is not a must for arch that has the
-implementation and futex does some kind of runtime detection like:
-
-static void __init futex_detect_cmpxchg(void)
-{
-#ifndef CONFIG_HAVE_FUTEX_CMPXCHG
-	u32 curval;
-
-	/*
-	 * This will fail and we want it. Some arch implementations do
-	 * runtime detection of the futex_atomic_cmpxchg_inatomic()
-	 * functionality. We want to know that before we call in any
-	 * of the complex code paths. Also we want to prevent
-	 * registration of robust lists in that case. NULL is
-	 * guaranteed to fault and we get -EFAULT on functional
-	 * implementation, the non-functional ones will return
-	 * -ENOSYS.
-	 */
-	if (cmpxchg_futex_value_locked(&curval, NULL, 0, 0) == -EFAULT)
-		futex_cmpxchg_enabled = 1;
-#endif
-}
-
-
+> The kheaders archive consisting of the kernel headers used for compiling
+> bpf programs is in /proc. However there is concern that moving it here
+> will make it permanent. Let us move it to /sys/kernel as discussed [1].
 >
+> [1] https://lore.kernel.org/patchwork/patch/1067310/#1265969
 >
->>  #include <linux/sched/signal.h>
->>  #include <linux/interval_tree_generic.h>
->>  #include <linux/nospec.h>
->> +#include <asm/futex.h>
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> This patch applies on top of the previous patch that was applied to the
+> driver tree:
+> https://lore.kernel.org/patchwork/patch/1067310/
 >
-> Also please include the futex maintainers to make sure they are fine
-> with this first usage of <asm/futex.h> outside of kernel/futex.c.
+> v2->v3: Fixed sysfs file mode nit (Greg).
+> v1->v2: Fixed some kconfig nits.
 >
-
-Thanks for ccing them. Will do for next version.
-
-If we decide to go this way, we probably need to move it to uaccess
-for a more generic helper.
-
+>  init/Kconfig                                | 16 ++++-----
+>  kernel/Makefile                             |  4 +--
+>  kernel/{gen_ikh_data.sh => gen_kheaders.sh} |  2 +-
+>  kernel/kheaders.c                           | 40 +++++++++------------
+>  4 files changed, 26 insertions(+), 36 deletions(-)
+>  rename kernel/{gen_ikh_data.sh => gen_kheaders.sh} (98%)
 >
->> +static int set_bit_to_user(int nr, u32 __user *addr)
->>  {
->>  	unsigned long log = (unsigned long)addr;
->>  	struct page *page;
->> +	u32 old_log;
->>  	int r;
->>  
->>  	r = get_user_pages_fast(log, 1, 1, &page);
->>  	if (r < 0)
->>  		return r;
->>  	BUG_ON(r != 1);
->> +
->> +	r = futex_atomic_cmpxchg_inatomic(&old_log, addr, 0, 0);
->> +	if (r < 0)
->> +		return r;
->> +
->> +	old_log |= 1 << nr;
->> +	r = put_user(old_log, addr);
->> +	if (r < 0)
->> +		return r;
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 26a364a95b57..c3661991b089 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -579,15 +579,13 @@ config IKCONFIG_PROC
+>           This option enables access to the kernel configuration file
+>           through /proc/config.gz.
 >
-> And this just looks odd to me.  Why do we need the futex call to
-> replace a 0 value with 0?  Why does it still duplicate the
-> put_user?  This doesn't look like actually working code to me.
+> -config IKHEADERS_PROC
+> -       tristate "Enable kernel header artifacts through /proc/kheaders.tar.xz"
+> -       depends on PROC_FS
+> -       help
+> -         This option enables access to the kernel header and other artifacts that
+> -         are generated during the build process. These can be used to build eBPF
+> -         tracing programs, or similar programs.  If you build the headers as a
+> -         module, a module called kheaders.ko is built which can be loaded on-demand
+> -         to get access to the headers.
+> +config IKHEADERS
+> +       tristate "Enable kernel headers through /sys/kernel/kheaders.tar.xz"
 
-Yes, this is a bug. Should be something like:
 
-static int set_bit_to_user(int nr, u32 __user *addr)
-{
-        unsigned long log = (unsigned long)addr;
-        struct page *page;
-        u32 old_log, new_log, l;
-        int r;
+I suggested "depends on SYSFS" twice, both in v1 and v2.
 
-        r = get_user_pages_fast(log, 1, 1, &page);
-        if (r < 0)
-                return r;
-	BUG_ON(r != 1);
+https://lore.kernel.org/patchwork/patch/1069806/#1266147
+https://lore.kernel.org/patchwork/patch/1070005/#1266279
 
-        do {
-                r = get_user(old_log, addr);
-                if (r < 0)
-                        return r;
-                new_log = old_log | (1 << nr);
-		r = futex_atomic_cmpxchg_inatomic(&l, addr, old_log, new_log);
-                if (r < 0)
-                        return r;
-        } while(l != new_log);
 
-	set_page_dirty_lock(page);
-        put_page(page);
-        return 0;
-}
 
+> +       help
+> +         This option enables access to the in-kernel headers that are generated during
+> +         the build process. These can be used to build eBPF tracing programs,
+> +         or similar programs.  If you build the headers as a module, a module called
+> +         kheaders.ko is built which can be loaded on-demand to get access to headers.
 >
-> Also don't we need a pagefault_disable() around
-> futex_atomic_cmpxchg_inatomic?
+>  config LOG_BUF_SHIFT
+>         int "Kernel log buffer size (16 => 64KB, 17 => 128KB)"
 
-Since we don't want to deal with pagefault, so the page has been
-pinned before futex_atomic_cmpxchg_inatomic().
 
-Thanks
+-- 
+Best Regards
+Masahiro Yamada
