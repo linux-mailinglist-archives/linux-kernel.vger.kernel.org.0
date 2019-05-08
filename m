@@ -2,200 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB14417392
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 926E417397
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfEHIXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:23:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36152 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfEHIXu (ORCPT
+        id S1726839AbfEHIYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:24:31 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44733 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfEHIYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:23:50 -0400
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hOHrg-0008JA-8N
-        for linux-kernel@vger.kernel.org; Wed, 08 May 2019 08:23:48 +0000
-Received: by mail-pg1-f199.google.com with SMTP id l13so12220182pgp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:23:48 -0700 (PDT)
+        Wed, 8 May 2019 04:24:30 -0400
+Received: by mail-vs1-f67.google.com with SMTP id j184so12106019vsd.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XNonYk8/ihexURqWmbVWGo+HlXE5x3mb0fn10s1rhqQ=;
+        b=NCJGCMhKpS7Nhq/WlWT49Dtmz49HBFEsfHuLJFyUR7lU7KrMSRbEg5CxmzO2MYJYAc
+         xeTN36amdNGYTYJcDBGer9V9C59ZmERZ814kwtqfK1+2l3beltuBS2EBTwo2kQ9rU39r
+         RxT3GqRpQuluDKyof/1SKJz3cvlP8m/dXmvHfAu5yzWo82mFctlVQWntst4XRWOzOPVw
+         pT0eC6YSnaSl4yILqf+YIau2ag0dZA0fAHDEdr3/OOzOk1GCM6ac31g5+xSm3J9KG3XW
+         6K2sZ28EunqXWhvUgwN4V6aDhQP8XPfopzGQDynU3l2hP3w2aC3ch8IfGiLu/yOgCROn
+         V77w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=PEIP3gzGSTUOPGUL36azQMiRELQm/3Z3XxB+EuCVXM4=;
-        b=L5J16JnRaJay87jjf5qlxPa2T3KmczcJfGfexGY8Hfp6iF7WXq1E+FPFc/NDiWQczN
-         yGtBGqZCwGpXew2dpCtybYAJYh+lx5l1oZtM6ZP2YS/8WZAQH+U/G2nXlVTLu2d+P2ri
-         PPEmxDd2PZImpk7K1gdIu0TfQoYHTZ+kkYaA+UQv1BiD5gonPkv8qUxvGbVfCykk1sRT
-         znhcCUYo6ANkESDAT7QKmhvvYBuJIyOl3TqBUGUcoWAoWGNVA6NeXpaullauuiCZP0Eo
-         0ITCPFT/PoYrr9TJc7YRx+y8xumQaNiJ77jrCHOu//JOM/L8JQl1vVyrxR1V+L0JJsfQ
-         NIkQ==
-X-Gm-Message-State: APjAAAXOOaD7JqYMofgvVKACk1QsLLBiMuJKfWxMowvcfrJdErCeS0r1
-        QsTrTJj6+jngMIpNu/mFt8uH6GFpNBWvzJKVr7204axiokJR5VdahY/gEfE9z5c0UqsIiKDCow/
-        kVWukOELDjooMm6hVsNJDfvR4xMcKDVVcHqRDD/ZhZg==
-X-Received: by 2002:a63:3dcf:: with SMTP id k198mr25762681pga.60.1557303826937;
-        Wed, 08 May 2019 01:23:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyxzhLHFuD0/5jYnF7tVi3Faefw6K5WL0tRgY1tpWQhiz2W2YgPkH4OzkcSI8SRr949cSYYKw==
-X-Received: by 2002:a63:3dcf:: with SMTP id k198mr25762653pga.60.1557303826650;
-        Wed, 08 May 2019 01:23:46 -0700 (PDT)
-Received: from 2001-b011-380f-14b9-cd39-5529-36b9-d37f.dynamic-ip6.hinet.net (2001-b011-380f-14b9-cd39-5529-36b9-d37f.dynamic-ip6.hinet.net. [2001:b011:380f:14b9:cd39:5529:36b9:d37f])
-        by smtp.gmail.com with ESMTPSA id e23sm19429414pfi.159.2019.05.08.01.23.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 01:23:45 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCH v2] cifs: fix strcat buffer overflow and reduce raciness
- in smb21_set_oplock_level()
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAKywueSJCs2B2cGmZvGNfxDU7KNvkBOsuyuaOSV=3GWG80f+kw@mail.gmail.com>
-Date:   Wed, 8 May 2019 16:23:42 +0800
-Cc:     Steve French <smfrench@gmail.com>,
-        Christoph Probst <kernel@probst.it>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8bit
-Message-Id: <A4165E00-AA20-4550-96FE-651271B7091B@canonical.com>
-References: <1557242200-26194-1-git-send-email-kernel@probst.it>
- <CAH2r5mtqkHYbHJkf_LbAjhujnNRQP6Zmkmqhj1dUHomwsc3e=w@mail.gmail.com>
- <CAKywueSJCs2B2cGmZvGNfxDU7KNvkBOsuyuaOSV=3GWG80f+kw@mail.gmail.com>
-To:     Pavel Shilovsky <piastryyy@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.8)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XNonYk8/ihexURqWmbVWGo+HlXE5x3mb0fn10s1rhqQ=;
+        b=fbFr6td0ccmv25JoBoS2sP2gzmUAr/XDYp01A2SZ00ow8lPWpWOk1xvlpPEoVi0JXq
+         LrvMy/hFimhkmbdpduAYADNKUVratjMR6lGvBWC3CV3LL9ZPIpwp4YLBcDmPQqLJBjzZ
+         tNWa3G/vfD7PZkpB0SIiGP7vBHR3B0MQ3+xtE+JauJlCY/LgjZYh97pZ0e0qqWeRTmjG
+         ni4pWagiRfrUa0iDvGCAbMVp7M32wMhAaVL+yO62ZPPMkkt0L1QELfZ4eJK/aZZ1nED2
+         Rr3DhE+7wZInkNSdj0zwjh8DOV68QvukCc0OYoH6GfCmOtWj3B9RJZCjjEoo6v5ylbxt
+         KWbQ==
+X-Gm-Message-State: APjAAAXOsJEzmUKNEv6JdY61cV+lu3U6uqUPfycjd6mcMnXBrkDAoA1U
+        do9oi/XlGUHvO6SoQkEeEHuHDL0GKI8AwsyNw9UBdg==
+X-Google-Smtp-Source: APXvYqzvqdfI/hjY2GupzJ4hQmeRb6kwfQPT4h75YLOR9fvCTVxVuStyB4lVkDgiLkIc9vXwMXKH+beoO6ciJweK3Yw=
+X-Received: by 2002:a67:fa95:: with SMTP id f21mr19250315vsq.180.1557303869534;
+ Wed, 08 May 2019 01:24:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190415155636.32748-1-sashal@kernel.org> <20190507174020.GH1747@sasha-vm>
+ <CAFA6WYPk5Bm11RfaC72g_C8rnMQEPyp-MhtopmDM3Of31v1Z_w@mail.gmail.com> <20190508080232.vzdyvmrqx2apfvlf@holly.lan>
+In-Reply-To: <20190508080232.vzdyvmrqx2apfvlf@holly.lan>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 8 May 2019 13:54:18 +0530
+Message-ID: <CAFA6WYP206hVoqkKcbEvLP9O7ZAOLLru3OZPbVDO95Me=euFnA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] ftpm: a firmware based TPM driver
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Sasha Levin <sashal@kernel.org>, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, corbet@lwn.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@microsoft.com, thiruan@microsoft.com,
+        bryankel@microsoft.com, tee-dev@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 02:28, Pavel Shilovsky <piastryyy@gmail.com> wrote:
-
-> вт, 7 мая 2019 г. в 09:13, Steve French via samba-technical
-> <samba-technical@lists.samba.org>:
->> merged into cifs-2.6.git for-next
->>
->> On Tue, May 7, 2019 at 10:17 AM Christoph Probst via samba-technical
->> <samba-technical@lists.samba.org> wrote:
->>> Change strcat to strncpy in the "None" case to fix a buffer overflow
->>> when cinode->oplock is reset to 0 by another thread accessing the same
->>> cinode. It is never valid to append "None" to any other message.
->>>
->>> Consolidate multiple writes to cinode->oplock to reduce raciness.
->>>
->>> Signed-off-by: Christoph Probst <kernel@probst.it>
->>> ---
->>>  fs/cifs/smb2ops.c | 14 ++++++++------
->>>  1 file changed, 8 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
->>> index c36ff0d..aa61dcf 100644
->>> --- a/fs/cifs/smb2ops.c
->>> +++ b/fs/cifs/smb2ops.c
->>> @@ -2917,26 +2917,28 @@ smb21_set_oplock_level(struct cifsInodeInfo  
->>> *cinode, __u32 oplock,
->>>                        unsigned int epoch, bool *purge_cache)
->>>  {
->>>         char message[5] = {0};
->>> +       unsigned int new_oplock = 0;
->>>
->>>         oplock &= 0xFF;
->>>         if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
->>>                 return;
->>>
->>> -       cinode->oplock = 0;
->>>         if (oplock & SMB2_LEASE_READ_CACHING_HE) {
->>> -               cinode->oplock |= CIFS_CACHE_READ_FLG;
->>> +               new_oplock |= CIFS_CACHE_READ_FLG;
->>>                 strcat(message, "R");
->>>         }
->>>         if (oplock & SMB2_LEASE_HANDLE_CACHING_HE) {
->>> -               cinode->oplock |= CIFS_CACHE_HANDLE_FLG;
->>> +               new_oplock |= CIFS_CACHE_HANDLE_FLG;
->>>                 strcat(message, "H");
->>>         }
->>>         if (oplock & SMB2_LEASE_WRITE_CACHING_HE) {
->>> -               cinode->oplock |= CIFS_CACHE_WRITE_FLG;
->>> +               new_oplock |= CIFS_CACHE_WRITE_FLG;
->>>                 strcat(message, "W");
->>>         }
->>> -       if (!cinode->oplock)
->>> -               strcat(message, "None");
->>> +       if (!new_oplock)
->>> +               strncpy(message, "None", sizeof(message));
->>> +
->>> +       cinode->oplock = new_oplock;
->>>         cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
->>>                  &cinode->vfs_inode);
->>>  }
->>> --
->>> 2.1.4
+On Wed, 8 May 2019 at 13:32, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>
+> On Wed, May 08, 2019 at 10:11:54AM +0530, Sumit Garg wrote:
+> > + TEE ML
+> >
+> > Hi Sasha,
+> >
+> > Firstly apologies for my comments here as I recently joined
+> > linux-integrity ML so I don't have other patches in my inbox. Also, it
+> > would be nice if you could cc TEE ML in future patches, so that people
+> > are aware of such interesting use-cases and may provide some feedback.
+>
+> If this kind is desire exists then shouldn't it be captured in
+> MAINTAINERS?
 >
 
-Doesn’t the race still happen, but implicitly here?
-cinode->oplock = new_oplock;
+Makes sense, will send a patch to capture it in MAINTAINERS file.
 
-Is it possible to just introduce a lock to force its proper ordering?
-e.g.
+-Sumit
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index bf5b8264e119..a3c3c6156d17 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -267,6 +267,7 @@ cifs_alloc_inode(struct super_block *sb)
-          * server, can not assume caching of file data or metadata.
-          */
-         cifs_set_oplock_level(cifs_inode, 0);
-+       mutex_init(&cifs_inode->oplock_mutex);
-         cifs_inode->flags = 0;
-         spin_lock_init(&cifs_inode->writers_lock);
-         cifs_inode->writers = 0;
-diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-index 37b5ddf27ff1..6dfd4ab16c4f 100644
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1214,6 +1214,7 @@ struct cifsInodeInfo {
-         struct list_head openFileList;
-         __u32 cifsAttrs; /* e.g. DOS archive bit, sparse, compressed, system */
-         unsigned int oplock;            /* oplock/lease level we have */
-+       struct mutex oplock_mutex;
-         unsigned int epoch;             /* used to track lease state changes */
-  #define CIFS_INODE_PENDING_OPLOCK_BREAK   (0) /* oplock break in progress */
-  #define CIFS_INODE_PENDING_WRITERS       (1) /* Writes in progress */
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index b20063cf774f..796b23712e71 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1901,6 +1901,7 @@ smb21_set_oplock_level(struct cifsInodeInfo *cinode,  
-__u32 oplock,
-         if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
-                 return;
- 
-+       mutex_lock(&cinode->oplock_mutex);
-         cinode->oplock = 0;
-         if (oplock & SMB2_LEASE_READ_CACHING_HE) {
-                 cinode->oplock |= CIFS_CACHE_READ_FLG;
-@@ -1916,6 +1917,8 @@ smb21_set_oplock_level(struct cifsInodeInfo *cinode,  
-__u32 oplock,
-         }
-         if (!cinode->oplock)
-                 strcat(message, "None");
-+       mutex_unlock(&cinode->oplock_mutex);
-+
-         cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
-                  &cinode->vfs_inode);
-  }
-
-Kai-Heng
-
-> Thanks for cleaning it up!
 >
-> Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+> Daniel.
 >
-> --
-> Best regards,
-> Pavel Shilovsky
-
-
+> >
+> > On Tue, 7 May 2019 at 23:10, Sasha Levin <sashal@kernel.org> wrote:
+> > >
+> > > On Mon, Apr 15, 2019 at 11:56:34AM -0400, Sasha Levin wrote:
+> > > >From: "Sasha Levin (Microsoft)" <sashal@kernel.org>
+> > > >
+> > > >Changes since v2:
+> > > >
+> > > > - Drop the devicetree bindings patch (we don't add any new ones).
+> > > > - More code cleanups based on Jason Gunthorpe's review.
+> > > >
+> > > >Sasha Levin (2):
+> > > >  ftpm: firmware TPM running in TEE
+> > > >  ftpm: add documentation for ftpm driver
+> > >
+> > > Ping? Does anyone have any objections to this?
+> > >
+> >
+> > From [PATCH v3 1/2] ftpm: firmware TPM running in TEE:
+> >
+> > > +static const struct of_device_id of_ftpm_tee_ids[] = {
+> > > + { .compatible = "microsoft,ftpm" },
+> > > + { }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, of_ftpm_tee_ids);
+> > > +
+> > > +static struct platform_driver ftpm_tee_driver = {
+> > > + .driver = {
+> > > + .name = DRIVER_NAME,
+> > > + .of_match_table = of_match_ptr(of_ftpm_tee_ids),
+> > > + },
+> > > + .probe = ftpm_tee_probe,
+> > > + .remove = ftpm_tee_remove,
+> > > +};
+> > > +
+> > > +module_platform_driver(ftpm_tee_driver);
+> >
+> > Here this fTPM driver (seems to communicate with OP-TEE based TA)
+> > should register on TEE bus [1] rather than platform bus as its actual
+> > dependency is on TEE driver rather than using deferred probe to meet
+> > its dependency. Have a look at OP-TEE based RNG driver here [2].
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0fc1db9d105915021260eb241661b8e96f5c0f1a
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5fe8b1cc6a03c46b3061e808256d39dcebd0d0f0
+> >
+> > -Sumit
+> >
+> > > --
+> > > Thanks,
+> > > Sasha
