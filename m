@@ -2,90 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 631C91759A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72563175C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfEHKGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:06:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44937 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbfEHKGU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:06:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c5so1153692wrs.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 03:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=W76017xpCMGd/eRYNl/6tdtFy+bghvWppnjb8gEgLwo=;
-        b=tv8Z8svLeF/GtceXkMecES5sO7KooVIDDL6QYugLmBuDt8JA+ODM9uZG0AGVsyAO7k
-         UjZs11IHZbvaZ/Db3orpmOFdzX9//tq5JxpXkxkviH+YF0VeThH3w6dSMgH4/t6j0VDC
-         yXqJAwpcTRWDTwfxwCO/F/HWMKy/IcqlJR/GDvsa8PREccPQS4TZLPXLbh+LM5DfvmVt
-         1hwAIaO0QXl+qhWYxO2XCKOdrVM93OJa7RPu/MaBuY2tXWPokVhNZrHWgcbehYN+/UfY
-         a3KcjLjwzNBmpFBET1eqpCoIVWdxbBjF+CQeewWyR1NceUr4gwd7GJCsx083WoloM6vu
-         Azmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=W76017xpCMGd/eRYNl/6tdtFy+bghvWppnjb8gEgLwo=;
-        b=lhPwetmG02PN8KxCuLtXmjWC6gPKffx8H72TYP5s7gRSaYdbtmhZ18Y67OAHFJNCKJ
-         jmP0K9jyjuuCUbgbPfPvpYcS38DOUtjaRdk47VV2pvrJkBpWYec1rk+WFDt24gUeJNAZ
-         3Vx8rUgbv5B/rmqyPW8NCsosK+TWVdin590QB5fr7aRXA8AY7341VnA2ULknnrHIUCna
-         klcABp8lteYnLo9GZRLjxMGG0tfX6X0BhQD3PNjpr0/+7rnOiJX1w0TWkLI+6PAQEvsO
-         6vBgWoRRDs4ZH6u5PDLdmi0ZgJrZXc3cZPOIzRGjqEJBmmlYc1/rEP3bxWwVQaucDRX3
-         51Rw==
-X-Gm-Message-State: APjAAAUp1gHSVAcL6gktP416WsMnj+oOf0kl/jXd6LEMjyRCFaCFaHMG
-        a0hvd4RUsSEXVMxk46E2EF/a15mK
-X-Google-Smtp-Source: APXvYqw4vYnN0BlzV5FVJgNHBZdG5eUUVXLEsMYQeCRKmNyLiB4w4NoBU+sQP+0C+IGnnTwPFu0acQ==
-X-Received: by 2002:adf:b611:: with SMTP id f17mr7662506wre.162.1557309978886;
-        Wed, 08 May 2019 03:06:18 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id d3sm4583273wmf.46.2019.05.08.03.06.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 03:06:18 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] habanalabs: check to load F/W before boot status
-Date:   Wed,  8 May 2019 13:06:16 +0300
-Message-Id: <20190508100616.2703-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727138AbfEHKO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 06:14:58 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51362 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727084AbfEHKO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 06:14:56 -0400
+Received: from zn.tnic (p2E584D41.dip0.t-ipconnect.de [46.88.77.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 622261EC0C09;
+        Wed,  8 May 2019 12:14:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1557310495;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=nDsb/D73KVuZC2JEvukNpVi8yfND5pnCi4MhFeu3w9c=;
+        b=GNZIZ9vrkwqDLVxRo0e3vaEBIsNEYR/xdf+xzTDNS2rSIXPwdB0FWGmCV/lBzj5dzPWJlQ
+        ThlAyVGSydiBicE0pj31VTe+w7qzc1LlOS1IRrlQJ6M1fKIc1dxUhX9WD/QRTk3uNUdEi4
+        IPGOh3xMDCx6Edg9YeAZosv7FZ9UeZ0=
+Date:   Wed, 8 May 2019 12:12:39 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Johannes Thumshirn <morbidrsa@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, linux-edac@vger.kernel.org,
+        mchehab@kernel.org, james.morse@arm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+Subject: Re: [PATCH] EDAC, mpc85xx: Prevent building as a module
+Message-ID: <20190508101238.GB19015@zn.tnic>
+References: <20190502141941.12927-1-mpe@ellerman.id.au>
+ <20190506065045.GA3901@x250>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190506065045.GA3901@x250>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the order of checks when initializing the device CPU.
-We want first to check if we need to load the F/W, and only if we need to,
-then we want to check the status of the CPU boot program.
+On Mon, May 06, 2019 at 08:50:45AM +0200, Johannes Thumshirn wrote:
+> Acked-by: Johannes Thumshirn <jth@kernel.org>
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/goya/goya.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Queued, thanks.
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index aaa88d442ffe..ccf9d925b6ed 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -2277,14 +2277,14 @@ static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
- 	goya_read_device_fw_version(hdev, FW_COMP_UBOOT);
- 	goya_read_device_fw_version(hdev, FW_COMP_PREBOOT);
- 
--	if (status == CPU_BOOT_STATUS_SRAM_AVAIL)
--		goto out;
--
- 	if (!hdev->fw_loading) {
- 		dev_info(hdev->dev, "Skip loading FW\n");
- 		goto out;
- 	}
- 
-+	if (status == CPU_BOOT_STATUS_SRAM_AVAIL)
-+		goto out;
-+
- 	rc = goya_push_linux_to_device(hdev);
- 	if (rc)
- 		return rc;
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
