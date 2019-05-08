@@ -2,87 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDCE6179CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C67179CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbfEHMz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 08:55:59 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7733 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726444AbfEHMz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 08:55:59 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4678F3A9E7B50225F17D;
-        Wed,  8 May 2019 20:55:43 +0800 (CST)
-Received: from huawei.com (10.184.227.228) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 May 2019
- 20:55:33 +0800
-From:   Wang Hai <wanghai26@huawei.com>
-To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
-        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <Bhawanpreet.Lakha@amd.com>, <Tony.Cheng@amd.com>,
-        <Dmytro.Laktyushkin@amd.com>, <hersenxs.wu@amd.com>,
-        <David.Francis@amd.com>, <Jun.Lei@amd.com>, <Jerry.Zuo@amd.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <wanghai26@huawei.com>
-Subject: [PATCH] drm/amd/display: Make some functions static
-Date:   Wed, 8 May 2019 20:55:16 +0800
-Message-ID: <20190508125516.16732-1-wanghai26@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728680AbfEHMzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 08:55:36 -0400
+Received: from mx.socionext.com ([202.248.49.38]:8343 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbfEHMzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 08:55:35 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 08 May 2019 21:55:34 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id D817B180B3E;
+        Wed,  8 May 2019 21:55:34 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 8 May 2019 21:55:34 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 8964B1A04E1;
+        Wed,  8 May 2019 21:55:34 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 7AB7A121BCE;
+        Wed,  8 May 2019 21:55:34 +0900 (JST)
+Subject: Re: serial: Add Milbeaut serial control
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <246f81ba-0ed1-d5bc-1a48-bcf0fb2cc05e@canonical.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <d19f16aa-1066-9a51-a743-4483a1b2ac46@socionext.com>
+Date:   Wed, 8 May 2019 21:55:33 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.184.227.228]
-X-CFilter-Loop: Reflected
+In-Reply-To: <246f81ba-0ed1-d5bc-1a48-bcf0fb2cc05e@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following sparse warnings:
+Hi,
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dce120/dce120_resource.c:483:21: warning: symbol 'dce120_clock_source_create' was not declared. Should it be static?
-drivers/gpu/drm/amd/amdgpu/../display/dc/dce120/dce120_resource.c:506:6: warning: symbol 'dce120_clock_source_destroy' was not declared. Should it be static?
-drivers/gpu/drm/amd/amdgpu/../display/dc/dce120/dce120_resource.c:513:6: warning: symbol 'dce120_hw_sequencer_create' was not declared. Should it be static?
+Thank you for pointing out.
 
-Fixes: b8fdfcc6a92c ("drm/amd/display: Add DCE12 core support")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wang Hai <wanghai26@huawei.com>
----
- drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 2019/05/02 20:47, Colin Ian King wrote:
+> Hi,
+> 
+> Static analysis with Coverity has picked up an issue in commit:
+> 
+> commit ba44dc04300441b47618f9933bf36e75a280e5fe
+> Author: Sugaya Taichi <sugaya.taichi@socionext.com>
+> Date:   Mon Apr 15 20:31:40 2019 +0900
+> 
+>      serial: Add Milbeaut serial control
+> 
+> In function mlb_usio_rx_chars() the u8 status is being bit-wise AND'd
+> with MLB_USIO_SSR_BRK (which is 1UL << 8) and hence the result is always
+> false, which looks incorrect to me.  Is this intentional?
+>
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-index 312a0aebf91f..0948421219ef 100644
---- a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
-@@ -458,7 +458,7 @@ static const struct dc_debug_options debug_defaults = {
- 		.disable_clock_gate = true,
- };
- 
--struct clock_source *dce120_clock_source_create(
-+static struct clock_source *dce120_clock_source_create(
- 	struct dc_context *ctx,
- 	struct dc_bios *bios,
- 	enum clock_source_id id,
-@@ -481,14 +481,14 @@ struct clock_source *dce120_clock_source_create(
- 	return NULL;
- }
- 
--void dce120_clock_source_destroy(struct clock_source **clk_src)
-+static void dce120_clock_source_destroy(struct clock_source **clk_src)
- {
- 	kfree(TO_DCE110_CLK_SRC(*clk_src));
- 	*clk_src = NULL;
- }
- 
- 
--bool dce120_hw_sequencer_create(struct dc *dc)
-+static bool dce120_hw_sequencer_create(struct dc *dc)
- {
- 	/* All registers used by dce11.2 match those in dce11 in offset and
- 	 * structure
--- 
-2.17.1
+No. It is always false so should be dropped.
+I will send a fixes patch.
 
+Thanks,
+Sugaya Taichi
+
+> Colin
+> 
 
