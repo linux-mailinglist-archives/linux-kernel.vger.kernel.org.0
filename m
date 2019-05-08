@@ -2,113 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D1D1762B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6BB217633
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfEHKom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:44:42 -0400
-Received: from mail-eopbgr60067.outbound.protection.outlook.com ([40.107.6.67]:30137
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725889AbfEHKom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:44:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0UxBJYWaxvo9rtknksJ9kzRu1GddNHkW0b798+MGk4Y=;
- b=dsLCj21253DY0oR3BUIVP+mSUmxy1La6Cw1zKyzJ+PGkTkkHn9RBx34sYCaajuDsitQWzeNtQLzJmdUUN7+UYaLl/PLLadGeynnJEE99vMKvx1bqq5MDup3sgEo8SuSGnx1p36cVqwS1q9ywaPeNDglIYJH0F0dgxjLoOkkXlTw=
-Received: from AM0PR04MB4865.eurprd04.prod.outlook.com (20.176.215.158) by
- AM0PR04MB6595.eurprd04.prod.outlook.com (20.179.255.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.11; Wed, 8 May 2019 10:44:39 +0000
-Received: from AM0PR04MB4865.eurprd04.prod.outlook.com
- ([fe80::f496:84c1:30b5:43be]) by AM0PR04MB4865.eurprd04.prod.outlook.com
- ([fe80::f496:84c1:30b5:43be%7]) with mapi id 15.20.1856.012; Wed, 8 May 2019
- 10:44:39 +0000
-From:   Wen He <wen.he_1@nxp.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     Leo Li <leoyang.li@nxp.com>, Wen He <wen.he_1@nxp.com>
-Subject: [v5] arm64: dts: ls1028a: Add properties for Mali DP500 node
-Thread-Topic: [v5] arm64: dts: ls1028a: Add properties for Mali DP500 node
-Thread-Index: AQHVBYsJ6isj8SfWxEyYwCBOPeVt9A==
-Date:   Wed, 8 May 2019 10:44:39 +0000
-Message-ID: <20190508104614.42481-1-wen.he_1@nxp.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR03CA0063.apcprd03.prod.outlook.com
- (2603:1096:202:17::33) To AM0PR04MB4865.eurprd04.prod.outlook.com
- (2603:10a6:208:c4::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7e24cef5-a368-46f7-0d46-08d6d3a22b99
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6595;
-x-ms-traffictypediagnostic: AM0PR04MB6595:
-x-microsoft-antispam-prvs: <AM0PR04MB659593C91C8DD2998D933973E2320@AM0PR04MB6595.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 0031A0FFAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(366004)(376002)(189003)(199004)(110136005)(54906003)(186003)(4326008)(50226002)(6506007)(2201001)(102836004)(26005)(86362001)(386003)(52116002)(99286004)(36756003)(25786009)(14454004)(305945005)(81156014)(8676002)(8936002)(81166006)(7736002)(64756008)(6436002)(6512007)(2906002)(6486002)(71200400001)(68736007)(476003)(2616005)(5660300002)(71190400001)(316002)(478600001)(2501003)(66476007)(53936002)(66066001)(66946007)(73956011)(1076003)(256004)(486006)(66556008)(66446008)(3846002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6595;H:AM0PR04MB4865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8WR7yrp4kv0kG3IGk9dZxCWUTWdnfMzNZe5RqzAsap1wgREgAA+LAq6tvIUQInBY9K1wvgB7BbVmpISD6SDbzlAsz7D3uptHqYx2hxD6qeVkaWWQLQ3UEFDdLTMiPyfSoMwzd89Ctw/HxZ78FwhZY2Z20cQzg/ytBhO0qdfLWubllF0TgFKtEdtWyaDp/NJn6F/4tg1nFWYAWe97vcga5LgaxX2eR6eRs8zrLNbIia/xerjSpfWxLkH+1dCIJeUcz5s2x4pfq/QI1EYa0YL0X7c9FZ/az3OMUrXGqPELbMCmJTbbpM32PSJ7Pt1clCfekH6+9eCADsKZ9JAUQMVrk92pyuzZz6vTfij52wYNcv+g9DwpdNvX07uIqbE96CFnG7mewvcxrlpcgN0+dXRRP+4cDpKYDuVaFCOgLFbsgNw=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727383AbfEHKo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 06:44:57 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42668 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfEHKoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 06:44:55 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y10so10520511lji.9;
+        Wed, 08 May 2019 03:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uo6IowrDKy5xO74vMPNp+4alps7YeBhIIa0E2z+OC4I=;
+        b=ksWsDbG033ZNAM/bhOkqJv7bItU8lGJLybn6jQjQ0FJCjLlKLUmUMYW+g+dH8syvr7
+         SRGckmSOrT+RwIZdM9Oq4jMwufhX7fWyPb+gzLRg+92UaZjvFbZROf9MfwGNs4sRS9b6
+         J9hloBDnwBwCg9eb0PpLz76GGThiYP0h+dMzi9hnUg3hYgiH/FfVepP0JOLJCVXSvYqC
+         Wp8IYf1VrWc9WbR7B7frq+VUUNat5Ya1qh9pOFQE2uz4V3H52HHBU+9oTkFhKwnG0VOL
+         WSJQv0lckvTBXG3iMKB51dkAbMMfCQyFfm2hzgISbcasBiApgAaIXMWt5NO0dkQHXldT
+         hWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uo6IowrDKy5xO74vMPNp+4alps7YeBhIIa0E2z+OC4I=;
+        b=U8Va7KL3lcKsqt8rZ8KcM962SqMdTQdUcNzqpaVxWnhgEt6maF7uzGIBHHPzsbUuZ+
+         7mU+8mORrmc9q/ORnH+x2vDefb1LtVV6iTGbgiNEBfpoHUwph+CphQslVXBQHtwJQzYg
+         mB77kYNWm9mdKUH8larOHEe+e/Z1eS6xQxIREduY4QsbHbeGNUrKFjK5QyNS4NzKI7wT
+         iCOpI9YGw10bqJtpJmj97JAWmn4WF66HWm3ktah/C5NSNzmRYURQdbovlgUwytq2QCQG
+         f4DFsp7XvJALWqyKG74YYX4+5BKW8iM8z4B+PCzlfJ+F4XPed7WGvZwLkDIe10+6wnOK
+         JKUw==
+X-Gm-Message-State: APjAAAVKpsskHF19Ry6pHpP3CI3nXJZH2HRe/Xl8F9acY0gnfpGpqksL
+        8BJvooFQGBtbZb5UIr/Hc80=
+X-Google-Smtp-Source: APXvYqz1yV3Og4tgavJ7jYF8TahNSxe9f0BkuWTgO7caJeJH4zHFwUizxFbRctkv5B94vfYcHinruQ==
+X-Received: by 2002:a2e:1b8a:: with SMTP id c10mr14788678ljf.139.1557312293344;
+        Wed, 08 May 2019 03:44:53 -0700 (PDT)
+Received: from localhost.localdomain ([5.164.217.122])
+        by smtp.gmail.com with ESMTPSA id 17sm2081193lju.3.2019.05.08.03.44.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2019 03:44:52 -0700 (PDT)
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tty: serial_core: Set port active bit in uart_port_activate
+Date:   Wed,  8 May 2019 13:44:41 +0300
+Message-Id: <20190508104441.16842-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e24cef5-a368-46f7-0d46-08d6d3a22b99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 10:44:39.1995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6595
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIExTMTAyOEEgaGFzIGEgTENEIGNvbnRyb2xsZXIgYW5kIERpc3BsYXlwb3J0IGludGVyZmFj
-ZSB0aGF0DQpjb25uZWN0cyB0byBlRFAgYW5kIERpc3BsYXlwb3J0IGNvbm5lY3RvcnMgb24gdGhl
-IExTMTAyOEEgYm9hcmQuDQoNClRoaXMgcGF0Y2ggZW5hYmxlcyB0aGUgTENEIGNvbnRyb2xsZXIg
-ZHJpdmVyIG9uIHRoZSBMUzEwMjhBLg0KDQpTaWduZWQtb2ZmLWJ5OiBBbGlzb24gV2FuZyA8YWxp
-c29uLndhbmdAbnhwLmNvbT4NClNpZ25lZC1vZmYtYnk6IFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNv
-bT4NClJldmlld2VkLWJ5OiBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT4NClJldmll
-d2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KLS0tDQpjaGFuZ2UgaW4gdjU6
-DQogICAgICAgIC0gUmV2aWV3ZWQgYnkgZnJvbSBSb2IsIHRoYW5rcy4NCg0KIC4uLi9hcm02NC9i
-b290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaSB8IDM4ICsrKysrKysrKysrKysrKysr
-KysNCiAxIGZpbGUgY2hhbmdlZCwgMzggaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvYXJj
-aC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaSBiL2FyY2gvYXJtNjQv
-Ym9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLmR0c2kNCmluZGV4IGIwNDU4MTI0OWYwYi4u
-YzBhMTNmOWU1Yjk1IDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUv
-ZnNsLWxzMTAyOGEuZHRzaQ0KKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNs
-LWxzMTAyOGEuZHRzaQ0KQEAgLTcwLDYgKzcwLDI3IEBADQogCQljbG9jay1vdXRwdXQtbmFtZXMg
-PSAic3lzY2xrIjsNCiAJfTsNCiANCisJZHBjbGs6IGNsb2NrLWRwIHsNCisJCWNvbXBhdGlibGUg
-PSAiZml4ZWQtY2xvY2siOw0KKwkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KKwkJY2xvY2stZnJlcXVl
-bmN5ID0gPDI3MDAwMDAwPjsNCisJCWNsb2NrLW91dHB1dC1uYW1lcz0gImRwY2xrIjsNCisJfTsN
-CisNCisJYWNsazogY2xvY2stYXhpIHsNCisJCWNvbXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0K
-KwkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KKwkJY2xvY2stZnJlcXVlbmN5ID0gPDY1MDAwMDAwMD47
-DQorCQljbG9jay1vdXRwdXQtbmFtZXM9ICJhY2xrIjsNCisJfTsNCisNCisJcGNsazogY2xvY2st
-YXBiIHsNCisJCWNvbXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0KKwkJI2Nsb2NrLWNlbGxzID0g
-PDA+Ow0KKwkJY2xvY2stZnJlcXVlbmN5ID0gPDY1MDAwMDAwMD47DQorCQljbG9jay1vdXRwdXQt
-bmFtZXM9ICJwY2xrIjsNCisJfTsNCisNCiAJcmVib290IHsNCiAJCWNvbXBhdGlibGUgPSJzeXNj
-b24tcmVib290IjsNCiAJCXJlZ21hcCA9IDwmZGNmZz47DQpAQCAtNDMzLDQgKzQ1NCwyMSBAQA0K
-IAkJCX07DQogCQl9Ow0KIAl9Ow0KKw0KKwltYWxpZHAwOiBkaXNwbGF5QGYwODAwMDAgew0KKwkJ
-Y29tcGF0aWJsZSA9ICJhcm0sbWFsaS1kcDUwMCI7DQorCQlyZWcgPSA8MHgwIDB4ZjA4MDAwMCAw
-eDAgMHgxMDAwMD47DQorCQlpbnRlcnJ1cHRzID0gPDAgMjIyIElSUV9UWVBFX0xFVkVMX0hJR0g+
-LA0KKwkJCSAgICAgPDAgMjIzIElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KKwkJaW50ZXJydXB0LW5h
-bWVzID0gIkRFIiwgIlNFIjsNCisJCWNsb2NrcyA9IDwmZHBjbGs+LCA8JmFjbGs+LCA8JmFjbGs+
-LCA8JnBjbGs+Ow0KKwkJY2xvY2stbmFtZXMgPSAicHhsY2xrIiwgIm1jbGsiLCAiYWNsayIsICJw
-Y2xrIjsNCisJCWFybSxtYWxpZHAtb3V0cHV0LXBvcnQtbGluZXMgPSAvYml0cy8gOCA8OCA4IDg+
-Ow0KKw0KKwkJcG9ydCB7DQorCQkJZHAwX291dDogZW5kcG9pbnQgew0KKw0KKwkJCX07DQorCQl9
-Ow0KKwl9Ow0KIH07DQotLSANCjIuMTcuMQ0KDQo=
+A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
+uart_open to use tty_port_open"). It caused a constant warning printed
+into the system log regarding the tty and port counter mismatch:
+
+[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
+
+in case if session hangup was detected so the warning is printed starting
+from the second open-close iteration.
+
+Particularly the problem was discovered in situation when there is a
+serial tty device without hardware back-end being setup. It is considered
+by the tty-serial subsystems as a hardware problem with session hang up.
+In this case uart_startup() will return a positive value with TTY_IO_ERROR
+flag set in corresponding tty_struct instance. The same value will get
+passed to be returned from the activate() callback and then being returned
+from tty_port_open(). But since in this case tty_port_block_til_ready()
+isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
+called before tty_port_open conversion was introduced and the rest of the
+subsystem code expected the bit being set in this case), which prevents the
+uart_hangup() method to perform any cleanups including the tty port
+counter setting to zero. So the next attempt to open/close the tty device
+will discover the counters mismatch.
+
+In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
+flag in case if uart_startup() returned a positive value. In this case
+the hang up procedure will perform a full set of cleanup actions including
+the port ref-counter resetting.
+
+Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+---
+ drivers/tty/serial/serial_core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 351843f847c0..9113e07952d1 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1776,6 +1776,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ {
+ 	struct uart_state *state = container_of(port, struct uart_state, port);
+ 	struct uart_port *uport;
++	int ret;
+ 
+ 	uport = uart_port_check(state);
+ 	if (!uport || uport->flags & UPF_DEAD)
+@@ -1786,7 +1787,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ 	/*
+ 	 * Start up the serial port.
+ 	 */
+-	return uart_startup(tty, state, 0);
++	ret = uart_startup(tty, state, 0);
++	if (ret > 0)
++		tty_port_set_active(port, 1);
++
++	return ret;
+ }
+ 
+ static const char *uart_type(struct uart_port *port)
+-- 
+2.21.0
+
