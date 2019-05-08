@@ -2,122 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C74E917A61
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2A117B4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfEHNU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 09:20:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727964AbfEHNUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 09:20:54 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E562C06647D;
-        Wed,  8 May 2019 13:20:54 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-49.brq.redhat.com [10.40.204.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5557410027D5;
-        Wed,  8 May 2019 13:20:50 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 12/12] perf script: Add --show-all-events option
-Date:   Wed,  8 May 2019 15:20:10 +0200
-Message-Id: <20190508132010.14512-13-jolsa@kernel.org>
-In-Reply-To: <20190508132010.14512-1-jolsa@kernel.org>
-References: <20190508132010.14512-1-jolsa@kernel.org>
+        id S1727930AbfEHOF7 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 10:05:59 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:38444
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727849AbfEHOF6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 10:05:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 085C5B4F00B;
+        Wed,  8 May 2019 13:22:31 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id H-TA6-hCWy2f; Wed,  8 May 2019 13:22:30 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 580B2B5046B;
+        Wed,  8 May 2019 13:22:30 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 1dJ_KIXw-7_w; Wed,  8 May 2019 13:22:30 +0000 (UTC)
+Received: from [100.67.244.148] (unknown [223.237.198.47])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id D47F3B4F00B;
+        Wed,  8 May 2019 13:21:55 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 08 May 2019 13:20:54 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Aviso_de_seguran=C3=A7a?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador da Web <exportaciones@minpal.gob.ve>
+Date:   Wed, 08 May 2019 18:51:45 +0530
+Message-Id: <20190508132155.D47F3B4F00B@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding --show-all-events option to show all
-side-bad events with single option, like:
+Aviso de segurança:
 
-  $ perf script --show-all-events
-  swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffa6000000(0xc00e41) @ 0xffffffffa6000000]: x [kernel.kallsyms]_text
-  ...
-  swapper     0 [000]     0.000000: PERF_RECORD_KSYMBOL addr ffffffffc01bc362 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-  swapper     0 [000]     0.000000: PERF_RECORD_BPF_EVENT type 1, flags 0, id 29
-  ...
-  swapper     0 [000]     0.000000: PERF_RECORD_FORK(1:1):(0:0)
-  systemd     0 [000]     0.000000: PERF_RECORD_COMM: systemd:1/1
-  ...
-  swapper     0 [000] 63587.039518:          1 cycles:  ffffffffa60698b4 [unknown] ([kernel.kallsyms])
-  swapper     0 [000] 63587.039522:          1 cycles:  ffffffffa60698b4 [unknown] ([kernel.kallsyms])
+Esta mensagem é do nosso Centro de administração para todos os usuários da nossa conta de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
 
-Link: http://lkml.kernel.org/n/tip-g7vmuwn6i7pa8cdpnxl9vsur@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 +++
- tools/perf/builtin-script.c              | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
+Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index af8282782911..ddcd08bf0172 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -316,6 +316,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-all-events
-+	Display all side-band events i.e. enable all --show-*-events options.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 3a48a2627670..e7462dcab2c6 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1607,6 +1607,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_all_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct cpu_map		*cpus;
-@@ -2436,6 +2437,16 @@ static int __cmd_script(struct perf_script *script)
- 
- 	perf_stat__init_shadow_stats();
- 
-+	if (script->show_all_events) {
-+		script->show_task_events	= true;
-+		script->show_mmap_events	= true;
-+		script->show_switch_events	= true;
-+		script->show_namespace_events	= true;
-+		script->show_lost_events	= true;
-+		script->show_round_events	= true;
-+		script->show_bpf_events		= true;
-+	}
-+
- 	/* override event processing functions */
- 	if (script->show_task_events) {
- 		script->tool.comm = process_comm_event;
-@@ -3481,6 +3492,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show round events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-bpf-events", &script.show_bpf_events,
- 		    "Show bpf related events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-all-events", &script.show_all_events,
-+		    "Show all side-band events (if recorded)"),
- 	OPT_BOOLEAN('\0', "per-event-dump", &script.per_event_dump,
- 		    "Dump trace output to files named by the monitored events"),
- 	OPT_BOOLEAN('f', "force", &symbol_conf.force, "don't complain, do it"),
--- 
-2.20.1
+Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
 
+Clique no link http://accountsecureadmin.xtgem.com/index se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
+
+Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
+Claro que você vai gostar da nova e melhorada interface de webmail.
+
+Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
+
+Obrigado por usar nossos serviços
+
+==============================================
+
+Sinceramente Web Admin.
+E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
+Número de registo 9697083H) ID do cliente 068806M Todos os direitos reservados.
