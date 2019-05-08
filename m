@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1975C17EBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3219B17ECA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbfEHRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:03:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:26497 "EHLO mga17.intel.com"
+        id S1729141AbfEHREC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:04:02 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5321 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728966AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 13:03:04 -0400
+        id S1728972AbfEHRDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 13:03:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:03 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,446,1549958400"; 
-   d="scan'208";a="169697573"
+   d="scan'208";a="169697576"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.171])
   by fmsmga002.fm.intel.com with ESMTP; 08 May 2019 10:03:03 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -27,10 +27,11 @@ To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 08/18] x86/fsgsbase/64: When copying a thread, use the FSGSBASE instructions
-Date:   Wed,  8 May 2019 03:02:23 -0700
-Message-Id: <1557309753-24073-9-git-send-email-chang.seok.bae@intel.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v7 09/18] x86/entry/64: Add the READ_MSR_GSBASE macro
+Date:   Wed,  8 May 2019 03:02:24 -0700
+Message-Id: <1557309753-24073-10-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
 References: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
@@ -39,59 +40,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Copy real FS/GSBASE values instead of approximation when FSGSBASE is
-enabled.
+Factor out the RDMSR-based GSBASE read into a new macro.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/kernel/process_64.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/x86/entry/calling.h  |  9 +++++++++
+ arch/x86/entry/entry_64.S | 12 ++++++++----
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index e2089c9..8610df7 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -428,7 +428,8 @@ unsigned long x86_fsbase_read_task(struct task_struct *task)
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index efb0d1b..d119729 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -337,6 +337,15 @@ For 32-bit we have the following conventions - kernel is built with
+ #endif
+ .endm
  
- 	if (task == current)
- 		fsbase = x86_fsbase_read_cpu();
--	else if (task->thread.fsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.fsindex == 0))
- 		fsbase = task->thread.fsbase;
- 	else
- 		fsbase = x86_fsgsbase_read_task(task, task->thread.fsindex);
-@@ -442,7 +443,8 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
++.macro READ_MSR_GSBASE save_reg:req
++	movl	$MSR_GS_BASE, %ecx
++	/* Read MSR specified by %ecx into %edx:%eax */
++	rdmsr
++	.ifnc \save_reg, %edx
++	movl	%edx, \save_reg
++	.endif
++.endm
++
+ #endif /* CONFIG_X86_64 */
  
- 	if (task == current)
- 		gsbase = x86_gsbase_read_cpu_inactive();
--	else if (task->thread.gsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.gsindex == 0))
- 		gsbase = task->thread.gsbase;
- 	else
- 		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
-@@ -482,10 +484,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	p->thread.sp = (unsigned long) fork_frame;
- 	p->thread.io_bitmap_ptr = NULL;
+ .macro STACKLEAK_ERASE
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 20e45d9..568a491 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1159,11 +1159,15 @@ ENTRY(paranoid_entry)
+ 	cld
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+ 	ENCODE_FRAME_POINTER 8
++
+ 	movl	$1, %ebx
+-	movl	$MSR_GS_BASE, %ecx
+-	rdmsr
+-	testl	%edx, %edx
+-	js	1f				/* negative -> in kernel */
++	/*
++	 * The kernel-enforced convention is a negative GSBASE indicates
++	 * a kernel value.
++	 */
++	READ_MSR_GSBASE save_reg=%edx
++	testl	%edx, %edx	/* Negative -> in kernel */
++	js	1f
+ 	SWAPGS
+ 	xorl	%ebx, %ebx
  
--	savesegment(gs, p->thread.gsindex);
--	p->thread.gsbase = p->thread.gsindex ? 0 : me->thread.gsbase;
--	savesegment(fs, p->thread.fsindex);
--	p->thread.fsbase = p->thread.fsindex ? 0 : me->thread.fsbase;
-+	save_fsgs(me);
-+	p->thread.fsindex = me->thread.fsindex;
-+	p->thread.fsbase = me->thread.fsbase;
-+	p->thread.gsindex = me->thread.gsindex;
-+	p->thread.gsbase = me->thread.gsbase;
- 	savesegment(es, p->thread.es);
- 	savesegment(ds, p->thread.ds);
- 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
 -- 
 2.7.4
 
