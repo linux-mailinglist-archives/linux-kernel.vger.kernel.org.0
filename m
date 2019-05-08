@@ -2,114 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C60717D4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 17:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BD61857F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 08:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfEHP1k convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 11:27:40 -0400
-Received: from unicorn.mansr.com ([81.2.72.234]:36280 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfEHP1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 11:27:39 -0400
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id CDBEB149B7; Wed,  8 May 2019 16:27:37 +0100 (BST)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] usb: core: verify devicetree nodes for disabled interfaces
-References: <106fc58c-1a4f-6605-41d7-b6031c5751a3@samsung.com>
-        <CGME20190508104442eucas1p2ebdffa348465f2c28177601014614853@eucas1p2.samsung.com>
-        <20190508104434.3409-1-m.szyprowski@samsung.com>
-        <yw1xtve5uq1y.fsf@mansr.com>
-        <e7f32280-57ec-6298-1a5d-8d2d4dc26667@samsung.com>
-Date:   Wed, 08 May 2019 16:27:37 +0100
-In-Reply-To: <e7f32280-57ec-6298-1a5d-8d2d4dc26667@samsung.com> (Marek
-        Szyprowski's message of "Wed, 8 May 2019 15:49:22 +0200")
-Message-ID: <yw1xpnotufti.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1726523AbfEIGp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 02:45:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726099AbfEIGp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 02:45:57 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x496ae7Q068239
+        for <linux-kernel@vger.kernel.org>; Thu, 9 May 2019 02:45:56 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2scce2e7n0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 02:45:56 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fiuczy@linux.ibm.com>;
+        Thu, 9 May 2019 07:45:53 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 May 2019 07:45:45 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x496jhIf55050456
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 May 2019 06:45:43 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5F056A4065;
+        Thu,  9 May 2019 06:45:43 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 534D2A4054;
+        Thu,  9 May 2019 06:45:42 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.222.56])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 May 2019 06:45:42 +0000 (GMT)
+Subject: Re: [libvirt] [PATCH v2 1/2] vfio/mdev: add version attribute for
+ mdev device
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>,
+        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
+        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "eauger@redhat.com" <eauger@redhat.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "eskultet@redhat.com" <eskultet@redhat.com>,
+        "Yang, Ziye" <ziye.yang@intel.com>,
+        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "felipe@nutanix.com" <felipe@nutanix.com>,
+        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "dgilbert@redhat.com" <dgilbert@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "dinechin@redhat.com" <dinechin@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+References: <20190506014514.3555-1-yan.y.zhao@intel.com>
+ <20190506014904.3621-1-yan.y.zhao@intel.com>
+ <20190507151826.502be009@x1.home> <20190508112740.GA24397@joy-OptiPlex-7040>
+ <20190508152242.4b54a5e7@x1.home>
+From:   Boris Fiuczynski <fiuczy@linux.ibm.com>
+Date:   Wed, 8 May 2019 17:27:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190508152242.4b54a5e7@x1.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050906-0008-0000-0000-000002E4CB1B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050906-0009-0000-0000-000022514FBA
+Message-Id: <5eac912c-e753-b5f6-83a4-b646f991d858@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905090043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
-
-> Hi
->
-> On 2019-05-08 13:46, MÂns RullgÂrd wrote:
->> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->>> Commit 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
->>> add support for disabling given USB device interface by adding nodes to
->>> the USB host controller device. The mentioned commit however identifies
->>> the given USB interface node only by the 'reg' property in the host
->>> controller children nodes and then checks for their the 'status'. The USB
->>> device interface nodes however also has to have a 'compatible' property as
->>> described in Documentation/devicetree/bindings/usb/usb-device.txt. This is
->>> important, because USB host controller might have child-nodes for other
->>> purposes. For example, Exynos EHCI and OHCI drivers already define
->>> child-nodes for each physical root hub port and assigns respective PHY
->>> controller and parameters for them. This conflicts with the proposed
->>> approach and verifying for the presence of the compatible property fixes
->>> this issue without changing the bindings and the way the PHY controllers
->>> are handled by Exynos EHCI/OHCI drivers.
->>>
->>> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
->>> Fixes: 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/usb/core/message.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
->>> index e844bb7b5676..6f7d047392bd 100644
->>> --- a/drivers/usb/core/message.c
->>> +++ b/drivers/usb/core/message.c
->>> @@ -2009,6 +2009,7 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
->>>   		struct usb_interface *intf = cp->interface[i];
->>>
->>>   		if (intf->dev.of_node &&
->>> +		    of_find_property(intf->dev.of_node, "compatible", NULL) &&
->>>   		    !of_device_is_available(intf->dev.of_node)) {
->>>   			dev_info(&dev->dev, "skipping disabled interface %d\n",
->>>   				 intf->cur_altsetting->desc.bInterfaceNumber);
->>> -- 
->> I don't think this is the right approach.  We don't want to be adding
->> such checks everywhere the of_node is used.  A better way might be to
->> not set of_node at all in the absence of a proper "compatible" string.
->
-> Right, this will be a better approach. I've just checked the code and a 
-> simple check for 'compatible' property presence can be easily added in 
-> drivers/usb/core/of.c in usb_of_get_device_node() and 
-> usb_of_get_interface_node() functions.
->
-> The second check could be added in drivers/usb/core/hub.c in 
-> usb_new_device() - to ensure that the device's vid/pid matches of_node 
-> compatible string.
->
-> Is this okay? Or just add a latter one?
-
-I'm not sure where the best place to check is.  Someone else will have
-to weigh in on that.
-
->> Then there's the problem of how to resolve the incompatibility between
->> the generic USB and Exynos bindings.  One possible fix could be to use
->> a child node of the controller node to represent the root hub.  Since
->> the driver currently doesn't work at all if a devicetree has nodes for
->> USB devices, there should be no compatibility concerns.
->
-> So far we don't have any use case for adding devicetree nodes for usb 
-> devices under Exynos EHCI/OHCI hcd, so this shouldn't be a problem for now.
-
-None that you know of, that is.  Regardless, the bindings are
-inconsistent, and that needs to be fixed.
+On 5/8/19 11:22 PM, Alex Williamson wrote:
+>>> I thought there was a request to make this more specific to migration
+>>> by renaming it to something like migration_version.  Also, as an
+>>>   
+>> so this attribute may not only include a mdev device's parent device info and
+>> mdev type, but also include numeric software version of vendor specific
+>> migration code, right?
+> It's a vendor defined string, it should be considered opaque to the
+> user, the vendor can include whatever they feel is relevant.
+> 
+Would a vendor also be allowed to provide a string expressing required 
+features as well as containing backend resource requirements which need 
+to be compatible for a successful migration? Somehow a bit like a cpu 
+model... maybe even as json or xml...
+I am asking this with vfio-ap in mind. In that context checking 
+compatibility of two vfio-ap mdev devices is not as simple as checking 
+if version A is smaller or equal to version B.
 
 -- 
-MÂns RullgÂrd
+Mit freundlichen Gr√º√üen/Kind regards
+    Boris Fiuczynski
+
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Matthias Hartmann
+Gesch√§ftsf√ºhrung: Dirk Wittkopp
+Sitz der Gesellschaft: B√∂blingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
+
