@@ -2,43 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB35B1746A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6972517475
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfEHJBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:01:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44960 "EHLO
+        id S1727016AbfEHJCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 05:02:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46004 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfEHJBt (ORCPT
+        with ESMTP id S1726464AbfEHJCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:01:49 -0400
+        Wed, 8 May 2019 05:02:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=OZSKu6gy0jL8wesxVTcC/2QJcoQ2eYauP88jNhYxHUE=; b=tJ8mI5REkGI+
-        RTNiLmDkj1AaXt3vNEanI7bDDjogg3RflGYBLLmsEawPdykHdQhb5rLioGPI7UcDsZPfI5sABbZ3f
-        5dBVjVhpHNfEv6h/XJr9UMjZ9MsHM2HAwuZNk3SlPItDBc/LsJnrZDDQbTOdWwju4CaG7Xgp5O9MP
-        mQ/78=;
+        List-Archive; bh=/1N9JZp2JQsf9CYYNCJzOBAG67m4fbIhB/j22kK9mlU=; b=PMUHRco9ZAMJ
+        38hTtA/ioeQf5v4aZJ/dE3UGilVQgss3i5QRQwZwIYgUfSCb7Drtnv/0acH33nuYndnBHSQeN811R
+        Ov2FHO86pAeBRnnNvgGjK5Qci4MJlHdRdfd6r0oyduBsctknWhT2R29R5PywS5Quf3r7ErPNOC5jV
+        CfovM=;
 Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hOISH-0007dW-3w; Wed, 08 May 2019 09:01:39 +0000
+        id 1hOISN-0007dj-1b; Wed, 08 May 2019 09:01:43 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 85A0D440036; Wed,  8 May 2019 10:01:29 +0100 (BST)
+        id 165F0440039; Wed,  8 May 2019 10:01:30 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        patchwork-bot+notify@kernel.org
-Subject: Applied "ASoC: hdmi-codec: remove function name debug traces" to the asoc tree
-In-Reply-To: <20190506095815.24578-2-jbrunet@baylibre.com>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
+        olivier.moysan@st.com, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: stm32: i2s: update pcm hardware constraints" to the asoc tree
+In-Reply-To: <1557147252-18679-2-git-send-email-olivier.moysan@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190508090129.85A0D440036@finisterre.sirena.org.uk>
-Date:   Wed,  8 May 2019 10:01:29 +0100 (BST)
+Message-Id: <20190508090130.165F0440039@finisterre.sirena.org.uk>
+Date:   Wed,  8 May 2019 10:01:30 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,11 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: hdmi-codec: remove function name debug traces
+   ASoC: stm32: i2s: update pcm hardware constraints
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -71,78 +75,36 @@ to this mail.
 Thanks,
 Mark
 
-From 900e5daf7034cf65ce4072b86f297c42f9042433 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 6 May 2019 11:58:12 +0200
-Subject: [PATCH] ASoC: hdmi-codec: remove function name debug traces
+From 4fc19fffaaf87335aafaeb059a561ef91aa6031c Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Mon, 6 May 2019 14:54:11 +0200
+Subject: [PATCH] ASoC: stm32: i2s: update pcm hardware constraints
 
-Remove the debug traces only showing the function name on entry.
-The same can be obtained using ftrace.
+- Set period minimum size. Ensure at least 5ms period
+up to 48kHz/16 bits to prevent underrun/overrun.
+- Remove MDMA constraints on period maximum size and
+set period maximum to half the buffer maximum size.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/hdmi-codec.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ sound/soc/stm/stm32_i2s.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 39caf19abb0b..eb31d7eddcbf 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -416,8 +416,6 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
- 	int ret = 0;
- 
--	dev_dbg(dai->dev, "%s()\n", __func__);
--
- 	ret = hdmi_codec_new_stream(substream, dai);
- 	if (ret)
- 		return ret;
-@@ -457,8 +455,6 @@ static void hdmi_codec_shutdown(struct snd_pcm_substream *substream,
- {
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
- 
--	dev_dbg(dai->dev, "%s()\n", __func__);
--
- 	WARN_ON(hcp->current_stream != substream);
- 
- 	hcp->chmap_idx = HDMI_CODEC_CHMAP_IDX_UNKNOWN;
-@@ -527,8 +523,6 @@ static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
- 	struct hdmi_codec_daifmt cf = { 0 };
- 
--	dev_dbg(dai->dev, "%s()\n", __func__);
--
- 	if (dai->id == DAI_ID_SPDIF)
- 		return 0;
- 
-@@ -597,8 +591,6 @@ static int hdmi_codec_digital_mute(struct snd_soc_dai *dai, int mute)
- {
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
- 
--	dev_dbg(dai->dev, "%s()\n", __func__);
--
- 	if (hcp->hcd.ops->digital_mute)
- 		return hcp->hcd.ops->digital_mute(dai->dev->parent,
- 						  hcp->hcd.data, mute);
-@@ -656,8 +648,6 @@ static int hdmi_codec_pcm_new(struct snd_soc_pcm_runtime *rtd,
- 	};
- 	int ret;
- 
--	dev_dbg(dai->dev, "%s()\n", __func__);
--
- 	ret =  snd_pcm_add_chmap_ctls(rtd->pcm, SNDRV_PCM_STREAM_PLAYBACK,
- 				      NULL, drv->playback.channels_max, 0,
- 				      &hcp->chmap_info);
-@@ -754,8 +744,6 @@ static int hdmi_codec_probe(struct platform_device *pdev)
- 	int dai_count, i = 0;
- 	int ret;
- 
--	dev_dbg(dev, "%s()\n", __func__);
--
- 	if (!hcd) {
- 		dev_err(dev, "%s: No platform data\n", __func__);
- 		return -EINVAL;
+diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
+index 97d5e9901a0e..8ee697ff1f86 100644
+--- a/sound/soc/stm/stm32_i2s.c
++++ b/sound/soc/stm/stm32_i2s.c
+@@ -731,7 +731,8 @@ static const struct snd_soc_dai_ops stm32_i2s_pcm_dai_ops = {
+ static const struct snd_pcm_hardware stm32_i2s_pcm_hw = {
+ 	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_MMAP,
+ 	.buffer_bytes_max = 8 * PAGE_SIZE,
+-	.period_bytes_max = 2048,
++	.period_bytes_min = 1024,
++	.period_bytes_max = 4 * PAGE_SIZE,
+ 	.periods_min = 2,
+ 	.periods_max = 8,
+ };
 -- 
 2.20.1
 
