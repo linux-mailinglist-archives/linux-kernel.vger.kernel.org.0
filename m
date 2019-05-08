@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421B7181E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 00:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78562181DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfEHWFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 18:05:44 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46551 "EHLO
+        id S1728665AbfEHV7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 17:59:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46186 "EHLO
         mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfEHWFn (ORCPT
+        with ESMTP id S1726837AbfEHV7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 18:05:43 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h21so209392ljk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:05:42 -0700 (PDT)
+        Wed, 8 May 2019 17:59:09 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h21so197191ljk.13
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 14:59:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mJDqU9Be18vct3RelT0fkz+NNup0uRkQXwCH0J/0ayA=;
-        b=ChqqDy9OtTLco9IUq0EovfxGWkylmU9D9HUEpFYYW+YRmXm0hippWdq2pKZankIEGt
-         Xf2jdjQWWmAdtZPM+9/wLEklwq++GFufTFUCOTqAq2A6cLLxT6l3ymO2l+h0yQElcUIS
-         oZ2pIuEdr4g1L8oDs6yyOQmrqt/DoKU53ONMc=
+        bh=UZMfXBQdOHBDgXhrafYn8rmUp2moZY4YUtAHGpeXcXQ=;
+        b=IwWDVQReBqLpD91rfRHP5GUe1YVtCg7a2594K/O6nP3EjOMfYjP9Jvg4wQFnrIuxJo
+         2xoX7a6EjGItF1lhoQX2Z7iEJzN7X0+uP1nULC7/B/NmgLe0tvRGxZqYWKBfpy7+PSKV
+         onf595Hho8vuccSrSxuNJeMLoEM3irs+ejy4Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mJDqU9Be18vct3RelT0fkz+NNup0uRkQXwCH0J/0ayA=;
-        b=L7vojqGNfTSUHUFwWsJ17oCD25qZsn3Lp5FZ7aIaS4D2vz/lrJTnIFiqLmB5/bF0uq
-         uJqC2HfFsj8l1b4OAnC0b+TcWWoMSmiAmRzzkXapukI2j3wFnpSvHmIRNbejLLqKxHsL
-         +VTG+63zkUMsVhw1qMPaPEEI3IlFWi8XFgbuDmLkkI5OPdSQx7kE9/T8OwwiQK+y8Fk5
-         nqjvDo96Ob7BGnvXf7dCYB8EdWTZlhFNQ5OqajWaedtZjtcSSZLQH1FMLSWJZ6KRTJ0J
-         Y7UdiOOsZoxUYL/BYbQlsfi7JopZMAzE0KSVBt7lFU+tZsoARHC1wMVigCEPxwmifAej
-         GavQ==
-X-Gm-Message-State: APjAAAVOA/wOmuG9iozfwJECzyU4c1uua5GGtGGdUBr8vGyYQOLIRrR3
-        Uw13mC6a7MR3+D3hOXjxeOzsqsW/Hoo=
-X-Google-Smtp-Source: APXvYqygUDBeYpRaGsjr9vW1NGeTSWZ7no5AWtwzfYAczLzD3/RN7kAPbUPv97A5g8TpCaLQAM0nIQ==
-X-Received: by 2002:a2e:5d49:: with SMTP id r70mr123175ljb.102.1557353142026;
-        Wed, 08 May 2019 15:05:42 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id s6sm8014ljh.65.2019.05.08.15.05.41
+        bh=UZMfXBQdOHBDgXhrafYn8rmUp2moZY4YUtAHGpeXcXQ=;
+        b=hk0iKxR/aafS3b8JJK+kqJ9VdnOzOD65g+7Wa0oenSt+f/d+BszAl09IeDR8mZTLGr
+         8koWoZHQwHgF4jsAzcz9amjSDVYVcm7nRnvP2SkmFb5qchixny3IENfVVyBvvhtMESfR
+         a2TEebQFFvnCVqPfwiYt3LInT7i0t5ay1u3JEoLi23lmfB5v8PLAWXOGk57Ebubd+kx7
+         ydssIM/GN0qSvOFZWRdoWjn5svJ1eAQMEfb2/a+0kV7WdjZeM+xxNudljwZHJVLM586e
+         hZyGhBjFN2qH7mtBlsni1Yj7nCuiD5b48F+BUvI1lAMrKwyQE6Tpzccc2Yk4CgTrrx0W
+         wc2Q==
+X-Gm-Message-State: APjAAAWixmtuIGDz5z4986KOlhRq1wnZ3Cq6Bo/amfIqflZYYz4pjLAr
+        uskfbG0JApFTn3BdSp2FOcD2CKiKOvo=
+X-Google-Smtp-Source: APXvYqxMTo7xVQ563KZv3qw+96OUpQXb2tHHtGdaT1aXfKbUXRIaWtINVJSvjVhNEmzayJoCbmBnLA==
+X-Received: by 2002:a2e:9812:: with SMTP id a18mr100026ljj.146.1557352747119;
+        Wed, 08 May 2019 14:59:07 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id q7sm7635lje.41.2019.05.08.14.59.05
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 15:05:41 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id n134so30410lfn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:05:41 -0700 (PDT)
-X-Received: by 2002:a19:2d1a:: with SMTP id k26mr255997lfj.104.1557352684116;
- Wed, 08 May 2019 14:58:04 -0700 (PDT)
+        Wed, 08 May 2019 14:59:05 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id r76so201983lja.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 14:59:05 -0700 (PDT)
+X-Received: by 2002:a2e:298d:: with SMTP id p13mr107842ljp.64.1557352744587;
+ Wed, 08 May 2019 14:59:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190507215359.113378-1-evgreen@chromium.org> <20190507215359.113378-3-evgreen@chromium.org>
- <866afac2-e457-375b-d745-88952b11d75e@linux.intel.com> <CAE=gft4sDo1cLeU8Cm1CRZu2PzVG0iu-b7UaWxWVrsUeZ=SYhQ@mail.gmail.com>
- <6fd9ca2b-dcf6-801f-209e-11eba59203fe@linux.intel.com>
-In-Reply-To: <6fd9ca2b-dcf6-801f-209e-11eba59203fe@linux.intel.com>
+References: <20190507215359.113378-1-evgreen@chromium.org> <20190507215359.113378-2-evgreen@chromium.org>
+ <cb0accd5-6b0d-065a-9b54-321252862d88@linux.intel.com> <CAE=gft7PtNWzH1QYigbQvDcJwZSb7ZLWoKzurPGBnh72DYcZrw@mail.gmail.com>
+ <0d2c6330-7882-a7e5-8dcb-51eec0e845ba@linux.intel.com>
+In-Reply-To: <0d2c6330-7882-a7e5-8dcb-51eec0e845ba@linux.intel.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 8 May 2019 14:57:27 -0700
-X-Gmail-Original-Message-ID: <CAE=gft7JgbDo2xPwdRmY9-oiA_Wchg+mCz1foH267pob-223YA@mail.gmail.com>
-Message-ID: <CAE=gft7JgbDo2xPwdRmY9-oiA_Wchg+mCz1foH267pob-223YA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ASoC: Intel: Skylake: Add Cometlake PCI IDs
+Date:   Wed, 8 May 2019 14:58:28 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4sTgnmzWDry2GB9_EAeC6Un2m7itvL4AG97z1XnWxe9A@mail.gmail.com>
+Message-ID: <CAE=gft4sTgnmzWDry2GB9_EAeC6Un2m7itvL4AG97z1XnWxe9A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ASoC: SOF: Add Comet Lake PCI IDs
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         Mark Brown <broonie@kernel.org>, Naveen M <naveen.m@intel.com>,
@@ -64,57 +64,43 @@ Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         Ben Zhang <benzh@chromium.org>,
         Rajat Jain <rajatja@chromium.org>,
         Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Yu Zhao <yuzhao@google.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Jenny TC <jenny.tc@intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 10:04 AM Pierre-Louis Bossart
+On Wed, May 8, 2019 at 10:00 AM Pierre-Louis Bossart
 <pierre-louis.bossart@linux.intel.com> wrote:
 >
 >
 >
-> On 5/8/19 11:51 AM, Evan Green wrote:
-> > On Tue, May 7, 2019 at 3:31 PM Pierre-Louis Bossart
+> On 5/8/19 11:42 AM, Evan Green wrote:
+> > On Tue, May 7, 2019 at 3:14 PM Pierre-Louis Bossart
 > > <pierre-louis.bossart@linux.intel.com> wrote:
 > >>
-> >> On 5/7/19 4:53 PM, Evan Green wrote:
-> >>> Add PCI IDs for Intel CometLake platforms, which from a software
-> >>> point of view are extremely similar to Cannonlake platforms.
+> >> Minor nit-picks below. The Kconfig would work but select CANNONLAKE even
+> >> if you don't want it.
 > >>
-> >> Humm, I have mixed feelings here.
+> >>>
+> >>> +config SND_SOC_SOF_COMETLAKE_LP
+> >>> +     tristate
+> >>> +     select SND_SOC_SOF_CANNONLAKE
 > >>
-> >> Yes the hardware is nearly identical, with the exception of one detail
-> >> that's not visible to the kernel, but there is no support for DMICs with
-> >> the Skylake driver w/ HDaudio, and Chrome platforms are only going with
-> >> SOF, so is it wise to add these two CometLake platforms to the default
-> >> SND_SOC_INTEL_SKYLAKE selector, which is used by a number of distributions?
-> >>
-> >> I don't mind if we add those PCI IDs and people use this driver if they
-> >> wish to, but it may be time for an explicit opt-in? The
-> >> SND_SOC_INTEL_SKYLAKE definition should even be pruned to mean SKL, APL,
-> >> KBL and GLK, and we can add DMI-based quirks for e.g. the Up2 board and
-> >> GLK Chromebooks which work with SOF.
+> >> This should be
+> >> select SND_SOF_SOF_HDA_COMMON
 > >
-> > I don't have the context here, so feel free to ignore me. But it seems
-> > like such a tiny amount of extra bits to add to make Cometlake work,
-> > and then there's no hassle for the distributions when Cometlake
-> > devices start showing up in the wild. So while things are more or less
-> > the same, why not continue piggypacking off the default?
-> > Or are you saying that the lack of DMIC support means the default
-> > should be to use a different driver?
+> > You mean SND_SOC_SOF_HDA_COMMON I assume.
+> > Except that I also need &cnl_desc, so I need CANNONLAKE to be on as
+> > well. Should I select them both?
 >
-> Yes, it's the latter case, SOF will be the only driver supporting DMICs
-> on CometLake, so it'd be better to avoid creating a conflict with SOF or
-> enabling a configuration by default which is known to have restrictions.
-> It's fine to add the CML IDs, but better avoid adding CML under the
-> SKYLAKE all-you-can-eat selector.
+> Ah I see. I'd rather use a different descriptor then, and make the two
+> platforms independent, as I did for CoffeeLake. You can use the same
+> descriptor for the two -H and -LP skews though.
 
-Ok, I'll plan to remove the new selects from under SND_SOC_INTEL_SKYLAKE.
+Ok, I'll add a cml_desc and have it conditionally compiled in on
+either _LP or _H Kconfig.
+-Evan
