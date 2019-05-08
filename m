@@ -2,51 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E1FA16EB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 03:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 541A416EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 03:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfEHBvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 21:51:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34606 "EHLO mail.kernel.org"
+        id S1726597AbfEHBwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 21:52:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbfEHBvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 21:51:54 -0400
+        id S1726368AbfEHBvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 21:51:55 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D42220879;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C7F321479;
         Wed,  8 May 2019 01:51:54 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hOBkP-0005kc-DD; Tue, 07 May 2019 21:51:53 -0400
-Message-Id: <20190508015112.818966506@goodmis.org>
+        id 1hOBkP-0005l8-Ip; Tue, 07 May 2019 21:51:53 -0400
+Message-Id: <20190508015153.469614024@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 07 May 2019 21:51:12 -0400
+Date:   Tue, 07 May 2019 21:51:13 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 0/3] tracing: Some updates before the pull request
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [for-next][PATCH 1/3] tracing: kdb: The skip_lines parameter should have been skip_entries
+References: <20190508015112.818966506@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I had this in my queue for some time, but never posted it to next.
+From: Douglas Anderson <dianders@chromium.org>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+The things skipped by kdb's "ftdump" command when you pass it a
+parameter has always been entries, not lines.  The difference usually
+doesn't matter but when the trace buffer has multi-line entries (like
+a stack dump) it can matter.
 
-Head SHA1: 03197fc02b356606355d7ede343b18e3e3737771
+Let's fix this both in the help text for ftdump and also in the local
+variable names.
+
+Link: http://lkml.kernel.org/r/20190319171206.97107-1-dianders@chromium.org
+
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_kdb.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
+index 810d78a8d14c..4b666643d69f 100644
+--- a/kernel/trace/trace_kdb.c
++++ b/kernel/trace/trace_kdb.c
+@@ -17,7 +17,7 @@
+ #include "trace.h"
+ #include "trace_output.h"
+ 
+-static void ftrace_dump_buf(int skip_lines, long cpu_file)
++static void ftrace_dump_buf(int skip_entries, long cpu_file)
+ {
+ 	/* use static because iter can be a bit big for the stack */
+ 	static struct trace_iterator iter;
+@@ -70,11 +70,11 @@ static void ftrace_dump_buf(int skip_lines, long cpu_file)
+ 			kdb_printf("---------------------------------\n");
+ 		cnt++;
+ 
+-		if (!skip_lines) {
++		if (!skip_entries) {
+ 			print_trace_line(&iter);
+ 			trace_printk_seq(&iter.seq);
+ 		} else {
+-			skip_lines--;
++			skip_entries--;
+ 		}
+ 
+ 		if (KDB_FLAG(CMD_INTERRUPT))
+@@ -106,7 +106,7 @@ static void ftrace_dump_buf(int skip_lines, long cpu_file)
+  */
+ static int kdb_ftdump(int argc, const char **argv)
+ {
+-	int skip_lines = 0;
++	int skip_entries = 0;
+ 	long cpu_file;
+ 	char *cp;
+ 
+@@ -114,9 +114,9 @@ static int kdb_ftdump(int argc, const char **argv)
+ 		return KDB_ARGCOUNT;
+ 
+ 	if (argc) {
+-		skip_lines = simple_strtol(argv[1], &cp, 0);
++		skip_entries = simple_strtol(argv[1], &cp, 0);
+ 		if (*cp)
+-			skip_lines = 0;
++			skip_entries = 0;
+ 	}
+ 
+ 	if (argc == 2) {
+@@ -129,7 +129,7 @@ static int kdb_ftdump(int argc, const char **argv)
+ 	}
+ 
+ 	kdb_trap_printk++;
+-	ftrace_dump_buf(skip_lines, cpu_file);
++	ftrace_dump_buf(skip_entries, cpu_file);
+ 	kdb_trap_printk--;
+ 
+ 	return 0;
+@@ -137,7 +137,7 @@ static int kdb_ftdump(int argc, const char **argv)
+ 
+ static __init int kdb_ftrace_register(void)
+ {
+-	kdb_register_flags("ftdump", kdb_ftdump, "[skip_#lines] [cpu]",
++	kdb_register_flags("ftdump", kdb_ftdump, "[skip_#entries] [cpu]",
+ 			    "Dump ftrace log", 0, KDB_ENABLE_ALWAYS_SAFE);
+ 	return 0;
+ }
+-- 
+2.20.1
 
 
-Douglas Anderson (3):
-      tracing: kdb: The skip_lines parameter should have been skip_entries
-      tracing: Add trace_total_entries() / trace_total_entries_cpu()
-      tracing: kdb: Allow ftdump to skip all but the last few entries
-
-----
- kernel/trace/trace.c     | 65 +++++++++++++++++++++++++++++++++++++-----------
- kernel/trace/trace.h     |  3 +++
- kernel/trace/trace_kdb.c | 61 +++++++++++++++++++++++++++++----------------
- 3 files changed, 92 insertions(+), 37 deletions(-)
