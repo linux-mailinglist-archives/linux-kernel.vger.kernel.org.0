@@ -2,81 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4867F17309
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 000C517366
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:14:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfEHH5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 03:57:01 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44831 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbfEHH5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 03:57:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 00:57:01 -0700
-X-ExtLoop1: 1
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.29])
-  by orsmga006.jf.intel.com with ESMTP; 08 May 2019 00:56:59 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        David Sterba <dsterba@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "lkp\@01.org" <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>,
-        Qu Wenruo <wqu@suse.com>
-Subject: Re: [LKP] [btrfs]  302167c50b:  fio.write_bw_MBps -12.4% regression
-References: <20190203081802.GD10498@shao2-debian>
-        <87h8alqong.fsf@yhuang-dev.intel.com>
-Date:   Wed, 08 May 2019 15:56:59 +0800
-In-Reply-To: <87h8alqong.fsf@yhuang-dev.intel.com> (Ying Huang's message of
-        "Fri, 26 Apr 2019 14:14:11 +0800")
-Message-ID: <87o94dl6pg.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727003AbfEHIOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:14:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49486 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfEHIOF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 04:14:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fRKiyFebGzfQ/OXZXnDZabcN2Du8hX+UbvT5OhOU7g0=; b=FMLuyCucBR/G6C0wsxjsJJ83s
+        dwTxUjz7/UE1a175DopdeINPjBv0ld/WJD6qzVGR0L/k2mmBKSIvh3gbGm/GluAlms+FipbBP7zqa
+        jTvlpiDO3nydFnr8H0lYUsKvxWKD4PP1Oi+DtcrVN4PUXZQrrpmCJUnz4aRHkBkB3l5kM=;
+Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hOHiD-0007RX-PC; Wed, 08 May 2019 08:14:02 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 5B682440017; Wed,  8 May 2019 08:57:06 +0100 (BST)
+Date:   Wed, 8 May 2019 16:57:06 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 5/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra20
+Message-ID: <20190508075706.GW14916@sirena.org.uk>
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-6-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="C5xVAVv//s0yeCuO"
+Content-Disposition: inline
+In-Reply-To: <20190414175939.12368-6-digetx@gmail.com>
+X-Cookie: -- I have seen the FUN --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Huang, Ying" <ying.huang@intel.com> writes:
 
-> Hi, Josef,
->
-> kernel test robot <rong.a.chen@intel.com> writes:
->
->> Greeting,
->>
->> FYI, we noticed a -12.4% regression of fio.write_bw_MBps due to commit:
->>
->>
->> commit: 302167c50b32e7fccc98994a91d40ddbbab04e52 ("btrfs: don't end the transaction for delayed refs in throttle")
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git pending-fixes
->>
->> in testcase: fio-basic
->> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
->> with following parameters:
->>
->> 	runtime: 300s
->> 	nr_task: 8t
->> 	disk: 1SSD
->> 	fs: btrfs
->> 	rw: randwrite
->> 	bs: 4k
->> 	ioengine: sync
->> 	test_size: 400g
->> 	cpufreq_governor: performance
->> 	ucode: 0xb00002e
->>
->> test-description: Fio is a tool that will spawn a number of threads or processes doing a particular type of I/O action as specified by the user.
->> test-url: https://github.com/axboe/fio
->>
->>
->
-> Do you have time to take a look at this regression?
+--C5xVAVv//s0yeCuO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ping
+On Sun, Apr 14, 2019 at 08:59:38PM +0300, Dmitry Osipenko wrote:
+> Add regulators coupler for Tegra20 SoC's that performs voltage balancing
+> of a coupled regulators and thus provides voltage scaling functionality.
 
-Best Regards,
-Huang, Ying
+Can you say what the rules that this is trying to follow are?
+
+--C5xVAVv//s0yeCuO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSi9EACgkQJNaLcl1U
+h9C3tAf/QEVkD4x9OPyNW8VAmP3XAF31JINw2pe4GGSAcKlq0ebDjdirVhY2OFQS
+YQvYFLQUajlYkWxFhmGAKzbR3PxZsAegrSGE6kNqPmKdCsHoj4g2qmDfRZ5kR2nf
+tD3xT81kBZaATyOm0DLVm5z7B3t6V3udOLSGDgn9KFV+JUG3ZN0DyV902fh2jA8I
++rMYdwGUHCQGPTyy8voDKWlyKQ7eNOUsUT7hsJevbUwW2lEa71R5mw2c/gld9boR
+MCdXQxB6nGoGY8VZUx46dbTvUFo0X6aw6S7bu/hv+SM21KeFnLZV958JBcuAvSlF
+y1hDjuZzE52CeJEhfAtgnX3I0VvuAg==
+=E32Z
+-----END PGP SIGNATURE-----
+
+--C5xVAVv//s0yeCuO--
