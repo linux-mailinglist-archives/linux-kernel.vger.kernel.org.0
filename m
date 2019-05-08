@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B68081825D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 00:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEB818266
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 00:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfEHWnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 18:43:14 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41263 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfEHWnN (ORCPT
+        id S1728959AbfEHWn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 18:43:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41650 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728600AbfEHWnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 18:43:13 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d9so99706pls.8
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:43:13 -0700 (PDT)
+        Wed, 8 May 2019 18:43:15 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l132so191723pfc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:43:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=M1B48uz7naoSYHk9LojprOtp1192ghEYyzqs88NhVJI=;
-        b=h+9P7YwnWLHHuSzwZ2sv+mHuB4E7XG6CChvg3sGv62F6onzVd8jsOqcaxIj2LjxAxT
-         1ih5EJ3MJS7PnnZRuZwNt1YaoH9DcM30vzWTUoeflEIv6Dtf+THHd7Dr9E7hf6W9csKg
-         Vu3g+Y9+GRgL5yrh35U0cu+myItVdw3MBEagZyQR8I50s79J9yhmnYjkT59vTrAxxaqk
-         FukJqSfQzJiaoXyGzZMhWXOpJimlLTZT7sSrjSuWAHzMaT0zTfC+NYPO1AIc1PwERqrs
-         WyvT1sz9SepKCxf4jVE5FphxE5a1H+ih/psUoxAFHpztysaGC2/EN3eO+8kHFvpzno6b
-         xibw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=5q9dsjY3DBzndr7wkuvZRTHnczHf4Q/fpKRsCx+qJwI=;
+        b=N7Vx7SQnonpq06ayiMuPXO0+ovJ9IYasbzcwhbTme1cqt6g2l9EAJqV0qhEcQK1LXZ
+         8RsHpt092gP2klW+DYNIce8SMCQbCIbM2mAaR/ePnQcJby/DDVcuFak875Y4u9bTLuCY
+         ZF4KHTOQnu5/Y00nHE9tsG4FY4ZC9vyUPgEylDJ+iqA34If3nZZP23+P8+WcOnk90U6Z
+         GCB5qzKAGTplbpCxsI2zSlBk1z63A99GOru/9uItbbTCs3V7fRcMgbjRDswQ4CLZV5mn
+         9I9yvTxeEwUs9yr0dEmFXyJrdPlhs5VBxj/lOiIlznABbisQ3pZ2hLvUfQbZ18G0j1Du
+         UAvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M1B48uz7naoSYHk9LojprOtp1192ghEYyzqs88NhVJI=;
-        b=q2S9zXbEduopCFcofTTvP8MjDx+FOFNET1bkm2GHZ7N3uu6vzTItI8K8HtP16gaKD7
-         YxwLw7NsID0EMacsYuNVyg01Pob6Wa4qaJ7VGOybj75lafrcWfsKl2SN1x7LGCS2fhG0
-         a7dQg8zwdlh3SsMVwHHUbtyN8DFzMHlDFFGfDoEnxRBKrs1CLTnzpTMWHZXvNOaejfTG
-         bNEts5xbIttabZQygGAuH7tMFT4X8vrZ8l+V4c4Hi2WbVVbbsbiOGqxlTVKeeHdJd4xJ
-         c75GZ8qQAbBXNu/458dg0fOk2rYAUwB0AMYRJZQtQ1Xu11oPFEGl4gc94FbuGqha7/Db
-         ceOQ==
-X-Gm-Message-State: APjAAAUIJgjl+xGedImegHnZfw+uzqRXBBNlOjxabwHPGO1kpMCEFRoK
-        Rs++uoTlCmXwSym66wU0jPuU8g==
-X-Google-Smtp-Source: APXvYqz6XWnNCnlZ4X+G7jjSasgvgF5m5Y/cdkIfjOx3lW+QBURzx9kbXupReuOJrB75rdT3Ubkfpw==
-X-Received: by 2002:a17:902:aa48:: with SMTP id c8mr470608plr.130.1557355393196;
-        Wed, 08 May 2019 15:43:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=5q9dsjY3DBzndr7wkuvZRTHnczHf4Q/fpKRsCx+qJwI=;
+        b=K372C0XSt1RuP45yU5Oe4qWR3K5wfIhD1CDeiQ2O6K564O2YNLmhGO1lnMHH0moerD
+         ELYkfG7PDeQSD8iTKNwMsbNfExJZUR7HUA6Na0dt3lEshYDOoa2cyJoHGgkt0OOvKG1L
+         2EoZ611CSXmBl7IZJp3P8EbsPxXEKFPdsqSLuWsYWjxxnumF6rr/+gtk832rMX8QCwPQ
+         O6hbSooHS/ICGnjOR0VwkMNPmXpT47wZq1htUpz/mWRlNA+qUdI3CNmYQFsch+Y2QOsj
+         t+BhsLl/7G3gIica1jAmDNJk82SdiAiM9uueMdu16QT+GM6sMCdGg4GfxUYbIrdJxOFo
+         W+oQ==
+X-Gm-Message-State: APjAAAUZ/EdsgVnu/AOHp7liY/EX1m7S3CBVpft3s4Ra5ZLUzp7RiP08
+        UYA3BnsK61R+rUECwtMkuzHwsw==
+X-Google-Smtp-Source: APXvYqzOx+Ty15Ki0fJrGT+TPqPGOflDSOwh2gjGYsH4NMh4u336RZkfTJHnFY5wiuyJ+fbYEByX3Q==
+X-Received: by 2002:a65:48ca:: with SMTP id o10mr900894pgs.136.1557355394400;
+        Wed, 08 May 2019 15:43:14 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 25sm320494pfo.145.2019.05.08.15.43.12
+        by smtp.gmail.com with ESMTPSA id 25sm320494pfo.145.2019.05.08.15.43.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 15:43:12 -0700 (PDT)
+        Wed, 08 May 2019 15:43:13 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         David Brown <david.brown@linaro.org>
@@ -50,28 +51,40 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] arm64: dts: qcom: qcs404: Enable PCIe
-Date:   Wed,  8 May 2019 15:43:06 -0700
-Message-Id: <20190508224309.5744-1-bjorn.andersson@linaro.org>
+Subject: [PATCH v4 1/3] arm64: dts: qcom: qcs404: Make gcc as reset-controller
+Date:   Wed,  8 May 2019 15:43:07 -0700
+Message-Id: <20190508224309.5744-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190508224309.5744-1-bjorn.andersson@linaro.org>
+References: <20190508224309.5744-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series defines the PCIe PHY and controller on QCS404 and enable them for
-EVB. This was 1 commit, but per Vinod's request its split up in its individual
-pieces.
+GCC is a reset-controller, so define #reset-cells.
 
-Bjorn Andersson (3):
-  arm64: dts: qcom: qcs404: Make gcc as reset-controller
-  arm64: dts: qcom: qcs404: Add PCIe related nodes
-  arm64: dts: qcom: qcs404-evb: Enable PCIe
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 26 ++++++++++
- arch/arm64/boot/dts/qcom/qcs404.dtsi     | 66 ++++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
+Changes since v3:
+- Split single patch, no functional change
 
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index ffedf9640af7..65a2cbeb28be 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -383,6 +383,7 @@
+ 			compatible = "qcom,gcc-qcs404";
+ 			reg = <0x01800000 0x80000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 
+ 			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
+ 			assigned-clock-rates = <19200000>;
 -- 
 2.18.0
 
