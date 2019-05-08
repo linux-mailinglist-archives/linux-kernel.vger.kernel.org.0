@@ -2,109 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBDC418111
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 22:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4021833F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfEHU1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 16:27:25 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33904 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729139AbfEHU1Y (ORCPT
+        id S1726571AbfEIBjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 21:39:40 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:52986 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725842AbfEIBjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 16:27:24 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j6so15615qtq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 13:27:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y1oAL2e+nDxNSlN8Pn+qOcIb2+7Ea2X17YXpRqljKsI=;
-        b=JYS8nhvWxAfBtVu9xdrLwq3zymLBJolq7Z9h0ZdiIgsCPff2mlXK3P72whWTnh4qGo
-         Ovg1aPAs0W8mSKgvaqdCikqOluGa84/dKcPAijH55blUXF4x6wpB06Gv7KbwF80938Wm
-         XLa66QvaPs8fLJ/hTq3p38J3z9RxOCvASvTkW3wDhvZVGQRRP+YAd6Lo3RZywh5rIWIS
-         +kpbU+4YKEaRU+N8OXKOx6Fx+ldPmplcErXwrt05qb3uuzpzvUSppLHPCPWX+4XRXvMP
-         Iw5H+K1Em7mb34jBBW3APKQTwZr5vmROWfBMkWt6Ga/vrZ57PaRmMhjTJ88APBbAOYDj
-         99+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y1oAL2e+nDxNSlN8Pn+qOcIb2+7Ea2X17YXpRqljKsI=;
-        b=Ba+62hzDckEc1VdknHIjfu0Gc1AIY6L5jFKykeHZMGhMj0EPalay/UgRUUVoFhttvU
-         2c6MetmWKBDd3KOGUK7hD/NNVMmoYbl8fGeRjzR34KDOBkBcKe+tYOHTCAn4db+IAdxE
-         O9hQqxQcSBztBzx6vb0DOxXBqHxg5K6VcKORRr9K6U9BJbPZwCIvYVet65Xw/bqXNPgF
-         w+RbkRabPjf6Xjtk7UCoBG6rRRlkRO+qtJhZ2kouKuexkabxfzRAJlbCowaVziML3D+J
-         nCyYgvg9u5cHazTtkq3K/ybQFjB8LI6WJq9lWX7lhJffrdTmJlCbiC+U4fnWiRYk/XtV
-         Y48Q==
-X-Gm-Message-State: APjAAAV5j6k2Y7et8bIaJgx7nS5COl5Xrudq0EGbD0OG5YURfGWfRJaX
-        8Mk+fHxNpEaUqazc+pEzRbf6XQ==
-X-Google-Smtp-Source: APXvYqxI348a5G44Us1OX3HYd/MQ95CBhXbRtWT/DUszb4SCQek/YD2KQUahgddFgYiOum1m0aUGCA==
-X-Received: by 2002:ad4:4587:: with SMTP id x7mr164380qvu.192.1557347243293;
-        Wed, 08 May 2019 13:27:23 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id n66sm9721679qkc.36.2019.05.08.13.27.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 13:27:22 -0700 (PDT)
-Date:   Wed, 8 May 2019 16:27:21 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: No zap shader is not an error
-Message-ID: <20190508202721.GL17077@art_vandelay>
-References: <20190508130726.27557-1-robdclark@gmail.com>
+        Wed, 8 May 2019 21:39:39 -0400
+X-Greylist: delayed 18665 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 21:39:38 EDT
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48KF0Mb019738
+        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 16:28:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=NBQDuoaJ1XrW6ALy4NvQGygfurvfzPp5iKN3XvrAFHM=;
+ b=tkB1ce0/PlIyySHQi8pc9xhgf6WspqE+kR1rWxurx0p7T1Q4dMEhooftbSuduiLnUIR5
+ TFHtcL8u51Y8ZyCVAV+o0SQN3KUY4B++ioNpVX2g/iIRBP2IJP5gv9Z685WCe2LBZELY
+ x758QDI96ABHk28dT+kJKnDH+OJH8veV6DhOnsWHk3TlPSceP+iXSG103imIkA6WNFQ2
+ C8Rf7xgcCWfV9Zx9IoUyacPsVu8YNG9szHAjPqYyMw92bfTitKPidLmySwwudN/zLU4R
+ JWi6+DbCs+6LhPtrvn6s8LSo6Qf9Co42/o/VXyjdUhrf/WLY6gIkT8TiIAj5RNH1ujmj GA== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2sbe014xgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 16:28:33 -0400
+Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48KCfvI094764
+        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 16:28:33 -0400
+Received: from ausxippc101.us.dell.com (ausxippc101.us.dell.com [143.166.85.207])
+        by mx0b-00154901.pphosted.com with ESMTP id 2sc32qjtac-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 16:28:32 -0400
+X-LoopCount0: from 10.166.132.128
+X-IronPort-AV: E=Sophos;i="5.60,346,1549951200"; 
+   d="scan'208";a="1233298866"
+From:   <Mario.Limonciello@dell.com>
+To:     <hch@lst.de>
+CC:     <kai.heng.feng@canonical.com>, <kbusch@kernel.org>,
+        <keith.busch@intel.com>, <axboe@fb.com>, <sagi@grimberg.me>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Topic: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Index: AQHVBdBS/xizqbOjGUOY5SKUREVH6KZh7T4AgAAD4gD//6zksIAAWSuA//+yBvA=
+Date:   Wed, 8 May 2019 20:28:30 +0000
+Message-ID: <b43f2c0078f245398101fa9a40cfc2dc@AUSX13MPC105.AMER.DELL.COM>
+References: <20190508185955.11406-1-kai.heng.feng@canonical.com>
+ <20190508191624.GA8365@localhost.localdomain>
+ <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
+ <f8a043b00909418bad6adcdb62d16e6e@AUSX13MPC105.AMER.DELL.COM>
+ <20190508195159.GA1530@lst.de>
+In-Reply-To: <20190508195159.GA1530@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508130726.27557-1-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=624 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905080124
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=711 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905080124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 06:06:52AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Depending on platform firmware, a zap shader may not be required to take
-> the GPU out of secure mode on boot, in which case we can just write
-> RBBM_SECVID_TRUST_CNTL directly.  Which we *mostly* handled, but missed
-> clearing 'ret' resulting that hw_init() returned an error on these
-> devices.
-> 
-> Fixes: abccb9fe3267 drm/msm/a6xx: Add zap shader load
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> -----Original Message-----
+> From: Christoph Hellwig <hch@lst.de>
+> Sent: Wednesday, May 8, 2019 2:52 PM
+> To: Limonciello, Mario
+> Cc: kai.heng.feng@canonical.com; kbusch@kernel.org; keith.busch@intel.com=
+;
+> axboe@fb.com; hch@lst.de; sagi@grimberg.me; linux-nvme@lists.infradead.or=
+g;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of=
+ D3 on
+> Suspend-to-Idle
+>=20
+>=20
+> [EXTERNAL EMAIL]
+>=20
+> On Wed, May 08, 2019 at 07:38:50PM +0000, Mario.Limonciello@dell.com wrot=
+e:
+> > The existing routines have an implied assumption that firmware will com=
+e
+> swinging
+> > with a hammer to control the rails the SSD sits on.
+> > With S2I everything needs to come from the driver side and it really is=
+ a
+> > different paradigm.
+>=20
+> And that is why is this patch is fundamentally broken.
+>=20
+> When using the simple pm ops suspend the pm core expects the device
+> to be powered off.  If fancy suspend doesn't want that we need to
+> communicate what to do to the device in another way, as the whole
+> thing is a platform decision.  There probabl is one (or five) methods
+> in dev_pm_ops that do the right thing, but please coordinate this
+> with the PM maintainers to make sure it does the right thing and
+> doesn't for example break either hibernate where we really don't
+> expect just a lower power state, or=20
 
-As discussed on IRC, I've stuffed this in -misc-next-fixes for the next PR I'm
-sending out.
+You might think this would be adding runtime_suspend/runtime_resume
+callbacks, but those also get called actually at runtime which is not
+the goal here.  At runtime, these types of disks should rely on APST which
+should calculate the appropriate latencies around the different power state=
+s.
 
-Sean
+This code path is only applicable in the suspend to idle state, which /does=
+/
+call suspend/resume functions associated with dev_pm_ops.  There isn't
+a dedicated function in there for use only in suspend to idle, which is
+why pm_suspend_via_s2idle() needs to get called.
 
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index ec24508b9d68..e74dce474250 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -527,6 +527,7 @@ static int a6xx_hw_init(struct msm_gpu *gpu)
->  		dev_warn_once(gpu->dev->dev,
->  			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
->  		gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
-> +		ret = 0;
->  	}
->  
->  out:
-> -- 
-> 2.20.1
-> 
+SIMPLE_DEV_PM_OPS normally sets the same function for suspend and
+freeze (hibernate), so to avoid any changes to the hibernate case it seems
+to me that there needs to be a new nvme_freeze() that calls into the existi=
+ng
+nvme_dev_disable for the freeze pm op and nvme_thaw() that calls into the
+existing nvme_reset_ctrl for the thaw pm op.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+> enterprise class NVMe devices
+> that don't do APST and don't really do different power states at
+> all in many cases.
+
+Enterprise class NVMe devices that don't do APST - do they typically
+have a non-zero value for ndev->ctrl.npss?
+
+If not, they wouldn't enter this new codepath even if the server entered in=
+to S2I.
