@@ -2,108 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E26F91765B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB3D17662
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfEHK6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:58:21 -0400
-Received: from mail-eopbgr10043.outbound.protection.outlook.com ([40.107.1.43]:31606
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725910AbfEHK6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:58:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LXW3YK6slftNlgC2m0DTk1r8b1rkzRY9JJ1j/qE7wA0=;
- b=NuOc76GspqRMOaoqbR+tAHBj5t1ow9K2KVuwHyZCCRbFYC+TsaNZSQbIfTglANgeUCQUsUl+8T45XvL36u5H++9ixBmlyHsWILo7IbgxF26/1y/Gw3Y20bo8hR65nXf+giI7qmjvAli7bOuutWD3Yg/C8yADGsZV2WoyscpLxZ8=
-Received: from AM0PR04MB4865.eurprd04.prod.outlook.com (20.176.215.158) by
- AM0PR04MB5474.eurprd04.prod.outlook.com (20.178.113.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.12; Wed, 8 May 2019 10:58:18 +0000
-Received: from AM0PR04MB4865.eurprd04.prod.outlook.com
- ([fe80::f496:84c1:30b5:43be]) by AM0PR04MB4865.eurprd04.prod.outlook.com
- ([fe80::f496:84c1:30b5:43be%7]) with mapi id 15.20.1856.012; Wed, 8 May 2019
- 10:58:18 +0000
-From:   Wen He <wen.he_1@nxp.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>,
-        "brian.starkey@arm.com" <brian.starkey@arm.com>
-CC:     Leo Li <leoyang.li@nxp.com>, Wen He <wen.he_1@nxp.com>
-Subject: [v1] drm/arm/mali-dp: Add a loop around the second set CVAL and try 5
- times
-Thread-Topic: [v1] drm/arm/mali-dp: Add a loop around the second set CVAL and
- try 5 times
-Thread-Index: AQHVBYzxBN8dpmpwpU6J1s6j0tqqMg==
-Date:   Wed, 8 May 2019 10:58:18 +0000
-Message-ID: <20190508105956.6107-1-wen.he_1@nxp.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR01CA0035.apcprd01.prod.exchangelabs.com
- (2603:1096:203:3e::23) To AM0PR04MB4865.eurprd04.prod.outlook.com
- (2603:10a6:208:c4::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8e2e2f1c-8b39-4fa7-4f40-08d6d3a413bf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5474;
-x-ms-traffictypediagnostic: AM0PR04MB5474:
-x-microsoft-antispam-prvs: <AM0PR04MB5474C0B51F685B2AD14B4AA1E2320@AM0PR04MB5474.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:506;
-x-forefront-prvs: 0031A0FFAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(346002)(376002)(189003)(199004)(26005)(486006)(2501003)(2616005)(476003)(8936002)(102836004)(53936002)(2906002)(3846002)(1076003)(316002)(36756003)(99286004)(81156014)(6486002)(81166006)(4326008)(8676002)(66476007)(2201001)(71190400001)(71200400001)(66556008)(50226002)(66946007)(66066001)(6506007)(386003)(305945005)(73956011)(6512007)(6116002)(7736002)(86362001)(66446008)(64756008)(6436002)(256004)(186003)(68736007)(478600001)(25786009)(14444005)(110136005)(14454004)(54906003)(5660300002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5474;H:AM0PR04MB4865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: msq+7yCd9bb5+rPkPoAYYbXTFXqBdOwoJJcktjl2108weibALQXefIi1WTWrUOXAGRNUZjBX79uZ/QjqJLA/DGDTfySl1bF+r6rp+aZ7a+wuxPpjUol90qiooM+eVGRRP6TfsAuyjYWz9iDNP1ow67Ie9QTf3I9DaNaCO/XUAXqO5lfDWAiesmMVU6qQKV4kkG/lvtx5xaXEGpEldSHzD+r4eEWQLrv+v4Bl5YWUMij3NvNtngSSZ4xiwVrYKmVsnPnGbZmm3P1FPv9ag6ykJr3QAe6YnCmh2jUQvVvJe4pcWKIW5PFvKkw5SwR3rag96gJMMgmHZ7hSVjgfCDgQBLGL+TUP1Z7h05th0JWeVJ1//RYsc9wxy74NJ4fjxfgHtTP5lDYV+bFkaK04Es0aqS3irGmZ1mARpxj6tizH5ew=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727082AbfEHLBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:01:42 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50447 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfEHLBl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:01:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p21so2715797wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=bqSOd5NdwH2sBo5UJZZvv7ez5x168vj6NoDWWxf39h8=;
+        b=vLr9lpNr81dJnJ4ki7Ofpz8YeDdWr5J7E+WbnN/TNKj2AV3rmoRX4bKe2x+R9pq/e6
+         rPwD07ephFcN39P8gkmRM8gmn9BylEndxfZ4ksrIRTw5ZW/qREgIVkccuqVGdZnOC8UO
+         R2CBVpx7dR8q4ZZSV0NxML8KhRgqyivdUNVwS5hIbb54TJ3/5cE6d1tIDK0o/wEkv8iz
+         8Ui+O+TZ3TcY+61yvIhzB1f5KHXZmSrWfMNdge130ZNe+k6xaZlxKDA0/sodnyn9u2wK
+         fotiY/BcQTzEs4psCyDrmZ/FJsiwdKE34X03fM56OH9BWd/Qhv6ezXJUVgz9MLzXnBha
+         rc9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=bqSOd5NdwH2sBo5UJZZvv7ez5x168vj6NoDWWxf39h8=;
+        b=EoRh6cLNa0fVIj14qeBVzxvbgali6n3Vuvoh7zrwJFr5+AdRwBxVBCunxAeiTfsKu6
+         wi5uu1CUJT6wNpB119DoIUpShpRANEYlpZ1jI39ArlaiTz+wfhN2qYcQ5L/PxBfWt2yY
+         Cw9yoJ7eqPH35zkD1of6m8iYr+mnPYvuYLXl50fmH/IvyMDw83s/q0d7xopz8E+H/3I8
+         D0KgAeadvJZ9DYtZ9Ufap5ymWshGJKxAjBQzP+qVk2+ags9JimNRsFfTrvf4G5WGdAE5
+         TZyuB1PyjaicTOYAgZ6nksOd5MKPNADZyeXZ9Boq55o/JAasVwT97NWwqLb9y7zSanFd
+         eQHg==
+X-Gm-Message-State: APjAAAUej1Fup6CYgrzHTZbI+FGG+XS+OG/93uvpzCyz8pzUBg+EzmmJ
+        0DlqrxEtA6MfMqhDqBjQplDABalbcIs=
+X-Google-Smtp-Source: APXvYqw1fiLxjnK9R324L7VjjDByPPrSiZVo/OEiG702CWo1hF7gtinHSZSWaINQaniIOrY5HwsZVw==
+X-Received: by 2002:a1c:48d7:: with SMTP id v206mr1187312wma.38.1557313299959;
+        Wed, 08 May 2019 04:01:39 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id a125sm3243927wmc.47.2019.05.08.04.01.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 04:01:39 -0700 (PDT)
+Date:   Wed, 8 May 2019 12:01:37 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v10 06/11] mfd: max77650: new core mfd driver
+Message-ID: <20190508110137.GQ3995@dell>
+References: <20190423090451.23711-1-brgl@bgdev.pl>
+ <20190423090451.23711-7-brgl@bgdev.pl>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e2e2f1c-8b39-4fa7-4f40-08d6d3a413bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 10:58:18.1214
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5474
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190423090451.23711-7-brgl@bgdev.pl>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBwYXRjaCB0cnlpbmcgdG8gZml4IG1vbml0b3IgZnJlZXplIGlzc3VlIGNhdXNlZCBieSBk
-cm0gZXJyb3INCidmbGlwX2RvbmUgdGltZWQgb3V0JyBvbiBMUzEwMjhBIHBsYXRmb3JtLiB0aGlz
-IHNldCB0cnkgaXMgbWFrZSBhIGxvb3ANCmFyb3VuZCB0aGUgc2Vjb25kIHNldHRpbmcgQ1ZBTCBh
-bmQgdHJ5IGxpa2UgNSB0aW1lcyBiZWZvcmUgZ2l2ZWluZyB1cC4NCg0KU2lnbmVkLW9mZi1ieTog
-TGl2aXUgPGxpdml1LkR1ZGF1QGFybS5jb20+DQpTaWduZWQtb2ZmLWJ5OiBXZW4gSGUgPHdlbi5o
-ZV8xQG54cC5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9kcnYuYyB8IDEz
-ICsrKysrKysrKysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfZHJ2LmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9kcnYuYw0KaW5kZXggMjE3MjVjOWI5ZjVlLi4x
-OGNiN2YxMzRmNGUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9kcnYu
-Yw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfZHJ2LmMNCkBAIC0xOTIsNiArMTky
-LDcgQEAgc3RhdGljIHZvaWQgbWFsaWRwX2F0b21pY19jb21taXRfaHdfZG9uZShzdHJ1Y3QgZHJt
-X2F0b21pY19zdGF0ZSAqc3RhdGUpDQogew0KIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtID0gc3Rh
-dGUtPmRldjsNCiAJc3RydWN0IG1hbGlkcF9kcm0gKm1hbGlkcCA9IGRybS0+ZGV2X3ByaXZhdGU7
-DQorCWludCBsb29wID0gNTsNCiANCiAJbWFsaWRwLT5ldmVudCA9IG1hbGlkcC0+Y3J0Yy5zdGF0
-ZS0+ZXZlbnQ7DQogCW1hbGlkcC0+Y3J0Yy5zdGF0ZS0+ZXZlbnQgPSBOVUxMOw0KQEAgLTIwNiw4
-ICsyMDcsMTggQEAgc3RhdGljIHZvaWQgbWFsaWRwX2F0b21pY19jb21taXRfaHdfZG9uZShzdHJ1
-Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpDQogCQkJZHJtX2NydGNfdmJsYW5rX2dldCgmbWFs
-aWRwLT5jcnRjKTsNCiANCiAJCS8qIG9ubHkgc2V0IGNvbmZpZ192YWxpZCBpZiB0aGUgQ1JUQyBp
-cyBlbmFibGVkICovDQotCQlpZiAobWFsaWRwX3NldF9hbmRfd2FpdF9jb25maWdfdmFsaWQoZHJt
-KSA8IDApDQorCQlpZiAobWFsaWRwX3NldF9hbmRfd2FpdF9jb25maWdfdmFsaWQoZHJtKSA8IDAp
-IHsNCisJCQkvKg0KKwkJCSAqIG1ha2UgYSBsb29wIGFyb3VuZCB0aGUgc2Vjb25kIENWQUwgc2V0
-dGluZyBhbmQNCisJCQkgKiB0cnkgNSB0aW1lcyBiZWZvcmUgZ2l2aW5nIHVwLg0KKwkJCSAqLw0K
-KwkJCXdoaWxlIChsb29wLS0pIHsNCisJCQkJaWYgKCFtYWxpZHBfc2V0X2FuZF93YWl0X2NvbmZp
-Z192YWxpZChkcm0pKQ0KKwkJCQkJYnJlYWs7DQorCQkJfQ0KIAkJCURSTV9ERUJVR19EUklWRVIo
-InRpbWVkIG91dCB3YWl0aW5nIGZvciB1cGRhdGVkIGNvbmZpZ3VyYXRpb25cbiIpOw0KKwkJfQ0K
-Kw0KIAl9IGVsc2UgaWYgKG1hbGlkcC0+ZXZlbnQpIHsNCiAJCS8qIENSVEMgaW5hY3RpdmUgbWVh
-bnMgdmJsYW5rIElSUSBpcyBkaXNhYmxlZCwgc2VuZCBldmVudCBkaXJlY3RseSAqLw0KIAkJc3Bp
-bl9sb2NrX2lycSgmZHJtLT5ldmVudF9sb2NrKTsNCi0tIA0KMi4xNy4xDQoNCg==
+On Tue, 23 Apr 2019, Bartosz Golaszewski wrote:
+
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add the core mfd driver for max77650 PMIC. We define five sub-devices
+> for which the drivers will be added in subsequent patches.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/mfd/Kconfig          |  14 +++
+>  drivers/mfd/Makefile         |   1 +
+>  drivers/mfd/max77650.c       | 232 +++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/max77650.h |  59 +++++++++
+>  4 files changed, 306 insertions(+)
+>  create mode 100644 drivers/mfd/max77650.c
+>  create mode 100644 include/linux/mfd/max77650.h
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
