@@ -2,170 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C51717AFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4888617B03
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfEHNrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 09:47:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33752 "EHLO mx1.redhat.com"
+        id S1727737AbfEHNso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 09:48:44 -0400
+Received: from node.akkea.ca ([192.155.83.177]:36446 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725910AbfEHNrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 09:47:19 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3174D307EA8C;
-        Wed,  8 May 2019 13:47:18 +0000 (UTC)
-Received: from x230.aquini.net (dhcp-17-61.bos.redhat.com [10.18.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3429660CA1;
-        Wed,  8 May 2019 13:47:16 +0000 (UTC)
-Date:   Wed, 8 May 2019 09:47:14 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Yury Norov <yury.norov@gmail.com>
-Cc:     Joel Savitz <jsavitz@redhat.com>, linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Sandeep Patil <sspatil@android.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
-Message-ID: <20190508134714.GA27786@x230.aquini.net>
-References: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
- <20190507125430.GA31025@x230.aquini.net>
- <20190508063716.GA3096@yury-thinkpad>
+        id S1726527AbfEHNso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 09:48:44 -0400
+Received: by node.akkea.ca (Postfix, from userid 33)
+        id 9B7234E204B; Wed,  8 May 2019 13:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1557323323; bh=SKj/DNrvkazDxcFBqphuIYlPgfO+U4yhSZPmkX4DW10=;
+        h=To:Subject:Date:From:Cc:In-Reply-To:References;
+        b=k/vXWgUIbCxjgEglHBOKfalx0V8B+86U7nnpXBGF666BoYzW8H0+9Z9evXXXMG3qe
+         OHKvVA8IHwCzVOVLrHb3Zuv7gXHFoIIfiSjLTzFaXRlUAx4wFN+qzittAWfySzp/UY
+         nLJtpkGck0gaz8PsyWVcHcDLJwJQZ0x9wmk9CWdY=
+To:     Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 1/1] usb: typec: tcpci: Clear the fault status register
+X-PHP-Originating-Script: 1000:rcube.php
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508063716.GA3096@yury-thinkpad>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 08 May 2019 13:47:18 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 08 May 2019 07:48:43 -0600
+From:   Angus Ainslie <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <groeck7@gmail.com>, linux-imx@nxp.com
+In-Reply-To: <3918f78b-15ec-9204-b2fc-f371157bc29c@roeck-us.net>
+References: <20190508002749.14816-1-angus@akkea.ca>
+ <20190508002749.14816-2-angus@akkea.ca>
+ <aed487a4-3f7c-55e8-9c84-feaa1c7f583d@roeck-us.net>
+ <3fd046562f3bea2cb85354f8d3c420fc@www.akkea.ca>
+ <3918f78b-15ec-9204-b2fc-f371157bc29c@roeck-us.net>
+Message-ID: <b1e568714632bc3be89f1452299873d2@www.akkea.ca>
+X-Sender: angus@akkea.ca
+User-Agent: Roundcube Webmail/1.1.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 11:37:16PM -0700, Yury Norov wrote:
-> On Tue, May 07, 2019 at 08:54:31AM -0400, Rafael Aquini wrote:
-> > On Mon, May 06, 2019 at 11:53:43AM -0400, Joel Savitz wrote:
-> > > There is currently no easy and architecture-independent way to find the
-> > > lowest unusable virtual address available to a process without
-> > > brute-force calculation. This patch allows a user to easily retrieve
-> > > this value via /proc/<pid>/status.
-> > > 
-> > > Using this patch, any program that previously needed to waste cpu cycles
-> > > recalculating a non-sensitive process-dependent value already known to
-> > > the kernel can now be optimized to use this mechanism.
-> > > 
-> > > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
-> > > ---
-> > >  Documentation/filesystems/proc.txt | 2 ++
-> > >  fs/proc/task_mmu.c                 | 2 ++
-> > >  2 files changed, 4 insertions(+)
-> > > 
-> > > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> > > index 66cad5c86171..1c6a912e3975 100644
-> > > --- a/Documentation/filesystems/proc.txt
-> > > +++ b/Documentation/filesystems/proc.txt
-> > > @@ -187,6 +187,7 @@ read the file /proc/PID/status:
-> > >    VmLib:      1412 kB
-> > >    VmPTE:        20 kb
-> > >    VmSwap:        0 kB
-> > > +  VmTaskSize:	137438953468 kB
-> > >    HugetlbPages:          0 kB
-> > >    CoreDumping:    0
-> > >    THP_enabled:	  1
-> > > @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
-> > >   VmPTE                       size of page table entries
-> > >   VmSwap                      amount of swap used by anonymous private data
-> > >                               (shmem swap usage is not included)
-> > > + VmTaskSize                  lowest unusable address in process virtual memory
-> > 
-> > Can we change this help text to "size of process' virtual address space memory" ?
-> 
-> Agree. Or go in other direction and make it VmEnd
-> 
-> > >   HugetlbPages                size of hugetlb memory portions
-> > >   CoreDumping                 process's memory is currently being dumped
-> > >                               (killing the process may lead to a corrupted core)
-> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > index 95ca1fe7283c..0af7081f7b19 100644
-> > > --- a/fs/proc/task_mmu.c
-> > > +++ b/fs/proc/task_mmu.c
-> > > @@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
-> > >  	seq_put_decimal_ull_width(m,
-> > >  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
-> > >  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
-> > > +	seq_put_decimal_ull_width(m,
-> > > +		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
-> > >  	seq_puts(m, " kB\n");
-> > >  	hugetlb_report_usage(m, mm);
-> > >  }
-> 
-> I'm OK with technical part, but I still have questions not answered
-> (or wrongly answered) in v1 and v2. Below is the very detailed
-> description of the concerns I have.
-> 
-> 1. What is the exact reason for it? Original version tells about some
-> test that takes so much time that you were able to drink a cup of
-> coffee before it was done. The test as you said implements linear
-> search to find the last page and so is of O(n). If it's only for some
-> random test, I think the kernel can survive without it. Do you have a
-> real example of useful programs that suffer without this information?
-> 
-> 
-> 2. I have nothing against taking breaks and see nothing weird if
-> ineffective algorithms take time. On my system (x86, Ubuntu) the last
-> mapped region according to /proc/<pid>/maps is:
-> ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0     [vsyscall]
-> So to find the required address, we have to inspect 2559 pages. With a
-> binary search it would take 12 iterations at max. If my calculation is
-> wrong or your environment is completely different - please elaborate.
-> 
-> 3. As far as I can see, Linux currently does not support dynamic
-> TASK_SIZE. It means that for any platform+ABI combination VmTaskSize
-> will be always the same. So VmTaskSize would be effectively useless waste
+Hi Guenter
 
-Assuming you can have it fixed and decide upon one another at compile
-time also is not necessarely true, unfortunately. One could adjust PAGE_OFFSET, 
-at kernel config, to provide different splits for the virtual address space,
-which will affect TASK_SIZE, eventually. (see arch/x86/Kconfig)
-
- 
-> of lines. In fact, TASK SIZE is compiler time information and should
-> be exposed to user in headers. In discussion to v2 Rafael Aquini answered
-> for this concern that TASK_SIZE is a runtime resolved macro. It's
-> true, but my main point is: GCC knows what type of binary it compiles
-> and is able to select proper value. We are already doing similar things
-> where appropriate. Refer for example to my arm64/ilp32 series:
-> arch/arm64/include/uapi/asm/bitsperlong.h:
-> -#define __BITS_PER_LONG 64
-> +#if defined(__LP64__)
-> +/* Assuming __LP64__ will be defined for native ELF64's and not for ILP32. */
-> +#  define __BITS_PER_LONG 64
-> +#elif defined(__ILP32__)
-> +#  define __BITS_PER_LONG 32
-> +#else
-> +#  error "Neither LP64 nor ILP32: unsupported ABI in asm/bitsperlong.h"
-> +#endif
+On 2019-05-07 23:18, Guenter Roeck wrote:
+> On 5/7/19 7:49 PM, Angus Ainslie wrote:
+>> On 2019-05-07 20:03, Guenter Roeck wrote:
+>>> On 5/7/19 5:27 PM, Angus Ainslie (Purism) wrote:
+>>>> If the fault status register doesn't get cleared then
+>>>> the ptn5110 interrupt gets stuck on. As the fault register gets
+>>>> set everytime the ptn5110 powers on the interrupt is always stuck.
+>>>> 
+>>>> Fixes: fault status register stuck
+>>>> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+>>>> ---
+>>>>   drivers/usb/typec/tcpm/tcpci.c | 11 +++++++++++
+>>>>   1 file changed, 11 insertions(+)
+>>>> 
+>>>> diff --git a/drivers/usb/typec/tcpm/tcpci.c 
+>>>> b/drivers/usb/typec/tcpm/tcpci.c
+>>>> index c1f7073a56de..a5746657b190 100644
+>>>> --- a/drivers/usb/typec/tcpm/tcpci.c
+>>>> +++ b/drivers/usb/typec/tcpm/tcpci.c
+>>>> @@ -463,6 +463,17 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>>>>       else if (status & TCPC_ALERT_TX_FAILED)
+>>>>           tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
+>>>>   +    if (status & TCPC_ALERT_FAULT) {
+>>> 
+>>> Wait - the driver doesn't set TCPC_ALERT_FAULT in the alert mask
+>>> register. How can the chip report it if fault alerts are not enabled 
+>>> ?
+>> 
+>> Well that I didn't check. But I know this code gets executed so 
+>> something must be turning it on.
+>> 
+>> Also if I don't clear it I get an unlimited number of interrupts.
+>> 
+>>> What am I missing here ?
+>> 
+>> Can the power on fault be masked ?
+>> 
+> 
+> There is a TCPC_ALERT_FAULT mask bit, so I would think so.
+> Can you dump register contents in the irq function and at the end of
+> tcpci_init() ?
 > 
 
+Ok so this seems to be related to imx8mq errata e7805:
 
-You are correct, but you miss the point Joel is trying to provide that
-value in an architectural agnostic way to avoid the hassle of keep adding
-more preprocessor complexity and being concerned about arch particularities.
+I2C: When the I2C clock speed is configured for 400 kHz, the SCL low 
+period violates the I2C spec of
+1.3 uS min
 
-You were spot on pointing the issues with the prctl(2) approach before,
-but I don't see the need to overengineer the suggested approach here. 
-The cost of getting mm->task_size exported via /proc/<pid>/status is
-neglectable, and prevents further complexity going in for such simple
-task.
+The work around suggested by NXP is to set the clock to 384 kHz so that 
+is what I did and this is the output:
+
+[    4.091512] device: 'tcpm-source-psy-0-0052': device_add
+[    4.091581] PM: Adding info for No Bus:tcpm-source-psy-0-0052
+[    4.091596] device: 'tcpm-source-psy-0-0052': dev_uevent: class 
+uevent() returned -11
+[    4.094774] tcpci 0-0052: ALERT MASK 0x7f
+[    4.107869] driver: 'tcpci': driver_bound: bound to device '0-0052'
+[    4.107935] bus: 'i2c': really_probe: bound device 0-0052 to driver 
+tcpci
+[    4.110994] tcpci 0-0052: ALERT MASK 0x7f
+[    4.115511] tcpci 0-0052: FAULT ALERT status 0x80
+[    4.126332] tcpci 0-0052: ALERT MASK 0x7f
+[    4.130784] tcpci 0-0052: FAULT ALERT status 0x0
+
+The first "ALERT MASK" is in the init function immediately after setting
+
+         reg = TCPC_ALERT_TX_SUCCESS | TCPC_ALERT_TX_FAILED |
+                 TCPC_ALERT_TX_DISCARDED | TCPC_ALERT_RX_STATUS |
+                 TCPC_ALERT_RX_HARD_RST | TCPC_ALERT_CC_STATUS;
+         if (tcpci->controls_vbus)
+                 reg |= TCPC_ALERT_POWER_STATUS;
+         ret = tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
 
 
-Regards,
--- Rafael
+So it looks like the register is correct but the fault interrupt still 
+fires. At 200 kHz I get the following output.
+
+[    4.136845] device: 'tcpm-source-psy-0-0052': device_add
+[    4.136943] PM: Adding info for No Bus:tcpm-source-psy-0-0052
+[    4.136966] device: 'tcpm-source-psy-0-0052': dev_uevent: class 
+uevent() returned -11
+[    4.178510] tcpci 0-0052: ALERT MASK 0x7f
+[    4.217197] driver: 'tcpci': driver_bound: bound to device '0-0052'
+[    4.217371] bus: 'i2c': really_probe: bound device 0-0052 to driver 
+tcpci
+
+So this is what is expected no fault interrupt.
+
+Maybe errata e7805 needs an update.
+
+Sorry for the noise.
+
+Cheers
+Angus
+
+
+> Thanks,
+> Guenter
+> 
+>> Angus
+>> 
+>>> 
+>>> Thanks,
+>>> Guenter
+>>> 
+>>>> +        u16 fault_status;
+>>>> +
+>>>> +        tcpci_read16(tcpci, TCPC_FAULT_STATUS, &fault_status);
+>>>> +
+>>>> +        dev_warn(tcpci->dev, "FAULT ALERT status 0x%x\n", 
+>>>> fault_status);
+>>>> +
+>>>> +        /* clear the fault status */
+>>>> +        tcpci_write16(tcpci, TCPC_FAULT_STATUS, fault_status);
+>>>> +    }
+>>>> +
+>>>>       return IRQ_HANDLED;
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(tcpci_irq);
+>>>> 
+>> 
+>> 
+
