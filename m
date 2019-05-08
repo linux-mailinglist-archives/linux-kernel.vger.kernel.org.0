@@ -2,87 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 208CC1716B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60F917177
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfEHGXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 02:23:34 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40286 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbfEHGXd (ORCPT
+        id S1727162AbfEHGYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 02:24:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35392 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbfEHGYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 02:23:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h4so6266312wre.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 23:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZwBzr8t2c5//Qv+vOM+zb95AmHVIIGSZXeL3Vx6exVA=;
-        b=vrBcJWBcO/7Ca/wCszwmavvuoj/LUQTTspcBW80sF2q5NXECfCj1CYpRR0Ymh86esM
-         wC5aqb6fneiaVB+DVT2+HxGNfDWa3GtkT1kH9mbTPsOL3+lG/aW69GuQ/pTbcH5g4MUh
-         CabAQreSIZguHDS2GWNSs2NwST7dPUFl3eYZiVq5WFVK5lZH8czZyfNtyeMQstVgUxeO
-         KpK6T8VKiwhONHMv++TL35cIY3w/Gi1lbyxywlaxz7DiyTOyHS5ZC26Y9IxP3igvil1k
-         Km0rcqRB7vfy4uuB7sU+5XYskfOilw+t/cgTJF5i25utVk0ZPQJwOfRsdw75mHPF4RSM
-         M+1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZwBzr8t2c5//Qv+vOM+zb95AmHVIIGSZXeL3Vx6exVA=;
-        b=ZsrV0AGWFV9m0bivuDk4SRE08zblEGEUP91rZ5eVDtmSbqr1tbQTLH0rwbleRE8mMI
-         XVDApydc2ViLaymdnf0p2uKZzdPynlrr9MO1g1a3UP8+GW+H1uxFNIVcR214rHHNFTgS
-         XPztJhFNBMpvP4ak+3OzG3Z7bR3zu6BvaGqN+s/EfYJwTp90eLBM13I53gfVu9Y1l1BR
-         G5zBsl3OWf8bhb5e7EqV6kvHsgTKqM0wWdQTb48bPkwB/Hwl0HhWl2WNWgl8fQbj3oik
-         XLYuMxga1rxjjXg1L4IqDm0PcjpPdnYlJpwosiiJfPqUX8frUFBrS8O+N2/8zZ0gNd7Y
-         g/fA==
-X-Gm-Message-State: APjAAAUGE07wHuvI5SUCDaPtyCD3Vnm8/gGP3roBJ/NQTAWxW5I9sJ9a
-        VySKEkm2Fwx+GhIpAI1EUIw37Q==
-X-Google-Smtp-Source: APXvYqyXAkfBLVqlYoyJPdjpjDrpRcXI6/fi/QgJCYsn/IaX8rp3yx2DcxxSO3Hdqj0BOr9Mlvh+HA==
-X-Received: by 2002:adf:e390:: with SMTP id e16mr2475754wrm.321.1557296611983;
-        Tue, 07 May 2019 23:23:31 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id b10sm1835950wme.25.2019.05.07.23.23.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 May 2019 23:23:31 -0700 (PDT)
-Date:   Wed, 8 May 2019 07:23:28 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Claudiu.Beznea@microchip.com
-Cc:     bbrezillon@kernel.org, airlied@linux.ie, daniel@ffwll.ch,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        Ludovic.Desroches@microchip.com, thierry.reding@gmail.com,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [RESEND][PATCH v3 0/6] add LCD support for SAM9X60
-Message-ID: <20190508062328.GD7627@dell>
-References: <1556195748-11106-1-git-send-email-claudiu.beznea@microchip.com>
+        Wed, 8 May 2019 02:24:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Yd4Wnh9vxeMCyESuNOhTBbsgDnGnCPY1zhBjGYoqdQY=; b=jAUUEfYmfCpe5e8h/svS9coVC8
+        TDOWiRHpciwkr9F7GGsRyZdt/hooATI/1MQ5mgItc8rdLTEy7HOw8qY3g33CXcY3c97JFBR8Y9WzU
+        TKfiq0Zqx+HF+G23AdT/r60i0S582szfIHjfJG1xFrBRXOK0btXx+xQ/NKLaaVqO7xyxGdNetHIOW
+        rd08no5poo8z1cOdFD1AF97c/wtKz1NEntssUpQ3VHknZa8txXqYhQG0OdrAmsmo/aBXfuTi8GC/E
+        iIak60hD783FpskXBixeXeMDaV54EIe6g45j5VsHRm0LlOnOXjweAn/b8CPGPE1SW4FDwnhjZtmHK
+        3IbMyfOg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOG04-0004h5-Nd; Wed, 08 May 2019 06:24:20 +0000
+Date:   Tue, 7 May 2019 23:24:20 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3 00/3] MIPS: SGI-IP27 rework part2
+Message-ID: <20190508062420.GD19227@infradead.org>
+References: <20190319154755.31049-1-tbogendoerfer@suse.de>
+ <20190418205726.GB126710@google.com>
+ <20190507153117.GA21665@e121166-lin.cambridge.arm.com>
+ <20190507174820.381fd56f678609416fd8b617@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1556195748-11106-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190507174820.381fd56f678609416fd8b617@suse.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c  |  18 ++--
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c    | 120 +++++++++++++++++++++++-
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h    |   2 +
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
->  drivers/pwm/pwm-atmel-hlcdc.c                   |   1 +
->  5 files changed, 132 insertions(+), 11 deletions(-)
+On Tue, May 07, 2019 at 05:48:20PM +0200, Thomas Bogendoerfer wrote:
+> > I had a look and the code is really, really MIPS specific, actually
+> > I would be interested in understanding how many platforms it supports,
+> > it is not even FW configurable.
+> 
+> it's MIPS only and used in basically 3 different SGI platforms.
 
-Not sure why I am receiving this set.
+Actually this isn't quite true, this whole infraѕtructure was also
+shared by the SGI IA64 systems.
 
-Could you please drop me from future submissions.
+The early SN1 prototypes were basically just IP35 systems with IA64
+CPUs glued in, and even the later SN2 that were released as Altix
+shared the same xtalk + bridge infrastructure, just with some hardware
+updates.  It just turned out SGI at some point decided to hide all that
+in firmware.  Linux 2.4 was still accessing this natively, but the code
+was a mess.  I tried to consolidate it with the mips version at that
+point, but SGI decided that hiding it under firmware calls was easier
+as they could just move the messy code there.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+So, not it isn't really MIPS only in theory, although in practice it
+very much is..
