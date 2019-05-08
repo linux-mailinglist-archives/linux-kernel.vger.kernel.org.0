@@ -2,152 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D059B16F99
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 05:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 334FC16F92
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 05:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfEHDod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 23:44:33 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:55088 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbfEHDoc (ORCPT
+        id S1727044AbfEHDoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 23:44:16 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51797 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726516AbfEHDoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 23:44:32 -0400
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x483iAfQ000467;
-        Wed, 8 May 2019 12:44:11 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x483iAfQ000467
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557287051;
-        bh=GtYEji5+EE71+LZjKDY0sxmohdZ0g+Z5/jFvjX0CHzk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1ZESEjZOrbdTa5+bMjMIxX7JKfYmQ/Y+dVySrIFat/BgQw0mbSCMDzXGSvjMWFz/n
-         avfYjmfH7jmGaI5QdsMqFVxzcZu8izw/LpK1K5OCkgm8I5KWmyRvu9UHOa8gxKoDZt
-         m+aRszBtUwNrViHlN1ejn9NLZd5sBn8LipsbVhKP/EmJklWC8d0SClpntEUdswPbO0
-         uxHDUcYmEs99d3dEYaGWHtzJe4sW3DhiZbWvfKF+a3i+oGn774ldgNtYyHqsLu0LUi
-         wdmGRah9iOVXGv/gkE0XnKA1+0cx7FHv6uxS86y+Yf+qd+CK0/DwFFePzuMXVm07lT
-         NS2Z5t8WpH/UA==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id g127so11777172vsd.6;
-        Tue, 07 May 2019 20:44:11 -0700 (PDT)
-X-Gm-Message-State: APjAAAUR3AuX3SmgwdBFiodM0SXGkP8nbnBJI942Jhx3gtbPtTPGtQfc
-        gQJhKeLMYD4sno69/A9o8/2bWOLvuRdWYJQxHWE=
-X-Google-Smtp-Source: APXvYqz4ub6AwdOUIv3IBI3Jv6hdIY2r3aV/UeyA9Lf21f53omFZix/UHdWvee9kuR48UmUZmxkT6DyZqggTTN2/rBA=
-X-Received: by 2002:a67:fd89:: with SMTP id k9mr7071343vsq.54.1557287050111;
- Tue, 07 May 2019 20:44:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190506013456.86061-1-joel@joelfernandes.org>
-In-Reply-To: <20190506013456.86061-1-joel@joelfernandes.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 8 May 2019 12:43:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQesyT-vspoGKdgRqycZfhtJm5Upx2T6ij-yB5i4Nx5nw@mail.gmail.com>
-Message-ID: <CAK7LNAQesyT-vspoGKdgRqycZfhtJm5Upx2T6ij-yB5i4Nx5nw@mail.gmail.com>
-Subject: Re: [PATCH v3] kheaders: Move from proc to sysfs
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        atish patra <atishp04@gmail.com>, bpf@vger.kernel.org,
-        Brendan Gregg <bgregg@netflix.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        duyuchao <yuchao.du@unisoc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Manjo Raja Rao <linux@manojrajarao.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        =?UTF-8?Q?Micha=C5=82_Gregorczyk?= <michalgr@fb.com>,
-        Michal Gregorczyk <michalgr@live.com>,
-        Mohammad Husain <russoue@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        Tamir Carmeli <carmeli.tamir@gmail.com>,
-        Yonghong Song <yhs@fb.com>
+        Tue, 7 May 2019 23:44:15 -0400
+X-UUID: 86b810c50c0f40feb7a66dc923344c34-20190508
+X-UUID: 86b810c50c0f40feb7a66dc923344c34-20190508
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1838829485; Wed, 08 May 2019 11:43:56 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 8 May 2019 11:43:55 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 8 May 2019 11:43:55 +0800
+Message-ID: <1557287035.3936.2.camel@mtksdaap41>
+Subject: Re: [PATCH v5 03/12] dt-binding: gce: add binding for gce subsys
+ property
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "YT Shen" <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
+        Frederic Chen <Frederic.Chen@mediatek.com>
+Date:   Wed, 8 May 2019 11:43:55 +0800
+In-Reply-To: <20190507081355.52630-4-bibby.hsieh@mediatek.com>
+References: <20190507081355.52630-1-bibby.hsieh@mediatek.com>
+         <20190507081355.52630-4-bibby.hsieh@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 10:37 AM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
->
-> The kheaders archive consisting of the kernel headers used for compiling
-> bpf programs is in /proc. However there is concern that moving it here
-> will make it permanent. Let us move it to /sys/kernel as discussed [1].
->
-> [1] https://lore.kernel.org/patchwork/patch/1067310/#1265969
->
-> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Hi, Bibby:
+
+On Tue, 2019-05-07 at 16:13 +0800, Bibby Hsieh wrote:
+> tcmdq driver provide a function that get the relationship
+> of sub system number from device node for client.
+> add specification for #subsys-cells, mediatek,gce-subsys.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 > ---
-> This patch applies on top of the previous patch that was applied to the
-> driver tree:
-> https://lore.kernel.org/patchwork/patch/1067310/
->
-> v2->v3: Fixed sysfs file mode nit (Greg).
-> v1->v2: Fixed some kconfig nits.
->
->  init/Kconfig                                | 16 ++++-----
->  kernel/Makefile                             |  4 +--
->  kernel/{gen_ikh_data.sh => gen_kheaders.sh} |  2 +-
->  kernel/kheaders.c                           | 40 +++++++++------------
->  4 files changed, 26 insertions(+), 36 deletions(-)
->  rename kernel/{gen_ikh_data.sh => gen_kheaders.sh} (98%)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 26a364a95b57..c3661991b089 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -579,15 +579,13 @@ config IKCONFIG_PROC
->           This option enables access to the kernel configuration file
->           through /proc/config.gz.
->
-> -config IKHEADERS_PROC
-> -       tristate "Enable kernel header artifacts through /proc/kheaders.tar.xz"
-> -       depends on PROC_FS
-> -       help
-> -         This option enables access to the kernel header and other artifacts that
-> -         are generated during the build process. These can be used to build eBPF
-> -         tracing programs, or similar programs.  If you build the headers as a
-> -         module, a module called kheaders.ko is built which can be loaded on-demand
-> -         to get access to the headers.
-> +config IKHEADERS
-> +       tristate "Enable kernel headers through /sys/kernel/kheaders.tar.xz"
+>  .../devicetree/bindings/mailbox/mtk-gce.txt       | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> index 1f7f8f2a3f49..8fd9479bc9f6 100644
+> --- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> @@ -21,11 +21,19 @@ Required properties:
+>  	priority: Priority of GCE thread.
+>  	atomic_exec: GCE processing continuous packets of commands in atomic
+>  		way.
+> +- #subsys-cells: Should be 3.
+> +	<&phandle subsys_number start_offset size>
+> +	phandle: Label name of a gce node.
+> +	subsys_number: specify the sub-system id which is corresponding
+> +		       to the register address.
+> +	start_offset: the start offset of register address that GCE can access.
+> +	size: the total size of register address that GCE can access.
+>  
+>  Required properties for a client device:
+>  - mboxes: Client use mailbox to communicate with GCE, it should have this
+>    property and list of phandle, mailbox specifiers.
+> -- mediatek,gce-subsys: u32, specify the sub-system id which is corresponding
+> +Optional propertier for a client device:
+
+properties
+
+Regards,
+CK
+
+> +- mediatek,gce-client-reg: u32, specify the sub-system id which is corresponding
+>    to the register address.
+>  
+>  Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
+> @@ -40,6 +48,7 @@ Example:
+>  		clocks = <&infracfg CLK_INFRA_GCE>;
+>  		clock-names = "gce";
+>  		#mbox-cells = <3>;
+> +		#subsys-cells = <3>;
+>  	};
+>  
+>  Example for a client device:
+> @@ -48,9 +57,9 @@ Example for a client device:
+>  		compatible = "mediatek,mt8173-mmsys";
+>  		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
+>  			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
+> -		mediatek,gce-subsys = <SUBSYS_1400XXXX>;
+>  		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
+>  				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
+> -
+> +		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
+> +					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
+>  		...
+>  	};
 
 
-I suggested "depends on SYSFS" twice, both in v1 and v2.
-
-https://lore.kernel.org/patchwork/patch/1069806/#1266147
-https://lore.kernel.org/patchwork/patch/1070005/#1266279
-
-
-
-> +       help
-> +         This option enables access to the in-kernel headers that are generated during
-> +         the build process. These can be used to build eBPF tracing programs,
-> +         or similar programs.  If you build the headers as a module, a module called
-> +         kheaders.ko is built which can be loaded on-demand to get access to headers.
->
->  config LOG_BUF_SHIFT
->         int "Kernel log buffer size (16 => 64KB, 17 => 128KB)"
-
-
--- 
-Best Regards
-Masahiro Yamada
