@@ -2,253 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7271D18089
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE0F18097
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbfEHTgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:36:32 -0400
-Received: from mx1.chost.de ([5.175.28.52]:59039 "EHLO mx1.chost.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbfEHTgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:36:32 -0400
-Received: from vm002.chost.de ([::ffff:192.168.122.102])
-  by mx1.chost.de with SMTP; Wed, 08 May 2019 21:37:15 +0200
-  id 0000000001438B7D.000000005CD32FEB.000036CD
-Received: by vm002.chost.de (sSMTP sendmail emulation); Wed, 08 May 2019 21:37:15 +0200
-From:   Christoph Probst <kernel@probst.it>
-To:     linux-cifs@vger.kernel.org
-Cc:     Steve French <sfrench@samba.org>, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, Christoph Probst <kernel@probst.it>
-Subject: [PATCH] cifs: fix checkpatch warnings and normalize strings
-Date:   Wed,  8 May 2019 21:36:25 +0200
-Message-Id: <1557344185-18457-1-git-send-email-kernel@probst.it>
-X-Mailer: git-send-email 2.1.4
+        id S1728484AbfEHTiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:38:55 -0400
+Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:40262 "EHLO
+        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727026AbfEHTiy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 15:38:54 -0400
+Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
+        by mx0a-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48JaHXk020910
+        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 15:38:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=RG3fYOhlX+j9LA9OuPSHT6FI9k57l6698BnyP71APwc=;
+ b=MKoAph3EjoHUwsyWYD4fJqgB+udMdAcfqhPWhGpFWmGxWMSyDoHb+HlLojtToY5/+4fG
+ YyfjV/Gy47ejczf7P3nc1WrDlIIvOfkn8XvC+ynpgHATVg59qZRA9evqhRP/6dTxN++V
+ hb6WCWDmky9ejH8M22fYyk7g2xVALaH9WW/8ww5J9y9ngadiAulkU0f4VGMpFhLFSEu6
+ vIFjEapw099/STEXzDQVsWK3rY1ztnX5p7noD2k+3yx4MY4gpgjmgvx0c6O2qY3sqUVQ
+ +N6rWOs6pH8MZb2jb663+MTXGwdhfT4fh4qDiI2rNsL+ldP8z3SZnfZDn2ffdELQKVV8 sQ== 
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+        by mx0a-00154904.pphosted.com with ESMTP id 2sb5mwep7s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:38:53 -0400
+Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48JWw0E005417
+        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 15:38:53 -0400
+Received: from ausxippc101.us.dell.com (ausxippc101.us.dell.com [143.166.85.207])
+        by mx0a-00154901.pphosted.com with ESMTP id 2sc32828x8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:38:53 -0400
+X-LoopCount0: from 10.166.132.130
+X-IronPort-AV: E=Sophos;i="5.60,346,1549951200"; 
+   d="scan'208";a="1233281014"
+From:   <Mario.Limonciello@dell.com>
+To:     <kai.heng.feng@canonical.com>, <kbusch@kernel.org>
+CC:     <keith.busch@intel.com>, <axboe@fb.com>, <hch@lst.de>,
+        <sagi@grimberg.me>, <linux-nvme@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Topic: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Index: AQHVBdBS/xizqbOjGUOY5SKUREVH6KZh7T4AgAAD4gD//6zksA==
+Date:   Wed, 8 May 2019 19:38:50 +0000
+Message-ID: <f8a043b00909418bad6adcdb62d16e6e@AUSX13MPC105.AMER.DELL.COM>
+References: <20190508185955.11406-1-kai.heng.feng@canonical.com>
+ <20190508191624.GA8365@localhost.localdomain>
+ <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
+In-Reply-To: <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=979 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905080119
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905080119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch warnings/errors in smb2ops.c except "LONG_LINE". Add missing
-linebreaks, indentings, __func__. Remove void-returns, unneeded braces.
-
-Add SPDX License Header.
-
-Add missing "\n" and capitalize first letter in some cifs_dbg() strings.
-
-Signed-off-by: Christoph Probst <kernel@probst.it>
----
- fs/cifs/smb2ops.c | 46 +++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
-
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index c36ff0d..9bda7e5 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  SMB2 version specific operations
-  *
-@@ -282,7 +283,7 @@ smb2_find_mid(struct TCP_Server_Info *server, char *buf)
- 	__u64 wire_mid = le64_to_cpu(shdr->MessageId);
- 
- 	if (shdr->ProtocolId == SMB2_TRANSFORM_PROTO_NUM) {
--		cifs_dbg(VFS, "encrypted frame parsing not supported yet");
-+		cifs_dbg(VFS, "Encrypted frame parsing not supported yet\n");
- 		return NULL;
- 	}
- 
-@@ -324,6 +325,7 @@ static int
- smb2_negotiate(const unsigned int xid, struct cifs_ses *ses)
- {
- 	int rc;
-+
- 	ses->server->CurrentMid = 0;
- 	rc = SMB2_negotiate(xid, ses);
- 	/* BB we probably don't need to retry with modern servers */
-@@ -789,8 +791,6 @@ smb3_qfs_tcon(const unsigned int xid, struct cifs_tcon *tcon)
- 		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
- 	else
- 		close_shroot(&tcon->crfid);
--
--	return;
- }
- 
- static void
-@@ -818,7 +818,6 @@ smb2_qfs_tcon(const unsigned int xid, struct cifs_tcon *tcon)
- 	SMB2_QFS_attr(xid, tcon, fid.persistent_fid, fid.volatile_fid,
- 			FS_DEVICE_INFORMATION);
- 	SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
--	return;
- }
- 
- static int
-@@ -906,9 +905,8 @@ move_smb2_ea_to_cifs(char *dst, size_t dst_size,
- 		value = &src->ea_data[src->ea_name_length + 1];
- 		value_len = (size_t)le16_to_cpu(src->ea_value_length);
- 
--		if (name_len == 0) {
-+		if (name_len == 0)
- 			break;
--		}
- 
- 		if (src_size < 8 + name_len + 1 + value_len) {
- 			cifs_dbg(FYI, "EA entry goes beyond length of list\n");
-@@ -1161,6 +1159,7 @@ static void
- smb2_clear_stats(struct cifs_tcon *tcon)
- {
- 	int i;
-+
- 	for (i = 0; i < NUMBER_OF_SMB2_COMMANDS; i++) {
- 		atomic_set(&tcon->stats.smb2_stats.smb2_com_sent[i], 0);
- 		atomic_set(&tcon->stats.smb2_stats.smb2_com_failed[i], 0);
-@@ -1501,7 +1500,7 @@ smb2_copychunk_range(const unsigned int xid,
- 	if (pcchunk == NULL)
- 		return -ENOMEM;
- 
--	cifs_dbg(FYI, "in smb2_copychunk_range - about to call request res key\n");
-+	cifs_dbg(FYI, "%s: about to call request res key\n", __func__);
- 	/* Request a key from the server to identify the source of the copy */
- 	rc = SMB2_request_res_key(xid, tlink_tcon(srcfile->tlink),
- 				srcfile->fid.persistent_fid,
-@@ -1621,6 +1620,7 @@ static unsigned int
- smb2_read_data_offset(char *buf)
- {
- 	struct smb2_read_rsp *rsp = (struct smb2_read_rsp *)buf;
-+
- 	return rsp->DataOffset;
- }
- 
-@@ -1749,7 +1749,7 @@ smb2_duplicate_extents(const unsigned int xid,
- 	dup_ext_buf.SourceFileOffset = cpu_to_le64(src_off);
- 	dup_ext_buf.TargetFileOffset = cpu_to_le64(dest_off);
- 	dup_ext_buf.ByteCount = cpu_to_le64(len);
--	cifs_dbg(FYI, "duplicate extents: src off %lld dst off %lld len %lld",
-+	cifs_dbg(FYI, "Duplicate extents: src off %lld dst off %lld len %lld\n",
- 		src_off, dest_off, len);
- 
- 	rc = smb2_set_file_size(xid, tcon, trgtfile, dest_off + len, false);
-@@ -1766,7 +1766,7 @@ smb2_duplicate_extents(const unsigned int xid,
- 			&ret_data_len);
- 
- 	if (ret_data_len > 0)
--		cifs_dbg(FYI, "non-zero response length in duplicate extents");
-+		cifs_dbg(FYI, "Non-zero response length in duplicate extents\n");
- 
- duplicate_extents_out:
- 	return rc;
-@@ -1947,9 +1947,9 @@ smb2_close_dir(const unsigned int xid, struct cifs_tcon *tcon,
- }
- 
- /*
--* If we negotiate SMB2 protocol and get STATUS_PENDING - update
--* the number of credits and return true. Otherwise - return false.
--*/
-+ * If we negotiate SMB2 protocol and get STATUS_PENDING - update
-+ * the number of credits and return true. Otherwise - return false.
-+ */
- static bool
- smb2_is_status_pending(char *buf, struct TCP_Server_Info *server)
- {
-@@ -2270,7 +2270,7 @@ smb2_get_dfs_refer(const unsigned int xid, struct cifs_ses *ses,
- 	struct get_dfs_referral_rsp *dfs_rsp = NULL;
- 	u32 dfs_req_size = 0, dfs_rsp_size = 0;
- 
--	cifs_dbg(FYI, "smb2_get_dfs_refer path <%s>\n", search_name);
-+	cifs_dbg(FYI, "%s: path: %s\n", __func__, search_name);
- 
- 	/*
- 	 * Try to use the IPC tcon, otherwise just use any
-@@ -2324,7 +2324,7 @@ smb2_get_dfs_refer(const unsigned int xid, struct cifs_ses *ses,
- 
- 	if (rc) {
- 		if ((rc != -ENOENT) && (rc != -EOPNOTSUPP))
--			cifs_dbg(VFS, "ioctl error in smb2_get_dfs_refer rc=%d\n", rc);
-+			cifs_dbg(VFS, "ioctl error in %s rc=%d\n", __func__, rc);
- 		goto out;
- 	}
- 
-@@ -2333,7 +2333,7 @@ smb2_get_dfs_refer(const unsigned int xid, struct cifs_ses *ses,
- 				 nls_codepage, remap, search_name,
- 				 true /* is_unicode */);
- 	if (rc) {
--		cifs_dbg(VFS, "parse error in smb2_get_dfs_refer rc=%d\n", rc);
-+		cifs_dbg(VFS, "parse error in %s rc=%d\n", __func__, rc);
- 		goto out;
- 	}
- 
-@@ -2629,7 +2629,7 @@ static long smb3_zero_range(struct file *file, struct cifs_tcon *tcon,
- 	inode = d_inode(cfile->dentry);
- 	cifsi = CIFS_I(inode);
- 
--        trace_smb3_zero_enter(xid, cfile->fid.persistent_fid, tcon->tid,
-+	trace_smb3_zero_enter(xid, cfile->fid.persistent_fid, tcon->tid,
- 			      ses->Suid, offset, len);
- 
- 
-@@ -2655,7 +2655,7 @@ static long smb3_zero_range(struct file *file, struct cifs_tcon *tcon,
- 		return rc;
- 	}
- 
--	cifs_dbg(FYI, "offset %lld len %lld", offset, len);
-+	cifs_dbg(FYI, "Offset %lld len %lld\n", offset, len);
- 
- 	fsctl_buf.FileOffset = cpu_to_le64(offset);
- 	fsctl_buf.BeyondFinalZero = cpu_to_le64(offset + len);
-@@ -2744,7 +2744,7 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 		return rc;
- 	}
- 
--	cifs_dbg(FYI, "offset %lld len %lld", offset, len);
-+	cifs_dbg(FYI, "Offset %lld len %lld\n", offset, len);
- 
- 	fsctl_buf.FileOffset = cpu_to_le64(offset);
- 	fsctl_buf.BeyondFinalZero = cpu_to_le64(offset + len);
-@@ -3237,7 +3237,7 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 
- 	req = aead_request_alloc(tfm, GFP_KERNEL);
- 	if (!req) {
--		cifs_dbg(VFS, "%s: Failed to alloc aead request", __func__);
-+		cifs_dbg(VFS, "%s: Failed to alloc aead request\n", __func__);
- 		return -ENOMEM;
- 	}
- 
-@@ -3248,7 +3248,7 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 
- 	sg = init_sg(num_rqst, rqst, sign);
- 	if (!sg) {
--		cifs_dbg(VFS, "%s: Failed to init sg", __func__);
-+		cifs_dbg(VFS, "%s: Failed to init sg\n", __func__);
- 		rc = -ENOMEM;
- 		goto free_req;
- 	}
-@@ -3256,7 +3256,7 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 	iv_len = crypto_aead_ivsize(tfm);
- 	iv = kzalloc(iv_len, GFP_KERNEL);
- 	if (!iv) {
--		cifs_dbg(VFS, "%s: Failed to alloc IV", __func__);
-+		cifs_dbg(VFS, "%s: Failed to alloc IV\n", __func__);
- 		rc = -ENOMEM;
- 		goto free_sg;
- 	}
-@@ -3364,7 +3364,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, int num_rqst,
- 	fill_transform_hdr(tr_hdr, orig_len, old_rq);
- 
- 	rc = crypt_message(server, num_rqst, new_rq, 1);
--	cifs_dbg(FYI, "encrypt message returned %d", rc);
-+	cifs_dbg(FYI, "Encrypt message returned %d\n", rc);
- 	if (rc)
- 		goto err_free;
- 
-@@ -3405,7 +3405,7 @@ decrypt_raw_data(struct TCP_Server_Info *server, char *buf,
- 	rqst.rq_tailsz = (page_data_size % PAGE_SIZE) ? : PAGE_SIZE;
- 
- 	rc = crypt_message(server, 1, &rqst, 0);
--	cifs_dbg(FYI, "decrypt message returned %d\n", rc);
-+	cifs_dbg(FYI, "Decrypt message returned %d\n", rc);
- 
- 	if (rc)
- 		return rc;
--- 
-2.1.4
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBLYWktSGVuZyBGZW5nIDxrYWku
+aGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgTWF5IDgsIDIwMTkg
+MjozMCBQTQ0KPiBUbzogS2VpdGggQnVzY2gNCj4gQ2M6IEtlaXRoIEJ1c2NoOyBheGJvZUBmYi5j
+b207IGhjaEBsc3QuZGU7IHNhZ2lAZ3JpbWJlcmcubWU7IGxpbnV4LQ0KPiBudm1lQGxpc3RzLmlu
+ZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IExpbW9uY2llbGxvLCBN
+YXJpbw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBudm1lLXBjaTogVXNlIG5vbi1vcGVyYXRpb25h
+bCBwb3dlciBzdGF0ZSBpbnN0ZWFkIG9mIEQzIG9uDQo+IFN1c3BlbmQtdG8tSWRsZQ0KPiANCj4g
+DQo+IFtFWFRFUk5BTCBFTUFJTF0NCj4gDQo+IGF0IDAzOjE2LCBLZWl0aCBCdXNjaCA8a2J1c2No
+QGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gPiBPbiBUaHUsIE1heSAwOSwgMjAxOSBhdCAwMjo1
+OTo1NUFNICswODAwLCBLYWktSGVuZyBGZW5nIHdyb3RlOg0KPiA+PiArc3RhdGljIGludCBudm1l
+X2RvX3Jlc3VtZV9mcm9tX2lkbGUoc3RydWN0IHBjaV9kZXYgKnBkZXYpDQo+ID4+ICt7DQo+ID4+
+ICsJc3RydWN0IG52bWVfZGV2ICpuZGV2ID0gcGNpX2dldF9kcnZkYXRhKHBkZXYpOw0KPiA+PiAr
+CWludCByZXN1bHQ7DQo+ID4+ICsNCj4gPj4gKwlwZGV2LT5kZXZfZmxhZ3MgJj0gflBDSV9ERVZf
+RkxBR1NfTk9fRDM7DQo+ID4+ICsJbmRldi0+Y3RybC5zdXNwZW5kX3RvX2lkbGUgPSBmYWxzZTsN
+Cj4gPj4gKw0KPiA+PiArCXJlc3VsdCA9IHBjaV9hbGxvY19pcnFfdmVjdG9ycyhwZGV2LCAxLCAx
+LCBQQ0lfSVJRX0FMTF9UWVBFUyk7DQo+ID4+ICsJaWYgKHJlc3VsdCA8IDApDQo+ID4+ICsJCWdv
+dG8gb3V0Ow0KPiA+PiArDQo+ID4+ICsJcmVzdWx0ID0gbnZtZV9wY2lfY29uZmlndXJlX2FkbWlu
+X3F1ZXVlKG5kZXYpOw0KPiA+PiArCWlmIChyZXN1bHQpDQo+ID4+ICsJCWdvdG8gb3V0Ow0KPiA+
+PiArDQo+ID4+ICsJcmVzdWx0ID0gbnZtZV9hbGxvY19hZG1pbl90YWdzKG5kZXYpOw0KPiA+PiAr
+CWlmIChyZXN1bHQpDQo+ID4+ICsJCWdvdG8gb3V0Ow0KPiA+PiArDQo+ID4+ICsJbmRldi0+Y3Ry
+bC5tYXhfaHdfc2VjdG9ycyA9IE5WTUVfTUFYX0tCX1NaIDw8IDE7DQo+ID4+ICsJbmRldi0+Y3Ry
+bC5tYXhfc2VnbWVudHMgPSBOVk1FX01BWF9TRUdTOw0KPiA+PiArCW11dGV4X3VubG9jaygmbmRl
+di0+c2h1dGRvd25fbG9jayk7DQo+ID4NCj4gPiBUaGlzIGxvY2sgd2FzIG5ldmVyIGxvY2tlZC4N
+Cj4gDQo+IFllYSwgd2lsbCBmaXggdGhpcy4NCj4gDQo+ID4NCj4gPiBCdXQgSSB0aGluayB0aGVz
+ZSBzcGVjaWFsIHN1c3BlbmQvcmVzdW1lIHJvdXRpbmVzIGFyZSB0b28gc2ltaWxhciB0byB0aGUN
+Cj4gPiBleGlzdGluZyBvbmVzLCB0aGV5IHNob3VsZCBqdXN0IGluY29ycG9yYXRlIHRoaXMgZmVh
+dHVyZSBpZiB3ZSBuZWVkIHRvDQo+ID4gZG8gdGhpcy4NCj4gDQo+IFRoYXTigJlzIG15IG9yaWdp
+bmFsIGRpcmVjdGlvbiwgYnV0IHRoaXMgcmVxdWlyZXMgYSBuZXcgYm9vbCB0bw0KPiBudm1lX2Rl
+dl9kaXNhYmxlKCksIHNvIGl0IGJlY29tZXMNCj4gc3RhdGljIHZvaWQgbnZtZV9kZXZfZGlzYWJs
+ZShzdHJ1Y3QgbnZtZV9kZXYgKmRldiwgYm9vbCBzaHV0ZG93biwgYm9vbA0KPiBzdXNwZW5kX3Rv
+X2lkbGUpDQo+IA0KPiBBbmQgaXQgc3RhcnRzIHRvIGdldCBtZXNzeS4NCj4gDQoNClRoZSBleGlz
+dGluZyByb3V0aW5lcyBoYXZlIGFuIGltcGxpZWQgYXNzdW1wdGlvbiB0aGF0IGZpcm13YXJlIHdp
+bGwgY29tZSBzd2luZ2luZw0Kd2l0aCBhIGhhbW1lciB0byBjb250cm9sIHRoZSByYWlscyB0aGUg
+U1NEIHNpdHMgb24uDQpXaXRoIFMySSBldmVyeXRoaW5nIG5lZWRzIHRvIGNvbWUgZnJvbSB0aGUg
+ZHJpdmVyIHNpZGUgYW5kIGl0IHJlYWxseSBpcyBhDQpkaWZmZXJlbnQgcGFyYWRpZ20uDQo=
