@@ -2,142 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93FAE1718C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 208CC1716B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 08:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfEHG2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 02:28:31 -0400
-Received: from www.osadl.org ([62.245.132.105]:47282 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbfEHG2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 02:28:30 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x486R0jv016762;
-        Wed, 8 May 2019 08:27:00 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        peter enderborg <peter.enderborg@sony.com>,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH RFC] selinux: provide __le variables explicitly
-Date:   Wed,  8 May 2019 08:21:17 +0200
-Message-Id: <1557296477-4694-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
-X-Spam-Status: No, score=-4.2 required=6.0 tests=BAYES_00,RCVD_IN_DNSWL_MED
-        autolearn=ham version=3.3.1
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on www.osadl.org
+        id S1727003AbfEHGXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 02:23:34 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40286 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbfEHGXd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 02:23:33 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h4so6266312wre.7
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 23:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZwBzr8t2c5//Qv+vOM+zb95AmHVIIGSZXeL3Vx6exVA=;
+        b=vrBcJWBcO/7Ca/wCszwmavvuoj/LUQTTspcBW80sF2q5NXECfCj1CYpRR0Ymh86esM
+         wC5aqb6fneiaVB+DVT2+HxGNfDWa3GtkT1kH9mbTPsOL3+lG/aW69GuQ/pTbcH5g4MUh
+         CabAQreSIZguHDS2GWNSs2NwST7dPUFl3eYZiVq5WFVK5lZH8czZyfNtyeMQstVgUxeO
+         KpK6T8VKiwhONHMv++TL35cIY3w/Gi1lbyxywlaxz7DiyTOyHS5ZC26Y9IxP3igvil1k
+         Km0rcqRB7vfy4uuB7sU+5XYskfOilw+t/cgTJF5i25utVk0ZPQJwOfRsdw75mHPF4RSM
+         M+1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZwBzr8t2c5//Qv+vOM+zb95AmHVIIGSZXeL3Vx6exVA=;
+        b=ZsrV0AGWFV9m0bivuDk4SRE08zblEGEUP91rZ5eVDtmSbqr1tbQTLH0rwbleRE8mMI
+         XVDApydc2ViLaymdnf0p2uKZzdPynlrr9MO1g1a3UP8+GW+H1uxFNIVcR214rHHNFTgS
+         XPztJhFNBMpvP4ak+3OzG3Z7bR3zu6BvaGqN+s/EfYJwTp90eLBM13I53gfVu9Y1l1BR
+         G5zBsl3OWf8bhb5e7EqV6kvHsgTKqM0wWdQTb48bPkwB/Hwl0HhWl2WNWgl8fQbj3oik
+         XLYuMxga1rxjjXg1L4IqDm0PcjpPdnYlJpwosiiJfPqUX8frUFBrS8O+N2/8zZ0gNd7Y
+         g/fA==
+X-Gm-Message-State: APjAAAUGE07wHuvI5SUCDaPtyCD3Vnm8/gGP3roBJ/NQTAWxW5I9sJ9a
+        VySKEkm2Fwx+GhIpAI1EUIw37Q==
+X-Google-Smtp-Source: APXvYqyXAkfBLVqlYoyJPdjpjDrpRcXI6/fi/QgJCYsn/IaX8rp3yx2DcxxSO3Hdqj0BOr9Mlvh+HA==
+X-Received: by 2002:adf:e390:: with SMTP id e16mr2475754wrm.321.1557296611983;
+        Tue, 07 May 2019 23:23:31 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id b10sm1835950wme.25.2019.05.07.23.23.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 May 2019 23:23:31 -0700 (PDT)
+Date:   Wed, 8 May 2019 07:23:28 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Claudiu.Beznea@microchip.com
+Cc:     bbrezillon@kernel.org, airlied@linux.ie, daniel@ffwll.ch,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com, thierry.reding@gmail.com,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [RESEND][PATCH v3 0/6] add LCD support for SAM9X60
+Message-ID: <20190508062328.GD7627@dell>
+References: <1556195748-11106-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1556195748-11106-1-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the endiannes is being handled properly sparse was unable to verify
-this due to type inconsistency. So introduce an additional __le32
-respectively _le64 variable to be passed to le32/64_to_cpu() to allow
-sparse to verify proper typing. Note that this patch does not change
-the generated binary on little-endian systems - on 32bit powerpc it
-does change the binary.
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c  |  18 ++--
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c    | 120 +++++++++++++++++++++++-
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h    |   2 +
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+>  drivers/pwm/pwm-atmel-hlcdc.c                   |   1 +
+>  5 files changed, 132 insertions(+), 11 deletions(-)
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+Not sure why I am receiving this set.
 
-Problem located by an experimental coccinelle script to locate
-patters that make sparse unhappy (false positives):
+Could you please drop me from future submissions.
 
-sparse complaints on different architectures fixed by this patch are:
-
-ppc6xx_defconfig
-  CHECK   security/selinux/ss/ebitmap.c
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-
-Little-endian systems:
-
-loongson3_defconfig
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-
-x86_64_defconfig
-security/selinux/ss/ebitmap.c:389:28: warning: cast to restricted __le32
-security/selinux/ss/ebitmap.c:431:23: warning: cast to restricted __le64
-
-Patch was compile-tested with: x86_64_defconfig,loongson3_defconfig (both
-little-endian) and ppc603_defconfig (big-endian).
-
-On little-endian systems the patch has no impact on the generated binary 
-(which is expected) but on the 32bit powerpc it does change the binary
-which is not expected but since I'm not able to generate the .lst files
-in security/selinux/ss/ due to the lack of a Makefile it is not clear
-if this is an unexpected side-effect or due only to the introduction of
-the additional variables. From my understanding the patch does not change
-the program logic so if the code was correct on big-endian systems before
-it should still be correct now.
-
-Patch is against 5.1 (localversion-next is next-20190506)
-
- security/selinux/ss/ebitmap.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-index 8f624f8..09929fc 100644
---- a/security/selinux/ss/ebitmap.c
-+++ b/security/selinux/ss/ebitmap.c
-@@ -347,7 +347,9 @@ int ebitmap_read(struct ebitmap *e, void *fp)
- {
- 	struct ebitmap_node *n = NULL;
- 	u32 mapunit, count, startbit, index;
-+	__le32 ebitmap_start;
- 	u64 map;
-+	__le64 mapbits;
- 	__le32 buf[3];
- 	int rc, i;
- 
-@@ -381,12 +383,12 @@ int ebitmap_read(struct ebitmap *e, void *fp)
- 		goto bad;
- 
- 	for (i = 0; i < count; i++) {
--		rc = next_entry(&startbit, fp, sizeof(u32));
-+		rc = next_entry(&ebitmap_start, fp, sizeof(u32));
- 		if (rc < 0) {
- 			pr_err("SELinux: ebitmap: truncated map\n");
- 			goto bad;
- 		}
--		startbit = le32_to_cpu(startbit);
-+		startbit = le32_to_cpu(ebitmap_start);
- 
- 		if (startbit & (mapunit - 1)) {
- 			pr_err("SELinux: ebitmap start bit (%d) is "
-@@ -423,12 +425,12 @@ int ebitmap_read(struct ebitmap *e, void *fp)
- 			goto bad;
- 		}
- 
--		rc = next_entry(&map, fp, sizeof(u64));
-+		rc = next_entry(&mapbits, fp, sizeof(u64));
- 		if (rc < 0) {
- 			pr_err("SELinux: ebitmap: truncated map\n");
- 			goto bad;
- 		}
--		map = le64_to_cpu(map);
-+		map = le64_to_cpu(mapbits);
- 
- 		index = (startbit - n->startbit) / EBITMAP_UNIT_SIZE;
- 		while (map) {
 -- 
-2.1.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
