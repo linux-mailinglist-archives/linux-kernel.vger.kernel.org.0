@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E1217ECF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24AA217ECC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfEHREW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:04:22 -0400
+        id S1729160AbfEHREN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:04:13 -0400
 Received: from mga03.intel.com ([134.134.136.65]:5321 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728925AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 May 2019 13:03:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:02 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,446,1549958400"; 
-   d="scan'208";a="169697546"
+   d="scan'208";a="169697549"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.171])
   by fmsmga002.fm.intel.com with ESMTP; 08 May 2019 10:03:02 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -28,9 +28,9 @@ To:     Andy Lutomirski <luto@kernel.org>,
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 01/18] x86/fsgsbase/64: Fix ARCH_SET_FS/GS behaviors for a remote task
-Date:   Wed,  8 May 2019 03:02:16 -0700
-Message-Id: <1557309753-24073-2-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v7 02/18] selftests/x86/fsgsbase: Test ptracer-induced GSBASE write
+Date:   Wed,  8 May 2019 03:02:17 -0700
+Message-Id: <1557309753-24073-3-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
 References: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
@@ -39,17 +39,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a ptracer writes to a ptracee's FS/GSBASE with a different value,
-the selector is also cleared. This behavior is not straightforward.
-
-The change will make the behavior simple and sensible, as it will
-(only) update the base when requested. Also, the condition check for
-comparing the base is removed to make more simple. It might save a few
-cycles, but this path is not performance critical.
-
-The only recognizable downside of this change is when writing the base
-if the selector is already nonzero. The base will be reloaded according
-to the selector. But the case is highly unexpected in real usages.
+The test validates to make sure the selector is not changed when a
+ptracer writes a ptracee's GSBASE.
 
 Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
@@ -58,94 +49,103 @@ Cc: Ingo Molnar <mingo@kernel.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 ---
- arch/x86/kernel/process_64.c | 21 +++++++++------------
- arch/x86/kernel/ptrace.c     | 14 ++------------
- 2 files changed, 11 insertions(+), 24 deletions(-)
+ tools/testing/selftests/x86/fsgsbase.c | 70 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index f8e1af3..32d12c6 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -719,13 +719,13 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 			return -EPERM;
+diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
+index f249e04..1c2dda0 100644
+--- a/tools/testing/selftests/x86/fsgsbase.c
++++ b/tools/testing/selftests/x86/fsgsbase.c
+@@ -23,6 +23,9 @@
+ #include <pthread.h>
+ #include <asm/ldt.h>
+ #include <sys/mman.h>
++#include <stddef.h>
++#include <sys/ptrace.h>
++#include <sys/wait.h>
  
- 		preempt_disable();
--		/*
--		 * ARCH_SET_GS has always overwritten the index
--		 * and the base. Zero is the most sensible value
--		 * to put in the index, and is the only value that
--		 * makes any sense if FSGSBASE is unavailable.
--		 */
- 		if (task == current) {
-+			/*
-+			 * For the request to set the current task's base,
-+			 * first to load with zero selector, then write
-+			 * the base value to be effective on a non-FSGSBASE
-+			 * system.
-+			 */
- 			loadseg(GS, 0);
- 			x86_gsbase_write_cpu_inactive(arg2);
- 
-@@ -736,7 +736,6 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 			task->thread.gsbase = arg2;
- 
- 		} else {
--			task->thread.gsindex = 0;
- 			x86_gsbase_write_task(task, arg2);
- 		}
- 		preempt_enable();
-@@ -751,11 +750,10 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 			return -EPERM;
- 
- 		preempt_disable();
--		/*
--		 * Set the selector to 0 for the same reason
--		 * as %gs above.
--		 */
- 		if (task == current) {
-+			/*
-+			 * Same here as %gs handling above
-+			 */
- 			loadseg(FS, 0);
- 			x86_fsbase_write_cpu(arg2);
- 
-@@ -765,7 +763,6 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 			 */
- 			task->thread.fsbase = arg2;
- 		} else {
--			task->thread.fsindex = 0;
- 			x86_fsbase_write_task(task, arg2);
- 		}
- 		preempt_enable();
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index 4b8ee05..3309cfe 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -396,22 +396,12 @@ static int putreg(struct task_struct *child,
- 	case offsetof(struct user_regs_struct,fs_base):
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
--		/*
--		 * When changing the FS base, use do_arch_prctl_64()
--		 * to set the index to zero and to set the base
--		 * as requested.
--		 */
--		if (child->thread.fsbase != value)
--			return do_arch_prctl_64(child, ARCH_SET_FS, value);
-+		x86_fsbase_write_cpu(child, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
--		/*
--		 * Exactly the same here as the %fs handling above.
--		 */
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
--		if (child->thread.gsbase != value)
--			return do_arch_prctl_64(child, ARCH_SET_GS, value);
-+		x86_gsbase_write_cpu(child, value);
- 		return 0;
- #endif
+ #ifndef __x86_64__
+ # error This test is 64-bit only
+@@ -367,6 +370,71 @@ static void test_unexpected_base(void)
  	}
+ }
+ 
++#define USER_REGS_OFFSET(r) offsetof(struct user_regs_struct, r)
++
++static void test_ptrace_write_gsbase(void)
++{
++	int status;
++	pid_t child = fork();
++
++	if (child < 0)
++		err(1, "fork");
++
++	if (child == 0) {
++		printf("[RUN]\tPTRACE_POKE(), write GSBASE from ptracer\n");
++
++		/*
++		 * Use the LDT setup and fetch the GSBASE from the LDT
++		 * by switching to the (nonzero) selector (again)
++		 */
++		do_unexpected_base();
++		asm volatile ("mov %0, %%gs" : : "rm" ((unsigned short)0x7));
++
++		if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) != 0)
++			err(1, "PTRACE_TRACEME");
++
++		raise(SIGTRAP);
++		_exit(0);
++	}
++
++	wait(&status);
++
++	if (WSTOPSIG(status) == SIGTRAP) {
++		unsigned long gs;
++		unsigned long gs_offset = USER_REGS_OFFSET(gs);
++		unsigned long base_offset = USER_REGS_OFFSET(gs_base);
++
++		gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
++
++		if (gs != 0x7) {
++			nerrs++;
++			printf("[FAIL]\tGS is not prepared with nonzero\n");
++			goto END;
++		}
++
++		if (ptrace(PTRACE_POKEUSER, child, base_offset, 0xFF) != 0)
++			err(1, "PTRACE_POKEUSER");
++
++		gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
++
++		/*
++		 * In a non-FSGSBASE system, the nonzero selector will load
++		 * GSBASE (again). But what is tested here is whether the
++		 * selector value is changed or not by the GSBASE write in
++		 * a ptracer.
++		 */
++		if (gs != 0x7) {
++			nerrs++;
++			printf("[FAIL]\tGS changed to %lx\n", gs);
++		} else {
++			printf("[OK]\tGS remained 0x7\n");
++		}
++	}
++
++END:
++	ptrace(PTRACE_CONT, child, NULL, NULL);
++}
++
+ int main()
+ {
+ 	pthread_t thread;
+@@ -423,5 +491,7 @@ int main()
+ 	if (pthread_join(thread, NULL) != 0)
+ 		err(1, "pthread_join");
+ 
++	test_ptrace_write_gsbase();
++
+ 	return nerrs == 0 ? 0 : 1;
+ }
 -- 
 2.7.4
 
