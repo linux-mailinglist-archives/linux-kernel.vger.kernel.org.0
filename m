@@ -2,199 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5CB17990
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C99F17996
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:42:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfEHMkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 08:40:23 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:50793 "EHLO honk.sigxcpu.org"
+        id S1727028AbfEHMl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 08:41:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:33116 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbfEHMkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 08:40:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id C0045FB03;
-        Wed,  8 May 2019 14:40:20 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nZU3glKHYqCD; Wed,  8 May 2019 14:40:18 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 566BE47B7D; Wed,  8 May 2019 14:40:18 +0200 (CEST)
-Date:   Wed, 8 May 2019 14:40:18 +0200
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Cc:     Jacky Bai <ping.bai@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH] soc: imx: Try harder to get imq8mq SoC revisions
-Message-ID: <20190508124018.GA16859@bogon.m.sigxcpu.org>
+        id S1726527AbfEHMl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 08:41:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 127FB80D;
+        Wed,  8 May 2019 05:41:56 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA5703F575;
+        Wed,  8 May 2019 05:41:53 -0700 (PDT)
+Date:   Wed, 8 May 2019 13:41:52 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH V2 1/3] Calculate Thermal Pressure
+Message-ID: <20190508090547.4glnypolmiw3cun4@queper01-lin>
+References: <1555443521-579-1-git-send-email-thara.gopinath@linaro.org>
+ <1555443521-579-2-git-send-email-thara.gopinath@linaro.org>
+ <20190425105658.q45cmfogrt6wwtih@queper01-ThinkPad-T460s>
+ <CAKfTPtBvY3xiDt6tcqF7GoZki3VihD4Tz7E5ctE8hNaNzL6NPA@mail.gmail.com>
+ <5CC31314.3070700@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM0PR04MB6434517A0235C8308D86B050EE310@AM0PR04MB6434.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5CC31314.3070700@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonard,
+Hi Thara,
 
-Thanks for your comments. Let's try s.th. different then: identify by
-bootrom, ocotop and anatop and fall back to ATF afterwards (I'll split
-out the DT part and add binding docs if this makes sense). I'm also
-happy to drop the whole ATF logic until mailine ATF catched up:
+Sorry for the delayed response.
 
-The mainline ATF doesn't currently support the FSL_SIP_GET_SOC_INFO call
-nor does it have the code to identify different imx8mq SOC revisions so
-mimic what NXPs ATF does here.
+On Friday 26 Apr 2019 at 10:17:56 (-0400), Thara Gopinath wrote:
+> On 04/25/2019 08:45 AM, Vincent Guittot wrote:
+> > Do you mean calling a variant of sched_update_thermal_pressure() in
+> > update_cpu_capacity() instead of periodic update ?
+> > Yes , that should be enough
+> 
+> Hi,
+> 
+> I do have some concerns in doing this.
+> 1. Updating thermal pressure does involve some calculations for
+> accumulating, averaging, decaying etc which in turn could have some
+> finite and measurable time spent in the function. I am not sure if this
+> delay will be acceptable for all systems during load balancing (I have
+> not measured the time involved). We need to decide if this is something
+> we can live with.
+> 
+> 2. More importantly, since update can happen from at least two paths (
+> thermal fw and periodic timer in case of this patch series)to ensure
+> mutual exclusion,  the update is done under a spin lock. Again calling
+> from update_cpu_capacity will involve holding the lock in the load
+> balance path which is possible not for the best.
+> For me, updating out of load balance minimizes the disruption to
+> scheduler on the whole.
+> 
+> But if there is an over whelming support for updating the statistics
+> from the LB , I can move the code.
 
-As a fallback use ATF so we can identify new revisions once it gains
-support or when using NXPs ATF.
+If I try to clarify my point a little bit, my observation is really that
+it's a shame to update the thermal stats often, but to not reflect that
+in capacity_of().
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 12 ++++
- drivers/soc/imx/soc-imx8.c                | 68 ++++++++++++++++++-----
- 2 files changed, 67 insertions(+), 13 deletions(-)
+So in fact there are two alternatives: 1) do the update only during LB
+(which is what I suggested first) to avoid 'useless' work; or 2) reflect
+the thermal pressure in the CPU capacity every time the thermal stats
+are updated.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 6d635ba0904c..52aa1600b33b 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -246,6 +246,18 @@
- 		ranges = <0x0 0x0 0x0 0x3e000000>;
- 		dma-ranges = <0x40000000 0x0 0x40000000 0xc0000000>;
- 
-+		bus@00000000 { /* ROM */
-+			compatible = "simple-bus";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x00000000 0x00000000 0x20000>;
-+
-+			rom@00000000 {
-+				compatible = "fsl,imx8mq-bootrom";
-+				reg = <0x00000000 0x1e800>;
-+			};
-+		};
-+
- 		bus@30000000 { /* AIPS1 */
- 			compatible = "fsl,imx8mq-aips-bus", "simple-bus";
- 			#address-cells = <1>;
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
-index fc6429f9170a..0a1fe82efe86 100644
---- a/drivers/soc/imx/soc-imx8.c
-+++ b/drivers/soc/imx/soc-imx8.c
-@@ -3,6 +3,7 @@
-  * Copyright 2019 NXP.
-  */
- 
-+#include <linux/arm-smccc.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/of_address.h>
-@@ -11,39 +12,80 @@
- #include <linux/platform_device.h>
- #include <linux/of.h>
- 
-+#define REV_A0				0x10
-+#define REV_B0				0x20
- #define REV_B1				0x21
- 
-+#define IMX8MQ_SW_INFO_A0		0x800
-+#define IMX8MQ_SW_INFO_B0		0x83C
- #define IMX8MQ_SW_INFO_B1		0x40
- #define IMX8MQ_SW_MAGIC_B1		0xff0055aa
- 
-+#define FSL_SIP_GET_SOC_INFO		0xc2000006
-+
- struct imx8_soc_data {
- 	char *name;
- 	u32 (*soc_revision)(void);
- };
- 
--static u32 __init imx8mq_soc_revision(void)
-+static u32 __init imx8mq_soc_revision_atf(void)
-+{
-+	struct arm_smccc_res res = { 0 };
-+
-+	arm_smccc_smc(FSL_SIP_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
-+	/*
-+	 * Bit [23:16] is the silicon ID
-+	 * Bit[7:4] is the base layer revision,
-+	 * Bit[3:0] is the metal layer revision
-+	 * e.g. 0x10 stands for Tapeout 1.0
-+	 */
-+	return res.a0 & 0xff;
-+}
-+
-+static u32 __init imx8mq_soc_magic_node(const char *node, u32 offset)
- {
- 	struct device_node *np;
--	void __iomem *ocotp_base;
-+	void __iomem *base;
- 	u32 magic;
--	u32 rev = 0;
- 
--	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
-+	np = of_find_compatible_node(NULL, NULL, node);
- 	if (!np)
--		goto out;
-+		return 0;
-+	base = of_iomap(np, 0);
-+	WARN_ON(!base);
-+
-+	magic = readl_relaxed(base + offset);
-+	iounmap(base);
-+	of_node_put(np);
-+
-+	return magic;
-+}
- 
--	ocotp_base = of_iomap(np, 0);
--	WARN_ON(!ocotp_base);
-+static u32 __init imx8mq_soc_revision(void)
-+{
-+	u32 magic;
- 
--	magic = readl_relaxed(ocotp_base + IMX8MQ_SW_INFO_B1);
-+	/* B1 revision identified by ocotop */
-+	magic = imx8mq_soc_magic_node("fsl,imx8mq-ocotp", IMX8MQ_SW_INFO_B1);
- 	if (magic == IMX8MQ_SW_MAGIC_B1)
--		rev = REV_B1;
-+		return REV_B1;
- 
--	iounmap(ocotp_base);
-+	/* B0 identified by bootrom */
-+	magic = imx8mq_soc_magic_node("fsl,imx8mq-bootrom", IMX8MQ_SW_INFO_B0);
-+	if ((magic & 0xff) == REV_B0)
-+		return REV_B0;
- 
--out:
--	of_node_put(np);
--	return rev;
-+	/* A0 identified by anatop */
-+	magic = imx8mq_soc_magic_node("fsl,imx8mq-anatop", IMX8MQ_SW_INFO_A0);
-+	if ((magic & 0xff) == REV_A0)
-+		return REV_A0;
-+
-+	/* Read revision from ATF as fallback */
-+	magic = imx8mq_soc_revision_atf();
-+	if (magic != 0xff)
-+		return magic;
-+
-+	return 0;
- }
- 
- static const struct imx8_soc_data imx8mq_soc_data = {
--- 
-2.20.1
+And thinking more about it, perhaps 2) is actually a better option? With
+this we could try smaller decay periods than the LB interval (which is
+most likely useless otherwise) and make sure the capacity considered
+during wake-up is up-to-date. This should be a good thing for latency
+sensitive tasks I think. (If you consider a task in the Android display
+pipeline for example, it needs to run within 16ms or the frame is
+missed. So, on wake-up, we'd like to know where the task can run fast
+_now_, not according to the capacities the CPUs had 200ms ago or so).
+
+Thoughts ?
+Quentin
