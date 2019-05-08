@@ -2,65 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A265F17BB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 070EF17ACE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfEHOjW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 10:39:22 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:56274
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726687AbfEHOjV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:39:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 20CC9B51BC6;
-        Wed,  8 May 2019 13:37:47 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id XZdTNeY5uuec; Wed,  8 May 2019 13:37:46 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 729D9B5087D;
-        Wed,  8 May 2019 13:37:46 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f1Qges6CcibE; Wed,  8 May 2019 13:37:46 +0000 (UTC)
-Received: from [100.67.244.148] (unknown [223.237.198.47])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 9C331B501D7;
-        Wed,  8 May 2019 13:37:38 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727521AbfEHNiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 09:38:23 -0400
+Received: from foss.arm.com ([217.140.101.70]:34668 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbfEHNiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 09:38:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27A5280D;
+        Wed,  8 May 2019 06:38:23 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0FD83F5AF;
+        Wed,  8 May 2019 06:38:21 -0700 (PDT)
+Date:   Wed, 8 May 2019 14:38:18 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 4/7] sched: Add sched_load_rq tracepoint
+Message-ID: <20190508133818.hvgc537fpnlnefwe@e107158-lin.cambridge.arm.com>
+References: <20190505115732.9844-1-qais.yousef@arm.com>
+ <20190505115732.9844-5-qais.yousef@arm.com>
+ <20190506090859.GK2606@hirez.programming.kicks-ass.net>
+ <20190506091823.GF2650@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Aviso_de_seguran=C3=A7a?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador da Web <exportaciones@minpal.gob.ve>
-Date:   Wed, 08 May 2019 19:07:29 +0530
-Message-Id: <20190508133738.9C331B501D7@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190506091823.GF2650@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de segurança:
+On 05/06/19 11:18, Peter Zijlstra wrote:
+> On Mon, May 06, 2019 at 11:08:59AM +0200, Peter Zijlstra wrote:
+> > Also; I _really_ hate how fat they are. Why can't we do simple straight
+> > forward things like:
+> > 
+> > 	trace_pelt_cfq(cfq);
+> > 	trace_pelt_rq(rq);
+> > 	trace_pelt_se(se);
+> > 
+> > And then have the thing attached to the event do the fat bits like
+> > extract the path and whatnot.
+> 
+> ARGH, because we don't export any of those data structures (for good
+> reason).. bah I hate all this.
 
-Esta mensagem é do nosso Centro de administração para todos os usuários da nossa conta de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
+I am not a big fan either..
 
-Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
+FWIW struct sched_entity and struct sched_avg are exported but only used in
+kernel/sched/*. Are the reasons behind not exporting struct cfs_rq and struct
+rq are really different to the other 2?
 
-Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
+Anyways. I have v2 almost ready but thought I'd ask before posting if we want
+to handle this in a different way.
 
-Clique no link http://accountsecureadmin.xtgem.com/index se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
+Thanks
 
-Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
-Claro que você vai gostar da nova e melhorada interface de webmail.
-
-Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
-
-Obrigado por usar nossos serviços
-
-==============================================
-
-Sinceramente Web Admin.
-E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
-Número de registo 9697083H) ID do cliente 068806M Todos os direitos reservados.
+--
+Qais Yousef
