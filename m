@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC28178A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB7DB178AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfEHLqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:46:15 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46134 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbfEHLqO (ORCPT
+        id S1728247AbfEHLqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:46:39 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40031 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbfEHLqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:46:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r7so26752339wrr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:46:13 -0700 (PDT)
+        Wed, 8 May 2019 07:46:36 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h4so7529893wre.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:46:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=JMXRWT/F4hp5WfrQGRhzI2YLNPd4nX+eBcUO3CBizws=;
-        b=Ezjf3jfdQWt8+1oRjIl4JHtShWCjon4HaXtoPv6Q4hNQ3C9AYRYsISbe45hvnNGK4D
-         IpQ8TzgeTJW8y2uF820mzyoewxCakvkiC0aiQa6YXUlZWI4l/YNPujRMIH1fS2ezveq5
-         gipjHBqcB7fbPOf61V+fdWG72epbFItzz8D6aQazvQieVRNrOGxtDE08vMRgXP+30dcj
-         2qLGIJkrHiJSQ5mcj9N12O8BESc0QMIvYA9EHApOALMkRwIvjmXi/p6ZVarTlrDVmjvF
-         AZ9sEqNvBClVOIRuLRdfCM0Uu3ml0OFgMMjRu/4x06T7h/+f0KOZJzbD4WGqqRhpd5/g
-         p7/w==
+        bh=lK+3d8MZJN2On8NKOvom0NUSbRl8X6Lpwh3/QgozcSY=;
+        b=y0v+w5FIAHTdurnw1cu21WfiHPivffquh0+KrSW6le6nkERrm9NKmrnahP31aohamW
+         neHYaTTGIIkmExwmWa+gD3umpWWkchdDSiQy6jOovdx05tUeolkyyQeTVkoR0FNkZ0hH
+         PmsZenZyFUPQmT+DXEK/Flf9HkeSOUOKEoGkbmzVU0dlDgCUJ8w8dO9ZzwOeAHJV3lXM
+         g8siYiM9erVdB3N0YSEWiyQRV2g0kCgOyLkCkVY12E9Eh+1YfGJQuKUDI7J+isUY7rwW
+         PXapOmShKa6kW6agO8zYODBXVUpVAz+pOjy6T5HNDQ7oY9UitqRg6lVidYZULsged7R3
+         YQbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=JMXRWT/F4hp5WfrQGRhzI2YLNPd4nX+eBcUO3CBizws=;
-        b=ioDs5/MuqEY4EHNPXbwwcaOwelPd5Ct5Z6GDZtsjJwZO+2bHVxnjQX62p0ju2veMRk
-         w+PHKtXtVeDjcNhksADsz9kd31i9hk+4N/JCGY8LxBGDsECRUbWNQ+tGYRlXIhLgcZaP
-         eet2KffQ2XR/y6teqmCAUrmoYVAU5yjJdzqrw/1nDTiX1ObkqSudFdHD0iuRuw3yxDI1
-         5HFZyGMa8YKA5I1kVWxbTUt1MEEdUKOEuHs0WB+OGPcvktU687uRR7Uq5YJXoTpptwkQ
-         ElyG9yghYtsr+tGy6cQVndNCnPUkxNTkZQzM7DGjy+2MxHKWcFp17MY8Sx8b25lST1v0
-         hTcg==
-X-Gm-Message-State: APjAAAXF6Vzh6HoePYzAb8jTVjBdSltlW9ozDrLQZJsLKW5kttz/zL69
-        aCtNWqEuseLijg4soiyG23p5nQ==
-X-Google-Smtp-Source: APXvYqyXTmLI4JXav9TDocJWmcd5fIHJYqnB6gupx9rImn0d0mLlJ8TiDiXRuOldMiuSCLR8SkGzIA==
-X-Received: by 2002:adf:a202:: with SMTP id p2mr27045648wra.166.1557315973156;
-        Wed, 08 May 2019 04:46:13 -0700 (PDT)
+        bh=lK+3d8MZJN2On8NKOvom0NUSbRl8X6Lpwh3/QgozcSY=;
+        b=LLDR6g87gaI2tOOa7uFtUmEwT1O8YNvz4Rz/KOsJbNrPKf5OBA5qPy03Y2CuaaO5rK
+         Wp3DFXuzDZIL9uum4fJSm1roaGukbaEEuCFPCvWaVouen1vEoP1rLDoPUxWfIIP8d389
+         OO8fPjhFC2zenmxWXDHJukqAuS6hKBV7Sn65nD+fwEOn/afJDgmmzQOcjj0q3CNc33m8
+         FiuSICT+8/Sh7z3W3Iyd5aM0ycMebqNC4t480geip5R5MRH9JMiWzmTPl+ft6sYiqh59
+         SkyLVYJjkfQ0UIvoLZjzVeNuwe5VBUzVMiBTb3q6cp22kuypNj/BIzp003i1e5IyJ2k8
+         SnHw==
+X-Gm-Message-State: APjAAAX/fJixwSLjCNt75NXaKTBpkrpKSjwfkt6VwpBeQw1XAeyMjmLv
+        mZYq51Y/F8aMYUBdwz+RcGYXkQ==
+X-Google-Smtp-Source: APXvYqxKVFGte1Ew/V9TgW7FVFiVCw5/xNDNFvhTQ0pVkzuMo+L/aM3TAKIf67yeB5PnQmk8Wjjc0w==
+X-Received: by 2002:adf:fa03:: with SMTP id m3mr4846442wrr.323.1557315995272;
+        Wed, 08 May 2019 04:46:35 -0700 (PDT)
 Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id b10sm28889467wrh.59.2019.05.08.04.46.12
+        by smtp.gmail.com with ESMTPSA id a125sm3450734wmc.47.2019.05.08.04.46.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 04:46:12 -0700 (PDT)
-Date:   Wed, 8 May 2019 12:46:11 +0100
+        Wed, 08 May 2019 04:46:34 -0700 (PDT)
+Date:   Wed, 8 May 2019 12:46:33 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -60,16 +60,16 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] dt-bindings: mfd: max77620: Add compatible for
- Maxim 77663
-Message-ID: <20190508114611.GH31645@dell>
+Subject: Re: [PATCH v4 2/6] dt-bindings: mfd: max77620: Add
+ system-power-controller property
+Message-ID: <20190508114633.GI31645@dell>
 References: <20190505154325.30026-1-digetx@gmail.com>
- <20190505154325.30026-2-digetx@gmail.com>
+ <20190505154325.30026-3-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190505154325.30026-2-digetx@gmail.com>
+In-Reply-To: <20190505154325.30026-3-digetx@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,11 +78,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, 05 May 2019, Dmitry Osipenko wrote:
 
-> Maxim 77663 has a few minor differences in regards to hardware interface
-> and available capabilities by comparing it with 77620 and 20024 models,
-> hence re-use 77620 device-tree binding for the 77663.
+> Document new generic property that designates the PMIC as the system's
+> power controller.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
 For my own reference:
