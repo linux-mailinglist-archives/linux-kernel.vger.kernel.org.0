@@ -2,249 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 340D517913
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10B117904
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 14:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfEHMIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 08:08:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62605 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfEHMIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 08:08:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 05:08:37 -0700
-X-ExtLoop1: 1
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
-  by fmsmga004.fm.intel.com with ESMTP; 08 May 2019 05:08:32 -0700
-Date:   Wed, 8 May 2019 08:02:55 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eskultet@redhat.com" <eskultet@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        "dinechin@redhat.com" <dinechin@redhat.com>
-Subject: Re: [PATCH v2 2/2] drm/i915/gvt: export mdev device version to sysfs
- for Intel vGPU
-Message-ID: <20190508120255.GC24397@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20190506014514.3555-1-yan.y.zhao@intel.com>
- <20190506015102.3691-1-yan.y.zhao@intel.com>
- <20190507112753.2699d0b5.cohuck@redhat.com>
+        id S1728396AbfEHMEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 08:04:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53426 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfEHMEk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 08:04:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=a4N5d3+J61zEDzUpaHhBlkj2KG/wlTG6nB4CxBf7TaY=; b=BbdHQHOTPB6xFc6bCqoYQED5j
+        rtNPCDjTaX0yyk9wuTFPSvTjzz7MMpdmMzq3d8bucAspIGuxMNBAdR2jDrhFMA8WA60yVWSh5u2yE
+        AG8B9ucMoe14oAsSs+AJk6Ptc4vE+m6lbnRUagcxJQuyP3j1Qu9o8SacF4syS6//WvKXvYXtcBUpS
+        Nz3aSiiohUvJCvFQO+4FeGUO+9rEANKIiMPfTvQIWFgskSAb+sgUgoqeIz34t+zHZV2NfdaXfcEhv
+        swkGxNjqsYLb0rnlrl9PVGyxIUj88H5MkGMBGMQ6Vz8ExQA/X0xVsYPoHh4553aEcV9CxZikaaX5r
+        8E5SZGohw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOLJ4-0004TC-BS; Wed, 08 May 2019 12:04:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D0BE92029F882; Wed,  8 May 2019 14:04:16 +0200 (CEST)
+Date:   Wed, 8 May 2019 14:04:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 2/4] x86/kprobes: Fix frame pointer annotations
+Message-ID: <20190508120416.GL2589@hirez.programming.kicks-ass.net>
+References: <20190508074901.982470324@infradead.org>
+ <20190508080612.721269814@infradead.org>
+ <20190508115416.nblx7c2kocidpytm@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507112753.2699d0b5.cohuck@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190508115416.nblx7c2kocidpytm@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 05:27:53PM +0800, Cornelia Huck wrote:
-> On Sun,  5 May 2019 21:51:02 -0400
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > This feature implements the version attribute for Intel's vGPU mdev
-> > devices.
+On Wed, May 08, 2019 at 06:54:16AM -0500, Josh Poimboeuf wrote:
+> On Wed, May 08, 2019 at 09:49:03AM +0200, Peter Zijlstra wrote:
+> > The kprobe trampolines have a FRAME_POINTER annotation that makes no
+> > sense. It marks the frame in the middle of pt_regs, at the place of
+> > saving BP.
 > > 
-> > version attribute is rw.
-> > It's used to check device compatibility for two mdev devices.
-> > version string format and length are private for vendor driver. vendor
-> > driver is able to define them freely.
+> > Change it to mark the pt_regs frame as per the ENCODE_FRAME_POINTER
+> > from the respective entry_*.S.
 > > 
-> > For Intel vGPU of gen8 and gen9, the mdev device version
-> > consists of 3 fields: "vendor id" + "device id" + "mdev type".
-> > 
-> > Reading from a vGPU's version attribute, a string is returned in below
-> > format: <vendor id>-<device id>-<mdev type>. e.g.
-> > 8086-193b-i915-GVTg_V5_2.
-> > 
-> > Writing a string to a vGPU's version attribute will trigger GVT to check
-> > whether a vGPU identified by the written string is compatible with
-> > current vGPU owning this version attribute. errno is returned if the two
-> > vGPUs are incompatible. The length of written string is returned in
-> > compatible case.
-> > 
-> > For other platforms, and for GVT not supporting vGPU live migration
-> > feature, errnos are returned when read/write of mdev devices' version
-> > attributes.
-> > 
-> > For old GVT versions where no version attributes exposed in sysfs, it is
-> > regarded as not supporting vGPU live migration.
-> > 
-> > For future platforms, besides the current 2 fields in vendor proprietary
-> > part, more fields may be added to identify Intel vGPU well for live
-> > migration purpose.
-> > 
-> > v2:
-> > 1. removed 32 common part of version string
-> > (Alex Williamson)
-> > 2. do not register version attribute for GVT not supporting live
-> > migration.(Cornelia Huck)
-> > 3. for platforms out of gen8, gen9, return -EINVAL --> -ENODEV for
-> > incompatible. (Cornelia Huck)
-> 
-> Should go below '---'.
->
-got it. will change it in next revision.
-
-> > 
-> > Cc: Alex Williamson <alex.williamson@redhat.com>
-> > Cc: Erik Skultety <eskultet@redhat.com>
-> > Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-> > Cc: Cornelia Huck <cohuck@redhat.com>
-> > Cc: "Tian, Kevin" <kevin.tian@intel.com>
-> > Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-> > Cc: "Wang, Zhi A" <zhi.a.wang@intel.com>
-> > c: Neo Jia <cjia@nvidia.com>
-> > Cc: Kirti Wankhede <kwankhede@nvidia.com>
-> > 
-> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > > ---
-> >  drivers/gpu/drm/i915/gvt/Makefile         |  2 +-
-> >  drivers/gpu/drm/i915/gvt/device_version.c | 87 +++++++++++++++++++++++
-> >  drivers/gpu/drm/i915/gvt/gvt.c            | 51 +++++++++++++
-> >  drivers/gpu/drm/i915/gvt/gvt.h            |  6 ++
-> >  4 files changed, 145 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/gpu/drm/i915/gvt/device_version.c
+> >  arch/x86/kernel/kprobes/common.h |   32 +++++++++++++++++++++++---------
+> >  1 file changed, 23 insertions(+), 9 deletions(-)
 > > 
+> > --- a/arch/x86/kernel/kprobes/common.h
+> > +++ b/arch/x86/kernel/kprobes/common.h
+> > @@ -6,14 +6,15 @@
+> >  
+> >  #include <asm/asm.h>
+> >  
+> > +#ifdef CONFIG_X86_64
+> > +
+> >  #ifdef CONFIG_FRAME_POINTER
+> > -# define SAVE_RBP_STRING "	push %" _ASM_BP "\n" \
+> > -			 "	mov  %" _ASM_SP ", %" _ASM_BP "\n"
+> > +#define ENCODE_FRAME_POINTER			\
+> > +	"	leaq 1(%rsp), %rbp\n"
+> >  #else
+> > -# define SAVE_RBP_STRING "	push %" _ASM_BP "\n"
+> > +#define ENCODE_FRAME_POINTER
+> >  #endif
 > 
-> (...)
+> > +#ifdef CONFIG_FRAME_POINTER
+> > +#define ENCODE_FRAME_POINTER			\
+> > +	"	movl %esp, %ebp\n"		\
+> > +	"	andl $0x7fffffff, %ebp\n"
+> > +#else
+> > +#define ENCODE_FRAME_POINTER
+> > +#endif
 > 
-> > diff --git a/drivers/gpu/drm/i915/gvt/device_version.c b/drivers/gpu/drm/i915/gvt/device_version.c
-> > new file mode 100644
-> > index 000000000000..bd4cdcbdba95
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/i915/gvt/device_version.c
-> > @@ -0,0 +1,87 @@
-> > +/*
-> > + * Copyright(c) 2011-2017 Intel Corporation. All rights reserved.
-> > + *
-> > + * Permission is hereby granted, free of charge, to any person obtaining a
-> > + * copy of this software and associated documentation files (the "Software"),
-> > + * to deal in the Software without restriction, including without limitation
-> > + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> > + * and/or sell copies of the Software, and to permit persons to whom the
-> > + * Software is furnished to do so, subject to the following conditions:
-> > + *
-> > + * The above copyright notice and this permission notice (including the next
-> > + * paragraph) shall be included in all copies or substantial portions of the
-> > + * Software.
-> > + *
-> > + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> > + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> > + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> > + * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> > + * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> > + * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> > + * SOFTWARE.
-> > + *
-> > + * Authors:
-> > + *    Yan Zhao <yan.y.zhao@intel.com>
-> > + */
-> > +#include <linux/vfio.h>
-> > +#include "i915_drv.h"
-> > +
-> > +static bool is_compatible(const char *self, const char *remote)
-> > +{
-> > +	if (strlen(remote) != strlen(self))
-> > +		return false;
-> > +
-> > +	return (strncmp(self, remote, strlen(self))) ? false : true;
-> > +}
-> > +
-> > +ssize_t intel_gvt_get_vfio_device_version_len(struct drm_i915_private *dev_priv)
-> > +{
-> > +	if (!IS_GEN(dev_priv, 8) && !IS_GEN(dev_priv, 9))
-> > +		return -ENODEV;
-> > +
-> > +	return PAGE_SIZE;
-> > +}
-> > +
-> > +ssize_t intel_gvt_get_vfio_device_version(struct drm_i915_private *dev_priv,
-> > +		char *buf, const char *mdev_type)
-> > +{
-> > +	int cnt = 0, ret = 0;
-> > +	const char *str = NULL;
-> > +
-> > +	/* currently only gen8 & gen9 are supported */
-> > +	if (!IS_GEN(dev_priv, 8) && !IS_GEN(dev_priv, 9))
-> > +		return -ENODEV;
-> > +
-> > +	/* vendor id + device id + mdev type */
-> > +	/* vendor id */
-> > +	cnt = snprintf(buf, 5, "%04x", PCI_VENDOR_ID_INTEL);
-> > +	buf += cnt;
-> > +	ret += cnt;
-> > +
-> > +	/* device id */
-> > +	cnt = snprintf(buf, 6, "-%04x", INTEL_DEVID(dev_priv));
-> > +	buf += cnt;
-> > +	ret += cnt;
-> > +
-> > +	/* mdev type */
-> > +	str = mdev_type;
-> > +	cnt = snprintf(buf, strlen(str) + 3, "-%s\n", mdev_type);
-> > +	buf += cnt;
-> > +	ret += cnt;
-> > +
-> > +	return ret;
-> 
-> I'm not familiar with this driver; but would it make sense to pre-build
-> the version on init? It does not look to me like the values could
-> change dynamically.
->
-yes. I intended to save some memory by not pre-building the version on init, as
-migration is a rare event. but as these version strings are not big, moving them
-to init is also good. I'll do it in next revision.
-thanks:)
+> We should put these macros in a header file somewhere (including
+> stringified versions).
 
+Probably a good idea. I'll frob them into asm/frame.h.
 
-> > +}
-> > +
-> > +ssize_t intel_gvt_check_vfio_device_version(struct drm_i915_private *dev_priv,
-> > +		const char *self, const char *remote)
-> > +{
-> > +
-> > +	/* currently only gen8 & gen9 are supported */
-> > +	if (!IS_GEN(dev_priv, 8) && !IS_GEN(dev_priv, 9))
-> > +		return -ENODEV;
-> > +
-> > +	if (!is_compatible(self, remote))
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Return values look reasonable to me. I'll leave discussions regarding
-> where the attribute should go to folks familiar with this driver.
-ok. thanks :)
+Do the x86_64 variants also want some ORC annotation?
