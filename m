@@ -2,168 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 142E01724E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F7B17253
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 09:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfEHHKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 03:10:02 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35078 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfEHHKB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 03:10:01 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t87so9440409pfa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 00:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=T+Y5n/1kItNj/Wraq5boFXyk+YaoMnIUa2Kq93ASx4s=;
-        b=nTPUhnxIkq/ys1Q49IT3TTaqpxV6Cy7X1FsCVQlkwaeTTKRhvWAC9V0+F5CtlUWZrV
-         wkt08Nw8tYk8tyqU+Ool3Phi3VT9gZHbwFrLMwp9bjJ1xGq7h9oVOCn3u+uZvEFYjKSO
-         KE8IsIetL2rxKjq+7BoprqKAgh+L7jWzUUIqL/zPLXUbr/f+Oi6ytBX/okSMtc7fQDSQ
-         e9I9DT/mvIIZTcXpIjJ0zoSNxo5K+xL6/vFa2DbQoWGcxAb9ABY2iM9FmHCjPlQkF3/E
-         4TIa6NZgbm9Hrs7TlVchQ2MvP4UXrgYJf85a3F+tDuljGBSQKLugnki36H77jQjwVEdC
-         17Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=T+Y5n/1kItNj/Wraq5boFXyk+YaoMnIUa2Kq93ASx4s=;
-        b=m53pgv/ihSTJEHWaZ/PZrNOeEX9Ulw9NX1kskEDtSoZHMoBQNU+y9lXE8eV2CEkQt+
-         /tLmPAuNxE4wOqKza3jztTM2t2uRcdYNepzWUDGxGFbsn4DrybezWuQmCfLagtJ580Hj
-         plwj9i5C40mQVEKwtEI0LOpjWjXyynUQcJziCJShhi+TaSpDokLit4VIgpKwi7nmvVbz
-         9wn+xQ/0VuVCcGFPJTEBARQzpdent+Ny/UJpRpmkWXlaKdGKd2aGHcMbFZs47630+giK
-         2YKUag24CMidCh68iAnMQNWWAlbQhEEA9hakILnqISzEuEkfh/JrD5dYfmTCtibyk6vU
-         Zi7g==
-X-Gm-Message-State: APjAAAUsxW0zN52sHawggczRd2XyfNHnq8ZgwKs6qxOR7jnWfGMi4iLM
-        HHBRIAeEHgbguta7HlKJWsyOHOhGlmw=
-X-Google-Smtp-Source: APXvYqxk2m3K74J6O/mVHUf27bwYFe69Rho+Z44IcRmVS8rlYpfrnTYd8NvSok89A0IYfAwdG2vUAg==
-X-Received: by 2002:a65:628b:: with SMTP id f11mr43263248pgv.95.1557299400795;
-        Wed, 08 May 2019 00:10:00 -0700 (PDT)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id w12sm9228247pfj.41.2019.05.08.00.09.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 00:09:59 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <9EA5FF19-6602-46AC-AD1A-A2E5B7209040@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_1BA7894E-B92C-4A98-910C-D0E24D6557DD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] ext4: fix use-after-free in dx_release()
-Date:   Wed, 8 May 2019 01:09:47 -0600
-In-Reply-To: <1557295997-13377-1-git-send-email-stummala@codeaurora.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Sahitya Tummala <stummala@codeaurora.org>
-References: <1557295997-13377-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: Apple Mail (2.3273)
+        id S1726879AbfEHHKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 03:10:20 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7732 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725884AbfEHHKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 03:10:20 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 410D641BD71046C7F0A4;
+        Wed,  8 May 2019 15:10:18 +0800 (CST)
+Received: from [127.0.0.1] (10.177.219.49) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 May 2019
+ 15:10:08 +0800
+Subject: Re: [PATCH] hugetlbfs: always use address space in inode for resv_map
+ pointer
+To:     Mike Kravetz <mike.kravetz@oracle.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <stable@vger.kernel.org>, <yuyufen@huawei.com>
+References: <20190416065058.GB11561@dhcp22.suse.cz>
+ <20190419204435.16984-1-mike.kravetz@oracle.com>
+From:   yuyufen <yuyufen@huawei.com>
+Message-ID: <fafe9985-7db1-b65c-523d-875ab4b3b3b8@huawei.com>
+Date:   Wed, 8 May 2019 15:10:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190419204435.16984-1-mike.kravetz@oracle.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.177.219.49]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Apple-Mail=_1BA7894E-B92C-4A98-910C-D0E24D6557DD
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
 
-On May 8, 2019, at 12:13 AM, Sahitya Tummala <stummala@codeaurora.org> =
-wrote:
->=20
-> The buffer_head (frames[0].bh) and it's corresping page can be
-> potentially free'd once brelse() is done inside the for loop
-> but before the for loop exits in dx_release(). It can be free'd
-> in another context, when the page cache is flushed via
-> drop_caches_sysctl_handler(). This results into below data abort
-> when accessing info->indirect_levels in dx_release().
->=20
-> Unable to handle kernel paging request at virtual address =
-ffffffc17ac3e01e
-> Call trace:
-> dx_release+0x70/0x90
-> ext4_htree_fill_tree+0x2d4/0x300
-> ext4_readdir+0x244/0x6f8
-> iterate_dir+0xbc/0x160
-> SyS_getdents64+0x94/0x174
->=20
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-
-The patch looks reasonable, but there is a danger that it may be
-"optimized" back to the pre-patch form again.  It probably makes
-sense to include a comment like:
-
-	/* save local copy, "info" may be freed after brelse() */
-
-Looks fine otherwise.
-
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-
+On 2019/4/20 4:44, Mike Kravetz wrote:
+> Continuing discussion about commit 58b6e5e8f1ad ("hugetlbfs: fix memory
+> leak for resv_map") brought up the issue that inode->i_mapping may not
+> point to the address space embedded within the inode at inode eviction
+> time.  The hugetlbfs truncate routine handles this by explicitly using
+> inode->i_data.  However, code cleaning up the resv_map will still use
+> the address space pointed to by inode->i_mapping.  Luckily, private_data
+> is NULL for address spaces in all such cases today but, there is no
+> guarantee this will continue.
+>
+> Change all hugetlbfs code getting a resv_map pointer to explicitly get
+> it from the address space embedded within the inode.  In addition, add
+> more comments in the code to indicate why this is being done.
+>
+> Reported-by: Yufen Yu <yuyufen@huawei.com>
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 > ---
-> fs/ext4/namei.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 4181c9c..7e6c298 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -871,12 +871,14 @@ static void dx_release(struct dx_frame *frames)
-> {
-> 	struct dx_root_info *info;
-> 	int i;
-> +	unsigned int indirect_levels;
->=20
-> 	if (frames[0].bh =3D=3D NULL)
-> 		return;
->=20
-> 	info =3D &((struct dx_root *)frames[0].bh->b_data)->info;
-> -	for (i =3D 0; i <=3D info->indirect_levels; i++) {
-> +	indirect_levels =3D info->indirect_levels;
-> +	for (i =3D 0; i <=3D indirect_levels; i++) {
-> 		if (frames[i].bh =3D=3D NULL)
-> 			break;
-> 		brelse(frames[i].bh);
-> --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation =
-Center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a =
-Linux Foundation Collaborative Project.
->=20
+>   fs/hugetlbfs/inode.c | 11 +++++++++--
+>   mm/hugetlb.c         | 19 ++++++++++++++++++-
+>   2 files changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 9285dd4f4b1c..cbc649cd1722 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -499,8 +499,15 @@ static void hugetlbfs_evict_inode(struct inode *inode)
+>   	struct resv_map *resv_map;
+>   
+>   	remove_inode_hugepages(inode, 0, LLONG_MAX);
+> -	resv_map = (struct resv_map *)inode->i_mapping->private_data;
+> -	/* root inode doesn't have the resv_map, so we should check it */
+> +
+> +	/*
+> +	 * Get the resv_map from the address space embedded in the inode.
+> +	 * This is the address space which points to any resv_map allocated
+> +	 * at inode creation time.  If this is a device special inode,
+> +	 * i_mapping may not point to the original address space.
+> +	 */
+> +	resv_map = (struct resv_map *)(&inode->i_data)->private_data;
+> +	/* Only regular and link inodes have associated reserve maps */
+>   	if (resv_map)
+>   		resv_map_release(&resv_map->refs);
+>   	clear_inode(inode);
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 6cdc7b2d9100..b30e97b0ef37 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -740,7 +740,15 @@ void resv_map_release(struct kref *ref)
+>   
+>   static inline struct resv_map *inode_resv_map(struct inode *inode)
+>   {
+> -	return inode->i_mapping->private_data;
+> +	/*
+> +	 * At inode evict time, i_mapping may not point to the original
+> +	 * address space within the inode.  This original address space
+> +	 * contains the pointer to the resv_map.  So, always use the
+> +	 * address space embedded within the inode.
+> +	 * The VERY common case is inode->mapping == &inode->i_data but,
+> +	 * this may not be true for device special inodes.
+> +	 */
+> +	return (struct resv_map *)(&inode->i_data)->private_data;
+>   }
+>   
+>   static struct resv_map *vma_resv_map(struct vm_area_struct *vma)
+> @@ -4477,6 +4485,11 @@ int hugetlb_reserve_pages(struct inode *inode,
+>   	 * called to make the mapping read-write. Assume !vma is a shm mapping
+>   	 */
+>   	if (!vma || vma->vm_flags & VM_MAYSHARE) {
+> +		/*
+> +		 * resv_map can not be NULL as hugetlb_reserve_pages is only
+> +		 * called for inodes for which resv_maps were created (see
+> +		 * hugetlbfs_get_inode).
+> +		 */
+>   		resv_map = inode_resv_map(inode);
+>   
+>   		chg = region_chg(resv_map, from, to);
+> @@ -4568,6 +4581,10 @@ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
+>   	struct hugepage_subpool *spool = subpool_inode(inode);
+>   	long gbl_reserve;
+>   
+> +	/*
+> +	 * Since this routine can be called in the evict inode path for all
+> +	 * hugetlbfs inodes, resv_map could be NULL.
+> +	 */
+>   	if (resv_map) {
+>   		chg = region_del(resv_map, start, end);
+>   		/*
+
+Dose this patch have been applied?
+
+I think it is better to add fixes label, like:
+Fixes: 58b6e5e8f1ad ("hugetlbfs: fix memory leak for resv_map")
+
+Since the commit 58b6e5e8f1a has been merged to stable, this patch also 
+be needed.
+https://www.spinics.net/lists/stable/msg298740.html
 
 
-Cheers, Andreas
 
 
 
-
-
-
---Apple-Mail=_1BA7894E-B92C-4A98-910C-D0E24D6557DD
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlzSgLwACgkQcqXauRfM
-H+BqDw/+OW1zyHI2woUUl4G4qodJ05Tws6F67FakYSQrsTt0Nq23FxQh/jH1N6Ge
-3SP71KoSaVQrc+9sG9NJXhKY+ev1suTmGKdB214pyuVwyX8KlwDwzdR8LVbQH5PP
-CKDiK9RfbwoF1lcjltH+h+BpW6Qb/dwafAzBHkPJI+S8n+1PjYNjMeRonGh/OO8s
-5hXgumoc0+HIE4Rl9+A430HqYdZodZTPpzZBWBh+tXuiyxlOc8wRyxrs/2egp3vq
-18NFZ/Zj9SDwbUfYfZVP/81/p5KDIbrBg6BqDXmuS6Yx40nOfQtX0BnHWBEFiGQN
-eH+naiEt/cu1z0ASNJmQlX3D1TTOFCR1M8p+IYwh2uS3EBmDAjKG7ayAokmh/wjH
-HmjG5vr5QmeUXwB/GFmdqlBNoht6vb/i7DnsgCEYKXKOvkYy7a+gS5VubhWqBHsy
-omxlmH74xGZHGOe1WR/+ut16jCLWbY+NJSgTBidBWasOLbosWgMYe7PgGPHAxP03
-rEgBvusfEvuD3R7FbUAKAQZn76QHroNFb0kN6yD/OAQ0rXFqcOX586UmVbh1/8oZ
-svzQpqfJqBEsngbPxjnqD6TaDEYRbY5RgiPAWhkCzvpj+F9rUgdmsMtN+6keFptt
-lCcRmrTi8WaKZfz+8ih2vQB2ZBr0LoQhHiVgglIAac4sRmv+qo0=
-=EYlx
------END PGP SIGNATURE-----
-
---Apple-Mail=_1BA7894E-B92C-4A98-910C-D0E24D6557DD--
