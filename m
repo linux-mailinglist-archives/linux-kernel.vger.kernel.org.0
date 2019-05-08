@@ -2,75 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE1618062
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95EAC18073
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfEHTT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:19:59 -0400
-Received: from mga11.intel.com ([192.55.52.93]:27842 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfEHTT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:19:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 12:19:58 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 08 May 2019 12:19:57 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     Raj Ashok <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH] iommu/vt-d: Fix bind svm with multiple devices
-Date:   Wed,  8 May 2019 12:22:46 -0700
-Message-Id: <1557343366-18686-1-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727269AbfEHTa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:30:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51620 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbfEHTa0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 15:30:26 -0400
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hOSGm-0003S7-1g
+        for linux-kernel@vger.kernel.org; Wed, 08 May 2019 19:30:24 +0000
+Received: by mail-pg1-f200.google.com with SMTP id a8so13259369pgq.22
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 12:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=cCKA80aIyIzqzmA17kQSPJ30eCGEekyYUlZQPpyEa+Q=;
+        b=eClFBmvUP+qP7zyRm+ioUFzdN6BSzhtxcXK4OWCdYhd/WmUUsYJYMUkNaELvA91rtP
+         Ofw64WKeGQWJGDlTi8+soOO/CshFhGTzcoKcGjExJOAlZ4feit8auOlsDqXxmnc29d8G
+         R31HrwFYzEJ2RTm+Rs50XTnwbRedQL3kWQLFN7w7RQIBVYWFrYJUz2aTPubdKYDhMD2m
+         S6IFUmFJTEEKnHVlPYVB2DpxFnmhUJ7FGFnJCiHQy6xAkvwiM9h15uradDSMyasdQhJt
+         NxNA817TP0sbxczwjlnPvfz8SdxPKF1b9l8RM/py1rTQGjVynGjnWSscEbtnBlvJ9T0X
+         Um/g==
+X-Gm-Message-State: APjAAAXP/KnwGFO00dlzWBGdU76BviIVC/LM3ftIeKiWO/AahrbJyaqr
+        41Wtfbhh12cRtT9RXGr02py2pRnZOLCdQDtAt5IR/DS3cPSazBjnVcEwyabTUywWKzo3yx/exrN
+        VANchxHrh9qvtYL206kcPpo3p2lzosim2euJjwTGJpw==
+X-Received: by 2002:a17:902:b092:: with SMTP id p18mr32652963plr.323.1557343822779;
+        Wed, 08 May 2019 12:30:22 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyg7+aZTDLDPgmVT2n/95vy67ghG5QewkjADQCz3WUrlQ4lRrhvdNgQh3JMNa+O6N4fax2lkw==
+X-Received: by 2002:a17:902:b092:: with SMTP id p18mr32652935plr.323.1557343822519;
+        Wed, 08 May 2019 12:30:22 -0700 (PDT)
+Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id o71sm29925608pfi.174.2019.05.08.12.30.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2019 12:30:21 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190508191624.GA8365@localhost.localdomain>
+Date:   Thu, 9 May 2019 03:30:18 +0800
+Cc:     Keith Busch <keith.busch@intel.com>, axboe@fb.com, hch@lst.de,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
+References: <20190508185955.11406-1-kai.heng.feng@canonical.com>
+ <20190508191624.GA8365@localhost.localdomain>
+To:     Keith Busch <kbusch@kernel.org>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If multiple devices try to bind to the same mm/PASID, we need to
-set up first level PASID entries for all the devices. The current
-code does not consider this case which results in failed DMA for
-devices after the first bind.
+at 03:16, Keith Busch <kbusch@kernel.org> wrote:
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reported-by: Mike Campin <mike.campin@intel.com>
----
- drivers/iommu/intel-svm.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> On Thu, May 09, 2019 at 02:59:55AM +0800, Kai-Heng Feng wrote:
+>> +static int nvme_do_resume_from_idle(struct pci_dev *pdev)
+>> +{
+>> +	struct nvme_dev *ndev = pci_get_drvdata(pdev);
+>> +	int result;
+>> +
+>> +	pdev->dev_flags &= ~PCI_DEV_FLAGS_NO_D3;
+>> +	ndev->ctrl.suspend_to_idle = false;
+>> +
+>> +	result = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
+>> +	if (result < 0)
+>> +		goto out;
+>> +
+>> +	result = nvme_pci_configure_admin_queue(ndev);
+>> +	if (result)
+>> +		goto out;
+>> +
+>> +	result = nvme_alloc_admin_tags(ndev);
+>> +	if (result)
+>> +		goto out;
+>> +
+>> +	ndev->ctrl.max_hw_sectors = NVME_MAX_KB_SZ << 1;
+>> +	ndev->ctrl.max_segments = NVME_MAX_SEGS;
+>> +	mutex_unlock(&ndev->shutdown_lock);
+>
+> This lock was never locked.
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 3a4b09a..f3d59d1 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -357,6 +357,21 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		}
- 
- 		list_add_tail(&svm->list, &global_svm_list);
-+	} else {
-+		/*
-+		 * Binding a new device with existing PASID, need to setup
-+		 * the PASID entry.
-+		 */
-+		spin_lock(&iommu->lock);
-+		ret = intel_pasid_setup_first_level(iommu, dev,
-+						mm ? mm->pgd : init_mm.pgd,
-+						svm->pasid, FLPT_DEFAULT_DID,
-+						mm ? 0 : PASID_FLAG_SUPERVISOR_MODE);
-+		spin_unlock(&iommu->lock);
-+		if (ret) {
-+			kfree(sdev);
-+			goto out;
-+		}
- 	}
- 	list_add_rcu(&sdev->list, &svm->devs);
- 
--- 
-2.7.4
+Yea, will fix this.
 
+>
+> But I think these special suspend/resume routines are too similar to the
+> existing ones, they should just incorporate this feature if we need to
+> do this.
+
+That’s my original direction, but this requires a new bool to  
+nvme_dev_disable(), so it becomes
+static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown, bool  
+suspend_to_idle)
+
+And it starts to get messy.
+
+Kai-Heng
