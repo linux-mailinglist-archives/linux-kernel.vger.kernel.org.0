@@ -2,80 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE6E17FBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 20:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B6C017FCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 20:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfEHSUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 14:20:05 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45000 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfEHSUF (ORCPT
+        id S1728248AbfEHS0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 14:26:47 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42108 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbfEHS0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 14:20:05 -0400
-Received: by mail-lf1-f65.google.com with SMTP id n134so13414021lfn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 11:20:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j1WmOHHPEdJ3yi2p5J+Oh8mr/EtgaDeprnRifRsdYb8=;
-        b=oy7PTsrGWxgx4kbV0MYFtgfgxmTytAoHH7E1+r/ZLaAnp73jKA+ExWmgHyQcnGvZ+8
-         aZf0ZReKWnTZoN6ettL98+v3Bl4zG4B5BHQnbVzfwtGip97b0bXQEY7gG+SLsUvvnArA
-         glPMTIBT9k1FZ8AHue8U2u8RfkhUOtSFJk+yO/IaZdtU2RD+sJPfMuFv+0dbVp6F0/b0
-         sFIS/Lj0X1pjDeppEo/1H3ryYslYR/sL7LIpv5HulSUQeXtJh60e6rBU9Ehgj4HpeXUh
-         8LvFcCZZD/Rtjuo0AK57FwTf1AlpJToHW58kyAsW98/o/nslJz/b7S677ZIz3NdBT1Xs
-         1eZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j1WmOHHPEdJ3yi2p5J+Oh8mr/EtgaDeprnRifRsdYb8=;
-        b=B/WD1kHbmxxgsNs3jLSLxDHIq5UXYjQRTXjVWGmubUsUOHW2pf4FBQAbY26bkYRPeJ
-         l94FN3BYgG1pmM71v5IBwElpdVQlTmGWI2B8VbgWH7xIsZz/F6EhLSF69p9XCIAdLprF
-         PZ7AsyRRvMJM1OjqYhAq5ynep8aip2yJ52e8nW9itOPu8t7i73Cr0UDlIEhfevWKK1WP
-         g6546b+5XNRuWfS7xLoG0g/cNIFz68rjvODcvWva80XoPe/7S6Z8+lP7Y6731noXV+5t
-         3t9NkELQLweqjYPp7idYVWK20jddaai06Ftr9V7vwN+WJEj0y0++CNVxiHrygkNMZ7DP
-         Y/Dw==
-X-Gm-Message-State: APjAAAU2N7ZhOxL2Cl+y2Wgizq5Ja0sqXuvk5sMCJ8NJVh88pe3ZpEez
-        +8eEIzQ/fcG6Gs2XEV0HfeKPUyJIOytuynSq+Sg=
-X-Google-Smtp-Source: APXvYqx9K2KxbFhGltAks9qNDSNYnSv1emsQTgfF3DGp7bgkfI0HKSB7KVwYHgGTct0X8W2jL3Hq+HyEJoDsRaJbeG0=
-X-Received: by 2002:a19:6b03:: with SMTP id d3mr14380616lfa.137.1557339602914;
- Wed, 08 May 2019 11:20:02 -0700 (PDT)
+        Wed, 8 May 2019 14:26:46 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x48INgMl029049;
+        Wed, 8 May 2019 18:25:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=xsNUcAWdL76XvZcF2jqEaUnZP2wMaX+lRuNszc20Pno=;
+ b=ERC/n8eQ1DLhQ5Rmjjm7sLviBekPwac1KKFc3Xvuxy2TT94foN1otafHDVMiSxmmx5S5
+ yynxKM+rN5U5CXGEuWp5kT6xovwrifbrCJ2IdPi+NmspV/iDEX/A2tOflOuW+pcMBCPb
+ /PQyb4IU8Ky/MlUqGPc5a/WNpLZnDP+Y0wmUAE4kWRTdiropJjdnII8ijsXJB5AGWtpU
+ vWe/2/lYhIRrmHUs0wr8SRNX8msJOaQ/MbtSKqcQc56iOZ8TiuJKmIck1h1i+XloNS+y
+ VY1I7nXE6EXcSl3masce8IOEKtfO8se3ypmZr1K0o8+C/oPj/E3Ss5Q0UYGeaWqEogXQ iQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2s94bg60fa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 May 2019 18:25:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x48INH8k132122;
+        Wed, 8 May 2019 18:23:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2s94ba9s0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 May 2019 18:23:47 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x48INfSr002295;
+        Wed, 8 May 2019 18:23:41 GMT
+Received: from [10.132.91.213] (/10.132.91.213)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 May 2019 11:23:41 -0700
+Subject: Re: [RFC PATCH v2 11/17] sched: Basic tracking of matching tasks
+To:     Aubrey Li <aubrey.intel@gmail.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1556025155.git.vpillai@digitalocean.com>
+ <2364f2b65bf50826d881c84d7634b6565dfee527.1556025155.git.vpillai@digitalocean.com>
+ <20190429061516.GA9796@aaronlu>
+ <6dfc392f-e24b-e641-2f7d-f336a90415fa@linux.intel.com>
+ <777b7674-4811-dac4-17df-29bd028d6b26@linux.intel.com>
+ <CAERHkrvU0nay-cG9equdOBejOZ5Ffdxo+67ZRp9q0L9BQkcAtQ@mail.gmail.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <eb9abb34-d946-c63c-750b-8f52ed842670@oracle.com>
+Date:   Wed, 8 May 2019 11:19:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190508174356.13952-1-borneo.antonio@gmail.com> <e9cccc6630eb2fd273e7aa47a635717041b92d05.camel@perches.com>
-In-Reply-To: <e9cccc6630eb2fd273e7aa47a635717041b92d05.camel@perches.com>
-From:   Antonio Borneo <borneo.antonio@gmail.com>
-Date:   Wed, 8 May 2019 20:19:41 +0200
-Message-ID: <CAAj6DX2=KYJb1_CmyDFra5gpufb2KHU8mT4Nd1UMTHhYs9N1zw@mail.gmail.com>
-Subject: Re: [PATCH v2] checkpatch: add command-line option for TAB size
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAERHkrvU0nay-cG9equdOBejOZ5Ffdxo+67ZRp9q0L9BQkcAtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905080112
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905080112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 7:56 PM Joe Perches <joe@perches.com> wrote:
->
-> On Wed, 2019-05-08 at 19:43 +0200, Antonio Borneo wrote:
-> > The size of 8 characters used for both TAB and indentation is
-> > embedded as magic value allover the checkpatch script, and this
-> > makes the script less readable.
->
-> I doubt this bit of the commit message is proper.
->
-> Tabs _are_ 8 in the linux-kernel sources and checkpatch
-> was written for the linux-kernel.
->
-> Using a variable _could_ reasonably be described as an
-> improvement, but readability wasn't and isn't really an
-> issue here.
 
-Well, it depends on own skill with regular expressions in perl :-)
+On 5/8/19 8:49 AM, Aubrey Li wrote:
+>> Pawan ran an experiment setting up 2 VMs, with one VM doing a parallel kernel build and one VM doing sysbench,
+>> limiting both VMs to run on 16 cpu threads (8 physical cores), with 8 vcpu for each VM.
+>> Making the fix did improve kernel build time by 7%.
+> I'm gonna agree with the patch below, but just wonder if the testing
+> result is consistent,
+> as I didn't see any improvement in my testing environment.
+>
+> IIUC, from the code behavior, especially for 2 VMs case(only 2
+> different cookies), the
+> per-rq rb tree unlikely has nodes with different cookies, that is, all
+> the nodes on this
+> tree should have the same cookie, so:
+> - if the parameter cookie is equal to the rb tree cookie, we meet a
+> match and go the
+> third branch
+> - else, no matter we go left or right, we can't find a match, and
+> we'll return idle thread
+> finally.
+>
+> Please correct me if I was wrong.
+>
+> Thanks,
+> -Aubrey
+This is searching in the per core rb tree (rq->core_tree) which can have
+2 different cookies. But having said that, even I didn't see any
+improvement with the patch for my DB test case. But logically it is
+correct.
 
-I will change the commit message focusing on the new command line flag
-and drop this part.
-
-Thanks
-Antonio
