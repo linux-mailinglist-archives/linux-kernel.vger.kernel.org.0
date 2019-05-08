@@ -2,153 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED8617C24
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B591C93B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:12:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfEHOsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 10:48:31 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:39246 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbfEHOs3 (ORCPT
+        id S1726151AbfENNMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:12:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34852 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfENNMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:48:29 -0400
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x48EmGpG024668;
-        Wed, 8 May 2019 23:48:17 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x48EmGpG024668
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557326897;
-        bh=bvhIzKTBk7J7G5vBUDLEluKtD7GGfNPxDgXcxobOlIc=;
-        h=From:Date:Subject:To:Cc:From;
-        b=z43jXtqkgteM1xlmOkJyxm2un0WT+AhcpqisbhN5b06nPNrbJYTWQ0yNDMn6MHx0C
-         dgPaCvJT+c/X3uIqK6gCF87MDimnk9PcrbjpXK/s/ft7vsfRlRQNXBi7/3+9niHh6I
-         5JE2Z3fbMpiaO5cvkCXMmpBdiV7iYVcmv1DcRWfzxOxbB63qyVJ6lUYaSP4JWTgrpq
-         dXc/wUFUeGVz8z/+MfoI0OtVOR9klA9aGYJvj0lWe0DEUy6YOlJ/mMj6iBi1vRMjip
-         pT1yjqD9d0mcqH/EQv//cS8ZI1zYXDL82Zjp/4cjnKkm+8KBl/OOsfv070icifoTrI
-         yrb1NCEhjnIOw==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id f9so7474935ual.1;
-        Wed, 08 May 2019 07:48:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAU3WnZ7zn3NWV/6Ge3+ffnaLT3m1M3dBA/GdsvgVWJTnSLs/SiP
-        d5B7//Gnnu/fXmW/BPciI2FpcpHjgEHwjwtyClg=
-X-Google-Smtp-Source: APXvYqwUWCY6aKZnPtjSqhmvmAfR0yJMJ4bo5LR32qxpRyorxFmfisaUBe+2YkB18BzWwcd+ce0Re28cAa3bTUtMM8w=
-X-Received: by 2002:ab0:1309:: with SMTP id g9mr20917504uae.40.1557326895915;
- Wed, 08 May 2019 07:48:15 -0700 (PDT)
+        Tue, 14 May 2019 09:12:32 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g5so8262144plt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8j4bTePHKvxQHvdCNJpe7zeTS2p9aPCumSJI0+OPUho=;
+        b=QFJ7Uj5YexuFf6uISaOzUn230iNrGfeGlc5p43zd5sz3KohEp5mu1AieK2+nd3A4Ul
+         eQMY2Z8dEI6SO527Hx3lpfx+qG6PFsMPpD8t0XJPiyUJoIEBsXU5wI/dI8+2+w1/Bl+0
+         F7ItnZYkgweTYUPkCBIpXzOWiI6lbAftb+paqcWaapzMQYXvfTvEEGXQMmjkEZM7EvfU
+         JDy5Nb6VX3ws3gAv+5glr4Pzo4FaSnwIq6LIsjLjUDxFyWz8vLdxOval9hI5sS5ZRJpl
+         bt6XDed0yt9H9K/f2WX8NStrCnX2jieuEGxGp4X4QmG0/5+qsHIdzOxikX00+d+q7typ
+         qEwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8j4bTePHKvxQHvdCNJpe7zeTS2p9aPCumSJI0+OPUho=;
+        b=drD7mRFXr3o9B8FNuUs95yK58fQaSjX7v6pSbAqDrRELb1ssTD04yfxdoPaEHrH1cq
+         CJhyAK8JiAqgCIAHcNHOduL3J93bWj8dIyP1Kgf9+MLuesandT8sDQIBqbWL97QjQmfy
+         hVjFZE4VhCPtjdZlw3aou4D8XWlLcQ47fZk4bQtMDKJXJKv4v150Gy7NU5Np3gn6f1pQ
+         ryCPDF39wo638+wPoNIm2BcN5ugHRDeFxE4yDL5UH0eZSHde3GUH1+S85s5J+yVFbvWZ
+         MvtjnXJlbHeYzRwuKKHIwnmnzR2CZePLfdfXQpCpVlC6a4PnEBcx53j+stJ5+KCNGQfo
+         OV0w==
+X-Gm-Message-State: APjAAAUb8Diz10MyjF3tMXnbFv9AiQP5K6qhxVDVQ4gdjSPEpSSiQUmW
+        8AwpAm9vjSyMx4Cvl1Wo82zVXA==
+X-Google-Smtp-Source: APXvYqxqgfcYr8ueqlj/ULqC7UHBgssWO16AHhzumldec5lumpiBNFn6b6GYsRNopPkPY29HgGR5nw==
+X-Received: by 2002:a17:902:84:: with SMTP id a4mr37940501pla.210.1557839552080;
+        Tue, 14 May 2019 06:12:32 -0700 (PDT)
+Received: from box.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id 5sm2405005pfh.109.2019.05.14.06.12.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 06:12:30 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id F2F551007C1; Wed,  8 May 2019 17:47:39 +0300 (+03)
+Date:   Wed, 8 May 2019 17:47:39 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        keescook@chromium.org
+Subject: Re: [PATCH v4] x86/mm/KASLR: Fix the size of vmemmap section
+Message-ID: <20190508144739.we4owbvjmjisium5@box>
+References: <20190508080417.15074-1-bhe@redhat.com>
+ <20190508082418.GC24922@MiWiFi-R3L-srv>
+ <20190508090424.GA19015@zn.tnic>
+ <20190508093520.GD24922@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 8 May 2019 23:47:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARG6if48VWsFTYmKstm+2jPSbrZRimVbD2W4a4AmBqmOA@mail.gmail.com>
-Message-ID: <CAK7LNARG6if48VWsFTYmKstm+2jPSbrZRimVbD2W4a4AmBqmOA@mail.gmail.com>
-Subject: [GIT PULL] Kbuild updates for v5.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     masahiroy@kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508093520.GD24922@MiWiFi-R3L-srv>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, May 08, 2019 at 05:35:20PM +0800, Baoquan He wrote:
+> On 05/08/19 at 11:04am, Borislav Petkov wrote:
+> > On Wed, May 08, 2019 at 04:24:18PM +0800, Baoquan He wrote:
+> > > I think this's worth noticing stable tree:
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > 
+> > Fixes: ?
+> 
+> Not sure which commit validated 5-level.
+> 
+> Hi Kirill,
+> 
+> Is this commit OK?
+> 
+> Fiexes: eedb92abb9bb ("x86/mm: Make virtual memory layout dynamic for CONFIG_X86_5LEVEL=y")
 
-Please pull Kbuild updates for v5.2
-
-Thanks.
-
-
-
-The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
-
-  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v5.2
-
-for you to fetch changes up to 7fb1fc420f3b1cb27cce5aa1050eb5d9161d0944:
-
-  .gitignore: add more all*.config patterns (2019-05-08 09:47:46 +0900)
-
-----------------------------------------------------------------
-Kbuild updates for v5.2
-
-- allow users to invoke 'make' out of the source tree
-
-- refactor scripts/mkmakefile
-
-- deprecate KBUILD_SRC, which was used to track the source tree
-  location for O= build.
-
-- fix recordmcount.pl in case objdump output is localized
-
-- turn unresolved symbols in external modules to errors from warnings
-  by default; pass KBUILD_MODPOST_WARN=1 to get them back to warnings
-
-- generate modules.builtin.modinfo to collect .modinfo data from
-  built-in modules
-
-- misc Makefile cleanups
-
-----------------------------------------------------------------
-Alexey Gladkov (1):
-      moduleparam: Save information about built-in modules in separate file
-
-Daniel Dadap (1):
-      scripts: override locale from environment when running recordmcount.pl
-
-Masahiro Yamada (18):
-      kbuild: move RETPOLINE flags below config-targets
-      kbuild: fix warning "overriding recipe for target 'Makefile'"
-      kbuild: pass $(MAKECMDGOALS) to sub-make as is
-      kbuild: allow Kbuild to start from any directory
-      kbuild: mkmakefile: do not check the generated Makefile marker
-      kbuild: mkmakefile: generate a simple wrapper of top Makefile
-      kbuild: use $(srctree) instead of KBUILD_SRC to check out-of-tree build
-      memory: squash drivers/memory/Makefile.asm-offsets
-      kbuild: remove unneeded dependency for include/config/kernel.release
-      kbuild: check arch/$(SRCARCH)/include/generated before out-of-tree build
-      kbuild: move samples/ to KBUILD_VMLINUX_OBJS
-      kbuild: move Documentation to vmlinux-alldirs
-      samples: seccomp: turn CONFIG_SAMPLE_SECCOMP into a bool option
-      samples: kobject: allow CONFIG_SAMPLE_KOBJECT to become y
-      scripts/tags.sh: fix direct execution of scripts/tags.sh
-      .gitignore: add leading and trailing slashes to generated directories
-      Remove MODULE_ALIAS() calls that take undefined macro
-      .gitignore: add more all*.config patterns
-
-Wiebe, Wladislav (Nokia - DE/Ulm) (1):
-      modpost: make KBUILD_MODPOST_WARN also configurable for external modules
-
- .gitignore                          |  16 ++-
- Documentation/dontdiff              |   1 +
- Documentation/kbuild/kbuild.txt     |   5 +
- Makefile                            | 146 +++++++++++++++-------------
- arch/arm/plat-omap/dma.c            |   1 -
- drivers/clocksource/timer-ti-dm.c   |   1 -
- drivers/memory/Makefile             |   7 +-
- drivers/memory/Makefile.asm-offsets |   4 -
- drivers/mfd/omap-usb-tll.c          |   1 -
- include/asm-generic/vmlinux.lds.h   |   1 +
- include/linux/module.h              |   1 +
- include/linux/moduleparam.h         |  12 +--
- samples/Kconfig                     |   7 +-
- samples/Makefile                    |   2 +-
- samples/seccomp/Makefile            |   2 +-
- scripts/Makefile.build              |   2 +-
- scripts/Makefile.host               |   2 +-
- scripts/Makefile.lib                |   2 +-
- scripts/Makefile.modbuiltin         |   2 +-
- scripts/Makefile.modpost            |   2 +-
- scripts/gdb/linux/Makefile          |   2 +-
- scripts/link-vmlinux.sh             |   3 +
- scripts/mkmakefile                  |  26 +----
- scripts/recordmcount.pl             |   2 +-
- scripts/tags.sh                     |   2 +-
- 25 files changed, 128 insertions(+), 124 deletions(-)
- delete mode 100644 drivers/memory/Makefile.asm-offsets
+Yep.
 
 -- 
-Best Regards
-Masahiro Yamada
+ Kirill A. Shutemov
