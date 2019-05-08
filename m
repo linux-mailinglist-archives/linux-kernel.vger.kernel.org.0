@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CF117ECD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D01817EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfEHRDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:03:04 -0400
+        id S1728989AbfEHRDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:03:05 -0400
 Received: from mga17.intel.com ([192.55.52.151]:26495 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728925AbfEHRDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728927AbfEHRDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 May 2019 13:03:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,7 +17,7 @@ Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,446,1549958400"; 
-   d="scan'208";a="169697559"
+   d="scan'208";a="169697563"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.171])
   by fmsmga002.fm.intel.com with ESMTP; 08 May 2019 10:03:02 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -27,11 +27,10 @@ To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v7 04/18] kbuild: Raise the minimum required binutils version to 2.21
-Date:   Wed,  8 May 2019 03:02:19 -0700
-Message-Id: <1557309753-24073-5-git-send-email-chang.seok.bae@intel.com>
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 05/18] x86/fsgsbase/64: Add intrinsics for FSGSBASE instructions
+Date:   Wed,  8 May 2019 03:02:20 -0700
+Message-Id: <1557309753-24073-6-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
 References: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
@@ -40,45 +39,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It helps to use some new instructions directly in assembly code.
+From: Andi Kleen <ak@linux.intel.com>
 
-Suggested-by: Andi Kleen <ak@linux.intel.com>
+Add C intrinsics and assembler macros for the new FSBASE and GSBASE
+instructions.
+
+Very straight forward. Used in followon patches.
+
+[ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
+  make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linux Torvalds <torvalds@linux-foundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
 ---
- Documentation/process/changes.rst | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/fsgsbase.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 18735dc..0a18075 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -31,7 +31,7 @@ you probably needn't concern yourself with isdn4k-utils.
- ====================== ===============  ========================================
- GNU C                  4.6              gcc --version
- GNU make               3.81             make --version
--binutils               2.20             ld -v
-+binutils               2.21             ld -v
- flex                   2.5.35           flex --version
- bison                  2.0              bison --version
- util-linux             2.10o            fdformat --version
-@@ -77,9 +77,7 @@ You will need GNU make 3.81 or later to build the kernel.
- Binutils
- --------
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index bca4c74..fdd1177 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -19,6 +19,36 @@ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+ extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+ extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
  
--The build system has, as of 4.13, switched to using thin archives (`ar T`)
--rather than incremental linking (`ld -r`) for built-in.a intermediate steps.
--This requires binutils 2.20 or newer.
-+Binutils 2.21 or newer is needed to build the kernel.
++/* Must be protected by X86_FEATURE_FSGSBASE check. */
++
++static __always_inline unsigned long rdfsbase(void)
++{
++	unsigned long fsbase;
++
++	asm volatile("rdfsbase %0" : "=r" (fsbase) :: "memory");
++
++	return fsbase;
++}
++
++static __always_inline unsigned long rdgsbase(void)
++{
++	unsigned long gsbase;
++
++	asm volatile("rdgsbase %0" : "=r" (gsbase) :: "memory");
++
++	return gsbase;
++}
++
++static __always_inline void wrfsbase(unsigned long fsbase)
++{
++	asm volatile("wrfsbase %0" :: "r" (fsbase) : "memory");
++}
++
++static __always_inline void wrgsbase(unsigned long gsbase)
++{
++	asm volatile("wrgsbase %0" :: "r" (gsbase) : "memory");
++}
++
+ /* Helper functions for reading/writing FS/GS base */
  
- pkg-config
- ----------
+ static inline unsigned long x86_fsbase_read_cpu(void)
 -- 
 2.7.4
 
