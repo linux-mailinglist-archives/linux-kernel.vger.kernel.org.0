@@ -2,102 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A98E417373
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4DA17377
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:17:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfEHIQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:16:45 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37862 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfEHIQp (ORCPT
+        id S1727041AbfEHIRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:17:19 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44902 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfEHIRS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:16:45 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a12so15840086wrn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:16:43 -0700 (PDT)
+        Wed, 8 May 2019 04:17:18 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b8so21210104edm.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:17:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GAXYVm9NcX/2LS+PAeOz79lHGPmC519ptueWLbeJo8k=;
-        b=oXeyXO6C0pw6WvX5xZqKPgGsXKCY0G9zfoXSWEV79JmfIgrUqcvThF3c1YIifzZWLG
-         kx1W7KwZYeRCMKXKrM0K09z2V3abI581w9sZsEWhfIe14Bn9LTQT+MbvqpYNctqZQQ8n
-         mlTc+hcrWbSh7g5ECWlxDYTcM2tbaELh7qwtazUS4EW+WxxyVL65gaLOVogQ+75hxVtp
-         jQql/ObUJjEsKllPLxEwhc6R+s41C43RWWcjxDKsu6x8zZJd1pVmbddxfNCPF0/wbSyG
-         dSYgZyROGY5LAcxiJLbpVoF5AHTWJiBXzrcdlr5NUki/Et8NFNKpSW9opSp1vcUWp1sO
-         hlPQ==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0N5lnGAYpVl8jLu0POCScTDd8sfYN5q61LdKD5JAjDs=;
+        b=DAkTcLdGYhnJCVY4IkNJ0G0i4EJT46OzMiH5ZTn93wJXF5Z7EK0zgt6AHjy9PIzOKy
+         3vJ+SHx2b75l1gsUddKs3lBS4ZUpZnQSqaQzW6e2X0yEPYCQP9Bpu40CQPzoUVktN4Cw
+         4OtivpDrUpwc7KBYTgtxIEG9Vl59FRTONKQwE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GAXYVm9NcX/2LS+PAeOz79lHGPmC519ptueWLbeJo8k=;
-        b=Xgj9xm4JEB7La0p6B4knLDeOC7PzziOOI7cVxTynj/GjDuty5r+RKcpMPa2xvnuhLu
-         v3Lwntfd7HwweZ4J441jvP/o/G4JrUFfVYO+N/IHRes/bchEbvUvut36QKbNRfC/TfTx
-         FKxSo6Zcl7UHHcYerANVHrm82GzLSllHTOIm1c/zY5ztzQgAKYJZtMRs+NbQ+XY0zMqB
-         uZZzfeRTpqSEBiwUrEDVVN4IUFYK2FPdlucvH2rBWarlpwkZtigwTihM5wSWycbom1v/
-         qqdX0RJH3cSyvn42OrwGy5FVxpBuwgXme3OB7Uwt4SQ2YxTUur6eKOLWuIRzI1soIIcm
-         2SDA==
-X-Gm-Message-State: APjAAAWN6oYYZYzzzTXFZwcxr3sf4DFtiPr9FkGttFC4rSfaOUnfim/w
-        FZc1CQy0k3jzsc/QqtaxVTHVeQ==
-X-Google-Smtp-Source: APXvYqyG1HAsV02i0U4ENltrjiHr5I37VaEzMpOv2ZB+S/cXkDHWabqASHuRwZ0rv35Yf2my3nSLlw==
-X-Received: by 2002:a5d:4f88:: with SMTP id d8mr10862408wru.34.1557303403211;
-        Wed, 08 May 2019 01:16:43 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id m17sm3556067wmi.27.2019.05.08.01.16.42
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=0N5lnGAYpVl8jLu0POCScTDd8sfYN5q61LdKD5JAjDs=;
+        b=jKGrUK0yrpqTqU+e22hXkUtU5PDLxYlc8cNLsWAMAtumABO4AJFagWnpeajTFHzTru
+         PAKeWa5cOiCdqHH0yBdjjxmti7/hprsnAxbylJlpPmqXW2Slhfe2E/d6iggwYbc2VnS1
+         MyXUBSdxQgzUa1fyyhKxKqSbg05glON9sT6vX909l13KjZ3RavhEJTAruGc8m82e93Jf
+         ufEUd0ovqdY1n+KlA/7X1NHrp1fHLKPPUeSZStxAl5C266bL90fzcwE4GB82sNI8fPyK
+         cTXwaPUDrqQLXED/e6gHa1wcyL0mr88TbTj8ZdXID0cFJN6qi4wkPZEuY5uzUp7sfg30
+         LAqQ==
+X-Gm-Message-State: APjAAAWSnqAhGVw8drgQwbbz0uz2Q7Wg1uspNr3kUArqBsA1Sebmbabu
+        a2DoLRJN13FzgyDpIB0xILpzYQ==
+X-Google-Smtp-Source: APXvYqz+mpxWshuU26UyHoB8ox7W8kTtZXnf6nLdtTuCZczDanWJ43OpBb+lAoPhFsj1Wz2jvfNgDw==
+X-Received: by 2002:a17:906:4bda:: with SMTP id x26mr28323747ejv.176.1557303436362;
+        Wed, 08 May 2019 01:17:16 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id q33sm4932194eda.71.2019.05.08.01.17.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 01:16:42 -0700 (PDT)
-Date:   Wed, 8 May 2019 09:16:40 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Wenlin Kang <wenlin.kang@windriver.com>
-Cc:     jason.wessel@windriver.com, prarit@redhat.com,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: Fix bound check compiler warning
-Message-ID: <20190508081640.tvtnazr4tf5jijh7@holly.lan>
-References: <1557280359-202637-1-git-send-email-wenlin.kang@windriver.com>
+        Wed, 08 May 2019 01:17:15 -0700 (PDT)
+Date:   Wed, 8 May 2019 10:17:12 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH] RFC: console: hack up console_lock more v2
+Message-ID: <20190508081712.GQ17751@phenom.ffwll.local>
+Mail-Followup-To: Petr Mladek <pmladek@suse.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org
+References: <20190502141643.21080-1-daniel.vetter@ffwll.ch>
+ <20190506074553.21464-1-daniel.vetter@ffwll.ch>
+ <20190506081614.b7b22k4prodskbiy@pathway.suse.cz>
+ <20190506082628.wehkislebljxmk5d@pathway.suse.cz>
+ <20190506093812.GG17751@phenom.ffwll.local>
+ <20190506112448.rng2oefmp2c262dq@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557280359-202637-1-git-send-email-wenlin.kang@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190506112448.rng2oefmp2c262dq@pathway.suse.cz>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 09:52:39AM +0800, Wenlin Kang wrote:
-> The strncpy() function may leave the destination string buffer
-> unterminated, better use strlcpy() instead.
+On Mon, May 06, 2019 at 01:24:48PM +0200, Petr Mladek wrote:
+> On Mon 2019-05-06 11:38:13, Daniel Vetter wrote:
+> > On Mon, May 06, 2019 at 10:26:28AM +0200, Petr Mladek wrote:
+> > > On Mon 2019-05-06 10:16:14, Petr Mladek wrote:
+> > > > On Mon 2019-05-06 09:45:53, Daniel Vetter wrote:
+> > > > > console_trylock, called from within printk, can be called from pretty
+> > > > > much anywhere. Including try_to_wake_up. Note that this isn't common,
+> > > > > usually the box is in pretty bad shape at that point already. But it
+> > > > > really doesn't help when then lockdep jumps in and spams the logs,
+> > > > > potentially obscuring the real backtrace we're really interested in.
+> > > > > One case I've seen (slightly simplified backtrace):
+> > > > > 
+> > > > >  Call Trace:
+> > > > >   <IRQ>
+> > > > >   console_trylock+0xe/0x60
+> > > > >   vprintk_emit+0xf1/0x320
+> > > > >   printk+0x4d/0x69
+> > > > >   __warn_printk+0x46/0x90
+> > > > >   native_smp_send_reschedule+0x2f/0x40
+> > > > >   check_preempt_curr+0x81/0xa0
+> > > > >   ttwu_do_wakeup+0x14/0x220
+> > > > >   try_to_wake_up+0x218/0x5f0
+> > > > 
+> > > > try_to_wake_up() takes p->pi_lock. It could deadlock because it
+> > > > can get called recursively from printk_safe_up().
+> > > > 
+> > > > And there are more locks taken from try_to_wake_up(), for example,
+> > > > __task_rq_lock() taken from ttwu_remote().
+> > > > 
+> > > > IMHO, the most reliable solution would be do call the entire
+> > > > up_console_sem() from printk deferred context. We could assign
+> > > > few bytes for this context in the per-CPU printk_deferred
+> > > > variable.
+> > > 
+> > > Ah, I was too fast and did the same mistake. This won't help because
+> > > it would still call try_to_wake_up() recursively.
+> > 
+> > Uh :-/
+> > 
+> > > We need to call all printk's that can be called under locks
+> > > taken in try_to_wake_up() path in printk deferred context.
+> > > Unfortunately it is whack a mole approach.
+> > 
+> > Hm since it's whack-a-mole anyway, what about converting the WARN_ON into
+> > a prinkt_deferred, like all the other scheduler related code? Feels a
+> > notch more consistent to me than leaking the printk_context into areas it
+> > wasn't really meant built for. Scheduler code already fully subscribed to
+> > the whack-a-mole approach after all.
 > 
-> This fixes the following warning with gcc 8.2:
+> I am not sure how exactly you mean the conversion.
 > 
-> kernel/debug/kdb/kdb_io.c: In function 'kdb_getstr':
-> kernel/debug/kdb/kdb_io.c:449:3: warning: 'strncpy' specified bound 256 equals destination size [-Wstringop-truncation]
->    strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Anyway, we do not want to use printk_deferred() treewide. It reduces
+> the chance that the messages reach consoles. Scheduler is an
+> exception because of the possible deadlocks.
 > 
-> Signed-off-by: Wenlin Kang <wenlin.kang@windriver.com>
-> ---
->  kernel/debug/kdb/kdb_io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-> index 6a4b414..7fd4513 100644
-> --- a/kernel/debug/kdb/kdb_io.c
-> +++ b/kernel/debug/kdb/kdb_io.c
-> @@ -446,7 +446,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
->  char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
->  {
->  	if (prompt && kdb_prompt_str != prompt)
-> -		strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> +		strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+> A solution would be to define WARN_ON_DEFERRED() that would
+> call normal WARN_ON() in printk deferred context and
+> use in scheduler.
 
-Shouldn't that be strscpy?
+Sent it out, and then Sergey pointed out printk_safe_enter/exit (which I
+guess is what you meant, and which I missed), but we're doing this already
+around the up() call in __up_console_sem.
 
+So I think these further recursions you're pointed out are already handled
+correctly, and all we need to do is to break the loop involving
+semaphore.lock of the console_lock semaphore only. Which I think this
+patch here achieves.
 
-Daniel.
+Thoughts? Or are we again missing something here?
 
->  	kdb_printf(kdb_prompt_str);
->  	kdb_nextline = 1;	/* Prompt and input resets line number */
->  	return kdb_read(buffer, bufsize);
-> -- 
-> 1.9.1
-> 
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
