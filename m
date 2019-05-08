@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B09217465
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C7E91746B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfEHJBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:01:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44756 "EHLO
+        id S1726811AbfEHJBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 05:01:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45094 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfEHJBm (ORCPT
+        with ESMTP id S1726452AbfEHJBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:01:42 -0400
+        Wed, 8 May 2019 05:01:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=bwHhshSS/kbfWXI+gsQyuvdaNlF4NdaPvcOqb1oDAdo=; b=bsWwKanjClyz
-        3Q9U6F/VocjQtO/23y2c9tlFDgFhqXBiGnFtBEHU/dJYlV3dP1j2bgg8Bk6D6wCZnPj6Tf+kCXAQD
-        hoNGpgQF/9zNWx9PFWMKEkNNEKceL1N4jLyGKKvmd3v6dzjvnJVyeCMsn22Zwf9I5hCtLMUe58Z9k
-        N7pE8=;
+        List-Archive; bh=j0BVhUdSsVNZZmpI2QpfiLV2xfXPtZzCwrFt5yURFYU=; b=JWKWuMRHWILi
+        YdbjuGBH0MzGGR++caNDzWDv0M5Sf+mBkpcSJl3TobMeo91jjbvDPHvEpIF57VeJzgW9L+iF/Y6kk
+        fiYhbtUEU633ojVYx3CNClm3uWB2PmKPdZ7/kIJ0KLdqUoybRrhTcOa7mHjm/TPrGBwrWi4r5HDG1
+        a/DcY=;
 Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hOISA-0007dM-I7; Wed, 08 May 2019 09:01:31 +0000
+        id 1hOISD-0007dQ-0A; Wed, 08 May 2019 09:01:36 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 34D1C44000C; Wed,  8 May 2019 10:01:24 +0100 (BST)
+        id 495B0440017; Wed,  8 May 2019 10:01:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "sound: soc-acpi: fix implicit header use of module.h/export.h" to the asoc tree
-In-Reply-To: <1555168518-15287-1-git-send-email-paul.gortmaker@windriver.com>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
+        olivier.moysan@st.com, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: stm32: i2s: manage identification registers" to the asoc tree
+In-Reply-To: <1557147252-18679-3-git-send-email-olivier.moysan@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190508090124.34D1C44000C@finisterre.sirena.org.uk>
-Date:   Wed,  8 May 2019 10:01:24 +0100 (BST)
+Message-Id: <20190508090127.495B0440017@finisterre.sirena.org.uk>
+Date:   Wed,  8 May 2019 10:01:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   sound: soc-acpi: fix implicit header use of module.h/export.h
+   ASoC: stm32: i2s: manage identification registers
 
 has been applied to the asoc tree at
 
@@ -72,49 +75,135 @@ to this mail.
 Thanks,
 Mark
 
-From 473849e7f208b2d7de004c6c6c0eabe037d125ac Mon Sep 17 00:00:00 2001
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Sat, 13 Apr 2019 11:15:18 -0400
-Subject: [PATCH] sound: soc-acpi: fix implicit header use of module.h/export.h
+From 71ed4bddde08285cd02d6d28c861ea1815d67476 Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Mon, 6 May 2019 14:54:12 +0200
+Subject: [PATCH] ASoC: stm32: i2s: manage identification registers
 
-This file is implicitly relying on an instance of including
-module.h from <linux/acpi.h>.
+Add support of identification registers in STM32 I2S.
 
-Ideally, header files under include/linux shouldn't be adding
-includes of other headers, in anticipation of their consumers,
-but just the headers needed for the header itself to pass
-parsing with CPP.
-
-The module.h is particularly bad in this sense, as it itself does
-include a whole bunch of other headers, due to the complexity of
-module support.
-
-Here, we make the include explicit, in order to allow the future
-removal of module.h from linux/acpi.h without causing build breakage.
-
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-acpi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/stm/stm32_i2s.c | 60 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 57 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/soc-acpi.c b/sound/soc/soc-acpi.c
-index 4fb29f0e561e..444ce0602f76 100644
---- a/sound/soc/soc-acpi.c
-+++ b/sound/soc/soc-acpi.c
-@@ -4,6 +4,8 @@
- //
- // Copyright (c) 2013-15, Intel Corporation.
+diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
+index 97d5e9901a0e..9755c49ae7dc 100644
+--- a/sound/soc/stm/stm32_i2s.c
++++ b/sound/soc/stm/stm32_i2s.c
+@@ -16,6 +16,7 @@
+  * details.
+  */
  
-+#include <linux/export.h>
-+#include <linux/module.h>
- #include <sound/soc-acpi.h>
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+@@ -37,6 +38,10 @@
+ #define STM32_I2S_TXDR_REG	0X20
+ #define STM32_I2S_RXDR_REG	0x30
+ #define STM32_I2S_CGFR_REG	0X50
++#define STM32_I2S_HWCFGR_REG	0x3F0
++#define STM32_I2S_VERR_REG	0x3F4
++#define STM32_I2S_IPIDR_REG	0x3F8
++#define STM32_I2S_SIDR_REG	0x3FC
  
- struct snd_soc_acpi_mach *
+ /* Bit definition for SPI2S_CR1 register */
+ #define I2S_CR1_SPE		BIT(0)
+@@ -143,6 +148,23 @@
+ #define I2S_CGFR_ODD		BIT(I2S_CGFR_ODD_SHIFT)
+ #define I2S_CGFR_MCKOE		BIT(25)
+ 
++/* Registers below apply to I2S version 1.1 and more */
++
++/* Bit definition for SPI_HWCFGR register */
++#define I2S_HWCFGR_I2S_SUPPORT_MASK	GENMASK(15, 12)
++
++/* Bit definition for SPI_VERR register */
++#define I2S_VERR_MIN_MASK	GENMASK(3, 0)
++#define I2S_VERR_MAJ_MASK	GENMASK(7, 4)
++
++/* Bit definition for SPI_IPIDR register */
++#define I2S_IPIDR_ID_MASK	GENMASK(31, 0)
++
++/* Bit definition for SPI_SIDR register */
++#define I2S_SIDR_ID_MASK	GENMASK(31, 0)
++
++#define I2S_IPIDR_NUMBER	0x00130022
++
+ enum i2s_master_mode {
+ 	I2S_MS_NOT_SET,
+ 	I2S_MS_MASTER,
+@@ -280,6 +302,10 @@ static bool stm32_i2s_readable_reg(struct device *dev, unsigned int reg)
+ 	case STM32_I2S_SR_REG:
+ 	case STM32_I2S_RXDR_REG:
+ 	case STM32_I2S_CGFR_REG:
++	case STM32_I2S_HWCFGR_REG:
++	case STM32_I2S_VERR_REG:
++	case STM32_I2S_IPIDR_REG:
++	case STM32_I2S_SIDR_REG:
+ 		return true;
+ 	default:
+ 		return false;
+@@ -711,10 +737,11 @@ static const struct regmap_config stm32_h7_i2s_regmap_conf = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
+-	.max_register = STM32_I2S_CGFR_REG,
++	.max_register = STM32_I2S_SIDR_REG,
+ 	.readable_reg = stm32_i2s_readable_reg,
+ 	.volatile_reg = stm32_i2s_volatile_reg,
+ 	.writeable_reg = stm32_i2s_writeable_reg,
++	.num_reg_defaults_raw = STM32_I2S_SIDR_REG / sizeof(u32) + 1,
+ 	.fast_io = true,
+ 	.cache_type = REGCACHE_FLAT,
+ };
+@@ -864,6 +891,7 @@ static int stm32_i2s_parse_dt(struct platform_device *pdev,
+ static int stm32_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct stm32_i2s_data *i2s;
++	u32 val;
+ 	int ret;
+ 
+ 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
+@@ -902,8 +930,34 @@ static int stm32_i2s_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	/* Set SPI/I2S in i2s mode */
+-	return regmap_update_bits(i2s->regmap, STM32_I2S_CGFR_REG,
+-				  I2S_CGFR_I2SMOD, I2S_CGFR_I2SMOD);
++	ret = regmap_update_bits(i2s->regmap, STM32_I2S_CGFR_REG,
++				 I2S_CGFR_I2SMOD, I2S_CGFR_I2SMOD);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(i2s->regmap, STM32_I2S_IPIDR_REG, &val);
++	if (ret)
++		return ret;
++
++	if (val == I2S_IPIDR_NUMBER) {
++		ret = regmap_read(i2s->regmap, STM32_I2S_HWCFGR_REG, &val);
++		if (ret)
++			return ret;
++
++		if (!FIELD_GET(I2S_HWCFGR_I2S_SUPPORT_MASK, val)) {
++			dev_err(&pdev->dev,
++				"Device does not support i2s mode\n");
++			return -EPERM;
++		}
++
++		ret = regmap_read(i2s->regmap, STM32_I2S_VERR_REG, &val);
++
++		dev_dbg(&pdev->dev, "I2S version: %lu.%lu registered\n",
++			FIELD_GET(I2S_VERR_MAJ_MASK, val),
++			FIELD_GET(I2S_VERR_MIN_MASK, val));
++	}
++
++	return ret;
+ }
+ 
+ MODULE_DEVICE_TABLE(of, stm32_i2s_ids);
 -- 
 2.20.1
 
