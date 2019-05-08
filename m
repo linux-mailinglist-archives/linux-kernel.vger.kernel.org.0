@@ -2,70 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD5D181A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28A8181A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbfEHV23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 17:28:29 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33337 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfEHV23 (ORCPT
+        id S1728344AbfEHVcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 17:32:51 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38494 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726591AbfEHVcu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 17:28:29 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f23so210662ljc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 14:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=5eOh2wNscAxKX1ZFz1vtJIK1TE4QrIerh1ujw7Wntkk=;
-        b=kQCavvZgdmMHy1K4JCf4uB7omgrafkHduDul9mgFkbal8gKN5Qq5TsLI6BJlSe0UmK
-         AIw+TSENkpaZqhlNA8/NGs5aUAH3RvlSeIkai+mcwjUQECd7yNpbZxN1tdrzooyUqmRR
-         7laCXOsC0nOSmlqZb47nFKxjGVNQlg1NSBRXdi31xH1FOHhD5LHPptWkXaj+Cx/yDKfd
-         /Oq4DuiHrZDZAuTKOqKT8coiOr2nlkHEwKoG7X9b7ybICg48X/MOXTtfUQFdrCN8nCu4
-         2b5VOlQ2rz1ENM8ylHZx2Z+lermpApXOjFmFW+eP4I4SaQClLk58GM8YBGWUTCGJwx5z
-         bNwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=5eOh2wNscAxKX1ZFz1vtJIK1TE4QrIerh1ujw7Wntkk=;
-        b=B1NEGFZGr8D1VEQqJFJ7A4PEeYgUxcAa2S6Lw2PH80awYXHYXxX7bEeLZjmYTYCV1h
-         sAlBC8sppNEy5MSW+fqtDi+2nV5OnofvtKZl4spXveZL3TQTtsNVEes+kVREmBa0vheb
-         2WMAKJNZcKn7H5vxdtK/OPxfCRdsI/6rzSPPTVHX3lsdlsi2aI0dG669zIlbUT5oWPdW
-         BKStgcZq3sOUwdynVcIegiZzIZRjjIKMoQJyOmKcsZTpWzoLdWf6Ydt/q5ZlL3f45mST
-         ThBHStTYR5azDd4ru7fA/oA9odelqHHH0538xoKN/GZhPEcz5xBS+xfDA9dLevPy6gmG
-         kpIQ==
-X-Gm-Message-State: APjAAAWQx4wGfTzaDp4uPyyiUt7Z/kxqmr6ZGhfFWpEQUlEjTBc8WR+3
-        kuZdjDTYykt1PkkSjgcac0F1xDWHWBdrTVUcWbg=
-X-Google-Smtp-Source: APXvYqxzPXafsyba9RCzyU5BKbTOEGcBbtjd/1YZPIzc7geNeDU5zRL/sVZWm3QKNOFfu6X0cxSnoixeudgBkm3YJtY=
-X-Received: by 2002:a2e:9954:: with SMTP id r20mr44102ljj.24.1557350907213;
- Wed, 08 May 2019 14:28:27 -0700 (PDT)
+        Wed, 8 May 2019 17:32:50 -0400
+Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A95C3439EA1;
+        Thu,  9 May 2019 07:32:45 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hOUBA-0005CI-3q; Thu, 09 May 2019 07:32:44 +1000
+Date:   Thu, 9 May 2019 07:32:44 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-xfs@vger.kernel.org, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] fs,xfs: fix missed wakeup on l_flush_wait
+Message-ID: <20190508213244.GP29573@dread.disaster.area>
+References: <20190507130528.1d3d471b@imladris.surriel.com>
+ <20190507212213.GO29573@dread.disaster.area>
+ <3985b9feffe11dcdbb86fa8c2d9ffc4bd7ab8458.camel@surriel.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:9242:0:0:0:0:0 with HTTP; Wed, 8 May 2019 14:28:26 -0700 (PDT)
-Reply-To: lincobah14@gmail.com
-From:   Lincoln Bah <rahmanbashshar2015@gmail.com>
-Date:   Wed, 8 May 2019 22:28:26 +0100
-Message-ID: <CAKSbv7a1exdCxajK7qrZHXA37QJuwKfivuT7NjUtd1PYG0U1Yg@mail.gmail.com>
-Subject: =?UTF-8?B?VVJHwq1FTlQgVVBEwq1BVEVTLi4uLi4uLi4uLi4uLi4uLi4=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3985b9feffe11dcdbb86fa8c2d9ffc4bd7ab8458.camel@surriel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=SUDwL0deLe-cEYJYUesA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Wed, May 08, 2019 at 10:08:59AM -0400, Rik van Riel wrote:
+> On Wed, 2019-05-08 at 07:22 +1000, Dave Chinner wrote:
+> > On Tue, May 07, 2019 at 01:05:28PM -0400, Rik van Riel wrote:
+> > > The code in xlog_wait uses the spinlock to make adding the task to
+> > > the wait queue, and setting the task state to UNINTERRUPTIBLE
+> > > atomic
+> > > with respect to the waker.
+> > > 
+> > > Doing the wakeup after releasing the spinlock opens up the
+> > > following
+> > > race condition:
+> > > 
+> > > - add task to wait queue
+> > > 
+> > > -                                      wake up task
+> > > 
+> > > - set task state to UNINTERRUPTIBLE
+> > > 
+> > > Simply moving the spin_unlock to after the wake_up_all results
+> > > in the waker not being able to see a task on the waitqueue before
+> > > it has set its state to UNINTERRUPTIBLE.
+> > 
+> > Yup, seems like an issue. Good find, Rik.
+> > 
+> > So, what problem is this actually fixing? Was it noticed by
+> > inspection, or is it actually manifesting on production machines?
+> > If it is manifesting IRL, what are the symptoms (e.g. hang running
+> > out of log space?) and do you have a test case or any way to
+> > exercise it easily?
+> 
+> Chris spotted a hung kworker task, in UNINTERRUPTIBLE
+> state, but with an empty wait queue. This does not seem
+> like something that is easily reproducible.
 
-With due respect to your person and much sincerity of purpose.I wrote
-you two days ago expecting that you would reply as regards the urgency
-of this proposal that i passed to you.Anyway, I don't know if you did
-receive it or not that is the reason I am re-sending it.I have a
-business proposal which I will like to handle with you. $35 million
-USD is involves. But be rest assured that everything is legal and risk
-free as I have concluded all the arrangements and the legal papers
-that will back the transaction up. Kindly indicate your interest as to
-enable me tell you more detail of the proposal.
+Yeah, I just read that, not something we can trigger with a
+regression test :P
 
-Waiting for your urgent response.
-Yours Faithfully,
-Mr.Lincoln Bah
+> > And, FWIW, did you check all the other xlog_wait() users for the
+> > same problem?
+> 
+> I did not, but am looking now. The xlog_wait code itself
+> is fine, but it seems there are a few other wakers that
+> are doing the wakeup after releasing the lock.
+> 
+> It looks like xfs_log_force_umount() and the other wakeup 
+> in xlog_state_do_callback() suffer from the same issue.
+
+Hmmm, the first wakeup in xsdc is this one, right:
+
+	       /* wake up threads waiting in xfs_log_force() */
+	       wake_up_all(&iclog->ic_force_wait);
+
+At the end of the iclog iteration loop? That one is under the
+ic_loglock - the lock is dropped to run callbacks, then picked up
+again once the callbacks are done and before the ic_callback_lock is
+dropped (about 10 lines above the wakeup). So unless I'm missing
+something (like enough coffee!) that one look fine.
+
+.....
+
+> I am not sure about xfs_log_force_umount(). Could the unlock 
+> be moved to after the wake_up_all, or does that create lock
+> ordering issues with the xlog_grant_head_wake_all calls?
+> Could a simple lock + unlock of log->l_icloglock around the
+> wake_up_all do the trick, or is there some other state that
+> also needs to stay locked?
+
+Need to be careful which lock is used with which wait queue :)
+
+This one is waking the the xc_commit_wait queue (CIL push commit
+sequencing wait queue), which is protected by the
+log->l_cilp->xc_push_lock. That should nest jsut fine inside any
+locks we are holding at this point, so you should just be able to
+wrap it.  It's not a common code path, though, it'll only hit this
+code when the filesystem is already considered to be in an
+unrecoverable state.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
