@@ -2,106 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9CD617B96
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C98417B83
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfEHOft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 10:35:49 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44545 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727081AbfEHOft (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:35:49 -0400
-Received: by mail-qt1-f195.google.com with SMTP id f24so13013726qtk.11
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 07:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3CqV7qK/MYg0m3+i2Zpuf5DMfjvdX/UQG8imkRgo8G4=;
-        b=Y7IdqX5SwtfUZhMC8Omj7ZnkfOutLCTgi99GUmAKTzJeA+tn5upJO2YMtJb0gbCT1a
-         Ya/o8+LtVpEmBSX5gjKepenV9kfHwcVWfzyayXiH44+BpddsoK3sYXfePk/hMIYzczhG
-         +CvJaScO1luWaIia9bjHEy0+TBUkVdOsjNMYDGElJtShKGzwb27gOyMdwjb47LPkYyTm
-         8ZexTO4FrY/srB6LmYc/uaSkgX2RjwKflAdPOrQJTgF6fW3zPbgKGrhnily+9FjTR8Qk
-         MwwZAvQqflQk3f9w6dAdUGbRQNtW5lx9PmJ4K7tc7uXjedIVZlN3fHMs/juLzjmlEAco
-         j1Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3CqV7qK/MYg0m3+i2Zpuf5DMfjvdX/UQG8imkRgo8G4=;
-        b=NrQLgkfyOrl4fveTF7QZasHqLLxsmyOovnZ2rYbihpfAbacITCRS8Nm3OoszwsR4HN
-         2+l+yYl/TgSx0lHoq34t7bg5svXsBUB2sRD+4hGC/hWraPf+BtTXe9Ac4GgbpPs7wLDq
-         e7gq+foROF/olV1lc1joHXghMwDMjrf9hMI5B+/5F6aUXfbU1gwn4ys7Xa/CwEwnUWev
-         3nhnjyfA59GXGv5OVzuULwja65OAQ7yZPCMgfGDtGXTbNQQQGL+98iLrAOGifBfoaAXc
-         yS88wV41B/2Syuh5xa9H0WwD/OxtkFE9h9xmJKAord2oWgw1UYpzCcNgiYUw+QmhLB6d
-         XUfA==
-X-Gm-Message-State: APjAAAV6rYQ5nThU6Z5XILDxaO/Hb1O3x/lAyTqi4zc8Kj46H2O95f0a
-        UCocHlU5sgiLRnI/Bhm29C2YCw==
-X-Google-Smtp-Source: APXvYqwRXPijPs76WYJinxhIWtACNjsBn+EyW7O54bxbDoCzWVQhJluAtNSkYy2fL/8CdskcCrCziQ==
-X-Received: by 2002:ad4:51c2:: with SMTP id p2mr14418052qvq.64.1557326148469;
-        Wed, 08 May 2019 07:35:48 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id s50sm10775869qts.39.2019.05.08.07.35.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 07:35:47 -0700 (PDT)
-Date:   Wed, 8 May 2019 10:35:46 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: No zap shader is not an error
-Message-ID: <20190508143546.GJ17077@art_vandelay>
-References: <20190508130726.27557-1-robdclark@gmail.com>
+        id S1727260AbfEHO2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 10:28:38 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52442 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726783AbfEHO2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 10:28:37 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 252892C6F3213E655003;
+        Wed,  8 May 2019 22:28:35 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 8 May 2019 22:28:27 +0800
+From:   Wei Li <liwei391@huawei.com>
+To:     <acme@kernel.org>, <jolsa@redhat.com>, <namhyung@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <xiezhipeng1@huawei.com>
+Subject: [PATCH v2] fix use-after-free in perf_sched__lat
+Date:   Wed, 8 May 2019 22:36:48 +0800
+Message-ID: <20190508143648.8153-1-liwei391@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508130726.27557-1-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 06:06:52AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Depending on platform firmware, a zap shader may not be required to take
-> the GPU out of secure mode on boot, in which case we can just write
-> RBBM_SECVID_TRUST_CNTL directly.  Which we *mostly* handled, but missed
-> clearing 'ret' resulting that hw_init() returned an error on these
-> devices.
-> 
-> Fixes: abccb9fe3267 drm/msm/a6xx: Add zap shader load
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+After thread is added to machine->threads[i].dead in
+__machine__remove_thread, the machine->threads[i].dead is freed
+when calling free(session) in perf_session__delete(). So it get a
+Segmentation fault when accessing it in thread__put().
 
-Reviewed-by: Sean Paul <sean@poorly.run>
+In this patch, we delay the perf_session__delete until all threads
+have been deleted.
 
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index ec24508b9d68..e74dce474250 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -527,6 +527,7 @@ static int a6xx_hw_init(struct msm_gpu *gpu)
->  		dev_warn_once(gpu->dev->dev,
->  			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
->  		gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
-> +		ret = 0;
->  	}
->  
->  out:
-> -- 
-> 2.20.1
-> 
+This can be reproduced by following steps:
+	ulimit -c unlimited
+	export MALLOC_MMAP_THRESHOLD_=0
+	perf sched record sleep 10
+	perf sched latency --sort max
+	Segmentation fault (core dumped)
 
+Signed-off-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+Signed-off-by: Wei Li <liwei391@huawei.com>
+---
+ tools/perf/builtin-sched.c | 63 ++++++++++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 20 deletions(-)
+
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 275f2d92a7bf..8a4841fa124c 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -1774,7 +1774,8 @@ static int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
+ 	return 0;
+ }
+ 
+-static int perf_sched__read_events(struct perf_sched *sched)
++static int __perf_sched__read_events(struct perf_sched *sched,
++					struct perf_session *session)
+ {
+ 	const struct perf_evsel_str_handler handlers[] = {
+ 		{ "sched:sched_switch",	      process_sched_switch_event, },
+@@ -1783,30 +1784,17 @@ static int perf_sched__read_events(struct perf_sched *sched)
+ 		{ "sched:sched_wakeup_new",   process_sched_wakeup_event, },
+ 		{ "sched:sched_migrate_task", process_sched_migrate_task_event, },
+ 	};
+-	struct perf_session *session;
+-	struct perf_data data = {
+-		.path  = input_name,
+-		.mode  = PERF_DATA_MODE_READ,
+-		.force = sched->force,
+-	};
+-	int rc = -1;
+-
+-	session = perf_session__new(&data, false, &sched->tool);
+-	if (session == NULL) {
+-		pr_debug("No Memory for session\n");
+-		return -1;
+-	}
+ 
+ 	symbol__init(&session->header.env);
+ 
+ 	if (perf_session__set_tracepoints_handlers(session, handlers))
+-		goto out_delete;
++		return -1;
+ 
+ 	if (perf_session__has_traces(session, "record -R")) {
+ 		int err = perf_session__process_events(session);
+ 		if (err) {
+ 			pr_err("Failed to process events, error %d", err);
+-			goto out_delete;
++			return -1;
+ 		}
+ 
+ 		sched->nr_events      = session->evlist->stats.nr_events[0];
+@@ -1814,9 +1802,28 @@ static int perf_sched__read_events(struct perf_sched *sched)
+ 		sched->nr_lost_chunks = session->evlist->stats.nr_events[PERF_RECORD_LOST];
+ 	}
+ 
+-	rc = 0;
+-out_delete:
++	return 0;
++}
++
++static int perf_sched__read_events(struct perf_sched *sched)
++{
++	struct perf_session *session;
++	struct perf_data data = {
++		.path  = input_name,
++		.mode  = PERF_DATA_MODE_READ,
++		.force = sched->force,
++	};
++	int rc;
++
++	session = perf_session__new(&data, false, &sched->tool);
++	if (session == NULL) {
++		pr_debug("No Memory for session\n");
++		return -1;
++	}
++
++	rc = __perf_sched__read_events(sched, session);
+ 	perf_session__delete(session);
++
+ 	return rc;
+ }
+ 
+@@ -3130,12 +3137,25 @@ static void perf_sched__merge_lat(struct perf_sched *sched)
+ 
+ static int perf_sched__lat(struct perf_sched *sched)
+ {
++	struct perf_session *session;
++	struct perf_data data = {
++		.path  = input_name,
++		.mode  = PERF_DATA_MODE_READ,
++		.force = sched->force,
++	};
+ 	struct rb_node *next;
++	int rc = -1;
+ 
+ 	setup_pager();
+ 
+-	if (perf_sched__read_events(sched))
++	session = perf_session__new(&data, false, &sched->tool);
++	if (session == NULL) {
++		pr_debug("No Memory for session\n");
+ 		return -1;
++	}
++
++	if (__perf_sched__read_events(sched, session))
++		goto out_delete;
+ 
+ 	perf_sched__merge_lat(sched);
+ 	perf_sched__sort_lat(sched);
+@@ -3164,7 +3184,10 @@ static int perf_sched__lat(struct perf_sched *sched)
+ 	print_bad_events(sched);
+ 	printf("\n");
+ 
+-	return 0;
++	rc = 0;
++out_delete:
++	perf_session__delete(session);
++	return rc;
+ }
+ 
+ static int setup_map_cpus(struct perf_sched *sched)
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.17.1
+
