@@ -2,109 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0854616DFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C8F16E13
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbfEHAHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 20:07:47 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45310 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfEHAHr (ORCPT
+        id S1726718AbfEHAKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 20:10:41 -0400
+Received: from mo-csw1514.securemx.jp ([210.130.202.153]:59904 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfEHAKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 20:07:47 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a5so4026562pls.12;
-        Tue, 07 May 2019 17:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HN68pgSokYWWKvinzUgVn1U1SddKsTL2kSGU6FODjf0=;
-        b=bjfr/fPM+0H2SZXbx6TNp/DGV4zpmnTRSn1alUqvoJbctyEYK6nmlvvdUUTHsmHSz9
-         +OhxAnrdDt0lh0w95+rJlQEFnQom0c4jDAAyl6H8reZeWtIpMV7unEF85hkm5THnttQI
-         7mhELEV19lyG1oN/qF0Xthd2xh/7XBVJ1weoiskLIfrIrC5lBIYI6ppzS3nhsGaPVQox
-         NaCZ1z/n+LANnboGjkUN1wnXjfxF/Q3Y4udAakxJDj3koat7LrHTBwG2ZuRQJfacDbAT
-         BSPkOG6okSgfpuaZ6f4GxEbwC/kY3xFbxQ6zK4lMSNNMWQDjQDH5AIRvXVVpSCKN4hsB
-         Y9FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HN68pgSokYWWKvinzUgVn1U1SddKsTL2kSGU6FODjf0=;
-        b=BGmXHnI7XVSAk0XZK1Btie3FXjC8VPpMJSpIYtcUi9tHKPRzsSF6fkx6kEf8hHFTfw
-         oseo1xSMXMqmAHIDocsgf6eGFmO83Nh/OmNY1bDvUMMY67mOhXkw3VWz8Dl8LXJlgNip
-         rQBQYPUmvpun53hcskcM3S8qGp0R8ftgGqlBVd0Ly/rV7jlPOqq81wywm5QHO7lqF53y
-         3NPehbpQdXdE7oa3+1oaPuUUYNc8mP77Jm+ZMLdNXXTTZER9lGwwnQ6PrBDf3u2RUGFq
-         4FHtcIRJrB5dvMPMCN81FtWicsy/PWBIIDkdta1ggRraeJxIjYyWHKcS+oK++VmhQ3I0
-         nmWQ==
-X-Gm-Message-State: APjAAAXairzAIr/b6v/e2Ik2MobrKJYHfOIzENPrzu9gnldq/GjfIz4G
-        DALGMGdnWmQUhzhg9/YGxbE=
-X-Google-Smtp-Source: APXvYqwfTg2fF7e7jMIli0z/0adeHhQWjX/dtytTySV8YZfOK/KeUo9PmzbmXzrbi1jkW3Ra3vv5JQ==
-X-Received: by 2002:a17:902:2927:: with SMTP id g36mr41998203plb.6.1557274066589;
-        Tue, 07 May 2019 17:07:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r18sm19170613pfd.89.2019.05.07.17.07.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2019 17:07:45 -0700 (PDT)
-Subject: Re: [PATCH] watchdog: fix watchdog_pretimeout.c build error when no
- default gov. is set
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-References: <ec5a2b04-2649-e527-bcfd-4e708808e681@infradead.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <aace995d-a076-2fc5-8456-1e2638e4faa6@roeck-us.net>
-Date:   Tue, 7 May 2019 17:07:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 7 May 2019 20:10:40 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1514) id x480AQ18030660; Wed, 8 May 2019 09:10:26 +0900
+X-Iguazu-Qid: 34trPHnJtp4SJX7ZnU
+X-Iguazu-QSIG: v=2; s=0; t=1557274226; q=34trPHnJtp4SJX7ZnU; m=GRuQWOFM8kgwiNxmUcKBoJxO6dGlsBq0CmDxg/ZAAZQ=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1512) id x480AOWn008974;
+        Wed, 8 May 2019 09:10:25 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id x480AOFV029282;
+        Wed, 8 May 2019 09:10:24 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id x480AOm7022147;
+        Wed, 8 May 2019 09:10:24 +0900
+Date:   Wed, 8 May 2019 09:10:14 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 38/99] net: stmmac: use correct DMA buffer size in
+ the RX descriptor
+X-TSB-HOP: ON
+Message-ID: <20190508001014.hlemsaqvir3umv2i@toshiba.co.jp>
+References: <20190506143053.899356316@linuxfoundation.org>
+ <20190506143057.399914447@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <ec5a2b04-2649-e527-bcfd-4e708808e681@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506143057.399914447@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/7/19 4:33 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+Hi,
+
+On Mon, May 06, 2019 at 04:32:11PM +0200, Greg Kroah-Hartman wrote:
+> [ Upstream commit 583e6361414903c5206258a30e5bd88cb03c0254 ]
 > 
-> Fix build error when
-> CONFIG_WATCHDOG_PRETIMEOUT_GOV=y
-> # CONFIG_WATCHDOG_PRETIMEOUT_GOV_NOOP is not set
-> # CONFIG_WATCHDOG_PRETIMEOUT_GOV_PANIC is not set
+> We always program the maximum DMA buffer size into the receive descriptor,
+> although the allocated size may be less. E.g. with the default MTU size
+> we allocate only 1536 bytes. If somebody sends us a bigger frame, then
+> memory may get corrupted.
 > 
-> Fixes this build error:
+> Fix by using exact buffer sizes.
 > 
-> ../drivers/watchdog/watchdog_pretimeout.c: In function ‘watchdog_register_governor’:
-> ../drivers/watchdog/watchdog_pretimeout.c:139:26: error: ‘WATCHDOG_PRETIMEOUT_DEFAULT_GOV’ undeclared (first use in this function)
->    if (!strncmp(gov->name, WATCHDOG_PRETIMEOUT_DEFAULT_GOV,
-> 
+> Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  .../net/ethernet/stmicro/stmmac/descs_com.h   | 22 ++++++++++++-------
+>  .../ethernet/stmicro/stmmac/dwmac4_descs.c    |  2 +-
+>  .../ethernet/stmicro/stmmac/dwxgmac2_descs.c  |  2 +-
+>  .../net/ethernet/stmicro/stmmac/enh_desc.c    | 10 ++++++---
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h    |  2 +-
+>  .../net/ethernet/stmicro/stmmac/norm_desc.c   | 10 ++++++---
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++--
 
-Ah, I knew I missed something. The following would be a better fix,
-though, since it enforces that at least one pretimeout governor is enabled
-(matching the old code):
+This commit is incomplete and we need the following commit:
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index e19960ace0c0..4a3461afa96f 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -71,6 +71,12 @@ config WATCHDOG_PRETIMEOUT_GOV
-         help
-           The option allows to select watchdog pretimeout governors.
+commit f87db4dbd52f2f8a170a2b51cb0926221ca7c9e2
+Author: YueHaibing <yuehaibing@huawei.com>
+Date:   Wed Apr 17 09:49:39 2019 +0800
 
-+config WATCHDOG_PRETIMEOUT_GOV_SEL
-+       tristate
-+       depends on WATCHDOG_PRETIMEOUT_GOV
-+       default m
-+       select WATCHDOG_PRETIMEOUT_GOV_PANIC if WATCHDOG_PRETIMEOUT_GOV_NOOP=n
-+
-  if WATCHDOG_PRETIMEOUT_GOV
+    net: stmmac: Use bfsize1 in ndesc_init_rx_desc
 
-Can you send v2 with the above, or do you want me to send it and give you credit ?
+    gcc warn this:
 
-Thanks,
-Guenter
+    drivers/net/ethernet/stmicro/stmmac/norm_desc.c: In function ndesc_init_rx_desc:
+    drivers/net/ethernet/stmicro/stmmac/norm_desc.c:138:6: warning: variable 'bfsize1' set but not used [-Wunused-but-set-variable]
+
+    Like enh_desc_init_rx_desc, we should use bfsize1
+    in ndesc_init_rx_desc to calculate 'p->des1'
+
+    Fixes: 583e63614149 ("net: stmmac: use correct DMA buffer size in the RX descriptor")
+    Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+    Reviewed-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+And this fix is also needed for 5.0.14-rc.
+Please apply this commit to 4.19.y-rc and 5.0.y-rc.
+
+Best regards,
+  Nobuhiro
