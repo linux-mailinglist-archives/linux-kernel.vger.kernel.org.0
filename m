@@ -2,140 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCD517D06
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 17:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E330D17D20
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 17:23:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbfEHPWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 11:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51634 "EHLO mail.kernel.org"
+        id S1726559AbfEHPXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 11:23:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39216 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727800AbfEHPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 11:22:42 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726842AbfEHPXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 11:23:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05910216C8;
-        Wed,  8 May 2019 15:22:38 +0000 (UTC)
-Date:   Wed, 8 May 2019 11:22:37 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Joel Fernandes <joel@joelfernandes.org>, yhs@fb.com
-Subject: Re: [RFC PATCH v6 4/6] tracing/probe: Support user-space
- dereference
-Message-ID: <20190508112237.76bd0e6b@gandalf.local.home>
-In-Reply-To: <20190508131143.6f69abddd4c11b47bea138fb@kernel.org>
-References: <155289137555.7218.9282784065958321058.stgit@devnote2>
-        <155289143224.7218.6083289081805224583.stgit@devnote2>
-        <20190506115226.70c62f7a@gandalf.local.home>
-        <20190508131143.6f69abddd4c11b47bea138fb@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 924EB3007149;
+        Wed,  8 May 2019 15:23:33 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3BE972E09B;
+        Wed,  8 May 2019 15:23:33 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id B6B4B41F56;
+        Wed,  8 May 2019 15:23:32 +0000 (UTC)
+Date:   Wed, 8 May 2019 11:23:32 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Jakub =?utf-8?Q?Staro=C5=84?= <jstaron@google.com>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, jack@suse.cz, mst@redhat.com,
+        jasowang@redhat.com, david@fromorbit.com, lcapitulino@redhat.com,
+        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
+        aarcange@redhat.com, dave jiang <dave.jiang@intel.com>,
+        darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
+        willy@infradead.org, hch@infradead.org, jmoyer@redhat.com,
+        nilal@redhat.com, lenb@kernel.org, kilobyte@angband.pl,
+        riel@surriel.com, yuval shaia <yuval.shaia@oracle.com>,
+        stefanha@redhat.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
+        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        cohuck@redhat.com, rjw@rjwysocki.net, imammedo@redhat.com,
+        smbarber@google.com
+Message-ID: <1482604497.27348783.1557329012320.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1555943483.27247564.1557313967518.JavaMail.zimbra@redhat.com>
+References: <20190426050039.17460-1-pagupta@redhat.com> <20190426050039.17460-3-pagupta@redhat.com> <3d6479ae-6c39-d614-f1d9-aa1978e2e438@google.com> <1555943483.27247564.1557313967518.JavaMail.zimbra@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH v7 2/6] virtio-pmem: Add virtio pmem driver
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.32, 10.4.195.26]
+Thread-Topic: virtio-pmem: Add virtio pmem driver
+Thread-Index: PGqRBxt7ac04jwyhY+CEFoY6aRdKvNGTIbxd
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 08 May 2019 15:23:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 May 2019 13:11:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> On Mon, 6 May 2019 11:52:26 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Mon, 18 Mar 2019 15:43:52 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >   
-> > > +.. _user_mem_access:
-> > > +User Memory Access
-> > > +------------------
-> > > +Kprobe events supports user-space memory access. For that purpose, you can use
-> > > +either user-space dereference syntax or 'ustring' type.
+> > 
+> > > +int virtio_pmem_flush(struct nd_region *nd_region)
+> > > +{
+> > > +        int err;
+> > > +        unsigned long flags;
+> > > +        struct scatterlist *sgs[2], sg, ret;
+> > > +        struct virtio_device *vdev = nd_region->provider_data;
+> > > +        struct virtio_pmem *vpmem = vdev->priv;
+> > > +        struct virtio_pmem_request *req;
 > > > +
-> > > +The user-space dereference syntax allows you to access a field of a data
-> > > +structure in user-space. This is done by adding the "u" prefix to the
-> > > +dereference syntax. For example, +u4(%si) means it will read memory from the
-> > > +address in the register %si offset by 4, and the mory is expected to be in  
-> > 
-> >                                                     ^^^^
-> >  "memory"  
-> 
-> OK, thanks!
-> 
-> >   
-> > > +user-space. You can use this for strings too, e.g. +u0(%si):string will read
-> > > +a string from the address in the register %si that is expected to be in user-
-> > > +space. 'ustring' is a shortcut way of performing the same task. That is,
-> > > ++0(%si):ustring is equivalent to +u0(%si):string.
+> > > +        might_sleep();
+> > > +        req = kmalloc(sizeof(*req), GFP_KERNEL);
+> > > +        if (!req)
+> > > +                return -ENOMEM;
 > > > +
-> > > +Note that kprobe-event provides the user-memory access syntax but it doesn't
-> > > +use it transparently. This means if you use normal dereference or string type
-> > > +for user memory, it might fail, and always fails on some arch. So user has to  
+> > > +        req->done = req->wq_buf_avail = false;
+> > > +        strcpy(req->name, "FLUSH");
+> > > +        init_waitqueue_head(&req->host_acked);
+> > > +        init_waitqueue_head(&req->wq_buf);
+> > > +        sg_init_one(&sg, req->name, strlen(req->name));
+> > > +        sgs[0] = &sg;
+> > > +        sg_init_one(&ret, &req->ret, sizeof(req->ret));
+> > > +        sgs[1] = &ret;
+> > > +
+> > > +        spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> > > +        err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
+> > > +        if (err) {
+> > > +                dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
+> > > +
+> > > +                list_add_tail(&vpmem->req_list, &req->list);
+> > > +                spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> > > +
+> > > +                /* When host has read buffer, this completes via host_ack */
+> > > +                wait_event(req->wq_buf, req->wq_buf_avail);
+> > > +                spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> > > +        }
 > > 
-> >   "and may always fail on some archs. The user has to carefully check
-> >   if the target data is in kernel or user space."  
+> > Aren't the arguments in `list_add_tail` swapped? The element we are adding
 > 
-> OK. I'll update.
-> 
-> > > +check if the targe data is in kernel or in user space carefully.
-> > >  
-> > >  Per-Probe Event Filtering
-> > >  -------------------------
-> > > diff --git a/Documentation/trace/uprobetracer.rst b/Documentation/trace/uprobetracer.rst
-> > > index 4346e23e3ae7..de8812c932bc 100644
-> > > --- a/Documentation/trace/uprobetracer.rst
-> > > +++ b/Documentation/trace/uprobetracer.rst
-> > > @@ -42,16 +42,17 @@ Synopsis of uprobe_tracer
-> > >     @+OFFSET	: Fetch memory at OFFSET (OFFSET from same file as PATH)
-> > >     $stackN	: Fetch Nth entry of stack (N >= 0)
-> > >     $stack	: Fetch stack address.
-> > > -   $retval	: Fetch return value.(*)
-> > > +   $retval	: Fetch return value.(\*1)
-> > >     $comm	: Fetch current task comm.
-> > > -   +|-offs(FETCHARG) : Fetch memory at FETCHARG +|- offs address.(**)
-> > > +   +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*2)(\*3)
-> > >     NAME=FETCHARG     : Set NAME as the argument name of FETCHARG.
-> > >     FETCHARG:TYPE     : Set TYPE as the type of FETCHARG. Currently, basic types
-> > >  		       (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
-> > >  		       (x8/x16/x32/x64), "string" and bitfield are supported.  
-> > 
-> > Hmm, shouldn't uprobes default to userspace. Isn't the purpose mostly
-> > to find out what's going on in userspace. Perhaps we should add a 'k'
-> > annotation to uprobes to denote that it's for kernel space, as that
-> > should be the exception and not the norm.  
-> 
-> No, uprobe can not access kernel space, because it doesn't have the
-> current kernel context. Note that all registers, stacks which
-> can be accessed from uprobe handler are user-space. We can not access
-> kernel context from that. See below
-> 
-> > > -  (*) only for return probe.
-> > > -  (**) this is useful for fetching a field of data structures.
-> > > +  (\*1) only for return probe.
-> > > +  (\*2) this is useful for fetching a field of data structures.
-> > > +  (\*3) Unlike kprobe event, "u" prefix will just be ignored.  
-> 
-> Thus the 'u' is just ignored on uprobe event.
 
-I totally missed the footnote here. Can we stress this point more up in
-the "User Memory Access" section. Specifically state something like:
-"Uprobes only access userspace memory, thus the 'u' is not required,
-and if it is added to a uprobe, it will simply be ignored".
+Yes, arguments for 'list_add_tail' should be swapped.
 
-Thanks!
+list_add_tail(&req->list, &vpmem->req_list);
 
--- Steve
+
+Thank you,
+Pankaj
