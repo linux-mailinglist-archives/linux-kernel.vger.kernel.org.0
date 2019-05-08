@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F84817E42
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2083F17E46
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfEHQk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:40:57 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46057 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbfEHQk5 (ORCPT
+        id S1728453AbfEHQlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 12:41:01 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37243 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbfEHQk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:40:57 -0400
-Received: by mail-yw1-f67.google.com with SMTP id w18so16734830ywa.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:40:57 -0700 (PDT)
+        Wed, 8 May 2019 12:40:59 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 186so7925639ywo.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 09:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pTdoN4SflFP4fbr2SxTsp4j5gxt4IEGJ5+rLZXtfkwo=;
-        b=C+Yvedgm6x5TyN5rAF0fQpyyP7vco20p/5yRzDHrxwY8DiIs8kMFlJHh64PWZTR7BQ
-         Ji/Jy3CL1KMBFbHirIji8wqMjsyknJUwRdWnxzWyWCYAolL/9Dc2VZSDT6SZaDFhUJre
-         capLnF2C4Z0/6DPmdLxIADMM86o22HdI1Ging=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Xa6DtNP/MsKA3xKlWUlfMOa1BuQnbHXWgUsbk88eqkY=;
+        b=GcFcfdz920X4hAX7aP+vIaiyEOWH4ow01gaSLiNFw/lkDgzf3WlT0694nzdDi/gyFN
+         Fc8v+7pLhnyHv2+P+5XPjJnwYWdmqdr85JV9OFtuv496D5IUyQgG7lZpBoCeTxt53pw7
+         PXnXA/FoWK1dK4Mwg211m0vncobkAkEZctTw4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pTdoN4SflFP4fbr2SxTsp4j5gxt4IEGJ5+rLZXtfkwo=;
-        b=J3H1OgnCJhKAEKv/HO/swJSNZMJ4Pnd7i5ptCvRMn46J5Vo9Zl8dk+eAyqZfOOYYnX
-         70w6pLGyrPBoWRGUAWMjWJqlXsY47Zx3v/FbYBxrUwh1kuluzKWZH/II0ED64sUK9Azh
-         ahv3oguqM8m7uCGLw21uQcp2tA7ZekFbaAfL5oUV1ruE92u8B+Y6MVHVhYITcvXfLF1Y
-         Sbjj95CBpI/zZP72OWpBtB1VYJeYxo08Gn7GKDsIDxRayUxxsmaGmp2uGIYufKV+Fxfp
-         Y2mK2IzfTwYWyvqVL9SrKXUnlN1nMcvd5afNH6ZSDdKH0uu2DqxfIzG3v09gKZFOxtSw
-         orsw==
-X-Gm-Message-State: APjAAAVgQjoNeZDM71Rv1qFulOoEmZbDxSYr/Jm2Z2MJDapcvCiDopmK
-        5DjMuVgDNF3UZejitRb9nB7dfQ==
-X-Google-Smtp-Source: APXvYqwmGI3bpXiAHaDGzTa99Dfvb2iN7LenRuQNW3bTo1/dsMzLvmARRa06QIQ4/vyHIh5XMA+X8w==
-X-Received: by 2002:a81:244e:: with SMTP id k75mr18594001ywk.44.1557333656568;
-        Wed, 08 May 2019 09:40:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Xa6DtNP/MsKA3xKlWUlfMOa1BuQnbHXWgUsbk88eqkY=;
+        b=r3ZvKtwQvuuBJ/lxVVgg3/JEGjGXFw2qaUGOSOL1Z25lSMK2zmQmlnbDwYwJZOALem
+         Hb6VDYqM4rxsOoin8+8bZ8sZQy0Uvp16rkvbvcq5bGsOWxBPcNOW3yrE84jJthOnpRhq
+         QmzYf1B/cKpTDLLVKUCLWXSvj+90XtuEelj0ku9lB4knSWNmEozJN46Hy2n3Jujc4oW/
+         gAXsDv9jtKwtK/CafyrzqomFMUqDh6EsvEL/ExeXyXSCRh1iMhLAabTysVQo6hgNb3/a
+         VvzIWEnSNq+kMXVlrIhrKvj5eDaJxLpFTeRAStEHqRibJo4vmxcOjZjnjuj3riXFziUf
+         Wd5A==
+X-Gm-Message-State: APjAAAXk4b6uDlm+E0A39JVgQhK8vizePHBv2AbsLc9tNe+iiTk5V3oI
+        FvgmxWtL1fKPnHGQ1RDXTGz2VQ==
+X-Google-Smtp-Source: APXvYqwwQ/ZXbeVOvDJBMAyLP+sfNNNFUcrgESJuSZJO2anvG8yUMgG4YKbZW8WAbZQhc+gylFARBQ==
+X-Received: by 2002:a81:2717:: with SMTP id n23mr12899509ywn.511.1557333658983;
+        Wed, 08 May 2019 09:40:58 -0700 (PDT)
 Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id u6sm4671081ywl.71.2019.05.08.09.40.54
+        by smtp.gmail.com with ESMTPSA id u6sm4671081ywl.71.2019.05.08.09.40.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 09:40:55 -0700 (PDT)
+        Wed, 08 May 2019 09:40:58 -0700 (PDT)
 From:   Scott Branden <scott.branden@broadcom.com>
 To:     Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -48,32 +49,51 @@ To:     Adrian Hunter <adrian.hunter@intel.com>,
         Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
         linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v2 0/2] mmc: sdhci-iproc: fixes for HS50 data hold time
-Date:   Wed,  8 May 2019 09:40:42 -0700
-Message-Id: <20190508164044.22451-1-scott.branden@broadcom.com>
+        linux-kernel@vger.kernel.org, Trac Hoang <trac.hoang@broadcom.com>,
+        stable@vger.kernel.org, Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v2 1/2] mmc: sdhci-iproc: cygnus: Set NO_HISPD bit to fix HS50 data hold time problem
+Date:   Wed,  8 May 2019 09:40:43 -0700
+Message-Id: <20190508164044.22451-2-scott.branden@broadcom.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190508164044.22451-1-scott.branden@broadcom.com>
+References: <20190508164044.22451-1-scott.branden@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series fixes data hold timing issues for various sdhci-iproc
-ip blocks that do not meet the HS50 data hold time.  NO_HISPD bit is set
-in quirks.
+From: Trac Hoang <trac.hoang@broadcom.com>
 
-Changes from v1:
- - Change fixes tag to Cc: stable@vger.kernel.org to specify version to backport to
+The iproc host eMMC/SD controller hold time does not meet the
+specification in the HS50 mode. This problem can be mitigated
+by disabling the HISPD bit; thus forcing the controller output
+data to be driven on the falling clock edges rather than the
+rising clock edges.
 
-Trac Hoang (2):
-  mmc: sdhci-iproc: cygnus: Set NO_HISPD bit to fix HS50 data hold time
-    problem
-  mmc: sdhci-iproc: Set NO_HISPD bit to fix HS50 data hold time problem
+This change applies only to the Cygnus platform.
 
- drivers/mmc/host/sdhci-iproc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Trac Hoang <trac.hoang@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-iproc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
+index 9d12c06c7fd6..9d4071c41c94 100644
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -196,7 +196,8 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+-	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
++	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
++		  SDHCI_QUIRK_NO_HISPD_BIT,
+ 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
 -- 
 2.17.1
 
