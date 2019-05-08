@@ -2,237 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC7818024
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD3A18027
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfEHS7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 14:59:37 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33770 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbfEHS7g (ORCPT
+        id S1727933AbfEHTA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:00:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51175 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbfEHTA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 14:59:36 -0400
-Received: by mail-qk1-f195.google.com with SMTP id k189so3334014qkc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 11:59:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sm3smJDhVDMlXi4hS7D0sl1HnAyaNuMug0E6S5yftB4=;
-        b=r50w+kQ7Xlrfpck9l9GJpfguRNSrX5RSutg/V0hm/2/DypoEL+dEZ/8KRbmJr+kRlM
-         pEy9ItvbleduZ+wBnnjNxfqQeLP75ap6NgTujOI71ZUcm8F7xjCadp7kFiwySxqaiagn
-         mBhXypS2JcxNtWLxVoP5uRzeD8CH1m8+vf0UpYDmvBitsvNUBAsSc2U0XaITLpyBSWyK
-         6cGF7I0AJtqBMWRRAVlCAr94Ov8v53wyPguGrKY5+J8h9GHfUEPoPhxMcUjYdtL+wfAC
-         KeeQSGTh6yHMj7NLb2B0/R9SlU3rZl4R1jf6K5rC18+2z97LBIjl6DHHmW5exzvGQeqn
-         OONQ==
-X-Gm-Message-State: APjAAAVTbwMy86caCllzC8TjpQzSk3iqzHfy0KJV522kGKS4gCsNfyml
-        KR5/RCvF+5RQECvFgmmes4M=
-X-Google-Smtp-Source: APXvYqxDzWdVZ3CcwuyyuFXUcvKoOClhh3q4tYljSs1jh1P9/E8cVDgiivFYdYKGyEXiE7bHvlvOwg==
-X-Received: by 2002:a37:5042:: with SMTP id e63mr30203493qkb.240.1557341975502;
-        Wed, 08 May 2019 11:59:35 -0700 (PDT)
-Received: from dennisz-mbp ([2620:10d:c091:500::1:9ddb])
-        by smtp.gmail.com with ESMTPSA id v31sm7518403qtv.6.2019.05.08.11.59.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 11:59:34 -0700 (PDT)
-Date:   Wed, 8 May 2019 14:59:32 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     John Sperbeck <jsperbeck@google.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Eric Dumazet <edumazet@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] percpu: remove spurious lock dependency between percpu
- and sched
-Message-ID: <20190508185932.GA68786@dennisz-mbp>
-References: <20190508014320.55404-1-jsperbeck@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508014320.55404-1-jsperbeck@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 8 May 2019 15:00:28 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hORnL-0001aA-PC; Wed, 08 May 2019 19:00:00 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH] nvme-pci: Use non-operational power state instead of D3 on Suspend-to-Idle
+Date:   Thu,  9 May 2019 02:59:55 +0800
+Message-Id: <20190508185955.11406-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 06:43:20PM -0700, John Sperbeck wrote:
-> In free_percpu() we sometimes call pcpu_schedule_balance_work() to
-> queue a work item (which does a wakeup) while holding pcpu_lock.
-> This creates an unnecessary lock dependency between pcpu_lock and
-> the scheduler's pi_lock.  There are other places where we call
-> pcpu_schedule_balance_work() without hold pcpu_lock, and this case
-> doesn't need to be different.
-> 
-> Moving the call outside the lock prevents the following lockdep splat
-> when running tools/testing/selftests/bpf/{test_maps,test_progs} in
-> sequence with lockdep enabled:
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 5.1.0-dbg-DEV #1 Not tainted
-> ------------------------------------------------------
-> kworker/23:255/18872 is trying to acquire lock:
-> 000000000bc79290 (&(&pool->lock)->rlock){-.-.}, at: __queue_work+0xb2/0x520
-> 
-> but task is already holding lock:
-> 00000000e3e7a6aa (pcpu_lock){..-.}, at: free_percpu+0x36/0x260
-> 
-> which lock already depends on the new lock.
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #4 (pcpu_lock){..-.}:
->        lock_acquire+0x9e/0x180
->        _raw_spin_lock_irqsave+0x3a/0x50
->        pcpu_alloc+0xfa/0x780
->        __alloc_percpu_gfp+0x12/0x20
->        alloc_htab_elem+0x184/0x2b0
->        __htab_percpu_map_update_elem+0x252/0x290
->        bpf_percpu_hash_update+0x7c/0x130
->        __do_sys_bpf+0x1912/0x1be0
->        __x64_sys_bpf+0x1a/0x20
->        do_syscall_64+0x59/0x400
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> -> #3 (&htab->buckets[i].lock){....}:
->        lock_acquire+0x9e/0x180
->        _raw_spin_lock_irqsave+0x3a/0x50
->        htab_map_update_elem+0x1af/0x3a0
-> 
-> -> #2 (&rq->lock){-.-.}:
->        lock_acquire+0x9e/0x180
->        _raw_spin_lock+0x2f/0x40
->        task_fork_fair+0x37/0x160
->        sched_fork+0x211/0x310
->        copy_process.part.43+0x7b1/0x2160
->        _do_fork+0xda/0x6b0
->        kernel_thread+0x29/0x30
->        rest_init+0x22/0x260
->        arch_call_rest_init+0xe/0x10
->        start_kernel+0x4fd/0x520
->        x86_64_start_reservations+0x24/0x26
->        x86_64_start_kernel+0x6f/0x72
->        secondary_startup_64+0xa4/0xb0
-> 
-> -> #1 (&p->pi_lock){-.-.}:
->        lock_acquire+0x9e/0x180
->        _raw_spin_lock_irqsave+0x3a/0x50
->        try_to_wake_up+0x41/0x600
->        wake_up_process+0x15/0x20
->        create_worker+0x16b/0x1e0
->        workqueue_init+0x279/0x2ee
->        kernel_init_freeable+0xf7/0x288
->        kernel_init+0xf/0x180
->        ret_from_fork+0x24/0x30
-> 
-> -> #0 (&(&pool->lock)->rlock){-.-.}:
->        __lock_acquire+0x101f/0x12a0
->        lock_acquire+0x9e/0x180
->        _raw_spin_lock+0x2f/0x40
->        __queue_work+0xb2/0x520
->        queue_work_on+0x38/0x80
->        free_percpu+0x221/0x260
->        pcpu_freelist_destroy+0x11/0x20
->        stack_map_free+0x2a/0x40
->        bpf_map_free_deferred+0x3c/0x50
->        process_one_work+0x1f7/0x580
->        worker_thread+0x54/0x410
->        kthread+0x10f/0x150
->        ret_from_fork+0x24/0x30
-> 
-> other info that might help us debug this:
-> 
-> Chain exists of:
->   &(&pool->lock)->rlock --> &htab->buckets[i].lock --> pcpu_lock
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(pcpu_lock);
->                                lock(&htab->buckets[i].lock);
->                                lock(pcpu_lock);
->   lock(&(&pool->lock)->rlock);
-> 
->  *** DEADLOCK ***
-> 
-> 3 locks held by kworker/23:255/18872:
->  #0: 00000000b36a6e16 ((wq_completion)events){+.+.},
->      at: process_one_work+0x17a/0x580
->  #1: 00000000dfd966f0 ((work_completion)(&map->work)){+.+.},
->      at: process_one_work+0x17a/0x580
->  #2: 00000000e3e7a6aa (pcpu_lock){..-.},
->      at: free_percpu+0x36/0x260
-> 
-> stack backtrace:
-> CPU: 23 PID: 18872 Comm: kworker/23:255 Not tainted 5.1.0-dbg-DEV #1
-> Hardware name: ...
-> Workqueue: events bpf_map_free_deferred
-> Call Trace:
->  dump_stack+0x67/0x95
->  print_circular_bug.isra.38+0x1c6/0x220
->  check_prev_add.constprop.50+0x9f6/0xd20
->  __lock_acquire+0x101f/0x12a0
->  lock_acquire+0x9e/0x180
->  _raw_spin_lock+0x2f/0x40
->  __queue_work+0xb2/0x520
->  queue_work_on+0x38/0x80
->  free_percpu+0x221/0x260
->  pcpu_freelist_destroy+0x11/0x20
->  stack_map_free+0x2a/0x40
->  bpf_map_free_deferred+0x3c/0x50
->  process_one_work+0x1f7/0x580
->  worker_thread+0x54/0x410
->  kthread+0x10f/0x150
->  ret_from_fork+0x24/0x30
-> 
-> Signed-off-by: John Sperbeck <jsperbeck@google.com>
-> ---
->  mm/percpu.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 68dd2e7e73b5..d832793bf83a 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -1738,6 +1738,7 @@ void free_percpu(void __percpu *ptr)
->  	struct pcpu_chunk *chunk;
->  	unsigned long flags;
->  	int off;
-> +	bool need_balance = false;
->  
->  	if (!ptr)
->  		return;
-> @@ -1759,7 +1760,7 @@ void free_percpu(void __percpu *ptr)
->  
->  		list_for_each_entry(pos, &pcpu_slot[pcpu_nr_slots - 1], list)
->  			if (pos != chunk) {
-> -				pcpu_schedule_balance_work();
-> +				need_balance = true;
->  				break;
->  			}
->  	}
-> @@ -1767,6 +1768,9 @@ void free_percpu(void __percpu *ptr)
->  	trace_percpu_free_percpu(chunk->base_addr, off, ptr);
->  
->  	spin_unlock_irqrestore(&pcpu_lock, flags);
-> +
-> +	if (need_balance)
-> +		pcpu_schedule_balance_work();
->  }
->  EXPORT_SYMBOL_GPL(free_percpu);
->  
-> -- 
-> 2.21.0.1020.gf2820cf01a-goog
-> 
+Several NVMes consume lots of power during Suspend-to-Idle.
 
-Hi John,
+According to the NVMe vendors, APST should be used and there are two
+things that should be prevented:
+- Controller shutdown (CC.SHN)
+- PCI D3
 
-The free_percpu() function hasn't changed in a little under 2 years. So,
-either lockdep has gotten smarter or something else has changed. There
-was a workqueue change recently merged: 6d25be5782e4 ("sched/core,
-workqueues: Distangle worker accounting from rq lock"). Would you mind
-reverting this and then seeing if you still encounter deadlock?
+I think that's because the Windows Modern Standby design document [1]
+states below as a requirement:
+"
+Akin to AHCI PCIe SSDs, NVMe SSDs need to provide the host with a
+non-operational power state that is comparable to DEVSLP (<5mW draw,
+<100ms exit latency) in order to allow the host to perform appropriate
+transitions into Modern Standby. Should the NVMe SSD not expose such a
+non-operational power state, autonomous power state transitions (APST)
+is the only other option to enter Modern Standby successfully.
+"
 
-Thanks,
-Dennis
+D3 wasn't mentioned at all, though for some vendors D3 still put the
+device into a low power state, others disable APST after trasition to
+D3.
+
+So instead of disabling NVMe controller in suspend callback we do the
+following instead:
+- Make sure all IRQs are quiesced
+- Stop all queues
+- Prevent the device entering D3
+- Use memory barrier to make sure DMA operations are flushed on HMB devices
+
+This patch has been verified on several different NVMes:
+- Intel
+- Hynix
+- LiteOn
+- Micron
+- WDC
+- Samsung
+- Tohiba
+
+With the new suspend routine, the laptop I tested use roughly 0.8W
+under Suspend-to-Idle, and resume time is faster than the original
+D3 scheme.
+
+The only one exception so far is Toshiba XG5, which works with the old
+suspend routine, so introduce a new quirk for XG5.
+We are working with Toshiba to root cause the issue on XG5.
+
+[1] https://docs.microsoft.com/en-us/windows-hardware/design/device-experiences/part-selection#ssd-storage
+
+Tested-by: Lucien Kao <Lucien_kao@compal.com>
+Tested-by: Mice Lin <mice_lin@wistron.com>
+Tested-by: Jason Tan <LiangChuan.Tan@wdc.com>
+Tested-by: Cody Liu (codyliu) <codyliu@micron.com>
+Tested-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/nvme/host/core.c |   8 +++
+ drivers/nvme/host/nvme.h |   8 +++
+ drivers/nvme/host/pci.c  | 102 +++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 115 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index a6644a2c3ef7..929db749da98 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3903,6 +3903,14 @@ static inline void _nvme_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_directive_cmd) != 64);
+ }
+ 
++void nvme_enter_deepest(struct nvme_ctrl *ctrl)
++{
++	int ret = nvme_set_features(ctrl, NVME_FEAT_POWER_MGMT, ctrl->npss,
++				    NULL, 0, NULL);
++	if (ret)
++		dev_warn(ctrl->device, "failed to set deepest non-operational state (%d)\n", ret);
++}
++EXPORT_SYMBOL_GPL(nvme_enter_deepest);
+ 
+ static int __init nvme_core_init(void)
+ {
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 5ee75b5ff83f..ea40a83314ae 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -92,6 +92,11 @@ enum nvme_quirks {
+ 	 * Broken Write Zeroes.
+ 	 */
+ 	NVME_QUIRK_DISABLE_WRITE_ZEROES		= (1 << 9),
++
++	/*
++	 * Use D3 on S2I regardless of NPSS.
++	 */
++	NVME_QUIRK_USE_D3_ON_S2I		= (1 << 10),
+ };
+ 
+ /*
+@@ -229,6 +234,7 @@ struct nvme_ctrl {
+ 	/* Power saving configuration */
+ 	u64 ps_max_latency_us;
+ 	bool apst_enabled;
++	bool suspend_to_idle;
+ 
+ 	/* PCIe only: */
+ 	u32 hmpre;
+@@ -467,6 +473,8 @@ int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
+ int nvme_get_log(struct nvme_ctrl *ctrl, u32 nsid, u8 log_page, u8 lsp,
+ 		void *log, size_t size, u64 offset);
+ 
++void nvme_enter_deepest(struct nvme_ctrl *ctrl);
++
+ extern const struct attribute_group *nvme_ns_id_attr_groups[];
+ extern const struct block_device_operations nvme_ns_head_ops;
+ 
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 3e4fb891a95a..dea42b41f9a8 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -23,6 +23,7 @@
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/sed-opal.h>
+ #include <linux/pci-p2pdma.h>
++#include <linux/suspend.h>
+ 
+ #include "trace.h"
+ #include "nvme.h"
+@@ -2828,12 +2829,98 @@ static void nvme_remove(struct pci_dev *pdev)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
++static void nvme_do_suspend_to_idle(struct pci_dev *pdev)
++{
++	struct nvme_dev *ndev = pci_get_drvdata(pdev);
++
++	pdev->dev_flags |= PCI_DEV_FLAGS_NO_D3;
++	ndev->ctrl.suspend_to_idle = true;
++
++	nvme_start_freeze(&ndev->ctrl);
++	nvme_wait_freeze_timeout(&ndev->ctrl, NVME_IO_TIMEOUT);
++	nvme_stop_queues(&ndev->ctrl);
++
++	nvme_enter_deepest(&ndev->ctrl);
++
++	if (ndev->ctrl.queue_count > 0) {
++		nvme_disable_io_queues(ndev);
++		nvme_poll_irqdisable(&ndev->queues[0], -1);
++	}
++
++	nvme_suspend_io_queues(ndev);
++	nvme_suspend_queue(&ndev->queues[0]);
++	pci_free_irq_vectors(pdev);
++
++	blk_mq_tagset_busy_iter(&ndev->tagset, nvme_cancel_request, &ndev->ctrl);
++	blk_mq_tagset_busy_iter(&ndev->admin_tagset, nvme_cancel_request, &ndev->ctrl);
++
++	/* Make sure all HMB DMA operations are done */
++	mb();
++}
++
++static int nvme_do_resume_from_idle(struct pci_dev *pdev)
++{
++	struct nvme_dev *ndev = pci_get_drvdata(pdev);
++	int result;
++
++	pdev->dev_flags &= ~PCI_DEV_FLAGS_NO_D3;
++	ndev->ctrl.suspend_to_idle = false;
++
++	result = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
++	if (result < 0)
++		goto out;
++
++	result = nvme_pci_configure_admin_queue(ndev);
++	if (result)
++		goto out;
++
++	result = nvme_alloc_admin_tags(ndev);
++	if (result)
++		goto out;
++
++	ndev->ctrl.max_hw_sectors = NVME_MAX_KB_SZ << 1;
++	ndev->ctrl.max_segments = NVME_MAX_SEGS;
++	mutex_unlock(&ndev->shutdown_lock);
++
++	result = nvme_init_identify(&ndev->ctrl);
++	if (result)
++		goto out;
++
++	result = nvme_setup_io_queues(ndev);
++	if (result)
++		goto out;
++
++	if (ndev->online_queues < 2) {
++		dev_warn(ndev->ctrl.device, "IO queues not created\n");
++		nvme_kill_queues(&ndev->ctrl);
++		nvme_remove_namespaces(&ndev->ctrl);
++	} else {
++		nvme_start_queues(&ndev->ctrl);
++		nvme_wait_freeze(&ndev->ctrl);
++		nvme_dev_add(ndev);
++		nvme_unfreeze(&ndev->ctrl);
++	}
++
++	nvme_start_ctrl(&ndev->ctrl);
++
++	return 0;
++
++ out:
++	nvme_remove_dead_ctrl(ndev, result);
++	return result;
++}
++
+ static int nvme_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct nvme_dev *ndev = pci_get_drvdata(pdev);
+ 
+-	nvme_dev_disable(ndev, true);
++	if (IS_ENABLED(CONFIG_ACPI) && pm_suspend_via_s2idle() &&
++	    ndev->ctrl.npss && !(ndev->ctrl.quirks & NVME_QUIRK_USE_D3_ON_S2I))
++		nvme_do_suspend_to_idle(pdev);
++	else
++		nvme_dev_disable(ndev, true);
++
+ 	return 0;
+ }
+ 
+@@ -2841,9 +2928,16 @@ static int nvme_resume(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct nvme_dev *ndev = pci_get_drvdata(pdev);
++	int result = 0;
+ 
+-	nvme_reset_ctrl(&ndev->ctrl);
+-	return 0;
++	if (ndev->ctrl.suspend_to_idle) {
++		result = nvme_do_resume_from_idle(pdev);
++		if (result)
++			dev_warn(dev, "failed to resume from idle state (%d)\n", result);
++	} else
++		nvme_reset_ctrl(&ndev->ctrl);
++
++	return result;
+ }
+ #endif
+ 
+@@ -2921,6 +3015,8 @@ static const struct pci_device_id nvme_id_table[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
+ 		.driver_data = NVME_QUIRK_IDENTIFY_CNS |
+ 				NVME_QUIRK_DISABLE_WRITE_ZEROES, },
++	{ PCI_DEVICE(0x1179, 0x0116),	/* Toshiba XG5 */
++		.driver_data = NVME_QUIRK_USE_D3_ON_S2I, },
+ 	{ PCI_DEVICE(0x1bb1, 0x0100),   /* Seagate Nytro Flash Storage */
+ 		.driver_data = NVME_QUIRK_DELAY_BEFORE_CHK_RDY, },
+ 	{ PCI_DEVICE(0x1c58, 0x0003),	/* HGST adapter */
+-- 
+2.17.1
+
