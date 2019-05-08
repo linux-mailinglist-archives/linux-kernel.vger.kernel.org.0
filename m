@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 800D916E3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8CD16E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfEHAaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 20:30:04 -0400
-Received: from node.akkea.ca ([192.155.83.177]:43178 "EHLO node.akkea.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbfEHAaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 20:30:03 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id B32784E2050;
-        Wed,  8 May 2019 00:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1557275402; bh=kKw3PXSebbu1jSJsDkQQCAb+XJjRIcsDdg852RVfVgM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ZZcLaBmD7n10nCdaT2FpM/LbP0NwzibIHz0dFG/OyNX2tu+Q3ZDUqpDHaPMsFJBfk
-         MtG0xKkb/L3GcPsFkWcTTpCRmPVV36S/J0ICpSaNQFLGWNWlarH3Erz+LAcxnsac7Q
-         dHlsKhmUEglC8YIBC4TbdWZkvyqkBlkAbEyTS6BY=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rm2Sfk5cR1u3; Wed,  8 May 2019 00:30:02 +0000 (UTC)
-Received: from localhost.localdomain (198-48-167-13.cpe.pppoe.ca [198.48.167.13])
-        by node.akkea.ca (Postfix) with ESMTPSA id 2C5E64E204B;
-        Wed,  8 May 2019 00:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1557275402; bh=kKw3PXSebbu1jSJsDkQQCAb+XJjRIcsDdg852RVfVgM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ZZcLaBmD7n10nCdaT2FpM/LbP0NwzibIHz0dFG/OyNX2tu+Q3ZDUqpDHaPMsFJBfk
-         MtG0xKkb/L3GcPsFkWcTTpCRmPVV36S/J0ICpSaNQFLGWNWlarH3Erz+LAcxnsac7Q
-         dHlsKhmUEglC8YIBC4TbdWZkvyqkBlkAbEyTS6BY=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     angus.ainslie@puri.sm
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v2 1/1] usb: typec: tcpci: Clear the fault status register
-Date:   Tue,  7 May 2019 18:27:49 -0600
-Message-Id: <20190508002749.14816-2-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190508002749.14816-1-angus@akkea.ca>
-References: <20190508002749.14816-1-angus@akkea.ca>
+        id S1726640AbfEHAa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 20:30:27 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34117 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfEHAa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 20:30:27 -0400
+Received: by mail-ot1-f66.google.com with SMTP id l17so7243530otq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2019 17:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aNugRNfI1NASCVQQotBkfUx3cjwsiA1TzUpe8ibe7ac=;
+        b=gRIeqvWjXvHVuVEemJNJK8AS0nBpMXjQNbmZV9qOtFksOrHCfrqeuX/vrn0nS6wwxy
+         kLfpormJ8YBe4ZEF9hNxd/IFXkViwzDXyjJ7SWlHab5fqkWfEG9z/QESkM0GYa14N37c
+         lpNEiivZk/k4qPe6YXKCt/Usic/XxFC7BwQxcRPqPZt9yKca0JFbo8LULWWrbneDHmq+
+         K8a2yddzszAkKsKQ3kY36HSo7YkWplePB3l48/W53IN9tPwuJM2Yv7wbC95njLsaoego
+         6jh4lLkkJ43Um5WDoj3cd+7cCVtFpC4h2yUMlngnDEfXLG3iM/uPEArsgoY53kR9Wc3H
+         DUgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aNugRNfI1NASCVQQotBkfUx3cjwsiA1TzUpe8ibe7ac=;
+        b=f1OklCfmP9B1HWhuTtuK5vrPpJCcCWJtEJPdayR67eeJN3e21pg/HSXCWX49XL6aZx
+         6piRav3g+nYFOLcY8joxUfEPFU1PPYi/cyexDmkMCQo1DeQfWaSdXOtOSAq7KGLX8lZX
+         a8EGeGiKAMPd9krqsdPIZF6eeMLgaUaongDBZh0c6w8lER8S/qAhDqkUaCFGp09dRs3Y
+         U/7mJqclQHycGxN8pxx+XGC1u3aUkeyaGr/aYA2PclGaKzCxiV6xC/42XOtsv7omb+12
+         dSRTrQG8NHkEIwz9Ns+V/aLXqxLQFf8DGRGp/2KiJdKHX8pinCBt+ogjVBdDM/Qmo2dc
+         gskQ==
+X-Gm-Message-State: APjAAAUJFbxrQm9yAD7i9PGbaDvyMB16LQtcKW72ymUcb4f/iiyD9vHk
+        92Mu0tQzAjaNkQW+Fn5jYdzoFNdvPAdkGYR8FuHelQ==
+X-Google-Smtp-Source: APXvYqwnFUcfnqP6BFgjGKomJPr5yaMMCBD85pEk3++fjkl68hk/raq4PqQ7V3ysBstXCoK7LDo9wO4kaWYzTHhnX6M=
+X-Received: by 2002:a9d:5cc1:: with SMTP id r1mr22059155oti.229.1557275426847;
+ Tue, 07 May 2019 17:30:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190507183804.5512-1-david@redhat.com> <20190507183804.5512-9-david@redhat.com>
+In-Reply-To: <20190507183804.5512-9-david@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 7 May 2019 17:30:15 -0700
+Message-ID: <CAPcyv4hzpuApmKHhC6mHnE-RmiZ8Aspiv5wfd+Fs4QmaDsCJVw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] mm/memory_hotplug: Remove "zone" parameter from sparse_remove_one_section
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh <linux-sh@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the fault status register doesn't get cleared then
-the ptn5110 interrupt gets stuck on. As the fault register gets
-set everytime the ptn5110 powers on the interrupt is always stuck.
+On Tue, May 7, 2019 at 11:39 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> Unused, and memory unplug path should never care about zones. This is
+> the job of memory offlining. ZONE_DEVICE might require special care -
+> the caller of arch_remove_memory() should handle this.
 
-Fixes: fault status register stuck
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
----
- drivers/usb/typec/tcpm/tcpci.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+The ZONE_DEVICE usage does not require special care so you can drop
+that comment. The only place it's used in the subsection patches is to
+lookup the node-id, but it turns out that the resulting node-id is
+then never used.
 
-diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-index c1f7073a56de..a5746657b190 100644
---- a/drivers/usb/typec/tcpm/tcpci.c
-+++ b/drivers/usb/typec/tcpm/tcpci.c
-@@ -463,6 +463,17 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
- 	else if (status & TCPC_ALERT_TX_FAILED)
- 		tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
- 
-+	if (status & TCPC_ALERT_FAULT) {
-+		u16 fault_status;
-+
-+		tcpci_read16(tcpci, TCPC_FAULT_STATUS, &fault_status);
-+
-+		dev_warn(tcpci->dev, "FAULT ALERT status 0x%x\n", fault_status);
-+
-+		/* clear the fault status */
-+		tcpci_write16(tcpci, TCPC_FAULT_STATUS, fault_status);
-+	}
-+
- 	return IRQ_HANDLED;
- }
- EXPORT_SYMBOL_GPL(tcpci_irq);
--- 
-2.17.1
+With the ZONE_DEVICE mention dropped out of changelog you can add:
 
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
