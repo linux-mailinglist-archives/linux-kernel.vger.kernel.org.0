@@ -2,210 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BCC116EC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 04:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE9216EBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 03:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbfEHCAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 22:00:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfEHCAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 22:00:02 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C65592173E;
-        Wed,  8 May 2019 02:00:01 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hOBsG-0005s1-SC; Tue, 07 May 2019 22:00:00 -0400
-Message-Id: <20190508020000.756502662@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 07 May 2019 21:56:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH 3/3] ftrace/x86_64: Emulate call function while updating in breakpoint
- handler
-References: <20190508015559.767152678@goodmis.org>
+        id S1726491AbfEHB7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 21:59:39 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34225 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbfEHB7j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 21:59:39 -0400
+Received: by mail-pf1-f195.google.com with SMTP id n19so1074225pfa.1;
+        Tue, 07 May 2019 18:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LKDYwa6gUv5wCTyZ99PrxN7F5ZX+WfRDRB+TBVrMR/M=;
+        b=bO3R80TSFgE++pk0ozdsgJgulasRz6lSf+dyLKEVUTZnfrzKlw4n41cPixoi/YaXAm
+         qDKvTGfvQ+qMhD+bh7vb7BD5GTw+DMtuB25imranm80XSc2CleG5G0YkZ8T1DDB59CeE
+         bILBcf4cuYFCFWQFJnz02u5w12qvjgsFJeB3LpSXWcQbS63aSCBVz8sNJA2+XT3F8uyf
+         /WPfZpv53QTIJLeOG97HFQkXLaKUlzppqEogTcYfC9a4r/0Ane+aLN/ScxQNT3mWRuly
+         5dI+eBPVKfxjv5p/hCZu610r2FW/KiwoGYi2/rPiTcRBXNP8uBHaE/KH93zXb8w9CEWK
+         dmAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LKDYwa6gUv5wCTyZ99PrxN7F5ZX+WfRDRB+TBVrMR/M=;
+        b=C+kcWKfM4RtoXnyXtmHvVArc6muUqb8qSsp/VdcXLTxqAzzd/jfRaYHzNwRmBQnA0Z
+         v6ekA3c99cjNQVANjTaPBolMa+d+RVAQlLtT8Yl5O8Iw3D8ILuHUpWWnt5Qied3dOBUc
+         FCNOR1XMKKlmOzenRMTCFqz/MeYKcXrgq1oek5r9Oc9BJIZVllyuq/qQOWVKz+IKY3FJ
+         CGpUb+UI1SDfSy4tR3gC6Wfm35/djreg1wteCrNIXrs1h7ZKjiFyr0zpB19MDMaQi2Mm
+         maT5KwfRvHXFN4zOoiKvGBzKl5DDw7LQo+M3RyhTkZiLKW34SnRk5vpkyoe9H4sePHS+
+         dwpA==
+X-Gm-Message-State: APjAAAWRRo/GFDVTm/wKOfoMC+fs2L6/HHoYnAzD3SovpflVbXG+hOXe
+        BiiPRCD0ugYPHAC3NPbVZLPpR2zX
+X-Google-Smtp-Source: APXvYqxDuhJVVTLedW1BLuHfADxWqaSKHmzJSrRoR+NS1/eEc5b2m3SHitJ4rvGEcpem027CijC6qA==
+X-Received: by 2002:a63:fb01:: with SMTP id o1mr43420797pgh.135.1557280778532;
+        Tue, 07 May 2019 18:59:38 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a18sm14455836pfr.22.2019.05.07.18.59.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 18:59:37 -0700 (PDT)
+Subject: Re: [PATCH 1/1] usb: typec: tcpci: add functions to read the VBUS
+ voltage
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190508004027.16558-1-angus@akkea.ca>
+ <20190508004027.16558-2-angus@akkea.ca>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f70df755-9462-54af-cd7d-83d35c1dd3f8@roeck-us.net>
+Date:   Tue, 7 May 2019 18:59:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <20190508004027.16558-2-angus@akkea.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+On 5/7/19 5:40 PM, Angus Ainslie (Purism) wrote:
+> Show an error when the VBUS voltage is out of range.
+> 
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
+>   drivers/usb/typec/tcpm/tcpci.c | 35 ++++++++++++++++++++++++++++++++++
+>   1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index a5746657b190..223941e11ef3 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -261,6 +261,26 @@ static int tcpci_set_pd_rx(struct tcpc_dev *tcpc, bool enable)
+>   	return 0;
+>   }
+>   
+> +static int tcpci_get_vbus_voltage(struct tcpc_dev *tcpc)
+> +{
+> +	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+> +	u16 vbus_reg;
+> +	unsigned int vbus_voltage;
+> +	int ret, scale;
+> +
+> +	ret = tcpci_read16(tcpci, TCPC_VBUS_VOLTAGE, &vbus_reg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	vbus_voltage = vbus_reg & 0x3f;
+> +
+> +	scale = (vbus_reg >> 10) & 3;
+> +	if (scale == 3)
+> +		return -EIO;
+> +
+> +	return (vbus_voltage << scale) * 25;
+> +}
+> +
+>   static int tcpci_get_vbus(struct tcpc_dev *tcpc)
+>   {
+>   	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+> @@ -401,6 +421,7 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+>   irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>   {
+>   	u16 status;
+> +	int ret;
+>   
+>   	tcpci_read16(tcpci, TCPC_ALERT, &status);
+>   
+> @@ -474,6 +495,20 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>   		tcpci_write16(tcpci, TCPC_FAULT_STATUS, fault_status);
+>   	}
+>   
+> +	if (status & (TCPC_ALERT_V_ALARM_LO | TCPC_ALERT_V_ALARM_HI)) {
+> +		ret = tcpci_get_vbus_voltage(&tcpci->tcpc);
+> +
+Extra empty line.
 
-Nicolai Stange discovered[1] that if live kernel patching is enabled, and the
-function tracer started tracing the same function that was patched, the
-conversion of the fentry call site during the translation of going from
-calling the live kernel patch trampoline to the iterator trampoline, would
-have as slight window where it didn't call anything.
+> +		if (ret >= 0) {
+> +			if (status & TCPC_ALERT_V_ALARM_LO)
+> +				dev_err(tcpci->dev, "Low VBUS voltage %d mV\n",
+> +						ret);
+> +
+> +			if (status & TCPC_ALERT_V_ALARM_HI)
+> +				dev_err(tcpci->dev, "High VBUS voltage %d mV\n",
+> +						ret);
+> +		}
 
-As live kernel patching depends on ftrace to always call its code (to
-prevent the function being traced from being called, as it will redirect
-it). This small window would allow the old buggy function to be called, and
-this can cause undesirable results.
+This doesn't report anything if reading the VBUS voltage
+returns an error.
 
-Nicolai submitted new patches[2] but these were controversial. As this is
-similar to the static call emulation issues that came up a while ago[3].
-But after some debate[4][5] adding a gap in the stack when entering the
-breakpoint handler allows for pushing the return address onto the stack to
-easily emulate a call.
+Also, per TCPCI specification, you probably want to check
+POWER_CONTROL.VBUS_VOLTAGE Monitor to see if it is enabled
+in the first place.
 
-[1] http://lkml.kernel.org/r/20180726104029.7736-1-nstange@suse.de
-[2] http://lkml.kernel.org/r/20190427100639.15074-1-nstange@suse.de
-[3] http://lkml.kernel.org/r/3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com
-[4] http://lkml.kernel.org/r/CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com
-[5] http://lkml.kernel.org/r/CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com
+On a higher level, the driver doesn't currently set limits for low
+and high voltage alarms, and it doesn't enable those alarms. As such,
+I wonder if/how you can get those alerts. Can you clarify ?
 
-[
-  Live kernel patching is not implemented on x86_32, thus the emulate
-  calls are only for x86_64.
-]
+Thanks,
+Guenter
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: the arch/x86 maintainers <x86@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Miroslav Benes <mbenes@suse.cz>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Nayna Jain <nayna@linux.ibm.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Fixes: b700e7f03df5 ("livepatch: kernel: add support for live patching")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-[ Changed to only implement emulated calls for x86_64 ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- arch/x86/kernel/ftrace.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index ef49517f6bb2..bd553b3af22e 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -29,6 +29,7 @@
- #include <asm/kprobes.h>
- #include <asm/ftrace.h>
- #include <asm/nops.h>
-+#include <asm/text-patching.h>
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
-@@ -231,6 +232,7 @@ int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
- }
- 
- static unsigned long ftrace_update_func;
-+static unsigned long ftrace_update_func_call;
- 
- static int update_ftrace_func(unsigned long ip, void *new)
- {
-@@ -259,6 +261,8 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
- 	unsigned char *new;
- 	int ret;
- 
-+	ftrace_update_func_call = (unsigned long)func;
-+
- 	new = ftrace_call_replace(ip, (unsigned long)func);
- 	ret = update_ftrace_func(ip, new);
- 
-@@ -294,13 +298,28 @@ int ftrace_int3_handler(struct pt_regs *regs)
- 	if (WARN_ON_ONCE(!regs))
- 		return 0;
- 
--	ip = regs->ip - 1;
--	if (!ftrace_location(ip) && !is_ftrace_caller(ip))
--		return 0;
-+	ip = regs->ip - INT3_INSN_SIZE;
- 
--	regs->ip += MCOUNT_INSN_SIZE - 1;
-+#ifdef CONFIG_X86_64
-+	if (ftrace_location(ip)) {
-+		int3_emulate_call(regs, (unsigned long)ftrace_regs_caller);
-+		return 1;
-+	} else if (is_ftrace_caller(ip)) {
-+		if (!ftrace_update_func_call) {
-+			int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
-+			return 1;
-+		}
-+		int3_emulate_call(regs, ftrace_update_func_call);
-+		return 1;
-+	}
-+#else
-+	if (ftrace_location(ip) || is_ftrace_caller(ip)) {
-+		int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
-+		return 1;
-+	}
-+#endif
- 
--	return 1;
-+	return 0;
- }
- NOKPROBE_SYMBOL(ftrace_int3_handler);
- 
-@@ -859,6 +878,8 @@ void arch_ftrace_update_trampoline(struct ftrace_ops *ops)
- 
- 	func = ftrace_ops_get_func(ops);
- 
-+	ftrace_update_func_call = (unsigned long)func;
-+
- 	/* Do a safe modify in case the trampoline is executing */
- 	new = ftrace_call_replace(ip, (unsigned long)func);
- 	ret = update_ftrace_func(ip, new);
-@@ -960,6 +981,7 @@ static int ftrace_mod_jmp(unsigned long ip, void *func)
- {
- 	unsigned char *new;
- 
-+	ftrace_update_func_call = 0UL;
- 	new = ftrace_jmp_replace(ip, (unsigned long)func);
- 
- 	return update_ftrace_func(ip, new);
--- 
-2.20.1
-
+> +	}
+> +
+>   	return IRQ_HANDLED;
+>   }
+>   EXPORT_SYMBOL_GPL(tcpci_irq);
+> 
 
