@@ -2,123 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B6AF16E0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1D016DFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 02:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfEHAKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 7 May 2019 20:10:07 -0400
-Received: from mx1.cock.li ([185.10.68.5]:58579 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726604AbfEHAKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 May 2019 20:10:04 -0400
-X-Greylist: delayed 349 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 May 2019 20:10:03 EDT
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_40,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1557273851; bh=8G0TzcOzwSFxmUI0oP71wqUIU3dz/rah4Bu4Hn2AW4Q=;
+        id S1726403AbfEHAFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 7 May 2019 20:05:35 -0400
+Received: from ozlabs.org ([203.11.71.1]:36349 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfEHAFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 May 2019 20:05:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44zGvb4CM2z9s00;
+        Wed,  8 May 2019 10:05:31 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557273933;
+        bh=oiPHLrJ1PNdtIn7Z2unJZ152OwUKHCpZpXYVThGD6G0=;
         h=Date:From:To:Cc:Subject:From;
-        b=bCXmNwBdPf/drfE7nppPOCJziilvIQJ8RYnE4Fnc6yOxcb7WmSzMRdY3TavehAigG
-         ZyIYBvSLxELl30ck/QIc8sxQn7RlAqX92Xk4xzydlGKZYCvxM5EYd8qx93DS8Km7KQ
-         1K4n12eV3QOON89chJDZN5fDVWwfkNeXWBG5IcS1ZMx+2uoVhutWT8K5a+5t13TOuc
-         3r6Ozf941wmCEGM4ExhOu77ZjiW1TLRBp2aotTT0QsU7zaEI/dnVk8weFulhkjx6Kp
-         /2jAqie5hhxKNn9//VoYXvRJQrThHKUMZTGP6CXAb7E60aIUClMcLfyBCA+Rt36Y5U
-         wmjVZwEiDNXxw==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 08 May 2019 00:04:11 +0000
-From:   informator@redchan.it
-To:     andrew@rainway.io
-Cc:     linux-kernel@vger.kernel.org
-Subject: To: Andrew Sampson: Rights granted by the GPL _can_ be
- "retroactively" retracted. Yes I am a lawyer
-Message-ID: <cfc2a12664356a6d14078b58fc1ddbf0@redchan.it>
-X-Sender: informator@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+        b=de44/kO67Isp6nkiulJukoLG7aPg9xt0BTNhM48Bk03ff0xj5f2Eh0hompS/fGJib
+         Qmu82+zV5j2276qeRiKIX5ugSejhI1L4cqpZC1Ew2re3JqXxXCR9KUZPh3iyuujLL/
+         I3nymZKW2K8FMhPTGa8SppkOk8svjcCAOgCsUXLlreEmB55rb3r/ODZOimf0epMMSF
+         vaeFPBUTCas1GMgHJ00jYKuL/QlOn6iAjCDIM/u3nk9GWaJpopxTdjv6sO5dsfhj9I
+         q1CcQIyTLNAVTBgBo8s8jPdkfQyrSv923rTl/j8Y2+kLtF/K5wf5AtbWIDOl17aG6x
+         F7UUW2xHHvdsw==
+Date:   Wed, 8 May 2019 10:05:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Artem Bityutskiy <dedekind1@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Weinberger <richard@nod.at>
+Subject: linux-next: manual merge of the ubifs tree with Linus' tree
+Message-ID: <20190508100525.7c24c8be@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PktYFn.tjcmLyihpLR/OTUn"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Andrew Sampson;
-The proclamations given in the thread: 
-github.com/Codeusa/Borderless-Gaming/issues/312 are incorrect.
+--Sig_/PktYFn.tjcmLyihpLR/OTUn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If the non-exclusive licensee did not pay the copyright holder 
-consideration for receipt of the permissions given regarding the 
-copyrighted work, the copyright holder can freely rescind those 
-permissions _AT_ANY_TIME_ .
+Hi all,
 
-The reasons are as follows: For the licensee to "hold" the licensor to 
-any promise regarding when and how rescission is to take place there 
-must be a contract between the two. A contract requires valid 
-bargained-for consideration. Otherwise any "promise" made is an Illusory 
-Promise (unenforceable).
+Today's linux-next merge of the ubifs tree got a conflict in:
 
-"Nothing" is not valid consideration.
+  fs/ubifs/auth.c
 
-Obeying a pre-existing duty is not valid consideration.
+between commit:
 
-The licensee has a pre-existing duty to obey copyright law, without 
-permission from the copyright holder he may not 
-use/modify/make-derivative-works-of/distribute/distribute-derivative-works-of. 
-That permission is what he is attempting to "contract" for. Saying one 
-will follow those permissions is not valid consideration to "pay" for 
-those permissions. Promising not to violate the copyright holder's 
-rights -by promising to only use the copyrighted works as freely 
-permitted by the copyright holder, is not valid consideration as that is 
-a pre-existing duty.
+  877b5691f27a ("crypto: shash - remove shash_desc::flags")
 
-Yes: Codeusa: you _C_A_N_ revoke GPL permissions from free-takers at 
-your will. And you should do so if that is needed for your livelihood to 
-succeed.
+from Linus' tree and commit:
 
-You should do so if it is simply your want.
+  f4844b35d68a ("ubifs: work around high stack usage with clang")
 
-Do not the pennyless leaches intimidate you from making your own 
-decisions regarding your work of authorship. They gave you nothing, you 
-asked for nothing, they have nothing. Remember: a non-exclusive license 
-is not a transfer, it is permission. Permission that can be ended at any 
-time unless there exists an attached interest (ie: the other side payed 
-you for a license contract)
-Also Remember: The FSF has _always_ (and still does) required Copyright 
-Transfers before it would accept a contribution.
+from the ubifs tree.
 
-And yes: I am a lawyer.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Of course: consult your local copyright attorney. Strategy is important 
-in these cases. The free-loaders feel they have the 9th circuit judges 
-in the bag, and that the 9th circuit will invalidate the concept of 
-consideration if needed to protect the California tech industry (so 
-revoke from those outside the 9th circuit first).
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc fs/ubifs/auth.c
+index b758004085c4,3d049194afa4..000000000000
+--- a/fs/ubifs/auth.c
++++ b/fs/ubifs/auth.c
+@@@ -85,12 -86,17 +84,16 @@@ int ubifs_prepare_auth_node(struct ubif
+  	if (!hash)
+  		return -ENOMEM;
+ =20
+- 	hash_desc->tfm =3D c->hash_tfm;
+- 	ubifs_shash_copy_state(c, inhash, hash_desc);
++ 	{
++ 		SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
+ =20
+- 	err =3D crypto_shash_final(hash_desc, hash);
+- 	if (err)
+- 		goto out;
++ 		hash_desc->tfm =3D c->hash_tfm;
+ -		hash_desc->flags =3D CRYPTO_TFM_REQ_MAY_SLEEP;
++ 		ubifs_shash_copy_state(c, inhash, hash_desc);
++=20
++ 		err =3D crypto_shash_final(hash_desc, hash);
++ 		if (err)
++ 			goto out;
++ 	}
+ =20
+  	err =3D ubifs_hash_calc_hmac(c, hash, auth->hmac);
+  	if (err)
 
+--Sig_/PktYFn.tjcmLyihpLR/OTUn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSHUUACgkQAVBC80lX
+0GxluAf+NFIDpqdiuZljF+G24ADeJLFbGjsnyLnKHvfZwi0xS/hCVrzhpL0NnyUo
+ZtExq/OwLbnb0/BNgG5C1WlnhGrpfDE62f81N8cajNl5fuYmBsQW+9zBiokJM63J
+tiWJ9Y2cwN4WAp15sQUogprh4dXOwp/dwer+Q47GvX6KOZHdXByGEjQLYBlqafg1
+6a8xoIbjxmCi06vqcu3EiuF9g0PICRMPrbpTpDAPcaKFvJyXFVTFHY35dctILcQq
+2QzqLIWLfQuE+DJedxdOPf/f29ofZls4Z46JihojydTUUMwymC4ANWBofzct9nWB
+j+UuwyN5M5Q5+Q9pkJN496Xx/gI02g==
+=gYRA
+-----END PGP SIGNATURE-----
 
-
-For easy to read by lay-people discussions on this topic:
-lkml.org/lkml/2019/5/4/334
-lkml.org/lkml/2019/5/3/698
-
-For legal articles and treatises that agree: no consideration from GPL 
-free-taker, no contract, revocable by the copyright holder:
-scholarship.law.duke.edu/faculty_scholarship/1857/
-www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876
-papers.ssrn.com/sol3/papers.cfm?abstract_id=243237
-
-
-
-Note: I tried to inform you of this on your github account but was 
-immediatly "hell banned" by github.
-
-
-Sincerely;
-Pro-Bono Attorney
-
-
-
+--Sig_/PktYFn.tjcmLyihpLR/OTUn--
