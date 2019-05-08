@@ -2,102 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7E0175B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0890C175C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfEHKNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfEHKNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:13:04 -0400
-Received: from earth.universe (dyndsl-091-248-052-181.ewe-ip-backbone.de [91.248.52.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8929320578;
-        Wed,  8 May 2019 10:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557310383;
-        bh=ErD1/VVKRF8b62CZRklMab94FhD0FCMFP5weYO0YEes=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j8NUrwNH5Hlt8uCH8AeYGh7YXEMXYP5oI00keFeekOJpu/Wbb3z6+2P2wStcduXmR
-         Zw3y9N5+cXGe4sxU4jTzFlr9jKl8gh44GQOx07Tl21dwwW0UT4meaX80Kms3/xYark
-         RIiUMPExHrd/AycUJTjWmTpGiYOMIqthg2jjFRLI=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4077C3C0CBD; Wed,  8 May 2019 12:13:01 +0200 (CEST)
-Date:   Wed, 8 May 2019 12:13:01 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] spi updates for v5.2
-Message-ID: <20190508101301.lxwt4e6eziujdfit@earth.universe>
-References: <20190506143301.GU14916@sirena.org.uk>
- <CAADWXX_MqtZ6RxS2zEVmHtKrjqigiNzdSe5qVwBVvfVU6dxJRQ@mail.gmail.com>
- <20190507021853.GY14916@sirena.org.uk>
- <20190507030241.GC14916@sirena.org.uk>
- <CAHk-=wi4EJQLoMNd4ptiiZvLy8ZW49pcCy0VQwZt4xhDDqSOjw@mail.gmail.com>
- <20190507110345.GF14916@sirena.org.uk>
- <20190507120730.5ylk6v4yvzxuzqld@earth.universe>
- <20190508060936.GH14916@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="67wcu6z2guvpdeh7"
-Content-Disposition: inline
-In-Reply-To: <20190508060936.GH14916@sirena.org.uk>
-User-Agent: NeoMutt/20180716
+        id S1727091AbfEHKO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 06:14:56 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42038 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfEHKOz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 06:14:55 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x15so9696232pln.9
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 03:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=p0PVRgJN8u0SVmWtfEOhULrDoirbepiDPqsJzyAsDR0=;
+        b=GjDGBM1MhOzB7g7oZKvrWlHtLNSULP4C2WSeH4ePuxqbOA7kRw/H/w1qQ75qEp5erT
+         VahBMI6gdHHpR9d1ynk7u8Y8xrdg+csGkg8v/4taHTiNKY5DPQtP6396fkBjp94EgfQ3
+         vPwCjljv445MS1pJQsLA/s17OKSYszZUHdN0lWlqcvvMiS07c0hD0XprAuRpflQFsm2G
+         4ytHLaATPWGdGBC/ZH81tOxHaiOciOR5Br4udxrcoW/5Buqp7koKmODpua/D7Xo/uub+
+         WdCxDnjdvdpns17mGjxNv++8oyNtHL6YN0Az+h1+Eb0H9qqE3TU7uldrKbLdaLr+Kiur
+         U8uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=p0PVRgJN8u0SVmWtfEOhULrDoirbepiDPqsJzyAsDR0=;
+        b=OjmIGAv80lI6PFN1LALJ5Ptieg2CbB6z59nn4T5hEhKxR8H3C09YuV5YDkCPrbpfO9
+         0io/eo5EaqsGcPo/QoUwpCd8+ZXR/K+i0LoYV81h0kw5TFfJvOBoZ/7sOeb5EL0xh2S7
+         QZrNIKcNFb48DblvN/HDnQwWP2FIoVKQXPgSKNKtUBZU74KBc9PLTLh0tsm5KNbJyx/O
+         I2teYBUxYrd8Javl3x2Ua3TuB1INnrQw7m9Lq7ZSn0rN92j7m80Gj6uAVwATwdKvgRk9
+         Gv7r9PE2tu9Dc9WB7EwXePpStgJYFxXyyBZtsFzkRULQ8wx6cwJP86zaaw68u9P90h6X
+         STdQ==
+X-Gm-Message-State: APjAAAV0cyn9eBVegDphGL5BaARs6bxpmOHVVKV5OX7pOS6JQHfaenDC
+        4a4xOwoeJvDG1weRFylFQJK5Og==
+X-Google-Smtp-Source: APXvYqz4nnEbNBomHXi+aIf4iA5eKUG8g1Jt89p6jZkv5pkE5sTsVzYb7gyXpbI9Oyl7jU0qQcBsmA==
+X-Received: by 2002:a17:902:e28a:: with SMTP id cf10mr5589375plb.77.1557310495213;
+        Wed, 08 May 2019 03:14:55 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.67.140])
+        by smtp.gmail.com with ESMTPSA id f15sm19014077pgf.18.2019.05.08.03.14.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 08 May 2019 03:14:54 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org
+Cc:     linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, daniel.thompson@linaro.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH] MAINTAINERS: Add mailing list for the TEE subsystem
+Date:   Wed,  8 May 2019 15:44:09 +0530
+Message-Id: <1557310449-30450-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add a mailing list for patch reviews and discussions related to TEE
+subsystem.
 
---67wcu6z2guvpdeh7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hi,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 920a0a1..c05dff7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11556,11 +11556,13 @@ F:	drivers/scsi/st.h
+ 
+ OP-TEE DRIVER
+ M:	Jens Wiklander <jens.wiklander@linaro.org>
++L:	tee-dev@lists.linaro.org
+ S:	Maintained
+ F:	drivers/tee/optee/
+ 
+ OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
+ M:	Sumit Garg <sumit.garg@linaro.org>
++L:	tee-dev@lists.linaro.org
+ S:	Maintained
+ F:	drivers/char/hw_random/optee-rng.c
+ 
+@@ -15312,6 +15314,7 @@ F:	include/media/i2c/tw9910.h
+ 
+ TEE SUBSYSTEM
+ M:	Jens Wiklander <jens.wiklander@linaro.org>
++L:	tee-dev@lists.linaro.org
+ S:	Maintained
+ F:	include/linux/tee_drv.h
+ F:	include/uapi/linux/tee.h
+-- 
+2.7.4
 
-On Wed, May 08, 2019 at 03:09:36PM +0900, Mark Brown wrote:
-> On Tue, May 07, 2019 at 02:07:30PM +0200, Sebastian Reichel wrote:
-> > FWIW, I send out kernel.org mails via mail.kernel.org. Konstantin
-> > added that service in 2014. You can get a password with
->=20
-> > ssh git@gitolite.kernel.org getsmtppass
-> >=20
-> > and then use the following settings for (example for git):
->=20
-> I'd have to send all mail out via kernel.org to do that, or persuade a
-> MTA to route mail differently based on contents which seems interesting
-> - I inject most of my mail via /usr/sbin/sendmail rather than SMTP
-> (including a bunch of scripts).
-
-I have a locally installed postfix in sender dependent relay
-configuration, which does that for me:
-
-http://www.postfix.org/SOHO_README.html#client_sasl_sender
-
--- Sebastian
-
---67wcu6z2guvpdeh7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlzSq6gACgkQ2O7X88g7
-+pp6khAAmZ5my97oTpts1tAYrnA+mzSWdA+fvZAdfRUfIlIH7Xgwg6nH5Ll8CQyO
-BEcChOdj1Ph6bMgWnpZczOb9UW2rCMXqA27Rsucj8VtQPK7Ipdz92fXoigi5N64P
-Nr2KInKFS8chQYf0wNklhl0vE+/zpYlohL54QyGZrTr2/XgdZl4ytBqZvQK2LEJU
-lLSdHH87nTXqKnNVtUd3shezT/rOGB3BpYTqhtW2hIn1VUFZEeDpdC6iGLCILGMb
-dqG6MLNCa3JKtmALxXS4hWAeRa7EohHoxwPFXP1uvA6K09GYhBeyZla3yxyjYWHI
-QUaY4TUvqaTCr5I8BUihQFhb4yGLdXhzgnTKMWX5asgPw2+Dy6CpxiWLgO8hnDpf
-s2Qgb2B+KIyNC/onAUt5CDlCxpG16YrRLiX/7h4riKvzTMmavIFx4HgifmwbiLoO
-UugIu0TU08xGvJbmiJiUOGeXXLOPS61faBcKF1GFWLkEwO0PXpw9TsVoJVB4+Pvx
-V+4KZj/TdtP4CR5rkngHu+3jxU5T+eb6KFZYTu546QNIhNixEB68inYVcP2tV/QY
-5q0FIHAISvKz95rzuxIW6WZ8OyC+ZVccROSpcL6hs/heoUamsSexRzOf3eXCtndg
-STlX6FelVrUXgHXKY4h+gIFANOfr04wYq7miZYqV41Pab4L5oYI=
-=CZEI
------END PGP SIGNATURE-----
-
---67wcu6z2guvpdeh7--
