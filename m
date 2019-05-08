@@ -2,72 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D378817AF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BACD217AE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 15:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfEHNpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 09:45:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726481AbfEHNpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 09:45:51 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A672CBD953975132DD20;
-        Wed,  8 May 2019 21:45:48 +0800 (CST)
-Received: from huawei.com (10.184.227.228) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 8 May 2019
- 21:45:39 +0800
-From:   Wang Hai <wanghai26@huawei.com>
-To:     <olteanv@gmail.com>, <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
-        <f.fainelli@gmail.com>, <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <wanghai26@huawei.com>
-Subject: [PATCH] net: dsa: sja1105: Make 'sja1105et_regs' and 'sja1105pqrs_regs' static
-Date:   Wed, 8 May 2019 21:43:26 +0800
-Message-ID: <20190508134326.34840-1-wanghai26@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727703AbfEHNnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 09:43:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfEHNnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 09:43:52 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27A64214AF;
+        Wed,  8 May 2019 13:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557323031;
+        bh=XrfOkBwkQE73zyZSkSTLIh9IBVtJ+5CvdEGAlS+U8uc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xxE1PGDbYNid+aUL75GhE1JvSM+eFv3neeeFpPiJVFn1qvTY+CYHdghmwferpn9Hr
+         j+wT5zSBSgaFKtwCi2kNkwKov9f2RFjyewIW1bWziq9hWh8ARiTyqPkGB+/T08a2Jf
+         HWrnTPAaqmaRmlFolycDWyRIxxEhl1/OdwrbAAlw=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-mtd@lists.infradead.org
+Cc:     dinguyen@kernel.org, marex@denx.de, tudor.ambarus@microchip.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCHv4 1/2] dt-bindings: cadence-quadspi: add options reset property
+Date:   Wed,  8 May 2019 08:43:37 -0500
+Message-Id: <20190508134338.20565-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.184.227.228]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/net/dsa/sja1105/sja1105_spi.c:486:21: warning: symbol 'sja1105et_regs' was not declared. Should it be static?
-drivers/net/dsa/sja1105/sja1105_spi.c:511:21: warning: symbol 'sja1105pqrs_regs' was not declared. Should it be static?
+The QSPI module can have an optional reset signals that will hold the
+module in a reset state.
 
-Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port L2 switch")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wang Hai <wanghai26@huawei.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/net/dsa/sja1105/sja1105_spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v4: no change
+v3: created base on review comments
+v2: did not exist
+v1: did not exist
+---
+ Documentation/devicetree/bindings/mtd/cadence-quadspi.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
-index 244a94ccfc18..6848d82e423a 100644
---- a/drivers/net/dsa/sja1105/sja1105_spi.c
-+++ b/drivers/net/dsa/sja1105/sja1105_spi.c
-@@ -483,7 +483,7 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
- 	return rc;
- }
+diff --git a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+index 4345c3a6f530..b6264323a03c 100644
+--- a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
++++ b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+@@ -35,6 +35,8 @@ custom properties:
+ 		  (qspi_n_ss_out).
+ - cdns,tslch-ns : Delay in nanoseconds between setting qspi_n_ss_out low
+                   and first bit transfer.
++- resets	: Must contain an entry for each entry in reset-names.
++		  See ../reset/reset.txt for details.
  
--struct sja1105_regs sja1105et_regs = {
-+static struct sja1105_regs sja1105et_regs = {
- 	.device_id = 0x0,
- 	.prod_id = 0x100BC3,
- 	.status = 0x1,
-@@ -508,7 +508,7 @@ struct sja1105_regs sja1105et_regs = {
- 	.rmii_ext_tx_clk = {0x100018, 0x10001F, 0x100026, 0x10002D, 0x100034},
- };
+ Example:
  
--struct sja1105_regs sja1105pqrs_regs = {
-+static struct sja1105_regs sja1105pqrs_regs = {
- 	.device_id = 0x0,
- 	.prod_id = 0x100BC3,
- 	.status = 0x1,
+@@ -50,6 +52,8 @@ Example:
+ 		cdns,fifo-depth = <128>;
+ 		cdns,fifo-width = <4>;
+ 		cdns,trigger-address = <0x00000000>;
++		resets = <&rst QSPI_RESET>, <&rst QSPI_OCP_RESET>;
++		reset-names = "qspi", "qspi-ocp";
+ 
+ 		flash0: n25q00@0 {
+ 			...
 -- 
-2.17.1
-
+2.20.0
 
