@@ -2,92 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B591C93B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 506D817C87
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbfENNMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:12:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34852 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfENNMc (ORCPT
+        id S1728917AbfEHOvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 10:51:48 -0400
+Received: from smtprelay0140.hostedemail.com ([216.40.44.140]:53653 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727049AbfEHOvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:12:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g5so8262144plt.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8j4bTePHKvxQHvdCNJpe7zeTS2p9aPCumSJI0+OPUho=;
-        b=QFJ7Uj5YexuFf6uISaOzUn230iNrGfeGlc5p43zd5sz3KohEp5mu1AieK2+nd3A4Ul
-         eQMY2Z8dEI6SO527Hx3lpfx+qG6PFsMPpD8t0XJPiyUJoIEBsXU5wI/dI8+2+w1/Bl+0
-         F7ItnZYkgweTYUPkCBIpXzOWiI6lbAftb+paqcWaapzMQYXvfTvEEGXQMmjkEZM7EvfU
-         JDy5Nb6VX3ws3gAv+5glr4Pzo4FaSnwIq6LIsjLjUDxFyWz8vLdxOval9hI5sS5ZRJpl
-         bt6XDed0yt9H9K/f2WX8NStrCnX2jieuEGxGp4X4QmG0/5+qsHIdzOxikX00+d+q7typ
-         qEwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8j4bTePHKvxQHvdCNJpe7zeTS2p9aPCumSJI0+OPUho=;
-        b=drD7mRFXr3o9B8FNuUs95yK58fQaSjX7v6pSbAqDrRELb1ssTD04yfxdoPaEHrH1cq
-         CJhyAK8JiAqgCIAHcNHOduL3J93bWj8dIyP1Kgf9+MLuesandT8sDQIBqbWL97QjQmfy
-         hVjFZE4VhCPtjdZlw3aou4D8XWlLcQ47fZk4bQtMDKJXJKv4v150Gy7NU5Np3gn6f1pQ
-         ryCPDF39wo638+wPoNIm2BcN5ugHRDeFxE4yDL5UH0eZSHde3GUH1+S85s5J+yVFbvWZ
-         MvtjnXJlbHeYzRwuKKHIwnmnzR2CZePLfdfXQpCpVlC6a4PnEBcx53j+stJ5+KCNGQfo
-         OV0w==
-X-Gm-Message-State: APjAAAUb8Diz10MyjF3tMXnbFv9AiQP5K6qhxVDVQ4gdjSPEpSSiQUmW
-        8AwpAm9vjSyMx4Cvl1Wo82zVXA==
-X-Google-Smtp-Source: APXvYqxqgfcYr8ueqlj/ULqC7UHBgssWO16AHhzumldec5lumpiBNFn6b6GYsRNopPkPY29HgGR5nw==
-X-Received: by 2002:a17:902:84:: with SMTP id a4mr37940501pla.210.1557839552080;
-        Tue, 14 May 2019 06:12:32 -0700 (PDT)
-Received: from box.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id 5sm2405005pfh.109.2019.05.14.06.12.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 06:12:30 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id F2F551007C1; Wed,  8 May 2019 17:47:39 +0300 (+03)
-Date:   Wed, 8 May 2019 17:47:39 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        keescook@chromium.org
-Subject: Re: [PATCH v4] x86/mm/KASLR: Fix the size of vmemmap section
-Message-ID: <20190508144739.we4owbvjmjisium5@box>
-References: <20190508080417.15074-1-bhe@redhat.com>
- <20190508082418.GC24922@MiWiFi-R3L-srv>
- <20190508090424.GA19015@zn.tnic>
- <20190508093520.GD24922@MiWiFi-R3L-srv>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508093520.GD24922@MiWiFi-R3L-srv>
-User-Agent: NeoMutt/20180716
+        Wed, 8 May 2019 10:51:45 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 7138C180A813C;
+        Wed,  8 May 2019 14:51:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2731:2828:2919:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:3874:4321:5007:7903:10004:10400:10450:10455:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:19904:19999:21080:21324:21433:21451:21627:30029:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: ray83_ee8e93ad3e2b
+X-Filterd-Recvd-Size: 2043
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  8 May 2019 14:51:42 +0000 (UTC)
+Message-ID: <4517dfca6c4692b28c4914410f475d3f521cd230.camel@perches.com>
+Subject: Re: [PATCH 1/4] checkpatch: fix multiple const * types
+From:   Joe Perches <joe@perches.com>
+To:     Antonio Borneo <borneo.antonio@gmail.com>,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Wed, 08 May 2019 07:51:40 -0700
+In-Reply-To: <20190508122721.7513-1-borneo.antonio@gmail.com>
+References: <20190508122721.7513-1-borneo.antonio@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 05:35:20PM +0800, Baoquan He wrote:
-> On 05/08/19 at 11:04am, Borislav Petkov wrote:
-> > On Wed, May 08, 2019 at 04:24:18PM +0800, Baoquan He wrote:
-> > > I think this's worth noticing stable tree:
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > 
-> > Fixes: ?
+On Wed, 2019-05-08 at 14:27 +0200, Antonio Borneo wrote:
+> Commit 1574a29f8e76 ("checkpatch: allow multiple const * types")
+> claims to support repetition of pattern "const *", but it actually
+> allows only one extra instance.
+> Check the following lines
+> 	int a(char const * const x[]);
+> 	int b(char const * const *x);
+> 	int c(char const * const * const x[]);
+> 	int d(char const * const * const *x);
+> with command
+> 	./scripts/checkpatch.pl --show-types -f filename
+> to find that only the first line passes the test, while a warning
+> is triggered by the other 3 lines:
+> 	WARNING:FUNCTION_ARGUMENTS: function definition argument
+> 	'char const * const' should also have an identifier name
+> The reason is that the pattern match halts at the second asterisk
+> in the line, thus the remaining text starting with asterisk fails
+> to match a valid name for a variable.
 > 
-> Not sure which commit validated 5-level.
-> 
-> Hi Kirill,
-> 
-> Is this commit OK?
-> 
-> Fiexes: eedb92abb9bb ("x86/mm: Make virtual memory layout dynamic for CONFIG_X86_5LEVEL=y")
+> Fixed by replacing "?" (Match 1 or 0 times) with "*" (Match 0 or
+> more times) in the regular expression.
+> Fix also the similar test for types in unusual order.
 
-Yep.
+It might be better to use a max match like {0,4} instead of *
 
--- 
- Kirill A. Shutemov
+perl is pretty memory intensive at multiple unrestricted matches
+of somewhat complex patterns.
+
+
