@@ -2,74 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC9117EA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 18:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B89B180B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbfEHQ6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 12:58:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48272 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbfEHQ6k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 12:58:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x2WuU/X5fa5tUVfwJobGS2HfWE2m292r4J/u47Wd82s=; b=WvagHzfkLT5uNstZZ33NzU8f4
-        hVRF06AuCxJhAWvqiZKox4/2Nfevff1DInfGoORtzQW+kOTzEwOz2D0pN1WsVfq3c0szMFWAsntze
-        flir9K6/Xz58geaWHO0lBGR8m/i0p8MjqeGp8pxnONpBNbMwqgXhj60gzgD/nNxjh1sUqYc7evbBi
-        amGm5itevVi3gSAVbNmFKXK7tPwhMvTUfCrbQ99DOdeKj2WMEHulKQNkmG2v0IzJib2n4UwagtS2Q
-        WJK03LVZfAXQ883EK+5tiBm397uUhr8ew+Rmmq5FzR7mmvyCV4pgMPI+POmu/zHUsi0bEK5DNuY7C
-        chf1RE70Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOPtm-00039J-A2; Wed, 08 May 2019 16:58:30 +0000
-Date:   Wed, 8 May 2019 09:58:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH, RFC 52/62] x86/mm: introduce common code for mem
- encryption
-Message-ID: <20190508165830.GA11815@infradead.org>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
- <20190508144422.13171-53-kirill.shutemov@linux.intel.com>
+        id S1728363AbfEHTwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:52:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbfEHTwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 15:52:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 389EC214AF;
+        Wed,  8 May 2019 19:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557345161;
+        bh=WvqlE0zoyG0HaDjphQsaFq6mRxNdKTiq1F02ec0+6Bo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rmfX5vc3on/JzT6wUcFitavY0RbtRsD+JW/PFXruSyUpQmR07wgSrqVDy6GaoSa/F
+         pFtRYcbBqQgrIni09uMAjm/TAa5viZhb4GBCgTjtFi6S5/nyxhv/n88lXjXuFVEns7
+         V3lpZWZvYKJu2emVGDK049Uw1XD8Q1tb7UeYtFcM=
+Date:   Wed, 8 May 2019 18:59:45 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org,
+        tiwai@suse.de, linux-kernel@vger.kernel.org,
+        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [alsa-devel] [RFC PATCH 1/7] soundwire: Add sysfs support for
+ master(s)
+Message-ID: <20190508165945.GC6157@kroah.com>
+References: <20190504065242.GA9770@kroah.com>
+ <b0059709-027e-26c4-25a1-bd55df7c507f@linux.intel.com>
+ <20190507052732.GD16052@vkoul-mobl>
+ <20190507055432.GB17986@kroah.com>
+ <20190507110331.GL16052@vkoul-mobl>
+ <20190507111956.GB1092@kroah.com>
+ <10fef156-7b01-7a08-77b4-ae3153eaaabc@linux.intel.com>
+ <20190508074606.GV16052@vkoul-mobl>
+ <20190508091628.GB1858@kroah.com>
+ <c0161db3-69d7-0a76-f4bd-d5feb3529128@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190508144422.13171-53-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <c0161db3-69d7-0a76-f4bd-d5feb3529128@linux.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 05:44:12PM +0300, Kirill A. Shutemov wrote:
-> +EXPORT_SYMBOL_GPL(__mem_encrypt_dma_set);
-> +
-> +phys_addr_t __mem_encrypt_dma_clear(phys_addr_t paddr)
-> +{
-> +	if (sme_active())
-> +		return __sme_clr(paddr);
-> +
-> +	return paddr & ~mktme_keyid_mask;
-> +}
-> +EXPORT_SYMBOL_GPL(__mem_encrypt_dma_clear);
+On Wed, May 08, 2019 at 11:42:15AM -0500, Pierre-Louis Bossart wrote:
+> 
+> 
+> On 5/8/19 4:16 AM, Greg KH wrote:
+> > On Wed, May 08, 2019 at 01:16:06PM +0530, Vinod Koul wrote:
+> > > On 07-05-19, 17:49, Pierre-Louis Bossart wrote:
+> > > > 
+> > > > > > The model here is that Master device is PCI or Platform device and then
+> > > > > > creates a bus instance which has soundwire slave devices.
+> > > > > > 
+> > > > > > So for any attribute on Master device (which has properties as well and
+> > > > > > representation in sysfs), device specfic struct (PCI/platfrom doesn't
+> > > > > > help). For slave that is not a problem as sdw_slave structure takes care
+> > > > > > if that.
+> > > > > > 
+> > > > > > So, the solution was to create the psedo sdw_master device for the
+> > > > > > representation and have device-specific structure.
+> > > > > 
+> > > > > Ok, much like the "USB host controller" type device.  That's fine, make
+> > > > > such a device, add it to your bus, and set the type correctly.  And keep
+> > > > > a pointer to that structure in your device-specific structure if you
+> > > > > really need to get to anything in it.
+> > > > 
+> > > > humm, you lost me on the last sentence. Did you mean using
+> > > > set_drv/platform_data during the init and retrieving the bus information
+> > > > with get_drv/platform_data as needed later? Or something else I badly need
+> > > > to learn?
+> > > 
+> > > IIUC Greg meant we should represent a soundwire master device type and
+> > > use that here. Just like we have soundwire slave device type. Something
+> > > like:
+> > > 
+> > > struct sdw_master {
+> > >          struct device dev;
+> > >          struct sdw_master_prop *prop;
+> > >          ...
+> > > };
+> > > 
+> > > In show function you get master from dev (container of) and then use
+> > > that to access the master properties. So int.sdw.0 can be of this type.
+> > 
+> > Yes, you need to represent the master device type if you are going to be
+> > having an internal representation of it.
+> 
+> Humm, confused...In the existing code bus and master are synonyms, see e.g.
+> following code excerpts:
+> 
+>  * sdw_add_bus_master() - add a bus Master instance
+>  * @bus: bus instance
+>  *
+>  * Initializes the bus instance, read properties and create child
+>  * devices.
+> 
+> struct sdw_bus {
+> 	struct device *dev; <<< pointer here
 
-In general nothing related to low-level dma address should ever
-be exposed to modules.  What is your intended user for these two?
+That's the pointer to what?  The device that the bus is "attached to"
+(i.e. parent, like a platform device or a pci device)?
+
+Why isn't this a "real" device in itself?
+
+I thought I asked that a long time ago when first reviewing these
+patches...
+
+> 	unsigned int link_id;
+> 	struct list_head slaves;
+> 	DECLARE_BITMAP(assigned, SDW_MAX_DEVICES);
+> 	struct mutex bus_lock;
+> 	struct mutex msg_lock;
+> 	const struct sdw_master_ops *ops;
+> 	const struct sdw_master_port_ops *port_ops;
+> 	struct sdw_bus_params params;
+> 	struct sdw_master_prop prop;
+> 
+> The existing code creates a platform_device in
+> drivers/soundwire/intel_init.c, and it's assigned by the following code:
+
+The core creates a platform device, don't assume you can "take it over"
+:)
+
+That platform device lives on the platform bus, you need a "master"
+device that lives on your soundbus bus.
+
+Again, look at how USB does this.  Or better yet, greybus, as that code
+is a lot smaller and simpler.
+
+> 
+> static int intel_probe(struct platform_device *pdev)
+> {
+> 	struct sdw_cdns_stream_config config;
+> 	struct sdw_intel *sdw;
+> 	int ret;
+> 
+> 	sdw = devm_kzalloc(&pdev->dev, sizeof(*sdw), GFP_KERNEL);
+> [snip]
+> 	sdw->cdns.dev = &pdev->dev;
+> 	sdw->cdns.bus.dev = &pdev->dev;
+
+Gotta love the lack of reference counting :(
+
+> I really don't see what you are hinting at, sorry, unless we are talking
+> about major surgery in the code.
+
+It sounds like you need a device on your bus that represents the master,
+as you have attributes associated with it, and other things.  You can't
+put attributes on a random pci or platform device, as you do not "own"
+that device.
+
+does that help?
+
+greg k-h
