@@ -2,132 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A6EE18068
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99171806C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfEHTVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:21:41 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52460 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfEHTVl (ORCPT
+        id S1727824AbfEHTWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:22:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34757 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbfEHTWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:21:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=k86bIbJQYyAtCnJQ/9r7wNszrHqG9KBOaSii4mKHzlw=; b=SVVtCFeU3ylj97tn0HhXzkEUO
-        dP3wY5ZEVrg1Zjk/SewUndpbZJYyav5FsXRHnS7xXFnDgaSHrrOPALGEH0HnZH27IVZ4MjclKV83K
-        kYv0WFJK9t0WsOf3TWiv1X2PLSQAcK4TVbauzOsfdkdQV+iZVpsjqfUWb2sKdfWBKQbo7f4PSWjtE
-        yE9LYpGpEjXMIkmNKu7AsHHUgx1NpdTsQE7PURNLqaoJ1YJ7obGfNwq4iRxY+Z0OLilehI0XD4L7y
-        +J/SbWmLOvHCI7hUOp8F/GKZbEFe+KYnimnUCsbmfcrhB0w6qi2q5mFZ0gnC13mHsVq5hbW/ioHje
-        100YUWVtg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOS8D-0003hQ-6K; Wed, 08 May 2019 19:21:33 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 368AD98030A; Wed,  8 May 2019 21:21:31 +0200 (CEST)
-Date:   Wed, 8 May 2019 21:21:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v8 05/16] sched/core: Allow sched_setattr() to use the
- current policy
-Message-ID: <20190508192131.GD32547@worktop.programming.kicks-ass.net>
-References: <20190402104153.25404-1-patrick.bellasi@arm.com>
- <20190402104153.25404-6-patrick.bellasi@arm.com>
+        Wed, 8 May 2019 15:22:32 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n19so2440620pfa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 12:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ft6EOyvYHRbxghf4ibP2yDUEDKBSiu7rrJ8IV2ARge4=;
+        b=CB1BCNZiaTLxg6tOUGINx1olRrTu9x7aCQ8+7GpeaQQvOHzJd8VPVRV9b/g9lZNh+K
+         X0j4pf+vo5HOoOELzJtNbjT3LriRfmWk8OcKazgmTMy7U6ApnNsfPuQUQQPl7FrdgKQQ
+         hI1zUWhfvqEZ7mgrzHqseMwoUsMyVumh5AarinrlnWFyrr/luruWS+uyEfE4naOPUIEr
+         BFUA4/qzHnZ5sOaSQwxq0uXm2D0954CBuCj4xQXCG3jiIrfk3mEfwMGDTLVMiWhaSv/0
+         2uXhVh57yHjF6Pl7uNBCVUKfNs9qtnAhMYKVlHFeJbUyJHSJTcOPkUwdOTCT9S2WluqT
+         h+fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ft6EOyvYHRbxghf4ibP2yDUEDKBSiu7rrJ8IV2ARge4=;
+        b=IfaeuCMw2cGmXoGRtAqt4s1eJ2jqbFeS5ZZmLrizSlPhrLjy8QVE1Arf8Xsem+9cI3
+         Wctpegw/NpHHJ+67Ok3NZBxjniiYxe+e/1pSgx6F1kZg65kBDADmbMzY1JkNEygnrpgx
+         wILo262eYbcVsnW0k+l6hZvEFVJS0fNQJqy27zzOs1jSeZeQL6KUGNCsppUP3EgVKN3o
+         ACl0vOD2jxNkxISD5RYXXZH/rQKp7ks5qwzAArLZmTrNEvqI3NTzZ+Jeobh2Kb4GPqih
+         uDJXW+UxZ1DQranyLh0J9EOpIKUD5YhxzrRKaacsEZZoUburPsHwyx0nj2zQukQAvxti
+         pA1A==
+X-Gm-Message-State: APjAAAViTXUKPerEhz1DAu3yfdE+R9NpKL/apfAuTtVB9HvZCDHKBHrz
+        n01ebJAA5GYai2NYfMoqbOe53nC0Vx+pXALTJOZH0A==
+X-Google-Smtp-Source: APXvYqy+F7cyChtJEW0QfoYLRnjdvRuMptX+gdsJzETkAsPfkGfClW6PDkLUacZJUuIu/vUPamM5PEFe+TfUwwMe0Tg=
+X-Received: by 2002:aa7:8b88:: with SMTP id r8mr50703470pfd.174.1557343351587;
+ Wed, 08 May 2019 12:22:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190402104153.25404-6-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAK7LNASLBQ=w9YFBD80s7dit1bd_Tr+ggVyRNms0jf1pR9k=ZA@mail.gmail.com>
+ <20190424180223.253025-1-ndesaulniers@google.com> <CAKwvOd=5SVBFsfEgYc9Dpgr--h+pQgCwOnpAjg9B4HG2VY6kFg@mail.gmail.com>
+In-Reply-To: <CAKwvOd=5SVBFsfEgYc9Dpgr--h+pQgCwOnpAjg9B4HG2VY6kFg@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 8 May 2019 12:22:20 -0700
+Message-ID: <CAKwvOdkpjwgt3pP9rjZtm=rEK9MhEfQdc6PEr91Bnb9tMVDBEA@mail.gmail.com>
+Subject: Re: [PATCH v2] sh: vsyscall: drop unnecessary cc-ldoption
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-sh@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 11:41:41AM +0100, Patrick Bellasi wrote:
-> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
-> index 22627f80063e..075c610adf45 100644
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -40,6 +40,8 @@
->  /* SCHED_ISO: reserved but not implemented yet */
->  #define SCHED_IDLE		5
->  #define SCHED_DEADLINE		6
-> +/* Must be the last entry: used to sanity check attr.policy values */
-> +#define SCHED_POLICY_MAX	SCHED_DEADLINE
+bumping for review, as the merge window is now open.
 
-This is a wee bit sad to put in a uapi header; but yeah, where else :/
+On Tue, Apr 30, 2019 at 1:26 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Wed, Apr 24, 2019 at 11:02 AM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> >
+> > Towards the goal of removing cc-ldoption, it seems that --hash-style=
+> > was added to binutils 2.17.50.0.2 in 2006. The minimal required version
+> > of binutils for the kernel according to
+> > Documentation/process/changes.rst is 2.20.
+> >
+> > Link: https://gcc.gnu.org/ml/gcc/2007-01/msg01141.html
+> > Cc: clang-built-linux@googlegroups.com
+> > Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > ---
+> > Changes V1 -> V2:
+> > * update commit subject and message as per Masahiro/Geert.
+> >
+> > To Geert's question about minimum binutils versions; no change needed to
+> > binutils.
+> >
+> >
+> >  arch/sh/kernel/vsyscall/Makefile | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/arch/sh/kernel/vsyscall/Makefile b/arch/sh/kernel/vsyscall/Makefile
+> > index 5db6579bc44c..6e8664448048 100644
+> > --- a/arch/sh/kernel/vsyscall/Makefile
+> > +++ b/arch/sh/kernel/vsyscall/Makefile
+> > @@ -15,8 +15,7 @@ quiet_cmd_syscall = SYSCALL $@
+> >
+> >  export CPPFLAGS_vsyscall.lds += -P -C -Ush
+> >
+> > -vsyscall-flags = -shared -s -Wl,-soname=linux-gate.so.1 \
+> > -               $(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
+> > +vsyscall-flags = -shared -s -Wl,-soname=linux-gate.so.1 -Wl,--hash-style=sysv
+> >
+> >  SYSCFLAGS_vsyscall-trapa.so    = $(vsyscall-flags)
+> >
+> > --
+> > 2.21.0.593.g511ec345e18-goog
+> >
+>
+> bumping for review
+> --
+> Thanks,
+> ~Nick Desaulniers
 
-Another option would be something like:
 
-enum {
-	SCHED_NORMAL = 0,
-	SCHED_FIFO = 1,
-	SCHED_RR = 2,
-	SCHED_BATCH = 3,
-	/* SCHED_ISO = 4, reserved */
-	SCHED_IDLE = 5,
-	SCHED_DEADLINE = 6,
-	SCHED_POLICY_NR
-};
 
->  /* Can be ORed in to make sure the process is reverted back to SCHED_NORMAL on fork */
->  #define SCHED_RESET_ON_FORK     0x40000000
-> @@ -50,9 +52,11 @@
->  #define SCHED_FLAG_RESET_ON_FORK	0x01
->  #define SCHED_FLAG_RECLAIM		0x02
->  #define SCHED_FLAG_DL_OVERRUN		0x04
-> +#define SCHED_FLAG_KEEP_POLICY		0x08
->  
->  #define SCHED_FLAG_ALL	(SCHED_FLAG_RESET_ON_FORK	| \
->  			 SCHED_FLAG_RECLAIM		| \
-> -			 SCHED_FLAG_DL_OVERRUN)
-> +			 SCHED_FLAG_DL_OVERRUN		| \
-> +			 SCHED_FLAG_KEEP_POLICY)
->  
->  #endif /* _UAPI_LINUX_SCHED_H */
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index d368ac26b8aa..20efb32e1a7e 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4907,8 +4907,17 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
->  	if (retval)
->  		return retval;
->  
-> -	if ((int)attr.sched_policy < 0)
-> +	/*
-> +	 * A valid policy is always required from userspace, unless
-> +	 * SCHED_FLAG_KEEP_POLICY is set and the current policy
-> +	 * is enforced for this call.
-> +	 */
-> +	if (attr.sched_policy > SCHED_POLICY_MAX &&
-> +	    !(attr.sched_flags & SCHED_FLAG_KEEP_POLICY)) {
->  		return -EINVAL;
-> +	}
-
-And given I just looked at those darn SCHED_* things, I now note the
-above does 'funny' things when passed: attr.policy=4.
-
-> +	if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
-> +		attr.sched_policy = SETPARAM_POLICY;
->  
->  	rcu_read_lock();
->  	retval = -ESRCH;
+-- 
+Thanks,
+~Nick Desaulniers
