@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A02217535
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAFA1754A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 11:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfEHJf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 05:35:59 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:35161 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfEHJf7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 05:35:59 -0400
-Received: from [192.168.1.41] ([92.148.209.44])
-        by mwinf5d59 with ME
-        id 9lbw200030y1A8U03lbwXh; Wed, 08 May 2019 11:35:57 +0200
-X-ME-Helo: [192.168.1.41]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 08 May 2019 11:35:57 +0200
-X-ME-IP: 92.148.209.44
-Subject: Re: [PATCH] scsi: bnx2fc: fix incorrect cast to u64 on shift
- operation
-To:     Colin King <colin.king@canonical.com>,
-        QLogic-Storage-Upstream@qlogic.com,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190504164829.26631-1-colin.king@canonical.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <718d3ec2-c3e6-bdfa-bbd2-7988f7783bde@wanadoo.fr>
-Date:   Wed, 8 May 2019 11:35:55 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727296AbfEHJlb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 05:41:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51370 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726544AbfEHJlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 05:41:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0738ADC7;
+        Wed,  8 May 2019 09:41:21 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch\/x86 maintainers" <x86@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "open list\:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, stable <stable@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 0/3] x86_64/ftrace: Emulate calls from int3 when patching functions
+References: <20190508015559.767152678@goodmis.org>
+Date:   Wed, 08 May 2019 11:41:19 +0200
+In-Reply-To: <20190508015559.767152678@goodmis.org> (Steven Rostedt's message
+        of "Tue, 07 May 2019 21:55:59 -0400")
+Message-ID: <87lfzhwaf4.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190504164829.26631-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 04/05/2019 à 18:48, Colin King a écrit :
-> From: Colin Ian King <colin.king@canonical.com>
+Steven Rostedt <rostedt@goodmis.org> writes:
+
+> [
+>   This is the non-RFC version.
 >
-> Currently an int is being shifted and the result is being cast to a u64
-> which leads to undefined behaviour if the shift is more than 31 bits. Fix
-> this by casting the integer value 1 to u64 before the shift operation.
+>   It went through and passed all my tests. If there's no objections
+>   I'm going to include this in my pull request. I still have patches
+>   in my INBOX that may still be included, so I need to run those through
+>   my tests as well, so a pull request wont be immediate.
+> ]
+
+<snip />
+
+> Josh Poimboeuf (1):
+>       x86_64: Add gap to int3 to allow for call emulation
 >
-> Addresses-Coverity: ("Bad shift operation")
-> Fixes: 7b594769120b ("[SCSI] bnx2fc: Handle REC_TOV error code from firmware")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/scsi/bnx2fc/bnx2fc_hwi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> index 19734ec7f42e..747f019fb393 100644
-> --- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> +++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> @@ -830,7 +830,7 @@ static void bnx2fc_process_unsol_compl(struct bnx2fc_rport *tgt, u16 wqe)
->   			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
->   			(u64)err_entry->data.err_warn_bitmap_lo;
->   		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
-> -			if (err_warn_bit_map & (u64) (1 << i)) {
-> +			if (err_warn_bit_map & ((u64)1 << i)) {
->   				err_warn = i;
->   				break;
->   			}
+> Peter Zijlstra (2):
+>       x86_64: Allow breakpoints to emulate call instructions
+>       ftrace/x86_64: Emulate call function while updating in breakpoint handler
 
+Reviewed-and-tested-by: Nicolai Stange <nstange@suse.de>
 
-Hi, just for the records and if you need additional ack, see
+for the whole series. Many, many thanks to everybody involved!
 
-    https://lkml.org/lkml/2016/11/26/172
+I'll resend that live patching selftest once this fix here has been
+merged.
 
-just my 2c :-)
+Nicolai
 
-CJ
-
+-- 
+SUSE Linux GmbH, GF: Felix Imendörffer, Mary Higgins, Sri Rasiah, HRB
+21284 (AG Nürnberg)
