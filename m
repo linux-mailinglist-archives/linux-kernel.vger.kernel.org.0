@@ -2,177 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C98417B83
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65EBC17B9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbfEHO2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 10:28:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52442 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726783AbfEHO2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:28:37 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 252892C6F3213E655003;
-        Wed,  8 May 2019 22:28:35 +0800 (CST)
-Received: from euler.huawei.com (10.175.104.193) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 8 May 2019 22:28:27 +0800
-From:   Wei Li <liwei391@huawei.com>
-To:     <acme@kernel.org>, <jolsa@redhat.com>, <namhyung@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <xiezhipeng1@huawei.com>
-Subject: [PATCH v2] fix use-after-free in perf_sched__lat
-Date:   Wed, 8 May 2019 22:36:48 +0800
-Message-ID: <20190508143648.8153-1-liwei391@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727468AbfEHOg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 10:36:59 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43015 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbfEHOg7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 10:36:59 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c6so5397290pfa.10;
+        Wed, 08 May 2019 07:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ftxd/yGo/xg+LooGM3ZD/VdN0H7EkQxNojOlbdPB8hk=;
+        b=GFOAMN4G1WRghAnlNyjXeaqSsonA/53S0DSqWPf54QwuNQDT1NbIYLzp9w3fhZJFtN
+         aiSKheRl2EusqiUpf3wsoy3fr5QmJu1rSfg7kWe0o/uADF8HeDLcbksODBQwBwlmizbz
+         8XE1Cb7/QP0JCLcxO6ebcvY7JlWjixRPUtMymB2ehb9bUFpAAwJKTN2pvQ0A+dib+RCT
+         SGekeXxhObb5v1F6knvIdK+gQPPbU5Yy/oJwAIO2vXK2hVb78feJqIh2E0lghsfK6QgE
+         jktmdNu03tVA+o+IS/rc4DicflXeoMssjytPTXhMO9HCDWJsir2kCt5jeSX/yqcF5Uj7
+         LG+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ftxd/yGo/xg+LooGM3ZD/VdN0H7EkQxNojOlbdPB8hk=;
+        b=Dn9ksz872ac3pmGPFOUm5Rx7TPmwQhQWmGqktYc26S319pDRA2mzg4V4d2Ifo/9utz
+         FeKEZpnpwS/fGzC1yNW257xdhWksogk3x8Lbo1MFohR2o1w5gADqqs/OolVFUeNts8H4
+         KHeOIqExYIpHqMpHzrpk6oppLyT6RYGfG3mWM4tjU9ifJVHg1eEoO1WfmCsI1cM5+z9/
+         BWGzu8JaswxYSVR0Q+EDnppVW/V9adROqMDnoWQsr0ml5d4z7IFtxazuRA9KIGCz/12C
+         jJ+lWTSd4XbY4aDmFlrn8RRa170IEAVYDbp5Y8T5898pn1EqdvsdxzwrK+4EXAuLsnI3
+         EeqA==
+X-Gm-Message-State: APjAAAVX69ghzsP6e2ubZasx7MEVGTxxzj3tUy0g4UFwBXXpRM07D0Rx
+        TjC4NMcOwz6RWj9+9x47Yzo=
+X-Google-Smtp-Source: APXvYqwFTky+u99b+yN1sIumvpHzai76th7uvSwoCwE6E1F3oFzkKw34NCWTmOtkhi1n2S8pol/jMQ==
+X-Received: by 2002:a63:465b:: with SMTP id v27mr6811806pgk.38.1557326218322;
+        Wed, 08 May 2019 07:36:58 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id t26sm10739342pgk.62.2019.05.08.07.36.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 May 2019 07:36:57 -0700 (PDT)
+Date:   Wed, 8 May 2019 07:36:54 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Po Liu <po.liu@nxp.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Y.b. Lu" <yangbo.lu@nxp.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Leo Li <leoyang.li@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>
+Subject: Re: [EXT] Re: [PATCH v1] timer:clock:ptp: add support the dynamic
+ posix clock alarm set for ptp
+Message-ID: <20190508143654.uj7266kcbhf744c3@localhost>
+References: <1557032106-28041-1-git-send-email-Po.Liu@nxp.com>
+ <20190507134952.uqqxmhinv75actbh@localhost>
+ <VI1PR04MB51359553C796D25765720FCC92320@VI1PR04MB5135.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.193]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB51359553C796D25765720FCC92320@VI1PR04MB5135.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After thread is added to machine->threads[i].dead in
-__machine__remove_thread, the machine->threads[i].dead is freed
-when calling free(session) in perf_session__delete(). So it get a
-Segmentation fault when accessing it in thread__put().
+On Wed, May 08, 2019 at 03:30:01AM +0000, Po Liu wrote:
+> > Sorry, NAK, since we decided some time ago not to support timer_* operations
+> > on dynamic clocks.  You get much better application level timer performance
+> > by synchronizing CLOCK_REALTIME to your PHC and using clock_nanosleep()
+> > with CLOCK_REALTIME or CLOCK_MONOTONIC.
+> 
+> The code intend to get alarm by interrupt of ptp hardware. The code
+> to fix ptp not support to application layer to get the alarm
+> interrupt.  Do you mean the synchronizing at application layer by
+> PHC (using clock_nanosleep()) to the CLOCK_REALTIME source? Then the
+> kernel could using the hrtimer with CLOCK_REALTIME?
 
-In this patch, we delay the perf_session__delete until all threads
-have been deleted.
+Yes, or with CLOCK_MONOTONIC.
 
-This can be reproduced by following steps:
-	ulimit -c unlimited
-	export MALLOC_MMAP_THRESHOLD_=0
-	perf sched record sleep 10
-	perf sched latency --sort max
-	Segmentation fault (core dumped)
+> > > This won't change the user space system call code. Normally the user
+> > > space set alarm by timer_create() and timer_settime(). Reference code
+> > > are tools/testing/selftests/ptp/testptp.c.
+> > 
+> > That program still has misleading examples.  Sorry about that.  I'll submit a
+> > patch to remove them.
+> 
+> Is there any replace method for an application code to get alarm interrupt by the ptp source?
 
-Signed-off-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-Signed-off-by: Wei Li <liwei391@huawei.com>
----
- tools/perf/builtin-sched.c | 63 ++++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 20 deletions(-)
+No the alarm functionality has been removed.  It will not be coming
+back, unless there are really strong arguments to support it.
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 275f2d92a7bf..8a4841fa124c 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1774,7 +1774,8 @@ static int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
- 	return 0;
- }
- 
--static int perf_sched__read_events(struct perf_sched *sched)
-+static int __perf_sched__read_events(struct perf_sched *sched,
-+					struct perf_session *session)
- {
- 	const struct perf_evsel_str_handler handlers[] = {
- 		{ "sched:sched_switch",	      process_sched_switch_event, },
-@@ -1783,30 +1784,17 @@ static int perf_sched__read_events(struct perf_sched *sched)
- 		{ "sched:sched_wakeup_new",   process_sched_wakeup_event, },
- 		{ "sched:sched_migrate_task", process_sched_migrate_task_event, },
- 	};
--	struct perf_session *session;
--	struct perf_data data = {
--		.path  = input_name,
--		.mode  = PERF_DATA_MODE_READ,
--		.force = sched->force,
--	};
--	int rc = -1;
--
--	session = perf_session__new(&data, false, &sched->tool);
--	if (session == NULL) {
--		pr_debug("No Memory for session\n");
--		return -1;
--	}
- 
- 	symbol__init(&session->header.env);
- 
- 	if (perf_session__set_tracepoints_handlers(session, handlers))
--		goto out_delete;
-+		return -1;
- 
- 	if (perf_session__has_traces(session, "record -R")) {
- 		int err = perf_session__process_events(session);
- 		if (err) {
- 			pr_err("Failed to process events, error %d", err);
--			goto out_delete;
-+			return -1;
- 		}
- 
- 		sched->nr_events      = session->evlist->stats.nr_events[0];
-@@ -1814,9 +1802,28 @@ static int perf_sched__read_events(struct perf_sched *sched)
- 		sched->nr_lost_chunks = session->evlist->stats.nr_events[PERF_RECORD_LOST];
- 	}
- 
--	rc = 0;
--out_delete:
-+	return 0;
-+}
-+
-+static int perf_sched__read_events(struct perf_sched *sched)
-+{
-+	struct perf_session *session;
-+	struct perf_data data = {
-+		.path  = input_name,
-+		.mode  = PERF_DATA_MODE_READ,
-+		.force = sched->force,
-+	};
-+	int rc;
-+
-+	session = perf_session__new(&data, false, &sched->tool);
-+	if (session == NULL) {
-+		pr_debug("No Memory for session\n");
-+		return -1;
-+	}
-+
-+	rc = __perf_sched__read_events(sched, session);
- 	perf_session__delete(session);
-+
- 	return rc;
- }
- 
-@@ -3130,12 +3137,25 @@ static void perf_sched__merge_lat(struct perf_sched *sched)
- 
- static int perf_sched__lat(struct perf_sched *sched)
- {
-+	struct perf_session *session;
-+	struct perf_data data = {
-+		.path  = input_name,
-+		.mode  = PERF_DATA_MODE_READ,
-+		.force = sched->force,
-+	};
- 	struct rb_node *next;
-+	int rc = -1;
- 
- 	setup_pager();
- 
--	if (perf_sched__read_events(sched))
-+	session = perf_session__new(&data, false, &sched->tool);
-+	if (session == NULL) {
-+		pr_debug("No Memory for session\n");
- 		return -1;
-+	}
-+
-+	if (__perf_sched__read_events(sched, session))
-+		goto out_delete;
- 
- 	perf_sched__merge_lat(sched);
- 	perf_sched__sort_lat(sched);
-@@ -3164,7 +3184,10 @@ static int perf_sched__lat(struct perf_sched *sched)
- 	print_bad_events(sched);
- 	printf("\n");
- 
--	return 0;
-+	rc = 0;
-+out_delete:
-+	perf_session__delete(session);
-+	return rc;
- }
- 
- static int setup_map_cpus(struct perf_sched *sched)
--- 
-2.17.1
+Here is the result of a study of a prototype alarm method.  It shows
+why the hrtimer method is better.
 
+   https://sourceforge.net/p/linuxptp/mailman/message/35535965/
+
+Thanks,
+Richard
