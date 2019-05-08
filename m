@@ -2,141 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E529182A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 01:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B72182AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 01:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfEHXV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 19:21:28 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35986 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727763AbfEHXV1 (ORCPT
+        id S1728618AbfEHXYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 19:24:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57318 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbfEHXX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 19:21:27 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x48NIRsb026484;
-        Wed, 8 May 2019 16:20:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=lCdKIPHMGvGvKmpk8HbdROgwQl29v5EI3TaR7mBLsA0=;
- b=Pew+PYZM1QGT2MtjUHc5cGi8l27SXBbToaK7F9TuFPp3oTTYU+whHtRiRc3QZAO5Zuu1
- O+MxB7AZEYfkVoTz21gowViQXBz1TniDPynF8clJOnKu22xUcpufxvXwEI1iwlx9OTuY
- EKpgc24XYoU+S1doILWUQMg6jkQ4SFtmL9Q= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2sc7t2r5db-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 08 May 2019 16:20:55 -0700
-Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
- prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Wed, 8 May 2019 16:20:54 -0700
-Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
- prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Wed, 8 May 2019 16:20:53 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Wed, 8 May 2019 16:20:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lCdKIPHMGvGvKmpk8HbdROgwQl29v5EI3TaR7mBLsA0=;
- b=MV69l51gbUsBTwbnHJhapq3cSvmtIF6OxMJgTP04A32LqgR4dYeyPH63cZRVrC3GfPJ5P8F/P94ub8sNEEN6CcRQV9xTwmZztlRocVVyOzm3OLkwYjA1daGex7FkEcXwwuqElHkpL3p6Uu049K1vL8/3Gp5MkTrVbw2PHJ3oKTA=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2678.namprd15.prod.outlook.com (20.179.156.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.20; Wed, 8 May 2019 23:20:51 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ddd2:172e:d688:b5b7]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ddd2:172e:d688:b5b7%3]) with mapi id 15.20.1856.012; Wed, 8 May 2019
- 23:20:51 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Shakeel Butt <shakeelb@google.com>
-CC:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2] memcg, fsnotify: no oom-kill for remote memcg charging
-Thread-Topic: [PATCH v2] memcg, fsnotify: no oom-kill for remote memcg
- charging
-Thread-Index: AQHVAokQTI6+FEdd6UGTORMvAHxc7KZh5EEA
-Date:   Wed, 8 May 2019 23:20:51 +0000
-Message-ID: <20190508232042.GA1104@tower.DHCP.thefacebook.com>
-References: <20190504145242.258875-1-shakeelb@google.com>
-In-Reply-To: <20190504145242.258875-1-shakeelb@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR08CA0035.namprd08.prod.outlook.com
- (2603:10b6:301:5f::48) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::2:524d]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bf008100-e7c3-4e95-aded-08d6d40bcf73
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB2678;
-x-ms-traffictypediagnostic: BYAPR15MB2678:
-x-microsoft-antispam-prvs: <BYAPR15MB2678AB6FB8BA07664B988789BE320@BYAPR15MB2678.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0031A0FFAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(189003)(54534003)(6916009)(1076003)(86362001)(2906002)(102836004)(7736002)(6506007)(386003)(71190400001)(33656002)(71200400001)(25786009)(6246003)(305945005)(446003)(14454004)(4326008)(7416002)(68736007)(46003)(73956011)(478600001)(6116002)(5660300002)(66946007)(186003)(66446008)(64756008)(66556008)(66476007)(14444005)(256004)(53936002)(8936002)(6486002)(99286004)(52116002)(229853002)(11346002)(76176011)(6436002)(316002)(486006)(54906003)(8676002)(81166006)(81156014)(9686003)(6512007)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2678;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: M9ViFNyD/FCUCLUJj4EkV9tPxnfSYa1qKvRE+Dut1F1h5GU8e2828C3QhQncfW4qAWfT8O8S013bCbISnnrTQaj73Z/2z8mj0OPfbOP7pL7QZnO9/+JFq/Qss6tCl8oWbM87NSOrWO4gCfPbzMavhcAKIY/fXvY8z6ckJ+G+ys/1c9tq/6KVpwqhHgOotzHwJRAHnhnInB7drqHvB9xcS76uWuiNWe9HOgL4JXl4FS7nyvsPVzmuF24FXH2HMlSkZSGylnyU+EnDx4fGajZ16euc0btpq68mGpe+wVAzAFGT+2bDJ4PuncwXvR36kInToCsZQ8+l1pdHAS+FFu3qCxkjR3SvkGLRr48eQ6uMFQUbLY/A9TFYZP92vMLbVRW2BpXzndx4YCkEf6FwHOohc4+8NXTeI4Bk4gh/Jm+WVTU=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FAA360BA6EA9A646B5F14EE9A945F468@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 8 May 2019 19:23:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=r0DfwmpGBXR6BV7Pz6TDO+BpLqpIYvGRUplJqu3ybfM=; b=ANLpXTXcgQa5gHHGP4sr0ZKWk
+        lBDf7w4WGKrj8YJx18MEzafBVS8yLbU/84cVu+XCIiSHwYuC7kmvPQIz86k5KR7NiEiR1XtdUrgZW
+        JAMpI9P381NuxkS5tALIoItFpzxYvwlGvnPYl35UyyREXnGo0IirnogfCzoOXg62ynsfkgSdGO9Zi
+        xivIw6ZR+HaccUdvpXgthwODFgOBrYt16zSIR3Blg89AcPCM/ywHFZn2g9kUW0QDX3tYbkirHg36H
+        erw3wjHmtXWw1zAkJsAOfsgpN8qBDOT613VPrkByMJIvUyJFx0+xLy+ak0q5J1821lzUX2Zl/JMFJ
+        BpaoV5Z8Q==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOVun-0006Rl-Vr; Wed, 08 May 2019 23:23:57 +0000
+Date:   Wed, 8 May 2019 16:23:56 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Semyon Verchenko <semverchenko@factor-ts.ru>
+Subject: Re: [PATCH] platform/x86: pmc_atom: Add Lex 3I380D industrial PC to
+ critclk_systems DMI table
+Message-ID: <20190508232356.GA33357@wrath>
+References: <20190429150135.15070-1-hdegoede@redhat.com>
+ <CAHp75VeE=88mCcgVx3Y3PQJPQ819Z7=3s=jRGz1y=t09phk=rA@mail.gmail.com>
+ <085c5b6e-d220-ebd1-38d2-def7efca24b8@redhat.com>
+ <CAHp75Vfe9uK_b_V+uG29wb1L6J7u1hpbU+P4beXso9KNPM+8Rg@mail.gmail.com>
+ <568ba27d-a6a5-b158-bab1-f22cd8ccb34e@redhat.com>
+ <155726027056.14659.1724431433952718602@swboyd.mtv.corp.google.com>
+ <10c8864c-6ee7-4dfd-6274-b1996e767653@redhat.com>
+ <CAHp75VdnxRQi3X6J9hLGUjGsOYTkjoPN5MakJc=mUSumoC+wag@mail.gmail.com>
+ <e9c92d24-9044-c37d-3f18-4884d97047d5@redhat.com>
+ <20190508225522.GA32286@wrath>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf008100-e7c3-4e95-aded-08d6d40bcf73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 23:20:51.3370
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2678
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_12:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508225522.GA32286@wrath>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 04, 2019 at 07:52:42AM -0700, Shakeel Butt wrote:
-> The commit d46eb14b735b ("fs: fsnotify: account fsnotify metadata to
-> kmemcg") added remote memcg charging for fanotify and inotify event
-> objects. The aim was to charge the memory to the listener who is
-> interested in the events but without triggering the OOM killer.
-> Otherwise there would be security concerns for the listener. At the
-> time, oom-kill trigger was not in the charging path. A parallel work
-> added the oom-kill back to charging path i.e. commit 29ef680ae7c2
-> ("memcg, oom: move out_of_memory back to the charge path"). So to not
-> trigger oom-killer in the remote memcg, explicitly add
-> __GFP_RETRY_MAYFAIL to the fanotigy and inotify event allocations.
->=20
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
-> Changelog since v1:
-> - Fixed usage of __GFP_RETRY_MAYFAIL flag.
->=20
->  fs/notify/fanotify/fanotify.c        | 5 ++++-
->  fs/notify/inotify/inotify_fsnotify.c | 7 +++++--
->  2 files changed, 9 insertions(+), 3 deletions(-)
+On Wed, May 08, 2019 at 03:55:22PM -0700, Darren Hart wrote:
+> On Wed, May 08, 2019 at 11:20:52AM +0200, Hans de Goede wrote:
+> > Hi,
+> > 
+> > On 08-05-19 10:42, Andy Shevchenko wrote:
+> > > On Wed, May 8, 2019 at 10:48 AM Hans de Goede <hdegoede@redhat.com> wrote:
+> > > > On 07-05-19 22:17, Stephen Boyd wrote:
+> > > > > Quoting Hans de Goede (2019-05-06 08:05:42)
+> > > 
+> > > > > I guess this is urgent?
+> > > > 
+> > > > Somewhat, getting this into e.g. rc2 would be fine too, waiting till 5.3
+> > > > would be bad.
+> > > 
+> > > So, I can do it as a fixes for rc2, just ping me after merge window.
+> > 
+> > Ok, will do.
+> 
+> Andy, what is the issue here? If the dependency is in v5.1 we can do a "merge
+> --ff-only v5.1" in our for-next branch in order to pull it in, that would be the
+> same as an immutable branch basically.
+> 
 
-Hi Shakeel,
+A simpler solution for this case would be to issue two PRs to Linus from two
+different branches. Other subsystems send topic branches, so this isn't out of
+the ordinary.
 
-the patch looks good to me!
+I have merged the two patches in question from Hans and Steffen to for-next-2.
 
-Reviewed-by: Roman Gushchin <guro@fb.com>
+We could send two PRs back to back, with a note to Linus why this is a bit
+different than usual, and then come back together in our for-next and fixes
+branches once both are merged and continue as usual.
 
-Thanks!
+Any concerns with this approach?
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
