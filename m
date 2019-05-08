@@ -2,89 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94CB1765A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 12:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7B41765E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfEHK4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 06:56:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40544 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725910AbfEHK4f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 06:56:35 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x48AmCkb060607
-        for <linux-kernel@vger.kernel.org>; Wed, 8 May 2019 06:56:35 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sbvj8c0ed-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 06:56:34 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 8 May 2019 11:56:32 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 May 2019 11:56:30 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x48AuTRm56754200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 May 2019 10:56:29 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9C1742047;
-        Wed,  8 May 2019 10:56:29 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80B8642042;
-        Wed,  8 May 2019 10:56:29 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.21])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 May 2019 10:56:29 +0000 (GMT)
-Date:   Wed, 8 May 2019 12:56:28 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Arcari <darcari@redhat.com>
-Subject: Re: [PATCH v2] modules: Only return -EEXIST for modules that have
- finished loading
-References: <20190507145413.16297-1-prarit@redhat.com>
+        id S1726687AbfEHLAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:00:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:57304 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725910AbfEHLAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:00:00 -0400
+Received: from zn.tnic (p2E584D41.dip0.t-ipconnect.de [46.88.77.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B4B611EC0C09;
+        Wed,  8 May 2019 12:59:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1557313198;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=mRAsdrIOlP+8UoeDEp8dYp3g59kPQNnvrlU59gF02ig=;
+        b=N/hUJWD4cBC3u6Vdz6zVUMuU0LYfQ26fRd2ASJmwCXyYse/iKqthGqMT6rpqoyucQ6VuKF
+        N8k6cd6yJ9K/SgTGdXiGeSElYFInHgAg/G/EGPPN7lUDiqNTEvED/GoCkiOxSU92rxVwig
+        JWWYnBUa97MBmRyFUA5QSfJByyw2IyE=
+Date:   Wed, 8 May 2019 12:57:43 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     PanBian <bianpan2016@163.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: EDAC: Fix memory leak in creating CSROW object
+Message-ID: <20190508105743.GC19015@zn.tnic>
+References: <1555554438-103953-1-git-send-email-bianpan2016@163.com>
+ <20190418172548.GL27160@zn.tnic>
+ <20190419003536.GA57795@bianpan2016@163.com>
+ <20190419004516.GC559@zn.tnic>
+ <20190427214925.GE16338@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190507145413.16297-1-prarit@redhat.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19050810-4275-0000-0000-0000033297F3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050810-4276-0000-0000-000038420669
-Message-Id: <20190508105628.GC4102@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=739 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905080070
+In-Reply-To: <20190427214925.GE16338@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prarit,
+On Sat, Apr 27, 2019 at 11:49:25PM +0200, Greg KH wrote:
+> How about this patch, I think it fixes up everything you need to do
+> here, right?
 
-On Tue, May 07, 2019 at 10:54:13AM -0400, Prarit Bhargava wrote:
-> Heiko, it would still be good to get a test of this patch from you.  I
-> tested this here at Red Hat on some System Z machines.  Without the
-> modification made here in v2, the systems failed to boot ~10% of the time.
-> After the modification I do not see any boot failures.  I also was
-> able to reproduce the boot issue with the acpi_cpufreq driver on a very
-> large & fast x86 system which had closer to 100% failure rate without
-> the changes in v2.  After the modification in v2 the system has rebooted
-> all weekend without any issues.
+Almost, see the two patches as a reply to this message. I've taken
+Pan's original patch because it is correct and I doubt you're dying for
+attribution :-)
 
-I gave it a try on a machine that failed quite reliably with your
-first patch (the one that was in linux-next and caused problems on
-s390) - it now comes up without any issues. Also a machine with 80
-CPUs (+SMT2 -> 160 CPUs) comes up without problems.
+Then, I productized yours, with some additions. :)
 
-So everything seems to work. Thanks!
+Thoughts?
 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
