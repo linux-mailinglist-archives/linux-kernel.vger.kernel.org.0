@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9978917EBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1975C17EBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 19:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfEHRDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 13:03:06 -0400
-Received: from mga17.intel.com ([192.55.52.151]:26495 "EHLO mga17.intel.com"
+        id S1729023AbfEHRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 13:03:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:26497 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728961AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728966AbfEHRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 May 2019 13:03:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,7 +17,7 @@ Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 10:03:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,446,1549958400"; 
-   d="scan'208";a="169697570"
+   d="scan'208";a="169697573"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.171])
   by fmsmga002.fm.intel.com with ESMTP; 08 May 2019 10:03:03 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -28,9 +28,9 @@ To:     Andy Lutomirski <luto@kernel.org>,
 Cc:     Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 07/18] x86/fsgsbase/64: Preserve FS/GS state in __switch_to() if FSGSBASE is on
-Date:   Wed,  8 May 2019 03:02:22 -0700
-Message-Id: <1557309753-24073-8-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v7 08/18] x86/fsgsbase/64: When copying a thread, use the FSGSBASE instructions
+Date:   Wed,  8 May 2019 03:02:23 -0700
+Message-Id: <1557309753-24073-9-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
 References: <1557309753-24073-1-git-send-email-chang.seok.bae@intel.com>
@@ -39,88 +39,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+Copy real FS/GSBASE values instead of approximation when FSGSBASE is
+enabled.
 
-With the new FSGSBASE instructions, we can efficiently read and write
-the FSBASE and GSBASE in __switch_to().  Use that capability to preserve
-the full state.
-
-This will enable user code to do whatever it wants with the new
-instructions without any kernel-induced gotchas.  (There can still be
-architectural gotchas: movl %gs,%eax; movl %eax,%gs may change GSBASE
-if WRGSBASE was used, but users are expected to read the CPU manual
-before doing things like that.)
-
-This is a considerable speedup.  It seems to save about 100 cycles
-per context switch compared to the baseline 4.6-rc1 behavior on my
-Skylake laptop.
-
-[ chang: 5~10% performance improvements were seen by a context switch
-  benchmark that ran threads with different FS/GSBASE values (to the
-  baseline 4.16). Minor edit on the changelog. ]
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 ---
- arch/x86/kernel/process_64.c | 34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
+ arch/x86/kernel/process_64.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 17421c3..e2089c9 100644
+index e2089c9..8610df7 100644
 --- a/arch/x86/kernel/process_64.c
 +++ b/arch/x86/kernel/process_64.c
-@@ -239,8 +239,18 @@ static __always_inline void save_fsgs(struct task_struct *task)
- {
- 	savesegment(fs, task->thread.fsindex);
- 	savesegment(gs, task->thread.gsindex);
--	save_base_legacy(task, task->thread.fsindex, FS);
--	save_base_legacy(task, task->thread.gsindex, GS);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		/*
-+		 * If FSGSBASE is enabled, we can't make any useful guesses
-+		 * about the base, and user code expects us to save the current
-+		 * value.  Fortunately, reading the base directly is efficient.
-+		 */
-+		task->thread.fsbase = rdfsbase();
-+		task->thread.gsbase = __rdgsbase_inactive();
-+	} else {
-+		save_base_legacy(task, task->thread.fsindex, FS);
-+		save_base_legacy(task, task->thread.gsindex, GS);
-+	}
- }
+@@ -428,7 +428,8 @@ unsigned long x86_fsbase_read_task(struct task_struct *task)
  
- #if IS_ENABLED(CONFIG_KVM)
-@@ -319,10 +329,22 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
- static __always_inline void x86_fsgsbase_load(struct thread_struct *prev,
- 					      struct thread_struct *next)
- {
--	load_seg_legacy(prev->fsindex, prev->fsbase,
--			next->fsindex, next->fsbase, FS);
--	load_seg_legacy(prev->gsindex, prev->gsbase,
--			next->gsindex, next->gsbase, GS);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		/* Update the FS and GS selectors if they could have changed. */
-+		if (unlikely(prev->fsindex || next->fsindex))
-+			loadseg(FS, next->fsindex);
-+		if (unlikely(prev->gsindex || next->gsindex))
-+			loadseg(GS, next->gsindex);
-+
-+		/* Update the bases. */
-+		wrfsbase(next->fsbase);
-+		__wrgsbase_inactive(next->gsbase);
-+	} else {
-+		load_seg_legacy(prev->fsindex, prev->fsbase,
-+				next->fsindex, next->fsbase, FS);
-+		load_seg_legacy(prev->gsindex, prev->gsbase,
-+				next->gsindex, next->gsbase, GS);
-+	}
- }
+ 	if (task == current)
+ 		fsbase = x86_fsbase_read_cpu();
+-	else if (task->thread.fsindex == 0)
++	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
++		 (task->thread.fsindex == 0))
+ 		fsbase = task->thread.fsbase;
+ 	else
+ 		fsbase = x86_fsgsbase_read_task(task, task->thread.fsindex);
+@@ -442,7 +443,8 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
  
- static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	if (task == current)
+ 		gsbase = x86_gsbase_read_cpu_inactive();
+-	else if (task->thread.gsindex == 0)
++	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
++		 (task->thread.gsindex == 0))
+ 		gsbase = task->thread.gsbase;
+ 	else
+ 		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
+@@ -482,10 +484,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+ 	p->thread.sp = (unsigned long) fork_frame;
+ 	p->thread.io_bitmap_ptr = NULL;
+ 
+-	savesegment(gs, p->thread.gsindex);
+-	p->thread.gsbase = p->thread.gsindex ? 0 : me->thread.gsbase;
+-	savesegment(fs, p->thread.fsindex);
+-	p->thread.fsbase = p->thread.fsindex ? 0 : me->thread.fsbase;
++	save_fsgs(me);
++	p->thread.fsindex = me->thread.fsindex;
++	p->thread.fsbase = me->thread.fsbase;
++	p->thread.gsindex = me->thread.gsindex;
++	p->thread.gsbase = me->thread.gsbase;
+ 	savesegment(es, p->thread.es);
+ 	savesegment(ds, p->thread.ds);
+ 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
 -- 
 2.7.4
 
