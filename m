@@ -2,93 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CC817367
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC7F17321
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 10:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfEHIOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 04:14:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49488 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfEHIOF (ORCPT
+        id S1726773AbfEHIGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 04:06:35 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33697 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfEHIGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 04:14:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WhnysPOirrt1DrR0x644ScRFfc9EAtcJqNjTBQeoFiM=; b=wWSeSXbwvJpYsldXVtPQpCUFj
-        JYlr2xejylzZ6BKn4YD+0Ixk86373GqeyKIo/nobIrwNChDbcd/KUIwte7j9vesBCwhkuW0s53Ben
-        JPK9gU6oRvhTRLHSllrBMXjz190TKBNZKsPLNirAhGWbjySe0+6hwIFEBouHoh2ySXcdw=;
-Received: from [61.199.190.11] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hOHiD-0007RW-PC; Wed, 08 May 2019 08:14:02 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id B32C1440036; Wed,  8 May 2019 09:05:13 +0100 (BST)
-Date:   Wed, 8 May 2019 17:05:13 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/6] Introduce machine-specific regulators
- coupling API
-Message-ID: <20190508080513.GY14916@sirena.org.uk>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <46665d2d-aeda-4b63-1d0e-1599214e7bae@gmail.com>
+        Wed, 8 May 2019 04:06:34 -0400
+Received: by mail-it1-f194.google.com with SMTP id u16so1689605itc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 01:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ki8hQ48k4lITqZ/TVIYvLD49Gs7QEyF45lWbuLR1Sl0=;
+        b=CvUyCgoivRAhF/4ErqyHzJu2eu3YdNKSU7bPgEtxWicHsKTLP+tGbafiiQw2io/GQb
+         PsmMQMPtsa2T8025pi5SsvE5ri1xNbzvZLpapw15edM7IGu2w97/kbA/7yKXYYdu1WMI
+         IReG5o25f4R84RgSKj515yoqgHSx3qI4bKkMU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ki8hQ48k4lITqZ/TVIYvLD49Gs7QEyF45lWbuLR1Sl0=;
+        b=a2h+SrMjrFohkx3z7ydu20QOPrpa3uDZzxCeREda5A/qX0A/Yx+KSEw8+2or8QLM2z
+         q2cwWlNYgrfIgZdw4eLfqhyIZ4EczQX1Tk2KCraCb4i+YehBmrJ78799HuFur26ZPi6F
+         qZWHZTjRgR+js3Wj19gaYvYTd3lEq5m7Fp2VoznHUQ+F/jUVsaBRya8TUiLm+1kRiyvs
+         ugp1/hDHdGV1gYq3/C4fKSCyfeFkmUxvBcUTT3k2vVylzSrQpU/pDW7JoQ1LFbZoSjkv
+         o1Pcf3vx5Vt9IXCKqr3c650GY44o06lt9XAPqH70G1gnwmBCkkS1QqHLfHeSKARfS+BH
+         xPTg==
+X-Gm-Message-State: APjAAAX3ApLS37dcaqNQM3z55aUkyv2YzizwQk5CgRf6C4xQFzaLgnlv
+        m9xj9enn5F8JJ2Fv/lhmRL4BLOh+6x6Nb8BME5ZUDA==
+X-Google-Smtp-Source: APXvYqz+LcWP0P11hgtedlhpXw1Ues0QKV277c7pjb7z6FDlN0mBHxeeIFN92GfUDXQ/Z8jxOJiL3YzcPDe2HsbWoww=
+X-Received: by 2002:a02:ca4a:: with SMTP id i10mr27164568jal.70.1557302793766;
+ Wed, 08 May 2019 01:06:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CpRwOJvrTIYkeTuO"
-Content-Disposition: inline
-In-Reply-To: <46665d2d-aeda-4b63-1d0e-1599214e7bae@gmail.com>
-X-Cookie: -- I have seen the FUN --
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190507173329.17031-1-daniel.vetter@ffwll.ch>
+ <20190508074420.GB15704@jagdpanzerIV> <20190508075302.GC15704@jagdpanzerIV>
+In-Reply-To: <20190508075302.GC15704@jagdpanzerIV>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed, 8 May 2019 10:06:20 +0200
+Message-ID: <CAKMK7uFeRmSGkqFj-xmdebwKok9+z1pyDZWUMNXfzTT4H2=-fA@mail.gmail.com>
+Subject: Re: [PATCH] RFC: x86/smp: use printk_deferred in native_smp_send_reschedule
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 8, 2019 at 9:53 AM Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+>
+> On (05/08/19 16:44), Sergey Senozhatsky wrote:
+> > [..]
+> > >  static void native_smp_send_reschedule(int cpu)
+> > >  {
+> > >     if (unlikely(cpu_is_offline(cpu))) {
+> > > -           WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
+> > > +           printk_deferred(KERN_WARNING
+> > > +                           "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
+> > >             return;
+> > >     }
+> > >     apic->send_IPI(cpu, RESCHEDULE_VECTOR);
+> >
+> > Hmm,
+> > One thing to notice here is that the CPU in question is offline-ed,
+> > and printk_deferred() is a per-CPU type of deferred printk(). So the
+> > following thing
+> >
+> >       __this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
+> >       irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
+> >
+> > might not print anything at all. In this particular case we always
+> > need another CPU to do console_unlock(), since this_cpu() is not
+> > really expected to do wake_up_klogd_work_func()->console_unlock().
+>
+> D'oh... It's remote CPU which is offline, not this_cpu().
+> Sorry, my bad!
 
---CpRwOJvrTIYkeTuO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Well I started reading, then freaked out about the WARN_ON in
+irq_work_queue_on until I realized that's not the one we're calling
+either :-)
 
-On Sun, May 05, 2019 at 05:57:42PM +0300, Dmitry Osipenko wrote:
+> Any printk-related patch in this area will make PeterZ really-really
+> angry :)
 
-> after bootloader. Currently, in this patchset, we are not allowing CORE
-> voltage to go lower than the level left after bootloader and once all
-> the relevant drivers will get support for the voltage management, we
-> should be able to unhold the lower CORE voltages around late_init().
+Hm any more context for someone with no clue about this? Just that the
+dependencies are already terribly complex and it's not going to get
+better, or something more specific?
 
-That's going to break as soon as someone like a distro builds drivers as
-modules, you can't rely on things getting done at any particular point
-in initialization or indeed on any given set of drivers being available
-in the particular kernel that the user chooses to run - if they decide
-not to build drivers for devices that they don't use on their particular
-system that should work.
+> printk_deferred(), just like prinkt_safe(), depends on IRQ work;
+> printk_safe(), however, can redirect multiple lines, unlike
+> printk_deferred(). So if you want to keep the backtrace, you may
+> do something like
+>
+>         if (unlikely(cpu_is_offline(cpu))) {
+>                 printk_safe_enter(...);
+>                 WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n",
+>                          cpu);
+>                 printk_safe_exit(...);
+>                 return;
+>         }
+>
+> I think, in this case John's reworked-printk can do better than
+> printk_safe/printk_deferred.
 
-Overall this feels like an abstraction failure and you've not really
-said what the constraints you're trying to implement here are so it's
-hard to tell if that's the case or not.
-
---CpRwOJvrTIYkeTuO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzSjbgACgkQJNaLcl1U
-h9BIygf/UDsx2Mvn6tUgdKjwd2FK4/61FyNOrCOHq8yIsQJaCv+pAISiYiBYbZJV
-p1MMMbjsrGO+2p3hcXsGgK8/lGtKwMK2zHLlQW2ZOK3rShmBXfA5W1uyunwj78Tu
-6d+RB51jWzFUKI9wuGkGlv8G4kP4duFpuyzd8ENLpO5toHD0CuE+twv/mS/WXMN2
-4KR7WgYaCeztK1zWhBbhViu0H0hTSq49GRCeQLt67dQdchGU19N/rO27cm1iwbjk
-LLGRIEhXyfn6GkZDl3YiTTrkYpfRm9eROQEzGm0oG5aMe/ZtZ4XFGxdiQWzqSfjl
-AXWIb8nqZkseDVV4WfRJIdJveYS0+A==
-=cGV4
------END PGP SIGNATURE-----
-
---CpRwOJvrTIYkeTuO--
+Hm I think this is what Petr was suggesting, but somehow I didn't find
+the printk_safe_* functions and didn't connect the dots. Needs the
+_irqsave variants I guess, I'll respin a v2 of this.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
