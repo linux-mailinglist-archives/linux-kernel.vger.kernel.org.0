@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DEB818266
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 00:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C250B18261
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 00:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbfEHWn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 18:43:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41650 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728600AbfEHWnP (ORCPT
+        id S1728760AbfEHWnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 18:43:19 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39701 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728608AbfEHWnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 18:43:15 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l132so191723pfc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:43:15 -0700 (PDT)
+        Wed, 8 May 2019 18:43:16 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g9so104329plm.6
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 15:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5q9dsjY3DBzndr7wkuvZRTHnczHf4Q/fpKRsCx+qJwI=;
-        b=N7Vx7SQnonpq06ayiMuPXO0+ovJ9IYasbzcwhbTme1cqt6g2l9EAJqV0qhEcQK1LXZ
-         8RsHpt092gP2klW+DYNIce8SMCQbCIbM2mAaR/ePnQcJby/DDVcuFak875Y4u9bTLuCY
-         ZF4KHTOQnu5/Y00nHE9tsG4FY4ZC9vyUPgEylDJ+iqA34If3nZZP23+P8+WcOnk90U6Z
-         GCB5qzKAGTplbpCxsI2zSlBk1z63A99GOru/9uItbbTCs3V7fRcMgbjRDswQ4CLZV5mn
-         9I9yvTxeEwUs9yr0dEmFXyJrdPlhs5VBxj/lOiIlznABbisQ3pZ2hLvUfQbZ18G0j1Du
-         UAvA==
+        bh=ZRWOAg/RyHnGg26N15yptA5VgOFfFjkzmzqD1kcfUOw=;
+        b=RdT8BY5t8wPzm+4po1DJeApnXg3skW0a2CPSwwA/bsFs8Vj4+pFwxByzwZjW8sK8wN
+         rA4i0GwqqgOFGvf/Tz+SyKfKVLveGxi12/drxfs0A45/+geWHyUP4RbbvKmuRV75YOS6
+         +xnR4i1S5iR6FdROsAr57ggWtH4GqlCQudDQdlbJ3qbZFrwYNv4QPqXQtmNitRI4r6tT
+         N09mpV+sfgE8URu8yOsw8V/Zd3nOJajqkvrO53+iaFDldnJV2Fic3nSQzmZKxwqGFYCX
+         pM6+qFODqdiVAew5IGuCBcRvRyHOXhPZAK6SnydWxsnMiSXCOBUf9TMxS0SWKOPryHb7
+         3d+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5q9dsjY3DBzndr7wkuvZRTHnczHf4Q/fpKRsCx+qJwI=;
-        b=K372C0XSt1RuP45yU5Oe4qWR3K5wfIhD1CDeiQ2O6K564O2YNLmhGO1lnMHH0moerD
-         ELYkfG7PDeQSD8iTKNwMsbNfExJZUR7HUA6Na0dt3lEshYDOoa2cyJoHGgkt0OOvKG1L
-         2EoZ611CSXmBl7IZJp3P8EbsPxXEKFPdsqSLuWsYWjxxnumF6rr/+gtk832rMX8QCwPQ
-         O6hbSooHS/ICGnjOR0VwkMNPmXpT47wZq1htUpz/mWRlNA+qUdI3CNmYQFsch+Y2QOsj
-         t+BhsLl/7G3gIica1jAmDNJk82SdiAiM9uueMdu16QT+GM6sMCdGg4GfxUYbIrdJxOFo
-         W+oQ==
-X-Gm-Message-State: APjAAAUZ/EdsgVnu/AOHp7liY/EX1m7S3CBVpft3s4Ra5ZLUzp7RiP08
-        UYA3BnsK61R+rUECwtMkuzHwsw==
-X-Google-Smtp-Source: APXvYqzOx+Ty15Ki0fJrGT+TPqPGOflDSOwh2gjGYsH4NMh4u336RZkfTJHnFY5wiuyJ+fbYEByX3Q==
-X-Received: by 2002:a65:48ca:: with SMTP id o10mr900894pgs.136.1557355394400;
-        Wed, 08 May 2019 15:43:14 -0700 (PDT)
+        bh=ZRWOAg/RyHnGg26N15yptA5VgOFfFjkzmzqD1kcfUOw=;
+        b=hZmdf7gOVlRk3Br0sHgjzhtoQj3LbsKxpP5gGe/3POcQUUvCVMZHy1nvCzkZCTzFf6
+         Pf0AX1IWI/Q/n15frlnEPqp0s7M5cFDi7aGD5Meq3XiKvhV/CzTchBVnVs9gxG0rdQhc
+         GWnX8BdTZnXTnhf4ssfxSpfUd27q+tjUd+D12Rhs+XIDLui2KjXFVYMx0DT1sCFG3ZvI
+         9CtdFJwj09DqMqyu3ehucW76kVufY6wEE1dXt66sUV7scHTg9AF9Ey3mjx/lK+F85uaX
+         zFAR5HoUkozFKy4buohb1FzKY8p9erxTUkB3zneKtfjUB05fMaiXqB8/3Rtv6BvuYYwW
+         F++g==
+X-Gm-Message-State: APjAAAW/IMdfab5cSAAOXeTIorarea5Qax8SP/BIlDPJObQzEzEJurw5
+        e98H7NzQ56jDSU1HefODAoxcaQ==
+X-Google-Smtp-Source: APXvYqzp0faxVfN4AREXFDyjq/oRrZq5pxi5rj2y4qzUEN/mC7d+4AQVN2DyqyI6hlzo4Qqwb2cyoA==
+X-Received: by 2002:a17:902:7294:: with SMTP id d20mr406356pll.276.1557355395687;
+        Wed, 08 May 2019 15:43:15 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 25sm320494pfo.145.2019.05.08.15.43.13
+        by smtp.gmail.com with ESMTPSA id 25sm320494pfo.145.2019.05.08.15.43.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 15:43:13 -0700 (PDT)
+        Wed, 08 May 2019 15:43:14 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         David Brown <david.brown@linaro.org>
@@ -51,9 +51,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/3] arm64: dts: qcom: qcs404: Make gcc as reset-controller
-Date:   Wed,  8 May 2019 15:43:07 -0700
-Message-Id: <20190508224309.5744-2-bjorn.andersson@linaro.org>
+Subject: [PATCH v4 2/3] arm64: dts: qcom: qcs404: Add PCIe related nodes
+Date:   Wed,  8 May 2019 15:43:08 -0700
+Message-Id: <20190508224309.5744-3-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190508224309.5744-1-bjorn.andersson@linaro.org>
 References: <20190508224309.5744-1-bjorn.andersson@linaro.org>
@@ -62,29 +62,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC is a reset-controller, so define #reset-cells.
+The QCS404 has a PCIe2 PHY and a Qualcomm PCIe controller, define these
+to for the platform.
 
+Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v3:
 - Split single patch, no functional change
 
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 65 ++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index ffedf9640af7..65a2cbeb28be 100644
+index 65a2cbeb28be..f97e9c96b7f7 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -383,6 +383,7 @@
- 			compatible = "qcom,gcc-qcs404";
- 			reg = <0x01800000 0x80000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
+@@ -412,6 +412,21 @@
+ 			#interrupt-cells = <4>;
+ 		};
  
- 			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
- 			assigned-clock-rates = <19200000>;
++		pcie_phy: phy@7786000 {
++			compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
++			reg = <0x07786000 0xb8>;
++
++			clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
++			resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
++				 <&gcc GCC_PCIE_0_PIPE_ARES>;
++			reset-names = "phy", "pipe";
++
++			clock-output-names = "pcie_0_pipe_clk";
++			#phy-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		sdcc1: sdcc@7804000 {
+ 			compatible = "qcom,sdhci-msm-v5";
+ 			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
+@@ -797,6 +812,56 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		pcie: pci@10000000 {
++			compatible = "qcom,pcie-qcs404", "snps,dw-pcie";
++			reg =  <0x10000000 0xf1d>,
++			       <0x10000f20 0xa8>,
++			       <0x07780000 0x2000>,
++			       <0x10001000 0x2000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			ranges = <0x81000000 0 0          0x10003000 0 0x00010000>, /* I/O */
++				 <0x82000000 0 0x10013000 0x10013000 0 0x007ed000>; /* memory */
++
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++			clocks = <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
++				 <&gcc GCC_PCIE_0_AUX_CLK>,
++				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
++				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>;
++			clock-names = "iface", "aux", "master_bus", "slave_bus";
++
++			resets = <&gcc GCC_PCIE_0_AXI_MASTER_ARES>,
++				 <&gcc GCC_PCIE_0_AXI_SLAVE_ARES>,
++				 <&gcc GCC_PCIE_0_AXI_MASTER_STICKY_ARES>,
++				 <&gcc GCC_PCIE_0_CORE_STICKY_ARES>,
++				 <&gcc GCC_PCIE_0_BCR>,
++				 <&gcc GCC_PCIE_0_AHB_ARES>;
++			reset-names = "axi_m",
++				      "axi_s",
++				      "axi_m_sticky",
++				      "pipe_sticky",
++				      "pwr",
++				      "ahb";
++
++			phys = <&pcie_phy>;
++			phy-names = "pciephy";
++
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer {
 -- 
 2.18.0
 
