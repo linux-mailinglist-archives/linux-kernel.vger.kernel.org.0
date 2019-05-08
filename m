@@ -2,104 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB3D17662
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4DC1766B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfEHLBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:01:42 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50447 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfEHLBl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:01:41 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p21so2715797wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bqSOd5NdwH2sBo5UJZZvv7ez5x168vj6NoDWWxf39h8=;
-        b=vLr9lpNr81dJnJ4ki7Ofpz8YeDdWr5J7E+WbnN/TNKj2AV3rmoRX4bKe2x+R9pq/e6
-         rPwD07ephFcN39P8gkmRM8gmn9BylEndxfZ4ksrIRTw5ZW/qREgIVkccuqVGdZnOC8UO
-         R2CBVpx7dR8q4ZZSV0NxML8KhRgqyivdUNVwS5hIbb54TJ3/5cE6d1tIDK0o/wEkv8iz
-         8Ui+O+TZ3TcY+61yvIhzB1f5KHXZmSrWfMNdge130ZNe+k6xaZlxKDA0/sodnyn9u2wK
-         fotiY/BcQTzEs4psCyDrmZ/FJsiwdKE34X03fM56OH9BWd/Qhv6ezXJUVgz9MLzXnBha
-         rc9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bqSOd5NdwH2sBo5UJZZvv7ez5x168vj6NoDWWxf39h8=;
-        b=EoRh6cLNa0fVIj14qeBVzxvbgali6n3Vuvoh7zrwJFr5+AdRwBxVBCunxAeiTfsKu6
-         wi5uu1CUJT6wNpB119DoIUpShpRANEYlpZ1jI39ArlaiTz+wfhN2qYcQ5L/PxBfWt2yY
-         Cw9yoJ7eqPH35zkD1of6m8iYr+mnPYvuYLXl50fmH/IvyMDw83s/q0d7xopz8E+H/3I8
-         D0KgAeadvJZ9DYtZ9Ufap5ymWshGJKxAjBQzP+qVk2+ags9JimNRsFfTrvf4G5WGdAE5
-         TZyuB1PyjaicTOYAgZ6nksOd5MKPNADZyeXZ9Boq55o/JAasVwT97NWwqLb9y7zSanFd
-         eQHg==
-X-Gm-Message-State: APjAAAUej1Fup6CYgrzHTZbI+FGG+XS+OG/93uvpzCyz8pzUBg+EzmmJ
-        0DlqrxEtA6MfMqhDqBjQplDABalbcIs=
-X-Google-Smtp-Source: APXvYqw1fiLxjnK9R324L7VjjDByPPrSiZVo/OEiG702CWo1hF7gtinHSZSWaINQaniIOrY5HwsZVw==
-X-Received: by 2002:a1c:48d7:: with SMTP id v206mr1187312wma.38.1557313299959;
-        Wed, 08 May 2019 04:01:39 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id a125sm3243927wmc.47.2019.05.08.04.01.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 04:01:39 -0700 (PDT)
-Date:   Wed, 8 May 2019 12:01:37 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v10 06/11] mfd: max77650: new core mfd driver
-Message-ID: <20190508110137.GQ3995@dell>
-References: <20190423090451.23711-1-brgl@bgdev.pl>
- <20190423090451.23711-7-brgl@bgdev.pl>
+        id S1727265AbfEHLFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 07:05:04 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58040 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726608AbfEHLFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:05:03 -0400
+Received: from zn.tnic (p2E584D41.dip0.t-ipconnect.de [46.88.77.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CD4FA1EC0C09;
+        Wed,  8 May 2019 13:05:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1557313501;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=o7NDZ8O3Gbdptbt9b7o+h4iD6eziklREAki3blIrTDs=;
+        b=QYBfw7s0l1XyJ+2GTNrw/PdH4LkRT5Fm6B9TAjnLNntc4z2D2OS9LTxN6PAgvT/9VDGGno
+        JGEwE5nFPkXYKjEDStBkIgI3F0+sZbAlNl6rfN1PP9lr3isGO43Y/iC8hgyw7xo/LBBdSc
+        qkB5HZlwyomqzqTZizclT3XIKNLF07s=
+Date:   Wed, 8 May 2019 13:02:50 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     PanBian <bianpan2016@163.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] EDAC/sysfs: Fix memory leak when creating a csrow object
+Message-ID: <20190508110250.GD19015@zn.tnic>
+References: <1555554438-103953-1-git-send-email-bianpan2016@163.com>
+ <20190418172548.GL27160@zn.tnic>
+ <20190419003536.GA57795@bianpan2016@163.com>
+ <20190419004516.GC559@zn.tnic>
+ <20190427214925.GE16338@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190423090451.23711-7-brgl@bgdev.pl>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190427214925.GE16338@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Apr 2019, Bartosz Golaszewski wrote:
+From 28e7f23939208bea639d6cd3d492cde3f65a7e4f Mon Sep 17 00:00:00 2001
+From: Pan Bian <bianpan2016@163.com>
+Date: Thu, 18 Apr 2019 10:27:18 +0800
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add the core mfd driver for max77650 PMIC. We define five sub-devices
-> for which the drivers will be added in subsequent patches.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/mfd/Kconfig          |  14 +++
->  drivers/mfd/Makefile         |   1 +
->  drivers/mfd/max77650.c       | 232 +++++++++++++++++++++++++++++++++++
->  include/linux/mfd/max77650.h |  59 +++++++++
->  4 files changed, 306 insertions(+)
->  create mode 100644 drivers/mfd/max77650.c
->  create mode 100644 include/linux/mfd/max77650.h
+In edac_create_csrow_object(), the reference to the object is not
+released when adding the device to the device hierarchy fails
+(device_add()). This may result in a memory leak.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
+---
+ drivers/edac/edac_mc_sysfs.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index 464174685589..9b7d396f26e9 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -404,6 +404,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
+ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 				    struct csrow_info *csrow, int index)
+ {
++	int err;
++
+ 	csrow->dev.type = &csrow_attr_type;
+ 	csrow->dev.groups = csrow_dev_groups;
+ 	device_initialize(&csrow->dev);
+@@ -415,7 +417,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 	edac_dbg(0, "creating (virtual) csrow node %s\n",
+ 		 dev_name(&csrow->dev));
+ 
+-	return device_add(&csrow->dev);
++	err = device_add(&csrow->dev);
++	if (err)
++		put_device(&csrow->dev);
++
++	return err;
+ }
+ 
+ /* Create a CSROW object under specifed edac_mc_device */
+-- 
+2.21.0
+
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
