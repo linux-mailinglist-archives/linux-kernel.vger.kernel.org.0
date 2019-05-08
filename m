@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17C0B17B7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4491417B85
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 16:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfEHOYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 10:24:30 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51052 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726914AbfEHOYa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 10:24:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D13058EE2B1;
-        Wed,  8 May 2019 07:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557325469;
-        bh=xydTi/hn1JDJTRyeJqcJB5CNRIzFduahaKTlPNfO1IM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=g9J2++dy2yHjw1VgAG+xuKtM3+Ffdl90VFrw8hMWS5OgnG15ZSG29vx3WWHYinwv9
-         NaciE0RfPfGVsVKEOEphmxnK7sbh/ih6GLZ8a7E9qR9BsXxXllu2adpGkb7yLMZFup
-         w6Bk1ctdc12FOZRshyvo/zvuvq7udEKyH3RQjoOs=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id xgX-hAvPV0kW; Wed,  8 May 2019 07:24:29 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 22C688EE0D2;
-        Wed,  8 May 2019 07:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557325469;
-        bh=xydTi/hn1JDJTRyeJqcJB5CNRIzFduahaKTlPNfO1IM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=g9J2++dy2yHjw1VgAG+xuKtM3+Ffdl90VFrw8hMWS5OgnG15ZSG29vx3WWHYinwv9
-         NaciE0RfPfGVsVKEOEphmxnK7sbh/ih6GLZ8a7E9qR9BsXxXllu2adpGkb7yLMZFup
-         w6Bk1ctdc12FOZRshyvo/zvuvq7udEKyH3RQjoOs=
-Message-ID: <1557325468.3196.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH] mptsas: fix undefined behaviour of a shift of an int by
- more than 31 places
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Colin Ian King <colin.king@canonical.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 08 May 2019 07:24:28 -0700
-In-Reply-To: <de7e3aaf-0155-5007-c228-510f0d0de428@canonical.com>
-References: <20190504164010.24937-1-colin.king@canonical.com>
-         <1557027274.2821.2.camel@HansenPartnership.com>
-         <de7e3aaf-0155-5007-c228-510f0d0de428@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1727485AbfEHO3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 10:29:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:36098 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbfEHO3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 10:29:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2318BA78;
+        Wed,  8 May 2019 07:29:19 -0700 (PDT)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 496BF3F238;
+        Wed,  8 May 2019 07:29:14 -0700 (PDT)
+Subject: Re: [PATCH v2 00/11] dts: Update DT bindings for CoreSight replicator
+ and funnel
+To:     leo.yan@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        xuwei5@hisilicon.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        agross@kernel.org, david.brown@linaro.org,
+        linus.walleij@linaro.org, liviu.dudau@arm.com,
+        Sudeep.Holla@arm.com, Lorenzo.Pieralisi@arm.com,
+        orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     guodong.xu@linaro.org, zhangfei.gao@linaro.org,
+        haojian.zhuang@linaro.org, cphealy@gmail.com, andrew@lunn.ch,
+        lee.jones@linaro.org, zhang.chunyan@linaro.org
+References: <20190508021902.10358-1-leo.yan@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <9c56323b-7b14-c662-b824-ed60fbb1638f@arm.com>
+Date:   Wed, 8 May 2019 15:29:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190508021902.10358-1-leo.yan@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-08 at 14:07 +0100, Colin Ian King wrote:
-> On 05/05/2019 04:34, James Bottomley wrote:
-> > On Sat, 2019-05-04 at 17:40 +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > Currently the shift of int value 1 by more than 31 places can
-> > > result in undefined behaviour. Fix this by making the 1 a ULL
-> > > value before the shift operation.
-> > 
-> > Fusion SAS is pretty ancient.  I thought the largest one ever
-> > produced had four phys, so how did you produce the overflow?
+
+
+On 08/05/2019 03:18, Leo Yan wrote:
+> Since the DT bindings consolidatoins for CoreSight replicator and funnel
+> is ready for kernel v5.2 merge window [1], this patch set is to update
+> the related CoreSight DT bindings for platforms; IIUC, this patch set
+> will be safe for merging into kernel v5.2 because the dependency
+> patches in [1] will be landed into mainline kernel v5.2 cycle.
 > 
-> This was an issue found by static analysis with Coverity; so I guess
-> won't happen in the wild, in which case the patch could be ignored.
+> In this patch set, it tries to update below two compatible strings to
+> the latest strings:
+> 
+>    s/"arm,coresight-replicator"/"arm,coresight-static-replicator"
+>    s/"arm,coresight-funnel"/"arm,coresight-dynamic-funnel"
+> 
+> Please note, some platforms have two continuous patches, one is for
+> updating static replicator compatible string and another is for dynamic
+> funnel change; and other platforms have only one patch since it only
+> needs to change for dynamic funnel.
 
-The point I was more making is that if we thought this could ever
-happen in practice, we'd need more error handling than simply this:
-we'd be setting the phy_bitmap to zero which would be every bit as bad
-as some random illegal value.
+This is now misleading ;-), but that doesn't matter.
 
-James
+For the entire series :
 
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
