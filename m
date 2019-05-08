@@ -2,110 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0775181C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B62181C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 23:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfEHVr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 17:47:56 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46433 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfEHVr4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 17:47:56 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bi2so29701plb.13;
-        Wed, 08 May 2019 14:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5bNHEZyoMBk+M3klI9aU53M2aRLAmC1Bv+JFzOfGHa0=;
-        b=pBlRZGaLwQVLu6p7WDopNzOsjrEGhrlO/Y573oVOa0V1JmJhiKJX7YKDURJpbhWIfh
-         p7Pmn+fT58/zf0jzExbvDtqLLvCG33F+IqblJJSkAIHEWVrb+0dGx4Ht2fruP1duuFAO
-         lICxbo4B0JTwANqsBnhW/FNlAyKrxSwn9bn8fowc/TSTzd7O4/WR1OzQoQ6ftdDzjwCG
-         0rgiMmMf7zN4+SIP6dzG9PoM40O+4YCUG+05j0eC9zQEryfct5+tFjIizEajdI/xcicX
-         Yc8sgGy5gKVjaEz91MYZr2C6pAam2vrBmnFoEGbEGNlueLj8a2HYZhn6e5un5lRMhBdR
-         X9Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5bNHEZyoMBk+M3klI9aU53M2aRLAmC1Bv+JFzOfGHa0=;
-        b=nzGKJ9DGkfK2cG5+lh4YgqjJ1EBZOSmRSGEvyXHhWi0JxiI4trIQoSEHaSpX1ILm7u
-         +5fZr78hBLeExkACy+D0iy7Q3boiVgQ2XwJCDTMMwHpIMSQf0oeLacFertoieu39Dt1r
-         3IYApzBi9sBBGPR4S+Je32qdwXOqTP7vxIJP2BXwGQn0qINFRCWa9mI1GpUg1/zXnF0c
-         hp92lj1QKTAJsC1I00z0JDRyFvOUpTkQ59sXnvlN74LxVEYklI70T820aJMJg094rzVl
-         HnV/41SQuQW1CgEkGmTCwrl8LqumECIINddz/dl32PhF4WDIEhViFaDfdvk7Kj+d7vnH
-         a+zA==
-X-Gm-Message-State: APjAAAUudpQL1Q1ZI9WuU0NiPJ+mdsuT1Qu1jdPyZFwrVSUZ+8bZR4OF
-        0rhGQjIrJfxWyAt95d6xZwHKIZ6qjc5RL2OHfhBcZA==
-X-Google-Smtp-Source: APXvYqxZh9GqHMV6SQwteGF/JoL1z9bDQTTi2v9t2Ry5aUK/J9uIr86FN0DdFGdCrfU9nIkUusb604Ppp8Z18reiUVg=
-X-Received: by 2002:a17:902:b105:: with SMTP id q5mr190268plr.290.1557352074726;
- Wed, 08 May 2019 14:47:54 -0700 (PDT)
+        id S1728199AbfEHVru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 17:47:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56547 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727486AbfEHVrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 17:47:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44zqpB6JN0z9s5c;
+        Thu,  9 May 2019 07:47:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557352067;
+        bh=fsWeFJ18i29DlMOTNiKm3faX0b2v6GdafoFItBbR4VY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UJ65kkuyeK6mnzpSOIioS3VFFjfQNCPghbiu3lbKeb90cxZXUh7b9p0+oGL+8RHi8
+         l2lydsL0w6E45cnNiGa+/6VfNL+Upz1wWVwTkSfkC56ME1eafpqaUs8Ah6+6RDQxVF
+         sRL2iObsNjePt4ZYyh9ILtgRH2IaNhjdKPMhUr9VInTtDN+Ra2W9riloca7QmvFEGW
+         8lgIewyQr8xTGiaJKAtdUudptJOUPmxLVV0LZWOoXLH6ySzWHg1SMIPG/c//9MwQOS
+         +UuAC/Mpp1PA1vlxfmEPAiRO7kzw8ztpf1tTct5rwKTYM67f7QLkqKVXV74Bm6x1kn
+         q524D2IJJpWBw==
+Date:   Thu, 9 May 2019 07:47:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the risc-v tree
+Message-ID: <20190509074745.65336288@canb.auug.org.au>
 MIME-Version: 1.0
-References: <CAH2r5mv=4JsaF-8v=U4JR3jrOyPfhtUsJPogNudLejDh09xGSA@mail.gmail.com>
- <CAHk-=wiKoePP_9CM0fn_Vv1bYom7iB5N=ULaLLz7yOST3K+k5g@mail.gmail.com>
-In-Reply-To: <CAHk-=wiKoePP_9CM0fn_Vv1bYom7iB5N=ULaLLz7yOST3K+k5g@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 8 May 2019 16:47:43 -0500
-Message-ID: <CAH2r5mu2tsupGjLQPK0z7va-FPdWb_WT0DKTYjZw-SW4=DCaRQ@mail.gmail.com>
-Subject: Re: [GIT PULL] CIFS/SMB3 fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JuVz_E.gihc1z=sUgwxe/Hl"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 3:37 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, May 8, 2019 at 11:32 AM Steve French <smfrench@gmail.com> wrote:
-> >
-> >    [..] Our
-> > build verification tests passed (and continue to be extended to
-> > include more tests).  See e.g. our 'buildbot' results at:
-> > http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/199
->
-> Still, is there any reason for that very late rebase?
->
-> Why are all the commits so recent?
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Most of the commits were from April, three from March, only a few more
-recent. I rebased
-yesterday (bad idea it seems based on your note) simply to avoid any potential
-merge conflict with the two broad VFS changes (unrelated to my PR)
-that hit cifs code yesterday (albeit they turned out to be very small).
+Hi all,
 
-> And perhaps even more importantly, why is the base for that rebase is
-> some completely random and inappropriate commit in the middle of the
-> merge window?
+Commits
 
-Understood. I had originally based it on v5.1 tag, but changed that
-for testing after
-I saw two other PR's hit I wanted to run the regression tests on
-'current' mainline
-with the changes in for-next code just in case (very unlikely) the other two
-changes that I hadn't seen that hit cifs since 5.1 broke anything or
-caused conflicts.
+  da8e7c379659 ("riscv: Support BUG() in kernel module")
+  564bd22ea4e5 ("riscv: Add the support for c.ebreak check in is_valid_buga=
+ddr()")
+  67363778b72c ("riscv: support trap-based WARN()")
+  efd48cf0b393 ("riscv: fix sbi_remote_sfence_vma{,_asid}.")
+  89f7840cf346 ("riscv: move switch_mm to its own file")
+  8c0e1593f15d ("riscv: move flush_icache_{all,mm} to cacheflush.c")
 
-> So don't do the whole "rebase the day before" in the first place, but
-> *DEFINITELY* don't do it when you then pick a random and bad point to
-> rebase things on top of!
+are missing a Signed-off-by from their committer.
 
-Understood - will do the rebase for our verification testing only
-(e.g. to spot any
-regressions in recent global or VFS changes) but not for
-sending to you.   So for future, will try to send with base as that of
-mainline kernel
-as of he last cifs PR  merge or new kernel version or rc (e.g.
-v5.2-rc1 or v5.1 etc)
-whichever is more recent.  Is that ok?
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Thanks,
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTToEACgkQAVBC80lX
+0GwWjwf4wB2YFLNTSbr42lg6yvdodtwSa1b1gHnaFmD8hyc652cB3pgpoZ0fXR8o
+284nZ1WomaqkemWG8hysMSJ6cEM8wU7aTWPkDkI+LdVAoGcsTuPMgTjT+cd09Eac
+cRZTO8YQ9H5nUfmka5yOrUKCvkTUhBdQBJafOo9hZx56lkcojI7utGS0kSfeCDvN
+P0jfDXdZNsqNTzys6lhCiwcZxD0+nmbn2Vh6CTNdH7o3OVOqm/XEy4EPQcpLSXZB
+XYsEjANDK3W2VSZ1RY6mQ48Eaz3k5x+MTxAUZIFsjch9c6FOUk+nyE5lQROPoIoF
+cOW51aynJXYlsUT0onQyXH58AUht
+=ca2D
+-----END PGP SIGNATURE-----
 
-Steve
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl--
