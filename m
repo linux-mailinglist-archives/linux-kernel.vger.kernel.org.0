@@ -2,101 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E42D18025
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE6318029
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 21:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfEHTAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 15:00:06 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40689 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbfEHTAG (ORCPT
+        id S1728047AbfEHTAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 15:00:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52246 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbfEHTAf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 15:00:06 -0400
-Received: by mail-it1-f196.google.com with SMTP id g71so5674197ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 12:00:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xFf9uuAjtBL9IH9yaswsFff4UsAX0yv8nQW3HavZOd0=;
-        b=P96IPVq7a+MzxzE6zhmUbfGS9F4NHE58wjnePj+tjakHQwISmw+gMoiR82a711Ya37
-         POtASZNuaDC6KyGpSokGHaYNwdwLJIFb3iQIAnViXDEoE7zvKUFTJpJ2S3fiyCgkLxKH
-         +oavXVtKl+P9bm/K8YcPTAg9bGn2GLUHvMgBdpAAM04K+IFPAhG3X7WAQWOVGPjuGxhj
-         /L6Nx+FdR9lfr4gOeKmZRijdEXRlza2d2TYOuvPfQXxm2BYISZzfhGRJmpuPiiiPZg/Q
-         3PSlvX8pplZ90RcbOl8F93tmffEqEXzeLZda8nnDk+O1buofetwqpuuMQcI8ERMYfW6z
-         cRrg==
-X-Gm-Message-State: APjAAAWGulrqEgw+qZJpG9aYwcw4njedYBClnWExSh8IuG1MZM1Az5+P
-        AN3D+9ATETMtLeHEexL9n8MzSA==
-X-Google-Smtp-Source: APXvYqw6OgdbT39YQKJ9xLRkJPqn9ZlqEwws+dWhkTy0exKzhj9IaRuEi42/6M1yafHGW//gpVp7CA==
-X-Received: by 2002:a24:2c8a:: with SMTP id i132mr4594039iti.130.1557342005215;
-        Wed, 08 May 2019 12:00:05 -0700 (PDT)
-Received: from google.com ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id r22sm841996ioh.54.2019.05.08.12.00.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 08 May 2019 12:00:04 -0700 (PDT)
-Date:   Wed, 8 May 2019 13:00:00 -0600
-From:   Raul Rangel <rrangel@chromium.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     djkurtz@chromium.org, hongjiefang <hongjiefang@asrmicro.com>,
-        Jennifer Dahm <jennifer.dahm@ni.com>,
-        linux-kernel@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, rrangel@chromium.org
-Subject: Re: [RFC PATCH 1/2] mmc: sdhci: Manually check card status after
- reset
-Message-ID: <20190508190000.GA156909@google.com>
-References: <20190501175457.195855-1-rrangel@chromium.org>
- <20190503151224.GA3650@google.com>
+        Wed, 8 May 2019 15:00:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G5cSp6uXMPnnzFNazt27d470pw/eFBtk4HEyqUtsqls=; b=NVKayVoyG7DIerq67jDawzKuW
+        Z8DyXl57CA29JIEnjkvQDkz47ar/picbGRJetShXTWoRnpuGCTy/TAo4z1jDS8ptFebBowu0YwoA3
+        1LWeN32ilwW40UU5OS7D+TL+grn1eI73hYHJKnumIOOODWZYqwmCgk+FR20mdOT4MwEO1jExULTQH
+        978E00mwL4rlORhP/8v8RqibzJJdKyCgREbgcw50hAJd4ORJEs17bnWrhx+b86bBZj0iRFG6aFyS8
+        nK8RSgVBeqblNFUBglYTchSLmEyYryMYY1AreMSrt+IfuCc92OfKDDKgKOClRa++ZHxYfoEth7v0b
+        YmHgCyUFA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hORna-0003RS-0P; Wed, 08 May 2019 19:00:14 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B7ED198030A; Wed,  8 May 2019 21:00:11 +0200 (CEST)
+Date:   Wed, 8 May 2019 21:00:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v8 04/16] sched/core: uclamp: Add system default clamps
+Message-ID: <20190508190011.GB32547@worktop.programming.kicks-ass.net>
+References: <20190402104153.25404-1-patrick.bellasi@arm.com>
+ <20190402104153.25404-5-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190503151224.GA3650@google.com>
+In-Reply-To: <20190402104153.25404-5-patrick.bellasi@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 03, 2019 at 09:12:24AM -0600, Raul Rangel wrote:
-> On Wed, May 01, 2019 at 11:54:56AM -0600, Raul E Rangel wrote:
-> > I am running into a kernel panic. A task gets stuck for more than 120
-> > seconds. I keep seeing blkdev_close in the stack trace, so maybe I'm not
-> > calling something correctly?
-> > 
-> > Here is the panic: https://privatebin.net/?8ec48c1547d19975#dq/h189w5jmTlbMKKAwZjUr4bhm7Q2AgvGdRqc5BxAc=
-> > 
-> > I sometimes see the following:
-> > [  547.943974] udevd[144]: seq 2350 '/devices/pci0000:00/0000:00:14.7/mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0p1' is taking a long time
-> > 
-> > I was getting the kernel panic on a 4.14 kernel: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/f3dc032faf4d074f20ada437e2d081a28ac699da/drivers/mmc/host
-> > So I'm guessing I'm missing an upstream fix.
-> > 
-> 
-> I'll keep trying to track down the hung task I was seeing on 4.14. But I
-> don't think that's related to these patches. I might just end up
-> backporting the blk-mq patches to our 4.14 branch since I suspect that
-> fixes it.
 
-So I tracked down the hung task in 4.14, it's a resource leak.
-mmc_cleanup_queue stops the worker thread. If there were any requests in
-the queue they would be holding onto a reference of mmc_blk_data. When
-mmc_blk_remove_req calls mmc_blk_put, there are still references to md, so
-it never calls blk_cleanup_queue, and the requests stay in the queue
-forever.
+There was a bunch of repetition that seemed fragile; does something like
+the below make sense?
 
-Fortunately Adrian already has a fix for this: https://lore.kernel.org/patchwork/patch/856512/
-I think we should cherry-pick 41e3efd07d5a02c80f503e29d755aa1bbb4245de
-into v4.14. I've tried it locally and it fixes the kernel panic I was
-seeing.
 
-I've also sent out two more patches for v4.14 that need to be applied
-with Adrian's patch:
-* https://patchwork.kernel.org/patch/10936439/
-* https://patchwork.kernel.org/patch/10936441/
+Index: linux-2.6/kernel/sched/core.c
+===================================================================
+--- linux-2.6.orig/kernel/sched/core.c
++++ linux-2.6/kernel/sched/core.c
+@@ -770,6 +770,9 @@ unsigned int sysctl_sched_uclamp_util_ma
+ /* All clamps are required to be less or equal than these values */
+ static struct uclamp_se uclamp_default[UCLAMP_CNT];
+ 
++#define for_each_clamp_id(clamp_id)	\
++	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
++
+ /* Integer rounded range for each bucket */
+ #define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
+ 
+@@ -790,6 +793,12 @@ static inline unsigned int uclamp_none(i
+ 	return SCHED_CAPACITY_SCALE;
+ }
+ 
++static inline void uclamp_se_set(struct uclamp_se *uc_se, unsigned int value)
++{
++	uc_se->value = value;
++	uc_se->bucket_id = uclamp_bucket_id(value);
++}
++
+ static inline unsigned int
+ uclamp_idle_value(struct rq *rq, unsigned int clamp_id, unsigned int clamp_value)
+ {
+@@ -977,7 +986,7 @@ static inline void uclamp_rq_inc(struct
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+ 
+-	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id)
++	for_each_clamp_id(clamp_id)
+ 		uclamp_rq_inc_id(p, rq, clamp_id);
+ 
+ 	/* Reset clamp idle holding when there is one RUNNABLE task */
+@@ -992,7 +1001,7 @@ static inline void uclamp_rq_dec(struct
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+ 
+-	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id)
++	for_each_clamp_id(clamp_id)
+ 		uclamp_rq_dec_id(p, rq, clamp_id);
+ }
+ 
+@@ -1021,16 +1030,13 @@ int sysctl_sched_uclamp_handler(struct c
+ 	}
+ 
+ 	if (old_min != sysctl_sched_uclamp_util_min) {
+-		uclamp_default[UCLAMP_MIN].value =
+-			sysctl_sched_uclamp_util_min;
+-		uclamp_default[UCLAMP_MIN].bucket_id =
+-			uclamp_bucket_id(sysctl_sched_uclamp_util_min);
++		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
++			      sysctl_sched_uclamp_util_min);
+ 	}
++
+ 	if (old_max != sysctl_sched_uclamp_util_max) {
+-		uclamp_default[UCLAMP_MAX].value =
+-			sysctl_sched_uclamp_util_max;
+-		uclamp_default[UCLAMP_MAX].bucket_id =
+-			uclamp_bucket_id(sysctl_sched_uclamp_util_max);
++		uclamp_se_set(&uclamp_default[UCLAMP_MAX],
++			      sysctl_sched_uclamp_util_max);
+ 	}
+ 
+ 	/*
+@@ -1052,7 +1058,7 @@ static void uclamp_fork(struct task_stru
+ {
+ 	unsigned int clamp_id;
+ 
+-	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id)
++	for_each_clamp_id(clamp_id)
+ 		p->uclamp[clamp_id].active = false;
+ }
+ 
+@@ -1067,17 +1073,12 @@ static void __init init_uclamp(void)
+ 		cpu_rq(cpu)->uclamp_flags = 0;
+ 	}
+ 
+-	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+-		struct uclamp_se *uc_se = &init_task.uclamp_req[clamp_id];
+-
+-		uc_se->value = uclamp_none(clamp_id);
+-		uc_se->bucket_id = uclamp_bucket_id(uc_se->value);
+-	}
++	for_each_clamp_id(clamp_id)
++		uclamp_se_set(&init_task.uclamp_req[clamp_id], uclamp_none(clamp_id));
+ 
+ 	/* System defaults allow max clamp values for both indexes */
+-	uc_max.value = uclamp_none(UCLAMP_MAX);
+-	uc_max.bucket_id = uclamp_bucket_id(uc_max.value);
+-	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id)
++	uclamp_se_set(&uc_max, uclamp_none(UCLAMP_MAX));
++	for_each_clamp_id(clamp_id)
+ 		uclamp_default[clamp_id] = uc_max;
+ }
+ 
 
-As for this patch, are there any comments? I have a test running that is
-doing random connect/disconnects, and it's over 6k iterations now.
-
-Thanks,
-Raul
