@@ -2,92 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7DB178AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C01178AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2019 13:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfEHLqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 07:46:39 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40031 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfEHLqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 07:46:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h4so7529893wre.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 04:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lK+3d8MZJN2On8NKOvom0NUSbRl8X6Lpwh3/QgozcSY=;
-        b=y0v+w5FIAHTdurnw1cu21WfiHPivffquh0+KrSW6le6nkERrm9NKmrnahP31aohamW
-         neHYaTTGIIkmExwmWa+gD3umpWWkchdDSiQy6jOovdx05tUeolkyyQeTVkoR0FNkZ0hH
-         PmsZenZyFUPQmT+DXEK/Flf9HkeSOUOKEoGkbmzVU0dlDgCUJ8w8dO9ZzwOeAHJV3lXM
-         g8siYiM9erVdB3N0YSEWiyQRV2g0kCgOyLkCkVY12E9Eh+1YfGJQuKUDI7J+isUY7rwW
-         PXapOmShKa6kW6agO8zYODBXVUpVAz+pOjy6T5HNDQ7oY9UitqRg6lVidYZULsged7R3
-         YQbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lK+3d8MZJN2On8NKOvom0NUSbRl8X6Lpwh3/QgozcSY=;
-        b=LLDR6g87gaI2tOOa7uFtUmEwT1O8YNvz4Rz/KOsJbNrPKf5OBA5qPy03Y2CuaaO5rK
-         Wp3DFXuzDZIL9uum4fJSm1roaGukbaEEuCFPCvWaVouen1vEoP1rLDoPUxWfIIP8d389
-         OO8fPjhFC2zenmxWXDHJukqAuS6hKBV7Sn65nD+fwEOn/afJDgmmzQOcjj0q3CNc33m8
-         FiuSICT+8/Sh7z3W3Iyd5aM0ycMebqNC4t480geip5R5MRH9JMiWzmTPl+ft6sYiqh59
-         SkyLVYJjkfQ0UIvoLZjzVeNuwe5VBUzVMiBTb3q6cp22kuypNj/BIzp003i1e5IyJ2k8
-         SnHw==
-X-Gm-Message-State: APjAAAX/fJixwSLjCNt75NXaKTBpkrpKSjwfkt6VwpBeQw1XAeyMjmLv
-        mZYq51Y/F8aMYUBdwz+RcGYXkQ==
-X-Google-Smtp-Source: APXvYqxKVFGte1Ew/V9TgW7FVFiVCw5/xNDNFvhTQ0pVkzuMo+L/aM3TAKIf67yeB5PnQmk8Wjjc0w==
-X-Received: by 2002:adf:fa03:: with SMTP id m3mr4846442wrr.323.1557315995272;
-        Wed, 08 May 2019 04:46:35 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id a125sm3450734wmc.47.2019.05.08.04.46.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 04:46:34 -0700 (PDT)
-Date:   Wed, 8 May 2019 12:46:33 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mallikarjun Kasoju <mkasoju@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] dt-bindings: mfd: max77620: Add
- system-power-controller property
-Message-ID: <20190508114633.GI31645@dell>
-References: <20190505154325.30026-1-digetx@gmail.com>
- <20190505154325.30026-3-digetx@gmail.com>
+        id S1728206AbfEHLqf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 8 May 2019 07:46:35 -0400
+Received: from unicorn.mansr.com ([81.2.72.234]:35024 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727545AbfEHLqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 07:46:35 -0400
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id 2C80F149B7; Wed,  8 May 2019 12:46:33 +0100 (BST)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] usb: core: verify devicetree nodes for disabled interfaces
+References: <106fc58c-1a4f-6605-41d7-b6031c5751a3@samsung.com>
+        <CGME20190508104442eucas1p2ebdffa348465f2c28177601014614853@eucas1p2.samsung.com>
+        <20190508104434.3409-1-m.szyprowski@samsung.com>
+Date:   Wed, 08 May 2019 12:46:33 +0100
+In-Reply-To: <20190508104434.3409-1-m.szyprowski@samsung.com> (Marek
+        Szyprowski's message of "Wed, 08 May 2019 12:44:34 +0200")
+Message-ID: <yw1xtve5uq1y.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190505154325.30026-3-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 05 May 2019, Dmitry Osipenko wrote:
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
 
-> Document new generic property that designates the PMIC as the system's
-> power controller.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Commit 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
+> add support for disabling given USB device interface by adding nodes to
+> the USB host controller device. The mentioned commit however identifies
+> the given USB interface node only by the 'reg' property in the host
+> controller children nodes and then checks for their the 'status'. The USB
+> device interface nodes however also has to have a 'compatible' property as
+> described in Documentation/devicetree/bindings/usb/usb-device.txt. This is
+> important, because USB host controller might have child-nodes for other
+> purposes. For example, Exynos EHCI and OHCI drivers already define
+> child-nodes for each physical root hub port and assigns respective PHY
+> controller and parameters for them. This conflicts with the proposed
+> approach and verifying for the presence of the compatible property fixes
+> this issue without changing the bindings and the way the PHY controllers
+> are handled by Exynos EHCI/OHCI drivers.
+>
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Fixes: 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/usb/core/message.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+> index e844bb7b5676..6f7d047392bd 100644
+> --- a/drivers/usb/core/message.c
+> +++ b/drivers/usb/core/message.c
+> @@ -2009,6 +2009,7 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
+>  		struct usb_interface *intf = cp->interface[i];
+>
+>  		if (intf->dev.of_node &&
+> +		    of_find_property(intf->dev.of_node, "compatible", NULL) &&
+>  		    !of_device_is_available(intf->dev.of_node)) {
+>  			dev_info(&dev->dev, "skipping disabled interface %d\n",
+>  				 intf->cur_altsetting->desc.bInterfaceNumber);
+> -- 
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+I don't think this is the right approach.  We don't want to be adding
+such checks everywhere the of_node is used.  A better way might be to
+not set of_node at all in the absence of a proper "compatible" string.
+
+Then there's the problem of how to resolve the incompatibility between
+the generic USB and Exynos bindings.  One possible fix could be to use
+a child node of the controller node to represent the root hub.  Since
+the driver currently doesn't work at all if a devicetree has nodes for
+USB devices, there should be no compatibility concerns.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+M�ns Rullg�rd
