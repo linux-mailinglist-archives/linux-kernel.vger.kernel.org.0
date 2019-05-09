@@ -2,55 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7981A188C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0772E188AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfEILMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:12:25 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36689 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbfEILLg (ORCPT
+        id S1726704AbfEILLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:11:38 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40892 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbfEILLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:11:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id o4so2474504wra.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:35 -0700 (PDT)
+        Thu, 9 May 2019 07:11:37 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h4so2458343wre.7
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=P3ip9Z1kPiurKcUpueirhLQ3VIip1Pisqdmbkd91afc=;
-        b=tk0VK6eshbXc6vdh9kh06KVLt040/1a5YvqavcZdlyogvdnIi3Z4HZkhRrNJRUkW84
-         xqnY2WsmFfZfGeJbBbR9m3uFHGPMOEER+cg+fqfietDdEX3q2cmAinp1Jo+R0pIxEdVq
-         G6L3qpNF4MXaUC3UR0KMADi7lzEcItYMrTSh/SPHPSeeobxMkAWn+V58X8qYKjFnn/0b
-         aWOblHDwIRNXcUZkRerNr4YyY6EpXF92AEedpI/t2y2+UgLPzB8YqUOyQ49nB77PuEH2
-         Ap9ByMxHDdVNzDOCOF5Zm8sVKdY0dbdu3ANM1dRnFhFqpUZwWcs7GXJsXLhLZRgeZl0E
-         SCbA==
+        bh=OrI1DkG8hXh5qOzNYuZ9U1o4Js7uyFKM86UkARAQjFU=;
+        b=dDaPI9k3tcMtll47Djpz/rdtUGEzwzvLyyL0l//cu8cVR2Rt99lGVVkca4bXCWy+bF
+         6cA0oko1TzN6KJydKoxqLaE6azX6lRuedbrSJPew3NWRjR7BLke3Fqi8giw2uDhne1qD
+         qKVThZQ/j3dwNLYKXGIjM4SUk48jDT86z07FLXGIg3JuxV1uIUCtgXMDgPR09ZZMfZr+
+         TNHzhK3fyYN/vr3k/3/WP6pHTR+hO1AntaTqGiyZ0TU+Wlnzh8TPRxANcXf0ShFml+vx
+         o70PgJlW2nxCNS2TKkr488HT9y5XauThy5EedX37kOz98RiqhvvRoUuaPW9l7sXT3Nbm
+         Qhkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=P3ip9Z1kPiurKcUpueirhLQ3VIip1Pisqdmbkd91afc=;
-        b=saBPHrHFeQdWyDIOW7JU/okfetYYowJ9PjpWjgZTcHhTJW0Tt6vK05Neuf9+Hy0m0J
-         0aafSRR/vYIbvpzqHv3HGRw2ywi6MBazv/Wv/Ak8Krzp4Gb4uNjVYCZr9MEmgdrG/dXn
-         FvPHtBVLG4MT7euXqeKzvYtOT1cPUiUoQyiARQzJ3P6+MSLe1xL8ePrMik/Q635Flefk
-         AJbIqPBi8DCfhlWIYn43RzQ8uSDhXHDE4qPzsWulLUTZJyBGp542y4NhYGAKvpbflJR7
-         nlMLcnbnaKcTT8lpcVzqz8PgUJ5yUAw0N3SqaP8a3EpnDAa92VjAZk4tHHrL0OWKS9rD
-         rbHA==
-X-Gm-Message-State: APjAAAVFPqxLjE7jLhMyG1YKj0OebQHh6CaXrHzPoRpxi7TyszYAWlcU
-        BgF19XzCr6zX3U4qDWUHVthMQQ==
-X-Google-Smtp-Source: APXvYqyJtAweickuD27QVQKK4yt2nT2qWIP7tcilr3otZCmYGnEEhrOn36D8aMeoZt/GEuoE0dqMdg==
-X-Received: by 2002:a5d:400b:: with SMTP id n11mr638415wrp.123.1557400294149;
-        Thu, 09 May 2019 04:11:34 -0700 (PDT)
+        bh=OrI1DkG8hXh5qOzNYuZ9U1o4Js7uyFKM86UkARAQjFU=;
+        b=eWpGnFrnW5nweBXx0TNnNMK3ELKL91Vww5U1vEfG0l0tpWF/Rq2ha7BcQuOddLV2cM
+         SPh+SYCzGV+v4QuoLoF4mVQaCqCCUCB32UOrlqfLa/sQHmL/U23qfCHE01uw5MF7usxX
+         nrBL2n0qXUPE56oKHGhUz5dg6qDNJZw0fsKw3MFEO20gudOOuh37oFUyx2auf6HeBsZR
+         0p0oN8nKsGsFBh7AIckIfFYCFEqE08JIwE5/PqisGcLYioMSjOUK/AjW408c9GzcKgh/
+         +k4Ey9HNBW4SN0Pix/dc8YDpTqmv2Gw9ES/s/I2EU6kb7QNR1/5fivG8sQK3/PtLpL61
+         4Vmg==
+X-Gm-Message-State: APjAAAX4jDUVOJPMEU5DcvirQ00BXQeMn892wzWL2DMPWIRHwDa75Vx/
+        HP6TnZbLsjkDCdKV6OyWhSMRng==
+X-Google-Smtp-Source: APXvYqzkFCRg/4jV4ymjIhFIzAV05l1GgTMsLu+5AiktxlCAcReCeZs1b3mYSzdsAI2AeT9bdLmVAw==
+X-Received: by 2002:adf:9c87:: with SMTP id d7mr2643806wre.68.1557400295729;
+        Thu, 09 May 2019 04:11:35 -0700 (PDT)
 Received: from mai.irit.fr ([141.115.39.235])
-        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.33
+        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 04:11:33 -0700 (PDT)
+        Thu, 09 May 2019 04:11:35 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 06/15] clocksource/drivers/timer-milbeaut: Cleanup common register accesses
-Date:   Thu,  9 May 2019 13:10:39 +0200
-Message-Id: <20190509111048.11151-6-daniel.lezcano@linaro.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Chas Williams <3chas3@gmail.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:MICROCHIP TIMER
+        COUNTER (TC) AND CLOCKSOURCE DR...),
+        linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM),
+        linux-atm-general@lists.sourceforge.net (moderated list:ATM),
+        netdev@vger.kernel.org (open list:ATM)
+Subject: [PATCH 07/15] ARM: at91: move SoC specific definitions to SoC folder
+Date:   Thu,  9 May 2019 13:10:40 +0200
+Message-Id: <20190509111048.11151-7-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190509111048.11151-1-daniel.lezcano@linaro.org>
 References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
@@ -60,138 +71,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sugaya Taichi <sugaya.taichi@socionext.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Aggregate common register accesses into shared functions for
-maintainability.
+Move linux/atmel_tc.h to the SoC specific folder include/soc/at91.
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-milbeaut.c | 62 +++++++++++++++++-----------
- 1 file changed, 39 insertions(+), 23 deletions(-)
+ drivers/clocksource/tcb_clksrc.c                   | 2 +-
+ drivers/misc/atmel_tclib.c                         | 2 +-
+ drivers/pwm/pwm-atmel-tcb.c                        | 2 +-
+ include/{linux/atmel_tc.h => soc/at91/atmel_tcb.h} | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+ rename include/{linux/atmel_tc.h => soc/at91/atmel_tcb.h} (99%)
 
-diff --git a/drivers/clocksource/timer-milbeaut.c b/drivers/clocksource/timer-milbeaut.c
-index f4780619dbaf..fa9fb4eacade 100644
---- a/drivers/clocksource/timer-milbeaut.c
-+++ b/drivers/clocksource/timer-milbeaut.c
-@@ -26,8 +26,8 @@
- #define MLB_TMR_TMCSR_CSL_DIV2	0
- #define MLB_TMR_DIV_CNT		2
+diff --git a/drivers/clocksource/tcb_clksrc.c b/drivers/clocksource/tcb_clksrc.c
+index 43f4d5c4d6fa..138a12090149 100644
+--- a/drivers/clocksource/tcb_clksrc.c
++++ b/drivers/clocksource/tcb_clksrc.c
+@@ -11,7 +11,7 @@
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <linux/syscore_ops.h>
+-#include <linux/atmel_tc.h>
++#include <soc/at91/atmel_tcb.h>
  
--#define MLB_TMR_SRC_CH  (1)
--#define MLB_TMR_EVT_CH  (0)
-+#define MLB_TMR_SRC_CH		1
-+#define MLB_TMR_EVT_CH		0
  
- #define MLB_TMR_SRC_CH_OFS	(MLB_TMR_REGSZPCH * MLB_TMR_SRC_CH)
- #define MLB_TMR_EVT_CH_OFS	(MLB_TMR_REGSZPCH * MLB_TMR_EVT_CH)
-@@ -43,6 +43,8 @@
- #define MLB_TMR_EVT_TMRLR2_OFS	(MLB_TMR_EVT_CH_OFS + MLB_TMR_TMRLR2_OFS)
+ /*
+diff --git a/drivers/misc/atmel_tclib.c b/drivers/misc/atmel_tclib.c
+index ac24a4bd63f7..194f774ab3a1 100644
+--- a/drivers/misc/atmel_tclib.c
++++ b/drivers/misc/atmel_tclib.c
+@@ -1,4 +1,3 @@
+-#include <linux/atmel_tc.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+@@ -10,6 +9,7 @@
+ #include <linux/slab.h>
+ #include <linux/export.h>
+ #include <linux/of.h>
++#include <soc/at91/atmel_tcb.h>
  
- #define MLB_TIMER_RATING	500
-+#define MLB_TIMER_ONESHOT	0
-+#define MLB_TIMER_PERIODIC	1
+ /*
+  * This is a thin library to solve the problem of how to portably allocate
+diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+index 0d0f8376bc35..7da1fdb4d269 100644
+--- a/drivers/pwm/pwm-atmel-tcb.c
++++ b/drivers/pwm/pwm-atmel-tcb.c
+@@ -17,10 +17,10 @@
+ #include <linux/ioport.h>
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
+-#include <linux/atmel_tc.h>
+ #include <linux/pwm.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
++#include <soc/at91/atmel_tcb.h>
  
- static irqreturn_t mlb_timer_interrupt(int irq, void *dev_id)
- {
-@@ -59,38 +61,53 @@ static irqreturn_t mlb_timer_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+ #define NPWM	6
  
--static int mlb_set_state_periodic(struct clock_event_device *clk)
-+static void mlb_evt_timer_start(struct timer_of *to, bool periodic)
- {
--	struct timer_of *to = to_timer_of(clk);
- 	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
+diff --git a/include/linux/atmel_tc.h b/include/soc/at91/atmel_tcb.h
+similarity index 99%
+rename from include/linux/atmel_tc.h
+rename to include/soc/at91/atmel_tcb.h
+index 468fdfa643f0..c3c7200ce151 100644
+--- a/include/linux/atmel_tc.h
++++ b/include/soc/at91/atmel_tcb.h
+@@ -7,8 +7,8 @@
+  * (at your option) any later version.
+  */
  
-+	val |= MLB_TMR_TMCSR_CNTE | MLB_TMR_TMCSR_TRG | MLB_TMR_TMCSR_INTE;
-+	if (periodic)
-+		val |= MLB_TMR_TMCSR_RELD;
- 	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-+}
-+
-+static void mlb_evt_timer_stop(struct timer_of *to)
-+{
-+	u32 val = readl_relaxed(timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
+-#ifndef ATMEL_TC_H
+-#define ATMEL_TC_H
++#ifndef __SOC_ATMEL_TCB_H
++#define __SOC_ATMEL_TCB_H
  
--	writel_relaxed(to->of_clk.period, timer_of_base(to) +
--				MLB_TMR_EVT_TMRLR1_OFS);
--	val |= MLB_TMR_TMCSR_RELD | MLB_TMR_TMCSR_CNTE |
--		MLB_TMR_TMCSR_TRG | MLB_TMR_TMCSR_INTE;
-+	val &= ~MLB_TMR_TMCSR_CNTE;
- 	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-+}
-+
-+static void mlb_evt_timer_register_count(struct timer_of *to, unsigned long cnt)
-+{
-+	writel_relaxed(cnt, timer_of_base(to) + MLB_TMR_EVT_TMRLR1_OFS);
-+}
-+
-+static int mlb_set_state_periodic(struct clock_event_device *clk)
-+{
-+	struct timer_of *to = to_timer_of(clk);
-+
-+	mlb_evt_timer_stop(to);
-+	mlb_evt_timer_register_count(to, to->of_clk.period);
-+	mlb_evt_timer_start(to, MLB_TIMER_PERIODIC);
- 	return 0;
- }
- 
- static int mlb_set_state_oneshot(struct clock_event_device *clk)
- {
- 	struct timer_of *to = to_timer_of(clk);
--	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
- 
--	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
--	val |= MLB_TMR_TMCSR_CNTE | MLB_TMR_TMCSR_TRG | MLB_TMR_TMCSR_INTE;
--	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-+	mlb_evt_timer_stop(to);
-+	mlb_evt_timer_start(to, MLB_TIMER_ONESHOT);
- 	return 0;
- }
- 
- static int mlb_set_state_shutdown(struct clock_event_device *clk)
- {
- 	struct timer_of *to = to_timer_of(clk);
--	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
- 
--	writel_relaxed(val, timer_of_base(to) + MLB_TMR_EVT_TMCSR_OFS);
-+	mlb_evt_timer_stop(to);
- 	return 0;
- }
- 
-@@ -99,22 +116,21 @@ static int mlb_clkevt_next_event(unsigned long event,
- {
- 	struct timer_of *to = to_timer_of(clk);
- 
--	writel_relaxed(event, timer_of_base(to) + MLB_TMR_EVT_TMRLR1_OFS);
--	writel_relaxed(MLB_TMR_TMCSR_CSL_DIV2 |
--			MLB_TMR_TMCSR_CNTE | MLB_TMR_TMCSR_INTE |
--			MLB_TMR_TMCSR_TRG, timer_of_base(to) +
--			MLB_TMR_EVT_TMCSR_OFS);
-+	mlb_evt_timer_stop(to);
-+	mlb_evt_timer_register_count(to, event);
-+	mlb_evt_timer_start(to, MLB_TIMER_ONESHOT);
- 	return 0;
- }
- 
- static int mlb_config_clock_source(struct timer_of *to)
- {
--	writel_relaxed(0, timer_of_base(to) + MLB_TMR_SRC_TMCSR_OFS);
--	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMR_OFS);
-+	u32 val = MLB_TMR_TMCSR_CSL_DIV2;
-+
-+	writel_relaxed(val, timer_of_base(to) + MLB_TMR_SRC_TMCSR_OFS);
- 	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMRLR1_OFS);
- 	writel_relaxed(~0, timer_of_base(to) + MLB_TMR_SRC_TMRLR2_OFS);
--	writel_relaxed(BIT(4) | BIT(1) | BIT(0), timer_of_base(to) +
--		MLB_TMR_SRC_TMCSR_OFS);
-+	val |= MLB_TMR_TMCSR_RELD | MLB_TMR_TMCSR_CNTE | MLB_TMR_TMCSR_TRG;
-+	writel_relaxed(val, timer_of_base(to) + MLB_TMR_SRC_TMCSR_OFS);
- 	return 0;
- }
- 
+ #include <linux/compiler.h>
+ #include <linux/list.h>
 -- 
 2.17.1
 
