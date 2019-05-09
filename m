@@ -2,338 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B0AA18DE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2665A18DFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfEIQUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 12:20:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41981 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfEIQUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 12:20:09 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d9so1375983pls.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 09:20:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Da8NJHS+7ZThf+OYImudsb+xwESZVW3cTD3jbRasagk=;
-        b=gzFJZzgJPaZOucWo/vGMIWF9T1za1Iyi65SlihCeJbqtt/msKUw1nz7EPEN2hzNegz
-         b/dS6s4L0QhwAP4U2cgOxcvgj/l8oPYk8pKWywFPwniO7kF1aprd6AwIged5Z+PsVxWU
-         TqCDO3ZWBmCpYUwIJrzJ6dDaehTVjOVSGK1NKdQoUCr4q37afPcQth5OaU2/6A0ifAK5
-         FnlPX194aoxQCHrCS9nietKN0QRKYWrnfjhrrns2sdUrgd5PoqYM4JnVELcUYsrxDqZv
-         DNXgFaJclAHn4NjG4u8+xlMouUe40x6WTco8xHeJf60QyHdlgvgvmft/7D/eHzB3tZtV
-         ifkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Da8NJHS+7ZThf+OYImudsb+xwESZVW3cTD3jbRasagk=;
-        b=PcWWGyNQlzMYPAwwEG667hhuE0FKmS+4JIeLmyqSGlK11jB3O4gQh4uVfHNdN6/AAw
-         5r/jHPqICQz2Ys6meBPyYa7LyYu9mnK1WL83EdXt6pbT9HwayXMOOlRz75dbruYY84y9
-         Uhgaw2C7RNheQgBy8TJqZ7ENxQFwLy8Ww4gxAORfLxSrp09QvJDXeDyTytpNapAfLwFe
-         NUMC3w50oXgVmCl5eEC9WOS2Q/n7pLPtXo6h52Sx/vj0bfIKzHig8MdoUu8NanSd5bVj
-         sjXPWHmQTDbnTRmxJYvQ4dAKn3uSseLRPlyXx2vB8JWUvvRg6x20o3VvyfLz1nDtxSfF
-         ppsQ==
-X-Gm-Message-State: APjAAAWG82XmWOAej2W7yK0LlWKx/4+t4DbC85mSgHD8DOvDfaMvK7qc
-        pRVjeOzij4WtTJjpLuxanhw74A==
-X-Google-Smtp-Source: APXvYqyek3vYot8PDiUs/2GXtlTftVn0SxW+VEnhHWpmGG8ZBMqgEH+H6vf2yS0OxGzrlBxec9MXdQ==
-X-Received: by 2002:a17:902:9a81:: with SMTP id w1mr5118343plp.71.1557418808267;
-        Thu, 09 May 2019 09:20:08 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:8848:cc98:4f02:bf2c? ([2601:646:c200:1ef2:8848:cc98:4f02:bf2c])
-        by smtp.gmail.com with ESMTPSA id s78sm7785323pfs.187.2019.05.09.09.20.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 09:20:07 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 2/4] x86/kprobes: Fix frame pointer annotations
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <20190509081431.GO2589@hirez.programming.kicks-ass.net>
-Date:   Thu, 9 May 2019 09:20:06 -0700
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>, linux-kselftest@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <81170F0B-A2BB-4CD6-A1B5-5E7E0DDBC282@amacapital.net>
-References: <20190508074901.982470324@infradead.org> <20190508080612.721269814@infradead.org> <20190508115416.nblx7c2kocidpytm@treble> <20190508120416.GL2589@hirez.programming.kicks-ass.net> <20190508124248.u5ukpbhnh4wpiccq@treble> <20190508153907.GM2589@hirez.programming.kicks-ass.net> <20190508184848.qerg3flv3ej3xsev@treble> <20190509102030.dfa62e058f09d0d8cbdd6053@kernel.org> <20190509081431.GO2589@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
+        id S1727049AbfEIQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 12:26:11 -0400
+Received: from mga09.intel.com ([134.134.136.24]:40864 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbfEIQ0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 12:26:10 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 May 2019 09:26:10 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga005.fm.intel.com with ESMTP; 09 May 2019 09:26:09 -0700
+Date:   Thu, 9 May 2019 10:20:38 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        "Busch, Keith" <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Message-ID: <20190509162038.GC9548@localhost.localdomain>
+References: <3CDA9F13-B17C-456F-8CE1-3A63C6E0DC8F@canonical.com>
+ <f8a043b00909418bad6adcdb62d16e6e@AUSX13MPC105.AMER.DELL.COM>
+ <20190508195159.GA1530@lst.de>
+ <b43f2c0078f245398101fa9a40cfc2dc@AUSX13MPC105.AMER.DELL.COM>
+ <20190509061237.GA15229@lst.de>
+ <064701C3-2BD4-4D93-891D-B7FBB5040FC4@canonical.com>
+ <CAJZ5v0ggMwpJt=XWXu4gU51o8y4BpJ4KZ5RKzfk3+v8GGb-QbQ@mail.gmail.com>
+ <A4DD2E9F-054E-4D4B-9F77-D69040EBE120@canonical.com>
+ <20190509095601.GA19041@lst.de>
+ <225CF4F7-C8E1-4C66-B362-97E84596A54E@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <225CF4F7-C8E1-4C66-B362-97E84596A54E@canonical.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 09, 2019 at 03:28:32AM -0700, Kai-Heng Feng wrote:
+> at 17:56, Christoph Hellwig <hch@lst.de> wrote:
+> > The we have the sequence in your patch.  This seems to be related to
+> > some of the MS wording, but I'm not sure what for example tearing down
+> > the queues buys us.  Can you explain a bit more where those bits
+> > make a difference?
+> 
+> Based on my testing if queues (IRQ) are not disabled, NVMe controller won’t  
+> be quiesced.
+> Symptoms can be high power drain or system freeze.
+> 
+> I can check with vendors whether this also necessary under Windows.
 
+Hm, that doesn't sound right based on the spec's description of how this
+feature works. We should not need to tear down IO queues for entering
+low power, nor reset the controller to exit it.
 
-> On May 9, 2019, at 1:14 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->=20
->> On Thu, May 09, 2019 at 10:20:30AM +0900, Masami Hiramatsu wrote:
->> Hi Josh,
->>=20
->> On Wed, 8 May 2019 13:48:48 -0500
->> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->>=20
->>>> On Wed, May 08, 2019 at 05:39:07PM +0200, Peter Zijlstra wrote:
->>>>> On Wed, May 08, 2019 at 07:42:48AM -0500, Josh Poimboeuf wrote:
->>>>> On Wed, May 08, 2019 at 02:04:16PM +0200, Peter Zijlstra wrote:
->>>>=20
->>>>>> Do the x86_64 variants also want some ORC annotation?
->>>>>=20
->>>>> Maybe so.  Though it looks like regs->ip isn't saved.  The saved
->>>>> registers might need to be tweaked.  I'll need to look into it.
->>>>=20
->>>> What all these sites do (and maybe we should look at unifying them
->>>> somehow) is turn a CALL frame (aka RET-IP) into an exception frame (aka=
+The sequence for entering non-operational low power should just be freeze
+request queues, set the power feature, then unfreeze request queues.
 
->>>> pt_regs).
->>>>=20
->>>> So regs->ip will be the return address (which is fixed up to be the CAL=
-L
->>>> address in the handler).
->>>=20
->>> But from what I can tell, trampoline_handler() hard-codes regs->ip to
->>> point to kretprobe_trampoline(), and the original return address is
->>> placed in regs->sp.
->>>=20
->>> Masami, is there a reason why regs->ip doesn't have the original return
->>> address and regs->sp doesn't have the original SP?  I think that would
->>> help the unwinder understand things.
->>=20
->> Yes, for regs->ip, there is a histrical reason. Since previously, we had
->> an int3 at trampoline, so the user (kretprobe) handler expects that
->> regs->ip is trampoline address and ri->ret_addr is original return addres=
-s.
->> It is better to check the other archs, but I think it is possible to
->> change the regs->ip to original return address, since no one cares such
->> "fixed address". :)
->>=20
->> For the regs->sp, there are 2 reasons.
->>=20
->> For x86-64, it's just for over-optimizing (reduce stack usage).
->> I think we can make a gap for putting return address, something like
->>=20
->>    "kretprobe_trampoline:\n"
->> #ifdef CONFIG_X86_64
->>    "    pushq %rsp\n"    /* Make a gap for return address */
->>    "    pushq 0(%rsp)\n"    /* Copy original stack pointer */
->>    "    pushfq\n"
->>    SAVE_REGS_STRING
->>    "    movq %rsp, %rdi\n"
->>    "    call trampoline_handler\n"
->>    /* Push the true return address to the bottom */
->>    "    movq %rax, 20*8(%rsp)\n"
->>    RESTORE_REGS_STRING
->>    "    popfq\n"
->>    "    addq $8, %rsp\n"    /* Skip original stack pointer */
->>=20
->> For i386 (x86-32), there is no other way to keep &regs->sp as
->> the original stack pointer. It has to be changed with this series,
->> maybe as same as x86-64.
->=20
-> Right; I already fixed that in my patch changing i386's pt_regs.
->=20
-> But what I'd love to do is something like the belwo patch, and make all
-> the trampolines (very much including ftrace) use that. Such that we then
-> only have 1 copy of this magic (well, 2 because x86_64 also needs an
-> implementation of this of course).
->=20
-> Changing ftrace over to this would be a little more work but it can
-> easily chain things a little to get its original context back:
->=20
-> ENTRY(ftrace_regs_caller)
-> GLOBAL(ftrace_regs_func)
->    push ftrace_stub
->    push ftrace_regs_handler
->    jmp call_to_exception_trampoline
-> END(ftrace_regs_caller)
->=20
-> typedef void (*ftrace_func_t)(unsigned long, unsigned long, struct ftrace_=
-op *, struct pt_regs *);
->=20
-> struct ftrace_regs_stack {
->    ftrace_func_t func;
->    unsigned long parent_ip;
-> };
->=20
-> void ftrace_regs_handler(struct pr_regs *regs)
-> {
->    struct ftrace_regs_stack *st =3D (void *)regs->sp;
->    ftrace_func_t func =3D st->func;
->=20
->    regs->sp +=3D sizeof(long); /* pop func */
->=20
->    func(regs->ip, st->parent_ip, function_trace_op, regs);
-> }
->=20
-> Hmm? I didn't look into the function_graph thing, but I imagine it can
-> be added without too much pain.
->=20
-> ---
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -1576,3 +1576,100 @@ ENTRY(rewind_stack_do_exit)
->    call    do_exit
-> 1:    jmp 1b
-> END(rewind_stack_do_exit)
-> +
-> +/*
-> + * Transforms a CALL frame into an exception frame; IOW it pretends the C=
-ALL we
-> + * just did was in fact scribbled with an INT3.
-> + *
-> + * Use this trampoline like:
-> + *
-> + *   PUSH $func
-> + *   JMP call_to_exception_trampoline
-> + *
-> + * $func will see regs->ip point at the CALL instruction and must therefo=
-re
-> + * modify regs->ip in order to make progress (just like a normal INT3 scr=
-ibbled
-> + * CALL).
-> + *
-> + * NOTE: we do not restore any of the segment registers.
-> + */
-> +ENTRY(call_to_exception_trampoline)
-> +    /*
-> +     * On entry the stack looks like:
-> +     *
-> +     *   2*4(%esp) <previous context>
-> +     *   1*4(%esp) RET-IP
-> +     *   0*4(%esp) func
-> +     *
-> +     * transform this into:
-> +     *
-> +     *  19*4(%esp) <previous context>
-> +     *  18*4(%esp) gap / RET-IP
-> +     *  17*4(%esp) gap / func
-> +     *  16*4(%esp) ss
-> +     *  15*4(%esp) sp / <previous context>
-> +     *  14*4(%esp) flags
-> +     *  13*4(%esp) cs
-> +     *  12*4(%esp) ip / RET-IP
-> +     *  11*4(%esp) orig_eax
-> +     *  10*4(%esp) gs
-> +     *   9*4(%esp) fs
-> +     *   8*4(%esp) es
-> +     *   7*4(%esp) ds
-> +     *   6*4(%esp) eax
-> +     *   5*4(%esp) ebp
-> +     *   4*4(%esp) edi
-> +     *   3*4(%esp) esi
-> +     *   2*4(%esp) edx
-> +     *   1*4(%esp) ecx
-> +     *   0*4(%esp) ebx
-> +     */
-> +    pushl    %ss
-> +    pushl    %esp        # points at ss
-> +    addl    $3*4, (%esp)    #   point it at <previous context>
-> +    pushfl
-> +    pushl    %cs
-> +    pushl    5*4(%esp)    # RET-IP
-> +    subl    5, (%esp)    #   point at CALL instruction
-> +    pushl    $-1
-> +    pushl    %gs
-> +    pushl    %fs
-> +    pushl    %es
-> +    pushl    %ds
-> +    pushl    %eax
-> +    pushl    %ebp
-> +    pushl    %edi
-> +    pushl    %esi
-> +    pushl    %edx
-> +    pushl    %ecx
-> +    pushl    %ebx
-> +
-> +    ENCODE_FRAME_POINTER
-> +
-> +    movl    %esp, %eax    # 1st argument: pt_regs
-> +
-> +    movl    17*4(%esp), %ebx    # func
-> +    CALL_NOSPEC %ebx
-> +
-> +    movl    PT_OLDESP(%esp), %eax
-> +
-> +    movl    PT_EIP(%esp), %ecx
-> +    movl    %ecx, -1*4(%eax)
-> +
-> +    movl    PT_EFLAGS(%esp), %ecx
-> +    movl    %ecx, -2*4(%eax)
-> +
-> +    movl    PT_EAX(%esp), %ecx
-> +    movl    %ecx, -3*4(%eax)
-> +
-> +    popl    %ebx
-> +    popl    %ecx
-> +    popl    %edx
-> +    popl    %esi
-> +    popl    %edi
-> +    popl    %ebp
-> +
-> +    lea    -3*4(%eax), %esp
-> +    popl    %eax
-> +    popfl
-> +    ret
-> +END(call_to_exception_trampoline)
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -731,29 +731,8 @@ asm(
->    ".global kretprobe_trampoline\n"
->    ".type kretprobe_trampoline, @function\n"
->    "kretprobe_trampoline:\n"
-> -    /* We don't bother saving the ss register */
-> -#ifdef CONFIG_X86_64
-> -    "    pushq %rsp\n"
-> -    "    pushfq\n"
-> -    SAVE_REGS_STRING
-> -    "    movq %rsp, %rdi\n"
-> -    "    call trampoline_handler\n"
-> -    /* Replace saved sp with true return address. */
-> -    "    movq %rax, 19*8(%rsp)\n"
-> -    RESTORE_REGS_STRING
-> -    "    popfq\n"
-> -#else
-> -    "    pushl %esp\n"
-> -    "    pushfl\n"
-> -    SAVE_REGS_STRING
-> -    "    movl %esp, %eax\n"
-> -    "    call trampoline_handler\n"
-> -    /* Replace saved sp with true return address. */
-> -    "    movl %eax, 15*4(%esp)\n"
-> -    RESTORE_REGS_STRING
-> -    "    popfl\n"
-> -#endif
-> -    "    ret\n"
-> +    "push trampoline_handler\n"
-> +    "jmp call_to_exception_trampoline\n"
->    ".size kretprobe_trampoline, .-kretprobe_trampoline\n"
-> );
-
-
-Potentially minor nit: you=E2=80=99re doing popfl, but you=E2=80=99re not do=
-ing TRACE_IRQ_whatever.  This makes me think that you should either add the t=
-racing (ugh!) or you should maybe just skip the popfl.=
+We shouldn't have to do anything to exit the state as the spec requires
+devices autonomously return to operational when an IO doorbell is written.
