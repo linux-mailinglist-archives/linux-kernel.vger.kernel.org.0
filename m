@@ -2,260 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0B311861A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C30C1861F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfEIHUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 03:20:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45077 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbfEIHUf (ORCPT
+        id S1726690AbfEIHVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 03:21:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38158 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfEIHVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 03:20:35 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hOdLo-0001DW-QJ; Thu, 09 May 2019 09:20:20 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hOdLm-0007dA-Ad; Thu, 09 May 2019 09:20:18 +0200
-Date:   Thu, 9 May 2019 09:20:18 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "otavio@ossystems.com.br" <otavio@ossystems.com.br>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V11 2/5] pwm: Add i.MX TPM PWM driver support
-Message-ID: <20190509072018.cenumkgbysfba57l@pengutronix.de>
-References: <1554860547-18237-1-git-send-email-Anson.Huang@nxp.com>
- <1554860547-18237-3-git-send-email-Anson.Huang@nxp.com>
+        Thu, 9 May 2019 03:21:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v11so1441215wru.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 00:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=owEgLo/HcmCzShJRdQ87tV9B/UkMK9st7rnftaLXHhA=;
+        b=ZFnXhuifD3P93A3YswTNqy26WNVcmwR47CC74gBYFa3On/syduZVP9NORmfuTbK2bh
+         ebFOr5uNDPk2R+jIaOB/FJ9oNXbo0R0rZVnC0CWHjnM4zIY+oPARuuUUuzkefWo8YpX+
+         KUaWZQwa27yjeWgbzIerxs5m2Bl2R76ih4xtvxiiU55QvPZxsb0ACyX951phFOTfxna5
+         UnNtIfteP/VCD+AzQ7k8oKxAKRA1fvKJ/AiqXQKcd9esk+P2xS5cN+M0rJuPvLe7SQ3f
+         SaBUrGYyCkc8SQK97dnsanSKYlqnKgYtDcW0S1qc2Fc7lJM7Wopf1ItFUbmeXLPlEPD4
+         GB+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=owEgLo/HcmCzShJRdQ87tV9B/UkMK9st7rnftaLXHhA=;
+        b=m/Dxa4cxu0comKh8Si303tyApTySx+mT8FIu1pHYc0/4zmiG1BGWVJrSwZg6sZvsUS
+         f31NiB1GMX9zA+TJHI0u+/dtwaKb/N9UTtSGqAZpOsH4m2ut6W7RnK9m43U1yQ77RVeg
+         5sUNXw9qCzovzhKuEv3aCcQ81iqGrVG/t7/3tRZX5z/tIcQ4T12ozeyLtidRNbq2BxFw
+         L2PFFt0VSJKc19tZPzy1mlDtQHjmx/v2OZJ9feA7OYLgRFIzWqSbwZmp6QZodKprGQIw
+         Lo/8UV4TtJ8ibzeYEXQ+p6FgDSIHb3Lyfp4+h5cAwcL+xL52KAOLbi4WkoC/10+V/Ha0
+         klyA==
+X-Gm-Message-State: APjAAAWDYB9P096j133OxKZAaXC1V48fVOKWa9Q/e1yCqyjL8Olwb+4o
+        1RdhutFjf+xhBVffnWbCwQw=
+X-Google-Smtp-Source: APXvYqyq/mLovs7TqPawx0IlYAl/xDLwTuPSgQ4VOpuJJ5ZFkDTCCIPeddTRvQAR9mYAlbp6uhyvOA==
+X-Received: by 2002:adf:ec51:: with SMTP id w17mr1767999wrn.326.1557386476248;
+        Thu, 09 May 2019 00:21:16 -0700 (PDT)
+Received: from localhost.localdomain (lputeaux-657-1-239-64.w80-14.abo.wanadoo.fr. [80.14.206.64])
+        by smtp.gmail.com with ESMTPSA id x18sm1208632wrw.14.2019.05.09.00.21.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 00:21:15 -0700 (PDT)
+From:   Antonio Borneo <borneo.antonio@gmail.com>
+To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>,
+        "Elliott, Robert (Servers)" <elliott@hpe.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v4] checkpatch: add command-line option for TAB size
+Date:   Thu,  9 May 2019 09:21:04 +0200
+Message-Id: <20190509072104.18734-1-borneo.antonio@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1554860547-18237-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Linux kernel coding style requires a size of 8 characters for
+both TAB and indentation, and such value is embedded as magic
+value allover the checkpatch script.
+This makes hard to reuse the script by other projects with
+different requirements in their coding style (e.g. OpenOCD [1]
+requires TAB size of 4 characters [2]).
 
-On Wed, Apr 10, 2019 at 01:47:40AM +0000, Anson Huang wrote:
-> i.MX7ULP has TPM(Low Power Timer/Pulse Width Modulation Module)
-> inside, it can support multiple PWM channels, all the channels
-> share same counter and period setting, but each channel can
-> configure its duty and polarity independently.
-> 
-> There are several TPM modules in i.MX7ULP, the number of channels
-> in TPM modules are different, it can be read from each TPM module's
-> PARAM register.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> Changes since V10:
-> 	- remove channel private data which is ONLY for storing polarity, just read it from HW register;
-> 	- improve pwm_imx_tpm_round_state() and pwm_imx_tpm_apply_hw() parameters sequence;
-> 	- improve comments for polarity setting;
-> 	- refuse polarity change if PWM is active.
-> ---
->  drivers/pwm/Kconfig       |  11 ++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-imx-tpm.c | 442 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 454 insertions(+)
->  create mode 100644 drivers/pwm/pwm-imx-tpm.c
-> 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index c054bd1..1311b540 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -210,6 +210,17 @@ config PWM_IMX27
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-imx27.
->  
-> +config PWM_IMX_TPM
-> +	tristate "i.MX TPM PWM support"
-> +	depends on ARCH_MXC || COMPILE_TEST
-> +	depends on HAVE_CLK && HAS_IOMEM
-> +	help
-> +	  Generic PWM framework driver for i.MX7ULP TPM module, TPM's full
-> +	  name is Low Power Timer/Pulse Width Modulation Module.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-imx-tpm.
-> +
->  config PWM_JZ4740
->  	tristate "Ingenic JZ47xx PWM support"
->  	depends on MACH_INGENIC
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 448825e..c368599 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -19,6 +19,7 @@ obj-$(CONFIG_PWM_HIBVT)		+= pwm-hibvt.o
->  obj-$(CONFIG_PWM_IMG)		+= pwm-img.o
->  obj-$(CONFIG_PWM_IMX1)		+= pwm-imx1.o
->  obj-$(CONFIG_PWM_IMX27)		+= pwm-imx27.o
-> +obj-$(CONFIG_PWM_IMX_TPM)	+= pwm-imx-tpm.o
->  obj-$(CONFIG_PWM_JZ4740)	+= pwm-jz4740.o
->  obj-$(CONFIG_PWM_LP3943)	+= pwm-lp3943.o
->  obj-$(CONFIG_PWM_LPC18XX_SCT)	+= pwm-lpc18xx-sct.o
-> diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
-> new file mode 100644
-> index 0000000..9349f4f
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-imx-tpm.c
-> @@ -0,0 +1,442 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2018-2019 NXP.
-> + *
-> + * Limitations:
-> + * - The TPM counter and period counter are shared between
-> + *   multiple channels, so all channels should use same period
-> + *   settings.
-> + * - Changes to polarity cannot be latched at the time of the
-> + *   next period start.
-> + * - Changing period and duty cycle together isn't atomic,
-> + *   with the wrong timing it might happen that a period is
-> + *   produced with old duty cycle but new period settings.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/log2.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/slab.h>
-> +
-> +#define PWM_IMX_TPM_PARAM	0x4
-> +#define PWM_IMX_TPM_GLOBAL	0x8
-> +#define PWM_IMX_TPM_SC		0x10
-> +#define PWM_IMX_TPM_CNT		0x14
-> +#define PWM_IMX_TPM_MOD		0x18
-> +#define PWM_IMX_TPM_CnSC(n)	(0x20 + (n) * 0x8)
-> +#define PWM_IMX_TPM_CnV(n)	(0x24 + (n) * 0x8)
-> +
-> +#define PWM_IMX_TPM_PARAM_CHAN			GENMASK(7, 0)
-> +
-> +#define PWM_IMX_TPM_SC_PS			GENMASK(2, 0)
-> +#define PWM_IMX_TPM_SC_CMOD			GENMASK(4, 3)
-> +#define PWM_IMX_TPM_SC_CMOD_INC_EVERY_CLK	FIELD_PREP(PWM_IMX_TPM_SC_CMOD, 1)
-> +#define PWM_IMX_TPM_SC_CPWMS			BIT(5)
-> +
-> +#define PWM_IMX_TPM_CnSC_CHF	BIT(7)
-> +#define PWM_IMX_TPM_CnSC_MSB	BIT(5)
-> +#define PWM_IMX_TPM_CnSC_MSA	BIT(4)
-> +
-> +/*
-> + * The reference manual describes this field as two separate bits. The
-> + * semantic of the two bits isn't orthogonal though, so they are treated
-> + * together as a 2-bit field here.
-> + */
-> +#define PWM_IMX_TPM_CnSC_ELS	GENMASK(3, 2)
-> +#define PWM_IMX_TPM_CnSC_ELS_INVERSED	FIELD_PREP(PWM_IMX_TPM_CnSC_ELS, 1)
-> +#define PWM_IMX_TPM_CnSC_ELS_NORMAL	FIELD_PREP(PWM_IMX_TPM_CnSC_ELS, 2)
-> +
-> +
-> +#define PWM_IMX_TPM_MOD_WIDTH	16
-> +#define PWM_IMX_TPM_MOD_MOD	GENMASK(PWM_IMX_TPM_MOD_WIDTH - 1, 0)
-> +
-> +struct imx_tpm_pwm_chip {
-> +	struct pwm_chip chip;
-> +	struct clk *clk;
-> +	void __iomem *base;
-> +	struct mutex lock;
-> +	u32 user_count;
-> +	u32 enable_count;
-> +	u32 real_period;
-> +};
-> +
-> +struct imx_tpm_pwm_param {
-> +	u8 prescale;
-> +	u32 mod;
-> +	u32 val;
-> +};
-> +
-> +static inline struct imx_tpm_pwm_chip *to_imx_tpm_pwm_chip(struct pwm_chip *chip)
-> +{
-> +	return container_of(chip, struct imx_tpm_pwm_chip, chip);
-> +}
-> +
+Replace the magic value 8 with a variable.
 
-Maybe add a comment here describing the purpose of this function.
-Something like:
+Add a command-line option "--tab-size" to let the user select a
+TAB size value other than 8.
 
-/* 
- * This function determines for a given pwm_state *state that a consumer
- * might request the pwm_state *realstate that eventually is implemented
- * by the hardware and the necessary register values (in *p) to achive
- * this.
- */
+[1] http://openocd.org/
+[2] http://openocd.org/doc/doxygen/html/stylec.html#styleformat
 
-I didn't revalidate all the maths in this driver but assume they are
-still right from the previous rounds. If you add the comment I suggested
-above, feel free to also add
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Signed-off-by: Erik AhlÃ©n <erik.ahlen@avalonenterprise.com>
+Signed-off-by: Spencer Oliver <spen@spen-soft.co.uk>
+---
+v1 -> v2
+	add the command line option
 
-	Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+v2 -> v3
+	rewrite commit msg to remove script readability issue
 
-> +static int pwm_imx_tpm_round_state(struct pwm_chip *chip,
-> +				   struct imx_tpm_pwm_param *p,
-> +				   struct pwm_state *real_state,
-> +				   struct pwm_state *state)
-> +{
-> +	struct imx_tpm_pwm_chip *tpm = to_imx_tpm_pwm_chip(chip);
-> +	u32 rate, prescale, period_count, clock_unit;
-> +	u64 tmp;
-> +
-> +	rate = clk_get_rate(tpm->clk);
-> +	tmp = (u64)state->period * rate;
-> +	clock_unit = DIV_ROUND_CLOSEST_ULL(tmp, NSEC_PER_SEC);
-> +	if (clock_unit <= PWM_IMX_TPM_MOD_MOD)
-> +		prescale = 0;
-> +	else
-> +		prescale = ilog2(clock_unit) + 1 - PWM_IMX_TPM_MOD_WIDTH;
-> +
-> +	if ((!FIELD_FIT(PWM_IMX_TPM_SC_PS, prescale)))
-> +		return -ERANGE;
+v3 -> v4
+	check for command line value positive
+---
+ scripts/checkpatch.pl | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-It's a bit sad that my ideas for the core concerning a round_rate
-callback don't go down particularly well on Thierry's side. 
-
-With the way I suggested we'd continue with prescale = 7 in this case.
-
-As of now there is no rule which kind of deviation to accept and which
-not. :-| (Nothing this patch can change of course.)
-
-Best regards
-Uwe
-
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 916a3fbd4d47..216f2c8db7aa 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -62,6 +62,7 @@ my $conststructsfile = "$D/const_structs.checkpatch";
+ my $typedefsfile = "";
+ my $color = "auto";
+ my $allow_c99_comments = 1; # Can be overridden by --ignore C99_COMMENT_TOLERANCE
++my $tabsize = 8;
+ 
+ sub help {
+ 	my ($exitcode) = @_;
+@@ -96,6 +97,7 @@ Options:
+   --show-types               show the specific message type in the output
+   --max-line-length=n        set the maximum line length, if exceeded, warn
+   --min-conf-desc-length=n   set the min description length, if shorter, warn
++  --tab-size=n               set the number of spaces for tab (default 8)
+   --root=PATH                PATH to the kernel tree root
+   --no-summary               suppress the per-file summary
+   --mailback                 only produce a report in case of warnings/errors
+@@ -213,6 +215,7 @@ GetOptions(
+ 	'list-types!'	=> \$list_types,
+ 	'max-line-length=i' => \$max_line_length,
+ 	'min-conf-desc-length=i' => \$min_conf_desc_length,
++	'tab-size=i'	=> \$tabsize,
+ 	'root=s'	=> \$root,
+ 	'summary!'	=> \$summary,
+ 	'mailback!'	=> \$mailback,
+@@ -265,6 +268,8 @@ if ($color =~ /^[01]$/) {
+ 	die "Invalid color mode: $color\n";
+ }
+ 
++die "Invalid TAB size: $tabsize\n" if ($tabsize <= 0);
++
+ sub hash_save_array_words {
+ 	my ($hashRef, $arrayRef) = @_;
+ 
+@@ -1211,7 +1216,7 @@ sub expand_tabs {
+ 		if ($c eq "\t") {
+ 			$res .= ' ';
+ 			$n++;
+-			for (; ($n % 8) != 0; $n++) {
++			for (; ($n % $tabsize) != 0; $n++) {
+ 				$res .= ' ';
+ 			}
+ 			next;
+@@ -2224,7 +2229,7 @@ sub string_find_replace {
+ sub tabify {
+ 	my ($leading) = @_;
+ 
+-	my $source_indent = 8;
++	my $source_indent = $tabsize;
+ 	my $max_spaces_before_tab = $source_indent - 1;
+ 	my $spaces_to_tab = " " x $source_indent;
+ 
+@@ -3153,7 +3158,7 @@ sub process {
+ 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
+ 
+ # at the beginning of a line any tabs must come first and anything
+-# more than 8 must use tabs.
++# more than $tabsize must use tabs.
+ 		if ($rawline =~ /^\+\s* \t\s*\S/ ||
+ 		    $rawline =~ /^\+\s*        \s*/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+@@ -3172,7 +3177,7 @@ sub process {
+ 				"please, no space before tabs\n" . $herevet) &&
+ 			    $fix) {
+ 				while ($fixed[$fixlinenr] =~
+-					   s/(^\+.*) {8,8}\t/$1\t\t/) {}
++					   s/(^\+.*) {$tabsize,$tabsize}\t/$1\t\t/) {}
+ 				while ($fixed[$fixlinenr] =~
+ 					   s/(^\+.*) +\t/$1\t/) {}
+ 			}
+@@ -3194,11 +3199,11 @@ sub process {
+ 		if ($perl_version_ok &&
+ 		    $sline =~ /^\+\t+( +)(?:$c90_Keywords\b|\{\s*$|\}\s*(?:else\b|while\b|\s*$)|$Declare\s*$Ident\s*[;=])/) {
+ 			my $indent = length($1);
+-			if ($indent % 8) {
++			if ($indent % $tabsize) {
+ 				if (WARN("TABSTOP",
+ 					 "Statements should start on a tabstop\n" . $herecurr) &&
+ 				    $fix) {
+-					$fixed[$fixlinenr] =~ s@(^\+\t+) +@$1 . "\t" x ($indent/8)@e;
++					$fixed[$fixlinenr] =~ s@(^\+\t+) +@$1 . "\t" x ($indent/$tabsize)@e;
+ 				}
+ 			}
+ 		}
+@@ -3216,8 +3221,8 @@ sub process {
+ 				my $newindent = $2;
+ 
+ 				my $goodtabindent = $oldindent .
+-					"\t" x ($pos / 8) .
+-					" "  x ($pos % 8);
++					"\t" x ($pos / $tabsize) .
++					" "  x ($pos % $tabsize);
+ 				my $goodspaceindent = $oldindent . " "  x $pos;
+ 
+ 				if ($newindent ne $goodtabindent &&
+@@ -3688,11 +3693,11 @@ sub process {
+ 			#print "line<$line> prevline<$prevline> indent<$indent> sindent<$sindent> check<$check> continuation<$continuation> s<$s> cond_lines<$cond_lines> stat_real<$stat_real> stat<$stat>\n";
+ 
+ 			if ($check && $s ne '' &&
+-			    (($sindent % 8) != 0 ||
++			    (($sindent % $tabsize) != 0 ||
+ 			     ($sindent < $indent) ||
+ 			     ($sindent == $indent &&
+ 			      ($s !~ /^\s*(?:\}|\{|else\b)/)) ||
+-			     ($sindent > $indent + 8))) {
++			     ($sindent > $indent + $tabsize))) {
+ 				WARN("SUSPECT_CODE_INDENT",
+ 				     "suspect code indent for conditional statements ($indent, $sindent)\n" . $herecurr . "$stat_real\n");
+ 			}
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.21.0
+
