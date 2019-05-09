@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9555F1887E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 12:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5310818886
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 12:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfEIKrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 06:47:08 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:44464 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbfEIKrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 06:47:07 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 12BAC9BBD87513C55F72;
-        Thu,  9 May 2019 18:47:03 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x49AktYE044383;
-        Thu, 9 May 2019 18:46:55 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019050918471900-10203318 ;
-          Thu, 9 May 2019 18:47:19 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        sean.j.christopherson@intel.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wang.yi59@zte.com.cn
-Subject: [PATCH v2] [next] KVM: lapic: allow set apic debug dynamically
-Date:   Thu, 9 May 2019 18:47:57 +0800
-Message-Id: <1557398877-32750-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-05-09 18:47:19,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-05-09 18:46:41,
-        Serialize complete at 2019-05-09 18:46:41
-X-MAIL: mse-fl1.zte.com.cn x49AktYE044383
+        id S1726254AbfEIKvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 06:51:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58140 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725872AbfEIKvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 06:51:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 51078AC2D;
+        Thu,  9 May 2019 10:51:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 264201E3C7F; Thu,  9 May 2019 12:51:10 +0200 (CEST)
+Date:   Thu, 9 May 2019 12:51:10 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@gmail.com>
+Cc:     jack@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] quota: add dqi_dirty_list description to comment of
+ Dquot List Management
+Message-ID: <20190509105110.GE23589@quack2.suse.cz>
+References: <1557106743-19157-1-git-send-email-cgxu519@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557106743-19157-1-git-send-email-cgxu519@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are many functions invoke apic_debug(), which is defined
-a null function by default, and that's incovenient for debuging
-lapic.
+On Mon 06-05-19 09:39:03, Chengguang Xu wrote:
+> Actually there are four lists for dquot management, so add
+> the description of dqui_dirty_list to comment.
+> 
+> Signed-off-by: Chengguang Xu <cgxu519@gmail.com>
 
-This patch allows setting apic debug according to add a apic_dbg
-parameter of kvm.
+Thanks applied with small addition:
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
-v2: change apic_dbg to bool and tag __read_mostly. Thanks to Sean.
+Note that some filesystems do dirty dquot tracking on their own (e.g. in a
+journal) and thus don't use dqi_dirty_list.
 
- arch/x86/kvm/lapic.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+								Honza
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 9bf70cf..0827e7c 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -54,8 +54,13 @@
- #define PRIu64 "u"
- #define PRIo64 "o"
- 
-+static bool apic_dbg __read_mostly;
-+module_param(apic_dbg, bool, 0644);
-+
- /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
--#define apic_debug(fmt, arg...) do {} while (0)
-+#define apic_debug(fmt, arg...) do {  if (apic_dbg)   \
-+	printk(KERN_DEBUG fmt, ##arg);    \
-+} while (0)
- 
- /* 14 is the version for Xeon and Pentium 8.4.8*/
- #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
+> ---
+>  fs/quota/dquot.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index fc20e06c56ba..6a236bdaef89 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -223,9 +223,9 @@ static void put_quota_format(struct quota_format_type *fmt)
+>  
+>  /*
+>   * Dquot List Management:
+> - * The quota code uses three lists for dquot management: the inuse_list,
+> - * free_dquots, and dquot_hash[] array. A single dquot structure may be
+> - * on all three lists, depending on its current state.
+> + * The quota code uses four lists for dquot management: the inuse_list,
+> + * free_dquots, dqi_dirty_list, and dquot_hash[] array. A single dquot
+> + * structure may be on some of those lists, depending on its current state.
+>   *
+>   * All dquots are placed to the end of inuse_list when first created, and this
+>   * list is used for invalidate operation, which must look at every dquot.
+> @@ -236,6 +236,10 @@ static void put_quota_format(struct quota_format_type *fmt)
+>   * dqstats.free_dquots gives the number of dquots on the list. When
+>   * dquot is invalidated it's completely released from memory.
+>   *
+> + * Dirty dquots are added to the dqi_dirty_list of quota_info when mark
+> + * dirtied, and this list is searched when writeback diry dquots to
+> + * quota file.
+> + *
+>   * Dquots with a specific identity (device, type and id) are placed on
+>   * one of the dquot_hash[] hash chains. The provides an efficient search
+>   * mechanism to locate a specific dquot.
+> -- 
+> 2.17.2
+> 
+> 
 -- 
-1.8.3.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
