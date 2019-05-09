@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A15218DF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71A418DF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfEIQZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 12:25:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        id S1726714AbfEIQZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 12:25:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbfEIQZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 12:25:15 -0400
-Subject: Re: [GIT PULL]: dmaengine updates for v5.2-rc1
+        id S1726913AbfEIQZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 12:25:16 -0400
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557419115;
-        bh=xto6+id0Mi1ewqtcVp1HIIrd38CrS4FIKCZ/SeV5aRU=;
+        s=default; t=1557419116;
+        bh=9l24qoZpm/lMj/JHy0wFhM4SVl/U6n5X5kDMMREc2oc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=RJ01z0r5hV8yRJPQqu0moSU/03WIYLne678hMSvMcMSHigwHAFIcwnGupTHDKRPvC
-         wpW/Q6Yf2IE1TXMlfVg+e8OdnmMb8CnQRu3/KV8MufZQP1OxI7KeG/GM1QhZTpuZTT
-         eU+aOgXUi8y73EAoTtolXWWU1pRTmY/z9H9bMJOw=
+        b=JnBU9+g8BOMgXWtNf/a/0Qf058g2uCoVRfMsBF+Rv7xv4gE30bzIcgtfFRU5+9MvD
+         y+WFMa6PC531DB4PK2vwCFPYCX4ZessmhsCmsKwZWhPd5XZiHY9Nw5Rjzdc9wu/y8h
+         wDB68CXqM8vzYJ/wDlhsii59GwJjA0Y3sWstxK6w=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190509074615.GB16052@vkoul-mobl>
-References: <20190509074615.GB16052@vkoul-mobl>
+In-Reply-To: <20190509133711.GA16703@ziepe.ca>
+References: <20190509133711.GA16703@ziepe.ca>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190509074615.GB16052@vkoul-mobl>
-X-PR-Tracked-Remote: git://git.infradead.org/users/vkoul/slave-dma.git
- tags/dmaengine-5.2-rc1
-X-PR-Tracked-Commit-Id: f33e7bb3eb922618612a90f0a828c790e8880773
+X-PR-Tracked-Message-Id: <20190509133711.GA16703@ziepe.ca>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+X-PR-Tracked-Commit-Id: b79656ed44c6865e17bcd93472ec39488bcc4984
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 055128ee008b00fba14e3638e7e84fc2cff8d77d
-Message-Id: <155741911494.30533.404952002387503115.pr-tracker-bot@kernel.org>
-Date:   Thu, 09 May 2019 16:25:14 +0000
-To:     Vinod Koul <vkoul@kernel.org>
+X-PR-Merge-Commit-Id: dce45af5c2e9e85f22578f2f8065f225f5d11764
+Message-Id: <155741911625.30533.6017431247232404075.pr-tracker-bot@kernel.org>
+Date:   Thu, 09 May 2019 16:25:16 +0000
+To:     Jason Gunthorpe <jgg@mellanox.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Doug Ledford <dledford@redhat.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 9 May 2019 13:16:15 +0530:
+The pull request you sent on Thu, 9 May 2019 13:37:23 +0000:
 
-> git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-5.2-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/055128ee008b00fba14e3638e7e84fc2cff8d77d
+https://git.kernel.org/torvalds/c/dce45af5c2e9e85f22578f2f8065f225f5d11764
 
 Thank you!
 
