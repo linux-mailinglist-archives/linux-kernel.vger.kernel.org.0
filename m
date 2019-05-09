@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5833A1917B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35697190DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfEIS50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:57:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
+        id S1728321AbfEIStu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728256AbfEISyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:54:11 -0400
+        id S1727883AbfEISts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:49:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC3F2204FD;
-        Thu,  9 May 2019 18:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C837217F9;
+        Thu,  9 May 2019 18:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428050;
-        bh=3X5YdOqJHbz8Jj1Su7duO+N7W/wIastC3yBPuBnU54Y=;
+        s=default; t=1557427787;
+        bh=zEkpSKpNxQ9eAA+mpyxf27JasOOiBzYr8WawKE5QZOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQ9RQ6Q98sh1+bLrTzwOiD+cK8c1QrMqUUiQRFDzhxfgOSFtGoLVkjFxeYxs+8alu
-         FkEU5yONx6IYPpryWzYpj2bVBWso4GRFxXRQixriL2L/dwR1U1mJi9gW+8r+JSEmtb
-         +7gFUyvJPK1vkQp+E8mh/zgDKeiOY0QXjxU14fh4=
+        b=JUIDpJqlRDCd/dOiRIWP0/NPpcyvPgvIw79YfFGiL9qAFE+firaNrn+Yurjohivyg
+         xsaGe5DhmuKIid7JrAU8KsRTFe3oormP0TG9z2IB0RGQBrIz3VEgJyn+9h9oU0XONe
+         sO0+LVrQtyTQJyI+5aJ68zjrJty3wND2+1iqbmqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Minwoo Im <minwoo.im@samsung.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        James Smart <james.smart@broadcom.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 68/95] nvmet: fix discover log page when offsets are used
+        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>, marc.zyngier@arm.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 50/66] genirq: Prevent use-after-free and work list corruption
 Date:   Thu,  9 May 2019 20:42:25 +0200
-Message-Id: <20190509181314.210243549@linuxfoundation.org>
+Message-Id: <20190509181306.946889313@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,194 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d808b7f759b50acf0784ce6230ffa63e12ef465d ]
+[ Upstream commit 59c39840f5abf4a71e1810a8da71aaccd6c17d26 ]
 
-The nvme target hadn't been taking the Get Log Page offset parameter
-into consideration, and so has been returning corrupted log pages when
-offsets are used. Since many tools, including nvme-cli, split the log
-request to 4k, we've been breaking discovery log responses when more
-than 3 subsystems exist.
+When irq_set_affinity_notifier() replaces the notifier, then the
+reference count on the old notifier is dropped which causes it to be
+freed. But nothing ensures that the old notifier is not longer queued
+in the work list. If it is queued this results in a use after free and
+possibly in work list corruption.
 
-Fix the returned data by internally generating the entire discovery
-log page and copying only the requested bytes into the user buffer. The
-command log page offset type has been modified to a native __le64 to
-make it easier to extract the value from a command.
+Ensure that the work is canceled before the reference is dropped.
 
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Minwoo Im <minwoo.im@samsung.com>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: marc.zyngier@arm.com
+Link: https://lkml.kernel.org/r/1553439424-6529-1-git-send-email-psodagud@codeaurora.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/target/admin-cmd.c |  5 +++
- drivers/nvme/target/discovery.c | 68 ++++++++++++++++++++++-----------
- drivers/nvme/target/nvmet.h     |  1 +
- include/linux/nvme.h            |  9 ++++-
- 4 files changed, 58 insertions(+), 25 deletions(-)
+ kernel/irq/manage.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
-index 11baeb14c3881..8fdae510c5ac0 100644
---- a/drivers/nvme/target/admin-cmd.c
-+++ b/drivers/nvme/target/admin-cmd.c
-@@ -32,6 +32,11 @@ u32 nvmet_get_log_page_len(struct nvme_command *cmd)
- 	return len;
- }
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 5c0ba5ca59308..cd4f9f3e8345c 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -356,8 +356,10 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 	desc->affinity_notify = notify;
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
-+u64 nvmet_get_log_page_offset(struct nvme_command *cmd)
-+{
-+	return le64_to_cpu(cmd->get_log_page.lpo);
-+}
-+
- static void nvmet_execute_get_log_page_noop(struct nvmet_req *req)
- {
- 	nvmet_req_complete(req, nvmet_zero_sgl(req, 0, req->data_len));
-diff --git a/drivers/nvme/target/discovery.c b/drivers/nvme/target/discovery.c
-index d2cb71a0b419d..389c1a90197d9 100644
---- a/drivers/nvme/target/discovery.c
-+++ b/drivers/nvme/target/discovery.c
-@@ -139,54 +139,76 @@ static void nvmet_set_disc_traddr(struct nvmet_req *req, struct nvmet_port *port
- 		memcpy(traddr, port->disc_addr.traddr, NVMF_TRADDR_SIZE);
- }
- 
-+static size_t discovery_log_entries(struct nvmet_req *req)
-+{
-+	struct nvmet_ctrl *ctrl = req->sq->ctrl;
-+	struct nvmet_subsys_link *p;
-+	struct nvmet_port *r;
-+	size_t entries = 0;
-+
-+	list_for_each_entry(p, &req->port->subsystems, entry) {
-+		if (!nvmet_host_allowed(p->subsys, ctrl->hostnqn))
-+			continue;
-+		entries++;
-+	}
-+	list_for_each_entry(r, &req->port->referrals, entry)
-+		entries++;
-+	return entries;
-+}
-+
- static void nvmet_execute_get_disc_log_page(struct nvmet_req *req)
- {
- 	const int entry_size = sizeof(struct nvmf_disc_rsp_page_entry);
- 	struct nvmet_ctrl *ctrl = req->sq->ctrl;
- 	struct nvmf_disc_rsp_page_hdr *hdr;
-+	u64 offset = nvmet_get_log_page_offset(req->cmd);
- 	size_t data_len = nvmet_get_log_page_len(req->cmd);
--	size_t alloc_len = max(data_len, sizeof(*hdr));
--	int residual_len = data_len - sizeof(*hdr);
-+	size_t alloc_len;
- 	struct nvmet_subsys_link *p;
- 	struct nvmet_port *r;
- 	u32 numrec = 0;
- 	u16 status = 0;
-+	void *buffer;
-+
-+	/* Spec requires dword aligned offsets */
-+	if (offset & 0x3) {
-+		status = NVME_SC_INVALID_FIELD | NVME_SC_DNR;
-+		goto out;
+-	if (old_notify)
++	if (old_notify) {
++		cancel_work_sync(&old_notify->work);
+ 		kref_put(&old_notify->kref, old_notify->release);
 +	}
  
- 	/*
- 	 * Make sure we're passing at least a buffer of response header size.
- 	 * If host provided data len is less than the header size, only the
- 	 * number of bytes requested by host will be sent to host.
- 	 */
--	hdr = kzalloc(alloc_len, GFP_KERNEL);
--	if (!hdr) {
-+	down_read(&nvmet_config_sem);
-+	alloc_len = sizeof(*hdr) + entry_size * discovery_log_entries(req);
-+	buffer = kzalloc(alloc_len, GFP_KERNEL);
-+	if (!buffer) {
-+		up_read(&nvmet_config_sem);
- 		status = NVME_SC_INTERNAL;
- 		goto out;
- 	}
- 
--	down_read(&nvmet_config_sem);
-+	hdr = buffer;
- 	list_for_each_entry(p, &req->port->subsystems, entry) {
-+		char traddr[NVMF_TRADDR_SIZE];
-+
- 		if (!nvmet_host_allowed(p->subsys, ctrl->hostnqn))
- 			continue;
--		if (residual_len >= entry_size) {
--			char traddr[NVMF_TRADDR_SIZE];
--
--			nvmet_set_disc_traddr(req, req->port, traddr);
--			nvmet_format_discovery_entry(hdr, req->port,
--					p->subsys->subsysnqn, traddr,
--					NVME_NQN_NVME, numrec);
--			residual_len -= entry_size;
--		}
-+
-+		nvmet_set_disc_traddr(req, req->port, traddr);
-+		nvmet_format_discovery_entry(hdr, req->port,
-+				p->subsys->subsysnqn, traddr,
-+				NVME_NQN_NVME, numrec);
- 		numrec++;
- 	}
- 
- 	list_for_each_entry(r, &req->port->referrals, entry) {
--		if (residual_len >= entry_size) {
--			nvmet_format_discovery_entry(hdr, r,
--					NVME_DISC_SUBSYS_NAME,
--					r->disc_addr.traddr,
--					NVME_NQN_DISC, numrec);
--			residual_len -= entry_size;
--		}
-+		nvmet_format_discovery_entry(hdr, r,
-+				NVME_DISC_SUBSYS_NAME,
-+				r->disc_addr.traddr,
-+				NVME_NQN_DISC, numrec);
- 		numrec++;
- 	}
- 
-@@ -198,8 +220,8 @@ static void nvmet_execute_get_disc_log_page(struct nvmet_req *req)
- 
- 	up_read(&nvmet_config_sem);
- 
--	status = nvmet_copy_to_sgl(req, 0, hdr, data_len);
--	kfree(hdr);
-+	status = nvmet_copy_to_sgl(req, 0, buffer + offset, data_len);
-+	kfree(buffer);
- out:
- 	nvmet_req_complete(req, status);
+ 	return 0;
  }
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 3e4719fdba854..d253c45c1aa6e 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -436,6 +436,7 @@ u16 nvmet_copy_from_sgl(struct nvmet_req *req, off_t off, void *buf,
- u16 nvmet_zero_sgl(struct nvmet_req *req, off_t off, size_t len);
- 
- u32 nvmet_get_log_page_len(struct nvme_command *cmd);
-+u64 nvmet_get_log_page_offset(struct nvme_command *cmd);
- 
- extern struct list_head *nvmet_ports;
- void nvmet_port_disc_changed(struct nvmet_port *port,
-diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-index bbcc83886899c..7ba0368f16e6e 100644
---- a/include/linux/nvme.h
-+++ b/include/linux/nvme.h
-@@ -975,8 +975,13 @@ struct nvme_get_log_page_command {
- 	__le16			numdl;
- 	__le16			numdu;
- 	__u16			rsvd11;
--	__le32			lpol;
--	__le32			lpou;
-+	union {
-+		struct {
-+			__le32 lpol;
-+			__le32 lpou;
-+		};
-+		__le64 lpo;
-+	};
- 	__u32			rsvd14[2];
- };
- 
 -- 
 2.20.1
 
