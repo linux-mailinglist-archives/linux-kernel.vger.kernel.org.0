@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BAAE1908A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 943AD19270
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfEISpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:45:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
+        id S1726734AbfEITH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:07:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbfEISpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:45:49 -0400
+        id S1727442AbfEISpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:45:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2762182B;
-        Thu,  9 May 2019 18:45:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15CFB21848;
+        Thu,  9 May 2019 18:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427548;
-        bh=aN7zUq/E67UrnccRwoLh33vhd9zhbZEvz7Rksp36vrc=;
+        s=default; t=1557427551;
+        bh=scQnLSil0ImaITJO60dTpxacwCQbUf+OJuPDTSNB3n4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r8Dbf1a5ZuwCQS3PTyBQvFdNrKSheOkRMQO6N/E2vNt+A4TRVBPpcpODjHDT+u/p2
-         ELNl11ZzN0yalUmLL6ZssGFjceJB3fugeWaT2BpUkGhzqTcw5OsrxG+X3tRdJNje00
-         im5Zswni8dYP/IdC1PlQ3bgyYcb2E6ll+45u+gJE=
+        b=rZnFvQ3yrB7YXehTzAl5SQTXTIqfQHdCHcs/FUE9onjbdRTsPNlzbKKsUDxIWarwH
+         62A0evFUcJcQFb2DyARVA4OSAstZYVdVowUMAvFA3DPOQDCQw308sMbzGKqcVNVVnw
+         aFFaw1G1L8cTeLBq7N/p+0b6JLoU+BRSlExjPnCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kamal Heib <kamalheib1@gmail.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/42] RDMA/vmw_pvrdma: Fix memory leak on pvrdma_pci_remove
-Date:   Thu,  9 May 2019 20:42:12 +0200
-Message-Id: <20190509181257.358644909@linuxfoundation.org>
+Subject: [PATCH 4.14 24/42] scsi: csiostor: fix missing data copy in csio_scsi_err_handler()
+Date:   Thu,  9 May 2019 20:42:13 +0200
+Message-Id: <20190509181257.517067473@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
 References: <20190509181252.616018683@linuxfoundation.org>
@@ -45,32 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ea7a5c706fa49273cf6d1d9def053ecb50db2076 ]
+[ Upstream commit 5c2442fd78998af60e13aba506d103f7f43f8701 ]
 
-Make sure to free the DSR on pvrdma_pci_remove() to avoid the memory leak.
+If scsi cmd sglist is not suitable for DDP then csiostor driver uses
+preallocated buffers for DDP, because of this data copy is required from
+DDP buffer to scsi cmd sglist before calling ->scsi_done().
 
-Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
-Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
-Acked-by: Adit Ranadive <aditr@vmware.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/csiostor/csio_scsi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-index 6ce709a67959b..d549c9ffadcbb 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-@@ -1055,6 +1055,8 @@ static void pvrdma_pci_remove(struct pci_dev *pdev)
- 	pvrdma_page_dir_cleanup(dev, &dev->cq_pdir);
- 	pvrdma_page_dir_cleanup(dev, &dev->async_pdir);
- 	pvrdma_free_slots(dev);
-+	dma_free_coherent(&pdev->dev, sizeof(*dev->dsr), dev->dsr,
-+			  dev->dsrbase);
+diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
+index dab0d3f9bee13..e09c7f360dbde 100644
+--- a/drivers/scsi/csiostor/csio_scsi.c
++++ b/drivers/scsi/csiostor/csio_scsi.c
+@@ -1713,8 +1713,11 @@ csio_scsi_err_handler(struct csio_hw *hw, struct csio_ioreq *req)
+ 	}
  
- 	iounmap(dev->regs);
- 	kfree(dev->sgid_tbl);
+ out:
+-	if (req->nsge > 0)
++	if (req->nsge > 0) {
+ 		scsi_dma_unmap(cmnd);
++		if (req->dcopy && (host_status == DID_OK))
++			host_status = csio_scsi_copy_to_sgl(hw, req);
++	}
+ 
+ 	cmnd->result = (((host_status) << 16) | scsi_status);
+ 	cmnd->scsi_done(cmnd);
 -- 
 2.20.1
 
