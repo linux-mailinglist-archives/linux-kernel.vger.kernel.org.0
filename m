@@ -2,319 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C03C18DA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E5518DA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfEIQHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 12:07:42 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39494 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbfEIQHk (ORCPT
+        id S1726698AbfEIQFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 12:05:44 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:36226 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726590AbfEIQFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 12:07:40 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49G45Bt084958;
-        Thu, 9 May 2019 16:07:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=NVGYH0XHby9mmyeGkuUXvJdFcYxk3J6W0cOvDLlMUJI=;
- b=Zuhx6KBF03D4sbzFJBYrPcOti8y68kH09lRoZi33teE1ALdB5B0gZwRprt8Q3h2uRBqK
- gS2QwdnN6huCIBHNvrSbYkW+Ey58b9ROHXooo6HelsugaGKhmyEQBas+SiNXu9+luH5z
- J5OERohj7mlWv+n7RqiaUtlmQwYMUZ29cR9Mc2oJ2zEPGebfAZCDotyidPoFUwt/3f3N
- 15+f1kVwADR6NXEo9bNga1+zdymzkuHNC9SQXouPePz9JOy0DZuwtITJ8W1NkhX3aIeN
- v15pow2qS/J09k75VhLZ08aNneZQeYnTFNd7huX/fazGOqIzi8eZ2YTVF5mHwUFs0VV+ Qg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2s94bgbyus-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 16:07:33 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49G7672142274;
-        Thu, 9 May 2019 16:07:33 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2schvywx4m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 16:07:32 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x49G7VDb010297;
-        Thu, 9 May 2019 16:07:31 GMT
-Received: from oracle.com (/75.80.107.76)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 09 May 2019 09:07:31 -0700
-From:   Larry Bassel <larry.bassel@oracle.com>
-To:     mike.kravetz@oracle.com, willy@infradead.org,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Cc:     Larry Bassel <larry.bassel@oracle.com>
-Subject: [PATCH, RFC 2/2] Implement sharing/unsharing of PMDs for FS/DAX
-Date:   Thu,  9 May 2019 09:05:33 -0700
-Message-Id: <1557417933-15701-3-git-send-email-larry.bassel@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
-References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9252 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905090092
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9252 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905090092
+        Thu, 9 May 2019 12:05:43 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B3C97C012B;
+        Thu,  9 May 2019 16:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1557417946; bh=+zT3l6b7Trmptm1zDuRdBEK5WtdkP9JnR8Dw1dNvr2k=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=F8xwqlS41ukC9ZSKTag3xvOyOWuYu6Mja15XfGc8P5rl4NkqRBZKPiQI6DqjywDlO
+         zCPnBhcdBu6wlTYaKpoaw37GoeudHO+vZzmIFEbVmXHHFW3S/DYkql2gLT82ANj6Vb
+         vFD2njGohHPhsXEjBI+ZCohKOsyRlK4EaPO8fe9YBhYJwYJ9Pix1himYxk14E8e6We
+         /kEtxjzpkvRyM+P2sTHMbn5zkPGV7zWELCid83BSxd3hLHo4HgBXIM6aAvc5+/t7C9
+         Hme23HLoQh3N/Qyq/ZaXO1FCmjWaWyf04xa/2bOSXqvm9/+q+IPpe2JJvN0hvHjyKr
+         bJfAX93QuW1mw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 3DEB9A008E;
+        Thu,  9 May 2019 16:05:38 +0000 (UTC)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 9 May 2019 09:05:38 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 9 May 2019 18:05:35 +0200
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     'Andrew Lunn' <andrew@lunn.ch>,
+        'Jose Abreu' <Jose.Abreu@synopsys.com>
+CC:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        'Joao Pinto' <Joao.Pinto@synopsys.com>,
+        "'David S . Miller'" <davem@davemloft.net>,
+        'Giuseppe Cavallaro' <peppe.cavallaro@st.com>,
+        'Alexandre Torgue' <alexandre.torgue@st.com>
+Subject: RE: [PATCH net-next 00/11] net: stmmac: Selftests
+Thread-Topic: [PATCH net-next 00/11] net: stmmac: Selftests
+Thread-Index: AQHVBXLZwJ2RZgEDF0CNP6MWY759gKZhghGAgADw7NCAAIOwAA==
+Date:   Thu, 9 May 2019 16:05:35 +0000
+Message-ID: <78EB27739596EE489E55E81C33FEC33A0B47B52A@DE02WEMBXB.internal.synopsys.com>
+References: <cover.1557300602.git.joabreu@synopsys.com>
+ <20190508195011.GK25013@lunn.ch>
+ <78EB27739596EE489E55E81C33FEC33A0B47AAEE@DE02WEMBXB.internal.synopsys.com>
+In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B47AAEE@DE02WEMBXB.internal.synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.107.19.176]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is based on (but somewhat different from) what hugetlbfs
-does to share/unshare page tables.
+From: Jose Abreu <joabreu@synopsys.com>
+Date: Thu, May 09, 2019 at 09:17:03
 
-Signed-off-by: Larry Bassel <larry.bassel@oracle.com>
----
- include/linux/hugetlb.h |   4 ++
- mm/huge_memory.c        |  32 ++++++++++++++
- mm/hugetlb.c            |  21 ++++++++--
- mm/memory.c             | 108 +++++++++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 160 insertions(+), 5 deletions(-)
+> From: Andrew Lunn <andrew@lunn.ch>
+> Date: Wed, May 08, 2019 at 20:50:11
+>=20
+> > The normal operation is interrupted by the tests you carry out
+> > here. But i don't see any code looking for ETH_TEST_FL_OFFLINE
+>=20
+> Ok will fix to only run in offline mode then.
+>=20
+> >=20
+> > > (Error code -95 means EOPNOTSUPP in current HW).
+> >=20
+> > How deep do you have to go before you know about EOPNOTSUPP?  It would
+> > be better to not return the string and result at all. Or patch ethtool
+> > to call strerror(3).
+>=20
+> When I looked at other drivers I saw that they return positive value (1)=
+=20
+> or zero so calling strerror in ethtool may not be ideal.
+>=20
+> I think its useful to let the user know if a given test is not supported=
+=20
+> in HW so maybe I can return 1 instead of EOPNOTSUPP ?
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 11943b6..9ed9542 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -142,6 +142,10 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
- int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
- void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
- 				unsigned long *start, unsigned long *end);
-+unsigned long page_table_shareable(struct vm_area_struct *svma,
-+				   struct vm_area_struct *vma,
-+				   unsigned long addr, pgoff_t idx);
-+bool vma_shareable(struct vm_area_struct *vma, unsigned long addr);
- struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
- 			      int write);
- struct page *follow_huge_pd(struct vm_area_struct *vma,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b6a34b3..e1627c3 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1747,6 +1747,33 @@ static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
- 	mm_dec_nr_ptes(mm);
- }
- 
-+#ifdef CONFIG_MAY_SHARE_FSDAX_PMD
-+static int unshare_huge_pmd(struct mm_struct *mm, unsigned long addr,
-+			    pmd_t *pmdp)
-+{
-+	pgd_t *pgd = pgd_offset(mm, addr);
-+	p4d_t *p4d = p4d_offset(pgd, addr);
-+	pud_t *pud = pud_offset(p4d, addr);
-+
-+	WARN_ON(page_count(virt_to_page(pmdp)) == 0);
-+	if (page_count(virt_to_page(pmdp)) == 1)
-+		return 0;
-+
-+	pud_clear(pud);
-+	put_page(virt_to_page(pmdp));
-+	mm_dec_nr_pmds(mm);
-+	return 1;
-+}
-+
-+#else
-+static int unshare_huge_pmd(struct mm_struct *mm, unsigned long addr,
-+			    pmd_t *pmdp)
-+{
-+	return 0;
-+}
-+
-+#endif
-+
- int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 pmd_t *pmd, unsigned long addr)
- {
-@@ -1764,6 +1791,11 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	 * pgtable_trans_huge_withdraw after finishing pmdp related
- 	 * operations.
- 	 */
-+	if (unshare_huge_pmd(vma->vm_mm, addr, pmd)) {
-+		spin_unlock(ptl);
-+		return 1;
-+	}
-+
- 	orig_pmd = pmdp_huge_get_and_clear_full(tlb->mm, addr, pmd,
- 			tlb->fullmm);
- 	tlb_remove_pmd_tlb_entry(tlb, pmd, addr);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 641cedf..919a290 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4594,9 +4594,9 @@ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
- }
- 
- #ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
--static unsigned long page_table_shareable(struct vm_area_struct *svma,
--				struct vm_area_struct *vma,
--				unsigned long addr, pgoff_t idx)
-+unsigned long page_table_shareable(struct vm_area_struct *svma,
-+				   struct vm_area_struct *vma,
-+				   unsigned long addr, pgoff_t idx)
- {
- 	unsigned long saddr = ((idx - svma->vm_pgoff) << PAGE_SHIFT) +
- 				svma->vm_start;
-@@ -4619,7 +4619,7 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
- 	return saddr;
- }
- 
--static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
-+bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
- {
- 	unsigned long base = addr & PUD_MASK;
- 	unsigned long end = base + PUD_SIZE;
-@@ -4763,6 +4763,19 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
- 				unsigned long *start, unsigned long *end)
- {
- }
-+
-+unsigned long page_table_shareable(struct vm_area_struct *svma,
-+				   struct vm_area_struct *vma,
-+				   unsigned long addr, pgoff_t idx)
-+{
-+	return 0;
-+}
-+
-+bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
-+{
-+	return false;
-+}
-+
- #define want_pmd_share()	(0)
- #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index f7d962d..4c1814c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3845,6 +3845,109 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
- 	return 0;
- }
- 
-+#ifdef CONFIG_MAY_SHARE_FSDAX_PMD
-+static pmd_t *huge_pmd_offset(struct mm_struct *mm,
-+			      unsigned long addr, unsigned long sz)
-+{
-+	pgd_t *pgd;
-+	p4d_t *p4d;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+
-+	pgd = pgd_offset(mm, addr);
-+	if (!pgd_present(*pgd))
-+		return NULL;
-+	p4d = p4d_offset(pgd, addr);
-+	if (!p4d_present(*p4d))
-+		return NULL;
-+
-+	pud = pud_offset(p4d, addr);
-+	if (sz != PUD_SIZE && pud_none(*pud))
-+		return NULL;
-+	/* hugepage or swap? */
-+	if (pud_huge(*pud) || !pud_present(*pud))
-+		return (pmd_t *)pud;
-+
-+	pmd = pmd_offset(pud, addr);
-+	if (sz != PMD_SIZE && pmd_none(*pmd))
-+		return NULL;
-+	/* hugepage or swap? */
-+	if (pmd_huge(*pmd) || !pmd_present(*pmd))
-+		return pmd;
-+
-+	return NULL;
-+}
-+
-+static pmd_t *pmd_share(struct mm_struct *mm, pud_t *pud, unsigned long addr)
-+{
-+	struct vm_area_struct *vma = find_vma(mm, addr);
-+	struct address_space *mapping = vma->vm_file->f_mapping;
-+	pgoff_t idx = ((addr - vma->vm_start) >> PAGE_SHIFT) +
-+			vma->vm_pgoff;
-+	struct vm_area_struct *svma;
-+	unsigned long saddr;
-+	pmd_t *spmd = NULL;
-+	pmd_t *pmd;
-+	spinlock_t *ptl;
-+
-+	if (!vma_shareable(vma, addr))
-+		return pmd_alloc(mm, pud, addr);
-+
-+	i_mmap_lock_write(mapping);
-+
-+	vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
-+		if (svma == vma)
-+			continue;
-+
-+		saddr = page_table_shareable(svma, vma, addr, idx);
-+		if (saddr) {
-+			spmd = huge_pmd_offset(svma->vm_mm, saddr,
-+					       vma_mmu_pagesize(svma));
-+			if (spmd) {
-+				get_page(virt_to_page(spmd));
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (!spmd)
-+		goto out;
-+
-+	ptl = pmd_lockptr(mm, spmd);
-+	spin_lock(ptl);
-+
-+	if (pud_none(*pud)) {
-+		pud_populate(mm, pud,
-+			    (pmd_t *)((unsigned long)spmd & PAGE_MASK));
-+		mm_inc_nr_pmds(mm);
-+	} else {
-+		put_page(virt_to_page(spmd));
-+	}
-+	spin_unlock(ptl);
-+out:
-+	pmd = pmd_alloc(mm, pud, addr);
-+	i_mmap_unlock_write(mapping);
-+	return pmd;
-+}
-+
-+static bool may_share_pmd(struct vm_area_struct *vma)
-+{
-+	if (vma_is_fsdax(vma))
-+		return true;
-+	return false;
-+}
-+#else
-+static pmd_t *pmd_share(struct mm_struct *mm, pud_t *pud, unsigned long addr)
-+{
-+	return pmd_alloc(mm, pud, addr);
-+}
-+
-+static bool may_share_pmd(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
-+#endif
-+
- /*
-  * By the time we get here, we already hold the mm semaphore
-  *
-@@ -3898,7 +4001,10 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 		}
- 	}
- 
--	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
-+	if (unlikely(may_share_pmd(vma)))
-+		vmf.pmd = pmd_share(mm, vmf.pud, address);
-+	else
-+		vmf.pmd = pmd_alloc(mm, vmf.pud, address);
- 	if (!vmf.pmd)
- 		return VM_FAULT_OOM;
- 	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
--- 
-1.8.3.1
+After thinking about this in more detail I now realize that returning 1=20
+is not ideal because when a test fails it will also return 1. So if I do=20
+it this way and more than one test fails then user won't know if the test=20
+really failed or if it wasn't supported in the first time.
 
+Any advice ?
+
+Thanks,
+Jose Miguel Abreu
