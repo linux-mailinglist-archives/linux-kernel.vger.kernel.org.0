@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D22A919437
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2551946B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfEIVOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:14:21 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34809 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbfEIVOR (ORCPT
+        id S1727584AbfEIVQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:16:17 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36666 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfEIVOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:17 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w7so1740984plz.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:17 -0700 (PDT)
+        Thu, 9 May 2019 17:14:19 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v80so1963535pfa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=udiEMwpcNcNB7NyeY/LW3vmQ/pONNdgNOWTQwo1KqlY=;
-        b=c0Evvz7SqIOpBtbszMd48zTsrve/UCxIf0zJ3NbeQdTbGmEXUbBUQ0dA2DmGDsdfmL
-         5QJ/doUBjbnRNMinj4mcdm+qI8hY9z1YqO8lI9pPIMbi/3wF4n8YBVr2tyJ9sPa7j3o5
-         PE2ekHh9c2rPk7lZeLT8tumnx40ByJrS3BmYs=
+        bh=uaJsxtRSz7Gp1mSEkwxRyQYxA/E3JN7w4ZIeh5Z/k6I=;
+        b=BlfEwnw9XbH0TMZbXU9nMxzyTq5pNGfIKBEigTowQChP6kIb2ivlJzwFuT0bFd0fJE
+         +SqlsVcgFOyBivX9sslqKOKHm3Ps6Eloaib/EFyRFXI8F7H6jzVqZXNLAKHQXKWZKjup
+         DuiPm0AlKPJOi6448tAbtk/RTQ1A6lU9mCtNo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=udiEMwpcNcNB7NyeY/LW3vmQ/pONNdgNOWTQwo1KqlY=;
-        b=k2ud6h3MSXpFmtsCEwKPYh13cJXVRUqYwFr+9tSdh/6S490F/MO8XzX4mlzhjGV0CK
-         WOYY5onerbavMRwZMIo5U+AlOES5zHGtJ5Y9yFuWzoQ7UYrkUzADaMjqbweP7Y1NzKzc
-         25xBM5u0LRV6Di9X5jVMLzOt01JyLZM8hELMhsoz1ulKF6KJBmN1OvXICxVoB9ViuNVP
-         y067aTzBPWaorM0E05UP4prRtV+RJ0sJ/A+e5blsncTDQNg1CGqR6Ajk5/q7uGbD+zeK
-         3OpQJZtNIGDFkU59og61JCcsrV/gztIDjI1DF2ef0tDgNO9GcshYE3UD57bZffMiQbau
-         T2lQ==
-X-Gm-Message-State: APjAAAUKvfgVdW4AxTfrt0gJPbBko78uLMvhQU1finOGPn5wFKg38lf5
-        VRZOpp6bgiejSDCvdg1sLCxBQw==
-X-Google-Smtp-Source: APXvYqzaHvYO2NqU95lNWxf5E7dLuEc324JyFJKSOrlPvERXlmWHUaZy1PHRco+qjJyOyJtPPm/duA==
-X-Received: by 2002:a17:902:b098:: with SMTP id p24mr8249554plr.38.1557436456796;
-        Thu, 09 May 2019 14:14:16 -0700 (PDT)
+        bh=uaJsxtRSz7Gp1mSEkwxRyQYxA/E3JN7w4ZIeh5Z/k6I=;
+        b=Q0gxcdMHi9OktsYzEdPN1Uppu6vKTlhfSy+sDYvVX50p/scL2FvK0La6VOcOE1d5rt
+         b3FinXkOhm3ev/mOdKTc5H0SA50UcewM2kJhNxAPct7nRpRaiTKYItALiC4DrutbutVx
+         QDS4WF/YswVqmlzM8wPVb6QMwx/LyegoVVbTTY7o4WCXLmcCs9rbHtWPSLttFx45SMqr
+         9jH9tY1/bNPnkUST8hT+ysyYbCj7OjOpPpVEAp/KTKEWVWDFoNGV76Nbl/ihwxn0wjuF
+         Pk3XC8rze4NKnMkEQQdqFTC0fGV0epaTCNyYQ6XCW5AzFNQO3BptN8EtfwoU8fbSJtT+
+         SofQ==
+X-Gm-Message-State: APjAAAUta2XcZv8ItcpqxmA3RkGzbW/lebrxxQmEC5qE33sjW23pgtbP
+        6K3AsiHe95cHIaZONjVlst2k7w==
+X-Google-Smtp-Source: APXvYqzmR6UP7QFDsPP7XFJh5ZWSFAjHq9Q5qqMTlAp4c2cu8CjtuaZdJq/AjE7hrRFln1J8MfwVVA==
+X-Received: by 2002:aa7:925a:: with SMTP id 26mr8424340pfp.152.1557436458458;
+        Thu, 09 May 2019 14:14:18 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id n13sm3874787pgh.6.2019.05.09.14.14.15
+        by smtp.gmail.com with ESMTPSA id 4sm3990290pfd.55.2019.05.09.14.14.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:16 -0700 (PDT)
+        Thu, 09 May 2019 14:14:17 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 09/30] mfd: cros_ec: Remove zero-size structs
-Date:   Thu,  9 May 2019 14:13:32 -0700
-Message-Id: <20190509211353.213194-10-gwendal@chromium.org>
+Subject: [PATCH v3 10/30] mfd: cros_ec: Add Flash V2 commands API
+Date:   Thu,  9 May 2019 14:13:33 -0700
+Message-Id: <20190509211353.213194-11-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,81 +62,239 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Empty structure size is different between C and C++.
-To prevent clang warning when compiling this include file in C++
-programs, remove empty structures.
+Added for supporting larger embedded controller flash.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 33 +++++++++++++++-------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ include/linux/mfd/cros_ec_commands.h | 150 ++++++++++++++++++++++++++-
+ 1 file changed, 147 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index d8bde2b5e9ce..fabf341af97f 100644
+index fabf341af97f..3d1d26f62bd3 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -1540,10 +1540,14 @@ struct lightbar_program {
- struct ec_params_lightbar {
- 	uint8_t cmd;		      /* Command (see enum lightbar_command) */
- 	union {
--		struct {
--			/* no args */
--		} dump, off, on, init, get_seq, get_params_v0, get_params_v1,
--			version, get_brightness, get_demo, suspend, resume;
-+		/*
-+		 * The following commands have no args:
-+		 *
-+		 * dump, off, on, init, get_seq, get_params_v0, get_params_v1,
-+		 * version, get_brightness, get_demo, suspend, resume
-+		 *
-+		 * Don't use an empty struct, because C++ hates that.
-+		 */
+@@ -1138,6 +1138,7 @@ struct ec_response_get_features {
  
- 		struct __ec_todo_unpacked {
- 			uint8_t num;
-@@ -1597,11 +1601,13 @@ struct ec_response_lightbar {
- 			uint8_t red, green, blue;
- 		} get_rgb;
+ /* Get flash info */
+ #define EC_CMD_FLASH_INFO 0x0010
++#define EC_VER_FLASH_INFO 2
  
--		struct {
--			/* no return params */
--		} off, on, init, set_brightness, seq, reg, set_rgb,
--			demo, set_params_v0, set_params_v1,
--			set_program, manual_suspend_ctrl, suspend, resume;
-+		/*
-+		 * The following commands have no response:
-+		 *
-+		 * off, on, init, set_brightness, seq, reg, set_rgb,
-+		 * set_params_v0, set_params_v1, set_program,
-+		 * manual_suspend_ctrl, suspend, resume
-+		 */
- 	};
- } __ec_todo_packed;
+ /**
+  * struct ec_response_flash_info - Response to the flash info command.
+@@ -1164,6 +1165,15 @@ struct ec_response_flash_info {
+  */
+ #define EC_FLASH_INFO_ERASE_TO_0 BIT(0)
  
-@@ -3021,9 +3027,7 @@ enum charge_state_params {
- struct ec_params_charge_state {
- 	uint8_t cmd;				/* enum charge_state_command */
- 	union {
--		struct {
--			/* no args */
--		} get_state;
-+		/* get_state has no args */
- 
- 		struct __ec_todo_unpacked {
- 			uint32_t param;		/* enum charge_state_param */
-@@ -3049,9 +3053,8 @@ struct ec_response_charge_state {
- 		struct __ec_align4 {
- 			uint32_t value;
- 		} get_param;
--		struct {
--			/* no return values */
--		} set_param;
++/*
++ * Flash must be selected for read/write/erase operations to succeed.  This may
++ * be necessary on a chip where write/erase can be corrupted by other board
++ * activity, or where the chip needs to enable some sort of programming voltage,
++ * or where the read/write/erase operations require cleanly suspending other
++ * chip functionality.
++ */
++#define EC_FLASH_INFO_SELECT_REQUIRED BIT(1)
 +
-+		/* set_param returns no args */
- 	};
+ /**
+  * struct ec_response_flash_info_1 - Response to the flash info v1 command.
+  * @flash_size: Usable flash size in bytes.
+@@ -1186,6 +1196,12 @@ struct ec_response_flash_info {
+  * gcc anonymous structs don't seem to get along with the __packed directive;
+  * if they did we'd define the version 0 structure as a sub-structure of this
+  * one.
++ *
++ * Version 2 supports flash banks of different sizes:
++ * The caller specified the number of banks it has preallocated
++ * (num_banks_desc)
++ * The EC returns the number of banks describing the flash memory.
++ * It adds banks descriptions up to num_banks_desc.
+  */
+ struct ec_response_flash_info_1 {
+ 	/* Version 0 fields; see above for description */
+@@ -1199,6 +1215,42 @@ struct ec_response_flash_info_1 {
+ 	uint32_t flags;
  } __ec_align4;
+ 
++struct ec_params_flash_info_2 {
++	/* Number of banks to describe */
++	uint16_t num_banks_desc;
++	/* Reserved; set 0; ignore on read */
++	uint8_t reserved[2];
++} __ec_align4;
++
++struct ec_flash_bank {
++	/* Number of sector is in this bank. */
++	uint16_t count;
++	/* Size in power of 2 of each sector (8 --> 256 bytes) */
++	uint8_t size_exp;
++	/* Minimal write size for the sectors in this bank */
++	uint8_t write_size_exp;
++	/* Erase size for the sectors in this bank */
++	uint8_t erase_size_exp;
++	/* Size for write protection, usually identical to erase size. */
++	uint8_t protect_size_exp;
++	/* Reserved; set 0; ignore on read */
++	uint8_t reserved[2];
++};
++
++struct ec_response_flash_info_2 {
++	/* Total flash in the EC. */
++	uint32_t flash_size;
++	/* Flags; see EC_FLASH_INFO_* */
++	uint32_t flags;
++	/* Maximum size to use to send data to write to the EC. */
++	uint32_t write_ideal_size;
++	/* Number of banks present in the EC. */
++	uint16_t num_banks_total;
++	/* Number of banks described in banks array. */
++	uint16_t num_banks_desc;
++	struct ec_flash_bank banks[0];
++} __ec_align4;
++
+ /*
+  * Read flash
+  *
+@@ -1238,7 +1290,7 @@ struct ec_params_flash_write {
+ #define EC_CMD_FLASH_ERASE 0x0013
+ 
+ /**
+- * struct ec_params_flash_erase - Parameters for the flash erase command.
++ * struct ec_params_flash_erase - Parameters for the flash erase command, v0.
+  * @offset: Byte offset to erase.
+  * @size: Size to erase in bytes.
+  */
+@@ -1247,6 +1299,43 @@ struct ec_params_flash_erase {
+ 	uint32_t size;
+ } __ec_align4;
+ 
++/*
++ * v1 add async erase:
++ * subcommands can returns:
++ * EC_RES_SUCCESS : erased (see ERASE_SECTOR_ASYNC case below).
++ * EC_RES_INVALID_PARAM : offset/size are not aligned on a erase boundary.
++ * EC_RES_ERROR : other errors.
++ * EC_RES_BUSY : an existing erase operation is in progress.
++ * EC_RES_ACCESS_DENIED: Trying to erase running image.
++ *
++ * When ERASE_SECTOR_ASYNC returns EC_RES_SUCCESS, the operation is just
++ * properly queued. The user must call ERASE_GET_RESULT subcommand to get
++ * the proper result.
++ * When ERASE_GET_RESULT returns EC_RES_BUSY, the caller must wait and send
++ * ERASE_GET_RESULT again to get the result of ERASE_SECTOR_ASYNC.
++ * ERASE_GET_RESULT command may timeout on EC where flash access is not
++ * permitted while erasing. (For instance, STM32F4).
++ */
++enum ec_flash_erase_cmd {
++	FLASH_ERASE_SECTOR,     /* Erase and wait for result */
++	FLASH_ERASE_SECTOR_ASYNC,  /* Erase and return immediately. */
++	FLASH_ERASE_GET_RESULT,  /* Ask for last erase result */
++};
++
++/**
++ * struct ec_params_flash_erase_v1 - Parameters for the flash erase command, v1.
++ * @cmd: One of ec_flash_erase_cmd.
++ * @reserved: Pad byte; currently always contains 0.
++ * @flag: No flags defined yet; set to 0.
++ * @params: Same as v0 parameters.
++ */
++struct ec_params_flash_erase_v1 {
++	uint8_t  cmd;
++	uint8_t  reserved;
++	uint16_t flag;
++	struct ec_params_flash_erase params;
++} __ec_align4;
++
+ /*
+  * Get/set flash protection.
+  *
+@@ -1282,6 +1371,15 @@ struct ec_params_flash_erase {
+ #define EC_FLASH_PROTECT_ERROR_INCONSISTENT BIT(5)
+ /* Entire flash code protected when the EC boots */
+ #define EC_FLASH_PROTECT_ALL_AT_BOOT        BIT(6)
++/* RW flash code protected when the EC boots */
++#define EC_FLASH_PROTECT_RW_AT_BOOT         BIT(7)
++/* RW flash code protected now. */
++#define EC_FLASH_PROTECT_RW_NOW             BIT(8)
++/* Rollback information flash region protected when the EC boots */
++#define EC_FLASH_PROTECT_ROLLBACK_AT_BOOT   BIT(9)
++/* Rollback information flash region protected now */
++#define EC_FLASH_PROTECT_ROLLBACK_NOW       BIT(10)
++
+ 
+ /**
+  * struct ec_params_flash_protect - Parameters for the flash protect command.
+@@ -1320,16 +1418,31 @@ struct ec_response_flash_protect {
+ enum ec_flash_region {
+ 	/* Region which holds read-only EC image */
+ 	EC_FLASH_REGION_RO = 0,
+-	/* Region which holds rewritable EC image */
+-	EC_FLASH_REGION_RW,
++	/*
++	 * Region which holds active RW image. 'Active' is different from
++	 * 'running'. Active means 'scheduled-to-run'. Since RO image always
++	 * scheduled to run, active/non-active applies only to RW images (for
++	 * the same reason 'update' applies only to RW images. It's a state of
++	 * an image on a flash. Running image can be RO, RW_A, RW_B but active
++	 * image can only be RW_A or RW_B. In recovery mode, an active RW image
++	 * doesn't enter 'running' state but it's still active on a flash.
++	 */
++	EC_FLASH_REGION_ACTIVE,
+ 	/*
+ 	 * Region which should be write-protected in the factory (a superset of
+ 	 * EC_FLASH_REGION_RO)
+ 	 */
+ 	EC_FLASH_REGION_WP_RO,
++	/* Region which holds updatable (non-active) RW image */
++	EC_FLASH_REGION_UPDATE,
+ 	/* Number of regions */
+ 	EC_FLASH_REGION_COUNT,
+ };
++/*
++ * 'RW' is vague if there are multiple RW images; we mean the active one,
++ * so the old constant is deprecated.
++ */
++#define EC_FLASH_REGION_RW EC_FLASH_REGION_ACTIVE
+ 
+ /**
+  * struct ec_params_flash_region_info - Parameters for the flash region info
+@@ -1364,6 +1477,37 @@ struct ec_response_vbnvcontext {
+ 	uint8_t block[EC_VBNV_BLOCK_SIZE];
+ } __ec_align4;
+ 
++
++/* Get SPI flash information */
++#define EC_CMD_FLASH_SPI_INFO 0x0018
++
++struct ec_response_flash_spi_info {
++	/* JEDEC info from command 0x9F (manufacturer, memory type, size) */
++	uint8_t jedec[3];
++
++	/* Pad byte; currently always contains 0 */
++	uint8_t reserved0;
++
++	/* Manufacturer / device ID from command 0x90 */
++	uint8_t mfr_dev_id[2];
++
++	/* Status registers from command 0x05 and 0x35 */
++	uint8_t sr1, sr2;
++} __ec_align1;
++
++
++/* Select flash during flash operations */
++#define EC_CMD_FLASH_SELECT 0x0019
++
++/**
++ * struct ec_params_flash_select - Parameters for the flash select command.
++ * @select: 1 to select flash, 0 to deselect flash
++ */
++struct ec_params_flash_select {
++	uint8_t select;
++} __ec_align4;
++
++
+ /*****************************************************************************/
+ /* PWM commands */
  
 -- 
 2.21.0.1020.gf2820cf01a-goog
