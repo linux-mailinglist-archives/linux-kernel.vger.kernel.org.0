@@ -2,87 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B965219211
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29BA19051
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfEITD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:03:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726715AbfEIStR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:49:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38BE820578;
-        Thu,  9 May 2019 18:49:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427756;
-        bh=hEuToZTYTh+72tR79gRIV7bx32NRmE1y/XhSGpfYvRw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KnrEnyXksrwKaGERCdlVjCwMO/g0vX9UfUryFdN3WwXqxo6w2sDaWX8Q9ZEhqzwRJ
-         86JS+pco6oK0oupnUL9kBPjJoKVe0JZsSXQmmt5M00n6gVqxlydNoO84OaxZbpSt+K
-         n3MY12nv0oUiu53gyqpKx48/wAun3OPY258tNZlc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Vasquez <andrewv@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 59/66] scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
-Date:   Thu,  9 May 2019 20:42:34 +0200
-Message-Id: <20190509181307.679020537@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726787AbfEISmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:42:40 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50549 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbfEISmk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:42:40 -0400
+Received: by mail-it1-f193.google.com with SMTP id i10so1419956ite.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 11:42:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RAPPdEdzAC7Nt0I8+scXV0pUykQdkkkD3cPHgHiKjU8=;
+        b=RHO4MaT9A3dg94yATiVfdlnOcNJ00w+dlJeyvC9kPOfz9O9nLSDooTncc9xZD/Cvai
+         tGkxe5OP6emVysPpOvyJVbh6SZaMhhAH6bUnJyHX+2FDtRVLeJjeVcBNuB7/9f8QIpvf
+         yJuhvIq/tnVt4PJu15xbS94QR+ooYkyEv445tDOLiIsY75vjPF6UXB+yvjgrscOcCuzy
+         0tREfSNoEFWEnOmnEoqGrpe1c4D3EvcI27HChW2LJbujuljFRpxCgCGcT0QrHR1S5Luq
+         /JcK9zKFCjz1lo9F/0TNMulXYGRkHYSogqvUHcFZvvR2u9wUEtgnrahfjmR3EcUfnndV
+         8nCg==
+X-Gm-Message-State: APjAAAUu1lP0OfDvtp9qymvl3mAn4BDcLUkYyQaRCpn5g0gnsJbVd8FZ
+        KsYgEoI0pYpy/7FqCpzMR7/ejA==
+X-Google-Smtp-Source: APXvYqz/8tymkjQmLnwRihvpLkgn17Ri7VMfntsvcRf0uxgb8XJaXi9AYQEnf2j9n/EgX0JRGNMKcA==
+X-Received: by 2002:a24:17ce:: with SMTP id 197mr4164215ith.21.1557427359216;
+        Thu, 09 May 2019 11:42:39 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id h16sm1021805ioh.35.2019.05.09.11.42.38
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 09 May 2019 11:42:38 -0700 (PDT)
+Date:   Thu, 9 May 2019 12:42:34 -0600
+From:   Raul Rangel <rrangel@chromium.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-mmc@vger.kernel.org, djkurtz@google.com,
+        adrian.hunter@intel.com, zwisler@chromium.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/2] mmc: v4.14: Fix null pointer dereference in
+ mmc_init_request
+Message-ID: <20190509184234.GA197434@google.com>
+References: <20190508185833.187068-1-rrangel@chromium.org>
+ <20190509060456.GA17096@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190509060456.GA17096@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Vasquez <andrewv@marvell.com>
+On Wed, May 08, 2019 at 11:04:56PM -0700, Christoph Hellwig wrote:
+> On Wed, May 08, 2019 at 12:58:32PM -0600, Raul E Rangel wrote:
+> > It is possible for queuedata to be cleared in mmc_cleanup_queue before
+> > the request has been started.
+> 
+> Errm.  I think we need to fix that problem instead of working around it.
+So mmc_request_fn already has a null check, it was just missing on
+mmc_init_request.
 
-commit 5cbdae10bf11f96e30b4d14de7b08c8b490e903c upstream.
+I could move `blk_cleanup_queue(q)` above `q->queuedata = NULL` and the
+lock. So that would mean cherry-picking
+https://lore.kernel.org/patchwork/patch/856512/ and then a patch with
+moving blk_cleanup_queue.
 
-Commit e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs
-code") incorrectly set 'optrom_region_size' to 'start+size', which can
-overflow option-rom boundaries when 'start' is non-zero.  Continue setting
-optrom_region_size to the proper adjusted value of 'size'.
+Should I do that instead?
 
-Fixes: e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Vasquez <andrewv@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/scsi/qla2xxx/qla_attr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -345,7 +345,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
- 
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
- 
- 		ha->optrom_state = QLA_SREADING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
-@@ -418,7 +418,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
- 
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
- 
- 		ha->optrom_state = QLA_SWRITING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
-
-
+Thanks,
+Raul
