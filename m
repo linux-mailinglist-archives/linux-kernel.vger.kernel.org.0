@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E94E519069
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBBE19185
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfEISoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
+        id S1728696AbfEISwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:52:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727053AbfEISoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:34 -0400
+        id S1727414AbfEISwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:52:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13F10217D6;
-        Thu,  9 May 2019 18:44:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B57172182B;
+        Thu,  9 May 2019 18:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427473;
-        bh=hEuToZTYTh+72tR79gRIV7bx32NRmE1y/XhSGpfYvRw=;
+        s=default; t=1557427938;
+        bh=jjP8GWtlILrBRpdD3esKiF1H7/7VQZoK2gV4u4kBoAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zzG4xRsdUvGkJcSCHdYm+SB7DsBsnY3B+B3Z/Cidqh8n/NQ5CnFVYP0IPW0UTLtR6
-         KQLKd3rEtOSDJui2cXAACxXOw2CvlzfQAM1T8Fc6gqI2GNGRgIHCvaRa1r3dHl0mB5
-         XVpPlHw7g2MkaFvGeUJ6U/3zEIFvsusxRBuUHFgA=
+        b=vxzgR8G8u8cGZl8djERmTjKemfXzEc/6wlqbyZ5AqlUdD2EAVpY0jEtR4xHwgi5Dh
+         hUwhIYLjUrQkzFApSzLV8LuieVbm1ym+EjfkI3ZpadxxJKYiiViBKNwjC9zYxVJjUg
+         7HQyr0fbwMsU+0ieQbvZqRwSlP237frL/aGHb1YU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Vasquez <andrewv@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 23/28] scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
-Date:   Thu,  9 May 2019 20:42:15 +0200
-Message-Id: <20190509181255.186877923@linuxfoundation.org>
+        stable@vger.kernel.org, Wangyan Wang <wangyan.wang@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 59/95] drm/mediatek: using new factor for tvdpll for MT2701 hdmi phy
+Date:   Thu,  9 May 2019 20:42:16 +0200
+Message-Id: <20190509181313.618384753@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Vasquez <andrewv@marvell.com>
+[ Upstream commit 8eeb3946feeb00486ac0909e2309da87db8988a5 ]
 
-commit 5cbdae10bf11f96e30b4d14de7b08c8b490e903c upstream.
+This is the second step to make MT2701 HDMI stable.
+The factor depends on the divider of DPI in MT2701, therefore,
+we should fix this factor to the right and new one.
+Test: search ok
 
-Commit e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs
-code") incorrectly set 'optrom_region_size' to 'start+size', which can
-overflow option-rom boundaries when 'start' is non-zero.  Continue setting
-optrom_region_size to the proper adjusted value of 'size'.
-
-Fixes: e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Vasquez <andrewv@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Wangyan Wang <wangyan.wang@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_attr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dpi.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -345,7 +345,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
+diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+index 62a9d47df9487..9160c55769f8d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dpi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+@@ -662,13 +662,11 @@ static unsigned int mt8173_calculate_factor(int clock)
+ static unsigned int mt2701_calculate_factor(int clock)
+ {
+ 	if (clock <= 64000)
+-		return 16;
+-	else if (clock <= 128000)
+-		return 8;
+-	else if (clock <= 256000)
+ 		return 4;
+-	else
++	else if (clock <= 128000)
+ 		return 2;
++	else
++		return 1;
+ }
  
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
- 
- 		ha->optrom_state = QLA_SREADING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
-@@ -418,7 +418,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
- 
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
- 
- 		ha->optrom_state = QLA_SWRITING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
+ static const struct mtk_dpi_conf mt8173_conf = {
+-- 
+2.20.1
+
 
 
