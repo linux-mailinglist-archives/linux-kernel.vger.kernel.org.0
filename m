@@ -2,121 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570D6190CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1A519148
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfEISs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:48:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40808 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbfEISs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:48:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5q/s2hrhUTj3cVinMhLy+5FPiQBrNa6bCN5Wvxe1rU4=; b=nO7h2DDN4IXo4GrmU5T+DEyyB
-        Dq4yGuLSObfqN0nGFYMG70Nsl2yUxl0pJG07OOvIN9x6U7utlVnpLZrmJVfMxnoDEMFuprPKEqyAC
-        FUumBOHk4uDS/UyGed7kHHq4fb9IdYeU95mNZvCqtD2UnCX9+Xo3lI7jEt4cuJbYlllTESaHNgAsN
-        LPZgWvac8G3BN8bTx1AFH6lljoHzlDHK/GY3VM+nJmAkgxJftmMWg6Mq0lE3HaUXfGMwT/cvT4yi9
-        f1zIt2deD739xKFAmh3gL43IU3/Klx7I7qev2OjoCj+YibB5/aRvpHcBAV7+ekZoiDFi07WeJzlJh
-        KtBGRddaw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOo68-000583-JQ; Thu, 09 May 2019 18:48:52 +0000
-Subject: Re: [PATCH 02/25] tracing: Improve "if" macro code generation
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "luto@amacapital.net" <luto@amacapital.net>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dvyukov@google.com" <dvyukov@google.com>
-References: <20190318153840.906404905@infradead.org>
- <20190318155140.058627431@infradead.org>
- <f918ecb0b6bf43f3bf0f526084d8467b@AcuMS.aculab.com>
- <CAHk-=wiALN3jRuzARpwThN62iKd476Xj-uom+YnLZ4=eqcz7xQ@mail.gmail.com>
- <20190509090058.6554dc81@gandalf.local.home>
- <CAHk-=wiLMXDO-_NGjgtoHxp9TRpcnykHPNWOHfXfWd9GmCu1Uw@mail.gmail.com>
- <20190509142902.08a32f20@gandalf.local.home>
- <20190509184531.jhinxi2x2pdfaefb@treble>
- <20190509184715.6y2uzlld4irlm3tw@treble>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3998ab5d-225b-0680-5edf-60b4068e3e59@infradead.org>
-Date:   Thu, 9 May 2019 11:48:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728704AbfEISzN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 9 May 2019 14:55:13 -0400
+Received: from unicorn.mansr.com ([81.2.72.234]:43750 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728705AbfEISzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:55:09 -0400
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id 7734E14180; Thu,  9 May 2019 19:55:06 +0100 (BST)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+References: <yw1xpnotufti.fsf@mansr.com>
+        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
+        <20190509084726.5405-1-m.szyprowski@samsung.com>
+Date:   Thu, 09 May 2019 19:55:06 +0100
+In-Reply-To: <20190509084726.5405-1-m.szyprowski@samsung.com> (Marek
+        Szyprowski's message of "Thu, 09 May 2019 10:47:26 +0200")
+Message-ID: <yw1xlfzfv4ol.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190509184715.6y2uzlld4irlm3tw@treble>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/19 11:47 AM, Josh Poimboeuf wrote:
-> On Thu, May 09, 2019 at 01:45:31PM -0500, Josh Poimboeuf wrote:
->> On Thu, May 09, 2019 at 02:29:02PM -0400, Steven Rostedt wrote:
->>> On Thu, 9 May 2019 09:51:59 -0700
->>> Linus Torvalds <torvalds@linux-foundation.org> wrote:
->>>
->>>> On Thu, May 9, 2019 at 6:01 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->>>>>
->>>>> This patch works. Can I get your Signed-off-by for it?  
->>>>
->>>> Yes. Please write some kind of comprehensible commit log for it, but
->>>
->>> How's this:
->>>
->>> "Peter Zijlstra noticed that with CONFIG_PROFILE_ALL_BRANCHES, the "if"
->>> macro converts the conditional to an array index.  This can cause GCC
->>> to create horrible code.  When there are nested ifs, the generated code
->>> uses register values to encode branching decisions.
->>>
->>> Josh Poimboeuf found that replacing the define "if" macro from using
->>> the condition as an array index and incrementing the branch statics
->>> with an if statement itself, reduced the asm complexity and shrinks the
->>> generated code quite a bit.
->>>
->>> But this can be simplified even further by replacing the internal if
->>> statement with a ternary operator.
->>>
->>> Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>> Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
->>
->> Actually, my original fix already went in:
->>
->>   37686b1353cf ("tracing: Improve "if" macro code generation")
->>
->> But it introduced a regression:
->>
->>   https://lkml.kernel.org/r/201905040509.iqQ2CrOU%lkp@intel.com
->>
->> which Linus' patch fixes for some reason.
-> 
-> /me curses URL encoding
-> 
-> https://lkml.kernel.org/r/201905040509.iqQ2CrOU%25lkp@intel.com
-> 
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
 
-Still fails for me.
+> Commit 69bec7259853 ("USB: core: let USB device know device node")
+> added support for attaching devicetree node for USB devices. The mentioned
+> commit however identifies the given USB device node only by the 'reg'
+> property in the host controller children nodes. The USB device node
+> however also has to have a 'compatible' property as described in
+> Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
+> 'compatible' property check might result in assigning a devicetree node,
+> which is not intended to be the proper node for the given USB device.
+>
+> This is important especially when USB host controller has child-nodes for
+> other purposes. For example, Exynos EHCI and OHCI drivers already define
+> child-nodes for each physical root hub port and assigns respective PHY
+> controller and parameters for them. Those binding predates support for
+> USB devicetree nodes.
+>
+> Checking for the proper compatibility string allows to mitigate the
+> conflict between USB device devicetree nodes and the bindings for USB
+> controllers with child nodes. It also fixes the side-effect of the other
+> commits, like 01fdf179f4b0 ("usb: core: skip interfaces disabled in
+> devicetree"), which incorrectly disables some devices on Exynos based
+> boards.
+>
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v3:
+> - replaced ad hoc checks by proper test for proper value of the
+>   compatible string in drivers/usb/core/of.c
+> v2: https://lkml.org/lkml/2019/5/8/321
+> v1: https://lkml.org/lkml/2019/5/7/715
+> ---
+>  drivers/usb/core/hub.c |  3 +++
+>  drivers/usb/core/of.c  | 31 +++++++++++++++++++++++++++++++
+>  include/linux/usb/of.h |  2 ++
+>  3 files changed, 36 insertions(+)
+>
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 2f94568ba385..6f2438522d09 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/usb.h>
+>  #include <linux/usbdevice_fs.h>
+>  #include <linux/usb/hcd.h>
+> +#include <linux/usb/of.h>
+>  #include <linux/usb/otg.h>
+>  #include <linux/usb/quirks.h>
+>  #include <linux/workqueue.h>
+> @@ -5023,6 +5024,8 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+>  		if (status < 0)
+>  			goto loop;
+>
+> +		usb_of_validate_device_node(udev);
+> +
+>  		if (udev->quirks & USB_QUIRK_DELAY_INIT)
+>  			msleep(2000);
+>
+> diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
+> index 651708d8c908..2b6f16753edc 100644
+> --- a/drivers/usb/core/of.c
+> +++ b/drivers/usb/core/of.c
+> @@ -30,6 +30,12 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+>  	for_each_child_of_node(hub->dev.of_node, node) {
+>  		if (of_property_read_u32(node, "reg", &reg))
+>  			continue;
+> +		/*
+> +		 * idVendor and idProduct are not yet known, so check only
+> +		 * a presence of the compatible property.
+> +		 */
+
+This function could be called from anywhere, so that comment seems a bit
+misplaced.
+
+> +		if (!of_find_property(node, "compatible", NULL))
+> +			continue;
+
+What if there is a node with a "compatible" property for some entirely
+different purpose?  Since that won't be caught, why bother with this
+test at all?
+
+>  		if (reg == port1)
+>  			return node;
+> @@ -39,6 +45,31 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+>  }
+>  EXPORT_SYMBOL_GPL(usb_of_get_device_node);
+>
+> +/**
+> + * usb_of_validate_device_node() - validate dt node of the probed USB device
+> + * @udev: USB device
+> + *
+> + * Validate devicetree node for the USB device. Compatible string must match
+> + * device's idVendor and idProduct, otherwise the of_node will be put and set
+> + * to NULL.
+> + */
+> +void usb_of_validate_device_node(struct usb_device *udev)
+> +{
+> +	char compatible[13];
+> +
+> +	if (!udev->dev.of_node)
+> +		return;
+> +
+> +	snprintf(compatible, sizeof(compatible), "usb%x,%x",
+> +		 le16_to_cpu(udev->descriptor.idVendor),
+> +		 le16_to_cpu(udev->descriptor.idProduct));
+> +
+> +	if (of_device_is_compatible(udev->dev.of_node, compatible) == 0) {
+> +		of_node_put(udev->dev.of_node);
+> +		udev->dev.of_node = NULL;
+> +	}
+> +}
+> +
+>  /**
+>   * usb_of_has_combined_node() - determine whether a device has a combined node
+>   * @udev: USB device
+> diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+> index dba55ccb9b53..9969efda03ad 100644
+> --- a/include/linux/usb/of.h
+> +++ b/include/linux/usb/of.h
+> @@ -24,6 +24,7 @@ bool usb_of_has_combined_node(struct usb_device *udev);
+>  struct device_node *usb_of_get_interface_node(struct usb_device *udev,
+>  		u8 config, u8 ifnum);
+>  struct device *usb_of_get_companion_dev(struct device *dev);
+> +void usb_of_validate_device_node(struct usb_device *udev);
+>  #else
+>  static inline enum usb_dr_mode
+>  of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
+> @@ -57,6 +58,7 @@ static inline struct device *usb_of_get_companion_dev(struct device *dev)
+>  {
+>  	return NULL;
+>  }
+> +static inline void usb_of_validate_device_node(struct usb_device *udev) { }
+>  #endif
+>
+>  #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
+> -- 
+> 2.17.1
+>
 
 -- 
-~Randy
+Måns Rullgård
