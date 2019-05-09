@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B5F190C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 643CF19077
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbfEISsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:48:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41628 "EHLO mail.kernel.org"
+        id S1727242AbfEISpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:45:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728070AbfEISsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:48:39 -0400
+        id S1727221AbfEISpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:45:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94B1020578;
-        Thu,  9 May 2019 18:48:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38649217F9;
+        Thu,  9 May 2019 18:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427719;
-        bh=fuPoLE3V2yAUWFUBWayRnbpH4gfWO4t8LudXIxPk+J4=;
+        s=default; t=1557427499;
+        bh=DSgNyAu3218PTqN3ZNvpI+NYW6lqI+fUcvQx/HBEHVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQLZR4vIPrTzxoeppc/gZIjhgm/La+cntd/McIKEiWhyv1TDbjWIorX/cw1TPPpso
-         izztYO8rn06HZQOkyhmdTWTOqN1Ibydqa4Ug3o1Zrt26MeWdOy/qClK5lQbiN5Jziv
-         v8jakqivYVY13rPihREOwZE3UdrmkUubfLx1qphU=
+        b=ntIH2ByQV/N7xnK3RNl56gDk6kkn0cGxJ0FoZI0eLzzSH67v1FlJ/8CQ8Vv9AtZbv
+         eW/EZLYRSybLcyVb2TCS5gcFgkgfD78N1+iLZWIg3SPTKYRXgT3aFLGStGjFgbnbVS
+         IC0Foh1R3niUucBFsqafCqOMuBXH2J89mfYv/ug8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/66] drm/mediatek: fix possible object reference leak
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 26/28] UAS: fix alignment of scatter/gather segments
 Date:   Thu,  9 May 2019 20:42:18 +0200
-Message-Id: <20190509181306.423253638@linuxfoundation.org>
+Message-Id: <20190509181255.760577817@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,46 +42,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2ae2c3316fb77dcf64275d011596b60104c45426 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+commit 3ae62a42090f1ed48e2313ed256a1182a85fb575 upstream.
 
-Detected by coccinelle with the following warnings:
-drivers/gpu/drm/mediatek/mtk_hdmi.c:1521:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1509, but without a corresponding object release within this function.
-drivers/gpu/drm/mediatek/mtk_hdmi.c:1524:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1509, but without a corresponding object release within this function.
+This is the UAS version of
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: CK Hu <ck.hu@mediatek.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+747668dbc061b3e62bc1982767a3a1f9815fcf0e
+usb-storage: Set virt_boundary_mask to avoid SG overflows
+
+We are not as likely to be vulnerable as storage, as it is unlikelier
+that UAS is run over a controller without native support for SG,
+but the issue exists.
+The issue has been existing since the inception of the driver.
+
+Fixes: 115bb1ffa54c ("USB: Add UAS driver")
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/storage/uas.c |   35 ++++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index c7a77d6f612b2..62444a3a5742a 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1508,6 +1508,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
- 	of_node_put(remote);
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -796,24 +796,33 @@ static int uas_slave_alloc(struct scsi_d
+ {
+ 	struct uas_dev_info *devinfo =
+ 		(struct uas_dev_info *)sdev->host->hostdata;
++	int maxp;
  
- 	hdmi->ddc_adpt = of_find_i2c_adapter_by_node(i2c_np);
-+	of_node_put(i2c_np);
- 	if (!hdmi->ddc_adpt) {
- 		dev_err(dev, "Failed to get ddc i2c adapter by node\n");
- 		return -EINVAL;
--- 
-2.20.1
-
+ 	sdev->hostdata = devinfo;
+ 
+ 	/*
+-	 * USB has unusual DMA-alignment requirements: Although the
+-	 * starting address of each scatter-gather element doesn't matter,
+-	 * the length of each element except the last must be divisible
+-	 * by the Bulk maxpacket value.  There's currently no way to
+-	 * express this by block-layer constraints, so we'll cop out
+-	 * and simply require addresses to be aligned at 512-byte
+-	 * boundaries.  This is okay since most block I/O involves
+-	 * hardware sectors that are multiples of 512 bytes in length,
+-	 * and since host controllers up through USB 2.0 have maxpacket
+-	 * values no larger than 512.
++	 * We have two requirements here. We must satisfy the requirements
++	 * of the physical HC and the demands of the protocol, as we
++	 * definitely want no additional memory allocation in this path
++	 * ruling out using bounce buffers.
+ 	 *
+-	 * But it doesn't suffice for Wireless USB, where Bulk maxpacket
+-	 * values can be as large as 2048.  To make that work properly
+-	 * will require changes to the block layer.
++	 * For a transmission on USB to continue we must never send
++	 * a package that is smaller than maxpacket. Hence the length of each
++         * scatterlist element except the last must be divisible by the
++         * Bulk maxpacket value.
++	 * If the HC does not ensure that through SG,
++	 * the upper layer must do that. We must assume nothing
++	 * about the capabilities off the HC, so we use the most
++	 * pessimistic requirement.
++	 */
++
++	maxp = usb_maxpacket(devinfo->udev, devinfo->data_in_pipe, 0);
++	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
++
++	/*
++	 * The protocol has no requirements on alignment in the strict sense.
++	 * Controllers may or may not have alignment restrictions.
++	 * As this is not exported, we use an extremely conservative guess.
+ 	 */
+ 	blk_queue_update_dma_alignment(sdev->request_queue, (512 - 1));
+ 
 
 
