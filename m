@@ -2,96 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07BCB188B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BD61C945
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfEILLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:11:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41008 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbfEILLr (ORCPT
+        id S1726221AbfENNRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:17:00 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44489 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbfENNQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:11:47 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d12so2449334wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:47 -0700 (PDT)
+        Tue, 14 May 2019 09:16:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b8so22816957edm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qVGkTtEbJGXMDq9yfYbvGEhm0nTx4/Q5KKy9E6G6Uls=;
-        b=Q14zEwAVJ9z1gCyDh7Pvv/+JbG3ARRqKDiD3F+DXQx18zoM6hirJXgkqL3Rz14N6Pk
-         jqPs9miT3a4rOXazdPQRMH/N9XjuF7ir7durm/GwimyvozKXr0rn5XtxS3FsxXcEJzdb
-         o3UflAShf1SFKF3ROszcWoh+Jh5Y3rFcn6BW3Dyj9oHMBSi9ijUGtjKiWFaDrGpbVJcI
-         cxMXl3DKWTIxRGNR7KdaoHTcUYor2syu8T+Kus0ipxh6r1XhGogSgQzSMGmdzzz3DvE2
-         zqlBQ8Rw518/FbDSB2migS9IDBFyJFzASEpS0LA24IulsYf3lWUN4lS2G8W6C9tUCdOs
-         qxkA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HU2OhhRwtLlO2grDKgyXrqHwCvITV5s+KpEjai5SUIw=;
+        b=pbpNOzttqK4OLvPFTIqSdzUugV654BOzlZHH5NQ9Z7kpBCx1qWuscsBsxAyd4NsK7j
+         6VPUqvLJ7vjDmP++FqVqm+6MaJFlGKVPLNT8vz+W99Q1EV4PN+GIxlyl92lRtA81pRKj
+         3T0TlzlT6mva4C57dA8zJSHlPna1eTIj6ox5T/RM1lFRDKuo2j/gdGKfFTNNLIR4YSnT
+         kizeyg38zxZeV4mn6qH+fLm4/A/0m0dh4MGIzAtUAJX7tDZqzV0O3xPbxzdycgvGydsA
+         dtuKic1mbhOBRvcX9K9/qLakrDE7XTwlvWsMFojFQ6KNOW7/kvKR5QDcatVcmDZXLfLF
+         vHsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qVGkTtEbJGXMDq9yfYbvGEhm0nTx4/Q5KKy9E6G6Uls=;
-        b=mwB8xJqs8r040fPkGp1ia3Vnin7jbV0pMHtc5EOeCgmzMhqFOLaucp3qXsy6mM6FPj
-         IAaPHbPa0AQFyzW7IZFVzUXZrE5EYS8T/GXSqHTDq4POvB2e3X6B03qy6CeLaFRraLyS
-         S+5Ld9xEDfdVJC7z//dXQCa+OaSrCJz926WK19GOL7fqlu07k8jLZ9DSrXADbrRMMrO1
-         cFz2qmugXME7JJdWlN4FHgcLpmY1vbpbZhYSdjImh/RgS8Qaghdq51/uExbDZMBs0Tlw
-         sOkRNtLb77fgpplKAR2WJQ4f8zNBan0VDzzTeNqSjCrkufcUA9ex9V57hxXDoiE5Blt/
-         TDqQ==
-X-Gm-Message-State: APjAAAWN+ABT7b3q8pPkQdFKfQ7w1dsqPjCvwBqc4AoH4WP2lV+3TrSQ
-        1WChmH3wtPao6WEwt21ZBA0LYQ==
-X-Google-Smtp-Source: APXvYqxmNseiHG6j6CHViU7MdKt23CuoxFMo6eV7NmQGqMcSLVJs7hdMitKEmQksaHnD5UVv3l6ckw==
-X-Received: by 2002:a5d:448e:: with SMTP id j14mr2738284wrq.158.1557400306306;
-        Thu, 09 May 2019 04:11:46 -0700 (PDT)
-Received: from mai.irit.fr ([141.115.39.235])
-        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HU2OhhRwtLlO2grDKgyXrqHwCvITV5s+KpEjai5SUIw=;
+        b=U50URhjUEFIbxOJ0ANLMAhMsjJJV5xRLHizrcWYOiBajVqBt4Usu9Ihk+oEsP1JVdf
+         pD4beywdQbUefkePLmIvxGcdAD7aEHFKe9ppjGH/lbY7BAzIKipkE52+C3gg8sfl7i9W
+         jjANKmXDMAwwwWnan3z6BY3ddQjmPD5Yj9R5uMC0S9DlIc9YzEW/8+P4/5XgpQVHefsc
+         HYSBfZVOuChF/AtxivCOICSIMcjQ4twIPeTrPoGaPrCWcoVHacmpYZb6Qo9N0QjUxuu5
+         rKC5MAdHvsXQmLmDUE8EsBmeTsw2If71OWoo0A1WdMzquk1Y7QePvPcrn0OLnG9qtdH1
+         yTnw==
+X-Gm-Message-State: APjAAAWfKeVVUYu80CndC52x4+XTA0C6I++FbjvfBv0P4zAe4db8Wfe4
+        Mq5GY8uX4Xbd9sk4GTB8WKYEXrCWSh8Pdw==
+X-Google-Smtp-Source: APXvYqyXwQDHp0jc9m2nkqf+K6yqtJAVQnxaRfUSmtMIwVO3YjSrnZ+KhJJ4X840ZmSEUSXVcVlD+A==
+X-Received: by 2002:aa7:db50:: with SMTP id n16mr35118571edt.108.1557839817293;
+        Tue, 14 May 2019 06:16:57 -0700 (PDT)
+Received: from box.localdomain (mm-137-212-121-178.mgts.dynamic.pppoe.byfly.by. [178.121.212.137])
+        by smtp.gmail.com with ESMTPSA id k4sm4386120edi.80.2019.05.14.06.16.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 04:11:45 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:MICROCHIP TIMER
-        COUNTER (TC) AND CLOCKSOURCE DR...)
-Subject: [PATCH 15/15] misc: atmel_tclib: Do not probe already used TCBs
-Date:   Thu,  9 May 2019 13:10:48 +0200
-Message-Id: <20190509111048.11151-15-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190509111048.11151-1-daniel.lezcano@linaro.org>
-References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
- <20190509111048.11151-1-daniel.lezcano@linaro.org>
+        Tue, 14 May 2019 06:16:53 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id F421110013E; Thu,  9 May 2019 14:13:43 +0300 (+03)
+Date:   Thu, 9 May 2019 14:13:43 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Justin Piszcz <jpiszcz@lucidpixels.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: 5.1 kernel: khugepaged stuck at 100%
+Message-ID: <20190509111343.rvmy5noqlf4os3zk@box>
+References: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Thu, May 09, 2019 at 05:54:56AM -0400, Justin Piszcz wrote:
+> Hello,
+> 
+> Kernel: 5.1 (self-compiled, no modules)
+> Arch: x86_64
+> Distro: Debian Testing
+> 
+> Issue: I was performing a dump of ext3 and ext4 filesystems and then
+> restoring them to a separate volume (testing)-- afterwards I noticed that
+> khugepaged is stuck at 100% CPU. It is currently still stuck at 100% CPU, is
+> there anything I can do to debug what is happening prior to a reboot to work
+> around the issue?  I have never seen this behavior prior to 5.1. 
+> 
+> $ cat /proc/cmdline
+> auto BOOT_IMAGE=5.1.0-2 ro root=901 3w-sas.use_msi=1 nohugeiomap
+> page_poison=1 pcie_aspm=off pti=on rootfstype=ext4 slub_debug=P
+> zram.enabled=1 zram.num_devices=12 zswap.enabled=1 zswap.compressor=lz4
+> zswap.zpool=z3fold
+> 
+> $ 5.1 .config attached: config.txt.gz
+> 
+> $ attachment: graphic.JPG -> graph of the processes, dark green ->
+> khugepaged
+> 
+> $ top
+> 
+>   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>    77 root      39  19       0      0      0 R 100.0   0.0  23:29.27
+> khugepaged
+>     1 root      20   0  171800   7832   4948 S   0.0   0.0   1:25.59 systemd
+>     2 root      20   0       0      0      0 S   0.0   0.0   0:00.02
+> kthreadd
+>     3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+>     4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
+> rcu_par_gp
+>     6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
+> kworker/0+
+>     8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
+> mm_percpu+
+> 
+> Thoughts on debugging / before reboot to clear this up?
 
-The TCBs that have children are using the proper DT bindings and don't need
-to be handled by tclib.
+Could you check what khugepaged doing?
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/misc/atmel_tclib.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/misc/atmel_tclib.c b/drivers/misc/atmel_tclib.c
-index 194f774ab3a1..2c6850ef0e9c 100644
---- a/drivers/misc/atmel_tclib.c
-+++ b/drivers/misc/atmel_tclib.c
-@@ -111,6 +111,9 @@ static int __init tc_probe(struct platform_device *pdev)
- 	struct resource	*r;
- 	unsigned int	i;
- 
-+	if (of_get_child_count(pdev->dev.of_node))
-+		return -EBUSY;
-+
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return -EINVAL;
--- 
-2.17.1
-
+cat /proc/$(pidof khugepaged)/stack
