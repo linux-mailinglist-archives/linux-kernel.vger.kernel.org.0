@@ -2,114 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E7E1890A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18ECE18918
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfEILaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:30:01 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43066 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfEILaA (ORCPT
+        id S1726721AbfEILgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:36:03 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:37903 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfEILgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:30:00 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r3so1975067qtp.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fefsIyQlS+PE1KzrJIi4KuRCpKpBYyPVtYH4pxbYOj8=;
-        b=wALPIkKCc39G4Zkl7NKUawBtHAYQtGjWHx1k3+tbvjSXA+91dfV+Kb0+1XFKKIZQg8
-         2mAwkEAwNFB9ULY2ivgN16hqSC7KnZGaKNzKqacIJUnIhoORA/DDdAXTfbhVunnqRn5M
-         kE1uoGOtMfFzDL567wwUzzZwReiOXGgAiZEisDP/J2TL5h4gTTGAf+EBM9nnYD40zeQB
-         RXtkmbg71Wmzw/qR1biIpmb+dqiCeyc67hV+npuKSANz1Js0YRkJu9WMy7/zXKbmNoeD
-         nDqX2IL/d+R4aGjbeioBqzoNjvCJxptaEQgjh3+Vviz0B8/ibfncRts1g5+RCABe3r9j
-         d9ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fefsIyQlS+PE1KzrJIi4KuRCpKpBYyPVtYH4pxbYOj8=;
-        b=UJbwCDsXQuSrZaIi6zt+YUk6GoXedVufb8lvnek9rIcbVp1Hh/FVIznLKpL9NDwncA
-         67H/RtgpQPLNDddAh7URZB/Wc3epvkp4Er3lM6sE1SyNlDZ0wHdzbnKH4cp2Xl4vE6nm
-         o4Au3rVKiivJ8wLXfG3XPvMl53Zg1FLR1fZ8yd7w0N1vSm+a3K1VsOh2ZWr0Q4zCwrx8
-         hFk7VD3ZZLtr8+xA5wCK2OGWmicxbWQCXMbrWA6+xpdHcZS5rfvRfs0unRM83dM78eft
-         WNrekpcKxqDadgN0/740s3vBetaL39idwLymtkbbU1L87sSAugyylnXzLuQ9u/vBCB0f
-         VyFg==
-X-Gm-Message-State: APjAAAXIne3qx7xNTI/pFgRd3wmUqGzoqZ1MPV140FbrMIL4bDh0NI03
-        V+iNheXOKft05FVYyvHeP6crRsjiwheTcu0qz1gWVQ==
-X-Google-Smtp-Source: APXvYqxhavDoDtncVVFpIMi2Xg5cRbGsIlttaMiV4M0Hm30viC0bzcfLCkHLvFoeZx0WTa6gNj44afmdX5+0JioEY9c=
-X-Received: by 2002:a0c:b99c:: with SMTP id v28mr3054612qvf.10.1557401399660;
- Thu, 09 May 2019 04:29:59 -0700 (PDT)
+        Thu, 9 May 2019 07:36:03 -0400
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x49BZfwU026748;
+        Thu, 9 May 2019 20:35:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x49BZfwU026748
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557401742;
+        bh=PL01WUsmxYOgu3vvcvfxyKA3luTzFek4V3LVb2hS7LE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Zl3JG7WtdomkCaZilW11XTnQ8h60XrG3uZ1n/QNohO1lekita6uGX7GZJ5jsCdbgu
+         snBJ21Ip5+rIyCps+V4HRHMgc+12Ww9rAOBtlUnsb0sqe4BX2luFe+MAFqGVPBg7Ct
+         JrMtq7kryfgO1uxwAwfGxrQH+dA6g84kOoX9dmOFVrDplCFi1v59cTVnpS8M1uUNiz
+         MGLPx7Q1lsVN1Oyn8DTgJTWDwAUDSXlIEhlx5fpS8J1Y3haRHLyLeonwPZXzoiFNYj
+         2kX3FqWbzuJ2tBxVPVKQq2sAR9Dr48c1UIeuDw3G1KrecSA7Un9I1/y9J0604w5eLz
+         6w9YFmuxylsLw==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id g187so1179276vsc.8;
+        Thu, 09 May 2019 04:35:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAVzC+DVcCgaauI/TShSEQSCmE98neO3plPooYnldks4UurQIvb/
+        qCf1rMLtU/VU/YGVw3Ji7SyD6ocWzTrJ9UL5Q8U=
+X-Google-Smtp-Source: APXvYqz43z6deMTelju4IlQu5Tc9PL6TkjY78McJ94t4eOCDAyZwLfGsNngbI9QUWmS6JshI9Y4ds/CNXiA7mo1hHcM=
+X-Received: by 2002:a67:fd89:: with SMTP id k9mr1943399vsq.54.1557401741466;
+ Thu, 09 May 2019 04:35:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190423092810.28359-1-jian-hong@endlessm.com>
- <155613593248.25205.769591454199358982@skylake-alporthouse-com> <15be67b19d898ab74c9ae6d9d9080ef339772e00.camel@intel.com>
-In-Reply-To: <15be67b19d898ab74c9ae6d9d9080ef339772e00.camel@intel.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Thu, 9 May 2019 19:29:48 +0800
-Message-ID: <CAD8Lp462rLGnnTLCSOoMWwU37bxCk1cznsw8==Z8AgumeqHXkQ@mail.gmail.com>
-Subject: Re: [PATCH] i915: disable framebuffer compression on GeminiLake
-To:     Paulo Zanoni <paulo.r.zanoni@intel.com>
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
+References: <20190509064455.1173-1-yamada.masahiro@socionext.com> <20190509111534.GA32696@archlinux-i9>
+In-Reply-To: <20190509111534.GA32696@archlinux-i9>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 9 May 2019 20:35:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASpsid7_sh4rdRNSTwZ1YtW_+uH2eoarJNNUttntQZ-kg@mail.gmail.com>
+Message-ID: <CAK7LNASpsid7_sh4rdRNSTwZ1YtW_+uH2eoarJNNUttntQZ-kg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add most of Clang-specific flags unconditionally
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi.
 
-
-On Thu, Apr 25, 2019 at 4:27 AM Paulo Zanoni <paulo.r.zanoni@intel.com> wro=
-te:
+On Thu, May 9, 2019 at 8:15 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
-> Em qua, 2019-04-24 =C3=A0s 20:58 +0100, Chris Wilson escreveu:
-> > Quoting Jian-Hong Pan (2019-04-23 10:28:10)
-> > > From: Daniel Drake <drake@endlessm.com>
-> > >
-> > > On many (all?) the Gemini Lake systems we work with, there is frequen=
-t
-> > > momentary graphical corruption at the top of the screen, and it seems
-> > > that disabling framebuffer compression can avoid this.
-> > >
-> > > The ticket was reported 6 months ago and has already affected a
-> > > multitude of users, without any real progress being made. So, lets
-> > > disable framebuffer compression on GeminiLake until a solution is fou=
-nd.
-> > >
-> > > Buglink: https://bugs.freedesktop.org/show_bug.cgi?id=3D108085
-> > > Signed-off-by: Daniel Drake <drake@endlessm.com>
-> > > Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> On Thu, May 09, 2019 at 03:44:55PM +0900, Masahiro Yamada wrote:
+> > We do not support old Clang versions. Upgrade your clang version
+> > if any of these flags is unsupported.
 > >
-> > Fixes: fd7d6c5c8f3e ("drm/i915: enable FBC on gen9+ too") ?
-> > Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > Cc: <stable@vger.kernel.org> # v4.11+
+> > Let's add flags within ifdef CONFIG_CC_IS_CLANG unconditionally,
+> > except -fcatch-undefined-behavior.
 > >
-> > glk landed 1 month before, so that seems the earliest broken point.
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
 > >
+> >  Makefile                   | 10 +++++-----
+> >  scripts/Makefile.extrawarn | 12 ++++++------
+> >  2 files changed, 11 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index bd7ae11947cb..c71ffb6f55b5 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -731,15 +731,15 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
+> >  KBUILD_CFLAGS += $(stackp-flags-y)
+> >
+> >  ifdef CONFIG_CC_IS_CLANG
+> > -KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+> > -KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+> > -KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> > +KBUILD_CPPFLAGS += -Qunused-arguments
+> > +KBUILD_CFLAGS += -Wno-format-invalid-specifier
+> > +KBUILD_CFLAGS += -Wno-gnu
+> >  # Quiet clang warning: comparison of unsigned expression < 0 is always false
+> > -KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+> > +KBUILD_CFLAGS += -Wno-tautological-compare
+> >  # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+> >  # source of a reference will be _MergedGlobals and not on of the whitelisted names.
+> >  # See modpost pattern 2
+> > -KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+> > +KBUILD_CFLAGS += -mno-global-merge
+> >  KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
 >
-> The bug is well reported, the bug author is helpful and it even has a
-> description of "steps to reproduce" that looks very easy (although I
-> didn't try it). Everything suggests this is a bug the display team
-> could actually solve with not-so-many hours of debugging.
+> I think we should just remove this, I'm fairly confident the kernel
+> can't be reliably compiled with anything earlier than Clang 4 (Pixel 2
+> was shipped with it but had some hacks, this commit is from Clang 3.5):
 >
-> In the meantime, unbreak the systems:
-> Reviewed-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
+> https://github.com/llvm/llvm-project/commit/cb3f812b6b9fab8f3b41414f24e90222170417b4
 
-Quick ping here. Any further comments on this patch? Can it be applied?
 
-Thanks
-Daniel
+Oh, I did not know this was deprecated.
+
+Could you send a patch to remove it
+with filling the commit log ?
+
+
+Thanks.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
