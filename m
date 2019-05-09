@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013F01913F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA138191A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbfEISyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:54:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49590 "EHLO mail.kernel.org"
+        id S1728877AbfEIS5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:57:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729110AbfEISyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:54:41 -0400
+        id S1728945AbfEISxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6DD7204FD;
-        Thu,  9 May 2019 18:54:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 459ED217D6;
+        Thu,  9 May 2019 18:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428081;
-        bh=AvzCBlu9b21RH+Bn5XnyCH1lsWQ02IjRZ9x6cTTvQXM=;
+        s=default; t=1557428028;
+        bh=M/WflKJ18bUUTjs4bfqR6PSZ0fvoLlGIFcH8OVmjCno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QRTslW1G8pLPTB17HhY6LZGSEu+M7eJhC2oAnjSgOCH0WM4oIuCf2wWQYebIacqJ+
-         JWNaA7dfNAWT2HfUqJtQG+vTTW+/2f2bOt32CcThjeQXt3YFiGT614CUT6Y0HRxCoN
-         oKjNNd/ivTotlrA4SBmijrkQ7fpwzToEfpW1vl3E=
+        b=gj5VXeE/cLonRAG/6WopegWBQfw6kA3W6tKpSincKQ5hL4soJ/yjiBsPC5ez8XoXV
+         8Id9oCSDG0HdC1EPQyuUSQ7SoiswNg1Txm3dlvEWu6Lv9cA9aI6QrfRNnsq162xGfr
+         mPvK+IspiSOut3pXXDE0J6QhW1My6LfBG7dR06KE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Vasquez <andrewv@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.1 19/30] scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
-Date:   Thu,  9 May 2019 20:42:51 +0200
-Message-Id: <20190509181254.999527801@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 5.0 95/95] arm64: futex: Bound number of LDXR/STXR loops in FUTEX_WAKE_OP
+Date:   Thu,  9 May 2019 20:42:52 +0200
+Message-Id: <20190509181315.815947588@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +43,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Vasquez <andrewv@marvell.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 5cbdae10bf11f96e30b4d14de7b08c8b490e903c upstream.
+commit 03110a5cb2161690ae5ac04994d47ed0cd6cef75 upstream.
 
-Commit e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs
-code") incorrectly set 'optrom_region_size' to 'start+size', which can
-overflow option-rom boundaries when 'start' is non-zero.  Continue setting
-optrom_region_size to the proper adjusted value of 'size'.
+Our futex implementation makes use of LDXR/STXR loops to perform atomic
+updates to user memory from atomic context. This can lead to latency
+problems if we end up spinning around the LL/SC sequence at the expense
+of doing something useful.
 
-Fixes: e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Vasquez <andrewv@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Rework our futex atomic operations so that we return -EAGAIN if we fail
+to update the futex word after 128 attempts. The core futex code will
+reschedule if necessary and we'll try again later.
+
+Cc: <stable@kernel.org>
+Fixes: 6170a97460db ("arm64: Atomic operations")
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_attr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/futex.h |   55 +++++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 21 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -364,7 +364,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
+--- a/arch/arm64/include/asm/futex.h
++++ b/arch/arm64/include/asm/futex.h
+@@ -23,26 +23,34 @@
  
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
+ #include <asm/errno.h>
  
- 		ha->optrom_state = QLA_SREADING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
-@@ -437,7 +437,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
++#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
++
+ #define __futex_atomic_op(insn, ret, oldval, uaddr, tmp, oparg)		\
+ do {									\
++	unsigned int loops = FUTEX_MAX_LOOPS;				\
++									\
+ 	uaccess_enable();						\
+ 	asm volatile(							\
+ "	prfm	pstl1strm, %2\n"					\
+ "1:	ldxr	%w1, %2\n"						\
+ 	insn "\n"							\
+ "2:	stlxr	%w0, %w3, %2\n"						\
+-"	cbnz	%w0, 1b\n"						\
+-"	dmb	ish\n"							\
++"	cbz	%w0, 3f\n"						\
++"	sub	%w4, %w4, %w0\n"					\
++"	cbnz	%w4, 1b\n"						\
++"	mov	%w0, %w7\n"						\
+ "3:\n"									\
++"	dmb	ish\n"							\
+ "	.pushsection .fixup,\"ax\"\n"					\
+ "	.align	2\n"							\
+-"4:	mov	%w0, %w5\n"						\
++"4:	mov	%w0, %w6\n"						\
+ "	b	3b\n"							\
+ "	.popsection\n"							\
+ 	_ASM_EXTABLE(1b, 4b)						\
+ 	_ASM_EXTABLE(2b, 4b)						\
+-	: "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp)	\
+-	: "r" (oparg), "Ir" (-EFAULT)					\
++	: "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp),	\
++	  "+r" (loops)							\
++	: "r" (oparg), "Ir" (-EFAULT), "Ir" (-EAGAIN)			\
+ 	: "memory");							\
+ 	uaccess_disable();						\
+ } while (0)
+@@ -57,23 +65,23 @@ arch_futex_atomic_op_inuser(int op, int
  
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
+ 	switch (op) {
+ 	case FUTEX_OP_SET:
+-		__futex_atomic_op("mov	%w3, %w4",
++		__futex_atomic_op("mov	%w3, %w5",
+ 				  ret, oldval, uaddr, tmp, oparg);
+ 		break;
+ 	case FUTEX_OP_ADD:
+-		__futex_atomic_op("add	%w3, %w1, %w4",
++		__futex_atomic_op("add	%w3, %w1, %w5",
+ 				  ret, oldval, uaddr, tmp, oparg);
+ 		break;
+ 	case FUTEX_OP_OR:
+-		__futex_atomic_op("orr	%w3, %w1, %w4",
++		__futex_atomic_op("orr	%w3, %w1, %w5",
+ 				  ret, oldval, uaddr, tmp, oparg);
+ 		break;
+ 	case FUTEX_OP_ANDN:
+-		__futex_atomic_op("and	%w3, %w1, %w4",
++		__futex_atomic_op("and	%w3, %w1, %w5",
+ 				  ret, oldval, uaddr, tmp, ~oparg);
+ 		break;
+ 	case FUTEX_OP_XOR:
+-		__futex_atomic_op("eor	%w3, %w1, %w4",
++		__futex_atomic_op("eor	%w3, %w1, %w5",
+ 				  ret, oldval, uaddr, tmp, oparg);
+ 		break;
+ 	default:
+@@ -93,6 +101,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
+ 			      u32 oldval, u32 newval)
+ {
+ 	int ret = 0;
++	unsigned int loops = FUTEX_MAX_LOOPS;
+ 	u32 val, tmp;
+ 	u32 __user *uaddr;
  
- 		ha->optrom_state = QLA_SWRITING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
+@@ -104,20 +113,24 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
+ 	asm volatile("// futex_atomic_cmpxchg_inatomic\n"
+ "	prfm	pstl1strm, %2\n"
+ "1:	ldxr	%w1, %2\n"
+-"	sub	%w3, %w1, %w4\n"
+-"	cbnz	%w3, 3f\n"
+-"2:	stlxr	%w3, %w5, %2\n"
+-"	cbnz	%w3, 1b\n"
+-"	dmb	ish\n"
++"	sub	%w3, %w1, %w5\n"
++"	cbnz	%w3, 4f\n"
++"2:	stlxr	%w3, %w6, %2\n"
++"	cbz	%w3, 3f\n"
++"	sub	%w4, %w4, %w3\n"
++"	cbnz	%w4, 1b\n"
++"	mov	%w0, %w8\n"
+ "3:\n"
++"	dmb	ish\n"
++"4:\n"
+ "	.pushsection .fixup,\"ax\"\n"
+-"4:	mov	%w0, %w6\n"
+-"	b	3b\n"
++"5:	mov	%w0, %w7\n"
++"	b	4b\n"
+ "	.popsection\n"
+-	_ASM_EXTABLE(1b, 4b)
+-	_ASM_EXTABLE(2b, 4b)
+-	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp)
+-	: "r" (oldval), "r" (newval), "Ir" (-EFAULT)
++	_ASM_EXTABLE(1b, 5b)
++	_ASM_EXTABLE(2b, 5b)
++	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp), "+r" (loops)
++	: "r" (oldval), "r" (newval), "Ir" (-EFAULT), "Ir" (-EAGAIN)
+ 	: "memory");
+ 	uaccess_disable();
+ 
 
 
