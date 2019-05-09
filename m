@@ -2,86 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93CE818323
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70AF41832C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfEIBJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 21:09:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfEIBJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 21:09:43 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F606214AF;
-        Thu,  9 May 2019 01:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557364182;
-        bh=a0Fe5iOq9yzYPB9phD7q6sNgTD0wMUOBXAkPMDa6OKI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pmbTsB9zmMA2lVN4aLELutZP8sm8eZbR74fGwDtUcpF7lHe8mFm8sNaSlf5QYzCAE
-         xT2gE18I1auYIrqQsa882Aifj21EAzWJVHnMYXFcbvBst6MNWocM9SJIlt/MKB2VTw
-         EYcm1wMWHhlRUwyKdjGFyTo7nvHw9H5kvytIiC/U=
-Date:   Wed, 8 May 2019 21:09:41 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Subject: Re: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for
- lsvmbus
-Message-ID: <20190509010941.GT1747@sasha-vm>
-References: <20190506172737.18122-1-avladu@cloudbasesolutions.com>
- <20190506173331.18906-1-avladu@cloudbasesolutions.com>
- <PU1P153MB016957AD2B1C356FA1BFB1A8BF310@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        id S1726568AbfEIBP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 21:15:56 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3005 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725832AbfEIBPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 21:15:55 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id B279296CE9A30478F184;
+        Thu,  9 May 2019 09:15:53 +0800 (CST)
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 9 May 2019 09:15:53 +0800
+Received: from [10.134.22.195] (10.134.22.195) by
+ dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 9 May 2019 09:15:52 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity with enabled features
+ in image
+From:   Chao Yu <yuchao0@huawei.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190424094850.118323-1-yuchao0@huawei.com>
+ <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
+ <373f4633-d331-5cf3-74b7-e982072bc4b4@kernel.org>
+ <20190501032242.GA84420@jaegeuk-macbookpro.roam.corp.google.com>
+ <3f170d86-e556-13ae-ce19-3bba3944f5fa@huawei.com>
+Message-ID: <192bae92-2193-570f-7b50-00334271bd2e@huawei.com>
+Date:   Thu, 9 May 2019 09:15:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <PU1P153MB016957AD2B1C356FA1BFB1A8BF310@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3f170d86-e556-13ae-ce19-3bba3944f5fa@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-ClientProxiedBy: dggeme702-chm.china.huawei.com (10.1.199.98) To
+ dggeme763-chm.china.huawei.com (10.3.19.109)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 05:02:47AM +0000, Dexuan Cui wrote:
->> From: Adrian Vladu <avladu@cloudbasesolutions.com>
->> Sent: Monday, May 6, 2019 10:34 AM
->> To: linux-kernel@vger.kernel.org
->> Cc: Adrian Vladu <avladu@cloudbasesolutions.com>; KY Srinivasan
->> <kys@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; Stephen
->> Hemminger <sthemmin@microsoft.com>; Sasha Levin <sashal@kernel.org>;
->> Dexuan Cui <decui@microsoft.com>; Alessandro Pilotti
->> <apilotti@cloudbasesolutions.com>
->> Subject: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for lsvmbus
+On 2019/5/5 10:51, Chao Yu wrote:
+> On 2019/5/1 11:22, Jaegeuk Kim wrote:
+>> On 04/29, Chao Yu wrote:
+>>> On 2019-4-28 21:38, Jaegeuk Kim wrote:
+>>>> On 04/24, Chao Yu wrote:
+>>>>> This patch fixes to do sanity with enabled features in image, if
+>>>>> there are features kernel can not recognize, just fail the mount.
+>>>>
+>>>> We need to figure out per-feature-based rejection, since some of them can
+>>>> be set without layout change.
+>>>
+>>> So any suggestion on how to implement this?
 >>
->> Fixed pep8/flake8 python style code for lsvmbus tool.
->>
->> The TAB indentation was on purpose ignored (pep8 rule W191) to make
->> sure the code is complying with the Linux code guideline.
->> The following command do not show any warnings now:
->> pep8 --ignore=W191 lsvmbus
->> flake8 --ignore=W191 lsvmbus
->>
->> Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
->>
->> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
->> Cc: Haiyang Zhang <haiyangz@microsoft.com>
->> Cc: Stephen Hemminger <sthemmin@microsoft.com>
->> Cc: Sasha Levin <sashal@kernel.org>
->> Cc: Dexuan Cui <decui@microsoft.com>
->> Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-[...]
->Looks good to me. Thanks, Adrian!
->
->Reviewed-by: Dexuan Cui <decui@microsoft.com>
+>> Which features do we need to disallow? When we introduce new features, they
+> 
+> I guess it should be the new features.
+> 
+>> didn't hurt the previous flow by checking f2fs_sb_has_###().
+> 
+> Yes, but new features may use new disk layout, if old kernel handled it with old
+> disk layout, there must be problematic.
+> 
+> e.g. format image with -O extra_attr, and mount it with kernel who don't
+> recognize new inode layout.
 
-Queued for hyperv-fixes, thanks!
+Jaegeuk,
 
---
+Any thoughts?
+
 Thanks,
-Sasha
+
+> 
+> Thanks,
+> 
+>>
+>>>
+>>> Maybe:
+>>>
+>>> if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
+>>> 	check 4.14+ features
+>>> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+>>> 	check 4.9+ features
+>>> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
+>>> 	check 4.4+ features
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>> ---
+>>>>>  fs/f2fs/f2fs.h  | 13 +++++++++++++
+>>>>>  fs/f2fs/super.c |  9 +++++++++
+>>>>>  2 files changed, 22 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>> index f5ffc09705eb..15b640967e12 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -151,6 +151,19 @@ struct f2fs_mount_info {
+>>>>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>>>>  #define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>>>>  
+>>>>> +#define F2FS_ALL_FEATURES	(F2FS_FEATURE_ENCRYPT |			\
+>>>>> +				F2FS_FEATURE_BLKZONED |			\
+>>>>> +				F2FS_FEATURE_ATOMIC_WRITE |		\
+>>>>> +				F2FS_FEATURE_EXTRA_ATTR |		\
+>>>>> +				F2FS_FEATURE_PRJQUOTA |			\
+>>>>> +				F2FS_FEATURE_INODE_CHKSUM |		\
+>>>>> +				F2FS_FEATURE_FLEXIBLE_INLINE_XATTR |	\
+>>>>> +				F2FS_FEATURE_QUOTA_INO |		\
+>>>>> +				F2FS_FEATURE_INODE_CRTIME |		\
+>>>>> +				F2FS_FEATURE_LOST_FOUND |		\
+>>>>> +				F2FS_FEATURE_VERITY |			\
+>>>>> +				F2FS_FEATURE_SB_CHKSUM)
+>>>>> +
+>>>>>  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+>>>>>  	((raw_super->feature & cpu_to_le32(mask)) != 0)
+>>>>>  #define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index 4f8e9ab48b26..57f2fc6d14ba 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -2573,6 +2573,15 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>>>>  		return 1;
+>>>>>  	}
+>>>>>  
+>>>>> +	/* check whether kernel supports all features */
+>>>>> +	if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
+>>>>> +		f2fs_msg(sb, KERN_INFO,
+>>>>> +			"Unsupported feature:%u: supported:%u",
+>>>>> +			le32_to_cpu(raw_super->feature),
+>>>>> +			F2FS_ALL_FEATURES);
+>>>>> +		return 1;
+>>>>> +	}
+>>>>> +
+>>>>>  	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+>>>>>  	if (sanity_check_area_boundary(sbi, bh))
+>>>>>  		return 1;
+>>>>> -- 
+>>>>> 2.18.0.rc1
+>> .
+>>
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> .
+> 
