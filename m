@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0EBD1920F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B95EC19163
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfEITDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:03:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42660 "EHLO mail.kernel.org"
+        id S1729186AbfEISzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:55:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726764AbfEIStW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:49:22 -0400
+        id S1729169AbfEISzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:55:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6773320578;
-        Thu,  9 May 2019 18:49:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF05C204FD;
+        Thu,  9 May 2019 18:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427761;
-        bh=m5v/VQDEu53kIn8smOqM7gN/gtLhfkr4W9EBM+BYU1s=;
+        s=default; t=1557428105;
+        bh=zQzmm6dj+EOCZ8ur2FIbwdpP9bU2WnuSLDZZiJSOEa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d/oWImlQrN9mLvwiEBinU0g2/UkYhTlcZUn2NA7B490WerHTcaubt/Suw6G/5DKwr
-         gTg34Y8enAu7XdvMgrrxMagFqubThmDOs98XvATrMQWY9VfYuZxDBJwUbnpxhw0bKi
-         7ULg1vD6M72v8Kg06n6lwwqacyUCCb6dw/DvRu6g=
+        b=AqKbz9PV0477e/BWPISKe/5FosCirUG3L1P1sSe67jL4qaohkdSMnZ9xdDLJjYtVx
+         WFIMjgXzBrS7mwMU92gnNxPSXpkpYiivJTmgJHEhetsdv2m7048KYPkkJdcysOMYS3
+         RhiR9SCTI9R5i9I/dXL+nS52mBQSzAdEPWbObYN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.19 61/66] Bluetooth: hidp: fix buffer overflow
-Date:   Thu,  9 May 2019 20:42:36 +0200
-Message-Id: <20190509181307.845881067@linuxfoundation.org>
+        stable@vger.kernel.org, Suresh Udipi <sudipi@jp.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Christian Gromm <christian.gromm@microchip.com>
+Subject: [PATCH 5.1 05/30] staging: most: cdev: fix chrdev_region leak in mod_exit
+Date:   Thu,  9 May 2019 20:42:37 +0200
+Message-Id: <20190509181251.856587212@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
+References: <20190509181250.417203112@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Young Xiao <YangX92@hotmail.com>
+From: Suresh Udipi <sudipi@jp.adit-jv.com>
 
-commit a1616a5ac99ede5d605047a9012481ce7ff18b16 upstream.
+commit af708900e9a48c0aa46070c8a8cdf0608a1d2025 upstream.
 
-Struct ca is copied from userspace. It is not checked whether the "name"
-field is NULL terminated, which allows local users to obtain potentially
-sensitive information from kernel stack memory, via a HIDPCONNADD command.
+It looks like v4.18-rc1 commit [0] which upstreams mld-1.8.0
+commit [1] missed to fix the memory leak in mod_exit function.
 
-This vulnerability is similar to CVE-2011-1079.
+Do it now.
 
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: stable@vger.kernel.org
+[0] aba258b7310167 ("staging: most: cdev: fix chrdev_region leak")
+[1] https://github.com/microchip-ais/linux/commit/a2d8f7ae7ea381
+    ("staging: most: cdev: fix leak for chrdev_region")
+
+Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Acked-by: Christian Gromm <christian.gromm@microchip.com>
+Fixes: aba258b73101 ("staging: most: cdev: fix chrdev_region leak")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/hidp/sock.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/most/cdev/cdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/bluetooth/hidp/sock.c
-+++ b/net/bluetooth/hidp/sock.c
-@@ -76,6 +76,7 @@ static int hidp_sock_ioctl(struct socket
- 			sockfd_put(csock);
- 			return err;
- 		}
-+		ca.name[sizeof(ca.name)-1] = 0;
- 
- 		err = hidp_connection_add(&ca, csock, isock);
- 		if (!err && copy_to_user(argp, &ca, sizeof(ca)))
+--- a/drivers/staging/most/cdev/cdev.c
++++ b/drivers/staging/most/cdev/cdev.c
+@@ -549,7 +549,7 @@ static void __exit mod_exit(void)
+ 		destroy_cdev(c);
+ 		destroy_channel(c);
+ 	}
+-	unregister_chrdev_region(comp.devno, 1);
++	unregister_chrdev_region(comp.devno, CHRDEV_REGION_SIZE);
+ 	ida_destroy(&comp.minor_id);
+ 	class_destroy(comp.class);
+ }
 
 
