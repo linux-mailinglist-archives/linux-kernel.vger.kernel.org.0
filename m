@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D4E19102
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED6019271
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfEISv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:51:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
+        id S1727381AbfEISpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:45:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728622AbfEISvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:51:53 -0400
+        id S1726802AbfEISpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:45:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36970217F9;
-        Thu,  9 May 2019 18:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C617217F5;
+        Thu,  9 May 2019 18:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427912;
-        bh=dSHJXIz/MW86AFCCyrvKfJ7DdGXaV0Y39LUssTUxtNk=;
+        s=default; t=1557427535;
+        bh=vF+lWQtoC6+UM7ZibawzX9nioyvhBcNcaLQEhoJC92I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3GQEPQQ47Q/xMFF9pON0gz/m3a9vJW2Y/Nm+LoeZmWll1ctPdjq5cJ08JVbhN7Zn
-         4n/2ipfhttDXatyb6tGb44+I8F7wBr4I4vRAmXEnXATk7g6qp4Zu56rv/P6WU0arF+
-         5sf2Y3hiGAec3xZ5p8IL+N9vPRlJCIIqndR5FvCk=
+        b=XcULc3VM9BSqD0Kb7E/vYLGAOHHke+ATKw+8cBS3gfNsXo9HorXo2mn1PJYkqHJ9K
+         Uhgi5GKA5htodJR4PMrM2TPnrSc9ZawMKmekn2nHQHzRhFRlXokrKXAh2ssyuuxg2M
+         /iCe2GwgrhcMTy9ADj6DPukWwupBQOcosJSnesKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gonglei <arei.gonglei@huawei.com>,
-        Longpeng <longpeng2@huawei.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 50/95] virtio_pci: fix a NULL pointer reference in vp_del_vqs
-Date:   Thu,  9 May 2019 20:42:07 +0200
-Message-Id: <20190509181312.985579071@linuxfoundation.org>
+Subject: [PATCH 4.14 19/42] xtensa: fix initialization of pt_regs::syscall in start_thread
+Date:   Thu,  9 May 2019 20:42:08 +0200
+Message-Id: <20190509181256.614576168@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
+References: <20190509181252.616018683@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6a8aae68c87349dbbcd46eac380bc43cdb98a13b ]
+[ Upstream commit 2663147dc7465cb29040a05cc4286fdd839978b5 ]
 
-If the msix_affinity_masks is alloced failed, then we'll
-try to free some resources in vp_free_vectors() that may
-access it directly.
+New pt_regs should indicate that there's no syscall, not that there's
+syscall #0. While at it wrap macro body in do/while and parenthesize
+macro arguments.
 
-We met the following stack in our production:
-[   29.296767] BUG: unable to handle kernel NULL pointer dereference at  (null)
-[   29.311151] IP: [<ffffffffc04fe35a>] vp_free_vectors+0x6a/0x150 [virtio_pci]
-[   29.324787] PGD 0
-[   29.333224] Oops: 0000 [#1] SMP
-[...]
-[   29.425175] RIP: 0010:[<ffffffffc04fe35a>]  [<ffffffffc04fe35a>] vp_free_vectors+0x6a/0x150 [virtio_pci]
-[   29.441405] RSP: 0018:ffff9a55c2dcfa10  EFLAGS: 00010206
-[   29.453491] RAX: 0000000000000000 RBX: ffff9a55c322c400 RCX: 0000000000000000
-[   29.467488] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9a55c322c400
-[   29.481461] RBP: ffff9a55c2dcfa20 R08: 0000000000000000 R09: ffffc1b6806ff020
-[   29.495427] R10: 0000000000000e95 R11: 0000000000aaaaaa R12: 0000000000000000
-[   29.509414] R13: 0000000000010000 R14: ffff9a55bd2d9e98 R15: ffff9a55c322c400
-[   29.523407] FS:  00007fdcba69f8c0(0000) GS:ffff9a55c2840000(0000) knlGS:0000000000000000
-[   29.538472] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   29.551621] CR2: 0000000000000000 CR3: 000000003ce52000 CR4: 00000000003607a0
-[   29.565886] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   29.580055] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   29.594122] Call Trace:
-[   29.603446]  [<ffffffffc04fe8a2>] vp_request_msix_vectors+0xe2/0x260 [virtio_pci]
-[   29.618017]  [<ffffffffc04fedc5>] vp_try_to_find_vqs+0x95/0x3b0 [virtio_pci]
-[   29.632152]  [<ffffffffc04ff117>] vp_find_vqs+0x37/0xb0 [virtio_pci]
-[   29.645582]  [<ffffffffc057bf63>] init_vq+0x153/0x260 [virtio_blk]
-[   29.658831]  [<ffffffffc057c1e8>] virtblk_probe+0xe8/0x87f [virtio_blk]
-[...]
-
-Cc: Gonglei <arei.gonglei@huawei.com>
-Signed-off-by: Longpeng <longpeng2@huawei.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Gonglei <arei.gonglei@huawei.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/virtio/virtio_pci_common.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/xtensa/include/asm/processor.h | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index d0584c040c60f..7a0398bb84f77 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -255,9 +255,11 @@ void vp_del_vqs(struct virtio_device *vdev)
- 	for (i = 0; i < vp_dev->msix_used_vectors; ++i)
- 		free_irq(pci_irq_vector(vp_dev->pci_dev, i), vp_dev);
+diff --git a/arch/xtensa/include/asm/processor.h b/arch/xtensa/include/asm/processor.h
+index a39cd81b741ad..3a0a8a53f2e72 100644
+--- a/arch/xtensa/include/asm/processor.h
++++ b/arch/xtensa/include/asm/processor.h
+@@ -195,15 +195,18 @@ struct thread_struct {
  
--	for (i = 0; i < vp_dev->msix_vectors; i++)
--		if (vp_dev->msix_affinity_masks[i])
--			free_cpumask_var(vp_dev->msix_affinity_masks[i]);
-+	if (vp_dev->msix_affinity_masks) {
-+		for (i = 0; i < vp_dev->msix_vectors; i++)
-+			if (vp_dev->msix_affinity_masks[i])
-+				free_cpumask_var(vp_dev->msix_affinity_masks[i]);
-+	}
+ /* Clearing a0 terminates the backtrace. */
+ #define start_thread(regs, new_pc, new_sp) \
+-	memset(regs, 0, sizeof(*regs)); \
+-	regs->pc = new_pc; \
+-	regs->ps = USER_PS_VALUE; \
+-	regs->areg[1] = new_sp; \
+-	regs->areg[0] = 0; \
+-	regs->wmask = 1; \
+-	regs->depc = 0; \
+-	regs->windowbase = 0; \
+-	regs->windowstart = 1;
++	do { \
++		memset((regs), 0, sizeof(*(regs))); \
++		(regs)->pc = (new_pc); \
++		(regs)->ps = USER_PS_VALUE; \
++		(regs)->areg[1] = (new_sp); \
++		(regs)->areg[0] = 0; \
++		(regs)->wmask = 1; \
++		(regs)->depc = 0; \
++		(regs)->windowbase = 0; \
++		(regs)->windowstart = 1; \
++		(regs)->syscall = NO_SYSCALL; \
++	} while (0)
  
- 	if (vp_dev->msix_enabled) {
- 		/* Disable the vector used for configuration */
+ /* Forward declaration */
+ struct task_struct;
 -- 
 2.20.1
 
