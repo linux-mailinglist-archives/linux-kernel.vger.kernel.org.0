@@ -2,142 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04FB118398
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D951839F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfEICOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 22:14:04 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36998 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfEICOD (ORCPT
+        id S1726597AbfEICQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 22:16:09 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34002 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfEICQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 22:14:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g3so437300pfi.4;
-        Wed, 08 May 2019 19:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=m2h4qfOyf/vTBN3ksTZ+p+B5Uh42DjnmBaKteMIQJDg=;
-        b=d6Fl21d6H9hguqCIk66KfQTbpzIqdRCUj3hyqEHsDnZWMFK8wQPsR7wgx3oa+G2kjG
-         1seT91f0+lIwQZd84COg8BT3K9ELnhDM30SHEOrlnvKeE7/5VX5u1W/8fgPsbHGyE+tg
-         N1mbck/bnevbonwY9JDeI4wL+fVc6yDfWWKPjYGMVo+t1urDbbw17h12P2lsuAick9RL
-         +tTl21ycCYmhS8aq1IQN4QtpicNviaYVVDhPWJWCkKNQi57gYY8h3oQc9YLQvbqDRawh
-         S+/psk+LuYFrjp041aE4v+E+1oI4xE/yaxSeWSVYuo1fFT8XcryTFla0UCjHS8CZoXbN
-         /oeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=m2h4qfOyf/vTBN3ksTZ+p+B5Uh42DjnmBaKteMIQJDg=;
-        b=a7fncWhP6kjwsAbhSo1YWP0/rHwq/XMQuuQXXr46s42tQEcjL5MpAPnwfamFge9o24
-         j+kx6dYi0h/zZqWI7fu1pyDT/A/TNw+XIc2Sd4rLtZFLcYmef8A+E2pmueF9IZ7UvE4B
-         tRmA9rOJsjqwiS9yw1LS/KIaBbROhV5tam5IVWWFJHRNdZQBx9FdBrBMotf7lGp6OQDw
-         78s8GC2X+if4VyTgTp+erjrOVF1Fe5g4LED91vaixGF9EDDei34zNZbWhycsK2ymo3JV
-         c3Ac9U8r0xbU0DhKe+QN0KqXX0FlD5B9ja1oDwCTenEQ+vMDqssu3C8FtV6/7Dj8msTm
-         VA8A==
-X-Gm-Message-State: APjAAAXE8x9H0Sma10zb7yq2/rd+v+hTRzAcy2H9kI7d74mmm1Z04r35
-        9OEsiKPoevvCVzxHWt6tavI=
-X-Google-Smtp-Source: APXvYqzL/TN1nN9Ct8HQ4wtcFHZZcQhp0SvsSuj3cK4ro/YW06pExZSQlXbu2Pcfe+Xz4ExfmkwqHw==
-X-Received: by 2002:a63:b64:: with SMTP id a36mr2188141pgl.58.1557368042377;
-        Wed, 08 May 2019 19:14:02 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id a17sm668823pff.82.2019.05.08.19.13.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 19:14:01 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
- <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
- <20190509015856.GB7031@mit.edu>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
-Date:   Wed, 8 May 2019 19:13:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 8 May 2019 22:16:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x492926g185076;
+        Thu, 9 May 2019 02:14:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=IFDV7oPHgoa3Ih86T8SrYHUlKrBp0rVil4J7SjjEnq8=;
+ b=l1ti1/vq9RYRfqG4TXh3uEJ9l8V9l2ddSKNVAvSd1VkNDAIGWEMHX8sYG1gb7wKohm0k
+ uVCRnIa3r5bCZsZX7aRBDROCUm5UDFb6/PcPbneGoZ760szAN1EKTFAtqXcjA93Rfbm6
+ 9qrg9yQidCthE0+sI0C1Rybs1Gv9dSqk57qgrHf63ptU7WcH3JtB8g+o0BViu/fuqFki
+ jC7YMn9JynILYGNo0UMeMNl15qrxc5Wln2fAjMazWLUI+YsxxF9JpaiqceRzRj8Q12rt
+ oH7LdXYcWfnsogDRlttgYALuxWj+YWSQB1kAI8d4iHxAWGyZnFKIFmiatZWAScz6CFVV gQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2s94bg7un0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 02:14:23 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x492D6oW153932;
+        Thu, 9 May 2019 02:14:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2s9ayfwnsx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 02:14:22 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x492EJJw006773;
+        Thu, 9 May 2019 02:14:19 GMT
+Received: from Subhras-MacBook-Pro.local (/73.252.215.155)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 May 2019 19:14:19 -0700
+Subject: Re: [RFC PATCH v2 11/17] sched: Basic tracking of matching tasks
+To:     Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1556025155.git.vpillai@digitalocean.com>
+ <2364f2b65bf50826d881c84d7634b6565dfee527.1556025155.git.vpillai@digitalocean.com>
+ <20190429061516.GA9796@aaronlu>
+ <6dfc392f-e24b-e641-2f7d-f336a90415fa@linux.intel.com>
+ <777b7674-4811-dac4-17df-29bd028d6b26@linux.intel.com>
+ <CAERHkrvU0nay-cG9equdOBejOZ5Ffdxo+67ZRp9q0L9BQkcAtQ@mail.gmail.com>
+ <eb9abb34-d946-c63c-750b-8f52ed842670@oracle.com>
+ <28fb6854-2772-5d29-087a-6a0cf6afe626@oracle.com>
+ <CAERHkrsavsBoEOR5Eq-nm6ADarS0zTi5Mu-T7TO6JoSUi7TRfQ@mail.gmail.com>
+ <8098b70b-2095-91ea-d4ad-9181829066c7@oracle.com>
+ <CAERHkrvKfvrSOKoJ5StYWENm9domgx1OkPyeKHacP9AGrgf8cg@mail.gmail.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <7671d3f0-ca07-7260-a855-473ab58d1c30@oracle.com>
+Date:   Wed, 8 May 2019 19:14:17 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190509015856.GB7031@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAERHkrvKfvrSOKoJ5StYWENm9domgx1OkPyeKHacP9AGrgf8cg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905090011
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905090011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/19 6:58 PM, Theodore Ts'o wrote:
-> On Wed, May 08, 2019 at 05:43:35PM -0700, Frank Rowand wrote:
->> kselftest provides a mechanism for in-kernel tests via modules.  For
->> example, see:
+
+On 5/8/19 6:38 PM, Aubrey Li wrote:
+> On Thu, May 9, 2019 at 8:29 AM Subhra Mazumdar
+> <subhra.mazumdar@oracle.com> wrote:
 >>
->>   tools/testing/selftests/vm/run_vmtests invokes:
->>     tools/testing/selftests/vm/test_vmalloc.sh
->>       loads module:
->>         test_vmalloc
->>         (which is built from lib/test_vmalloc.c if CONFIG_TEST_VMALLOC)
-> 
-> The majority of the kselftests are implemented as userspace programs.
-
-Non-argument.
-
-
-> You *can* run in-kernel test using modules; but there is no framework
-> for the in-kernel code found in the test modules, which means each of
-> the in-kernel code has to create their own in-kernel test
-> infrastructure.
-
-Why create an entire new subsystem (KUnit) when you can add a header
-file (and .c code as appropriate) that outputs the proper TAP formatted
-results from kselftest kernel test modules?
-
-There are already a multitude of in kernel test modules used by
-kselftest.  It would be good if they all used a common TAP compliant
-mechanism to report results.
-
- 
-> That's much like saying you can use vice grips to turn a nut or
-> bolt-head.  You *can*, but it might be that using a monkey wrench
-> would be a much better tool that is much easier.
-> 
-> What would you say to a wood worker objecting that a toolbox should
-> contain a monkey wrench because he already knows how to use vise
-> grips, and his tiny brain shouldn't be forced to learn how to use a
-> wrench when he knows how to use a vise grip, which is a perfectly good
-> tool?
-> 
-> If you want to use vice grips as a hammer, screwdriver, monkey wrench,
-> etc.  there's nothing stopping you from doing that.  But it's not fair
-> to object to other people who might want to use better tools.
-> 
-> The reality is that we have a lot of testing tools.  It's not just
-> kselftests.  There is xfstests for file system code, blktests for
-> block layer tests, etc.   We use the right tool for the right job.
-
-More specious arguments.
-
--Frank
-
-> 
-> 						- Ted
-> 
-
+>> On 5/8/19 5:01 PM, Aubrey Li wrote:
+>>> On Thu, May 9, 2019 at 2:41 AM Subhra Mazumdar
+>>> <subhra.mazumdar@oracle.com> wrote:
+>>>> On 5/8/19 11:19 AM, Subhra Mazumdar wrote:
+>>>>> On 5/8/19 8:49 AM, Aubrey Li wrote:
+>>>>>>> Pawan ran an experiment setting up 2 VMs, with one VM doing a
+>>>>>>> parallel kernel build and one VM doing sysbench,
+>>>>>>> limiting both VMs to run on 16 cpu threads (8 physical cores), with
+>>>>>>> 8 vcpu for each VM.
+>>>>>>> Making the fix did improve kernel build time by 7%.
+>>>>>> I'm gonna agree with the patch below, but just wonder if the testing
+>>>>>> result is consistent,
+>>>>>> as I didn't see any improvement in my testing environment.
+>>>>>>
+>>>>>> IIUC, from the code behavior, especially for 2 VMs case(only 2
+>>>>>> different cookies), the
+>>>>>> per-rq rb tree unlikely has nodes with different cookies, that is, all
+>>>>>> the nodes on this
+>>>>>> tree should have the same cookie, so:
+>>>>>> - if the parameter cookie is equal to the rb tree cookie, we meet a
+>>>>>> match and go the
+>>>>>> third branch
+>>>>>> - else, no matter we go left or right, we can't find a match, and
+>>>>>> we'll return idle thread
+>>>>>> finally.
+>>>>>>
+>>>>>> Please correct me if I was wrong.
+>>>>>>
+>>>>>> Thanks,
+>>>>>> -Aubrey
+>>>>> This is searching in the per core rb tree (rq->core_tree) which can have
+>>>>> 2 different cookies. But having said that, even I didn't see any
+>>>>> improvement with the patch for my DB test case. But logically it is
+>>>>> correct.
+>>>>>
+>>>> Ah, my bad. It is per rq. But still can have 2 different cookies. Not sure
+>>>> why you think it is unlikely?
+>>> Yeah, I meant 2 different cookies on the system, but unlikely 2
+>>> different cookies
+>>> on one same rq.
+>>>
+>>> If I read the source correctly, for the sched_core_balance path, when try to
+>>> steal cookie from another CPU, sched_core_find() uses dst's cookie to search
+>>> if there is a cookie match in src's rq, and sched_core_find() returns idle or
+>>> matched task, and later put this matched task onto dst's rq (activate_task() in
+>>> sched_core_find()). At this moment, the nodes on the rq's rb tree should have
+>>> same cookies.
+>>>
+>>> Thanks,
+>>> -Aubrey
+>> Yes, but sched_core_find is also called from pick_task to find a local
+>> matching task.
+> Can a local searching introduce a different cookies? Where is it from?
+No. I meant the local search uses the same binary search of sched_core_find
+so it has to be correct.
+>
+>> The enqueue side logic of the scheduler is unchanged with
+>> core scheduling,
+> But only the task with cookies is placed onto this rb tree?
+>
+>> so it is possible tasks with different cookies are
+>> enqueued on the same rq. So while searching for a matching task locally
+>> doing it correctly should matter.
+> May I know how exactly?
+select_task_rq_* seems to be unchanged. So the search logic to find a cpu
+to enqueue when a task becomes runnable is same as before and doesn't do
+any kind of cookie matching.
+>
+> Thanks,
+> -Aubrey
