@@ -2,101 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65FB418ED0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10ED518ED3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfEIRTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:19:15 -0400
-Received: from smtprelay0228.hostedemail.com ([216.40.44.228]:45651 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726620AbfEIRTP (ORCPT
+        id S1726882AbfEIRTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:19:42 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46695 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfEIRTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:19:15 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 943FC100E86C7;
-        Thu,  9 May 2019 17:19:13 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3872:4321:5007:7901:7903:10004:10400:10848:11026:11232:11473:11658:11914:12296:12555:12663:12740:12760:12895:13069:13311:13357:13439:14180:14181:14659:14721:21060:21080:21451:21627:30054:30060:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: fly20_3353c4314b71f
-X-Filterd-Recvd-Size: 2401
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  9 May 2019 17:19:12 +0000 (UTC)
-Message-ID: <b5e2a4d9eb49290d6dc3449c90cdf07797b1aba6.camel@perches.com>
-Subject: Re: [Proposal] end of file checks by checkpatch.pl
-From:   Joe Perches <joe@perches.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Whitcroft <apw@canonical.com>
-Date:   Thu, 09 May 2019 10:19:11 -0700
-In-Reply-To: <CAK7LNAR5j1ygbq9TLqUhbJ+tkMdrtD3BgQoUWZErUrnEoWKYMw@mail.gmail.com>
-References: <CAK7LNAR5j1ygbq9TLqUhbJ+tkMdrtD3BgQoUWZErUrnEoWKYMw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 9 May 2019 13:19:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y11so1638904pfm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 10:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=BRvqwUI0uZFzpl2BLIYqh6OYcksWnrEnofgk6bb9Vto=;
+        b=VyVSCgseyO03qDb0Fz1SCSG/lnngZMXkixXOzRxFqXJD/h0EX67ov2xnjFfy+lWQ0X
+         S+uOzxaltej7fzX+aqD+8LbJCQ5NecCkh9+oGCwZNBZcQ7R75E5Sf1/5EOalr4TgnmZl
+         /786ewakOMgLR3843zA46SKj3D44SpGU02G2c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=BRvqwUI0uZFzpl2BLIYqh6OYcksWnrEnofgk6bb9Vto=;
+        b=jtBR363NwPA+wrsRWNao+cXOFwzlCuOt99g2vdOPmQ0mPUuqml21gBgPJFKNt89Gl0
+         0aL1k8/KLOqOqHUb0ae6w3jdPNzJY3gjBbKUVTRdgfcTbQKub9liPHziSAB22TjuNOvE
+         5C+m6sHwg/ldbpMtlVDzaf2Aj4qmIgPaj/HorHgfAH0D4EshL1nuPSJS+nYIwd4uPdlz
+         BdYMTfpAdAymB83/8Hdgz2//VgfibZmADB8Szv6ucGe07I7p1LNffDDVKutQ14Gm5j9K
+         2yy+ALuPOyLejLqrNYJGXRRVele7kRe/YgIewCvSn8J10e21Bm/CYW1SJrtufThwmpK/
+         mO8w==
+X-Gm-Message-State: APjAAAVHlwlAVu89yCcW5RIJGXcI2uLFoiwcDoZtTKk0GYl5hK06I1MW
+        GYAmy0btBPgfN/kU2lk7tBiRyA==
+X-Google-Smtp-Source: APXvYqz6fK1TLtsbjm9UyeEYNG6YhCRI6vIP/1JMtdlyGlEUhuCoW1xJwlVwyohLTxLaHl9DJsNSSA==
+X-Received: by 2002:aa7:98c6:: with SMTP id e6mr6850845pfm.191.1557422381114;
+        Thu, 09 May 2019 10:19:41 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k26sm3675274pfi.136.2019.05.09.10.19.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 May 2019 10:19:40 -0700 (PDT)
+Date:   Thu, 9 May 2019 10:19:39 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lkdtm fixes for next
+Message-ID: <201905091017.DA22A3E0C@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-10 at 00:27 +0900, Masahiro Yamada wrote:
-> Hi Joe,
-> 
-> 
-> Does it make sense to check the following
-> by checkpatch.pl ?
-> 
-> 
-> [1] blank line at end of file
+Hi Greg,
 
+Please pull these lkdtm fixes for next. If possible, it'd be nice to get
+these into v5.2 (they're small fixes), but I'm fine if they have to wait.
+I meant to send these earlier, but got distracted by other things.
 
-> [2] no new line at end of file
+Thanks!
 
-I'm pretty sure checkpatch does one this already.
-(around line 3175)
+-Kees
 
-# check for adding lines without a newline.
-		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/) {
- 			WARN("MISSING_EOF_NEWLINE",
- 			     "adding a line without newline at end of file\n" . $herecurr);
- 		}
+The following changes since commit 8c2ffd9174779014c3fe1f96d9dc3641d9175f00:
 
+  Linux 5.1-rc2 (2019-03-24 14:02:26 -0700)
 
-> When I apply a patch,
-> I sometimes see the following warning from 'git am'.
-> 
-> 
-> Applying: kunit: test: add string_stream a std::stream like string builder
-> .git/rebase-apply/patch:223: new blank line at EOF.
-> +
-> 
-> 
-> I just thought it could be checked
-> before the patch submission.
+are available in the Git repository at:
 
-perhaps:
----
- scripts/checkpatch.pl | 6 ++++++
- 1 file changed, 6 insertions(+)
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/lkdtm-next
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 1c421ac42b07..ceb32c584ee5 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3356,6 +3356,12 @@ sub process {
- 			$last_blank_line = $linenr;
- 		}
- 
-+# check the last line isn't blank
-+		if ($linenr >= $#rawlines && $line =~ /^\+\s*$/) {
-+			WARN("LINE_SPACING",
-+			     "Avoid blank lines at EOF\n" . $herecurr);
-+		}
-+
- # check for missing blank lines after declarations
- 		if ($sline =~ /^\+\s+\S/ &&			#Not at char 1
- 			# actual declarations
+for you to fetch changes up to 24cccab42c4199c6daa0a6981e6f6a1ffb0b5a09:
 
+  lkdtm/bugs: Adjust recursion test to avoid elision (2019-04-07 10:38:31 -0700)
 
+----------------------------------------------------------------
+lkdtm: various fixes
+
+- Move KERNEL_DS test to non-canonical range
+- Make stack exhaustion test more robust
+
+----------------------------------------------------------------
+Kees Cook (2):
+      lkdtm/usercopy: Moves the KERNEL_DS test to non-canonical
+      lkdtm/bugs: Adjust recursion test to avoid elision
+
+ drivers/misc/lkdtm/bugs.c     | 23 +++++++++++++++++------
+ drivers/misc/lkdtm/core.c     |  6 +++---
+ drivers/misc/lkdtm/lkdtm.h    |  2 +-
+ drivers/misc/lkdtm/usercopy.c | 10 ++++++----
+ 4 files changed, 27 insertions(+), 14 deletions(-)
+
+-- 
+Kees Cook
