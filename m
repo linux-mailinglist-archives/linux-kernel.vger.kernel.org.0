@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B8D18EFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F32718EF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfEIR0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:26:35 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:41856 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfEIRZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726896AbfEIRZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 9 May 2019 13:25:59 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJNDR162267;
-        Thu, 9 May 2019 17:25:44 GMT
+Received: from userp2130.oracle.com ([156.151.31.86]:41824 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfEIRZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 13:25:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJKhR151507;
+        Thu, 9 May 2019 17:25:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=zCzFQDoK69hNVAh8gq852QANu8+0XDEc/eDcX80GMqk=;
- b=OgaV2BVA2iW8FAFJxgTjjlCJjgqKAbnyuKTgPt7MyPWTUZEcIShqzFMgSiFsYB178J4t
- WePWZgCCPzdZypVU20IPA2gHQxUIxry3uq5hYU9jJWDEjhZML6l5gcIO6YvJ2mEOrora
- 9HEpRnMZ9X0NnHq8UYv7Q8teUybowuzcPDVy6vq0kUiZlZmZM5pPYr5GCpDCXG/qeIho
- g4VlX/CojoagSg9ND2/LOM0ezOpa/2RhMW3HLIs2GVZnoEWJaliFmdsgs5tSY1/142Ax
- zzRGYVeCzOxmfSHmUCV8+kwBWs5XisxVL7vLuuPsVIXpsIcAnWJTWkxpJN+R/4nVRWBy KQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2s94b6ceyu-1
+ bh=3LSWyrB/R95u7v5C2K7eIXIMxZmvnIpEVypvxjtlHBI=;
+ b=JVdmi8QsftBJ0Q8P8nrZ3UOGM4ChJ2oHVC2jHqIjXA7hlWcP3V7XVP+BPgxBmw0OBkmi
+ q8mHb+8dFtinIqg2+S5tH7QqXjJolNbx+jUQoGrCkfMQ0EMWNHkubC5+MloMANBbsSWY
+ 9GmwLYsYI/MMaE11sol6srMfeC0hHa9aS0+qkl0C6WeuI7tWKzAeldNpuN6f3CnJR3kr
+ +fxge1FZAEn3h66ygqcJL4KiB+NwFSBDmZbfOZrYH9/S3kEGhNpwPDEHAFMzRXF8xNLm
+ WdLj9EFy6eSoZGzSnM24st5NL+KJGU/ZcHkHSfqv7HNQ3DKwvSOQYjWRHHZrCHYBWwH2 wA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2s94bgcedr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 17:25:44 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HPh5B086806;
-        Thu, 9 May 2019 17:25:43 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2s94agwu19-1
+        Thu, 09 May 2019 17:25:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HP4sf119423;
+        Thu, 9 May 2019 17:25:38 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2scpy5t219-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 17:25:43 +0000
+        Thu, 09 May 2019 17:25:38 +0000
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x49HPadr013211;
-        Thu, 9 May 2019 17:25:36 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x49HPbcl031171;
+        Thu, 9 May 2019 17:25:37 GMT
 Received: from aa1-ca-oracle-com.ca.oracle.com (/10.156.75.204)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 09 May 2019 10:25:36 -0700
+        with ESMTP ; Thu, 09 May 2019 10:25:37 -0700
 From:   Ankur Arora <ankur.a.arora@oracle.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 Cc:     jgross@suse.com, pbonzini@redhat.com, boris.ostrovsky@oracle.com,
         konrad.wilk@oracle.com, sstabellini@kernel.org,
         joao.m.martins@oracle.com, ankur.a.arora@oracle.com
-Subject: [RFC PATCH 02/16] x86/xen: cpuid support in xenhost_t
-Date:   Thu,  9 May 2019 10:25:26 -0700
-Message-Id: <20190509172540.12398-3-ankur.a.arora@oracle.com>
+Subject: [RFC PATCH 03/16] x86/xen: make hypercall_page generic
+Date:   Thu,  9 May 2019 10:25:27 -0700
+Message-Id: <20190509172540.12398-4-ankur.a.arora@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190509172540.12398-1-ankur.a.arora@oracle.com>
 References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
@@ -70,238 +70,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xen_cpuid_base() is used to probe and setup features early in a
-guest's lifetime.
-
-We want this to behave differently depending on xenhost->type: for
-instance, local xenhosts cannot intercept the cpuid instruction at all.
-
-Add op (*cpuid_base)() in xenhost_ops_t.
+Make hypercall_page a generic interface which can be implemented
+by other hypervisors. With this change, hypercall_page now points to
+the newly introduced xen_hypercall_page which is seeded by Xen, or
+to one that is filled in by a different hypervisor.
 
 Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 ---
- arch/x86/include/asm/xen/hypervisor.h |  2 +-
- arch/x86/pci/xen.c                    |  2 +-
- arch/x86/xen/enlighten_hvm.c          |  7 +++++--
- arch/x86/xen/enlighten_pv.c           | 16 +++++++++++++++-
- arch/x86/xen/enlighten_pvh.c          |  4 ++++
- drivers/tty/hvc/hvc_xen.c             |  2 +-
- drivers/xen/grant-table.c             |  3 ++-
- drivers/xen/xenbus/xenbus_xs.c        |  3 ++-
- include/xen/xenhost.h                 | 21 +++++++++++++++++++++
- 9 files changed, 52 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/xen/hypercall.h | 12 +++++++-----
+ arch/x86/xen/enlighten.c             |  1 +
+ arch/x86/xen/enlighten_hvm.c         |  3 ++-
+ arch/x86/xen/enlighten_pv.c          |  1 +
+ arch/x86/xen/enlighten_pvh.c         |  3 ++-
+ arch/x86/xen/xen-asm_32.S            |  2 +-
+ arch/x86/xen/xen-asm_64.S            |  2 +-
+ arch/x86/xen/xen-head.S              |  8 ++++----
+ 8 files changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
-index 39171b3646bb..6c4cdcdf997d 100644
---- a/arch/x86/include/asm/xen/hypervisor.h
-+++ b/arch/x86/include/asm/xen/hypervisor.h
-@@ -53,7 +53,7 @@ static inline bool xen_x2apic_para_available(void)
- #else
- static inline bool xen_x2apic_para_available(void)
- {
--	return (xen_cpuid_base() != 0);
-+	return (xen_cpuid_base(NULL) != 0);
- }
- #endif
+diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
+index ef05bea7010d..1a3cd6680e6f 100644
+--- a/arch/x86/include/asm/xen/hypercall.h
++++ b/arch/x86/include/asm/xen/hypercall.h
+@@ -86,11 +86,13 @@ struct xen_dm_op_buf;
+  * there aren't more than 5 arguments...)
+  */
  
-diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
-index 9112d1cb397b..d1a3b9f08289 100644
---- a/arch/x86/pci/xen.c
-+++ b/arch/x86/pci/xen.c
-@@ -431,7 +431,7 @@ void __init xen_msi_init(void)
- 		 * event channels for MSI handling and instead use regular
- 		 * APIC processing
- 		 */
--		uint32_t eax = cpuid_eax(xen_cpuid_base() + 4);
-+		uint32_t eax = cpuid_eax(xenhost_cpuid_base(xh_default) + 4);
+-extern struct { char _entry[32]; } hypercall_page[];
++struct hypercall_entry { char _entry[32]; };
++extern struct hypercall_entry xen_hypercall_page[128];
++extern struct hypercall_entry *hypercall_page;
  
- 		if (((eax & XEN_HVM_CPUID_X2APIC_VIRT) && x2apic_mode) ||
- 		    ((eax & XEN_HVM_CPUID_APIC_ACCESS_VIRT) && boot_cpu_has(X86_FEATURE_APIC)))
+-#define __HYPERCALL		"call hypercall_page+%c[offset]"
++#define __HYPERCALL	CALL_NOSPEC
+ #define __HYPERCALL_ENTRY(x)						\
+-	[offset] "i" (__HYPERVISOR_##x * sizeof(hypercall_page[0]))
++	[thunk_target] "0" (hypercall_page + __HYPERVISOR_##x)
+ 
+ #ifdef CONFIG_X86_32
+ #define __HYPERCALL_RETREG	"eax"
+@@ -116,7 +118,7 @@ extern struct { char _entry[32]; } hypercall_page[];
+ 	register unsigned long __arg4 asm(__HYPERCALL_ARG4REG) = __arg4; \
+ 	register unsigned long __arg5 asm(__HYPERCALL_ARG5REG) = __arg5;
+ 
+-#define __HYPERCALL_0PARAM	"=r" (__res), ASM_CALL_CONSTRAINT
++#define __HYPERCALL_0PARAM	"=&r" (__res), ASM_CALL_CONSTRAINT
+ #define __HYPERCALL_1PARAM	__HYPERCALL_0PARAM, "+r" (__arg1)
+ #define __HYPERCALL_2PARAM	__HYPERCALL_1PARAM, "+r" (__arg2)
+ #define __HYPERCALL_3PARAM	__HYPERCALL_2PARAM, "+r" (__arg3)
+@@ -208,7 +210,7 @@ xen_single_call(unsigned int call,
+ 
+ 	asm volatile(CALL_NOSPEC
+ 		     : __HYPERCALL_5PARAM
+-		     : [thunk_target] "a" (&hypercall_page[call])
++		     : [thunk_target] "0" (hypercall_page + call)
+ 		     : __HYPERCALL_CLOBBER5);
+ 
+ 	return (long)__res;
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index 750f46ad018a..e9dc92e79afa 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -20,6 +20,7 @@
+ #include "smp.h"
+ #include "pmu.h"
+ 
++struct hypercall_entry *hypercall_page;
+ EXPORT_SYMBOL_GPL(hypercall_page);
+ 
+ /*
 diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 100452f4f44c..ffc5791675b2 100644
+index ffc5791675b2..4d85cd2ff261 100644
 --- a/arch/x86/xen/enlighten_hvm.c
 +++ b/arch/x86/xen/enlighten_hvm.c
-@@ -83,7 +83,10 @@ static void __init xen_hvm_init_mem_mapping(void)
- 	xen_vcpu_info_reset(0);
- }
+@@ -115,8 +115,9 @@ static void __init init_hvm_pv_info(void)
  
-+extern uint32_t xen_pv_cpuid_base(xenhost_t *xh);
-+
- xenhost_ops_t xh_hvm_ops = {
-+	.cpuid_base = xen_pv_cpuid_base,
- };
+ 		pv_info.name = "Xen HVM";
+ 		msr = cpuid_ebx(base + 2);
+-		pfn = __pa(hypercall_page);
++		pfn = __pa(xen_hypercall_page);
+ 		wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
++		hypercall_page = xen_hypercall_page;
+ 	}
  
- xenhost_ops_t xh_hvm_nested_ops = {
-@@ -94,7 +97,7 @@ static void __init init_hvm_pv_info(void)
- 	int major, minor;
- 	uint32_t eax, ebx, ecx, edx, base;
- 
--	base = xen_cpuid_base();
-+	base = xenhost_cpuid_base(xh_default);
- 	eax = cpuid_eax(base + 1);
- 
- 	major = eax >> 16;
-@@ -250,7 +253,7 @@ static uint32_t __init xen_platform_hvm(void)
- 	if (xen_pv_domain() || xen_nopv)
- 		return 0;
- 
--	return xen_cpuid_base();
-+	return xenhost_cpuid_base(xh_default);
- }
- 
- static __init void xen_hvm_guest_late_init(void)
+ 	xen_setup_features();
 diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index bb6e811c1525..a4e04b0cc596 100644
+index a4e04b0cc596..3239e8452ede 100644
 --- a/arch/x86/xen/enlighten_pv.c
 +++ b/arch/x86/xen/enlighten_pv.c
-@@ -1189,10 +1189,23 @@ static void __init xen_dom0_set_legacy_features(void)
- 	x86_platform.legacy.rtc = 1;
- }
+@@ -1217,6 +1217,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
  
-+uint32_t xen_pv_cpuid_base(xenhost_t *xh)
-+{
-+	return hypervisor_cpuid_base("XenVMMXenVMM", 2);
-+}
-+
-+uint32_t xen_pv_nested_cpuid_base(xenhost_t *xh)
-+{
-+	return hypervisor_cpuid_base("XenVMMXenVMM",
-+				2 /* nested specific leaf? */);
-+}
-+
- xenhost_ops_t xh_pv_ops = {
-+	.cpuid_base = xen_pv_cpuid_base,
- };
+ 	if (!xen_start_info)
+ 		return;
++	hypercall_page = xen_hypercall_page;
  
- xenhost_ops_t xh_pv_nested_ops = {
-+	.cpuid_base = xen_pv_nested_cpuid_base,
- };
+ 	xenhost_register(xenhost_r1, &xh_pv_ops);
  
- /* First C function to be called on Xen boot */
-@@ -1469,7 +1482,8 @@ static int xen_cpu_dead_pv(unsigned int cpu)
- static uint32_t __init xen_platform_pv(void)
- {
- 	if (xen_pv_domain())
--		return xen_cpuid_base();
-+		/* xenhost is setup in xen_start_kernel. */
-+		return xenhost_cpuid_base(xh_default);
- 
- 	return 0;
- }
 diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index 826c296d27a3..c07eba169572 100644
+index c07eba169572..e47866fcb7ea 100644
 --- a/arch/x86/xen/enlighten_pvh.c
 +++ b/arch/x86/xen/enlighten_pvh.c
-@@ -29,6 +29,10 @@ void __init xen_pvh_init(void)
- 	u32 msr;
- 	u64 pfn;
+@@ -46,8 +46,9 @@ void __init xen_pvh_init(void)
+ 	xen_start_flags = pvh_start_info.flags;
  
-+	/*
-+	 * Note: we have already called xen_cpuid_base() in
-+	 * hypervisor_specific_init()
-+	 */
- 	xenhost_register(xenhost_r1, &xh_hvm_ops);
- 
- 	/*
-diff --git a/drivers/tty/hvc/hvc_xen.c b/drivers/tty/hvc/hvc_xen.c
-index dc43fa96c3de..5e5ca35d7187 100644
---- a/drivers/tty/hvc/hvc_xen.c
-+++ b/drivers/tty/hvc/hvc_xen.c
-@@ -595,7 +595,7 @@ console_initcall(xen_cons_init);
- #ifdef CONFIG_X86
- static void xen_hvm_early_write(uint32_t vtermno, const char *str, int len)
- {
--	if (xen_cpuid_base())
-+	if (xen_cpuid_base(xh_default))
- 		outsb(0xe9, str, len);
+ 	msr = cpuid_ebx(xen_cpuid_base() + 2);
+-	pfn = __pa(hypercall_page);
++	pfn = __pa(xen_hypercall_page);
+ 	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
++	hypercall_page = xen_hypercall_page;
  }
- #else
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 7ea6fb6a2e5d..98af259d0d4f 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -50,6 +50,7 @@
+ 
+ void __init mem_map_via_hcall(struct boot_params *boot_params_p)
+diff --git a/arch/x86/xen/xen-asm_32.S b/arch/x86/xen/xen-asm_32.S
+index c15db060a242..ee4998055ea9 100644
+--- a/arch/x86/xen/xen-asm_32.S
++++ b/arch/x86/xen/xen-asm_32.S
+@@ -121,7 +121,7 @@ xen_iret_end_crit:
+ 
+ hyper_iret:
+ 	/* put this out of line since its very rarely used */
+-	jmp hypercall_page + __HYPERVISOR_iret * 32
++	jmp xen_hypercall_page + __HYPERVISOR_iret * 32
+ 
+ 	.globl xen_iret_start_crit, xen_iret_end_crit
+ 
+diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+index 1e9ef0ba30a5..2172d6aec9a3 100644
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -70,7 +70,7 @@ ENTRY(xen_early_idt_handler_array)
+ END(xen_early_idt_handler_array)
+ 	__FINIT
+ 
+-hypercall_iret = hypercall_page + __HYPERVISOR_iret * 32
++hypercall_iret = xen_hypercall_page + __HYPERVISOR_iret * 32
+ /*
+  * Xen64 iret frame:
+  *
+diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+index 5077ead5e59c..7ff5437bd83f 100644
+--- a/arch/x86/xen/xen-head.S
++++ b/arch/x86/xen/xen-head.S
+@@ -58,18 +58,18 @@ END(startup_xen)
+ 
+ .pushsection .text
+ 	.balign PAGE_SIZE
+-ENTRY(hypercall_page)
++ENTRY(xen_hypercall_page)
+ 	.rept (PAGE_SIZE / 32)
+ 		UNWIND_HINT_EMPTY
+ 		.skip 32
+ 	.endr
+ 
+ #define HYPERCALL(n) \
+-	.equ xen_hypercall_##n, hypercall_page + __HYPERVISOR_##n * 32; \
++	.equ xen_hypercall_##n, xen_hypercall_page + __HYPERVISOR_##n * 32; \
+ 	.type xen_hypercall_##n, @function; .size xen_hypercall_##n, 32
+ #include <asm/xen-hypercalls.h>
+ #undef HYPERCALL
+-END(hypercall_page)
++END(xen_hypercall_page)
+ .popsection
+ 
+ 	ELFNOTE(Xen, XEN_ELFNOTE_GUEST_OS,       .asciz "linux")
+@@ -85,7 +85,7 @@ END(hypercall_page)
+ #ifdef CONFIG_XEN_PV
+ 	ELFNOTE(Xen, XEN_ELFNOTE_ENTRY,          _ASM_PTR startup_xen)
  #endif
- 
- #include <xen/xen.h>
-+#include <xen/xenhost.h>
- #include <xen/interface/xen.h>
- #include <xen/page.h>
- #include <xen/grant_table.h>
-@@ -1318,7 +1319,7 @@ static bool gnttab_need_v2(void)
- 	uint32_t base, width;
- 
- 	if (xen_pv_domain()) {
--		base = xen_cpuid_base();
-+		base = xenhost_cpuid_base(xh_default);
- 		if (cpuid_eax(base) < 5)
- 			return false;	/* Information not available, use V1. */
- 		width = cpuid_ebx(base + 5) &
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 49a3874ae6bb..3236d1b1fa01 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -49,6 +49,7 @@
- #include <asm/xen/hypervisor.h>
- #include <xen/xenbus.h>
- #include <xen/xen.h>
-+#include <xen/xenhost.h>
- #include "xenbus.h"
- 
- /*
-@@ -722,7 +723,7 @@ static bool xen_strict_xenbus_quirk(void)
- #ifdef CONFIG_X86
- 	uint32_t eax, ebx, ecx, edx, base;
- 
--	base = xen_cpuid_base();
-+	base = xenhost_cpuid_base(xh_default);
- 	cpuid(base + 1, &eax, &ebx, &ecx, &edx);
- 
- 	if ((eax >> 16) < 4)
-diff --git a/include/xen/xenhost.h b/include/xen/xenhost.h
-index a58e883f144e..13a70bdadfd2 100644
---- a/include/xen/xenhost.h
-+++ b/include/xen/xenhost.h
-@@ -1,6 +1,9 @@
- #ifndef __XENHOST_H
- #define __XENHOST_H
- 
-+#include <xen/interface/features.h>
-+#include <xen/interface/xen.h>
-+#include <asm/xen/hypervisor.h>
- /*
-  * Xenhost abstracts out the Xen interface. It co-exists with the PV/HVM/PVH
-  * abstractions (x86_init, hypervisor_x86, pv_ops etc) and is meant to
-@@ -70,6 +73,16 @@ typedef struct {
- } xenhost_t;
- 
- typedef struct xenhost_ops {
-+	/*
-+	 * xen_cpuid is used to probe features early.
-+	 * xenhost_r0:
-+	 *   Implementation could not use cpuid at all: it's difficult to
-+	 *   intercept cpuid instruction locally.
-+	 * xenhost_r1:
-+	 * xenhost_r2:
-+	 *   Separate cpuid-leafs?
-+	 */
-+	uint32_t (*cpuid_base)(xenhost_t *xenhost);
- } xenhost_ops_t;
- 
- extern xenhost_t *xh_default, *xh_remote;
-@@ -92,4 +105,12 @@ void __xenhost_unregister(enum xenhost_type type);
- 	for ((xh) = (xenhost_t **) &xenhosts[0];	\
- 		(((xh) - (xenhost_t **)&xenhosts) < 2) && (*xh)->type != xenhost_invalid; (xh)++)
- 
-+static inline uint32_t xenhost_cpuid_base(xenhost_t *xh)
-+{
-+	if (xh)
-+		return (xh->ops->cpuid_base)(xh);
-+	else
-+		return xen_cpuid_base();
-+}
-+
- #endif /* __XENHOST_H */
+-	ELFNOTE(Xen, XEN_ELFNOTE_HYPERCALL_PAGE, _ASM_PTR hypercall_page)
++	ELFNOTE(Xen, XEN_ELFNOTE_HYPERCALL_PAGE, _ASM_PTR xen_hypercall_page)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_FEATURES,
+ 		.ascii "!writable_page_tables|pae_pgdir_above_4gb")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_SUPPORTED_FEATURES,
 -- 
 2.20.1
 
