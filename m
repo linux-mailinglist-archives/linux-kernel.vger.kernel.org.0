@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9411619446
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E135319449
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfEIVOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:14:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44663 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfEIVOp (ORCPT
+        id S1727504AbfEIVPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:15:05 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33407 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfEIVOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:45 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z16so1824294pgv.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:44 -0700 (PDT)
+        Thu, 9 May 2019 17:14:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z28so1969585pfk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3QabCw1HIkztYdYez4gT+jeQCWJg/9Fy/MseoqvwA5w=;
-        b=d76qSptbPyEpZ/SiDgxkYt/Z8s1G7N6Lifv3aHzOa89rU7G42rsPv77OqJJ9CPNpDH
-         5vJDmJ130eppYZ68kdDVURNskJ9p/ySNEHCiwNFdTJbUdAIpkFyezS9EejW7RdmVcUbv
-         APyJ+V3DaqTZwYMWaglFs6t3jjFhpajfoXebw=
+        bh=iEoj9UWn6ktDadq2q+zM7vTVKQmSYDuVcrz+o3RZUT0=;
+        b=GqqS1+Yil5iPIKQH8kNhai87NuR66dDkpn1Tev4gvZ+tI3cazbQVrtEmEJehRlKktx
+         c2/BxyBaojnix5er3xWC8vFu8rOaeTlMbWn5+SrBBz7EAV2PgZnfAsBQCseLQGyFCAnO
+         z+IsYoWPuOXbaWTGg+egFgRj6vrJ4KIlYUVxE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3QabCw1HIkztYdYez4gT+jeQCWJg/9Fy/MseoqvwA5w=;
-        b=c0iefcq95tXsvf1tsmJ3ZEbjsEzpElTK8g0mkSB8VkbHItga2/e+0nGgB5l+7f7Txf
-         v7wr05042r2wEkcamrsGZw4264otM8IrMILurFXNf+1Ea15IiZWSbvowCuilWepeYCnQ
-         X05jPv06VRMIzoN5+GgfK1r3r+RNodsFWeuoR5tq/5JOPiWSu+F69piCKtcY2DMm0zK3
-         EfrjDFpM4Dnzpc2smRjDBiNGeV0xQbKwbFWN2TD7pxvkA98PTEJKpNqn8QiwWo8UAytU
-         64SWaemb/jVPxIzer9eko+PHMZ6Ph9bJ+gqTHSt9yjAqbwaHez0Hfyt3zRAK9N7FlI05
-         NwCQ==
-X-Gm-Message-State: APjAAAXc6GNRUd/NFG1NPhksZ81/TLZP7TWKfkJy+QLeUU6/2mIVZTTr
-        8WgLqd9V2rvFz0Ib001FAMgbbA==
-X-Google-Smtp-Source: APXvYqzZtLGUzqv0mQx+N5pyoUMEaNksuYUR3NfF4xLggGy8/ThtNc9Tu/K5gunI7JBCe3pbA389vQ==
-X-Received: by 2002:a63:682:: with SMTP id 124mr8810308pgg.243.1557436484408;
-        Thu, 09 May 2019 14:14:44 -0700 (PDT)
+        bh=iEoj9UWn6ktDadq2q+zM7vTVKQmSYDuVcrz+o3RZUT0=;
+        b=LOr1Cw42SDSUK0KI4141FpTu1zNM//ksaW5tywV3AujnlAJZFWDLhENIcXACj6RDhf
+         H2XgL2Xv1b8boQgX4A8m3qAKRZu07Z9MHxxgEq2FY85rUACdtoB8eXX+VMMRwYAr3GjH
+         TI+X0pY5Nj9su71gbe0xPbNRyOSMsPgDX+eKe0/dSaQqFLdwei070tXxj2c1c0IJXsqG
+         UIUTpwJa3IcL32o+Qhy2OYw+W3EmK73bjsNKxVn53EOxx+mMsCY6/PbqGFgQJyB9wSr8
+         z0FlTDwSqun7igxbOy2JKjiE18drijJ/T2iOVxLObVa08DupOw/EkWJJLEktyeAspprL
+         k9cw==
+X-Gm-Message-State: APjAAAVC2OFrNRWoCJLJG0vuAdYkkPgsL+43fOJgIxBxvcTM4WPn7ppX
+        VgMzERJnHFdjD0tNfMKgJdV4Fw==
+X-Google-Smtp-Source: APXvYqyNbflpPLU6IWNXQOg5adDujRj0wRbVs+kdC+wh1ZLvwxVOq3c5vY9LA2rfa6uYQE8Try3YMA==
+X-Received: by 2002:a63:88c7:: with SMTP id l190mr8719140pgd.244.1557436485750;
+        Thu, 09 May 2019 14:14:45 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id j35sm3461511pgj.60.2019.05.09.14.14.43
+        by smtp.gmail.com with ESMTPSA id k26sm4107553pfi.136.2019.05.09.14.14.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:43 -0700 (PDT)
+        Thu, 09 May 2019 14:14:45 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 27/30] mfd: cros_ec: Add API for rwsig
-Date:   Thu,  9 May 2019 14:13:50 -0700
-Message-Id: <20190509211353.213194-28-gwendal@chromium.org>
+Subject: [PATCH v3 28/30] mfd: cros_ec: Add SKU ID and Secure storage API
+Date:   Thu,  9 May 2019 14:13:51 -0700
+Message-Id: <20190509211353.213194-29-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,48 +62,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add command to retrieve signature of image stored in the RW memory
-slot(s).
+Add API to store SKU, Cros board information in EC flash memory.
+Add API to store security data in EC.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ include/linux/mfd/cros_ec_commands.h | 107 +++++++++++++++++++++++++++
+ 1 file changed, 107 insertions(+)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 4a9ac3861bdd..3d3a37b11002 100644
+index 3d3a37b11002..860a76274334 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -5043,6 +5043,32 @@ struct ec_response_pd_chip_info_v1 {
- 	};
+@@ -1292,6 +1292,17 @@ struct ec_response_get_features {
+ 	uint32_t flags[2];
+ } __ec_align4;
+ 
++/*****************************************************************************/
++/* Get the board's SKU ID from EC */
++#define EC_CMD_GET_SKU_ID 0x000E
++
++/* Set SKU ID from AP */
++#define EC_CMD_SET_SKU_ID 0x000F
++
++struct ec_sku_id_info {
++	uint32_t sku_id;
++} __ec_align4;
++
+ /*****************************************************************************/
+ /* Flash commands */
+ 
+@@ -2902,6 +2913,49 @@ struct ec_response_port80_last_boot {
+ 	uint16_t code;
  } __ec_align2;
  
-+/* Run RW signature verification and get status */
-+#define EC_CMD_RWSIG_CHECK_STATUS	0x011C
++/*****************************************************************************/
++/* Temporary secure storage for host verified boot use */
 +
-+struct ec_response_rwsig_check_status {
-+	uint32_t status;
-+} __ec_align4;
++/* Number of bytes in a vstore slot */
++#define EC_VSTORE_SLOT_SIZE 64
 +
-+/* For controlling RWSIG task */
-+#define EC_CMD_RWSIG_ACTION	0x011D
++/* Maximum number of vstore slots */
++#define EC_VSTORE_SLOT_MAX 32
 +
-+enum rwsig_action {
-+	RWSIG_ACTION_ABORT = 0,		/* Abort RWSIG and prevent jumping */
-+	RWSIG_ACTION_CONTINUE = 1,	/* Jump to RW immediately */
++/* Get persistent storage info */
++#define EC_CMD_VSTORE_INFO 0x0049
++struct ec_response_vstore_info {
++	/* Indicates which slots are locked */
++	uint32_t slot_locked;
++	/* Total number of slots available */
++	uint8_t slot_count;
++} __ec_align_size1;
++
++/*
++ * Read temporary secure storage
++ *
++ * Response is EC_VSTORE_SLOT_SIZE bytes of data.
++ */
++#define EC_CMD_VSTORE_READ 0x004A
++
++struct ec_params_vstore_read {
++	uint8_t slot; /* Slot to read from */
++} __ec_align1;
++
++struct ec_response_vstore_read {
++	uint8_t data[EC_VSTORE_SLOT_SIZE];
++} __ec_align1;
++
++/*
++ * Write temporary secure storage and lock it.
++ */
++#define EC_CMD_VSTORE_WRITE 0x004B
++
++struct ec_params_vstore_write {
++	uint8_t slot; /* Slot to write to */
++	uint8_t data[EC_VSTORE_SLOT_SIZE];
++} __ec_align1;
++
+ /*****************************************************************************/
+ /* Thermal engine commands. Note that there are two implementations. We'll
+  * reuse the command number, but the data and behavior is incompatible.
+@@ -5069,6 +5123,59 @@ struct ec_params_efs_verify {
+ 	uint8_t region;		/* enum ec_flash_region */
+ } __ec_align1;
+ 
++/*
++ * Retrieve info from Cros Board Info store. Response is based on the data
++ * type. Integers return a uint32. Strings return a string, using the response
++ * size to determine how big it is.
++ */
++#define EC_CMD_GET_CROS_BOARD_INFO	0x011F
++/*
++ * Write info into Cros Board Info on EEPROM. Write fails if the board has
++ * hardware write-protect enabled.
++ */
++#define EC_CMD_SET_CROS_BOARD_INFO	0x0120
++
++enum cbi_data_tag {
++	CBI_TAG_BOARD_VERSION = 0, /* uint32_t or smaller */
++	CBI_TAG_OEM_ID = 1,        /* uint32_t or smaller */
++	CBI_TAG_SKU_ID = 2,        /* uint32_t or smaller */
++	CBI_TAG_DRAM_PART_NUM = 3, /* variable length ascii, nul terminated. */
++	CBI_TAG_OEM_NAME = 4,      /* variable length ascii, nul terminated. */
++	CBI_TAG_MODEL_ID = 5,      /* uint32_t or smaller */
++	CBI_TAG_COUNT,
 +};
 +
-+struct ec_params_rwsig_action {
-+	uint32_t action;
++/*
++ * Flags to control read operation
++ *
++ * RELOAD:  Invalidate cache and read data from EEPROM. Useful to verify
++ *          write was successful without reboot.
++ */
++#define CBI_GET_RELOAD		BIT(0)
++
++struct ec_params_get_cbi {
++	uint32_t tag;		/* enum cbi_data_tag */
++	uint32_t flag;		/* CBI_GET_* */
 +} __ec_align4;
 +
-+/* Run verification on a slot */
-+#define EC_CMD_EFS_VERIFY	0x011E
++/*
++ * Flags to control write behavior.
++ *
++ * NO_SYNC: Makes EC update data in RAM but skip writing to EEPROM. It's
++ *          useful when writing multiple fields in a row.
++ * INIT:    Need to be set when creating a new CBI from scratch. All fields
++ *          will be initialized to zero first.
++ */
++#define CBI_SET_NO_SYNC		BIT(0)
++#define CBI_SET_INIT		BIT(1)
 +
-+struct ec_params_efs_verify {
-+	uint8_t region;		/* enum ec_flash_region */
++struct ec_params_set_cbi {
++	uint32_t tag;		/* enum cbi_data_tag */
++	uint32_t flag;		/* CBI_SET_* */
++	uint32_t size;		/* Data size */
++	uint8_t data[];		/* For string and raw data */
 +} __ec_align1;
 +
  /*****************************************************************************/
