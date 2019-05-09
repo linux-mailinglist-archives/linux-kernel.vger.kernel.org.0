@@ -2,45 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1884E19059
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC62190B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfEISoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
+        id S1727955AbfEISsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:48:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfEISoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:07 -0400
+        id S1727509AbfEISsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD1D02182B;
-        Thu,  9 May 2019 18:44:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5357217D7;
+        Thu,  9 May 2019 18:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427447;
-        bh=IMwpLaU7gYGHD0ENoQFEavG1anlK5ZDetiYNVj2a3Ig=;
+        s=default; t=1557427685;
+        bh=aX+daBkOFi/hzxzV5VBSXPDsK3AzYTYFgnswphyaDhg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsWjKSuhGv7ZLhEyKWShBdIyEUN5EmdWrL80+E59B9lD3GxmYTTedLy2P1cjOM95X
-         UXBqmzXbcmlr0BSw15MGnIobmcOFrKVTzeGGaZxYfasbouxlnTEfE7dJ22d/MS2MAa
-         BR6tT5N/0pC1V0JDBlzQMMnR1J4Ue8IS1XN3L728=
+        b=zRhkGA67lOD1TM40rm2wye/7zLuIS/D+hrPtr4TPldD6ASPlHsqFpGIUWdUD8izHw
+         fQVK6f2guYFgAgtSklFo2ZT7AmoIF3zdDAKVUjWux6wIzyLm6i+8nNVjRwKLy8P4nC
+         ruFMJ2A9fFA40wb/fbQ+oftmZdqKEVjhGoHqHNf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/28] drm/mediatek: fix possible object reference leak
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        NeilBrown <neilb@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Qiaowei Ren <qiaowei.ren@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 31/66] linux/kernel.h: Use parentheses around argument in u64_to_user_ptr()
 Date:   Thu,  9 May 2019 20:42:06 +0200
-Message-Id: <20190509181253.142746342@linuxfoundation.org>
+Message-Id: <20190509181305.215780475@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,44 +56,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2ae2c3316fb77dcf64275d011596b60104c45426 ]
+[ Upstream commit a0fe2c6479aab5723239b315ef1b552673f434a3 ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Use parentheses around uses of the argument in u64_to_user_ptr() to
+ensure that the cast doesn't apply to part of the argument.
 
-Detected by coccinelle with the following warnings:
-drivers/gpu/drm/mediatek/mtk_hdmi.c:1521:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1509, but without a corresponding object release within this function.
-drivers/gpu/drm/mediatek/mtk_hdmi.c:1524:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1509, but without a corresponding object release within this function.
+There are existing uses of the macro of the form
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: CK Hu <ck.hu@mediatek.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+  u64_to_user_ptr(A + B)
+
+which expands to
+
+  (void __user *)(uintptr_t)A + B
+
+(the cast applies to the first operand of the addition, the addition
+is a pointer addition). This happens to still work as intended, the
+semantic difference doesn't cause a difference in behavior.
+
+But I want to use u64_to_user_ptr() with a ternary operator in the
+argument, like so:
+
+  u64_to_user_ptr(A ? B : C)
+
+This currently doesn't work as intended.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: NeilBrown <neilb@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Qiaowei Ren <qiaowei.ren@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190329214652.258477-1-jannh@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/kernel.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 200f75e1d6198..e7a6651ceeab1 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1528,6 +1528,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
- 	of_node_put(remote);
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d6aac75b51baa..3d83ebb302cfd 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -73,8 +73,8 @@
  
- 	hdmi->ddc_adpt = of_find_i2c_adapter_by_node(i2c_np);
-+	of_node_put(i2c_np);
- 	if (!hdmi->ddc_adpt) {
- 		dev_err(dev, "Failed to get ddc i2c adapter by node\n");
- 		return -EINVAL;
+ #define u64_to_user_ptr(x) (		\
+ {					\
+-	typecheck(u64, x);		\
+-	(void __user *)(uintptr_t)x;	\
++	typecheck(u64, (x));		\
++	(void __user *)(uintptr_t)(x);	\
+ }					\
+ )
+ 
 -- 
 2.20.1
 
