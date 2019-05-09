@@ -2,197 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1BFC1952A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B85F19547
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfEIWUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 18:20:50 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39999 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfEIWUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 18:20:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b3so1802708plr.7;
-        Thu, 09 May 2019 15:20:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z1YADLv+X+eTaFOCPRPMkyVNxJwrl9u02E65BW40D5k=;
-        b=lcbJ3zLpdbWPY6o2RCZ4AodP4ic2pzULnGi7IghozPpmKe1z1o67yEB9TIsnQngizS
-         KQgXLqZNB7Ae2D6QTJeoIIqZefMYGYF5wjyAxNmtBeh5ZS633Cqonxv8mDbqMMjSRZDR
-         KNS33bTuluL5H/WFj/xZ8RngtzSlE+Lf1/8paQYrrVKmxaXOoWm8NnMgpEKH6ztlYaad
-         PI4+UUj4as/Xt/f8FdwsSAi1UFvM6iDeS4eALzNNvTEt665rIfZ0LHkKzXP0zOrqi6Dg
-         e2TU2/pqcloLVkFbFoZh4bIvUClKXvQke538xFqKLidb8EG8zEgLTojfB0qEVQCKzKrw
-         6t5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z1YADLv+X+eTaFOCPRPMkyVNxJwrl9u02E65BW40D5k=;
-        b=gaD0DqIqvzADPn5ow3Y2Y7MOgJCBDoj2xHvIJUPKu15jkqzcBIYwRaCzjikkhtLLW6
-         DhDE4CsOqs7VVSaKTrH+4DrA1YPNECR4Ofqn6c4GOJkb5DMkg1EBbv9+lW4H8TQyye0z
-         ZNe6n3OmBuI0nT7gj2h+VDStHZi7YRSTH5lZtVOPxj7lTlbePnzR0rsJjpvRCNDuRuAa
-         SyivS4b2wKowzGNc9fZ8Ykeh1Wqbrf/LYilDUdoHPAmENeSyGagc3nlNvHYMZfb1BNg9
-         C4nXo/tJnAko/7pH08LdYjuVGF6xF2qJzW+v0MlTt17vgFwmMN+eHe9q7TbUWcBU+0GO
-         MQiA==
-X-Gm-Message-State: APjAAAWnMa10DlnkpuJGs2gIqRTCzVdV9nM5p/HYVgeClmcufFi4z7iD
-        juabw0K+Wm3AKrjb4Coub9k=
-X-Google-Smtp-Source: APXvYqzSmVmq4+FqBEl/cq1bHlnhsA+wSlbzzJZ/8v9nTieYPU4Ln2SpEjRuNj0P80hXDrqRQNAbHg==
-X-Received: by 2002:a17:902:8bca:: with SMTP id r10mr8481101plo.67.1557440449042;
-        Thu, 09 May 2019 15:20:49 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:200::bc44])
-        by smtp.gmail.com with ESMTPSA id o71sm8197898pfi.174.2019.05.09.15.20.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 15:20:47 -0700 (PDT)
-Date:   Thu, 9 May 2019 15:20:46 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        shuah <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.2-rc1
-Message-ID: <20190509222043.b4zn32kuohduzzzr@ast-mbp>
-References: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
+        id S1726845AbfEIWes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 18:34:48 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50141 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbfEIWer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 18:34:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 450Snw21ctz9s7h;
+        Fri, 10 May 2019 08:34:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557441284;
+        bh=nqt2J1Tvd3nd726L9NOu6y41YE7UUVKiEXFRxS9Io7o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=o6pb63bUrdyEQy66I2K5jxxfdMGEklSfe7tzSeFiMECiG/v+gwmRObK0/I1Ltpy8u
+         j8wInQZqTO0fPAv6FErt7Cg5CHgrvKeGhIvYm7L91LF9HaSzAS6rQpNb0O5nH4Jdaw
+         s372XpQfBlb8JZiVyV8yURMcImAHiyPeNo7zbH6u2rwpk+NfcOtFlMNU5IhxvK6MZR
+         yzZcWVEhRCGlY92kHPug0CdWux8W56ulUJ5/Gtp2Du88sZE7ocKQmHIA9kB5lEVuDG
+         bJEm52Q9Oomqy8Tc/1l7oosBzHHMacm6vy2xkKeTlQRlpqmY6GUjkg7PircBCg3Rrz
+         1K8l0+7xtHWaQ==
+Date:   Fri, 10 May 2019 08:34:35 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brett Mastbergen <bmastbergen@untangle.com>
+Subject: linux-next: manual merge of the netfilter tree with Linus' tree
+Message-ID: <20190510083435.68faecf5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/h7S8YNgI927TIl05dJJy0b6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 10:56:56AM -0600, Shuah Khan wrote:
-> Hi Linus,
-> 
-> Please pull the following Kselftest update for Linux 5.2-rc1
-> 
-> This Kselftest update for Linux 5.2-rc1 consists of
-> 
-> - fixes to seccomp test, and kselftest framework
-> - cleanups to remove duplicate header defines
-> - fixes to efivarfs "make clean" target
-> - cgroup cleanup path
-> - Moving the IMA kexec_load selftest to selftests/kexec work from
->   Mimi Johar and Petr Vorel
-> - A framework to kselftest for writing kernel test modules addition
->   from Tobin C. Harding
-> 
-> diff is attached.
-> 
-> thanks,
-> -- Shuah
-> 
-> 
-> ----------------------------------------------------------------
-> The following changes since commit 15ade5d2e7775667cf191cf2f94327a4889f8b9d:
-> 
->   Linux 5.1-rc4 (2019-04-07 14:09:59 -1000)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
-> tags/linux-kselftest-5.2-rc1
-> 
-> for you to fetch changes up to d917fb876f6eaeeea8a2b620d2a266ce26372f4d:
-> 
->   selftests: build and run gpio when output directory is the src dir
-> (2019-04-22 17:02:26 -0600)
-> 
-> ----------------------------------------------------------------
-> linux-kselftest-5.2-rc1
-> 
-> This Kselftest update for Linux 5.2-rc1 consists of
-> 
-> - fixes to seccomp test, and kselftest framework
-> - cleanups to remove duplicate header defines
-> - fixes to efivarfs "make clean" target
-> - cgroup cleanup path
-> - Moving the IMA kexec_load selftest to selftests/kexec work from
->   Mimi Johar and Petr Vorel
-> - A framework to kselftest for writing kernel test modules addition
->   from Tobin C. Harding
-> 
-> ----------------------------------------------------------------
-> Kees Cook (3):
->       selftests/seccomp: Handle namespace failures gracefully
->       selftests/harness: Add 30 second timeout per test
->       selftests/ipc: Fix msgque compiler warnings
-> 
-> Mathieu Desnoyers (1):
->       rseq/selftests: Adapt number of threads to the number of detected cpus
-> 
-> Mimi Zohar (9):
->       selftests/kexec: move the IMA kexec_load selftest to selftests/kexec
->       selftests/kexec: cleanup the kexec selftest
->       selftests/kexec: define a set of common functions
->       selftests/kexec: define common logging functions
->       selftests/kexec: define "require_root_privileges"
->       selftests/kexec: kexec_file_load syscall test
->       selftests/kexec: check kexec_load and kexec_file_load are enabled
->       selftests/kexec: make kexec_load test independent of IMA being enabled
->       selftests/kexec: update get_secureboot_mode
-> 
-> Petr Vorel (1):
->       selftests/kexec: Add missing '=y' to config options
-> 
-> Po-Hsu Lin (1):
->       selftests/efivarfs: clean up test files from test_create*()
-> 
-> Roman Gushchin (1):
->       selftests: cgroup: fix cleanup path in test_memcg_subtree_control()
-> 
-> Sabyasachi Gupta (4):
->       selftest/x86/mpx-dig.c: Remove duplicate header
->       selftest/timers: Remove duplicate header
->       selftest/rseq: Remove duplicate header
->       selftest/gpio: Remove duplicate header
-> 
-> Shuah Khan (2):
->       selftests: fix headers_install circular dependency
+--Sig_/h7S8YNgI927TIl05dJJy0b6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Shuah,
+Hi all,
 
-the commit 8ce72dc32578 ("selftests: fix headers_install circular dependency")
-broke our build/test workflow, since it added:
-  ifneq ($(KBUILD_OUTPUT),)
-          OUTPUT := $(KBUILD_OUTPUT)
-  else
+Today's linux-next merge of the netfilter tree got a conflict in:
 
-which means that all of selftests/bpf artifacts are now going into
-main build directory cluttering it with all sorts of .o, generated files
-and executables.
-The end result is humans and scripts can no longer find tests.
+  include/uapi/linux/netfilter/nf_tables.h
 
-For now I hacked it as:
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 5979fdc4f36c..caecec7aebde 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -6,12 +6,8 @@ ifeq (0,$(MAKELEVEL))
-     ifneq ($(O),)
-        OUTPUT := $(O)
-     else
--       ifneq ($(KBUILD_OUTPUT),)
--               OUTPUT := $(KBUILD_OUTPUT)
--       else
--               OUTPUT := $(shell pwd)
--               DEFAULT_INSTALL_HDR_PATH := 1
--       endif
-+       OUTPUT := $(shell pwd)
-+       DEFAULT_INSTALL_HDR_PATH := 1
-     endif
- endif
+between commit:
 
-bpf developers are doing "cd tools/testing/selftests/bpf; make; ./test_verifier; ..."
-while KBUILD_OUTPUT is also set.
-I don't quite get this 'circular dependency' issue that your commit suppose to address
-but please fix it differently, so bpf developer's workflow is restored and buildbots work again.
-People and scripts depend on it.
-It's even described in Documentation/bpf/bpf_devel_QA.rst
+  3087c3f7c23b ("netfilter: nft_ct: Add ct id support")
 
-Thanks
+from Linus' tree and commit:
 
+  c6c9c0596c21 ("netfilter: nf_tables: remove NFT_CT_TIMEOUT")
+
+from the netfilter tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/netfilter/nf_tables.h
+index f0cf7b0f4f35,92bb1e2b2425..000000000000
+--- a/include/uapi/linux/netfilter/nf_tables.h
++++ b/include/uapi/linux/netfilter/nf_tables.h
+@@@ -966,8 -966,6 +966,7 @@@ enum nft_socket_keys=20
+   * @NFT_CT_DST_IP: conntrack layer 3 protocol destination (IPv4 address)
+   * @NFT_CT_SRC_IP6: conntrack layer 3 protocol source (IPv6 address)
+   * @NFT_CT_DST_IP6: conntrack layer 3 protocol destination (IPv6 address)
+-  * @NFT_CT_TIMEOUT: connection tracking timeout policy assigned to conntr=
+ack
+ + * @NFT_CT_ID: conntrack id
+   */
+  enum nft_ct_keys {
+  	NFT_CT_STATE,
+@@@ -993,8 -991,6 +992,7 @@@
+  	NFT_CT_DST_IP,
+  	NFT_CT_SRC_IP6,
+  	NFT_CT_DST_IP6,
+- 	NFT_CT_TIMEOUT,
+ +	NFT_CT_ID,
+  	__NFT_CT_MAX
+  };
+  #define NFT_CT_MAX		(__NFT_CT_MAX - 1)
+
+--Sig_/h7S8YNgI927TIl05dJJy0b6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzUqvsACgkQAVBC80lX
+0GxnZAf/SdTlpbKzDuxhI5RBK2yQNcTv6GgKfwVURQRdDOIjqr4jpzkRcd3zbVCh
+mFX+mAR1xmJ13MeSZ1Cis7o58GfkZuNV/i3GxKl4l7GSEtU6gAscrqqXnZ66wdd/
+oAlNyJLpmIpsL/rs9E5MWK/ZavrsYU4eQLLzqZvO63wx8zTYlhvyVpr3IF2pCyjb
+wUZgxUz4i1blraY756ULGw1G/vWHbWmbZEVbTubXzugYgqTfZqi1xSA3BjYM6Hvs
+yRRj1AZ4qOlhzyFe2UwUHXWJv+TgECO9iBpELW7IsUOsNqJaAZnQZ6WH5WxF9IwC
+FD/5SCnPAXGFHY6/CQf4Fu9wwdjuPA==
+=sJiz
+-----END PGP SIGNATURE-----
+
+--Sig_/h7S8YNgI927TIl05dJJy0b6--
