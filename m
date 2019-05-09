@@ -2,77 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3192718BCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E899A18BF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfEIOcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:32:01 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:43782 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726704AbfEIOcA (ORCPT
+        id S1726657AbfEIOiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:38:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56980 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfEIOiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:32:00 -0400
-Received: (qmail 14260 invoked by uid 2102); 9 May 2019 10:31:59 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 May 2019 10:31:59 -0400
-Date:   Thu, 9 May 2019 10:31:59 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Greg KH <gregkh@linuxfoundation.org>
-cc:     Jim Lin <jilin@nvidia.com>, <mathias.nyman@intel.com>,
-        <kai.heng.feng@canonical.com>, <drinkcat@chromium.org>,
-        <keescook@chromium.org>, <nsaenzjulienne@suse.de>,
-        <jflat@chromium.org>, <malat@debian.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/1] usb: xhci: Add Clear_TT_Buffer
-In-Reply-To: <20190509122534.GA31542@kroah.com>
-Message-ID: <Pine.LNX.4.44L0.1905091015440.1480-100000@iolanthe.rowland.org>
+        Thu, 9 May 2019 10:38:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BD3A960779; Thu,  9 May 2019 14:38:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557412699;
+        bh=m/9MIbexuBdPxCFPr6oX4nJ8E4mDFLipijNpmR33xf0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EJX8j9RinsUzb5V1hvPYqVOPERp2yIR1uT/0HBSVR0Q+O6CI0LwmKwYLq0rKQ4ies
+         zGVXpsPJRiso66Ua8hTfNohOiDKOVE8jhxX3gZ3wJ3mbNjHr2fSOS1Zb7OUpvuUkBI
+         Xt2uYLXIwmn05nTC5BwCkI2TIq8o8q0yazTOrfbQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from [10.204.78.109] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: gkohli@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9491D6016D;
+        Thu,  9 May 2019 14:38:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557412698;
+        bh=m/9MIbexuBdPxCFPr6oX4nJ8E4mDFLipijNpmR33xf0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KVLMA6xnVzPYMMB8pD2qrzzyV4Ipd559Wuq/B/1f73knIZWmE0yQ3DBOJxGoFNIz8
+         PcGr67buW45zYJd+Hi9O/tZuj7J0sKHqYyxJxSxSZgaXyJl25MdQLz0eLBFB6kqPO0
+         hUp/EkRKZzI8FDXFHswA4oppfmczHonEPG+nM4tc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9491D6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
+Subject: Re: [PATCH] driver core: Fix use-after-free and double free on glue
+ directory
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Muchun Song <smuchun@gmail.com>
+Cc:     rafael@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        zhaowuyun@wingtech.com, linux-arm-msm@vger.kernel.org
+References: <20190423143258.96706-1-smuchun@gmail.com>
+ <24b0fff3775147c04b006282727d94fea7f408b4.camel@kernel.crashing.org>
+ <CAPSr9jHhwASv7=83hU+81mC0JJyuyt2gGxLmyzpCOfmc9vKgGQ@mail.gmail.com>
+ <a37e7a49c3e7fa6ece2be2b76798fef3e51ade4e.camel@kernel.crashing.org>
+ <CAPSr9jHCVCHNK+AmKkUBgs4dPC0UC5KdYKqMinkauyL3OL6qrQ@mail.gmail.com>
+ <79fbc203bc9fa09d88ab2c4bff8635be4c293d49.camel@kernel.crashing.org>
+ <CAPSr9jHw9hgAZo2TuDAKdSLEG1c6EtJG005MWxsxfnbsk1AXow@mail.gmail.com>
+ <20190504153440.GB19654@kroah.com>
+From:   Gaurav Kohli <gkohli@codeaurora.org>
+Message-ID: <e79201c2-a00b-d226-adc2-62769ae1ad81@codeaurora.org>
+Date:   Thu, 9 May 2019 20:08:02 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20190504153440.GB19654@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 May 2019, Greg KH wrote:
+Hi ,
 
-> On Thu, May 09, 2019 at 08:03:15PM +0800, Jim Lin wrote:
-> > --- a/include/linux/usb.h
-> > +++ b/include/linux/usb.h
-> > @@ -625,6 +625,7 @@ struct usb3_lpm_parameters {
-> >   *		parent->hub_delay + wHubDelay + tTPTransmissionDelay (40ns)
-> >   *
-> >   *	Will be used as wValue for SetIsochDelay requests.
-> > + * @devaddr: address on a USB bus, assigned by controller like XHCI
-> >   *
-> >   * Notes:
-> >   * Usbcore drivers should not set usbdev->state directly.  Instead use
-> > @@ -709,6 +710,7 @@ struct usb_device {
-> >  	unsigned lpm_disable_count;
-> >  
-> >  	u16 hub_delay;
-> > +	int devaddr;
+Last patch will serialize the addition of child to parent directory, 
+won't it affect performance.
+
+Regards
+Gaurav
+
+On 5/4/2019 9:04 PM, Greg KH wrote:
+> On Sat, May 04, 2019 at 10:47:07PM +0800, Muchun Song wrote:
+>> Benjamin Herrenschmidt <benh@kernel.crashing.org> 于2019年5月2日周四 下午2:25写道：
+>>
+>>>>> The basic idea yes, the whole bool *locked is horrid though.
+>>>>> Wouldn't it
+>>>>> work to have a get_device_parent_locked that always returns with
+>>>>> the mutex held,
+>>>>> or just move the mutex to the caller or something simpler like this
+>>>>> ?
+>>>>>
+>>>>
+>>>> Greg and Rafael, do you have any suggestions for this? Or you also
+>>>> agree with Ben?
+>>>
+>>> Ping guys ? This is worth fixing...
+>>
+>> I also agree with you. But Greg and Rafael seem to be high latency right now.
 > 
-> Shouldn't this be u32?
+> It's in my list of patches to get to, sorry, hopefully will dig out of
+> that next week with the buffer that the merge window provides me.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-In fact the device address is an unsigned 7-bit value.  The size of the 
-variable we store it in doesn't matter much.
-
-BUT!  If it's going to be stored in a regular int then it's foolish to 
-leave a 16-bit gap between it and the preceding field in the structure.  
-It should be added at some appropriate spot in the structure, not at 
-the end.
-
-Overall I think this should be broken up into two patches: one to
-introduce the new field and one to implement Clear-TT-Buffer for xHCI.
-
-Furthermore, update_devnum() in hub.c should do:
-
-	if (udev->devaddr == 0)
-		udev->devaddr = devnum;
-
-Then the code usb_hub_clear_tt_buffer() can just use devaddr without
-needing to check the HCD type.
-
-Alan Stern
-
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
