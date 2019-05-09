@@ -2,72 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1D51857B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 08:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F51518581
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 08:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfEIGjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 02:39:46 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57269 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbfEIGjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 02:39:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4503bz41lDz9s9y;
-        Thu,  9 May 2019 16:39:43 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1557383983;
-        bh=Dy19V1ekO8bMEFYYDG7JNKoKSMUwbDVlOCMCfJEfQl8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oO58vmbXKH96T92p+Ai5DX9UCPdNnT23tQCUsWzVMxK+QD2l4YjfOSM8dhP4F56qy
-         TalpSbdFZF46HuvMXYmTajZR1DkxDDca9d1CJn0s2Iey/5tuozdL+OccGRGlZoXSEN
-         sviOdiUSp0w2Bx4ZQSFBGfGlQL2BoGkuRmR52GAAYPoycgH8eBWimWYVhypphZyN8o
-         Yb3FDZCcZbIDtET3gtBeRNI+Z4uwxXLH9LI1CEbRT7a8BzvluwsD/UVmpA9DyMucKy
-         4opYe6LllUQ0+tV9c6Mu/ZoGm7N+iJWZTTuXDWameJRuRUKp4A6PebCzWUVRWi/mHM
-         THIuupx0UDpWw==
-Date:   Thu, 9 May 2019 16:39:42 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: the merge window is open
-Message-ID: <20190509163942.6a233bf4@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3ys0XM_FdcHI52m8E1ExmQU"; protocol="application/pgp-signature"
+        id S1726600AbfEIGqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 02:46:02 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:40658 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfEIGqB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 02:46:01 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x496j7Vr017928;
+        Thu, 9 May 2019 15:45:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x496j7Vr017928
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557384307;
+        bh=ZmodlAgJDx+4Bn0ZK3dZyFQf7agV4L/RsO8W9qSntN0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pEbXKMR8YvAnpIkGsdPF2sD82pO8HtkWwfyrLxlNKdZadNPnf3ssO+W3yXgI+cf4y
+         XUAc/ihyIzF2MTIG0khGbHRAKK0STPWmtWzi0OWHPTCw4/IJLmKSdielO4i53c1kRG
+         /Anq7JNbNz8TtDvLzgC3Gv3jckSInALv1LLzld7anqTyZVypfZlVQrJcuv/wAI0hNb
+         IviRk8xfR+dAwA6D76r39XZWHFFyLr4QdmmVa2hUn0GEvXM3hKzzb/Z4+LdtiU/bN2
+         gD1M8pgegBT9i9s4oEulJihQBATjblgCtCVn6vcXSucSChzK5ehkhprd2AMm06fOto
+         dDk4MYmiu+HUQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux@googlegroups.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: add most of Clang-specific flags unconditionally
+Date:   Thu,  9 May 2019 15:44:55 +0900
+Message-Id: <20190509064455.1173-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3ys0XM_FdcHI52m8E1ExmQU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+We do not support old Clang versions. Upgrade your clang version
+if any of these flags is unsupported.
 
-Hi all,
+Let's add flags within ifdef CONFIG_CC_IS_CLANG unconditionally,
+except -fcatch-undefined-behavior.
 
-Please do not add any v5.3 material to your linux-next included
-trees/branches until after v5.2-rc1 has been released.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
---=20
-Cheers,
-Stephen Rothwell
+ Makefile                   | 10 +++++-----
+ scripts/Makefile.extrawarn | 12 ++++++------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
---Sig_/3ys0XM_FdcHI52m8E1ExmQU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/Makefile b/Makefile
+index bd7ae11947cb..c71ffb6f55b5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -731,15 +731,15 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
+ KBUILD_CFLAGS += $(stackp-flags-y)
+ 
+ ifdef CONFIG_CC_IS_CLANG
+-KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+-KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+-KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
++KBUILD_CPPFLAGS += -Qunused-arguments
++KBUILD_CFLAGS += -Wno-format-invalid-specifier
++KBUILD_CFLAGS += -Wno-gnu
+ # Quiet clang warning: comparison of unsigned expression < 0 is always false
+-KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
++KBUILD_CFLAGS += -Wno-tautological-compare
+ # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+ # source of a reference will be _MergedGlobals and not on of the whitelisted names.
+ # See modpost pattern 2
+-KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
++KBUILD_CFLAGS += -mno-global-merge
+ KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+ else
+ 
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 768306add591..523c4cafe2dc 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -66,11 +66,11 @@ KBUILD_CFLAGS += $(warning)
+ else
+ 
+ ifdef CONFIG_CC_IS_CLANG
+-KBUILD_CFLAGS += $(call cc-disable-warning, initializer-overrides)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-value)
+-KBUILD_CFLAGS += $(call cc-disable-warning, format)
+-KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+-KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+-KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
++KBUILD_CFLAGS += -Wno-initializer-overrides
++KBUILD_CFLAGS += -Wno-unused-value
++KBUILD_CFLAGS += -Wno-format
++KBUILD_CFLAGS += -Wno-sign-compare
++KBUILD_CFLAGS += -Wno-format-zero-length
++KBUILD_CFLAGS += -Wno-uninitialized
+ endif
+ endif
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTyy8ACgkQAVBC80lX
-0GyK+AgAiMiumY9MMQzlqX7AWpUsxiSqJi0LJP+qIAW8ZtdP7Mzy8k0B94hJgpk/
-zNzt1gPYEQoopZsn7do0Aww0uRK642q1DAVORR+qddlrujn/I18EBCDCXutft5PD
-sfzEM9cWL35kl8Qhrc7iTTaNdN9W4Bn7RdnDhkh1tL/B/EL1GmBo+u1QUHfKY/Fd
-HQsST5CIn1hW4FJI5bnvY3bobN8d99gIPpk/KsOyJsPIOp1IMGeurVjm4W4PSg2e
-y2OUv2QKnTguCo8GyKkmPCvNC13t8lR55T04f2+xmvlAscfksytq/uv/BldbOpNE
-3uiUdTIn2p+2HRRRreI2aj/h8atyag==
-=slrH
------END PGP SIGNATURE-----
-
---Sig_/3ys0XM_FdcHI52m8E1ExmQU--
