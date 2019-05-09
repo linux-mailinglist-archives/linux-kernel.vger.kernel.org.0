@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB49F191B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D7419216
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfEIS7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46252 "EHLO mail.kernel.org"
+        id S1728168AbfEITED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:04:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728156AbfEISwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:52:16 -0400
+        id S1728101AbfEISsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30E882183E;
-        Thu,  9 May 2019 18:52:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FA47217D7;
+        Thu,  9 May 2019 18:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427935;
-        bh=FIXdxNrE9/HrVfQLCvXe/WWdQ3EDi7cCuGjjZ40Gutw=;
+        s=default; t=1557427729;
+        bh=0zZtPe/QZmm1wOMxxCB1OieNmsIUQ3UbVlb0wPX58Fw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9Mk+pra+OJHxJTDKDosAnvSZqzLXoq7ZGCsErOpA6s8xhU3unHZGpAT9fy+frARM
-         9KrREo3OFK4RHX75PPtR1ttXr4BB9b9nEmLnylx1bQnsK3Lw7n/BTrZ80cXdQzoo/P
-         3O2T+LqtoiaB1QIMpAKs4d+jZkNyrR6KnNOs0wxo=
+        b=bvsoTr7lZ1O98lEm5QYOCz82/wNwwkUI/aDdtQh2a7VzwlGQd+VHi0lpXRnXdWYAE
+         GVUxmFPyRzPiXbSvW7TwbTtworkneRGCpX1ThqdyLWIBsqMSMo01iWpRGatmDZR75L
+         mPG3Z8kKICaoK6XNP69QnuUoWPoSttQyxmGjiJ/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, JaeChul Lee <jcsing.lee@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 32/95] IB/hfi1: Fix the allocation of RSM table
-Date:   Thu,  9 May 2019 20:41:49 +0200
-Message-Id: <20190509181311.548879047@linuxfoundation.org>
+Subject: [PATCH 4.19 15/66] ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate
+Date:   Thu,  9 May 2019 20:41:50 +0200
+Message-Id: <20190509181303.530167536@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,99 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d0294344470e6b52d097aa7369173f32d11f2f52 ]
+[ Upstream commit 2b13bee3884926cba22061efa75bd315e871de24 ]
 
-The receive side mapping (RSM) on hfi1 hardware is a special
-matching mechanism to direct an incoming packet to a given
-hardware receive context. It has 4 instances of matching capabilities
-(RSM0 - RSM3) that share the same RSM table (RMT). The RMT has a total of
-256 entries, each of which points to a receive context.
+After commit fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate
+handling") the audio root clock frequency is configured improperly for
+44100 sample rate. Due to clock rate rounding it's 20070401 Hz instead
+of 22579000 Hz. This results in a too low value of the PSR clock divider
+in the CPU DAI driver and too fast actual sample rate for fs=44100. E.g.
+1 kHz tone has actual 1780 Hz frequency (1 kHz * 20070401/22579000 * 2).
 
-Currently, three instances of RSM have been used:
-1. RSM0 by QOS;
-2. RSM1 by PSM FECN;
-3. RSM2 by VNIC.
+Fix this by increasing the correction passed to clk_set_rate() to take
+into account inaccuracy of the EPLL frequency properly.
 
-Each RSM instance should reserve enough entries in RMT to function
-properly. Since both PSM and VNIC could allocate any receive context
-between dd->first_dyn_alloc_ctxt and dd->num_rcv_contexts, PSM FECN must
-reserve enough RMT entries to cover the entire receive context index
-range (dd->num_rcv_contexts - dd->first_dyn_alloc_ctxt) instead of only
-the user receive contexts allocated for PSM
-(dd->num_user_contexts). Consequently, the sizing of
-dd->num_user_contexts in set_up_context_variables is incorrect.
-
-Fixes: 2280740f01ae ("IB/hfi1: Virtual Network Interface Controller (VNIC) HW support")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handling")
+Reported-by: JaeChul Lee <jcsing.lee@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/chip.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ sound/soc/samsung/odroid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
-index b443642eac021..0ae05e9249b39 100644
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -13219,7 +13219,7 @@ static int set_up_context_variables(struct hfi1_devdata *dd)
- 	int total_contexts;
- 	int ret;
- 	unsigned ngroups;
--	int qos_rmt_count;
-+	int rmt_count;
- 	int user_rmt_reduced;
- 	u32 n_usr_ctxts;
- 	u32 send_contexts = chip_send_contexts(dd);
-@@ -13281,10 +13281,20 @@ static int set_up_context_variables(struct hfi1_devdata *dd)
- 		n_usr_ctxts = rcv_contexts - total_contexts;
- 	}
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index e7b371b072304..45c6d73967852 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -64,11 +64,11 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
  
--	/* each user context requires an entry in the RMT */
--	qos_rmt_count = qos_rmt_entries(dd, NULL, NULL);
--	if (qos_rmt_count + n_usr_ctxts > NUM_MAP_ENTRIES) {
--		user_rmt_reduced = NUM_MAP_ENTRIES - qos_rmt_count;
-+	/*
-+	 * The RMT entries are currently allocated as shown below:
-+	 * 1. QOS (0 to 128 entries);
-+	 * 2. FECN for PSM (num_user_contexts + num_vnic_contexts);
-+	 * 3. VNIC (num_vnic_contexts).
-+	 * It should be noted that PSM FECN oversubscribe num_vnic_contexts
-+	 * entries of RMT because both VNIC and PSM could allocate any receive
-+	 * context between dd->first_dyn_alloc_text and dd->num_rcv_contexts,
-+	 * and PSM FECN must reserve an RMT entry for each possible PSM receive
-+	 * context.
-+	 */
-+	rmt_count = qos_rmt_entries(dd, NULL, NULL) + (num_vnic_contexts * 2);
-+	if (rmt_count + n_usr_ctxts > NUM_MAP_ENTRIES) {
-+		user_rmt_reduced = NUM_MAP_ENTRIES - rmt_count;
- 		dd_dev_err(dd,
- 			   "RMT size is reducing the number of user receive contexts from %u to %d\n",
- 			   n_usr_ctxts,
-@@ -14272,9 +14282,11 @@ static void init_user_fecn_handling(struct hfi1_devdata *dd,
- 	u64 reg;
- 	int i, idx, regoff, regidx;
- 	u8 offset;
-+	u32 total_cnt;
+ 	/*
+-	 *  We add 1 to the rclk_freq value in order to avoid too low clock
++	 *  We add 2 to the rclk_freq value in order to avoid too low clock
+ 	 *  frequency values due to the EPLL output frequency not being exact
+ 	 *  multiple of the audio sampling rate.
+ 	 */
+-	rclk_freq = params_rate(params) * rfs + 1;
++	rclk_freq = params_rate(params) * rfs + 2;
  
- 	/* there needs to be enough room in the map table */
--	if (rmt->used + dd->num_user_contexts >= NUM_MAP_ENTRIES) {
-+	total_cnt = dd->num_rcv_contexts - dd->first_dyn_alloc_ctxt;
-+	if (rmt->used + total_cnt >= NUM_MAP_ENTRIES) {
- 		dd_dev_err(dd, "User FECN handling disabled - too many user contexts allocated\n");
- 		return;
- 	}
-@@ -14328,7 +14340,7 @@ static void init_user_fecn_handling(struct hfi1_devdata *dd,
- 	/* add rule 1 */
- 	add_rsm_rule(dd, RSM_INS_FECN, &rrd);
- 
--	rmt->used += dd->num_user_contexts;
-+	rmt->used += total_cnt;
- }
- 
- /* Initialize RSM for VNIC */
+ 	ret = clk_set_rate(priv->sclk_i2s, rclk_freq);
+ 	if (ret < 0)
 -- 
 2.20.1
 
