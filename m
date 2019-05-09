@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9F5191C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B7519235
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfEISvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:51:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45360 "EHLO mail.kernel.org"
+        id S1727924AbfEITFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:05:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728569AbfEISve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:51:34 -0400
+        id S1727874AbfEISrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:47:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1BC3217D7;
-        Thu,  9 May 2019 18:51:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9533217D7;
+        Thu,  9 May 2019 18:47:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427894;
-        bh=bHoOnIlsyTPfLVH1YTxoNF1t9ZcKKZiYw2OEkn5sGCU=;
+        s=default; t=1557427668;
+        bh=n6R/SMkEDuB4xZ6Ddy+01pQ8t9J5hnVCEn33UDP+TM8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qTkNNysOThHnZ2p2OD13+CsLMZeouHGzB2bW6S3Mat+PXzXFcGqxKfbIXD8G5T7nh
-         2L2fYHBrka/yFl5Og+D1zIzBS+R0MAGbPeY6qJwbj3wsucZv5WPIYDE+ZDf28cUQ/v
-         9GLrjOa1pHWdEd3hMyr6LEEy1wm/DTVfwl36QeDo=
+        b=U0gSLRpLGzlrygrgVLNoX274O9PD91rfrNNcTYUjanFjJAHmyMBlFUz6z9MwPIsVP
+         zfRSV3f9Bt8yIfA9N1Y7M/Hi2Sk8qaoMwWAOkp1gw+CWxzWUgs8+Lc5fqJZma+4TXR
+         RBGtGtt65FQ9MAGUw8qHEhRwj/KENUjLL/zXmGdI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wentao Lou <Wentao.Lou@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 44/95] drm/amdgpu: amdgpu_device_recover_vram always failed if only one node in shadow_list
+        stable@vger.kernel.org, Chong Qiao <qiaochong@loongson.cn>,
+        Douglas Anderson <dianders@chromium.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 26/66] MIPS: KGDB: fix kgdb support for SMP platforms.
 Date:   Thu,  9 May 2019 20:42:01 +0200
-Message-Id: <20190509181312.518662004@linuxfoundation.org>
+Message-Id: <20190509181304.656350630@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +50,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1712fb1a2f6829150032ac76eb0e39b82a549cfb ]
+[ Upstream commit ab8a6d821179ab9bea1a9179f535ccba6330c1ed ]
 
-amdgpu_bo_restore_shadow would assign zero to r if succeeded.
-r would remain zero if there is only one node in shadow_list.
-current code would always return failure when r <= 0.
-restart the timeout for each wait was a rather problematic bug as well.
-The value of tmo SHOULD be changed, otherwise we wait tmo jiffies on each loop.
+KGDB_call_nmi_hook is called by other cpu through smp call.
+MIPS smp call is processed in ipi irq handler and regs is saved in
+ handle_int.
+So kgdb_call_nmi_hook get regs by get_irq_regs and regs will be passed
+ to kgdb_cpu_enter.
 
-Signed-off-by: Wentao Lou <Wentao.Lou@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: QiaoChong <qiaochong@loongson.cn>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/mips/kernel/kgdb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 7ff3a28fc9038..d55dd570a7023 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -3158,11 +3158,16 @@ static int amdgpu_device_recover_vram(struct amdgpu_device *adev)
- 			break;
+diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
+index eb6c0d582626b..2c1e30ca7ee4e 100644
+--- a/arch/mips/kernel/kgdb.c
++++ b/arch/mips/kernel/kgdb.c
+@@ -33,6 +33,7 @@
+ #include <asm/processor.h>
+ #include <asm/sigcontext.h>
+ #include <linux/uaccess.h>
++#include <asm/irq_regs.h>
  
- 		if (fence) {
--			r = dma_fence_wait_timeout(fence, false, tmo);
-+			tmo = dma_fence_wait_timeout(fence, false, tmo);
- 			dma_fence_put(fence);
- 			fence = next;
--			if (r <= 0)
-+			if (tmo == 0) {
-+				r = -ETIMEDOUT;
- 				break;
-+			} else if (tmo < 0) {
-+				r = tmo;
-+				break;
-+			}
- 		} else {
- 			fence = next;
- 		}
-@@ -3173,8 +3178,8 @@ static int amdgpu_device_recover_vram(struct amdgpu_device *adev)
- 		tmo = dma_fence_wait_timeout(fence, false, tmo);
- 	dma_fence_put(fence);
+ static struct hard_trap_info {
+ 	unsigned char tt;	/* Trap type code for MIPS R3xxx and R4xxx */
+@@ -214,7 +215,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+ 	old_fs = get_fs();
+ 	set_fs(get_ds());
  
--	if (r <= 0 || tmo <= 0) {
--		DRM_ERROR("recover vram bo from shadow failed\n");
-+	if (r < 0 || tmo <= 0) {
-+		DRM_ERROR("recover vram bo from shadow failed, r is %ld, tmo is %ld\n", r, tmo);
- 		return -EIO;
- 	}
+-	kgdb_nmicallback(raw_smp_processor_id(), NULL);
++	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
  
+ 	set_fs(old_fs);
+ }
 -- 
 2.20.1
 
