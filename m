@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8D918B4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE1118B61
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfEIONL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:13:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46912 "EHLO
+        id S1726949AbfEIONz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:13:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46910 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726590AbfEIONK (ORCPT
+        by vger.kernel.org with ESMTP id S1726682AbfEIONK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 May 2019 10:13:10 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-000124-Gr; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-000126-Hb; Thu, 09 May 2019 15:13:08 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-0006M0-Ae; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-0006MA-Ca; Thu, 09 May 2019 15:13:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Amit Klein" <aksecurity@gmail.com>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
 Date:   Thu, 09 May 2019 15:08:17 +0100
-Message-ID: <lsq.1557410897.931368180@decadent.org.uk>
+Message-ID: <lsq.1557410897.455940790@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 03/10] inet: update the IP ID generation algorithm to
- higher standards.
+Subject: [PATCH 3.16 05/10] vxlan: Fix big-endian declaration of VNI
 In-Reply-To: <lsq.1557410896.171359878@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,62 +45,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amit Klein <aksecurity@gmail.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-Commit 355b98553789 ("netns: provide pure entropy for net_hash_mix()")
-makes net_hash_mix() return a true 32 bits of entropy.  When used in the
-IP ID generation algorithm, this has the effect of extending the IP ID
-generation key from 32 bits to 64 bits.
+In this version of the driver, VNIs are consistently kept in host
+order.  However vxlan_fdb_create() erroneously declares its vni
+parameter as __be32, which sparse warns about.  Change it to __u32.
 
-However, net_hash_mix() is only used for IP ID generation starting with
-kernel version 4.1.  Therefore, earlier kernels remain with 32-bit key
-no matter what the net_hash_mix() return value is.
+This was resolved upstream by commit 54bfd872bf16 "vxlan: keep flags
+and vni in network byte order".
 
-This change addresses the issue by explicitly extending the key to 64
-bits for kernels older than 4.1.
-
-Signed-off-by: Amit Klein <aksecurity@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/route.c      | 4 +++-
- net/ipv6/ip6_output.c | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -487,13 +487,15 @@ EXPORT_SYMBOL(ip_idents_reserve);
- void __ip_select_ident(struct iphdr *iph, int segs)
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -706,7 +706,7 @@ static struct vxlan_fdb *vxlan_fdb_alloc
+ static int vxlan_fdb_create(struct vxlan_dev *vxlan,
+ 			    const u8 *mac, union vxlan_addr *ip,
+ 			    __u16 state, __be16 port,
+-			    __be32 vni, __u32 ifindex, __u8 ndm_flags,
++			    __u32 vni, __u32 ifindex, __u8 ndm_flags,
+ 			    struct vxlan_fdb **fdb)
  {
- 	static u32 ip_idents_hashrnd __read_mostly;
-+	static u32 ip_idents_hashrnd_extra __read_mostly;
- 	u32 hash, id;
- 
- 	net_get_random_once(&ip_idents_hashrnd, sizeof(ip_idents_hashrnd));
-+	net_get_random_once(&ip_idents_hashrnd_extra, sizeof(ip_idents_hashrnd_extra));
- 
- 	hash = jhash_3words((__force u32)iph->daddr,
- 			    (__force u32)iph->saddr,
--			    iph->protocol,
-+			    iph->protocol ^ ip_idents_hashrnd_extra,
- 			    ip_idents_hashrnd);
- 	id = ip_idents_reserve(hash, segs);
- 	iph->id = htons(id);
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -541,12 +541,15 @@ static void ip6_copy_metadata(struct sk_
- static void ipv6_select_ident(struct frag_hdr *fhdr, struct rt6_info *rt)
- {
- 	static u32 ip6_idents_hashrnd __read_mostly;
-+	static u32 ip6_idents_hashrnd_extra __read_mostly;
- 	u32 hash, id;
- 
- 	net_get_random_once(&ip6_idents_hashrnd, sizeof(ip6_idents_hashrnd));
-+	net_get_random_once(&ip6_idents_hashrnd_extra, sizeof(ip6_idents_hashrnd_extra));
- 
- 	hash = __ipv6_addr_jhash(&rt->rt6i_dst.addr, ip6_idents_hashrnd);
- 	hash = __ipv6_addr_jhash(&rt->rt6i_src.addr, hash);
-+	hash = jhash_1word(hash, ip6_idents_hashrnd_extra);
- 
- 	id = ip_idents_reserve(hash, 1);
- 	fhdr->identification = htonl(id);
+ 	struct vxlan_rdst *rd = NULL;
 
