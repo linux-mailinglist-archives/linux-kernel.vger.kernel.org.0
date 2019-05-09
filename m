@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E013B190C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 517D419100
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfEISst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41724 "EHLO mail.kernel.org"
+        id S1728096AbfEISvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbfEISsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:48:42 -0400
+        id S1728608AbfEISvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:51:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D3AF2183E;
-        Thu,  9 May 2019 18:48:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8D75217D7;
+        Thu,  9 May 2019 18:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427721;
-        bh=AYeoGN273AXyjiMv89OcvbcdISNL0ikD9NfcKVEP0pw=;
+        s=default; t=1557427907;
+        bh=Qt77VUw4ge7hsZmIDo7QKSC2ysPJBo4tHgWGfWn3O7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h0T19ikhrg3IBow/8936KD1zvqinR9emRhULnJxjrbpoFO72oWL9jv81ufFj9lCi/
-         7zv4SP+nHJv6pHiOHtvnPSi56+6CZ/JD8qXyx2COrGnAIciYX0iGqSSOalVpctscn5
-         /M1SmXnQdN2hJ5YlF6DAbWA1MOsZG701Ek9mUEbk=
+        b=rTZSz+99cQn4IcgjV2d+VvD7qleVdkONoXK4/MiAjVOCfXLew6P3aVUl0KhMeIq6+
+         FHs68FxSsobRnaZGFB8uYL5aSgafouFMxnMordDPxcBFtZk7RvppWC/1zoO2sueIEJ
+         avQwSJADPH+90ESHgc7frmSJ1GpIDsX2O57AT6A8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rander Wang <rander.wang@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 12/66] ASoC:intel:skl:fix a simultaneous playback & capture issue on hda platform
-Date:   Thu,  9 May 2019 20:41:47 +0200
-Message-Id: <20190509181303.215614019@linuxfoundation.org>
+Subject: [PATCH 5.0 31/95] IB/hfi1: Eliminate opcode tests on mr deref
+Date:   Thu,  9 May 2019 20:41:48 +0200
+Message-Id: <20190509181311.480613377@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,76 +47,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c899df3e9b0bf7b76e642aed1a214582ea7012d5 ]
+[ Upstream commit a8639a79e85c18c16c10089edd589c7948f19bbd ]
 
-If playback and capture are enabled concurrently, when the capture stops
-the output becomes inaudile. The playback application will become stuck
-and underrun after a timeout.
+When an old ack_queue entry is used to store an incoming request, it may
+need to clean up the old entry if it is still referencing the
+MR. Originally only RDMA READ request needed to reference MR on the
+responder side and therefore the opcode was tested when cleaning up the
+old entry. The introduction of tid rdma specific operations in the
+ack_queue makes the specific opcode tests wrong.  Multiple opcodes (RDMA
+READ, TID RDMA READ, and TID RDMA WRITE) may need MR ref cleanup.
 
-This is caused by mistaken use of the stream_id, which should only be
-set for playback and not for capture
+Remove the opcode specific tests associated with the ack_queue.
 
-Tested on Apollolake and Kabylake with SST driver.
-
-Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: f48ad614c100 ("IB/hfi1: Move driver out of staging")
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/skylake/skl-pcm.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/hfi1/rc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index 823e39103edd3..6b2c8c6e7a00f 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -180,6 +180,7 @@ int skl_pcm_link_dma_prepare(struct device *dev, struct skl_pipe_params *params)
- 	struct hdac_stream *hstream;
- 	struct hdac_ext_stream *stream;
- 	struct hdac_ext_link *link;
-+	unsigned char stream_tag;
- 
- 	hstream = snd_hdac_get_stream(bus, params->stream,
- 					params->link_dma_id + 1);
-@@ -198,10 +199,13 @@ int skl_pcm_link_dma_prepare(struct device *dev, struct skl_pipe_params *params)
- 
- 	snd_hdac_ext_link_stream_setup(stream, format_val);
- 
--	list_for_each_entry(link, &bus->hlink_list, list) {
--		if (link->index == params->link_index)
--			snd_hdac_ext_link_set_stream_id(link,
--					hstream->stream_tag);
-+	stream_tag = hstream->stream_tag;
-+	if (stream->hstream.direction == SNDRV_PCM_STREAM_PLAYBACK) {
-+		list_for_each_entry(link, &bus->hlink_list, list) {
-+			if (link->index == params->link_index)
-+				snd_hdac_ext_link_set_stream_id(link,
-+								stream_tag);
-+		}
- 	}
- 
- 	stream->link_prepared = 1;
-@@ -640,6 +644,7 @@ static int skl_link_hw_free(struct snd_pcm_substream *substream,
- 	struct hdac_ext_stream *link_dev =
- 				snd_soc_dai_get_dma_data(dai, substream);
- 	struct hdac_ext_link *link;
-+	unsigned char stream_tag;
- 
- 	dev_dbg(dai->dev, "%s: %s\n", __func__, dai->name);
- 
-@@ -649,7 +654,11 @@ static int skl_link_hw_free(struct snd_pcm_substream *substream,
- 	if (!link)
- 		return -EINVAL;
- 
--	snd_hdac_ext_link_clear_stream_id(link, hdac_stream(link_dev)->stream_tag);
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+		stream_tag = hdac_stream(link_dev)->stream_tag;
-+		snd_hdac_ext_link_clear_stream_id(link, stream_tag);
-+	}
-+
- 	snd_hdac_ext_stream_release(link_dev, HDAC_EXT_STREAM_TYPE_LINK);
- 	return 0;
- }
+diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
+index be603f35d7e47..cfde43b1df960 100644
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -2302,7 +2302,7 @@ void hfi1_rc_rcv(struct hfi1_packet *packet)
+ 			update_ack_queue(qp, next);
+ 		}
+ 		e = &qp->s_ack_queue[qp->r_head_ack_queue];
+-		if (e->opcode == OP(RDMA_READ_REQUEST) && e->rdma_sge.mr) {
++		if (e->rdma_sge.mr) {
+ 			rvt_put_mr(e->rdma_sge.mr);
+ 			e->rdma_sge.mr = NULL;
+ 		}
+@@ -2376,7 +2376,7 @@ void hfi1_rc_rcv(struct hfi1_packet *packet)
+ 			update_ack_queue(qp, next);
+ 		}
+ 		e = &qp->s_ack_queue[qp->r_head_ack_queue];
+-		if (e->opcode == OP(RDMA_READ_REQUEST) && e->rdma_sge.mr) {
++		if (e->rdma_sge.mr) {
+ 			rvt_put_mr(e->rdma_sge.mr);
+ 			e->rdma_sge.mr = NULL;
+ 		}
 -- 
 2.20.1
 
