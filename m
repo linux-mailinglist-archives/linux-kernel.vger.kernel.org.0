@@ -2,82 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D87721925D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE3E192A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:10:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbfEITGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:06:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbfEITGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 15:06:48 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4153F20656;
-        Thu,  9 May 2019 19:06:46 +0000 (UTC)
-Date:   Thu, 9 May 2019 15:06:44 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "luto@amacapital.net" <luto@amacapital.net>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
+        id S1726806AbfEITKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:10:19 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:51028 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726784AbfEITKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 15:10:18 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TRHKq3L_1557429003;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TRHKq3L_1557429003)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 10 May 2019 03:10:07 +0800
+Subject: Re: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
+ flush
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <namit@vmware.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        "jstancek@redhat.com" <jstancek@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dvyukov@google.com" <dvyukov@google.com>
-Subject: Re: [PATCH 02/25] tracing: Improve "if" macro code generation
-Message-ID: <20190509150644.13d4a046@gandalf.local.home>
-In-Reply-To: <20190509184531.jhinxi2x2pdfaefb@treble>
-References: <20190318153840.906404905@infradead.org>
-        <20190318155140.058627431@infradead.org>
-        <f918ecb0b6bf43f3bf0f526084d8467b@AcuMS.aculab.com>
-        <CAHk-=wiALN3jRuzARpwThN62iKd476Xj-uom+YnLZ4=eqcz7xQ@mail.gmail.com>
-        <20190509090058.6554dc81@gandalf.local.home>
-        <CAHk-=wiLMXDO-_NGjgtoHxp9TRpcnykHPNWOHfXfWd9GmCu1Uw@mail.gmail.com>
-        <20190509142902.08a32f20@gandalf.local.home>
-        <20190509184531.jhinxi2x2pdfaefb@treble>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        Mel Gorman <mgorman@suse.de>
+References: <1557264889-109594-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190509083726.GA2209@brain-police>
+ <20190509103813.GP2589@hirez.programming.kicks-ass.net>
+ <F22533A7-016F-4506-809A-7E86BAF24D5A@vmware.com>
+ <20190509182435.GA2623@hirez.programming.kicks-ass.net>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <84720bb8-bf3d-8c10-d675-0670f13b2efc@linux.alibaba.com>
+Date:   Thu, 9 May 2019 12:10:02 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190509182435.GA2623@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 May 2019 13:45:31 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-> Actually, my original fix already went in:
-> 
->   37686b1353cf ("tracing: Improve "if" macro code generation")
-> 
-> But it introduced a regression:
-> 
->   https://lkml.kernel.org/r/201905040509.iqQ2CrOU%lkp@intel.com
-> 
-> which Linus' patch fixes for some reason.
 
-Hmm, I'm still working on my pull request for the merge window, and if
-this already went in, I could just add this, and let it conflict. I'm
-sure Linus will have no problems in fixing up the conflicts.
+On 5/9/19 11:24 AM, Peter Zijlstra wrote:
+> On Thu, May 09, 2019 at 05:36:29PM +0000, Nadav Amit wrote:
+>>> On May 9, 2019, at 3:38 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>>> diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+>>> index 99740e1dd273..fe768f8d612e 100644
+>>> --- a/mm/mmu_gather.c
+>>> +++ b/mm/mmu_gather.c
+>>> @@ -244,15 +244,20 @@ void tlb_finish_mmu(struct mmu_gather *tlb,
+>>> 		unsigned long start, unsigned long end)
+>>> {
+>>> 	/*
+>>> -	 * If there are parallel threads are doing PTE changes on same range
+>>> -	 * under non-exclusive lock(e.g., mmap_sem read-side) but defer TLB
+>>> -	 * flush by batching, a thread has stable TLB entry can fail to flush
+>>> -	 * the TLB by observing pte_none|!pte_dirty, for example so flush TLB
+>>> -	 * forcefully if we detect parallel PTE batching threads.
+>>> +	 * Sensible comment goes here..
+>>> 	 */
+>>> -	if (mm_tlb_flush_nested(tlb->mm)) {
+>>> -		__tlb_reset_range(tlb);
+>>> -		__tlb_adjust_range(tlb, start, end - start);
+>>> +	if (mm_tlb_flush_nested(tlb->mm) && !tlb->full_mm) {
+>>> +		/*
+>>> +		 * Since we're can't tell what we actually should have
+>>> +		 * flushed flush everything in the given range.
+>>> +		 */
+>>> +		tlb->start = start;
+>>> +		tlb->end = end;
+>>> +		tlb->freed_tables = 1;
+>>> +		tlb->cleared_ptes = 1;
+>>> +		tlb->cleared_pmds = 1;
+>>> +		tlb->cleared_puds = 1;
+>>> +		tlb->cleared_p4ds = 1;
+>>> 	}
+>>>
+>>> 	tlb_flush_mmu(tlb);
+>> As a simple optimization, I think it is possible to hold multiple nesting
+>> counters in the mm, similar to tlb_flush_pending, for freed_tables,
+>> cleared_ptes, etc.
+>>
+>> The first time you set tlb->freed_tables, you also atomically increase
+>> mm->tlb_flush_freed_tables. Then, in tlb_flush_mmu(), you just use
+>> mm->tlb_flush_freed_tables instead of tlb->freed_tables.
+> That sounds fraught with races and expensive; I would much prefer to not
+> go there for this arguably rare case.
+>
+> Consider such fun cases as where CPU-0 sees and clears a PTE, CPU-1
+> races and doesn't see that PTE. Therefore CPU-0 sets and counts
+> cleared_ptes. Then if CPU-1 flushes while CPU-0 is still in mmu_gather,
+> it will see cleared_ptes count increased and flush that granularity,
+> OTOH if CPU-1 flushes after CPU-0 completes, it will not and potentiall
+> miss an invalidate it should have had.
+>
+> This whole concurrent mmu_gather stuff is horrible.
+>
+>    /me ponders more....
+>
+> So I think the fundamental race here is this:
+>
+> 	CPU-0				CPU-1
+>
+> 	tlb_gather_mmu(.start=1,	tlb_gather_mmu(.start=2,
+> 		       .end=3);			       .end=4);
+>
+> 	ptep_get_and_clear_full(2)
+> 	tlb_remove_tlb_entry(2);
+> 	__tlb_remove_page();
+> 					if (pte_present(2)) // nope
+>
+> 					tlb_finish_mmu();
+>
+> 					// continue without TLBI(2)
+> 					// whoopsie
+>
+> 	tlb_finish_mmu();
+> 	  tlb_flush()		->	TLBI(2)
 
-I should change the subject, as it is the same ;-) Perhaps to:
+I'm not quite sure if this is the case Jan really met. But, according to 
+his test, once correct tlb->freed_tables and tlb->cleared_* are set, his 
+test works well.
 
- tracing: Clean up "if" macro
+>
+>
+> And we can fix that by having tlb_finish_mmu() sync up. Never let a
+> concurrent tlb_finish_mmu() complete until all concurrenct mmu_gathers
+> have completed.
 
-But it would be good to find out why this fixes the issue you see.
-Perhaps its because we remove the internal if statement?
+Not sure if this will scale well.
 
--- Steve
+>
+> This should not be too hard to make happen.
+
