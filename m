@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90CFE19063
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4288190BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfEISo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35796 "EHLO mail.kernel.org"
+        id S1728018AbfEISsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:48:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727003AbfEISo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:26 -0400
+        id S1727989AbfEISsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AA5A217D6;
-        Thu,  9 May 2019 18:44:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86D96217F9;
+        Thu,  9 May 2019 18:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427465;
-        bh=YtgbiACOYpu3Ps647bzUjSSLMETUjJZB0fG39icM7G0=;
+        s=default; t=1557427701;
+        bh=VHEcK7OOP1jtW+G99RTlVZzKoB+P1+WnmyH6ylK7zTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IVUg8Uo7OR+0ziaQ8UiPRoJuXhRhUN54PC8uJJ1PRIKW93rlIEYOb7smiUxV4uPAP
-         Ig8pfMSC3AEMGmohC+D3EVFmd0zVeMfxamqS9z/JLQdU7kC/DAWV/SvyhHX9fAw59O
-         XYitaYIqZt8+yRAXx5+/f0rt6fyZaPJT6lL639hc=
+        b=B0NQtxmiBmNoT/JFt0A1lAvl7aK8xIg+k7E1jDZktiwZ4TNST537Pbn/WNO6prucz
+         RSb0tLi2NYrzJBN1YZrqV5vwg8lBdvFDE2ZWb27jKX8ZbQVchkXkCgUIwjrgppxCiq
+         FmQRbHATQMLVjjMIwvlrkddXVHXFk4htmZXhZ4e4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 20/28] usb: dwc3: Fix default lpm_nyet_threshold value
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        "Tobin C. Harding" <tobin@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 37/66] slab: fix a crash by reading /proc/slab_allocators
 Date:   Thu,  9 May 2019 20:42:12 +0200
-Message-Id: <20190509181254.486030106@linuxfoundation.org>
+Message-Id: <20190509181305.905790050@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+[ Upstream commit fcf88917dd435c6a4cb2830cb086ee58605a1d85 ]
 
-commit 8d791929b2fbdf7734c1596d808e55cb457f4562 upstream.
+The commit 510ded33e075 ("slab: implement slab_root_caches list")
+changes the name of the list node within "struct kmem_cache" from "list"
+to "root_caches_node", but leaks_show() still use the "list" which
+causes a crash when reading /proc/slab_allocators.
 
-The max possible value for DCTL.LPM_NYET_THRES is 15 and not 255. Change
-the default value to 15.
+You need to have CONFIG_SLAB=y and CONFIG_MEMCG=y to see the problem,
+because without MEMCG all slab caches are root caches, and the "list"
+node happens to be the right one.
 
-Cc: stable@vger.kernel.org
-Fixes: 80caf7d21adc ("usb: dwc3: add lpm erratum support")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 510ded33e075 ("slab: implement slab_root_caches list")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Tobin C. Harding <tobin@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/slab.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -991,7 +991,7 @@ static int dwc3_probe(struct platform_de
- 	dwc->regs_size	= resource_size(res);
+diff --git a/mm/slab.c b/mm/slab.c
+index b8e0ec74330f3..018d32496e8d1 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -4305,7 +4305,8 @@ static void show_symbol(struct seq_file *m, unsigned long address)
  
- 	/* default to highest possible threshold */
--	lpm_nyet_threshold = 0xff;
-+	lpm_nyet_threshold = 0xf;
- 
- 	/* default to -3.5dB de-emphasis */
- 	tx_de_emphasis = 1;
+ static int leaks_show(struct seq_file *m, void *p)
+ {
+-	struct kmem_cache *cachep = list_entry(p, struct kmem_cache, list);
++	struct kmem_cache *cachep = list_entry(p, struct kmem_cache,
++					       root_caches_node);
+ 	struct page *page;
+ 	struct kmem_cache_node *n;
+ 	const char *name;
+-- 
+2.20.1
+
 
 
