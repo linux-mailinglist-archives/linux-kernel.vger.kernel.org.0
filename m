@@ -2,60 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2BF188BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F5C188BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfEILMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:12:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43395 "EHLO
+        id S1726769AbfEILLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:11:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46200 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbfEILLm (ORCPT
+        with ESMTP id S1726715AbfEILLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:11:42 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r4so2440129wro.10
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:40 -0700 (PDT)
+        Thu, 9 May 2019 07:11:43 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r7so1824236wrr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QCYNgLeacHF6Po+7GOvr1beHIPnLrcjXHBlwdHrGCU0=;
-        b=xrKRJ01FjexwcW6Amk2UUkgupUslrHuPLDtpflcQVkX5Ui7ZAjWgKS3dqp58CehLKT
-         m7U0HLJL81DLGNl6Nx8C/Ze2rWrVrZwAO8aM27Roy/Ir2eESs+RkNsf/uY6dyUXS6US2
-         e/efAcycx/5aKwBol9pNrIh/G34Q/aw2VxmiGEk2XrAfc/dMaUXXsVbit8T/LT8KlTzB
-         SKj1qIdFVKRAKmp4X13yEt/cAu12cSOGL6sjJjgG3NeQqmd9HoVWW9ItPzkBRyBTx2FF
-         +WQJjZK3DHfwhBM/4FxygB9SdEVA7e38iRLAhYmZSg67u5I1ZWtN994Oppt1+kZR4FlQ
-         4fgQ==
+        bh=LvXnZafEYce3eQKqHnoNFRM0UdhTjWak2LbszgnoCDw=;
+        b=nVNkiLZZnD0l0mljltaU+TL2K/INQVTmvo6L6LxI4KN1XdK8+rV4sSWsBWCDaI0v2u
+         4MV/gdQ/dH//yjmesEhgh7co8VVsOg9SGz0aNJi3RMSiZNJN3uhnXNWjqYPg3i+7NE9g
+         P9UG4KP4Wkn+o3i52xoJSa4mp90sh1Cu0F0XUfRXvhkjojFuWq5usvUFwTVVZxktGnz4
+         m9sdKKS5d9WX3FDpvhMfwERGRJm8Pc8S0w6keRmjiXlVF9SkrEQHLO6oHpBUtHiHzZTU
+         s8pidw8/Xl2K9ntFRohkonecIOKkLuZCK8UKelRWP563YP6k8Qe0pLvW9rMEC6F1mIAb
+         n1mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QCYNgLeacHF6Po+7GOvr1beHIPnLrcjXHBlwdHrGCU0=;
-        b=m16gNsVTN9PfUS3mwxLeO49zUPHdB8y34L0QyP33nXcr/JsD9kgrenkVcIgzM1KS9h
-         nfdyVGiXmMXFLr73zBE1VlPgQzaaZrC1x2Ti9LmUmvZC9tnySZzUcXWhqvVNfiRPFchN
-         DcotpCfmGFskXntFnlI0pRm+lVwrVsKUd77uRHFP5SqBaR1BA4qKA27u+coBH2gOMRdS
-         EKzRpOCbgDGrZ7Gi4BS7IcCZkRwZJNBr//4Lfu6WRo/J/M+YhiHtS7jxQ95fiQURfr0X
-         ii+3/FNZl5yXpMGyugQ157GiiKMFGEOrSxPyJqDDxVizt9ObelVh2/iLxx8YiBtyvjxz
-         nq2g==
-X-Gm-Message-State: APjAAAUaGkrHZJTLqL3qR4FEeh12Nh9A1czuXaIOa2QuxVI4/mDDYXro
-        yMk9NEOzBC/W5C6vqkaxi/Tobg==
-X-Google-Smtp-Source: APXvYqzMGoZEXQojTRjD72YL1yIFVm7J1W+VHiI9SvPm03np6VnCkUTzFJcvv1XUeh0PfNamyp1clg==
-X-Received: by 2002:a5d:6ad2:: with SMTP id u18mr2489123wrw.199.1557400299916;
-        Thu, 09 May 2019 04:11:39 -0700 (PDT)
+        bh=LvXnZafEYce3eQKqHnoNFRM0UdhTjWak2LbszgnoCDw=;
+        b=MT2MTPY7OJaUSUl/pY1abi2zv962TH5VnWqXGw9Fz5rTbTYkLsQ/kF8wwEuKDEJmZ/
+         r+GIJTroTJMeUAouLq2FadLXnPOP/h5N+sTWXLLmM3iCHb4Ew8IxfHGoyJCm1ScwK+q6
+         u6frq7+Zgt6SHp/rfY/GBiG90Nt84l4NsoYK13FtPt9YzPvkS6z9f4/SiwMLRlspBDhv
+         SmKKfJqkMdMpwteGFgtcFSPxfUGGk0UDS23PV4PEToqIv7SnmN8acAGClCXEgrcUQ8tc
+         yyW3ddBy2bvHy1dsKhypsrhMrRRLdVzUw0MiQ6MuM9Y8d0dck2R0bbERqJcVRRMMWB0r
+         nVSg==
+X-Gm-Message-State: APjAAAUsxCq8QXStGan2xzWbemo0up3BRTRDAJup5AApHQxPaZxJP3Nm
+        rBHTc+WSLts8jbEmasHvMi/AQA==
+X-Google-Smtp-Source: APXvYqz/tfg0kvd52vftBvhMXj5rBnbW/SfA92OndwT53A//UUiNej0enl6FDxrI74BMaCHgrSeBmg==
+X-Received: by 2002:adf:f108:: with SMTP id r8mr814863wro.221.1557400301093;
+        Thu, 09 May 2019 04:11:41 -0700 (PDT)
 Received: from mai.irit.fr ([141.115.39.235])
-        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.38
+        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 04:11:39 -0700 (PDT)
+        Thu, 09 May 2019 04:11:40 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM
-        SUB-ARCHITECTURES)
-Subject: [PATCH 10/15] ARM: at91: Implement clocksource selection
-Date:   Thu,  9 May 2019 13:10:43 +0200
-Message-Id: <20190509111048.11151-10-daniel.lezcano@linaro.org>
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 11/15] clocksource/drivers/tcb_clksrc: Move Kconfig option
+Date:   Thu,  9 May 2019 13:10:44 +0200
+Message-Id: <20190509111048.11151-11-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190509111048.11151-1-daniel.lezcano@linaro.org>
 References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
@@ -67,49 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Allow selecting and unselecting the PIT clocksource driver so it doesn't
-have to be compiled when unused.
+Move the ATMEL_TCB_CLKSRC option to drivers/clocksource and make it silent
+if COMPILE_TEST is not selected.
 
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- arch/arm/mach-at91/Kconfig | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/clocksource/Kconfig |  7 +++++++
+ drivers/misc/Kconfig        | 14 --------------
+ 2 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 903f23c309df..da1d97a06c53 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -107,6 +107,29 @@ config SOC_AT91SAM9
- 	    AT91SAM9X35
- 	    AT91SAM9XE
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index ede5d20299b9..eb1560187434 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -410,6 +410,13 @@ config ATMEL_ST
+ 	help
+ 	  Support for the Atmel ST timer.
  
-+comment "Clocksource driver selection"
-+
-+config ATMEL_CLOCKSOURCE_PIT
-+	bool "Periodic Interval Timer (PIT) support"
-+	depends on SOC_AT91SAM9 || SOC_SAMA5
-+	default SOC_AT91SAM9 || SOC_SAMA5
-+	select ATMEL_PIT
++config ATMEL_TCB_CLKSRC
++	bool "Atmel TC Block timer driver" if COMPILE_TEST
++	depends on HAS_IOMEM
++	select TIMER_OF if OF
 +	help
-+	  Select this to get a clocksource based on the Atmel Periodic Interval
-+	  Timer. It has a relatively low resolution and the TC Block clocksource
-+	  should be preferred.
++	  Support for Timer Counter Blocks on Atmel SoCs.
 +
-+config ATMEL_CLOCKSOURCE_TCB
-+	bool "Timer Counter Blocks (TCB) support"
-+	default SOC_AT91RM9200 || SOC_AT91SAM9 || SOC_SAMA5
-+	select ATMEL_TCB_CLKSRC
-+	help
-+	  Select this to get a high precision clocksource based on a
-+	  TC block with a 5+ MHz base clock rate.
-+	  On platforms with 16-bit counters, two timer channels are combined
-+	  to make a single 32-bit timer.
-+	  It can also be used as a clock event device supporting oneshot mode.
-+
- config HAVE_AT91_UTMI
- 	bool
+ config CLKSRC_EXYNOS_MCT
+ 	bool "Exynos multi core timer driver" if COMPILE_TEST
+ 	depends on ARM || ARM64
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 268a01d3d6f3..c84033909395 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -59,20 +59,6 @@ config ATMEL_TCLIB
+ 	  blocks found on many Atmel processors.  This facilitates using
+ 	  these blocks by different drivers despite processor differences.
  
+-config ATMEL_TCB_CLKSRC
+-	bool "TC Block Clocksource"
+-	depends on ARCH_AT91
+-	select TIMER_OF if OF
+-	default y
+-	help
+-	  Select this to get a high precision clocksource based on a
+-	  TC block with a 5+ MHz base clock rate.  Two timer channels
+-	  are combined to make a single 32-bit timer.
+-
+-	  When GENERIC_CLOCKEVENTS is defined, the third timer channel
+-	  may be used as a clock event device supporting oneshot mode
+-	  (delays of up to two seconds) based on the 32 KiHz clock.
+-
+ config DUMMY_IRQ
+ 	tristate "Dummy IRQ handler"
+ 	default n
 -- 
 2.17.1
 
