@@ -2,205 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48AD188FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFED3188E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbfEIL3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:29:11 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32930 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725869AbfEIL3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:29:10 -0400
-Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 9D6FBDF03E2FB9130A0C;
-        Thu,  9 May 2019 12:29:08 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 9 May 2019 12:29:02 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
-        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 3/3] initramfs: introduce do_readxattrs()
-Date:   Thu, 9 May 2019 13:24:20 +0200
-Message-ID: <20190509112420.15671-4-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+        id S1726572AbfEILZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:25:38 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38995 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfEILZh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 07:25:37 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w8so97890wrl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:25:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Qu8EFyx1RYwBMH9ABcsp970ZpeO13Jjnq3l+ZsRNLGc=;
+        b=L/h96bMyP4sbfcIes0jd00888NxzJqfZrZyAIQk+hnercmv4rlnZBs1Ozw0nXgpQbH
+         tHIaIe7AF0o/yekpCa3uhSI2FB34IFkmRKnrx8qztyD9W0mmHcNYUirjZAwPD77Zyys+
+         bQigGcpAhNAaqn3J6gMNpmrfgL1U1eQeeD83Yhy9TxLsl2b0+NhTmqawG0DwqwOEse5O
+         jZoIGkE1YbXPr4nkYHLgWJml1mJokBdlmqO100AkpaQW9gHvDEvSieYlsO0s9KHtcDwo
+         +V4Px+FfauqUTn3ekAcP6Er12scd77+WYDvFae8j8CqLzeIr91KXkddsIrt4xIhjYGmc
+         idrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Qu8EFyx1RYwBMH9ABcsp970ZpeO13Jjnq3l+ZsRNLGc=;
+        b=kIvsWniziGVS1ZrUW9jKmSQ73Dc3zHdXRS4MXkuuqKoajVooPCCbqMQE6fRxCNWCo9
+         vlBl+6Q5KXKDCj8ISmUW+luA+6LL6e4+TCibJ+pCyeJ654IwQwds+bmC70ZIQsrcrRd7
+         u/UHp1isz7B/93GBjFjji9/0LbK9H/MkqbVUFZseXN+qV+7uNXYXMeMyqQWbnS5PCROT
+         KiGdDLFIfXo/wy/3v5m0L/vhJlmIfoEt7h+afYAox8jn/XLMmAPucJb0X2In7dD1YMK7
+         94CwMI9Z+gjUAUH1hDrva4lqJWKGYPHXOYDFtYmLeDmeoQefg/h4XE0cad0+1OaNlsbI
+         rTUw==
+X-Gm-Message-State: APjAAAUy7pcE27P8K43xc3KcpNTikyezP8YRpR+wzVBdz5dIuSlVL8OZ
+        G2/WoMT+/1PS7+a3eJpqQ2puZg==
+X-Google-Smtp-Source: APXvYqxkgkcwMsgvY8OwH0/UFYR9RdwILD9DhHe3pbBmYXh3YTjihk194EhuB5bpA4dK8th2VPj0zw==
+X-Received: by 2002:adf:9cc8:: with SMTP id h8mr2586136wre.308.1557401135633;
+        Thu, 09 May 2019 04:25:35 -0700 (PDT)
+Received: from ?IPv6:2a01:cb1d:379:8b00:1910:6694:7019:d3a? ([2a01:cb1d:379:8b00:1910:6694:7019:d3a])
+        by smtp.gmail.com with ESMTPSA id d6sm2079136wrp.9.2019.05.09.04.25.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 04:25:34 -0700 (PDT)
+Subject: Re: [PATCH v3 4/6] pinctrl: meson: Rework enable/disable bias part
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        khilman@baylibre.com, linux-gpio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190507115726.23714-1-glaroque@baylibre.com>
+ <20190507115726.23714-5-glaroque@baylibre.com>
+ <CAFBinCBQSE7wh367Aa25zwtDphsx8Z_KGDTn8dcSCir6bLvq_A@mail.gmail.com>
+From:   guillaume La Roque <glaroque@baylibre.com>
+Message-ID: <c3246e0e-897f-4139-91da-5850a596c713@baylibre.com>
+Date:   Thu, 9 May 2019 13:25:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAFBinCBQSE7wh367Aa25zwtDphsx8Z_KGDTn8dcSCir6bLvq_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for an alternative method to add xattrs to files in
-the rootfs filesystem. Instead of extracting them directly from the ram
-disk image, they are extracted from a regular file called .xattr-list, that
-can be added by any ram disk generator available today.
+hi Martin,
 
-.xattr-list can be generated by executing:
+same as previous patch i will do a new serie with your comments.
 
-$ getfattr --absolute-names -d -P -R -e hex -m - \
-      <file list> | xattr.awk -b > ${initdir}/.xattr-list
 
-where the content of the xattr.awk script is:
+On 5/7/19 7:53 PM, Martin Blumenstingl wrote:
+> Hi Guillaume,
+>
+> On Tue, May 7, 2019 at 1:57 PM Guillaume La Roque <glaroque@baylibre.com> wrote:
+>> rework bias enable/disable part to prepare drive-strength integration
+> if it was my patch I would add "no functional changes" at the end to
+> make it explicit that this only changes the structure of the code.
+>
+>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> with the minor comments from below addressed:
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>
+>> ---
+>>  drivers/pinctrl/meson/pinctrl-meson.c | 79 ++++++++++++++++-----------
+>>  1 file changed, 48 insertions(+), 31 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+>> index 96a4a72708e4..a216a7537564 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>> @@ -174,13 +174,57 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev, unsigned selector,
+>>         return 0;
+>>  }
+>>
+>> +static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
+>> +                                     unsigned int pin)
+>> +{
+>> +       struct meson_bank *bank;
+>> +       unsigned int reg, bit = 0;
+>> +       int ret;
+>> +
+>> +       ret = meson_get_bank(pc, pin, &bank);
+>> +       if (ret)
+>> +               return ret;
+> add an empty line here to keep it consistent with the rest of the code
+>
+> [...]
+>>  static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+>>                              unsigned long *configs, unsigned num_configs)
+>>  {
+>>         struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
+>>         struct meson_bank *bank;
+> bank is not read anymore (it's passed to meson_get_bank to set it, but
+> then it's not read, which is probably why my compiler doesn't
+> complain)
+>
+>>         enum pin_config_param param;
+>> -       unsigned int reg, bit;
+>>         int i, ret;
+>>
+>>         ret = meson_get_bank(pc, pin, &bank);
+>> @@ -192,44 +236,17 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+>>
+>>                 switch (param) {
+>>                 case PIN_CONFIG_BIAS_DISABLE:
+>> -                       dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+>> -
+>> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
+>> -                                              &bit);
+>> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
+>> -                                                BIT(bit), 0);
+>> +                       ret = meson_pinconf_disable_bias(pc, pin);
+>>                         if (ret)
+>>                                 return ret;
+>>                         break;
+>>                 case PIN_CONFIG_BIAS_PULL_UP:
+>> -                       dev_dbg(pc->dev, "pin %u: enable pull-up\n", pin);
+>> -
+>> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
+>> -                                              &reg, &bit);
+>> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
+>> -                                                BIT(bit), BIT(bit));
+>> -                       if (ret)
+>> -                               return ret;
+>> -
+>> -                       meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+>> -                       ret = regmap_update_bits(pc->reg_pull, reg,
+>> -                                                BIT(bit), BIT(bit));
+>> +                       ret = meson_pinconf_enable_bias(pc, pin, 1);
+> use "true" instead of "1"?
+>
+>>                         if (ret)
+>>                                 return ret;
+>>                         break;
+>>                 case PIN_CONFIG_BIAS_PULL_DOWN:
+>> -                       dev_dbg(pc->dev, "pin %u: enable pull-down\n", pin);
+>> -
+>> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
+>> -                                              &reg, &bit);
+>> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
+>> -                                                BIT(bit), BIT(bit));
+>> -                       if (ret)
+>> -                               return ret;
+>> -
+>> -                       meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+>> -                       ret = regmap_update_bits(pc->reg_pull, reg,
+>> -                                                BIT(bit), 0);
+>> +                       ret = meson_pinconf_enable_bias(pc, pin, 0);
+> use "false" instead of "0"?
+>
+> one overall comment: thank you for working on this!
+> in my opinion it's a good preparation step to ensure that
+> meson_pinconf_set is easy to understand even if we add more
+> functionality here
+>
+>
+> Regards
+> Martin
 
-#! /usr/bin/awk -f
-{
-  if (!length($0)) {
-    printf("%.10x%s\0", len, file);
-    for (x in xattr) {
-      printf("%.8x%s\0", xattr_len[x], x);
-      for (i = 0; i < length(xattr[x]) / 2; i++) {
-        printf("%c", strtonum("0x"substr(xattr[x], i * 2 + 1, 2)));
-      }
-    }
-    i = 0;
-    delete xattr;
-    delete xattr_len;
-    next;
-  };
-  if (i == 0) {
-    file=$3;
-    len=length(file) + 8 + 1;
-  }
-  if (i > 0) {
-    split($0, a, "=");
-    xattr[a[1]]=substr(a[2], 3);
-    xattr_len[a[1]]=length(a[1]) + 1 + 8 + length(xattr[a[1]]) / 2;
-    len+=xattr_len[a[1]];
-  };
-  i++;
-}
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- init/initramfs.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 98c2aa4b5ab4..91f35a84c592 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -11,6 +11,9 @@
- #include <linux/utime.h>
- #include <linux/file.h>
- 
-+#define XATTR_LIST_FILENAME ".xattr-list"
-+
-+
- static ssize_t __init xwrite(int fd, const char *p, size_t count)
- {
- 	ssize_t out = 0;
-@@ -451,6 +454,91 @@ static int __init do_setxattrs(void)
- 	return 0;
- }
- 
-+struct path_hdr {
-+	char p_size[10]; /* total size including p_size field */
-+	char p_data[];  /* <path>\0<xattrs> */
-+};
-+
-+static int __init do_readxattrs(void)
-+{
-+	struct path_hdr hdr;
-+	char str[sizeof(hdr.p_size) + 1];
-+	unsigned long file_entry_size;
-+	size_t size, name_buf_size, total_size;
-+	struct kstat st;
-+	int ret, fd;
-+
-+	ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-+	if (ret < 0)
-+		return ret;
-+
-+	total_size = st.size;
-+
-+	fd = ksys_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-+	if (fd < 0)
-+		return fd;
-+
-+	while (total_size) {
-+		size = ksys_read(fd, (char *)&hdr, sizeof(hdr));
-+		if (size != sizeof(hdr)) {
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		total_size -= size;
-+
-+		memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-+		ret = kstrtoul(str, 16, &file_entry_size);
-+		if (ret < 0)
-+			goto out;
-+
-+		file_entry_size -= sizeof(sizeof(hdr.p_size));
-+		if (file_entry_size > total_size) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		name_buf = vmalloc(file_entry_size);
-+		if (!name_buf) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		size = ksys_read(fd, name_buf, file_entry_size);
-+		if (size != file_entry_size) {
-+			ret = -EIO;
-+			goto out_free;
-+		}
-+
-+		total_size -= size;
-+
-+		name_buf_size = strnlen(name_buf, file_entry_size);
-+		if (name_buf_size == file_entry_size) {
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		xattr_buf = name_buf + name_buf_size + 1;
-+		xattr_len = file_entry_size - name_buf_size - 1;
-+
-+		ret = do_setxattrs();
-+		vfree(name_buf);
-+		name_buf = NULL;
-+
-+		if (ret < 0)
-+			break;
-+	}
-+out_free:
-+	vfree(name_buf);
-+out:
-+	ksys_close(fd);
-+
-+	if (ret < 0)
-+		error("Unable to parse xattrs");
-+
-+	return ret;
-+}
-+
- static __initdata int (*actions[])(void) = {
- 	[Start]		= do_start,
- 	[Collect]	= do_collect,
-@@ -554,6 +642,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 		buf += my_inptr;
- 		len -= my_inptr;
- 	}
-+	do_readxattrs();
- 	dir_utime();
- 	kfree(name_buf);
- 	kfree(symlink_buf);
--- 
-2.17.1
+guillaume
 
