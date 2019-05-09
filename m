@@ -2,104 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB335185DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F02D91861E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfEIHRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 03:17:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41968 "EHLO
+        id S1726658AbfEIHUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 03:20:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43134 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfEIHRT (ORCPT
+        with ESMTP id S1726525AbfEIHUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 03:17:19 -0400
+        Thu, 9 May 2019 03:20:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n2162wdlBrQIOUPLB7f2xIUVw2pG4qMesu/oB9VnM1U=; b=Uk740ZifxhcQUjkMGUtNCCuZu
-        Y87Refm+GmE6UR5JsholTT/PhP3N4OqDuXsL28GAVz4252oycY62vzOLiD9sW3HLqI6+8o5sPvY/i
-        LWFmBP3j8VmB/5maPXTai1AKt6bk1FyGlsPjEKgvkZ4jnoO/ui5WdYVqlT0IjuqD8YWcAxRqsdnIC
-        fVUiDGacrBOvdh6uFVqv2De6yZ2eoHzrMnheUM4A5AkBEw2ydbPxhvvp1inL5+sU3vtZdjW4Bemzs
-        hnsSJnCCyLZURVichgD2WjUEo9S/YWJ9j/WRVAtjBZJnvBRaSkWzSAHuFjXpaDZoUE3Wdh+k/s/eG
-        wcgMaFRfA==;
+         bh=dHPcM7BToWSY7XBTx45AtDbkmyX1K9o4jR86GMXyrWY=; b=FnXQrJHUhhe9vAR/2fLP8tRF7
+        Di7W3Iao30bbViXAWg8zQHkmSzSqDScbjfSyWwxECcCw/QIyiZ2VwyWxI6oote2HhxVGV6JvvYGHU
+        DGHbILgpPHBNfr2K93OqJaInQAN63uEd4XSP1zlTyFkiwB4uqrFM/7rScwHdU3Eva4syMG5fYyrqH
+        YwWI505e5A2W8UK8K/bl1DjHrWEBB/iyj4cNQosK59L20lc/p7jMnJud1Rebq7sDjeCcBrAjRhn8C
+        6XGYuw28SADvfL7wQGN6ZiJktLnkjTXVCP09fYqwPkmFTS0hkcyLJ/57wajLhB3n/YBcWBpyBxkdP
+        VCLWV4aXg==;
 Received: from 089144210233.atnat0019.highway.a1.net ([89.144.210.233] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOdIq-0004T1-1W; Thu, 09 May 2019 07:17:16 +0000
-Date:   Thu, 9 May 2019 09:16:34 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] DMA mapping updates for 5.2
-Message-ID: <20190509071634.GA604@infradead.org>
+        id 1hOdME-00067H-Jh; Thu, 09 May 2019 07:20:47 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dma-mapping: don't use the atomic pool for DMA_ATTR_NO_KERNEL_MAPPING
+Date:   Thu,  9 May 2019 09:20:06 +0200
+Message-Id: <20190509072006.727-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+DMA allocations with the DMA_ATTR_NO_KERNEL_MAPPING do not return a kernel
+virtual address for use in driver, but are expected to be used entirely
+for userspace mappings and/or device private memory.
 
-a pretty small DMA mapping updates for this merge window below:
+Because of that we don't need to remap them as uncached, and thus don't need
+the atomic pool for non-blocking allocations.  Note that using the
+DMA allocator with DMA_ATTR_NO_KERNEL_MAPPING from non-blocking context
+on a non-coherent device is actually broken without this patch as well, as
+we feed the address passes to dma_free_attrs directly to the genpool
+allocator, but for DMA_ATTR_NO_KERNEL_MAPPING allocations it actually
+contains the address of the first page pointer.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arm/mm/dma-mapping.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-The following changes since commit 15ade5d2e7775667cf191cf2f94327a4889f8b9d:
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index d029fa31624b..f74d824f8fc1 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -706,6 +706,7 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+ 			 gfp_t gfp, pgprot_t prot, bool is_coherent,
+ 			 unsigned long attrs, const void *caller)
+ {
++	bool want_vaddr = !(attrs & DMA_ATTR_NO_KERNEL_MAPPING);
+ 	u64 mask = get_coherent_dma_mask(dev);
+ 	struct page *page = NULL;
+ 	void *addr;
+@@ -717,7 +718,7 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+ 		.gfp = gfp,
+ 		.prot = prot,
+ 		.caller = caller,
+-		.want_vaddr = ((attrs & DMA_ATTR_NO_KERNEL_MAPPING) == 0),
++		.want_vaddr = want_vaddr,
+ 		.coherent_flag = is_coherent ? COHERENT : NORMAL,
+ 	};
+ 
+@@ -755,14 +756,14 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+ 	allowblock = gfpflags_allow_blocking(gfp);
+ 	cma = allowblock ? dev_get_cma_area(dev) : false;
+ 
+-	if (cma)
++	if (!allowblock && !is_coherent && want_vaddr)
++		buf->allocator = &pool_allocator;
++	else if (cma)
+ 		buf->allocator = &cma_allocator;
+ 	else if (is_coherent)
+ 		buf->allocator = &simple_allocator;
+-	else if (allowblock)
+-		buf->allocator = &remap_allocator;
+ 	else
+-		buf->allocator = &pool_allocator;
++		buf->allocator = &remap_allocator;
+ 
+ 	addr = buf->allocator->alloc(&args, &page);
+ 
+-- 
+2.20.1
 
-  Linux 5.1-rc4 (2019-04-07 14:09:59 -1000)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.2
-
-for you to fetch changes up to 13bf5ced93775ffccb53527a9d862e023a9daa03:
-
-  dma-mapping: add a Kconfig symbol to indicate arch_dma_prep_coherent presence (2019-05-06 15:04:40 +0200)
-
-----------------------------------------------------------------
-DMA mapping updates for 5.2
-
- - remove the already broken support for NULL dev arguments to the
-   DMA API calls
- - Kconfig tidyups
-
-----------------------------------------------------------------
-Christoph Hellwig (8):
-      parport_ip32: pass struct device to DMA API functions
-      da8xx-fb: pass struct device to DMA API functions
-      gbefb: switch to managed version of the DMA allocator
-      pxa3xx-gcu: pass struct device to dma_mmap_coherent
-      arm: use a dummy struct device for ISA DMA use of the DMA API
-      dma-mapping: remove leftover NULL device support
-      x86/dma: Remove the x86_dma_fallback_dev hack
-      dma-mapping: add a Kconfig symbol to indicate arch_dma_prep_coherent presence
-
-Clément Leger (1):
-      dma: select GENERIC_ALLOCATOR for DMA_REMAP
-
-Dan Carpenter (1):
-      dma-mapping: remove an unnecessary NULL check
-
- Documentation/DMA-API-HOWTO.txt    | 13 ++++++-------
- arch/arm/kernel/dma-isa.c          |  8 +++++++-
- arch/arm/mach-rpc/dma.c            |  8 +++++++-
- arch/arm64/Kconfig                 |  1 +
- arch/csky/Kconfig                  |  1 +
- arch/x86/include/asm/dma-mapping.h | 10 ----------
- arch/x86/kernel/amd_gart_64.c      |  6 ------
- arch/x86/kernel/pci-dma.c          | 20 --------------------
- drivers/parport/parport_ip32.c     | 18 ++++++++++--------
- drivers/video/fbdev/da8xx-fb.c     | 13 +++++++------
- drivers/video/fbdev/gbefb.c        | 24 ++++++++----------------
- drivers/video/fbdev/pxa3xx-gcu.c   |  4 +++-
- include/linux/dma-mapping.h        |  6 +++---
- include/linux/dma-noncoherent.h    |  6 ++++++
- kernel/dma/Kconfig                 |  4 ++++
- kernel/dma/direct.c                |  2 +-
- kernel/dma/mapping.c               |  9 +--------
- 17 files changed, 65 insertions(+), 88 deletions(-)
