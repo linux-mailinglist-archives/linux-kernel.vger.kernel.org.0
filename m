@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BE5191B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85BA192A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbfEIS75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:59:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45976 "EHLO mail.kernel.org"
+        id S1727351AbfEITJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:09:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728646AbfEISwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:52:03 -0400
+        id S1726690AbfEISoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:44:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D1D420578;
-        Thu,  9 May 2019 18:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0057A2183E;
+        Thu,  9 May 2019 18:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427922;
-        bh=ITVC5MyQebwwuTYGEQFN5WcrGNso+TLT3BOfYFjDfVc=;
+        s=default; t=1557427460;
+        bh=5iPk4+ih3XUJVCw+XissPYCGciJ7xc3mxsPBpRoFYPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oZWXEss19EZiiI0qFReO+uN21lQHOG2QHcMgBghE1Dgh5mOsbHFAlDuovyDilZgWF
-         +X4HCYtbCWnNI/SLFwdvdteleMP+/0jpsnisgtYEk3NXrJJpNN3Dbc6pezRVSN2QV7
-         J3zuyoWL+p/nRcq1a0H61FhN8Zc/nZe2n7dzOJMs=
+        b=gvnEnCPj+rH3rfePdjBFVm+KvsVO/kOdAwi0eXPVmtfnLG3La40d+kYjNI7tq3X6i
+         kYlCAB2DNyZzDmMnV3O3FFR0dVfkJ7S1sMNtXgjykb2Ac8zqm7rYyMkQroneZMBFA2
+         poplXfkW3YcDRYMpwAt24Sl0j+ofDTGTtxZc9RbU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>, marc.zyngier@arm.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 54/95] scsi: csiostor: fix missing data copy in csio_scsi_err_handler()
+Subject: [PATCH 4.9 19/28] genirq: Prevent use-after-free and work list corruption
 Date:   Thu,  9 May 2019 20:42:11 +0200
-Message-Id: <20190509181313.292815070@linuxfoundation.org>
+Message-Id: <20190509181254.290923000@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5c2442fd78998af60e13aba506d103f7f43f8701 ]
+[ Upstream commit 59c39840f5abf4a71e1810a8da71aaccd6c17d26 ]
 
-If scsi cmd sglist is not suitable for DDP then csiostor driver uses
-preallocated buffers for DDP, because of this data copy is required from
-DDP buffer to scsi cmd sglist before calling ->scsi_done().
+When irq_set_affinity_notifier() replaces the notifier, then the
+reference count on the old notifier is dropped which causes it to be
+freed. But nothing ensures that the old notifier is not longer queued
+in the work list. If it is queued this results in a use after free and
+possibly in work list corruption.
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Ensure that the work is canceled before the reference is dropped.
+
+Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: marc.zyngier@arm.com
+Link: https://lkml.kernel.org/r/1553439424-6529-1-git-send-email-psodagud@codeaurora.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/csiostor/csio_scsi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/irq/manage.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
-index bc5547a62c00c..c54c6cd504c41 100644
---- a/drivers/scsi/csiostor/csio_scsi.c
-+++ b/drivers/scsi/csiostor/csio_scsi.c
-@@ -1713,8 +1713,11 @@ csio_scsi_err_handler(struct csio_hw *hw, struct csio_ioreq *req)
- 	}
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index cf94460504bba..be7f489788e27 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -332,8 +332,10 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 	desc->affinity_notify = notify;
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
- out:
--	if (req->nsge > 0)
-+	if (req->nsge > 0) {
- 		scsi_dma_unmap(cmnd);
-+		if (req->dcopy && (host_status == DID_OK))
-+			host_status = csio_scsi_copy_to_sgl(hw, req);
+-	if (old_notify)
++	if (old_notify) {
++		cancel_work_sync(&old_notify->work);
+ 		kref_put(&old_notify->kref, old_notify->release);
 +	}
  
- 	cmnd->result = (((host_status) << 16) | scsi_status);
- 	cmnd->scsi_done(cmnd);
+ 	return 0;
+ }
 -- 
 2.20.1
 
