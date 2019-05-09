@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5659318B5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4DF018B4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfEIONN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:13:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46936 "EHLO
+        id S1726873AbfEIONW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:13:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46920 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726690AbfEIONK (ORCPT
+        by vger.kernel.org with ESMTP id S1726661AbfEIONK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 May 2019 10:13:10 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-000128-LC; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-000122-EU; Thu, 09 May 2019 15:13:08 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-0006MK-EO; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-0006Lr-9G; Thu, 09 May 2019 15:13:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Joerg Roedel" <jroedel@suse.de>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
 Date:   Thu, 09 May 2019 15:08:17 +0100
-Message-ID: <lsq.1557410897.741749439@decadent.org.uk>
+Message-ID: <lsq.1557410897.311064425@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 07/10] KVM: VMX: Fix x2apic check in  vmx_msr_bitmap_mode()
+Subject: [PATCH 3.16 01/10] Revert "brcmfmac: assure SSID length from
+ firmware is limited"
 In-Reply-To: <lsq.1557410896.171359878@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,46 +46,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-The stable backport of upstream commit
+This reverts commit 9657f3abd17772d3290a3545dfb4811d945e84e1, which
+was similar to commit 1b5e2423164b3670e8bc9174e4762d297990deff
+upstream.  The function fixed upstream doesn't exist in 3.16 and the
+similar bug that does exist here needs a different fix.
 
-	904e14fb7cb96 KVM: VMX: make MSR bitmaps per-VCPU
-
-has a bug in vmx_msr_bitmap_mode(). It enables the x2apic
-MSR-bitmap when the kernel emulates x2apic for the guest in
-software. The upstream version of the commit checkes whether
-the hardware has virtualization enabled for x2apic
-emulation.
-
-Since KVM emulates x2apic for guests even when the host does
-not support x2apic in hardware, this causes the intercept of
-at least the X2APIC_TASKPRI MSR to be disabled on machines
-not supporting that MSR. The result is undefined behavior,
-on some machines (Intel Westmere based) it causes a crash of
-the guest kernel when it tries to access that MSR.
-
-Change the check in vmx_msr_bitmap_mode() to match the upstream
-code. This fixes the guest crashes observed with stable
-kernels starting with v4.4.168 through v4.4.175.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/vmx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4224,7 +4224,9 @@ static u8 vmx_msr_bitmap_mode(struct kvm
- {
- 	u8 mode = 0;
+--- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -3082,8 +3082,6 @@ brcmf_notify_sched_scan_results(struct b
  
--	if (irqchip_in_kernel(vcpu->kvm) && apic_x2apic_mode(vcpu->arch.apic)) {
-+	if (cpu_has_secondary_exec_ctrls() &&
-+	    (vmcs_read32(SECONDARY_VM_EXEC_CONTROL) &
-+	     SECONDARY_EXEC_VIRTUALIZE_X2APIC_MODE)) {
- 		mode |= MSR_BITMAP_MODE_X2APIC;
- 		if (enable_apicv)
- 			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
+ 			brcmf_dbg(SCAN, "SSID:%s Channel:%d\n",
+ 				  netinfo->SSID, netinfo->channel);
+-			if (netinfo->SSID_len > IEEE80211_MAX_SSID_LEN)
+-				netinfo->SSID_len = IEEE80211_MAX_SSID_LEN;
+ 			memcpy(ssid[i].ssid, netinfo->SSID, netinfo->SSID_len);
+ 			ssid[i].ssid_len = netinfo->SSID_len;
+ 			request->n_ssids++;
 
