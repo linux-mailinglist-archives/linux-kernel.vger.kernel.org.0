@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F72E19057
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40CF190FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfEISoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35176 "EHLO mail.kernel.org"
+        id S1728599AbfEISvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:51:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfEISoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:03 -0400
+        id S1727147AbfEISvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:51:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33C32182B;
-        Thu,  9 May 2019 18:44:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F5292177E;
+        Thu,  9 May 2019 18:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427442;
-        bh=9flyyWlt2Ysks86M1x4/sTwhoqFydfvZzpjtiA4iXsA=;
+        s=default; t=1557427902;
+        bh=JBtVoaT0g82CvcmsPisB4l2gsmCEcnu04QTdbPJ3rSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XOmoa0WjEboVfV7vLzI4qksh+xWRBJdyPZM1fPQV4L+EBUAjrbTn6Xv99oxOj9wLl
-         mOO7TMGUc/9ec73E7FKJu3AV3vNrfE3cYoiiHcKpmXBiqt5TgzN2OmGByM42kNg4Of
-         rVwO/hXA6oaAkE7nNjQUj9PBBWgm5Arj3ketPfX0=
+        b=qShn9gKlpRHlGs78ev0XtMGoeyO5AuQXYsxinXs8LJXOAJIQ80HZ9pxz3AshJZYL2
+         QL3boEDb84KMBdGc07j+FIv8Yh008EKNQ8uJwEqX/cRMPzh6woThv7qgTtQdD25ft0
+         LErJhqgGLWW+Ry2ipmNmba3L9wj1laPLs54DURWM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 12/28] xtensa: fix initialization of pt_regs::syscall in start_thread
+Subject: [PATCH 5.0 47/95] objtool: Add rewind_stack_do_exit() to the noreturn list
 Date:   Thu,  9 May 2019 20:42:04 +0200
-Message-Id: <20190509181252.776963756@linuxfoundation.org>
+Message-Id: <20190509181312.759976502@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2663147dc7465cb29040a05cc4286fdd839978b5 ]
+[ Upstream commit 4fa5ecda2bf96be7464eb406df8aba9d89260227 ]
 
-New pt_regs should indicate that there's no syscall, not that there's
-syscall #0. While at it wrap macro body in do/while and parenthesize
-macro arguments.
+This fixes the following warning seen on GCC 7.3:
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+  arch/x86/kernel/dumpstack.o: warning: objtool: oops_end() falls through to next function show_regs()
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/3418ebf5a5a9f6ed7e80954c741c0b904b67b5dc.1554398240.git.jpoimboe@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/include/asm/processor.h | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ tools/objtool/check.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/xtensa/include/asm/processor.h b/arch/xtensa/include/asm/processor.h
-index 521c1e789e6e0..1fc0154597550 100644
---- a/arch/xtensa/include/asm/processor.h
-+++ b/arch/xtensa/include/asm/processor.h
-@@ -180,15 +180,18 @@ struct thread_struct {
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5dde107083c60..479196aeb4096 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -165,6 +165,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 		"fortify_panic",
+ 		"usercopy_abort",
+ 		"machine_real_restart",
++		"rewind_stack_do_exit",
+ 	};
  
- /* Clearing a0 terminates the backtrace. */
- #define start_thread(regs, new_pc, new_sp) \
--	memset(regs, 0, sizeof(*regs)); \
--	regs->pc = new_pc; \
--	regs->ps = USER_PS_VALUE; \
--	regs->areg[1] = new_sp; \
--	regs->areg[0] = 0; \
--	regs->wmask = 1; \
--	regs->depc = 0; \
--	regs->windowbase = 0; \
--	regs->windowstart = 1;
-+	do { \
-+		memset((regs), 0, sizeof(*(regs))); \
-+		(regs)->pc = (new_pc); \
-+		(regs)->ps = USER_PS_VALUE; \
-+		(regs)->areg[1] = (new_sp); \
-+		(regs)->areg[0] = 0; \
-+		(regs)->wmask = 1; \
-+		(regs)->depc = 0; \
-+		(regs)->windowbase = 0; \
-+		(regs)->windowstart = 1; \
-+		(regs)->syscall = NO_SYSCALL; \
-+	} while (0)
- 
- /* Forward declaration */
- struct task_struct;
+ 	if (func->bind == STB_WEAK)
 -- 
 2.20.1
 
