@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD761905D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D7E19220
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfEISoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35506 "EHLO mail.kernel.org"
+        id S1727287AbfEISsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:48:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfEISoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:15 -0400
+        id S1727525AbfEISsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C81212183E;
-        Thu,  9 May 2019 18:44:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3231217F5;
+        Thu,  9 May 2019 18:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427455;
-        bh=tNjYUTZ1DOGAjleLkG3kpghjYkmPPY5p4WMIEZcqOlI=;
+        s=default; t=1557427693;
+        bh=r/gG9fHbgSH+e8w0+yw+2NRJygv2eH5liffGZQMgvFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GyEf5MGQJCdnJflZts/co78p519k7bNn/ldJJ0WuzhY+IQr5mQ57/TbxgH7FpGLrR
-         HIDt4c3xhg0Lr5CcdF6TQyYBeFPnyNxO0h31KSxqcB8TKgEMqk2OX8JNCLldsfcR1B
-         tjyhAhQt1Y+kjb3FDr5/bKsGIVmoWRagCXAgjRkg=
+        b=oEDdUYVsX5e4P3xVO7ru4qzQ64fQVIhnYfEfsL8qIsQKx541+zci5GCDgNbQGQQIo
+         qdnladPp3RPdEYcmvDdPMVwf2oufrOqvXfBBcUumpxNSYxzkqqDIoJosfGNCms0hxe
+         XdjqeA+akDrOw++WZUh2hkUWBL+ppZIhgGgihHkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Tianci Yin <tianci.yin@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 17/28] mm: add try_get_page() helper function
+Subject: [PATCH 4.19 34/66] drm/amd/display: fix cursor black issue
 Date:   Thu,  9 May 2019 20:42:09 +0200
-Message-Id: <20190509181253.918151808@linuxfoundation.org>
+Message-Id: <20190509181305.612568910@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 88b1a17dfc3ed7728316478fae0f5ad508f50397 ]
+[ Upstream commit c1cefe115d1cdc460014483319d440b2f0d07c68 ]
 
-This is the same as the traditional 'get_page()' function, but instead
-of unconditionally incrementing the reference count of the page, it only
-does so if the count was "safe".  It returns whether the reference count
-was incremented (and is marked __must_check, since the caller obviously
-has to be aware of it).
+[Why]
+the member sdr_white_level of struct dc_cursor_attributes was not
+initialized, then the random value result that
+dcn10_set_cursor_sdr_white_level() set error hw_scale value 0x20D9(normal
+value is 0x3c00), this cause the black cursor issue.
 
-Also like 'get_page()', you can't use this function unless you already
-had a reference to the page.  The intent is that you can use this
-exactly like get_page(), but in situations where you want to limit the
-maximum reference count.
+[how]
+just initilize the obj of struct dc_cursor_attributes to zero to avoid
+the random value.
 
-The code currently does an unconditional WARN_ON_ONCE() if we ever hit
-the reference count issues (either zero or negative), as a notification
-that the conditional non-increment actually happened.
-
-NOTE! The count access for the "safety" check is inherently racy, but
-that doesn't matter since the buffer we use is basically half the range
-of the reference count (ie we look at the sign of the count).
-
-Acked-by: Matthew Wilcox <willy@infradead.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Signed-off-by: Tianci Yin <tianci.yin@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/mm.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 11a5a46ce72be..e3c8d40a18b5b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -777,6 +777,15 @@ static inline void get_page(struct page *page)
- 		get_zone_device_page(page);
- }
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 2b8b892eb846f..76ee2de43ea66 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4028,6 +4028,7 @@ static void handle_cursor_update(struct drm_plane *plane,
+ 	amdgpu_crtc->cursor_width = plane->state->crtc_w;
+ 	amdgpu_crtc->cursor_height = plane->state->crtc_h;
  
-+static inline __must_check bool try_get_page(struct page *page)
-+{
-+	page = compound_head(page);
-+	if (WARN_ON_ONCE(page_ref_count(page) <= 0))
-+		return false;
-+	page_ref_inc(page);
-+	return true;
-+}
-+
- static inline void put_page(struct page *page)
- {
- 	page = compound_head(page);
++	memset(&attributes, 0, sizeof(attributes));
+ 	attributes.address.high_part = upper_32_bits(address);
+ 	attributes.address.low_part  = lower_32_bits(address);
+ 	attributes.width             = plane->state->crtc_w;
 -- 
 2.20.1
 
