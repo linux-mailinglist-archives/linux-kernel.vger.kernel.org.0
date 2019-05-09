@@ -2,110 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4BD61C945
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2930188CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:15:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbfENNRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:17:00 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44489 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfENNQ7 (ORCPT
+        id S1726513AbfEILPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:15:39 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43187 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfEILPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:16:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b8so22816957edm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:16:57 -0700 (PDT)
+        Thu, 9 May 2019 07:15:38 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w33so1651675edb.10;
+        Thu, 09 May 2019 04:15:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=HU2OhhRwtLlO2grDKgyXrqHwCvITV5s+KpEjai5SUIw=;
-        b=pbpNOzttqK4OLvPFTIqSdzUugV654BOzlZHH5NQ9Z7kpBCx1qWuscsBsxAyd4NsK7j
-         6VPUqvLJ7vjDmP++FqVqm+6MaJFlGKVPLNT8vz+W99Q1EV4PN+GIxlyl92lRtA81pRKj
-         3T0TlzlT6mva4C57dA8zJSHlPna1eTIj6ox5T/RM1lFRDKuo2j/gdGKfFTNNLIR4YSnT
-         kizeyg38zxZeV4mn6qH+fLm4/A/0m0dh4MGIzAtUAJX7tDZqzV0O3xPbxzdycgvGydsA
-         dtuKic1mbhOBRvcX9K9/qLakrDE7XTwlvWsMFojFQ6KNOW7/kvKR5QDcatVcmDZXLfLF
-         vHsQ==
+        bh=1mAgKXKVH6WJBmD9lEy5Hj69s/z+i3XAtMbYTQrm+2w=;
+        b=QA6Edfawa1zT9m9B+S/BkNfQazS4cCMndYNMA/og+NYbvmgkqAHNTdVXuXKfTLh+wR
+         qCdI9Lr1K2gbRYi4Y10nT9fCJREhMYQ2E0ajnPNtTlJqcFfhMA2JhUYzbMIWpHsGdrsE
+         KyPA0TRbfcqpNAXvBP1+E7rXrYeC7A7pSmkS2DMnckMjdJaBUq4+qfsnoXWIv6TPUvKw
+         CmrEa1Ih0GZ6yr0fqPikN9tqoHUzVoPtRGhdwLEwWb+MN5f7KEAGS5QtaRH2qPZtNTwO
+         FEwdwSrrABkEzg5YFC1zvw6p+NKgR6U8cb4QxkK8TuHx5Prz8yLZ9XW3GKI5Use4UaRE
+         A4Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HU2OhhRwtLlO2grDKgyXrqHwCvITV5s+KpEjai5SUIw=;
-        b=U50URhjUEFIbxOJ0ANLMAhMsjJJV5xRLHizrcWYOiBajVqBt4Usu9Ihk+oEsP1JVdf
-         pD4beywdQbUefkePLmIvxGcdAD7aEHFKe9ppjGH/lbY7BAzIKipkE52+C3gg8sfl7i9W
-         jjANKmXDMAwwwWnan3z6BY3ddQjmPD5Yj9R5uMC0S9DlIc9YzEW/8+P4/5XgpQVHefsc
-         HYSBfZVOuChF/AtxivCOICSIMcjQ4twIPeTrPoGaPrCWcoVHacmpYZb6Qo9N0QjUxuu5
-         rKC5MAdHvsXQmLmDUE8EsBmeTsw2If71OWoo0A1WdMzquk1Y7QePvPcrn0OLnG9qtdH1
-         yTnw==
-X-Gm-Message-State: APjAAAWfKeVVUYu80CndC52x4+XTA0C6I++FbjvfBv0P4zAe4db8Wfe4
-        Mq5GY8uX4Xbd9sk4GTB8WKYEXrCWSh8Pdw==
-X-Google-Smtp-Source: APXvYqyXwQDHp0jc9m2nkqf+K6yqtJAVQnxaRfUSmtMIwVO3YjSrnZ+KhJJ4X840ZmSEUSXVcVlD+A==
-X-Received: by 2002:aa7:db50:: with SMTP id n16mr35118571edt.108.1557839817293;
-        Tue, 14 May 2019 06:16:57 -0700 (PDT)
-Received: from box.localdomain (mm-137-212-121-178.mgts.dynamic.pppoe.byfly.by. [178.121.212.137])
-        by smtp.gmail.com with ESMTPSA id k4sm4386120edi.80.2019.05.14.06.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 06:16:53 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id F421110013E; Thu,  9 May 2019 14:13:43 +0300 (+03)
-Date:   Thu, 9 May 2019 14:13:43 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Justin Piszcz <jpiszcz@lucidpixels.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: 5.1 kernel: khugepaged stuck at 100%
-Message-ID: <20190509111343.rvmy5noqlf4os3zk@box>
-References: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
+        bh=1mAgKXKVH6WJBmD9lEy5Hj69s/z+i3XAtMbYTQrm+2w=;
+        b=gCsE+H0IbzOkaDUBSiEB7VLTnJfp7s1spkR/v2PfTR8ITB4zX7yBjnKvvwLr2AxPOu
+         razytLTF4vyHH7iBfXF61AVQA0Y+UeWTtd/iOUA/+Jc1Wldu/bITBFb/QSmZO6AnKR3t
+         ufBJYkeYj574rKYP1M9+ZzJXGSZ9M3mpYUw7cfn9I1Ebd4kULmgl1su57VE08JgvcYr7
+         Zkhj/7WRKgC2KnTeTzUNgPtnBh10pYy8RcUi5Hk77jHII3iNC1WPTkJbeQzk97CVya9w
+         S/6+58Xv9Tvh/Dz7hMnrYlghu9Cl6LUMSG/LnEuJTBY2jMyPFXvyvSlPFoi3ufCgJpl2
+         sadw==
+X-Gm-Message-State: APjAAAV+lITzRopj/sSwGgdaIcQ5vZQg9aA/aEe2mTuQn/CDGeMV6mfQ
+        3reciEtbLURO7rYUk7R/pK8=
+X-Google-Smtp-Source: APXvYqwGMCpOdLTxnht++5+hKtWPAl5Aps+XOP+DAJpiCjVanBHLY7ecFbvwxGHXC43savWrLIKOdg==
+X-Received: by 2002:a17:906:65b:: with SMTP id t27mr2744512ejb.49.1557400536609;
+        Thu, 09 May 2019 04:15:36 -0700 (PDT)
+Received: from archlinux-i9 ([2a01:4f9:2b:2b84::2])
+        by smtp.gmail.com with ESMTPSA id v15sm276581ejh.6.2019.05.09.04.15.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 09 May 2019 04:15:35 -0700 (PDT)
+Date:   Thu, 9 May 2019 04:15:34 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux@googlegroups.com,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add most of Clang-specific flags unconditionally
+Message-ID: <20190509111534.GA32696@archlinux-i9>
+References: <20190509064455.1173-1-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190509064455.1173-1-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 05:54:56AM -0400, Justin Piszcz wrote:
-> Hello,
+On Thu, May 09, 2019 at 03:44:55PM +0900, Masahiro Yamada wrote:
+> We do not support old Clang versions. Upgrade your clang version
+> if any of these flags is unsupported.
 > 
-> Kernel: 5.1 (self-compiled, no modules)
-> Arch: x86_64
-> Distro: Debian Testing
+> Let's add flags within ifdef CONFIG_CC_IS_CLANG unconditionally,
+> except -fcatch-undefined-behavior.
 > 
-> Issue: I was performing a dump of ext3 and ext4 filesystems and then
-> restoring them to a separate volume (testing)-- afterwards I noticed that
-> khugepaged is stuck at 100% CPU. It is currently still stuck at 100% CPU, is
-> there anything I can do to debug what is happening prior to a reboot to work
-> around the issue?  I have never seen this behavior prior to 5.1. 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 > 
-> $ cat /proc/cmdline
-> auto BOOT_IMAGE=5.1.0-2 ro root=901 3w-sas.use_msi=1 nohugeiomap
-> page_poison=1 pcie_aspm=off pti=on rootfstype=ext4 slub_debug=P
-> zram.enabled=1 zram.num_devices=12 zswap.enabled=1 zswap.compressor=lz4
-> zswap.zpool=z3fold
+>  Makefile                   | 10 +++++-----
+>  scripts/Makefile.extrawarn | 12 ++++++------
+>  2 files changed, 11 insertions(+), 11 deletions(-)
 > 
-> $ 5.1 .config attached: config.txt.gz
-> 
-> $ attachment: graphic.JPG -> graph of the processes, dark green ->
-> khugepaged
-> 
-> $ top
-> 
->   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
->    77 root      39  19       0      0      0 R 100.0   0.0  23:29.27
-> khugepaged
->     1 root      20   0  171800   7832   4948 S   0.0   0.0   1:25.59 systemd
->     2 root      20   0       0      0      0 S   0.0   0.0   0:00.02
-> kthreadd
->     3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
->     4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
-> rcu_par_gp
->     6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
-> kworker/0+
->     8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00
-> mm_percpu+
-> 
-> Thoughts on debugging / before reboot to clear this up?
+> diff --git a/Makefile b/Makefile
+> index bd7ae11947cb..c71ffb6f55b5 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -731,15 +731,15 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
+>  KBUILD_CFLAGS += $(stackp-flags-y)
+>  
+>  ifdef CONFIG_CC_IS_CLANG
+> -KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> +KBUILD_CPPFLAGS += -Qunused-arguments
+> +KBUILD_CFLAGS += -Wno-format-invalid-specifier
+> +KBUILD_CFLAGS += -Wno-gnu
+>  # Quiet clang warning: comparison of unsigned expression < 0 is always false
+> -KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+> +KBUILD_CFLAGS += -Wno-tautological-compare
+>  # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+>  # source of a reference will be _MergedGlobals and not on of the whitelisted names.
+>  # See modpost pattern 2
+> -KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+> +KBUILD_CFLAGS += -mno-global-merge
+>  KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
 
-Could you check what khugepaged doing?
+I think we should just remove this, I'm fairly confident the kernel
+can't be reliably compiled with anything earlier than Clang 4 (Pixel 2
+was shipped with it but had some hacks, this commit is from Clang 3.5):
 
-cat /proc/$(pidof khugepaged)/stack
+https://github.com/llvm/llvm-project/commit/cb3f812b6b9fab8f3b41414f24e90222170417b4
+
+Otherwise:
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+
+>  else
+>  
+> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> index 768306add591..523c4cafe2dc 100644
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -66,11 +66,11 @@ KBUILD_CFLAGS += $(warning)
+>  else
+>  
+>  ifdef CONFIG_CC_IS_CLANG
+> -KBUILD_CFLAGS += $(call cc-disable-warning, initializer-overrides)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-value)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
+> +KBUILD_CFLAGS += -Wno-initializer-overrides
+> +KBUILD_CFLAGS += -Wno-unused-value
+> +KBUILD_CFLAGS += -Wno-format
+> +KBUILD_CFLAGS += -Wno-sign-compare
+> +KBUILD_CFLAGS += -Wno-format-zero-length
+> +KBUILD_CFLAGS += -Wno-uninitialized
+>  endif
+>  endif
+> -- 
+> 2.17.1
+> 
