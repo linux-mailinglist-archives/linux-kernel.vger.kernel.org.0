@@ -2,93 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B143418C06
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4CF18C20
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfEIOjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:39:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbfEIOjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:39:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5706B3079B74;
-        Thu,  9 May 2019 14:39:18 +0000 (UTC)
-Received: from jlaw-desktop.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 622755ED22;
-        Thu,  9 May 2019 14:39:16 +0000 (UTC)
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCH v4 10/10] livepatch/klp-convert: abort on special sections
-Date:   Thu,  9 May 2019 10:38:59 -0400
-Message-Id: <20190509143859.9050-11-joe.lawrence@redhat.com>
-In-Reply-To: <20190509143859.9050-1-joe.lawrence@redhat.com>
-References: <20190509143859.9050-1-joe.lawrence@redhat.com>
+        id S1727033AbfEIOkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:40:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48276 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726743AbfEIOkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:40:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 93DC0ACBC;
+        Thu,  9 May 2019 14:40:03 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Mark Brown <broonie@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-spi@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: bcm2835: only split transfers that exceed DLEN if DMA available
+Date:   Thu,  9 May 2019 16:39:59 +0200
+Message-Id: <20190509144000.681-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 09 May 2019 14:39:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To properly convert alternatives, paravirt ops, and static keys,
-klp-convert needs to implement "klp.arch" sections as supported by
-d4c3e6e1b193 (“livepatch/x86: apply alternatives and paravirt patches
-after relocations”).
+There is no use for this when performing non DMA operations. So we
+bypass the split.
 
-There is some amount of ELF section bookkeeping required for this (ie,
-moving data structure entries and relocations to their ".klp.arch"
-equivalents) but the hardest part will be determining klp_object
-relationships.  This may require some larger changes to livepatch API,
-so defer support for now.
-
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- scripts/livepatch/klp-convert.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/spi/spi-bcm2835.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/scripts/livepatch/klp-convert.c b/scripts/livepatch/klp-convert.c
-index 72b65428e738..b5873abecefb 100644
---- a/scripts/livepatch/klp-convert.c
-+++ b/scripts/livepatch/klp-convert.c
-@@ -617,6 +617,18 @@ static void free_converted_resources(struct elf *klp_elf)
- 	}
- }
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index 37893313e595..649fd6caed35 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -861,15 +861,17 @@ static int bcm2835_spi_prepare_message(struct spi_master *master,
+ 	u32 cs = bcm2835_rd(bs, BCM2835_SPI_CS);
+ 	int ret;
  
-+/* Check for special sections that klp-convert doesn't support */
-+static bool is_section_supported(char *sname)
-+{
-+	if (strcmp(sname, ".rela.altinstructions") == 0)
-+		return false;
-+	if (strcmp(sname, ".rela.parainstructions") == 0)
-+		return false;
-+	if (strcmp(sname, ".rela__jump_table") == 0)
-+		return false;
-+	return true;
-+}
-+
- int main(int argc, const char **argv)
- {
- 	const char *klp_in_module, *klp_out_module, *symbols_list;
-@@ -649,6 +661,12 @@ int main(int argc, const char **argv)
- 	}
+-	/*
+-	 * DMA transfers are limited to 16 bit (0 to 65535 bytes) by the SPI HW
+-	 * due to DLEN. Split up transfers (32-bit FIFO aligned) if the limit is
+-	 * exceeded.
+-	 */
+-	ret = spi_split_transfers_maxsize(master, msg, 65532,
+-					  GFP_KERNEL | GFP_DMA);
+-	if (ret)
+-		return ret;
++	if (master->can_dma) {
++		/*
++		 * DMA transfers are limited to 16 bit (0 to 65535 bytes) by
++		 * the SPI HW due to DLEN. Split up transfers (32-bit FIFO
++		 * aligned) if the limit is exceeded.
++		 */
++		ret = spi_split_transfers_maxsize(master, msg, 65532,
++						  GFP_KERNEL | GFP_DMA);
++		if (ret)
++			return ret;
++	}
  
- 	list_for_each_entry_safe(sec, aux, &klp_elf->sections, list) {
-+		if (!is_section_supported(sec->name)) {
-+			WARN("Special ELF section: %s not supported",
-+				sec->name);
-+			return -1;
-+		}
-+
- 		if (!is_rela_section(sec) ||
- 		    is_klp_rela_section(sec->name))
- 			continue;
+ 	cs &= ~(BCM2835_SPI_CS_CPOL | BCM2835_SPI_CS_CPHA);
+ 
 -- 
-2.20.1
+2.21.0
 
