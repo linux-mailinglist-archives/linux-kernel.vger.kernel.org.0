@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674F218EF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E9918F13
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfEIR0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:26:06 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35216 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfEIR0D (ORCPT
+        id S1727071AbfEIR2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:28:11 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44072 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfEIR2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:26:03 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJSKw169534;
-        Thu, 9 May 2019 17:25:47 GMT
+        Thu, 9 May 2019 13:28:10 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJMtB162249;
+        Thu, 9 May 2019 17:27:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=8eeODQeRuwFmGZ13uOTkhbpPMHGCcBqOBjA3QDlEv1g=;
- b=wCNbEOUdHJ8UsozLmEVCQ0dJGFhXGSCJArCTfyRrdJaXxGMzvSJ/xRrClddffLN/DWBd
- C4+I0u/cCKKVqxeIwroqWu+SxbephLrkHR9FLSUAmY+qz7Zc1XrPSTiQFw0B6q8ZgWeK
- OrZ3Gw9zGCOsu30hyxUiCnFeB6hBxXRisLuj/QNudKRMNajMOl+5WIHAaKePRnW54PXT
- jg5YYaJBwdaxRr4xdJszyXMebkum3dXhlQQfobGMBDsWQqLz+a/Wb5G5WtZzyqjyEUPQ
- 0G6lN3j+A1Huc237lTDm+d/x/eOQ+TrynHGDBrSE7ihHlJWZckKbR8iS24vS6hmJagav DQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2s94b14e3r-1
+ bh=qADDO5XbYDC5p6Cw305RMwRKa5GuJxNYpTDOSlCGey4=;
+ b=2uRpHG+0Oa6u+Fr3EJRP8c6OSt8R3D0E2fi3ueDJy/WY75/zcvKH1qnFqQHkZN6obTe6
+ xRa9STbdfb1Rs08NkmQxncRDrgOPI28d374A7sJLGroeBuO7IW5AEZcB1V737YX6PG0A
+ fR5Ihfeixd3mHNXgTYmhbMBstGkkV0DcrxGP1wgF50rxcH3rOT7DECAHHE4Sas+IEjev
+ 0rAa4A3046b5aWtMtUmFxir4DOV1YvM3oeUNR4b8ORMjd04nhT2pFehkrbjDlx/0UA22
+ 5qY69JwH4I5zMS7k3PKPEH7dCsw5UQ1URLRjDun8cYPxL1CsmX4xssEkgZ8uNkIgYFaS pw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2s94b6cf9m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 17:25:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HPhkW086661;
-        Thu, 9 May 2019 17:25:46 GMT
+        Thu, 09 May 2019 17:27:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HP4lo119491;
+        Thu, 9 May 2019 17:25:47 GMT
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2s94agwu3f-1
+        by aserp3030.oracle.com with ESMTP id 2scpy5t23m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 09 May 2019 17:25:46 +0000
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x49HPjEO019355;
-        Thu, 9 May 2019 17:25:45 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x49HPkFf019362;
+        Thu, 9 May 2019 17:25:46 GMT
 Received: from aa1-ca-oracle-com.ca.oracle.com (/10.156.75.204)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 09 May 2019 10:25:45 -0700
+        with ESMTP ; Thu, 09 May 2019 10:25:46 -0700
 From:   Ankur Arora <ankur.a.arora@oracle.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 Cc:     jgross@suse.com, pbonzini@redhat.com, boris.ostrovsky@oracle.com,
         konrad.wilk@oracle.com, sstabellini@kernel.org,
         joao.m.martins@oracle.com, ankur.a.arora@oracle.com
-Subject: [RFC PATCH 13/16] drivers/xen: gnttab, evtchn, xenbus API changes
-Date:   Thu,  9 May 2019 10:25:37 -0700
-Message-Id: <20190509172540.12398-14-ankur.a.arora@oracle.com>
+Subject: [RFC PATCH 14/16] xen/blk: gnttab, evtchn, xenbus API changes
+Date:   Thu,  9 May 2019 10:25:38 -0700
+Message-Id: <20190509172540.12398-15-ankur.a.arora@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190509172540.12398-1-ankur.a.arora@oracle.com>
 References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
@@ -70,483 +70,876 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mechanical changes, now most of these calls take xenhost_t *
-as parameter.
+For the most part, we now pass xenhost_t * as a parameter.
 
 Co-developed-by: Joao Martins <joao.m.martins@oracle.com>
 Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 ---
- drivers/xen/cpu_hotplug.c     | 14 ++++++-------
- drivers/xen/gntalloc.c        | 13 ++++++++----
- drivers/xen/gntdev.c          | 16 +++++++++++----
- drivers/xen/manage.c          | 37 ++++++++++++++++++-----------------
- drivers/xen/platform-pci.c    | 12 +++++++-----
- drivers/xen/sys-hypervisor.c  | 12 ++++++++----
- drivers/xen/xen-balloon.c     | 10 +++++++---
- drivers/xen/xenfs/xenstored.c |  7 ++++---
- 8 files changed, 73 insertions(+), 48 deletions(-)
+ drivers/block/xen-blkback/blkback.c |  34 +++++----
+ drivers/block/xen-blkback/common.h  |   2 +-
+ drivers/block/xen-blkback/xenbus.c  |  63 ++++++++---------
+ drivers/block/xen-blkfront.c        | 103 +++++++++++++++-------------
+ 4 files changed, 107 insertions(+), 95 deletions(-)
 
-diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
-index afeb94446d34..4a05bc028956 100644
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -31,13 +31,13 @@ static void disable_hotplug_cpu(int cpu)
- 	unlock_device_hotplug();
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 7ad4423c24b8..d366a17a4bd8 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -142,7 +142,7 @@ static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
+ 		HZ * xen_blkif_pgrant_timeout);
  }
  
--static int vcpu_online(unsigned int cpu)
-+static int vcpu_online(xenhost_t *xh, unsigned int cpu)
+-static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
++static inline int get_free_page(xenhost_t *xh, struct xen_blkif_ring *ring, struct page **page)
  {
- 	int err;
- 	char dir[16], state[16];
+ 	unsigned long flags;
  
- 	sprintf(dir, "cpu/%u", cpu);
--	err = xenbus_scanf(xh_default, XBT_NIL, dir, "availability", "%15s", state);
-+	err = xenbus_scanf(xh, XBT_NIL, dir, "availability", "%15s", state);
- 	if (err != 1) {
- 		if (!xen_initial_domain())
- 			pr_err("Unable to read cpu state\n");
-@@ -52,12 +52,12 @@ static int vcpu_online(unsigned int cpu)
- 	pr_err("unknown state(%s) on CPU%d\n", state, cpu);
- 	return -EINVAL;
+@@ -150,7 +150,7 @@ static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
+ 	if (list_empty(&ring->free_pages)) {
+ 		BUG_ON(ring->free_pages_num != 0);
+ 		spin_unlock_irqrestore(&ring->free_pages_lock, flags);
+-		return gnttab_alloc_pages(1, page);
++		return gnttab_alloc_pages(xh, 1, page);
+ 	}
+ 	BUG_ON(ring->free_pages_num == 0);
+ 	page[0] = list_first_entry(&ring->free_pages, struct page, lru);
+@@ -174,7 +174,7 @@ static inline void put_free_pages(struct xen_blkif_ring *ring, struct page **pag
+ 	spin_unlock_irqrestore(&ring->free_pages_lock, flags);
  }
--static void vcpu_hotplug(unsigned int cpu)
-+static void vcpu_hotplug(xenhost_t *xh, unsigned int cpu)
+ 
+-static inline void shrink_free_pagepool(struct xen_blkif_ring *ring, int num)
++static inline void shrink_free_pagepool(xenhost_t *xh, struct xen_blkif_ring *ring, int num)
  {
- 	if (!cpu_possible(cpu))
- 		return;
- 
--	switch (vcpu_online(cpu)) {
-+	switch (vcpu_online(xh, cpu)) {
- 	case 1:
- 		enable_hotplug_cpu(cpu);
- 		break;
-@@ -78,7 +78,7 @@ static void handle_vcpu_hotplug_event(struct xenbus_watch *watch,
- 	cpustr = strstr(path, "cpu/");
- 	if (cpustr != NULL) {
- 		sscanf(cpustr, "cpu/%u", &cpu);
--		vcpu_hotplug(cpu);
-+		vcpu_hotplug(watch->xh, cpu);
+ 	/* Remove requested pages in batches of NUM_BATCH_FREE_PAGES */
+ 	struct page *page[NUM_BATCH_FREE_PAGES];
+@@ -190,14 +190,14 @@ static inline void shrink_free_pagepool(struct xen_blkif_ring *ring, int num)
+ 		ring->free_pages_num--;
+ 		if (++num_pages == NUM_BATCH_FREE_PAGES) {
+ 			spin_unlock_irqrestore(&ring->free_pages_lock, flags);
+-			gnttab_free_pages(num_pages, page);
++			gnttab_free_pages(xh, num_pages, page);
+ 			spin_lock_irqsave(&ring->free_pages_lock, flags);
+ 			num_pages = 0;
+ 		}
  	}
+ 	spin_unlock_irqrestore(&ring->free_pages_lock, flags);
+ 	if (num_pages != 0)
+-		gnttab_free_pages(num_pages, page);
++		gnttab_free_pages(xh, num_pages, page);
  }
  
-@@ -93,7 +93,7 @@ static int setup_cpu_watcher(struct notifier_block *notifier,
- 	(void)register_xenbus_watch(xh_default, &cpu_watch);
- 
- 	for_each_possible_cpu(cpu) {
--		if (vcpu_online(cpu) == 0) {
-+		if (vcpu_online(cpu_watch.xh, cpu) == 0) {
- 			(void)cpu_down(cpu);
- 			set_cpu_present(cpu, false);
- 		}
-@@ -114,7 +114,7 @@ static int __init setup_vcpu_hotplug_event(void)
- #endif
- 		return -ENODEV;
- 
--	register_xenstore_notifier(&xsn_cpu);
-+	register_xenstore_notifier(xh_default, &xsn_cpu);
- 
- 	return 0;
+ #define vaddr(page) ((unsigned long)pfn_to_kaddr(page_to_pfn(page)))
+@@ -301,8 +301,8 @@ static void put_persistent_gnt(struct xen_blkif_ring *ring,
+ 	atomic_dec(&ring->persistent_gnt_in_use);
  }
-diff --git a/drivers/xen/gntalloc.c b/drivers/xen/gntalloc.c
-index e07823886fa8..a490e4e8c854 100644
---- a/drivers/xen/gntalloc.c
-+++ b/drivers/xen/gntalloc.c
-@@ -79,6 +79,8 @@ static LIST_HEAD(gref_list);
- static DEFINE_MUTEX(gref_mutex);
- static int gref_size;
  
-+static xenhost_t *xh;
-+
- struct notify_info {
- 	uint16_t pgoff:12;    /* Bits 0-11: Offset of the byte to clear */
- 	uint16_t flags:2;     /* Bits 12-13: Unmap notification flags */
-@@ -144,7 +146,7 @@ static int add_grefs(struct ioctl_gntalloc_alloc_gref *op,
- 		}
- 
- 		/* Grant foreign access to the page. */
--		rc = gnttab_grant_foreign_access(op->domid,
-+		rc = gnttab_grant_foreign_access(xh, op->domid,
- 						 xen_page_to_gfn(gref->page),
- 						 readonly);
- 		if (rc < 0)
-@@ -196,13 +198,13 @@ static void __del_gref(struct gntalloc_gref *gref)
- 	gref->notify.flags = 0;
- 
- 	if (gref->gref_id) {
--		if (gnttab_query_foreign_access(gref->gref_id))
-+		if (gnttab_query_foreign_access(xh, gref->gref_id))
- 			return;
- 
--		if (!gnttab_end_foreign_access_ref(gref->gref_id, 0))
-+		if (!gnttab_end_foreign_access_ref(xh, gref->gref_id, 0))
- 			return;
- 
--		gnttab_free_grant_reference(gref->gref_id);
-+		gnttab_free_grant_reference(xh, gref->gref_id);
- 	}
- 
- 	gref_size--;
-@@ -586,6 +588,9 @@ static int __init gntalloc_init(void)
- 	if (!xen_domain())
- 		return -ENODEV;
- 
-+	/* Limit to default xenhost for now. */
-+	xh = xh_default;
-+
- 	err = misc_register(&gntalloc_miscdev);
- 	if (err != 0) {
- 		pr_err("Could not register misc gntalloc device\n");
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 0f0c951cd5b1..40a42abe2dd0 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -67,6 +67,8 @@ static atomic_t pages_mapped = ATOMIC_INIT(0);
- static int use_ptemod;
- #define populate_freeable_maps use_ptemod
- 
-+static xenhost_t *xh;
-+
- static int unmap_grant_pages(struct gntdev_grant_map *map,
- 			     int offset, int pages);
- 
-@@ -114,7 +116,7 @@ static void gntdev_free_map(struct gntdev_grant_map *map)
- 	} else
- #endif
- 	if (map->pages)
--		gnttab_free_pages(map->count, map->pages);
-+		gnttab_free_pages(xh, map->count, map->pages);
- 
- #ifdef CONFIG_XEN_GRANT_DMA_ALLOC
- 	kfree(map->frames);
-@@ -183,7 +185,7 @@ struct gntdev_grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
- 		add->dma_bus_addr = args.dev_bus_addr;
- 	} else
- #endif
--	if (gnttab_alloc_pages(count, add->pages))
-+	if (gnttab_alloc_pages(xh, count, add->pages))
- 		goto err;
- 
- 	for (i = 0; i < count; i++) {
-@@ -339,7 +341,7 @@ int gntdev_map_grant_pages(struct gntdev_grant_map *map)
- 	}
- 
- 	pr_debug("map %d+%d\n", map->index, map->count);
--	err = gnttab_map_refs(map->map_ops, use_ptemod ? map->kmap_ops : NULL,
-+	err = gnttab_map_refs(xh, map->map_ops, use_ptemod ? map->kmap_ops : NULL,
- 			map->pages, map->count);
- 	if (err)
- 		return err;
-@@ -385,6 +387,7 @@ static int __unmap_grant_pages(struct gntdev_grant_map *map, int offset,
- 	unmap_data.kunmap_ops = use_ptemod ? map->kunmap_ops + offset : NULL;
- 	unmap_data.pages = map->pages + offset;
- 	unmap_data.count = pages;
+-static void free_persistent_gnts(struct xen_blkif_ring *ring, struct rb_root *root,
+-                                 unsigned int num)
++static void free_persistent_gnts(xenhost_t *xh, struct xen_blkif_ring *ring,
++				struct rb_root *root, unsigned int num)
+ {
+ 	struct gnttab_unmap_grant_ref unmap[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+ 	struct page *pages[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+@@ -314,6 +314,7 @@ static void free_persistent_gnts(struct xen_blkif_ring *ring, struct rb_root *ro
+ 	unmap_data.pages = pages;
+ 	unmap_data.unmap_ops = unmap;
+ 	unmap_data.kunmap_ops = NULL;
 +	unmap_data.xh = xh;
  
- 	err = gnttab_unmap_refs_sync(&unmap_data);
- 	if (err)
-@@ -877,7 +880,7 @@ static int gntdev_copy(struct gntdev_copy_batch *batch)
+ 	foreach_grant_safe(persistent_gnt, n, root, node) {
+ 		BUG_ON(persistent_gnt->handle ==
+@@ -351,10 +352,12 @@ void xen_blkbk_unmap_purged_grants(struct work_struct *work)
+ 	int segs_to_unmap = 0;
+ 	struct xen_blkif_ring *ring = container_of(work, typeof(*ring), persistent_purge_work);
+ 	struct gntab_unmap_queue_data unmap_data;
++	struct xenbus_device *dev = xen_blkbk_xenbus(ring->blkif->be);
+ 
+ 	unmap_data.pages = pages;
+ 	unmap_data.unmap_ops = unmap;
+ 	unmap_data.kunmap_ops = NULL;
++	unmap_data.xh = dev->xh;
+ 
+ 	while(!list_empty(&ring->persistent_purge_list)) {
+ 		persistent_gnt = list_first_entry(&ring->persistent_purge_list,
+@@ -615,6 +618,7 @@ int xen_blkif_schedule(void *arg)
+ 	struct xen_vbd *vbd = &blkif->vbd;
+ 	unsigned long timeout;
+ 	int ret;
++	struct xenbus_device *dev = xen_blkbk_xenbus(blkif->be);
+ 
+ 	set_freezable();
+ 	while (!kthread_should_stop()) {
+@@ -657,7 +661,7 @@ int xen_blkif_schedule(void *arg)
+ 		}
+ 
+ 		/* Shrink if we have more than xen_blkif_max_buffer_pages */
+-		shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
++		shrink_free_pagepool(dev->xh, ring, xen_blkif_max_buffer_pages);
+ 
+ 		if (log_stats && time_after(jiffies, ring->st_print))
+ 			print_stats(ring);
+@@ -677,18 +681,18 @@ int xen_blkif_schedule(void *arg)
+ /*
+  * Remove persistent grants and empty the pool of free pages
+  */
+-void xen_blkbk_free_caches(struct xen_blkif_ring *ring)
++void xen_blkbk_free_caches(xenhost_t *xh, struct xen_blkif_ring *ring)
  {
- 	unsigned int i;
+ 	/* Free all persistent grant pages */
+ 	if (!RB_EMPTY_ROOT(&ring->persistent_gnts))
+-		free_persistent_gnts(ring, &ring->persistent_gnts,
++		free_persistent_gnts(xh, ring, &ring->persistent_gnts,
+ 			ring->persistent_gnt_c);
  
--	gnttab_batch_copy(batch->ops, batch->nr_ops);
-+	gnttab_batch_copy(xh, batch->ops, batch->nr_ops);
- 	gntdev_put_pages(batch);
+ 	BUG_ON(!RB_EMPTY_ROOT(&ring->persistent_gnts));
+ 	ring->persistent_gnt_c = 0;
  
- 	/*
-@@ -1210,8 +1213,13 @@ static int __init gntdev_init(void)
- 	if (!xen_domain())
- 		return -ENODEV;
+ 	/* Since we are shutting down remove all pages from the buffer */
+-	shrink_free_pagepool(ring, 0 /* All */);
++	shrink_free_pagepool(xh, ring, 0 /* All */);
+ }
  
-+	/*
-+	 * Use for mappings grants related to the default xenhost.
-+	 */
-+	xh = xh_default;
- 	use_ptemod = !xen_feature(XENFEAT_auto_translated_physmap);
+ static unsigned int xen_blkbk_unmap_prepare(
+@@ -784,6 +788,7 @@ static void xen_blkbk_unmap(struct xen_blkif_ring *ring,
+ 	struct gnttab_unmap_grant_ref unmap[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+ 	struct page *unmap_pages[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+ 	unsigned int invcount = 0;
++	struct xenbus_device *dev = xen_blkbk_xenbus(ring->blkif->be);
+ 	int ret;
  
-+
- 	err = misc_register(&gntdev_miscdev);
- 	if (err != 0) {
- 		pr_err("Could not register gntdev device\n");
-diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
-index 9a69d955dd5c..1655d0a039fd 100644
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@ -227,14 +227,14 @@ static void shutdown_handler(struct xenbus_watch *watch,
- 		return;
+ 	while (num) {
+@@ -792,7 +797,7 @@ static void xen_blkbk_unmap(struct xen_blkif_ring *ring,
+ 		invcount = xen_blkbk_unmap_prepare(ring, pages, batch,
+ 						   unmap, unmap_pages);
+ 		if (invcount) {
+-			ret = gnttab_unmap_refs(unmap, NULL, unmap_pages, invcount);
++			ret = gnttab_unmap_refs(dev->xh, unmap, NULL, unmap_pages, invcount);
+ 			BUG_ON(ret);
+ 			put_free_pages(ring, unmap_pages, invcount);
+ 		}
+@@ -815,6 +820,7 @@ static int xen_blkbk_map(struct xen_blkif_ring *ring,
+ 	int last_map = 0, map_until = 0;
+ 	int use_persistent_gnts;
+ 	struct xen_blkif *blkif = ring->blkif;
++	struct xenbus_device *dev = xen_blkbk_xenbus(blkif->be); /* function call */
  
-  again:
--	err = xenbus_transaction_start(xh_default, &xbt);
-+	err = xenbus_transaction_start(watch->xh, &xbt);
- 	if (err)
- 		return;
+ 	use_persistent_gnts = (blkif->vbd.feature_gnt_persistent);
  
--	str = (char *)xenbus_read(xh_default, xbt, "control", "shutdown", NULL);
-+	str = (char *)xenbus_read(watch->xh, xbt, "control", "shutdown", NULL);
- 	/* Ignore read errors and empty reads. */
- 	if (XENBUS_IS_ERR_READ(str)) {
--		xenbus_transaction_end(xh_default, xbt, 1);
-+		xenbus_transaction_end(watch->xh, xbt, 1);
- 		return;
+@@ -841,7 +847,7 @@ static int xen_blkbk_map(struct xen_blkif_ring *ring,
+ 			pages[i]->page = persistent_gnt->page;
+ 			pages[i]->persistent_gnt = persistent_gnt;
+ 		} else {
+-			if (get_free_page(ring, &pages[i]->page))
++			if (get_free_page(dev->xh, ring, &pages[i]->page))
+ 				goto out_of_memory;
+ 			addr = vaddr(pages[i]->page);
+ 			pages_to_gnt[segs_to_map] = pages[i]->page;
+@@ -859,7 +865,7 @@ static int xen_blkbk_map(struct xen_blkif_ring *ring,
  	}
  
-@@ -245,9 +245,9 @@ static void shutdown_handler(struct xenbus_watch *watch,
+ 	if (segs_to_map) {
+-		ret = gnttab_map_refs(map, NULL, pages_to_gnt, segs_to_map);
++		ret = gnttab_map_refs(dev->xh, map, NULL, pages_to_gnt, segs_to_map);
+ 		BUG_ON(ret);
+ 	}
  
- 	/* Only acknowledge commands which we are prepared to handle. */
- 	if (idx < ARRAY_SIZE(shutdown_handlers))
--		xenbus_write(xh_default, xbt, "control", "shutdown", "");
-+		xenbus_write(watch->xh, xbt, "control", "shutdown", "");
+diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
+index 1d3002d773f7..633115888765 100644
+--- a/drivers/block/xen-blkback/common.h
++++ b/drivers/block/xen-blkback/common.h
+@@ -382,7 +382,7 @@ int xen_blkif_xenbus_init(void);
+ irqreturn_t xen_blkif_be_int(int irq, void *dev_id);
+ int xen_blkif_schedule(void *arg);
+ int xen_blkif_purge_persistent(void *arg);
+-void xen_blkbk_free_caches(struct xen_blkif_ring *ring);
++void xen_blkbk_free_caches(xenhost_t *xh, struct xen_blkif_ring *ring);
  
--	err = xenbus_transaction_end(xh_default, xbt, 0);
-+	err = xenbus_transaction_end(watch->xh, xbt, 0);
- 	if (err == -EAGAIN) {
- 		kfree(str);
- 		goto again;
-@@ -272,10 +272,10 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
+ int xen_blkbk_flush_diskcache(struct xenbus_transaction xbt,
+ 			      struct backend_info *be, int state);
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index beea4272cfd3..a3ed34269b23 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -65,7 +65,7 @@ static int blkback_name(struct xen_blkif *blkif, char *buf)
+ 	char *devpath, *devname;
+ 	struct xenbus_device *dev = blkif->be->dev;
+ 
+-	devpath = xenbus_read(XBT_NIL, dev->nodename, "dev", NULL);
++	devpath = xenbus_read(dev->xh, XBT_NIL, dev->nodename, "dev", NULL);
+ 	if (IS_ERR(devpath))
+ 		return PTR_ERR(devpath);
+ 
+@@ -246,6 +246,7 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+ 	struct pending_req *req, *n;
+ 	unsigned int j, r;
+ 	bool busy = false;
++	struct xenbus_device *dev = xen_blkbk_xenbus(blkif->be);
+ 
+ 	for (r = 0; r < blkif->nr_rings; r++) {
+ 		struct xen_blkif_ring *ring = &blkif->rings[r];
+@@ -279,7 +280,7 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+ 		}
+ 
+ 		/* Remove all persistent grants and the cache of ballooned pages. */
+-		xen_blkbk_free_caches(ring);
++		xen_blkbk_free_caches(dev->xh, ring);
+ 
+ 		/* Check that there is no request in use */
+ 		list_for_each_entry_safe(req, n, &ring->pending_free, free_list) {
+@@ -507,7 +508,7 @@ static int xen_blkbk_remove(struct xenbus_device *dev)
+ 		xenvbd_sysfs_delif(dev);
+ 
+ 	if (be->backend_watch.node) {
+-		unregister_xenbus_watch(&be->backend_watch);
++		unregister_xenbus_watch(dev->xh, &be->backend_watch);
+ 		kfree(be->backend_watch.node);
+ 		be->backend_watch.node = NULL;
+ 	}
+@@ -530,7 +531,7 @@ int xen_blkbk_flush_diskcache(struct xenbus_transaction xbt,
+ 	struct xenbus_device *dev = be->dev;
  	int err;
  
-  again:
--	err = xenbus_transaction_start(xh_default, &xbt);
-+	err = xenbus_transaction_start(watch->xh, &xbt);
+-	err = xenbus_printf(xbt, dev->nodename, "feature-flush-cache",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "feature-flush-cache",
+ 			    "%d", state);
  	if (err)
- 		return;
--	err = xenbus_scanf(xh_default, xbt, "control", "sysrq", "%c", &sysrq_key);
-+	err = xenbus_scanf(watch->xh, xbt, "control", "sysrq", "%c", &sysrq_key);
- 	if (err < 0) {
- 		/*
- 		 * The Xenstore watch fires directly after registering it and
-@@ -287,21 +287,21 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
- 		if (err != -ENOENT && err != -ERANGE)
- 			pr_err("Error %d reading sysrq code in control/sysrq\n",
- 			       err);
--		xenbus_transaction_end(xh_default, xbt, 1);
-+		xenbus_transaction_end(watch->xh, xbt, 1);
- 		return;
- 	}
+ 		dev_warn(&dev->dev, "writing feature-flush-cache (%d)", err);
+@@ -547,18 +548,18 @@ static void xen_blkbk_discard(struct xenbus_transaction xbt, struct backend_info
+ 	struct block_device *bdev = be->blkif->vbd.bdev;
+ 	struct request_queue *q = bdev_get_queue(bdev);
  
- 	if (sysrq_key != '\0') {
--		err = xenbus_printf(xh_default, xbt, "control", "sysrq", "%c", '\0');
-+		err = xenbus_printf(watch->xh, xbt, "control", "sysrq", "%c", '\0');
+-	if (!xenbus_read_unsigned(dev->nodename, "discard-enable", 1))
++	if (!xenbus_read_unsigned(dev->xh, dev->nodename, "discard-enable", 1))
+ 		return;
+ 
+ 	if (blk_queue_discard(q)) {
+-		err = xenbus_printf(xbt, dev->nodename,
++		err = xenbus_printf(dev->xh, xbt, dev->nodename,
+ 			"discard-granularity", "%u",
+ 			q->limits.discard_granularity);
  		if (err) {
- 			pr_err("%s: Error %d writing sysrq in control/sysrq\n",
- 			       __func__, err);
--			xenbus_transaction_end(xh_default, xbt, 1);
-+			xenbus_transaction_end(watch->xh, xbt, 1);
+ 			dev_warn(&dev->dev, "writing discard-granularity (%d)", err);
+ 			return;
+ 		}
+-		err = xenbus_printf(xbt, dev->nodename,
++		err = xenbus_printf(dev->xh, xbt, dev->nodename,
+ 			"discard-alignment", "%u",
+ 			q->limits.discard_alignment);
+ 		if (err) {
+@@ -567,7 +568,7 @@ static void xen_blkbk_discard(struct xenbus_transaction xbt, struct backend_info
+ 		}
+ 		state = 1;
+ 		/* Optional. */
+-		err = xenbus_printf(xbt, dev->nodename,
++		err = xenbus_printf(dev->xh, xbt, dev->nodename,
+ 				    "discard-secure", "%d",
+ 				    blkif->vbd.discard_secure);
+ 		if (err) {
+@@ -575,7 +576,7 @@ static void xen_blkbk_discard(struct xenbus_transaction xbt, struct backend_info
  			return;
  		}
  	}
+-	err = xenbus_printf(xbt, dev->nodename, "feature-discard",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "feature-discard",
+ 			    "%d", state);
+ 	if (err)
+ 		dev_warn(&dev->dev, "writing feature-discard (%d)", err);
+@@ -586,7 +587,7 @@ int xen_blkbk_barrier(struct xenbus_transaction xbt,
+ 	struct xenbus_device *dev = be->dev;
+ 	int err;
  
--	err = xenbus_transaction_end(xh_default, xbt, 0);
-+	err = xenbus_transaction_end(watch->xh, xbt, 0);
+-	err = xenbus_printf(xbt, dev->nodename, "feature-barrier",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "feature-barrier",
+ 			    "%d", state);
+ 	if (err)
+ 		dev_warn(&dev->dev, "writing feature-barrier (%d)", err);
+@@ -625,7 +626,7 @@ static int xen_blkbk_probe(struct xenbus_device *dev,
+ 		goto fail;
+ 	}
+ 
+-	err = xenbus_printf(XBT_NIL, dev->nodename,
++	err = xenbus_printf(dev->xh, XBT_NIL, dev->nodename,
+ 			    "feature-max-indirect-segments", "%u",
+ 			    MAX_INDIRECT_SEGMENTS);
+ 	if (err)
+@@ -634,7 +635,7 @@ static int xen_blkbk_probe(struct xenbus_device *dev,
+ 			 dev->nodename, err);
+ 
+ 	/* Multi-queue: advertise how many queues are supported by us.*/
+-	err = xenbus_printf(XBT_NIL, dev->nodename,
++	err = xenbus_printf(dev->xh, XBT_NIL, dev->nodename,
+ 			    "multi-queue-max-queues", "%u", xenblk_max_queues);
+ 	if (err)
+ 		pr_warn("Error writing multi-queue-max-queues\n");
+@@ -647,7 +648,7 @@ static int xen_blkbk_probe(struct xenbus_device *dev,
+ 	if (err)
+ 		goto fail;
+ 
+-	err = xenbus_printf(XBT_NIL, dev->nodename, "max-ring-page-order", "%u",
++	err = xenbus_printf(dev->xh, XBT_NIL, dev->nodename, "max-ring-page-order", "%u",
+ 			    xen_blkif_max_ring_order);
+ 	if (err)
+ 		pr_warn("%s write out 'max-ring-page-order' failed\n", __func__);
+@@ -685,7 +686,7 @@ static void backend_changed(struct xenbus_watch *watch,
+ 
+ 	pr_debug("%s %p %d\n", __func__, dev, dev->otherend_id);
+ 
+-	err = xenbus_scanf(XBT_NIL, dev->nodename, "physical-device", "%x:%x",
++	err = xenbus_scanf(dev->xh, XBT_NIL, dev->nodename, "physical-device", "%x:%x",
+ 			   &major, &minor);
+ 	if (XENBUS_EXIST_ERR(err)) {
+ 		/*
+@@ -707,7 +708,7 @@ static void backend_changed(struct xenbus_watch *watch,
+ 		return;
+ 	}
+ 
+-	be->mode = xenbus_read(XBT_NIL, dev->nodename, "mode", NULL);
++	be->mode = xenbus_read(dev->xh, XBT_NIL, dev->nodename, "mode", NULL);
+ 	if (IS_ERR(be->mode)) {
+ 		err = PTR_ERR(be->mode);
+ 		be->mode = NULL;
+@@ -715,7 +716,7 @@ static void backend_changed(struct xenbus_watch *watch,
+ 		return;
+ 	}
+ 
+-	device_type = xenbus_read(XBT_NIL, dev->otherend, "device-type", NULL);
++	device_type = xenbus_read(dev->xh, XBT_NIL, dev->otherend, "device-type", NULL);
+ 	if (!IS_ERR(device_type)) {
+ 		cdrom = strcmp(device_type, "cdrom") == 0;
+ 		kfree(device_type);
+@@ -849,7 +850,7 @@ static void connect(struct backend_info *be)
+ 
+ 	/* Supply the information about the device the frontend needs */
+ again:
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(dev->xh, &xbt);
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "starting transaction");
+ 		return;
+@@ -862,14 +863,14 @@ static void connect(struct backend_info *be)
+ 
+ 	xen_blkbk_barrier(xbt, be, be->blkif->vbd.flush_support);
+ 
+-	err = xenbus_printf(xbt, dev->nodename, "feature-persistent", "%u", 1);
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "feature-persistent", "%u", 1);
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "writing %s/feature-persistent",
+ 				 dev->nodename);
+ 		goto abort;
+ 	}
+ 
+-	err = xenbus_printf(xbt, dev->nodename, "sectors", "%llu",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "sectors", "%llu",
+ 			    (unsigned long long)vbd_sz(&be->blkif->vbd));
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "writing %s/sectors",
+@@ -878,7 +879,7 @@ static void connect(struct backend_info *be)
+ 	}
+ 
+ 	/* FIXME: use a typename instead */
+-	err = xenbus_printf(xbt, dev->nodename, "info", "%u",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "info", "%u",
+ 			    be->blkif->vbd.type |
+ 			    (be->blkif->vbd.readonly ? VDISK_READONLY : 0));
+ 	if (err) {
+@@ -886,7 +887,7 @@ static void connect(struct backend_info *be)
+ 				 dev->nodename);
+ 		goto abort;
+ 	}
+-	err = xenbus_printf(xbt, dev->nodename, "sector-size", "%lu",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "sector-size", "%lu",
+ 			    (unsigned long)
+ 			    bdev_logical_block_size(be->blkif->vbd.bdev));
+ 	if (err) {
+@@ -894,13 +895,13 @@ static void connect(struct backend_info *be)
+ 				 dev->nodename);
+ 		goto abort;
+ 	}
+-	err = xenbus_printf(xbt, dev->nodename, "physical-sector-size", "%u",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "physical-sector-size", "%u",
+ 			    bdev_physical_block_size(be->blkif->vbd.bdev));
+ 	if (err)
+ 		xenbus_dev_error(dev, err, "writing %s/physical-sector-size",
+ 				 dev->nodename);
+ 
+-	err = xenbus_transaction_end(xbt, 0);
++	err = xenbus_transaction_end(dev->xh, xbt, 0);
  	if (err == -EAGAIN)
  		goto again;
+ 	if (err)
+@@ -913,7 +914,7 @@ static void connect(struct backend_info *be)
  
-@@ -324,14 +324,14 @@ static struct notifier_block xen_reboot_nb = {
- 	.notifier_call = poweroff_nb,
- };
- 
--static int setup_shutdown_watcher(void)
-+static int setup_shutdown_watcher(xenhost_t *xh)
- {
- 	int err;
- 	int idx;
- #define FEATURE_PATH_SIZE (SHUTDOWN_CMD_SIZE + sizeof("feature-"))
- 	char node[FEATURE_PATH_SIZE];
- 
--	err = register_xenbus_watch(xh_default, &shutdown_watch);
-+	err = register_xenbus_watch(xh, &shutdown_watch);
- 	if (err) {
- 		pr_err("Failed to set shutdown watcher\n");
- 		return err;
-@@ -339,7 +339,7 @@ static int setup_shutdown_watcher(void)
- 
- 
- #ifdef CONFIG_MAGIC_SYSRQ
--	err = register_xenbus_watch(xh_default, &sysrq_watch);
-+	err = register_xenbus_watch(xh, &sysrq_watch);
- 	if (err) {
- 		pr_err("Failed to set sysrq watcher\n");
- 		return err;
-@@ -351,7 +351,7 @@ static int setup_shutdown_watcher(void)
- 			continue;
- 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
- 			 shutdown_handlers[idx].command);
--		err = xenbus_printf(xh_default, XBT_NIL, "control", node, "%u", 1);
-+		err = xenbus_printf(xh, XBT_NIL, "control", node, "%u", 1);
- 		if (err) {
- 			pr_err("%s: Error %d writing %s\n", __func__,
- 				err, node);
-@@ -364,9 +364,9 @@ static int setup_shutdown_watcher(void)
- 
- static int shutdown_event(struct notifier_block *notifier,
- 			  unsigned long event,
--			  void *data)
-+			  void *xh)
- {
--	setup_shutdown_watcher();
-+	setup_shutdown_watcher((xenhost_t *) xh);
- 	return NOTIFY_DONE;
+ 	return;
+  abort:
+-	xenbus_transaction_end(xbt, 1);
++	xenbus_transaction_end(dev->xh, xbt, 1);
  }
  
-@@ -378,7 +378,8 @@ int xen_setup_shutdown_event(void)
+ /*
+@@ -928,7 +929,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+ 	struct xenbus_device *dev = blkif->be->dev;
+ 	unsigned int ring_page_order, nr_grefs, evtchn;
  
- 	if (!xen_domain())
- 		return -ENODEV;
--	register_xenstore_notifier(&xenstore_notifier);
-+
-+	register_xenstore_notifier(xh_default, &xenstore_notifier);
- 	register_reboot_notifier(&xen_reboot_nb);
+-	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
++	err = xenbus_scanf(dev->xh, XBT_NIL, dir, "event-channel", "%u",
+ 			  &evtchn);
+ 	if (err != 1) {
+ 		err = -EINVAL;
+@@ -936,10 +937,10 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+ 		return err;
+ 	}
+ 
+-	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
++	err = xenbus_scanf(dev->xh, XBT_NIL, dev->otherend, "ring-page-order", "%u",
+ 			  &ring_page_order);
+ 	if (err != 1) {
+-		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
++		err = xenbus_scanf(dev->xh, XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
+ 		if (err != 1) {
+ 			err = -EINVAL;
+ 			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+@@ -962,7 +963,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+ 			char ring_ref_name[RINGREF_NAME_LEN];
+ 
+ 			snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+-			err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
++			err = xenbus_scanf(dev->xh, XBT_NIL, dir, ring_ref_name,
+ 					   "%u", &ring_ref[i]);
+ 			if (err != 1) {
+ 				err = -EINVAL;
+@@ -1034,7 +1035,7 @@ static int connect_ring(struct backend_info *be)
+ 	pr_debug("%s %s\n", __func__, dev->otherend);
+ 
+ 	be->blkif->blk_protocol = BLKIF_PROTOCOL_DEFAULT;
+-	err = xenbus_scanf(XBT_NIL, dev->otherend, "protocol",
++	err = xenbus_scanf(dev->xh, XBT_NIL, dev->otherend, "protocol",
+ 			   "%63s", protocol);
+ 	if (err <= 0)
+ 		strcpy(protocol, "unspecified, assuming default");
+@@ -1048,7 +1049,7 @@ static int connect_ring(struct backend_info *be)
+ 		xenbus_dev_fatal(dev, err, "unknown fe protocol %s", protocol);
+ 		return -ENOSYS;
+ 	}
+-	pers_grants = xenbus_read_unsigned(dev->otherend, "feature-persistent",
++	pers_grants = xenbus_read_unsigned(dev->xh, dev->otherend, "feature-persistent",
+ 					   0);
+ 	be->blkif->vbd.feature_gnt_persistent = pers_grants;
+ 	be->blkif->vbd.overflow_max_grants = 0;
+@@ -1056,7 +1057,7 @@ static int connect_ring(struct backend_info *be)
+ 	/*
+ 	 * Read the number of hardware queues from frontend.
+ 	 */
+-	requested_num_queues = xenbus_read_unsigned(dev->otherend,
++	requested_num_queues = xenbus_read_unsigned(dev->xh, dev->otherend,
+ 						    "multi-queue-num-queues",
+ 						    1);
+ 	if (requested_num_queues > xenblk_max_queues
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index a06716424023..3929370d1f2f 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -341,10 +341,11 @@ static struct grant *get_free_grant(struct blkfront_ring_info *rinfo)
+ 	return gnt_list_entry;
+ }
+ 
+-static inline void grant_foreign_access(const struct grant *gnt_list_entry,
++static inline void grant_foreign_access(xenhost_t *xh,
++					const struct grant *gnt_list_entry,
+ 					const struct blkfront_info *info)
+ {
+-	gnttab_page_grant_foreign_access_ref_one(gnt_list_entry->gref,
++	gnttab_page_grant_foreign_access_ref_one(xh, gnt_list_entry->gref,
+ 						 info->xbdev->otherend_id,
+ 						 gnt_list_entry->page,
+ 						 0);
+@@ -361,13 +362,13 @@ static struct grant *get_grant(grant_ref_t *gref_head,
+ 		return gnt_list_entry;
+ 
+ 	/* Assign a gref to this page */
+-	gnt_list_entry->gref = gnttab_claim_grant_reference(gref_head);
++	gnt_list_entry->gref = gnttab_claim_grant_reference(info->xbdev->xh, gref_head);
+ 	BUG_ON(gnt_list_entry->gref == -ENOSPC);
+ 	if (info->feature_persistent)
+-		grant_foreign_access(gnt_list_entry, info);
++		grant_foreign_access(info->xbdev->xh, gnt_list_entry, info);
+ 	else {
+ 		/* Grant access to the GFN passed by the caller */
+-		gnttab_grant_foreign_access_ref(gnt_list_entry->gref,
++		gnttab_grant_foreign_access_ref(info->xbdev->xh, gnt_list_entry->gref,
+ 						info->xbdev->otherend_id,
+ 						gfn, 0);
+ 	}
+@@ -385,7 +386,7 @@ static struct grant *get_indirect_grant(grant_ref_t *gref_head,
+ 		return gnt_list_entry;
+ 
+ 	/* Assign a gref to this page */
+-	gnt_list_entry->gref = gnttab_claim_grant_reference(gref_head);
++	gnt_list_entry->gref = gnttab_claim_grant_reference(info->xbdev->xh, gref_head);
+ 	BUG_ON(gnt_list_entry->gref == -ENOSPC);
+ 	if (!info->feature_persistent) {
+ 		struct page *indirect_page;
+@@ -397,7 +398,7 @@ static struct grant *get_indirect_grant(grant_ref_t *gref_head,
+ 		list_del(&indirect_page->lru);
+ 		gnt_list_entry->page = indirect_page;
+ 	}
+-	grant_foreign_access(gnt_list_entry, info);
++	grant_foreign_access(info->xbdev->xh, gnt_list_entry, info);
+ 
+ 	return gnt_list_entry;
+ }
+@@ -723,10 +724,10 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 	if (rinfo->persistent_gnts_c < max_grefs) {
+ 		new_persistent_gnts = true;
+ 
+-		if (gnttab_alloc_grant_references(
++		if (gnttab_alloc_grant_references(info->xbdev->xh,
+ 		    max_grefs - rinfo->persistent_gnts_c,
+ 		    &setup.gref_head) < 0) {
+-			gnttab_request_free_callback(
++			gnttab_request_free_callback(info->xbdev->xh,
+ 				&rinfo->callback,
+ 				blkif_restart_queue_callback,
+ 				rinfo,
+@@ -835,7 +836,7 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 		rinfo->shadow[extra_id].req = *extra_ring_req;
+ 
+ 	if (new_persistent_gnts)
+-		gnttab_free_grant_references(setup.gref_head);
++		gnttab_free_grant_references(info->xbdev->xh, setup.gref_head);
  
  	return 0;
-diff --git a/drivers/xen/platform-pci.c b/drivers/xen/platform-pci.c
-index 5d7dcad0b0a0..8fdb01c4a610 100644
---- a/drivers/xen/platform-pci.c
-+++ b/drivers/xen/platform-pci.c
-@@ -154,18 +154,20 @@ static int platform_pci_probe(struct pci_dev *pdev,
+ }
+@@ -1195,7 +1196,7 @@ static void xlvbd_release_gendisk(struct blkfront_info *info)
+ 		struct blkfront_ring_info *rinfo = &info->rinfo[i];
+ 
+ 		/* No more gnttab callback work. */
+-		gnttab_cancel_free_callback(&rinfo->callback);
++		gnttab_cancel_free_callback(info->xbdev->xh, &rinfo->callback);
+ 
+ 		/* Flush gnttab callback work. Must be done with no locks held. */
+ 		flush_work(&rinfo->work);
+@@ -1265,7 +1266,7 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+ 					 &rinfo->grants, node) {
+ 			list_del(&persistent_gnt->node);
+ 			if (persistent_gnt->gref != GRANT_INVALID_REF) {
+-				gnttab_end_foreign_access(persistent_gnt->gref,
++				gnttab_end_foreign_access(info->xbdev->xh, persistent_gnt->gref,
+ 							  0, 0UL);
+ 				rinfo->persistent_gnts_c--;
+ 			}
+@@ -1289,7 +1290,7 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+ 		       rinfo->shadow[i].req.u.rw.nr_segments;
+ 		for (j = 0; j < segs; j++) {
+ 			persistent_gnt = rinfo->shadow[i].grants_used[j];
+-			gnttab_end_foreign_access(persistent_gnt->gref, 0, 0UL);
++			gnttab_end_foreign_access(info->xbdev->xh, persistent_gnt->gref, 0, 0UL);
+ 			if (info->feature_persistent)
+ 				__free_page(persistent_gnt->page);
+ 			kfree(persistent_gnt);
+@@ -1304,7 +1305,7 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+ 
+ 		for (j = 0; j < INDIRECT_GREFS(segs); j++) {
+ 			persistent_gnt = rinfo->shadow[i].indirect_grants[j];
+-			gnttab_end_foreign_access(persistent_gnt->gref, 0, 0UL);
++			gnttab_end_foreign_access(info->xbdev->xh, persistent_gnt->gref, 0, 0UL);
+ 			__free_page(persistent_gnt->page);
+ 			kfree(persistent_gnt);
+ 		}
+@@ -1319,7 +1320,7 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+ 	}
+ 
+ 	/* No more gnttab callback work. */
+-	gnttab_cancel_free_callback(&rinfo->callback);
++	gnttab_cancel_free_callback(info->xbdev->xh, &rinfo->callback);
+ 
+ 	/* Flush gnttab callback work. Must be done with no locks held. */
+ 	flush_work(&rinfo->work);
+@@ -1327,7 +1328,7 @@ static void blkif_free_ring(struct blkfront_ring_info *rinfo)
+ 	/* Free resources associated with old device channel. */
+ 	for (i = 0; i < info->nr_ring_pages; i++) {
+ 		if (rinfo->ring_ref[i] != GRANT_INVALID_REF) {
+-			gnttab_end_foreign_access(rinfo->ring_ref[i], 0, 0);
++			gnttab_end_foreign_access(info->xbdev->xh, rinfo->ring_ref[i], 0, 0);
+ 			rinfo->ring_ref[i] = GRANT_INVALID_REF;
+ 		}
+ 	}
+@@ -1491,7 +1492,7 @@ static bool blkif_completion(unsigned long *id,
+ 	}
+ 	/* Add the persistent grant into the list of free grants */
+ 	for (i = 0; i < num_grant; i++) {
+-		if (gnttab_query_foreign_access(s->grants_used[i]->gref)) {
++		if (gnttab_query_foreign_access(info->xbdev->xh, s->grants_used[i]->gref)) {
+ 			/*
+ 			 * If the grant is still mapped by the backend (the
+ 			 * backend has chosen to make this grant persistent)
+@@ -1510,14 +1511,14 @@ static bool blkif_completion(unsigned long *id,
+ 			 * so it will not be picked again unless we run out of
+ 			 * persistent grants.
+ 			 */
+-			gnttab_end_foreign_access(s->grants_used[i]->gref, 0, 0UL);
++			gnttab_end_foreign_access(info->xbdev->xh, s->grants_used[i]->gref, 0, 0UL);
+ 			s->grants_used[i]->gref = GRANT_INVALID_REF;
+ 			list_add_tail(&s->grants_used[i]->node, &rinfo->grants);
+ 		}
+ 	}
+ 	if (s->req.operation == BLKIF_OP_INDIRECT) {
+ 		for (i = 0; i < INDIRECT_GREFS(num_grant); i++) {
+-			if (gnttab_query_foreign_access(s->indirect_grants[i]->gref)) {
++			if (gnttab_query_foreign_access(info->xbdev->xh, s->indirect_grants[i]->gref)) {
+ 				if (!info->feature_persistent)
+ 					pr_alert_ratelimited("backed has not unmapped grant: %u\n",
+ 							     s->indirect_grants[i]->gref);
+@@ -1526,7 +1527,7 @@ static bool blkif_completion(unsigned long *id,
+ 			} else {
+ 				struct page *indirect_page;
+ 
+-				gnttab_end_foreign_access(s->indirect_grants[i]->gref, 0, 0UL);
++				gnttab_end_foreign_access(info->xbdev->xh, s->indirect_grants[i]->gref, 0, 0UL);
+ 				/*
+ 				 * Add the used indirect page back to the list of
+ 				 * available pages for indirect grefs.
+@@ -1726,9 +1727,10 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
+ 	unsigned int i;
+ 	const char *message = NULL;
+ 	struct blkfront_info *info = rinfo->dev_info;
++	xenhost_t *xh = info->xbdev->xh;
+ 
+ 	if (info->nr_ring_pages == 1) {
+-		err = xenbus_printf(xbt, dir, "ring-ref", "%u", rinfo->ring_ref[0]);
++		err = xenbus_printf(xh, xbt, dir, "ring-ref", "%u", rinfo->ring_ref[0]);
+ 		if (err) {
+ 			message = "writing ring-ref";
+ 			goto abort_transaction;
+@@ -1738,7 +1740,7 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
+ 			char ring_ref_name[RINGREF_NAME_LEN];
+ 
+ 			snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+-			err = xenbus_printf(xbt, dir, ring_ref_name,
++			err = xenbus_printf(xh, xbt, dir, ring_ref_name,
+ 					    "%u", rinfo->ring_ref[i]);
+ 			if (err) {
+ 				message = "writing ring-ref";
+@@ -1747,7 +1749,7 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
  		}
  	}
  
--	max_nr_gframes = gnttab_max_grant_frames();
-+	max_nr_gframes = gnttab_max_grant_frames(xh_default);
- 	grant_frames = alloc_xen_mmio(PAGE_SIZE * max_nr_gframes);
--	ret = gnttab_setup_auto_xlat_frames(grant_frames);
-+	ret = gnttab_setup_auto_xlat_frames(xh_default, grant_frames);
- 	if (ret)
- 		goto out;
--	ret = gnttab_init();
-+
-+	/* HVM only, we don't need xh_remote */
-+	ret = gnttab_init(xh_default);
- 	if (ret)
- 		goto grant_out;
--	xenbus_probe(NULL);
-+	__xenbus_probe(xh_default->xenstore_private);
+-	err = xenbus_printf(xbt, dir, "event-channel", "%u", rinfo->evtchn);
++	err = xenbus_printf(xh, xbt, dir, "event-channel", "%u", rinfo->evtchn);
+ 	if (err) {
+ 		message = "writing event-channel";
+ 		goto abort_transaction;
+@@ -1756,7 +1758,7 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
  	return 0;
- grant_out:
--	gnttab_free_auto_xlat_frames();
-+	gnttab_free_auto_xlat_frames(xh_default);
- out:
- 	pci_release_region(pdev, 0);
- mem_out:
-diff --git a/drivers/xen/sys-hypervisor.c b/drivers/xen/sys-hypervisor.c
-index 005a898e7a23..d69c0790692c 100644
---- a/drivers/xen/sys-hypervisor.c
-+++ b/drivers/xen/sys-hypervisor.c
-@@ -14,6 +14,7 @@
- #include <linux/err.h>
  
- #include <xen/interface/xen.h>
-+#include <xen/xenhost.h>
- #include <asm/xen/hypervisor.h>
- #include <asm/xen/hypercall.h>
+ abort_transaction:
+-	xenbus_transaction_end(xbt, 1);
++	xenbus_transaction_end(xh, xbt, 1);
+ 	if (message)
+ 		xenbus_dev_fatal(info->xbdev, err, "%s", message);
  
-@@ -141,15 +142,15 @@ static ssize_t uuid_show_fallback(struct hyp_sysfs_attr *attr, char *buffer)
- {
- 	char *vm, *val;
- 	int ret;
--	extern int xenstored_ready;
+@@ -1782,7 +1784,7 @@ static int talk_to_blkback(struct xenbus_device *dev,
+ 	if (!info)
+ 		return -ENODEV;
  
-+	/* Disable for now: xenstored_ready is private to xenbus
- 	if (!xenstored_ready)
--		return -EBUSY;
-+		return -EBUSY;*/
+-	max_page_order = xenbus_read_unsigned(info->xbdev->otherend,
++	max_page_order = xenbus_read_unsigned(dev->xh, info->xbdev->otherend,
+ 					      "max-ring-page-order", 0);
+ 	ring_page_order = min(xen_blkif_max_ring_order, max_page_order);
+ 	info->nr_ring_pages = 1 << ring_page_order;
+@@ -1801,14 +1803,14 @@ static int talk_to_blkback(struct xenbus_device *dev,
+ 	}
  
--	vm = xenbus_read(XBT_NIL, "vm", "", NULL);
-+	vm = xenbus_read(xh_default, XBT_NIL, "vm", "", NULL);
- 	if (IS_ERR(vm))
- 		return PTR_ERR(vm);
--	val = xenbus_read(XBT_NIL, vm, "uuid", NULL);
-+	val = xenbus_read(xh_default, XBT_NIL, vm, "uuid", NULL);
- 	kfree(vm);
- 	if (IS_ERR(val))
- 		return PTR_ERR(val);
-@@ -602,6 +603,9 @@ static struct kobj_type hyp_sysfs_kobj_type = {
- 	.sysfs_ops = &hyp_sysfs_ops,
- };
+ again:
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(dev->xh, &xbt);
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "starting transaction");
+ 		goto destroy_blkring;
+ 	}
  
-+/*
-+ * For now, default xenhost only.
-+ */
- static int __init hypervisor_subsys_init(void)
- {
- 	if (!xen_domain())
-diff --git a/drivers/xen/xen-balloon.c b/drivers/xen/xen-balloon.c
-index d34d9b1af7a8..9d448dd7ff17 100644
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -40,6 +40,7 @@
+ 	if (info->nr_ring_pages > 1) {
+-		err = xenbus_printf(xbt, dev->nodename, "ring-page-order", "%u",
++		err = xenbus_printf(dev->xh, xbt, dev->nodename, "ring-page-order", "%u",
+ 				    ring_page_order);
+ 		if (err) {
+ 			message = "writing ring-page-order";
+@@ -1825,7 +1827,7 @@ static int talk_to_blkback(struct xenbus_device *dev,
+ 		char *path;
+ 		size_t pathsize;
  
- #include <xen/xen.h>
- #include <xen/interface/xen.h>
-+#include <xen/xenhost.h>
- #include <xen/balloon.h>
- #include <xen/xenbus.h>
- #include <xen/features.h>
-@@ -99,11 +100,11 @@ static struct xenbus_watch target_watch = {
- 
- static int balloon_init_watcher(struct notifier_block *notifier,
- 				unsigned long event,
--				void *data)
-+				void *xh)
- {
- 	int err;
- 
--	err = register_xenbus_watch(xh_default, &target_watch);
-+	err = register_xenbus_watch(xh, &target_watch);
+-		err = xenbus_printf(xbt, dev->nodename, "multi-queue-num-queues", "%u",
++		err = xenbus_printf(dev->xh, xbt, dev->nodename, "multi-queue-num-queues", "%u",
+ 				    info->nr_rings);
+ 		if (err) {
+ 			message = "writing multi-queue-num-queues";
+@@ -1851,19 +1853,19 @@ static int talk_to_blkback(struct xenbus_device *dev,
+ 		}
+ 		kfree(path);
+ 	}
+-	err = xenbus_printf(xbt, dev->nodename, "protocol", "%s",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "protocol", "%s",
+ 			    XEN_IO_PROTO_ABI_NATIVE);
+ 	if (err) {
+ 		message = "writing protocol";
+ 		goto abort_transaction;
+ 	}
+-	err = xenbus_printf(xbt, dev->nodename,
++	err = xenbus_printf(dev->xh, xbt, dev->nodename,
+ 			    "feature-persistent", "%u", 1);
  	if (err)
- 		pr_err("Failed to set balloon watcher\n");
+ 		dev_warn(&dev->dev,
+ 			 "writing persistent grants feature to xenbus");
  
-@@ -120,7 +121,10 @@ void xen_balloon_init(void)
+-	err = xenbus_transaction_end(xbt, 0);
++	err = xenbus_transaction_end(dev->xh, xbt, 0);
+ 	if (err) {
+ 		if (err == -EAGAIN)
+ 			goto again;
+@@ -1884,7 +1886,7 @@ static int talk_to_blkback(struct xenbus_device *dev,
+ 	return 0;
  
- 	register_xen_selfballooning(&balloon_dev);
+  abort_transaction:
+-	xenbus_transaction_end(xbt, 1);
++	xenbus_transaction_end(dev->xh, xbt, 1);
+ 	if (message)
+ 		xenbus_dev_fatal(dev, err, "%s", message);
+  destroy_blkring:
+@@ -1907,7 +1909,7 @@ static int negotiate_mq(struct blkfront_info *info)
+ 	BUG_ON(info->nr_rings);
  
--	register_xenstore_notifier(&xenstore_notifier);
-+	/*
-+	 * ballooning is only concerned with the default xenhost.
-+	 */
-+	register_xenstore_notifier(xh_default, &xenstore_notifier);
+ 	/* Check if backend supports multiple queues. */
+-	backend_max_queues = xenbus_read_unsigned(info->xbdev->otherend,
++	backend_max_queues = xenbus_read_unsigned(info->xbdev->xh, info->xbdev->otherend,
+ 						  "multi-queue-max-queues", 1);
+ 	info->nr_rings = min(backend_max_queues, xen_blkif_max_queues);
+ 	/* We need at least one ring. */
+@@ -1948,11 +1950,11 @@ static int blkfront_probe(struct xenbus_device *dev,
+ 	struct blkfront_info *info;
+ 
+ 	/* FIXME: Use dynamic device id if this is not set. */
+-	err = xenbus_scanf(XBT_NIL, dev->nodename,
++	err = xenbus_scanf(dev->xh, XBT_NIL, dev->nodename,
+ 			   "virtual-device", "%i", &vdevice);
+ 	if (err != 1) {
+ 		/* go looking in the extended area instead */
+-		err = xenbus_scanf(XBT_NIL, dev->nodename, "virtual-device-ext",
++		err = xenbus_scanf(dev->xh, XBT_NIL, dev->nodename, "virtual-device-ext",
+ 				   "%i", &vdevice);
+ 		if (err != 1) {
+ 			xenbus_dev_fatal(dev, err, "reading virtual-device");
+@@ -1980,7 +1982,7 @@ static int blkfront_probe(struct xenbus_device *dev,
+ 			}
+ 		}
+ 		/* do not create a PV cdrom device if we are an HVM guest */
+-		type = xenbus_read(XBT_NIL, dev->nodename, "device-type", &len);
++		type = xenbus_read(dev->xh, XBT_NIL, dev->nodename, "device-type", &len);
+ 		if (IS_ERR(type))
+ 			return -ENODEV;
+ 		if (strncmp(type, "cdrom", 5) == 0) {
+@@ -2173,7 +2175,7 @@ static void blkfront_setup_discard(struct blkfront_info *info)
+ 	unsigned int discard_alignment;
+ 
+ 	info->feature_discard = 1;
+-	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
++	err = xenbus_gather(info->xbdev->xh, XBT_NIL, info->xbdev->otherend,
+ 		"discard-granularity", "%u", &discard_granularity,
+ 		"discard-alignment", "%u", &discard_alignment,
+ 		NULL);
+@@ -2182,7 +2184,7 @@ static void blkfront_setup_discard(struct blkfront_info *info)
+ 		info->discard_alignment = discard_alignment;
+ 	}
+ 	info->feature_secdiscard =
+-		!!xenbus_read_unsigned(info->xbdev->otherend, "discard-secure",
++		!!xenbus_read_unsigned(info->xbdev->xh, info->xbdev->otherend, "discard-secure",
+ 				       0);
  }
- EXPORT_SYMBOL_GPL(xen_balloon_init);
  
-diff --git a/drivers/xen/xenfs/xenstored.c b/drivers/xen/xenfs/xenstored.c
-index f59235f9f8a2..1d66974ae730 100644
---- a/drivers/xen/xenfs/xenstored.c
-+++ b/drivers/xen/xenfs/xenstored.c
-@@ -8,6 +8,7 @@
- #include <xen/xenbus.h>
- 
- #include "xenfs.h"
-+#include "../xenbus/xenbus.h" /* FIXME */
- 
- static ssize_t xsd_read(struct file *file, char __user *buf,
- 			    size_t size, loff_t *off)
-@@ -25,7 +26,7 @@ static int xsd_release(struct inode *inode, struct file *file)
- static int xsd_kva_open(struct inode *inode, struct file *file)
+@@ -2279,6 +2281,7 @@ static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo)
+ static void blkfront_gather_backend_features(struct blkfront_info *info)
  {
- 	file->private_data = (void *)kasprintf(GFP_KERNEL, "0x%p",
--					       xen_store_interface);
-+					       xs_priv(xh_default)->store_interface);
- 	if (!file->private_data)
- 		return -ENOMEM;
- 	return 0;
-@@ -39,7 +40,7 @@ static int xsd_kva_mmap(struct file *file, struct vm_area_struct *vma)
- 		return -EINVAL;
+ 	unsigned int indirect_segments;
++	xenhost_t *xh = info->xbdev->xh;
  
- 	if (remap_pfn_range(vma, vma->vm_start,
--			    virt_to_pfn(xen_store_interface),
-+			    virt_to_pfn(xs_priv(xh_default)->store_interface),
- 			    size, vma->vm_page_prot))
- 		return -EAGAIN;
+ 	info->feature_flush = 0;
+ 	info->feature_fua = 0;
+@@ -2290,7 +2293,8 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+ 	 *
+ 	 * If there are barriers, then we use flush.
+ 	 */
+-	if (xenbus_read_unsigned(info->xbdev->otherend, "feature-barrier", 0)) {
++	if (xenbus_read_unsigned(xh, info->xbdev->otherend,
++					"feature-barrier", 0)) {
+ 		info->feature_flush = 1;
+ 		info->feature_fua = 1;
+ 	}
+@@ -2299,20 +2303,21 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+ 	 * And if there is "feature-flush-cache" use that above
+ 	 * barriers.
+ 	 */
+-	if (xenbus_read_unsigned(info->xbdev->otherend, "feature-flush-cache",
+-				 0)) {
++	if (xenbus_read_unsigned(xh, info->xbdev->otherend,
++					"feature-flush-cache", 0)) {
+ 		info->feature_flush = 1;
+ 		info->feature_fua = 0;
+ 	}
  
-@@ -56,7 +57,7 @@ const struct file_operations xsd_kva_file_ops = {
- static int xsd_port_open(struct inode *inode, struct file *file)
- {
- 	file->private_data = (void *)kasprintf(GFP_KERNEL, "%d",
--					       xen_store_evtchn);
-+					       xs_priv(xh_default)->store_evtchn);
- 	if (!file->private_data)
- 		return -ENOMEM;
- 	return 0;
+-	if (xenbus_read_unsigned(info->xbdev->otherend, "feature-discard", 0))
++	if (xenbus_read_unsigned(xh, info->xbdev->otherend,
++					"feature-discard", 0))
+ 		blkfront_setup_discard(info);
+ 
+ 	info->feature_persistent =
+-		!!xenbus_read_unsigned(info->xbdev->otherend,
++		!!xenbus_read_unsigned(xh, info->xbdev->otherend,
+ 				       "feature-persistent", 0);
+ 
+-	indirect_segments = xenbus_read_unsigned(info->xbdev->otherend,
++	indirect_segments = xenbus_read_unsigned(xh, info->xbdev->otherend,
+ 					"feature-max-indirect-segments", 0);
+ 	if (indirect_segments > xen_blkif_max_segments)
+ 		indirect_segments = xen_blkif_max_segments;
+@@ -2346,7 +2351,7 @@ static void blkfront_connect(struct blkfront_info *info)
+ 		 * Potentially, the back-end may be signalling
+ 		 * a capacity change; update the capacity.
+ 		 */
+-		err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
++		err = xenbus_scanf(info->xbdev->xh, XBT_NIL, info->xbdev->otherend,
+ 				   "sectors", "%Lu", &sectors);
+ 		if (XENBUS_EXIST_ERR(err))
+ 			return;
+@@ -2375,7 +2380,7 @@ static void blkfront_connect(struct blkfront_info *info)
+ 	dev_dbg(&info->xbdev->dev, "%s:%s.\n",
+ 		__func__, info->xbdev->otherend);
+ 
+-	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
++	err = xenbus_gather(info->xbdev->xh, XBT_NIL, info->xbdev->otherend,
+ 			    "sectors", "%llu", &sectors,
+ 			    "info", "%u", &binfo,
+ 			    "sector-size", "%lu", &sector_size,
+@@ -2392,7 +2397,7 @@ static void blkfront_connect(struct blkfront_info *info)
+ 	 * provide this. Assume physical sector size to be the same as
+ 	 * sector_size in that case.
+ 	 */
+-	physical_sector_size = xenbus_read_unsigned(info->xbdev->otherend,
++	physical_sector_size = xenbus_read_unsigned(info->xbdev->xh, info->xbdev->otherend,
+ 						    "physical-sector-size",
+ 						    sector_size);
+ 	blkfront_gather_backend_features(info);
+@@ -2668,11 +2673,11 @@ static void purge_persistent_grants(struct blkfront_info *info)
+ 		list_for_each_entry_safe(gnt_list_entry, tmp, &rinfo->grants,
+ 					 node) {
+ 			if (gnt_list_entry->gref == GRANT_INVALID_REF ||
+-			    gnttab_query_foreign_access(gnt_list_entry->gref))
++			    gnttab_query_foreign_access(info->xbdev->xh, gnt_list_entry->gref))
+ 				continue;
+ 
+ 			list_del(&gnt_list_entry->node);
+-			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
++			gnttab_end_foreign_access(info->xbdev->xh, gnt_list_entry->gref, 0, 0UL);
+ 			rinfo->persistent_gnts_c--;
+ 			gnt_list_entry->gref = GRANT_INVALID_REF;
+ 			list_add_tail(&gnt_list_entry->node, &rinfo->grants);
 -- 
 2.20.1
 
