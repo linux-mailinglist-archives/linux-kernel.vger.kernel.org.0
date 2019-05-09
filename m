@@ -2,510 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A6018BD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7E818BCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfEIOcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:32:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44668 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726558AbfEIObz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:31:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AC869ACBC;
-        Thu,  9 May 2019 14:31:53 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     dan.carpenter@oracle.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        id S1726819AbfEIOb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:31:57 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41969 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfEIOb4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:31:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m4so2221541edd.8;
+        Thu, 09 May 2019 07:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=28M3/Gt0muyIKgyfcpD9ysscEUSK1ZnFipvrQH7okoo=;
+        b=qOlNtK752XXn4kkfsFMWyY7kRPfrZUsTtqBPdR/hrsY1mJM2tbu2nhsutSmVVSM1WW
+         nXRASbDxRAmYKoGMORG1Srq+QfFSesIFDMzjzchm3j4kE/sLGsIywSyqVlu3Yz91d/8r
+         FlEQUB4qvWSHM4vKfCBekEvL6H1BeRT6mMgSjN/ZfvQ7xjppTiRrhRzhd0DiONdD3rHG
+         8+F+D+pkIWAxOZxeIGT+39UvOnSIMPWvX3z65R9GJNUd8yqfL58nMe8pY6Q7GvVCzYIM
+         6GCvJUep1xdo/Z8mF1dvC94zMfD6T5hlTY7VkMhVkudMpY654rvkzmeZxmnK6kPTSOvF
+         yY0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=28M3/Gt0muyIKgyfcpD9ysscEUSK1ZnFipvrQH7okoo=;
+        b=jed3anqXrvbj4ZZvMcgvnz2hOSjNy3GlKDIkndxem5pg6xUhbMGp3DiRnlt/60D/Fk
+         Nlbqyk3kvsw5x5NNqNL02gvzh9nW04qPjtRpZ+jO7Dgzq6mbG3ThT1PPv8X3oj9vvk/W
+         OMK93AhtoT7mXqO/l3WoH01bVYsfoeY9NBwtKv86IT2pYmybAp30GHGvAwi6pSNWU6oY
+         GXzSbR3Hc8CCDpT34neVeyM2AMAQhpVLcuo6A40bfsVXQGMfTMVUO6XYUYUFSZy2lEmp
+         qigou5nhe2KQQCZQjwm79BXY9V9JeBEf+x11vniURnLwIltSOAp45KB2wogDLdka78WF
+         rGcA==
+X-Gm-Message-State: APjAAAWhrKkU7a4KxYYR7kMJH3IGts2oxo9gKjXZjrkhOiYntjm9cdEt
+        yhy0jtvkuEDm1nuMcMbNUVQ=
+X-Google-Smtp-Source: APXvYqzkJhS5L8NnWGrt01x6w71u7E8s0GHuJykWEj8KfZGhfTtKpBAzu9nFzSqSe/2NArkKjIgUMw==
+X-Received: by 2002:a50:be48:: with SMTP id b8mr4401819edi.284.1557412313899;
+        Thu, 09 May 2019 07:31:53 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id d11sm623679eda.45.2019.05.09.07.31.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 May 2019 07:31:52 -0700 (PDT)
+Date:   Thu, 9 May 2019 14:31:51 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] staging: vchiq: stop explicitly comparing with zero to catch errors
-Date:   Thu,  9 May 2019 16:31:36 +0200
-Message-Id: <20190509143137.31254-5-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509143137.31254-1-nsaenzjulienne@suse.de>
-References: <20190509143137.31254-1-nsaenzjulienne@suse.de>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Qian Cai <cai@lca.pw>, Wei Yang <richard.weiyang@gmail.com>,
+        Arun KS <arunks@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>
+Subject: Re: [PATCH v2 4/8] mm/memory_hotplug: Create memory block devices
+ after arch_add_memory()
+Message-ID: <20190509143151.zexjmwu3ikkmye7i@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190507183804.5512-1-david@redhat.com>
+ <20190507183804.5512-5-david@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190507183804.5512-5-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vchiq code tends to follow a coding pattern that's not accepted as
-per the Linux kernel coding style
+On Tue, May 07, 2019 at 08:38:00PM +0200, David Hildenbrand wrote:
+>Only memory to be added to the buddy and to be onlined/offlined by
+>user space using memory block devices needs (and should have!) memory
+>block devices.
+>
+>Factor out creation of memory block devices Create all devices after
+>arch_add_memory() succeeded. We can later drop the want_memblock parameter,
+>because it is now effectively stale.
+>
+>Only after memory block devices have been added, memory can be onlined
+>by user space. This implies, that memory is not visible to user space at
+>all before arch_add_memory() succeeded.
+>
+>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>Cc: David Hildenbrand <david@redhat.com>
+>Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
+>Cc: Andrew Morton <akpm@linux-foundation.org>
+>Cc: Ingo Molnar <mingo@kernel.org>
+>Cc: Andrew Banman <andrew.banman@hpe.com>
+>Cc: Oscar Salvador <osalvador@suse.de>
+>Cc: Michal Hocko <mhocko@suse.com>
+>Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+>Cc: Qian Cai <cai@lca.pw>
+>Cc: Wei Yang <richard.weiyang@gmail.com>
+>Cc: Arun KS <arunks@codeaurora.org>
+>Cc: Mathieu Malaterre <malat@debian.org>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
+>---
+> drivers/base/memory.c  | 70 ++++++++++++++++++++++++++----------------
+> include/linux/memory.h |  2 +-
+> mm/memory_hotplug.c    | 15 ++++-----
+> 3 files changed, 53 insertions(+), 34 deletions(-)
+>
+>diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+>index 6e0cb4fda179..862c202a18ca 100644
+>--- a/drivers/base/memory.c
+>+++ b/drivers/base/memory.c
+>@@ -701,44 +701,62 @@ static int add_memory_block(int base_section_nr)
+> 	return 0;
+> }
+> 
+>+static void unregister_memory(struct memory_block *memory)
+>+{
+>+	BUG_ON(memory->dev.bus != &memory_subsys);
+>+
+>+	/* drop the ref. we got via find_memory_block() */
+>+	put_device(&memory->dev);
+>+	device_unregister(&memory->dev);
+>+}
+>+
+> /*
+>- * need an interface for the VM to add new memory regions,
+>- * but without onlining it.
+>+ * Create memory block devices for the given memory area. Start and size
+>+ * have to be aligned to memory block granularity. Memory block devices
+>+ * will be initialized as offline.
+>  */
+>-int hotplug_memory_register(int nid, struct mem_section *section)
+>+int hotplug_memory_register(unsigned long start, unsigned long size)
 
-We have this:
-	if (expression != 0)
+One trivial suggestion about the function name.
 
-We want this:
-	if (expression)
+For memory_block device, sometimes we use the full name
 
-We make an exception if the expression refers to a size, in which case
-it's accepted for the sake of clarity.
+    find_memory_block
+    init_memory_block
+    add_memory_block
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- .../bcm2835-camera/bcm2835-camera.c           | 11 ++--
- .../interface/vchiq_arm/vchiq_2835_arm.c      |  2 +-
- .../interface/vchiq_arm/vchiq_arm.c           | 66 ++++++++-----------
- .../interface/vchiq_arm/vchiq_connected.c     |  4 +-
- .../interface/vchiq_arm/vchiq_core.c          | 28 ++++----
- .../interface/vchiq_arm/vchiq_debugfs.c       |  4 +-
- 6 files changed, 52 insertions(+), 63 deletions(-)
+But sometimes we use *nick* name
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index 68f08dc18da9..57f79c153277 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -327,7 +327,7 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
- 		 "%s: status:%d, buf:%p, length:%lu, flags %u, pts %lld\n",
- 		 __func__, status, buf, length, mmal_flags, pts);
- 
--	if (status != 0) {
-+	if (status) {
- 		/* error in transfer */
- 		if (buf) {
- 			/* there was a buffer with the error so return it */
-@@ -359,8 +359,7 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
- 		}
- 	} else {
- 		if (dev->capture.frame_count) {
--			if (dev->capture.vc_start_timestamp != -1 &&
--			    pts != 0) {
-+			if (dev->capture.vc_start_timestamp != -1 && pts) {
- 				ktime_t timestamp;
- 				s64 runtime_us = pts -
- 				    dev->capture.vc_start_timestamp;
-@@ -826,7 +825,7 @@ static int vidioc_enum_input(struct file *file, void *priv,
- 			     struct v4l2_input *inp)
- {
- 	/* only a single camera input */
--	if (inp->index != 0)
-+	if (inp->index)
- 		return -EINVAL;
- 
- 	inp->type = V4L2_INPUT_TYPE_CAMERA;
-@@ -842,7 +841,7 @@ static int vidioc_g_input(struct file *file, void *priv, unsigned int *i)
- 
- static int vidioc_s_input(struct file *file, void *priv, unsigned int i)
- {
--	if (i != 0)
-+	if (i)
- 		return -EINVAL;
- 
- 	return 0;
-@@ -1281,7 +1280,7 @@ static int vidioc_s_fmt_vid_cap(struct file *file, void *priv,
- 	}
- 
- 	ret = mmal_setup_components(dev, f);
--	if (ret != 0) {
-+	if (ret) {
- 		v4l2_err(&dev->v4l2_dev,
- 			 "%s: failed to setup mmal components: %d\n",
- 			 __func__, ret);
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index 49d3b39b1059..cb588c0b9364 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -514,7 +514,7 @@ create_pagelist(char __user *buf, size_t count, unsigned short type)
- 		(g_cache_line_size - 1)))) {
- 		char *fragments;
- 
--		if (down_interruptible(&g_free_fragments_sema) != 0) {
-+		if (down_interruptible(&g_free_fragments_sema)) {
- 			cleanup_pagelistinfo(pagelistinfo);
- 			return NULL;
- 		}
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 62d8f599e765..9264a07cf160 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -238,7 +238,7 @@ VCHIQ_STATUS_T vchiq_shutdown(VCHIQ_INSTANCE_T instance)
- 	vchiq_log_trace(vchiq_core_log_level,
- 		"%s(%p) called", __func__, instance);
- 
--	if (mutex_lock_killable(&state->mutex) != 0)
-+	if (mutex_lock_killable(&state->mutex))
- 		return VCHIQ_RETRY;
- 
- 	/* Remove all services */
-@@ -280,7 +280,7 @@ VCHIQ_STATUS_T vchiq_connect(VCHIQ_INSTANCE_T instance)
- 	vchiq_log_trace(vchiq_core_log_level,
- 		"%s(%p) called", __func__, instance);
- 
--	if (mutex_lock_killable(&state->mutex) != 0) {
-+	if (mutex_lock_killable(&state->mutex)) {
- 		vchiq_log_trace(vchiq_core_log_level,
- 			"%s: call to mutex_lock failed", __func__);
- 		status = VCHIQ_RETRY;
-@@ -645,8 +645,7 @@ service_callback(VCHIQ_REASON_T reason, struct vchiq_header *header,
- 
- 			DEBUG_TRACE(SERVICE_CALLBACK_LINE);
- 			if (wait_for_completion_interruptible(
--						&user_service->remove_event)
--				!= 0) {
-+						&user_service->remove_event)) {
- 				vchiq_log_info(vchiq_arm_log_level,
- 					"%s interrupted", __func__);
- 				DEBUG_TRACE(SERVICE_CALLBACK_LINE);
-@@ -850,7 +849,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			break;
- 		}
- 		rc = mutex_lock_killable(&instance->state->mutex);
--		if (rc != 0) {
-+		if (rc) {
- 			vchiq_log_error(vchiq_arm_log_level,
- 				"vchiq: connect: could not lock mutex for "
- 				"state %d: %d",
-@@ -874,9 +873,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		void *userdata;
- 		int srvstate;
- 
--		if (copy_from_user
--			 (&args, (const void __user *)arg,
--			  sizeof(args)) != 0) {
-+		if (copy_from_user(&args, (const void __user *)arg,
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -940,7 +938,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 				&(((struct vchiq_create_service __user *)
- 					arg)->handle),
- 				(const void *)&service->handle,
--				sizeof(service->handle)) != 0) {
-+				sizeof(service->handle))) {
- 				ret = -EFAULT;
- 				vchiq_remove_service(service->handle);
- 			}
-@@ -1015,9 +1013,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case VCHIQ_IOC_QUEUE_MESSAGE: {
- 		struct vchiq_queue_message args;
- 
--		if (copy_from_user
--			 (&args, (const void __user *)arg,
--			  sizeof(args)) != 0) {
-+		if (copy_from_user(&args, (const void __user *)arg,
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1049,9 +1046,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			(cmd == VCHIQ_IOC_QUEUE_BULK_TRANSMIT) ?
- 			VCHIQ_BULK_TRANSMIT : VCHIQ_BULK_RECEIVE;
- 
--		if (copy_from_user
--			(&args, (const void __user *)arg,
--			sizeof(args)) != 0) {
-+		if (copy_from_user(&args, (const void __user *)arg,
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1125,7 +1121,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 				&(((struct vchiq_queue_bulk_transfer __user *)
- 					arg)->mode),
- 				(const void *)&mode_waiting,
--				sizeof(mode_waiting)) != 0)
-+				sizeof(mode_waiting)))
- 				ret = -EFAULT;
- 		}
- 	} break;
-@@ -1140,7 +1136,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		}
- 
- 		if (copy_from_user(&args, (const void __user *)arg,
--			sizeof(args)) != 0) {
-+			sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1158,7 +1154,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			rc = wait_for_completion_interruptible(
- 						&instance->insert_event);
- 			mutex_lock(&instance->completion_mutex);
--			if (rc != 0) {
-+			if (rc) {
- 				DEBUG_TRACE(AWAIT_COMPLETION_LINE);
- 				vchiq_log_info(vchiq_arm_log_level,
- 					"AWAIT_COMPLETION interrupted");
-@@ -1224,7 +1220,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 					if (copy_from_user(&msgbuf,
- 						(const void __user *)
- 						&args.msgbufs[msgbufcount],
--						sizeof(msgbuf)) != 0) {
-+						sizeof(msgbuf))) {
- 						if (ret == 0)
- 							ret = -EFAULT;
- 						break;
-@@ -1232,7 +1228,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 					/* Copy the message to user space */
- 					if (copy_to_user(msgbuf, header,
--						msglen) != 0) {
-+						msglen)) {
- 						if (ret == 0)
- 							ret = -EFAULT;
- 						break;
-@@ -1257,8 +1253,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 					(size_t)args.buf + ret *
- 					sizeof(struct vchiq_completion_data)),
- 					completion,
--					sizeof(struct vchiq_completion_data))
--									!= 0) {
-+					sizeof(struct vchiq_completion_data))) {
- 						if (ret == 0)
- 							ret = -EFAULT;
- 					break;
-@@ -1278,13 +1273,13 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 					&((struct vchiq_await_completion *)arg)
- 						->msgbufcount,
- 					&msgbufcount,
--					sizeof(msgbufcount)) != 0) {
-+					sizeof(msgbufcount))) {
- 					ret = -EFAULT;
- 				}
- 			}
- 		}
- 
--		if (ret != 0)
-+		if (ret)
- 			complete(&instance->remove_event);
- 		mutex_unlock(&instance->completion_mutex);
- 		DEBUG_TRACE(AWAIT_COMPLETION_LINE);
-@@ -1296,9 +1291,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		struct vchiq_header *header;
- 
- 		DEBUG_TRACE(DEQUEUE_MESSAGE_LINE);
--		if (copy_from_user
--			 (&args, (const void __user *)arg,
--			  sizeof(args)) != 0) {
-+		if (copy_from_user(&args, (const void __user *)arg,
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1384,7 +1378,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		struct vchiq_config config;
- 
- 		if (copy_from_user(&args, (const void __user *)arg,
--			sizeof(args)) != 0) {
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1403,9 +1397,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case VCHIQ_IOC_SET_SERVICE_OPTION: {
- 		struct vchiq_set_service_option args;
- 
--		if (copy_from_user(
--			&args, (const void __user *)arg,
--			sizeof(args)) != 0) {
-+		if (copy_from_user(&args, (const void __user *)arg,
-+				   sizeof(args))) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -2329,8 +2322,7 @@ vchiq_keepalive_thread_func(void *v)
- 	while (1) {
- 		long rc = 0, uc = 0;
- 
--		if (wait_for_completion_interruptible(&arm_state->ka_evt)
--				!= 0) {
-+		if (wait_for_completion_interruptible(&arm_state->ka_evt)) {
- 			vchiq_log_error(vchiq_susp_log_level,
- 				"%s interrupted", __func__);
- 			flush_signals(current);
-@@ -3011,7 +3003,7 @@ vchiq_use_internal(struct vchiq_state *state, struct vchiq_service *service,
- 			vchiq_log_info(vchiq_susp_log_level, "%s %s resume "
- 				"blocked - waiting...", __func__, entity);
- 			if (wait_for_completion_killable(
--					&arm_state->resume_blocker) != 0) {
-+					&arm_state->resume_blocker)) {
- 				vchiq_log_error(vchiq_susp_log_level, "%s %s "
- 					"wait for resume blocker interrupted",
- 					__func__, entity);
-@@ -3060,7 +3052,7 @@ vchiq_use_internal(struct vchiq_state *state, struct vchiq_service *service,
- 		vchiq_log_info(vchiq_susp_log_level, "%s %s wait for resume",
- 			__func__, entity);
- 		if (wait_for_completion_killable(
--				&arm_state->vc_resume_complete) != 0) {
-+				&arm_state->vc_resume_complete)) {
- 			vchiq_log_error(vchiq_susp_log_level, "%s %s wait for "
- 				"resume interrupted", __func__, entity);
- 			ret = VCHIQ_ERROR;
-@@ -3505,13 +3497,13 @@ static int vchiq_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, drvdata);
- 
- 	err = vchiq_platform_init(pdev, &g_state);
--	if (err != 0)
-+	if (err)
- 		goto failed_platform_init;
- 
- 	cdev_init(&vchiq_cdev, &vchiq_fops);
- 	vchiq_cdev.owner = THIS_MODULE;
- 	err = cdev_add(&vchiq_cdev, vchiq_devid, 1);
--	if (err != 0) {
-+	if (err) {
- 		vchiq_log_error(vchiq_arm_log_level,
- 			"Unable to register device");
- 		goto failed_platform_init;
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c
-index e87e6619695e..1640906e3929 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c
-@@ -41,7 +41,7 @@ void vchiq_add_connected_callback(VCHIQ_CONNECTED_CALLBACK_T callback)
- {
- 	connected_init();
- 
--	if (mutex_lock_killable(&g_connected_mutex) != 0)
-+	if (mutex_lock_killable(&g_connected_mutex))
- 		return;
- 
- 	if (g_connected)
-@@ -76,7 +76,7 @@ void vchiq_call_connected_callbacks(void)
- 
- 	connected_init();
- 
--	if (mutex_lock_killable(&g_connected_mutex) != 0)
-+	if (mutex_lock_killable(&g_connected_mutex))
- 		return;
- 
- 	for (i = 0; i <  g_num_deferred_callbacks; i++)
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 44bfa890e0e5..44f0eb64952a 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -800,7 +800,7 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
- 	WARN_ON(!(stride <= VCHIQ_SLOT_SIZE));
- 
- 	if (!(flags & QMFLAGS_NO_MUTEX_LOCK) &&
--		(mutex_lock_killable(&state->slot_mutex) != 0))
-+	    mutex_lock_killable(&state->slot_mutex))
- 		return VCHIQ_RETRY;
- 
- 	if (type == VCHIQ_MSG_DATA) {
-@@ -812,8 +812,8 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
- 			return VCHIQ_ERROR;
- 		}
- 
--		WARN_ON((flags & (QMFLAGS_NO_MUTEX_LOCK |
--				  QMFLAGS_NO_MUTEX_UNLOCK)) != 0);
-+		WARN_ON(flags & (QMFLAGS_NO_MUTEX_LOCK |
-+				 QMFLAGS_NO_MUTEX_UNLOCK));
- 
- 		if (service->closing) {
- 			/* The service has been closed */
-@@ -874,7 +874,7 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
- 				return VCHIQ_RETRY;
- 			if (service->closing)
- 				return VCHIQ_ERROR;
--			if (mutex_lock_killable(&state->slot_mutex) != 0)
-+			if (mutex_lock_killable(&state->slot_mutex))
- 				return VCHIQ_RETRY;
- 			if (service->srvstate != VCHIQ_SRVSTATE_OPEN) {
- 				/* The service has been closed */
-@@ -912,8 +912,8 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
- 			header, size, VCHIQ_MSG_SRCPORT(msgid),
- 			VCHIQ_MSG_DSTPORT(msgid));
- 
--		WARN_ON((flags & (QMFLAGS_NO_MUTEX_LOCK |
--				  QMFLAGS_NO_MUTEX_UNLOCK)) != 0);
-+		WARN_ON(flags & (QMFLAGS_NO_MUTEX_LOCK |
-+				 QMFLAGS_NO_MUTEX_UNLOCK));
- 
- 		callback_result =
- 			copy_message_data(copy_callback, context,
-@@ -1040,8 +1040,8 @@ queue_message_sync(struct vchiq_state *state, struct vchiq_service *service,
- 
- 	local = state->local;
- 
--	if ((VCHIQ_MSG_TYPE(msgid) != VCHIQ_MSG_RESUME) &&
--		(mutex_lock_killable(&state->sync_mutex) != 0))
-+	if (VCHIQ_MSG_TYPE(msgid) != VCHIQ_MSG_RESUME &&
-+	    mutex_lock_killable(&state->sync_mutex))
- 		return VCHIQ_RETRY;
- 
- 	remote_event_wait(&state->sync_release_event, &local->sync_release);
-@@ -1718,8 +1718,7 @@ parse_rx_slots(struct vchiq_state *state)
- 					&service->bulk_rx : &service->bulk_tx;
- 
- 				DEBUG_TRACE(PARSE_LINE);
--				if (mutex_lock_killable(
--					&service->bulk_mutex) != 0) {
-+				if (mutex_lock_killable(&service->bulk_mutex)) {
- 					DEBUG_TRACE(PARSE_LINE);
- 					goto bail_not_ready;
- 				}
-@@ -2523,7 +2522,7 @@ do_abort_bulks(struct vchiq_service *service)
- 	VCHIQ_STATUS_T status;
- 
- 	/* Abort any outstanding bulk transfers */
--	if (mutex_lock_killable(&service->bulk_mutex) != 0)
-+	if (mutex_lock_killable(&service->bulk_mutex))
- 		return 0;
- 	abort_outstanding_bulks(service, &service->bulk_tx);
- 	abort_outstanding_bulks(service, &service->bulk_rx);
-@@ -3038,7 +3037,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 	queue = (dir == VCHIQ_BULK_TRANSMIT) ?
- 		&service->bulk_tx : &service->bulk_rx;
- 
--	if (mutex_lock_killable(&service->bulk_mutex) != 0) {
-+	if (mutex_lock_killable(&service->bulk_mutex)) {
- 		status = VCHIQ_RETRY;
- 		goto error_exit;
- 	}
-@@ -3052,8 +3051,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 				status = VCHIQ_RETRY;
- 				goto error_exit;
- 			}
--			if (mutex_lock_killable(&service->bulk_mutex)
--				!= 0) {
-+			if (mutex_lock_killable(&service->bulk_mutex)) {
- 				status = VCHIQ_RETRY;
- 				goto error_exit;
- 			}
-@@ -3081,7 +3079,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 
- 	/* The slot mutex must be held when the service is being closed, so
- 	   claim it here to ensure that isn't happening */
--	if (mutex_lock_killable(&state->slot_mutex) != 0) {
-+	if (mutex_lock_killable(&state->slot_mutex)) {
- 		status = VCHIQ_RETRY;
- 		goto cancel_bulk_error_exit;
- 	}
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-index 2bb9120883fd..f217b78d95a0 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-@@ -86,7 +86,7 @@ static ssize_t debugfs_log_write(struct file *file,
- 	if (count >= DEBUGFS_WRITE_BUF_SIZE)
- 		count = DEBUGFS_WRITE_BUF_SIZE;
- 
--	if (copy_from_user(kbuf, buffer, count) != 0)
-+	if (copy_from_user(kbuf, buffer, count))
- 		return -EFAULT;
- 	kbuf[count - 1] = 0;
- 
-@@ -151,7 +151,7 @@ static ssize_t debugfs_trace_write(struct file *file,
- 	VCHIQ_INSTANCE_T instance = f->private;
- 	char firstchar;
- 
--	if (copy_from_user(&firstchar, buffer, 1) != 0)
-+	if (copy_from_user(&firstchar, buffer, 1))
- 		return -EFAULT;
- 
- 	switch (firstchar) {
+    hotplug_memory_register
+    register_memory
+    unregister_memory
+
+This is a little bit confusion.
+
+Can we use one name convention here? 
+
+[...]
+
+> /*
+>@@ -1106,6 +1100,13 @@ int __ref add_memory_resource(int nid, struct resource *res)
+> 	if (ret < 0)
+> 		goto error;
+> 
+>+	/* create memory block devices after memory was added */
+>+	ret = hotplug_memory_register(start, size);
+>+	if (ret) {
+>+		arch_remove_memory(nid, start, size, NULL);
+
+Functionally, it works I think.
+
+But arch_remove_memory() would remove pages from zone. At this point, we just
+allocate section/mmap for pages, the zones are empty and pages are not
+connected to zone.
+
+Function  zone = page_zone(page); always gets zone #0, since pages->flags is 0
+at  this point. This is not exact.
+
+Would we add some comment to mention this? Or we need to clean up
+arch_remove_memory() to take out __remove_zone()?
+
+
+>+		goto error;
+>+	}
+>+
+> 	if (new_node) {
+> 		/* If sysfs file of new node can't be created, cpu on the node
+> 		 * can't be hot-added. There is no rollback way now.
+>-- 
+>2.20.1
+
 -- 
-2.21.0
-
+Wei Yang
+Help you, Help me
