@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8CD019461
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0408319431
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:14:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfEIVOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:14:07 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:47095 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfEIVOE (ORCPT
+        id S1727141AbfEIVOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:14:08 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34297 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfEIVOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:04 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y11so1937509pfm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:04 -0700 (PDT)
+        Thu, 9 May 2019 17:14:06 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n19so1964700pfa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d/80tNNoqNchHETXJchLO/lOWqI7WgjPd5nso/co8eY=;
-        b=AUGxOu3DHNF8Z86pQz5bIBLujbaK2WibpbQN8fpI80OL1P03ICeh4AplsYpo0qFBRQ
-         r5uZOGgYhHqkAkBQk+TDLrEskDWUQKyqbOE1OL82v2vJPV8fy0aE9Fl+cumt3MStvrBm
-         Pr+Q2OMf5iZpkU1jtgjbGkbVs6J5r2IZzJJ5w=
+        bh=/7P5q4QlYjlB1PoaalbGvh8L1Fqv8yMUpPNP9xHcgwI=;
+        b=mKj2Cgfps3G1zkXLP/TIIcygJDNMHzTg6Im1Me8vkc9Tt/pT5I3JuoMevxlhdjlXaP
+         vlcQwc3KzzYMSbUXV9An0OBLQ9UIyV07iY9hhxhJV2UqDrw0rS16/AoF0aF59mU0dUKA
+         y56TmbTurVjtUNNP1jvaKkxMZAUfZRLEwQHHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d/80tNNoqNchHETXJchLO/lOWqI7WgjPd5nso/co8eY=;
-        b=mmF+S/3qQNWKvJMDgvF8SgcTUzup9ygdMZFoH31ttbJPbwliyrUIooU1hCetDojDxf
-         Z7EHWlbPugVqQSQdjF6cm0z+pst6TCCVxDUFANJyMPHZbOWCCADnyGtmer3fHH92GBUP
-         X52t0cZGLpiNyxcrJE7keCswePr4UOUPnRmpv1Tbzwknw8eYbaz5NlZFel997gwblqdM
-         +vBZektOG1COzpIEvDrSThcnIxt4244kDG2+K0KtOIKPaUo9eXBcAuqSgKk5CfSGNc1w
-         9fdwhDHUMAQX7frHs/9ZfGyNbtc8rhjLxMV1TjaAgfpObGYXzbqhFbLxEla4L9Q18waV
-         k4hA==
-X-Gm-Message-State: APjAAAW3DE8Ar7SVi0xdJpmoZKrfgZ3hMUEINX3nOBUBjGkOVfoi7GLB
-        khSwuHPhg1thmBD9S2Kw163jAQ==
-X-Google-Smtp-Source: APXvYqzyrCsBLpH98WnNvOPuqptMkqpqV1bnMw3nBAhqRCEzxFqDIvc2gG7qEY/DBoFVTYYkBzObvQ==
-X-Received: by 2002:a63:7c54:: with SMTP id l20mr5267168pgn.167.1557436444004;
-        Thu, 09 May 2019 14:14:04 -0700 (PDT)
+        bh=/7P5q4QlYjlB1PoaalbGvh8L1Fqv8yMUpPNP9xHcgwI=;
+        b=s+x4zLBeXfCAP+5kgE6ggBExbtMkLPW0rmbJF4of8W8P5NF0JfRjnZxn0QEZUZJk6w
+         FSBM3+wPSPaTFjcfirEEpmqfr53EUGHH9lLAemQ98ght/oU3dVqtfRs59kGiD65pfJbG
+         UuitweQ26w2mZDpm1YGlAs/BU32qjkU29v1J7mlFxfviRTq2+7BI++zDZovdb2D9Dk8R
+         JmhNm1LK/ew8U8MCx0k0690qP3z3V9+pfLRz7k8syYtJ8OuQAmyYJHmDxmK4byjZbXdF
+         6sS/lFk2mlT9dM9XcFjRG76LeKSSBOs62LYUzZXmHF8nt7NQjay2qmWta5aWcgCtbatl
+         /SDw==
+X-Gm-Message-State: APjAAAUICp9FCL5lqYAlqs4pWmWm822mrGErL6KrDq9RACdO58GTMbzt
+        lUWGFcl/E8UcFkMa6FZwrYd7jg==
+X-Google-Smtp-Source: APXvYqxsq242WuHcF8/Wt0+0fgOWnGWASQJ3tDGCiBrsZLC4ZM6LkVI2F+ZEyqL/TfDx1mm8LexPxQ==
+X-Received: by 2002:a63:b706:: with SMTP id t6mr2570714pgf.305.1557436445625;
+        Thu, 09 May 2019 14:14:05 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id l21sm5186810pff.40.2019.05.09.14.14.02
+        by smtp.gmail.com with ESMTPSA id p2sm5140870pfi.73.2019.05.09.14.14.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:03 -0700 (PDT)
+        Thu, 09 May 2019 14:14:04 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 01/30] mfd: cros_ec: Update license term
-Date:   Thu,  9 May 2019 14:13:24 -0700
-Message-Id: <20190509211353.213194-2-gwendal@chromium.org>
+Subject: [PATCH v3 02/30] mfd: cros_ec: Zero BUILD_ macro
+Date:   Thu,  9 May 2019 14:13:25 -0700
+Message-Id: <20190509211353.213194-3-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,50 +62,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update to SPDX-License-Identifier, GPL-2.0
+Defined out build macro used when compiling embedded controller
+firmware.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ include/linux/mfd/cros_ec_commands.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index dcec96f01879..48292d449921 100644
+index 48292d449921..7b8fac4d0c89 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -1,25 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Host communication command constants for ChromeOS EC
-  *
-  * Copyright (C) 2012 Google, Inc
-  *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * The ChromeOS EC multi function device is used to mux all the requests
-- * to the EC device for its multiple features: keyboard controller,
-- * battery charging and regulator control, firmware update.
-- *
-- * NOTE: This file is copied verbatim from the ChromeOS EC Open Source
-- * project in an attempt to make future updates easy to make.
-+ * NOTE: This file is auto-generated from ChromeOS EC Open Source code from
-+ * https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h
-  */
- 
-+/* Host communication command constants for Chrome EC */
-+
+@@ -13,6 +13,11 @@
  #ifndef __CROS_EC_COMMANDS_H
  #define __CROS_EC_COMMANDS_H
  
++
++
++
++#define BUILD_ASSERT(_cond)
++
+ /*
+  * Current version of this protocol
+  *
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
