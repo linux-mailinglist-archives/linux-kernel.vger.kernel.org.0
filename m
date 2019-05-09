@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728BA19146
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D645D19195
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfEISzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:55:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50070 "EHLO mail.kernel.org"
+        id S1728389AbfEISxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:53:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfEISzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:55:03 -0400
+        id S1728815AbfEISxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20CB2204FD;
-        Thu,  9 May 2019 18:55:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DA18217D6;
+        Thu,  9 May 2019 18:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428102;
-        bh=lioSarW61e1fg5cWblIDvNnD9WgAyJjR+Tnu0ISsUdQ=;
+        s=default; t=1557427984;
+        bh=OP280kuGSMjRSEKfqeYczZixuEf3EDUGnZF1DlEt8Fw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zUbtSXLidaizvTbVrfpzeG9cnGJ4DDW8zxixUJ70iLBqfm++b21wUG4L2F61qf/Vq
-         8CaWitEUbXm2Vnt3zP0vjP2JrMpKCvGz3QHO2xoy0T66+PHtLLLZZFYNaNpDUlARFs
-         UljAA+mciweOuQ7pMqYtILO2P/+RC14p15wFg/v0=
+        b=cD8mSrsWFgHXIrRhtccCckf4vtVNH4A7fyHjMqhK/W3D4KuGzeikkK+opcSfRjeS6
+         2A48ZYRNPeRPQMhIE4+rzHtF8Tfgn+4mjYYnVw1W54Df8XaKGnVzwAW+E119wjCJ0Z
+         bkhfAAjO7zXdMDiEA2zZ7kZQTTTC1sh0tmNRd1Bs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Ajay Singh <ajay.kathat@microchip.com>,
-        Adham Abozaeid <adham.abozaeid@microchip.com>
-Subject: [PATCH 5.1 04/30] staging: wilc1000: Avoid GFP_KERNEL allocation from atomic context.
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 5.0 79/95] intel_th: pci: Add Comet Lake support
 Date:   Thu,  9 May 2019 20:42:36 +0200
-Message-Id: <20190509181251.512793363@linuxfoundation.org>
+Message-Id: <20190509181314.856078931@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit ae26aa844679cdf660e12c7055f958cb90889eb6 upstream.
+commit e60e9a4b231a20a199d7a61caadc48693c30d695 upstream.
 
-Since wilc_set_multicast_list() is called with dev->addr_list_lock
-spinlock held, we can't use GFP_KERNEL memory allocation.
+This adds support for Intel TH on Comet Lake.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Fixes: e624c58cf8eb ("staging: wilc1000: refactor code to avoid use of wilc_set_multicast_list global")
-Cc: Ajay Singh <ajay.kathat@microchip.com>
-Reviewed-by: Adham Abozaeid <adham.abozaeid@microchip.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wilc1000/wilc_netdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwtracing/intel_th/pci.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/staging/wilc1000/wilc_netdev.c
-+++ b/drivers/staging/wilc1000/wilc_netdev.c
-@@ -708,7 +708,7 @@ static void wilc_set_multicast_list(stru
- 		return;
- 	}
- 
--	mc_list = kmalloc_array(dev->mc.count, ETH_ALEN, GFP_KERNEL);
-+	mc_list = kmalloc_array(dev->mc.count, ETH_ALEN, GFP_ATOMIC);
- 	if (!mc_list)
- 		return;
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -165,6 +165,11 @@ static const struct pci_device_id intel_
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a6),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
++	{
++		/* Comet Lake */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x02a6),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
+ 	{ 0 },
+ };
  
 
 
