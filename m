@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B023619213
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:04:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0485319137
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfEITDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42448 "EHLO mail.kernel.org"
+        id S1729044AbfEISyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:54:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727692AbfEIStL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:49:11 -0400
+        id S1728568AbfEISyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:54:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7B4D2182B;
-        Thu,  9 May 2019 18:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E3D420578;
+        Thu,  9 May 2019 18:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427750;
-        bh=if2nZ56rO+pMZc+Myfq3f0Ur5avwSADbbKcVIDE0cJU=;
+        s=default; t=1557428052;
+        bh=Kj5Z/o3GPzGUtGgwwDOoGylmwD5Ap/wDMMcXe3t9suE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sa6BqvQXbPekqFKQuBK3bynypz39S0Qg50Bc5xxyFlAtK0uTHj1Ib9QyXcHNrS8NT
-         EoQsI0daRNScp66NjIxgO02Vd/+5axOdFvnZvedyEyu5XPBqUnXx8t6JqOQKA8D0Jn
-         tmU90xQQmlbROWwyCv/XhYp1zPxRldSVyuO2gZHo=
+        b=VlIv9XJiMXWRlNGo5CQOjTYla1Lqa6iWPMLsYQday98nSVK/J116piwXMgWehdSmr
+         twUjScTEkLZJYpVU3IZ6BrFzSy6WKW8by81p9w7qH/vhUwWMCjWRm1HTMbZ4r4wOCI
+         G5wj0gZfrFh1qrfNz3r3mszaJotmjyoLg5tqB71A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.19 57/66] soc: sunxi: Fix missing dependency on REGMAP_MMIO
-Date:   Thu,  9 May 2019 20:42:32 +0200
-Message-Id: <20190509181307.508024707@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 5.1 01/30] Drivers: hv: vmbus: Remove the undesired put_cpu_ptr() in hv_synic_cleanup()
+Date:   Thu,  9 May 2019 20:42:33 +0200
+Message-Id: <20190509181250.759963229@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
+References: <20190509181250.417203112@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,67 +47,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Holland <samuel@sholland.org>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit a84014e1db35d8e7af09878d0b4bf30804fb17d5 upstream.
+commit a0033bd1eae4650b69be07c17cb87393da584563 upstream.
 
-When enabling ARCH_SUNXI from allnoconfig, SUNXI_SRAM is enabled, but
-not REGMAP_MMIO, so the kernel fails to link with an undefined reference
-to __devm_regmap_init_mmio_clk. Select REGMAP_MMIO, as suggested in
-drivers/base/regmap/Kconfig.
+With CONFIG_DEBUG_PREEMPT=y, the put_cpu_ptr() triggers an underflow
+warning in preempt_count_sub().
 
-This creates the following dependency loop:
-
-  drivers/of/Kconfig:68:                symbol OF_IRQ depends on IRQ_DOMAIN
-  kernel/irq/Kconfig:63:                symbol IRQ_DOMAIN is selected by REGMAP
-  drivers/base/regmap/Kconfig:7:        symbol REGMAP default is visible depending on REGMAP_MMIO
-  drivers/base/regmap/Kconfig:39:       symbol REGMAP_MMIO is selected by SUNXI_SRAM
-  drivers/soc/sunxi/Kconfig:4:          symbol SUNXI_SRAM is selected by USB_MUSB_SUNXI
-  drivers/usb/musb/Kconfig:63:          symbol USB_MUSB_SUNXI depends on GENERIC_PHY
-  drivers/phy/Kconfig:7:                symbol GENERIC_PHY is selected by PHY_BCM_NS_USB3
-  drivers/phy/broadcom/Kconfig:29:      symbol PHY_BCM_NS_USB3 depends on MDIO_BUS
-  drivers/net/phy/Kconfig:12:           symbol MDIO_BUS default is visible depending on PHYLIB
-  drivers/net/phy/Kconfig:181:          symbol PHYLIB is selected by ARC_EMAC_CORE
-  drivers/net/ethernet/arc/Kconfig:18:  symbol ARC_EMAC_CORE is selected by ARC_EMAC
-  drivers/net/ethernet/arc/Kconfig:24:  symbol ARC_EMAC depends on OF_IRQ
-
-To fix the circular dependency, make USB_MUSB_SUNXI select GENERIC_PHY
-instead of depending on it. This matches the use of GENERIC_PHY by all
-but two other drivers.
-
-Cc: <stable@vger.kernel.org> # 4.19
-Fixes: 5828729bebbb ("soc: sunxi: export a regmap for EMAC clock reg on A64")
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 37cdd991fac8 ("vmbus: put related per-cpu variable together")
+Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/sunxi/Kconfig |    1 +
- drivers/usb/musb/Kconfig  |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/hv/hv.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/soc/sunxi/Kconfig
-+++ b/drivers/soc/sunxi/Kconfig
-@@ -4,6 +4,7 @@
- config SUNXI_SRAM
- 	bool
- 	default ARCH_SUNXI
-+	select REGMAP_MMIO
- 	help
- 	  Say y here to enable the SRAM controller support. This
- 	  device is responsible on mapping the SRAM in the sunXi SoCs
---- a/drivers/usb/musb/Kconfig
-+++ b/drivers/usb/musb/Kconfig
-@@ -66,7 +66,7 @@ config USB_MUSB_SUNXI
- 	depends on NOP_USB_XCEIV
- 	depends on PHY_SUN4I_USB
- 	depends on EXTCON
--	depends on GENERIC_PHY
-+	select GENERIC_PHY
- 	select SUNXI_SRAM
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -408,7 +408,6 @@ int hv_synic_cleanup(unsigned int cpu)
  
- config USB_MUSB_DAVINCI
+ 		clockevents_unbind_device(hv_cpu->clk_evt, cpu);
+ 		hv_ce_shutdown(hv_cpu->clk_evt);
+-		put_cpu_ptr(hv_cpu);
+ 	}
+ 
+ 	hv_get_synint_state(VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
 
 
