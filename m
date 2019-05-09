@@ -2,115 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6713C195BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 01:41:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D57E5195D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 01:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfEIXlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 19:41:23 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38178 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfEIXlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 19:41:23 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.141])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hOseo-0006HM-DN; Thu, 09 May 2019 17:40:59 -0600
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
-        knut.omang@oracle.com, gregkh@linuxfoundation.org,
-        brendanhiggins@google.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, amir73il@gmail.com,
-        dan.carpenter@oracle.com, dan.j.williams@intel.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
- <20190509015856.GB7031@mit.edu>
- <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
- <20190509032017.GA29703@mit.edu>
- <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
- <20190509133551.GD29703@mit.edu>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
- <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
- <20190509214233.GA20877@mit.edu>
- <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
- <20190509233043.GC20877@mit.edu>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
-Date:   Thu, 9 May 2019 17:40:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190509233043.GC20877@mit.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1726806AbfEIXww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 19:52:52 -0400
+Received: from mail-eopbgr780121.outbound.protection.outlook.com ([40.107.78.121]:47168
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726620AbfEIXww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 19:52:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c1opa8gVoiMWdXjeoP5MH2to97rq4aewECLBK+VStt8=;
+ b=oqyWi5844ecp/tCDrJ4PVCIHwBIlrtQ/koxd0goGsbRA8QDjuH3EI17DNfMRNFsoH8yopZVYZKAwF/GNZS05B8q5lKkbRIzkGL30rEstj1BlHx8kx/T8Ons7fe7Q8lqFrd1oU+ljwfXE5M/HFI4ADB96Ih7U9UctgP0cDaExlkc=
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.214.23) by
+ CY4PR2201MB1207.namprd22.prod.outlook.com (10.171.210.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.22; Thu, 9 May 2019 23:52:48 +0000
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::954e:662f:d233:dc53]) by CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::954e:662f:d233:dc53%4]) with mapi id 15.20.1856.012; Thu, 9 May 2019
+ 23:52:48 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        James Hogan <jhogan@kernel.org>,
+        "open list:PERFORMANCE EVENTS SUBSYSTEM" 
+        <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH fixes v2] MIPS: perf: Fix build with CONFIG_CPU_BMIPS5000
+  enabled
+Thread-Topic: [PATCH fixes v2] MIPS: perf: Fix build with CONFIG_CPU_BMIPS5000
+  enabled
+Thread-Index: AQHVBsJOzEtNJUx6U0yfGCTcJdB0/w==
+Date:   Thu, 9 May 2019 23:52:48 +0000
+Message-ID: <CY4PR2201MB1272133F3A938CA88D7099EDC1330@CY4PR2201MB1272.namprd22.prod.outlook.com>
+References: <20190509183047.18408-1-f.fainelli@gmail.com>
+In-Reply-To: <20190509183047.18408-1-f.fainelli@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: wfg@linux.intel.com, rostedt@goodmis.org, rientjes@google.com, richard@nod.at, pmladek@suse.com, mpe@ellerman.id.au, khilman@baylibre.com, julia.lawall@lip6.fr, joel@jms.id.au, jdike@addtoit.com, daniel@ffwll.ch, dan.j.williams@intel.com, dan.carpenter@oracle.com, amir73il@gmail.com, Alexander.Levin@microsoft.com, linux-um@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, shuah@kernel.org, sboyd@kernel.org, robh@kernel.org, mcgrof@kernel.org, kieran.bingham@ideasonboard.com, keescook@google.com, brendanhiggins@google.com, gregkh@linuxfoundation.org, knut.omang@oracle.com, Tim.Bird@sony.com, frowand.list@gmail.com, tytso@mit.edu
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR02CA0009.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::22) To CY4PR2201MB1272.namprd22.prod.outlook.com
+ (2603:10b6:910:6e::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [73.93.154.214]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8bbf069e-ee91-45eb-6d78-08d6d4d97073
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:CY4PR2201MB1207;
+x-ms-traffictypediagnostic: CY4PR2201MB1207:
+x-microsoft-antispam-prvs: <CY4PR2201MB120702E3016E85168D053ABAC1330@CY4PR2201MB1207.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2657;
+x-forefront-prvs: 003245E729
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(39850400004)(396003)(366004)(189003)(199004)(2906002)(486006)(53936002)(446003)(6116002)(6246003)(256004)(476003)(11346002)(4326008)(76176011)(74316002)(6436002)(25786009)(186003)(9686003)(3846002)(54906003)(42882007)(55016002)(44832011)(33656002)(71190400001)(71200400001)(305945005)(68736007)(6916009)(316002)(229853002)(102836004)(386003)(7416002)(6506007)(7736002)(478600001)(4744005)(52536014)(26005)(8936002)(66066001)(66446008)(81166006)(81156014)(8676002)(66946007)(66556008)(64756008)(73956011)(66476007)(99286004)(5660300002)(52116002)(14454004)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1207;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ym0WuYgV/tRX+OlxbSuj+LFsEHTnwxCs/prW/bKx+N3lYhPucRcMr/4Y+uwausEBioJFqRL2V87tk3ULAENmqabr78yyr13E8BcPnqqHSa4PcgvHTkVJ9BaJfU6bHtO6MDyplYUOhk1LQQNlcKIdVtdM7rouGS6fu3Jpsc2XtnLik+1QZHgjGxQEVGy5B1S8UZlVBoCEDT+k8StynQyJEmPxz1evTJTqIDk78DpM9tyfelUb2BJB9RV+oZONGRY0he3TQOQ5gqNNzpfs6z/uGZEf1SpxVMongMG2zxlzkeJLRI/OuIMVMmScfzZxLQruNNCU2dCzjFatoTKy2qVHpjSKdE1YqwqorBsLkrJ8JOHuAxA1/Hv6DjahzzatuX5evu22Ixy2R8ZxnuuTsINQd9mZeSJZUWYcfk2ztL6xh7Q=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bbf069e-ee91-45eb-6d78-08d6d4d97073
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 23:52:48.4663
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-05-09 5:30 p.m., Theodore Ts'o wrote:
-> On Thu, May 09, 2019 at 04:20:05PM -0600, Logan Gunthorpe wrote:
->>
->> The second item, arguably, does have significant overlap with kselftest.
->> Whether you are running short tests in a light weight UML environment or
->> higher level tests in an heavier VM the two could be using the same
->> framework for writing or defining in-kernel tests. It *may* also be valuable
->> for some people to be able to run all the UML tests in the heavy VM
->> environment along side other higher level tests.
->>
->> Looking at the selftests tree in the repo, we already have similar items to
->> what Kunit is adding as I described in point (2) above. kselftest_harness.h
->> contains macros like EXPECT_* and ASSERT_* with very similar intentions to
->> the new KUNIT_EXECPT_* and KUNIT_ASSERT_* macros.
->>
->> However, the number of users of this harness appears to be quite small. Most
->> of the code in the selftests tree seems to be a random mismash of scripts
->> and userspace code so it's not hard to see it as something completely
->> different from the new Kunit:
->>
->> $ git grep --files-with-matches kselftest_harness.h *
-> 
-> To the extent that we can unify how tests are written, I agree that
-> this would be a good thing.  However, you should note that
-> kselftest_harness.h is currently assums that it will be included in
-> userspace programs.  This is most obviously seen if you look closely
-> at the functions defined in the header files which makes calls to
-> fork(), abort() and fprintf().
-
-Ah, yes. I obviously did not dig deep enough. Using kunit for in-kernel 
-tests and kselftest_harness for userspace tests seems like a sensible 
-line to draw to me. Trying to unify kernel and userspace here sounds 
-like it could be difficult so it's probably not worth forcing the issue 
-unless someone wants to do some really fancy work to get it done.
-
-Based on some of the other commenters, I was under the impression that 
-kselftests had in-kernel tests but I'm not sure where or if they exist. 
-If they do exists, it seems like it would make sense to convert those to 
-kunit and have Kunit tests run-able in a VM or baremetal instance.
-
-Logan
-
+SGVsbG8sDQoNCkZsb3JpYW4gRmFpbmVsbGkgd3JvdGU6DQo+IGFyY2gvbWlwcy9rZXJuZWwvcGVy
+Zl9ldmVudF9taXBzeHguYzogSW4gZnVuY3Rpb24gJ21pcHN4eF9wbXVfZW5hYmxlX2V2ZW50JzoN
+Cj4gYXJjaC9taXBzL2tlcm5lbC9wZXJmX2V2ZW50X21pcHN4eC5jOjMyNjoyMTogZXJyb3I6IHVu
+dXNlZCB2YXJpYWJsZSAnZXZlbnQnIFstV2Vycm9yPXVudXNlZC12YXJpYWJsZV0NCj4gc3RydWN0
+IHBlcmZfZXZlbnQgKmV2ZW50ID0gY29udGFpbmVyX29mKGV2dCwgc3RydWN0IHBlcmZfZXZlbnQs
+IGh3KTsNCj4gXn5+fn4NCj4gDQo+IEZpeCB0aGlzIGJ5IG1ha2luZyB1c2Ugb2YgSVNfRU5BQkxF
+RCgpIHRvIHNpbXBsaWZ5IHRoZSBjb2RlIGFuZCBhdm9pZA0KPiB1bm5lY2Vzc2FyeSBpZmRlZmVy
+eS4NCj4gDQo+IEZpeGVzOiA4NDAwMmM4ODU5OWQgKCJNSVBTOiBwZXJmOiBGaXggcGVyZiB3aXRo
+IE1UIGNvdW50aW5nIG90aGVyIHRocmVhZHMiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBGbG9yaWFuIEZh
+aW5lbGxpIDxmLmZhaW5lbGxpQGdtYWlsLmNvbT4NCg0KQXBwbGllZCB0byBtaXBzLW5leHQuDQoN
+ClRoYW5rcywNCiAgICBQYXVsDQoNClsgVGhpcyBtZXNzYWdlIHdhcyBhdXRvLWdlbmVyYXRlZDsg
+aWYgeW91IGJlbGlldmUgYW55dGhpbmcgaXMgaW5jb3JyZWN0DQogIHRoZW4gcGxlYXNlIGVtYWls
+IHBhdWwuYnVydG9uQG1pcHMuY29tIHRvIHJlcG9ydCBpdC4gXQ0K
