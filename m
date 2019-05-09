@@ -2,128 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8224518445
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 05:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F30E11844D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 06:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfEID6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 23:58:10 -0400
-Received: from mail-eopbgr150042.outbound.protection.outlook.com ([40.107.15.42]:60670
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726082AbfEID6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 23:58:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PpGlwJHmEXiGpkDz+SKaOqwgrxGwYCjqEHXiAaPXRjc=;
- b=l1bwdwT8uEv5hAtnzMnESJ6BA1X4nI/isCy0JOAlsVze1pA7dEwFpwiY/mDpofeHHR/OHoimn5LW6LCnJRaGPB4gYem6+hVqnLyM8EUDoQ2YNqp43Vv+BG7o7DEFEQB7hRMxHB6Xqeiruv9hDpTyoQPcwqx7FyWV4Jg22YEUM6o=
-Received: from VI1PR04MB4158.eurprd04.prod.outlook.com (52.133.15.33) by
- VI1PR04MB4317.eurprd04.prod.outlook.com (52.134.31.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.11; Thu, 9 May 2019 03:58:04 +0000
-Received: from VI1PR04MB4158.eurprd04.prod.outlook.com
- ([fe80::8015:ec84:d721:b566]) by VI1PR04MB4158.eurprd04.prod.outlook.com
- ([fe80::8015:ec84:d721:b566%5]) with mapi id 15.20.1856.012; Thu, 9 May 2019
- 03:58:04 +0000
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-CC:     Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jiafei Pan <jiafei.pan@nxp.com>,
-        Suresh Gupta <suresh.gupta@freescale.com>
-Subject: RE: [EXT] Re: [PATCH v5 4/5] usb: host: Stops USB controller init if
- PLL fails to lock
-Thread-Topic: [EXT] Re: [PATCH v5 4/5] usb: host: Stops USB controller init if
- PLL fails to lock
-Thread-Index: AQHVBWPwtPsu0fLjhE+qRODS4vtH+6ZhcX6AgAC5hiA=
-Date:   Thu, 9 May 2019 03:58:04 +0000
-Message-ID: <VI1PR04MB4158AA40AB4A4E60711FD580E9330@VI1PR04MB4158.eurprd04.prod.outlook.com>
-References: <20190508060608.33882-4-yinbo.zhu@nxp.com>
- <Pine.LNX.4.44L0.1905081248440.1699-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1905081248440.1699-100000@iolanthe.rowland.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yinbo.zhu@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 843b58be-f38d-4ab0-8b5d-08d6d43289f5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4317;
-x-ms-traffictypediagnostic: VI1PR04MB4317:
-x-microsoft-antispam-prvs: <VI1PR04MB4317F2B9FDE90D536E57550AE9330@VI1PR04MB4317.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 003245E729
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(366004)(396003)(136003)(346002)(189003)(199004)(13464003)(229853002)(305945005)(74316002)(81166006)(76116006)(102836004)(7736002)(52536014)(66066001)(26005)(99286004)(186003)(6116002)(2906002)(3846002)(9686003)(73956011)(6246003)(66446008)(107886003)(4326008)(53936002)(53546011)(6916009)(6506007)(25786009)(86362001)(66946007)(64756008)(66556008)(66476007)(2171002)(71190400001)(68736007)(71200400001)(55016002)(476003)(33656002)(5660300002)(81156014)(486006)(8676002)(44832011)(446003)(11346002)(6436002)(14444005)(256004)(478600001)(54906003)(316002)(8936002)(7696005)(14454004)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4317;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nZNIemHESZFyPSIVsUvthyZgXLSq3wNtIax8l6yiR1mIwoaWB9W8pWJfOLAppsp7rQKb31Vaha+ao/qTCcEQ46Itg5gnEdhfAglmNZ/nwM8V0S2nWKidOGTCR1hX3jyb5t+ToZvXYJsOrWoGRzJP9ngIOqJt7Oc08dxQ/OlMEuw1ZMjVDaov/qmvG6w8FhE+OoLndF5jcJmel9MizUc7TNlmkzz068M82Mjzm9lXlfd2vpPU2zcM7Qte4ZYlL5nRESgxx7ISkXbS06PB9qVDZLOGZglITYyUkXUcp1tmL2OYOOcATIWWWqTYNytM+D2/7G9g6QNenAHwSXSr0LOYmRf+NYUNDisLUcbHpCA9ivNknU4wqCAI5v8VSU8W/BcOl7CQo8KCEH4x4VOBqxv52JHeby6E83xXVj1K8Q4r8BA=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 843b58be-f38d-4ab0-8b5d-08d6d43289f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 03:58:04.5626
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4317
+        id S1726084AbfEIEHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 00:07:53 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38923 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfEIEHx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 00:07:53 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e24so739590edq.6
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 21:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=rcSJ7jMxGzSyHBuvTtybXntBxEii0S3igF/TJN9iQIM=;
+        b=QPVRsbDGwbwOKduzLxNA/St9KZmC5Ae8sNTu9LmM5AJtu04sEiBz5fJHFNo9UD7hEs
+         8G3lxwQrInn/dkSYjdxreFZgNxIeYPSNjMEBtRQywrH2lwnTRpD0jktriN4AEzzrKN6Y
+         /kzkwF2nNfxFDwopA0LPJWgKdvEgYnlRe74bw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rcSJ7jMxGzSyHBuvTtybXntBxEii0S3igF/TJN9iQIM=;
+        b=Eqe1eV+1B2av9gDFTcridcwBNrScSvv9FaBERkGGKUwW2nhLDEHRB/o0UWWGkU+cfD
+         IgIDLyGpG11M4Jt9J5fw67TMDCsRBnAoAnBHCS5c+76DfnkZov5e9+bca/Aj4Gyqa9OI
+         G8Ul4oTSD155paO9Vd9Qd4dnsejHssU+smToKsK51/VtJ/ClA7Jq57DKa8qakvjx/lf/
+         ncZ6/0S19B6G8iunRuJ5DGlaKeEoWIQ5p8FdToSlm35h58lN+5M/yYChK0FWQXa1VM51
+         wY/F/bIx5H3ZMVAlii1Y22TXbUDO63ZQ1pWhaKt4RWFVXNcxnQ/37GjaTsxCjCPD08w0
+         jp5Q==
+X-Gm-Message-State: APjAAAU4w+VzvZ+gyG90W9xO08yAmBc5WyHK5jAz+sxmdjsMPsfndXFr
+        N3CqCWRnwf7nymfyUi3+VMQFfg==
+X-Google-Smtp-Source: APXvYqxcOrc5gd9eDfHxiUPAuBj3NuxKGu9eRVP6WLM+z/Zwia0Xcd911wSrmY3vokbdinZ67Lp8+w==
+X-Received: by 2002:a50:930e:: with SMTP id m14mr1438356eda.93.1557374870816;
+        Wed, 08 May 2019 21:07:50 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id a61sm257424edf.8.2019.05.08.21.07.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 08 May 2019 21:07:49 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-i2c@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        Ray Jui <ray.jui@broadcom.com>,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michael Cheng <ccheng@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH 1/1] i2c: iproc: Add multi byte read-write support for slave mode
+Date:   Thu,  9 May 2019 09:35:17 +0530
+Message-Id: <1557374717-14603-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxhbiBTdGVybiBbbWFp
-bHRvOnN0ZXJuQHJvd2xhbmQuaGFydmFyZC5lZHVdDQo+IFNlbnQ6IDIwMTnE6jXUwjnI1SAwOjUw
-DQo+IFRvOiBZaW5ibyBaaHUgPHlpbmJvLnpodUBueHAuY29tPg0KPiBDYzogWGlhb2JvIFhpZSA8
-eGlhb2JvLnhpZUBueHAuY29tPjsgR3JlZyBLcm9haC1IYXJ0bWFuDQo+IDxncmVna2hAbGludXhm
-b3VuZGF0aW9uLm9yZz47IFJhbW5lZWsgTWVocmVzaA0KPiA8cmFtbmVlay5tZWhyZXNoQGZyZWVz
-Y2FsZS5jb20+OyBOaWtoaWwgQmFkb2xhDQo+IDxuaWtoaWwuYmFkb2xhQGZyZWVzY2FsZS5jb20+
-OyBSYW4gV2FuZyA8cmFuLndhbmdfMUBueHAuY29tPjsNCj4gbGludXgtdXNiQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSmlhZmVpIFBhbg0KPiA8amlhZmVp
-LnBhbkBueHAuY29tPjsgU3VyZXNoIEd1cHRhIDxzdXJlc2guZ3VwdGFAZnJlZXNjYWxlLmNvbT4N
-Cj4gU3ViamVjdDogW0VYVF0gUmU6IFtQQVRDSCB2NSA0LzVdIHVzYjogaG9zdDogU3RvcHMgVVNC
-IGNvbnRyb2xsZXIgaW5pdCBpZiBQTEwgZmFpbHMgdG8NCj4gbG9jaw0KPiANCj4gQ2F1dGlvbjog
-RVhUIEVtYWlsDQo+IA0KPiBPbiBXZWQsIDggTWF5IDIwMTksIFlpbmJvIFpodSB3cm90ZToNCj4g
-DQo+ID4gRnJvbTogUmFtbmVlayBNZWhyZXNoIDxyYW1uZWVrLm1laHJlc2hAZnJlZXNjYWxlLmNv
-bT4NCj4gPg0KPiA+IFVTQiBlcnJhdHVtLUEwMDY5MTggd29ya2Fyb3VuZCB0cmllcyB0byBzdGFy
-dCBpbnRlcm5hbCBQSFkgaW5zaWRlDQo+ID4gdWJvb3QgKHdoZW4gUExMIGZhaWxzIHRvIGxvY2sp
-LiBIb3dldmVyLCBpZiB0aGUgd29ya2Fyb3VuZCBhbHNvIGZhaWxzLA0KPiA+IHRoZW4gVVNCIGlu
-aXRpYWxpemF0aW9uIGlzIGFsc28gc3RvcHBlZCBpbnNpZGUgTGludXguDQo+ID4gRXJyYXR1bS1B
-MDA2OTE4IHdvcmthcm91bmQgZmFpbHVyZSBjcmVhdGVzICJmc2wsZXJyYXR1bV9hMDA2OTE4Ig0K
-PiA+IG5vZGUgaW4gZGV2aWNlLXRyZWUuIFByZXNlbmNlIG9mIHRoaXMgbm9kZSBpbiBkZXZpY2Ut
-dHJlZSBpcyB1c2VkIHRvDQo+ID4gc3RvcCBVU0IgY29udHJvbGxlciBpbml0aWFsaXphdGlvbiBp
-biBMaW51eA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtbmVlayBNZWhyZXNoIDxyYW1uZWVr
-Lm1laHJlc2hAZnJlZXNjYWxlLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdXJlc2ggR3VwdGEg
-PHN1cmVzaC5ndXB0YUBmcmVlc2NhbGUuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlpbmJvIFpo
-dSA8eWluYm8uemh1QG54cC5jb20+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlIGluIHY1Og0KPiA+ICAg
-ICAgICAgICAgICAgdXNlIGRldl93YXJuKCkgaW5zdGVhZCBvZiBwcl93YXJuKCkNCj4gPg0KPiA+
-ICBkcml2ZXJzL3VzYi9ob3N0L2VoY2ktZnNsLmMgICAgICB8ICAgIDUgKysrKysNCj4gPiAgZHJp
-dmVycy91c2IvaG9zdC9mc2wtbXBoLWRyLW9mLmMgfCAgICAzICsrLQ0KPiA+ICAyIGZpbGVzIGNo
-YW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3VzYi9ob3N0L2VoY2ktZnNsLmMgYi9kcml2ZXJzL3VzYi9ob3N0L2VoY2kt
-ZnNsLmMNCj4gPiBpbmRleCAxNjM0YWM4Li45MDU1MGE2IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
-cnMvdXNiL2hvc3QvZWhjaS1mc2wuYw0KPiA+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3QvZWhjaS1m
-c2wuYw0KPiA+IEBAIC0yMzYsNiArMjM2LDExIEBAIHN0YXRpYyBpbnQgZWhjaV9mc2xfc2V0dXBf
-cGh5KHN0cnVjdCB1c2JfaGNkICpoY2QsDQo+ID4gICAgICAgICAgICAgICBwb3J0c2MgfD0gUE9S
-VF9QVFNfUFRXOw0KPiA+ICAgICAgICAgICAgICAgLyogZmFsbCB0aHJvdWdoICovDQo+ID4gICAg
-ICAgY2FzZSBGU0xfVVNCMl9QSFlfVVRNSToNCj4gPiArICAgICAgICAgICAgIGlmIChwZGF0YS0+
-aGFzX2ZzbF9lcnJhdHVtX2EwMDY5MTgpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZGV2
-X3dhcm4oZGV2LCAiVVNCIFBIWSBjbG9jayBpbnZhbGlkXG4iKTsNCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gKyAgICAgICAgICAgICB9DQo+ID4gKw0KPiAN
-Cj4gWW91IG5lZWQgdG8gYWRkIGEgIkZhbGwgdGhyb3VnaCIgY29tbWVudCBiZXR3ZWVuIHRoZXNl
-IHR3byBjYXNlcy4NCj4gPiAgICAgICBjYXNlIEZTTF9VU0IyX1BIWV9VVE1JX0RVQUw6DQo+ID4g
-ICAgICAgICAgICAgICAvKiBQSFlfQ0xLX1ZBTElEIGJpdCBpcyBkZS1mZWF0dXJlZCBmcm9tIGFs
-bCBjb250cm9sbGVyDQo+ID4gICAgICAgICAgICAgICAgKiB2ZXJzaW9ucyBiZWxvdyAyLjQgYW5k
-IGlzIHRvIGJlIGNoZWNrZWQgb25seSBmb3INCj4gDQo+IEFsYW4gU3Rlcm4NCkhpIEFsYW4gU3Rl
-cm4sDQoNCllvdXIgbWVhbmluZyBpcyB0byByZW1vdmUgIi8qIGZhbGwgdGhyb3VnaCovIiBvciBh
-ZGQgdGhlIGVycmF0dW0gY29tbW9udCByZXBsYWNlICIvKiBmYWxsIHRocm91Z2gqLyINCg0KUmVn
-YXJkcywNCllpbmJvDQo=
+Add multiple byte read-write support for slave mode.
+
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+---
+ drivers/i2c/busses/i2c-bcm-iproc.c | 117 +++++++++++++++++--------------------
+ 1 file changed, 53 insertions(+), 64 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
+index a845b8d..2c7f145 100644
+--- a/drivers/i2c/busses/i2c-bcm-iproc.c
++++ b/drivers/i2c/busses/i2c-bcm-iproc.c
+@@ -165,12 +165,6 @@ enum i2c_slave_read_status {
+ 	I2C_SLAVE_RX_END,
+ };
+ 
+-enum i2c_slave_xfer_dir {
+-	I2C_SLAVE_DIR_READ = 0,
+-	I2C_SLAVE_DIR_WRITE,
+-	I2C_SLAVE_DIR_NONE,
+-};
+-
+ enum bus_speed_index {
+ 	I2C_SPD_100K = 0,
+ 	I2C_SPD_400K,
+@@ -203,7 +197,6 @@ struct bcm_iproc_i2c_dev {
+ 	struct i2c_msg *msg;
+ 
+ 	struct i2c_client *slave;
+-	enum i2c_slave_xfer_dir xfer_dir;
+ 
+ 	/* bytes that have been transferred */
+ 	unsigned int tx_bytes;
+@@ -219,7 +212,8 @@ struct bcm_iproc_i2c_dev {
+ 		| BIT(IS_M_RX_THLD_SHIFT))
+ 
+ #define ISR_MASK_SLAVE (BIT(IS_S_START_BUSY_SHIFT)\
+-		| BIT(IS_S_RX_EVENT_SHIFT) | BIT(IS_S_RD_EVENT_SHIFT))
++		| BIT(IS_S_RX_EVENT_SHIFT) | BIT(IS_S_RD_EVENT_SHIFT)\
++		| BIT(IS_S_TX_UNDERRUN_SHIFT))
+ 
+ static int bcm_iproc_i2c_reg_slave(struct i2c_client *slave);
+ static int bcm_iproc_i2c_unreg_slave(struct i2c_client *slave);
+@@ -297,15 +291,11 @@ static void bcm_iproc_i2c_slave_init(
+ 	/* clear all pending slave interrupts */
+ 	iproc_i2c_wr_reg(iproc_i2c, IS_OFFSET, ISR_MASK_SLAVE);
+ 
+-	/* Enable interrupt register for any READ event */
+-	val = BIT(IE_S_RD_EVENT_SHIFT);
+ 	/* Enable interrupt register to indicate a valid byte in receive fifo */
+-	val |= BIT(IE_S_RX_EVENT_SHIFT);
++	val = BIT(IE_S_RX_EVENT_SHIFT);
+ 	/* Enable interrupt register for the Slave BUSY command */
+ 	val |= BIT(IE_S_START_BUSY_SHIFT);
+ 	iproc_i2c_wr_reg(iproc_i2c, IE_OFFSET, val);
+-
+-	iproc_i2c->xfer_dir = I2C_SLAVE_DIR_NONE;
+ }
+ 
+ static void bcm_iproc_i2c_check_slave_status(
+@@ -314,8 +304,11 @@ static void bcm_iproc_i2c_check_slave_status(
+ 	u32 val;
+ 
+ 	val = iproc_i2c_rd_reg(iproc_i2c, S_CMD_OFFSET);
+-	val = (val >> S_CMD_STATUS_SHIFT) & S_CMD_STATUS_MASK;
++	/* status is valid only when START_BUSY is cleared after it was set */
++	if (val & BIT(S_CMD_START_BUSY_SHIFT))
++		return;
+ 
++	val = (val >> S_CMD_STATUS_SHIFT) & S_CMD_STATUS_MASK;
+ 	if (val == S_CMD_STATUS_TIMEOUT) {
+ 		dev_err(iproc_i2c->device, "slave random stretch time timeout\n");
+ 
+@@ -327,70 +320,66 @@ static void bcm_iproc_i2c_check_slave_status(
+ }
+ 
+ static bool bcm_iproc_i2c_slave_isr(struct bcm_iproc_i2c_dev *iproc_i2c,
+-				u32 status)
++				    u32 status)
+ {
+-	u8 value;
+ 	u32 val;
+-	u32 rd_status;
+-	u32 tmp;
++	u8 value, rx_status;
+ 
+-	/* Start of transaction. check address and populate the direction */
+-	if (iproc_i2c->xfer_dir == I2C_SLAVE_DIR_NONE) {
+-		tmp = iproc_i2c_rd_reg(iproc_i2c, S_RX_OFFSET);
+-		rd_status = (tmp >> S_RX_STATUS_SHIFT) & S_RX_STATUS_MASK;
+-		/* This condition checks whether the request is a new request */
+-		if (((rd_status == I2C_SLAVE_RX_START) &&
+-			(status & BIT(IS_S_RX_EVENT_SHIFT))) ||
+-			((rd_status == I2C_SLAVE_RX_END) &&
+-			(status & BIT(IS_S_RD_EVENT_SHIFT)))) {
+-
+-			/* Last bit is W/R bit.
+-			 * If 1 then its a read request(by master).
+-			 */
+-			iproc_i2c->xfer_dir = tmp & SLAVE_READ_WRITE_BIT_MASK;
+-			if (iproc_i2c->xfer_dir == I2C_SLAVE_DIR_WRITE)
+-				i2c_slave_event(iproc_i2c->slave,
+-					I2C_SLAVE_READ_REQUESTED, &value);
+-			else
+-				i2c_slave_event(iproc_i2c->slave,
++	/* Slave RX byte receive */
++	if (status & BIT(IS_S_RX_EVENT_SHIFT)) {
++		val = iproc_i2c_rd_reg(iproc_i2c, S_RX_OFFSET);
++		rx_status = (val >> S_RX_STATUS_SHIFT) & S_RX_STATUS_MASK;
++		if (rx_status == I2C_SLAVE_RX_START) {
++			/* Start of SMBUS for Master write */
++			i2c_slave_event(iproc_i2c->slave,
+ 					I2C_SLAVE_WRITE_REQUESTED, &value);
+-		}
+-	}
+ 
+-	/* read request from master */
+-	if ((status & BIT(IS_S_RD_EVENT_SHIFT)) &&
+-		(iproc_i2c->xfer_dir == I2C_SLAVE_DIR_WRITE)) {
+-		i2c_slave_event(iproc_i2c->slave,
+-			I2C_SLAVE_READ_PROCESSED, &value);
+-		iproc_i2c_wr_reg(iproc_i2c, S_TX_OFFSET, value);
++			val = iproc_i2c_rd_reg(iproc_i2c, S_RX_OFFSET);
++			value = (u8)((val >> S_RX_DATA_SHIFT) & S_RX_DATA_MASK);
++			i2c_slave_event(iproc_i2c->slave,
++					I2C_SLAVE_WRITE_RECEIVED, &value);
++		} else if (status & BIT(IS_S_RD_EVENT_SHIFT)) {
++			/* Start of SMBUS for Master Read */
++			i2c_slave_event(iproc_i2c->slave,
++					I2C_SLAVE_READ_REQUESTED, &value);
++			iproc_i2c_wr_reg(iproc_i2c, S_TX_OFFSET, value);
+ 
+-		val = BIT(S_CMD_START_BUSY_SHIFT);
+-		iproc_i2c_wr_reg(iproc_i2c, S_CMD_OFFSET, val);
+-	}
++			val = BIT(S_CMD_START_BUSY_SHIFT);
++			iproc_i2c_wr_reg(iproc_i2c, S_CMD_OFFSET, val);
+ 
+-	/* write request from master */
+-	if ((status & BIT(IS_S_RX_EVENT_SHIFT)) &&
+-		(iproc_i2c->xfer_dir == I2C_SLAVE_DIR_READ)) {
+-		val = iproc_i2c_rd_reg(iproc_i2c, S_RX_OFFSET);
+-		/* Its a write request by Master to Slave.
+-		 * We read data present in receive FIFO
+-		 */
+-		value = (u8)((val >> S_RX_DATA_SHIFT) & S_RX_DATA_MASK);
++			/*
++			 * Enable interrupt for TX FIFO becomes empty and
++			 * less than PKT_LENGTH bytes were output on the SMBUS
++			 */
++			val = iproc_i2c_rd_reg(iproc_i2c, IE_OFFSET);
++			val |= BIT(IE_S_TX_UNDERRUN_SHIFT);
++			iproc_i2c_wr_reg(iproc_i2c, IE_OFFSET, val);
++		} else {
++			/* Master write other than start */
++			value = (u8)((val >> S_RX_DATA_SHIFT) & S_RX_DATA_MASK);
++			i2c_slave_event(iproc_i2c->slave,
++					I2C_SLAVE_WRITE_RECEIVED, &value);
++		}
++	} else if (status & BIT(IS_S_TX_UNDERRUN_SHIFT)) {
++		/* Master read other than start */
+ 		i2c_slave_event(iproc_i2c->slave,
+-			I2C_SLAVE_WRITE_RECEIVED, &value);
+-
+-		/* check the status for the last byte of the transaction */
+-		rd_status = (val >> S_RX_STATUS_SHIFT) & S_RX_STATUS_MASK;
+-		if (rd_status == I2C_SLAVE_RX_END)
+-			iproc_i2c->xfer_dir = I2C_SLAVE_DIR_NONE;
++				I2C_SLAVE_READ_PROCESSED, &value);
+ 
+-		dev_dbg(iproc_i2c->device, "\nread value = 0x%x\n", value);
++		iproc_i2c_wr_reg(iproc_i2c, S_TX_OFFSET, value);
++		val = BIT(S_CMD_START_BUSY_SHIFT);
++		iproc_i2c_wr_reg(iproc_i2c, S_CMD_OFFSET, val);
+ 	}
+ 
+ 	/* Stop */
+ 	if (status & BIT(IS_S_START_BUSY_SHIFT)) {
+ 		i2c_slave_event(iproc_i2c->slave, I2C_SLAVE_STOP, &value);
+-		iproc_i2c->xfer_dir = I2C_SLAVE_DIR_NONE;
++		/*
++		 * Enable interrupt for TX FIFO becomes empty and
++		 * less than PKT_LENGTH bytes were output on the SMBUS
++		 */
++		val = iproc_i2c_rd_reg(iproc_i2c, IE_OFFSET);
++		val &= ~BIT(IE_S_TX_UNDERRUN_SHIFT);
++		iproc_i2c_wr_reg(iproc_i2c, IE_OFFSET, val);
+ 	}
+ 
+ 	/* clear interrupt status */
+-- 
+1.9.1
+
