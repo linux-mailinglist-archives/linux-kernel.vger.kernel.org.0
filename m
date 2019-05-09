@@ -2,157 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFC6192B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BC9F192B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfEITNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726749AbfEITNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 15:13:33 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7AB2085A;
-        Thu,  9 May 2019 19:13:32 +0000 (UTC)
-Date:   Thu, 9 May 2019 15:13:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] ktest: cleanup get_grub_index
-Message-ID: <20190509151330.6165bb43@gandalf.local.home>
-In-Reply-To: <20190509184158.te2cglg2nuvgm6gm@gabell>
-References: <20190509174630.26713-1-msys.mizuma@gmail.com>
-        <20190509174630.26713-3-msys.mizuma@gmail.com>
-        <20190509135721.4802161b@gandalf.local.home>
-        <20190509184158.te2cglg2nuvgm6gm@gabell>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726809AbfEITQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:16:38 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38422 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfEITQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 15:16:38 -0400
+Received: by mail-pg1-f193.google.com with SMTP id j26so1696089pgl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 12:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=dCjJw/na5CXc5Q7VmihmkFQY0cVqesjTapigdI+UM0g=;
+        b=Ro0dwDhTlBCaQgyZTqsSv5mR+AGvMLj4LjdmJehXtkcoEdj83UTNtDMm812HjEgFgG
+         WtkOxcg/0Al+n5Ga+/0p8P1bExpE5DPnXo/7jHMQ6nd4kAWbCup/Zv9xvF6WtWRR0Lnp
+         oruX0gqjPwHseld0MGgOVFHurgf4h5h3nTSPK3rFEUC9ys0WuAISLh6LuzStL0JumwKQ
+         W2zIUqcaIhuoTPE9Pp60lLQTeUR10KOviNKN6Ales4vSwdLDM3uBaZ5uxZLK0j2idyFg
+         HjdCnyK1X8w3isQaVfK1cHujb3BWoAOnUdEUqRmLOsu6clZixIbeQke+iYmw61FU1+63
+         f65Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=dCjJw/na5CXc5Q7VmihmkFQY0cVqesjTapigdI+UM0g=;
+        b=FKcLowibnrNwOa7ITKEk/93746uOxTcr5zvGJ8lhNvV4aAGoCy8vzyU5pAD7WHjKgf
+         vACqUevBYLzbWXWKe0/QlNVcts8ygMX9Sjgf5sie/oTn8/SDRNHd+WtZFqvj9GkmzkN0
+         +iWF3XYlN9Y7YMa5C/TqW24+vF04zn3eY+RK93CTW93/5c24Jm3ZVJWlFWGDxDKEJGQj
+         pPn6y9ur7fGiUuBzZ5JdI4yUaDcW6yM8Vm/0RuUhuyyLOJlpkVJkY/HsFV0+FOmrrCno
+         2FbF1nex0QM5vURpJtNYhSPJNTVwBkqQU9G6fRaxDZVxpgvgJkDfI/3jheht5PCknv0Z
+         pTHg==
+X-Gm-Message-State: APjAAAXACbzMuJ3gR4f/f+G4ILOxhiGJ0ys5N2mCnr4TumE2pa7otOm2
+        AaIO6kfGIv+zfzoWmCEQH78=
+X-Google-Smtp-Source: APXvYqwZFedSgKIUTu7ZNPnnQUX8hU7MXGQXIWKdjmj28oyrKlAJvzFrqKt1HsL3cu0EZlzLizIrNA==
+X-Received: by 2002:a63:4006:: with SMTP id n6mr8009418pga.424.1557429397325;
+        Thu, 09 May 2019 12:16:37 -0700 (PDT)
+Received: from [192.168.20.7] (c-73-19-52-228.hsd1.wa.comcast.net. [73.19.52.228])
+        by smtp.gmail.com with ESMTPSA id y14sm3539772pga.54.2019.05.09.12.16.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 12:16:36 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: Danish FreeBSD Developer hates jews collectively
+From:   Enji Cooper <yaneurabeya@gmail.com>
+In-Reply-To: <49cfcff55fe21d5d01df916e9f9531f1@redchan.it>
+Date:   Thu, 9 May 2019 12:16:35 -0700
+Cc:     linux-kernel@vger.kernel.org, misc@openbsd.org,
+        freebsd-current@freebsd.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5AFBB386-6841-4E96-A6CB-5540BC188357@gmail.com>
+References: <49cfcff55fe21d5d01df916e9f9531f1@redchan.it>
+To:     ossobserver@redchan.it
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 May 2019 14:41:59 -0400
-Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
 
-> On Thu, May 09, 2019 at 01:57:21PM -0400, Steven Rostedt wrote:
-> > On Thu,  9 May 2019 13:46:27 -0400
-> > Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
-> >   
-> > > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > > 
-> > > Cleanup get_grub_index().  
-> > 
-> > Hi Masayoshi,
-> > 
-> > Thanks for the patches, quick comment below.
-> >   
-> > > 
-> > > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > > ---
-> > >  tools/testing/ktest/ktest.pl | 50 +++++++++++-------------------------
-> > >  1 file changed, 15 insertions(+), 35 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-> > > index 3862b23672f7..1255ea0d9df4 100755
-> > > --- a/tools/testing/ktest/ktest.pl
-> > > +++ b/tools/testing/ktest/ktest.pl
-> > > @@ -1934,46 +1934,26 @@ sub get_grub2_index {
-> > >  
-> > >  sub get_grub_index {
-> > >  
-> > > -    if ($reboot_type eq "grub2") {
-> > > -	get_grub2_index;
-> > > -	return;
-> > > -    }
-> > > -
-> > > -    if ($reboot_type ne "grub") {
-> > > -	return;
-> > > -    }  
-> > 
-> > We still need something like:
-> > 
-> > 	if ($reboot_type !~ /^grub/) {
-> > 		return;
-> > 	}
-> > 
-> > Because I believe this will run (and probably error) for syslinux boot
-> > systems. I have a couple, I could test it and find out ;-)  
-> 
-> Thank you for your review! I'll add the check.
->
+> On May 9, 2019, at 11:03 AM, ossobserver@redchan.it wrote:
 
+This is the only reply I=E2=80=99m going to give to this thread that =
+seems like obvious troll bait.
 
-> > > -    return if (defined($grub_number) && defined($last_grub_menu) &&
-> > > -	       $last_grub_menu eq $grub_menu && defined($last_machine) &&
-> > > -	       $last_machine eq $machine);
-> > > -
-> > > -    doprint "Find grub menu ... ";
-> > > -    $grub_number = -1;
-> > > +    my $command;
-> > > +    my $target;
-> > > +    my $skip;
-> > > +    my $grub_menu_qt;
-> > >  
-> > > -    my $ssh_grub = $ssh_exec;
-> > > -    $ssh_grub =~ s,\$SSH_COMMAND,cat /boot/grub/menu.lst,g;
+As a native English speaker who often gets into debates about =
+controversial issues with respect to concepts like classism, LGBTIQ =
+issues, race issues, etc, the argument phk@ made wasn=E2=80=99t =
+necessary in favor of anti-semitism from the perspective of hating =
+Jewish people or their culture/religion; it was more or less commentary =
+about policy issues with Israelis vs Palestine, apartheid, the Gaza =
+strip occupation and the fact that some of the Israeli people aren=E2=80=99=
+t acting out against the issues between both parties in an attempt to =
+end the conflict. With this in mind, it was a poorly worded response =
+which led to a slippery slope in a discussion, done on a social medium =
+(Twitter) that seems to get blown out of proportion really quickly =
+(trolls and misinterpretation abound).
 
+This kind of reasoning presented sounds a lot like cognitive dissonance =
+employed by the far-right in America vs individuals like Rep. Ilhan =
+Omar, etc, where they play the victim in order to make leftist groups =
+look like they tolerate hate against certain groups (in this case Jewish =
+people). Does that mean that the left has anti-Semites? Yes, it can =
+happen, regardless of one=E2=80=99s political allegiance if one is to =
+believe the left vs right dichotomy (which I think is largely poppycock, =
+meant to separate groups via tribalism, etc). However, I think a number =
+of people are reading between the tea leaves in this thread.
 
-> > > +    return if ($reboot_type ne "grub") and ($reboot_type ne "grub2");
+Do I think phk@ and others should potentially take a step back from the =
+discussion and avoid digging a larger hole than has already been dug? =
+Yes. It=E2=80=99s not my business to make people do that though, since =
+I=E2=80=99m not in a leadership/policy making position.
 
-I missed that you added that, which is basically the same. But I think
-just doing a check of "^grub" is a bit cleaner.
+Please leave this discussion on Twitter instead of flooding these =
+mailing lists. Linux/OpenBSD should not be exposed to this unnecessary =
+drama, and FreeBSD-CURRENT is the wrong mailing list for this (try =
+freebsd-chat@ if you are so inclined).
 
-Looking forward for a v2 of your patch series.
+-Enji
 
-Note, I do have some travel coming up, so if you don't hear from me in
-a week after you post them, please send me a ping, as my email gets
-harder to maintain when I travel.
-
-Thanks!
-
--- Steve
-
-> > >  
-> > > -    open(IN, "$ssh_grub |")
-> > > -	or dodie "unable to get menu.lst";
-> > > -
-> > > -    my $found = 0;
-> > > -    my $grub_menu_qt = quotemeta($grub_menu);
-> > > +    $grub_menu_qt = quotemeta($grub_menu);
-> > >  
-> > > -    while (<IN>) {
-> > > -	if (/^\s*title\s+$grub_menu_qt\s*$/) {
-> > > -	    $grub_number++;
-> > > -	    $found = 1;
-> > > -	    last;
-> > > -	} elsif (/^\s*title\s/) {
-> > > -	    $grub_number++;
-> > > -	}
-> > > +    if ($reboot_type eq "grub") {
-> > > +	$command = "cat /boot/grub/menu.lst";
-> > > +	$target = '^\s*title\s+' . $grub_menu_qt . '\s*$';
-> > > +	$skip = '^\s*title\s';
-> > > +    } elsif ($reboot_type eq "grub2") {
-> > > +	$command = "cat $grub_file";
-> > > +	$target = '^menuentry.*' . $grub_menu_qt;
-> > > +	$skip = '^menuentry\s|^submenu\s';
-> > >      }
-> > > -    close(IN);
-> > >  
-> > > -    dodie "Could not find '$grub_menu' in /boot/grub/menu on $machine"
-> > > -	if (!$found);
-> > > -    doprint "$grub_number\n";
-> > > -    $last_grub_menu = $grub_menu;
-> > > -    $last_machine = $machine;
-> > > +    _get_grub_index($command, $target, $skip);
-> > >  }
-> > >  
-> > >  sub wait_for_input  
-> >   
-
+PS I am not representing the FreeBSD project; I am only representing my =
+personal opinion.=
