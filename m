@@ -2,208 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE5418CC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE7818CC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfEIPPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 11:15:02 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44391 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbfEIPPC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 11:15:02 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c5so3552999wrs.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 08:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WIoalgfl9sB38qAJBElhkuBUCSWiSCsmyfEgfkSYiRQ=;
-        b=H5qiIONrxB7hLFsb9rrnuiuqPc+zrOGv70fqWwcEd7WxVsAdDfJ+bE7awRHt3RmGbJ
-         TXzwG9OHdHnppDFSDyHUCN4WFnA2OBNvgRIm9kTznr0eDnm33auw4h64LL05vR08L1S3
-         dze/b46aeC96NPTDNPMNnBuasyWP6zIFcugwDAGOoullVhtOMGYxQTvt7YrmoWXzw9hs
-         k6Uv4JrPSnbJsIou9gB5q72aignrfjgIrN+lKI3DqwuJRa8P2/pWhb7i8YL0GjrV7Vqw
-         341XOWVcmsXG7pJOjB9GRWh6HmtLFtLW5d5iO6mJyHDwKDLZFQcm1EwGQcnNXRqyLtco
-         rxeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WIoalgfl9sB38qAJBElhkuBUCSWiSCsmyfEgfkSYiRQ=;
-        b=XzuZKyw3axC9LcQf8biWWh3IlNmRCuR7ZAgqLEQmzVoISQRSpGoC9BIjokatn0Dns6
-         s+Vb9NznBopXQOs4DXMvVQEv/gXxxenFx5rSt4vk0XwduvFDtDj75JUe0KljondzgbcY
-         rtAeINGBW/Lm0QnvhOs4lOga16+0EqIKVAQm/fJaEe2CMxuQ5nw2Ek5fZb3OJKLr/Soo
-         s3DSSZGvc81F0s40uFSHbwdl4RqAQT4xIygjwA3O/e7dZFQIIpnOU8YHT90h1rTCNekU
-         UnfZ4kXWzf8em3NmzrdcDN3MJoj7I2pTHNUw+MR1gnrvZs2HXqYn6fc0JB3LHDaqIofW
-         ZDWA==
-X-Gm-Message-State: APjAAAVW6LhnlzT6UUsai3eEd5LZU8ezRBDnza4irOx4oLspPW6DtOMl
-        /1KLi1meUE1+1ju3o/WLeZ5uGA==
-X-Google-Smtp-Source: APXvYqwMm0zjMX5F2Wrypephb4Ds8LTa3vdggOVjM2ghxNW5OeG9W/7z9xoPa/KB5kSQSk1jJPcSpw==
-X-Received: by 2002:adf:c503:: with SMTP id q3mr3742761wrf.263.1557414900058;
-        Thu, 09 May 2019 08:15:00 -0700 (PDT)
-Received: from [192.168.0.100] (146-241-119-67.dyn.eolo.it. [146.241.119.67])
-        by smtp.gmail.com with ESMTPSA id x17sm3356570wru.27.2019.05.09.08.14.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 08:14:59 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: use-after-free in bfq_idle_slice_timer()
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20190508195047.GA28280@roeck-us.net>
-Date:   Thu, 9 May 2019 17:14:57 +0200
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CFD68161-8AE4-48A1-9884-B8B4A93A50EB@linaro.org>
-References: <20190508195047.GA28280@roeck-us.net>
-To:     Guenter Roeck <linux@roeck-us.net>
-X-Mailer: Apple Mail (2.3445.104.8)
+        id S1726721AbfEIPQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 11:16:36 -0400
+Received: from mx1.cock.li ([185.10.68.5]:40863 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726234AbfEIPQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 11:16:36 -0400
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_20,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
+MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1557414991; bh=kqjJnv1l7CqFUPIZGszkS4/Xm9Fm7HKOAlbIulWh1LQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tomGYe21zMHAXOOD2aWj4JGLcwG6gQKxJDv8LTQ/DN77Hy7pG0Pj0n1r2frofamPf
+         pSw/ax1fxx8nrxBcklk1VKgwVnyGlqqTsJerV0dtL/HzM/Rq4xZutL1pMH3gV61bM+
+         M5isifNAinqXe9QUZhPjACnqGmisvMfUF+PyTnfFTzQKH5BcuZAa+gxURbe63n8x0+
+         0BvBgjg6DCESUYiPsbm9Tu/3XJn1wpGOJc3caHSb36t9RdbTx2bfPyVBms8D6aNoHe
+         rpOZ9/+Ctjq+RDUTYYg5XRAr+YNEoeGDZe2gDy0Jsl/oHgXHoF6FmeIH6l0jE2Gd+a
+         QSsyjDwRw/8RQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 09 May 2019 15:16:31 +0000
+From:   informator@redchan.it
+To:     phk@phk.freebsd.dk
+Cc:     linux-kernel@vger.kernel.org, misc@openbsd.org,
+        freebsd-chat@freebsd.org
+Subject: Regarding threats to "CoC" you. - You do have recourse - license
+ rescission
+Message-ID: <68ed688fdca3c53b6a79d5da5bbe5412@redchan.it>
+X-Sender: informator@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I couldn't find any explanation.  Would you be willing to apply a
-patch that adds runtime checks in bfq?  It'd take me a few days to
-prepare it.
+Dear Poul-Henning "UNIX guru at large" Kamp;
+    Many have noticed threats made against you recently to seek your
+ejectment from the FreeBSD project as retaliation for statements
+you made protesting the ceaseless and ever on-going slaughter of
+innocents; A transparent attempt to censor your political speech,
+if there ever was one.
 
-Thanks,
-Paolo
+    I am forwarding this message below to you because if such is
+attempted, you do have recourse: and that is the rescind the
+gratis license you have granted regarding the use of your works of
+authorship. You may rescind these grantsfrom your attackers, those
+who fail to defend your right to free speech, from the project
+itself, or from all free-takers (if such is your wish).
 
-> Il giorno 8 mag 2019, alle ore 21:50, Guenter Roeck =
-<linux@roeck-us.net> ha scritto:
->=20
-> Hi,
->=20
-> we have seen the attached use-after-free in bfq_idle_slice_timer()
-> while running reboot tests. The code in these tests includes all
-> bfq patches up to and including commit eed47d19d936 ("block, bfq:
-> fix use after free in bfq_bfqq_expire").
->=20
-> gdb points to the dereference of struct bfq_queue *bfqq in
-> bfq_bfqq_budget_timeout(). My suspicion is that the cleanup path
-> in bfq_put_queue() may not clear bfqd->in_service_queue, but I don't
-> understand the code well enough to be sure.
->=20
-> Any thoughts / comments ?
->=20
-> Thanks,
-> Guenter
->=20
-> ---
-> [   25.307269] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [   25.314555] BUG: KASAN: use-after-free in =
-bfq_idle_slice_timer+0x88/0x1d4
-> [   25.321359] Read of size 8 at addr fffffff089360440 by task =
-swapper/0/0
-> [   25.327975]=20
-> [   25.329487] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G S              =
-  4.19.38 #37
-> [   25.336974] Hardware name: <...> rev2 board (DT)
-> [   25.342378] Call trace:
-> [   25.344844]  dump_backtrace+0x0/0x358
-> [   25.348521]  show_stack+0x20/0x2c
-> [   25.351849]  dump_stack+0x130/0x19c
-> [   25.355353]  print_address_description+0x74/0x250
-> [   25.360068]  kasan_report+0x27c/0x2a0
-> [   25.363742]  __asan_report_load8_noabort+0x2c/0x38
-> [   25.368546]  bfq_idle_slice_timer+0x88/0x1d4
-> [   25.372829]  __hrtimer_run_queues+0x794/0xa34
-> [   25.377197]  hrtimer_interrupt+0x278/0x600
-> [   25.381310]  arch_timer_handler_phys+0x5c/0x6c
-> [   25.385767]  handle_percpu_devid_irq+0x2e4/0x754
-> [   25.390399]  __handle_domain_irq+0xd4/0x158
-> [   25.394593]  gic_handle_irq+0x208/0x260
-> [   25.398437]  el1_irq+0xb0/0x128
-> [   25.401591]  arch_cpu_idle+0x20c/0x548
-> [   25.405352]  do_idle+0x184/0x4dc
-> [   25.408590]  cpu_startup_entry+0x24/0x28
-> [   25.412526]  rest_init+0x114/0x148
-> [   25.415939]  start_kernel+0x4c8/0x5c4
-> [   25.419605]=20
-> [   25.421105] Allocated by task 1430:
-> [   25.424606]  kasan_kmalloc+0xe0/0x1ac
-> [   25.428279]  kasan_slab_alloc+0x14/0x1c
-> [   25.432127]  kmem_cache_alloc+0x178/0x278
-> [   25.436149]  bfq_get_queue+0x160/0x650
-> [   25.439911]  bfq_get_bfqq_handle_split+0xcc/0x2fc
-> [   25.444627]  bfq_init_rq+0x254/0x18c0
-> [   25.448301]  bfq_insert_requests+0x5d0/0x1048
-> [   25.452669]  blk_mq_sched_insert_requests+0x130/0x204
-> [   25.457734]  blk_mq_flush_plug_list+0x844/0x91c
-> [   25.462278]  blk_flush_plug_list+0x3e4/0x778
-> [   25.466559]  blk_finish_plug+0x54/0x78
-> [   25.470322]  read_pages+0x294/0x2f0
-> [   25.473824]  __do_page_cache_readahead+0x1a4/0x354
-> [   25.478628]  filemap_fault+0x8ec/0xbb4
-> [   25.482389]  ext4_filemap_fault+0x84/0xa4
-> [   25.486409]  __do_fault+0x128/0x338
-> [   25.489909]  handle_mm_fault+0x1de0/0x2588
-> [   25.494017]  do_page_fault+0x464/0x8d8
-> [   25.497777]  do_translation_fault+0x6c/0x88
-> [   25.501969]  do_mem_abort+0xd8/0x2d0
-> [   25.505554]  do_el0_ia_bp_hardening+0x13c/0x1a8
-> [   25.510094]  el0_ia+0x18/0x1c
-> [   25.513065]=20
-> [   25.514562] Freed by task 1430:
-> [   25.517715]  __kasan_slab_free+0x13c/0x21c
-> [   25.521821]  kasan_slab_free+0x10/0x1c
-> [   25.525582]  kmem_cache_free+0x7c/0x5f8
-> [   25.529429]  bfq_put_queue+0x19c/0x2e4
-> [   25.533191]  bfq_exit_icq_bfqq+0x108/0x228
-> [   25.537299]  bfq_exit_icq+0x20/0x38
-> [   25.540798]  ioc_exit_icq+0xe4/0x16c
-> [   25.544384]  put_io_context_active+0x174/0x234
-> [   25.548836]  exit_io_context+0x84/0x94
-> [   25.552599]  do_exit+0x13b4/0x18e4
-> [   25.556013]  do_group_exit+0x1cc/0x204
-> [   25.559775]  __wake_up_parent+0x0/0x5c
-> [   25.563537]  __se_sys_exit_group+0x0/0x24
-> [   25.567558]  el0_svc_common+0x124/0x1ec
-> [   25.571407]  el0_svc_compat_handler+0x84/0xb0
-> [   25.575774]  el0_svc_compat+0x8/0x18
-> [   25.579351]=20
-> [   25.580854] The buggy address belongs to the object at =
-fffffff089360338
-> [   25.580854]  which belongs to the cache bfq_queue of size 464
-> [   25.587350] cros-ec-spi spi2.0: SPI transfer timed out
-> [   25.593209] The buggy address is located 264 bytes inside of
-> [   25.593209]  464-byte region [fffffff089360338, fffffff089360508)
-> [   25.593216] The buggy address belongs to the page:
-> [   25.593234] page:ffffffbfc224d800 count:1 mapcount:0 =
-mapping:fffffff09916d880 index:0xfffffff089360cc8
-> [   25.598388] cros-ec-spi spi2.0: spi transfer failed: -110
-> [   25.610092]  compound_mapcount: 0
-> [   25.610109] flags: 0x4000000000008100(slab|head)
-> [   25.610133] raw: 4000000000008100 ffffffbfc14c1908 fffffff0991668a0 =
-fffffff09916d880
-> [   25.615021] cros-ec-spi spi2.0: Command xfer error (err:-110)
-> [   25.624225] raw: fffffff089360cc8 000000000014000d 00000001ffffffff =
-0000000000000000
-> [   25.624233] page dumped because: kasan: bad access detected
-> [   25.624237]=20
-> [   25.624243] Memory state around the buggy address:
-> [   25.624257]  fffffff089360300: fc fc fc fc fc fc fc fb fb fb fb fb =
-fb fb fb fb
-> [   25.624271]  fffffff089360380: fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb
-> [   25.630223] cros-ec-i2c-tunnel 11012000.spi:ec@0:i2c-tunnel: Error =
-transferring EC i2c message -110
-> [   25.632977] >fffffff089360400: fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb
-> [   25.632985]                                            ^
-> [   25.632997]  fffffff089360480: fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb
-> [   25.633010]  fffffff089360500: fb fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc fc
-> [   25.633016] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
+    Remeber: A non-exclusive license grant is not a transfer of
+copyright, and such a license absent bargained-for consideration
+is just that: a license (permission); it is not a contract and does not 
+bind the /grantor/ to any terms. It can be revocated at
+any time, for any or no reason.
 
+    This applies to all the "classic" free licenses, from the MIT
+license, to the BSD license, to the GPL.
+
+-------
+The proclamations made by some as to the irrevocability of freely given 
+non-exclusive licenses are incorrect.
+
+If the non-exclusive licensee did not pay the copyright holder 
+consideration for receipt of the permissions given regarding the 
+copyrighted work, the copyright holder can freely rescind those 
+permissions _AT_ANY_TIME_ .
+
+The reasons are as follows: For the licensee to "hold" the licensor to 
+any promise regarding when and how rescission is to take place there 
+must be a contract between the two. A contract requires valid 
+bargained-for consideration. Otherwise any "promise" made is an Illusory 
+Promise (unenforceable).
+
+"Nothing" is not valid consideration.
+
+Obeying a pre-existing duty is not valid consideration.
+
+The licensee has a pre-existing duty to obey copyright law, without 
+permission from the copyright holder he may not 
+use/modify/make-derivative-works-of/distribute/distribute-derivative-works-of. 
+That permission is what he is attempting to "contract" for. Saying one 
+will follow those permissions is not valid consideration to "pay" for 
+those permissions. Promising not to violate the copyright holder's 
+rights -by promising to only use the copyrighted works as freely 
+permitted by the copyright holder, is not valid consideration as that is 
+a pre-existing duty.
+
+Yes: you _C_A_N_ revoke GPL/BSD/MIT/etc permissions from free-takers at 
+your will. And you should do so if that is needed for your livelihood to 
+succeed.
+
+You should do so if it is simply your want.
+(And you should do so if you are attacked by those free-takers)
+
+Do not the pennyless leaches intimidate you from making your own 
+decisions regarding your work of authorship. They gave you nothing, you 
+asked for nothing, they have nothing. Remember: a non-exclusive license 
+is not a transfer, it is permission. Permission that can be ended at any 
+time unless there exists an attached interest (ie: the other side payed 
+you for a license contract)
+Also Remember: The FSF has _always_ (and still does) required Copyright 
+Transfers before it would accept a contribution.
+
+And yes: I am a lawyer.
+
+Of course: consult your local copyright attorney. Strategy is important 
+in these cases. The free-loaders feel they have the 9th circuit judges 
+in the bag, and that the 9th circuit will invalidate the concept of 
+consideration if needed to protect the California tech industry (so 
+revoke from those outside the 9th circuit first).
+
+
+
+
+
+
+For easy to read by lay-people discussions on this topic:
+lkml.org/lkml/2019/5/4/334
+lkml.org/lkml/2019/5/3/698
+
+For legal articles and treatises that agree: no consideration from GPL 
+free-taker, no contract, revocable by the copyright holder:
+scholarship.law.duke.edu/faculty_scholarship/1857/
+www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876
+papers.ssrn.com/sol3/papers.cfm?abstract_id=243237
+
+
+Sincerely;
+Pro-Bono Attorney
+
+(Note: all discussion herein is in relevance to US law)
