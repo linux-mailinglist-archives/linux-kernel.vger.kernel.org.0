@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1DDE1927E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1BD190B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfEITII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:08:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37058 "EHLO mail.kernel.org"
+        id S1727131AbfEISr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727300AbfEISpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:45:18 -0400
+        id S1727502AbfEISrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:47:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86933217F9;
-        Thu,  9 May 2019 18:45:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76866217F5;
+        Thu,  9 May 2019 18:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427518;
-        bh=wjbGWFqpVYEx/KMtz9p5c0//79ohF9cJwwfkSlbOwzE=;
+        s=default; t=1557427671;
+        bh=2PFsMYG+mKXHwmubDCUGEfYhxQOXD3Jk4Q8q1MGnEJI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y2PxZTHvAMJ0VQUI09efvh+BDGZpskARNafy3j04FKvxg00AMaPzIs2M8zGX7WQQd
-         EgTtepgRRNtXaUdSzgWW8kIVm8gnBKCIZotr67u3cpht3u+r/byXDe4J8aY3DpWoZd
-         oDaP4j0dViukqoxXnoMqJIe967BInGxoOOd3H/H0=
+        b=NaVwAqEh3P0YvtNlljtChtB6mlS6Kv8bz8MeUTgiP9A9fks36T9rzpJkKrl0tMv/n
+         MW3a4T3e1MuHQjrmLAj+ma1AIDGHMQf4illH7m7m5rJI2JExKI60s53GOS703lv31v
+         nHMD6mopXaF793hqy0M1JyGBYgLEUwJdkCZVhAQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Annaliese McDermond <nh6z@nh6z.net>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 12/42] IB/hfi1: Eliminate opcode tests on mr deref
-Date:   Thu,  9 May 2019 20:42:01 +0200
-Message-Id: <20190509181255.161329314@linuxfoundation.org>
+Subject: [PATCH 4.19 27/66] ASoC: tlv320aic32x4: Fix Common Pins
+Date:   Thu,  9 May 2019 20:42:02 +0200
+Message-Id: <20190509181304.752392830@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,50 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8639a79e85c18c16c10089edd589c7948f19bbd ]
+[ Upstream commit c63adb28f6d913310430f14c69f0a2ea55eed0cc ]
 
-When an old ack_queue entry is used to store an incoming request, it may
-need to clean up the old entry if it is still referencing the
-MR. Originally only RDMA READ request needed to reference MR on the
-responder side and therefore the opcode was tested when cleaning up the
-old entry. The introduction of tid rdma specific operations in the
-ack_queue makes the specific opcode tests wrong.  Multiple opcodes (RDMA
-READ, TID RDMA READ, and TID RDMA WRITE) may need MR ref cleanup.
+The common pins were mistakenly not added to the DAPM graph.
+Adding these pins will allow valid graphs to be created.
 
-Remove the opcode specific tests associated with the ack_queue.
-
-Fixes: f48ad614c100 ("IB/hfi1: Move driver out of staging")
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Annaliese McDermond <nh6z@nh6z.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/rc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/tlv320aic32x4.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
-index d3b8cb92fd6d6..28eb7003c297e 100644
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -2309,7 +2309,7 @@ void hfi1_rc_rcv(struct hfi1_packet *packet)
- 			update_ack_queue(qp, next);
- 		}
- 		e = &qp->s_ack_queue[qp->r_head_ack_queue];
--		if (e->opcode == OP(RDMA_READ_REQUEST) && e->rdma_sge.mr) {
-+		if (e->rdma_sge.mr) {
- 			rvt_put_mr(e->rdma_sge.mr);
- 			e->rdma_sge.mr = NULL;
- 		}
-@@ -2383,7 +2383,7 @@ void hfi1_rc_rcv(struct hfi1_packet *packet)
- 			update_ack_queue(qp, next);
- 		}
- 		e = &qp->s_ack_queue[qp->r_head_ack_queue];
--		if (e->opcode == OP(RDMA_READ_REQUEST) && e->rdma_sge.mr) {
-+		if (e->rdma_sge.mr) {
- 			rvt_put_mr(e->rdma_sge.mr);
- 			e->rdma_sge.mr = NULL;
- 		}
+diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
+index f03195d2ab2ea..45d9f4a090441 100644
+--- a/sound/soc/codecs/tlv320aic32x4.c
++++ b/sound/soc/codecs/tlv320aic32x4.c
+@@ -462,6 +462,8 @@ static const struct snd_soc_dapm_widget aic32x4_dapm_widgets[] = {
+ 	SND_SOC_DAPM_INPUT("IN2_R"),
+ 	SND_SOC_DAPM_INPUT("IN3_L"),
+ 	SND_SOC_DAPM_INPUT("IN3_R"),
++	SND_SOC_DAPM_INPUT("CM_L"),
++	SND_SOC_DAPM_INPUT("CM_R"),
+ };
+ 
+ static const struct snd_soc_dapm_route aic32x4_dapm_routes[] = {
 -- 
 2.20.1
 
