@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27BD3190C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B85CF1907C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfEISsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:48:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41500 "EHLO mail.kernel.org"
+        id S1727291AbfEISpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727353AbfEISsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:48:35 -0400
+        id S1727269AbfEISpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:45:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE7B20578;
-        Thu,  9 May 2019 18:48:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25312217F9;
+        Thu,  9 May 2019 18:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427714;
-        bh=gXA1V0Hcm30fXk20UNjgt87jxM6iQ5P4exP5dhQABEI=;
+        s=default; t=1557427507;
+        bh=m5v/VQDEu53kIn8smOqM7gN/gtLhfkr4W9EBM+BYU1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=glWbGXT/NJhvqxFARMvOj9QPoWwRGeRZe8rp9qIttu7E7t9Al+Ff5YUVuAR0UHy+P
-         kcJCN5lDJX0BF10PgzqC/8Mrk6PvZN8Tq8utT2S+YUcGzKgJB9WaDsWsbWktXHLc23
-         unnIdWyKE0RQS/XPpgcoOaHTf1qU70g0+qnY4Z9o=
+        b=MpzpTdOZIEM+pXsSPqaoE8MuzT52iDto1imwWBJsUsm3UdGVAsMmMJ4tAqRe5hlLX
+         1uMdr8ciAJSORsVP7Dp3qtffRXA5+zD3jWkt+MoQ+WS3tA93QjG83s5GsK1QfPpMQD
+         JQ4mERKwKgGdIsqN5RE+mlXXgRJRILxErrD+isYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, chenglang <chenglang@huawei.com>,
-        Lijun Ou <oulijun@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/66] RDMA/hns: Fix bug that caused srq creation to fail
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.9 24/28] Bluetooth: hidp: fix buffer overflow
 Date:   Thu,  9 May 2019 20:42:16 +0200
-Message-Id: <20190509181306.277936413@linuxfoundation.org>
+Message-Id: <20190509181255.392576707@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,79 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4772e03d239484f3461e33c79d721c8ea03f7416 ]
+From: Young Xiao <YangX92@hotmail.com>
 
-Due to the incorrect use of the seg and obj information, the position of
-the mtt is calculated incorrectly, and the free space of the page is not
-enough to store the entire mtt, resulting in access to the next page. This
-patch fixes this problem.
+commit a1616a5ac99ede5d605047a9012481ce7ff18b16 upstream.
 
- Unable to handle kernel paging request at virtual address ffff00006e3cd000
- ...
- Call trace:
-  hns_roce_write_mtt+0x154/0x2f0 [hns_roce]
-  hns_roce_buf_write_mtt+0xa8/0xd8 [hns_roce]
-  hns_roce_create_srq+0x74c/0x808 [hns_roce]
-  ib_create_srq+0x28/0xc8
+Struct ca is copied from userspace. It is not checked whether the "name"
+field is NULL terminated, which allows local users to obtain potentially
+sensitive information from kernel stack memory, via a HIDPCONNADD command.
 
-Fixes: 0203b14c4f32 ("RDMA/hns: Unify the calculation for hem index in hip08")
-Signed-off-by: chenglang <chenglang@huawei.com>
-Signed-off-by: Lijun Ou <oulijun@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This vulnerability is similar to CVE-2011-1079.
+
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/infiniband/hw/hns/hns_roce_hem.c | 6 ++++--
- drivers/infiniband/hw/hns/hns_roce_mr.c  | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ net/bluetooth/hidp/sock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
-index f6faefed96e8b..a73d388b70930 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
-@@ -745,6 +745,8 @@ void *hns_roce_table_find(struct hns_roce_dev *hr_dev,
- 		idx_offset = (obj & (table->num_obj - 1)) % obj_per_chunk;
- 		dma_offset = offset = idx_offset * table->obj_size;
- 	} else {
-+		u32 seg_size = 64; /* 8 bytes per BA and 8 BA per segment */
-+
- 		hns_roce_calc_hem_mhop(hr_dev, table, &mhop_obj, &mhop);
- 		/* mtt mhop */
- 		i = mhop.l0_idx;
-@@ -756,8 +758,8 @@ void *hns_roce_table_find(struct hns_roce_dev *hr_dev,
- 			hem_idx = i;
+--- a/net/bluetooth/hidp/sock.c
++++ b/net/bluetooth/hidp/sock.c
+@@ -76,6 +76,7 @@ static int hidp_sock_ioctl(struct socket
+ 			sockfd_put(csock);
+ 			return err;
+ 		}
++		ca.name[sizeof(ca.name)-1] = 0;
  
- 		hem = table->hem[hem_idx];
--		dma_offset = offset = (obj & (table->num_obj - 1)) *
--				       table->obj_size % mhop.bt_chunk_size;
-+		dma_offset = offset = (obj & (table->num_obj - 1)) * seg_size %
-+				       mhop.bt_chunk_size;
- 		if (mhop.hop_num == 2)
- 			dma_offset = offset = 0;
- 	}
-diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
-index eb26a5f6fc58c..41a538d23b802 100644
---- a/drivers/infiniband/hw/hns/hns_roce_mr.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
-@@ -707,7 +707,6 @@ static int hns_roce_write_mtt_chunk(struct hns_roce_dev *hr_dev,
- 	struct hns_roce_hem_table *table;
- 	dma_addr_t dma_handle;
- 	__le64 *mtts;
--	u32 s = start_index * sizeof(u64);
- 	u32 bt_page_size;
- 	u32 i;
- 
-@@ -730,7 +729,8 @@ static int hns_roce_write_mtt_chunk(struct hns_roce_dev *hr_dev,
- 		table = &hr_dev->mr_table.mtt_cqe_table;
- 
- 	mtts = hns_roce_table_find(hr_dev, table,
--				mtt->first_seg + s / hr_dev->caps.mtt_entry_sz,
-+				mtt->first_seg +
-+				start_index / HNS_ROCE_MTT_ENTRY_PER_SEG,
- 				&dma_handle);
- 	if (!mtts)
- 		return -ENOMEM;
--- 
-2.20.1
-
+ 		err = hidp_connection_add(&ca, csock, isock);
+ 		if (!err && copy_to_user(argp, &ca, sizeof(ca)))
 
 
