@@ -2,135 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C0818B00
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C939218B08
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbfEINxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 09:53:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42776 "EHLO mail.kernel.org"
+        id S1726632AbfEINy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 09:54:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34424 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726192AbfEINxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 09:53:39 -0400
-Received: from linux-8ccs (ip5f5adeaa.dynamic.kabel-deutschland.de [95.90.222.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726560AbfEINyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 09:54:54 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46F8120675;
-        Thu,  9 May 2019 13:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557410018;
-        bh=5bgQ6CHqRJTKqil2SYpOdeiLLfAUR1hz6lrikzEL1R8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LlWIUdggLWAE6LoVh7f4hVZUYYoNDUd+InUDc8WAv8kUZ6qdyGYx54sIYhSa3EDfZ
-         csGB/Xw6OCdoqjS8Id/j4Vk4LxmNNthp/3ib5iqE6MiyTVB5tUv+8PChj8ry4APTHB
-         7Dp43vqFTtWzvYv4S18Yl5BeNqaV67n3DrrlEF5k=
-Date:   Thu, 9 May 2019 15:53:34 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Arcari <darcari@redhat.com>
-Subject: Re: [PATCH v2] modules: Only return -EEXIST for modules that have
- finished loading
-Message-ID: <20190509135333.GA9337@linux-8ccs>
-References: <20190507145413.16297-1-prarit@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2D3E8C057F3B;
+        Thu,  9 May 2019 13:54:54 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BE9E31001E7C;
+        Thu,  9 May 2019 13:54:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  9 May 2019 15:54:53 +0200 (CEST)
+Date:   Thu, 9 May 2019 15:54:51 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: Re: [PATCH] cgroup: never call do_group_exit() with task->frozen bit
+ set
+Message-ID: <20190509135450.GA24526@redhat.com>
+References: <20190508203420.580163-1-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190507145413.16297-1-prarit@redhat.com>
-X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190508203420.580163-1-guro@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 09 May 2019 13:54:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Prarit Bhargava [07/05/19 10:54 -0400]:
->Heiko, it would still be good to get a test of this patch from you.  I
->tested this here at Red Hat on some System Z machines.  Without the
->modification made here in v2, the systems failed to boot ~10% of the time.
->After the modification I do not see any boot failures.  I also was
->able to reproduce the boot issue with the acpi_cpufreq driver on a very
->large & fast x86 system which had closer to 100% failure rate without
->the changes in v2.  After the modification in v2 the system has rebooted
->all weekend without any issues.
+On 05/08, Roman Gushchin wrote:
 >
->P.
->
->---8<---
->
->Microsoft HyperV disables the X86_FEATURE_SMCA bit on AMD systems, and
->linux guests boot with repeated errors:
->
->amd64_edac_mod: Unknown symbol amd_unregister_ecc_decoder (err -2)
->amd64_edac_mod: Unknown symbol amd_register_ecc_decoder (err -2)
->amd64_edac_mod: Unknown symbol amd_report_gart_errors (err -2)
->amd64_edac_mod: Unknown symbol amd_unregister_ecc_decoder (err -2)
->amd64_edac_mod: Unknown symbol amd_register_ecc_decoder (err -2)
->amd64_edac_mod: Unknown symbol amd_report_gart_errors (err -2)
->
->The warnings occur because the module code erroneously returns -EEXIST
->for modules that have failed to load and are in the process of being
->removed from the module list.
->
->module amd64_edac_mod has a dependency on module edac_mce_amd.  Using
->modules.dep, systemd will load edac_mce_amd for every request of
->amd64_edac_mod.  When the edac_mce_amd module loads, the module has
->state MODULE_STATE_UNFORMED and once the module load fails and the state
->becomes MODULE_STATE_GOING.  Another request for edac_mce_amd module
->executes and add_unformed_module() will erroneously return -EEXIST even
->though the previous instance of edac_mce_amd has MODULE_STATE_GOING.
->Upon receiving -EEXIST, systemd attempts to load amd64_edac_mod, which
->fails because of unknown symbols from edac_mce_amd.
->
->add_unformed_module() must wait to return for any case other than
->MODULE_STATE_LIVE to prevent a race between multiple loads of
->dependent modules.
->
->v2: The initial (old->state != MODULE_STATE_LIVE) change exposed an
->additional issue in the code.  wait_event_interruptible() puts each thread
->to sleep until the a module finishes loading an executes the module_wq
->workqueue.  The result is a long delay during the boot.  Switching to
->wait_event_interruptible_timeout() resolves the sleep problem.
->
->Signed-off-by: Prarit Bhargava <prarit@redhat.com>
->Cc: Jessica Yu <jeyu@kernel.org>
->Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
->Cc: David Arcari <darcari@redhat.com>
+> To resolve this problem, let's move cgroup_leave_frozen(true) call to
+> just after the fatal label. If the task is going to die, the frozen
+> bit must be cleared no matter how we get into this point.
 
-Hi Prarit,
+OK, agreed, better than nothing.
 
-Thanks a lot for the revised patch. I'll queue this up right after the
-merge window is over.
+but please see my previous email. enter_frozen() in ptrace_stop() is not safe
+anyway. In fact somehow I thought it does leave_frozen(), iirc this was true
+in the earlier versions...
 
-Thanks!
+> 
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Reported-by: Qian Cai <cai@lca.pw>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> ---
+>  kernel/signal.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 16b72f4f14df..8607b11ff936 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2483,10 +2483,6 @@ bool get_signal(struct ksignal *ksig)
+>  		ksig->info.si_signo = signr = SIGKILL;
+>  		sigdelset(&current->pending.signal, SIGKILL);
+>  		recalc_sigpending();
+> -		current->jobctl &= ~JOBCTL_TRAP_FREEZE;
+> -		spin_unlock_irq(&sighand->siglock);
+> -		if (unlikely(cgroup_task_frozen(current)))
+> -			cgroup_leave_frozen(true);
+>  		goto fatal;
+>  	}
+>  
+> @@ -2608,8 +2604,10 @@ bool get_signal(struct ksignal *ksig)
+>  			continue;
+>  		}
+>  
+> -		spin_unlock_irq(&sighand->siglock);
+>  	fatal:
+> +		spin_unlock_irq(&sighand->siglock);
+> +		if (unlikely(cgroup_task_frozen(current)))
+> +			cgroup_leave_frozen(true);
+>  
+>  		/*
+>  		 * Anything else is fatal, maybe with a core dump.
+> -- 
+> 2.20.1
+> 
 
-Jessica
-
->---
-> kernel/module.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index 1c429d8d2d74..6c868aabaf37 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -3568,12 +3568,12 @@ static int add_unformed_module(struct module *mod)
-> 	mutex_lock(&module_mutex);
-> 	old = find_module_all(mod->name, strlen(mod->name), true);
-> 	if (old != NULL) {
->-		if (old->state == MODULE_STATE_COMING
->-		    || old->state == MODULE_STATE_UNFORMED) {
->+		if (old->state != MODULE_STATE_LIVE) {
-> 			/* Wait in case it fails to load. */
-> 			mutex_unlock(&module_mutex);
->-			err = wait_event_interruptible(module_wq,
->-					       finished_loading(mod->name));
->+			err = wait_event_interruptible_timeout(module_wq,
->+					       finished_loading(mod->name),
->+					       HZ/1000);
-> 			if (err)
-> 				goto out_unlocked;
-> 			goto again;
->-- 
->2.18.1
->
