@@ -2,95 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 309071903D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 028AB19045
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfEISdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:33:51 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33293 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfEISdu (ORCPT
+        id S1726761AbfEISgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:36:11 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:42964 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726666AbfEISgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:33:50 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 66so3261015otq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 11:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
-        b=m7MZm5jn+yUTyqYeKP+3U2AfIk2e/Jl7gRlj1d0vNElu89qzzwPGU4WFh2pRN3iGK8
-         6NkXYiIaZxmWqTWtDTsXMCjBrxg3Wi+ON8VLjl28KeXWmZ1yCAk7U2iA9U5wOLGpVrf6
-         4C4jvycCm53aEaILky7UnN3UKRuEHLH4DYCjk6kbWNpnMsPw3O4PTkZ34RDNe5jWnbck
-         UmNUnENCXk7ZL3MZ1rYS34gPy7dbedYHUod/vucgxDHzv2UGKYZZ9m/Ped5rsgK+BFk/
-         Fy+UM5SnDsH5pIswj8zYSyHMqUWESF+i8+t6ovRwRYGQ/c3kpcWuWIDJlTrTTBHJz/6S
-         zOfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
-        b=JOiIxW4WrhU7bp6e6UYx6oe9CphRbsRJb9Tg9nVjYIS/s7rr2AY0H4yUf8jUIj5auJ
-         hSdOWvjf8robpuvVxYxAU9C0dPPPGoiRNGold0bDkfGGPzqWE5x3ioyZ+VJPcOLy1I0U
-         q9m4IM1rHdBjLHZuGnVd2jbC5FsY6lDgFHQXGb3OxCk7gIsqRBVkMFyLi61ASYEbT3Er
-         9q6f1BUeB1if/eVS6dFpez1bA0ncb+wN8+6dtroIxgmuqhW/LMyvSCb+TXgJu26xjnc+
-         3b6TLwezRvbf1BxFdFyAhcVS2bbMyuR75gDAb6YIT6LQoeXIn22kUeTCk8VuaMmIdBqW
-         P7uw==
-X-Gm-Message-State: APjAAAVJulb0vudRylngDB/YUyZtivaRCndBR+xo86YTT4eMbDlEO5Pd
-        fdvqtxqSWnYdTqXgURgMlzNzCg==
-X-Google-Smtp-Source: APXvYqyC+t5IsIZRkPqBYoKSelJuMnV/D1ZbE+b+3mQahrODmHmWzUUCjlIwBfKd2Oj/f6iFjJVnEg==
-X-Received: by 2002:a9d:7c88:: with SMTP id q8mr151513otn.167.1557426829720;
-        Thu, 09 May 2019 11:33:49 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id j1sm1034165otl.43.2019.05.09.11.33.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 11:33:49 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, james.w.mcmechan@gmail.com
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
-Date:   Thu, 9 May 2019 13:34:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 9 May 2019 14:36:11 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TRHO45d_1557426956;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TRHO45d_1557426956)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 10 May 2019 02:36:00 +0800
+Subject: Re: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
+ flush
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     jstancek@redhat.com, akpm@linux-foundation.org,
+        stable@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com,
+        npiggin@gmail.com, namit@vmware.com, minchan@kernel.org,
+        Mel Gorman <mgorman@suse.de>
+References: <1557264889-109594-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190509083726.GA2209@brain-police>
+ <20190509103813.GP2589@hirez.programming.kicks-ass.net>
+ <20190509105446.GL2650@hirez.programming.kicks-ass.net>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <6a907073-67ec-04fe-aaae-c1adcb62e3df@linux.alibaba.com>
+Date:   Thu, 9 May 2019 11:35:55 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190509105446.GL2650@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/19 6:24 AM, Roberto Sassu wrote:
-> This patch set aims at solving the following use case: appraise files from
-> the initial ram disk. To do that, IMA checks the signature/hash from the
-> security.ima xattr. Unfortunately, this use case cannot be implemented
-> currently, as the CPIO format does not support xattrs.
-> 
-> This proposal consists in marshaling pathnames and xattrs in a file called
-> .xattr-list. They are unmarshaled by the CPIO parser after all files have
-> been extracted.
 
-So it's in-band signalling that has a higher peak memory requirement.
 
-> The difference with another proposal
-> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
-> included in an image without changing the image format, as opposed to
-> defining a new one. As seen from the discussion, if a new format has to be
-> defined, it should fix the issues of the existing format, which requires
-> more time.
+On 5/9/19 3:54 AM, Peter Zijlstra wrote:
+> On Thu, May 09, 2019 at 12:38:13PM +0200, Peter Zijlstra wrote:
+>
+>> That's tlb->cleared_p*, and yes agreed. That is, right until some
+>> architecture has level dependent TLBI instructions, at which point we'll
+>> need to have them all set instead of cleared.
+>> Anyway; am I correct in understanding that the actual problem is that
+>> we've cleared freed_tables and the ARM64 tlb_flush() will then not
+>> invalidate the cache and badness happens?
+>>
+>> Because so far nobody has actually provided a coherent description of
+>> the actual problem we're trying to solve. But I'm thinking something
+>> like the below ought to do.
+> There's another 'fun' issue I think. For architectures like ARM that
+> have range invalidation and care about VM_EXEC for I$ invalidation, the
+> below doesn't quite work right either.
+>
+> I suspect we also have to force: tlb->vma_exec = 1.
 
-So you've explicitly chosen _not_ to address Y2038 while you're there.
+Isn't the below code in tlb_flush enough to guarantee this?
 
-Rob
+...
+} else if (tlb->end) {
+                struct vm_area_struct vma = {
+                        .vm_mm = tlb->mm,
+                        .vm_flags = (tlb->vma_exec ? VM_EXEC    : 0) |
+                                    (tlb->vma_huge ? VM_HUGETLB : 0),
+                };
+...
+
+>
+> And I don't think there's an architecture that cares, but depending on
+> details I can construct cases where any setting of tlb->vm_hugetlb is
+> wrong, so that is _awesome_. But I suspect the sane thing for now is to
+> force it 0.
+>
+>> diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+>> index 99740e1dd273..fe768f8d612e 100644
+>> --- a/mm/mmu_gather.c
+>> +++ b/mm/mmu_gather.c
+>> @@ -244,15 +244,20 @@ void tlb_finish_mmu(struct mmu_gather *tlb,
+>>   		unsigned long start, unsigned long end)
+>>   {
+>>   	/*
+>> -	 * If there are parallel threads are doing PTE changes on same range
+>> -	 * under non-exclusive lock(e.g., mmap_sem read-side) but defer TLB
+>> -	 * flush by batching, a thread has stable TLB entry can fail to flush
+>> -	 * the TLB by observing pte_none|!pte_dirty, for example so flush TLB
+>> -	 * forcefully if we detect parallel PTE batching threads.
+>> +	 * Sensible comment goes here..
+>>   	 */
+>> -	if (mm_tlb_flush_nested(tlb->mm)) {
+>> -		__tlb_reset_range(tlb);
+>> -		__tlb_adjust_range(tlb, start, end - start);
+>> +	if (mm_tlb_flush_nested(tlb->mm) && !tlb->full_mm) {
+>> +		/*
+>> +		 * Since we're can't tell what we actually should have
+>> +		 * flushed flush everything in the given range.
+>> +		 */
+>> +		tlb->start = start;
+>> +		tlb->end = end;
+>> +		tlb->freed_tables = 1;
+>> +		tlb->cleared_ptes = 1;
+>> +		tlb->cleared_pmds = 1;
+>> +		tlb->cleared_puds = 1;
+>> +		tlb->cleared_p4ds = 1;
+>>   	}
+>>   
+>>   	tlb_flush_mmu(tlb);
+
