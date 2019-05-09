@@ -2,123 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AB418501
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 07:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 828E81850D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 08:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfEIF7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 01:59:21 -0400
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:40669 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfEIF7U (ORCPT
+        id S1726874AbfEIGF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 02:05:58 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:43774 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfEIGF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 01:59:20 -0400
-Received: by mail-wm1-f49.google.com with SMTP id h11so1437846wmb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 22:59:19 -0700 (PDT)
+        Thu, 9 May 2019 02:05:57 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,448,1549954800"; 
+   d="scan'208";a="29738518"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 May 2019 23:05:56 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 8 May 2019 23:05:53 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CDL1LOFL6Jlvbl8W+9pBU7MYHG/j9NgPfPY2BCaA4/8=;
-        b=ukO8xFTk6d8lkBW+BnbvosZqdHt/Z23qFZl2MnuIOiwHS6LgHeQK+TQJEHet9+/uGo
-         FvQwCmaCHeebWVzM8tcXAVKzKQu+a4x3FpcKhw9r+wBGuwFc55GycXOJzz1hcBWOjJGq
-         2Uktdl4/e6sVL1dTceBmmYDDwxwKqkQ1e7vVoHA6pQLMkHSjP3XZyczyTaH52Hf/IN1S
-         iOXyxRvpW6PlcOop3UKlghRbwjLs1Ei2AGyUQg6J45/cfC/paMnKRw8eR+I9l4kqILj4
-         7DlxP2MzWhz0W4Y97L3EaHc5rLnKCKdpyM+6qLDGYsY6zwWospLTzTm17dX4pNNIdCmZ
-         IIpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CDL1LOFL6Jlvbl8W+9pBU7MYHG/j9NgPfPY2BCaA4/8=;
-        b=YpzKH8mx3gBDZ3Tji5apziZJb9JQKM8cibDh5O4XeyLQm3SjHcXPMFE/tQfbcKw30F
-         AIbMOpS3Nqx092uSP5xRxz2wrIYdAGpZCfW9BRwc08jwnxaFYz+adk9UxWDUI8qUqukV
-         jaXc5Dynt4zfWzZxkG721cnlCZM9fbkUuOmzAmqnGDtXeK3Rnan7s1tFCu3gJqwFyE68
-         GdFQIDNgoym4sNAmfnHAqiH9lJJKkTg1YJcbGNmyGoM0Dk9mjMN/4AWU1JuN78l0a7sh
-         xNOQZ1rNDr1U42krDAYLEpe1bX9gpL3plmYb0Ct6mF9afw8YWmymrJNTgkHbE2Ntmv6k
-         tlCw==
-X-Gm-Message-State: APjAAAW96v5mnPDqeR2xwtKHamhKw443BiYnfvs0YDkvrm6cmqE1Y0Jx
-        rxWyeEFqcbMB17XZ6ANuPEw=
-X-Google-Smtp-Source: APXvYqzhrqUo1CvwG+RMHZq8RlOHZQ/qqgQavage6WPcNUl9NMahmJz5bNig2fptPyoNSBBZW0CWgQ==
-X-Received: by 2002:a7b:c7d4:: with SMTP id z20mr1441523wmk.66.1557381558974;
-        Wed, 08 May 2019 22:59:18 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g3sm1397588wmh.27.2019.05.08.22.59.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 May 2019 22:59:17 -0700 (PDT)
-Date:   Thu, 9 May 2019 07:59:15 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Message-ID: <20190509055915.GA58462@gmail.com>
-References: <2e55aeb3b39440c0bebf47f0f9522dd8@AcuMS.aculab.com>
- <CALCETrXjGvWVgZHrKCfH6RBsnYOyD2+Mey1Esw7BsA4Eg6PS0A@mail.gmail.com>
- <20190502150853.GA16779@gmail.com>
- <d64b3562d179430f9bdd8712999ff98a@AcuMS.aculab.com>
- <20190502164524.GB115950@gmail.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C6F523@IRSMSX102.ger.corp.intel.com>
- <e4fbad8c51284a0583b98c52de4a207d@AcuMS.aculab.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C760A7@IRSMSX102.ger.corp.intel.com>
- <20190508113239.GA33324@gmail.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C762F7@IRSMSX102.ger.corp.intel.com>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+nm1JMbpmGdWJCF3Ve/sJh27Ed620DPL4MeIriGZU+E=;
+ b=dzedssQZfo1hUlze28U5oQsLoHFI7p6GmQP+mJ+opha5ov8L6sot2TBpwaC6uDZV4o8nW1Oxzes1qCbCpg7VkmwYfh05vbFj0aRtapXNl0ae66uUFHCAHaPorEjIYZEF3My+q8YRjnHOfpkA/11GYdyv/Rhpm8fFFoYFBC9BHvk=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB0027.namprd11.prod.outlook.com (10.164.155.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Thu, 9 May 2019 06:04:51 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::e0e3:1d51:9e3e:6dc]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::e0e3:1d51:9e3e:6dc%3]) with mapi id 15.20.1856.012; Thu, 9 May 2019
+ 06:04:51 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <linux@roeck-us.net>
+CC:     <Nicolas.Ferre@microchip.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <wim@linux-watchdog.org>,
+        <linux-watchdog@vger.kernel.org>
+Subject: Re: [PATCH] watchdog: sama5d4: fix WDD value to be always set to max
+Thread-Topic: [PATCH] watchdog: sama5d4: fix WDD value to be always set to max
+Thread-Index: AQHVBahu/JHAOFdIPEa7ks2ptdaG2qZhbGKAgADhN4A=
+Date:   Thu, 9 May 2019 06:04:51 +0000
+Message-ID: <5fa08492-a2c1-0ebb-9399-4aa6519c358e@microchip.com>
+References: <1557324535-9050-1-git-send-email-eugen.hristev@microchip.com>
+ <20190508163405.GB5495@roeck-us.net>
+In-Reply-To: <20190508163405.GB5495@roeck-us.net>
+Accept-Language: ro-RO, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR08CA0120.eurprd08.prod.outlook.com
+ (2603:10a6:800:d4::22) To DM5PR11MB1242.namprd11.prod.outlook.com
+ (2603:10b6:3:14::8)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20190509090009158
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 475a828b-78d8-4cf9-678e-08d6d4443fcb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR11MB0027;
+x-ms-traffictypediagnostic: DM5PR11MB0027:
+x-microsoft-antispam-prvs: <DM5PR11MB002786C7BE93EA91D932E2E2E8330@DM5PR11MB0027.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 003245E729
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(376002)(39860400002)(366004)(199004)(189003)(53936002)(31686004)(6246003)(478600001)(446003)(72206003)(2906002)(76176011)(102836004)(53546011)(73956011)(6506007)(386003)(26005)(6486002)(186003)(68736007)(4326008)(11346002)(5660300002)(66556008)(64756008)(66946007)(66476007)(66446008)(25786009)(6116002)(6512007)(486006)(3846002)(86362001)(14454004)(81156014)(81166006)(6436002)(71190400001)(8676002)(71200400001)(316002)(8936002)(7736002)(31696002)(66066001)(54906003)(6916009)(305945005)(476003)(52116002)(2616005)(99286004)(229853002)(256004)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB0027;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: g3wj3NydAmygsxt9/IOt/Z7kzvCkfLbvQx20pVyJXxj1uV50MrlG0KSqpoCnAJiLp9VlNMekGtpcmPT/w1omxG48idL+mHs93McWIEa5BWa1ahDwRcyXRKahlqDiTEOQSCR/9XArugp+E+E827xoeI1z9HH2AJCaZ+I3OHe3lQMIbhcb281PEU+O3EG/7TYOTjM1FZ8/jxCuFs/AraqYEIQh8cvtIJ/tMctyGdEyv2TBAOQ3SuzDTM0o72/YrjAIqfZ7DtPPUg2e8PX5Lf6WBEhVNAkefX1m0U+JL+zeyWcWhPw7rRtE4nch0zECbmVvO4Z2bpRCXt2q1DnpIyuMhf1KmoiETLg++4e6WnBstANFJzLymm2NOuBcURP1jwrWbO6pq33BuWmjvPRDe3SLKJSpBDeSthuPGsq9rHr1l0s=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7CBDBF6FD9780E489D1CE63BD08C6BEF@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4C762F7@IRSMSX102.ger.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 475a828b-78d8-4cf9-678e-08d6d4443fcb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 06:04:51.5715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB0027
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Reshetova, Elena <elena.reshetova@intel.com> wrote:
-
-> > * Reshetova, Elena <elena.reshetova@intel.com> wrote:
-> > 
-> > > CONFIG_PAGE_TABLE_ISOLATION=n:
-> > >
-> > > base:                                  Simple syscall: 0.0510 microseconds
-> > > get_random_bytes(4096 bytes buffer):   Simple syscall: 0.0597 microseconds
-> > >
-> > > So, pure speed wise get_random_bytes() with 1 page per-cpu buffer wins.
-> > 
-> > It still adds +17% overhead to the system call path, which is sad.
-> > Why is it so expensive?
-> 
-> I guess I can experiment further with buffer size increase and/or 
-> using HW acceleration (I mostly played around different rdrand paths now). 
-> 
-> What would be acceptable overheard approximately (so that I know how
-> much I need to squeeze this thing)? 
-
-As much as possible? No idea, I'm sad about anything that is more than 
-0%, and I'd be *really* sad about anything more than say 1-2%.
-
-I find it ridiculous that even with 4K blocked get_random_bytes(), which 
-gives us 32k bits, which with 5 bits should amortize the RNG call to 
-something like "once per 6553 calls", we still see 17% overhead? It's 
-either a measurement artifact, or something doesn't compute.
-
-Thanks,
-
-	Ingo
+DQoNCk9uIDA4LjA1LjIwMTkgMTk6MzQsIEd1ZW50ZXIgUm9lY2sgd3JvdGU6DQo+IE9uIFdlZCwg
+TWF5IDA4LCAyMDE5IGF0IDAyOjE1OjAzUE0gKzAwMDAsIEV1Z2VuLkhyaXN0ZXZAbWljcm9jaGlw
+LmNvbSB3cm90ZToNCj4+IEZyb206IEV1Z2VuIEhyaXN0ZXYgPGV1Z2VuLmhyaXN0ZXZAbWljcm9j
+aGlwLmNvbT4NCj4+DQo+PiBXREQgdmFsdWUgbXVzdCBiZSBhbHdheXMgc2V0IHRvIG1heCAoMHhG
+RkYpIG90aGVyd2lzZSB0aGUgaGFyZHdhcmUNCj4+IGJsb2NrIHdpbGwgcmVzZXQgdGhlIGJvYXJk
+IG9uIHRoZSBmaXJzdCBwaW5nIG9mIHRoZSB3YXRjaGRvZy4NCj4+DQo+IE5vdCBzdXJlIHdoeSBz
+ZXR0aW5nIFdERCB0byB0aGUgc2FtZSB2YWx1ZSBhcyBXRFYgd291bGQgZG8gdGhhdCwNCj4gYnV0
+IG9uIHRoZSBvdGhlciBzaWRlIGl0IGxvb2tzIGxpa2Ugc2V0dGluZyBXREQgdG8gYW55dGhpbmcg
+YnV0DQo+IHRoZSBtYXhpbXVtIGRvZXNuJ3QgYWRkIGFueSB2YWx1ZSBlaXRoZXIsIHNvDQoNCkl0
+J3MgYSBoYXJkd2FyZSBpc3N1ZS4NCk5vcm1hbGx5LCBzZXR0aW5nIGEgV0REIGxvd2VyIHdvdWxk
+IGFsbG93IHRoZSBzeXN0ZW0gZm9yIGEgbGl0dGxlIHRpbWUgDQp0byBwcmludCBvdXQgc29tZXRo
+aW5nLCBiZWZvcmUgdGhlIGluZXZpdGFibGUgcmVzZXQgaGFwcGVucy4uLg0KSW4gb3VyIGNhc2Us
+IHNldHRpbmcgV0REIGxvd2VyIHRoYW4gbWF4IHdvdWxkIG5vdCBhbGxvdyBhIHNpbmdsZSANCndh
+dGNoZG9nIGZlZWQsIGFzIHRoZSBmaXJzdCBhdHRlbXB0IHRvIHdyaXRlIHRoZSBDUiB3b3VsZCB0
+cmlnZ2VyIHRoZSByZXNldC4NClRoaXMgYnVnIHdhcyBub3Qgb2J2aW91cyBiZWNhdXNlIHRoZSBk
+cml2ZXIgd2FzIGFsd2F5cyBzZXR0aW5nIGJvdGggV0REIA0KYW5kIFdEViB0byBtYXguLi4gdW50
+aWwgdGltZW91dC1zZWMgcHJvcGVydHkgY2FtZSB1cCBpbiBEVCB3aGljaCBjaGFuZ2VzIA0KdGhp
+cy4NCg0KRXVnZW4NCj4gDQo+IFJldmlld2VkLWJ5OiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vj
+ay11cy5uZXQ+DQo+IA0KPiBHdWVudGVyDQo+IA0KPj4gU2lnbmVkLW9mZi1ieTogRXVnZW4gSHJp
+c3RldiA8ZXVnZW4uaHJpc3RldkBtaWNyb2NoaXAuY29tPg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMv
+d2F0Y2hkb2cvc2FtYTVkNF93ZHQuYyB8IDQgKy0tLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKyksIDMgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+d2F0Y2hkb2cvc2FtYTVkNF93ZHQuYyBiL2RyaXZlcnMvd2F0Y2hkb2cvc2FtYTVkNF93ZHQuYw0K
+Pj4gaW5kZXggMWU5M2MxYi4uZDQ5NTMzNiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvd2F0Y2hk
+b2cvc2FtYTVkNF93ZHQuYw0KPj4gKysrIGIvZHJpdmVycy93YXRjaGRvZy9zYW1hNWQ0X3dkdC5j
+DQo+PiBAQCAtMTExLDkgKzExMSw3IEBAIHN0YXRpYyBpbnQgc2FtYTVkNF93ZHRfc2V0X3RpbWVv
+dXQoc3RydWN0IHdhdGNoZG9nX2RldmljZSAqd2RkLA0KPj4gICAJdTMyIHZhbHVlID0gV0RUX1NF
+QzJUSUNLUyh0aW1lb3V0KTsNCj4+ICAgDQo+PiAgIAl3ZHQtPm1yICY9IH5BVDkxX1dEVF9XRFY7
+DQo+PiAtCXdkdC0+bXIgJj0gfkFUOTFfV0RUX1dERDsNCj4+ICAgCXdkdC0+bXIgfD0gQVQ5MV9X
+RFRfU0VUX1dEVih2YWx1ZSk7DQo+PiAtCXdkdC0+bXIgfD0gQVQ5MV9XRFRfU0VUX1dERCh2YWx1
+ZSk7DQo+PiAgIA0KPj4gICAJLyoNCj4+ICAgCSAqIFdERElTIGhhcyB0byBiZSAwIHdoZW4gdXBk
+YXRpbmcgV0REL1dEVi4gVGhlIGRhdGFzaGVldCBzdGF0ZXM6IFdoZW4NCj4+IEBAIC0yNTEsNyAr
+MjQ5LDcgQEAgc3RhdGljIGludCBzYW1hNWQ0X3dkdF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
+aWNlICpwZGV2KQ0KPj4gICANCj4+ICAgCXRpbWVvdXQgPSBXRFRfU0VDMlRJQ0tTKHdkZC0+dGlt
+ZW91dCk7DQo+PiAgIA0KPj4gLQl3ZHQtPm1yIHw9IEFUOTFfV0RUX1NFVF9XREQodGltZW91dCk7
+DQo+PiArCXdkdC0+bXIgfD0gQVQ5MV9XRFRfU0VUX1dERChXRFRfU0VDMlRJQ0tTKE1BWF9XRFRf
+VElNRU9VVCkpOw0KPj4gICAJd2R0LT5tciB8PSBBVDkxX1dEVF9TRVRfV0RWKHRpbWVvdXQpOw0K
+Pj4gICANCj4+ICAgCXJldCA9IHNhbWE1ZDRfd2R0X2luaXQod2R0KTsNCj4+IC0tIA0KPj4gMi43
+LjQNCj4+DQo+IA0KPiANCg==
