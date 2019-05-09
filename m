@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F13919060
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D52919106
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfEISoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35588 "EHLO mail.kernel.org"
+        id S1728652AbfEISwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfEISoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:18 -0400
+        id S1728638AbfEISwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:52:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CA10217D6;
-        Thu,  9 May 2019 18:44:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B90217D7;
+        Thu,  9 May 2019 18:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427457;
-        bh=U9CTq3I/rLV1LufqLJb85uD7bOGN5SH9NgAN5kkw4eE=;
+        s=default; t=1557427920;
+        bh=EJS7YmUdOqdLQveuIiW+PCJ+NsY51FD7U65FDriMI1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tcj1+9/cP3SfpfqoDv55x8ohHY6439IWH/PvMx+Kp8MfQOtWWfSsLkQPEBH3HPoGf
-         55kef1uhXpEbdTH2geBkraLAlTfnX5Sl8j6iOdawiHmjG9tkObN4kMXH6Ak2fnWMwJ
-         nrt/AOoA29wr7TIqGX5/130n7/gk8qelNYJPTVHQ=
+        b=qNtFWcv50XDoaYe67V1dRTJdTNvZ2V7dTo4+vis7ZNT6ohR9PRKG1kVDGeO9/CpUE
+         xjmXPKD2DxCBxRTC1v1syDq9wOL3VLT5aQuGFECi4o9Zlqel8yf1a1Xwr4ri7bHaiL
+         jZj0JuR7rBKKuLqW7NKqWPcl21NA19iSN9bqrhO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, David Laight <David.Laight@aculab.com>,
+        Denis Kenzior <denkenz@gmail.com>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/28] ARM: 8680/1: boot/compressed: fix inappropriate Thumb2 mnemonic for __nop
+Subject: [PATCH 5.0 53/95] KEYS: trusted: fix -Wvarags warning
 Date:   Thu,  9 May 2019 20:42:10 +0200
-Message-Id: <20190509181254.093026560@linuxfoundation.org>
+Message-Id: <20190509181313.216685540@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +49,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 60ce2858514ed9ccaf00dc7e9f4dc219537e9855 ]
+[ Upstream commit be24b37e22c20cbaa891971616784dd0f35211e8 ]
 
-Commit 06a4b6d009a1 ("ARM: 8677/1: boot/compressed: fix decompressor
-header layout for v7-M") fixed an issue in the layout of the header
-of the compressed kernel image that was caused by the assembler
-emitting narrow opcodes for 'mov r0, r0', and for this reason, the
-mnemonic was updated to use the W() macro, which will append the .w
-suffix (which forces a wide encoding) if required, i.e., when building
-the kernel in Thumb2 mode.
+Fixes the warning reported by Clang:
+security/keys/trusted.c:146:17: warning: passing an object that
+undergoes default
+      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+        va_start(argp, h3);
+                       ^
+security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+char' is declared here
+unsigned char *h2, unsigned char h3, ...)
+                               ^
+Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+standards explicitly call this out as undefined behavior:
 
-However, this failed to take into account that on Thumb2 kernels built
-for CPUs that are also ARM capable, the entry point is entered in ARM
-mode, and so the instructions emitted here will be ARM instructions
-that only exist in a wide encoding to begin with, which is why the
-assembler rejects the .w suffix here and aborts the build with the
-following message:
+The parameter parmN is the identifier of the rightmost parameter in
+the variable parameter list in the function definition (the one just
+before the ...). If the parameter parmN is declared with ... or with a
+type that is not compatible with the type that results after
+application of the default argument promotions, the behavior is
+undefined.
 
-  head.S: Assembler messages:
-  head.S:132: Error: width suffixes are invalid in ARM mode -- `mov.w r0,r0'
-
-So replace the W(mov) with separate ARM and Thumb2 instructions, where
-the latter will only be used for THUMB2_ONLY builds.
-
-Fixes: 06a4b6d009a1 ("ARM: 8677/1: boot/compressed: fix decompressor ...")
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Link: https://github.com/ClangBuiltLinux/linux/issues/41
+Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+Suggested-by: David Laight <David.Laight@aculab.com>
+Suggested-by: Denis Kenzior <denkenz@gmail.com>
+Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/compressed/efi-header.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/keys/trusted.h  | 2 +-
+ security/keys/trusted.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/compressed/efi-header.S b/arch/arm/boot/compressed/efi-header.S
-index 3f7d1b74c5e02..a17ca8d78656d 100644
---- a/arch/arm/boot/compressed/efi-header.S
-+++ b/arch/arm/boot/compressed/efi-header.S
-@@ -17,7 +17,8 @@
- 		@ there.
- 		.inst	'M' | ('Z' << 8) | (0x1310 << 16)   @ tstne r0, #0x4d000
- #else
--		W(mov)	r0, r0
-+ AR_CLASS(	mov	r0, r0		)
-+  M_CLASS(	nop.w			)
- #endif
- 		.endm
+diff --git a/include/keys/trusted.h b/include/keys/trusted.h
+index adbcb68178260..0071298b9b28e 100644
+--- a/include/keys/trusted.h
++++ b/include/keys/trusted.h
+@@ -38,7 +38,7 @@ enum {
  
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...);
++			unsigned char *h2, unsigned int h3, ...);
+ int TSS_checkhmac1(unsigned char *buffer,
+ 			  const uint32_t command,
+ 			  const unsigned char *ononce,
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 4d98f4f87236c..94d2b28c7c223 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+  */
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...)
++			unsigned char *h2, unsigned int h3, ...)
+ {
+ 	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+ 	struct sdesc *sdesc;
+@@ -139,7 +139,7 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 		return PTR_ERR(sdesc);
+ 	}
+ 
+-	c = h3;
++	c = !!h3;
+ 	ret = crypto_shash_init(&sdesc->shash);
+ 	if (ret < 0)
+ 		goto out;
 -- 
 2.20.1
 
