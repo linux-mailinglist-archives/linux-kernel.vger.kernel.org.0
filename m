@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0CE01916A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10918190D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfEIS4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:56:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50204 "EHLO mail.kernel.org"
+        id S1728253AbfEIStf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:49:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729174AbfEISzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:55:08 -0400
+        id S1728239AbfEIStc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:49:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90104204FD;
-        Thu,  9 May 2019 18:55:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C401320578;
+        Thu,  9 May 2019 18:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428108;
-        bh=gB4rxXtmZhaQAk8GNiRvnotbYsWheyhY6t08SUjxvUk=;
+        s=default; t=1557427772;
+        bh=K7/Z7ULPaiMrGML8CskPhXEpmnsruK7vDzfr3sp2vPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zrsiV788cMIlCtq9S9M5BysuEDUz5aL2u4S0NLOjyOO9ijNJDGBK+l2Rv3GE3oK2u
-         xjhbbmouUwWVDKFSSdWvUA771HHSvgT6Qrfygq6oEyRjCaWueVA36fknc6zb3wxVnf
-         PynUw7NiGU/hXRfLnJzyEhWD0jkg+c5RFsERp4TQ=
+        b=fbNp7PiylVii+xeuwG/HYvqNdmMtpG3aIqLCQZuXlabTNoCUPMzusH00cM1uvA/B+
+         Bqq+h72qtUqWZAV5GrmUUBtg9W09HTx09gKHuyWgEv1BRGZ2wLAzQfymEN7yJ4r7NT
+         e/j7kyWKRq/Q0FYzXUI5xVSQoGrVmMtjIqZWSY9I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Christian Gromm <christian.gromm@microchip.com>
-Subject: [PATCH 5.1 06/30] staging: most: sound: pass correct device when creating a sound card
-Date:   Thu,  9 May 2019 20:42:38 +0200
-Message-Id: <20190509181252.039168954@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 64/66] ASoC: Intel: avoid Oops if DMA setup fails
+Date:   Thu,  9 May 2019 20:42:39 +0200
+Message-Id: <20190509181308.092615871@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Gromm <christian.gromm@microchip.com>
+From: Ross Zwisler <zwisler@chromium.org>
 
-commit 98592c1faca82a9024a64e4ecead68b19f81c299 upstream.
+commit 0efa3334d65b7f421ba12382dfa58f6ff5bf83c4 upstream.
 
-This patch fixes the usage of the wrong struct device when calling
-function snd_card_new.
+Currently in sst_dsp_new() if we get an error return from sst_dma_new()
+we just print an error message and then still complete the function
+successfully.  This means that we are trying to run without sst->dma
+properly set up, which will result in NULL pointer dereference when
+sst->dma is later used.  This was happening for me in
+sst_dsp_dma_get_channel():
 
-Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Signed-off-by: Christian Gromm <christian.gromm@microchip.com>
-Fixes: 69c90cf1b2fa ("staging: most: sound: call snd_card_new with struct device")
-Cc: stable <stable@vger.kernel.org>
+        struct sst_dma *dma = dsp->dma;
+	...
+        dma->ch = dma_request_channel(mask, dma_chan_filter, dsp);
+
+This resulted in:
+
+   BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+   IP: sst_dsp_dma_get_channel+0x4f/0x125 [snd_soc_sst_firmware]
+
+Fix this by adding proper error handling for the case where we fail to
+set up DMA.
+
+This change only affects Haswell and Broadwell systems.  Baytrail
+systems explicilty opt-out of DMA via sst->pdata->resindex_dma_base
+being set to -1.
+
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+Cc: stable@vger.kernel.org
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/most/sound/sound.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/common/sst-firmware.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/most/sound/sound.c
-+++ b/drivers/staging/most/sound/sound.c
-@@ -622,7 +622,7 @@ static int audio_probe_channel(struct mo
- 	INIT_LIST_HEAD(&adpt->dev_list);
- 	iface->priv = adpt;
- 	list_add_tail(&adpt->list, &adpt_list);
--	ret = snd_card_new(&iface->dev, -1, "INIC", THIS_MODULE,
-+	ret = snd_card_new(iface->driver_dev, -1, "INIC", THIS_MODULE,
- 			   sizeof(*channel), &adpt->card);
- 	if (ret < 0)
- 		goto err_free_adpt;
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -1251,11 +1251,15 @@ struct sst_dsp *sst_dsp_new(struct devic
+ 		goto irq_err;
+ 
+ 	err = sst_dma_new(sst);
+-	if (err)
+-		dev_warn(dev, "sst_dma_new failed %d\n", err);
++	if (err)  {
++		dev_err(dev, "sst_dma_new failed %d\n", err);
++		goto dma_err;
++	}
+ 
+ 	return sst;
+ 
++dma_err:
++	free_irq(sst->irq, sst);
+ irq_err:
+ 	if (sst->ops->free)
+ 		sst->ops->free(sst);
 
 
