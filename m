@@ -2,113 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E9BE18F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72AC818F94
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfEIRra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:47:30 -0400
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:45817 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfEIRr2 (ORCPT
+        id S1726620AbfEIRtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:49:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32828 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfEIRtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:47:28 -0400
-Received: by mail-qt1-f171.google.com with SMTP id t1so3460199qtc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 10:47:27 -0700 (PDT)
+        Thu, 9 May 2019 13:49:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e11so4265285wrs.0;
+        Thu, 09 May 2019 10:49:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=99hNsfwv1wBSWemPF3ysQllU+bttu/2/09vasul1uFo=;
-        b=gKPUcC07KUUITJXrTtyiy604O5ynb+fTQXDHCzVwaTcA3BXzEAfC2K3COyJE+rhRMC
-         V1FeF0uppaPFKf4VhTBLqeSGxQytLS1YQiahW/JsUPP7wMdlIqvVRuQtUzk8L9+9BNq9
-         aVzbHIviKeULqCCC5429hgwyTDhYm0Bd+I5fcI6w2TC+QB9tEb50Phmd3y/predNAAWk
-         VnDNTOpYyisMnjjLV/UglIj/PrJFf1F+rPjv8RJl7d7lD4E5lNlmOOZBrF1/UMZm4HlF
-         YK3GW1XboDLuzV+aBXJzJlHXU6bRHi3J0aw7wOyHKhJP2pKb6e5akucNQ70xD5WUcKZ7
-         c/0w==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0/UR7KuBk7jn3GdiXeodrKFMGjiBmRvYd8mwzpA5/pQ=;
+        b=Lr2gDwCHh+okjR5BMJoyAUcTWx2e7xJCBSFaC2JjpvhMZiM7r0e3wgnMGmmTUWVCeG
+         Zv8nRv/DH1GU3rCUBk71aYdRxzDHb0L67ODR1lbZSr30yncbPJzsTXMTKASFdt/le1f0
+         5DTT4izNgzSVdFjb/EyfnmphquHq6Z+D71PAJsxsGDj8xVc5tE40SrYHHkF7VA2a6ozG
+         068Q3H2JF/0Cak9ac+8L5fVCxB+WmdWXVU0+a8XbVtrSKMIzWTt69AZCXLR1glOXWwEo
+         7hn9l2SkHAtVG1iDv6sPJHk0HTSCkRCCTlCp0ONX5Y6XSD+1JcxuOjEGk8fw1yHvsD3R
+         a5IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=99hNsfwv1wBSWemPF3ysQllU+bttu/2/09vasul1uFo=;
-        b=oC0wM41xoAiWfgWDU/zZlKWo63DNS47Webb5141jlSnt7+M/zJdmfJm+UaI1B2Xi5e
-         Ddve6x6iUua4aGOD9tHBMVXfwqvOVx8WE0VDlE37O4xcPlESm5Ck6J6YJtdPbKqn87V7
-         hNSVsvgokQy5+Uu8bfjFjw2gXa9OEV6MT+LHSDDiY1AAtjqhBrOI8bUKLE2WPicK1sSq
-         PyPlxxTjARg7v/z1n8570h1yi29y7Yyo4A77Na4PA/NWY+xalkQM0wdQL1lEK2H+C4sR
-         7ja8BWVYUpK1zR6pryQZAV11jH26X2H8pZF4bqfbbkUKTAfEVXs+eVygNUVmCVOm4eb3
-         wbBg==
-X-Gm-Message-State: APjAAAVYGY5Ld1LPOdIKDuXUex2WQwWP6QlJYs5DZ2do6V8qJSig75AA
-        EFh1r7YC+6PdmX9jPMdWfd1HPRw=
-X-Google-Smtp-Source: APXvYqxMR4mdwnJ9Al6Wtc6PGOV8dSF9ScqjJEAqIK+8B34hxmDNuBy/3+Lb4rLnPSOmIcDlIBayPg==
-X-Received: by 2002:a0c:b99c:: with SMTP id v28mr4835816qvf.10.1557424047369;
-        Thu, 09 May 2019 10:47:27 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z11sm1262953qki.95.2019.05.09.10.47.26
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0/UR7KuBk7jn3GdiXeodrKFMGjiBmRvYd8mwzpA5/pQ=;
+        b=jKBYkcvP9HTc/+ythuAEjaTSV36C+OoIedS7hvuFHgOSTAHsHx/LmbmFZeHvuA53zZ
+         9FxaEiG8zEMJQ4Xb2judJ7qzsQWM8Y5ARiBgrHhSD/CTKotSNAIZynSLgToQXkD6ST6O
+         prK5ntQVqx4bJ7Vh8X+xq5Ps2HWXDiSnwwgIgG+eGpNhsHRLb/kbKZ+h3Tt0FIH0pw1i
+         aw96YOShMNaXn5yB5ESrSndF/CbRzhNcluj7ECntXrWtXaMFzdLMSr8R6C40Qgb11iqk
+         iYoCI+rRuBI7hYZmzAJYNUzlfVjlfdtRQgtphig9yt6lzraHhrjH+WUULJSPpuXFlqHI
+         Dm9A==
+X-Gm-Message-State: APjAAAU2dl77m88PUUPMg6iTXjeerCRQPxMcO2GfpS1ZIpzkcLqQniIr
+        mylUM4stR9E+tFWnQxBItxvKxi7O
+X-Google-Smtp-Source: APXvYqxpxT5uCg6dRjinbTiAzLimF39CcpccN2MoM68JfAIz692dZPSLjbsqHgk/WZQBZKtsxMVxsQ==
+X-Received: by 2002:a5d:67cb:: with SMTP id n11mr4144109wrw.3.1557424150632;
+        Thu, 09 May 2019 10:49:10 -0700 (PDT)
+Received: from [192.168.20.141] ([194.99.104.18])
+        by smtp.gmail.com with ESMTPSA id k67sm4474383wmb.34.2019.05.09.10.49.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 10:47:26 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] ktest: update sample.conf for grub2bls
-Date:   Thu,  9 May 2019 13:46:30 -0400
-Message-Id: <20190509174630.26713-6-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190509174630.26713-1-msys.mizuma@gmail.com>
-References: <20190509174630.26713-1-msys.mizuma@gmail.com>
+        Thu, 09 May 2019 10:49:10 -0700 (PDT)
+Subject: Re: [PATCH v3 08/11] platform/x86: asus-wmi: Enhance detection of
+ thermal data
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Daniel Drake <drake@endlessm.com>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <7acd57fe-604a-a96a-4ca2-a25bc88d6405@gmail.com>
+ <7595c4f0-3dbb-2fe5-4daf-4b9a266f67d7@gmail.com>
+ <CAHp75VdE7MBjyLj=9bS6oc5jc8+BC_hftWUJgZGG02iDd=saiQ@mail.gmail.com>
+From:   Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>
+Message-ID: <0d7f6a9e-d508-65ba-9646-39f1d1a42a13@gmail.com>
+Date:   Thu, 9 May 2019 19:49:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdE7MBjyLj=9bS6oc5jc8+BC_hftWUJgZGG02iDd=saiQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On 08.05.19 15:58, Andy Shevchenko wrote:
+> On Fri, Apr 19, 2019 at 1:12 PM Yurii Pavlovskyi
+> <yurii.pavlovskyi@gmail.com> wrote:
+> 
+>> -               if (value == ASUS_WMI_UNSUPPORTED_METHOD || value & 0xFFF80000
+>> +               if (value == ASUS_WMI_UNSUPPORTED_METHOD || (value & 0xFFF80000)
+> 
+> Seems like a bug fix and thus should be a separate commit predecessing
+> the series.
+The previous one should theoretically work as well, just thought that would
+help readability, will revert this.
 
-Update sample.conf for grub2bls.
+>> -       else if (attr == &dev_attr_temp1_input.attr)
+>> -               dev_id = ASUS_WMI_DEVID_THERMAL_CTRL;
+>
+> I don't see how this change affects the user output or driver
+> behaviour. Why is it done?
+> 
+>> -       } else if (dev_id == ASUS_WMI_DEVID_THERMAL_CTRL) {
+> 
+>> +       } else if (attr == &dev_attr_temp1_input.attr) {
+> 
+> So, I don't see why you change this line.
+> 
+Yes, looking at this patch now I'd guess the refactoring there is really
+misguided as it adds a lot more code than it removes, will drop it
+completely and just add a new condition to the current check instead in
+next version:
+-		/* If value is zero, something is clearly wrong */
+-		if (!value)
++		if (!value || value == 1)
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- tools/testing/ktest/sample.conf | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/ktest/sample.conf b/tools/testing/ktest/sample.conf
-index 8c893a58b68e..5ac32ab1f3bc 100644
---- a/tools/testing/ktest/sample.conf
-+++ b/tools/testing/ktest/sample.conf
-@@ -349,13 +349,13 @@
- # option to boot to with GRUB_REBOOT
- #GRUB_FILE = /boot/grub2/grub.cfg
- 
--# The tool for REBOOT_TYPE = grub2 to set the next reboot kernel
-+# The tool for REBOOT_TYPE = grub2 or grub2bls to set the next reboot kernel
- # to boot into (one shot mode).
- # (default grub2_reboot)
- #GRUB_REBOOT = grub2_reboot
- 
- # The grub title name for the test kernel to boot
--# (Only mandatory if REBOOT_TYPE = grub or grub2)
-+# (Only mandatory if REBOOT_TYPE = grub or grub2 or grub2bls)
- #
- # Note, ktest.pl will not update the grub menu.lst, you need to
- # manually add an option for the test. ktest.pl will search
-@@ -374,6 +374,10 @@
- # do a: GRUB_MENU = 'Test Kernel'
- # For customizing, add your entry in /etc/grub.d/40_custom.
- #
-+# For grub2bls, a search of "title"s are done. The menu is found
-+# by searching for the contents of GRUB_MENU in the line that starts
-+# with "title".
-+#
- #GRUB_MENU = Test Kernel
- 
- # For REBOOT_TYPE = syslinux, the name of the syslinux executable
-@@ -593,6 +597,8 @@
- # For REBOOT_TYPE = grub2, you must define both GRUB_MENU and
- # GRUB_FILE.
- #
-+# For REBOOT_TYPE = grub2bls, you must define GRUB_MENU.
-+#
- # For REBOOT_TYPE = syslinux, you must define SYSLINUX_LABEL, and
- # perhaps modify SYSLINUX (default extlinux) and SYSLINUX_PATH
- # (default /boot/extlinux)
--- 
-2.20.1
-
+Thanks,
+Yurii
