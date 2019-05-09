@@ -2,109 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81375195A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 01:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CF7195B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 01:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfEIX1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 19:27:15 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53501 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbfEIX1P (ORCPT
+        id S1726864AbfEIXcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 19:32:25 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38430 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726108AbfEIXcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 19:27:15 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 198so5239006wme.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 16:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=RnvY7geH+A4N8B10Z1RbPFf3s1ZPigUFVWpv/Xpazjs=;
-        b=KZXV+ZmebZiHyksi89Co3Ncpgpll079vA+GPTDcX0c3sNhE7P/fo4EdX4iO1u0r0mZ
-         COOreq3YGTcJLoYVnHX/+3Xvs7DTecqEiFLlFMaY7yEKZIyzuSAyvs5K7i6EE4gH01uV
-         91H5X2EdBsyu5VtMNtV/YFwARMQ2cqT6CCKNQ9uJF3pXIwS9U9Wwp7JUEcC7vUJKXjx8
-         DJGfxDLwnLy3krjt0OtCkXQjTudjHgYu0+rFwPcdGGjxmknBOkYH5WlQC+K/eg0wdlkK
-         Scx4Nsm9ATFL0UUBB4FxUQW+qPRPW5ZrN+J/aj2IFQK8R3u5FLkqXNxWqPNEvFu2zskn
-         aljA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=RnvY7geH+A4N8B10Z1RbPFf3s1ZPigUFVWpv/Xpazjs=;
-        b=sTM+XsrA8QxjcmVU27Te7OpQ+dX0RmUxK/ba4UTN7a+AJnqFBlbQ6d6TaqCMe1dYPW
-         Ze37JmZLTghNQ/P5sOVyqOqmlGeWUCR4p78CPOsc6ZbvEQ1RMYYXqH37wIUvBPAAjgXO
-         AjXNpPhm5G51OnEAYFoWTC/8it8TpDKkkT+ElEGwks4JL7cssLmYhrOlalnN8UgMzsE7
-         igxgtUqumLwLiRvBrHvyv9muiukOQyRy9hyTtPnd+hlpqwsxfexfVG2BYBMCvpQTvFZY
-         bO5vPB8PRJ/svoNEV8ERD8S9Hhf+GNQvXEqBG218RSZozKFkntbRLEDrRValcSRzWu25
-         pB4A==
-X-Gm-Message-State: APjAAAV9+9MJprlVI+w5EWYux5aZklDv2hPWc9APseadX/AyjJyCT/Qp
-        HyjuSHR39xXnhfSMyLaN+zu/FA==
-X-Google-Smtp-Source: APXvYqxLLfrFCfz3i3u9lf6pJBwCTjAtwmx1g16ijs4SqlmlwcGtWHQfTSP6cXuPpLXD8ZRGHn/UEw==
-X-Received: by 2002:a1c:a406:: with SMTP id n6mr4581605wme.126.1557444433385;
-        Thu, 09 May 2019 16:27:13 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f7sm2215872wmb.28.2019.05.09.16.27.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 16:27:12 -0700 (PDT)
-Message-ID: <5cd4b750.1c69fb81.c7a5d.a8bc@mx.google.com>
-Date:   Thu, 09 May 2019 16:27:12 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 9 May 2019 19:32:24 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x49NUiJg006219
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 9 May 2019 19:30:45 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AC36A420024; Thu,  9 May 2019 19:30:43 -0400 (EDT)
+Date:   Thu, 9 May 2019 19:30:43 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, dan.j.williams@intel.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190509233043.GC20877@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
+        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+References: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
+ <20190509015856.GB7031@mit.edu>
+ <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+ <20190509032017.GA29703@mit.edu>
+ <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Kernel: v4.14.117-43-gfd7dbc6d8090
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/42] 4.14.118-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 09, 2019 at 04:20:05PM -0600, Logan Gunthorpe wrote:
+> 
+> The second item, arguably, does have significant overlap with kselftest.
+> Whether you are running short tests in a light weight UML environment or
+> higher level tests in an heavier VM the two could be using the same
+> framework for writing or defining in-kernel tests. It *may* also be valuable
+> for some people to be able to run all the UML tests in the heavy VM
+> environment along side other higher level tests.
+> 
+> Looking at the selftests tree in the repo, we already have similar items to
+> what Kunit is adding as I described in point (2) above. kselftest_harness.h
+> contains macros like EXPECT_* and ASSERT_* with very similar intentions to
+> the new KUNIT_EXECPT_* and KUNIT_ASSERT_* macros.
+> 
+> However, the number of users of this harness appears to be quite small. Most
+> of the code in the selftests tree seems to be a random mismash of scripts
+> and userspace code so it's not hard to see it as something completely
+> different from the new Kunit:
+> 
+> $ git grep --files-with-matches kselftest_harness.h *
 
+To the extent that we can unify how tests are written, I agree that
+this would be a good thing.  However, you should note that
+kselftest_harness.h is currently assums that it will be included in
+userspace programs.  This is most obviously seen if you look closely
+at the functions defined in the header files which makes calls to
+fork(), abort() and fprintf().
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.117-43-gfd7dbc6d8090/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.117-43-gfd7dbc6d8090/
+So Kunit can't reuse kselftest_harness.h unmodified.  And whether or
+not the actual implementation of the header file can be reused or
+refactored, making the unit tests use the same or similar syntax would
+be a good thing.
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.117-43-gfd7dbc6d8090
-Git Commit: fd7dbc6d8090b210573e19d5a50f7772ec4b1977
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 64 unique boards, 25 SoC families, 15 builds out of 201
+Cheers,
 
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            stih410-b2120: 1 failed lab
-
-arm64:
-    defconfig:
-        gcc-8:
-            rk3399-firefly: 1 failed lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    davinci_all_defconfig:
-        da850-lcdk:
-            lab-baylibre: PASS (gcc-8)
-            lab-baylibre-seattle: FAIL (gcc-8)
-
----
-For more info write to <info@kernelci.org>
+						- Ted
