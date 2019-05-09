@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF761910D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94E519069
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbfEISwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:52:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46186 "EHLO mail.kernel.org"
+        id S1727088AbfEISoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:44:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728664AbfEISwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:52:13 -0400
+        id S1727053AbfEISoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:44:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F5812182B;
-        Thu,  9 May 2019 18:52:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13F10217D6;
+        Thu,  9 May 2019 18:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427933;
-        bh=470NZB2kKHQn1HDTjfZigknZIavOuUfXqk1JNoQXSOU=;
+        s=default; t=1557427473;
+        bh=hEuToZTYTh+72tR79gRIV7bx32NRmE1y/XhSGpfYvRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1BJkaj/293e4aflYNnc8djbxbgVUzHB4E6uqPOTym0LkcCoMa2jPZb9IS3v7X0qBq
-         u9KlPbZpliVE3gc4IOhc/84HUImzgg8x/sAWpWMXa7w5RDM5P//bXNbkIpAwm3tECg
-         dlp7y8I4xEoikKIrt7DmryeiYrduIyV9uU3gXyjE=
+        b=zzG4xRsdUvGkJcSCHdYm+SB7DsBsnY3B+B3Z/Cidqh8n/NQ5CnFVYP0IPW0UTLtR6
+         KQLKd3rEtOSDJui2cXAACxXOw2CvlzfQAM1T8Fc6gqI2GNGRgIHCvaRa1r3dHl0mB5
+         XVpPlHw7g2MkaFvGeUJ6U/3zEIFvsusxRBuUHFgA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wangyan Wang <wangyan.wang@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 58/95] drm/mediatek: remove flag CLK_SET_RATE_PARENT for MT2701 hdmi phy
+        stable@vger.kernel.org, Andrew Vasquez <andrewv@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 23/28] scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
 Date:   Thu,  9 May 2019 20:42:15 +0200
-Message-Id: <20190509181313.556196468@linuxfoundation.org>
+Message-Id: <20190509181255.186877923@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,101 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 827abdd024207146822f66ba3ba74867135866b9 ]
+From: Andrew Vasquez <andrewv@marvell.com>
 
-This is the first step to make MT2701 hdmi stable.
-The parent rate of hdmi phy had set by DPI driver.
-We should not set or change the parent rate of MT2701 hdmi phy,
-as a result we should remove the flags of "CLK_SET_RATE_PARENT"
-from the clock of MT2701 hdmi phy.
+commit 5cbdae10bf11f96e30b4d14de7b08c8b490e903c upstream.
 
-Signed-off-by: Wangyan Wang <wangyan.wang@mediatek.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Commit e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs
+code") incorrectly set 'optrom_region_size' to 'start+size', which can
+overflow option-rom boundaries when 'start' is non-zero.  Continue setting
+optrom_region_size to the proper adjusted value of 'size'.
+
+Fixes: e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs code")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrew Vasquez <andrewv@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 13 +++++--------
- drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  1 +
- drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c |  1 +
- drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  1 +
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/scsi/qla2xxx/qla_attr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-index efc400ebbb90b..08b029772c5a5 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-@@ -102,13 +102,11 @@ mtk_hdmi_phy_dev_get_ops(const struct mtk_hdmi_phy *hdmi_phy)
- 		return NULL;
- }
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -345,7 +345,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
+ 		}
  
--static void mtk_hdmi_phy_clk_get_ops(struct mtk_hdmi_phy *hdmi_phy,
--				     const struct clk_ops **ops)
-+static void mtk_hdmi_phy_clk_get_data(struct mtk_hdmi_phy *hdmi_phy,
-+				      struct clk_init_data *clk_init)
- {
--	if (hdmi_phy && hdmi_phy->conf && hdmi_phy->conf->hdmi_phy_clk_ops)
--		*ops = hdmi_phy->conf->hdmi_phy_clk_ops;
--	else
--		dev_err(hdmi_phy->dev, "Failed to get clk ops of phy\n");
-+	clk_init->flags = hdmi_phy->conf->flags;
-+	clk_init->ops = hdmi_phy->conf->hdmi_phy_clk_ops;
- }
+ 		ha->optrom_region_start = start;
+-		ha->optrom_region_size = start + size;
++		ha->optrom_region_size = size;
  
- static int mtk_hdmi_phy_probe(struct platform_device *pdev)
-@@ -121,7 +119,6 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
- 	struct clk_init_data clk_init = {
- 		.num_parents = 1,
- 		.parent_names = (const char * const *)&ref_clk_name,
--		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	};
+ 		ha->optrom_state = QLA_SREADING;
+ 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
+@@ -418,7 +418,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
+ 		}
  
- 	struct phy *phy;
-@@ -159,7 +156,7 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
- 	hdmi_phy->dev = dev;
- 	hdmi_phy->conf =
- 		(struct mtk_hdmi_phy_conf *)of_device_get_match_data(dev);
--	mtk_hdmi_phy_clk_get_ops(hdmi_phy, &clk_init.ops);
-+	mtk_hdmi_phy_clk_get_data(hdmi_phy, &clk_init);
- 	hdmi_phy->pll_hw.init = &clk_init;
- 	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
- 	if (IS_ERR(hdmi_phy->pll)) {
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-index 71430691ffe43..d28b8d5ed2b44 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-@@ -21,6 +21,7 @@ struct mtk_hdmi_phy;
+ 		ha->optrom_region_start = start;
+-		ha->optrom_region_size = start + size;
++		ha->optrom_region_size = size;
  
- struct mtk_hdmi_phy_conf {
- 	bool tz_disabled;
-+	unsigned long flags;
- 	const struct clk_ops *hdmi_phy_clk_ops;
- 	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
- 	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
-diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-index feb6a7ed63d16..31f3175f032bc 100644
---- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-+++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-@@ -232,6 +232,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
- 
- struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
- 	.tz_disabled = true,
-+	.flags = CLK_SET_RATE_GATE,
- 	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
- 	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
- 	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
-diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-index 83662a2084916..37f9503d76433 100644
---- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-+++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-@@ -317,6 +317,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
- }
- 
- struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf = {
-+	.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
- 	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
- 	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
--- 
-2.20.1
-
+ 		ha->optrom_state = QLA_SWRITING;
+ 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
 
 
