@@ -2,108 +2,356 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC9F192B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:16:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42EF1192B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfEITQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:16:38 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38422 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfEITQi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 15:16:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id j26so1696089pgl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 12:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dCjJw/na5CXc5Q7VmihmkFQY0cVqesjTapigdI+UM0g=;
-        b=Ro0dwDhTlBCaQgyZTqsSv5mR+AGvMLj4LjdmJehXtkcoEdj83UTNtDMm812HjEgFgG
-         WtkOxcg/0Al+n5Ga+/0p8P1bExpE5DPnXo/7jHMQ6nd4kAWbCup/Zv9xvF6WtWRR0Lnp
-         oruX0gqjPwHseld0MGgOVFHurgf4h5h3nTSPK3rFEUC9ys0WuAISLh6LuzStL0JumwKQ
-         W2zIUqcaIhuoTPE9Pp60lLQTeUR10KOviNKN6Ales4vSwdLDM3uBaZ5uxZLK0j2idyFg
-         HjdCnyK1X8w3isQaVfK1cHujb3BWoAOnUdEUqRmLOsu6clZixIbeQke+iYmw61FU1+63
-         f65Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dCjJw/na5CXc5Q7VmihmkFQY0cVqesjTapigdI+UM0g=;
-        b=FKcLowibnrNwOa7ITKEk/93746uOxTcr5zvGJ8lhNvV4aAGoCy8vzyU5pAD7WHjKgf
-         vACqUevBYLzbWXWKe0/QlNVcts8ygMX9Sjgf5sie/oTn8/SDRNHd+WtZFqvj9GkmzkN0
-         +iWF3XYlN9Y7YMa5C/TqW24+vF04zn3eY+RK93CTW93/5c24Jm3ZVJWlFWGDxDKEJGQj
-         pPn6y9ur7fGiUuBzZ5JdI4yUaDcW6yM8Vm/0RuUhuyyLOJlpkVJkY/HsFV0+FOmrrCno
-         2FbF1nex0QM5vURpJtNYhSPJNTVwBkqQU9G6fRaxDZVxpgvgJkDfI/3jheht5PCknv0Z
-         pTHg==
-X-Gm-Message-State: APjAAAXACbzMuJ3gR4f/f+G4ILOxhiGJ0ys5N2mCnr4TumE2pa7otOm2
-        AaIO6kfGIv+zfzoWmCEQH78=
-X-Google-Smtp-Source: APXvYqwZFedSgKIUTu7ZNPnnQUX8hU7MXGQXIWKdjmj28oyrKlAJvzFrqKt1HsL3cu0EZlzLizIrNA==
-X-Received: by 2002:a63:4006:: with SMTP id n6mr8009418pga.424.1557429397325;
-        Thu, 09 May 2019 12:16:37 -0700 (PDT)
-Received: from [192.168.20.7] (c-73-19-52-228.hsd1.wa.comcast.net. [73.19.52.228])
-        by smtp.gmail.com with ESMTPSA id y14sm3539772pga.54.2019.05.09.12.16.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 12:16:36 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: Danish FreeBSD Developer hates jews collectively
-From:   Enji Cooper <yaneurabeya@gmail.com>
-In-Reply-To: <49cfcff55fe21d5d01df916e9f9531f1@redchan.it>
-Date:   Thu, 9 May 2019 12:16:35 -0700
-Cc:     linux-kernel@vger.kernel.org, misc@openbsd.org,
-        freebsd-current@freebsd.org
+        id S1726883AbfEITUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:20:11 -0400
+Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:15070
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726658AbfEITUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 15:20:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pK25MVezTqntB8MSB4igYtKULdt4mM1da5q0B2nqQ0M=;
+ b=sd/B3pKgEf94c85FARw5JMpF0zMNq+38mgewYP5O2l34WXqC/GNhIhUUhG0wcyomoschQ7JdRJB5kCe02vQDRG98/45ngwmER4r6DnzToJOpKDvt3n3HPo47cKBBJfJill+9WGB8QumD93v0svpG5n+up2TI4BYDG9hDE/a4w0U=
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.134.149) by
+ VI1PR0501MB2303.eurprd05.prod.outlook.com (10.169.135.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.21; Thu, 9 May 2019 19:19:59 +0000
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::8810:9799:ab77:9494]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::8810:9799:ab77:9494%2]) with mapi id 15.20.1878.022; Thu, 9 May 2019
+ 19:19:59 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "cjia@nvidia.com" <cjia@nvidia.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: RE: [PATCHv2 08/10] vfio/mdev: Improve the create/remove sequence
+Thread-Topic: [PATCHv2 08/10] vfio/mdev: Improve the create/remove sequence
+Thread-Index: AQHU/6cMznXkHMKRl0CFAIkpWMX/sqZhgmuAgABOd4CAALynAIAAkxbw
+Date:   Thu, 9 May 2019 19:19:59 +0000
+Message-ID: <VI1PR0501MB2271DD5EE143784B9F94D446D1330@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <20190430224937.57156-1-parav@mellanox.com>
+        <20190430224937.57156-9-parav@mellanox.com>
+        <20190508190957.673dd948.cohuck@redhat.com>
+        <VI1PR0501MB2271CFAFF2ACF145FDFD8E2ED1320@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+ <20190509110600.5354463c.cohuck@redhat.com>
+In-Reply-To: <20190509110600.5354463c.cohuck@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [208.176.44.194]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9759359d-76b6-41ad-4ff9-08d6d4b35459
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR0501MB2303;
+x-ms-traffictypediagnostic: VI1PR0501MB2303:
+x-microsoft-antispam-prvs: <VI1PR0501MB2303BE98A40A2F8BBBFC2CD7D1330@VI1PR0501MB2303.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:169;
+x-forefront-prvs: 003245E729
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(346002)(376002)(51444003)(13464003)(189003)(199004)(102836004)(6436002)(14454004)(55016002)(229853002)(6506007)(53546011)(76116006)(99286004)(74316002)(6246003)(2906002)(6116002)(3846002)(25786009)(478600001)(86362001)(5660300002)(71190400001)(71200400001)(68736007)(6916009)(14444005)(256004)(7696005)(76176011)(52536014)(8936002)(305945005)(446003)(11346002)(186003)(4326008)(26005)(7736002)(33656002)(8676002)(81156014)(81166006)(53936002)(66066001)(66476007)(486006)(66556008)(476003)(73956011)(66946007)(54906003)(9686003)(64756008)(66446008)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2303;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 27IFBwrRKLpbKEVL9YXVNW83PVeXUvwPXC5BKQRYjmow+mgx7gKbz74uO87qjTIqHanBzG4EyCeeHx4s/QiSJ6j8HFABr/lPHnx8EzVaNfZIAhxOeMKoAJUxJmA6a09os3YtIV1T3ixsdqC7jbINsavxtKVjD3Oal2Qv5g+Z/A5ZM7P9d9OI4ATiPqYTqC9i/Oq8+/NHiopUMlWUIqny7zSKQqEa2HsXnNdfhrG/07rD7IEOid84TmzsgdTlS3pZ3+v7pW1eo2iDcMBnobwy7ozNej/0bX0Ynljs77mZv93ZOUc4PRHxO+UgWoLmdLcWcBOVy4yPuiyaDFQoJSc56/NLX02JNEJSVVrRqgYvpIgoq0whf7NqSx8bS7GDnYFUJu8v5akK/x8fJymHSrtb4XnyDeSjg2PGZi3ziX5wwGg=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <5AFBB386-6841-4E96-A6CB-5540BC188357@gmail.com>
-References: <49cfcff55fe21d5d01df916e9f9531f1@redchan.it>
-To:     ossobserver@redchan.it
-X-Mailer: Apple Mail (2.3445.104.8)
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9759359d-76b6-41ad-4ff9-08d6d4b35459
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 19:19:59.8457
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2303
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> On May 9, 2019, at 11:03 AM, ossobserver@redchan.it wrote:
 
-This is the only reply I=E2=80=99m going to give to this thread that =
-seems like obvious troll bait.
+> -----Original Message-----
+> From: Cornelia Huck <cohuck@redhat.com>
+> Sent: Thursday, May 9, 2019 4:06 AM
+> To: Parav Pandit <parav@mellanox.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> kwankhede@nvidia.com; alex.williamson@redhat.com; cjia@nvidia.com;
+> Tony Krowiak <akrowiak@linux.ibm.com>; Pierre Morel
+> <pmorel@linux.ibm.com>; Halil Pasic <pasic@linux.ibm.com>
+> Subject: Re: [PATCHv2 08/10] vfio/mdev: Improve the create/remove
+> sequence
+>=20
+> [vfio-ap folks: find a question regarding removal further down]
+>=20
+> On Wed, 8 May 2019 22:06:48 +0000
+> Parav Pandit <parav@mellanox.com> wrote:
+>=20
+> > > -----Original Message-----
+> > > From: Cornelia Huck <cohuck@redhat.com>
+> > > Sent: Wednesday, May 8, 2019 12:10 PM
+> > > To: Parav Pandit <parav@mellanox.com>
+> > > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > kwankhede@nvidia.com; alex.williamson@redhat.com; cjia@nvidia.com
+> > > Subject: Re: [PATCHv2 08/10] vfio/mdev: Improve the create/remove
+> > > sequence
+> > >
+> > > On Tue, 30 Apr 2019 17:49:35 -0500
+> > > Parav Pandit <parav@mellanox.com> wrote:
+> > >
+> > > > This patch addresses below two issues and prepares the code to
+> > > > address 3rd issue listed below.
+> > > >
+> > > > 1. mdev device is placed on the mdev bus before it is created in
+> > > > the vendor driver. Once a device is placed on the mdev bus without
+> > > > creating its supporting underlying vendor device, mdev driver's
+> > > > probe()
+> > > gets triggered.
+> > > > However there isn't a stable mdev available to work on.
+> > > >
+> > > >    create_store()
+> > > >      mdev_create_device()
+> > > >        device_register()
+> > > >           ...
+> > > >          vfio_mdev_probe()
+> > > >         [...]
+> > > >         parent->ops->create()
+> > > >           vfio_ap_mdev_create()
+> > > >             mdev_set_drvdata(mdev, matrix_mdev);
+> > > >             /* Valid pointer set above */
+> > > >
+> > > > Due to this way of initialization, mdev driver who want to use the
+>=20
+> s/want/wants/
+>=20
+> > > > mdev, doesn't have a valid mdev to work on.
+> > > >
+> > > > 2. Current creation sequence is,
+> > > >    parent->ops_create()
+> > > >    groups_register()
+> > > >
+> > > > Remove sequence is,
+> > > >    parent->ops->remove()
+> > > >    groups_unregister()
+> > > >
+> > > > However, remove sequence should be exact mirror of creation
+> sequence.
+> > > > Once this is achieved, all users of the mdev will be terminated
+> > > > first before removing underlying vendor device.
+> > > > (Follow standard linux driver model).
+> > > > At that point vendor's remove() ops shouldn't failed because
+> > > > device is
+>=20
+> s/failed/fail/
+>=20
+> > > > taken off the bus that should terminate the users.
+>=20
+> "because taking the device off the bus should terminate any usage" ?
+>=20
+> > > >
+> > > > 3. When remove operation fails, mdev sysfs removal attempts to add
+> > > > the file back on already removed device. Following call trace [1] i=
+s
+> observed.
+> > > >
+> > > > [1] call trace:
+> > > > kernel: WARNING: CPU: 2 PID: 9348 at fs/sysfs/file.c:327
+> > > > sysfs_create_file_ns+0x7f/0x90
+> > > > kernel: CPU: 2 PID: 9348 Comm: bash Kdump: loaded Not tainted
+> > > > 5.1.0-rc6-vdevbus+ #6
+> > > > kernel: Hardware name: Supermicro SYS-6028U-TR4+/X10DRU-i+, BIOS
+> > > > 2.0b
+> > > > 08/09/2016
+> > > > kernel: RIP: 0010:sysfs_create_file_ns+0x7f/0x90
+> > > > kernel: Call Trace:
+> > > > kernel: remove_store+0xdc/0x100 [mdev]
+> > > > kernel: kernfs_fop_write+0x113/0x1a0
+> > > > kernel: vfs_write+0xad/0x1b0
+> > > > kernel: ksys_write+0x5a/0xe0
+> > > > kernel: do_syscall_64+0x5a/0x210
+> > > > kernel: entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > >
+> > > > Therefore, mdev core is improved in following ways.
+> > > >
+> > > > 1. Before placing mdev devices on the bus, perform vendor drivers
+> > > > creation which supports the mdev creation.
+>=20
+> "invoke the vendor driver ->create callback" ?
+>=20
+> > > > This ensures that mdev specific all necessary fields are
+> > > > initialized
+>=20
+> "that all necessary mdev specific fields are initialized" ?
+>=20
+> > > > before a given mdev can be accessed by bus driver.
+> > > > This follows standard Linux kernel bus and device model similar to
+> > > > other widely used PCI bus.
+>=20
+> "This follows standard practice on other Linux device model buses." ?
+>=20
+> > > >
+> > > > 2. During remove flow, first remove the device from the bus. This
+> > > > ensures that any bus specific devices and data is cleared.
+> > > > Once device is taken of the mdev bus, perform remove() of mdev
+> > > > from
+>=20
+> s/of/off/
+>=20
+> > > > the vendor driver.
+> > > >
+> > > > 3. Linux core device model provides way to register and auto
+> > > > unregister the device sysfs attribute groups at dev->groups.
+>=20
+> "The driver core provides a way to automatically register and unregister =
+sysfs
+> attributes via dev->groups." ?
+>=20
+> > > > Make use of this groups to let core create the groups and simplify
+> > > > code to avoid explicit groups creation and removal.
+> > > >
+> > > > A below stack dump of a mdev device remove process also ensures
+> > > > that vfio driver guards against device removal already in use.
+> > > >
+> > > >  cat /proc/21962/stack
+> > > > [<0>] vfio_del_group_dev+0x216/0x3c0 [vfio] [<0>]
+> > > > mdev_remove+0x21/0x40 [mdev] [<0>]
+> > > > device_release_driver_internal+0xe8/0x1b0
+> > > > [<0>] bus_remove_device+0xf9/0x170 [<0>] device_del+0x168/0x350
+> > > > [<0>] mdev_device_remove_common+0x1d/0x50 [mdev] [<0>]
+> > > > mdev_device_remove+0x8c/0xd0 [mdev] [<0>]
+> remove_store+0x71/0x90
+> > > > [mdev] [<0>] kernfs_fop_write+0x113/0x1a0 [<0>]
+> > > > vfs_write+0xad/0x1b0 [<0>] ksys_write+0x5a/0xe0 [<0>]
+> > > > do_syscall_64+0x5a/0x210 [<0>]
+> > > > entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > > [<0>] 0xffffffffffffffff
+> > > >
+> > > > This prepares the code to eliminate calling device_create_file()
+> > > > in subsquent patch.
+>=20
+> I find this stack dump and explanation more confusing than enlightening.
+> Maybe just drop it?
+>=20
+> > >
+> > > I'm afraid I have a bit of a problem following this explanation, so
+> > > let me try to summarize what the patch does to make sure that I
+> > > understand it
+> > > correctly:
+> > >
+> > > - Add the sysfs groups to device->groups so that the driver core deal=
+s
+> > >   with proper registration/deregistration.
+> > > - Split the device registration/deregistration sequence so that some
+> > >   things can be done between initialization of the device and hooking
+> > >   it up to the infrastructure respectively after deregistering it fro=
+m
+> > >   the infrastructure but before giving up our final reference. In
+> > >   particular, this means invoking the ->create and ->remove callback =
+in
+> > >   those new windows. This gives the vendor driver an initialized mdev
+> > >   device to work with during creation.
+> > > - Don't allow ->remove to fail, as the device is already removed from
+> > >   the infrastructure at that point in time.
+> > >
+> > You got all the points pretty accurate.
+>=20
+> Ok, good.
+>=20
+> >
+> > > >
+> > > > Signed-off-by: Parav Pandit <parav@mellanox.com>
+> > > > ---
+> > > >  drivers/vfio/mdev/mdev_core.c    | 94 +++++++++-------------------=
+----
+> > > >  drivers/vfio/mdev/mdev_private.h |  2 +-
+> > > >  drivers/vfio/mdev/mdev_sysfs.c   |  2 +-
+> > > >  3 files changed, 27 insertions(+), 71 deletions(-)
+> > >
+> > > (...)
+>=20
+> > > > @@ -373,16 +330,15 @@ int mdev_device_remove(struct device *dev,
+> > > bool force_remove)
+> > > >  	mutex_unlock(&mdev_list_lock);
+> > > >
+> > > >  	type =3D to_mdev_type(mdev->type_kobj);
+> > > > +	mdev_remove_sysfs_files(dev, type);
+> > > > +	device_del(&mdev->dev);
+> > > >  	parent =3D mdev->parent;
+> > > > +	ret =3D parent->ops->remove(mdev);
+> > > > +	if (ret)
+> > > > +		dev_err(&mdev->dev, "Remove failed: err=3D%d\n", ret);
+> > >
+> > > I think carrying on with removal regardless of the return code of
+> > > the
+> > > ->remove callback makes sense, as it simply matches usual practice.
+> > > However, are we sure that every vendor driver works well with that?
+> > > I think it should, as removal from bus unregistration (vs. from the
+> > > sysfs
+> > > file) was always something it could not veto, but have you looked at
+> > > the individual drivers?
+> > >
+> > I looked at following drivers a little while back.
+> > Looked again now.
+> >
+> > drivers/gpu/drm/i915/gvt/kvmgt.c which clears the handle valid in
+> intel_vgpu_release(), which should finish first before remove() is invoke=
+d.
+> >
+> > s390 vfio_ccw_mdev_remove() driver drivers/s390/cio/vfio_ccw_ops.c
+> remove() always returns 0.
+> > s39 crypo fails the remove() once vfio_ap_mdev_release marks kvm null,
+> which should finish before remove() is invoked.
+>=20
+> That one is giving me a bit of a headache (the ->kvm reference is suppose=
+d
+> to keep us from detaching while a vm is running), so let's cc:
+> the vfio-ap maintainers to see whether they have any concerns.
+>=20
+I probably wrote wrongly.
+vfio_ap_mdev_remove() fails if the VM is already running (i.e. vfio_ap_mdev=
+_release() is not yet called).
 
-As a native English speaker who often gets into debates about =
-controversial issues with respect to concepts like classism, LGBTIQ =
-issues, race issues, etc, the argument phk@ made wasn=E2=80=99t =
-necessary in favor of anti-semitism from the perspective of hating =
-Jewish people or their culture/religion; it was more or less commentary =
-about policy issues with Israelis vs Palestine, apartheid, the Gaza =
-strip occupation and the fact that some of the Israeli people aren=E2=80=99=
-t acting out against the issues between both parties in an attempt to =
-end the conflict. With this in mind, it was a poorly worded response =
-which led to a slippery slope in a discussion, done on a social medium =
-(Twitter) that seems to get blown out of proportion really quickly =
-(trolls and misinterpretation abound).
+And if VM is running it guarded by the vfio_mdev driver which is the one wh=
+o binds to the device mdev device.
+That is why I shown the above stack trace in the commit log, indicating tha=
+t vfio driver is guarding it.
 
-This kind of reasoning presented sounds a lot like cognitive dissonance =
-employed by the far-right in America vs individuals like Rep. Ilhan =
-Omar, etc, where they play the victim in order to make leftist groups =
-look like they tolerate hate against certain groups (in this case Jewish =
-people). Does that mean that the left has anti-Semites? Yes, it can =
-happen, regardless of one=E2=80=99s political allegiance if one is to =
-believe the left vs right dichotomy (which I think is largely poppycock, =
-meant to separate groups via tribalism, etc). However, I think a number =
-of people are reading between the tea leaves in this thread.
-
-Do I think phk@ and others should potentially take a step back from the =
-discussion and avoid digging a larger hole than has already been dug? =
-Yes. It=E2=80=99s not my business to make people do that though, since =
-I=E2=80=99m not in a leadership/policy making position.
-
-Please leave this discussion on Twitter instead of flooding these =
-mailing lists. Linux/OpenBSD should not be exposed to this unnecessary =
-drama, and FreeBSD-CURRENT is the wrong mailing list for this (try =
-freebsd-chat@ if you are so inclined).
-
--Enji
-
-PS I am not representing the FreeBSD project; I am only representing my =
-personal opinion.=
+> > samples/vfio-mdev/mbochs.c mbochs_remove() always returns 0.
+> >
+> > > >
+> > > > -	ret =3D mdev_device_remove_ops(mdev, force_remove);
+> > > > -	if (ret) {
+> > > > -		mdev->active =3D true;
+> > > > -		return ret;
+> > > > -	}
+> > > > -
+> > > > -	mdev_remove_sysfs_files(dev, type);
+> > > > -	device_unregister(dev);
+> > > > +	/* Balances with device_initialize() */
+> > > > +	put_device(&mdev->dev);
+> > > >  	mdev_put_parent(parent);
+> > > >
+> > > >  	return 0;
+> > >
+> > > I think that looks sane in general, but the commit message might
+> > > benefit from tweaking.
+> > Part of your description is more crisp than my commit message, I can
+> probably take snippet from it to improve?
+> > Or any specific entries in commit message that I should address?
+>=20
+> I have added some comments inline (mostly some wording tweaks).
+>=20
+> Feel free to take anything from my summary as well.
