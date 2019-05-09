@@ -2,84 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0D618910
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA151891F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfEILfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:35:41 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35917 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfEILfl (ORCPT
+        id S1726683AbfEILhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:37:07 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:56432 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfEILhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:35:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id a3so1088347pgb.3;
-        Thu, 09 May 2019 04:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pCzQA9iFafWm9xsaMI26hanRVNC/kRqx7QC4DMgsQhw=;
-        b=tYUZ6ptGZ0VCmH5SP3u3RZe53nNjuDZy6tuB8oq1LpEe6sL19KnFH2BjIHZgo0DmnH
-         P56z51i/LOEB/YxplPb/jxR+C6mmiPpaEfSWJ7yeBUd48qqkIHZPhTZm2eQ4dYljsZMd
-         aprbB8wnK/FR0qI6JMO50dIA90z2pHdWpTmYUP9X2YmGICVR5+1tQGLoe/zKrgHzQGc1
-         Gf+/psfSfVEOyC4JcVJ69yfwEQJ4u3rBadLyjIm8e7q+NeFb0KOufiz+pqPpXYSxex21
-         6sWqZzUxEZFJ6ExWzpqpt1tPMLdjJItID4sCXixfXhZ6L9Aofy4u6khLZHKkyvCL1SOR
-         4eag==
+        Thu, 9 May 2019 07:37:07 -0400
+Received: by mail-io1-f70.google.com with SMTP id s184so1400918iod.23
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:37:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pCzQA9iFafWm9xsaMI26hanRVNC/kRqx7QC4DMgsQhw=;
-        b=qVYomWBdu9qkQFR83O3sFrHfo3YbS3xnLc0ZMZ86EoK8PFofuwZXcJmiuWM0hMUT6g
-         eZdf9hxQufP4u1PjfKiA4f0K62ztiYkCRKAj5zWWuH9ZEj45rBKfGdBczXeMUoEl09pv
-         ReblfE5neggSM+nbR+mXmRwhzgPr+c9/hXcWc889lqfiDWWoEdcXcFFAZ/6axdVWrEAD
-         XWaYT4gUJJ4bDvzu390NUvsnOi18kbWmqxUAosUb/GgKyv9x8ZlmvXkRCh477oVyCAI5
-         0jco0N/oeCCe4RgJA9a+kDj5GwLSuWANOW/uysitkeIfxfRh104dABENgK6kwL80Nc8s
-         20ng==
-X-Gm-Message-State: APjAAAWtEYpuK4O5zdwBerVxWiAl59xAffMx2eXn3Mar2gKmVenol5Ya
-        zK7DPzS12emcT/g02N3qWKQ=
-X-Google-Smtp-Source: APXvYqxmRsJST+6oDiJ8/5DEEcoDK/i0mbVlIZapJZhIrRHkp7lkL1zHzEGnt+fRmKLy5EinBajctQ==
-X-Received: by 2002:aa7:9242:: with SMTP id 2mr4381343pfp.230.1557401740471;
-        Thu, 09 May 2019 04:35:40 -0700 (PDT)
-Received: from [192.168.86.235] (c-73-241-150-70.hsd1.ca.comcast.net. [73.241.150.70])
-        by smtp.gmail.com with ESMTPSA id v40sm6937601pgn.17.2019.05.09.04.35.39
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 04:35:39 -0700 (PDT)
-Subject: Re: [PATCH net V3 1/2] tuntap: fix dividing by zero in ebpf queue
- selection
-To:     Jason Wang <jasowang@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     yuehaibing@huawei.com, xiyou.wangcong@gmail.com,
-        weiyongjun1@huawei.com, eric.dumazet@gmail.com
-References: <1557372018-18544-1-git-send-email-jasowang@redhat.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <1a244711-657c-88f9-6463-c503d178dd02@gmail.com>
-Date:   Thu, 9 May 2019 04:35:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ehHiCH7SYbQmOW8XlMeAAbAZBYEjB3xQM+LCER9pDJw=;
+        b=r1fdtncyTe/foEkrwO4tj924sW0N+CXXkmEuwsgnxEqTCBUIVt9HqK8dQUWlApFCa9
+         IONbtx3XU/9QUOirpCxRzw99NfR6SzW97QkhxsBrfxayAfuZJX5Jm+lfrd2jlalXMsvI
+         MJjd3bQrNJ26a+nhwlp7RFmAUC7oJhD7on1TJ2Mq7BQi7qnKCy+B6dBuNA6gLOMbH2ng
+         EzWKmdsUZiPZRduvrMcd1TmPpAKPDviWW4DtWNTFcY5lj3YjjYNXjYneHg0MExZKqlmE
+         HQ0DKJrBAPbkx8NmMPIZF8JUPvl+l1ief6W8uVCGAEprTTwfb/fKGad/+6Ae+oAQGrZo
+         ChNg==
+X-Gm-Message-State: APjAAAX2lHVM8Xdx3oBu7rkqMXQL4wbSmxBNhpTPgjwcpb80kCgRrnrB
+        maabIwK7ZAb3QIjJIlFPIZkGIn8BolUfXwe1LXAajC7hhKXE
+X-Google-Smtp-Source: APXvYqzwz3nMaZbEVPxd55R7GnE0algi/np8iEFDRXg/gjyJH1v67KwF/+6jDgkqSULnCnavOkbGb9KAP/a+2/lC9qjQBqBbVhz3
 MIME-Version: 1.0
-In-Reply-To: <1557372018-18544-1-git-send-email-jasowang@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:694f:: with SMTP id e76mr2771706jac.111.1557401826476;
+ Thu, 09 May 2019 04:37:06 -0700 (PDT)
+Date:   Thu, 09 May 2019 04:37:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a3ca70058872de7c@google.com>
+Subject: WARNING: ath10k USB support is incomplete, don't expect anything to work!
+From:   syzbot <syzbot+c1b25598aa60dcd47e78@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=178c8394a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
+dashboard link: https://syzkaller.appspot.com/bug?extid=c1b25598aa60dcd47e78
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c22222a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ddce02a00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c1b25598aa60dcd47e78@syzkaller.appspotmail.com
+
+usb 1-1: new low-speed USB device number 2 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 93 but max is 0
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=13b1, idProduct=0042,  
+bcdDevice=f9.d4
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+usb 1-1: WARNING: ath10k USB support is incomplete, don't expect anything  
+to work!
 
 
-On 5/8/19 11:20 PM, Jason Wang wrote:
-> We need check if tun->numqueues is zero (e.g for the persist device)
-> before trying to use it for modular arithmetic.
-> 
-> Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-> Fixes: 96f84061620c6("tun: add eBPF based queue selection method")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
-Thanks.
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
