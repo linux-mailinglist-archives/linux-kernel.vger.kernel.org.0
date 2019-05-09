@@ -2,85 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F6D019152
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E841917A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfEISzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:55:45 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40329 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728067AbfEISzn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:55:43 -0400
-Received: by mail-yw1-f67.google.com with SMTP id 18so2699857ywe.7;
-        Thu, 09 May 2019 11:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4JFPFXVDH7pJ9CJTfoL2qJ+K7zcKHZ5roJuaHINr0fU=;
-        b=VkBo2kat9T4exVnlUA1bHK14ozicDJbZ7bEF/zNTVnMg+kDzu1jvmAWAkbD0Hyr+kr
-         dxeWekWbRiXvQtRC+ezW0VrSfDxmTqS5rVLLXtgQWs6YYHfDjrGOw0ORNZCkfyho8D/0
-         203ElUp4T/6HItf2fiinS4NkeaOj59/tYEbBnIxv3DOablRikKYSKZ9AMNFo1AwK0TYd
-         5PpgWFvp2hu9+eTd9mO7KKHMNKi1iyp5lnTTyv0b/Ig5nrVmCdnKM2NF0hJgQWFdMrGo
-         cd20NCP8uCgeAlj3PCgBGmHSovzlODFAkM/zwIcAHqiCyKNpBrq6hcLQJDf0fFSmu2Xj
-         pIqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4JFPFXVDH7pJ9CJTfoL2qJ+K7zcKHZ5roJuaHINr0fU=;
-        b=KBYgJ+GCkAyVtQ29NDt4VSVZfiJbwf0RKrs9RQfaMLFot/S3riS1blQt1A+dDCnep9
-         X9N9N5VHEqgBTnIeV3eW9sM0wF7pYkPI41i5lJh8fy8C2SoJPm4GDwtuzgr8lQpuNxuL
-         o39i5HZRLIuJH0IjgRKtpw0FAApNJkZ1KKa9j8Zj/0czkrG+NCtiv9XvKIoBQLqbNDkI
-         pC9dw8uE5eldey/LzFZD0Ld6cpqDHKcyPF4kgnMf8JutyZjrsHuIHKNcbOinqdkeeuvL
-         7lpGnhUpLt95y2hT5X3hCw6wYSJkiSdoLjqMuqOIQ8rgxKxY6lgXVo+jjcWL1Igv7xTK
-         0ozg==
-X-Gm-Message-State: APjAAAW2lHJShkn0Nk0X75pt2lFWjwjrLUQbbzNa4BDwcCqgOk0JEeoI
-        dgk9qu0QwYuGh0akw2lOalkRbA9wmU2mGFP3PR4=
-X-Google-Smtp-Source: APXvYqwNlGdkGWUPsJYGt/hFZGUABwbuzytLt/hWzpG1HIsldhR/35nTAj17XxIPutZ/+XfqJ0/Q/fsLJeS8d5kh4Jk=
-X-Received: by 2002:a0d:d7d0:: with SMTP id z199mr3300615ywd.468.1557428143045;
- Thu, 09 May 2019 11:55:43 -0700 (PDT)
+        id S1729126AbfEIS5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:57:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50984 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727867AbfEIS5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:57:08 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 398D0C0601F2;
+        Thu,  9 May 2019 18:57:08 +0000 (UTC)
+Received: from treble (ovpn-123-166.rdu2.redhat.com [10.10.123.166])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3D5460FE6;
+        Thu,  9 May 2019 18:57:03 +0000 (UTC)
+Date:   Thu, 9 May 2019 13:57:01 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "luto@amacapital.net" <luto@amacapital.net>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "valentin.schneider@arm.com" <valentin.schneider@arm.com>,
+        "brgerst@gmail.com" <brgerst@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dvyukov@google.com" <dvyukov@google.com>
+Subject: Re: [PATCH 02/25] tracing: Improve "if" macro code generation
+Message-ID: <20190509185701.hocym3zlc4x4pmx5@treble>
+References: <20190318153840.906404905@infradead.org>
+ <20190318155140.058627431@infradead.org>
+ <f918ecb0b6bf43f3bf0f526084d8467b@AcuMS.aculab.com>
+ <CAHk-=wiALN3jRuzARpwThN62iKd476Xj-uom+YnLZ4=eqcz7xQ@mail.gmail.com>
+ <20190509090058.6554dc81@gandalf.local.home>
+ <CAHk-=wiLMXDO-_NGjgtoHxp9TRpcnykHPNWOHfXfWd9GmCu1Uw@mail.gmail.com>
+ <20190509142902.08a32f20@gandalf.local.home>
+ <20190509184531.jhinxi2x2pdfaefb@treble>
+ <20190509184715.6y2uzlld4irlm3tw@treble>
+ <3998ab5d-225b-0680-5edf-60b4068e3e59@infradead.org>
 MIME-Version: 1.0
-References: <20190509181301.719249738@linuxfoundation.org> <20190509181305.327667203@linuxfoundation.org>
-In-Reply-To: <20190509181305.327667203@linuxfoundation.org>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Thu, 9 May 2019 11:55:31 -0700
-Message-ID: <CAMo8Bf+TZ_ptRjDVuKLZ2M6Bjo83ckuvj=6hCpiZ2ufJrnu80A@mail.gmail.com>
-Subject: Re: [PATCH 4.19 32/66] xtensa: fix initialization of pt_regs::syscall
- in start_thread
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3998ab5d-225b-0680-5edf-60b4068e3e59@infradead.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 09 May 2019 18:57:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, May 09, 2019 at 11:48:43AM -0700, Randy Dunlap wrote:
+> On 5/9/19 11:47 AM, Josh Poimboeuf wrote:
+> > On Thu, May 09, 2019 at 01:45:31PM -0500, Josh Poimboeuf wrote:
+> >> On Thu, May 09, 2019 at 02:29:02PM -0400, Steven Rostedt wrote:
+> >>> On Thu, 9 May 2019 09:51:59 -0700
+> >>> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >>>
+> >>>> On Thu, May 9, 2019 at 6:01 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>>>>
+> >>>>> This patch works. Can I get your Signed-off-by for it?  
+> >>>>
+> >>>> Yes. Please write some kind of comprehensible commit log for it, but
+> >>>
+> >>> How's this:
+> >>>
+> >>> "Peter Zijlstra noticed that with CONFIG_PROFILE_ALL_BRANCHES, the "if"
+> >>> macro converts the conditional to an array index.  This can cause GCC
+> >>> to create horrible code.  When there are nested ifs, the generated code
+> >>> uses register values to encode branching decisions.
+> >>>
+> >>> Josh Poimboeuf found that replacing the define "if" macro from using
+> >>> the condition as an array index and incrementing the branch statics
+> >>> with an if statement itself, reduced the asm complexity and shrinks the
+> >>> generated code quite a bit.
+> >>>
+> >>> But this can be simplified even further by replacing the internal if
+> >>> statement with a ternary operator.
+> >>>
+> >>> Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >>> Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> >>
+> >> Actually, my original fix already went in:
+> >>
+> >>   37686b1353cf ("tracing: Improve "if" macro code generation")
+> >>
+> >> But it introduced a regression:
+> >>
+> >>   https://lkml.kernel.org/r/201905040509.iqQ2CrOU%lkp@intel.com
+> >>
+> >> which Linus' patch fixes for some reason.
+> > 
+> > /me curses URL encoding
+> > 
+> > https://lkml.kernel.org/r/201905040509.iqQ2CrOU%25lkp@intel.com
+> > 
+> 
+> Still fails for me.
 
-On Thu, May 9, 2019 at 11:48 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> [ Upstream commit 2663147dc7465cb29040a05cc4286fdd839978b5 ]
->
-> New pt_regs should indicate that there's no syscall, not that there's
-> syscall #0. While at it wrap macro body in do/while and parenthesize
-> macro arguments.
->
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  arch/xtensa/include/asm/processor.h | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
+Sorry, another URL fail.  It wasn't on lkml.  I should actually try
+clicking my own links.
 
-This patch should not be taken to any of the stable trees, except maybe
-5.0.y, because NO_SYSCALL was introduced to arch/xtensa in 5.0.
-
-This patch doesn't have any cc:stable tags, I'm curious why was it chosen
-for stable and what can I do to prevent that in the future?
+https://lists.01.org/pipermail/kbuild-all/2019-May/060554.html
 
 -- 
-Thanks.
--- Max
+Josh
